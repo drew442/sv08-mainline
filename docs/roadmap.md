@@ -30,7 +30,11 @@ identifies an 8 MHz/zero-offset build candidate, without establishing installed
 flash contents. HDMI and USB touch paths are detected. The owner has an ST-Link,
 eMMC USB reader and spare 32 GB module; the
 [recovery plan](hardware/test-sv08-01-recovery.md) preserves the original module
-and prepares the spare for restoration testing before migration.
+and prepares the spare for restoration testing before migration. Both eMMC boot
+regions and the user-area prefix now have matching repeat-read captures, with
+decoded eMMC metadata preserved privately. Full disk and MCU backups remain
+outstanding. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
+provides the offline capture steps and hardware identification/restore gates.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,
 MCU identities, existing configs, and flash/clock settings. Obtain recoverable

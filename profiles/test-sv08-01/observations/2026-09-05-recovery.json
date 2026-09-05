@@ -1,0 +1,52 @@
+{
+  "date": "2026-09-05",
+  "profile": "test-sv08-01",
+  "board_revision": null,
+  "evidence": "Read-only SSH inspection and private partial captures; owner-reported recovery adapters not physically inspected",
+  "boot_regions": [
+    {
+      "region": "emmc-boot0",
+      "bytes": 4194304,
+      "repeat_read_equal": true,
+      "all_zero": true
+    },
+    {
+      "region": "emmc-boot1",
+      "bytes": 4194304,
+      "repeat_read_equal": true,
+      "all_zero": true
+    }
+  ],
+  "user_area_prefix": {
+    "bytes": 4194304,
+    "repeat_read_equal": true,
+    "first_partition_sector": 8192,
+    "sector_bytes": 512
+  },
+  "extcsd": {
+    "PARTITION_CONFIG": "0x00",
+    "BOOT_BUS_CONDITIONS": "0x00",
+    "RST_N_FUNCTION": "0x00",
+    "PARTITION_SETTING_COMPLETED": "0x00"
+  },
+  "source_archive": {
+    "components": [
+      "Klipper",
+      "Moonraker",
+      "KlipperScreen"
+    ],
+    "regular_members_readable": true,
+    "atomic": false
+  },
+  "full_disk_backup_complete": false,
+  "mcu_backups_complete": false,
+  "second_storage_copy_verified": false,
+  "recovery_verified": false,
+  "hardware_writes_performed": false,
+  "limitations": [
+    "PCB revisions and adapter/module compatibility unknown",
+    "RPMB contents not captured",
+    "No filesystem consistency claim for live source archive",
+    "No heat, motion or restore testing"
+  ]
+}

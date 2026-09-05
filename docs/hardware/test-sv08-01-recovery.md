@@ -1,6 +1,6 @@
 # Test printer 01: recovery preparation
 
-Status: planned, 2026-09-05. The owner reports an ST-Link, an eMMC USB reader and
+Status: partial preservation, 2026-09-05. The owner reports an ST-Link, an eMMC USB reader and
 a spare nominal 32 GB eMMC module. Models, connector compatibility and recovery
 operation have not been verified. No raw storage or MCU writes have been made.
 
@@ -16,14 +16,55 @@ firmware replacement as separate, recorded steps.
 | Configuration, logs, services, selected boot files | Private archive readable; 30 non-log hashes rechecked | Second private copy; log capture is not atomic |
 | Loaded Klipper configuration | All 116 parsed archived sections match captured API values | Preserve local calibration when converting |
 | eMMC user area | Size and mounted layout identified | Offline image, exact byte count, SHA-256 and repeat-read comparison |
-| eMMC boot areas | Two 4,194,304-byte areas enumerated | Separate images and readback hashes; verify reader access |
-| eMMC settings | Incomplete | Readable device/boot configuration metadata and a restore interpretation |
+| eMMC boot areas | Both 4,194,304-byte regions captured twice; reads match, all zero | Second storage copy; restore interpretation |
+| eMMC settings | Decoded EXT_CSD and partition table captured read-only | Review settings against identified spare; RPMB not captured |
 | Mainboard firmware | Matching vendor artifact candidate identified | Physical identity and complete SWD readback |
 | Toolhead firmware | Runtime version identified; no matching file located | Physical identity and complete SWD readback |
 | Spare eMMC | Owner reports 32 GB capacity | Model, electrical/mechanical compatibility, actual capacity and restore test |
 
 See [discovery](test-sv08-01-discovery.md) and
 [firmware evidence](test-sv08-01-firmware.md) for the completed checks.
+
+## Completed remote preparation
+
+On 2026-09-05, SSH inspection found ready/standby, zero heater targets, hotend
+31.62°C and bed 29.68°C. Root resolved to the same recorded eMMC identity and
+7,818,182,656-byte user area; the physical PCB revision remains unknown.
+
+Both boot regions were read twice with `dd` over SSH, with `force_ro=1` retained.
+Each is 4,194,304 zero bytes with SHA-256
+`bb9f8df61474d25e71fa00722318cd387396ca1736605e1248821cc0de3d3af8`.
+The first partition starts at sector 8192 (512-byte sectors). The preceding
+4,194,304 bytes were also captured twice and matched, SHA-256
+`cc3136983e9611667cd4fbda329c2b6c168a9b7097da59665083c8fd37e2b71a`.
+This prefix includes a literal `eGON.BT0` at byte 8196; that string alone does
+not establish the complete boot chain or a working restore method.
+
+Read-only `mmc extcsd read` reports `PARTITION_CONFIG=0x00`,
+`BOOT_BUS_CONDITIONS=0x00`, `BOOT_WP=0x00`, `BOOT_WP_STATUS=0x00`,
+`RST_N_FUNCTION=0x00`, and `PARTITION_SETTING_COMPLETED=0x00`.
+The reported RPMB size multiplier is `0x04`; RPMB contents were not captured.
+Do not replay settings to the spare without field-by-field review.
+Tools: printer coreutils 8.32-4 and mmc-utils 0+git20180327.b4fe0c8c-1.
+The [kernel MMC tools documentation](https://cdn.kernel.org/doc/html/latest/driver-api/mmc/mmc-tools.html)
+describes EXT_CSD inspection (accessed 2026-09-05).
+
+The installed Klipper, Moonraker and KlipperScreen directories, including their
+Git metadata and local modifications, were archived privately (76,685,388 bytes;
+3,693 archive members). Every regular member was read successfully. This is a
+live, non-atomic source preservation copy; symlink targets outside those trees,
+Python environments and other host state are not included.
+
+Private files, identities, commands, sizes, hashes and repeat-read results are
+in `backups/test-sv08-01/recovery-20260905/manifest.json`; runtime evidence is
+in `local/test-sv08-01/recovery-20260905/`. These live partial reads do not
+capture the filesystems or constitute a full disk backup. No MCU backup or
+restoration test is complete. No hardware writes or operating changes were made.
+
+The [hands-on task list](test-sv08-01-recovery-tasks.md) provides ordered work,
+an offline Linux capture template, and branches for readers with limited region
+access. Full imaging, SWD attachment, spare identification and a separate storage
+copy require physical access; remote preparation can continue independently.
 
 ## Host preservation sequence
 
