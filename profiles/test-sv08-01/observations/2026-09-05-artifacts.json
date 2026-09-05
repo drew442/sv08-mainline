@@ -1,0 +1,75 @@
+{
+  "record_type": "read-only-artifact-and-configuration-inspection",
+  "profile": "test-sv08-01",
+  "captured_on": "2026-09-05",
+  "hardware_validated": false,
+  "source_commit": "a60644875f8c756d20b3828c9416518b414b5491",
+  "firmware_files": [
+    {
+      "path": "upstream/sovol-sv08/home/sovol/klipper/out/klipper.bin",
+      "bytes": 35988,
+      "sha256": "9af71bf52d9bc743c73d6dcd10b5394ff9cc26371d6d2de2a0cbe400f4957617",
+      "matches_printer_file": true
+    },
+    {
+      "path": "upstream/sovol-sv08/home/sovol/klipper/out/klipper.elf",
+      "bytes": 1138592,
+      "sha256": "3b1333d3b529c1a74cae7a8a0c85a5a15e2c76658b810b37d0888369365cff3e",
+      "matches_printer_file": true
+    },
+    {
+      "path": "upstream/sovol-sv08/home/sovol/klipper/out/klipper.dict",
+      "bytes": 7912,
+      "sha256": "f019703c33d61641e21ee94244b83607b9015203d7486de2de82392de170b949",
+      "matches_printer_file": true
+    }
+  ],
+  "candidate_mainboard_build": {
+    "evidence_level": "observed-file-contents",
+    "firmware_version": "v0.12.0-40-g77619e91-dirty",
+    "build_time_timezone_unknown": "2024-03-01 10:46:56",
+    "reported_target": "stm32f103xe",
+    "clock_reference_hz_from_elf_debug_macros": 8000000,
+    "flash_load_base_from_elf": "0x08000000",
+    "application_offset_bytes_from_elf_debug_macros": 0,
+    "elf_load_image_matches_bin": true,
+    "embedded_identify_offset_bytes": 29756,
+    "embedded_identify_matches_sidecar": true,
+    "identity_matches_running_mainboard_report": true,
+    "installed_flash_readback_performed": false
+  },
+  "configuration_audit": {
+    "method": "Pinned vendor PrinterConfig parser over archived contents with includes and SAVE_CONFIG; compared to captured runtime API raw config",
+    "unique_files": 7,
+    "sections": 116,
+    "option_differences": 0,
+    "printer_modules_started": false
+  },
+  "storage": {
+    "user_area_bytes": 7818182656,
+    "boot_area_bytes_each": 4194304,
+    "initial_linux_name": "mmcblk2",
+    "later_linux_name": "mmcblk1",
+    "device_name_is_persistent_identity": false,
+    "later_reported_product": "8GTF4R",
+    "later_reported_type": "MMC"
+  },
+  "display": {
+    "hdmi_connected": true,
+    "first_advertised_mode": "1024x600",
+    "framebuffer_virtual_size": "1024,600",
+    "usb_touch_candidate_vid_pid": "1a86:e5e3",
+    "input_device_detected": true,
+    "touch_function_validated": false
+  },
+  "limits": [
+    "File identity is not installed flash equality",
+    "No matching July 2025 toolhead artifact found in bounded home-directory search; search not exhaustive",
+    "No raw disk image, MCU flash dump or restore test performed",
+    "No heat, motion, configuration change, restart or flash command sent"
+  ],
+  "reports": [
+    "docs/hardware/test-sv08-01-firmware.md",
+    "docs/hardware/test-sv08-01-recovery.md"
+  ]
+}

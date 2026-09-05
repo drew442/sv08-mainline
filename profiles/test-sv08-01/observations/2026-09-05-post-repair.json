@@ -1,0 +1,46 @@
+{
+  "record_type": "read-only-post-repair-check",
+  "profile": "test-sv08-01",
+  "captured_at_utc": "2026-09-05T05:58:18.257394+00:00",
+  "owner_report": "Thermistor repaired; repair details and sensor part number unspecified",
+  "result": "Previous approximately 120C ambient anomaly no longer observed",
+  "samples": [
+    {
+      "captured_at_utc": "2026-09-05T05:58:18.312529+00:00",
+      "extruder_celsius": 29.43,
+      "bed_celsius": 29.4,
+      "extruder_target_celsius": 0.0,
+      "bed_target_celsius": 0.0,
+      "printer_state": "ready",
+      "print_state": "standby"
+    },
+    {
+      "captured_at_utc": "2026-09-05T05:58:28.349614+00:00",
+      "extruder_celsius": 29.44,
+      "bed_celsius": 29.4,
+      "extruder_target_celsius": 0.0,
+      "bed_target_celsius": 0.0,
+      "printer_state": "ready",
+      "print_state": "standby"
+    },
+    {
+      "captured_at_utc": "2026-09-05T05:58:38.623512+00:00",
+      "extruder_celsius": 29.42,
+      "bed_celsius": 29.42,
+      "extruder_target_celsius": 0.0,
+      "bed_target_celsius": 0.0,
+      "printer_state": "ready",
+      "print_state": "standby"
+    }
+  ],
+  "configuration_comparison": "Extruder, custom hotend thermistor and heater_bed raw settings identical to pre-repair API capture",
+  "sensor_type": "my_thermistor_e",
+  "configured_pullup_ohms": 11500,
+  "configuration_warnings": [],
+  "limits": [
+    "No heater, motion, restart or configuration commands sent",
+    "Ambient plausibility and short-term stability only; no heated-range calibration",
+    "Sensor part number, repair details and circuit values remain unverified"
+  ],
+  "report": "docs/hardware/test-sv08-01-temperature.md"
+}

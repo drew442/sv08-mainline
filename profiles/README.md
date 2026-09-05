@@ -8,6 +8,10 @@ The initial [stock profile](stock-sv08/profile.json) is research-only. Its unkno
 values are intentional. The format is provisional until build tooling needs a
 formal schema.
 
+[Test printer 01](test-sv08-01/profile.json) records an owner-reported modified
+bed/hotend and dual display setup on mostly factory electronics. Keep its
+configuration and validation distinct from the stock reference.
+
 Each future profile should describe host, mainboard, toolhead, transport, probe,
 display, firmware targets, relevant source references, and validation evidence.
 Use `null` for unknown machine-readable values. Store actual configuration only

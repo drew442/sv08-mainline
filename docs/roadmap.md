@@ -12,8 +12,25 @@ This phase establishes inputs; it does not validate firmware or printer operatio
 ## 1. Identify and preserve the stock system — in progress
 
 Prepared a read-only host collector with offline fixture tests and a
-[discovery/backup workflow](hardware/discovery-and-backup.md). Printer access,
-physical inspection, and actual backup/recovery evidence remain outstanding.
+[discovery/backup workflow](hardware/discovery-and-backup.md). Physical inspection
+and full backup/recovery evidence remain outstanding.
+
+[Test printer 01](hardware/test-sv08-01.md) is identified by its owner as mostly
+factory electronics with a 10 mm bed, upgraded hotend, enclosure and dual displays.
+Its [first live inspection](hardware/test-sv08-01-discovery.md) identifies a
+vendor-derived stack, two different MCU builds and mostly vendor thermal settings.
+The initial hotend temperature anomaly is no longer observed after owner-reported
+thermistor repair; a read-only recheck found stable ambient readings with unchanged
+sensor settings. Heated-range validation remains outstanding. Raw captures remain private.
+
+The approved private configuration archive parses to the same 116 sections as
+the captured running configuration. Existing mainboard firmware files match the
+pinned vendor artifacts; [file inspection](hardware/test-sv08-01-firmware.md)
+identifies an 8 MHz/zero-offset build candidate, without establishing installed
+flash contents. HDMI and USB touch paths are detected. The owner has an ST-Link,
+eMMC USB reader and spare 32 GB module; the
+[recovery plan](hardware/test-sv08-01-recovery.md) preserves the original module
+and prepares the spare for restoration testing before migration.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,
 MCU identities, existing configs, and flash/clock settings. Obtain recoverable
@@ -66,7 +83,7 @@ builds; publish supported combinations only with the associated test records.
 
 ## Open decisions
 
-- Exact installed stock board revisions and available recovery adapters.
+- Exact installed board revisions, recovery adapter models and spare-module compatibility.
 - OS/image builder, kernel line, bootloader, and device-tree strategy.
 - Treatment of vendor probing and power-loss recovery features.
 - First modified-electronics combination to support after stock.

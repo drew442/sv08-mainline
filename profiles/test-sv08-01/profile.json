@@ -1,0 +1,103 @@
+{
+  "format_version": 1,
+  "id": "test-sv08-01",
+  "printer_model": "Sovol SV08 (original)",
+  "electronics": "mostly factory, owner-reported; not yet inspected",
+  "status": "research",
+  "reviewed_on": "2026-09-05",
+  "hardware_verified": false,
+  "reference_profile": "stock-sv08",
+  "reference_profile_is_not_configuration_inheritance": true,
+  "evidence": "docs/hardware/test-sv08-01.md",
+  "components": {
+    "host": {
+      "installed_soc": null,
+      "board_revision": null,
+      "os": "SPI-XI 2.3.3 / Debian 11 (bullseye)",
+      "kernel": "5.16.17-sun50iw9 aarch64",
+      "boot_media": "eMMC: 7818182656-byte user area; two 4194304-byte boot areas; Linux device number changed across reboot",
+      "device_tree": "sun50i-h616-sovol-emmc (configured fdtfile)",
+      "reported_soc_compatible": "allwinner,sun50i-h616",
+      "reported_device_tree_model": "BigTreeTech CB1",
+      "reported_memtotal_kib": 1010632,
+      "evidence_level": "observed-host-report"
+    },
+    "mainboard": {
+      "installed_mcu": null,
+      "installed_board_revision": null,
+      "clock_hz": null,
+      "bootloader_offset_bytes": null,
+      "firmware_version": "v0.12.0-40-g77619e91-dirty",
+      "reported_firmware_build_time": "2024-03-01 10:46:56",
+      "reported_firmware_target": "stm32f103xe",
+      "reported_runtime_clock_hz": 72000000,
+      "firmware_evidence_level": "observed-running-mcu-report"
+    },
+    "toolhead": {
+      "installed_mcu": null,
+      "installed_board_revision": null,
+      "clock_hz": null,
+      "bootloader_offset_bytes": null,
+      "firmware_version": "v0.12.0-4-g3bfe0b7-dirty",
+      "reported_firmware_build_time": "2025-07-22 06:22:09",
+      "reported_firmware_target": "stm32f103xe",
+      "reported_runtime_clock_hz": 72000000,
+      "firmware_evidence_level": "observed-running-mcu-report"
+    },
+    "bed": {
+      "owner_description": "cn3d/nadir/funssor 10mm bed upgrade",
+      "evidence_level": "owner-reported",
+      "reported_plate_thickness_mm": 10,
+      "exact_kit_and_revision": null,
+      "heater": null,
+      "sensor": null,
+      "mounting_and_travel_changes": null
+    },
+    "hotend": {
+      "owner_description": "blv chcb-sv08 hotend upgrade",
+      "evidence_level": "owner-reported",
+      "exact_variant": null,
+      "heater": null,
+      "sensor": null,
+      "nozzle_geometry": null,
+      "temperature_discrepancy": "Prior approximately 120C ambient reading no longer observed after owner-reported thermistor repair; post-repair hotend 29.42-29.44C, bed 29.40-29.42C, targets zero; settings unchanged",
+      "diagnostic_reference": "docs/hardware/test-sv08-01-temperature.md"
+    },
+    "enclosure": {
+      "owner_description": "factory enclosure option",
+      "evidence_level": "owner-reported"
+    },
+    "displays": {
+      "owner_description": "Klipper HDMI touchscreen installed; factory LCD and control retained",
+      "evidence_level": "owner-reported",
+      "hdmi_model": null,
+      "touch_interface": null,
+      "running_ui_software": "KlipperScreen v0.3.9-1-ge0af637-dirty; service active",
+      "factory_control_configuration": "uc1701 LCD with encoder and click input loaded",
+      "observed_usb_touch_candidate": "1a86:e5e3 QinHeng USB2IIC_CTP_CONTROL (physical association unverified)",
+      "observed_hdmi": "Connected; first advertised mode 1024x600; framebuffer virtual size 1024x600"
+    },
+    "probe": {
+      "installed_model": null,
+      "configuration": "Vendor probe + probe_pressure + z_offset_calibration loaded"
+    }
+  },
+  "software_state": "Vendor-derived Klipper host with local modifications; mismatched-generation MCU builds; see discovery report",
+  "configuration_state": "Mostly vendor-default core settings with selected macro and include changes; suitability for upgraded thermal hardware unverified",
+  "validation_records": [
+    "profiles/test-sv08-01/observations/2026-09-05.json",
+    "profiles/test-sv08-01/observations/2026-09-05-post-repair.json",
+    "profiles/test-sv08-01/observations/2026-09-05-artifacts.json"
+  ],
+  "recovery_verified": false,
+  "recovery_preparation": {
+    "evidence_level": "owner-reported",
+    "st_link_available": true,
+    "emmc_usb_reader_available": true,
+    "spare_emmc_nominal_capacity_gb": 32,
+    "adapter_models": null,
+    "spare_module_model": null,
+    "spare_module_compatibility_verified": false,
+    "plan": "docs/hardware/test-sv08-01-recovery.md"
+  }
+}

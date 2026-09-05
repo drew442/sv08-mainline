@@ -15,6 +15,7 @@ validated printer configuration, or tested flashing procedure exists yet.
 
 - [Project definition](docs/project.md): scope, architecture, and success criteria.
 - [Hardware inventory](docs/hardware/stock-sv08.md): evidence and open questions.
+- [Test printer 01](docs/hardware/test-sv08-01.md): reported upgrades and inspection scope.
 - [Discovery and backup preparation](docs/hardware/discovery-and-backup.md): collect
   host evidence and define the preservation record.
 - [Reference library](docs/references.md): schematics, datasheets, and upstream docs.

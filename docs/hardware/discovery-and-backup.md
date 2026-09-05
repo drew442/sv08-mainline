@@ -1,8 +1,8 @@
 # Stock hardware discovery and preservation
 
-Status: preparation, not a demonstrated recovery procedure. The collector is
-tested against offline fixtures; it has not yet been run on an SV08 for this
-project. Keep the stock profile unverified until evidence comes from the printer.
+Status: preparation, not a demonstrated recovery procedure. The collector has
+offline fixture coverage and has run on [test printer 01](test-sv08-01-discovery.md).
+That host inspection does not validate stock configuration or recovery.
 
 ## Collect host evidence
 
@@ -84,9 +84,11 @@ an erase. ST documents that behavior for the STM32F10xxx in
 (checked 2026-09-05). Preserve the original flash regions needed for restoration and record
 addresses and sizes, not just filenames.
 
-This repository does not yet choose raw disk or MCU read/write commands: the
-actual devices, flash layouts, and available recovery adapters are unknown.
-Document the concrete procedure once those inputs are established. Store
+This repository does not yet choose raw disk or MCU read/write commands: target
+identity, flash layouts and adapter compatibility still need verification. Test
+printer 01 now has owner-reported adapters and a spare module; its
+[recovery preparation plan](test-sv08-01-recovery.md) records the next checks.
+Document the concrete commands once those inputs are established. Store
 artifacts in ignored `backups/` and at least one separate private location;
 verify hashes after transfer. Mark recovery verified only after demonstrating
 restoration on the identified hardware.

@@ -1,0 +1,60 @@
+{
+  "record_type": "read-only-discovery",
+  "date": "2026-09-05",
+  "profile": "test-sv08-01",
+  "methods": [
+    "Existing SSH key authentication",
+    "Project host collector",
+    "Existing Moonraker GET status APIs",
+    "Read-only service and source metadata inspection",
+    "Source hash comparison against pinned Sovol snapshot"
+  ],
+  "result": "Host and running firmware identified; local archive verified; temperature mismatch confirmed by owner external measurement, sensor identity unresolved",
+  "printer_reported_state": "ready / standby",
+  "thermal_observations": {
+    "extruder_reported_celsius": [
+      120.11,
+      120.1,
+      119.88
+    ],
+    "extruder_target_celsius": 0,
+    "bed_reported_celsius_range": [
+      28.22,
+      28.3
+    ],
+    "bed_target_celsius": 0,
+    "physical_temperature_verified": false,
+    "owner_reported_external_measurement_celsius": 28,
+    "external_measurement_method": "External tool; model, accuracy and measurement point unspecified",
+    "physical_temperature_evidence_level": "owner-reported-instrument-measurement"
+  },
+  "source_comparison": {
+    "vendor_commit": "a60644875f8c756d20b3828c9416518b414b5491",
+    "scope": "Vendor-listed .py/.c/.h files under klippy and src, compared on the installed host",
+    "compared": 413,
+    "matching": 405,
+    "different": 8,
+    "missing": 0,
+    "extra_installed_files_audited": false
+  },
+  "preservation": {
+    "private_host_report": true,
+    "private_runtime_api_report": true,
+    "config_and_log_archive": true,
+    "full_host_image": false,
+    "mcu_flash_backups": false,
+    "restore_test": false,
+    "archive_regular_files": 32,
+    "nonlog_file_hashes_reverified": 30,
+    "archive_crc_verified": true,
+    "archive_capture_limitation": "Live klippy.log changed during capture; tar exit 1; not an atomic snapshot"
+  },
+  "limits": [
+    "No heat, motion, probing, flashing or restart commanded by this inspection",
+    "MCU target strings do not prove chip suffix or flash capacity",
+    "Runtime clock is distinct from external oscillator frequency",
+    "On-disk AVR build configuration does not match running STM32 firmware",
+    "Raw captures and unique identities excluded from version control"
+  ],
+  "report": "docs/hardware/test-sv08-01-discovery.md"
+}
