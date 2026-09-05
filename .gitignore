@@ -1,0 +1,18 @@
+# Local machine data and generated output
+/local/
+/backups/
+/artifacts/
+/build/
+/dist/
+/.venv/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+.DS_Store
+*.swp
+
+# Workspace agent configuration is local, not project guidance.
+/.agents/
+/.codex/

@@ -1,0 +1,15 @@
+[submodule "upstream/sovol-sv08"]
+	path = upstream/sovol-sv08
+	url = https://github.com/Sovol3d/SV08.git
+[submodule "upstream/klipper"]
+	path = upstream/klipper
+	url = https://github.com/Klipper3d/klipper.git
+[submodule "upstream/sunxi-tools"]
+	path = upstream/sunxi-tools
+	url = https://github.com/linux-sunxi/sunxi-tools.git
+[submodule "upstream/moonraker"]
+	path = upstream/moonraker
+	url = https://github.com/Arksine/moonraker.git
+[submodule "upstream/mainsail"]
+	path = upstream/mainsail
+	url = https://github.com/mainsail-crew/mainsail.git

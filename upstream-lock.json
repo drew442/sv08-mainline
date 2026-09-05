@@ -1,0 +1,57 @@
+{
+  "format_version": 1,
+  "scope": "direct-submodule-source-intake",
+  "note": "Not a complete build dependency lock or supported release. Gitlinks are authoritative.",
+  "submodules": [
+    {
+      "path": "upstream/sovol-sv08",
+      "url": "https://github.com/Sovol3d/SV08.git",
+      "commit": "a60644875f8c756d20b3828c9416518b414b5491",
+      "selected_ref": "origin/main",
+      "selected_on": "2026-09-05",
+      "role": "vendor-reference",
+      "status": "intake-only",
+      "hardware_validated": false
+    },
+    {
+      "path": "upstream/klipper",
+      "url": "https://github.com/Klipper3d/klipper.git",
+      "commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+      "selected_ref": "origin/master",
+      "selected_on": "2026-09-05",
+      "role": "host-and-mcu-firmware",
+      "status": "intake-only",
+      "hardware_validated": false
+    },
+    {
+      "path": "upstream/sunxi-tools",
+      "url": "https://github.com/linux-sunxi/sunxi-tools.git",
+      "commit": "d7bbd172a5da601a08f94479de308c6fb714a19a",
+      "selected_ref": "origin/master",
+      "selected_on": "2026-09-05",
+      "role": "allwinner-tools",
+      "status": "intake-only",
+      "hardware_validated": false
+    },
+    {
+      "path": "upstream/moonraker",
+      "url": "https://github.com/Arksine/moonraker.git",
+      "commit": "985c1d0bbeb90bc057d34a232c9dc3b05e0c6c8d",
+      "selected_ref": "origin/master",
+      "selected_on": "2026-09-05",
+      "role": "api-service",
+      "status": "intake-only",
+      "hardware_validated": false
+    },
+    {
+      "path": "upstream/mainsail",
+      "url": "https://github.com/mainsail-crew/mainsail.git",
+      "commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+      "selected_ref": "origin/develop",
+      "selected_on": "2026-09-05",
+      "role": "web-ui",
+      "status": "intake-only",
+      "hardware_validated": false
+    }
+  ]
+}

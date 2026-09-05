@@ -1,0 +1,54 @@
+{
+  "format_version": 1,
+  "id": "stock-sv08",
+  "printer_model": "Sovol SV08 (original)",
+  "electronics": "stock",
+  "status": "research",
+  "reviewed_on": "2026-09-05",
+  "hardware_verified": false,
+  "evidence": "docs/hardware/stock-sv08.md",
+  "components": {
+    "host": {
+      "soc_candidate": "Allwinner H616",
+      "evidence_level": "inferred",
+      "board_revision": null,
+      "ram_bytes": null,
+      "storage": null,
+      "device_tree": null,
+      "os": null
+    },
+    "mainboard": {
+      "documented_mcu": "STM32F103VET6",
+      "evidence_level": "documented",
+      "schematic": "upstream/sovol-sv08/Motherboard/H616_JC_6Z_V1_2_MCU.pdf",
+      "installed_board_revision": null,
+      "clock_hz": null,
+      "bootloader_offset_bytes": null,
+      "firmware_config": null
+    },
+    "toolhead": {
+      "documented_mcu": "STM32F103CBT6",
+      "evidence_level": "documented",
+      "schematic": "upstream/sovol-sv08/Motherboard/Extra_MCU.pdf",
+      "installed_board_revision": null,
+      "clock_hz": null,
+      "bootloader_offset_bytes": null,
+      "firmware_config": null
+    },
+    "transport": {
+      "vendor_config": "USB serial to mainboard and toolhead",
+      "evidence_level": "documented",
+      "verified_device_mapping": null
+    },
+    "probe": {
+      "vendor_config": "probe plus probe_pressure",
+      "mainline_strategy": null
+    },
+    "display": {
+      "installed_model": null,
+      "configuration": null
+    }
+  },
+  "validation_records": [],
+  "recovery_verified": false
+}
