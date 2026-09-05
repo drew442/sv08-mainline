@@ -1,0 +1,47 @@
+{
+  "date": "2026-09-05",
+  "profile": "test-sv08-01",
+  "status": "built-offline-host-bringup-candidate",
+  "pcb_revision": null,
+  "owner_selected_host_rollback": "Retain factory eMMC unchanged; optional full disk-image file",
+  "target": "Owner-reported blank nominal 32 GB spare eMMC; actual model/compatibility unverified",
+  "image_bytes": 8589934592,
+  "image_sha256": "9f87879d553f832916a56b7229868e3eadfaa756aad38fd5e85f007b65b51b32",
+  "userland": "Debian 13 trixie arm64",
+  "debian_snapshot": "20260901T000000Z",
+  "kernel": "Captured 5.16.17-sun50iw9, not rebuilt from source",
+  "kernel_sha256": "b01f2d93fb543cb7ff98558439a043e4b74036f12c85f71660e8c2908122012a",
+  "dtb_sha256": "a4e42ea9f01636636f62b3779ed27ba1f2cbdef5f2342f86bc7b62cc20faf78b",
+  "klipper_source_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "printer_services_installed": false,
+  "mcu_firmware_included": false,
+  "offline_checks": {
+    "unit_tests_passed": 10,
+    "fat_integrity": true,
+    "ext4_integrity": true,
+    "partition_table_and_contents_readback": true,
+    "prefix_outside_mbr_preserved": true,
+    "boot_uuid_references": true,
+    "arm64_ssh_public_key_login_under_qemu": true,
+    "arm64_python_execution_under_qemu": true,
+    "sshd_configuration": true,
+    "systemd_257_unit_verification": true,
+    "fresh_machine_id_and_host_keys": true,
+    "sudoers_syntax_and_sudo_mode_4755": true
+  },
+  "limitations": [
+    "QEMU user mode shares workstation kernel; does not test target boot/kernel",
+    "Setuid elevation is not supported by this QEMU-user test; sudo requires hardware check",
+    "No spare eMMC write or hardware boot test",
+    "No printer operation or MCU changes",
+    "Captured boot support is not source-reproduced; no byte-identical rebuild claim"
+  ],
+  "hardware_boot_verified": false,
+  "recovery_verified": false,
+  "guide": "docs/hardware/test-sv08-01-image.md",
+  "compressed_image": {
+    "bytes": 291106052,
+    "sha256": "0fbcf1fe7b8418609ddf5d6c9b3946106762624ccebe154c57923e17cd479211",
+    "decompressed_matches_raw": true
+  }
+}

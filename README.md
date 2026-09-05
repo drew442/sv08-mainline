@@ -8,8 +8,11 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
-**Status: project foundation and hardware research.** No installable image,
-validated printer configuration, or tested flashing procedure exists yet.
+**Status: hardware research and first host-image candidate.** A private
+[spare-eMMC host image](docs/hardware/test-sv08-01-image.md) has been built and checked offline
+for test printer 01. It is not a printing system or validated hardware release;
+printer configuration, MCU firmware replacement and hardware boot tests remain
+outstanding.
 
 ## Start here
 

@@ -30,11 +30,13 @@ identifies an 8 MHz/zero-offset build candidate, without establishing installed
 flash contents. HDMI and USB touch paths are detected. The owner has an ST-Link,
 eMMC USB reader and spare 32 GB module; the
 [recovery plan](hardware/test-sv08-01-recovery.md) preserves the original module
-and prepares the spare for restoration testing before migration. Both eMMC boot
+as the owner-selected host rollback baseline and builds a fresh
+[host bring-up image](hardware/test-sv08-01-image.md) for the blank spare.
+A full factory image file is optional for this host-only experiment. Both eMMC boot
 regions and the user-area prefix now have matching repeat-read captures, with
 decoded eMMC metadata preserved privately. Full disk and MCU backups remain
 outstanding. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
-provides the offline capture steps and hardware identification/restore gates.
+provides the spare write/boot steps and independent MCU preservation tasks.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,
 MCU identities, existing configs, and flash/clock settings. Obtain recoverable
@@ -58,7 +60,13 @@ deferred. Evaluate the OS/kernel/device tree and boot chain independently.
 Exit evidence: architecture decisions, selected candidate revisions, compatibility
 gaps with reproductions, and a minimal custom-code plan where needed.
 
-## 3. Reproducible builds and offline validation
+## 3. Reproducible builds and offline validation — host candidate built offline
+
+The first image assembles fresh Debian 13 arm64 from a dated snapshot with
+captured vendor boot support; see [decision 0002](decisions/0002-first-emmc-image.md).
+It stages the selected Klipper source but does not activate printer services or
+include MCU firmware. This is not a source-reproduced boot chain or a supported
+printer image; hardware boot validation and full stack builds remain outstanding.
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact
 hashes. Build the host integration and both MCU targets. Check configuration

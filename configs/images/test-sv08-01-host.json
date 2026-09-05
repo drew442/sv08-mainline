@@ -1,0 +1,18 @@
+{
+  "profile": "test-sv08-01",
+  "status": "host-bringup-candidate",
+  "suite": "trixie",
+  "snapshot": "20260901T000000Z",
+  "architecture": "arm64",
+  "kernel": "5.16.17-sun50iw9",
+  "dtb": "sun50i-h616-sovol-emmc",
+  "vendor_archive_sha256": "2d3d43ee70a88b10def8304b1a823ec9a94047d79a594cdedbb9733f205b077b",
+  "prefix_sha256": "cc3136983e9611667cd4fbda329c2b6c168a9b7097da59665083c8fd37e2b71a",
+  "image_bytes": 8589934592,
+  "boot_start_sector": 8192,
+  "boot_sectors": 524288,
+  "root_start_sector": 532480,
+  "root_uuid": "d2b30f67-16d4-4bf3-9c86-77d06be236ac",
+  "fat_id": "53563031",
+  "disk_id": "0x53563031"
+}

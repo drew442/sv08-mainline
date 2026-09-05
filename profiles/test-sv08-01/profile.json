@@ -87,7 +87,9 @@
   "validation_records": [
     "profiles/test-sv08-01/observations/2026-09-05.json",
     "profiles/test-sv08-01/observations/2026-09-05-post-repair.json",
-    "profiles/test-sv08-01/observations/2026-09-05-artifacts.json"
+    "profiles/test-sv08-01/observations/2026-09-05-artifacts.json",
+    "profiles/test-sv08-01/observations/2026-09-05-recovery.json",
+    "profiles/test-sv08-01/observations/2026-09-05-host-image.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -98,6 +100,10 @@
     "adapter_models": null,
     "spare_module_model": null,
     "spare_module_compatibility_verified": false,
-    "plan": "docs/hardware/test-sv08-01-recovery.md"
+    "plan": "docs/hardware/test-sv08-01-recovery.md",
+    "host_rollback_strategy": "Retain factory eMMC unchanged; build new host image on blank spare; full factory image file optional by owner instruction",
+    "st_link_listing_url": "https://www.amazon.com.au/dp/B0C7QG6LHQ",
+    "st_link_owner_description": "ST-Link V2 Emulator Downloader Programmer STM32F103C8T6 STM8 STM32 with 4Pin GPIO Cable",
+    "st_link_delivered_identity_verified": false
   }
 }

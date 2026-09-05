@@ -15,7 +15,10 @@ Current follow-up: [firmware artifact evidence](test-sv08-01-firmware.md) and
 [recovery preparation](test-sv08-01-recovery.md). The owner has an ST-Link, an
 eMMC USB reader and a spare nominal 32 GB eMMC module; adapter/module models and
 compatibility are still to be checked. The plan preserves the original eMMC and
-uses the spare for restoration testing and subsequent migration.
+uses the blank spare for a new [host image](test-sv08-01-image.md). The owner
+selects the retained factory module as the host rollback baseline; an offline
+factory image file is optional. The ST-Link purchase listing is recorded in
+the recovery plan, with delivered-device identity still unverified.
 
 ## Owner-reported hardware
 

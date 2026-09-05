@@ -4,10 +4,20 @@ Status: partial preservation, 2026-09-05. The owner reports an ST-Link, an eMMC 
 a spare nominal 32 GB eMMC module. Models, connector compatibility and recovery
 operation have not been verified. No raw storage or MCU writes have been made.
 
-The proposed sequence preserves the original eMMC as the baseline and uses the
-spare for migration. First demonstrate that the preserved system can be restored
-to the spare; then make software changes there. Keep host replacement and MCU
-firmware replacement as separate, recorded steps.
+The owner has selected a new-image workflow: retain the factory eMMC unchanged
+as the host rollback baseline and write the new host image to the blank spare.
+A full factory image file and restoration onto the spare are optional additional
+preservation, not prerequisites for this host-only experiment. See the
+[image decision](../decisions/0002-first-emmc-image.md) and
+[image guide](test-sv08-01-image.md). MCU replacement remains separate and still
+requires its own preservation and recovery evidence.
+
+The owner's ST-Link listing is [Amazon ASIN B0C7QG6LHQ](https://www.amazon.com.au/dp/B0C7QG6LHQ),
+described as “ST-Link V2 Emulator Downloader Programmer STM32F103C8T6 STM8 STM32
+with 4Pin GPIO Cable”. Source: owner, 2026-09-05; direct listing access failed
+on that date. This identifies the purchase listing, not the delivered adapter's
+pinout, genuine ST provenance, firmware, voltage behavior or target MCU identity.
+The STM32F103C8T6 in the listing must not be recorded as either printer MCU.
 
 ## Existing preservation evidence
 
@@ -15,7 +25,7 @@ firmware replacement as separate, recorded steps.
 | --- | --- | --- |
 | Configuration, logs, services, selected boot files | Private archive readable; 30 non-log hashes rechecked | Second private copy; log capture is not atomic |
 | Loaded Klipper configuration | All 116 parsed archived sections match captured API values | Preserve local calibration when converting |
-| eMMC user area | Size and mounted layout identified | Offline image, exact byte count, SHA-256 and repeat-read comparison |
+| eMMC user area | Factory module retained as owner-selected rollback baseline; no full image file | Optional offline image for redundancy; preserve original unchanged |
 | eMMC boot areas | Both 4,194,304-byte regions captured twice; reads match, all zero | Second storage copy; restore interpretation |
 | eMMC settings | Decoded EXT_CSD and partition table captured read-only | Review settings against identified spare; RPMB not captured |
 | Mainboard firmware | Matching vendor artifact candidate identified | Physical identity and complete SWD readback |
@@ -63,36 +73,33 @@ restoration test is complete. No hardware writes or operating changes were made.
 
 The [hands-on task list](test-sv08-01-recovery-tasks.md) provides ordered work,
 an offline Linux capture template, and branches for readers with limited region
-access. Full imaging, SWD attachment, spare identification and a separate storage
-copy require physical access; remote preparation can continue independently.
+access. Writing/booting the spare, SWD attachment and spare identification require
+physical access. A separate copy and offline factory imaging remain optional
+additional host preservation under the owner-selected workflow.
 
 ## Host preservation sequence
 
-1. Identify the computer/OS used for the USB reader and record reader/module
-   models. This coding workspace currently exposes only virtual disks, so it
-   has not identified an attached reader or spare module.
-2. Arrange a shutdown while the printer is idle. After clean shutdown, remove
-   power before handling the eMMC. Record the original module and connector
-   orientation; check the spare's compatibility before inserting it.
-3. On the reader's computer, identify the newly attached original module by
-   device topology, model and capacity. Keep its filesystems unmounted and
-   disable automount for the capture. Do not select a source by a remembered
-   `/dev/sdX` or `/dev/mmcblkX` name.
-4. Capture the complete original user area to a new private file. Expected
-   source size from the printer is **7,818,182,656 bytes**; resolve discrepancies
-   before accepting an image. Capture any separately exposed boot areas and
-   readable eMMC configuration metadata. If the reader omits them, record that
-   gap and choose a suitable MMC access path before declaring preservation complete.
-5. Verify file sizes and SHA-256 hashes; compare a second complete source read
-   against the saved image. Retain a second private copy on separate storage.
-   Record source identity, tool/version, command, date, regions and read errors.
-6. Remove and label the original module for retention. Identify the spare
-   independently. Prepare the exact restore source, destination and relevant
-   device settings for review before writing the spare.
-7. Initially restore the original layout without resizing. Verify the written
-   image range and required boot areas/settings, then test boot and existing
-   service/configuration identity with heater targets zero and no motion. Use
-   the spare's additional capacity only in a later, separately recorded change.
+1. Keep the factory eMMC installed while gathering read-only build inputs. Do
+   not write or reconfigure it for migration.
+2. Build and inspect the new image as an ordinary workstation file. Confirm
+   its hash and that the blank spare is large enough and mechanically/electrically
+   compatible. Identify the USB writer's destination independently.
+3. Write only the new spare, using a whole-device image writer and readback
+   verification. The original module is not a writing target.
+4. Once ready to swap, confirm idle/zero targets, cleanly shut down the host,
+   disconnect power, remove and label the factory module, and insert the spare
+   with the verified orientation. Retain the original unchanged.
+5. Boot the new host and check Ethernet/SSH, storage, boot logs and HDMI. Printer
+   services are not installed in the host bring-up candidate. Record actual
+   results before extending the image or activating any printer service.
+6. If host bring-up fails, power down and reinstall the original. This rollback
+   assumes both MCUs have remained unchanged. Record a successful swap-back test
+   separately; retained media alone is not demonstrated recovery.
+
+An optional offline factory image can still follow the
+[general preservation workflow](discovery-and-backup.md), including boot regions,
+metadata, repeat reads and a separate storage copy. It is not a gate for building
+or boot-testing this spare image.
 
 Linux exposes MMC boot areas separately as `mmcblkXboot0` and `mmcblkXboot1`,
 with writes disabled by default. A user-area image alone does not capture those

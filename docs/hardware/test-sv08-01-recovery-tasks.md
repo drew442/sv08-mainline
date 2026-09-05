@@ -1,110 +1,57 @@
-# Test printer 01: hands-on recovery tasks
+# Test printer 01: hands-on recovery and image tasks
 
-Prepared 2026-09-05. Follow the [recovery plan](test-sv08-01-recovery.md).
-No full disk backup, MCU backup, or restoration test is complete. Record results
-privately under `local/test-sv08-01/` and `backups/test-sv08-01/`; publish only
-sanitized findings. PCB revisions remain unknown.
+Updated 2026-09-05 to follow the owner's selected workflow: retain the factory
+eMMC as the host rollback baseline and write the new image to the blank 32 GB
+spare. A full factory disk-image file is optional; it does not block this work.
+See the [image guide](test-sv08-01-image.md) and [recovery plan](test-sv08-01-recovery.md).
 
-## 1. Identify adapters and boards
+## Next: write and boot the spare
 
-- [ ] Record reader model, supported eMMC connector/voltage, spare module model,
-  and the computer/OS that will run the capture. Provide access to that computer
-  if remote assistance is wanted. Photograph module labels and orientation.
-- [ ] Record ST-Link model and software version. With printer power disconnected,
-  photograph both PCB revision labels, MCU markings, oscillator markings, and
-  accessible SWD pads/connectors. Identify pin orientation against the actual
-  board and schematic; do not infer wiring from a similar board.
-- [ ] Arrange separate private storage for a second copy of all backups. Reserve
-  at least 16 GB for two original user-area reads, plus space for other evidence.
+- [ ] Record the reader and spare module models, actual byte capacity and
+  connector/voltage compatibility. Identify the writer computer and its OS.
+- [ ] Verify the image SHA-256, select the blank spare as the whole destination,
+  write the image and complete the writer's readback validation. Do not format
+  the Linux partitions if the computer prompts after writing.
+- [ ] Confirm idle and zero heater targets; shut down the factory host cleanly,
+  disconnect power, then remove and label the factory eMMC. Retain it unchanged.
+- [ ] Insert the spare in the verified orientation, connect Ethernet and boot.
+  Record HDMI output, DHCP address and SSH access as user `sovol` with the
+  previously authorized key. The hostname is `sv08-mainline`; its address may
+  differ from the factory host. No password login or Wi-Fi setup is included.
+- [ ] Capture boot/storage/network evidence following the image guide. Do not
+  activate printer services or command heat/motion for this host test.
+- [ ] Demonstrate swap-back to the original after clean shutdown/power removal,
+  with both MCUs unchanged. Record the outcome as a host rollback test.
 
-These tasks can proceed independently. Neither the spare's nominal capacity nor
-an MCU runtime target string establishes electrical compatibility or flash size.
+The image is a host bring-up candidate, not yet a printing system. Unallocated
+space on the 32 GB spare is intentional; expansion is a later recorded operation.
 
-## 2. Capture original eMMC offline
+## Independent: prepare MCU preservation
 
-- [ ] Confirm idle, zero heater targets and cool hardware; cleanly shut down the
-  host, then disconnect printer power. Remove and label the original eMMC.
-- [ ] Disable automount on the reader computer before attaching it. Identify the
-  original by topology, model, capacity and label. Confirm no partitions are
-  mounted or used as swap. Resolve any size discrepancy before imaging.
-- [ ] Capture and compare two full reads using the Linux example below, or an
-  equivalent recorded procedure on the identified OS. Preserve command output,
-  reader identity, tool versions and errors alongside the image.
-- [ ] Retain the separate boot-region captures and eMMC metadata already saved
-  privately. If the USB reader exposes only the user area, explicitly record
-  that limitation; native MMC access was used for the existing boot captures.
-- [ ] Copy backups to separate storage and verify hashes there. Label and retain
-  the original module; do not use it as the migration destination.
+- [ ] Record the delivered ST-Link's markings, USB identity, firmware/tool version
+  and connector labels. The owner supplied Amazon ASIN B0C7QG6LHQ and a four-pin
+  cable description; this does not establish the physical pinout or voltage.
+- [ ] With power disconnected, record PCB revisions, MCU and oscillator markings,
+  SWD pads/connectors and orientation for both printer boards separately.
+- [ ] Verify SWD mapping, voltage reference, ground and power/backfeed arrangement
+  before connecting. Debug attachment can halt/reset a controller; use planned
+  maintenance with loads safe.
+- [ ] Read device identity and protection state. Stop if protected: do not unlock,
+  erase, alter option bytes or install a bootloader to obtain a backup.
+- [ ] Read each confirmed full flash range twice and compare hashes; preserve
+  readable option-byte state, tool logs, base address and length privately.
 
-Linux example, **only after source identification and unmounting**. This is a
-manual template, not an auto-detecting capture tool. Set `SOURCE` to the reviewed
-whole original device, not a partition, and `DEST` to a new directory on private
-backup storage. The placeholder intentionally does not name a real device.
+The documented toolhead 128 KiB candidate and its runtime `stm32f103xe` report
+must be reconciled through actual device evidence. The programmer listing's
+STM32F103C8T6 is not a printer MCU identification. Host image testing can proceed
+without an ST-Link connection; MCU flashing cannot inherit the host rollback path.
 
-```sh
-SOURCE=/dev/REPLACE_WITH_REVIEWED_ORIGINAL
-DEST=backups/test-sv08-01/offline-original-UNIQUE_DATE
-lsblk -b -o NAME,PATH,TYPE,SIZE,MODEL,SERIAL,MOUNTPOINTS "$SOURCE"
-findmnt
-swapon --show
-sudo blockdev --getsize64 "$SOURCE"
-# Continue only after confirming 7818182656 bytes and no mounted/in-use children.
-umask 077
-mkdir "$DEST"  # must be new; parent directory must already exist
-```
+## Optional additional host preservation
 
-Run each next command only if the preceding command succeeded. `oflag=excl`
-refuses existing output files; `dd` opens the source for reading. Do not add
-`conv=noerror` or `sync` to conceal read failures. Confirm sufficient free space
-on the destination filesystem first with `df -B1 "$DEST"`.
+- [ ] Make a full offline image of the factory module with repeat-read comparison,
+  retaining separately captured boot regions/settings; follow the
+  [general workflow](discovery-and-backup.md).
+- [ ] Copy private archives and manifests to separate storage and verify hashes.
 
-```sh
-sudo dd if="$SOURCE" of="$DEST/user-area.img" bs=4M iflag=fullblock oflag=excl status=progress
-sudo dd if="$SOURCE" of="$DEST/user-area-second.img" bs=4M iflag=fullblock oflag=excl status=progress
-stat -c '%n %s' "$DEST/user-area.img" "$DEST/user-area-second.img"
-cmp "$DEST/user-area.img" "$DEST/user-area-second.img"
-sha256sum "$DEST/user-area.img" "$DEST/user-area-second.img"
-```
-
-Both files must be exactly 7,818,182,656 bytes, both reads must exit successfully,
-and `cmp` must exit zero. Save the hashes, UTC date and device identity in the
-private inventory. A second read on the same disk is not a second storage copy.
-The offline image's first 4,194,304 bytes can also be compared with the earlier
-`user-area-prefix.bin`; investigate differences without assuming corruption.
-
-## 3. Preserve each MCU independently
-
-- [ ] Confirm MCU marking, PCB revision, flash capacity and SWD pin mapping for
-  the mainboard; repeat independently for the toolhead.
-- [ ] Review ST-Link voltage reference, ground, power/backfeed arrangement and
-  software connection mode before connecting. Debug attachment may halt/reset
-  the controller; perform only during planned maintenance with loads safe.
-- [ ] Read identity and protection state. If protected, stop: do not unlock,
-  erase, change option bytes or install a bootloader to obtain a backup.
-- [ ] Read each confirmed full flash range twice and compare hashes. Preserve
-  readable option-byte information and tool logs. Record base address, size,
-  identity, exact command/tool version and errors for each board separately.
-
-Do not choose between the documented 128 KiB toolhead candidate and the runtime
-`stm32f103xe` report by guessing. Physical identity and device information must
-resolve the range. Clock/offset candidates may be investigated offline, but
-must not become flash settings without evidence.
-
-## 4. Restore the spare and demonstrate recovery
-
-- [ ] Identify the spare independently; confirm mechanical/electrical compatibility
-  and actual capacity. Record accessible regions and settings. Review the exact
-  saved image, target and recovery method before writing it.
-- [ ] Restore the original user-area layout without resizing, plus any required
-  boot regions/settings established by review. Do not copy every EXT_CSD setting:
-  some fields are device-specific or irreversible. No restore command is selected
-  until the spare and reader are identified.
-- [ ] Verify the written image range, then boot the spare in the printer. Check
-  services, configuration, MCU identities and ambient sensor readings with zero
-  targets and no motion. Record results; this is not heat or print validation.
-- [ ] Document rollback to the retained original and both preserved MCU images
-  before migration. Mark recovery verified only after successful demonstration.
-
-Host imaging and MCU identification can be scheduled independently while the
-printer is powered down. Sensor identity, repair details and measured temperature
-accuracy remain separate bring-up tasks; do not heat to test the restored image.
+Raw evidence, machine identifiers and private keys belong in ignored local
+storage. No hardware profile is validated by possession of recovery adapters.

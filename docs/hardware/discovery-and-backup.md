@@ -84,10 +84,12 @@ an erase. ST documents that behavior for the STM32F10xxx in
 (checked 2026-09-05). Preserve the original flash regions needed for restoration and record
 addresses and sizes, not just filenames.
 
-The test-printer [hands-on task list](test-sv08-01-recovery-tasks.md) now includes
-a conditional Linux raw disk read template. MCU commands and restore writes
-remain deferred until target identity, flash layout and adapter compatibility
-are verified. Test
+For test printer 01, the owner now retains the original module as the host
+rollback baseline and writes a new image to a blank spare; a full factory image
+file is optional for that host-only experiment. The
+[hands-on task list](test-sv08-01-recovery-tasks.md) records that scope. MCU
+commands remain deferred until target identity, flash layout and adapter
+compatibility are verified. Test
 printer 01 now has owner-reported adapters and a spare module; its
 [recovery preparation plan](test-sv08-01-recovery.md) records the next checks.
 Document the concrete commands once those inputs are established. Store
