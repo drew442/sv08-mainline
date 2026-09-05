@@ -28,6 +28,11 @@ pinouts or MCU targets.
 
 ## Migration gaps already visible
 
+- The vendor snapshot's
+  [generated build header](../../upstream/sovol-sv08/home/sovol/klipper/out/autoconf.h)
+  selects AVR `atmega2560` (`CONFIG_MACH_AVR 1`, `CONFIG_MACH_STM32 0`), which
+  disagrees with the published STM32 schematics. It cannot establish either
+  stock MCU's actual build settings. Observed at the pinned snapshot on 2026-09-05.
 - The vendor configuration has `[probe_pressure]` and ships a corresponding
   `home/sovol/klipper/klippy/extras/probe_pressure.py`. Audit the probing and
   automatic Z-offset workflow before selecting a mainline implementation.
@@ -42,6 +47,8 @@ pinouts or MCU targets.
 ## Evidence to collect next
 
 Record PCB revision and chip markings for host, mainboard MCU, and toolhead MCU.
+Use the [discovery workflow](discovery-and-backup.md) for the host evidence report
+and private preservation inventory.
 Gather the OS release, kernel version, boot configuration, device-tree model and
 compatible strings, storage layout, USB identities, and existing Klipper build
 information. Preserve full configuration and recoverable host/MCU backups with

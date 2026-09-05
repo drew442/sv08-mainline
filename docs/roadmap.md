@@ -9,7 +9,11 @@
 
 This phase establishes inputs; it does not validate firmware or printer operation.
 
-## 1. Identify and preserve the stock system — next
+## 1. Identify and preserve the stock system — in progress
+
+Prepared a read-only host collector with offline fixture tests and a
+[discovery/backup workflow](hardware/discovery-and-backup.md). Printer access,
+physical inspection, and actual backup/recovery evidence remain outstanding.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,
 MCU identities, existing configs, and flash/clock settings. Obtain recoverable
