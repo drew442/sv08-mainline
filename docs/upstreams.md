@@ -16,7 +16,8 @@ toolchains, OS packages, and transitive build dependencies remain to be selected
 
 Mainsail's default branch is development work. Its initial checkout is for
 research; choose a reviewed release when assembling the first runnable stack.
-No initial pin is hardware-validated. The parent has no remote configured yet.
+No initial pin is hardware-validated. The project repository is
+[drew442/sv08-mainline](https://github.com/drew442/sv08-mainline).
 
 ## Initialize and inspect
 

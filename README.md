@@ -19,6 +19,7 @@ validated printer configuration, or tested flashing procedure exists yet.
   host evidence and define the preservation record.
 - [Reference library](docs/references.md): schematics, datasheets, and upstream docs.
 - [Upstream sources](docs/upstreams.md): submodules, pins, and update workflow.
+- [Vendor compatibility audit](docs/vendor-compatibility.md): known migration gaps.
 - [Roadmap](docs/roadmap.md): the next work and its acceptance criteria.
 - [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md).
 

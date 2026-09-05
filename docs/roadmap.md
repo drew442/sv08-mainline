@@ -25,6 +25,10 @@ reviewed recovery procedure, and resolved settings for each MCU build target.
 
 ## 2. Audit vendor behavior and select the stack
 
+An [initial static compatibility audit](vendor-compatibility.md) records removed
+configuration options, vendor extras, probe API differences, and missing includes.
+The complete vendor delta and runtime behavior remain to be investigated.
+
 Compare Sovol's Klipper changes, probing/Z-offset routines, macros, thermistor
 handling, and optional services against current upstream. Create a feature matrix:
 upstream equivalent, required configuration, custom implementation, or explicitly
