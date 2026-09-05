@@ -13,6 +13,9 @@ Do not flash either MCU during this host test.
 
 ## Artifact and first boot
 
+Follow the [Windows, Linux and macOS flashing instructions](flashing-emmc.md)
+to write the blank spare with checksum and readback validation.
+
 Local output is `artifacts/test-sv08-01-host-v1.img`, accompanied by SHA-256,
 package inventory and build manifest files. A compressed `.img.xz` copy is
 also provided (291,106,052 bytes, about 278 MiB); decompress it first if the

@@ -9,7 +9,8 @@ See the [image guide](test-sv08-01-image.md) and [recovery plan](test-sv08-01-re
 
 - [ ] Record the reader and spare module models, actual byte capacity and
   connector/voltage compatibility. Identify the writer computer and its OS.
-- [ ] Verify the image SHA-256, select the blank spare as the whole destination,
+- [ ] Follow the [Windows, Linux or macOS instructions](flashing-emmc.md):
+  verify the image SHA-256, select the blank spare as the whole destination,
   write the image and complete the writer's readback validation. Do not format
   the Linux partitions if the computer prompts after writing.
 - [ ] Confirm idle and zero heater targets; shut down the factory host cleanly,
