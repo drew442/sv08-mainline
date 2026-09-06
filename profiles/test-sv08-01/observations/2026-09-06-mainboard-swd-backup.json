@@ -1,0 +1,49 @@
+{
+  "date": "2026-09-06",
+  "profile": "test-sv08-01",
+  "board_revision": null,
+  "target": "owner-connected mainboard",
+  "flash_base": "0x08000000",
+  "flash_length": 524288,
+  "files": {
+    "flash-read2.bin": {
+      "bytes": 524288,
+      "sha256": "5f67d2c67205cbd96b21c900a882778b61fbcf775755748f3165210e88ad056d"
+    },
+    "options-read2.bin": {
+      "bytes": 16,
+      "sha256": "c0b942fbb9fe967ec0e7b675e080d48c930fc5fe3fde70f6dd6f9646fdffc0d3"
+    },
+    "options-read1.bin": {
+      "bytes": 16,
+      "sha256": "c0b942fbb9fe967ec0e7b675e080d48c930fc5fe3fde70f6dd6f9646fdffc0d3"
+    },
+    "flash-read1.bin": {
+      "bytes": 524288,
+      "sha256": "5f67d2c67205cbd96b21c900a882778b61fbcf775755748f3165210e88ad056d"
+    }
+  },
+  "repeat_reads_match": true,
+  "idcode": "0x10036414",
+  "flash_kib": 512,
+  "flash_obr": "0x03fffffc",
+  "flash_wrpr": "0xffffffff",
+  "vendor_prefix_matches": true,
+  "vendor_bytes": 35988,
+  "tail_all_ff": true,
+  "vectors": [
+    "0x20005000",
+    "0x80053e1"
+  ],
+  "restoration_tested": false,
+  "tool": "OpenOCD 0.12.0-1build2, ST-LINK/V2 V2J37S7, dapdirect_swd 950 kHz",
+  "flash_or_option_byte_writes_commanded": false,
+  "explicit_reset_or_halt_commanded": false,
+  "physical_clock_verified": false,
+  "toolhead_backup_complete": false,
+  "owner_report": "Pinout checked, mainboard LED lit, USB extension removed; printer supply off",
+  "adapter_voltage_v_range": [
+    3.213666,
+    3.21682
+  ]
+}

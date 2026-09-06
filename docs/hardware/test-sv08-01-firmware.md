@@ -42,10 +42,13 @@ records the evidence and its limits.
 
 ## What remains unknown
 
-An identical reported identity does not prove identical installed flash. Neither
-MCU has been read through SWD; board markings, physical clock source, protection
-state, full flash contents and any bootloader remain unverified. Keep the
-profile's installed clock/offset fields unknown until those checks are complete.
+The later [mainboard SWD capture](test-sv08-01-mainboard-swd.md) on 2026-09-06
+contains this exact binary at 0x08000000, followed entirely by 0xff through the
+end of the measured 512 KiB range. Two reads match; protection is disabled and
+option bytes are preserved. This establishes the installed mainboard application
+offset and links its build settings to the captured code. Physical board/MCU
+and oscillator markings remain unknown; the 8 MHz build selection is not a
+physical frequency measurement. Toolhead SWD evidence remains outstanding.
 
 The toolhead reports a different July 2025 build. No matching artifact was found
 in the bounded `/home/sovol` search, which excluded Git metadata, virtual

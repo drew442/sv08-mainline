@@ -38,12 +38,18 @@ space on the 32 GB spare is intentional; expansion is a later recorded operation
 - [x] Host detects ST-Link/V2 USB `0483:3748` (2026-09-06); this is not SWD validation.
 - [x] Owner reports printer powered down and programmer USB moved to a separate
   workstation (2026-09-06).
-- [ ] Check all four labelled wires, including 3.3V-to-3V3, and target voltage.
-  The programmer reports V2J37S7, but hot-plug SWD probes at 100/50 kHz both failed.
-  Disconnect programmer USB before changing wiring; keep printer supply off.
+- [x] Owner confirmed mainboard pinout and lit power LED; removed USB extension.
+- [x] Mainboard identity/protection read with OpenOCD ST-Link/V2 direct SWD.
+  Two complete 512 KiB flash reads and two option-byte reads match.
+- [ ] Disconnect ST-Link USB with printer supply off, record mainboard markings,
+  and move the four wires to the separately verified toolhead SWD header.
+  Report when connected; its identity and flash capacity must be read afresh.
+- [ ] Move the separate workstation's temporary backup copy to durable storage;
+  verify hashes against the private manifest.
 
-See the [mainboard SWD attempt](test-sv08-01-mainboard-swd.md) for results and
-physical checks before another connection attempt.
+See the [mainboard SWD backup](test-sv08-01-mainboard-swd.md) for the working
+method, hashes and remaining limitations. The tasks below still apply to the
+toolhead; mainboard PCB/MCU/oscillator photographs remain outstanding.
 
 - [ ] Record the delivered ST-Link's markings, USB identity, firmware/tool version
   and connector labels. The owner supplied Amazon ASIN B0C7QG6LHQ and a four-pin

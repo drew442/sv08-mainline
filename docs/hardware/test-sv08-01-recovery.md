@@ -30,7 +30,7 @@ The STM32F103C8T6 in the listing must not be recorded as either printer MCU.
 | eMMC user area | Factory-module image uploaded; owner confirmed source; supplied SHA-256 and read-only filesystem checks pass | Repeat-read/capture record, second storage copy and restore test |
 | eMMC boot areas | Both 4,194,304-byte regions captured twice; reads match, all zero | Second storage copy; restore interpretation |
 | eMMC settings | Decoded EXT_CSD and partition table captured read-only | Review settings against identified spare; RPMB not captured |
-| Mainboard firmware | Matching vendor artifact candidate identified | Physical identity and complete SWD readback |
+| Mainboard firmware | Two matching full 512 KiB SWD reads and option-byte captures; vendor binary matches installed prefix | Physical markings and restore test |
 | Toolhead firmware | Runtime version identified; no matching file located | Physical identity and complete SWD readback |
 | Spare eMMC | Owner reports 32 GB capacity | Model, electrical/mechanical compatibility, actual capacity and restore test |
 
@@ -44,9 +44,10 @@ validates the uploaded factory-system image and remotely confirms the new host
 on a 31,272,730,624-byte module. ST-Link USB detection succeeded; MCU attachment
 was initially paused because the powered-on printer differed from Sovol's
 four-wire procedure. The owner subsequently powered down and moved programmer
-USB to a separate workstation. [SWD probes](test-sv08-01-mainboard-swd.md) now
-read the programmer version but fail to identify the target; wiring and voltage
-checks are next. No MCU backup has been obtained.
+USB to a separate workstation. After wiring confirmation and USB extension
+removal, [OpenOCD direct SWD](test-sv08-01-mainboard-swd.md) succeeded with the
+ST-Link/V2. Two full mainboard flash reads and option-byte captures match;
+toolhead preservation and restoration tests remain outstanding.
 
 ## Completed remote preparation
 
@@ -81,8 +82,9 @@ Python environments and other host state are not included.
 Private files, identities, commands, sizes, hashes and repeat-read results are
 in `backups/test-sv08-01/recovery-20260905/manifest.json`; runtime evidence is
 in `local/test-sv08-01/recovery-20260905/`. These live partial reads do not
-capture the filesystems or constitute a full disk backup. No MCU backup or
-restoration test is complete. No hardware writes or operating changes were made.
+capture the filesystems or constitute a full disk backup. At that stage no MCU backup or
+restoration test was complete. No hardware writes or operating changes were made
+during those host reads. The later mainboard capture is recorded above.
 
 The [hands-on task list](test-sv08-01-recovery-tasks.md) provides ordered work,
 and the [image capture guide](imaging-emmc.md) covers offline reads on Windows,
