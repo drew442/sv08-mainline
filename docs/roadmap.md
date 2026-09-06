@@ -34,8 +34,11 @@ as the owner-selected host rollback baseline and builds a fresh
 [host bring-up image](hardware/test-sv08-01-image.md) for the blank spare.
 A full factory image file is optional for this host-only experiment. Both eMMC boot
 regions and the user-area prefix now have matching repeat-read captures, with
-decoded eMMC metadata preserved privately. Full disk and MCU backups remain
-outstanding. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
+decoded eMMC metadata preserved privately. A factory-module user-area image
+has now been uploaded and passed its supplied hash and read-only filesystem
+checks; repeat-read and restore evidence remain outstanding. The
+[backup/ST-Link intake](hardware/test-sv08-01-backup-and-stlink.md) records this
+and the new host's remote validation. MCU backups remain outstanding. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
 provides the spare write/boot steps and independent MCU preservation tasks.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,

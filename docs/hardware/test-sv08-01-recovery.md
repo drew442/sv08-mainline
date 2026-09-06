@@ -27,7 +27,7 @@ The STM32F103C8T6 in the listing must not be recorded as either printer MCU.
 | --- | --- | --- |
 | Configuration, logs, services, selected boot files | Private archive readable; 30 non-log hashes rechecked | Second private copy; log capture is not atomic |
 | Loaded Klipper configuration | All 116 parsed archived sections match captured API values | Preserve local calibration when converting |
-| eMMC user area | Factory module retained as owner-selected rollback baseline; no full image file | Optional offline image for redundancy; preserve original unchanged |
+| eMMC user area | Factory-module image uploaded; owner confirmed source; supplied SHA-256 and read-only filesystem checks pass | Repeat-read/capture record, second storage copy and restore test |
 | eMMC boot areas | Both 4,194,304-byte regions captured twice; reads match, all zero | Second storage copy; restore interpretation |
 | eMMC settings | Decoded EXT_CSD and partition table captured read-only | Review settings against identified spare; RPMB not captured |
 | Mainboard firmware | Matching vendor artifact candidate identified | Physical identity and complete SWD readback |
@@ -36,6 +36,13 @@ The STM32F103C8T6 in the listing must not be recorded as either printer MCU.
 
 See [discovery](test-sv08-01-discovery.md) and
 [firmware evidence](test-sv08-01-firmware.md) for the completed checks.
+
+## Latest intake
+
+The [2026-09-06 backup and ST-Link intake](test-sv08-01-backup-and-stlink.md)
+validates the uploaded factory-system image and remotely confirms the new host
+on a 31,272,730,624-byte module. ST-Link USB detection succeeded; MCU attachment
+is paused because the powered-on printer differs from Sovol's four-wire procedure.
 
 ## Completed remote preparation
 

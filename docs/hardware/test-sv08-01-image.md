@@ -16,7 +16,10 @@ Do not flash either MCU during this host test.
 On 2026-09-06 the owner reported successful boot of the new image on the new
 eMMC. This is [owner-reported evidence](../../profiles/test-sv08-01/observations/2026-09-06-spare-boot.json);
 no new boot logs, exact module capacity or installed-image hash were inspected.
-Detailed host validation and restoration testing remain outstanding. To preserve
+A subsequent [read-only SSH inspection](test-sv08-01-backup-and-stlink.md)
+confirmed Debian 13, SSH/sudo operation, the new module capacity and matching
+kernel/device-tree hashes. Extended host validation and restoration testing
+remain outstanding. To preserve
 the installed system, follow [Make an image file from an eMMC](imaging-emmc.md).
 
 ## Artifact and first boot

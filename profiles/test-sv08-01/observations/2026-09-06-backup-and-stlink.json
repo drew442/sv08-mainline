@@ -1,0 +1,47 @@
+{
+  "date": "2026-09-06",
+  "profile": "test-sv08-01",
+  "board_revision": null,
+  "backup": {
+    "bytes": 7818182656,
+    "sha256": "7a90da463b04d19e3325d6c9e1f40cf7b82a78a31007879f05c19ab8f261e5f6",
+    "supplied_hash_matches": true,
+    "content_identity": "SPI-XI 2.3.3 / Debian 11 factory system",
+    "original_module_association": "Owner confirmed factory-module source on 2026-09-06; size, layout and OS agree",
+    "fat_read_only_check_exit": 0,
+    "ext4_read_only_check_exit": 0,
+    "repeat_source_read_verified": false,
+    "restore_verified": false
+  },
+  "host": {
+    "evidence_level": "observed-read-only-SSH",
+    "os": "Debian 13 trixie 13.6",
+    "kernel": "5.16.17-sun50iw9 aarch64",
+    "user_area_bytes": 31272730624,
+    "root_partition_bytes": 8317304832,
+    "boot_partition_bytes": 268435456,
+    "ssh_and_sudo_work": true,
+    "failed_systemd_units": 0,
+    "kernel_and_dtb_match_built_image": true,
+    "staged_klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+    "printer_services": "klipper and moonraker inactive"
+  },
+  "stlink": {
+    "usb_id": "0483:3748",
+    "usb_report": "ST-LINK/V2",
+    "physical_header_connection": "owner reports mainboard four-pin header per Sovol guide",
+    "delivered_adapter_electrical_identity_verified": false,
+    "target_debug_attachment_performed": false,
+    "power_arrangement_confirmed": false,
+    "reason_for_pause": "Sovol guide powers programmer from separate computer and requires printer off; owner connected it to powered printer host",
+    "tools_available_in_pinned_snapshot": {
+      "stlink-tools": "1.8.0-1.1",
+      "openocd": "0.12.0-3+b2"
+    },
+    "tools_installed": false,
+    "printer_powered_on_owner_confirmed": true,
+    "three_volt_wire_connected": null
+  },
+  "mcu_backup_complete": false,
+  "recovery_verified": false
+}

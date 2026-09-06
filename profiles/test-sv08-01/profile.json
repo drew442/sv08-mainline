@@ -91,7 +91,8 @@
     "profiles/test-sv08-01/observations/2026-09-05-artifacts.json",
     "profiles/test-sv08-01/observations/2026-09-05-recovery.json",
     "profiles/test-sv08-01/observations/2026-09-05-host-image.json",
-    "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json"
+    "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json",
+    "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -110,8 +111,8 @@
   },
   "current_host_report": {
     "date": "2026-09-06",
-    "evidence_level": "owner-reported",
-    "state": "New host image booted on new eMMC",
-    "record": "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json"
+    "evidence_level": "observed-read-only-SSH",
+    "state": "Debian 13 host running from 31272730624-byte eMMC; SSH/sudo work; kernel and DTB match built image",
+    "record": "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json"
   }
 }
