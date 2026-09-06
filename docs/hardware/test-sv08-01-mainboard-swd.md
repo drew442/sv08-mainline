@@ -115,12 +115,12 @@ records the result. Earlier failed-attempt records remain historical evidence.
 
 ## Remaining hands-on work
 
-Keep printer supply off and disconnect ST-Link USB before moving wires.
-Record mainboard PCB/MCU/oscillator markings, then connect the programmer to the
-**toolhead's separately verified** SWD header using the corresponding Sovol
-diagram and board labels. Report when ready. The toolhead needs its own identity,
-capacity, protection checks and two complete reads; do not reuse the mainboard
-512 KiB range or its firmware. Restoration remains untested for both boards.
+The owner subsequently moved the programmer and the
+[toolhead backup](test-sv08-01-toolhead-swd.md) also completed. Record the
+mainboard and toolhead PCB/MCU/oscillator markings. Keep printer supply off and
+disconnect ST-Link USB before moving wires. See the
+[Katapult preparation](test-sv08-01-katapult.md) before changing either flash
+layout. Restoration remains untested for both boards.
 
 ## Sources
 

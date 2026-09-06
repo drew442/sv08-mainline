@@ -39,8 +39,11 @@ has now been uploaded and passed its supplied hash and read-only filesystem
 checks; repeat-read and restore evidence remain outstanding. The
 [backup/ST-Link intake](hardware/test-sv08-01-backup-and-stlink.md) records this
 and the new host's remote validation. The [mainboard SWD backup](hardware/test-sv08-01-mainboard-swd.md) now has
-two matching complete flash and option-byte reads; toolhead backup and MCU
-restoration tests remain outstanding. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
+two matching complete flash and option-byte reads. The
+[toolhead backup](hardware/test-sv08-01-toolhead-swd.md) also has matching full
+128 KiB reads and option bytes. MCU restoration tests remain outstanding;
+[Katapult preparation](hardware/test-sv08-01-katapult.md) records the proposed
+USB update path and remaining build requirements. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
 provides the spare write/boot steps and independent MCU preservation tasks.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,

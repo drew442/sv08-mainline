@@ -1,0 +1,71 @@
+{
+  "date": "2026-09-06",
+  "profile": "test-sv08-01",
+  "target_role": "owner-connected toolhead",
+  "board_revision": null,
+  "mcu_marking": null,
+  "idcode": "0x20036410",
+  "flash_capacity_bytes": 131072,
+  "flash_base": "0x08000000",
+  "flash_obr": "0x03fffffc",
+  "flash_wrpr": "0xffffffff",
+  "rdp_halfword": "0x5aa5",
+  "repeat_reads_match": true,
+  "remote_local_hashes_match": true,
+  "files": {
+    "flash-read2.bin": {
+      "bytes": 131072,
+      "sha256": "8527d07b40cdee678b83b9aa8e4118bab844694faef2cb3eebd7d2db2e3633c0"
+    },
+    "options-read2.bin": {
+      "bytes": 16,
+      "sha256": "c0b942fbb9fe967ec0e7b675e080d48c930fc5fe3fde70f6dd6f9646fdffc0d3"
+    },
+    "options-read1.bin": {
+      "bytes": 16,
+      "sha256": "c0b942fbb9fe967ec0e7b675e080d48c930fc5fe3fde70f6dd6f9646fdffc0d3"
+    },
+    "flash-read1.bin": {
+      "bytes": 131072,
+      "sha256": "8527d07b40cdee678b83b9aa8e4118bab844694faef2cb3eebd7d2db2e3633c0"
+    }
+  },
+  "vectors": [
+    "0x20005000",
+    "0x80000bd"
+  ],
+  "last_non_ff_offset": 31179,
+  "embedded_identify": [
+    {
+      "offset": 25296,
+      "version": "v0.12.0-4-g3bfe0b7-dirty",
+      "config": {
+        "ADC_MAX": 4095,
+        "BUS_PINS_i2c1": "PB6,PB7",
+        "BUS_PINS_i2c1a": "PB8,PB9",
+        "BUS_PINS_i2c2": "PB10,PB11",
+        "BUS_PINS_spi1": "PA6,PA7,PA5",
+        "BUS_PINS_spi1a": "PB4,PB5,PB3",
+        "BUS_PINS_spi2": "PB14,PB15,PB13",
+        "BUS_PINS_spi3": "PB4,PB5,PB3",
+        "CLOCK_FREQ": 72000000,
+        "MCU": "stm32f103xe",
+        "PWM_MAX": 255,
+        "RESERVE_PINS_USB": "PA11,PA12",
+        "STATS_SUMSQ_BASE": 256,
+        "STEPPER_BOTH_EDGE": 1
+      },
+      "build_versions": "gcc: (15:8-2019-q3-1+b1) 8.3.1 20190703 (release) [gcc-8-branch revision 273027] binutils: (2.35.2-2+14+b2) 2.35.2"
+    }
+  ],
+  "tool": "OpenOCD 0.12.0-1build2; ST-Link/V2 V2J37S7; dapdirect_swd 100 kHz",
+  "explicit_reset_or_halt_commanded": false,
+  "flash_or_option_byte_writes_commanded": false,
+  "recovery_verified": false,
+  "clock_registers": {
+    "RCC_CR": "0x00004d03",
+    "RCC_CFGR": "0x001de400",
+    "VTOR": "0x08000000",
+    "physical_reference_clock_hz": null
+  }
+}

@@ -41,15 +41,17 @@ space on the 32 GB spare is intentional; expansion is a later recorded operation
 - [x] Owner confirmed mainboard pinout and lit power LED; removed USB extension.
 - [x] Mainboard identity/protection read with OpenOCD ST-Link/V2 direct SWD.
   Two complete 512 KiB flash reads and two option-byte reads match.
-- [ ] Disconnect ST-Link USB with printer supply off, record mainboard markings,
-  and move the four wires to the separately verified toolhead SWD header.
-  Report when connected; its identity and flash capacity must be read afresh.
+- [x] Owner moved ST-Link to the toolhead; identity/protection were read afresh.
+- [x] Two complete toolhead 128 KiB flash reads and two option-byte reads match.
+- [ ] Record physical markings for both boards; follow the
+  [Katapult preparation list](test-sv08-01-katapult.md) before firmware writes.
 - [ ] Move the separate workstation's temporary backup copy to durable storage;
   verify hashes against the private manifest.
 
 See the [mainboard SWD backup](test-sv08-01-mainboard-swd.md) for the working
-method, hashes and remaining limitations. The tasks below still apply to the
-toolhead; mainboard PCB/MCU/oscillator photographs remain outstanding.
+method, hashes and remaining limitations, and the
+[toolhead backup](test-sv08-01-toolhead-swd.md) for its separate results.
+Both boards still need PCB/MCU/oscillator photographs.
 
 - [ ] Record the delivered ST-Link's markings, USB identity, firmware/tool version
   and connector labels. The owner supplied Amazon ASIN B0C7QG6LHQ and a four-pin
@@ -59,13 +61,14 @@ toolhead; mainboard PCB/MCU/oscillator photographs remain outstanding.
 - [ ] Verify SWD mapping, voltage reference, ground and power/backfeed arrangement
   before connecting. Debug attachment can halt/reset a controller; use planned
   maintenance with loads safe.
-- [ ] Read device identity and protection state. Stop if protected: do not unlock,
+- [x] Read device identity and protection state for both boards. Stop if protected: do not unlock,
   erase, alter option bytes or install a bootloader to obtain a backup.
-- [ ] Read each confirmed full flash range twice and compare hashes; preserve
+- [x] Read each confirmed full flash range twice and compare hashes; preserve
   readable option-byte state, tool logs, base address and length privately.
 
 The documented toolhead 128 KiB candidate and its runtime `stm32f103xe` report
-must be reconciled through actual device evidence. The programmer listing's
+are now reconciled by the measured 128 KiB size register; the target string
+is not a capacity measurement. The programmer listing's
 STM32F103C8T6 is not a printer MCU identification. Host image testing can proceed
 without an ST-Link connection; MCU flashing cannot inherit the host rollback path.
 

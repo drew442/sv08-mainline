@@ -4,7 +4,7 @@
   "printer_model": "Sovol SV08 (original)",
   "electronics": "mostly factory, owner-reported; not yet inspected",
   "status": "research",
-  "reviewed_on": "2026-09-05",
+  "reviewed_on": "2026-09-06",
   "hardware_verified": false,
   "reference_profile": "stock-sv08",
   "reference_profile_is_not_configuration_inheritance": true,
@@ -27,23 +27,27 @@
       "installed_mcu": null,
       "installed_board_revision": null,
       "clock_hz": null,
-      "bootloader_offset_bytes": null,
+      "bootloader_offset_bytes": 0,
       "firmware_version": "v0.12.0-40-g77619e91-dirty",
       "reported_firmware_build_time": "2024-03-01 10:46:56",
       "reported_firmware_target": "stm32f103xe",
       "reported_runtime_clock_hz": 72000000,
-      "firmware_evidence_level": "observed-running-mcu-report"
+      "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity",
+      "flash_capacity_bytes": 524288,
+      "flash_evidence": "docs/hardware/test-sv08-01-mainboard-swd.md"
     },
     "toolhead": {
       "installed_mcu": null,
       "installed_board_revision": null,
       "clock_hz": null,
-      "bootloader_offset_bytes": null,
+      "bootloader_offset_bytes": 0,
       "firmware_version": "v0.12.0-4-g3bfe0b7-dirty",
       "reported_firmware_build_time": "2025-07-22 06:22:09",
       "reported_firmware_target": "stm32f103xe",
       "reported_runtime_clock_hz": 72000000,
-      "firmware_evidence_level": "observed-running-mcu-report"
+      "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity",
+      "flash_capacity_bytes": 131072,
+      "flash_evidence": "docs/hardware/test-sv08-01-toolhead-swd.md"
     },
     "bed": {
       "owner_description": "cn3d/nadir/funssor 10mm bed upgrade",
@@ -93,7 +97,9 @@
     "profiles/test-sv08-01/observations/2026-09-05-host-image.json",
     "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json",
     "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json",
-    "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-attempt.json"
+    "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-attempt.json",
+    "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-backup.json",
+    "profiles/test-sv08-01/observations/2026-09-06-toolhead-swd-backup.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {

@@ -31,7 +31,7 @@ The STM32F103C8T6 in the listing must not be recorded as either printer MCU.
 | eMMC boot areas | Both 4,194,304-byte regions captured twice; reads match, all zero | Second storage copy; restore interpretation |
 | eMMC settings | Decoded EXT_CSD and partition table captured read-only | Review settings against identified spare; RPMB not captured |
 | Mainboard firmware | Two matching full 512 KiB SWD reads and option-byte captures; vendor binary matches installed prefix | Physical markings and restore test |
-| Toolhead firmware | Runtime version identified; no matching file located | Physical identity and complete SWD readback |
+| Toolhead firmware | Two matching full 128 KiB SWD reads and option captures; embedded identity matches runtime | Physical markings and restore test |
 | Spare eMMC | Owner reports 32 GB capacity | Model, electrical/mechanical compatibility, actual capacity and restore test |
 
 See [discovery](test-sv08-01-discovery.md) and
@@ -47,7 +47,9 @@ four-wire procedure. The owner subsequently powered down and moved programmer
 USB to a separate workstation. After wiring confirmation and USB extension
 removal, [OpenOCD direct SWD](test-sv08-01-mainboard-swd.md) succeeded with the
 ST-Link/V2. Two full mainboard flash reads and option-byte captures match;
-toolhead preservation and restoration tests remain outstanding.
+[Toolhead preservation](test-sv08-01-toolhead-swd.md) subsequently completed with
+two matching full reads; restoration tests remain outstanding. See the
+[Katapult assessment](test-sv08-01-katapult.md) for the proposed next step.
 
 ## Completed remote preparation
 

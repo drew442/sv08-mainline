@@ -48,7 +48,8 @@ end of the measured 512 KiB range. Two reads match; protection is disabled and
 option bytes are preserved. This establishes the installed mainboard application
 offset and links its build settings to the captured code. Physical board/MCU
 and oscillator markings remain unknown; the 8 MHz build selection is not a
-physical frequency measurement. Toolhead SWD evidence remains outstanding.
+physical frequency measurement. The [toolhead SWD backup](test-sv08-01-toolhead-swd.md) now preserves its
+separate July 2025 firmware and confirms 128 KiB capacity.
 
 The toolhead reports a different July 2025 build. No matching artifact was found
 in the bounded `/home/sovol` search, which excluded Git metadata, virtual
