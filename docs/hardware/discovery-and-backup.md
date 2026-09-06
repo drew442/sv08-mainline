@@ -109,3 +109,6 @@ Offline checks for changes to the collector:
 ```sh
 python3 -m unittest discover -s tests -v
 ```
+
+For platform-specific whole-device capture steps, see
+[Make an image file from an eMMC](imaging-emmc.md) (Windows, Linux and macOS).

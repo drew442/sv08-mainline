@@ -11,7 +11,8 @@ profiles. A profile being present does not mean it has been tested.
 **Status: hardware research and first host-image candidate.** A private
 [spare-eMMC host image](docs/hardware/test-sv08-01-image.md) has been built and checked offline
 for test printer 01. It is not a printing system or validated hardware release;
-printer configuration, MCU firmware replacement and hardware boot tests remain
+the owner reported booting it on the spare eMMC on 2026-09-06. Printer
+configuration, MCU firmware replacement and detailed hardware validation remain
 outstanding.
 
 ## Start here
@@ -21,6 +22,8 @@ outstanding.
 - [Test printer 01](docs/hardware/test-sv08-01.md): reported upgrades and inspection scope.
 - [Discovery and backup preparation](docs/hardware/discovery-and-backup.md): collect
   host evidence and define the preservation record.
+- [Capture an eMMC image](docs/hardware/imaging-emmc.md): offline backups on
+  Windows, Linux and macOS.
 - [Reference library](docs/references.md): schematics, datasheets, and upstream docs.
 - [Upstream sources](docs/upstreams.md): submodules, pins, and update workflow.
 - [Vendor compatibility audit](docs/vendor-compatibility.md): known migration gaps.

@@ -11,6 +11,14 @@ The factory eMMC remains the owner's host rollback baseline. An additional full
 factory image file is optional; it is not required to write and test this image.
 Do not flash either MCU during this host test.
 
+## Reported spare-module boot
+
+On 2026-09-06 the owner reported successful boot of the new image on the new
+eMMC. This is [owner-reported evidence](../../profiles/test-sv08-01/observations/2026-09-06-spare-boot.json);
+no new boot logs, exact module capacity or installed-image hash were inspected.
+Detailed host validation and restoration testing remain outstanding. To preserve
+the installed system, follow [Make an image file from an eMMC](imaging-emmc.md).
+
 ## Artifact and first boot
 
 Follow the [Windows, Linux and macOS flashing instructions](flashing-emmc.md)
@@ -150,7 +158,7 @@ python3 -m unittest discover -s tests -v
 
 The build manifest records hashes, package inventory, tool versions and selected
 Klipper commit. This is a repeatable assembly recipe with pinned inputs, not a
-claim of byte-identical output or source-reproduced boot firmware. Physical boot,
+claim of byte-identical output or source-reproduced boot firmware. The owner now reports a successful spare-module boot; detailed boot evidence,
 Ethernet, eMMC reliability, HDMI and swap-back remain hardware acceptance tasks.
 After that, build the matching upstream host/MCU stack, resolve per-board build
 settings and vendor configuration gaps, and preserve both MCU images before

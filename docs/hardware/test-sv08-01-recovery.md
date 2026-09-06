@@ -1,8 +1,10 @@
 # Test printer 01: recovery preparation
 
-Status: partial preservation, 2026-09-05. The owner reports an ST-Link, an eMMC USB reader and
+Status: partial preservation; spare boot owner-reported 2026-09-06. The owner reports an ST-Link, an eMMC USB reader and
 a spare nominal 32 GB eMMC module. Models, connector compatibility and recovery
-operation have not been verified. No raw storage or MCU writes have been made.
+operation have not been independently verified. The owner reports that the
+new image has booted on the new eMMC; no MCU write or completed restore test
+is established by that report.
 
 The owner has selected a new-image workflow: retain the factory eMMC unchanged
 as the host rollback baseline and write the new host image to the blank spare.
@@ -72,8 +74,8 @@ capture the filesystems or constitute a full disk backup. No MCU backup or
 restoration test is complete. No hardware writes or operating changes were made.
 
 The [hands-on task list](test-sv08-01-recovery-tasks.md) provides ordered work,
-an offline Linux capture template, and branches for readers with limited region
-access. Writing/booting the spare, SWD attachment and spare identification require
+and the [image capture guide](imaging-emmc.md) covers offline reads on Windows,
+Linux and macOS, with reader region limits explicit. Writing/booting the spare, SWD attachment and spare identification require
 physical access. A separate copy and offline factory imaging remain optional
 additional host preservation under the owner-selected workflow.
 

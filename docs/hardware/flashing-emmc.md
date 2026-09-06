@@ -2,15 +2,17 @@
 
 These instructions write the private test-sv08-01 host image to the owner's
 blank nominal 32 GB eMMC through a USB reader. Keep the factory module unchanged
-for host rollback. The image passed offline checks; physical boot and reader/module
-compatibility remain unverified. No ST-Link connection is needed for this step.
+for host rollback. The image passed offline checks, and the owner reported a successful boot on
+the new module on 2026-09-06. Detailed boot evidence and reader/module identity
+remain unverified. No ST-Link connection is needed for this step.
 
 Use [balenaEtcher](https://etcher.balena.io/) for the graphical writing and
 validation workflow on all three operating systems. Its
 [image-support checks](https://etcher-docs.balena.io/MANUAL-TESTING/#image-support)
 include XZ-compressed images, so the `.img.xz` can be selected directly.
 Both sources accessed 2026-09-05; the platform procedures below have not yet
-been exercised with this project's image on a physical reader.
+been individually validated with this project's image on a physical reader;
+the owner has not reported which writer platform was used.
 
 ## Obtain and check the image
 
@@ -135,3 +137,6 @@ authorized key, which may only be available on the build workstation. There is
 no password login, Wi-Fi configuration, printer web interface or active printer
 service in this host candidate. Do not flash MCUs or command heat/motion for this
 test. If boot fails, disconnect power before swapping the original module back.
+
+To save the installed module back to a file, follow the separate
+[eMMC image capture instructions](imaging-emmc.md).

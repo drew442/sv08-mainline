@@ -66,7 +66,10 @@ The first image assembles fresh Debian 13 arm64 from a dated snapshot with
 captured vendor boot support; see [decision 0002](decisions/0002-first-emmc-image.md).
 It stages the selected Klipper source but does not activate printer services or
 include MCU firmware. This is not a source-reproduced boot chain or a supported
-printer image; hardware boot validation and full stack builds remain outstanding.
+printer image. On 2026-09-06 the owner reported successful boot on the new
+eMMC; detailed host validation and full stack builds remain outstanding. The
+[image capture guide](hardware/imaging-emmc.md) now covers preserving the installed
+module on Windows, Linux and macOS.
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact
 hashes. Build the host integration and both MCU targets. Check configuration

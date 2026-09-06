@@ -20,7 +20,8 @@
       "reported_soc_compatible": "allwinner,sun50i-h616",
       "reported_device_tree_model": "BigTreeTech CB1",
       "reported_memtotal_kib": 1010632,
-      "evidence_level": "observed-host-report"
+      "evidence_level": "observed-host-report",
+      "observation_scope": "Factory module inspection on 2026-09-05; see current_host_report for the subsequent spare-module boot"
     },
     "mainboard": {
       "installed_mcu": null,
@@ -89,7 +90,8 @@
     "profiles/test-sv08-01/observations/2026-09-05-post-repair.json",
     "profiles/test-sv08-01/observations/2026-09-05-artifacts.json",
     "profiles/test-sv08-01/observations/2026-09-05-recovery.json",
-    "profiles/test-sv08-01/observations/2026-09-05-host-image.json"
+    "profiles/test-sv08-01/observations/2026-09-05-host-image.json",
+    "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -105,5 +107,11 @@
     "st_link_listing_url": "https://www.amazon.com.au/dp/B0C7QG6LHQ",
     "st_link_owner_description": "ST-Link V2 Emulator Downloader Programmer STM32F103C8T6 STM8 STM32 with 4Pin GPIO Cable",
     "st_link_delivered_identity_verified": false
+  },
+  "current_host_report": {
+    "date": "2026-09-06",
+    "evidence_level": "owner-reported",
+    "state": "New host image booted on new eMMC",
+    "record": "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json"
   }
 }

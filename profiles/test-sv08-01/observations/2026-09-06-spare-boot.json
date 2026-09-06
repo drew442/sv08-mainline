@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-06",
+  "profile": "test-sv08-01",
+  "evidence_level": "owner-reported",
+  "source": "Owner report in project session: the system has booted with the new image on the new eMMC",
+  "boot_reported": true,
+  "independently_verified": false,
+  "board_revision": null,
+  "module_model": null,
+  "module_capacity_bytes": null,
+  "installed_image_hash": null,
+  "candidate_reference": "profiles/test-sv08-01/observations/2026-09-05-host-image.json",
+  "scope": "Single reported boot; no new remote or physical inspection performed for this record",
+  "limitations": [
+    "Writer OS/tool and readback validation not reported",
+    "Boot logs, network, storage stability and repeated boots not inspected",
+    "Full module backup and restore test not reported",
+    "No MCU preservation or printer operation validation established"
+  ],
+  "recovery_verified": false
+}

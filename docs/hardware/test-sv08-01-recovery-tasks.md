@@ -5,7 +5,13 @@ eMMC as the host rollback baseline and write the new image to the blank 32 GB
 spare. A full factory disk-image file is optional; it does not block this work.
 See the [image guide](test-sv08-01-image.md) and [recovery plan](test-sv08-01-recovery.md).
 
-## Next: write and boot the spare
+## Spare boot reported; capture and validate next
+
+- [x] Owner reported that the new image booted on the new eMMC (2026-09-06).
+- [ ] Preserve the installed module using the [image capture guide](imaging-emmc.md),
+  recording exact capacity, two matching reads and a second storage copy.
+
+The detailed checks below remain open; the boot report does not establish them.
 
 - [ ] Record the reader and spare module models, actual byte capacity and
   connector/voltage compatibility. Identify the writer computer and its OS.
