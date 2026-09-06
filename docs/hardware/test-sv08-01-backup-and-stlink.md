@@ -80,3 +80,7 @@ its full readout range. Do not unlock, erase, or change option bytes to read it.
 The [sanitized observation](../../profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json)
 records this scope. The [hands-on task list](test-sv08-01-recovery-tasks.md)
 tracks the outstanding physical checks.
+
+Follow-up: the owner moved programmer USB to a separate workstation with the
+printer powered down. The [mainboard SWD attempt](test-sv08-01-mainboard-swd.md)
+records failed target connection and the next physical checks.

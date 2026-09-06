@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-06",
+  "profile": "test-sv08-01",
+  "target_role": "mainboard, owner-reported header connection",
+  "board_revision": null,
+  "power": "Owner reports printer powered down and ST-Link USB moved to separate workstation",
+  "workstation_os": "Ubuntu 24.04.4 LTS amd64",
+  "tool_package": "stlink-tools 1.8.0-1build2",
+  "programmer": {
+    "usb_id": "0483:3748",
+    "reported_firmware": "V2J37S7",
+    "physical_pinout_and_target_voltage_verified": false
+  },
+  "attempts": [
+    {
+      "command": "sudo -n st-info --probe --hot-plug --freq=100",
+      "result": "Failed to enter SWD mode; target unknown"
+    },
+    {
+      "command": "sudo -n st-info --probe --hot-plug --freq=50",
+      "result": "Failed to enter SWD mode; target unknown"
+    }
+  ],
+  "target_mcu_identity": null,
+  "flash_capacity_bytes": null,
+  "readout_protection": null,
+  "mcu_backup_complete": false,
+  "flash_or_option_byte_writes_commanded": false,
+  "explicit_reset_commanded": false,
+  "limitation": "Programmer enumerates but target SWD communication has not succeeded; zero chip/size reports are failure sentinels, not device measurements",
+  "next": "Check labelled four-wire mapping and 3V3-to-G voltage with printer supply off; disconnect programmer USB before changing wires",
+  "recovery_verified": false
+}

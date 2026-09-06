@@ -36,14 +36,14 @@ space on the 32 GB spare is intentional; expansion is a later recorded operation
 ## Independent: prepare MCU preservation
 
 - [x] Host detects ST-Link/V2 USB `0483:3748` (2026-09-06); this is not SWD validation.
-- [ ] Correct/review the power arrangement before debugger attachment. The owner
-  confirms the printer is powered on; Sovol's four-wire procedure requires it
-  off and the programmer connected to a separate computer. Cleanly shut down,
-  disconnect printer power and unplug programmer USB before changing wiring.
-  Identify the separate programmer computer and confirm the 3.3 V wire mapping.
+- [x] Owner reports printer powered down and programmer USB moved to a separate
+  workstation (2026-09-06).
+- [ ] Check all four labelled wires, including 3.3V-to-3V3, and target voltage.
+  The programmer reports V2J37S7, but hot-plug SWD probes at 100/50 kHz both failed.
+  Disconnect programmer USB before changing wiring; keep printer supply off.
 
-See the [backup/ST-Link intake](test-sv08-01-backup-and-stlink.md) for source
-instructions and the reason readout is paused.
+See the [mainboard SWD attempt](test-sv08-01-mainboard-swd.md) for results and
+physical checks before another connection attempt.
 
 - [ ] Record the delivered ST-Link's markings, USB identity, firmware/tool version
   and connector labels. The owner supplied Amazon ASIN B0C7QG6LHQ and a four-pin

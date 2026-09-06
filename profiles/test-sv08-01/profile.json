@@ -92,7 +92,8 @@
     "profiles/test-sv08-01/observations/2026-09-05-recovery.json",
     "profiles/test-sv08-01/observations/2026-09-05-host-image.json",
     "profiles/test-sv08-01/observations/2026-09-06-spare-boot.json",
-    "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json"
+    "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json",
+    "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-attempt.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {

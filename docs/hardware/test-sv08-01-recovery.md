@@ -42,7 +42,11 @@ See [discovery](test-sv08-01-discovery.md) and
 The [2026-09-06 backup and ST-Link intake](test-sv08-01-backup-and-stlink.md)
 validates the uploaded factory-system image and remotely confirms the new host
 on a 31,272,730,624-byte module. ST-Link USB detection succeeded; MCU attachment
-is paused because the powered-on printer differs from Sovol's four-wire procedure.
+was initially paused because the powered-on printer differed from Sovol's
+four-wire procedure. The owner subsequently powered down and moved programmer
+USB to a separate workstation. [SWD probes](test-sv08-01-mainboard-swd.md) now
+read the programmer version but fail to identify the target; wiring and voltage
+checks are next. No MCU backup has been obtained.
 
 ## Completed remote preparation
 
