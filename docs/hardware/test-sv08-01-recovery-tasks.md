@@ -43,7 +43,9 @@ space on the 32 GB spare is intentional; expansion is a later recorded operation
   Two complete 512 KiB flash reads and two option-byte reads match.
 - [x] Owner moved ST-Link to the toolhead; identity/protection were read afresh.
 - [x] Two complete toolhead 128 KiB flash reads and two option-byte reads match.
-- [ ] Record physical markings for both boards; follow the
+- [x] Owner reported mainboard and spare-toolhead MCU/8 MHz markings.
+- [ ] Corroborate the installed toolhead reference; record PCB revisions when
+  accessible. See [marking scopes](test-sv08-01-markings.md) and follow the
   [Katapult preparation list](test-sv08-01-katapult.md) before firmware writes.
 - [ ] Move the separate workstation's temporary backup copy to durable storage;
   verify hashes against the private manifest.
@@ -51,7 +53,8 @@ space on the 32 GB spare is intentional; expansion is a later recorded operation
 See the [mainboard SWD backup](test-sv08-01-mainboard-swd.md) for the working
 method, hashes and remaining limitations, and the
 [toolhead backup](test-sv08-01-toolhead-swd.md) for its separate results.
-Both boards still need PCB/MCU/oscillator photographs.
+PCB photographs remain useful; the spare toolhead marking must not be recorded
+as a direct inspection of the installed board.
 
 - [ ] Record the delivered ST-Link's markings, USB identity, firmware/tool version
   and connector labels. The owner supplied Amazon ASIN B0C7QG6LHQ and a four-pin

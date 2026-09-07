@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-07",
+  "profile": "test-sv08-01",
+  "source": "owner-transcribed markings; no photograph or frequency measurement",
+  "mainboard": {
+    "reported_part_number": "STM32F103VET6",
+    "reported_reference_marking": "YXC 8.000",
+    "nominal_reference_hz": 8000000,
+    "scope": "mainboard, owner report; unlike toolhead not described as a spare",
+    "board_revision": null,
+    "consistent_with_schematic_and_swd_capacity": true
+  },
+  "toolhead": {
+    "reported_part_number": "STM32F103CBT6",
+    "reported_reference_marking": "YXC 8.000",
+    "nominal_reference_hz": 8000000,
+    "scope": "spare factory SV08 toolhead only",
+    "board_revision": null,
+    "consistent_with_installed_swd_capacity": true,
+    "installed_reference_verified": false,
+    "installed_reference_candidate_hz": 8000000
+  },
+  "variant_assessment": "No conflicting original-SV08 toolhead variant established in consulted primary sources; no exhaustive revision inventory found; spare equivalence remains owner-reported",
+  "recovery_verified": false
+}

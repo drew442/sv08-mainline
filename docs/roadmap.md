@@ -43,7 +43,10 @@ two matching complete flash and option-byte reads. The
 [toolhead backup](hardware/test-sv08-01-toolhead-swd.md) also has matching full
 128 KiB reads and option bytes. MCU restoration tests remain outstanding;
 [Katapult preparation](hardware/test-sv08-01-katapult.md) records the proposed
-USB update path and remaining build requirements. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
+USB update path and remaining build requirements. The
+[2026-09-07 markings](hardware/test-sv08-01-markings.md) agree with measured
+MCU capacities; the toolhead crystal report is from a spare, so its installed
+8 MHz reference remains provisional. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
 provides the spare write/boot steps and independent MCU preservation tasks.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,

@@ -4,7 +4,7 @@
   "printer_model": "Sovol SV08 (original)",
   "electronics": "mostly factory, owner-reported; not yet inspected",
   "status": "research",
-  "reviewed_on": "2026-09-06",
+  "reviewed_on": "2026-09-07",
   "hardware_verified": false,
   "reference_profile": "stock-sv08",
   "reference_profile_is_not_configuration_inheritance": true,
@@ -24,7 +24,7 @@
       "observation_scope": "Factory module inspection on 2026-09-05; see current_host_report for the subsequent spare-module boot"
     },
     "mainboard": {
-      "installed_mcu": null,
+      "installed_mcu": "STM32F103VET6",
       "installed_board_revision": null,
       "clock_hz": null,
       "bootloader_offset_bytes": 0,
@@ -34,7 +34,10 @@
       "reported_runtime_clock_hz": 72000000,
       "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity",
       "flash_capacity_bytes": 524288,
-      "flash_evidence": "docs/hardware/test-sv08-01-mainboard-swd.md"
+      "flash_evidence": "docs/hardware/test-sv08-01-mainboard-swd.md",
+      "mcu_identity_evidence": "owner-transcribed mainboard marking, supported by schematic and SWD capacity",
+      "reported_reference_clock_hz": 8000000,
+      "reference_clock_evidence": "owner-transcribed YXC 8.000; nominal marking, not frequency measurement"
     },
     "toolhead": {
       "installed_mcu": null,
@@ -47,7 +50,10 @@
       "reported_runtime_clock_hz": 72000000,
       "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity",
       "flash_capacity_bytes": 131072,
-      "flash_evidence": "docs/hardware/test-sv08-01-toolhead-swd.md"
+      "flash_evidence": "docs/hardware/test-sv08-01-toolhead-swd.md",
+      "spare_reported_mcu": "STM32F103CBT6",
+      "candidate_reference_clock_hz": 8000000,
+      "reference_clock_evidence": "spare factory toolhead YXC 8.000 marking; installed board unverified"
     },
     "bed": {
       "owner_description": "cn3d/nadir/funssor 10mm bed upgrade",
@@ -99,7 +105,8 @@
     "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json",
     "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-attempt.json",
     "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-backup.json",
-    "profiles/test-sv08-01/observations/2026-09-06-toolhead-swd-backup.json"
+    "profiles/test-sv08-01/observations/2026-09-06-toolhead-swd-backup.json",
+    "profiles/test-sv08-01/observations/2026-09-07-markings.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
