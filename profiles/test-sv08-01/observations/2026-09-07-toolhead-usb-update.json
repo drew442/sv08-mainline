@@ -1,0 +1,31 @@
+{
+  "date": "2026-09-07",
+  "profile": "test-sv08-01",
+  "target": "toolhead",
+  "owner_confirmed_programmer_removed_and_normal_power": true,
+  "katapult_usb_status_passed": true,
+  "bootloader_protocol": "1.1.0",
+  "application_address": "0x08002000",
+  "usb_block_size": 64,
+  "klipper_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "application_bytes": 41588,
+  "application_sha256": "5e989df184cdbb86b80d218e8c257fa655537f7f5add5c4281fdff5bd6ba59e5",
+  "usb_readback_blocks": 650,
+  "usb_readback_padded_sha1": "6a574a2da5f16c0ebbd438d8959aca9f0d9c3e7f",
+  "uploads_verified": 2,
+  "software_requested_bootloader_reentry_verified": true,
+  "application_usb_enumeration_after_each_upload": true,
+  "live_output_free_host_test_state": "ready",
+  "live_mcu_reported_version": "f0892d8",
+  "temporary_host_process_stopped": true,
+  "heater_motion_or_output_pins_configured": false,
+  "printer_services_activated": false,
+  "mainboard_changed": false,
+  "remaining": [
+    "mainboard initial installation and USB tests",
+    "normal power-cycle validation of new toolhead application",
+    "interrupted update recovery test",
+    "factory restoration test",
+    "printer configuration and sensor/output validation"
+  ]
+}

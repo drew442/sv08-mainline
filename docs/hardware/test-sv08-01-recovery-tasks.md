@@ -106,7 +106,10 @@ storage. No hardware profile is validated by possession of recovery adapters.
   procedures; checksums pass.
 - [x] Owner completed power-off toolhead connection; Katapult installed and
   full flash/option bytes independently verified.
-- [ ] Disconnect ST-Link USB and all four target wires while printer power is
-  off; boot printer normally and report online for toolhead USB upload tests.
+- [x] Owner removed programmer and restored normal power; toolhead Katapult
+  USB enumeration, two verified application uploads and software re-entry pass.
+- [x] Updated toolhead reaches ready in a temporary no-output host configuration.
 - [ ] Complete mainboard initial installation in its separate power-off session.
-  See [toolhead result](test-sv08-01-toolhead-katapult.md).
+  See [toolhead USB result](test-sv08-01-toolhead-usb.md).
+- [ ] Shut down/disconnect printer power, connect ST-Link to mainboard with its
+  verified four-wire arrangement, then report ready for its guarded installation.

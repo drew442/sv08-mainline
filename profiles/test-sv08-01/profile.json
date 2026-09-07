@@ -60,11 +60,16 @@
       "current_flash_state": {
         "bootloader": "Katapult",
         "source_commit": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
-        "application": "erased",
-        "evidence": "docs/hardware/test-sv08-01-toolhead-katapult.md",
-        "full_readback_verified": true,
-        "usb_boot_verified": false
-      }
+        "application": "Klipper f0892d82b0f1c1228454f09eb508eddde2250f4b at 0x08002000",
+        "evidence": "docs/hardware/test-sv08-01-toolhead-usb.md",
+        "full_readback_verified": false,
+        "usb_boot_verified": true,
+        "usb_application_uploads_verified": 2,
+        "software_bootloader_reentry_verified": true,
+        "live_no_output_test": "ready",
+        "full_readback_scope": "Full SWD verification predates application upload; current application verified via USB block readback"
+      },
+      "firmware_version": "f0892d8"
     },
     "bed": {
       "owner_description": "cn3d/nadir/funssor 10mm bed upgrade",
@@ -121,7 +126,8 @@
     "profiles/test-sv08-01/observations/2026-09-07-mcu-usb-build.json",
     "profiles/test-sv08-01/observations/2026-09-07-host-integration.json",
     "profiles/test-sv08-01/observations/2026-09-07-usb-staging.json",
-    "profiles/test-sv08-01/observations/2026-09-07-toolhead-katapult-install.json"
+    "profiles/test-sv08-01/observations/2026-09-07-toolhead-katapult-install.json",
+    "profiles/test-sv08-01/observations/2026-09-07-toolhead-usb-update.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -149,7 +155,7 @@
     "bootloader": "Katapult",
     "application_offset_bytes": 8192,
     "decision": "docs/decisions/0003-usb-mcu-updates.md",
-    "status": "toolhead bootloader programmed and readback verified; USB tests and mainboard install pending",
+    "status": "toolhead USB update/re-entry verified; mainboard installation pending",
     "routine_physical_access_required": false,
     "exceptional_recovery": "ST-Link/OpenOCD"
   }

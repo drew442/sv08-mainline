@@ -1,8 +1,10 @@
 # Test printer 01: toolhead Katapult installation
 
 Date: 2026-09-07. **Katapult programmed and complete flash readback verified.**
-The toolhead application area is erased; Klipper has not yet been uploaded.
-Katapult USB boot/re-entry remains untested. The mainboard was not modified.
+At the end of that SWD session the application area was erased. The subsequent
+[USB session](test-sv08-01-toolhead-usb.md) installed Klipper, verified a repeat
+USB update and reached ready with no outputs configured. The mainboard was not
+modified.
 
 ## Maintenance setup and execution
 

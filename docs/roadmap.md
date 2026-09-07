@@ -92,8 +92,10 @@ outstanding at that build stage. The subsequent
 helper loading and dual-MCU file-output validation; physical USB updates remain
 untested. [Initial installation and rollback inputs](hardware/test-sv08-01-initial-programming.md)
 are now staged. The [toolhead bootloader installation](hardware/test-sv08-01-toolhead-katapult.md)
-has completed with full readback verification; the next session will test USB
-boot/application upload after removing the programmer and restoring normal power. Routine USB updates are selected by
+has completed with full readback verification. The
+[toolhead USB session](hardware/test-sv08-01-toolhead-usb.md) now verifies two
+application uploads, software re-entry and a live ready state with no outputs.
+Mainboard installation and full-printer validation remain outstanding. Routine USB updates are selected by
 [decision 0003](decisions/0003-usb-mcu-updates.md).
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact

@@ -4,8 +4,9 @@ Updated 2026-09-07. The owner requires routine updates without physical access.
 [Decision 0003](../decisions/0003-usb-mcu-updates.md) selects Katapult USB.
 [Bootloader and application artifacts](test-sv08-01-mcu-build.md) now build
 offline with matching offsets. The [toolhead bootloader](test-sv08-01-toolhead-katapult.md)
-is now programmed with matching full readback; application upload and USB
-validation remain outstanding. The mainboard is unchanged.
+is now programmed with matching full readback. Subsequent
+[toolhead USB tests](test-sv08-01-toolhead-usb.md) verified two application uploads,
+software re-entry and a ready host connection. The mainboard is unchanged.
 
 ## Choice for project goals (2026-09-07)
 
@@ -66,7 +67,8 @@ board's original flash through SWD, as well as selecting the factory host system
 - [x] Cross-build the AArch64 host helper and archive matching host sources.
 - [x] Complete and test the host dependency environment and live helper loading;
   see [host integration](test-sv08-01-host-integration.md).
-- [ ] Validate physical USB re-entry and application updates.
+- [x] Toolhead USB re-entry and two application updates verified.
+- [ ] Repeat installation and USB tests for the mainboard.
 - [x] Prepare the exact per-board installation and SWD rollback commands using
   identified targets and reviewed artifact paths/hashes. Review erase scope,
   readback verification and boot entry behavior before a write. See
