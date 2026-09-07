@@ -88,3 +88,12 @@ without an ST-Link connection; MCU flashing cannot inherit the host rollback pat
 
 Raw evidence, machine identifiers and private keys belong in ignored local
 storage. No hardware profile is validated by possession of recovery adapters.
+
+## USB update implementation
+
+- [x] Pin Katapult and build the bootloader/application candidate pair; clean
+  rebuilds match. See [build evidence](test-sv08-01-mcu-build.md).
+- [x] Build the AArch64 Klipper helper from the same MCU source revision.
+- [ ] Follow the remaining human and agent tasks in the build record, including
+  installed-toolhead reference corroboration, host environment completion and
+  repeat USB update tests. No routine update should require physical access.

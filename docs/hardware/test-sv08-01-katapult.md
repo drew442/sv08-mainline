@@ -1,14 +1,14 @@
 # Test printer 01: Katapult preparation
 
-Assessed 2026-09-06. Recommendation: prepare Katapult for USB firmware updates,
-then install it as part of a reviewed bootloader/application pair while SWD is
-available. No Katapult artifact has been built or flashed. This is a candidate
-migration plan, not hardware validation or an instruction to erase now.
+Updated 2026-09-07. The owner requires routine updates without physical access.
+[Decision 0003](../decisions/0003-usb-mcu-updates.md) selects Katapult USB.
+[Bootloader and application artifacts](test-sv08-01-mcu-build.md) now build
+offline with matching offsets; neither has been flashed or hardware validated.
 
 ## Choice for project goals (2026-09-07)
 
 Katapult over the existing USB transport remains the preferred maintenance
-candidate. Keep direct ST-Link/OpenOCD flashing as the bring-up alternative and
+choice. Keep direct ST-Link/OpenOCD flashing as the bring-up alternative and
 independent recovery method. There is no demonstrated need for a custom
 bootloader or a CAN conversion.
 
@@ -51,19 +51,18 @@ board's original flash through SWD, as well as selecting the factory host system
   keep it distinct from the 512 KiB mainboard.
 - [x] Inspect a fixed Katapult source revision:
   `ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e`.
-  This is a reviewed source candidate, not a project submodule or tested pin.
+  This is now a pinned project submodule; offline builds pass, hardware tests remain.
 - [x] Owner supplied mainboard and spare-toolhead MCU/reference markings;
   see the separate evidence scopes in the marking record.
 - [ ] Corroborate the installed toolhead reference; verify relevant USB and
   output circuitry for each board. Record PCB revisions when accessible.
-- [ ] Build Katapult from the reviewed revision with a recorded toolchain and
-  complete configuration, retaining SWD access. Review any startup GPIOs against
-  the actual heater/fan circuits; leave optional LED/button pins unassigned
-  until verified.
-- [ ] Inspect the resulting bootloader application address and build Klipper
-  for exactly that offset. Build both MCU applications and the host from the
-  same selected Klipper revision. Check ELF ranges, vector tables, available
-  flash/RAM, binary sizes and hashes.
+- [x] Build Katapult with recorded toolchain/configuration and retained SWD;
+  optional GPIOs are unassigned. Review actual output circuits before writes.
+- [x] Build the shared per-board candidate with an 8 KiB application offset;
+  check ELF ranges, vectors, sizes, hashes and clean rebuild agreement.
+- [x] Cross-build the AArch64 host helper and archive matching host sources.
+- [ ] Complete and test the host dependency environment; validate live loading
+  and USB updates separately.
 - [ ] Prepare the exact per-board installation and SWD rollback commands using
   identified targets and reviewed artifact paths/hashes. Review erase scope,
   readback verification and boot entry behavior before a write.

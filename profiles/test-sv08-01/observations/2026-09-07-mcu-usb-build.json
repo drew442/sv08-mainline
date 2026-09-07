@@ -1,0 +1,66 @@
+{
+  "date": "2026-09-07",
+  "profile": "test-sv08-01",
+  "status": "offline-built, not flash-approved",
+  "katapult_revision": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
+  "klipper_host_and_mcu_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "patches": [],
+  "shared_build_settings": {
+    "reference_hz": 8000000,
+    "transport": "USB PA11/PA12",
+    "application_address": "0x08002000",
+    "optional_gpio_assignments": [],
+    "swd_disabled": false
+  },
+  "targets": {
+    "mainboard": {
+      "flash_bytes": 524288,
+      "clock_evidence": "owner marking and installed vendor build"
+    },
+    "toolhead": {
+      "flash_bytes": 131072,
+      "clock_evidence": "provisional: spare board marking only"
+    }
+  },
+  "repeat_clean_mcu_builds_identical": true,
+  "host_status": "AArch64 helper cross-built and source archived; Python syntax checked; dependency environment and live ABI/loading not yet tested",
+  "files": {
+    "klipper-host-source.tar": {
+      "bytes": 224839680,
+      "sha256": "a4cbd288985930117dc38fc35588b72128765b5afbcab320382c7efba79742c7"
+    },
+    "klipper.dict": {
+      "bytes": 10512,
+      "sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b"
+    },
+    "klipper.bin": {
+      "bytes": 41588,
+      "sha256": "5e989df184cdbb86b80d218e8c257fa655537f7f5add5c4281fdff5bd6ba59e5",
+      "vectors": {
+        "stack": "0x20005000",
+        "reset": "0x8008ef1"
+      }
+    },
+    "c_helper-aarch64.so": {
+      "bytes": 327672,
+      "sha256": "3bb1a213c83bbd627ae931c789b1f14c4f466d9e5ba6224bf285fc648c0509ad"
+    },
+    "klipper.elf": {
+      "bytes": 1112688,
+      "sha256": "996d701eb7d220a13593ffd41a1fd065f90d96e07fab8fad12f5ac3f91bd71fd"
+    },
+    "katapult.elf": {
+      "bytes": 607784,
+      "sha256": "0c07374f5ea058c371595e17c8a1c72d524bbe371bf79f7a468c5f7f957b49d0"
+    },
+    "katapult.bin": {
+      "bytes": 4720,
+      "sha256": "0d293f1fabc3b6c81e8fe436230d0765d6e339e460f4e04b3228432022dec2b7",
+      "vectors": {
+        "stack": "0x20004ff8",
+        "reset": "0x80000a1"
+      }
+    }
+  },
+  "toolchain_packages": "binutils-aarch64-linux-gnu\t2.42-4ubuntu2.10\nbinutils-arm-none-eabi\t2.42-1ubuntu1+23\ngcc-13-aarch64-linux-gnu\t13.3.0-6ubuntu2~24.04.1cross1\ngcc-aarch64-linux-gnu\t4:13.2.0-7ubuntu1\ngcc-arm-none-eabi\t15:13.2.rel1-2\nlibc6-dev-arm64-cross\t2.39-0ubuntu8cross1\nlibnewlib-arm-none-eabi\t4.4.0.20231231-2\nlibnewlib-dev\t4.4.0.20231231-2\n"
+}

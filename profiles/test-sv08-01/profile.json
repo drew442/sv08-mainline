@@ -106,7 +106,8 @@
     "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-attempt.json",
     "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-backup.json",
     "profiles/test-sv08-01/observations/2026-09-06-toolhead-swd-backup.json",
-    "profiles/test-sv08-01/observations/2026-09-07-markings.json"
+    "profiles/test-sv08-01/observations/2026-09-07-markings.json",
+    "profiles/test-sv08-01/observations/2026-09-07-mcu-usb-build.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -128,5 +129,14 @@
     "evidence_level": "observed-read-only-SSH",
     "state": "Debian 13 host running from 31272730624-byte eMMC; SSH/sudo work; kernel and DTB match built image",
     "record": "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json"
+  },
+  "planned_mcu_update_method": {
+    "transport": "USB",
+    "bootloader": "Katapult",
+    "application_offset_bytes": 8192,
+    "decision": "docs/decisions/0003-usb-mcu-updates.md",
+    "status": "offline-built, not flashed",
+    "routine_physical_access_required": false,
+    "exceptional_recovery": "ST-Link/OpenOCD"
   }
 }

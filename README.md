@@ -13,7 +13,8 @@ profiles. A profile being present does not mean it has been tested.
 for test printer 01. It is not a printing system or validated hardware release;
 the owner reported booting it on the spare eMMC on 2026-09-06. Printer
 configuration, MCU firmware replacement and detailed hardware validation remain
-outstanding.
+outstanding. [Katapult and matching Klipper candidates](docs/hardware/test-sv08-01-mcu-build.md)
+now build offline; USB update validation is pending.
 
 ## Start here
 
@@ -39,7 +40,7 @@ git submodule update --init --depth 1
 git submodule status
 ```
 
-This initializes the five direct submodules at their recorded commits. Nested
+This initializes the six direct submodules at their recorded commits. Nested
 vendor dependencies are deliberately not initialized by this command; initialize
 them individually if a specific build needs them. Downloading sources does not
 install software or change a printer.
@@ -47,6 +48,7 @@ install software or change a printer.
 | Path | Purpose |
 | --- | --- |
 | `upstream/sovol-sv08/` | Sovol schematics, configuration, and vendor source snapshot |
+| `upstream/katapult/` | USB MCU bootloader for host-driven updates |
 | `upstream/klipper/` | Upstream Klipper host software, MCU firmware, and documentation |
 | `upstream/sunxi-tools/` | Allwinner host diagnostics and FEL tooling |
 | `upstream/moonraker/` | Klipper API service |

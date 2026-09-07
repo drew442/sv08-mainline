@@ -13,3 +13,6 @@
 [submodule "upstream/mainsail"]
 	path = upstream/mainsail
 	url = https://github.com/mainsail-crew/mainsail.git
+[submodule "upstream/katapult"]
+	path = upstream/katapult
+	url = https://github.com/Arksine/katapult.git

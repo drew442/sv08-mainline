@@ -1,7 +1,8 @@
 # Upstream sources
 
 Initial intake: 2026-09-05. Five shallow direct submodules were cloned from their
-upstream default branches. Gitlinks pin exact commits;
+upstream default branches. Katapult was added on 2026-09-07 at the reviewed
+commit for USB update builds, bringing the direct source count to six. Gitlinks pin exact commits;
 [`upstream-lock.json`](../upstream-lock.json) records the same revisions with
 roles and review status. It is an intake manifest, not a complete build lock:
 toolchains, OS packages, and transitive build dependencies remain to be selected.
@@ -12,6 +13,7 @@ toolchains, OS packages, and transitive build dependencies remain to be selected
 | `upstream/klipper` | [Klipper3d/klipper](https://github.com/Klipper3d/klipper) | Host + MCU firmware | `master` |
 | `upstream/sunxi-tools` | [linux-sunxi/sunxi-tools](https://github.com/linux-sunxi/sunxi-tools) | Host SoC diagnostic/recovery tools | `master` |
 | `upstream/moonraker` | [Arksine/moonraker](https://github.com/Arksine/moonraker) | API service | `master` |
+| `upstream/katapult` | [Arksine/katapult](https://github.com/Arksine/katapult) | USB bootloader; offline-built, hardware unvalidated | reviewed commit |
 | `upstream/mainsail` | [mainsail-crew/mainsail](https://github.com/mainsail-crew/mainsail) | Web UI | `develop` |
 
 Mainsail's default branch is development work. Its initial checkout is for
@@ -62,7 +64,8 @@ pipeline, avoiding redundant full kernel trees. The linux-sunxi organization is
 a useful tooling/documentation source; a repository name alone does not establish
 that a kernel tree is the current Linux mainline.
 
-Evaluate Katapult only after documenting each MCU's existing flash layout and
-recovery method. Evaluate CB1 material as a related platform reference; record
+Katapult is selected by [decision 0003](decisions/0003-usb-mcu-updates.md) after
+full MCU backups and layout inspection. Its first [build record](hardware/test-sv08-01-mcu-build.md)
+records repeatable local builds, not hardware compatibility. Evaluate CB1 material as a related platform reference; record
 SV08 differences explicitly. Optional display/camera/install tools can follow
 once the core stock profile is validated.

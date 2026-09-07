@@ -52,6 +52,16 @@
       "role": "web-ui",
       "status": "intake-only",
       "hardware_validated": false
+    },
+    {
+      "path": "upstream/katapult",
+      "url": "https://github.com/Arksine/katapult.git",
+      "commit": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
+      "selected_ref": "reviewed commit",
+      "selected_on": "2026-09-07",
+      "role": "USB MCU bootloader",
+      "status": "build-candidate",
+      "hardware_validated": false
     }
   ]
 }

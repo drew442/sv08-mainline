@@ -42,8 +42,8 @@ and the new host's remote validation. The [mainboard SWD backup](hardware/test-s
 two matching complete flash and option-byte reads. The
 [toolhead backup](hardware/test-sv08-01-toolhead-swd.md) also has matching full
 128 KiB reads and option bytes. MCU restoration tests remain outstanding;
-[Katapult preparation](hardware/test-sv08-01-katapult.md) records the proposed
-USB update path and remaining build requirements. The
+[Katapult preparation](hardware/test-sv08-01-katapult.md) records the selected
+USB update path and remaining validation requirements. The
 [2026-09-07 markings](hardware/test-sv08-01-markings.md) agree with measured
 MCU capacities; the toolhead crystal report is from a spare, so its installed
 8 MHz reference remains provisional. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
@@ -71,7 +71,7 @@ deferred. Evaluate the OS/kernel/device tree and boot chain independently.
 Exit evidence: architecture decisions, selected candidate revisions, compatibility
 gaps with reproductions, and a minimal custom-code plan where needed.
 
-## 3. Reproducible builds and offline validation — host candidate built offline
+## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with
 captured vendor boot support; see [decision 0002](decisions/0002-first-emmc-image.md).
@@ -81,6 +81,13 @@ printer image. On 2026-09-06 the owner reported successful boot on the new
 eMMC; detailed host validation and full stack builds remain outstanding. The
 [image capture guide](hardware/imaging-emmc.md) now covers preserving the installed
 module on Windows, Linux and macOS.
+
+The [2026-09-07 MCU build](hardware/test-sv08-01-mcu-build.md) provides pinned
+Katapult and matching Klipper binaries with identical clean rebuilds, plus an
+AArch64 host helper and matching source archive. The installed toolhead clock
+is provisional; hardware writes and the full host dependency environment remain
+outstanding. Routine USB updates are selected by
+[decision 0003](decisions/0003-usb-mcu-updates.md).
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact
 hashes. Build the host integration and both MCU targets. Check configuration
