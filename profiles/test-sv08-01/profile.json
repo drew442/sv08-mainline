@@ -53,7 +53,8 @@
       "flash_evidence": "docs/hardware/test-sv08-01-toolhead-swd.md",
       "spare_reported_mcu": "STM32F103CBT6",
       "candidate_reference_clock_hz": 8000000,
-      "reference_clock_evidence": "spare factory toolhead YXC 8.000 marking; installed board unverified"
+      "reference_clock_evidence": "owner confirms installed toolhead configured identically to inspected spare on 2026-09-07; nominal 8 MHz, not independently measured",
+      "reported_reference_clock_hz": 8000000
     },
     "bed": {
       "owner_description": "cn3d/nadir/funssor 10mm bed upgrade",
@@ -107,7 +108,8 @@
     "profiles/test-sv08-01/observations/2026-09-06-mainboard-swd-backup.json",
     "profiles/test-sv08-01/observations/2026-09-06-toolhead-swd-backup.json",
     "profiles/test-sv08-01/observations/2026-09-07-markings.json",
-    "profiles/test-sv08-01/observations/2026-09-07-mcu-usb-build.json"
+    "profiles/test-sv08-01/observations/2026-09-07-mcu-usb-build.json",
+    "profiles/test-sv08-01/observations/2026-09-07-host-integration.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -127,8 +129,8 @@
   "current_host_report": {
     "date": "2026-09-06",
     "evidence_level": "observed-read-only-SSH",
-    "state": "Debian 13 host running from 31272730624-byte eMMC; SSH/sudo work; kernel and DTB match built image",
-    "record": "profiles/test-sv08-01/observations/2026-09-06-backup-and-stlink.json"
+    "state": "Debian 13 host online; pinned Klipper Python environment and AArch64 helper tested in file-output mode; printer services inactive",
+    "record": "profiles/test-sv08-01/observations/2026-09-07-host-integration.json"
   },
   "planned_mcu_update_method": {
     "transport": "USB",

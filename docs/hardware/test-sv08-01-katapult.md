@@ -25,7 +25,8 @@ Katapult's USB upload path is provided by the installed flash bootloader.
 
 The [new marking evidence](test-sv08-01-markings.md) agrees with the MCU capacity
 measurements. Mainboard 8 MHz now has owner-reported marking support. Toolhead
-8 MHz remains a candidate because its marking was read from a spare. PCB revision
+8 MHz was initially provisional because its marking was read from a spare;
+the owner has now confirmed installed/spare equivalence. PCB revision
 labels are useful evidence, not a hard gate for offline preparation.
 
 ## Benefit and consequence
@@ -61,8 +62,9 @@ board's original flash through SWD, as well as selecting the factory host system
 - [x] Build the shared per-board candidate with an 8 KiB application offset;
   check ELF ranges, vectors, sizes, hashes and clean rebuild agreement.
 - [x] Cross-build the AArch64 host helper and archive matching host sources.
-- [ ] Complete and test the host dependency environment; validate live loading
-  and USB updates separately.
+- [x] Complete and test the host dependency environment and live helper loading;
+  see [host integration](test-sv08-01-host-integration.md).
+- [ ] Validate physical USB re-entry and application updates.
 - [ ] Prepare the exact per-board installation and SWD rollback commands using
   identified targets and reviewed artifact paths/hashes. Review erase scope,
   readback verification and boot entry behavior before a write.

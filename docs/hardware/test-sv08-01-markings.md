@@ -20,6 +20,15 @@ The installed toolhead's generic firmware target string `stm32f103xe` is not
 a contradiction: its independently read flash-size register reports 128 KiB.
 Both installed firmware dictionaries identify USB on PA11/PA12.
 
+## Subsequent owner confirmation
+
+Later on 2026-09-07 the owner confirmed the installed toolhead is configured
+identically to the inspected spare. This supports the 8 MHz installed reference
+as owner-reported equivalence. The original transcription still came from the
+spare; no photograph or direct frequency measurement is implied. The earlier
+provisional assessment below records the scope at initial intake.
+See [host integration](test-sv08-01-host-integration.md).
+
 ## Scope and board variants
 
 The spare markings support an **8 MHz candidate** for the installed toolhead.

@@ -46,7 +46,8 @@ two matching complete flash and option-byte reads. The
 USB update path and remaining validation requirements. The
 [2026-09-07 markings](hardware/test-sv08-01-markings.md) agree with measured
 MCU capacities; the toolhead crystal report is from a spare, so its installed
-8 MHz reference remains provisional. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
+8 MHz reference was initially provisional; the owner subsequently confirmed
+installed/spare equivalence. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
 provides the spare write/boot steps and independent MCU preservation tasks.
 
 Capture PCB revisions, processor markings, host OS/boot/device-tree information,
@@ -86,7 +87,10 @@ The [2026-09-07 MCU build](hardware/test-sv08-01-mcu-build.md) provides pinned
 Katapult and matching Klipper binaries with identical clean rebuilds, plus an
 AArch64 host helper and matching source archive. The installed toolhead clock
 is provisional; hardware writes and the full host dependency environment remain
-outstanding. Routine USB updates are selected by
+outstanding at that build stage. The subsequent
+[host integration](hardware/test-sv08-01-host-integration.md) now passes native
+helper loading and dual-MCU file-output validation; physical USB updates remain
+untested. Routine USB updates are selected by
 [decision 0003](decisions/0003-usb-mcu-updates.md).
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact

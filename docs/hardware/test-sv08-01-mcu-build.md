@@ -2,8 +2,9 @@
 
 Built 2026-09-07. Status: offline builds verified; no firmware flashed.
 [Decision 0003](../decisions/0003-usb-mcu-updates.md) selects Katapult USB updates.
-The installed toolhead's reference remains provisional; see
-[marking evidence](test-sv08-01-markings.md).
+The owner subsequently confirmed installed/spare toolhead equivalence; 8 MHz
+is supported by owner report. See [marking evidence](test-sv08-01-markings.md)
+and the later [live host environment validation](test-sv08-01-host-integration.md).
 
 ## Artifacts and layout
 
@@ -84,7 +85,7 @@ C helper source list was cross-compiled into an AArch64 shared library using
 upstream flags without x86 SSE flags. The exact command remains in
 `build/mcu-usb-v1/host-helper-command.txt`. Host Python syntax compilation passed.
 
-This is not a complete host installation: the dependency environment, live
+At the time of this offline build, this was not a complete host installation: the dependency environment, live
 library loading, MCU protocol connection, service configuration and printer
 configuration remain untested. The printer host did not answer SSH on 2026-09-07.
 Cross-compilation does not validate its ABI on the Debian host. Do not activate
@@ -119,13 +120,15 @@ validated. Restore tests remain outstanding.
 
 ## Remaining tasks
 
-- Human: corroborate the installed toolhead's reference; inspect output circuit
+- Completed by owner report: installed toolhead matches the inspected spare.
+- Human: confirm current ST-Link target/power wiring; inspect output circuit
   behavior needed for safe bootloader operation.
 - Human, when ready for USB tests: disconnect programmer USB before changing
   wiring/power arrangements, then restore the printer host to normal power
   under the maintenance plan. Do not combine programmer supply and printer
   power without a reviewed arrangement.
-- Agent: complete the host dependency environment and configuration migration;
+- Completed: host runtime environment and file-output test; see host integration.
+- Agent: complete printing configuration migration;
   prepare exact target-bound install/rollback commands once hardware inputs are
   resolved.
 - Agent plus hardware session: run the update/recovery acceptance tests from

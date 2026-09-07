@@ -44,7 +44,8 @@ space on the 32 GB spare is intentional; expansion is a later recorded operation
 - [x] Owner moved ST-Link to the toolhead; identity/protection were read afresh.
 - [x] Two complete toolhead 128 KiB flash reads and two option-byte reads match.
 - [x] Owner reported mainboard and spare-toolhead MCU/8 MHz markings.
-- [ ] Corroborate the installed toolhead reference; record PCB revisions when
+- [x] Owner confirmed installed toolhead configured identically to the spare.
+- [ ] Record PCB revisions when
   accessible. See [marking scopes](test-sv08-01-markings.md) and follow the
   [Katapult preparation list](test-sv08-01-katapult.md) before firmware writes.
 - [ ] Move the separate workstation's temporary backup copy to durable storage;
@@ -97,3 +98,7 @@ storage. No hardware profile is validated by possession of recovery adapters.
 - [ ] Follow the remaining human and agent tasks in the build record, including
   installed-toolhead reference corroboration, host environment completion and
   repeat USB update tests. No routine update should require physical access.
+
+- [x] Host Python environment, AArch64 helper loading and dual-MCU file-output
+  test pass; [host integration](test-sv08-01-host-integration.md) records scope.
+- [ ] Confirm ST-Link wiring/power while the printer is online before SWD use.
