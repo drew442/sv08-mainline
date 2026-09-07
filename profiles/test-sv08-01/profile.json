@@ -109,7 +109,8 @@
     "profiles/test-sv08-01/observations/2026-09-06-toolhead-swd-backup.json",
     "profiles/test-sv08-01/observations/2026-09-07-markings.json",
     "profiles/test-sv08-01/observations/2026-09-07-mcu-usb-build.json",
-    "profiles/test-sv08-01/observations/2026-09-07-host-integration.json"
+    "profiles/test-sv08-01/observations/2026-09-07-host-integration.json",
+    "profiles/test-sv08-01/observations/2026-09-07-usb-staging.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {

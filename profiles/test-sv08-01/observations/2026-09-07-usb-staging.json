@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-07",
+  "profile": "test-sv08-01",
+  "owner_confirmation": "ST-Link disconnected from printer",
+  "host_staging": {
+    "katapult_revision": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
+    "katapult_path": "/opt/sv08-mainline/katapult",
+    "firmware_path": "/opt/sv08-mainline/firmware/mcu-usb-v1",
+    "binary_hashes_verified": true,
+    "flashtool_help_passed": true
+  },
+  "programming_workstation_staging": {
+    "directory": "~/sv08-recovery/install-20260907",
+    "install_and_rollback_scripts_prepared": true,
+    "all_staged_checksums_verified": true,
+    "tcl_command_completeness_checked": true,
+    "hardware_execution_tested": false
+  },
+  "protocol_check": "Built Katapult signature and aligned request location match pinned Klipper reset implementation",
+  "physical_mcu_connection_attempted": false,
+  "flash_or_erase_executed": false,
+  "services_activated": false,
+  "next_human_task": "Cleanly shut down host, disconnect printer power, connect ST-Link four-wire power-off arrangement to toolhead, report ready"
+}

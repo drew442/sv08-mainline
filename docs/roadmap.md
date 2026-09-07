@@ -90,7 +90,9 @@ is provisional; hardware writes and the full host dependency environment remain
 outstanding at that build stage. The subsequent
 [host integration](hardware/test-sv08-01-host-integration.md) now passes native
 helper loading and dual-MCU file-output validation; physical USB updates remain
-untested. Routine USB updates are selected by
+untested. [Initial installation and rollback inputs](hardware/test-sv08-01-initial-programming.md)
+are now staged; the next hardware session needs the powered-down toolhead
+connected to ST-Link. Routine USB updates are selected by
 [decision 0003](decisions/0003-usb-mcu-updates.md).
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact

@@ -65,9 +65,10 @@ board's original flash through SWD, as well as selecting the factory host system
 - [x] Complete and test the host dependency environment and live helper loading;
   see [host integration](test-sv08-01-host-integration.md).
 - [ ] Validate physical USB re-entry and application updates.
-- [ ] Prepare the exact per-board installation and SWD rollback commands using
+- [x] Prepare the exact per-board installation and SWD rollback commands using
   identified targets and reviewed artifact paths/hashes. Review erase scope,
-  readback verification and boot entry behavior before a write.
+  readback verification and boot entry behavior before a write. See
+  [initial programming preparation](test-sv08-01-initial-programming.md).
 - [ ] Install during maintenance with loads safe, verify programming, then test
   USB bootloader enumeration and application update/re-entry. Record these as
   separate hardware tests before printer-service activation.

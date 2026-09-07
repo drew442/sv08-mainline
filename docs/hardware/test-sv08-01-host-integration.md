@@ -78,7 +78,9 @@ MCUs; do not interpret a successful simulation as physical commissioning.
 
 ST-Link USB still enumerates on the separate workstation while the printer is
 powered on. Its current target wiring and 3.3 V lead have not been confirmed,
-so no SWD probe or write was attempted. The earlier four-wire arrangement
+so no SWD probe or write was attempted. The owner subsequently confirmed the
+ST-Link is disconnected from the printer; see
+[initial programming preparation](test-sv08-01-initial-programming.md). The earlier four-wire arrangement
 supplied target power through the programmer with printer supply off. Confirm
 the current arrangement before choosing the initial flashing step.
 

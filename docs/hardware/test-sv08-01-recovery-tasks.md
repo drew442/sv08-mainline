@@ -101,4 +101,9 @@ storage. No hardware profile is validated by possession of recovery adapters.
 
 - [x] Host Python environment, AArch64 helper loading and dual-MCU file-output
   test pass; [host integration](test-sv08-01-host-integration.md) records scope.
-- [ ] Confirm ST-Link wiring/power while the printer is online before SWD use.
+- [x] Owner confirms ST-Link disconnected from the printer.
+- [x] Stage the pinned USB tool/firmware and guarded initial-install/rollback
+  procedures; checksums pass.
+- [ ] Follow the [initial programming hands-on sequence](test-sv08-01-initial-programming.md):
+  shut down/disconnect printer power, then connect ST-Link to the toolhead and
+  report ready. Routine updates will use USB after initial bootloader installation.
