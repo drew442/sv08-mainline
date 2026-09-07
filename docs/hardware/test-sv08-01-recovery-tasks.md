@@ -104,6 +104,9 @@ storage. No hardware profile is validated by possession of recovery adapters.
 - [x] Owner confirms ST-Link disconnected from the printer.
 - [x] Stage the pinned USB tool/firmware and guarded initial-install/rollback
   procedures; checksums pass.
-- [ ] Follow the [initial programming hands-on sequence](test-sv08-01-initial-programming.md):
-  shut down/disconnect printer power, then connect ST-Link to the toolhead and
-  report ready. Routine updates will use USB after initial bootloader installation.
+- [x] Owner completed power-off toolhead connection; Katapult installed and
+  full flash/option bytes independently verified.
+- [ ] Disconnect ST-Link USB and all four target wires while printer power is
+  off; boot printer normally and report online for toolhead USB upload tests.
+- [ ] Complete mainboard initial installation in its separate power-off session.
+  See [toolhead result](test-sv08-01-toolhead-katapult.md).

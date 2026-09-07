@@ -3,7 +3,9 @@
 Updated 2026-09-07. The owner requires routine updates without physical access.
 [Decision 0003](../decisions/0003-usb-mcu-updates.md) selects Katapult USB.
 [Bootloader and application artifacts](test-sv08-01-mcu-build.md) now build
-offline with matching offsets; neither has been flashed or hardware validated.
+offline with matching offsets. The [toolhead bootloader](test-sv08-01-toolhead-katapult.md)
+is now programmed with matching full readback; application upload and USB
+validation remain outstanding. The mainboard is unchanged.
 
 ## Choice for project goals (2026-09-07)
 

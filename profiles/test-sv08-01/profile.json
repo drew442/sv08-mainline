@@ -43,18 +43,28 @@
       "installed_mcu": null,
       "installed_board_revision": null,
       "clock_hz": null,
-      "bootloader_offset_bytes": 0,
-      "firmware_version": "v0.12.0-4-g3bfe0b7-dirty",
-      "reported_firmware_build_time": "2025-07-22 06:22:09",
-      "reported_firmware_target": "stm32f103xe",
-      "reported_runtime_clock_hz": 72000000,
-      "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity",
+      "bootloader_offset_bytes": 8192,
       "flash_capacity_bytes": 131072,
       "flash_evidence": "docs/hardware/test-sv08-01-toolhead-swd.md",
       "spare_reported_mcu": "STM32F103CBT6",
       "candidate_reference_clock_hz": 8000000,
       "reference_clock_evidence": "owner confirms installed toolhead configured identically to inspected spare on 2026-09-07; nominal 8 MHz, not independently measured",
-      "reported_reference_clock_hz": 8000000
+      "reported_reference_clock_hz": 8000000,
+      "factory_firmware_report": {
+        "firmware_version": "v0.12.0-4-g3bfe0b7-dirty",
+        "reported_firmware_build_time": "2025-07-22 06:22:09",
+        "reported_firmware_target": "stm32f103xe",
+        "reported_runtime_clock_hz": 72000000,
+        "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity"
+      },
+      "current_flash_state": {
+        "bootloader": "Katapult",
+        "source_commit": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
+        "application": "erased",
+        "evidence": "docs/hardware/test-sv08-01-toolhead-katapult.md",
+        "full_readback_verified": true,
+        "usb_boot_verified": false
+      }
     },
     "bed": {
       "owner_description": "cn3d/nadir/funssor 10mm bed upgrade",
@@ -110,7 +120,8 @@
     "profiles/test-sv08-01/observations/2026-09-07-markings.json",
     "profiles/test-sv08-01/observations/2026-09-07-mcu-usb-build.json",
     "profiles/test-sv08-01/observations/2026-09-07-host-integration.json",
-    "profiles/test-sv08-01/observations/2026-09-07-usb-staging.json"
+    "profiles/test-sv08-01/observations/2026-09-07-usb-staging.json",
+    "profiles/test-sv08-01/observations/2026-09-07-toolhead-katapult-install.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -138,7 +149,7 @@
     "bootloader": "Katapult",
     "application_offset_bytes": 8192,
     "decision": "docs/decisions/0003-usb-mcu-updates.md",
-    "status": "offline-built, not flashed",
+    "status": "toolhead bootloader programmed and readback verified; USB tests and mainboard install pending",
     "routine_physical_access_required": false,
     "exceptional_recovery": "ST-Link/OpenOCD"
   }

@@ -1,8 +1,9 @@
 # Test printer 01: initial Katapult programming preparation
 
-Prepared 2026-09-07; **not executed**. Owner confirms the ST-Link is disconnected
-from the printer. The powered printer host is available for software preparation.
-No SWD connection, erase, firmware write or service activation occurred.
+Prepared 2026-09-07. The [toolhead installation](test-sv08-01-toolhead-katapult.md)
+has now executed with complete readback verification. The mainboard installation
+and both rollback procedures remain unexecuted. The staging description below
+records preparation before that hardware session.
 
 ## Staged inputs
 
@@ -20,8 +21,8 @@ The separate programming workstation has private inputs under
   containing only Katapult followed by erased bytes.
 - The reviewed Katapult binary and SHA256SUMS for all staged inputs.
 
-All transferred checksums pass. Tcl command completeness was checked; execution
-against hardware is untested. The actual scripts and backups stay private;
+All transferred checksums pass. Tcl command completeness was checked before
+execution. The toolhead procedure has now run; other scripts remain untested. The actual scripts and backups stay private;
 their local copies are under `local/test-sv08-01/usb-staging-20260907/`.
 
 ## Reviewed installation sequence
@@ -57,7 +58,7 @@ capture from each attempt separately. They do not restore host software or
 change option bytes; factory operation also requires the matching host system.
 This restore procedure is prepared, not demonstrated.
 
-## Hands-on sequence required now
+## Initial installation sequence (toolhead programming now complete)
 
 1. Cleanly shut down the new host (`sudo shutdown -h now`), wait for shutdown,
    and disconnect printer supply power.

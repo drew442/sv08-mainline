@@ -1,0 +1,38 @@
+{
+  "date": "2026-09-07",
+  "profile": "test-sv08-01",
+  "target_role": "toolhead",
+  "board_revision": null,
+  "owner_confirmed_power_off_programming_setup": true,
+  "idcode": "0x20036410",
+  "flash_capacity_bytes": 131072,
+  "programmer": "ST-Link/V2 V2J37S7",
+  "tool": "OpenOCD 0.12.0-1build2",
+  "attempts": [
+    "100 kHz attachment failed before identity guard; no erase/write",
+    "5 kHz identification succeeded",
+    "100 kHz guarded installation succeeded",
+    "100 kHz independent full readback succeeded"
+  ],
+  "factory_full_flash_verified_before_erase": true,
+  "erased_sectors": [
+    0,
+    127
+  ],
+  "programmed_base": "0x08000000",
+  "programmed_bytes": 4720,
+  "katapult_revision": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
+  "katapult_bin_sha256": "0d293f1fabc3b6c81e8fe436230d0765d6e339e460f4e04b3228432022dec2b7",
+  "full_readback_sha256": "02ba3ae439db24559b6b8cfa2c495d077e301065990341f79b81648695a89cb0",
+  "full_readback_matches_expected": true,
+  "option_bytes_unchanged": true,
+  "option_bytes_sha256": "c0b942fbb9fe967ec0e7b675e080d48c930fc5fe3fde70f6dd6f9646fdffc0d3",
+  "application_area": "erased; no Klipper application installed",
+  "application_offset_bytes": 8192,
+  "target_halted_for_programming": true,
+  "explicit_reset_or_run_commanded": false,
+  "usb_boot_validated": false,
+  "mainboard_modified": false,
+  "factory_restore_tested": false,
+  "next": "Disconnect programmer USB and target wires with printer supply off; power printer normally and verify Katapult USB before application upload"
+}
