@@ -14,7 +14,8 @@ for test printer 01. It is not a printing system or validated hardware release;
 the owner reported booting it on the spare eMMC on 2026-09-06. Printer
 configuration, MCU firmware replacement and detailed hardware validation remain
 outstanding. [Katapult and matching Klipper candidates](docs/hardware/test-sv08-01-mcu-build.md)
-now build offline; USB update validation is pending.
+now build offline; [USB updates and paired MCU communication](docs/hardware/test-sv08-01-mainboard-usb.md)
+are verified on test printer 01. Printing remains unvalidated.
 
 ## Start here
 

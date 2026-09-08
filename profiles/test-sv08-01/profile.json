@@ -43,11 +43,16 @@
       "current_flash_state": {
         "bootloader": "Katapult",
         "source_commit": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
-        "application": "erased",
-        "full_readback_verified": true,
-        "usb_boot_verified": false,
-        "evidence": "docs/hardware/test-sv08-01-mainboard-katapult.md"
-      }
+        "application": "Klipper f0892d82b0f1c1228454f09eb508eddde2250f4b at 0x08002000",
+        "full_readback_verified": false,
+        "usb_boot_verified": true,
+        "evidence": "docs/hardware/test-sv08-01-mainboard-usb.md",
+        "full_readback_scope": "Full SWD readback predates application upload; current application verified through USB block readback",
+        "usb_application_uploads_verified": 2,
+        "software_bootloader_reentry_verified": true,
+        "live_no_output_test": "ready with both MCUs"
+      },
+      "firmware_version": "f0892d8"
     },
     "toolhead": {
       "installed_mcu": null,
@@ -77,7 +82,8 @@
         "usb_application_uploads_verified": 2,
         "software_bootloader_reentry_verified": true,
         "live_no_output_test": "ready",
-        "full_readback_scope": "Full SWD verification predates application upload; current application verified via USB block readback"
+        "full_readback_scope": "Full SWD verification predates application upload; current application verified via USB block readback",
+        "application_power_cycle_observed": true
       },
       "firmware_version": "f0892d8"
     },
@@ -119,7 +125,7 @@
       "configuration": "Vendor probe + probe_pressure + z_offset_calibration loaded"
     }
   },
-  "software_state": "Vendor-derived Klipper host with local modifications; mismatched-generation MCU builds; see discovery report",
+  "software_state": "Pinned Klipper host and both MCU applications at f0892d82; communication-only validation passed; printing configuration/services not activated",
   "configuration_state": "Mostly vendor-default core settings with selected macro and include changes; suitability for upgraded thermal hardware unverified",
   "validation_records": [
     "profiles/test-sv08-01/observations/2026-09-05.json",
@@ -138,7 +144,8 @@
     "profiles/test-sv08-01/observations/2026-09-07-usb-staging.json",
     "profiles/test-sv08-01/observations/2026-09-07-toolhead-katapult-install.json",
     "profiles/test-sv08-01/observations/2026-09-07-toolhead-usb-update.json",
-    "profiles/test-sv08-01/observations/2026-09-08-mainboard-katapult-install.json"
+    "profiles/test-sv08-01/observations/2026-09-08-mainboard-katapult-install.json",
+    "profiles/test-sv08-01/observations/2026-09-08-mainboard-usb-update.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -166,7 +173,7 @@
     "bootloader": "Katapult",
     "application_offset_bytes": 8192,
     "decision": "docs/decisions/0003-usb-mcu-updates.md",
-    "status": "both bootloaders installed; toolhead USB updates verified; mainboard application upload/USB tests pending",
+    "status": "both MCU USB uploads and software re-entry verified; paired no-output host test ready",
     "routine_physical_access_required": false,
     "exceptional_recovery": "ST-Link/OpenOCD"
   }

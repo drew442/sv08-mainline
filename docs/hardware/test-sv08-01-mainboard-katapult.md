@@ -1,8 +1,10 @@
 # Test printer 01: mainboard Katapult installation
 
 Date: 2026-09-08. **Katapult programmed; full 512 KiB readback matches the
-expected image and option bytes are unchanged.** The mainboard application
-area is erased. Mainboard USB boot and application upload remain pending.
+expected image and option bytes are unchanged.** At the end of this SWD session
+the application area was erased. The subsequent
+[USB update session](test-sv08-01-mainboard-usb.md) installed Klipper and
+validated repeat USB upload, re-entry and paired host communication.
 The toolhead was not modified during this session.
 
 ## Target and programming attempts

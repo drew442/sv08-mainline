@@ -8,7 +8,8 @@ is now programmed with matching full readback. Subsequent
 [toolhead USB tests](test-sv08-01-toolhead-usb.md) verified two application uploads,
 software re-entry and a ready host connection. The
 [mainboard bootloader](test-sv08-01-mainboard-katapult.md) is now installed with
-matching full readback; its USB/application tests remain pending.
+matching full readback. Its [USB uploads and paired MCU connection](test-sv08-01-mainboard-usb.md)
+now also pass.
 
 ## Choice for project goals (2026-09-07)
 
@@ -70,7 +71,8 @@ board's original flash through SWD, as well as selecting the factory host system
 - [x] Complete and test the host dependency environment and live helper loading;
   see [host integration](test-sv08-01-host-integration.md).
 - [x] Toolhead USB re-entry and two application updates verified.
-- [ ] Repeat installation and USB tests for the mainboard.
+- [x] Repeat installation and USB tests for the mainboard; both MCUs reach
+  ready together in the communication-only configuration.
 - [x] Prepare the exact per-board installation and SWD rollback commands using
   identified targets and reviewed artifact paths/hashes. Review erase scope,
   readback verification and boot entry behavior before a write. See

@@ -113,6 +113,13 @@ storage. No hardware profile is validated by possession of recovery adapters.
   full flash readback matches and option bytes are unchanged.
   See [toolhead USB result](test-sv08-01-toolhead-usb.md).
 - [x] Owner completed the mainboard power-off connection sequence.
-- [ ] With supply off, unplug ST-Link USB and all target leads; restore normal
-  printer power and report online for mainboard USB upload/re-entry tests.
+- [x] Owner restored normal printer power; mainboard Katapult USB status,
+  two verified application uploads and software re-entry pass.
+- [x] Both updated MCUs reach ready together with no outputs configured.
+- [ ] During a later normal power cycle, verify mainboard application boot
+  and repeat the paired connection check.
   See [mainboard installation result](test-sv08-01-mainboard-katapult.md).
+
+The [paired communication result](test-sv08-01-mainboard-usb.md) completes
+the initial USB update path. Configuration migration, sensor/output validation,
+interrupted-update recovery and factory restoration remain outstanding.
