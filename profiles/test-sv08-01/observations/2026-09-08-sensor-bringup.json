@@ -1,0 +1,32 @@
+{
+  "date": "2026-09-08",
+  "profile": "test-sv08-01",
+  "board_revisions": null,
+  "evidence_level": "live-input-only-and-offline-configuration-checks",
+  "klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "samples": 12,
+  "sample_span_seconds": 55.054,
+  "temperatures_c": {
+    "hotend": {
+      "min": 21.31,
+      "max": 21.39
+    },
+    "bed": {
+      "min": 20.06,
+      "max": 20.36
+    }
+  },
+  "outputs_configured_in_live_test": false,
+  "temporary_process_stopped": true,
+  "printing_services_active": false,
+  "offline_checks": [
+    "sensor configuration",
+    "30-section private printing candidate",
+    "probe/filament input configuration"
+  ],
+  "private_candidate_sha256": "695a5e1c10b89a09df8a3c39852479cba786378fc33774c4a92c2d5def241842",
+  "sensor_identity_verified": false,
+  "external_reference_temperature_c": null,
+  "printing_validated": false,
+  "record": "docs/hardware/test-sv08-01-sensor-bringup.md"
+}

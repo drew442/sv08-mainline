@@ -123,3 +123,11 @@ storage. No hardware profile is validated by possession of recovery adapters.
 The [paired communication result](test-sv08-01-mainboard-usb.md) completes
 the initial USB update path. Configuration migration, sensor/output validation,
 interrupted-update recovery and factory restoration remain outstanding.
+
+## Configuration commissioning
+
+- [x] Prepare input-only hotend/bed configuration; offline and bounded live checks pass.
+- [x] Prepare probe/filament input-only include; offline check passes.
+- [x] Prepare private upstream printing candidate; file-output parsing passes.
+- [ ] Complete the sensor reference, endstop/probe, fan, motion and heater tasks
+  in [sensor bring-up](test-sv08-01-sensor-bringup.md) before printing activation.

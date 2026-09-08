@@ -99,7 +99,9 @@ The [mainboard bootloader](hardware/test-sv08-01-mainboard-katapult.md) is now
 installed with full readback verification. Its
 [USB updates and paired MCU test](hardware/test-sv08-01-mainboard-usb.md) now pass:
 both MCUs report the pinned Klipper version and reach ready without outputs.
-Full-printer configuration and hardware validation remain outstanding. Routine USB updates are selected by
+The [sensor bring-up and offline configuration migration](hardware/test-sv08-01-sensor-bringup.md)
+now provide the next commissioning stage. Full-printer activation and hardware
+validation remain outstanding. Routine USB updates are selected by
 [decision 0003](decisions/0003-usb-mcu-updates.md).
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact
