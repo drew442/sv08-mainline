@@ -95,7 +95,9 @@ are now staged. The [toolhead bootloader installation](hardware/test-sv08-01-too
 has completed with full readback verification. The
 [toolhead USB session](hardware/test-sv08-01-toolhead-usb.md) now verifies two
 application uploads, software re-entry and a live ready state with no outputs.
-Mainboard installation and full-printer validation remain outstanding. Routine USB updates are selected by
+The [mainboard bootloader](hardware/test-sv08-01-mainboard-katapult.md) is now
+installed with full readback verification. Mainboard USB application tests and
+full-printer validation remain outstanding. Routine USB updates are selected by
 [decision 0003](decisions/0003-usb-mcu-updates.md).
 
 Record toolchains, build dependencies, per-MCU configs, patches, and artifact

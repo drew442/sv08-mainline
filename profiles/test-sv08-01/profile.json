@@ -4,7 +4,7 @@
   "printer_model": "Sovol SV08 (original)",
   "electronics": "mostly factory, owner-reported; not yet inspected",
   "status": "research",
-  "reviewed_on": "2026-09-07",
+  "reviewed_on": "2026-09-08",
   "hardware_verified": false,
   "reference_profile": "stock-sv08",
   "reference_profile_is_not_configuration_inheritance": true,
@@ -27,17 +27,27 @@
       "installed_mcu": "STM32F103VET6",
       "installed_board_revision": null,
       "clock_hz": null,
-      "bootloader_offset_bytes": 0,
-      "firmware_version": "v0.12.0-40-g77619e91-dirty",
-      "reported_firmware_build_time": "2024-03-01 10:46:56",
-      "reported_firmware_target": "stm32f103xe",
-      "reported_runtime_clock_hz": 72000000,
-      "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity",
+      "bootloader_offset_bytes": 8192,
       "flash_capacity_bytes": 524288,
       "flash_evidence": "docs/hardware/test-sv08-01-mainboard-swd.md",
       "mcu_identity_evidence": "owner-transcribed mainboard marking, supported by schematic and SWD capacity",
       "reported_reference_clock_hz": 8000000,
-      "reference_clock_evidence": "owner-transcribed YXC 8.000; nominal marking, not frequency measurement"
+      "reference_clock_evidence": "owner-transcribed YXC 8.000; nominal marking, not frequency measurement",
+      "factory_firmware_report": {
+        "firmware_version": "v0.12.0-40-g77619e91-dirty",
+        "reported_firmware_build_time": "2024-03-01 10:46:56",
+        "reported_firmware_target": "stm32f103xe",
+        "reported_runtime_clock_hz": 72000000,
+        "firmware_evidence_level": "observed-running-mcu-report and matching SWD capture identity"
+      },
+      "current_flash_state": {
+        "bootloader": "Katapult",
+        "source_commit": "ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e",
+        "application": "erased",
+        "full_readback_verified": true,
+        "usb_boot_verified": false,
+        "evidence": "docs/hardware/test-sv08-01-mainboard-katapult.md"
+      }
     },
     "toolhead": {
       "installed_mcu": null,
@@ -127,7 +137,8 @@
     "profiles/test-sv08-01/observations/2026-09-07-host-integration.json",
     "profiles/test-sv08-01/observations/2026-09-07-usb-staging.json",
     "profiles/test-sv08-01/observations/2026-09-07-toolhead-katapult-install.json",
-    "profiles/test-sv08-01/observations/2026-09-07-toolhead-usb-update.json"
+    "profiles/test-sv08-01/observations/2026-09-07-toolhead-usb-update.json",
+    "profiles/test-sv08-01/observations/2026-09-08-mainboard-katapult-install.json"
   ],
   "recovery_verified": false,
   "recovery_preparation": {
@@ -155,7 +166,7 @@
     "bootloader": "Katapult",
     "application_offset_bytes": 8192,
     "decision": "docs/decisions/0003-usb-mcu-updates.md",
-    "status": "toolhead USB update/re-entry verified; mainboard installation pending",
+    "status": "both bootloaders installed; toolhead USB updates verified; mainboard application upload/USB tests pending",
     "routine_physical_access_required": false,
     "exceptional_recovery": "ST-Link/OpenOCD"
   }

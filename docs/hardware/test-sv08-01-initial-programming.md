@@ -1,8 +1,10 @@
 # Test printer 01: initial Katapult programming preparation
 
 Prepared 2026-09-07. The [toolhead installation](test-sv08-01-toolhead-katapult.md)
-has now executed with complete readback verification. The mainboard installation
-and both rollback procedures remain unexecuted. The staging description below
+has now executed with complete readback verification. The
+[mainboard installation](test-sv08-01-mainboard-katapult.md) also completed, after
+a failed write and a verified erased-state recovery. Both factory rollback
+procedures remain unexecuted. The staging description below
 records preparation before that hardware session.
 
 ## Staged inputs
@@ -22,7 +24,9 @@ The separate programming workstation has private inputs under
 - The reviewed Katapult binary and SHA256SUMS for all staged inputs.
 
 All transferred checksums pass. Tcl command completeness was checked before
-execution. The toolhead procedure has now run; other scripts remain untested. The actual scripts and backups stay private;
+execution. Both bootloader installations have now completed; see their separate
+records for link speeds and the mainboard recovery procedure. Rollback remains
+untested. The actual scripts and backups stay private;
 their local copies are under `local/test-sv08-01/usb-staging-20260907/`.
 
 ## Reviewed installation sequence

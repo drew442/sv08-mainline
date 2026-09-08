@@ -109,7 +109,10 @@ storage. No hardware profile is validated by possession of recovery adapters.
 - [x] Owner removed programmer and restored normal power; toolhead Katapult
   USB enumeration, two verified application uploads and software re-entry pass.
 - [x] Updated toolhead reaches ready in a temporary no-output host configuration.
-- [ ] Complete mainboard initial installation in its separate power-off session.
+- [x] Complete mainboard initial installation in its separate power-off session;
+  full flash readback matches and option bytes are unchanged.
   See [toolhead USB result](test-sv08-01-toolhead-usb.md).
-- [ ] Shut down/disconnect printer power, connect ST-Link to mainboard with its
-  verified four-wire arrangement, then report ready for its guarded installation.
+- [x] Owner completed the mainboard power-off connection sequence.
+- [ ] With supply off, unplug ST-Link USB and all target leads; restore normal
+  printer power and report online for mainboard USB upload/re-entry tests.
+  See [mainboard installation result](test-sv08-01-mainboard-katapult.md).

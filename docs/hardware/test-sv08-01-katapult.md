@@ -6,7 +6,9 @@ Updated 2026-09-07. The owner requires routine updates without physical access.
 offline with matching offsets. The [toolhead bootloader](test-sv08-01-toolhead-katapult.md)
 is now programmed with matching full readback. Subsequent
 [toolhead USB tests](test-sv08-01-toolhead-usb.md) verified two application uploads,
-software re-entry and a ready host connection. The mainboard is unchanged.
+software re-entry and a ready host connection. The
+[mainboard bootloader](test-sv08-01-mainboard-katapult.md) is now installed with
+matching full readback; its USB/application tests remain pending.
 
 ## Choice for project goals (2026-09-07)
 
