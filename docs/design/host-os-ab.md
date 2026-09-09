@@ -1,7 +1,7 @@
 # Proposed host OS and A/B deployment
 
-Status: proposal awaiting owner choices, not an accepted architecture or flashable
-image. Assessment date: 2026-09-09. Printer offline; no printer connection or
+Status: revised proposal incorporating owner answers on 2026-09-09. The apt
+customization choice remains open; no replacement image has been built or validated. Assessment date: 2026-09-09. Printer offline; no printer connection or
 hardware changes were attempted. Applies first to
 [test-sv08-01](../hardware/test-sv08-01.md), not every H616 board.
 
@@ -9,15 +9,26 @@ hardware changes were attempted. Applies first to
 
 Build a small Debian 13 arm64 appliance image using deb/apt. Deploy signed,
 complete releases with RAUC into two OS slots, each with its own kernel, DTB,
-initramfs, modules and application stack. Mount the active OS read-only; keep
-explicit persistent data separately. Build on the workstation, not the printer.
+initramfs, modules and application stack. Provisionally mount the active OS read-only; keep
+explicit persistent data separately. The owner has requested an explanation of
+the apt trade-off before deciding whether direct package installation is needed.
+Build on the workstation, not the printer.
 Prefer upstream U-Boot/SPL and TF-A, with board support verified independently.
 
-For the stated latest kernel.org LTS requirement, evaluate a project-packaged
-6.18.y kernel first. Prefer a maintained distro package if it meets the selected
-branch and hardware requirements; do not freeze an obsolete backports binary
-and call that maintained. Final selection follows the questions below and a
-board-support audit. No new source revision is selected by this proposal.
+Prefer the Debian-maintained kernel, starting with the stable 6.12 series as a
+candidate. The owner has relaxed the newest-kernel.org-LTS and strictly in-tree
+requirements: retain existing hardware, using maintained out-of-tree modules
+and vendor firmware where necessary. HDMI touchscreen and onboard Wi-Fi are
+first-release requirements. Camera streaming/timelapse are desired initially;
+any deferral must include a path for the existing camera, not a required purchase.
+Debian remains preferred; Canonical commercial support is not wanted.
+
+Target the factory **8 GB eMMC footprint**, including A/B and recovery. The
+32 GB spare remains useful for testing but must not hide a release-size failure.
+Support an opt-out automatic policy that writes the inactive slot while idle
+and selects it on the next normal boot, without forcing a reboot. First-release
+updates use LAN-uploaded bundles; Internet update discovery/download is a planned
+extension of the same verification and deployment path.
 
 This is a custom **image of Debian**, with a small integration/package layer.
 A wholly separate distribution is unnecessary unless measurements or required
@@ -54,29 +65,55 @@ of unnecessary services. A smaller package list alone does not prove faster boot
 ## Kernel policy and upstream hardware support
 
 Kernel.org lists **6.18 as the newest longterm branch**, with projected EOL in
-December 2028. Select the latest reviewed patch release in that branch when
-building, record its exact source hash, and rebuild for security fixes. Recheck
-the longterm list before each branch decision; dates can change.
+December 2028. This is now a comparison option, not a required branch. Prefer
+distro maintenance and record exact package/source versions for each image.
+Recheck support before each branch decision; dates can change.
 [Kernel.org release policy](https://www.kernel.org/category/releases.html).
 
 | Kernel source | Benefit | Obligation / trade-off |
 | --- | --- | --- |
-| Debian stable 6.12 | Distro packaging/security integration, low local maintenance | Does not meet a strict newest-kernel.org-LTS requirement; board functionality still needs tests |
+| Debian stable 6.12 | Distro packaging/security integration, low local maintenance | Now the first candidate; HDMI/Wi-Fi support must be established before selection |
 | Debian backports | Newer distro-built kernel | The current arm64 meta-package points to 7.1.8, not 6.18; it tracks newer kernels rather than promising indefinite 6.18 maintenance |
 | Ubuntu LTS distro kernel | Canonical maintains its chosen kernel series | 26.04's arm64 generic package currently reports 7.0; distro LTS and kernel.org longterm are different policies |
-| kernel.org 6.18.y packaged by this project | Meets the requested branch; explicit config and patch provenance | We own config, .deb packaging, patch intake, regression testing and update delivery |
+| kernel.org 6.18.y packaged by this project | Alternative if required by hardware; explicit config and patch provenance | We own config, .deb packaging, patch intake, regression testing and update delivery |
 
 Current package checks: [Debian backports arm64](https://packages.debian.org/trixie-backports/linux-image-arm64),
 [Ubuntu 26.04 generic](https://packages.ubuntu.com/resolute/linux-generic).
 These are dated observations, not floating build inputs. Ubuntu's experimental
 mainline kernel builds are not the proposed production update source.
 
-“In-tree” includes Allwinner drivers named `sunxi`, `sun50i`, etc. The requirement
-is to retire the vendor BSP/out-of-tree drivers, not remove upstream Allwinner
-code. Loadable upstream modules are acceptable; only boot-critical drivers need
-be built in or supplied in the initramfs. Never mix the old 5.16 modules/DTB with
-a new kernel. Firmware blobs loaded by an upstream driver are a separate choice
-from out-of-tree driver code.
+“In-tree” includes Allwinner drivers named `sunxi`, `sun50i`, etc. Prefer upstream
+code, but retaining the existing peripherals takes priority over a strict
+in-tree-only rule. Vendor firmware files are acceptable. Never mix old 5.16
+binary modules with a new kernel; build modules for its exact ABI and pair the
+kernel with its reviewed DTB/initramfs.
+
+DKMS manages module rebuild/install for kernel versions; it does not repair
+incompatible driver source or supply missing kernel-core APIs, device-tree
+bindings, DRAM initialization or bootloader support. A separate Wi-Fi driver may
+be a suitable DKMS package after its identity and source are verified. HDMI can
+require coordinated DRM/clock/PHY changes and a DTS; it cannot be assumed to be
+one external module. [DKMS upstream documentation](https://github.com/dkms-project/dkms).
+
+Evaluate support in this order: distro kernel plus board DT and existing
+upstream drivers; distro kernel plus reviewed external modules; a suitable newer
+distro-maintained kernel; then a documented, minimal kernel patch series if core
+changes are unavoidable. A patched distro-derived build is maintained by this
+project for its deltas and is not an unchanged distro-supported kernel.
+Record each exception's source pin, license, kernel support range, test and
+upstreaming/removal plan. Fail the release if a required driver fails to build
+or load; never silently ship without Wi-Fi or the touchscreen.
+
+Use DKMS packaging/build recipes on the build workstation or an ARM64 build
+worker against the exact target headers/config. Deliver prebuilt, tested modules
+inside each slot with dependency metadata and any required signatures; test
+vermagic, dependency resolution and loading. Do not require kernel headers,
+compilers or first-boot DKMS compilation on the 1 GiB-RAM/8 GB printer. They cost
+space, startup time and introduce an untested failure after activation. A
+separate developer mode may carry those tools if needed. Debian candidates:
+[kernel package](https://packages.debian.org/trixie/linux-image-arm64) and
+[RAUC package](https://packages.debian.org/trixie/rauc); no exact build pin is
+selected by consulting these rolling pages.
 
 Local evidence: H616 device-tree compatible, approximately 1 GiB RAM reported by
 Linux, working vendor-assisted eMMC/Ethernet/USB baseline, and an HDMI/USB touch
@@ -90,18 +127,26 @@ of the installed radio's identity or active binding. See
 | --- | --- |
 | CPU, clocks, eMMC, USB, Ethernet, thermal/watchdog | H616 SoC nodes exist in upstream 6.18; verify enabled drivers, board regulators, pinmux, PHY wiring and DT bindings individually |
 | DRAM and initial boot | Separate SPL/U-Boot/TF-A task; no other board's DRAM config may be assumed correct |
-| Onboard Wi-Fi | Identify SDIO device and match exact upstream driver; the vendor `8189fs` module cannot be retained under the strict in-tree requirement |
-| HDMI touchscreen | The inspected 6.18 H616 dtsi has no HDMI/display-pipeline nodes; GPU support is not proof of scanout support. Audit driver/binding support and bootloader framebuffer handoff before promising a display |
-| USB touch and camera | Match actual IDs/interfaces; test touch mapping and UVC operation, then streaming load. No assumed hardware video encoder support |
+| Onboard Wi-Fi | Required: identify SDIO device; evaluate upstream or maintained external driver source for the selected distro kernel |
+| HDMI touchscreen | Required: the inspected 6.18 H616 dtsi has no HDMI/display-pipeline nodes; GPU support is not proof of scanout support. Audit driver/binding support and bootloader framebuffer handoff before promising a display |
+| USB touch and camera | Touch required; camera desired. Identify actual camera interface/formats, test existing-device streaming, then timelapse and concurrent load; no assumed UVC or hardware encoder support |
 | Stock control display | MCU-driven display path is separate from Linux HDMI; retain as a separately validated printer feature |
 
 Source inspection: [Linux v6.18 H616 dtsi](https://raw.githubusercontent.com/torvalds/linux/v6.18/arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi).
 This is a gap assessment, not a claim that every missing feature is impossible.
-If a required feature lacks an upstream driver, expose the conflict: wait for
-upstream support, explicitly choose an alternative supported peripheral/host,
-or reconsider the kernel policy. Do not silently introduce a vendor module.
-A board-specific DTS using upstream bindings may still be necessary; keep it
-reviewed and versioned with an upstream submission/retirement plan.
+If a required feature lacks an upstream driver, evaluate a pinned external driver
+or kernel patch before proposing hardware replacement. Board-specific DTS and
+boot-chain changes remain separate evidence-backed work. The owner authorizes
+this policy, not a claim that any particular driver is already compatible.
+
+For the camera, use captured evidence first and collect IDs, interface and
+advertised formats when the printer returns. Preserve its existing-device path:
+prefer pass-through of a camera-provided compressed stream where available;
+otherwise test software encoding at a sustainable resolution/frame rate. Keep
+streaming and timelapse independently configurable. If first-release support is
+deferred, record the exact driver/streamer/format gap and its implementation
+task. A different camera is not the default solution; storage limits may require
+lower recording retention or LAN export without changing the camera itself.
 
 ## A/B implementation
 
@@ -118,21 +163,53 @@ selection and success handling on this U-Boot board; using it would not remove
 that work. Prefer one deployment authority.
 [systemd-sysupdate source documentation](https://raw.githubusercontent.com/systemd/systemd/main/man/systemd-sysupdate.xml).
 
-Proposed space budget for the measured 31,272,730,624-byte spare (about 29.13 GiB):
+Proposed space budget uses the captured factory user-area size of
+**7,818,182,656 bytes = 7,456 MiB = 7.28125 GiB**, not an assumed 8 GiB.
+[Factory image evidence](../hardware/test-sv08-01-backup-and-stlink.md).
+This is a sizing target for that observed module, not proof that every nominal
+8 GB device has the same capacity. Check actual destination size before writing.
 
 | Region | Proposed capacity | Update behavior |
 | --- | --- | --- |
 | Boot firmware / redundant environment reservation | 16 MiB budget; offsets TBD | Excluded from routine OS updates |
-| boot A + root A | 256 MiB + 6 GiB | One complete release |
-| boot B + root B | 256 MiB + 6 GiB | One complete release |
-| Recovery | 512 MiB | Small network/USB recovery image, separately maintained |
-| Persistent data | Remainder, roughly 16 GiB | Never formatted by routine updates |
+| boot A + root A | 192 MiB + 2,048 MiB | One complete release |
+| boot B + root B | 192 MiB + 2,048 MiB | One complete release |
+| Recovery | 512 MiB | Self-contained kernel/initramfs and minimal rescue userspace |
+| Persistent data | 2,447 MiB | User artifacts, state generations and bounded staging |
+| Tail reservation | 1 MiB | Alignment and backup GPT budget |
 
-Sizes are provisional, including room for applications, touchscreen dependencies
-and growth. Cap image occupancy at 75% of its slot before release. Reserve data
-space for an incoming bundle, state backups and logs; reject updates if space is
-insufficient. Store bundles on disk, not in a 1 GiB RAM tmpfs. Large recordings
-need retention limits or external storage.
+The arithmetic totals 7,456 MiB; **package/image fit is not yet measured**.
+Target no more than 1,536 MiB installed content per 2,048 MiB root and 144 MiB per
+boot partition. Measure a full package closure including touchscreen, Wi-Fi,
+firmware and camera software. If ext4 misses the budget, compare compressed
+read-only roots and tighter package selection before revising the layout; do not
+drop required features or rely on 32 GB to pass. Compression must be benchmarked
+on the H616. Root compression and RAUC bundle compression are different layers.
+
+Initial staging budget: at most 1,024 MiB for one signed bundle, 256 MiB reserved
+for state copies and migration work, and at least 512 MiB free after staging.
+These are proposed limits, checked against actual bundle and live state sizes;
+they leave roughly 655 MiB for other content at those maxima, before filesystem
+overhead. UI must show remaining capacity and reject a too-large update without
+deleting user files. Keep one incoming bundle, promptly remove confirmed obsolete
+staging files, and bound logs/recording retention. The 32 GB profile may expand
+only the data partition; fixed OS slots remain identical.
+
+If measured bundles do not fit alongside realistic user data, evaluate RAUC's
+verified HTTP-range streaming from a LAN computer before relaxing update
+availability. This needs explicit server/client integration and interrupted-link
+tests; a browser upload is not automatically that protocol. First-release LAN
+file upload remains required and must pass a realistic free-space acceptance
+case. [RAUC streaming design](https://raw.githubusercontent.com/rauc/rauc/master/docs/advanced.rst).
+Never place a full bundle in RAM or count the running/fallback root as scratch.
+
+Recovery must carry its own tested eMMC, Ethernet and required Wi-Fi drivers and
+firmware, identity/network provisioning path, SSH and a minimal restore/upload
+interface; it must not depend on either damaged root's modules. Provide a local
+entry method when display support permits and an automatic path after both
+slots fail. Treat 512 MiB as a measured build gate. It can repair OS slots and
+export readable user data; it cannot repair failed storage or an unbootable
+SPL/U-Boot. Routine recovery does not format the persistent partition.
 
 Use GPT only after validating the H616 boot location and new SPL. Upstream
 U-Boot documents the conflict between its traditional 8 KiB boot location and
@@ -161,35 +238,53 @@ flowchart LR
     C --> P[Separate printer readiness gate]
 ```
 
-Update transaction proposal:
+Update policy and transaction proposal:
 
-1. Check release signature, hardware profile/layout, available space, version and
-   MCU compatibility. Downloads may occur during printing with low priority;
-   initially restrict slot writes, migrations, activation and reboot to idle.
-2. Mark B unbootable before modifying it. Write B's boot/root pair without
-   touching A, the partition table or persistent user artifacts. Verify output
-   and flush storage before making B the preferred trial slot.
-3. Prepare a consistent, versioned copy of mutable application state while the
-   relevant services are stopped. Record the intended state generation for B.
-4. Boot B. Confirm local storage, persistent mounts, required network interface
-   initialization, SSH, update/recovery services and local application health.
-   Do not require Internet, DHCP success or an attached MCU to avoid pointless
-   rollback loops when external equipment is unavailable. Test remote reachability
-   separately during commissioning; a valid static misconfiguration needs manual
-   rollback through an available management path.
-5. Mark good only after a bounded stable interval. Keep printing disabled until
-   config, MCU-version and sensor checks pass. An MCU/probe fault should leave
-   remote diagnostics available, not force repeated OS reboots.
-6. On trial failure, boot A with A's compatible state. Retain B's logs and any
-   newly created artifacts. Do not erase user files as part of rollback.
+1. Persist a user-selectable policy: automatic idle staging/next-boot activation,
+   or manual opt-out. Show pending version, staging state and cancellation in the
+   UI. Cancelling before trial selection keeps A preferred. If opted out after
+   staging, offer to disarm the pending trial without discarding diagnostics.
+   Do not automatically retry a known-failed release on every boot.
+2. First release accepts a signed file over the LAN. A later release adds signed
+   release metadata and HTTPS downloads through the same installer/policy; no
+   Internet dependency is introduced into boot, rollback or LAN updates.
+3. Define idle as no active/paused job, queued start, homing, calibration or heater
+   operation. Unknown state blocks automatic staging. Hold a maintenance lock
+   across checking idle and writing the slot; prevent new job admission during
+   this bounded phase. Manual G-code paths must honor the lock too. If the idle
+   condition is lost, abandon the unselected candidate safely. Paused is not idle.
+4. Check signature, profile/layout, space and MCU compatibility. Mark B unbootable
+   before writing B's complete boot/root pair; preserve A and persistent data.
+   Verify and flush before committing a bounded trial for the next normal boot.
+   Release the staging lock so A may print again. Do not force a reboot.
+5. **Do not freeze user state at staging time.** A may run for days before reboot.
+   At B's first boot, before starting state-writing applications, capture a
+   consistent copy of the latest persistent config/database generation. Retain
+   the original for A, migrate the copy transactionally, and record B's generation.
+   Detect incomplete copies/migrations on subsequent boots. A deliberate shutdown
+   should quiesce services; power-loss boots also need database integrity/recovery
+   checks. Block printing during trial and migration.
+6. Confirm storage/persistent mounts, required driver and interface loading, SSH,
+   update/recovery service and local application/display health. Test Wi-Fi and
+   touchscreen functionality as release gates; a missing access point, Internet,
+   DHCP lease or MCU alone must not create an OS reboot loop. After a bounded
+   stable interval mark B good; retain A and its compatible state for rollback.
+7. Keep a separate printer readiness gate for config/MCU versions/sensors. A failed
+   trial returns to A; preserve B logs and new user artifacts. A driver regression
+   prevents confirmation. A disconnected MCU leaves diagnostics available.
+8. Initial automatic OS releases retain the established host/MCU revision. Releases
+   requiring an MCU change are not eligible for automatic activation until the
+   two-board update and rollback transaction has passed its own tests. No silent
+   host/MCU mismatch or unannounced first-boot firmware write is permitted.
 
 ## Persistence and package management
 
-Use read-only ext4 roots initially: simple tooling and easy inspection. Evaluate
+Pending the owner's apt choice, prefer read-only ext4 roots initially for simple
+tooling and easy inspection. Evaluate
 dm-verity after the basic boot path works; read-only mounting is not a verified
 boot chain. Signed update bundles authenticate installation but do not alone
-protect every boot stage. EROFS/SquashFS are later measured options, not assumed
-performance wins. Do not use a permanent overlay of the entire old root or /etc;
+protect every boot stage. EROFS/SquashFS are measured alternatives if the 8 GB footprint requires them,
+not assumed performance wins. Do not use a permanent overlay of the entire old root or /etc;
 it can silently mask fixes from the new release.
 
 APT remains the build/package manager. The release's dpkg database, installed
@@ -229,7 +324,7 @@ separate storage and test restoration.
 ## Applications: packages versus snaps
 
 Preferred first version: package the pinned Klipper host environment, Moonraker,
-Mainsail static assets and optional KlipperScreen into the image; run ordinary
+Mainsail static assets and required KlipperScreen into the image; run ordinary
 systemd services. This avoids a second independently advancing release mechanism.
 Package pinned Python wheels/venvs rather than live pip or git updates. Add project
 .debs only where upstream/distro packages do not represent the selected stack.
@@ -266,7 +361,7 @@ network availability and printer-ready time.
 
 Start with systemd, udev, networkd (or NetworkManager if Wi-Fi provisioning
 requires it), SSH, time synchronization, Klipper, Moonraker, a small web server
-and optional UI/camera services. No general desktop/login manager, first-boot
+and required touchscreen services, plus camera services where implemented. No general desktop/login manager, first-boot
 cloud discovery or unrelated daemons. Avoid boot-wide waits for Internet; retain
 time synchronization and handle bad initial clocks for signed downloads.
 Use a small initramfs until mount/recovery requirements are proven; remove it
@@ -284,7 +379,7 @@ package/config set, not an arbitrary smallest-image target.
 
 ## Work plan and acceptance gates
 
-1. **Offline now:** settle owner questions; audit captured DTB/boot environment
+1. **Offline now:** resolve apt customization; audit captured DTB/boot environment
    against exact upstream bindings, inventory driver gaps and source licenses.
    Identify required DRAM/PHY/radio evidence without substituting another board.
 2. **Offline:** record accepted ADR, pin Linux/U-Boot/TF-A/RAUC and toolchains;
@@ -295,7 +390,9 @@ package/config set, not an arbitrary smallest-image target.
    matching kernel/modules/DTB/initramfs; validate systemd units and mounts.
    Use QEMU for ARM64 userspace and U-Boot sandbox where applicable. Simulate
    failed slot writes, bad signatures, incorrect hardware IDs, full data disk,
-   unsuccessful trials, state migrations and downgrade handling. Emulation does
+   unsuccessful trials, state migrations and downgrade handling. Include staging
+   followed by new config/database writes on A before a delayed reboot, opt-out
+   after staging, job-start races and insufficient staging space on 8 GB media. Emulation does
    not validate the H616 board or its power-failure behavior.
 4. **Owner when available:** preserve current spare-module data/image, provide
    host PCB/radio/DRAM evidence and access to boot diagnostics where practical.
@@ -303,7 +400,7 @@ package/config set, not an arbitrary smallest-image target.
    online conversion of the current single-root layout. Write only the identified
    spare, retain factory media and verify recovery access.
 5. **Bench:** establish upstream cold boot, memory/storage/network/USB, watchdog,
-   thermal/cpufreq and every required UI/camera feature. Record absent or failing
+   thermal/cpufreq, required Wi-Fi/HDMI and the existing-camera support path. Record absent or failing
    features explicitly. Then measure boot/runtime budgets.
 6. **Bench recovery:** A→B→A success; corrupt/truncated B and kernel failure;
    watchdog hang recovery; interrupted writes/environment updates; both slots
@@ -315,30 +412,52 @@ package/config set, not an arbitrary smallest-image target.
    manifests/hashes/signatures and owner documentation published. No automatic
    reboot during a print; no resume of motion after an OS recovery reboot.
 
-## Owner questions
+## Recorded owner choices and remaining apt decision
 
-Answer by number with yes/no. Recommendations are provisional, not assumed
-answers. Question 1 resolves what “use apt” means; questions 3–6 determine
-whether upstream hardware gaps can be accommodated.
+Owner answers received 2026-09-09 supersede the original strict in-tree/latest
+LTS preference and 32 GB sizing assumption.
 
-| # | Question | Suggested answer / consequence |
+| Original question | Owner answer / design effect |
+| --- | --- |
+| 1: build-time apt only | Undecided; needs practical explanation below |
+| 2: newest kernel.org LTS mandatory | No; prefer distro kernel, allow DKMS/external modules |
+| 3: HDMI touchscreen first release | Yes; required |
+| 4: built-in Wi-Fi first release | Yes; required |
+| 5: replace peripherals for upstream drivers | Prefer external drivers over buying replacement hardware |
+| 6: vendor firmware | Accepted |
+| 7: camera/timelapse | Ideally first release; otherwise document existing-camera implementation path |
+| 8: coordinated OS/app releases | Accepted |
+| 9: manual-only activation | No; configurable automatic idle staging, next-boot activation, user opt-out |
+| 10: LAN-only update capability | Yes initially; plan Internet updates for a later release |
+| 11: recovery | Yes, within factory 8 GB footprint |
+| 12: Canonical commercial integration | Not wanted |
+
+### What the apt choice changes
+
+In either design, users can edit printer configs/macros, change Wi-Fi settings,
+upload G-code, calibrate and save preferences. Those are persistent data, not
+changes to OS packages. Read-only OS does not mean read-only printer settings.
+
+| Task | Image-managed OS (recommended) | Direct apt on a writable OS |
 | --- | --- | --- |
-| 1 | Is using apt to build complete updates sufficient, without routine `apt install` on the running printer? | Yes: read-only A/B; no: design a writable maintenance path |
-| 2 | Must the kernel use the latest kernel.org LTS branch, even if we maintain its packages ourselves? | Yes, matching your stated preference; no: prefer a suitable distro-maintained kernel |
-| 3 | Must the HDMI touchscreen work in the first new OS release? | Yes if it is part of your normal workflow; this can block release on display support |
-| 4 | Must the built-in Wi-Fi work in the first release? | No if Ethernet is sufficient; yes makes radio identification/support a release gate |
-| 5 | If a peripheral has no upstream driver, would you accept a supported USB replacement? | Yes gives an in-tree fallback, subject to available ports and verified hardware |
-| 6 | Are vendor firmware files acceptable when the Linux driver itself is upstream? | Yes permits standard firmware packages; no further limits hardware choices |
-| 7 | Must camera streaming and timelapse work in the first release? | Your choice; yes adds driver, storage and concurrent-load acceptance tests |
-| 8 | Is it acceptable to update the OS and printer applications together as one tested release? | Yes: image-contained apps; no: design a second coordinated application release mechanism, potentially snaps |
-| 9 | Should activation/reboot always wait for your explicit action, even when the printer is idle? | Yes: automatic checking/downloads can still be separate |
-| 10 | Should updates work by uploading a file over the LAN with no printer Internet connection? | Yes: signed offline bundles and local management |
-| 11 | Is reserving 512 MiB for an independent recovery system worthwhile? | Yes: improves recovery when both OS slots fail; does not rescue a broken early bootloader |
-| 12 | Do you want Canonical commercial support/subscription integration? | No: Debian remains preferred; yes: reassess Ubuntu Server and exact coverage |
+| Add a utility such as `htop` | Include it in the package manifest and build/deploy an image | SSH in and install immediately |
+| Add a driver or service | Build/test with the exact kernel and application set before deployment | Install immediately, with local compatibility risk |
+| Preserve custom packages through A/B replacement | Explicit build manifest includes them in future images | Still needs a manifest/reconciliation step; a fresh B image does not inherit A's local installs |
+| Apply security updates | Build and deploy a tested release through the idle policy | Live apt is possible, but bypasses whole-release validation and must obey print-idle rules |
+| Recover from a bad software change | Previous complete release remains available | A/B still works, but local changes may differ between slots |
 
-These questions do not relax the in-tree-driver requirement or authorize losing
-user artifacts. If answers conflict with verified hardware capabilities, present
-the specific conflict before choosing a compromise.
+An image-managed release still uses Debian deb/apt to assemble packages. It does
+not require using snapd. A proposed maintenance mode can permit temporary system
+changes for debugging, mark the installation modified, and block automatic
+replacement until changes are discarded or reproduced in the build manifest.
+Neither a writable slot nor an overlay automatically preserves arbitrary added
+software across image updates. This mode remains a proposal, not implemented.
+
+**Remaining question:** Do you need to install arbitrary Linux packages directly
+over SSH and use them immediately, without building a new image? If no, use the
+image-managed design. If yes, design the writable/customization workflow explicitly
+before finalizing root layout and update reconciliation. Other research and
+package-size prototyping can continue without that answer.
 
 All linked online sources were accessed 2026-09-09. Versioned source links are
 identified above; rolling documentation is research evidence, not build pinning.
