@@ -1,7 +1,9 @@
 # Proposed host OS and A/B deployment
 
-Status: revised proposal incorporating owner answers on 2026-09-09. The apt
-customization choice remains open; no replacement image has been built or validated. Assessment date: 2026-09-09. Printer offline; no printer connection or
+Status: revised design incorporating owner answers on 2026-09-09. Immutable
+(default) and writable operating modes are accepted in
+[decision 0004](../decisions/0004-os-operating-modes.md). No replacement image
+has been built or validated. Assessment date: 2026-09-09. Printer offline; no printer connection or
 hardware changes were attempted. Applies first to
 [test-sv08-01](../hardware/test-sv08-01.md), not every H616 board.
 
@@ -9,9 +11,10 @@ hardware changes were attempted. Applies first to
 
 Build a small Debian 13 arm64 appliance image using deb/apt. Deploy signed,
 complete releases with RAUC into two OS slots, each with its own kernel, DTB,
-initramfs, modules and application stack. Provisionally mount the active OS read-only; keep
-explicit persistent data separately. The owner has requested an explanation of
-the apt trade-off before deciding whether direct package installation is needed.
+initramfs, modules and application stack. Provide immutable mode by default and
+a user-selectable writable mode; keep explicit persistent data separately. Both
+are supported operating choices, with mode switching and customization rules
+defined in decision 0004.
 Build on the workstation, not the printer.
 Prefer upstream U-Boot/SPL and TF-A, with board support verified independently.
 
@@ -109,8 +112,8 @@ worker against the exact target headers/config. Deliver prebuilt, tested modules
 inside each slot with dependency metadata and any required signatures; test
 vermagic, dependency resolution and loading. Do not require kernel headers,
 compilers or first-boot DKMS compilation on the 1 GiB-RAM/8 GB printer. They cost
-space, startup time and introduce an untested failure after activation. A
-separate developer mode may carry those tools if needed. Debian candidates:
+space, startup time and introduce an untested failure after activation. Users in
+writable mode may install those tools if needed and space permits. Debian candidates:
 [kernel package](https://packages.debian.org/trixie/linux-image-arm64) and
 [RAUC package](https://packages.debian.org/trixie/rauc); no exact build pin is
 selected by consulting these rolling pages.
@@ -181,8 +184,7 @@ This is a sizing target for that observed module, not proof that every nominal
 The arithmetic totals 7,456 MiB; **package/image fit is not yet measured**.
 Target no more than 1,536 MiB installed content per 2,048 MiB root and 144 MiB per
 boot partition. Measure a full package closure including touchscreen, Wi-Fi,
-firmware and camera software. If ext4 misses the budget, compare compressed
-read-only roots and tighter package selection before revising the layout; do not
+firmware and camera software. If ext4 misses the budget, compare tighter package selection and a mode-compatible compressed-root design before revising the layout; do not
 drop required features or rely on 32 GB to pass. Compression must be benchmarked
 on the H616. Root compression and RAUC bundle compression are different layers.
 
@@ -240,8 +242,10 @@ flowchart LR
 
 Update policy and transaction proposal:
 
-1. Persist a user-selectable policy: automatic idle staging/next-boot activation,
-   or manual opt-out. Show pending version, staging state and cancellation in the
+1. Persist a user-selectable policy, independent of immutable/writable mode:
+   automatic idle staging/next-boot activation, or manual opt-out. Customized
+   systems need successful reconciliation before activation, as defined in
+   decision 0004; an unresolved customization blocks that update. Show pending version, staging state and cancellation in the
    UI. Cancelling before trial selection keeps A preferred. If opted out after
    staging, offer to disarm the pending trial without discarding diagnostics.
    Do not automatically retry a known-failed release on every boot.
@@ -249,7 +253,7 @@ Update policy and transaction proposal:
    release metadata and HTTPS downloads through the same installer/policy; no
    Internet dependency is introduced into boot, rollback or LAN updates.
 3. Define idle as no active/paused job, queued start, homing, calibration or heater
-   operation. Unknown state blocks automatic staging. Hold a maintenance lock
+   operation. Unknown state blocks automatic staging. Hold an update lock
    across checking idle and writing the slot; prevent new job admission during
    this bounded phase. Manual G-code paths must honor the lock too. If the idle
    condition is lost, abandon the unselected candidate safely. Paused is not idle.
@@ -279,15 +283,16 @@ Update policy and transaction proposal:
 
 ## Persistence and package management
 
-Pending the owner's apt choice, prefer read-only ext4 roots initially for simple
-tooling and easy inspection. Evaluate
+Prefer ext4 roots for both modes: read-only in immutable mode, read-write in
+writable mode. This supports a common 8 GB layout and inspectable mode switching. Evaluate
 dm-verity after the basic boot path works; read-only mounting is not a verified
 boot chain. Signed update bundles authenticate installation but do not alone
-protect every boot stage. EROFS/SquashFS are measured alternatives if the 8 GB footprint requires them,
-not assumed performance wins. Do not use a permanent overlay of the entire old root or /etc;
+protect every boot stage. EROFS/SquashFS require a separately proven writable-mode strategy if the 8 GB
+footprint requires compression; they cannot be remounted read-write. Do not use a permanent overlay of the entire old root or /etc;
 it can silently mask fixes from the new release.
 
-APT remains the build/package manager. The release's dpkg database, installed
+APT is the image build/package manager and is also available for supported
+direct package changes in writable mode. The release's dpkg database, installed
 files, Python environments and system defaults all belong to that same OS slot.
 Do not share `/var/lib/dpkg`, apt state, all of `/var`, or all of `/etc` between
 slots. Do not run unattended apt upgrades against the active image. Build fresh
@@ -295,12 +300,14 @@ images from pinned repository snapshots and an explicit extra-package manifest;
 normal security updates arrive as newly tested images. Snapshots pin inputs,
 not a permanent exemption from security maintenance.
 
-If direct on-printer `apt install` is required, offer a distinct writable
-maintenance/developer mode with a recorded package manifest. Local changes are
-not automatically preserved by replacing the OS image. Incorporate them into a
-new release before claiming repeatability; the alternative is a traditional
-writable design with more drift to reconcile. Do not chroot into the fallback
-slot with shared host state and let package scripts alter the running system.
+Writable mode is a supported ongoing user choice, not a temporary repair mode.
+Package changes and their dpkg state remain slot-local. Preserve a customization
+manifest and exports; reconcile them into a candidate before an image update.
+If reconciliation cannot be completed, retain the running system and report the
+blocked update rather than overwriting changes. Do not blindly copy package
+metadata or replay installation scripts against shared running state. Switching
+back to immutable freezes current contents; it does not reset customizations or
+turn them into an official release. See decision 0004 for transitions and tests.
 
 | Data class | Persistence policy |
 | --- | --- |
@@ -379,7 +386,7 @@ package/config set, not an arbitrary smallest-image target.
 
 ## Work plan and acceptance gates
 
-1. **Offline now:** resolve apt customization; audit captured DTB/boot environment
+1. **Offline now:** implement the accepted operating-mode design; audit captured DTB/boot environment
    against exact upstream bindings, inventory driver gaps and source licenses.
    Identify required DRAM/PHY/radio evidence without substituting another board.
 2. **Offline:** record accepted ADR, pin Linux/U-Boot/TF-A/RAUC and toolchains;
@@ -412,14 +419,14 @@ package/config set, not an arbitrary smallest-image target.
    manifests/hashes/signatures and owner documentation published. No automatic
    reboot during a print; no resume of motion after an OS recovery reboot.
 
-## Recorded owner choices and remaining apt decision
+## Recorded owner choices and operating modes
 
 Owner answers received 2026-09-09 supersede the original strict in-tree/latest
 LTS preference and 32 GB sizing assumption.
 
 | Original question | Owner answer / design effect |
 | --- | --- |
-| 1: build-time apt only | Undecided; needs practical explanation below |
+| 1: apt and customization | Immutable mode by default; writable mode is a supported user-configurable option |
 | 2: newest kernel.org LTS mandatory | No; prefer distro kernel, allow DKMS/external modules |
 | 3: HDMI touchscreen first release | Yes; required |
 | 4: built-in Wi-Fi first release | Yes; required |
@@ -432,32 +439,20 @@ LTS preference and 32 GB sizing assumption.
 | 11: recovery | Yes, within factory 8 GB footprint |
 | 12: Canonical commercial integration | Not wanted |
 
-### What the apt choice changes
+### Operating modes
 
-In either design, users can edit printer configs/macros, change Wi-Fi settings,
-upload G-code, calibrate and save preferences. Those are persistent data, not
-changes to OS packages. Read-only OS does not mean read-only printer settings.
+The owner accepted the image-managed default and requested a lasting writable
+option for differing user requirements. The names are **Immutable mode** and
+**Writable mode**. These do not imply different hardware profiles or a temporary
+maintenance session. Printer settings and user artifacts stay editable and
+persistent in both modes.
 
-| Task | Image-managed OS (recommended) | Direct apt on a writable OS |
-| --- | --- | --- |
-| Add a utility such as `htop` | Include it in the package manifest and build/deploy an image | SSH in and install immediately |
-| Add a driver or service | Build/test with the exact kernel and application set before deployment | Install immediately, with local compatibility risk |
-| Preserve custom packages through A/B replacement | Explicit build manifest includes them in future images | Still needs a manifest/reconciliation step; a fresh B image does not inherit A's local installs |
-| Apply security updates | Build and deploy a tested release through the idle policy | Live apt is possible, but bypasses whole-release validation and must obey print-idle rules |
-| Recover from a bad software change | Previous complete release remains available | A/B still works, but local changes may differ between slots |
-
-An image-managed release still uses Debian deb/apt to assemble packages. It does
-not require using snapd. A proposed maintenance mode can permit temporary system
-changes for debugging, mark the installation modified, and block automatic
-replacement until changes are discarded or reproduced in the build manifest.
-Neither a writable slot nor an overlay automatically preserves arbitrary added
-software across image updates. This mode remains a proposal, not implemented.
-
-**Remaining question:** Do you need to install arbitrary Linux packages directly
-over SSH and use them immediately, without building a new image? If no, use the
-image-managed design. If yes, design the writable/customization workflow explicitly
-before finalizing root layout and update reconciliation. Other research and
-package-size prototyping can continue without that answer.
+[Decision 0004](../decisions/0004-os-operating-modes.md) defines mode switching,
+slot-local package management, customization reconciliation, update policy and
+required tests. Root access and custom software are supported in writable mode;
+arbitrary changes are preserved/exported but cannot be promised automatic merging
+into every future image. No owner question remains about whether to offer these
+modes. Build sizing, driver compatibility and implementation still need evidence.
 
 All linked online sources were accessed 2026-09-09. Versioned source links are
 identified above; rolling documentation is research evidence, not build pinning.
