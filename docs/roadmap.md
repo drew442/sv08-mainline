@@ -72,6 +72,12 @@ deferred. Evaluate the OS/kernel/device tree and boot chain independently.
 Exit evidence: architecture decisions, selected candidate revisions, compatibility
 gaps with reproductions, and a minimal custom-code plan where needed.
 
+The [2026-09-09 host OS and A/B proposal](design/host-os-ab.md) compares Debian,
+Ubuntu and custom distributions, upstream LTS kernels, persistent state and
+transactional deployment. Owner choices and offline board-support research can
+proceed while the printer is unavailable; this is not an accepted replacement
+for the current bring-up image.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with

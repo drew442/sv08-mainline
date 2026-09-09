@@ -29,6 +29,8 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Reference library](docs/references.md): schematics, datasheets, and upstream docs.
 - [Upstream sources](docs/upstreams.md): submodules, pins, and update workflow.
 - [Vendor compatibility audit](docs/vendor-compatibility.md): known migration gaps.
+- [Host OS and A/B proposal](docs/design/host-os-ab.md): OS/kernel assessment,
+  update design and owner choices.
 - [Roadmap](docs/roadmap.md): the next work and its acceptance criteria.
 - [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md).
 
