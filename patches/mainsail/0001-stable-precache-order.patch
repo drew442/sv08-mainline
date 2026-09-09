@@ -1,0 +1,25 @@
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -14,7 +14,9 @@
+ 
+ const PWAConfig: Partial<VitePWAOptions> = {
+     registerType: 'autoUpdate',
+-    includeAssets: ['fonts/**/*.woff2', 'img/**/*.svg', 'img/**/*.png'],
++    // The Workbox glob below already covers these assets and manifest icons.
++    includeAssets: [],
++    includeManifestIcons: false,
+     manifest: {
+         name: 'Mainsail',
+         short_name: 'Mainsail',
+@@ -49,6 +51,11 @@
+         ],
+     },
+     workbox: {
++        // Stable ordering for reproducible image packages across filesystem walks.
++        manifestTransforms: [async (manifest) => ({
++            manifest: [...manifest].sort((a, b) => a.url < b.url ? -1 : a.url > b.url ? 1 : 0),
++            warnings: [],
++        })],
+         globPatterns: ['**/*.{js,css,html,woff,woff2,png,svg}'],
+         navigateFallbackDenylist: [/^\/(access|api|printer|server|websocket)/, /^\/webcam[2-4]?/],
+         runtimeCaching: [

@@ -62,6 +62,16 @@
       "role": "USB MCU bootloader",
       "status": "build-candidate",
       "hardware_validated": false
+    },
+    {
+      "path": "upstream/klipperscreen",
+      "url": "https://github.com/KlipperScreen/KlipperScreen.git",
+      "commit": "3791fdf749df20c2a32fc43818749aa9f1754a9f",
+      "selected_ref": "origin/master",
+      "selected_on": "2026-09-09",
+      "role": "required-hdmi-touchscreen-ui",
+      "status": "intake-only",
+      "hardware_validated": false
     }
   ]
 }

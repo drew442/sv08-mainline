@@ -71,8 +71,9 @@ update staging and user data still require separate capacity tests.
 
 ## Remaining work
 
-- Package Moonraker, Mainsail and KlipperScreen with reviewed complete dependency
-  locks; measure the combined stack before claiming the 8 GB design fits.
+- Moonraker, Mainsail and KlipperScreen packaging is now in the
+  [complete stack build](host-stack-build.md); full deployment/staging capacity
+  and activation still need validation.
 - Integrate the distro ustreamer candidate and the retained camera settings.
 - Add coordinated service activation, persistent configuration/state and the
   immutable/writable operating modes from [decision 0004](../decisions/0004-os-operating-modes.md).

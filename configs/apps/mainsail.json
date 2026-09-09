@@ -1,0 +1,17 @@
+{
+  "format_version": 1,
+  "source_path": "upstream/mainsail",
+  "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+  "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+  "node_version": "22.23.2",
+  "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+  "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+  "package_version": "2.19.0+git32f99e1c-3",
+  "status": "offline-build-no-browser-validation",
+  "source_patches": [
+    {
+      "path": "patches/mainsail/0001-stable-precache-order.patch",
+      "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+    }
+  ]
+}

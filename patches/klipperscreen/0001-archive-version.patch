@@ -1,0 +1,16 @@
+--- a/ks_includes/functions.py
++++ b/ks_includes/functions.py
+@@ -56,6 +56,13 @@
+ 
+ 
+ def get_software_version():
++    # Image packages archive a pinned revision without shipping Git metadata.
++    version_file = os.path.join(os.path.dirname(__file__), "..", ".version")
++    if os.path.isfile(version_file):
++        with open(version_file, encoding="utf-8") as stream:
++            version = stream.read().strip()
++        if version:
++            return version
+     prog = (
+         "git",
+         "-C",

@@ -33,8 +33,9 @@ These are package candidates, not validated application/driver compatibility.
 NetworkManager is selected for the required Wi-Fi provisioning path; the final
 image must not also configure networkd to manage the same interfaces.
 The first [Klipper package](host-apps-build.md) now passes offline installation
-and file-output checks. Moonraker, Mainsail and KlipperScreen still need explicit
-packaging and their complete pinned dependencies. No camera streamer is selected
+and file-output checks. The [complete application payload build](host-stack-build.md) now includes
+Moonraker, Mainsail and KlipperScreen with their pinned dependencies. Service
+activation and operating-mode integration remain outstanding. No camera streamer is selected
 merely by installing V4L2/FFmpeg. Firmware-realtek is not an `8189fs` driver.
 
 ## Reproduce on the build workstation
@@ -139,7 +140,8 @@ compatible strings; the required clocks, PHY and controller support need review.
 
 ## Next work
 
-- Extend the measured baseline and Klipper package to the complete pinned application stack.
+- Continue from the [measured application stack](host-stack-build.md) through
+  the [completion checklist](host-os-tasks.md).
 - Continue the [Armbian source intake](host-ab-armbian-intake.md) for maintained
   SV08 boot support; its board definition is explicitly unverified.
 - Inspect the exact installed Debian kernel config/modules against captured DT

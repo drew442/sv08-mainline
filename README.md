@@ -31,6 +31,8 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Vendor compatibility audit](docs/vendor-compatibility.md): known migration gaps.
 - [Host OS and A/B design](docs/design/host-os-ab.md): OS/kernel assessment,
   update design and owner choices.
+- [Full host stack build](docs/hardware/host-stack-build.md): pinned application packages and capacity validation.
+- [Host completion checklist](docs/hardware/host-os-tasks.md): remaining offline and human tasks.
 - [Host application packaging](docs/hardware/host-apps-build.md): Klipper `.deb` and offline checks.
 - [Armbian source intake](docs/hardware/host-ab-armbian-intake.md): unverified SV08 boot-support candidate.
 - [New host build work](docs/hardware/host-ab-build.md): offline Debian baseline,
@@ -47,7 +49,7 @@ git submodule update --init --depth 1
 git submodule status
 ```
 
-This initializes the six direct submodules at their recorded commits. Nested
+This initializes the seven direct submodules at their recorded commits. Nested
 vendor dependencies are deliberately not initialized by this command; initialize
 them individually if a specific build needs them. Downloading sources does not
 install software or change a printer.
@@ -60,6 +62,7 @@ install software or change a printer.
 | `upstream/sunxi-tools/` | Allwinner host diagnostics and FEL tooling |
 | `upstream/moonraker/` | Klipper API service |
 | `upstream/mainsail/` | Web interface |
+| `upstream/klipperscreen/` | Required HDMI touchscreen UI |
 | `profiles/` | Hardware identities and compatibility records |
 | `docs/` | Design, evidence, decisions, and validation plans |
 

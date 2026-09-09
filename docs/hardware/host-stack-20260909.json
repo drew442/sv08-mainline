@@ -1,0 +1,219 @@
+{
+  "date": "2026-09-09",
+  "status": "offline-application-stack-not-bootable",
+  "hardware_profile": "test-sv08-01",
+  "hardware_access": false,
+  "packages": {
+    "klipper": {
+      "status": "offline-package-no-hardware-activation",
+      "source_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+      "package": "sv08-klipper_0.0+gitf0892d82-1_arm64.deb",
+      "sha256": "a418eeddfbb95b0b1d228ce19961ae1fde0d6879e9784c51d5f63c0c4c6608cf",
+      "bytes": 5702162,
+      "source_date_epoch": 1787876725,
+      "runtime_lock_sha256": "d075f11693e2fb940363a22018f3ac5c79eb7c80a31bbadeb4d22b1049cce1c8",
+      "helper_sha256": "3bb1a213c83bbd627ae931c789b1f14c4f466d9e5ba6224bf285fc648c0509ad",
+      "wheels": {
+        "Jinja2-2.11.3-py2.py3-none-any.whl": "03e47ad063331dd6a3f04a43eddca8a966a26ba0c5b7207a9a9e4e08f1b29419",
+        "aenum-3.1.17-py3-none-any.whl": "8b883a37a04e74cc838ac442bdd28c266eae5bbf13e1342c7ef123ed25230139",
+        "cffi-2.1.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl": "f16c709686a78c727bbbf059f92b0bf41c6fc60deec706d2dc19f529175a6125",
+        "greenlet-3.3.2-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": "ab0c7e7901a00bc0a7284907273dc165b32e0d109a6713babd04471327ff7986",
+        "markupsafe-1.1.1-cp313-cp313-linux_aarch64.whl": "6d1244ddb75f94a2197b5a11df94b484ccf7e3a14b28fe43bf334df525a2f627",
+        "msgspec-0.19.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": "19746b50be214a54239aab822964f2ac81e38b0055cca94808359d779338c10e",
+        "pycparser-3.0-py3-none-any.whl": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+        "pyserial-3.4-py2.py3-none-any.whl": "e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8",
+        "python_can-3.3.4-py2.py3-none-any.whl": "6c45fa405836b0017ed7c7c6b13e6234962441a22c444be962930753c51b758f",
+        "setuptools-78.1.1-py3-none-any.whl": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+        "wrapt-1.17.3-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "0ed61b7c2d49cee3c027372df5809a59d60cf1b6c2f81ee980a091f3afed6a2d"
+      },
+      "source_patches": [],
+      "activation_included": false,
+      "firmware_included": false,
+      "repeat_assembly_same_payload_identical": true
+    },
+    "moonraker": {
+      "profile": {
+        "format_version": 1,
+        "app": "moonraker",
+        "source_commit": "985c1d0bbeb90bc057d34a232c9dc3b05e0c6c8d",
+        "package_version": "0.11.0+git985c1d0b-1",
+        "runtime_lock": "configs/host/moonraker-python313-arm64.lock",
+        "runtime_lock_sha256": "87d7027f402fcabde152d96990e6b8b38be757e14fa87911136dabf0e77d252d",
+        "source_paths": [
+          "moonraker",
+          "LICENSE"
+        ],
+        "license_file": "LICENSE",
+        "system_site_packages": false,
+        "deb_dependencies": [
+          "python3 (>= 3.13)",
+          "python3 (<< 3.14)",
+          "libc6 (>= 2.41)",
+          "libsodium23"
+        ],
+        "status": "offline-packaging-no-activation",
+        "source_patches": []
+      },
+      "package": "sv08-moonraker_0.11.0+git985c1d0b-1_arm64.deb",
+      "sha256": "01a1603dff267f224f666ea9c20af444dd2b1b31fb7640dc002ff41deb9a0974",
+      "bytes": 11799354,
+      "payload_bytes": 61590060,
+      "source_date_epoch": 1787675697,
+      "activation_included": false
+    },
+    "mainsail": {
+      "profile": {
+        "format_version": 1,
+        "source_path": "upstream/mainsail",
+        "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+        "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+        "node_version": "22.23.2",
+        "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+        "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+        "package_version": "2.19.0+git32f99e1c-3",
+        "status": "offline-build-no-browser-validation",
+        "source_patches": [
+          {
+            "path": "patches/mainsail/0001-stable-precache-order.patch",
+            "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+          }
+        ]
+      },
+      "package": "sv08-mainsail_2.19.0+git32f99e1c-3_all.deb",
+      "sha256": "38dd9409cb0ccd6d415336d5bcb0fcde7498368f0d4018ba7fea214596bd19b9",
+      "bytes": 2509500,
+      "payload_bytes": 9999987,
+      "source_date_epoch": 1788551235,
+      "source_patches": [
+        {
+          "path": "patches/mainsail/0001-stable-precache-order.patch",
+          "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+        }
+      ],
+      "activation_included": false
+    },
+    "klipperscreen": {
+      "profile": {
+        "format_version": 1,
+        "app": "klipperscreen",
+        "source_commit": "3791fdf749df20c2a32fc43818749aa9f1754a9f",
+        "package_version": "0.0+git3791fdf7-2",
+        "runtime_lock": "configs/host/klipperscreen-python313-arm64.lock",
+        "runtime_lock_sha256": "e9be2dbccbd7085d97145d721066b5bf3a3ffb4b3a4e58dd870107e1d7e85f7b",
+        "source_paths": [
+          "screen.py",
+          "ks_includes",
+          "panels",
+          "styles",
+          "config",
+          "LICENSE"
+        ],
+        "license_file": "LICENSE",
+        "system_site_packages": true,
+        "deb_dependencies": [
+          "python3 (>= 3.13)",
+          "python3 (<< 3.14)",
+          "python3-gi (>= 3.48)",
+          "python3-gi (<< 3.51)",
+          "python3-gi-cairo",
+          "gir1.2-gtk-3.0",
+          "gir1.2-vte-2.91",
+          "libcairo2",
+          "libmpv2",
+          "libsystemd0",
+          "librsvg2-common"
+        ],
+        "status": "offline-packaging-no-activation",
+        "source_patches": [
+          {
+            "path": "patches/klipperscreen/0001-archive-version.patch",
+            "sha256": "2d46cc59220e87e9a0be0d4208bae9a6c5d9b3e7114acdf97c463b53448ec2f9"
+          }
+        ]
+      },
+      "package": "sv08-klipperscreen_0.0+git3791fdf7-2_arm64.deb",
+      "sha256": "a35f4e732da35bacce52ed858ded703129e6d28fb1d006e1a5c252edbbf4a1c6",
+      "bytes": 2850722,
+      "payload_bytes": 16224614,
+      "source_date_epoch": 1788808162,
+      "activation_included": false
+    }
+  },
+  "checks": {
+    "moonraker": {
+      "moonraker_version": "985c1d0",
+      "klippy_connected": false,
+      "klippy_state": "disconnected",
+      "failed_components": [],
+      "warnings": []
+    },
+    "klipperscreen": {
+      "virtual_display_window": "1024x600",
+      "connected_to_test_moonraker": true,
+      "physical_hdmi_touch_tested": false,
+      "pygobject": "3.50.0",
+      "pycairo": "1.29.1",
+      "gtk": "3.24",
+      "mpv_python": "1.0.8",
+      "patched_archive_version": "3791fdf",
+      "fixture": "empty sys/class/power_supply; Xvfb UNIX socket; no system D-Bus"
+    },
+    "mainsail_rebuild": {
+      "independent_builds_identical": true,
+      "sha256": "38dd9409cb0ccd6d415336d5bcb0fcde7498368f0d4018ba7fea214596bd19b9",
+      "precache_entry_count": 188,
+      "precache_entries_preserved": true
+    },
+    "apt_dependency_check": true,
+    "package_status_check": true
+  },
+  "baseline": {
+    "package_count": 501,
+    "package_inventory_sha256": "3cb5004828c44f600f93103c6c4f13d1fb74c1295cba52da7d577fcbc6240e2e",
+    "root_apparent_bytes": 1397470284,
+    "boot_apparent_bytes": 74531314,
+    "root_budget_pass": true,
+    "boot_budget_pass": true,
+    "tools": {
+      "debootstrap": "debootstrap 1.0.134ubuntu2",
+      "qemu": "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+    },
+    "missing": [
+      "board bootloader/DTB",
+      "verified Wi-Fi/display drivers",
+      "application service integration",
+      "A/B integration",
+      "operating modes/persistence",
+      "recovery image"
+    ]
+  },
+  "capacity_fixture": {
+    "status": "capacity-fixture-not-bootable",
+    "image_bytes": 2147483648,
+    "sha256": "37d7e0e01f1a2a90f481568de2d6de36817b3932314aacbfb30171100a03677e",
+    "filesystem_uuid": "4038012f-2b29-46b5-9070-8790aef29eb3",
+    "block_size": 4096,
+    "free_bytes": 562692096,
+    "reserved_bytes": 21471232,
+    "fsck_pass": true,
+    "hardware_access": false
+  },
+  "source_wheels": [
+    {
+      "filename": "pycairo-1.29.1-cp313-cp313-linux_aarch64.whl",
+      "sha256": "8766d812146248b9f34b549a148b309af763447659410ce01924b09e780cace0"
+    },
+    {
+      "filename": "streaming_form_data-2.1.0-cp313-cp313-linux_aarch64.whl",
+      "sha256": "e537f9f2a44af6e7228c3cf8b25a02b5a2f4fe4d9dca7adf359207011d805e83"
+    }
+  ],
+  "compiler_inventory_sha256": "40805708d13cd4a87ec186699c891f0f6833b56a77a5bf92a96000b4f9f86f9b",
+  "limitations": [
+    "No finalized boot/recovery image",
+    "No operating-mode or A/B activation",
+    "No physical display/Wi-Fi/camera validation",
+    "No independent repeat build of compiled Python wheels",
+    "Mainsail dependency audit requires release review"
+  ]
+}

@@ -2,7 +2,8 @@
 
 Initial intake: 2026-09-05. Five shallow direct submodules were cloned from their
 upstream default branches. Katapult was added on 2026-09-07 at the reviewed
-commit for USB update builds, bringing the direct source count to six. Gitlinks pin exact commits;
+commit for USB update builds, bringing the direct source count to six. KlipperScreen was added on 2026-09-09
+for the required HDMI UI, bringing the count to seven. Gitlinks pin exact commits;
 [`upstream-lock.json`](../upstream-lock.json) records the same revisions with
 roles and review status. It is an intake manifest, not a complete build lock:
 toolchains, OS packages, and transitive build dependencies remain to be selected.
@@ -15,6 +16,7 @@ toolchains, OS packages, and transitive build dependencies remain to be selected
 | `upstream/moonraker` | [Arksine/moonraker](https://github.com/Arksine/moonraker) | API service | `master` |
 | `upstream/katapult` | [Arksine/katapult](https://github.com/Arksine/katapult) | USB bootloader; offline-built, hardware unvalidated | reviewed commit |
 | `upstream/mainsail` | [mainsail-crew/mainsail](https://github.com/mainsail-crew/mainsail) | Web UI | `develop` |
+| `upstream/klipperscreen` | [KlipperScreen/KlipperScreen](https://github.com/KlipperScreen/KlipperScreen) | Required HDMI UI | `master` |
 
 Mainsail's default branch is development work. Its initial checkout is for
 research; choose a reviewed release when assembling the first runnable stack.
@@ -69,3 +71,9 @@ full MCU backups and layout inspection. Its first [build record](hardware/test-s
 records repeatable local builds, not hardware compatibility. Evaluate CB1 material as a related platform reference; record
 SV08 differences explicitly. Optional display/camera/install tools can follow
 once the core stock profile is validated.
+
+KlipperScreen was added on 2026-09-09 at
+`3791fdf749df20c2a32fc43818749aa9f1754a9f` for the required HDMI UI.
+This is a pinned source intake and offline packaging candidate, not hardware
+compatibility. No bundled installer was run. See the
+[host stack build](hardware/host-stack-build.md) for validation and dependency inputs.

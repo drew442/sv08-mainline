@@ -16,3 +16,6 @@
 [submodule "upstream/katapult"]
 	path = upstream/katapult
 	url = https://github.com/Arksine/katapult.git
+[submodule "upstream/klipperscreen"]
+	path = upstream/klipperscreen
+	url = https://github.com/KlipperScreen/KlipperScreen.git

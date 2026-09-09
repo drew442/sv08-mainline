@@ -49,3 +49,6 @@ identity remain unresolved.
    and display on the named profile with the existing recovery path. Board/photo
    and device-identity tasks remain in the host build task list; source review
    and application packaging can continue offline.
+
+The subsequent [GPT/SPL experiment](host-ab-layout.md) records the default raw-write
+collision, a relocated GPT alternative and further family/boot-patch findings.

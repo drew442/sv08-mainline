@@ -153,6 +153,8 @@ def inspect(c, work):
     # Apparent bytes deliberately include apt indexes; excludes only separate /boot.
     total = int(subprocess.check_output(['du', '-sbx', str(root)], text=True).split()[0])
     boot = int(subprocess.check_output(['du', '-sbx', str(root / 'boot')], text=True).split()[0])
+    installed = {line.split('\t', 1)[0] for line in inventory.splitlines()}
+    missing_apps = [name for name in ('sv08-klipper', 'sv08-moonraker', 'sv08-mainsail', 'sv08-klipperscreen') if name not in installed]
     report = dict(status='package-baseline-only-not-bootable', profile_sha256=digest(c),
                   layout=layout(c), package_count=len(inventory.splitlines()),
                   package_inventory_sha256=hashlib.sha256(inventory.encode()).hexdigest(),
@@ -167,8 +169,9 @@ def inspect(c, work):
                                            'qemu': ['qemu-aarch64-static', '--version']}.items()},
                   kernel_versions=sorted(p.name for p in (root / 'usr/lib/modules').iterdir()),
                   missing=['board bootloader/DTB', 'verified Wi-Fi/display drivers',
-                           'pinned printer/UI applications', 'A/B integration',
-                           'operating modes/persistence', 'recovery image'])
+                           'application service integration', 'A/B integration',
+                           'operating modes/persistence', 'recovery image'] +
+                          ['application package: ' + name for name in missing_apps])
     (work / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
     if not report['root_budget_pass'] or not report['boot_budget_pass']:
