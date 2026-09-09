@@ -29,8 +29,10 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Reference library](docs/references.md): schematics, datasheets, and upstream docs.
 - [Upstream sources](docs/upstreams.md): submodules, pins, and update workflow.
 - [Vendor compatibility audit](docs/vendor-compatibility.md): known migration gaps.
-- [Host OS and A/B proposal](docs/design/host-os-ab.md): OS/kernel assessment,
+- [Host OS and A/B design](docs/design/host-os-ab.md): OS/kernel assessment,
   update design and owner choices.
+- [New host build work](docs/hardware/host-ab-build.md): offline Debian baseline,
+  factory-capacity layout and driver audit.
 - [Roadmap](docs/roadmap.md): the next work and its acceptance criteria.
 - [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md).
 

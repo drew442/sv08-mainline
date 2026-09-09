@@ -7,6 +7,9 @@ has been built or validated. Assessment date: 2026-09-09. Printer offline; no pr
 hardware changes were attempted. Applies first to
 [test-sv08-01](../hardware/test-sv08-01.md), not every H616 board.
 
+Implementation has started with the [offline package/layout baseline](../hardware/host-ab-build.md).
+It does not yet implement boot selection, operating modes or printer activation.
+
 ## Recommended direction
 
 Build a small Debian 13 arm64 appliance image using deb/apt. Deploy signed,

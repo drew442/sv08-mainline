@@ -1,0 +1,74 @@
+{
+  "status": "package-baseline-only-not-bootable",
+  "profile_sha256": "6d38ddeef6f1c05f1656be947a00ed2b32704e84bc1838c1cf4a63af5642c65f",
+  "layout": [
+    {
+      "name": "boot-a",
+      "offset_bytes": 16777216,
+      "size_bytes": 201326592
+    },
+    {
+      "name": "root-a",
+      "offset_bytes": 218103808,
+      "size_bytes": 2147483648
+    },
+    {
+      "name": "boot-b",
+      "offset_bytes": 2365587456,
+      "size_bytes": 201326592
+    },
+    {
+      "name": "root-b",
+      "offset_bytes": 2566914048,
+      "size_bytes": 2147483648
+    },
+    {
+      "name": "recovery",
+      "offset_bytes": 4714397696,
+      "size_bytes": 536870912
+    },
+    {
+      "name": "data",
+      "offset_bytes": 5251268608,
+      "size_bytes": 2565865472
+    }
+  ],
+  "package_count": 476,
+  "package_inventory_sha256": "03221eef54116e26b57a310a03fd5f2d21e0a95fd33eaa9a6163cbe1f25702fd",
+  "root_apparent_bytes": 1145965060,
+  "boot_apparent_bytes": 74531314,
+  "boot_sha256": {
+    "System.map-6.12.107+deb13-arm64": "f47b4c00d87f4b5378487972ded9d447074d4771bea98af3f852220ee34392e5",
+    "config-6.12.107+deb13-arm64": "21b2f85fedc3801307af4a27a6ea15bbfdc16cd92d7a0211a5ead1f01dcc3cee",
+    "initrd.img-6.12.107+deb13-arm64": "470d669587382bdf662fceaff09efd0fee8cd5aa58ac69a87bf1ea7744903142",
+    "vmlinuz-6.12.107+deb13-arm64": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67"
+  },
+  "root_budget_pass": true,
+  "boot_budget_pass": true,
+  "tools": {
+    "debootstrap": "debootstrap 1.0.134ubuntu2",
+    "qemu": "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+  },
+  "kernel_versions": [
+    "6.12.107+deb13-arm64"
+  ],
+  "missing": [
+    "board bootloader/DTB",
+    "verified Wi-Fi/display drivers",
+    "pinned printer/UI applications",
+    "A/B integration",
+    "operating modes/persistence",
+    "recovery image"
+  ],
+  "date": "2026-09-09",
+  "evidence_level": "offline-arm64-chroot",
+  "hardware_validated": false,
+  "security_snapshot_refresh_complete": true,
+  "userspace_checks": [
+    "RAUC 1.13 version command",
+    "NetworkManager 1.52.1 version command",
+    "FFmpeg 7.1.5 version command",
+    "GTK 3.24 and Cairo 1.27.0 Python imports"
+  ],
+  "tests_passed": 16
+}

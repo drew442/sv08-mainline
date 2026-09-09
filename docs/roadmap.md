@@ -81,6 +81,11 @@ The owner selected immutable mode by default and supported writable mode in
 customization-aware updates require implementation; board/package-size validation
 remains open. This does not replace the current bring-up image.
 
+The [new host preparation stages](hardware/host-ab-build.md) now implement
+factory-capacity layout validation and an isolated Debian package baseline.
+Boot integration, application packaging and operating-mode implementation remain
+outstanding; this is not a flashable replacement image.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with
