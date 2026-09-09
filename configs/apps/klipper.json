@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "name": "sv08-klipper",
+  "version": "0.0+gitf0892d82-1",
+  "architecture": "arm64",
+  "source_path": "upstream/klipper",
+  "source_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "runtime_lock": "configs/host/test-sv08-01-python313-arm64.lock",
+  "runtime_lock_sha256": "d075f11693e2fb940363a22018f3ac5c79eb7c80a31bbadeb4d22b1049cce1c8",
+  "helper_sha256": "3bb1a213c83bbd627ae931c789b1f14c4f466d9e5ba6224bf285fc648c0509ad",
+  "source_prefix": "/opt/sv08-mainline/klipper",
+  "venv_prefix": "/opt/sv08-mainline/venvs/klipper-f0892d8",
+  "status": "offline-packaging-candidate-no-activation"
+}

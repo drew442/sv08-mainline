@@ -125,6 +125,12 @@ compatibility and regression-test custom behavior. Keep flashing separate.
 Exit evidence: repeatable build instructions and artifacts tied to a project
 revision. Builds alone do not advance hardware support status.
 
+The new A/B host now has a [measured Klipper package](hardware/host-apps-build.md)
+installed and checked in an isolated Debian ARM64 baseline. Remaining applications,
+operating modes, recovery and bootable image assembly remain outstanding. The
+[Armbian source intake](hardware/host-ab-armbian-intake.md) identifies a maintained
+SV08 board-support candidate whose hardware validation is explicitly pending.
+
 ## 4. Stock hardware bring-up and conversion guide
 
 Validate boot/storage/network reliability and persistent MCU identity. Follow

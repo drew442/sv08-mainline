@@ -31,6 +31,8 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Vendor compatibility audit](docs/vendor-compatibility.md): known migration gaps.
 - [Host OS and A/B design](docs/design/host-os-ab.md): OS/kernel assessment,
   update design and owner choices.
+- [Host application packaging](docs/hardware/host-apps-build.md): Klipper `.deb` and offline checks.
+- [Armbian source intake](docs/hardware/host-ab-armbian-intake.md): unverified SV08 boot-support candidate.
 - [New host build work](docs/hardware/host-ab-build.md): offline Debian baseline,
   factory-capacity layout and driver audit.
 - [Roadmap](docs/roadmap.md): the next work and its acceptance criteria.

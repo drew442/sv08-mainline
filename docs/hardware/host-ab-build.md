@@ -32,7 +32,8 @@ RAUC, SSH, GTK/Xorg/libinput, VTE, Realtek firmware, V4L2 tools, FFmpeg and ngin
 These are package candidates, not validated application/driver compatibility.
 NetworkManager is selected for the required Wi-Fi provisioning path; the final
 image must not also configure networkd to manage the same interfaces.
-Klipper, Moonraker, Mainsail and KlipperScreen releases still need explicit
+The first [Klipper package](host-apps-build.md) now passes offline installation
+and file-output checks. Moonraker, Mainsail and KlipperScreen still need explicit
 packaging and their complete pinned dependencies. No camera streamer is selected
 merely by installing V4L2/FFmpeg. Firmware-realtek is not an `8189fs` driver.
 
@@ -138,7 +139,9 @@ compatible strings; the required clocks, PHY and controller support need review.
 
 ## Next work
 
-- Measure the dependency baseline and then the complete pinned application stack.
+- Extend the measured baseline and Klipper package to the complete pinned application stack.
+- Continue the [Armbian source intake](host-ab-armbian-intake.md) for maintained
+  SV08 boot support; its board definition is explicitly unverified.
 - Inspect the exact installed Debian kernel config/modules against captured DT
   requirements; locate maintained driver/patch sources and record their pins,
   licensing and retirement criteria before building.

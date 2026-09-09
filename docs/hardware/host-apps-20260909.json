@@ -1,0 +1,50 @@
+{
+  "status": "offline-package-no-hardware-activation",
+  "source_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "package": "sv08-klipper_0.0+gitf0892d82-1_arm64.deb",
+  "sha256": "a418eeddfbb95b0b1d228ce19961ae1fde0d6879e9784c51d5f63c0c4c6608cf",
+  "bytes": 5702162,
+  "source_date_epoch": 1787876725,
+  "runtime_lock_sha256": "d075f11693e2fb940363a22018f3ac5c79eb7c80a31bbadeb4d22b1049cce1c8",
+  "helper_sha256": "3bb1a213c83bbd627ae931c789b1f14c4f466d9e5ba6224bf285fc648c0509ad",
+  "wheels": {
+    "Jinja2-2.11.3-py2.py3-none-any.whl": "03e47ad063331dd6a3f04a43eddca8a966a26ba0c5b7207a9a9e4e08f1b29419",
+    "aenum-3.1.17-py3-none-any.whl": "8b883a37a04e74cc838ac442bdd28c266eae5bbf13e1342c7ef123ed25230139",
+    "cffi-2.1.1-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl": "f16c709686a78c727bbbf059f92b0bf41c6fc60deec706d2dc19f529175a6125",
+    "greenlet-3.3.2-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl": "ab0c7e7901a00bc0a7284907273dc165b32e0d109a6713babd04471327ff7986",
+    "markupsafe-1.1.1-cp313-cp313-linux_aarch64.whl": "6d1244ddb75f94a2197b5a11df94b484ccf7e3a14b28fe43bf334df525a2f627",
+    "msgspec-0.19.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl": "19746b50be214a54239aab822964f2ac81e38b0055cca94808359d779338c10e",
+    "pycparser-3.0-py3-none-any.whl": "b727414169a36b7d524c1c3e31839a521725078d7b2ff038656844266160a992",
+    "pyserial-3.4-py2.py3-none-any.whl": "e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8",
+    "python_can-3.3.4-py2.py3-none-any.whl": "6c45fa405836b0017ed7c7c6b13e6234962441a22c444be962930753c51b758f",
+    "setuptools-78.1.1-py3-none-any.whl": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+    "wrapt-1.17.3-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl": "0ed61b7c2d49cee3c027372df5809a59d60cf1b6c2f81ee980a091f3afed6a2d"
+  },
+  "source_patches": [],
+  "activation_included": false,
+  "firmware_included": false,
+  "repeat_assembly_same_payload_identical": true,
+  "date": "2026-09-09",
+  "validation_scope": "offline ARM64 QEMU chroot; no printer access",
+  "checks": {
+    "dpkg_install": true,
+    "apt_dependencies": true,
+    "dual_mcu_file_output": true,
+    "unprivileged_helper_load": true,
+    "control_has_no_maintainer_scripts": true
+  },
+  "installed_baseline": {
+    "package_count": 477,
+    "package_inventory_sha256": "0120dfd4471cea99c2c6f4331ee727ab9a4d77963a4012e0dd2f42e1d35ac77e",
+    "root_apparent_bytes": 1280905934,
+    "boot_apparent_bytes": 74531314,
+    "root_budget_pass": true,
+    "boot_budget_pass": true,
+    "tools": {
+      "debootstrap": "debootstrap 1.0.134ubuntu2",
+      "qemu": "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+    }
+  },
+  "independent_full_rebuild": false,
+  "bootable_image": false
+}
