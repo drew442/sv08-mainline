@@ -19,6 +19,10 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Real mount-namespace tests for immutable/writable roots and explicit persistence.
 - [x] Full Debian ARM64 QEMU boots through immutable → writable → immutable,
   preserving customization, config, PID 1 identity, hostname and SSH host key.
+- [x] Real writable APT/dpkg installation, ordinary service activation and package
+  record/file preservation after returning to immutable mode.
+- [x] Two identical clean RAUC ARM64 package builds and actual inactive ext4/vfat
+  partition installation on the distro kernel; see [RAUC evidence](host-rauc-build.md).
 - [x] Signed verity bundle and actual paired inactive-slot RAUC file installation.
 - [x] Untrusted-key, wrong-compatible, corrupt-payload and corrupt-signature rejection with all slot
   files unchanged. See [state/update evidence](host-state-build.md).
@@ -34,9 +38,6 @@ that all project work is complete. Printer remains offline for this work.
   boot tests now cover PID 1 identity, persistent system state and core service
   startup in a VM; extend them to the remaining application services and hardware. Implement controlled idle mode-change reboot.
   Preserve customizations and avoid a shared root overlay.
-- [ ] Build/test the ARM64 RAUC runtime against the selected kernel. The baseline
-  still contains Debian RAUC 1.13; workstation installation needed upstream 1.15.2.
-  Do not confuse a native test-tool upgrade with an image-package upgrade.
 - [ ] Wire the tested RAUC paired installation to production boot selection,
   transaction reconciliation, health confirmation, fallback,
   independent recovery, signed bundles and offline key handling.

@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+systemctl daemon-reload
+deb-systemd-helper enable sv08-qemu-proof.service >/dev/null
+deb-systemd-invoke start sv08-qemu-proof.service

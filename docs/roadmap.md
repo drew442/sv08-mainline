@@ -84,7 +84,9 @@ remains open. This does not replace the current bring-up image.
 The [new host preparation stages](hardware/host-ab-build.md) now implement
 factory-capacity layout validation and an isolated Debian package baseline.
 Offline [state/mount and signed-update integration](hardware/host-state-build.md)
-now has regression, real mount and paired RAUC installation tests. Board boot
+now has regression, full ARM64 mode/package boots and paired RAUC installation
+tests. A [reproducible ARM64 RAUC package](hardware/host-rauc-build.md) also passes
+actual ext4/vfat inactive-partition installation on the selected distro kernel. Board boot
 integration, health confirmation, service activation and idle coordination remain
 outstanding; this is not a flashable replacement image.
 

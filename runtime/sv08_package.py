@@ -29,8 +29,10 @@ def require_writable(boot, state, service_states):
 
 def hook():
     token = os.environ.get('SV08_PACKAGE_TOKEN')
+    if not token:
+        raise ValueError('Use sudo sv08-package --execute for package changes in writable mode')
     lease = json.loads(Path('/run/sv08/package-lease.json').read_text())
-    if not token or token != lease['token']:
+    if token != lease['token']:
         raise ValueError('Use sv08-package for supported apt operations')
     os.kill(lease['pid'], 0)
     with open('/run/sv08/admission.lock', 'a') as lock:

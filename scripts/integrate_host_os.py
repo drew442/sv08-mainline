@@ -89,6 +89,8 @@ def stage(work, manifest):
     shutil.copyfile(REPO / 'configs/host-os/sshd.conf', root / 'etc/ssh/sshd_config.d/20-sv08.conf')
     # Only this final stage adds the apt guard, after image package construction.
     shutil.copyfile(REPO / 'configs/host-os/apt-policy.conf', root / 'etc/apt/apt.conf.d/90sv08-policy')
+    shutil.copyfile(REPO / 'configs/host-os/policy-rc.d', root / 'usr/sbin/policy-rc.d')
+    (root / 'usr/sbin/policy-rc.d').chmod(0o755)
     journal = root / 'etc/systemd/journald.conf.d'
     journal.mkdir(exist_ok=True)
     (journal / 'sv08.conf').write_text('[Journal]\nStorage=persistent\nSystemMaxUse=64M\nRuntimeMaxUse=16M\nMaxRetentionSec=14day\n')

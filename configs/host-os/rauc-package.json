@@ -1,0 +1,31 @@
+{
+  "name": "rauc",
+  "version": "1.15.2-0sv08.1",
+  "architecture": "arm64",
+  "source": {
+    "repository": "https://github.com/rauc/rauc",
+    "tag": "v1.15.2",
+    "commit": "4fb7c798d6ae412344fb8f8d310d773046af3441",
+    "archive_url": "https://api.github.com/repos/rauc/rauc/tarball/4fb7c798d6ae412344fb8f8d310d773046af3441",
+    "archive_sha256": "35acab5be04ddd0b96ba6b5d4c31f5f356769972a188b096254a3014faa8ed38",
+    "purpose": "Replacement offline installer after 1.13 rejected Linux 7.0 dm-verity status"
+  },
+  "source_date_epoch": 1774607834,
+  "reason": "Candidate upstream replacement for dm-verity status compatibility; retire when the selected Debian package includes the fix",
+  "build_dependencies": [
+    "build-essential",
+    "pkg-config",
+    "dpkg-dev",
+    "meson",
+    "ninja-build",
+    "libglib2.0-dev",
+    "libjson-glib-dev",
+    "libssl-dev",
+    "libcurl4-openssl-dev",
+    "libdbus-1-dev",
+    "libnl-3-dev",
+    "libnl-genl-3-dev",
+    "libfdisk-dev"
+  ],
+  "status": "build-candidate-not-runtime-validated"
+}

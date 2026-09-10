@@ -15,6 +15,7 @@ import sys
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--execute', action='store_true')
+parser.add_argument('--with-package', action='store_true')
 args = parser.parse_args()
 if not args.execute:
     print('Inspection only: this probe requires --execute inside a disposable QEMU guest.')
@@ -39,6 +40,18 @@ try:
         assert expected == 'writable', 'Immutable root accepted a write'
     except OSError as error:
         assert expected == 'immutable' and error.errno == errno.EROFS, str(error)
+    if args.with_package:
+        command = ['sv08-package', '--execute', 'install', '--yes', '/data/fixture/sv08-qemu-proof.deb']
+        if phase == 0:
+            rejected = subprocess.run(command, capture_output=True, text=True)
+            assert rejected.returncode != 0 and 'writable mode' in rejected.stderr, rejected.stderr
+            assert not Path('/usr/share/sv08-qemu/proof').exists()
+        elif phase == 1:
+            subprocess.run(command, check=True)
+            assert Path('/run/sv08/qemu-package-service-started').exists(), 'Runtime package service activation was blocked'
+        if phase:
+            assert Path('/usr/share/sv08-qemu/proof').read_text() == 'slot-local package artifact\n'
+            assert subprocess.check_output(['dpkg-query', '-W', '-f=${Version}', 'sv08-qemu-proof'], text=True) == '1.0'
     config = Path('/run/sv08/printer_data/config/qemu-persistence.cfg')
     if phase:
         assert config.read_text() == str(phase-1), 'State did not persist'
@@ -68,6 +81,7 @@ try:
     result = {'phase': phase, 'mode': expected, 'persistent_identity': True,
               'journal_identity': True, 'persistent_config': True,
               'persistent_hostname_and_ssh_key': True,
+              'package_workflow_tested': args.with_package,
               'customization_preserved': boot['customized'], 'passed': True}
     print('SV08_QEMU_RESULT '+json.dumps(result), flush=True)
     (Path('/data/sv08') / f'qemu-result-{phase}.json').write_text(json.dumps(result)+'\n')

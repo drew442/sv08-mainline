@@ -1,0 +1,5 @@
+Package: sv08-qemu-proof
+Version: 1.0
+Architecture: all
+Maintainer: SV08 Mainline contributors
+Description: Disposable VM package persistence fixture

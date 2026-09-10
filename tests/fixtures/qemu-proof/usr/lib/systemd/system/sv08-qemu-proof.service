@@ -1,0 +1,11 @@
+[Unit]
+Description=Disposable package activation fixture
+Requires=sv08-prepare.service
+After=sv08-prepare.service
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/touch /run/sv08/qemu-package-service-started
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
