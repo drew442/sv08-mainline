@@ -78,7 +78,9 @@ that all project work is complete. Printer remains offline for this work.
   migration failures, no space, rollback and customized-image update refusal
   across the assembled system. Library failure tests and actual RAUC malformed
   bundle rejection now pass; live admission and power-cut tests remain open.
-- [ ] Review Mainsail audit findings and complete browser/API/UI workload tests.
+- [x] Review Mainsail dependency reachability and pin compatible js-yaml/nanoid
+  fixes; two fresh patched package builds match. See [audit evidence](host-mainsail-audit.md).
+- [ ] Resolve remaining framework/tooling findings and complete browser/API/UI workload tests.
   Archive-version reporting and deterministic precache ordering now have tested
   patches; retire them when upstream provides equivalent support.
 - [ ] Independently rebuild packages and compiled wheels; retain complete source,

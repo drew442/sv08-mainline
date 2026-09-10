@@ -21,3 +21,24 @@ The patch follows the upstream source license. Upstreaming plan: propose stable
 precache ordering to Mainsail or the PWA plugin with the two-build reproduction.
 No upstream message has been sent. Retire when the selected upstream build emits
 a deterministic precache list without this configuration.
+
+## Fixed js-yaml and nanoid versions
+
+`0002-pin-fixed-yaml-nanoid.patch` uses npm overrides and exact lockfile integrity
+records for js-yaml 4.3.2 and nanoid 3.3.18. The source gitlink stays pinned;
+the builder checks both the original and patched lock hashes. Only these two
+package records change. npm's unrelated removal of libc metadata was excluded
+from the reviewed patch. Install scripts remain disabled.
+
+Primary fix provenance, accessed 2026-09-10:
+[js-yaml maintainer advisory](https://github.com/nodeca/js-yaml/security/advisories/GHSA-2883-xcg3-v3hh)
+and [Nano ID 3.3.18 release](https://github.com/ai/nanoid/releases/tag/3.3.18).
+The [bounded regression](../../tests/mainsail_fixed_dependencies.cjs) checks zero-size
+custom generators and enforcement of the YAML empty-merge limit. Use the pinned
+Node executable with the isolated build's node_modules path and an external
+five-second process timeout. Complete clean builds provide integration evidence.
+
+Upstreaming/retirement: offer the lock updates to Mainsail when appropriate; no
+message has been sent. Remove the override patch when the selected upstream lock
+contains fixed compatible versions. This patch does not resolve the separate
+Vue/Vuetify/ECharts and tooling audit findings.

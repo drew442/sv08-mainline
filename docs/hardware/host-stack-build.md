@@ -135,6 +135,10 @@ and test the resulting release. This build is not a security-approved release.
 Audit output remains in ignored build evidence; it is not evidence that all 17
 issues are exploitable in the deployed UI.
 
+The subsequent [dependency review](host-mainsail-audit.md) pins two compatible
+fixes and records new reproducible package evidence; the original fixture above
+retains its original package versions.
+
 Remaining system work is tracked in the [completion checklist](host-os-tasks.md).
 
 ## Completed capacity and GUI result

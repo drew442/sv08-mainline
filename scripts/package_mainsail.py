@@ -2,7 +2,7 @@
 """Build pinned Mainsail static assets into a deb; default dry-run.
 
 Gap: upstream ZIP releases do not provide this image's dpkg-owned source build.
-Only recorded build-configuration patches. Retire when upstream supplies an equivalent pinned deb.
+Only recorded build/dependency patches. Retire when upstream supplies an equivalent pinned deb.
 """
 import argparse
 import hashlib
@@ -54,6 +54,8 @@ def main():
     for patch in c.get('source_patches', []):
         run('patch', '--batch', '--forward', '--dry-run', '-d', src, '-p1', '-i', REPO / patch['path'])
         run('patch', '--batch', '--forward', '-d', src, '-p1', '-i', REPO / patch['path'])
+    if digest(src / 'package-lock.json') != c.get('patched_package_lock_sha256', c['package_lock_sha256']):
+        raise ValueError('Patched dependency lock hash mismatch')
     epoch = int(subprocess.check_output(['git', '-C', str(source), 'show', '-s', '--format=%ct', head], text=True))
     env = dict(os.environ, PATH=str(work / ('node-v' + c['node_version'] + '-linux-x64/bin')) + ':' + os.environ['PATH'], SOURCE_DATE_EPOCH=str(epoch))
     run('npm', 'ci', '--ignore-scripts', '--no-audit', '--no-fund', cwd=src, env=env)

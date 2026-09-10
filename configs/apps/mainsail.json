@@ -6,12 +6,17 @@
   "node_version": "22.23.2",
   "node_archive": "node-v22.23.2-linux-x64.tar.xz",
   "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
-  "package_version": "2.19.0+git32f99e1c-3",
+  "package_version": "2.19.0+git32f99e1c-4",
   "status": "offline-build-no-browser-validation",
   "source_patches": [
     {
       "path": "patches/mainsail/0001-stable-precache-order.patch",
       "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+    },
+    {
+      "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+      "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
     }
-  ]
+  ],
+  "patched_package_lock_sha256": "4e00d6f77841f7c1bb0e3310793a1c10af6edc299b82f0a7cfab237ca737d8e1"
 }
