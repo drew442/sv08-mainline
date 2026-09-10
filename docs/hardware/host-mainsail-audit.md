@@ -49,8 +49,8 @@ Fresh archive/npm/Vite builds in `build/mainsail-package-v7/` and `v8/` produced
 identical `sv08-mainsail_2.19.0+git32f99e1c-4_all.deb` packages:
 `6861b281cfdc19d1073c46aaf442e97ba7ba55e40fd97ff6d2552fd7b4310df1`.
 Both include the existing stable precache patch. Build logs remain beside the
-work directories. The first build's disposable node_modules was removed to free
-workstation space after its regressions; source archive, patched lock, output and
+work directories. Both builds' disposable node_modules directories were removed to free
+workstation space after their regressions; source archive, patched lock, output and
 report remain. The package has no service activation and has not been installed
 on the printer or substituted into older capacity/boot evidence.
 

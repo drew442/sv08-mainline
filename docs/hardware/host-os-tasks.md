@@ -35,6 +35,9 @@ that all project work is complete. Printer remains offline for this work.
 
 ## Offline implementation and release work still required
 
+- [x] Compile pinned upstream U-Boot/TF-A plus the reviewed CB1 board patches
+  twice with identical binaries; [compile evidence](host-cb1-boot-compile.md)
+  records the inherited 720 MHz DRAM clock and unverified hardware assumptions.
 - [ ] Finish the source-reproducible board boot chain: resolve complete U-Boot,
   TF-A, kernel and driver source/patch pins and licenses; compare board assumptions
   with captured evidence. Do not deploy the unverified CB1-equivalence claim.

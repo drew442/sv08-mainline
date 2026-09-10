@@ -1,0 +1,84 @@
+{
+  "config": {
+    "format_version": 1,
+    "status": "compile-only-unverified-board-assumptions",
+    "deployable": false,
+    "hardware_profile": "test-sv08-01",
+    "board_revision": null,
+    "board_mmc_device_index": null,
+    "armbian_reference_commit": "a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015",
+    "u_boot": {
+      "commit": "ece349ade2973e220f524ce59e59711cc919263f",
+      "archive_sha256": "2e932cb139c06adfdd2ef1369170135e1f449764287e7bdbc93642ed52249c7e",
+      "defconfig": "bigtreetech_cb1_defconfig",
+      "archive_url": "https://api.github.com/repos/u-boot/u-boot/tarball/ece349ade2973e220f524ce59e59711cc919263f"
+    },
+    "tf_a": {
+      "repository": "https://github.com/ARM-software/arm-trusted-firmware",
+      "tag": "lts-v2.12.9",
+      "commit": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+      "archive_url": "https://codeload.github.com/ARM-software/arm-trusted-firmware/tar.gz/c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+      "archive_sha256": "507a10e4a20d272124ee808c3d3083134c95113486e3d09b8236a6556e901536",
+      "platform": "sun50i_h616",
+      "debug": 1
+    },
+    "board_patches": [
+      {
+        "name": "001-bigtreetech-cb1-dts-and-defconfig.patch",
+        "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/u-boot/v2026.07-sunxi64/board_bigtreetech-cb1/001-bigtreetech-cb1-dts-and-defconfig.patch",
+        "sha256": "0bff09f1763dd4e74249e3500bebcbfd84cde79ac66b9556ce706de958318416"
+      },
+      {
+        "name": "002-bigtreetech-cb1-PC3-eMMC-selpin-set-to-pull-down-mode.patch",
+        "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/u-boot/v2026.07-sunxi64/board_bigtreetech-cb1/002-bigtreetech-cb1-PC3-eMMC-selpin-set-to-pull-down-mode.patch",
+        "sha256": "1fe801e57ce115f9d91dde132f1e756d2cf4a97284db4e4aa85c3bb0905eac81"
+      }
+    ],
+    "not_validated": [
+      "DDR3 profile and timing",
+      "AXP313 power topology",
+      "PC3 eMMC selection pull-down",
+      "Wi-Fi GPIOs and power sequence",
+      "MMC boot/environment device index",
+      "Linux device tree and drivers",
+      "A/B policy in board bootloader",
+      "physical boot and power-loss behavior"
+    ],
+    "source_date_epoch": 1783555200,
+    "build_timestamp": "2026-07-09T00:00:00Z"
+  },
+  "deployable": false,
+  "physical_hardware": false,
+  "spl_header_valid": true,
+  "reservation_bytes": [
+    8192,
+    1048576
+  ],
+  "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "artifacts": {
+    "u-boot-sunxi-with-spl.bin": {
+      "bytes": 771497,
+      "sha256": "6b4329500390bf3b4aacd4cc5055305c2c2eecf8795fa98f041b62eb001cedd3"
+    },
+    "u-boot-sunxi-with-spl.fit.fit": {
+      "bytes": 730537,
+      "sha256": "45eab854871b60d035aed953a29f27f7f99ae5853dc981c22bb76ede73df81b4"
+    },
+    "bl31.bin": {
+      "bytes": 53361,
+      "sha256": "d35c461a0ea73bfb6b4301c4233fd6ff741e3c8eec98e9a5caff39f9b642f289"
+    },
+    ".config": {
+      "bytes": 53743,
+      "sha256": "0d1c4e79a8bac3518fc377c5e88879ad9920f16e13171622d5c99c329861af20"
+    },
+    "u-boot-sunxi-with-spl.map": {
+      "bytes": 320,
+      "sha256": "355b9a7f656c9481941fd375659233b6a2db0951e4fc43a1147d1cc864a2986c"
+    }
+  },
+  "ab_policy_integrated": false,
+  "licenses_fully_audited": false,
+  "independent_binary_rebuilds_identical": true,
+  "compiled_dram_clock_mhz": 720
+}

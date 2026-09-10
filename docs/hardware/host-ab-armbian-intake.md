@@ -52,3 +52,7 @@ identity remain unresolved.
 
 The subsequent [GPT/SPL experiment](host-ab-layout.md) records the default raw-write
 collision, a relocated GPT alternative and further family/boot-patch findings.
+
+The subsequent [narrow boot-source compilation](host-cb1-boot-compile.md) resolves
+the TF-A pin and produces repeatable U-Boot/BL31 artifacts. It records additional
+configuration discrepancies and does not adopt full Armbian board equivalence.
