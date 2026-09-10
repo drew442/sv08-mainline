@@ -52,9 +52,13 @@ that all project work is complete. Printer remains offline for this work.
   wiring remains separate.
 - [x] Bound early-boot preparation with deadlines and reboot on failure; actual
   ARM64 identity-failure and timeout tests pass. See [boot failure evidence](host-boot-failure.md).
-- [ ] Wire the tested RAUC paired installation to production boot selection,
-  transaction reconciliation, health confirmation, fallback,
-  independent recovery, signed bundles and offline key handling.
+- [x] Connect real RAUC/U-Boot device backend to transaction and idle admission;
+  the ARM64 VM verifies install/hash/arm/cancel and final-attempt counter behavior.
+  See [backend evidence](host-rauc-backend.md).
+- [ ] Finish board configuration, owned staging/upload paths, boot-time transaction
+  reconciliation, health confirmation, fallback, independent recovery and offline
+  release-key handling. Signed metadata admission and device backend tests are
+  complete; they do not make the candidate deployable.
 - [x] Implement and separately package atomic Klipper idle admission; native and
   ARM64 reactor/dispatcher race tests pass. See [admission evidence](host-update-admission.md).
   Real ARM64 systemd/Moonraker boundary tests also pass with simulated printer

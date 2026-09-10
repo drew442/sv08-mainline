@@ -148,3 +148,24 @@ class TransactionTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.stage()
         self.assertEqual(self.tx.path.read_text(), '{bad')
         self.assertEqual(self.backend.calls, [])
+
+    def test_healthy_final_attempt_can_reset_counter_before_primary_check(self):
+        boot = self.trial()
+        # U-Boot decrements before Linux boots. On B's final attempt, RAUC
+        # reports A as next primary until B's successful mark-good resets it.
+        self.backend.states['B'] = False
+        self.backend.selected = 'A'
+        def good(slot):
+            self.backend.states[slot] = True
+            self.backend.selected = slot
+        with patch.object(self.backend, 'mark_good', side_effect=good):
+            self.tx.confirm(boot, lambda boot: True)
+        self.assertIsNone(self.store.load()['pending'])
+        self.assertEqual(self.tx.load()['phase'], 'complete')
+
+    def test_changed_order_cannot_be_confirmed_as_primary(self):
+        boot = self.trial()
+        self.backend.selected = 'A'
+        with self.assertRaisesRegex(ValueError, 'primary'):
+            self.tx.confirm(boot, lambda boot: True)
+        self.assertIsNotNone(self.store.load()['pending'])

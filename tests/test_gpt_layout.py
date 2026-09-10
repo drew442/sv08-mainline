@@ -3,6 +3,9 @@ import subprocess
 import sys
 from pathlib import Path
 import tempfile
+import stat
+from types import SimpleNamespace
+from unittest.mock import patch
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
@@ -53,3 +56,12 @@ class GPTTests(unittest.TestCase):
                         [(16*1024*1024,65536)], [(4194305,65536)]):
             with self.subTest(regions=invalid), self.assertRaises(ValueError):
                 inspect(self.image, environment_regions=invalid)
+
+    def test_block_audit_requires_explicit_footprint_and_is_read_only(self):
+        self.table(True)
+        before = self.image.read_bytes()
+        with patch.object(Path, 'stat', return_value=SimpleNamespace(st_mode=stat.S_IFBLK)):
+            with self.assertRaises(ValueError): inspect(self.image)
+            with self.assertRaises(ValueError): inspect(self.image, allow_block=True)
+            self.assertTrue(inspect(self.image, allow_block=True, image_bytes=len(before))['collision_free'])
+        self.assertEqual(self.image.read_bytes(), before)

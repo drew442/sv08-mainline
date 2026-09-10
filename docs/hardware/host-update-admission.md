@@ -92,7 +92,9 @@ written during this test. The public [result](host-service-admission-20260910.js
 keeps that distinction explicit.
 
 The fixture reused the earlier disposable failure-test disk/root files, preserving
-those failure logs; current images are under the admission fixture directory.
+those failure logs. The disk/root files were subsequently moved to
+`build/host-qemu-backend-v1/` for the integrated backend tests; admission logs
+and insertion commands remain in the admission fixture directory.
 Its `debugfs.cmd` records inserted files and temporary unit replacements. It
 restored the production preparation deadline, used `sv08.test=admission`, disabled
 network/USB passthrough and required the QEMU disk serial plus `deployable=false`.

@@ -71,9 +71,10 @@ admission and health callbacks are test stubs: they establish method ordering,
 not printer idleness or Linux/application health. U-Boot backend and Linux boot
 behavior have [separate](host-environment-build.md) [tests](host-rollback-build.md).
 
-Before release, implement the production RAUC/device backend, shared service-start
-admission, automatic idle staging/next-boot policy, reconciliation at boot and
-bounded health/recovery behavior. Do not wire the test callbacks into production.
+The subsequent [RAUC/device backend](host-rauc-backend.md) and
+[shared service admission](host-update-admission.md) now pass integrated VM tests.
+Before release, finish board configuration, automatic idle staging/next-boot policy,
+reconciliation at boot and bounded health/recovery behavior. Do not wire the test callbacks into production.
 The [early-boot failure unit](host-boot-failure.md) now reboots on errors/timeouts
 in QEMU; a board-integrated fallback and watchdog remain on the [task list](host-os-tasks.md).
 

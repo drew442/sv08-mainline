@@ -1,0 +1,51 @@
+{
+  "physical_hardware": false,
+  "printer_status": "simulated",
+  "real_rauc_uboot_backend": true,
+  "real_idle_service_admission": true,
+  "inactive_paired_hashes_verified": true,
+  "active_paired_hashes_preserved": true,
+  "staged_without_activation": true,
+  "armed_then_cancelled": true,
+  "pending_state_cleared_after_disarming": true,
+  "final_attempt_counter_confirmation": true,
+  "booted_target": false,
+  "health_confirmed": false,
+  "bundle_sha256": "fcc57a6b30d74fe6f8ea3dac161e03acdd2acaa036033c013d65746899d49c91",
+  "passed": true,
+  "date": "2026-09-10",
+  "boot_log_sha256": "e520653281510f63eb9d4bcea1d95c7fe17f8de39db5da06adf384fedbba489e",
+  "runtime_source_sha256": {
+    "runtime/sv08_rauc.py": "bdab359566fc7d0f48c7db92f6207cdb1f9b906b7b2875d772ff3764397b1ae1",
+    "runtime/sv08_transaction.py": "627a7e04d0cfce4d334539cd9a9d9825c8e74f407b7d06e8a5a300df1120d2bb"
+  },
+  "subsequent_sandbox_read": {
+    "arm64_rauc_environment_read_by_uboot": true,
+    "whole_image_unchanged": true,
+    "whole_image_sha256": "bee25248f6246afd60847d72193582a27aede97f6510c2d6dbe1da8b83797a3d",
+    "physical_hardware": false
+  },
+  "gpt_admission": {
+    "positive": {
+      "passed": true,
+      "overlapping_gpt": false,
+      "backend_writes": false,
+      "physical_hardware": false
+    },
+    "overlapping_primary_table": {
+      "passed": true,
+      "overlapping_gpt": true,
+      "backend_writes": false,
+      "physical_hardware": false
+    },
+    "source_sha256": {
+      "runtime/sv08_rauc.py": "c1dd7d082b458ec44dccddb93bc8a7bdd8c898f1175932de38f56a326f37ea4d",
+      "runtime/sv08_gpt.py": "e9f32ae89c027aca2cb9ef70988d58c5237a9e063297e6af61109296d62036c9",
+      "tests/host_qemu_gpt_backend.py": "866f23f78a7fa945cc88381ba4d36c6ecaedc31d45d6bb33e6aed2532b38f077"
+    },
+    "log_sha256": {
+      "gpt-positive.log": "ce0d84acb1d3842c304f0c5acaa89424374e60546963b60c31d2b00afdc18efa",
+      "gpt-negative.log": "87d73146c258f2a1ba1a9b0c35c90f1eb376eb1694c7f0e0f2d869f53cdcbe19"
+    }
+  }
+}

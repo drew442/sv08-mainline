@@ -136,14 +136,15 @@ class Transaction:
                 raise ValueError('Trial state has not been prepared')
             if pending is None and tx['phase'] != 'confirming':
                 raise ValueError('Missing trial state')
-            if self.backend.primary() != tx['slot']:
-                raise ValueError('Boot selection changed before confirmation')
             if health(boot) is not True:
                 raise ValueError('Trial health has not passed')
             self.save(tx, 'confirming')
             self.backend.mark_good(tx['slot'])  # Durable before application gate release.
-            if not self.backend.good(tx['slot']):
-                raise ValueError('Bootloader did not confirm the target')
+            # The last running attempt has already consumed its counter. Its
+            # next primary may therefore be the fallback until mark-good resets
+            # the counter. Check resulting priority only after that write.
+            if not self.backend.good(tx['slot']) or self.backend.primary() != tx['slot']:
+                raise ValueError('Bootloader did not confirm the target as primary')
             state['pending'] = None
             self.store.save(state)
             self.save(tx, 'complete')

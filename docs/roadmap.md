@@ -90,7 +90,8 @@ actual ext4/vfat inactive-partition installation on the selected distro kernel.
 [Redundant environment tests](hardware/host-environment-build.md) now cover real
 RAUC/U-Boot selection, CRC fallback and recovery-script dispatch.
 [Full Linux A → B → A boots](hardware/host-rollback-build.md) verify late state
-copying and rollback in QEMU. Board boot
+copying and rollback in QEMU. The [integrated device backend](hardware/host-rauc-backend.md)
+now stages, verifies, arms and cancels under real ARM64 service admission. Board boot
 integration, health confirmation, service activation and idle coordination remain
 outstanding; this is not a flashable replacement image.
 
