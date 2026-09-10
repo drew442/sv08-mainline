@@ -182,7 +182,9 @@ class Store:
                     raise ValueError('Finish or cancel the pending image transaction before changing mode')
                 state['requested_mode'] = mode
             if auto_update is not None:
-                state['auto_update'] = bool(auto_update)
+                if not isinstance(auto_update, bool):
+                    raise ValueError('Automatic update policy must be a boolean')
+                state['auto_update'] = auto_update
             self.save(state)
             return state
 

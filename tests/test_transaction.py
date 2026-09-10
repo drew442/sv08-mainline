@@ -53,6 +53,46 @@ class TransactionTests(unittest.TestCase):
         boot = self.store.prepare_boot('B', 'release-2'); boot['boot_id'] = 'boot-2'
         return boot
 
+    def test_automatic_opt_out_refuses_before_admission_or_writes(self):
+        self.store.policy(auto_update=False)
+        with patch.object(self.tx, 'admission', side_effect=AssertionError('service stop')):
+            with self.assertRaisesRegex(ValueError, 'disabled'):
+                self.tx.stage('test-bundle', self.proof, self.boot, automatic=True)
+        self.assertIsNone(self.tx.load())
+        self.assertEqual(self.backend.calls, [])
+        # Opt-out leaves explicitly requested installation available.
+        self.stage()
+        self.tx.arm(self.boot)
+        self.assertEqual(self.backend.primary(), 'B')
+
+    def test_opt_out_between_stage_and_arm_preserves_staged_target(self):
+        self.tx.stage('test-bundle', self.proof, self.boot, automatic=True)
+        self.store.policy(auto_update=False)
+        with patch.object(self.tx, 'admission', side_effect=AssertionError('service stop')):
+            with self.assertRaisesRegex(ValueError, 'disabled'):
+                self.tx.arm(self.boot, automatic=True)
+        self.assertEqual(self.tx.load()['phase'], 'staged')
+        self.assertEqual(self.backend.primary(), 'A')
+        self.assertIsNone(self.store.load()['pending'])
+        self.store.policy(auto_update=True)
+        self.tx.arm(self.boot, automatic=True)
+        self.assertEqual(self.backend.primary(), 'B')
+
+    def test_opt_out_does_not_undo_armed_update_and_cancel_still_works(self):
+        self.tx.stage('test-bundle', self.proof, self.boot, automatic=True)
+        self.tx.arm(self.boot, automatic=True)
+        self.store.policy(auto_update=False)
+        self.assertEqual(self.tx.reconcile(self.boot), 'awaiting-reboot')
+        self.assertEqual(self.backend.primary(), 'B')
+        self.tx.cancel(self.boot)
+        self.assertEqual(self.backend.primary(), 'A')
+
+    def test_automatic_flag_requires_boolean(self):
+        for value in ('false', 'true', 0, 1, None):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, 'boolean'):
+                self.tx.stage('test-bundle', self.proof, self.boot, automatic=value)
+        self.assertEqual(self.backend.calls, [])
+
     def test_stage_does_not_copy_state_or_select_target(self):
         self.stage()
         self.assertEqual(self.backend.primary(), 'A')

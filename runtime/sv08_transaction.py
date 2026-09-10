@@ -5,6 +5,7 @@ Integration library, not a hardware CLI. The caller must provide a validated RAU
 backend, authenticated bundle proof and quiescence/health checks. No default check
 assumes an idle or healthy printer. See ADR 0006 and transaction regression tests.
 """
+from contextlib import contextmanager, nullcontext
 import json
 import re
 import uuid
@@ -48,39 +49,69 @@ class Transaction:
         # Must obtain a shared admission lease and inspect service/print state;
         # the callback's context manager keeps the lease through the operation.
 
-    def stage(self, bundle, proof, boot):
+    @contextmanager
+    def source_admitted(self, boot, automatic, lease=nullcontext):
+        """Serialize policy changes with writes; opt-out precedes service stops."""
+        if not isinstance(automatic, bool):
+            raise ValueError('Automatic operation must be a boolean')
+        with self.store.locked():
+            state = self.store.load()
+            if automatic and not state['auto_update']:
+                raise ValueError('Automatic updates are disabled')
+            # Fixed ordering: state -> optional upload lease -> service barrier.
+            # Authenticate the upload before asking Klipper to quiesce.
+            with lease() as leased, self.admission():
+                self.require_source(state, boot)
+                yield state, leased
+
+    def stage(self, bundle, proof, boot, *, automatic=False):
         identifier(proof['release'])
         if not re.fullmatch('[0-9a-f]{64}', proof['bundle_sha256']):
             raise ValueError('Missing authenticated bundle identity')
-        with self.store.locked(), self.admission():
-            state = self.store.load()
-            self.require_source(state, boot)
-            previous = self.load()
-            if state['pending'] or previous and previous['phase'] not in ('complete', 'cancelled', 'failed'):
-                raise ValueError('Resolve the outstanding transaction before staging')
-            if any(record['release'] == proof['release'] for record in state['slots'].values()):
-                raise ValueError('Use a unique new release; reinstalling an existing generation is not supported')
-            self.store.check_copy_budget(state['slots'][boot['slot']], reserve_full_copy=True)
-            target = 'B' if boot['slot'] == 'A' else 'A'
-            if self.backend.primary() != boot['slot']:
-                raise ValueError('Boot selection differs from the running source')
-            tx = dict(format_version=1, id=uuid.uuid4().hex, phase='installing',
-                      slot=target, previous_slot=boot['slot'], previous_release=boot['release'],
-                      release=proof['release'], bundle_sha256=proof['bundle_sha256'],
-                      boot_id=identifier(boot['boot_id']))
-            self.save(tx, 'installing')
-            # Backend must verify this exact proof/file and both inactive hashes,
-            # preserve source devices, and use activate-installed=false.
-            self.backend.install(bundle, proof, target)
-            if self.backend.primary() != boot['slot'] or self.backend.good(target):
-                raise ValueError('Installer must retain the source primary and leave target bad')
-            self.save(tx, 'staged')
-            return tx
+        with self.source_admitted(boot, automatic) as (state, _):
+            return self._stage_admitted(bundle, proof, boot, state)
 
-    def arm(self, boot):
-        with self.store.locked(), self.admission():
-            state, tx = self.store.load(), self.load()
-            self.require_source(state, boot)
+    def stage_upload(self, staging, digest, verify, boot, *, automatic=False):
+        """Authenticate and lease a private upload through all inactive writes.
+
+        The caller supplies the reviewed keyring verifier and authenticated
+        request policy; this method does not expose an upload endpoint.
+        """
+        lease = lambda: staging.lease(digest, verify)
+        with self.source_admitted(boot, automatic, lease) as (state, uploaded):
+            bundle, proof = uploaded
+            return self._stage_admitted(bundle, proof, boot, state)
+
+    def _stage_admitted(self, bundle, proof, boot, state):
+        """Internal operation; caller holds state, upload (if any), admission."""
+        identifier(proof['release'])
+        if not re.fullmatch('[0-9a-f]{64}', proof['bundle_sha256']):
+            raise ValueError('Missing authenticated bundle identity')
+        previous = self.load()
+        if state['pending'] or previous and previous['phase'] not in ('complete', 'cancelled', 'failed'):
+            raise ValueError('Resolve the outstanding transaction before staging')
+        if any(record['release'] == proof['release'] for record in state['slots'].values()):
+            raise ValueError('Use a unique new release; reinstalling an existing generation is not supported')
+        self.store.check_copy_budget(state['slots'][boot['slot']], reserve_full_copy=True)
+        target = 'B' if boot['slot'] == 'A' else 'A'
+        if self.backend.primary() != boot['slot']:
+            raise ValueError('Boot selection differs from the running source')
+        tx = dict(format_version=1, id=uuid.uuid4().hex, phase='installing',
+                  slot=target, previous_slot=boot['slot'], previous_release=boot['release'],
+                  release=proof['release'], bundle_sha256=proof['bundle_sha256'],
+                  boot_id=identifier(boot['boot_id']))
+        self.save(tx, 'installing')
+        # Backend must verify this exact proof/file and both inactive hashes,
+        # preserve source devices, and use activate-installed=false.
+        self.backend.install(bundle, proof, target)
+        if self.backend.primary() != boot['slot'] or self.backend.good(target):
+            raise ValueError('Installer must retain the source primary and leave target bad')
+        self.save(tx, 'staged')
+        return tx
+
+    def arm(self, boot, *, automatic=False):
+        with self.source_admitted(boot, automatic) as (state, _):
+            tx = self.load()
             if (not tx or tx['phase'] not in ('staged', 'arming', 'armed') or
                     boot['slot'] != tx['previous_slot'] or boot['release'] != tx['previous_release'] or
                     boot['boot_id'] != tx['boot_id']):

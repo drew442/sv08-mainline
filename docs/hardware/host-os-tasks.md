@@ -60,7 +60,8 @@ that all project work is complete. Printer remains offline for this work.
   See [backend evidence](host-rauc-backend.md).
 - [x] Implement private bounded upload intake, verified publication, exclusive
   install leases and explicit cleanup; see [staging evidence](host-upload-staging.md).
-  Authenticated LAN endpoint and coordinator wiring remain open.
+  Transaction upload-lease composition now has real lock/exclusion tests;
+  authenticated LAN endpoint and assembled coordinator wiring remain open.
 - [x] Implement transaction reconciliation classification and interrupted-arming
   journal repair with failure-injection tests; no slot selection or inferred health.
 - [ ] Finish board configuration, boot-service reconciliation wiring,
@@ -71,6 +72,9 @@ that all project work is complete. Printer remains offline for this work.
   ARM64 reactor/dispatcher race tests pass. See [admission evidence](host-update-admission.md).
   Real ARM64 systemd/Moonraker boundary tests also pass with simulated printer
   status. Complete Klipper configuration activation and hardware checks remain open.
+- [x] Serialize automatic staging/arming with opt-out and reject malformed policy
+  booleans before service admission; [policy tests](host-transactions.md#automatic-update-opt-out-boundary)
+  cover manual operations and cancellation without implicitly undoing an armed update.
 - [ ] Integrate services, authorization, local onboarding, network provisioning,
   idle update staging, next-boot activation, opt-out and customization blocking.
   Keep Moonraker's independent software updater disabled for image-managed apps.

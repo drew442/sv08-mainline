@@ -72,6 +72,13 @@ class PersistentStateTests(unittest.TestCase):
         self.assertIsNone(self.store.load()['pending'])
         self.store.policy(mode='writable')
 
+    def test_policy_rejects_non_boolean_without_publishing_other_changes(self):
+        before = self.store.load()
+        for value in ('false', 'true', 0, 1, [], {}):
+            with self.subTest(value=value), self.assertRaisesRegex(ValueError, 'boolean'):
+                self.store.policy(mode='writable', auto_update=value)
+            self.assertEqual(self.store.load(), before)
+
     def test_copy_failure_never_publishes_b(self):
         self.store.expect_trial('B', 'release-2', 'A')
         with patch('sv08_state.snapshot', side_effect=OSError('disk full')):

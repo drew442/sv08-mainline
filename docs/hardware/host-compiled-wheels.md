@@ -77,6 +77,14 @@ loopback. Evidence is in `build/moonraker-repro-api-v1/` and the
 [public result](host-compiled-wheels-20260910.json). Earlier OS images and hardware
 records retain their original package versions; this test does not rewrite them.
 
+Two fresh KlipperScreen venv/package assemblies also match one another and the
+previously tested `sv08-klipperscreen_0.0+git3791fdf7-2_arm64.deb` byte for byte:
+`a35f4e732da35bacce52ed858ded703129e6d28fb1d006e1a5c252edbbf4a1c6`.
+Both pip dependency checks passed. Reports and packages remain in
+`build/klipperscreen-repro-package-v1/` and `v2/`; private overlay mounts were
+removed after assembly. The unchanged package retains its earlier virtual-display
+validation scope; this rebuild does not validate physical HDMI or touch hardware.
+
 Primary source records, accessed 2026-09-10:
 [streaming-form-data 2.1.0](https://pypi.org/project/streaming-form-data/2.1.0/),
 [Pycairo 1.29.1](https://pypi.org/project/pycairo/1.29.1/), and the local hash-checked

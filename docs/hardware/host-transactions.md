@@ -121,3 +121,47 @@ reject failed health, and exercise source reboot and actual state-registry
 fallback. The coordinator still must call reconciliation and execute its returned
 next step; these new cases have offline library evidence, not physical power-cut
 or assembled boot-service evidence.
+
+## Automatic update opt-out boundary
+
+Automatic callers now pass `automatic=True` separately to `stage()` and `arm()`.
+Each method reads the persistent opt-out under the same state lock that covers
+admission and writes. Disabled automatic work is refused before service admission,
+so a scheduler cannot stop printer services merely to discover the opt-out. The
+lock serializes policy changes with an operation already in progress; an opt-out
+waits for that operation to finish and applies to subsequent operations. It cannot
+interrupt an in-progress slot write.
+
+Opting out after staging leaves the source selected and blocks automatic arming.
+An explicit manual operation remains available with the same idle, customization,
+artifact and device checks. Opting out after arming does not undo boot selection;
+the UI must expose that pending update and a separate cancellation action. Trial
+health confirmation and fallback reconciliation still run regardless of opt-out.
+The transaction layer never requests a reboot: selecting B prepares the next
+normal boot. Automatic callers must explicitly identify themselves; endpoint and
+scheduler wiring remain outstanding.
+
+Tests cover opt-out before admission, between staging and arming, after arming,
+manual operation and cancellation while opted out. Policy and operation inputs
+require actual booleans; strings such as `"false"` are rejected instead of silently
+enabling updates. Failed policy validation publishes no partial mode change.
+These are offline integration-library tests, not an installed scheduling service.
+
+## Upload lease integration
+
+`Transaction.stage_upload()` connects private staging to the existing transaction
+and backend interface. Its lock order is state registry, upload lease, then
+service admission. The keyring callback authenticates the exact managed upload
+before service admission, and the upload lease stays held through backend writes
+and durable `staged` publication. The backend still independently checks the
+signed proof and paired image hashes. The coordinator must supply the reviewed
+verifier, never the fixture's checksum-only callback.
+
+`tests/test_staged_transaction.py` uses real file locks and temporary private
+uploads with a backend double. It verifies exclusion of competing cleanup during
+installation, authentication before admission, opt-out before verification, and
+retention of the upload plus `installing` journal after a write error. Locks are
+released on success and failure. The method acquires its own state lock; callers
+must not wrap it in another `Store.locked()` context. The authenticated network
+endpoint and assembled service still remain to be wired. This adds library
+composition evidence; it does not extend the earlier real-RAUC test scope.
