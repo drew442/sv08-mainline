@@ -60,6 +60,7 @@ class Transaction:
                 raise ValueError('Resolve the outstanding transaction before staging')
             if any(record['release'] == proof['release'] for record in state['slots'].values()):
                 raise ValueError('Use a unique new release; reinstalling an existing generation is not supported')
+            self.store.check_copy_budget(state['slots'][boot['slot']], reserve_full_copy=True)
             target = 'B' if boot['slot'] == 'A' else 'A'
             if self.backend.primary() != boot['slot']:
                 raise ValueError('Boot selection differs from the running source')

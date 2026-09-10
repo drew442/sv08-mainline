@@ -66,6 +66,9 @@ that all project work is complete. Printer remains offline for this work.
 - [ ] Integrate services, authorization, local onboarding, network provisioning,
   idle update staging, next-boot activation, opt-out and customization blocking.
   Keep Moonraker's independent software updater disabled for image-managed apps.
+- [x] Check state-copy blocks/inodes at staging and trial preparation, including
+  sparse expansion, the full late-copy allowance and refusal before installation.
+  See [capacity admission](host-transactions.md#state-copy-capacity-admission).
 - [ ] Exercise update/mode/package races, late state writes before reboot,
   migration failures, no space, rollback and customized-image update refusal
   across the assembled system. Library failure tests and actual RAUC malformed

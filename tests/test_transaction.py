@@ -169,3 +169,11 @@ class TransactionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'primary'):
             self.tx.confirm(boot, lambda boot: True)
         self.assertIsNotNone(self.store.load()['pending'])
+
+    def test_copy_budget_refusal_precedes_install_and_journal(self):
+        with patch.object(self.store, 'check_copy_budget', side_effect=ValueError('no copy capacity')):
+            with self.assertRaisesRegex(ValueError, 'copy capacity'):
+                self.stage()
+        self.assertEqual(self.backend.calls, [])
+        self.assertIsNone(self.tx.load())
+        self.assertIsNone(self.store.load()['pending'])

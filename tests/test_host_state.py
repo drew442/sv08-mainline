@@ -1,4 +1,6 @@
 import json
+import os
+from types import SimpleNamespace
 from pathlib import Path
 import sqlite3
 import sys
@@ -117,3 +119,33 @@ class PersistentStateTests(unittest.TestCase):
         self.store.save(state)
         with self.assertRaisesRegex(ValueError, 'pending transaction'):
             self.store.prepare_boot('B', 'release-2')
+
+    def test_copy_budget_counts_blocks_and_sparse_expansion(self):
+        record = self.store.load()['slots']['A']
+        block = os.statvfs(self.store.root).f_frsize
+        with self.config.open('wb') as stream:
+            stream.truncate(block * 20 + 1)
+        report = self.store.check_copy_budget(record)
+        self.assertGreaterEqual(report['copy_bytes'], block * 25)
+        self.store.copy_limit_bytes = block * 20
+        with self.assertRaisesRegex(ValueError, 'budget'):
+            self.store.check_copy_budget(record)
+
+    def test_space_and_inode_exhaustion_preserve_trial_source(self):
+        self.store.expect_trial('B', 'release-2', 'A')
+        for values in (dict(f_bavail=0, f_favail=10000),
+                       dict(f_bavail=1000000, f_favail=1)):
+            fs = SimpleNamespace(f_frsize=4096, f_bsize=4096, **values)
+            with self.subTest(values=values), patch('sv08_state.os.statvfs', return_value=fs):
+                with self.assertRaisesRegex(ValueError, 'space or inodes'):
+                    self.store.prepare_boot('B', 'release-2')
+            self.assertNotIn('B', self.store.load()['slots'])
+            self.assertEqual(self.config.read_text(), 'before staging')
+
+    def test_staging_reserves_full_late_copy_allowance(self):
+        record = self.store.load()['slots']['A']
+        fs = SimpleNamespace(f_frsize=4096, f_bsize=4096, f_bavail=1000, f_favail=10000)
+        with patch('sv08_state.os.statvfs', return_value=fs):
+            self.store.check_copy_budget(record)
+            with self.assertRaisesRegex(ValueError, 'space or inodes'):
+                self.store.check_copy_budget(record, reserve_full_copy=True)

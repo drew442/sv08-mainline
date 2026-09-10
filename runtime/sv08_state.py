@@ -222,6 +222,32 @@ class Store:
             raise ValueError('Missing/invalid state generation; use recovery')
         return path
 
+    def check_copy_budget(self, record, reserve_full_copy=False):
+        """Read-only preflight; caller holds the state lock and quiesces writers.
+
+        Count destination blocks/inodes, including directories and sparse file
+        expansion. Staging reserves the entire configured copy allowance because
+        configuration can grow before the next boot. Boot rechecks actual usage.
+        This is admission, not a filesystem quota or a promise against later writes.
+        """
+        origin = self.generation_path(record)
+        fs = os.statvfs(self.root)
+        block = fs.f_frsize or fs.f_bsize
+        required, inodes = block, 1  # Destination generation directory.
+        for path in origin.rglob('*'):
+            entry = path.lstat()
+            if not (stat.S_ISREG(entry.st_mode) or stat.S_ISDIR(entry.st_mode)):
+                raise ValueError('State copy requires regular files/directories; export unsupported links first')
+            required += block if stat.S_ISDIR(entry.st_mode) else ((entry.st_size + block - 1) // block) * block
+            inodes += 1
+        if required > self.copy_limit_bytes:
+            raise ValueError('Insufficient state-copy budget; original state retained')
+        allowance = self.copy_limit_bytes if reserve_full_copy else required
+        if (fs.f_bavail * block < self.reserve_bytes + allowance or
+                fs.f_favail < inodes + 128):
+            raise ValueError('Insufficient state-copy space or inodes; original state retained')
+        return dict(copy_bytes=required, copy_inodes=inodes, reserved_copy_bytes=allowance)
+
     def prepare_boot(self, slot, release, schema=1):
         """Run before any state-writing applications, not at image staging time."""
         identifier(release)
@@ -250,9 +276,7 @@ class Store:
                     if source['schema'] != schema:
                         raise ValueError('No supported state migration for this schema')
                     origin = self.generation_path(source)
-                    size = sum(p.stat().st_size for p in origin.rglob('*') if p.is_file())
-                    if size > self.copy_limit_bytes or shutil.disk_usage(self.root).free < self.reserve_bytes + size:
-                        raise ValueError('Insufficient state-copy budget; original state retained')
+                    self.check_copy_budget(source)
                     try:
                         snapshot(origin, target)
                     except BaseException:

@@ -82,3 +82,22 @@ This is original project coordination around upstream RAUC and the state module;
 no upstream source is modified. It extends [decision 0006](../decisions/0006-host-state-integration.md).
 Retire it if upstream integration provides the same generation/customization and
 crash-ordering semantics, keeping the failure tests as acceptance evidence.
+
+## State-copy capacity admission
+
+Staging now checks the source generation before journaling/installing and requires
+free space for the entire configured 256 MiB late-copy allowance plus the 512 MiB
+operating reserve. The uploaded bundle already consumes disk space at that point.
+This keeps a small current configuration from admitting an update with no room
+for its permitted growth before reboot. Trial preparation independently rechecks
+actual destination space and inodes immediately before copying.
+
+The shared check counts directory blocks, rounds regular files to filesystem
+blocks, counts sparse files at expanded destination size, rejects special files
+and links, and retains 128 spare inodes. It uses space available to ordinary users,
+so ext4's reserved blocks are not part of the update budget. Tests cover sparse
+expansion, byte/inode exhaustion, the full staging allowance and refusal before
+any installer call or new journal. This is a preflight check, not a quota: later
+user writes can consume space, in which case trial preparation fails and retains
+the source generation. Owned upload staging, quotas/cleanup policy and physical
+full-storage rollback testing remain separate work.
