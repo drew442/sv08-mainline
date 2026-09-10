@@ -65,7 +65,14 @@ upstream proposal must include the failure tests, without private printer state.
 
 The subsequent [transaction implementation](../hardware/host-transactions.md)
 orders durable installation, pending trial, boot selection, confirmation and
-cancellation. Its production backend/admission/health callbacks are still open;
-it does not enable automatic updates or declare a printer healthy. The
+cancellation. The later [RAUC backend](../hardware/host-rauc-backend.md) and
+[atomic idle admission](../hardware/host-update-admission.md) have integrated
+ARM64 VM evidence. Boot-service coordination, health confirmation and automatic
+scheduling remain open; the implementation does not declare a printer healthy. The
 [signed bundle policy](../hardware/host-bundle-policy.md) supplies the separate
 layout/state/Klipper admission check.
+
+Subsequent evidence also includes [full Linux rollback boots](../hardware/host-rollback-build.md),
+[private upload staging](../hardware/host-upload-staging.md), and transaction
+reconciliation/capacity checks. These extend the initial library/mount evidence
+above without establishing physical board support or power-loss behavior.

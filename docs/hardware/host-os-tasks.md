@@ -80,6 +80,8 @@ that all project work is complete. Printer remains offline for this work.
   bundle rejection now pass; live admission and power-cut tests remain open.
 - [x] Review Mainsail dependency reachability and pin compatible js-yaml/nanoid
   fixes; two fresh patched package builds match. See [audit evidence](host-mainsail-audit.md).
+- [x] Browser startup, real packaged Moonraker initialization and configuration
+  upload/read/delete pass in a loopback-only namespace with Klipper disconnected.
 - [ ] Resolve remaining framework/tooling findings and complete browser/API/UI workload tests.
   Archive-version reporting and deterministic precache ordering now have tested
   patches; retire them when upstream provides equivalent support.

@@ -70,3 +70,31 @@ counts separately from the limited browser result. The next steps are a local
 API fixture and browser workload coverage, remaining compatible tooling fixes,
 and reviewed treatment of the framework findings. Version-based findings remain
 visible until their fix or narrowly supported reachability disposition is tested.
+
+## Packaged API and file roundtrip
+
+The subsequent `build/mainsail-api-browser-v4/` run used the real packaged ARM64
+Moonraker 985c1d0 under QEMU user emulation and Chrome in one temporary network
+namespace containing only loopback. The fixture used a new disposable data tree,
+`provider: none`, trusted loopback and an absent Klipper socket. The browser
+completed its initialization list, reported the expected API version and
+Klipper-disconnected state, then uploaded, read back and deleted a harmless
+configuration file. There were no uncaught JavaScript exceptions. No physical
+network interface, MCU or printer service was available in that namespace.
+
+[The fixture runner](../../tests/host_moonraker_browser.py) records the method and
+requires explicit execution, build-directory paths and a non-deployable manifest.
+Run it through `sudo unshare --mount --net --pid --fork --mount-proc` with explicit
+`--rootfs`, `--output`, `--node`, `--chrome` and `--dist` arguments. Its network
+check uses namespace-local link information; the host's pre-existing sysfs mount
+can still describe host interfaces and must not be used for this check. The first
+15-second API deadline was too short for source compilation under user emulation;
+the successful run allowed 900 readiness polls with 100 ms retry delays
+and a one-second HTTP timeout. This is not an ARM hardware startup timing.
+
+The documented runner repeated this result in `build/mainsail-api-browser-v5/`.
+The test data was deleted and namespace/browser/API processes stopped afterward.
+Logs, server-info response, screenshot, DOM and browser result remain in the
+fixture output. Optional theme files were absent as expected. Internet announcement
+fetches failed in the intentionally disconnected namespace. This validates a
+trusted-loopback API/file path, not production authentication or a print workload.

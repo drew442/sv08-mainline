@@ -69,5 +69,24 @@
     "full_workload_validation": false,
     "browser": "Chrome for Testing 145.0.7632.6",
     "probe_sha256": "90ab4c9f89f09456a026608a7c1b5c5c8a72252882c36d364c2a6544e04389c6"
+  },
+  "packaged_api_browser": {
+    "passed": true,
+    "static_application_mounted": true,
+    "uncaught_exceptions": 0,
+    "physical_hardware": false,
+    "moonraker_connected": true,
+    "api_state": {
+      "connected": true,
+      "version": "985c1d0",
+      "klippy": "disconnected",
+      "initializing": []
+    },
+    "configuration_file_roundtrip": true,
+    "full_workload_validation": false,
+    "probe_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3",
+    "network": "loopback-only namespace",
+    "documented_runner_repeat_passed": true,
+    "runner_sha256": "8b756360d1214abcb2efc197c2e2c9e0ee88ea69785de61e0e68ebeadaa5dcbc"
   }
 }
