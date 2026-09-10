@@ -1,0 +1,11 @@
+{
+  "explicit_cleanup": true,
+  "passed": true,
+  "physical_hardware": false,
+  "real_rauc_signature_verification": true,
+  "authenticated_publish_and_reverified_lease": true,
+  "full_payload_verified": false,
+  "bundle_sha256": "fcc57a6b30d74fe6f8ea3dac161e03acdd2acaa036033c013d65746899d49c91",
+  "bundle_bytes": 598521825,
+  "source_sha256": "95e46b897393fb6753a8378de887816a2b5ba35a21ce940bb6750385ea67b32b"
+}

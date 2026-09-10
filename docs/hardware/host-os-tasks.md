@@ -55,7 +55,10 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Connect real RAUC/U-Boot device backend to transaction and idle admission;
   the ARM64 VM verifies install/hash/arm/cancel and final-attempt counter behavior.
   See [backend evidence](host-rauc-backend.md).
-- [ ] Finish board configuration, owned staging/upload paths, boot-time transaction
+- [x] Implement private bounded upload intake, verified publication, exclusive
+  install leases and explicit cleanup; see [staging evidence](host-upload-staging.md).
+  Authenticated LAN endpoint and coordinator wiring remain open.
+- [ ] Finish board configuration, boot-time transaction
   reconciliation, health confirmation, fallback, independent recovery and offline
   release-key handling. Signed metadata admission and device backend tests are
   complete; they do not make the candidate deployable.
