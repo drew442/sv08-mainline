@@ -58,8 +58,10 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Implement private bounded upload intake, verified publication, exclusive
   install leases and explicit cleanup; see [staging evidence](host-upload-staging.md).
   Authenticated LAN endpoint and coordinator wiring remain open.
-- [ ] Finish board configuration, boot-time transaction
-  reconciliation, health confirmation, fallback, independent recovery and offline
+- [x] Implement transaction reconciliation classification and interrupted-arming
+  journal repair with failure-injection tests; no slot selection or inferred health.
+- [ ] Finish board configuration, boot-service reconciliation wiring,
+  health confirmation, fallback, independent recovery and offline
   release-key handling. Signed metadata admission and device backend tests are
   complete; they do not make the candidate deployable.
 - [x] Implement and separately package atomic Klipper idle admission; native and

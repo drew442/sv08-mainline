@@ -124,6 +124,56 @@ class Transaction:
             self.save(tx, 'failed' if failed else 'cancelled')
             return tx
 
+    def reconcile(self, boot):
+        """Classify a prepared boot without selecting slots or asserting health.
+
+        The sole repair promotes an interrupted arming journal when the exact
+        announced target has actually booted with its matching trial generation.
+        The coordinator must execute the returned next step under its normal
+        checks. It must not release the trial gate merely because this returns.
+        """
+        with self.store.locked(), self.admission():
+            state, tx = self.store.load(), self.load()
+            pending = state['pending']
+            if not tx or tx['phase'] in ('complete', 'cancelled', 'failed'):
+                if pending:
+                    raise ValueError('Pending trial has no live transaction')
+                return 'idle'
+            self.require_source(state, boot)
+            if pending and (pending['id'] != tx['id'] or pending['slot'] != tx['slot'] or
+                    pending['release'] != tx['release'] or pending['previous_slot'] != tx['previous_slot']):
+                raise ValueError('Pending trial and transaction disagree')
+            if boot['slot'] == tx['slot'] and boot['release'] == tx['release']:
+                if tx['phase'] not in ('arming', 'armed', 'confirming'):
+                    raise ValueError('Target booted without an announced activation')
+                if pending is None:
+                    if tx['phase'] != 'confirming':
+                        raise ValueError('Target boot has no prepared trial state')
+                elif pending['phase'] != 'trial':
+                    raise ValueError('Prepare target state before reconciliation')
+                if tx['phase'] == 'arming':
+                    self.save(tx, 'armed')
+                return 'needs-health'
+            if boot['slot'] != tx['previous_slot'] or boot['release'] != tx['previous_release']:
+                raise ValueError('Running release is outside the transaction')
+            if pending and pending['phase'] != 'armed':
+                raise ValueError('Prepare fallback state before reconciliation')
+            if boot['boot_id'] != tx['boot_id']:
+                return 'needs-cancel'  # Never silently rearm after a fallback/reboot.
+            if tx['phase'] == 'installing':
+                return 'needs-cancel'
+            if tx['phase'] == 'staged':
+                if pending:
+                    raise ValueError('Staged transaction unexpectedly has a pending trial')
+                return 'staged'
+            if tx['phase'] == 'arming':
+                return 'needs-arm'
+            if tx['phase'] == 'armed':
+                if not pending or self.backend.primary() != tx['slot']:
+                    return 'needs-cancel'
+                return 'awaiting-reboot'
+            raise ValueError('Confirmation journal cannot resume from the source boot')
+
     def confirm(self, boot, health):
         """Health callback must check this boot; success is never inferred here."""
         with self.store.locked(), self.admission():

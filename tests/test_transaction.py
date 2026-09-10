@@ -177,3 +177,53 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual(self.backend.calls, [])
         self.assertIsNone(self.tx.load())
         self.assertIsNone(self.store.load()['pending'])
+
+    def test_reconcile_power_loss_after_activation_before_journal(self):
+        self.stage(); original = self.tx.save
+        def fail(tx, phase):
+            if phase == 'armed': raise OSError('power loss')
+            original(tx, phase)
+        with patch.object(self.tx, 'save', side_effect=fail):
+            with self.assertRaises(OSError): self.tx.arm(self.boot)
+        boot = self.store.prepare_boot('B', 'release-2'); boot['boot_id'] = 'boot-2'
+        calls = list(self.backend.calls)
+        self.assertEqual(self.tx.reconcile(boot), 'needs-health')
+        self.assertEqual(self.tx.load()['phase'], 'armed')
+        self.assertEqual(self.store.load()['pending']['phase'], 'trial')
+        self.assertEqual(self.backend.calls, calls)
+        self.assertEqual(self.tx.reconcile(boot), 'needs-health')
+        with self.assertRaisesRegex(ValueError, 'health'):
+            self.tx.confirm(boot, lambda boot: False)
+        self.tx.confirm(boot, lambda boot: True)
+        self.assertEqual(self.tx.reconcile(boot), 'idle')
+
+    def test_reconcile_source_reboot_never_rearms(self):
+        self.stage()
+        self.assertEqual(self.tx.reconcile(self.boot), 'staged')
+        self.tx.arm(self.boot)
+        self.assertEqual(self.tx.reconcile(self.boot), 'awaiting-reboot')
+        calls = list(self.backend.calls)
+        reboot = dict(self.boot, boot_id='new-boot')
+        self.assertEqual(self.tx.reconcile(reboot), 'needs-cancel')
+        self.assertEqual(self.backend.calls, calls)
+        self.tx.cancel(reboot)
+        self.assertEqual(self.tx.reconcile(reboot), 'idle')
+
+    def test_reconcile_actual_fallback_retains_failed_trial(self):
+        self.trial()
+        fallback = self.store.prepare_boot('A', 'release-1'); fallback['boot_id'] = 'boot-3'
+        self.assertEqual(self.tx.reconcile(fallback), 'needs-cancel')
+        self.assertEqual(self.tx.cancel(fallback)['phase'], 'failed')
+        self.assertEqual(self.tx.reconcile(fallback), 'idle')
+        self.assertEqual(self.store.load()['last_failed_trial']['release'], 'release-2')
+
+    def test_reconcile_refuses_orphan_pending_and_unannounced_target(self):
+        self.store.expect_trial('B', 'release-2', 'A')
+        with self.assertRaisesRegex(ValueError, 'no live transaction'):
+            self.tx.reconcile(self.boot)
+        self.store.cancel_trial()
+        self.stage()
+        self.store.expect_trial('B', 'release-2', 'A')
+        boot = self.store.prepare_boot('B', 'release-2'); boot['boot_id'] = 'boot-2'
+        with self.assertRaisesRegex(ValueError, 'disagree'):
+            self.tx.reconcile(boot)

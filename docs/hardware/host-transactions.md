@@ -101,3 +101,23 @@ any installer call or new journal. This is a preflight check, not a quota: later
 user writes can consume space, in which case trial preparation fails and retains
 the source generation. Owned upload staging, quotas/cleanup policy and physical
 full-storage rollback testing remain separate work.
+
+## Interrupted boot reconciliation
+
+`Transaction.reconcile()` now classifies a prepared boot without marking a slot
+or inferring health. It distinguishes staged work in the original boot, an armed
+image awaiting reboot, interrupted installation requiring cancellation, fallback
+requiring cancellation, and a running trial requiring health confirmation.
+A source reboot never silently rearms the target or replenishes its counters.
+
+If power fails after bootloader activation but before the journal changes from
+`arming` to `armed`, the exact target can already be running. With matching
+announced release, transaction ID and prepared trial generation, reconciliation
+repairs that journal phase and still requires the independent health check.
+Orphan pending state, mismatched transactions and unannounced target boots are
+refused. The application trial gate stays closed until confirmation completes.
+Unit tests inject that activation/journal interruption, repeat reconciliation,
+reject failed health, and exercise source reboot and actual state-registry
+fallback. The coordinator still must call reconciliation and execute its returned
+next step; these new cases have offline library evidence, not physical power-cut
+or assembled boot-service evidence.
