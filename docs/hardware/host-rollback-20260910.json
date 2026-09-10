@@ -1,0 +1,41 @@
+{
+  "date": "2026-09-10",
+  "physical_hardware": false,
+  "kernel": "6.12.107+deb13-arm64",
+  "results": [
+    {
+      "phase": 0,
+      "slot": "A",
+      "trial": false,
+      "paired_mounts": true,
+      "late_copy_and_fallback": true,
+      "passed": true,
+      "automatic_boot_selection_tested": false
+    },
+    {
+      "phase": 1,
+      "slot": "B",
+      "trial": true,
+      "paired_mounts": true,
+      "late_copy_and_fallback": true,
+      "passed": true,
+      "automatic_boot_selection_tested": false
+    },
+    {
+      "phase": 2,
+      "slot": "A",
+      "trial": false,
+      "paired_mounts": true,
+      "late_copy_and_fallback": true,
+      "passed": true,
+      "automatic_boot_selection_tested": false
+    }
+  ],
+  "sha256": {
+    "build/host-qemu-rollback-v1/root-A.ext4": "074d46557cef6baa205bc688ecc3a69c9131ff994595ed692ca838f28d06e480",
+    "build/host-qemu-rollback-v1/root-B.ext4": "366007545ca889c94abcd747ac546986a81971c037b2b0b92f8fc6172ce1537e",
+    "build/host-qemu-rollback-v1/boot-0.log": "5c41444ef189bc6ecd37684f058cd794cc53e1d751e91681a9843641c3abd881",
+    "build/host-qemu-rollback-v1/boot-1.log": "d83c1f5439f7c64eda1ded5911683ad7c6ea311eb6b08b77c2c2878e1bedb003",
+    "build/host-qemu-rollback-v1/boot-2.log": "87dcf84563e3df90092fa93ea607f2853a29b91f97954c809b2f44b67929b281"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-10",
+  "physical_hardware": false,
+  "installs_or_activates": false,
+  "accepted": {
+    "release": "0.1.0-test.1",
+    "compatible": "sv08-offline-test-only",
+    "metadata": {
+      "layout": "ab-8gb-v1",
+      "state-schema": "1",
+      "klipper-commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b"
+    },
+    "image_hashes": {
+      "rootfs": "37d7e0e01f1a2a90f481568de2d6de36817b3932314aacbfb30171100a03677e",
+      "boot": "be91fda16bd11eeb916251b9493dad8ab21b9b5204b2bdfe6cd1d5c959b0c578"
+    },
+    "bundle_sha256": "fcc57a6b30d74fe6f8ea3dac161e03acdd2acaa036033c013d65746899d49c91",
+    "installs_or_activates": false,
+    "full_payload_verified": false
+  },
+  "rejected": {
+    "compatible": "Bundle targets a different hardware profile",
+    "layout": "Signed layout/state/Klipper metadata does not match this system",
+    "state_schema": "Signed layout/state/Klipper metadata does not match this system",
+    "klipper_commit": "Signed layout/state/Klipper metadata does not match this system",
+    "missing-metadata": "Signed layout/state/Klipper metadata does not match this system"
+  },
+  "policy": {
+    "compatible": "sv08-offline-test-only",
+    "layout": "ab-8gb-v1",
+    "state_schema": 1,
+    "klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+    "max_bundle_bytes": 1073741824,
+    "image_bytes": {
+      "boot": 201326592,
+      "rootfs": 2147483648
+    }
+  },
+  "bundle_size_bytes": 598521825
+}

@@ -177,5 +177,6 @@ were reported. All three guests shut down normally. Logs are
 fsck; precise sizes and test results are in the
 [evidence record](host-state-20260909.json).
 
-These tests do not yet exercise a full kernel boot into B followed by rollback,
-RAUC health confirmation, active-print admission or production environment writes.
+The subsequent [A → B → A Linux fixture](host-rollback-build.md) now checks
+late state copying and fallback across full kernel boots. RAUC health confirmation,
+active-print admission and physical environment writes remain outstanding.

@@ -88,7 +88,9 @@ now has regression, full ARM64 mode/package boots and paired RAUC installation
 tests. A [reproducible ARM64 RAUC package](hardware/host-rauc-build.md) also passes
 actual ext4/vfat inactive-partition installation on the selected distro kernel.
 [Redundant environment tests](hardware/host-environment-build.md) now cover real
-RAUC/U-Boot selection, CRC fallback and recovery-script dispatch. Board boot
+RAUC/U-Boot selection, CRC fallback and recovery-script dispatch.
+[Full Linux A → B → A boots](hardware/host-rollback-build.md) verify late state
+copying and rollback in QEMU. Board boot
 integration, health confirmation, service activation and idle coordination remain
 outstanding; this is not a flashable replacement image.
 

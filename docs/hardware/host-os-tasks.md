@@ -19,11 +19,17 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Real mount-namespace tests for immutable/writable roots and explicit persistence.
 - [x] Full Debian ARM64 QEMU boots through immutable → writable → immutable,
   preserving customization, config, PID 1 identity, hostname and SSH host key.
+- [x] Full ARM64 A → B → A boots verify late configuration/database copy,
+  separate trial state, paired mounts and fallback with shared artifacts preserved;
+  see [Linux rollback evidence](host-rollback-build.md).
 - [x] Real writable APT/dpkg installation, ordinary service activation and package
   record/file preservation after returning to immutable mode.
 - [x] Two identical clean RAUC ARM64 package builds and actual inactive ext4/vfat
   partition installation on the distro kernel; see [RAUC evidence](host-rauc-build.md).
 - [x] Signed verity bundle and actual paired inactive-slot RAUC file installation.
+- [x] Read-only admission checks reject signed layout/state/Klipper mismatches;
+  see [bundle policy evidence](host-bundle-policy.md). Builder cross-checks and
+  coordinator wiring remain outstanding.
 - [x] Untrusted-key, wrong-compatible, corrupt-payload and corrupt-signature rejection with all slot
   files unchanged. See [state/update evidence](host-state-build.md).
 
