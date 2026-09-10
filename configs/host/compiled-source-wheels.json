@@ -1,0 +1,36 @@
+{
+  "format_version": 1,
+  "status": "independently-rebuilt-offline",
+  "architecture": "aarch64",
+  "python": "3.13.5",
+  "compiler": "Debian GCC 14.2.0-19",
+  "streaming_form_data": {
+    "version": "2.1.0",
+    "source_sha256": "2c5c81fc9c451ea133083bc6da959f87e9b91fba3effe99411f1f90461ea7c5b",
+    "source_date_epoch": 1787876725,
+    "setuptools": "78.1.1",
+    "setuptools_wheel_sha256": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+    "source_directory_basename": "streaming-form-data",
+    "python_cflags": "-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O2 -Wall",
+    "additional_cflags": [
+      "-ffile-prefix-map={work}=/usr/src/sv08-wheel-build",
+      "-fdebug-prefix-map={venv}=/usr/src/sv08-build-venv"
+    ],
+    "python_hash_seed": "0",
+    "filename": "streaming_form_data-2.1.0-cp313-cp313-linux_aarch64.whl",
+    "sha256": "b84023a8e49a3fcfe3f734702e61acd19fba88b261e3d4698a068b751148f66a",
+    "license": "MIT",
+    "license_source_path": "LICENSE.txt"
+  },
+  "pycairo": {
+    "version": "1.29.1",
+    "source_sha256": "4fbd26b4af24c9787d84cf5448e34eb8dca064b732479aaecd03109520eebd5f",
+    "source_date_epoch": 1788808152,
+    "build_wheel_manifest": "configs/host/cairo-build-wheels.json",
+    "filename": "pycairo-1.29.1-cp313-cp313-linux_aarch64.whl",
+    "sha256": "8766d812146248b9f34b549a148b309af763447659410ce01924b09e780cace0",
+    "license": "LGPL-2.1-only OR MPL-1.1"
+  },
+  "source_patches": [],
+  "hardware_validation": false
+}

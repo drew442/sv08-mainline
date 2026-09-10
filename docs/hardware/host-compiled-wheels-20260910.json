@@ -1,0 +1,81 @@
+{
+  "date": "2026-09-10",
+  "physical_hardware": false,
+  "pycairo_independent_rebuild_identical": true,
+  "pycairo_sha256": "8766d812146248b9f34b549a148b309af763447659410ce01924b09e780cace0",
+  "streaming_builds": {
+    "4": {
+      "filename": "streaming_form_data-2.1.0-cp313-cp313-linux_aarch64.whl",
+      "sha256": "b84023a8e49a3fcfe3f734702e61acd19fba88b261e3d4698a068b751148f66a",
+      "bytes": 574113
+    },
+    "5": {
+      "filename": "streaming_form_data-2.1.0-cp313-cp313-linux_aarch64.whl",
+      "sha256": "b84023a8e49a3fcfe3f734702e61acd19fba88b261e3d4698a068b751148f66a",
+      "bytes": 574113
+    }
+  },
+  "streaming_allocated_sections_preserved_except_build_id": true,
+  "moonraker_independent_packages_identical": true,
+  "moonraker_package": {
+    "profile": {
+      "format_version": 1,
+      "app": "moonraker",
+      "source_commit": "985c1d0bbeb90bc057d34a232c9dc3b05e0c6c8d",
+      "package_version": "0.11.0+git985c1d0b-2",
+      "runtime_lock": "configs/host/moonraker-python313-arm64.lock",
+      "runtime_lock_sha256": "fbbd448bd5bccd566283a70536897853686e4abb2ec082792eb5450c04f49193",
+      "source_paths": [
+        "moonraker",
+        "LICENSE"
+      ],
+      "license_file": "LICENSE",
+      "system_site_packages": false,
+      "deb_dependencies": [
+        "python3 (>= 3.13)",
+        "python3 (<< 3.14)",
+        "libc6 (>= 2.41)",
+        "libsodium23"
+      ],
+      "status": "offline-packaging-no-activation",
+      "source_patches": []
+    },
+    "package": "sv08-moonraker_0.11.0+git985c1d0b-2_arm64.deb",
+    "sha256": "5bbc65c0441391837859c9131829b241f2a91a3f7e028221d1a5e8bd08f226e1",
+    "bytes": 11799396,
+    "payload_bytes": 61590076,
+    "source_date_epoch": 1787675697,
+    "activation_included": false
+  },
+  "browser_api_test": {
+    "passed": true,
+    "static_application_mounted": true,
+    "uncaught_exceptions": 0,
+    "physical_hardware": false,
+    "moonraker_connected": true,
+    "api_state": {
+      "connected": true,
+      "version": "985c1d0",
+      "klippy": "disconnected",
+      "initializing": []
+    },
+    "configuration_file_roundtrip": true,
+    "full_workload_validation": false
+  },
+  "documented_runner": {
+    "filename": "streaming_form_data-2.1.0-cp313-cp313-linux_aarch64.whl",
+    "sha256": "b84023a8e49a3fcfe3f734702e61acd19fba88b261e3d4698a068b751148f66a",
+    "expected_sha256": "b84023a8e49a3fcfe3f734702e61acd19fba88b261e3d4698a068b751148f66a",
+    "matches_recorded_build": true,
+    "compiler": "14.2.0-19",
+    "python_backend_flags": [
+      [
+        3,
+        13,
+        5
+      ],
+      "78.1.1",
+      "-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O2 -Wall"
+    ]
+  }
+}

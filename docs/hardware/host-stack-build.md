@@ -107,8 +107,10 @@ PATH=/tmp/build-venv/bin:/usr/bin:/bin SOURCE_DATE_EPOCH=1788808152 \
 ```
 
 Unmount proc after building. Compare generated wheel hashes to the runtime locks;
-if they differ, investigate before changing a lock. Independent clean rebuilds
-of these new packages/wheels have not yet established byte reproducibility.
+if they differ, investigate before changing a lock. The subsequent [independent rebuilds](host-compiled-wheels.md) establish
+Pycairo reproducibility and a canonical-debug-path recipe for streaming-form-data.
+Use that recipe for the updated Moonraker lock; the original direct archive
+command above explains the older artifact but embeds random debug paths.
 Installed venvs keep absolute final paths and use the slot's system Python.
 The [KlipperScreen patch](../../patches/klipperscreen/README.md) reads the packaged
 `.version` before falling back to Git, avoiding errors in archive installations.

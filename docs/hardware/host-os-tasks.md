@@ -88,7 +88,10 @@ that all project work is complete. Printer remains offline for this work.
 - [ ] Resolve remaining framework/tooling findings and complete browser/API/UI workload tests.
   Archive-version reporting and deterministic precache ordering now have tested
   patches; retire them when upstream provides equivalent support.
-- [ ] Independently rebuild packages and compiled wheels; retain complete source,
+- [x] Independently rebuild Pycairo and streaming-form-data; preserve executable
+  sections while normalizing debug paths, then assemble identical Moonraker debs
+  and pass the browser/API file test. See [wheel evidence](host-compiled-wheels.md).
+- [ ] Finish independent rebuilds of the remaining packages/compiled wheels; retain complete source,
   toolchain and license manifests. A successful single build is insufficient.
 - [ ] Assemble finalized boot/root/recovery/data filesystems and signed release
   artifacts only after boot/persistence integration; capacity fixtures are not

@@ -36,7 +36,9 @@ at byte 779689, within the reserved boundary at 1048576. This is a file-size/hea
 check, not Boot ROM or DRAM initialization evidence. Cross compiler:
 `aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0`.
 The [public result](host-cb1-boot-compile-20260910.json) retains the configuration,
-artifact hashes and explicit limits. Build/FIT logs and artifacts remain local.
+artifact hashes and explicit limits. Build/FIT logs and artifacts remain local. After comparison, the first build
+source trees were removed to reclaim space; its artifacts/logs, the second source
+trees and original pinned archives remain.
 
 ## Findings that prevent activation
 

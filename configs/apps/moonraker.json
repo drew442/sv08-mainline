@@ -2,9 +2,9 @@
   "format_version": 1,
   "app": "moonraker",
   "source_commit": "985c1d0bbeb90bc057d34a232c9dc3b05e0c6c8d",
-  "package_version": "0.11.0+git985c1d0b-1",
+  "package_version": "0.11.0+git985c1d0b-2",
   "runtime_lock": "configs/host/moonraker-python313-arm64.lock",
-  "runtime_lock_sha256": "87d7027f402fcabde152d96990e6b8b38be757e14fa87911136dabf0e77d252d",
+  "runtime_lock_sha256": "fbbd448bd5bccd566283a70536897853686e4abb2ec082792eb5450c04f49193",
   "source_paths": [
     "moonraker",
     "LICENSE"
