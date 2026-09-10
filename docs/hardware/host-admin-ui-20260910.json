@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "physical_hardware": false,
+  "transport": "test Cockpit bridge shim; real disposable Controller",
+  "keyboard_navigation": true,
+  "escape_cancels": true,
+  "policy_persistence": true,
+  "mode_applies_only_on_boot": true,
+  "touch_navigation": true,
+  "unavailable_installer_disabled": true,
+  "uncaught_exceptions": 0,
+  "date": "2026-09-10",
+  "native_gtk": "800x480 Xvfb render; focus/dialog/damaged-state tests with explicit callback doubles",
+  "actual_cockpit_login_tested": false,
+  "recovery_write_backend_implemented": false,
+  "software_install_backend_implemented": false,
+  "ui_staging_activates_services": false,
+  "snapshot_cockpit_candidate": "337-1+deb13u2",
+  "unit_tests_passed": 132,
+  "ui_staging": {
+    "host": {
+      "execute": true,
+      "context": "host",
+      "activated": false,
+      "payload_bytes": 47229,
+      "hashes": {
+        "usr/share/cockpit/sv08-host/index.html": "5f816a29c5355cc3be850a38237b65fa834029e6030d738a7f1f19b2e9bfb6fe",
+        "usr/share/cockpit/sv08-host/manifest.json": "2e23136eb2b25405d326a5eb51a999cc984a713bba0872923f6f5f361b977ed6",
+        "usr/share/cockpit/sv08-host/app.js": "bcf16f55df2a53ad34991f02c263f431fc9204c7d3cc0ede169d7ca821fbd7f1",
+        "usr/share/cockpit/sv08-host/style.css": "e64852373cbdf77b49c295b9e9b56038ba5fd5d5eafb3f60d92a99799e5d6542",
+        "usr/lib/sv08/sv08_admin.py": "c19f93df2d0f754ba2358298bcdaae51b8a111fb497e164243ab2ffd011b800a",
+        "usr/lib/sv08/sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+        "usr/lib/sv08/sv08_recovery.py": "b6fdf7133581781c73932bac24134c5a17702642fee4ac28560144e3e892fc60",
+        "usr/lib/sv08/sv08_recovery_ui.py": "3bd8bf474facd234c9e3cd0723425e3561f28d16e5d0cea821c5bea108b6f03b",
+        "usr/lib/sv08/admin-context.json": "fefa94482c23bea5804b2077cad031833a9f134a682d98ffd9481c1141405ca2"
+      }
+    },
+    "recovery": {
+      "execute": true,
+      "context": "recovery",
+      "activated": false,
+      "payload_bytes": 29670,
+      "hashes": {
+        "usr/share/xsessions/sv08-recovery.desktop": "599bcd059add2036ca891bb89e46e364e02ef582220c6d2cfb5bbdc856d90da4",
+        "usr/lib/sv08/sv08_admin.py": "c19f93df2d0f754ba2358298bcdaae51b8a111fb497e164243ab2ffd011b800a",
+        "usr/lib/sv08/sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+        "usr/lib/sv08/sv08_recovery.py": "b6fdf7133581781c73932bac24134c5a17702642fee4ac28560144e3e892fc60",
+        "usr/lib/sv08/sv08_recovery_ui.py": "3bd8bf474facd234c9e3cd0723425e3561f28d16e5d0cea821c5bea108b6f03b",
+        "usr/lib/systemd/system/sv08-recovery-display.service": "8b5818aa5428bcccb1f09cd5c18f24a0a143f6abfd047ff5d3b966d6209a9e9b"
+      }
+    }
+  },
+  "source_sha256": {
+    "ui/host/index.html": "5f816a29c5355cc3be850a38237b65fa834029e6030d738a7f1f19b2e9bfb6fe",
+    "ui/host/manifest.json": "2e23136eb2b25405d326a5eb51a999cc984a713bba0872923f6f5f361b977ed6",
+    "ui/host/app.js": "bcf16f55df2a53ad34991f02c263f431fc9204c7d3cc0ede169d7ca821fbd7f1",
+    "ui/host/style.css": "e64852373cbdf77b49c295b9e9b56038ba5fd5d5eafb3f60d92a99799e5d6542",
+    "runtime/sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+    "runtime/sv08_admin.py": "c19f93df2d0f754ba2358298bcdaae51b8a111fb497e164243ab2ffd011b800a",
+    "runtime/sv08_recovery.py": "b6fdf7133581781c73932bac24134c5a17702642fee4ac28560144e3e892fc60",
+    "runtime/sv08_recovery_ui.py": "3bd8bf474facd234c9e3cd0723425e3561f28d16e5d0cea821c5bea108b6f03b"
+  },
+  "arm64_recovery_unit_verification": {
+    "passed": true,
+    "service_started": false,
+    "physical_hardware": false
+  }
+}

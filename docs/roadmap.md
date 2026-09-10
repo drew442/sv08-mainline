@@ -95,6 +95,12 @@ now stages, verifies, arms and cancels under real ARM64 service admission. Board
 integration, health confirmation, service activation and idle coordination remain
 outstanding; this is not a flashable replacement image.
 
+The owner now requires [browser host administration and local recovery UI](hardware/host-admin-ui.md)
+without Linux commands. Initial Cockpit page, GTK recovery screen, guarded policy
+and image-controller tests are implemented offline. Complete software/network
+adapters, authenticated upload, independent recovery writes/export, actual login
+integration and physical input testing remain first-release requirements.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with

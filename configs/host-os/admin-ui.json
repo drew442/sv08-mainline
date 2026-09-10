@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "status": "offline-ui-candidate-not-activated",
+  "host_packages": ["cockpit-ws", "cockpit-bridge"],
+  "recovery_packages": ["python3", "python3-gi", "gir1.2-gtk-3.0", "xserver-xorg-core", "xserver-xorg-input-libinput", "xinit", "fonts-dejavu-core", "dbus-x11", "at-spi2-core"],
+  "host_entry": "/cockpit/@localhost/sv08-host/index.html",
+  "recovery_entry": "/usr/lib/sv08/sv08_recovery_ui.py",
+  "network_activation": false,
+  "physical_display_validated": false,
+  "recovery_capacity_validated": false,
+  "package_versions": "Resolve and retain the exact closure from the selected OS snapshot before activation"
+}

@@ -21,8 +21,12 @@ not implicitly covered by the original SV08 profile.
 Work includes hardware inventory; host bootloader/kernel/OS selection; Klipper
 host and MCU builds; Moonraker and a web UI; printer configuration and macros;
 backup, migration, and recovery; and diagnostics and release validation.
-Camera, touchscreen, optional bootloaders, and vendor convenience features are
-evaluated after the core path is understood.
+The new host requires browser-based OS administration and an independent recovery
+UI usable with HDMI touch, keyboard, or keyboard and mouse; see
+[the UI decision](decisions/0010-host-administration-and-recovery-ui.md). These
+interfaces must preserve user artifacts and enforce the same update/admission rules.
+Camera, optional bootloaders and other vendor convenience features are evaluated
+against the selected host requirements.
 
 The project does not promise compatibility with every board or automatic updates
 to untested revisions. Mechanical redesign and performance tuning are outside

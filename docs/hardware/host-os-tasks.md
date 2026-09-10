@@ -101,6 +101,25 @@ that all project work is complete. Printer remains offline for this work.
   artifacts only after boot/persistence integration; capacity fixtures are not
   deployable images. Test complete 8 GB occupancy including update staging/state.
 
+## Administration and recovery UI completion
+
+- [x] Implement responsive Cockpit host page and native GTK recovery screen with
+  shared review/apply semantics; [UI evidence](host-admin-ui.md) records scope.
+- [x] Connect policy and image transaction adapters; test stale review, preserved
+  generations, cancellation and customization guards without hardware writes.
+- [x] Keep recovery diagnostics usable with missing/corrupt read-only state.
+- [ ] Build/pin/measure Cockpit and independent GTK/input/accessibility closures;
+  integrate actual authenticated login, owner provisioning and persistent TLS keys.
+- [ ] Finish bounded browser upload, signature/error/progress presentation and
+  jobs that survive a closed browser or dropped LAN connection.
+- [ ] Finish additional-software catalog, dependency/space preview, admitted APT
+  install/remove, service configuration and customization reconciliation.
+- [ ] Implement network/access forms, connectivity rollback, host naming/hosts
+  consistency and controlled idle restart. Ordinary administration must need no shell.
+- [ ] Connect independent recovery target identification, preserved-slot boot,
+  USB/LAN signed restore and export of readable user data without formatting it.
+- [ ] Add touch text entry for recovery network/credential workflows where needed.
+
 ## Human and powered-printer tasks
 
 These do not prevent the independent offline work above.
@@ -118,6 +137,8 @@ These do not prevent the independent offline work above.
   not an untested live repartition.
 - [ ] With a reviewed bootable candidate: test cold boots, storage/network/USB,
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.
+- [ ] Test the local recovery UI with HDMI touch only, keyboard only, and
+  keyboard + mouse; verify focus, cancellation, USB selection and readable errors.
 - [ ] Attend recovery and power-interruption tests with loads safe and backed-up
   expendable data; demonstrate A→B→A, failed trials, both slots failed and USB-reader
   restoration. Restore MCU backups separately when that test is planned.

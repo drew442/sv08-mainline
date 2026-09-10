@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=SV08 Recovery
+Comment=Recover the host OS and preserve user data
+Exec=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py
+Type=Application
+DesktopNames=SV08Recovery

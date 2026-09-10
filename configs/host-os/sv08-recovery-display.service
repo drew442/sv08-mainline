@@ -1,0 +1,17 @@
+[Unit]
+Description=SV08 local recovery interface
+After=systemd-udev-settle.service
+Conflicts=getty@tty1.service
+ConditionPathExists=/etc/sv08-recovery-image
+
+[Service]
+ExecStart=/usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py -- :0 vt1 -nolisten tcp
+StandardInput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
