@@ -61,3 +61,11 @@ Retire custom components individually if upstream RAUC/state-migration integrati
 provides these semantics, or upstream printer service APIs provide atomic idle
 admission. Keep project-specific state policy outside upstream checkouts. Any
 upstream proposal must include the failure tests, without private printer state.
+
+
+The subsequent [transaction implementation](../hardware/host-transactions.md)
+orders durable installation, pending trial, boot selection, confirmation and
+cancellation. Its production backend/admission/health callbacks are still open;
+it does not enable automatic updates or declare a printer healthy. The
+[signed bundle policy](../hardware/host-bundle-policy.md) supplies the separate
+layout/state/Klipper admission check.

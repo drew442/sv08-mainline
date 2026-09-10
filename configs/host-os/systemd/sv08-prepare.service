@@ -5,10 +5,12 @@ Requires=data.mount
 After=systemd-remount-fs.service data.mount
 Before=local-fs.target systemd-tmpfiles-setup.service
 Before=NetworkManager.service ssh.service sv08-klipper.service sv08-moonraker.service
-OnFailure=emergency.target
+FailureAction=reboot-force
 
 [Service]
 Type=oneshot
+TimeoutStartSec=120
+TimeoutStopSec=15
 Environment=PYTHONDONTWRITEBYTECODE=1
 ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_boot.py --execute
 RemainAfterExit=yes

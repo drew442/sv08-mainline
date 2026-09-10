@@ -47,6 +47,11 @@ that all project work is complete. Printer remains offline for this work.
   boot tests now cover PID 1 identity, persistent system state and core service
   startup in a VM; extend them to the remaining application services and hardware. Implement controlled idle mode-change reboot.
   Preserve customizations and avoid a shared root overlay.
+- [x] Implement durable transaction ordering and failure-injection tests; see
+  [transaction integration](host-transactions.md). Production admission/backend/health
+  wiring remains separate.
+- [x] Bound early-boot preparation with deadlines and reboot on failure; actual
+  ARM64 identity-failure and timeout tests pass. See [boot failure evidence](host-boot-failure.md).
 - [ ] Wire the tested RAUC paired installation to production boot selection,
   transaction reconciliation, health confirmation, fallback,
   independent recovery, signed bundles and offline key handling.

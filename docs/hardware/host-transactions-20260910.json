@@ -1,0 +1,23 @@
+{
+  "active_pair_unchanged": true,
+  "inactive_pair_matches_signed_hashes": true,
+  "activate_installed_false_preserves_primary": true,
+  "chooser_after_install": {
+    "primary": "A",
+    "A": "good",
+    "B": "bad"
+  },
+  "rejected_bundles": {
+    "untrusted-signature": "rejected before slot writes",
+    "wrong-compatible": "rejected before slot writes",
+    "corrupt-payload": "rejected before slot writes",
+    "corrupt-signature": "rejected before slot writes"
+  },
+  "slot_backend": "regular-file raw test fixtures",
+  "physical_hardware": false,
+  "transaction_library": {
+    "real_rauc_stage_arm_confirm": true,
+    "admission_and_health": "test stubs; no printer or Linux boot",
+    "bootloader": "custom test chooser"
+  }
+}

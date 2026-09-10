@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-10",
+  "physical_hardware": false,
+  "production_start_timeout_seconds": 120,
+  "production_stop_timeout_seconds": 15,
+  "fixture_timeout_seconds": 3,
+  "identity_mismatch_reboots": true,
+  "preparation_timeout_reboots": true,
+  "target_arm64_systemd_verify": true,
+  "automatic_bootloader_fallback_tested": false,
+  "log_sha256": {
+    "build/host-qemu-failure-v1/boot.log": "255a13ccf10bb72d70823d812c66ebae0edfd63362c2b6fede7fdea20fed9115",
+    "build/host-qemu-failure-v1/timeout-boot.log": "9a5324e2b05af61b177a97e90364f593c5a71732ba3d7e8b4e5b3f6dd20047e1"
+  }
+}

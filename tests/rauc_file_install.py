@@ -12,6 +12,8 @@ import os
 from pathlib import Path
 import subprocess
 import time
+import sys
+from contextlib import nullcontext
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -28,6 +30,7 @@ def main():
     p.add_argument('--keyring', type=Path, required=True)
     p.add_argument('--work', type=Path, required=True)
     p.add_argument('--execute', action='store_true')
+    p.add_argument('--transaction-policy', type=Path, help='Also exercise the transaction library with this signed-bundle policy')
     a = p.parse_args()
     rauc, bundle, keyring, work = (x.resolve() for x in (a.rauc, a.bundle, a.keyring, a.work))
     if not work.is_relative_to(REPO / 'build') or work == REPO / 'build' or work.exists():
@@ -67,7 +70,7 @@ a = sys.argv[1:]
 if a == ['get-primary']: print(s['primary'])
 elif a == ['get-current']: print('A')
 elif len(a) == 2 and a[0] == 'get-state': print(s[a[1]])
-elif len(a) == 2 and a[0] == 'set-primary': s['primary'] = a[1]
+elif len(a) == 2 and a[0] == 'set-primary': s['primary'] = a[1]; s[a[1]] = 'good'
 elif len(a) == 3 and a[0] == 'set-state': s[a[1]] = a[2]
 else: raise SystemExit(1)
 path.write_text(json.dumps(s))
@@ -98,11 +101,11 @@ path={keyring}
             raise RuntimeError('Private D-Bus did not start')
         env = dict(os.environ, DBUS_SYSTEM_BUS_ADDRESS=address)
         with (work / 'service.log').open('w') as log:
-            def start(compatible, trust=keyring):
+            def start(compatible, trust=keyring, booted='A'):
                 process = subprocess.Popen([str(rauc), '--conf='+str(config),
                     '--confopt=system:compatible='+compatible, '--confopt=keyring:path='+str(trust),
                     '--mount='+str(work / 'mount'),
-                    'service', '--override-boot-slot=A'], env=env, stdout=log, stderr=log)
+                    'service', '--override-boot-slot='+booted], env=env, stdout=log, stderr=log)
                 try:
                     for attempt in range(100):
                         status = subprocess.run([str(rauc), '--conf='+str(config), 'status', '--output-format=json'],
@@ -171,6 +174,50 @@ path={keyring}
                       'activate_installed_false_preserves_primary': True, 'chooser_after_install': state,
                       'rejected_bundles': rejected,
                       'slot_backend': 'regular-file raw test fixtures', 'physical_hardware': False}
+            if a.transaction_policy:
+                sys.path.insert(0, str(REPO / 'runtime'))
+                from sv08_bundle import inspect as inspect_bundle
+                from sv08_state import Store
+                from sv08_transaction import Transaction
+                proof = inspect_bundle(bundle, json.loads(a.transaction_policy.read_text()), keyring, rauc)
+                class Backend:
+                    def validate_context(self, boot):
+                        status = json.loads(subprocess.check_output([str(rauc), '--conf='+str(config),
+                            'status', '--output-format=json'], env=env, text=True))
+                        assert status['booted'] == boot['slot']
+                    def primary(self):
+                        return json.loads(chooser_state.read_text())['primary']
+                    def good(self, slot):
+                        return json.loads(chooser_state.read_text())[slot] == 'good'
+                    def mark(self, action, slot):
+                        subprocess.run([str(rauc), '--conf='+str(config), 'status', action,
+                            'rootfs.'+str(('A', 'B').index(slot))], env=env, check=True)
+                    def mark_active(self, slot): self.mark('mark-active', slot)
+                    def mark_bad(self, slot): self.mark('mark-bad', slot)
+                    def mark_good(self, slot): self.mark('mark-good', slot)
+                    def install(self, path, admitted, target):
+                        assert path == bundle and sha(path) == admitted['bundle_sha256'] and target == 'B'
+                        subprocess.run([str(rauc), '--conf='+str(config), 'install', str(path)],
+                                       env=env, check=True, stdout=subprocess.DEVNULL)
+                        for kind, image in images.items():
+                            assert sha(slots[kind, 'A']) == originals[str(slots[kind, 'A'])]
+                            assert sha(slots[kind, 'B']) == admitted['image_hashes'][kind]
+                store = Store(work / 'application-state', reserve_bytes=0)
+                store.initialize()
+                boot_a = dict(store.prepare_boot('A', 'offline-initial'), boot_id='file-test-boot-a')
+                # There are no printer services/writers in this isolated fixture.
+                transaction = Transaction(store, Backend(), nullcontext)
+                transaction.stage(bundle, proof, boot_a)
+                assert store.load()['pending'] is None
+                transaction.arm(boot_a)
+                assert transaction.load()['phase'] == 'armed'
+                service.terminate(); service.wait(timeout=10)
+                service = start('sv08-offline-test-only', booted='B')
+                boot_b = dict(store.prepare_boot('B', proof['release']), boot_id='file-test-boot-b')
+                transaction.confirm(boot_b, lambda boot: True)  # Test stub, not health validation.
+                assert transaction.load()['phase'] == 'complete' and store.load()['pending'] is None
+                report['transaction_library'] = dict(real_rauc_stage_arm_confirm=True,
+                    admission_and_health='test stubs; no printer or Linux boot', bootloader='custom test chooser')
             (work / 'result.json').write_text(json.dumps(report, indent=2)+'\n')
             print(json.dumps(report, indent=2))
     finally:
