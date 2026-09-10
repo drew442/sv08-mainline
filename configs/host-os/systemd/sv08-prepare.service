@@ -1,0 +1,17 @@
+[Unit]
+Description=Prepare SV08 persistent state and operating mode
+DefaultDependencies=no
+Requires=data.mount
+After=systemd-remount-fs.service data.mount
+Before=local-fs.target systemd-tmpfiles-setup.service
+Before=NetworkManager.service ssh.service sv08-klipper.service sv08-moonraker.service
+OnFailure=emergency.target
+
+[Service]
+Type=oneshot
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_boot.py --execute
+RemainAfterExit=yes
+
+[Install]
+WantedBy=local-fs.target

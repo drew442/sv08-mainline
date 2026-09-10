@@ -1,0 +1,51 @@
+#!/bin/sh
+# initramfs-tools local-bottom: persistent identity must precede systemd PID 1.
+# Render DATA_DEVICE from the reviewed image manifest, never runtime discovery.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in prereqs) prereqs; exit 0;; esac
+# shellcheck source=/dev/null
+. /scripts/functions
+fatal() { while :; do panic "$*"; done; }
+: "${rootmnt:?initramfs-tools must supply rootmnt}"
+DATA_DEVICE='@DATA_DEVICE@'
+for _attempt in 1 2 3 4 5 6 7 8 9 10; do
+    [ -b "$DATA_DEVICE" ] && break
+    sleep 1
+done
+[ -b "$DATA_DEVICE" ] || fatal 'SV08 persistent partition is unavailable'
+fsck.ext4 -p "$DATA_DEVICE"
+result=$?
+[ "$result" -le 1 ] || fatal 'SV08 persistent filesystem needs offline recovery'
+mount -t ext4 -o rw,nodev,nosuid "$DATA_DEVICE" "${rootmnt}/data" || fatal 'SV08 data mount failed'
+base="${rootmnt}/data/sv08"
+for directory in "$base" "$base/system"; do
+    [ ! -L "$directory" ] || fatal 'SV08 identity path contains a link'
+    mkdir -p "$directory" || fatal 'SV08 identity directory failed'
+done
+identity="$base/system/machine-id"
+[ ! -L "$identity" ] || fatal 'SV08 machine identity is a link'
+if [ ! -e "$identity" ]; then
+    umask 077
+    temporary=$(mktemp "$identity.new.XXXXXX") || fatal 'SV08 identity temporary file failed'
+    tr -d '-' < /proc/sys/kernel/random/uuid > "$temporary" || fatal 'SV08 identity generation failed'
+    chmod 444 "$temporary" || fatal 'SV08 identity permissions failed'
+    sync
+    mv "$temporary" "$identity" || fatal 'SV08 identity publication failed'
+    sync
+fi
+value=$(cat "$identity")
+[ "${#value}" -eq 32 ] || fatal 'SV08 machine identity length is invalid'
+case "$value" in *[!0-9a-f]*) fatal 'SV08 machine identity is invalid';; esac
+mount -o bind "$identity" "${rootmnt}/etc/machine-id" || fatal 'SV08 identity bind failed'
+hostname="$base/system/hostname"
+[ ! -L "$hostname" ] || fatal 'SV08 hostname is a link'
+if [ ! -e "$hostname" ]; then
+    temporary=$(mktemp "$hostname.new.XXXXXX") || fatal 'SV08 hostname temporary file failed'
+    printf 'sv08\n' > "$temporary" || fatal 'SV08 hostname creation failed'
+    chmod 644 "$temporary" || fatal 'SV08 hostname permissions failed'
+    sync
+    mv "$temporary" "$hostname" || fatal 'SV08 hostname publication failed'
+    sync
+fi
+mount -o bind "$hostname" "${rootmnt}/etc/hostname" || fatal 'SV08 hostname bind failed'

@@ -1,0 +1,35 @@
+{
+  "status": "offline-tools-not-board-boot-compatibility",
+  "sources": [
+    {
+      "repository": "https://github.com/rauc/rauc",
+      "tag": "v1.13",
+      "commit": "1183a396a2e10e92e428c396a510113edcd9037b",
+      "archive_url": "https://api.github.com/repos/rauc/rauc/tarball/1183a396a2e10e92e428c396a510113edcd9037b",
+      "archive_sha256": "0d25abdb22990cab1731e098f0876a14fa48384e6b5a0d31d6582c3c48e59dda"
+    },
+    {
+      "repository": "https://github.com/u-boot/u-boot",
+      "tag": "v2026.07",
+      "commit": "ece349ade2973e220f524ce59e59711cc919263f",
+      "archive_url": "https://api.github.com/repos/u-boot/u-boot/tarball/ece349ade2973e220f524ce59e59711cc919263f",
+      "archive_sha256": "2e932cb139c06adfdd2ef1369170135e1f449764287e7bdbc93642ed52249c7e"
+    },
+    {
+      "repository": "https://github.com/rauc/rauc",
+      "tag": "v1.15.2",
+      "commit": "4fb7c798d6ae412344fb8f8d310d773046af3441",
+      "archive_url": "https://api.github.com/repos/rauc/rauc/tarball/4fb7c798d6ae412344fb8f8d310d773046af3441",
+      "archive_sha256": "35acab5be04ddd0b96ba6b5d4c31f5f356769972a188b096254a3014faa8ed38",
+      "purpose": "Replacement offline installer after 1.13 rejected Linux 7.0 dm-verity status"
+    }
+  ],
+  "rauc_build_environment": {
+    "GIT_CEILING_DIRECTORIES": "parent of archived source (prevents enclosing repository version leakage)"
+  },
+  "uboot_sandbox_config_changes": [
+    "CONFIG_EFI_CAPSULE_AUTHENTICATE=n",
+    "CONFIG_BOOTMETH_RAUC_RESET_ALL_ZERO_TRIES=n",
+    "CONFIG_ENV_FAT_DEVICE_AND_PART=\"a:1\" (sandbox fixture only; not production environment storage)"
+  ]
+}

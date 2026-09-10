@@ -1,0 +1,11 @@
+#!/bin/sh
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in prereqs) prereqs; exit 0;; esac
+# shellcheck source=/dev/null
+. /usr/share/initramfs-tools/hook-functions
+# FSTYPE=ext4 enables Debian's standard fsck hook (including logsave).
+for tool in tr chmod sync mv mkdir cat mktemp; do
+    copy_exec "/usr/bin/$tool" "/bin/$tool"
+done
+manual_add_modules ext4

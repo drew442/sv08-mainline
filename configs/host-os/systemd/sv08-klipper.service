@@ -1,0 +1,20 @@
+[Unit]
+Description=SV08 Klipper host
+Requires=sv08-prepare.service
+After=sv08-prepare.service
+ConditionPathExists=/run/sv08/printer_data/config/printer.cfg
+ConditionPathExists=!/run/sv08/trial
+
+[Service]
+Type=simple
+User=sv08
+Group=sv08
+SupplementaryGroups=dialout
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStartPre=+/usr/bin/flock --nonblock /run/sv08/admission.lock /usr/bin/true
+ExecStart=/opt/sv08-mainline/venvs/klipper-f0892d8/bin/python /opt/sv08-mainline/klipper/klippy/klippy.py /run/sv08/printer_data/config/printer.cfg -a /run/sv08/printer_data/comms/klippy.sock -l /var/log/printer/klippy.log
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

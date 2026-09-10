@@ -1,0 +1,18 @@
+[Unit]
+Description=SV08 Moonraker API
+Requires=sv08-prepare.service
+After=sv08-prepare.service sv08-klipper.service network.target
+ConditionPathExists=/run/sv08/printer_data/config/moonraker.conf
+
+[Service]
+Type=simple
+User=sv08
+Group=sv08
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStartPre=+/usr/bin/flock --nonblock /run/sv08/admission.lock /usr/bin/true
+ExecStart=/opt/sv08-mainline/venvs/moonraker-985c1d0/bin/python /opt/sv08-mainline/moonraker/moonraker/moonraker.py -d /run/sv08/printer_data -l /var/log/printer/moonraker.log
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

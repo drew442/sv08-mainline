@@ -1,6 +1,6 @@
 # Host OS completion checklist
 
-Updated 2026-09-09. This is the completion gate for the new host, not a claim
+Updated 2026-09-10. This is the completion gate for the new host, not a claim
 that all project work is complete. Printer remains offline for this work.
 
 ## Completed offline
@@ -14,25 +14,39 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Two identical fresh Mainsail builds with preserved unique precache entries.
 - [x] Ustreamer package candidate for the retained camera.
 - [x] Explicit standard-GPT/SPL collision reproduction and relocated-GPT fixture checks.
+- [x] Actual U-Boot sandbox discovery of relocated GPT and bounded A/B selection.
+- [x] State-generation, SQLite WAL, rollback and mode/customization regression tests.
+- [x] Real mount-namespace tests for immutable/writable roots and explicit persistence.
+- [x] Full Debian ARM64 QEMU boots through immutable → writable → immutable,
+  preserving customization, config, PID 1 identity, hostname and SSH host key.
+- [x] Signed verity bundle and actual paired inactive-slot RAUC file installation.
+- [x] Untrusted-key, wrong-compatible, corrupt-payload and corrupt-signature rejection with all slot
+  files unchanged. See [state/update evidence](host-state-build.md).
 
 ## Offline implementation and release work still required
 
 - [ ] Finish the source-reproducible board boot chain: resolve complete U-Boot,
   TF-A, kernel and driver source/patch pins and licenses; compare board assumptions
   with captured evidence. Do not deploy the unverified CB1-equivalence claim.
-- [ ] Validate relocated GPT discovery in the chosen U-Boot build; allocate and
-  test redundant environment storage outside GPT, SPL and partitions.
-- [ ] Implement immutable/writable boot mounts, persistent system identity and
-  per-release state generations from decision 0004. Mode changes must occur at
-  controlled idle reboot and preserve customizations; no shared root overlay.
-- [ ] Integrate RAUC paired boot/root slots, health confirmation, fallback,
+- [ ] Allocate and test redundant production U-Boot environment storage outside
+  GPT, SPL and partitions. Sandbox FAT environment storage is test-only.
+- [ ] Finish OS persistence integration beyond the tested state/mount implementation:
+  boot tests now cover PID 1 identity, persistent system state and core service
+  startup in a VM; extend them to the remaining application services and hardware. Implement controlled idle mode-change reboot.
+  Preserve customizations and avoid a shared root overlay.
+- [ ] Build/test the ARM64 RAUC runtime against the selected kernel. The baseline
+  still contains Debian RAUC 1.13; workstation installation needed upstream 1.15.2.
+  Do not confuse a native test-tool upgrade with an image-package upgrade.
+- [ ] Wire the tested RAUC paired installation to production boot selection,
+  transaction reconciliation, health confirmation, fallback,
   independent recovery, signed bundles and offline key handling.
 - [ ] Integrate services, authorization, local onboarding, network provisioning,
   idle update staging, next-boot activation, opt-out and customization blocking.
   Keep Moonraker's independent software updater disabled for image-managed apps.
 - [ ] Exercise update/mode/package races, late state writes before reboot,
-  migration failures, no space, corrupted/wrong-target bundles, rollback and
-  customized-image update refusal using actual integration components.
+  migration failures, no space, rollback and customized-image update refusal
+  across the assembled system. Library failure tests and actual RAUC malformed
+  bundle rejection now pass; live admission and power-cut tests remain open.
 - [ ] Review Mainsail audit findings and complete browser/API/UI workload tests.
   Archive-version reporting and deterministic precache ordering now have tested
   patches; retire them when upstream provides equivalent support.

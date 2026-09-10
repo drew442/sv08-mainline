@@ -32,6 +32,7 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Host OS and A/B design](docs/design/host-os-ab.md): OS/kernel assessment,
   update design and owner choices.
 - [Full host stack build](docs/hardware/host-stack-build.md): pinned application packages and capacity validation.
+- [Host state and update tests](docs/hardware/host-state-build.md): operating modes, persistence and signed A/B fixtures.
 - [Host completion checklist](docs/hardware/host-os-tasks.md): remaining offline and human tasks.
 - [Host application packaging](docs/hardware/host-apps-build.md): Klipper `.deb` and offline checks.
 - [Armbian source intake](docs/hardware/host-ab-armbian-intake.md): unverified SV08 boot-support candidate.

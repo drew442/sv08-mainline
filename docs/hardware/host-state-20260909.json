@@ -1,0 +1,112 @@
+{
+  "recorded_on": "2026-09-09",
+  "scope": "offline workstation fixtures; no physical hardware validation",
+  "artifacts": {
+    "build/rauc-native-v1/rauc": {
+      "bytes": 1402360,
+      "sha256": "4a60a0d9123e370ec4e316458cc34877022aad81d61809a6d56a5279943a789b"
+    },
+    "build/rauc-native-v2/rauc": {
+      "bytes": 1503328,
+      "sha256": "c4cca3b8e5674504d954fb0b0d5b8552eca800a8fd576be97f11585bd33e5c96"
+    },
+    "build/u-boot-sandbox-v1/u-boot": {
+      "bytes": 22176440,
+      "sha256": "4b209b63928f0e2cb79d9702b6fbdcfd34c9a46894ab6827a21a06d4b5e3490a"
+    },
+    "build/u-boot-sandbox-v1/.config": {
+      "bytes": 58769,
+      "sha256": "d476ae802267dc980c50b553007e3603049c1a9e39b39c5a7ec5f88e4f1a541d"
+    },
+    "build/rauc-bundle-v1/paired.raucb": {
+      "bytes": 502298492,
+      "sha256": "06adf1217d4cc771293d13361efe7cce702566e7550e2410eb49ef2dad17cdef"
+    }
+  },
+  "tools": {
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "make": "GNU Make 4.3",
+    "meson": "1.3.2",
+    "ninja": "1.11.1",
+    "qemu-system-aarch64": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "uname": "7.0.0-31-generic"
+  },
+  "rauc_install": {
+    "active_pair_unchanged": true,
+    "inactive_pair_matches_signed_hashes": true,
+    "activate_installed_false_preserves_primary": true,
+    "chooser_after_install": {
+      "primary": "A",
+      "A": "good",
+      "B": "bad"
+    },
+    "rejected_bundles": {
+      "untrusted-signature": "rejected before slot writes",
+      "wrong-compatible": "rejected before slot writes",
+      "corrupt-payload": "rejected before slot writes",
+      "corrupt-signature": "rejected before slot writes"
+    },
+    "slot_backend": "regular-file raw test fixtures",
+    "physical_hardware": false
+  },
+  "uboot_sandbox": {
+    "relocated_gpt_discovered": true,
+    "preferred_B_saved_attempts": [
+      3,
+      2
+    ],
+    "fallback_A_saved_attempts": [
+      2,
+      0
+    ],
+    "both_exhausted_remain_zero": true,
+    "kernel_booted": false,
+    "environment_storage": "FAT on fake MMC a:1; not production placement"
+  },
+  "continued_on": "2026-09-10",
+  "unit_tests_passed": 52,
+  "arm64_qemu_boots": [
+    {
+      "phase": 0,
+      "mode": "immutable",
+      "persistent_identity": true,
+      "journal_identity": true,
+      "persistent_config": true,
+      "persistent_hostname_and_ssh_key": true,
+      "customization_preserved": false,
+      "passed": true
+    },
+    {
+      "phase": 1,
+      "mode": "writable",
+      "persistent_identity": true,
+      "journal_identity": true,
+      "persistent_config": true,
+      "persistent_hostname_and_ssh_key": true,
+      "customization_preserved": true,
+      "passed": true
+    },
+    {
+      "phase": 2,
+      "mode": "immutable",
+      "persistent_identity": true,
+      "journal_identity": true,
+      "persistent_config": true,
+      "persistent_hostname_and_ssh_key": true,
+      "customization_preserved": true,
+      "passed": true
+    }
+  ],
+  "qemu_scope": "Direct Debian ARM64 kernel on QEMU virt, no H616 bootloader, network or physical USB; no printing services activated",
+  "integrated_root_capacity": {
+    "status": "capacity-fixture-not-bootable",
+    "image_bytes": 2147483648,
+    "sha256": "436169ad3ec1b35af2e765ff06e6201ed23862340a89babb2a1fba9628af4dfe",
+    "filesystem_uuid": "3e739b74-0b31-4f21-aa76-1cab5852f38c",
+    "block_size": 4096,
+    "free_bytes": 561971200,
+    "reserved_bytes": 21471232,
+    "fsck_pass": true,
+    "hardware_access": false
+  }
+}

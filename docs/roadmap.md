@@ -83,7 +83,9 @@ remains open. This does not replace the current bring-up image.
 
 The [new host preparation stages](hardware/host-ab-build.md) now implement
 factory-capacity layout validation and an isolated Debian package baseline.
-Boot integration, application service activation and operating-mode implementation remain
+Offline [state/mount and signed-update integration](hardware/host-state-build.md)
+now has regression, real mount and paired RAUC installation tests. Board boot
+integration, health confirmation, service activation and idle coordination remain
 outstanding; this is not a flashable replacement image.
 
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
@@ -127,8 +129,8 @@ revision. Builds alone do not advance hardware support status.
 
 The new A/B host now has a [measured Klipper package](hardware/host-apps-build.md)
 installed and checked in an isolated Debian ARM64 baseline. The [complete application payload build](hardware/host-stack-build.md) now includes
-Moonraker, Mainsail and KlipperScreen, with offline API/GUI checks. Operating modes,
-recovery and bootable image assembly remain outstanding; see the
+Moonraker, Mainsail and KlipperScreen, with offline API/GUI checks. Operating-mode integration is under offline test;
+recovery and board-bootable image assembly remain outstanding; see the
 [completion checklist](hardware/host-os-tasks.md). The
 [Armbian source intake](hardware/host-ab-armbian-intake.md) identifies a maintained
 SV08 board-support candidate whose hardware validation is explicitly pending.
