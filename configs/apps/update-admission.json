@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "name": "sv08-update-admission",
+  "version": "0.1.0-1",
+  "architecture": "all",
+  "source": "extensions/klipper/sv08_update.py",
+  "source_sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522",
+  "klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "klipper_package_version": "0.0+gitf0892d82-1",
+  "source_date_epoch": 1788998400,
+  "status": "offline-extension-candidate-not-enabled"
+}

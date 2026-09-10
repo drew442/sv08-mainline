@@ -55,6 +55,9 @@ that all project work is complete. Printer remains offline for this work.
 - [ ] Wire the tested RAUC paired installation to production boot selection,
   transaction reconciliation, health confirmation, fallback,
   independent recovery, signed bundles and offline key handling.
+- [x] Implement and separately package atomic Klipper idle admission; native and
+  ARM64 reactor/dispatcher race tests pass. See [admission evidence](host-update-admission.md).
+  Live systemd coordination, configuration activation and hardware checks remain open.
 - [ ] Integrate services, authorization, local onboarding, network provisioning,
   idle update staging, next-boot activation, opt-out and customization blocking.
   Keep Moonraker's independent software updater disabled for image-managed apps.
