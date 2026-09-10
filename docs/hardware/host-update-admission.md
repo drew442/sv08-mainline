@@ -42,7 +42,8 @@ missing status, disconnected clients, malformed packets, stale sockets and expir
 FD callbacks. Local socket requests execute through the real reactor.
 `tests/test_service_admission.py` checks the host callback's ACK-before-stop
 ordering, retained process-start lock, service restoration and refusal/stop errors.
-Its systemd operations are doubles; live daemon/service coordination remains open.
+Those unit-test systemd operations are doubles; the subsequent guest test below
+now exercises the real service boundary.
 
 Native tests need `python3-greenlet`; the tested workstation package is recorded
 in the evidence. ARM64 tests use the already pinned Klipper venv. The final target
@@ -72,3 +73,31 @@ The [task list](host-os-tasks.md) retains those gates. Source inspected locally 
 2026-09-10: Klipper commit `f0892d82b0f1c1228454f09eb508eddde2250f4b`,
 `klippy/gcode.py`, `reactor.py`, `klippy.py`, `toolhead.py`, and
 `extras/{heaters,virtual_sdcard,pause_resume,print_stats,idle_timeout}.py`.
+
+
+## Full ARM64 systemd/Moonraker boundary
+
+The later `build/host-qemu-admission-v1/` run passed using the distro kernel and
+real systemd and Moonraker API. The disposable Klipper-named service ran
+[the fixture daemon](../../tests/fixtures/admission/klipper_service.py): the actual
+pinned reactor/G-code dispatcher/extension with simulated printer/heater status.
+It was not Klipper's complete hardware process and connected no MCU.
+
+[The guest orchestrator](../../tests/host_qemu_admission.py) verified that simulated
+active-print refusal preserved both service PIDs. Accepted idle admission stopped
+both services; an attempted concurrent systemd start failed at the shared flock.
+Both services restarted afterward, and Moonraker's real loopback API answered.
+A simulated installer exception also restored services. No bundle or package was
+written during this test. The public [result](host-service-admission-20260910.json)
+keeps that distinction explicit.
+
+The fixture reused the earlier disposable failure-test disk/root files, preserving
+those failure logs; current images are under the admission fixture directory.
+Its `debugfs.cmd` records inserted files and temporary unit replacements. It
+restored the production preparation deadline, used `sv08.test=admission`, disabled
+network/USB passthrough and required the QEMU disk serial plus `deployable=false`.
+The Klipper unit was replaced only in this disposable image; the production unit
+and MCU artifacts are unchanged. `boot.log` records normal guest shutdown.
+
+The next gate is the complete configured Klipper process and named hardware,
+followed by actual update/package/mode integration and the automatic policy/UI.

@@ -1,0 +1,15 @@
+{
+  "physical_hardware": false,
+  "hardware_status": "simulated",
+  "real_arm64_systemd": true,
+  "real_moonraker_api": true,
+  "real_pinned_gcode_reactor": true,
+  "active_print_refusal_preserves_service_pids": true,
+  "acknowledged_idle_stops_services": true,
+  "process_start_barrier": true,
+  "services_restored_after_success_and_body_failure": true,
+  "package_installed_or_bundle_written": false,
+  "passed": true,
+  "date": "2026-09-10",
+  "boot_log_sha256": "d80e957f4cb19a98e7aa0fcb95c4ce3490449a261b3e3f46ac390e93e33d5320"
+}
