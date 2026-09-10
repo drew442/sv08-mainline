@@ -11,12 +11,13 @@ import json
 from pathlib import Path
 import stat
 import struct
+import uuid
 import zlib
 
 SECTOR = 512
 
 
-def inspect(path, spl_start=8192, spl_limit=1048576):
+def inspect(path, spl_start=8192, spl_limit=1048576, environment_regions=()):
     if not stat.S_ISREG(path.stat().st_mode) or path.is_symlink():
         raise ValueError('Inspect only a regular image file')
     size = path.stat().st_size
@@ -24,7 +25,7 @@ def inspect(path, spl_start=8192, spl_limit=1048576):
         raise ValueError('Invalid image or SPL reservation')
     with path.open('rb') as f:
         arrays = []
-        metadata = []
+        metadata = [(0, SECTOR)]  # Preserve the protective MBR as well as GPT.
         geometry = []
         for lba in (1, size // SECTOR - 1):
             f.seek(lba * SECTOR)
@@ -63,6 +64,7 @@ def inspect(path, spl_start=8192, spl_limit=1048576):
         if arrays[0] != arrays[1]:
             raise ValueError('GPT arrays disagree')
         partitions = []
+        partition_records = []
         for offset in range(0, len(entries), entry_size):
             e = entries[offset:offset + entry_size]
             if e[:16] == bytes(16):
@@ -71,6 +73,10 @@ def inspect(path, spl_start=8192, spl_limit=1048576):
             if not first <= start <= stop <= last:
                 raise ValueError('Partition outside usable sectors')
             partitions.append((start * SECTOR, (stop + 1) * SECTOR))
+            partition_records.append(dict(number=offset // entry_size + 1,
+                name=e[56:128].decode('utf-16le').rstrip('\0'),
+                partuuid=str(uuid.UUID(bytes_le=e[16:32])),
+                offset_bytes=start * SECTOR, size_bytes=(stop-start+1) * SECTOR))
         occupied = sorted(metadata + partitions)
         for begin, end in occupied:
             if max(begin, spl_start) < min(end, spl_limit):
@@ -78,16 +84,37 @@ def inspect(path, spl_start=8192, spl_limit=1048576):
         for left, right in zip(occupied, occupied[1:]):
             if left[1] > right[0]:
                 raise ValueError('Overlapping metadata/partitions')
+        environments = []
+        for offset, length in environment_regions:
+            if (type(offset) is not int or type(length) is not int or
+                    offset < 0 or length <= 0 or offset % SECTOR or length % SECTOR):
+                raise ValueError('Environment regions must use positive aligned byte lengths')
+            region = (offset, offset + length)
+            if not partitions or region[1] > min(p[0] for p in partitions):
+                raise ValueError('Environment must fit before the first partition')
+            for begin, end in occupied + [(spl_start, spl_limit)] + environments:
+                if max(begin, region[0]) < min(end, region[1]):
+                    raise ValueError('Environment overlaps GPT, SPL, a partition or another copy')
+            environments.append(region)
     return dict(image_bytes=size, partitions=len(partitions), gpt_crc_valid=True,
+                partition_records=partition_records,
                 spl_reserved_bytes=[spl_start, spl_limit], collision_free=True,
+                environment_reserved_bytes=environments,
                 hardware_boot_validated=False)
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('image', type=Path)
+    p.add_argument('--environment-layout', type=Path)
     a = p.parse_args()
-    print(json.dumps(inspect(a.image), indent=2))
+    regions = []
+    if a.environment_layout:
+        layout = json.loads(a.environment_layout.read_text())
+        if layout['format_version'] != 1 or len(layout['copy_offsets_bytes']) != 2:
+            raise ValueError('Expected the reviewed two-copy environment layout')
+        regions = [(offset, layout['size_bytes']) for offset in layout['copy_offsets_bytes']]
+    print(json.dumps(inspect(a.image, environment_regions=regions), indent=2))
 
 
 if __name__ == '__main__':

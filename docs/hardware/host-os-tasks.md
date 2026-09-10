@@ -32,8 +32,11 @@ that all project work is complete. Printer remains offline for this work.
 - [ ] Finish the source-reproducible board boot chain: resolve complete U-Boot,
   TF-A, kernel and driver source/patch pins and licenses; compare board assumptions
   with captured evidence. Do not deploy the unverified CB1-equivalence claim.
-- [ ] Allocate and test redundant production U-Boot environment storage outside
-  GPT, SPL and partitions. Sandbox FAT environment storage is test-only.
+- [x] Allocate redundant raw environment regions outside GPT/SPL/partitions; test
+  real RAUC/libubootenv/sandbox writes, corruption fallback and recovery dispatch.
+  See [environment evidence](host-environment-build.md).
+- [ ] Wire the environment to the verified board MMC index/default loader and
+  complete physical power-loss validation; sandbox results do not establish these.
 - [ ] Finish OS persistence integration beyond the tested state/mount implementation:
   boot tests now cover PID 1 identity, persistent system state and core service
   startup in a VM; extend them to the remaining application services and hardware. Implement controlled idle mode-change reboot.

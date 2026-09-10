@@ -102,7 +102,8 @@ they do not boot Linux. Raw logs are `build/uboot-ab-tests/*.log` and
 
 The two `.cmd` files under `configs/host-os/` are integration templates. The board
 port must supply verified device selection and load addresses. Neither template
-is installed in a deployable image; actual recovery dispatch remains untested.
+is installed in a deployable image. Subsequent [raw-environment tests](host-environment-build.md)
+exercise recovery-script dispatch; booting a recovery OS remains outstanding.
 
 ## Signed bundle and installer fixture
 

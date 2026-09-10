@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "layout_id": "ab-8gb-v1",
+  "status": "offline-storage-layout-candidate",
+  "medium": "mmc-user-area",
+  "size_bytes": 65536,
+  "copy_offsets_bytes": [4194304, 8388608],
+  "board_mmc_device_index": null,
+  "sandbox_mmc_device_index": 10,
+  "hardware_power_loss_validated": false,
+  "note": "For the new six-partition image only. Not a write plan for the factory or current single-root image."
+}

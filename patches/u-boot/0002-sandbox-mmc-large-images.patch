@@ -1,0 +1,79 @@
+--- a/include/os.h
++++ b/include/os.h
+@@ -476,7 +476,7 @@
+  * @sizep:	Returns size of data
+  * Return:	0 if OK, -ve on error
+  */
+-int os_map_file(const char *pathname, int os_flags, void **bufp, int *sizep);
++int os_map_file(const char *pathname, int os_flags, void **bufp, size_t *sizep);
+ 
+ /**
+  * os_unmap() - Unmap a file previously mapped
+@@ -485,7 +485,7 @@
+  * @size: Size in bytes
+  * Return:	0 if OK, -ve on error
+  */
+-int os_unmap(void *buf, int size);
++int os_unmap(void *buf, size_t size);
+ 
+ /*
+  * os_find_text_base() - Find the text section in this running process
+--- a/arch/sandbox/cpu/os.c
++++ b/arch/sandbox/cpu/os.c
+@@ -234,7 +234,7 @@
+ 	return ret;
+ }
+ 
+-int os_map_file(const char *pathname, int os_flags, void **bufp, int *sizep)
++int os_map_file(const char *pathname, int os_flags, void **bufp, size_t *sizep)
+ {
+ 	void *ptr;
+ 	off_t size;
+@@ -272,10 +272,10 @@
+ 	return ret;
+ }
+ 
+-int os_unmap(void *buf, int size)
++int os_unmap(void *buf, size_t size)
+ {
+ 	if (munmap(buf, size)) {
+-		printf("Can't unmap %p %x\n", buf, size);
++		printf("Can't unmap %p %zx\n", buf, size);
+ 		return -EIO;
+ 	}
+ 
+--- a/drivers/mmc/sandbox_mmc.c
++++ b/drivers/mmc/sandbox_mmc.c
+@@ -29,7 +29,7 @@
+ struct sandbox_mmc_priv {
+ 	char *buf;
+ 	int csize;	/* CSIZE value to report */
+-	int size;
++	size_t size;
+ };
+ 
+ /**
+@@ -79,12 +79,12 @@
+ 	}
+ 	case MMC_CMD_READ_SINGLE_BLOCK:
+ 	case MMC_CMD_READ_MULTIPLE_BLOCK:
+-		memcpy(data->dest, &priv->buf[cmd->cmdarg * data->blocksize],
++		memcpy(data->dest, &priv->buf[(size_t)cmd->cmdarg * data->blocksize],
+ 		       data->blocks * data->blocksize);
+ 		break;
+ 	case MMC_CMD_WRITE_SINGLE_BLOCK:
+ 	case MMC_CMD_WRITE_MULTIPLE_BLOCK:
+-		memcpy(&priv->buf[cmd->cmdarg * data->blocksize], data->src,
++		memcpy(&priv->buf[(size_t)cmd->cmdarg * data->blocksize], data->src,
+ 		       data->blocks * data->blocksize);
+ 		break;
+ 	case MMC_CMD_STOP_TRANSMISSION:
+@@ -184,7 +184,7 @@
+ 
+ 		priv->buf = calloc(1, priv->size);
+ 		if (!priv->buf) {
+-			log_err("%s: Not enough memory (%x bytes)\n",
++			log_err("%s: Not enough memory (%zx bytes)\n",
+ 				dev->name, priv->size);
+ 			return -ENOMEM;
+ 		}

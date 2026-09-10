@@ -1,0 +1,53 @@
+{
+  "physical_hardware": false,
+  "bidirectional_environment": true,
+  "rauc_backend": "uboot with real libubootenv and sandbox raw MMC",
+  "trial_b_decrement": true,
+  "fallback_a_decrement": true,
+  "single_corrupt_copy_fallback": true,
+  "both_corrupt_copies_recovery_dispatch": true,
+  "exhausted_recovery_dispatch": true,
+  "outside_environment_unchanged": true,
+  "recovery_os_booted": false,
+  "invalid_environment_cases": [
+    "excluded-slot-has-attempts",
+    "invalid-counter",
+    "invalid-order",
+    "empty-order",
+    "wrong-layout"
+  ],
+  "uboot_sha256": "7e62a7f1f38eeb60bcdc8a83ca03b71085cb68508613f408cde193c614a8a1cd",
+  "environment_layout": {
+    "format_version": 1,
+    "layout_id": "ab-8gb-v1",
+    "status": "offline-storage-layout-candidate",
+    "medium": "mmc-user-area",
+    "size_bytes": 65536,
+    "copy_offsets_bytes": [
+      4194304,
+      8388608
+    ],
+    "board_mmc_device_index": null,
+    "sandbox_mmc_device_index": 10,
+    "hardware_power_loss_validated": false,
+    "note": "For the new six-partition image only. Not a write plan for the factory or current single-root image."
+  },
+  "date": "2026-09-10",
+  "status": "offline-test-pass-not-board-validation",
+  "uboot_commit": "ece349ade2973e220f524ce59e59711cc919263f",
+  "rauc_commit": "4fb7c798d6ae412344fb8f8d310d773046af3441",
+  "file_hashes": {
+    "build/u-boot-sandbox-raw-v2/.config": "61fe9d5ae7018ff143af10ef4e3a903930aacc27a6f16f03089ae5d7bfa80135",
+    "build/uboot-ab-tests/test.dtb": "65cbd9dd4947cf8ebcc1b361cd0e54e28a10a43d00787da3cdaec7929f7253e1",
+    "patches/u-boot/0001-sandbox-mmc-environment.patch": "10dd207a6edb55c3857e4f1750d6ab9e585e94b9e53806d71a210e638e17adc2",
+    "patches/u-boot/0002-sandbox-mmc-large-images.patch": "a7fd2ea459ac1572d8877747723945b1bda5f35843783a88a349fc6e56d661ee"
+  },
+  "toolchain": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "host_packages": [
+    "device-tree-compiler=1.7.0-2build1",
+    "dosfstools=4.2-1.1build1",
+    "libubootenv-tool=0.3.5-0.1build1",
+    "mtools=4.0.43-1build1",
+    "u-boot-tools=2025.10-0ubuntu0.24.04.2"
+  ]
+}
