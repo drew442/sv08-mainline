@@ -39,6 +39,19 @@ class RecoveryController(Controller):
                     images=self.adapter.images() if self.adapter else [],
                     destinations=self.adapter.destinations() if self.adapter else [])
 
+    def plan(self, action, arguments):
+        plan = super().plan(action, arguments)
+        if action == 'recovery.export':
+            if self.adapter is None or not hasattr(self.adapter, 'review_export'):
+                raise ValueError('Export preflight is unavailable')
+            plan['export'] = self.adapter.review_export(arguments['destination'])
+            detail = plan['export']
+            plan['effect'] = (f"Save user data to {detail['label']}. Allow up to "
+                              f"{detail['required_bytes'] / 1024**2:.1f} MiB for {detail['entries']} entries. "
+                              'The archive includes private configuration and credentials. Keep the destination private. '
+                              'The source and existing destination files are preserved.')
+        return plan
+
     def apply(self, plan):
         if not isinstance(plan, dict) or plan != self.plan(plan.get('action'), plan.get('arguments')):
             raise ValueError('Recovery state changed. Review the operation again.')

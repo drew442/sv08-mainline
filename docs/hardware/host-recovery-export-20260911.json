@@ -1,0 +1,21 @@
+{
+  "filename": "sv08-user-data-206c66b6a7f74f2dbcceb23bd1240a89.tar",
+  "sha256": "693a91ac12d4c9cc278b0ca2201a8f35b73e45919206e715dfa9e242e7cdf68d",
+  "files": 2,
+  "message": "User data saved and readback verified: sv08-user-data-206c66b6a7f74f2dbcceb23bd1240a89.tar. Includes private configuration and credentials; keep the destination private.",
+  "passed": true,
+  "physical_hardware": false,
+  "readonly_source": true,
+  "destination_filesystem": "vfat",
+  "inode_accounting": 0,
+  "source_registry_unchanged": true,
+  "date": "2026-09-11",
+  "gtk_to_real_archive_passed": true,
+  "production_usb_discovery": false,
+  "printer_contacted": false,
+  "source_sha256": {
+    "runtime/sv08_export.py": "0228d0e10d92c89012285af1cddbd0ac616345a034f125f6ac6e5c3ad3533459",
+    "runtime/sv08_recovery.py": "438b573c756ecb4962bc981f7e0f1e0f53f74430a01b6daf79368a1b971d3be0"
+  },
+  "unit_tests_passed": 144
+}

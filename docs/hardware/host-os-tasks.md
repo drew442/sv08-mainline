@@ -1,6 +1,6 @@
 # Host OS completion checklist
 
-Updated 2026-09-10. This is the completion gate for the new host, not a claim
+Updated 2026-09-11. This is the completion gate for the new host, not a claim
 that all project work is complete. Printer remains offline for this work.
 
 ## Completed offline
@@ -116,6 +116,9 @@ that all project work is complete. Printer remains offline for this work.
   install/remove, service configuration and customization reconciliation.
 - [ ] Implement network/access forms, connectivity rollback, host naming/hosts
   consistency and controlled idle restart. Ordinary administration must need no shell.
+- [x] Implement reviewed recovery data export with checksummed/readback-verified
+  archives, source/destination change refusal, GTK workflow and actual read-only
+  source/FAT32 fixture; [export evidence](host-recovery-export.md).
 - [ ] Connect independent recovery target identification, preserved-slot boot,
   USB/LAN signed restore and export of readable user data without formatting it.
 - [ ] Add touch text entry for recovery network/credential workflows where needed.

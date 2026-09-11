@@ -93,3 +93,12 @@ The local selected Debian/security snapshot resolves Cockpit to
 `337-1+deb13u2`; this is package-intake evidence, not a claim that the login/bridge
 has been exercised on the target image. Pin and measure its entire dependency
 closure during the next baseline build.
+
+## Subsequent export implementation
+
+2026-09-11: the [export implementation](../hardware/host-recovery-export.md) now
+provides reviewed destination selection, bounded PAX archives, checksummed readback
+and no-replace publication. It has native UI and read-only-source/FAT filesystem
+tests. Its mandatory media admission callback must be supplied by the independently
+verified recovery mount provider; no production USB discovery or hardware identity
+is inferred from these tests.

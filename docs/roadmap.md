@@ -100,6 +100,9 @@ without Linux commands. Initial Cockpit page, GTK recovery screen, guarded polic
 and image-controller tests are implemented offline. Complete software/network
 adapters, authenticated upload, independent recovery writes/export, actual login
 integration and physical input testing remain first-release requirements.
+[Recovery data export](hardware/host-recovery-export.md) now has a real archive
+backend, native UI tests and a read-only-source/FAT32 filesystem fixture; verified
+recovery/USB admission and physical export tests remain outstanding.
 
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 

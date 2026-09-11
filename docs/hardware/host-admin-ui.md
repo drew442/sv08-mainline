@@ -33,7 +33,7 @@ running host's slot identity.
 | Additional software | Catalog selection and reviewed-operation UI contract | Reviewed catalog, dependency/space preview, actual APT adapter and customization reconciliation |
 | Network/access configuration | Scope and unavailable-state explanation | Owner onboarding, persistent credentials/certificates, network forms and rollback |
 | Recovery state inspection | Read-only, including missing/corrupt registry; no initialization | Physical block/filesystem diagnosis adapter |
-| Recovery boot/restore/export | Native selection/review/apply UI and adapter contract | Independent verified recovery backend, USB discovery, signed restore, data export |
+| Recovery boot/restore/export | Native selection/review/apply; [export adapter and actual archive tests](host-recovery-export.md) added 2026-09-11 | Verified recovery/media admission, USB discovery, signed restore and physical export tests |
 
 Unavailable operations are disabled and explain the gap; they do not silently
 succeed. **This is not yet a complete no-command administration release.** In
@@ -115,8 +115,8 @@ Use the selected Node 22 runtime. The test needs a fresh preview because it chan
 its policy. Close the fixture server when done. Screenshots/logs stay ignored under
 `build/admin-ui-browser-v6/` and `build/admin-ui-preview-v3/`.
 
-UI staging reports 47,229 bytes for host assets/helpers and 29,670 bytes for
-recovery assets/helpers in the current fixture. Those figures exclude Python,
+The 2026-09-10 UI staging reported 47,229 bytes for host assets/helpers and 29,670 bytes for
+recovery assets/helpers before the export backend was added. Those figures exclude Python,
 GTK, X11, Cockpit, fonts, kernel and firmware; they are not rootfs fit results.
 Host-name publication preserves existing aliases in the staged hosts file before
 changing the name, so an interruption leaves the old name resolvable. An injected
@@ -126,3 +126,7 @@ The [public evidence record](host-admin-ui-20260910.json) records scope. Before
 release, run the actual Cockpit login/bridge/privilege flow, disconnected-browser
 jobs, 8 GB storage occupancy, independent recovery boot and attended HDMI touch,
 keyboard-only, mouse, USB export and signed restore tests on the named profile.
+
+The subsequent [2026-09-11 export work](host-recovery-export.md) adds a real archive
+backend and GTK-to-archive tests. Installed export remains gated on verified USB
+discovery and recovery mount admission; boot/restore are still separate work.
