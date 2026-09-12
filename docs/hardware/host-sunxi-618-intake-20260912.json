@@ -1,0 +1,759 @@
+{
+  "format_version": 1,
+  "access_date": "2026-09-12",
+  "status": "source-intake-only-not-adopted-applied-or-built",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "new_hardware_measurements": false,
+  "repository": "https://github.com/armbian/build",
+  "commit": "a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015",
+  "archive": "patch/kernel/archive/sunxi-6.18/",
+  "downloaded_file_count": 53,
+  "downloaded_bytes": 308365,
+  "verification": {
+    "sha256_recomputed": true,
+    "git_blob_sha1_recomputed": true,
+    "git_blobs_match_complete_pinned_tree": true,
+    "tree_truncated": false,
+    "patch_application_tested": false,
+    "base_kernel_commit_selected": false
+  },
+  "stock_dts": {
+    "path": "dt_64/sun50i-h616-sovol-sv08.dts",
+    "direct_include": "sun50i-h616-bigtreetech-cb1.dtsi",
+    "delivery_mechanism": "dt_64 copy and automatic DTS Makefile configuration in 0000.patching_config.yaml",
+    "max_dts_is_separate": true,
+    "max_source_downloaded": false
+  },
+  "declared_series_positions": {
+    "source": "series.conf",
+    "sram_link_and_fix_lines": [
+      129,
+      130
+    ],
+    "drm_0001_through_0042_lines": [
+      306,
+      347
+    ],
+    "cb1_board_and_ac300_lines": [
+      451,
+      452
+    ],
+    "meaning": "Declared manifest positions only, not a captured applied sequence."
+  },
+  "sources": [
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/0000.patching_config.yaml",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/0000.patching_config.yaml",
+      "access_date": "2026-09-12",
+      "bytes": 1940,
+      "git_blob": "42284f1131636a738affe6683874f48f624be937",
+      "sha256": "da90be57048d1b07353591b3a9907198a24eb7672dee02ac09cc41402b5bd572",
+      "patch_subject": null,
+      "touched_paths": []
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/dt_64/sun50i-h616-sovol-sv08.dts",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/dt_64/sun50i-h616-sovol-sv08.dts",
+      "access_date": "2026-09-12",
+      "bytes": 1401,
+      "git_blob": "3d5be2f83cbf2fb24fb5bc43aa61f2708d090e16",
+      "sha256": "b6dd738949b7cbb5e54f285b275d22b1fd930f40be7959a8723e0394e2f695a6",
+      "patch_subject": null,
+      "touched_paths": []
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/0301-arm64-dts-sun50i-h616-add-emac1-rmii-pins.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/0301-arm64-dts-sun50i-h616-add-emac1-rmii-pins.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1752,
+      "git_blob": "03690af1a629edb138bdb0d3532c5d416f375a35",
+      "sha256": "f3e328886f409a59ef7d15456140513ae903215ccb908c40595ea1b2bcdaf0c1",
+      "patch_subject": "arm64: dts: sun50i-h616: Add EMAC1 and RMII pins",
+      "touched_paths": [
+        "arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1-emac1-ac300.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1-emac1-ac300.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2574,
+      "git_blob": "4229c66615315bf209d2c343f034ae276d551e84",
+      "sha256": "197e070cad82b3eddfa1975102d8bf71d79d5e7997531429b499bcc5b735a76b",
+      "patch_subject": "arm64: dts: allwinner: BigTreeTech CB1 emac1 ac300",
+      "touched_paths": [
+        "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1.dtsi"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1.patch",
+      "access_date": "2026-09-12",
+      "bytes": 8780,
+      "git_blob": "4309b44050e332071d95bd9cdc9a79f914ebb6f5",
+      "sha256": "356a60d32066f56a3e90d95b4ec7099268e39c9ac48752c6ab0e14dd9a4cb845",
+      "patch_subject": "arm64: dts: sun50i-h616: Add BigTreeTech CB1 board support",
+      "touched_paths": [
+        "arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1.dtsi"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/drv-net-stmmac-dwmac-sun8i-add-h616-internal-phy.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/drv-net-stmmac-dwmac-sun8i-add-h616-internal-phy.patch",
+      "access_date": "2026-09-12",
+      "bytes": 10498,
+      "git_blob": "1852952d945f0a368d4a6facb950af3be6c0f087",
+      "sha256": "3787b5cfec5dd65733655ac2730f20e0b9db3ad8a2dc5522b34cc7c264097e1f",
+      "patch_subject": "[ARCHEOLOGY] Feature/sunxi mainline stmmac ac300 (#9952)",
+      "touched_paths": [
+        "drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/drv-soc-sunxi-sram-add-h616-sram-c1.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/drv-soc-sunxi-sram-add-h616-sram-c1.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1281,
+      "git_blob": "5ea6cb820f5237ec4a981fe652339af80d8f1a6e",
+      "sha256": "2cae8bd17bd35c47aede215d4543fac86265952dbca389baad57cf1f94db7286",
+      "patch_subject": "drv:soc: sunxi: sram: Add SRAM C1 H616 handling",
+      "touched_paths": [
+        "drivers/soc/sunxi/sunxi_sram.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0001-drm-sun4i-mixer-Fix-up-DE33-channel-macros.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0001-drm-sun4i-mixer-Fix-up-DE33-channel-macros.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1495,
+      "git_blob": "5236a468691417753039fb178b8d6685d877aef3",
+      "sha256": "f0827be527cccb6f1433fdc0de6fc8fa54cc87bf8d3adbd70dceaf9f44c653c1",
+      "patch_subject": "drm/sun4i: mixer: Fix up DE33 channel macros",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0002-drm-sun4i-mixer-Remove-ccsc-cfg-for-DE3.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0002-drm-sun4i-mixer-Remove-ccsc-cfg-for-DE3.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1298,
+      "git_blob": "f3b9ef3da2cad174ec3fd73a77cff1ee658b46fe",
+      "sha256": "f3a51bd563f7a346aa930e9405d04760fb06c2801c36bc32ebb75d96a2b53508",
+      "patch_subject": "drm/sun4i: mixer: Remove ccsc cfg for >= DE3",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0003-drm-sun4i-de2-Initialize-layer-fields-earlier.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0003-drm-sun4i-de2-Initialize-layer-fields-earlier.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2432,
+      "git_blob": "224d7ee18296a2f930e300d61dfcbce7ae477916",
+      "sha256": "f09704dfef15515b0ff3c1ce30c147802f1c04dba9e86bb7371c1ff2e5981c5e",
+      "patch_subject": "drm/sun4i: de2: Initialize layer fields earlier",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0004-drm-sun4i-ui_layer-Move-check-from-update-to-check-c.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0004-drm-sun4i-ui_layer-Move-check-from-update-to-check-c.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2237,
+      "git_blob": "56e70a961eab29fb996414dc3e380b5aecd077fd",
+      "sha256": "83c2d80086dddd2406cfdaa9aa3c0ea6df1dc29225c25a5a13574af6df650c3a",
+      "patch_subject": "drm/sun4i: ui_layer: Move check from update to check callback",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0005-drm-sun4i-vi_layer-Move-check-from-update-to-check-c.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0005-drm-sun4i-vi_layer-Move-check-from-update-to-check-c.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2166,
+      "git_blob": "58eef95e1ae961795615b75a01e938cc46a33a1c",
+      "sha256": "9e9e37cc33591fce287f25755a787515c4a69b9d6cace754bd09351ffc2dd8e8",
+      "patch_subject": "drm/sun4i: vi_layer: Move check from update to check callback",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0006-drm-sun4i-layers-Make-atomic-commit-functions-void.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0006-drm-sun4i-layers-Make-atomic-commit-functions-void.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5288,
+      "git_blob": "3bd67023ccc3e63f728baf36af9c3ce7157b5116",
+      "sha256": "afd9766388cb97c5d4f3d7f27f28541801ca4d0c8049ce7462b7cb58e4ec4b52",
+      "patch_subject": "drm/sun4i: layers: Make atomic commit functions void",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0007-drm-sun4i-Move-blender-config-from-layers-to-mixer.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0007-drm-sun4i-Move-blender-config-from-layers-to-mixer.patch",
+      "access_date": "2026-09-12",
+      "bytes": 7568,
+      "git_blob": "39eabe43bd06707a8bf2a0751380c710dbf91500",
+      "sha256": "a6d11952bb94eae10f739b3c51153ba7d40ea736663f566e4be31dd87b07a6da",
+      "patch_subject": "drm/sun4i: Move blender config from layers to mixer",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0008-drm-sun4i-ui-layer-Write-attributes-in-one-go.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0008-drm-sun4i-ui-layer-Write-attributes-in-one-go.patch",
+      "access_date": "2026-09-12",
+      "bytes": 3908,
+      "git_blob": "29a2f96090e7c6b67a9456bd0250e1bf3dcf7e51",
+      "sha256": "225353b9526c526f4c64538d7c91847a3f3139b6bdb654ac5bbbc6951a9f0b47",
+      "patch_subject": "drm/sun4i: ui layer: Write attributes in one go",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0009-drm-sun4i-vi-layer-Write-attributes-in-one-go.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0009-drm-sun4i-vi-layer-Write-attributes-in-one-go.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5198,
+      "git_blob": "223c244ef6f513bfddd26beb04c8b9ad409f5c21",
+      "sha256": "22a4c00720d544932ea2ae9ef1111fee9e29f45e675461644856bc20ea4d4372",
+      "patch_subject": "drm/sun4i: vi layer: Write attributes in one go",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0010-drm-sun4i-mixer-Move-layer-enabling-to-atomic_update.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0010-drm-sun4i-mixer-Move-layer-enabling-to-atomic_update.patch",
+      "access_date": "2026-09-12",
+      "bytes": 4637,
+      "git_blob": "bff809b97b0754a5b3296a9eab0f8f13c93316e3",
+      "sha256": "eb33295d133d37b90c32d470b9f13e842bea9a8bd27a19368f16f4622c48fd08",
+      "patch_subject": "drm/sun4i: mixer: Move layer enabling to atomic_update",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0011-drm-sun4i-de2-de3-Simplify-CSC-config-interface.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0011-drm-sun4i-de2-de3-Simplify-CSC-config-interface.patch",
+      "access_date": "2026-09-12",
+      "bytes": 6627,
+      "git_blob": "30c4c9426368a69b46a76a738585d775ece7aa97",
+      "sha256": "0b86334b26c8b7f95feeb71d07be0a10ca893f30361f171aedaeed2a0d917445",
+      "patch_subject": "drm/sun4i: de2/de3: Simplify CSC config interface",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_csc.c",
+        "drivers/gpu/drm/sun4i/sun8i_csc.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0012-drm-sun4i-csc-Simplify-arguments-with-taking-plane-s.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0012-drm-sun4i-csc-Simplify-arguments-with-taking-plane-s.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5293,
+      "git_blob": "3716374cf0fd126e959f1ae89e1a2348cdf78b33",
+      "sha256": "72f9669948b590356858eac4c37c895f1a0b49d53126c13002f003dd06fe6140",
+      "patch_subject": "drm/sun4i: csc: Simplify arguments with taking plane state",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_csc.c",
+        "drivers/gpu/drm/sun4i/sun8i_csc.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0013-drm-sun4i-de2-de3-Move-plane-type-determination-to-m.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0013-drm-sun4i-de2-de3-Move-plane-type-determination-to-m.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5182,
+      "git_blob": "4e9471ac200d5b160969c9183a7b830895782b3e",
+      "sha256": "57a7817423a3651b835fbbc086758bce750a37589a6c4ab1235950fd91283fcf",
+      "patch_subject": "drm/sun4i: de2/de3: Move plane type determination to mixer",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0014-drm-sun4i-ui_layer-Change-index-meaning.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0014-drm-sun4i-ui_layer-Change-index-meaning.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2867,
+      "git_blob": "99c77177d76cdc2dfe8b66b4f74d7fa286bbdee9",
+      "sha256": "5d6f1aaa063eb0b557ae1519f81f9fac7b4293d70a2793cce29613386fbd31eb",
+      "patch_subject": "drm/sun4i: ui_layer: Change index meaning",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0015-drm-sun4i-layer-move-num-of-planes-calc-out-of-layer.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0015-drm-sun4i-layer-move-num-of-planes-calc-out-of-layer.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5307,
+      "git_blob": "12fd8a4677b626bb0387a3c9ca9fb9b26be1e78c",
+      "sha256": "c69bd6787b99eaf9b0f414222593f7334d5d04a947d83d2f6bd3072c624e9729",
+      "patch_subject": "drm/sun4i: layer: move num of planes calc out of layer code",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0016-drm-sun4i-ui_layer-use-layer-struct-instead-of-multi.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0016-drm-sun4i-ui_layer-use-layer-struct-instead-of-multi.patch",
+      "access_date": "2026-09-12",
+      "bytes": 6962,
+      "git_blob": "c42b2ed308b53c253effec9657d7ac23abf8e9dd",
+      "sha256": "a6d278aad7164408c2373045e0caf6fa7fb7fc68556083ec8ce9f1989f52db5a",
+      "patch_subject": "drm/sun4i: ui_layer: use layer struct instead of multiple args",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0017-drm-sun4i-vi_layer-use-layer-struct-instead-of-multi.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0017-drm-sun4i-vi_layer-use-layer-struct-instead-of-multi.patch",
+      "access_date": "2026-09-12",
+      "bytes": 7016,
+      "git_blob": "cea7c06279deafa23bf2e7ef8e346deb80605563",
+      "sha256": "5d30504570d56ded55ae6f73e31e689c49336781ea477fdacf87d2704c411281",
+      "patch_subject": "drm/sun4i: vi_layer: use layer struct instead of multiple args",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0018-drm-sun4i-ui_scaler-use-layer-instead-of-mixer-for-a.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0018-drm-sun4i-ui_scaler-use-layer-instead-of-mixer-for-a.patch",
+      "access_date": "2026-09-12",
+      "bytes": 4088,
+      "git_blob": "d15a48e276c20cbc284a05cef8cc7baab0066bdd",
+      "sha256": "c11a8f1535b5fb5e46588e7380622fc7a9108ecd60630ad2afd0b32582fa5d92",
+      "patch_subject": "drm/sun4i: ui_scaler: use layer instead of mixer for args",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0019-drm-sun4i-vi_scaler-use-layer-instead-of-mixer-for-a.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0019-drm-sun4i-vi_scaler-use-layer-instead-of-mixer-for-a.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5174,
+      "git_blob": "ed079d7db77e470ef338454df824c919cb58a303",
+      "sha256": "075d467a7dd831e3e21630a0e17bae2acb27214ca8e8b45fc5bb14c23f5931e4",
+      "patch_subject": "drm/sun4i: vi_scaler: use layer instead of mixer for args",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_scaler.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_scaler.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0020-drm-sun4i-layers-Make-regmap-for-layers-configurable.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0020-drm-sun4i-layers-Make-regmap-for-layers-configurable.patch",
+      "access_date": "2026-09-12",
+      "bytes": 13349,
+      "git_blob": "076a7b6c914d6bf0c43b89c85b8ae26dc9a1994f",
+      "sha256": "83252a05ca5f41e09c16bc67a89a4d8d167e27adb512307f533433156834e2b2",
+      "patch_subject": "drm/sun4i: layers: Make regmap for layers configurable",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_scaler.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0021-drm-sun4i-csc-use-layer-arg-instead-of-mixer.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0021-drm-sun4i-csc-use-layer-arg-instead-of-mixer.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2866,
+      "git_blob": "5bb9cc3dc97a0f700abe28e52f60f14c30392a0d",
+      "sha256": "7eaac7292268ad20eca1a9ad1ffdf5ccbd177430bd93d9b4f624cccb2dba3fcc",
+      "patch_subject": "drm/sun4i: csc: use layer arg instead of mixer",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_csc.c",
+        "drivers/gpu/drm/sun4i/sun8i_csc.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0022-drm-sun4i-layers-add-physical-index-arg.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0022-drm-sun4i-layers-add-physical-index-arg.patch",
+      "access_date": "2026-09-12",
+      "bytes": 6475,
+      "git_blob": "be8f6c0df40f0e3d104cff66446aff3b5c96f668",
+      "sha256": "a3621644e5555a55ccb68ce3cfc43556c9270dd1c5ab04380e4e9a6362ff5287",
+      "patch_subject": "drm/sun4i: layers: add physical index arg",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0023-drm-sun4i-vi_scaler-Update-DE33-base-calculation.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0023-drm-sun4i-vi_scaler-Update-DE33-base-calculation.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2316,
+      "git_blob": "ef297eda329b081e2aafa1749ea8f35139c89e5e",
+      "sha256": "651234978f74ed80cbf3f9f8aedba5e7fdd54d8576e422ebc9fbfdc18d59ca18",
+      "patch_subject": "drm/sun4i: vi_scaler: Update DE33 base calculation",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_vi_scaler.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_scaler.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0024-drm-sun4i-mixer-Convert-heuristics-to-quirk.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0024-drm-sun4i-mixer-Convert-heuristics-to-quirk.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5347,
+      "git_blob": "a494da5a7207c92b117ea3de0845b0120619aa17",
+      "sha256": "293048fa3fea9010ae54e288d296b20233b885569cd6d4a46fb5c2fb9bd88700",
+      "patch_subject": "drm/sun4i: mixer: Convert heuristics to quirk",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0025-drm-sun4i-ui_scaler-drop-sanity-checks.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0025-drm-sun4i-ui_scaler-drop-sanity-checks.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1419,
+      "git_blob": "bf3071eccdef23c8d254c2fececd4c91f8308d0d",
+      "sha256": "932bdedd4d8e3b0dee820ede84287696094c6c3ded24cf82daa2290e4e75b4c5",
+      "patch_subject": "drm/sun4i: ui_scaler: drop sanity checks",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0026-drm-sun4i-mixer-Add-quirk-for-number-of-VI-scalers.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0026-drm-sun4i-mixer-Add-quirk-for-number-of-VI-scalers.patch",
+      "access_date": "2026-09-12",
+      "bytes": 6016,
+      "git_blob": "5e1b4309a2056f0ce9f9e93c98d92af4b926cd47",
+      "sha256": "ea614d528b1fcecb873ffbaa0819078bfc10311c17ca92900a071fc8d30492ac",
+      "patch_subject": "drm/sun4i: mixer: Add quirk for number of VI scalers",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0027-drm-sun4i-mixer-split-out-layer-config.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0027-drm-sun4i-mixer-split-out-layer-config.patch",
+      "access_date": "2026-09-12",
+      "bytes": 12013,
+      "git_blob": "b9300fcf2e998bbd941a9b5abf145dad139ea49b",
+      "sha256": "483f110564bfed674c858db176ea020b12c915018b506586919e6d110a93e965",
+      "patch_subject": "drm/sun4i: mixer: split out layer config",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_csc.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0028-drm-sun4i-layer-replace-mixer-with-layer-struct.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0028-drm-sun4i-layer-replace-mixer-with-layer-struct.patch",
+      "access_date": "2026-09-12",
+      "bytes": 18551,
+      "git_blob": "48fbc5a39bae25a303f921f61975ec52ce2ed8e9",
+      "sha256": "7dc155e7ae13e57d2bb12b6300dcf01192cec86c45205ac37c147349d93b37ff",
+      "patch_subject": "drm/sun4i: layer: replace mixer with layer struct",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_csc.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_scaler.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_scaler.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0029-drm-sun4i-vi_scaler-Find-mixer-from-crtc.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0029-drm-sun4i-vi_scaler-Find-mixer-from-crtc.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1496,
+      "git_blob": "2e43c599dadd8a78bb3b0d45f6114cbe3de96b3f",
+      "sha256": "799b226f9179a2fa39aebd7da23401b03e618bcbc298953d00fb13ceff38ad41",
+      "patch_subject": "drm/sun4i: vi_scaler: Find mixer from crtc",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0030-drm-sun4i-Nuke-mixer-pointer-from-layer-code.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0030-drm-sun4i-Nuke-mixer-pointer-from-layer-code.patch",
+      "access_date": "2026-09-12",
+      "bytes": 5192,
+      "git_blob": "95a0eb975fe8f3008865f72d9a9c1aa496225648",
+      "sha256": "1cd1522caadb110e4a241e4d2f1f472ec515e1bf3ad6f3f24db36b99beb96455",
+      "patch_subject": "drm/sun4i: Nuke mixer pointer from layer code",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_ui_layer.h",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c",
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0031-drm-sun4i-Add-support-for-DE33-CSC.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0031-drm-sun4i-Add-support-for-DE33-CSC.patch",
+      "access_date": "2026-09-12",
+      "bytes": 3639,
+      "git_blob": "84dd7c622648ad07e00ded69fc58df1b905bf4dd",
+      "sha256": "50cfd9e709611231a1548d75032710550944ba05309a766a71006965c1f48d23",
+      "patch_subject": "drm/sun4i: Add support for DE33 CSC",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_csc.c",
+        "drivers/gpu/drm/sun4i/sun8i_csc.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0032-drm-sun4i-vi_layer-Limit-formats-for-DE33.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0032-drm-sun4i-vi_layer-Limit-formats-for-DE33.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2221,
+      "git_blob": "3c9162882d9ec4e4b369dfe1f88bba2a7b1fb419",
+      "sha256": "1ea2e1656b1fc893b75228fb2b2d4d64ece4a7991e2f3092a9133297aa2c26f5",
+      "patch_subject": "drm/sun4i: vi_layer: Limit formats for DE33",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_vi_layer.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0033-clk-sunxi-ng-de2-Export-register-regmap-for-DE33.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0033-clk-sunxi-ng-de2-Export-register-regmap-for-DE33.patch",
+      "access_date": "2026-09-12",
+      "bytes": 3011,
+      "git_blob": "8a8b9f8ca278fde55c69e2b631dde44fc03dedbb",
+      "sha256": "7d09740d2a09735e3105b9f060d3cc53a325e962fb186c7686da1b91a5560259",
+      "patch_subject": "clk: sunxi-ng: de2: Export register regmap for DE33",
+      "touched_paths": [
+        "drivers/clk/sunxi-ng/ccu-sun8i-de2.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0034-dt-bindings-display-allwinner-Add-DE33-planes.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0034-dt-bindings-display-allwinner-Add-DE33-planes.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2103,
+      "git_blob": "c2fbe7a34b96ab91b0308b56b7d7afcfae5c80d1",
+      "sha256": "f5a20afe951d4bb23dab007fd54ae8b7030bab1b8ddce0e05f2343f088aef034",
+      "patch_subject": "dt-bindings: display: allwinner: Add DE33 planes",
+      "touched_paths": [
+        "Documentation/devicetree/bindings/display/allwinner,sun50i-h616-de33-planes.yaml"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0035-drm-sun4i-Add-planes-driver.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0035-drm-sun4i-Add-planes-driver.patch",
+      "access_date": "2026-09-12",
+      "bytes": 8358,
+      "git_blob": "dad52339bb5a151764b12dc00046dd47b7f6b040",
+      "sha256": "9a2a20d730fd354db613449eaf377480d6b0d945e9500cd438b2fc0a08578b48",
+      "patch_subject": "drm/sun4i: Add planes driver",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/Kconfig",
+        "drivers/gpu/drm/sun4i/Makefile",
+        "drivers/gpu/drm/sun4i/sun50i_planes.c",
+        "drivers/gpu/drm/sun4i/sun50i_planes.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0036-dt-bindings-display-allwinner-Update-H616-DE33-bindi.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0036-dt-bindings-display-allwinner-Update-H616-DE33-bindi.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2575,
+      "git_blob": "6e9d4a0f51284888338e8a6dc917227483e9413c",
+      "sha256": "090594282e98da7a54c759d7664fdb142cec84e17153b2fff1e04bbf19b731fe",
+      "patch_subject": "dt-bindings: display: allwinner: Update H616 DE33 binding",
+      "touched_paths": [
+        "Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0037-drm-sun4i-switch-DE33-to-new-bindings.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0037-drm-sun4i-switch-DE33-to-new-bindings.patch",
+      "access_date": "2026-09-12",
+      "bytes": 11491,
+      "git_blob": "310465a4e1e119a2b32708425fe5fe8fa0fe6560",
+      "sha256": "759b67020ab4e34c072b9812be864ec689fbf503b8fc8581e8507eb058d05add",
+      "patch_subject": "drm/sun4i: switch DE33 to new bindings",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_mixer.c",
+        "drivers/gpu/drm/sun4i/sun8i_mixer.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0038-drm-sun4i-Add-H616-TCON-TV-support.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0038-drm-sun4i-Add-H616-TCON-TV-support.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2908,
+      "git_blob": "bed1f9e490291ccdb667b874cc23e3f035878f8c",
+      "sha256": "5a0c893685817428301ebbaf59efdf0412cdbf363efb7afc58729548f5cfa0fa",
+      "patch_subject": "drm/sun4i: Add H616 TCON TV support",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun4i_tcon.c",
+        "drivers/gpu/drm/sun4i/sun4i_tcon.h"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0039-srm-sun4i-Add-support-for-H616-HDMI-PHY.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0039-srm-sun4i-Add-support-for-H616-HDMI-PHY.patch",
+      "access_date": "2026-09-12",
+      "bytes": 3151,
+      "git_blob": "47ff89e889732f54458cdd26f546ae3957006775",
+      "sha256": "10f6744d35ec675ea88c10e008c29372f66340cf46e199c02ca4161310b822b2",
+      "patch_subject": "srm/sun4i: Add support for H616 HDMI PHY",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0040-drm-sun4i-Add-compatible-for-H616-display-engine.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0040-drm-sun4i-Add-compatible-for-H616-display-engine.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1007,
+      "git_blob": "e510f83e50c160896378e585c2a0fd65ad543228",
+      "sha256": "9a3f8502db16e6277874110e4d65817670d64f4bf4d83d0be39b5cd3088a822a",
+      "patch_subject": "drm/sun4i: Add compatible for H616 display engine",
+      "touched_paths": [
+        "drivers/gpu/drm/sun4i/sun4i_drv.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0041-arm64-dts-allwinner-h616-Add-display-pipeline.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0041-arm64-dts-allwinner-h616-Add-display-pipeline.patch",
+      "access_date": "2026-09-12",
+      "bytes": 9362,
+      "git_blob": "ab5e11eb4f475d2d0955b89a96e74d0c8eca3001",
+      "sha256": "4c204d3af7aa3aff47b743b1c4e0e6a5bad3b73f8a71213ad5d6a58740b763fb",
+      "patch_subject": "arm64: dts: allwinner: h616: Add display pipeline",
+      "touched_paths": [
+        "arch/arm64/boot/dts/allwinner/sun50i-h616.dtsi"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0042-arm64-dts-allwinner-h616-Enable-HDMI-on-several-boar.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0042-arm64-dts-allwinner-h616-Enable-HDMI-on-several-boar.patch",
+      "access_date": "2026-09-12",
+      "bytes": 6946,
+      "git_blob": "7cc29ea748a04b3082a27480b08d111130ecfcb3",
+      "sha256": "21f6e330ffa10ceab8c1631b433d325a4d2583b0aa535c15d54a90ca639e9ace",
+      "patch_subject": "arm64: dts: allwinner: h616: Enable HDMI on several boards",
+      "touched_paths": [
+        "arch/arm64/boot/dts/allwinner/sun50i-h313-tanix-tx1.dts",
+        "arch/arm64/boot/dts/allwinner/sun50i-h616-orangepi-zero.dtsi",
+        "arch/arm64/boot/dts/allwinner/sun50i-h616-orangepi-zero2.dts",
+        "arch/arm64/boot/dts/allwinner/sun50i-h616-x96-mate.dts",
+        "arch/arm64/boot/dts/allwinner/sun50i-h618-orangepi-zero3.dts",
+        "arch/arm64/boot/dts/allwinner/sun50i-h618-transpeed-8k618-t.dts",
+        "arch/arm64/boot/dts/allwinner/sun50i-h618-yuzukihd-chameleon.dts"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/series.conf",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/series.conf",
+      "access_date": "2026-09-12",
+      "bytes": 43382,
+      "git_blob": "1d6ce4147c40549d3eed816e6966d0817f5a8417",
+      "sha256": "94db828ca556d3c1620d508359248478d1355a1f5b7b65cc079f9db5fc6241d4",
+      "patch_subject": null,
+      "touched_paths": []
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/drv-net-phy-ac300-phy-add.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/drv-net-phy-ac300-phy-add.patch",
+      "access_date": "2026-09-12",
+      "bytes": 16421,
+      "git_blob": "d0b8b0798e74ef15fb91960ce73d907928aff73f",
+      "sha256": "6d1a44a1cb96488fb8f51423fe5de2ecfb5f91cff7a91cd54fc145ea3e1bb53c",
+      "patch_subject": "[ARCHEOLOGY] Feature/sunxi mainline stmmac ac300 (#9952)",
+      "touched_paths": [
+        "drivers/net/phy/Kconfig",
+        "drivers/net/phy/Makefile",
+        "drivers/net/phy/ac300-phy.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.megous/fixes-6.18/0014-Fix-broken-allwinner-sram-dependency-on-h616-h618.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.megous/fixes-6.18/0014-Fix-broken-allwinner-sram-dependency-on-h616-h618.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2074,
+      "git_blob": "74422a43f6a132f7814c3d06c642e59f78543b36",
+      "sha256": "b19a248f3ecb513e68194a66e9a14097d4dfb5d1d41f429db38061969dad85d7",
+      "patch_subject": "Fix broken allwinner,sram dependency on h616, h618",
+      "touched_paths": [
+        "drivers/of/property.c"
+      ]
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.megous/fixes-6.18/0013-of-property-fw_devlink-Support-allwinner-sram-links.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.megous/fixes-6.18/0013-of-property-fw_devlink-Support-allwinner-sram-links.patch",
+      "access_date": "2026-09-12",
+      "bytes": 1707,
+      "git_blob": "439873fef81b156c354600e9b52c748c7dbd9cb5",
+      "sha256": "8d60a0d176c04bc8cac4b56e41cce851ddc0f913a3f45e8452f6e172b8be8faf",
+      "patch_subject": "of: property: fw_devlink: Support allwinner,sram links",
+      "touched_paths": [
+        "drivers/of/property.c"
+      ]
+    }
+  ],
+  "limitations": [
+    "No kernel base/include closure, patch application, configuration, build, schema or runtime validation performed.",
+    "The reviewed subset is not a proven minimal or complete applied platform set.",
+    "CB1 electrical equivalence, regulator topology, clock and GPIO assignments remain unverified for the named printer.",
+    "The CB1 patch adds a late GPU reg_dcdc3 supply; a separate AC300 patch contains earlier reg_dcdc1 context. The final combined tree remains unverified.",
+    "An SRAM fix author reports SV08 testing; this is not project hardware or complete-platform validation.",
+    "Full transitive source/firmware license inventory remains open."
+  ]
+}

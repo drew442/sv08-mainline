@@ -75,3 +75,7 @@ selected files were checked against their tree/contents entries. The upstream
 Linux v6.12.107 tag resolves to `f717995cb7dcd8998ab15516b8006aea09cfde0d`.
 Raw intake stays under ignored `local/feature-workflow/board-source-audit/`.
 No downloaded revision is claimed to be tested compatibility.
+
+The subsequent [53-file stock SV08/H616 intake](host-sunxi-618-intake-20260912.md)
+examines the 6.18 display and board dependencies, preserving exact source hashes
+and the distinction between declared patch order and an actually applied tree.

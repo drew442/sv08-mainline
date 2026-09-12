@@ -64,3 +64,8 @@ selected Armbian external-radio source, exact SDIO match and kernel patch-tree
 inventory. It distinguishes those source observations from the running vendor
 binary and from board compatibility. No driver or platform patch set is adopted
 or hardware-validated by this intake.
+
+The [stock SV08/H616 6.18 follow-up](host-sunxi-618-intake-20260912.md) records
+53 exact source inputs and their display, clock, device-tree and inherited board
+dependencies. It identifies remaining base-kernel and combined-tree checks;
+it does not establish an applied patch set or hardware compatibility.
