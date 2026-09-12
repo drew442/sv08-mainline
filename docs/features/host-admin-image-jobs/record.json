@@ -97,7 +97,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Reviewed the entire 17-file diff cb1257d..7afb16911aadcbbbb98a2986df3c79c08f7fd925, including additions and modes; submitted source HEAD is frozen and clean. Canonical digests use the PRIMARY submitted decision and evidence list; all six document/source hash sets match, as do installed runtime hashes and the measured 104577 -> 119976 byte payload (+15399). Material regression: ui/host/app.js adds setInterval(refresh, 1500), but refresh calls render(), which unconditionally resets hostname, automatic-update checkbox, mode radios and selection lists from server state. Real Chromium reproduction after a successful host connection set hostname=owner-draft, mode=writable and auto=false, waited 2000 ms without submitting, then observed hostname=\"\", mode=immutable and auto=true. This discards owner edits during normal use and violates the regression acceptance check. Reproducer: /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-image-jobs/build/verifier-draft-regression.mjs; result: /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-image-jobs/build/verifier-draft-browser/result.json. Executed with /home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64/bin/node and /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome, fixture build/verifier-image-jobs. Preserve dirty controls and selected values while independently refreshing jobs/status; add browser tests that edit each form, wait across multiple polling ticks, then review the intended values. Remaining reviewed checks: real browser close/reopen during state-lock-held stage passed in 127 ms, same durable identity retry caused exactly one install, real user-systemd separate worker completed stage/arm/cancel, cancelled review submitted nothing; result build/verifier-image-browser/result.json. Independently reran all 113 relevant Python checks, including crash/no-space/corruption/capacity/concurrency/admission regressions, with pinned Klipper source loaded from primary checkout for 10 admission tests (worktree submodules uninitialized). Fixed worker ARM64 installed-entry diagnostics independently passed all five cases in private overlay/chroot, build/verifier-image-jobs-installed/result.json; no source root writes or service started by that diagnostic. Service syntax, JSON syntax, touched Markdown local paths, git diff and cached diff whitespace checks and indexed gitlink/lock agreement passed. Source review confirms durable no-eviction retry binding, nonblocking status with job-first rendering, conservative ambiguous outcomes and no automatic replay, trusted fixed worker context, transaction-lock revision/capability revalidation, private signed staging lease and idle admission, plus safe customized cancellation. Conservative 128-receipt/full or ambiguous blocking and documented separately reviewed identity-preserving follow-on remain explicit limitations; worker inactivity alone is not RAUC service inactivity and reconcile is not read-only. Browser uses a test Cockpit bridge, fixture signature verifier and disk backend; user-systemd supervision is real but production system-manager deployment/authenticated Cockpit, complete ARM64 image, factory 8 GB closure and physical hardware remain unverified. Delivery is failed for the reproduced form regression despite the existing automated suite passing.",
+      "blocker": null,
       "checks": [
         "disconnect",
         "submission",
@@ -108,183 +108,15 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [
-        {
-          "board_revision": null,
-          "check": "disconnect",
-          "document": "docs/hardware/host-admin-image-jobs-20260912.json",
-          "document_sha256": "a2de439920852f463923ae647fa09da911b92675ba1e0307bb40f8aec2c11cd2",
-          "environment": "offline",
-          "limitations": "No production system-manager deployment or authenticated Cockpit bridge/session tested. Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage. No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established. Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on. ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot.",
-          "method": "Real browser and user-systemd separate worker, real controller/staging/transaction with deterministic install barrier; close/reopen and separately reviewed arm/cancel.",
-          "profile": null,
-          "source_commit": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
-          "source_sha256": {
-            "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
-            "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
-            "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
-            "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
-            "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
-            "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
-            "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
-            "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
-            "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
-            "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
-            "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
-            "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
-            "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "submission",
-          "document": "docs/hardware/host-admin-image-jobs-20260912.json",
-          "document_sha256": "a2de439920852f463923ae647fa09da911b92675ba1e0307bb40f8aec2c11cd2",
-          "environment": "offline",
-          "limitations": "No production system-manager deployment or authenticated Cockpit bridge/session tested. Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage. No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established. Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on. ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot.",
-          "method": "Browser lost acknowledgement retry, same identity exactly once; Python duplicate/content conflict, concurrency and no-eviction capacity tests; review cancellation.",
-          "profile": null,
-          "source_commit": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
-          "source_sha256": {
-            "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
-            "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
-            "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
-            "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
-            "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
-            "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
-            "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
-            "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
-            "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
-            "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
-            "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
-            "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
-            "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "admission",
-          "document": "docs/hardware/host-admin-image-jobs-20260912.json",
-          "document_sha256": "a2de439920852f463923ae647fa09da911b92675ba1e0307bb40f8aec2c11cd2",
-          "environment": "offline",
-          "limitations": "No production system-manager deployment or authenticated Cockpit bridge/session tested. Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage. No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established. Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on. ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot.",
-          "method": "Controller/image job tests revalidate review revision, changed boot, capability/writable/customized/nondeployable and idle failure; existing private staging/signature and transaction admission regressions.",
-          "profile": null,
-          "source_commit": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
-          "source_sha256": {
-            "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
-            "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
-            "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
-            "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
-            "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
-            "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
-            "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
-            "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
-            "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
-            "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
-            "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
-            "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
-            "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "interruption",
-          "document": "docs/hardware/host-admin-image-jobs-20260912.json",
-          "document_sha256": "a2de439920852f463923ae647fa09da911b92675ba1e0307bb40f8aec2c11cd2",
-          "environment": "offline",
-          "limitations": "No production system-manager deployment or authenticated Cockpit bridge/session tested. Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage. No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established. Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on. ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot.",
-          "method": "Injected launch loss, coordinator death after queued publication, queue expiry, worker death and durable result failure, corruption and publication no-space failure; ambiguity blocks replay.",
-          "profile": null,
-          "source_commit": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
-          "source_sha256": {
-            "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
-            "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
-            "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
-            "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
-            "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
-            "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
-            "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
-            "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
-            "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
-            "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
-            "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
-            "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
-            "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "staging",
-          "document": "docs/hardware/host-admin-image-jobs-20260912.json",
-          "document_sha256": "a2de439920852f463923ae647fa09da911b92675ba1e0307bb40f8aec2c11cd2",
-          "environment": "offline",
-          "limitations": "No production system-manager deployment or authenticated Cockpit bridge/session tested. Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage. No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established. Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on. ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot.",
-          "method": "Fixed receipt-bound service unit syntax, selected ARM64 installed-entry in private chroot overlay, runtime staging consistency and same-scope payload comparison.",
-          "profile": null,
-          "source_commit": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
-          "source_sha256": {
-            "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
-            "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
-            "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
-            "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
-            "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
-            "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
-            "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
-            "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
-            "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
-            "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
-            "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
-            "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
-            "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "regression",
-          "document": "docs/hardware/host-admin-image-jobs-20260912.json",
-          "document_sha256": "a2de439920852f463923ae647fa09da911b92675ba1e0307bb40f8aec2c11cd2",
-          "environment": "offline",
-          "limitations": "No production system-manager deployment or authenticated Cockpit bridge/session tested. Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage. No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established. Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on. ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot.",
-          "method": "113 relevant Python checks plus actual browser policy/keyboard/touch and job journeys, JSON/Markdown/diff/indexed gitlink checks as recorded.",
-          "profile": null,
-          "source_commit": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
-          "source_sha256": {
-            "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
-            "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
-            "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
-            "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
-            "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
-            "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
-            "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
-            "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
-            "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
-            "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
-            "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
-            "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
-            "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
-          }
-        }
-      ],
+      "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "image_jobs_implementer",
-        "run": "7130d050e7ab4955a8193d1ba1ddf471",
-        "session": "image-jobs-implementation-20260912"
-      },
-      "repeats": 1,
-      "resumption": null,
-      "status": "blocked",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": "Independent real-browser dwell reproduced polling overwriting unsaved edits. Preserve drafts and valid selections across refresh, clear only confirmed unchanged applied drafts, and add dwell/server-change/removal regressions before fresh independent review.",
+      "status": "pending",
       "title": "Image operations survive browser disconnection",
-      "verification": {
-        "decision_sha256": "db8f8e0440c743e7e468acf018aa1276d8b4d40a9d85cead6ac2fef3169ed956",
-        "evidence_sha256": "8635a36c64b827482b2a18cdc7e9e3b538f2223713c9a58806b388603bb4f300",
-        "outcome": "failed",
-        "rationale": "Reviewed the entire 17-file diff cb1257d..7afb16911aadcbbbb98a2986df3c79c08f7fd925, including additions and modes; submitted source HEAD is frozen and clean. Canonical digests use the PRIMARY submitted decision and evidence list; all six document/source hash sets match, as do installed runtime hashes and the measured 104577 -> 119976 byte payload (+15399). Material regression: ui/host/app.js adds setInterval(refresh, 1500), but refresh calls render(), which unconditionally resets hostname, automatic-update checkbox, mode radios and selection lists from server state. Real Chromium reproduction after a successful host connection set hostname=owner-draft, mode=writable and auto=false, waited 2000 ms without submitting, then observed hostname=\"\", mode=immutable and auto=true. This discards owner edits during normal use and violates the regression acceptance check. Reproducer: /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-image-jobs/build/verifier-draft-regression.mjs; result: /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-image-jobs/build/verifier-draft-browser/result.json. Executed with /home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64/bin/node and /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome, fixture build/verifier-image-jobs. Preserve dirty controls and selected values while independently refreshing jobs/status; add browser tests that edit each form, wait across multiple polling ticks, then review the intended values. Remaining reviewed checks: real browser close/reopen during state-lock-held stage passed in 127 ms, same durable identity retry caused exactly one install, real user-systemd separate worker completed stage/arm/cancel, cancelled review submitted nothing; result build/verifier-image-browser/result.json. Independently reran all 113 relevant Python checks, including crash/no-space/corruption/capacity/concurrency/admission regressions, with pinned Klipper source loaded from primary checkout for 10 admission tests (worktree submodules uninitialized). Fixed worker ARM64 installed-entry diagnostics independently passed all five cases in private overlay/chroot, build/verifier-image-jobs-installed/result.json; no source root writes or service started by that diagnostic. Service syntax, JSON syntax, touched Markdown local paths, git diff and cached diff whitespace checks and indexed gitlink/lock agreement passed. Source review confirms durable no-eviction retry binding, nonblocking status with job-first rendering, conservative ambiguous outcomes and no automatic replay, trusted fixed worker context, transaction-lock revision/capability revalidation, private signed staging lease and idle admission, plus safe customized cancellation. Conservative 128-receipt/full or ambiguous blocking and documented separately reviewed identity-preserving follow-on remain explicit limitations; worker inactivity alone is not RAUC service inactivity and reconcile is not read-only. Browser uses a test Cockpit bridge, fixture signature verifier and disk backend; user-systemd supervision is real but production system-manager deployment/authenticated Cockpit, complete ARM64 image, factory 8 GB closure and physical hardware remain unverified. Delivery is failed for the reproduced form regression despite the existing automated suite passing.",
-        "reviewer": "image_jobs_verifier",
-        "session": "/root/image_jobs_verifier-2026-09-12"
-      }
+      "verification": null
     }
   ],
   "title": "Image operations survive browser disconnection"
