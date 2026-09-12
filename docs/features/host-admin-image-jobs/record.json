@@ -293,7 +293,7 @@
       },
       "repeats": 0,
       "resumption": "Independent real-browser dwell reproduced polling overwriting unsaved edits. Preserve drafts and valid selections across refresh, clear only confirmed unchanged applied drafts, and add dwell/server-change/removal regressions before fresh independent review.",
-      "status": "review",
+      "status": "done",
       "title": "Image operations survive browser disconnection",
       "verification": {
         "decision_sha256": "db8f8e0440c743e7e468acf018aa1276d8b4d40a9d85cead6ac2fef3169ed956",
