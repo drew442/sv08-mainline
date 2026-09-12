@@ -8,6 +8,15 @@ host A/B assumptions or initialize missing state in recovery.
 from sv08_admin import ACTIONS, RECOVERY_ACTIONS, Controller, revision
 
 
+def installed_controller():
+    from sv08_recovery_media import MediaProvider, production_adapter
+    from sv08_state import Store
+    adapter = production_adapter()
+    # Export the complete configured data filesystem; its registry is diagnostic.
+    registry = adapter.source / 'sv08' if isinstance(adapter, MediaProvider) else '/data/sv08'
+    return RecoveryController(Store(registry), adapter)
+
+
 class RecoveryController(Controller):
     def __init__(self, store, adapter=None):
         super().__init__(store, {}, 'recovery', adapter)

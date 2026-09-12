@@ -31,8 +31,19 @@ class StageUITests(unittest.TestCase):
         self.assertTrue((self.work / 'rootfs/usr/share/xsessions/sv08-recovery.desktop').is_file())
         self.assertFalse((self.work / 'rootfs/usr/share/cockpit').exists())
         self.assertFalse((self.work / 'rootfs/etc/sv08-recovery-image').exists())
+        self.assertIn('usr/lib/sv08/sv08_recovery_media.py', result['hashes'])
+        self.assertFalse((self.work / 'rootfs/etc/sv08/recovery-media-policy.json').exists())
+        self.assertFalse((self.work / 'rootfs/run/sv08-recovery/media-context.json').exists())
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/multi-user.target.wants').exists())
 
     def test_mismatched_runtime_is_refused(self):
         (self.work / 'rootfs/usr/lib/sv08/sv08_state.py').write_text('old code')
         with self.assertRaisesRegex(ValueError, 'matching'): stage(self.work, 'host', True)
+
+    def test_provider_missing_or_mismatched_is_refused_before_staging(self):
+        provider = self.work / 'rootfs/usr/lib/sv08/sv08_recovery_media.py'
+        provider.unlink()
+        with self.assertRaisesRegex(ValueError, 'sv08_recovery_media'): stage(self.work, 'recovery', True)
+        provider.write_text('older provider')
+        with self.assertRaisesRegex(ValueError, 'sv08_recovery_media'): stage(self.work, 'recovery', True)
+        self.assertFalse((self.work / 'rootfs/usr/share/xsessions').exists())

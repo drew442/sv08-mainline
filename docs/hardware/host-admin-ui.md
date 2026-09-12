@@ -33,7 +33,7 @@ running host's slot identity.
 | Additional software | Catalog selection and reviewed-operation UI contract | Reviewed catalog, dependency/space preview, actual APT adapter and customization reconciliation |
 | Network/access configuration | Scope and unavailable-state explanation | Owner onboarding, persistent credentials/certificates, network forms and rollback |
 | Recovery state inspection | Read-only, including missing/corrupt registry; no initialization | Physical block/filesystem diagnosis adapter |
-| Recovery boot/restore/export | Native selection/review/apply; [export adapter and actual archive tests](host-recovery-export.md) added 2026-09-11 | Verified recovery/media admission, USB discovery, signed restore and physical export tests |
+| Recovery boot/restore/export | Native selection/review/apply; [archive exporter](host-recovery-export.md) and [verified pre-mounted export admission](host-recovery-media.md) with actual GTK/FAT tests | Independent recovery image and trusted premount integration, USB discovery, signed restore and physical export tests |
 
 Unavailable operations are disabled and explain the gap; they do not silently
 succeed. **This is not yet a complete no-command administration release.** In
@@ -127,6 +127,8 @@ release, run the actual Cockpit login/bridge/privilege flow, disconnected-browse
 jobs, 8 GB storage occupancy, independent recovery boot and attended HDMI touch,
 keyboard-only, mouse, USB export and signed restore tests on the named profile.
 
-The subsequent [2026-09-11 export work](host-recovery-export.md) adds a real archive
-backend and GTK-to-archive tests. Installed export remains gated on verified USB
-discovery and recovery mount admission; boot/restore are still separate work.
+The [2026-09-11 export work](host-recovery-export.md) adds a real archive backend.
+[2026-09-12 media admission](host-recovery-media.md) connects the installed GTK
+entry to an explicitly configured pre-mounted provider and preserves diagnostic-only
+behavior without valid trust inputs. Production image/premounter integration and
+physical USB tests remain required; boot/restore are still separate work.

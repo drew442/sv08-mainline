@@ -124,7 +124,7 @@ class Export:
 
     def prepare(self, target_id):
         target = self.destination(target_id)
-        with self.admission(target_id):
+        with self.admission(target_id) as guard:
             with opened(target) as fd: destination_identity = identity(os.fstat(fd))[:2]
             with opened(self.source) as fd: source_identity = identity(os.fstat(fd))[:2]
             entries = inventory(self.source)
@@ -132,8 +132,10 @@ class Export:
             size = 10240 + sum(len(member(p, s).tobuf(format=tarfile.PAX_FORMAT)) + ((member(p, s).size+511)//512)*512 for p,s in entries)
             size += 10240 + sum(len(json.dumps('/'.join(p)).encode())+256 for p,s in entries)
             self.space(target, size)
+            if guard is not None: guard.recheck()
             return dict(destination=target_id, source_identity=source_identity,
-                        destination_identity=destination_identity, entries=entries, required_bytes=size)
+                        destination_identity=destination_identity, entries=entries, required_bytes=size,
+                        media_fingerprint=guard.fingerprint if guard is not None else None)
 
     def space(self, target, size):
         with opened(target) as fd: fs = os.fstatvfs(fd)
@@ -144,16 +146,19 @@ class Export:
 
     def execute(self, plan):
         target = self.destination(plan['destination'])
-        with self.admission(plan['destination']):
+        with self.admission(plan['destination']) as guard:
+            if plan.get('media_fingerprint') != (guard.fingerprint if guard is not None else None):
+                raise ValueError('Recovery media changed; review the export again')
             with opened(target) as target_fd, opened(self.source) as source_fd:
                 if (identity(os.fstat(target_fd))[:2] != tuple(plan['destination_identity']) or
                         identity(os.fstat(source_fd))[:2] != tuple(plan['source_identity']) or
                         inventory(self.source) != plan['entries']):
                     raise ValueError('Source or destination changed; review the export again')
                 self.space(target, plan['required_bytes'])
+                if guard is not None: guard.recheck()
                 name = 'sv08-user-data-'+uuid.uuid4().hex+'.tar'
                 partial = '.'+name+'.partial'
-                expected = {}; records = []; created = False
+                expected = {}; records = []; created = False; published = False; completed = False
                 try:
                     fd = os.open(partial, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600, dir_fd=target_fd)
                     created = True
@@ -188,11 +193,20 @@ class Export:
                     # Revalidate paths before publishing into the still-held destination.
                     with opened(target) as now:
                         if identity(os.fstat(now))[:2] != tuple(plan['destination_identity']): raise ValueError('Destination changed')
+                    if guard is not None: guard.recheck()
                     publish(target_fd, partial, name)
+                    published = True
                     os.fsync(target_fd)
+                    if guard is not None: guard.recheck()
+                    completed = True
                     return dict(filename=name, sha256=digest.hexdigest(), files=len(records),
                                 message='User data saved and readback verified: '+name+'. Includes private configuration and credentials; keep the destination private.')
                 finally:
+                    if published and not completed:
+                        # Only this operation's output; never a pre-existing file.
+                        # Physical removal/power loss can still prevent cleanup.
+                        os.unlink(name, dir_fd=target_fd)
+                        os.fsync(target_fd)
                     if created:
                         try: os.unlink(partial, dir_fd=target_fd)
                         except FileNotFoundError: pass
