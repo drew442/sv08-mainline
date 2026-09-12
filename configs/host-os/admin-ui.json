@@ -22,7 +22,9 @@
   "recovery_entry": "/usr/lib/sv08/sv08_recovery_ui.py",
   "network_activation": false,
   "physical_display_validated": false,
-  "recovery_capacity_validated": false,
-  "package_versions": "Host: selected snapshot closure and sudo prerequisites pinned; recovery closure remains unvalidated",
-  "host_package_lock": "configs/host-os/cockpit-packages.json"
+  "recovery_capacity_validated": true,
+  "package_versions": "Host and recovery exact selected-snapshot closures pinned",
+  "host_package_lock": "configs/host-os/cockpit-packages.json",
+  "recovery_capacity_scope": "Offline ARM64 QEMU virt: complete 512 MiB independent ext4/compressed-/usr diagnostics; physical board and complete release remain unvalidated",
+  "recovery_package_lock": "configs/host-os/recovery-packages.json"
 }

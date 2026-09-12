@@ -112,8 +112,10 @@ backend and [verified pre-mounted media admission](hardware/host-recovery-media.
 with GTK cancellation/apply and filesystem/block-read-only source/FAT32 fixtures.
 [Single-pass verification](hardware/host-recovery-readback.md) now halves logical
 read volume on the approved fixture while retaining complete-byte integrity checks.
-The independent recovery image, trusted premount integration and physical export
-tests remain outstanding.
+The [independent recovery image](hardware/host-recovery-image.md) now fits its
+512 MiB allocation and boots the installed ARM64 GTK diagnostics without A/B/data
+roots. Trusted premount integration, production recovery operations and physical
+export/input tests remain outstanding.
 
 The printer returned online on 2026-09-12. A
 [read-only host inspection](hardware/test-sv08-01-online-20260912.md) now identifies

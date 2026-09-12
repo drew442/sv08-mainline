@@ -35,6 +35,7 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Host state and update tests](docs/hardware/host-state-build.md): operating modes, persistence and signed A/B fixtures.
 - [ARM64 RAUC validation](docs/hardware/host-rauc-build.md): reproducible package and inactive-partition installation.
 - [Host administration and recovery UI](docs/hardware/host-admin-ui.md): browser/native interfaces and integration status.
+- [Independent recovery image](docs/hardware/host-recovery-image.md): complete 512 MiB ARM64 offline GTK boot, input and refusal evidence.
 - [Host completion checklist](docs/hardware/host-os-tasks.md): remaining offline and human tasks.
 - [Host application packaging](docs/hardware/host-apps-build.md): Klipper `.deb` and offline checks.
 - [Armbian source intake](docs/hardware/host-ab-armbian-intake.md): unverified SV08 boot-support candidate.

@@ -1,0 +1,1328 @@
+{
+  "format_version": 1,
+  "scope": "Offline ARM64 QEMU virt independent diagnostic recovery; no hardware/release/export certification",
+  "authoritative_ignored_artifacts": {
+    "assembly": "build/recovery-assembly-v5",
+    "candidate": "build/recovery-final-v3",
+    "repeat": "build/recovery-repeat-v3",
+    "boots": [
+      "build/recovery-accepted-boot1",
+      "build/recovery-accepted-boot2"
+    ]
+  },
+  "source_files": {
+    "scripts/recovery_image.py": "148393ba08ad17eed4e1696364f0dfe428855770ea346c17337c6eef26b05e5b",
+    "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+    "tests/recovery_vm.py": "5810d60033a5d487192aed99b27886ea488b19530d28b175dba3f9a7fc2be1c8",
+    "tests/recovery_filesystem.py": "b0ea2310d56de989dd022289c422843900479e95c974abbd28d0e67b5b893986",
+    "tests/recovery_refusal_image.py": "c8ddea07c6365ad090248b6cfd7d246592dcd31504213c07f1ab05b5743b2f4a",
+    "tests/test_recovery_image.py": "6b5799887bb283f395ff4359b26197b38ac29fea7199620965625fe658a478c4",
+    "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15"
+  },
+  "assembly": {
+    "lock_sha256": "166c410341c360ef0e5f6e07887d783fcef8750472760ed12f4dc146694cb01b",
+    "root": {
+      "schema": 2,
+      "sha256": "a6d41fbe480b86715b2131739b7d5fe163b56d5e122153dafbfb4da1051038cd",
+      "files": 17763,
+      "bytes": 787984554
+    },
+    "integration_inputs": {
+      "scripts/recovery_image.py": "148393ba08ad17eed4e1696364f0dfe428855770ea346c17337c6eef26b05e5b",
+      "scripts/stage_admin_ui.py": "55626ce546a7949548438d49bfa57a5ee461c892bae91893ecd72e3feb40bd13",
+      "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+      "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+      "configs/host-os/sv08-recovery-display.service": "8b5818aa5428bcccb1f09cd5c18f24a0a143f6abfd047ff5d3b966d6209a9e9b",
+      "configs/host-os/recovery-session.desktop": "599bcd059add2036ca891bb89e46e364e02ef582220c6d2cfb5bbdc856d90da4",
+      "runtime/sv08_rauc.py": "02755b3adf5db27381c3bfaf2303d41abaed6e575c8a32c34bb5e14853eb943d",
+      "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+      "runtime/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+      "runtime/sv08_gpt.py": "d0c30268e8a5b4458d8646de02e7d02473a0611962b393a705db5ac096ab88dc",
+      "runtime/sv08_staging.py": "8f54fbf7af84f4e978e213e5c9b5309a310321d3787d1418c9c28358e032f65a",
+      "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+      "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+      "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+      "runtime/sv08_transaction.py": "17f67d24bcc82717bd0f1073472137f238e7fb49c6effed3ed9315b9d34fe94c",
+      "runtime/sv08_package.py": "82a721afc1734cb871f28f72b57cb5fd28483b19e7a09dde07d46ca448f8fce5",
+      "runtime/sv08_admin_images.py": "571a5ef6c09b17c93159457afc8b5d39bdc278d78bb8ca2ea1eeb6633724ac7b",
+      "runtime/sv08_admin.py": "367f5f9e033ec1fbfbd111c016b47ac7548f808b7ac3272c7e6fbb746b9c02eb",
+      "runtime/sv08_admin_upload.py": "90bf08e0ff4c124decbefc99ff0770028525d22a5f45ad803e637bc8af906200",
+      "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+      "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+      "runtime/sv08_boot.py": "acbb7aeb4f048e3c7dc9f0eee5a7bbbd457eeb25471e11a296d9512d847ac46e",
+      "runtime/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+      "runtime/sv08_admission.py": "e9feef862560fa381f8adde7edab98aade18c5e279363d0c522453f78b78611f",
+      "runtime/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf"
+    }
+  },
+  "candidate": {
+    "format_version": 1,
+    "status": "offline-vm-candidate",
+    "image_bytes": 536870912,
+    "image_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+    "allocated_bytes": 297590784,
+    "manifest_sha256": "1ef5581c7c917c278ca4ec9e3958b7d92b94e74162acfe8b5b312a6773446da7",
+    "usr_bytes": 224436224,
+    "usr_sha256": "483fd43ed5c3f9a7b7acf3bc193275ddba1b3765646386167589254b796db960",
+    "source": {
+      "schema": 2,
+      "sha256": "a6d41fbe480b86715b2131739b7d5fe163b56d5e122153dafbfb4da1051038cd",
+      "files": 17763,
+      "bytes": 787984554
+    },
+    "source_preserved": true,
+    "kernel_sha256": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67",
+    "initrd_sha256": "efc16364d8c5c9d66581846da347de84e196e2e4aa72c9a5ee3e27060a47acc6",
+    "envelope": {
+      "schema": 2,
+      "sha256": "5a0d4c81a651256bb0700ac2b0460ec50911620cb21a3bdc9b8f8e87e8ff7a86",
+      "files": 1448,
+      "bytes": 275890423
+    },
+    "boot_gate_sha256": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+    "builder_sha256": "148393ba08ad17eed4e1696364f0dfe428855770ea346c17337c6eef26b05e5b",
+    "assembly_record_sha256": "06293b9d38bf65e53f559e19cec901150b5db3c1d7b3701442b82d2d3317612a",
+    "integration_inputs": {
+      "scripts/recovery_image.py": "148393ba08ad17eed4e1696364f0dfe428855770ea346c17337c6eef26b05e5b",
+      "scripts/stage_admin_ui.py": "55626ce546a7949548438d49bfa57a5ee461c892bae91893ecd72e3feb40bd13",
+      "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+      "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+      "configs/host-os/sv08-recovery-display.service": "8b5818aa5428bcccb1f09cd5c18f24a0a143f6abfd047ff5d3b966d6209a9e9b",
+      "configs/host-os/recovery-session.desktop": "599bcd059add2036ca891bb89e46e364e02ef582220c6d2cfb5bbdc856d90da4",
+      "runtime/sv08_rauc.py": "02755b3adf5db27381c3bfaf2303d41abaed6e575c8a32c34bb5e14853eb943d",
+      "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+      "runtime/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+      "runtime/sv08_gpt.py": "d0c30268e8a5b4458d8646de02e7d02473a0611962b393a705db5ac096ab88dc",
+      "runtime/sv08_staging.py": "8f54fbf7af84f4e978e213e5c9b5309a310321d3787d1418c9c28358e032f65a",
+      "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+      "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+      "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+      "runtime/sv08_transaction.py": "17f67d24bcc82717bd0f1073472137f238e7fb49c6effed3ed9315b9d34fe94c",
+      "runtime/sv08_package.py": "82a721afc1734cb871f28f72b57cb5fd28483b19e7a09dde07d46ca448f8fce5",
+      "runtime/sv08_admin_images.py": "571a5ef6c09b17c93159457afc8b5d39bdc278d78bb8ca2ea1eeb6633724ac7b",
+      "runtime/sv08_admin.py": "367f5f9e033ec1fbfbd111c016b47ac7548f808b7ac3272c7e6fbb746b9c02eb",
+      "runtime/sv08_admin_upload.py": "90bf08e0ff4c124decbefc99ff0770028525d22a5f45ad803e637bc8af906200",
+      "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+      "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+      "runtime/sv08_boot.py": "acbb7aeb4f048e3c7dc9f0eee5a7bbbd457eeb25471e11a296d9512d847ac46e",
+      "runtime/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+      "runtime/sv08_admission.py": "e9feef862560fa381f8adde7edab98aade18c5e279363d0c522453f78b78611f",
+      "runtime/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf"
+    }
+  },
+  "filesystem": {
+    "envelope_metadata_paths_verified": 1703,
+    "envelope_extra_paths": [
+      "lost+found"
+    ],
+    "usr_inventory": {
+      "schema": 2,
+      "sha256": "852d2e332e4f3f489707807c9902e43b94bf394df9faeb66302347645673145f",
+      "files": 16319,
+      "bytes": 740135601
+    },
+    "usr_matches_assembly": true,
+    "preserved_xattrs": [],
+    "xattr_api_unsupported_with_empty_source": 3727,
+    "free_blocks": 56366,
+    "block_size": 4096,
+    "free_bytes": 230875136,
+    "free_inodes": 31055,
+    "total_inodes": 32768,
+    "total_blocks": 124725,
+    "dbus_helper": {
+      "uid": 0,
+      "gid": 992,
+      "mode": "0o4754"
+    },
+    "kernel_identical": true,
+    "initrd_identical": true,
+    "registry_exists": false
+  },
+  "boot_and_restart": [
+    {
+      "run": {
+        "seconds": 76.86465517804027,
+        "peak_qemu_rss_bytes": 1480970240,
+        "ram_mib": 768,
+        "installed_service_and_accessibility_ready": true,
+        "exit_code": null,
+        "image_before_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "boot_id_independent_process": true,
+        "input_steps": [
+          "keyboard-tab",
+          "keyboard-shift-tab",
+          "keyboard-review",
+          "keyboard-cancel",
+          "mouse-review",
+          "diagnostic-apply",
+          "touch-refresh",
+          "touch-review",
+          "touch-cancel",
+          "touch-review-again",
+          "touch-apply"
+        ],
+        "virtual_pointers": [
+          {
+            "index": 3,
+            "name": "QEMU HID Mouse",
+            "current": false,
+            "absolute": false
+          },
+          {
+            "index": 4,
+            "name": "QEMU HID Tablet",
+            "current": true,
+            "absolute": true
+          }
+        ],
+        "independent_touch_events_injected": true,
+        "image_after_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "image_preserved": true
+      },
+      "guest": {
+        "boot_id": "2b0cf5d6-71fa-42bf-bb03-c25201af2abd",
+        "display_unit": "MainPID=323\nNRestarts=0\nActiveState=active\nSubState=running\n",
+        "envelope_binding": "1ef5581c7c917c278ca4ec9e3958b7d92b94e74162acfe8b5b312a6773446da7",
+        "failed_units": "",
+        "kernel": "6.12.107+deb13-arm64",
+        "memory": [
+          "MemTotal:         733892 kB",
+          "MemFree:          119096 kB",
+          "MemAvailable:     538000 kB",
+          "Buffers:            1628 kB",
+          "Cached:           484200 kB",
+          "SwapCached:            0 kB",
+          "Active:           229904 kB",
+          "Inactive:         314688 kB",
+          "Active(anon):      67444 kB",
+          "Inactive(anon):        0 kB",
+          "Active(file):     162460 kB",
+          "Inactive(file):   314688 kB",
+          "Unevictable:        6160 kB",
+          "Mlocked:               0 kB",
+          "SwapTotal:             0 kB",
+          "SwapFree:              0 kB",
+          "Zswap:                 0 kB",
+          "Zswapped:              0 kB",
+          "Dirty:                 0 kB",
+          "Writeback:             0 kB",
+          "AnonPages:         64880 kB",
+          "Mapped:            91916 kB",
+          "Shmem:              8716 kB",
+          "KReclaimable:       7672 kB",
+          "Slab:              27820 kB",
+          "SReclaimable:       7672 kB",
+          "SUnreclaim:        20148 kB",
+          "KernelStack:        1400 kB",
+          "PageTables:         1636 kB",
+          "SecPageTables:         0 kB",
+          "NFS_Unstable:          0 kB",
+          "Bounce:                0 kB",
+          "WritebackTmp:          0 kB",
+          "CommitLimit:      366944 kB",
+          "Committed_AS:     145184 kB",
+          "VmallocTotal:   135288315904 kB",
+          "VmallocUsed:        9996 kB",
+          "VmallocChunk:          0 kB",
+          "Percpu:              416 kB",
+          "HardwareCorrupted:     0 kB",
+          "AnonHugePages:     10240 kB",
+          "ShmemHugePages:        0 kB",
+          "ShmemPmdMapped:        0 kB",
+          "FileHugePages:         0 kB",
+          "FilePmdMapped:         0 kB",
+          "CmaTotal:          65536 kB",
+          "CmaFree:           59568 kB",
+          "HugePages_Total:       0",
+          "HugePages_Free:        0",
+          "HugePages_Rsvd:        0",
+          "HugePages_Surp:        0",
+          "Hugepagesize:       2048 kB",
+          "Hugetlb:               0 kB"
+        ],
+        "mounts": [
+          "26 31 0:24 / /proc rw,relatime shared:5 - proc proc rw",
+          "27 31 0:25 / /sys rw,relatime shared:6 - sysfs sysfs rw",
+          "28 31 0:6 / /dev rw,relatime shared:11 - devtmpfs devtmpfs rw,size=16384k,nr_inodes=4096,mode=755,inode64",
+          "29 31 0:26 / /run rw,nosuid,nodev,relatime shared:4 - tmpfs tmpfs rw,size=98304k,mode=755,inode64",
+          "30 28 0:27 / /dev/shm rw,nosuid,nodev,relatime shared:12 - tmpfs tmpfs rw,size=32768k,inode64",
+          "31 1 254:0 / / ro,relatime shared:1 - ext4 /dev/vda ro,norecovery",
+          "32 31 7:0 / /usr ro,nodev,relatime shared:2 - squashfs /dev/loop0 ro,errors=continue",
+          "33 31 0:28 / /tmp rw,nosuid,nodev,relatime shared:3 - tmpfs tmpfs rw,size=65536k,inode64",
+          "34 27 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime shared:7 - securityfs securityfs rw",
+          "35 28 0:29 / /dev/pts rw,nosuid,noexec,relatime shared:13 - devpts devpts rw,gid=5,mode=600,ptmxmode=000",
+          "36 27 0:30 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:8 - cgroup2 cgroup2 rw,nsdelegate,memory_recursiveprot",
+          "37 27 0:31 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime shared:9 - pstore pstore rw",
+          "38 27 0:32 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime shared:10 - bpf bpf rw,mode=700",
+          "39 26 0:33 / /proc/sys/fs/binfmt_misc rw,relatime shared:14 - autofs systemd-1 rw,fd=36,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=364",
+          "40 28 0:34 / /dev/hugepages rw,nosuid,nodev,relatime shared:17 - hugetlbfs hugetlbfs rw,pagesize=2M",
+          "41 29 0:35 / /run/lock rw,nosuid,nodev,noexec,relatime shared:15 - tmpfs tmpfs rw,size=5120k,inode64",
+          "42 28 0:23 / /dev/mqueue rw,nosuid,nodev,noexec,relatime shared:16 - mqueue mqueue rw",
+          "43 27 0:13 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime shared:18 - tracefs tracefs rw",
+          "44 27 0:8 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime shared:19 - debugfs debugfs rw",
+          "68 29 0:37 / /run/credentials/systemd-journald.service ro,nosuid,nodev,noexec,relatime,nosymfollow shared:21 - tmpfs tmpfs rw,size=1024k,nr_inodes=1024,mode=700,inode64,noswap",
+          "45 27 0:38 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime shared:22 - fusectl fusectl rw",
+          "46 27 0:39 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime shared:23 - configfs configfs rw",
+          "48 39 0:40 / /proc/sys/fs/binfmt_misc rw,nosuid,nodev,noexec,relatime shared:30 - binfmt_misc binfmt_misc rw"
+        ],
+        "processes": [
+          {
+            "command": "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only ",
+            "pid": 322
+          },
+          {
+            "command": "/usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py -- :0 vt1 -nolisten tcp ",
+            "pid": 323
+          },
+          {
+            "command": "/usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py ",
+            "pid": 345
+          },
+          {
+            "command": "/usr/bin/dbus-daemon --syslog-only --fork --print-pid 5 --print-address 7 --session ",
+            "pid": 350
+          },
+          {
+            "command": "/usr/libexec/at-spi-bus-launcher ",
+            "pid": 352
+          },
+          {
+            "command": "/usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 11 --address=unix:path=/run/recovery-home/at-spi/bus_0 ",
+            "pid": 358
+          }
+        ],
+        "registry_exists": false,
+        "status": {
+          "auto_update": null,
+          "boot": {},
+          "capabilities": {
+            "config.hostname": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "image.arm": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "image.cancel": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "image.stage": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "policy.auto": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "policy.mode": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "recovery.boot": {
+              "available": false,
+              "reason": "User-data export unavailable: [Errno 2] No such file or directory: 'recovery-media-policy.json'"
+            },
+            "recovery.check": {
+              "available": true,
+              "reason": ""
+            },
+            "recovery.export": {
+              "available": false,
+              "reason": "User-data export unavailable: [Errno 2] No such file or directory: 'recovery-media-policy.json'"
+            },
+            "recovery.restore": {
+              "available": false,
+              "reason": "User-data export unavailable: [Errno 2] No such file or directory: 'recovery-media-policy.json'"
+            },
+            "software.install": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "software.remove": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "system.reboot": {
+              "available": false,
+              "reason": "Available in the running host."
+            }
+          },
+          "catalog": [],
+          "context": "recovery",
+          "destinations": [],
+          "diagnostic": "The state registry is unavailable or damaged. No initialization or repair was attempted: [Errno 2] No such file or directory: '/data/sv08/state.json'",
+          "free_bytes": null,
+          "hostname": "Recovery",
+          "images": [],
+          "pending": null,
+          "requested_mode": null,
+          "revision": "db2c165c597867cabc055f2d4cbc2252d252d1070ceb6ce04d2c0d61c5080423",
+          "slots": {},
+          "transaction": null
+        }
+      },
+      "virtual_input_kernel_evidence": [
+        "[   20.573193] input: QEMU Virtio MultiTouch as /devices/platform/4010000000.pcie/pci0000:00/0000:00:03.0/virtio2/input/input0",
+        "[   21.021945] input: gpio-keys as /devices/platform/gpio-keys/input/input1",
+        "[   22.855137] input: QEMU QEMU USB Keyboard as /devices/platform/4010000000.pcie/pci0000:00/0000:00:04.0/usb1/1-1/1-1:1.0/0003:0627:0001.0001/input/input2",
+        "[   22.989740] input: QEMU QEMU USB Mouse as /devices/platform/4010000000.pcie/pci0000:00/0000:00:04.0/usb1/1-2/1-2:1.0/0003:0627:0001.0002/input/input3",
+        "[   22.992186] input: QEMU QEMU USB Tablet as /devices/platform/4010000000.pcie/pci0000:00/0000:00:04.0/usb1/1-3/1-3:1.0/0003:0627:0001.0003/input/input4"
+      ],
+      "optional_warning_evidence": [
+        "Failed to open libbpf, cgroup BPF features disabled: Operation not supported"
+      ],
+      "startup": [
+        "Startup finished in 9.299s (kernel) + 41.465s (userspace) = 50.764s."
+      ],
+      "serial_sha256": "e6e661e029ad1022d29ff06c0bf2f3f2097b8aae358434199bbde82bd13d9af2",
+      "command": [
+        "qemu-system-aarch64",
+        "-machine",
+        "virt",
+        "-cpu",
+        "cortex-a53",
+        "-accel",
+        "tcg,thread=multi",
+        "-smp",
+        "2",
+        "-m",
+        "768",
+        "-kernel",
+        "<worktree>/build/recovery-final-v3/vmlinuz",
+        "-initrd",
+        "<worktree>/build/recovery-final-v3/initrd.img",
+        "-append",
+        "console=ttyAMA0 root=/dev/vda ro sv08.envelope=1ef5581c7c917c278ca4ec9e3958b7d92b94e74162acfe8b5b312a6773446da7 systemd.log_target=console systemd.show_status=yes",
+        "-drive",
+        "if=none,id=recovery,format=raw,file=<worktree>/build/recovery-final-v3/recovery.ext4,readonly=on",
+        "-device",
+        "virtio-blk-pci,drive=recovery",
+        "-device",
+        "virtio-gpu-pci,id=video0,xres=1024,yres=768",
+        "-device",
+        "virtio-multitouch-pci,display=video0",
+        "-device",
+        "qemu-xhci",
+        "-device",
+        "usb-kbd",
+        "-device",
+        "usb-mouse",
+        "-device",
+        "usb-tablet",
+        "-nic",
+        "none",
+        "-display",
+        "none",
+        "-serial",
+        "stdio",
+        "-qmp",
+        "unix:/tmp/sv08-recovery-7jgcz2pu/qmp.sock,server=on,wait=off",
+        "-no-reboot"
+      ],
+      "screenshots": {
+        "touch-refresh.png": "a26335c70a02b5b36140048a39a9dff450c18e095683f0f0bf765ea484de4c70",
+        "keyboard-shift-tab.png": "81ea3c325785c2c80d62db287ade44263cdcf28e291345c8ebd462e9f0367f40",
+        "display.png": "71f2dd9ce2f16abaf721625c474bf2a0af5ef4f1ae21bcd184fd33d9b078ec94",
+        "mouse-review.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "keyboard-cancel.png": "81ea3c325785c2c80d62db287ade44263cdcf28e291345c8ebd462e9f0367f40",
+        "touch-cancel.png": "81ea3c325785c2c80d62db287ade44263cdcf28e291345c8ebd462e9f0367f40",
+        "touch-review-again.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "keyboard-tab.png": "828d52ee3242764829e0062e6d19502bbdfa60b2688ce7509e1b0143406327b7",
+        "touch-review.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "diagnostic-apply.png": "a5c00af5b1846e5817934acf6715953d6160b66a72f671973d3953eb95b5de91",
+        "keyboard-review.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "touch-apply.png": "a5c00af5b1846e5817934acf6715953d6160b66a72f671973d3953eb95b5de91"
+      },
+      "visual_observations": [
+        "Tab focuses Check storage; Shift-Tab returns to selectable diagnostic text",
+        "Keyboard accelerator opens review with Cancel default; Escape cancels",
+        "Mouse opens review; Tab and Enter apply existing registry inspection",
+        "Direct touch Refresh enables Check, Check opens review, Cancel preserves, Apply executes diagnostic",
+        "Unsupported mutation buttons remain disabled; no persistent registry is initialized"
+      ]
+    },
+    {
+      "run": {
+        "seconds": 74.85282491799444,
+        "peak_qemu_rss_bytes": 1483161600,
+        "ram_mib": 768,
+        "installed_service_and_accessibility_ready": true,
+        "exit_code": null,
+        "image_before_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "boot_id_independent_process": true,
+        "input_steps": [
+          "keyboard-tab",
+          "keyboard-shift-tab",
+          "keyboard-review",
+          "keyboard-cancel",
+          "mouse-review",
+          "diagnostic-apply",
+          "touch-refresh",
+          "touch-review",
+          "touch-cancel",
+          "touch-review-again",
+          "touch-apply"
+        ],
+        "virtual_pointers": [
+          {
+            "index": 3,
+            "name": "QEMU HID Mouse",
+            "current": false,
+            "absolute": false
+          },
+          {
+            "index": 4,
+            "name": "QEMU HID Tablet",
+            "current": true,
+            "absolute": true
+          }
+        ],
+        "independent_touch_events_injected": true,
+        "image_after_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "image_preserved": true
+      },
+      "guest": {
+        "boot_id": "852c1ab0-f58f-479b-8b54-49a74bea54e8",
+        "display_unit": "MainPID=323\nNRestarts=0\nActiveState=active\nSubState=running\n",
+        "envelope_binding": "1ef5581c7c917c278ca4ec9e3958b7d92b94e74162acfe8b5b312a6773446da7",
+        "failed_units": "",
+        "kernel": "6.12.107+deb13-arm64",
+        "memory": [
+          "MemTotal:         733892 kB",
+          "MemFree:          125196 kB",
+          "MemAvailable:     544160 kB",
+          "Buffers:            1628 kB",
+          "Cached:           484348 kB",
+          "SwapCached:            0 kB",
+          "Active:           228184 kB",
+          "Inactive:         314756 kB",
+          "Active(anon):      65744 kB",
+          "Inactive(anon):        0 kB",
+          "Active(file):     162440 kB",
+          "Inactive(file):   314756 kB",
+          "Unevictable:        6160 kB",
+          "Mlocked:               0 kB",
+          "SwapTotal:             0 kB",
+          "SwapFree:              0 kB",
+          "Zswap:                 0 kB",
+          "Zswapped:              0 kB",
+          "Dirty:                 0 kB",
+          "Writeback:             0 kB",
+          "AnonPages:         63188 kB",
+          "Mapped:            91888 kB",
+          "Shmem:              8756 kB",
+          "KReclaimable:       7696 kB",
+          "Slab:              28032 kB",
+          "SReclaimable:       7696 kB",
+          "SUnreclaim:        20336 kB",
+          "KernelStack:        1396 kB",
+          "PageTables:         1636 kB",
+          "SecPageTables:         0 kB",
+          "NFS_Unstable:          0 kB",
+          "Bounce:                0 kB",
+          "WritebackTmp:          0 kB",
+          "CommitLimit:      366944 kB",
+          "Committed_AS:     143236 kB",
+          "VmallocTotal:   135288315904 kB",
+          "VmallocUsed:       10012 kB",
+          "VmallocChunk:          0 kB",
+          "Percpu:              416 kB",
+          "HardwareCorrupted:     0 kB",
+          "AnonHugePages:     12288 kB",
+          "ShmemHugePages:        0 kB",
+          "ShmemPmdMapped:        0 kB",
+          "FileHugePages:         0 kB",
+          "FilePmdMapped:         0 kB",
+          "CmaTotal:          65536 kB",
+          "CmaFree:           62568 kB",
+          "HugePages_Total:       0",
+          "HugePages_Free:        0",
+          "HugePages_Rsvd:        0",
+          "HugePages_Surp:        0",
+          "Hugepagesize:       2048 kB",
+          "Hugetlb:               0 kB"
+        ],
+        "mounts": [
+          "26 31 0:24 / /proc rw,relatime shared:5 - proc proc rw",
+          "27 31 0:25 / /sys rw,relatime shared:6 - sysfs sysfs rw",
+          "28 31 0:6 / /dev rw,relatime shared:11 - devtmpfs devtmpfs rw,size=16384k,nr_inodes=4096,mode=755,inode64",
+          "29 31 0:26 / /run rw,nosuid,nodev,relatime shared:4 - tmpfs tmpfs rw,size=98304k,mode=755,inode64",
+          "30 28 0:27 / /dev/shm rw,nosuid,nodev,relatime shared:12 - tmpfs tmpfs rw,size=32768k,inode64",
+          "31 1 254:0 / / ro,relatime shared:1 - ext4 /dev/vda ro,norecovery",
+          "32 31 7:0 / /usr ro,nodev,relatime shared:2 - squashfs /dev/loop0 ro,errors=continue",
+          "33 31 0:28 / /tmp rw,nosuid,nodev,relatime shared:3 - tmpfs tmpfs rw,size=65536k,inode64",
+          "34 27 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime shared:7 - securityfs securityfs rw",
+          "35 28 0:29 / /dev/pts rw,nosuid,noexec,relatime shared:13 - devpts devpts rw,gid=5,mode=600,ptmxmode=000",
+          "36 27 0:30 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime shared:8 - cgroup2 cgroup2 rw,nsdelegate,memory_recursiveprot",
+          "37 27 0:31 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime shared:9 - pstore pstore rw",
+          "38 27 0:32 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime shared:10 - bpf bpf rw,mode=700",
+          "39 26 0:33 / /proc/sys/fs/binfmt_misc rw,relatime shared:14 - autofs systemd-1 rw,fd=36,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=1856",
+          "40 28 0:23 / /dev/mqueue rw,nosuid,nodev,noexec,relatime shared:15 - mqueue mqueue rw",
+          "41 27 0:13 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime shared:16 - tracefs tracefs rw",
+          "42 27 0:8 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime shared:17 - debugfs debugfs rw",
+          "43 29 0:34 / /run/lock rw,nosuid,nodev,noexec,relatime shared:18 - tmpfs tmpfs rw,size=5120k,inode64",
+          "44 28 0:35 / /dev/hugepages rw,nosuid,nodev,relatime shared:19 - hugetlbfs hugetlbfs rw,pagesize=2M",
+          "86 29 0:36 / /run/credentials/systemd-journald.service ro,nosuid,nodev,noexec,relatime,nosymfollow shared:20 - tmpfs tmpfs rw,size=1024k,nr_inodes=1024,mode=700,inode64,noswap",
+          "45 27 0:39 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime shared:23 - fusectl fusectl rw",
+          "46 27 0:40 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime shared:24 - configfs configfs rw",
+          "48 39 0:38 / /proc/sys/fs/binfmt_misc rw,nosuid,nodev,noexec,relatime shared:30 - binfmt_misc binfmt_misc rw"
+        ],
+        "processes": [
+          {
+            "command": "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only ",
+            "pid": 322
+          },
+          {
+            "command": "/usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py -- :0 vt1 -nolisten tcp ",
+            "pid": 323
+          },
+          {
+            "command": "/usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py ",
+            "pid": 345
+          },
+          {
+            "command": "/usr/bin/dbus-daemon --syslog-only --fork --print-pid 5 --print-address 7 --session ",
+            "pid": 350
+          },
+          {
+            "command": "/usr/libexec/at-spi-bus-launcher ",
+            "pid": 352
+          },
+          {
+            "command": "/usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 11 --address=unix:path=/run/recovery-home/at-spi/bus_0 ",
+            "pid": 358
+          }
+        ],
+        "registry_exists": false,
+        "status": {
+          "auto_update": null,
+          "boot": {},
+          "capabilities": {
+            "config.hostname": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "image.arm": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "image.cancel": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "image.stage": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "policy.auto": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "policy.mode": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "recovery.boot": {
+              "available": false,
+              "reason": "User-data export unavailable: [Errno 2] No such file or directory: 'recovery-media-policy.json'"
+            },
+            "recovery.check": {
+              "available": true,
+              "reason": ""
+            },
+            "recovery.export": {
+              "available": false,
+              "reason": "User-data export unavailable: [Errno 2] No such file or directory: 'recovery-media-policy.json'"
+            },
+            "recovery.restore": {
+              "available": false,
+              "reason": "User-data export unavailable: [Errno 2] No such file or directory: 'recovery-media-policy.json'"
+            },
+            "software.install": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "software.remove": {
+              "available": false,
+              "reason": "Available in the running host."
+            },
+            "system.reboot": {
+              "available": false,
+              "reason": "Available in the running host."
+            }
+          },
+          "catalog": [],
+          "context": "recovery",
+          "destinations": [],
+          "diagnostic": "The state registry is unavailable or damaged. No initialization or repair was attempted: [Errno 2] No such file or directory: '/data/sv08/state.json'",
+          "free_bytes": null,
+          "hostname": "Recovery",
+          "images": [],
+          "pending": null,
+          "requested_mode": null,
+          "revision": "db2c165c597867cabc055f2d4cbc2252d252d1070ceb6ce04d2c0d61c5080423",
+          "slots": {},
+          "transaction": null
+        }
+      },
+      "virtual_input_kernel_evidence": [
+        "[   19.361238] input: QEMU Virtio MultiTouch as /devices/platform/4010000000.pcie/pci0000:00/0000:00:03.0/virtio2/input/input0",
+        "[   19.766692] input: gpio-keys as /devices/platform/gpio-keys/input/input1",
+        "[   21.678376] input: QEMU QEMU USB Keyboard as /devices/platform/4010000000.pcie/pci0000:00/0000:00:04.0/usb1/1-1/1-1:1.0/0003:0627:0001.0001/input/input2",
+        "[   21.807832] input: QEMU QEMU USB Mouse as /devices/platform/4010000000.pcie/pci0000:00/0000:00:04.0/usb1/1-2/1-2:1.0/0003:0627:0001.0002/input/input3",
+        "[   21.810298] input: QEMU QEMU USB Tablet as /devices/platform/4010000000.pcie/pci0000:00/0000:00:04.0/usb1/1-3/1-3:1.0/0003:0627:0001.0003/input/input4"
+      ],
+      "optional_warning_evidence": [
+        "Failed to open libbpf, cgroup BPF features disabled: Operation not supported"
+      ],
+      "startup": [
+        "Startup finished in 8.174s (kernel) + 41.238s (userspace) = 49.412s."
+      ],
+      "serial_sha256": "577c6f0ba2999e56fb7d42f4085a7333ba8b97985cec678b010ca688b71ed486",
+      "command": [
+        "qemu-system-aarch64",
+        "-machine",
+        "virt",
+        "-cpu",
+        "cortex-a53",
+        "-accel",
+        "tcg,thread=multi",
+        "-smp",
+        "2",
+        "-m",
+        "768",
+        "-kernel",
+        "<worktree>/build/recovery-final-v3/vmlinuz",
+        "-initrd",
+        "<worktree>/build/recovery-final-v3/initrd.img",
+        "-append",
+        "console=ttyAMA0 root=/dev/vda ro sv08.envelope=1ef5581c7c917c278ca4ec9e3958b7d92b94e74162acfe8b5b312a6773446da7 systemd.log_target=console systemd.show_status=yes",
+        "-drive",
+        "if=none,id=recovery,format=raw,file=<worktree>/build/recovery-final-v3/recovery.ext4,readonly=on",
+        "-device",
+        "virtio-blk-pci,drive=recovery",
+        "-device",
+        "virtio-gpu-pci,id=video0,xres=1024,yres=768",
+        "-device",
+        "virtio-multitouch-pci,display=video0",
+        "-device",
+        "qemu-xhci",
+        "-device",
+        "usb-kbd",
+        "-device",
+        "usb-mouse",
+        "-device",
+        "usb-tablet",
+        "-nic",
+        "none",
+        "-display",
+        "none",
+        "-serial",
+        "stdio",
+        "-qmp",
+        "unix:/tmp/sv08-recovery-xtagw7xp/qmp.sock,server=on,wait=off",
+        "-no-reboot"
+      ],
+      "screenshots": {
+        "touch-refresh.png": "a26335c70a02b5b36140048a39a9dff450c18e095683f0f0bf765ea484de4c70",
+        "keyboard-shift-tab.png": "81ea3c325785c2c80d62db287ade44263cdcf28e291345c8ebd462e9f0367f40",
+        "display.png": "71f2dd9ce2f16abaf721625c474bf2a0af5ef4f1ae21bcd184fd33d9b078ec94",
+        "mouse-review.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "keyboard-cancel.png": "81ea3c325785c2c80d62db287ade44263cdcf28e291345c8ebd462e9f0367f40",
+        "touch-cancel.png": "81ea3c325785c2c80d62db287ade44263cdcf28e291345c8ebd462e9f0367f40",
+        "touch-review-again.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "keyboard-tab.png": "828d52ee3242764829e0062e6d19502bbdfa60b2688ce7509e1b0143406327b7",
+        "touch-review.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "diagnostic-apply.png": "a5c00af5b1846e5817934acf6715953d6160b66a72f671973d3953eb95b5de91",
+        "keyboard-review.png": "55ea87a5dd49d0482c35ac109618aa415a3f87844311e2a673bd30abf60318e2",
+        "touch-apply.png": "a5c00af5b1846e5817934acf6715953d6160b66a72f671973d3953eb95b5de91"
+      },
+      "visual_observations": [
+        "Tab focuses Check storage; Shift-Tab returns to selectable diagnostic text",
+        "Keyboard accelerator opens review with Cancel default; Escape cancels",
+        "Mouse opens review; Tab and Enter apply existing registry inspection",
+        "Direct touch Refresh enables Check, Check opens review, Cancel preserves, Apply executes diagnostic",
+        "Unsupported mutation buttons remain disabled; no persistent registry is initialized"
+      ]
+    }
+  ],
+  "identity_refusals": [
+    {
+      "case": "missing-manifest",
+      "refusal": "missing envelope manifest",
+      "serial_sha256": "f435a0f1355f421a51164b300fd5f04918585e7ff38e6ad1d8487d3ccad7cd24",
+      "run": {
+        "seconds": 12.01103562710341,
+        "peak_qemu_rss_bytes": 268394496,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "5f302b0f9736b152085bb49d1443c6aad18b89e6c26379ca13c456fbb68608de",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "5f302b0f9736b152085bb49d1443c6aad18b89e6c26379ca13c456fbb68608de",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: missing envelope manifest",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0",
+        "/dev/vda /newroot ext4 ro,relatime,norecovery 0 0"
+      ]
+    },
+    {
+      "case": "changed-manifest",
+      "refusal": "changed envelope manifest",
+      "serial_sha256": "d63dd5ad6e5ecee316372478bf49bbdc6b2dec34e19c3f1a746e286f38541cda",
+      "run": {
+        "seconds": 12.008105686982162,
+        "peak_qemu_rss_bytes": 267620352,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "5520b55bfcfb3ab3228c751b0f0515d8373acf1305108c4d68d0e95b8e65c63e",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "5520b55bfcfb3ab3228c751b0f0515d8373acf1305108c4d68d0e95b8e65c63e",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: changed envelope manifest",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0",
+        "/dev/vda /newroot ext4 ro,relatime,norecovery 0 0"
+      ]
+    },
+    {
+      "case": "missing-usr",
+      "refusal": "missing compressed userspace",
+      "serial_sha256": "71133220c1d572dca2f7d4115b2bc93d3bec8474da61d3ad27b28cfff035bfc6",
+      "run": {
+        "seconds": 12.008700773003511,
+        "peak_qemu_rss_bytes": 264339456,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "b8c8e7a4df110a06ea7de4c4b050d29c56ab2a42d1ac34dea7e9e898b29af905",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "b8c8e7a4df110a06ea7de4c4b050d29c56ab2a42d1ac34dea7e9e898b29af905",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: missing compressed userspace",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0",
+        "/dev/vda /newroot ext4 ro,relatime,norecovery 0 0"
+      ]
+    },
+    {
+      "case": "changed-usr",
+      "refusal": "changed compressed digest",
+      "serial_sha256": "b9db83658848dc5e205058005c2ffaf278735053f1a4a30bc55dd3407c5def76",
+      "run": {
+        "seconds": 19.01522166200448,
+        "peak_qemu_rss_bytes": 491130880,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "48a5ec558982135f0a2e8ec9ad22761f9d4a4a7b795a0b5ee50a715d273798cd",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "48a5ec558982135f0a2e8ec9ad22761f9d4a4a7b795a0b5ee50a715d273798cd",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: changed compressed digest",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0",
+        "/dev/vda /newroot ext4 ro,relatime,norecovery 0 0"
+      ]
+    },
+    {
+      "case": "wrong-uuid",
+      "refusal": "wrong recovery filesystem UUID",
+      "serial_sha256": "a268ecf479787265a8c83460e0dffc265bc8cdd0b87d01fd6effe5fd6dbf27a7",
+      "run": {
+        "seconds": 7.002689586952329,
+        "peak_qemu_rss_bytes": 262787072,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "e7ab8547145eb878cdef22999daedefcdc45a625c75e7b888d1ec45a6a84496a",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "e7ab8547145eb878cdef22999daedefcdc45a625c75e7b888d1ec45a6a84496a",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: wrong recovery filesystem UUID",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0"
+      ]
+    },
+    {
+      "case": "writable-backing",
+      "refusal": "recovery block must be read-only",
+      "serial_sha256": "15fbba9eb42c0082522432603ddffe4124a4b3b08ef8532e80dca7aad679196d",
+      "run": {
+        "seconds": 7.002729214029387,
+        "peak_qemu_rss_bytes": 263094272,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: recovery block must be read-only",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0"
+      ]
+    },
+    {
+      "case": "symlink-usr",
+      "refusal": "symlink in envelope",
+      "serial_sha256": "ab6c2d3129a2960b96ff1b67e665e371c72a41c1c50ebe2d75ead7ccd535d213",
+      "run": {
+        "seconds": 6.001967666088603,
+        "peak_qemu_rss_bytes": 271958016,
+        "ram_mib": 768,
+        "exit_code": 0,
+        "image_before_sha256": "283394c605b13229ad5da5a3ec6d9570995ed23c5b21ad1e2b6fcefa323dcab9",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "283394c605b13229ad5da5a3ec6d9570995ed23c5b21ad1e2b6fcefa323dcab9",
+        "image_preserved": true
+      },
+      "harness_execution_note": "Executed before the positive-input readiness instrumentation; negative boot command/artifact/gate path unchanged. Final delivery source_files is not this historical harness fingerprint.",
+      "console_identity_evidence": [
+        "SV08_RECOVERY_REFUSED: symlink in envelope: /newroot/usr.squashfs",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0",
+        "/dev/vda /newroot ext4 ro,relatime,norecovery 0 0"
+      ]
+    },
+    {
+      "case": "preassigned-loop",
+      "refusal": "unexpected preassigned loop mapping",
+      "serial_sha256": "45e1a67756844d707dab9d25025b741f335e2ec30b7446e3e868d4a8a67f0773",
+      "run": {
+        "seconds": 11.005918037029915,
+        "peak_qemu_rss_bytes": 494964736,
+        "ram_mib": 768,
+        "installed_service_and_accessibility_ready": false,
+        "exit_code": 0,
+        "image_before_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "boot_id_independent_process": true,
+        "input_steps": [],
+        "virtual_pointers": [],
+        "independent_touch_events_injected": false,
+        "image_after_sha256": "98e4030b0902e877d912d9a627e481cd0e24dddeb81d118050e82e9869001a56",
+        "image_preserved": true
+      },
+      "test_fixture": {
+        "case": "preassigned-loop",
+        "unchanged_gate_sha256": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+        "wrapper_sha256": "a1a2d4effc79ba50f6c8e3fede8a67310ec01ee50df68b09d2e6d21361c5bd47",
+        "production_initrd_sha256": "efc16364d8c5c9d66581846da347de84e196e2e4aa72c9a5ee3e27060a47acc6"
+      },
+      "harness_execution_note": "Final readiness-aware harness",
+      "console_identity_evidence": [
+        "SV08_TEST_PREASSIGNED_LOOP",
+        "/spurious",
+        "0",
+        "0",
+        "1",
+        "SV08_RECOVERY_REFUSED: unexpected preassigned loop mapping",
+        "proc /proc proc rw,relatime 0 0",
+        "sysfs /sys sysfs rw,relatime 0 0",
+        "devtmpfs /dev devtmpfs rw,relatime,size=16384k,nr_inodes=4096,mode=755,inode64 0 0",
+        "tmpfs /run tmpfs rw,nosuid,nodev,relatime,size=98304k,mode=755,inode64 0 0",
+        "tmpfs /dev/shm tmpfs rw,nosuid,nodev,relatime,size=32768k,inode64 0 0",
+        "/dev/vda /newroot ext4 ro,relatime,norecovery 0 0"
+      ]
+    }
+  ],
+  "repeat": {
+    "build": {
+      "format_version": 1,
+      "status": "offline-vm-candidate",
+      "image_bytes": 536870912,
+      "image_sha256": "c052d4b11671ae7b4225cf22ac6953374eacb42f959c74aa72e52eae5913d14f",
+      "allocated_bytes": 297590784,
+      "manifest_sha256": "1ef5581c7c917c278ca4ec9e3958b7d92b94e74162acfe8b5b312a6773446da7",
+      "usr_bytes": 224436224,
+      "usr_sha256": "483fd43ed5c3f9a7b7acf3bc193275ddba1b3765646386167589254b796db960",
+      "source": {
+        "schema": 2,
+        "sha256": "a6d41fbe480b86715b2131739b7d5fe163b56d5e122153dafbfb4da1051038cd",
+        "files": 17763,
+        "bytes": 787984554
+      },
+      "source_preserved": true,
+      "kernel_sha256": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67",
+      "initrd_sha256": "efc16364d8c5c9d66581846da347de84e196e2e4aa72c9a5ee3e27060a47acc6",
+      "envelope": {
+        "schema": 2,
+        "sha256": "5a0d4c81a651256bb0700ac2b0460ec50911620cb21a3bdc9b8f8e87e8ff7a86",
+        "files": 1448,
+        "bytes": 275890423
+      },
+      "boot_gate_sha256": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+      "builder_sha256": "148393ba08ad17eed4e1696364f0dfe428855770ea346c17337c6eef26b05e5b",
+      "assembly_record_sha256": "06293b9d38bf65e53f559e19cec901150b5db3c1d7b3701442b82d2d3317612a",
+      "integration_inputs": {
+        "scripts/recovery_image.py": "148393ba08ad17eed4e1696364f0dfe428855770ea346c17337c6eef26b05e5b",
+        "scripts/stage_admin_ui.py": "55626ce546a7949548438d49bfa57a5ee461c892bae91893ecd72e3feb40bd13",
+        "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+        "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+        "configs/host-os/sv08-recovery-display.service": "8b5818aa5428bcccb1f09cd5c18f24a0a143f6abfd047ff5d3b966d6209a9e9b",
+        "configs/host-os/recovery-session.desktop": "599bcd059add2036ca891bb89e46e364e02ef582220c6d2cfb5bbdc856d90da4",
+        "runtime/sv08_rauc.py": "02755b3adf5db27381c3bfaf2303d41abaed6e575c8a32c34bb5e14853eb943d",
+        "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+        "runtime/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+        "runtime/sv08_gpt.py": "d0c30268e8a5b4458d8646de02e7d02473a0611962b393a705db5ac096ab88dc",
+        "runtime/sv08_staging.py": "8f54fbf7af84f4e978e213e5c9b5309a310321d3787d1418c9c28358e032f65a",
+        "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+        "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+        "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+        "runtime/sv08_transaction.py": "17f67d24bcc82717bd0f1073472137f238e7fb49c6effed3ed9315b9d34fe94c",
+        "runtime/sv08_package.py": "82a721afc1734cb871f28f72b57cb5fd28483b19e7a09dde07d46ca448f8fce5",
+        "runtime/sv08_admin_images.py": "571a5ef6c09b17c93159457afc8b5d39bdc278d78bb8ca2ea1eeb6633724ac7b",
+        "runtime/sv08_admin.py": "367f5f9e033ec1fbfbd111c016b47ac7548f808b7ac3272c7e6fbb746b9c02eb",
+        "runtime/sv08_admin_upload.py": "90bf08e0ff4c124decbefc99ff0770028525d22a5f45ad803e637bc8af906200",
+        "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+        "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+        "runtime/sv08_boot.py": "acbb7aeb4f048e3c7dc9f0eee5a7bbbd457eeb25471e11a296d9512d847ac46e",
+        "runtime/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+        "runtime/sv08_admission.py": "e9feef862560fa381f8adde7edab98aade18c5e279363d0c522453f78b78611f",
+        "runtime/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf"
+      }
+    },
+    "filesystem_metadata_identical": true,
+    "usr_kernel_initrd_byte_identical": true,
+    "raw_image_byte_identical": false,
+    "differences": {
+      "differing_blocks": 108,
+      "ranges": [
+        [
+          73,
+          180
+        ]
+      ],
+      "block_size": 4096,
+      "first": {
+        "/": "Inode: 2   Type: directory    Mode:  0755   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 4096\nFile ACL: 0\nLinks: 18   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0x667146c7\nEXTENTS:\n(0):2121\n",
+        "/etc": "Inode: 20   Type: directory    Mode:  0755   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 4096\nFile ACL: 0\nLinks: 53   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa4f2d6:00000000 -- Sat Sep 12 06:36:06 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0x4d87c8c0\nEXTENTS:\n(0):11940\n",
+        "/etc/sv08/recovery-envelope.manifest": "Inode: 301   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 215\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa4f2d6:00000000 -- Sat Sep 12 06:36:06 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0x5346b8f7\nEXTENTS:\n(0):12177\n",
+        "/usr.squashfs": "Inode: 397   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 224436224\nFile ACL: 0\nLinks: 1   Blockcount: 438352\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa4f2d6:00000000 -- Sat Sep 12 06:36:06 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0xcd630cbd\nEXTENTS:\n(0-20527):12240-32767, (20528-53230):32833-65535, (53231-54793):69632-71194\n"
+      },
+      "repeat": {
+        "/": "Inode: 2   Type: directory    Mode:  0755   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 4096\nFile ACL: 0\nLinks: 18   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0x667146c7\nEXTENTS:\n(0):2121\n",
+        "/etc": "Inode: 20   Type: directory    Mode:  0755   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 4096\nFile ACL: 0\nLinks: 53   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa4f349:00000000 -- Sat Sep 12 06:38:01 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0x269f32cc\nEXTENTS:\n(0):11940\n",
+        "/etc/sv08/recovery-envelope.manifest": "Inode: 301   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 215\nFile ACL: 0\nLinks: 1   Blockcount: 8\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa4f349:00000000 -- Sat Sep 12 06:38:01 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0x385e42fb\nEXTENTS:\n(0):12177\n",
+        "/usr.squashfs": "Inode: 397   Type: regular    Mode:  0644   Flags: 0x80000\nGeneration: 0    Version: 0x00000000:00000000\nUser:     0   Group:     0   Project:     0   Size: 224436224\nFile ACL: 0\nLinks: 1   Blockcount: 438352\nFragment:  Address: 0    Number: 0    Size: 0\n ctime: 0x6aa4f349:00000000 -- Sat Sep 12 06:38:01 2026\n atime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\n mtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\ncrtime: 0x6a961580:00000000 -- Tue Sep  1 00:00:00 2026\nSize of extra inode fields: 32\nInode checksum: 0xa67bf6b1\nEXTENTS:\n(0-20527):12240-32767, (20528-53230):32833-65535, (53231-54793):69632-71194\n"
+      },
+      "differing_inode_relative_byte_offsets": {
+        "12": 1702,
+        "13": 1702,
+        "124": 1702,
+        "125": 1702,
+        "130": 1702,
+        "131": 1702
+      }
+    }
+  },
+  "resources": {
+    "build": {
+      "command": [
+        "sudo",
+        "-n",
+        "unshare",
+        "--mount",
+        "--pid",
+        "--net",
+        "--fork",
+        "/usr/bin/time",
+        "-v",
+        "python3",
+        "scripts/recovery_image.py",
+        "build",
+        "--assembly",
+        "build/recovery-assembly-v5",
+        "--work",
+        "build/recovery-final-v3",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "seconds": 57.04272469994612,
+      "sample_interval_seconds": 0.25,
+      "samples": 219,
+      "peak_process_tree_sum_rss_bytes": 269500416,
+      "initial_filesystem_available_bytes": 5091303424,
+      "minimum_filesystem_available_bytes": 4470079488,
+      "maximum_sampled_filesystem_consumption_bytes": 621223936,
+      "final_filesystem_available_bytes": 4470079488,
+      "rss_semantics": "Sum of descendant resident sets; shared pages may be counted repeatedly; transient peaks between samples may be missed",
+      "workspace_semantics": "Available-space low-water on shared workspace filesystem; concurrent unrelated changes can affect it"
+    },
+    "repeat_build": {
+      "command": [
+        "sudo",
+        "-n",
+        "unshare",
+        "--mount",
+        "--pid",
+        "--net",
+        "--fork",
+        "/usr/bin/time",
+        "-v",
+        "python3",
+        "scripts/recovery_image.py",
+        "build",
+        "--assembly",
+        "build/recovery-assembly-v5",
+        "--work",
+        "build/recovery-repeat-v3",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "seconds": 96.87468178709969,
+      "sample_interval_seconds": 0.25,
+      "samples": 353,
+      "peak_process_tree_sum_rss_bytes": 275767296,
+      "initial_filesystem_available_bytes": 4470136832,
+      "minimum_filesystem_available_bytes": 2445524992,
+      "maximum_sampled_filesystem_consumption_bytes": 2024611840,
+      "final_filesystem_available_bytes": 2445524992,
+      "rss_semantics": "Sum of descendant resident sets; shared pages may be counted repeatedly; transient peaks between samples may be missed",
+      "workspace_semantics": "Available-space low-water on shared workspace filesystem; concurrent unrelated changes can affect it"
+    },
+    "boot1": {
+      "command": [
+        "sudo",
+        "-n",
+        "unshare",
+        "--mount",
+        "--pid",
+        "--net",
+        "--fork",
+        "python3",
+        "tests/recovery_vm.py",
+        "--build",
+        "build/recovery-final-v3",
+        "--work",
+        "build/recovery-accepted-boot1",
+        "--seconds",
+        "180",
+        "--inputs",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "seconds": 78.09129199001472,
+      "sample_interval_seconds": 0.25,
+      "samples": 301,
+      "peak_process_tree_sum_rss_bytes": 1524383744,
+      "initial_filesystem_available_bytes": 1211064320,
+      "minimum_filesystem_available_bytes": 1182498816,
+      "maximum_sampled_filesystem_consumption_bytes": 28565504,
+      "final_filesystem_available_bytes": 1182498816,
+      "rss_semantics": "Sum of descendant resident sets; shared pages may be counted repeatedly; transient peaks between samples may be missed",
+      "workspace_semantics": "Available-space low-water on shared workspace filesystem; concurrent unrelated changes can affect it"
+    },
+    "boot2": {
+      "command": [
+        "sudo",
+        "-n",
+        "unshare",
+        "--mount",
+        "--pid",
+        "--net",
+        "--fork",
+        "python3",
+        "tests/recovery_vm.py",
+        "--build",
+        "build/recovery-final-v3",
+        "--work",
+        "build/recovery-accepted-boot2",
+        "--seconds",
+        "180",
+        "--inputs",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "seconds": 75.91202253999654,
+      "sample_interval_seconds": 0.25,
+      "samples": 294,
+      "peak_process_tree_sum_rss_bytes": 1531236352,
+      "initial_filesystem_available_bytes": 1182396416,
+      "minimum_filesystem_available_bytes": 1152839680,
+      "maximum_sampled_filesystem_consumption_bytes": 29556736,
+      "final_filesystem_available_bytes": 1152839680,
+      "rss_semantics": "Sum of descendant resident sets; shared pages may be counted repeatedly; transient peaks between samples may be missed",
+      "workspace_semantics": "Available-space low-water on shared workspace filesystem; concurrent unrelated changes can affect it"
+    },
+    "equivalent_fresh_assembly": {
+      "peak_sampled_assembly_tmpfs_used_bytes": 0,
+      "command": [
+        "unshare",
+        "--mount",
+        "--pid",
+        "--net",
+        "--fork",
+        "/usr/bin/time",
+        "-v",
+        "python3",
+        "scripts/recovery_image.py",
+        "assemble",
+        "--work",
+        "build/recovery-assembly-repeat",
+        "--intake",
+        "build/recovery-intake",
+        "--execute"
+      ],
+      "exit_code": 0,
+      "seconds": 417.73653080593795,
+      "sample_interval_seconds": 0.25,
+      "samples": 1609,
+      "peak_process_tree_sum_rss_bytes": 348901376,
+      "initial_filesystem_available_bytes": 1992384512,
+      "minimum_filesystem_available_bytes": 1001435136,
+      "maximum_sampled_filesystem_consumption_bytes": 990949376,
+      "final_filesystem_available_bytes": 1149796352,
+      "rss_semantics": "Sum of descendant resident sets; shared pages may be counted repeatedly; transient peaks between samples may be missed",
+      "workspace_semantics": "Available-space low-water on shared workspace filesystem; concurrent unrelated changes can affect it",
+      "completed_assembly_record_identical": true,
+      "gnu_time_maximum_child_rss_kib": 285032,
+      "tmpfs_sample_scope": "Allocated data blocks sampled through descendant mount views; excludes directory metadata, kernel overhead and page cache. Zero is a sampled observation, not proof of zero memory cost."
+    }
+  },
+  "resource_sampler": {
+    "final_fresh_assembly_implementation_sha256": "32791ae8a06f429ba4437c51edebd949f3140870e2f515397bceae8733b0f960",
+    "note": "Earlier build/VM samples used the same process-tree and available-space sampling logic without the later assembly-tmpfs counter; this hash identifies only the final fresh-assembly sampler"
+  },
+  "foundation": {
+    "json_syntax_and_local_markdown_targets": true,
+    "checked_files": [
+      "README.md",
+      "configs/host-os/admin-ui.json",
+      "configs/host-os/recovery-copyrights.json",
+      "configs/host-os/recovery-evidence.json",
+      "configs/host-os/recovery-init",
+      "configs/host-os/recovery-license-references.json",
+      "configs/host-os/recovery-packages.json",
+      "configs/host-os/recovery-resolution.json",
+      "configs/host-os/recovery-sources.json",
+      "docs/decisions/0014-independent-compressed-recovery.md",
+      "docs/hardware/host-admin-ui.md",
+      "docs/hardware/host-os-tasks.md",
+      "docs/hardware/host-recovery-image.md",
+      "docs/roadmap.md",
+      "runtime/sv08_recovery_boot_report.py",
+      "scripts/recovery_image.py",
+      "tests/recovery_filesystem.py",
+      "tests/recovery_refusal_image.py",
+      "tests/recovery_vm.py",
+      "tests/test_recovery_image.py"
+    ],
+    "indexed_gitlinks_match_lock": true,
+    "submodule_status": "-ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e upstream/katapult\n-f0892d82b0f1c1228454f09eb508eddde2250f4b upstream/klipper\n-3791fdf749df20c2a32fc43818749aa9f1754a9f upstream/klipperscreen\n-32f99e1cf97640b23a52829dfa3a0aceee11d382 upstream/mainsail\n-985c1d0bbeb90bc057d34a232c9dc3b05e0c6c8d upstream/moonraker\n-a60644875f8c756d20b3828c9416518b414b5491 upstream/sovol-sv08\n-d7bbd172a5da601a08f94479de308c6fb714a19a upstream/sunxi-tools\n"
+  },
+  "source_and_host_preservation": {
+    "baseline_before": {
+      "sha256": "76e82be434996be27ce967ccbfc4604dabb918820724d2d73b666d3eb03360bf",
+      "files": 21670,
+      "bytes": 1318499182
+    },
+    "baseline_after": {
+      "sha256": "76e82be434996be27ce967ccbfc4604dabb918820724d2d73b666d3eb03360bf",
+      "files": 21670,
+      "bytes": 1318499182
+    },
+    "baseline_content_modes_owners_preserved": true,
+    "historical_baseline_inventory_scope": "Does not attest historical xattrs, hardlink topology or root-directory metadata; baseline only read as package-index input",
+    "host_files_before": {
+      "/var/lib/dpkg/status": "7c31015dbb4fc9d337cd1673e65a2009267c6ac631556bbf39a07d7b771ed7f4",
+      "/etc/machine-id": "ac3e1feb71496b7974e10f9e894a37282a413db4184249fa9853653c94ddbd01",
+      "/etc/passwd": "df7d578518228197baa3376fb6259e5eab5d92c51adbdf98ab0f1eecf05583a3",
+      "/etc/group": "0e0f4862e3a232f880f8753f316ad1f5e380fcbd034cbb8748a15ac5666495e6",
+      "/etc/hostname": "243b0dc9b847e66c440dca985e10fe0ce9e29c379b018ddd5747ba8948f84cc8"
+    },
+    "host_files_after": {
+      "/var/lib/dpkg/status": "e13d6316400065ae028f8e2f253dd05b1ff95a2893a424acf60fa0c99ec28c8b",
+      "/etc/machine-id": "ac3e1feb71496b7974e10f9e894a37282a413db4184249fa9853653c94ddbd01",
+      "/etc/passwd": "df7d578518228197baa3376fb6259e5eab5d92c51adbdf98ab0f1eecf05583a3",
+      "/etc/group": "0e0f4862e3a232f880f8753f316ad1f5e380fcbd034cbb8748a15ac5666495e6",
+      "/etc/hostname": "243b0dc9b847e66c440dca985e10fe0ce9e29c379b018ddd5747ba8948f84cc8"
+    },
+    "host_changed_files": [
+      "/var/lib/dpkg/status"
+    ],
+    "external_change_evidence": [
+      "2026-09-12 06:02:20,316 INFO Starting unattended upgrades script",
+      "2026-09-12 06:02:20,316 INFO Allowed origins are: o=Ubuntu,a=noble, o=Ubuntu,a=noble-security, o=UbuntuESMApps,a=noble-apps-security, o=UbuntuESM,a=noble-infra-security",
+      "2026-09-12 06:02:20,316 INFO Initial blacklist: ",
+      "2026-09-12 06:02:20,317 INFO Initial whitelist (not strict): ",
+      "2026-09-12 06:02:23,266 INFO Packages that will be upgraded: libc-bin libc-dev-bin libc-devtools libc6 libc6-dev libpython3.12-dev libpython3.12-minimal libpython3.12-stdlib libpython3.12t64 locales python3.12 python3.12-dev python3.12-minimal python3.12-venv wireless-regdb",
+      "2026-09-12 06:02:23,267 INFO Writing dpkg log to /var/log/unattended-upgrades/unattended-upgrades-dpkg.log",
+      "2026-09-12 06:02:37,140 INFO All upgrades installed"
+    ],
+    "host_mounts_before_sha256": "b0eaca53cd4ea2a1bfd9abc160f57549b064f019ba24db2cedbca83a2322d51f",
+    "host_mounts_after_sha256": "b0eaca53cd4ea2a1bfd9abc160f57549b064f019ba24db2cedbca83a2322d51f"
+  },
+  "limitations": [
+    "Exact source archives indexed, not downloaded/rebuilt",
+    "gzip retains actual GFDL1.3 text despite upstream GFDL-3 literal reference typo",
+    "Supplied manifest digest does not establish authenticated boot",
+    "Current production media provider unchanged and unsupported operations refused",
+    "Intake receipt hashes lock at completion; concurrent lock replacement is not rejected there. Authoritative assembly captures lock at entry, revalidates every archive/control field and rejects changes at completion. Intake reporting continuity is follow-up work",
+    "Historical baseline fingerprint did not include root metadata/xattrs/hardlinks; current assembly and build fingerprints do"
+  ],
+  "regression_logs": {
+    "final-export-tests.log": "03281d5ee5e47ee24e9dc0a4e6e7af852abf9db28102f3813c1a1c9e73c0243c",
+    "final-recovery-tests.log": "59a479a4fccf0fd8c68091e523a1dec411cb33871ecd5d2592bb8f3dbc590788",
+    "final-stage-tests.log": "960da5fc1eb9cb5a2641bf51f826142d685bb57a0263278672f16391e5ced49c"
+  }
+}
