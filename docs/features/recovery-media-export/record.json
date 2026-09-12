@@ -83,7 +83,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Reviewed the complete base-to-e54d46c diff and confirmed clean HEAD, submitted source/document hashes, approval hashes, unchanged indexed gitlinks, JSON/Markdown checks, and reported payload measurements. Independently passed all 40 targeted tests and four actual staged non-fixture GTK diagnostic cases. Material admission failure remains at runtime/sv08_recovery_media.py:230: normalizing wwid and device/wwid into one dictionary silently discards an identity. same_identity({'wwid':'known-system-medium','device/wwid':'other-value'}, {'wwid':'known-system-medium'}) returns false. Either alias ordering can lose the known match when the conflicting value occurs last. Reproduced through the production snapshot positive-control harness: adding these conflicting destination attributes allowed a known unmounted system medium; the expected refusal was not raised. This violates the approved requirement to reject system/source media and ambiguous topology. Retain all normalized identity values or refuse conflicting aliases, with regression tests covering both insertion orders and the full production snapshot. Physical recovery, named-profile validation, independent image/preparer integration, 512 MiB recovery closure and 8 GB capacity remain open.",
+      "blocker": null,
       "checks": [
         "admission",
         "gtk-fat",
@@ -96,23 +96,23 @@
           "board_revision": null,
           "check": "admission",
           "document": "docs/hardware/host-recovery-media.md",
-          "document_sha256": "c2c917d1279540bfdab31886b0da687b4a4a74485f47fd1bf4eb82f81b2b0780",
+          "document_sha256": "80641c270303c84bc233bba924e37e22b2b1825e3673ba44837160a6f6a3cbae",
           "environment": "offline",
           "limitations": "Workstation/disposable filesystem evidence only; no independent recovery OS boot or physical printer/media/input/power-loss validation. Production image and trusted preparation closure, incremental target package footprint, 512 MiB recovery and 8 GB image capacity remain open. Physical task stays blocked.",
-          "method": "40 targeted Python tests across recovery_media/export/stage_admin_ui/admin/host_integration; real private mount/PID namespace ext4/FAT fixture covers same lease, mount aliases, source block-RO, system media separation, process namespace refusal, removal and device-number reuse. See exact commands and branch-specific controls in evidence document.",
+          "method": "41 targeted Python tests across recovery_media/export/stage_admin_ui/admin/host_integration; real private mount/PID namespace ext4/FAT fixture covers same lease, mount aliases, source block-RO, system media separation, process namespace refusal, removal and device-number reuse. See exact commands and branch-specific controls in evidence document. Full production-snapshot regression covers eight destination/system-inventory alias-spelling/order cases; the prior comparator reproduces four failures, while the corrected comparator preserves every known identity match.",
           "profile": null,
-          "source_commit": "e54d46c15c68d737b5d844352910ff9ddc33264c",
+          "source_commit": "03cb99996e7ad92eed97c312932463821818ec8e",
           "source_sha256": {
             "configs/host-os/admin-ui.json": "2855513cccb835965899335a6caaee0df3ae82eedfa5fe6c154db0960882634b",
             "runtime/sv08_export.py": "cd73ede827805417903bd9bf8c82bb180624bb9cab1519841c14a6b02acb435b",
             "runtime/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
-            "runtime/sv08_recovery_media.py": "c4db9d201f3479200b875193d34e37f0283facf64b3e4eda9ef02f92440a4c46",
+            "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
             "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
             "scripts/stage_admin_ui.py": "c0f334f07b27615924a586723c19b9086181b849989dae0f0d8e0aafb2d64616",
             "tests/recovery_media_entry.py": "99b2f6d0f74ecc221faa10a4b8d1b007cda6f0ceedf9d2862432ea7c1f48a7c7",
             "tests/recovery_media_mounts.py": "1d681a1fefea9d09363c4b116be50390a903b42093ef45bf1e070475560ffa62",
             "tests/test_export.py": "7212f1b57e6d04ba900ab2ef2b6164fda104326a4f882c934c72ad9aa81f54f4",
-            "tests/test_recovery_media.py": "95d0da40bf2985025c859ab90040e049944e8092810a045ea4b18a9e0781b18a",
+            "tests/test_recovery_media.py": "6c233c8a14871f0211f9dc51e526e54fec895a03bae849f34caeb503b469d6e3",
             "tests/test_stage_admin_ui.py": "80f41ac70a3dfdbd9a776a61c918c8c3ecab939ebfd1532d38567d15303d12b7"
           }
         },
@@ -120,23 +120,23 @@
           "board_revision": null,
           "check": "gtk-fat",
           "document": "docs/hardware/host-recovery-media.md",
-          "document_sha256": "c2c917d1279540bfdab31886b0da687b4a4a74485f47fd1bf4eb82f81b2b0780",
+          "document_sha256": "80641c270303c84bc233bba924e37e22b2b1825e3673ba44837160a6f6a3cbae",
           "environment": "offline",
           "limitations": "Workstation/disposable filesystem evidence only; no independent recovery OS boot or physical printer/media/input/power-loss validation. Production image and trusted preparation closure, incremental target package footprint, 512 MiB recovery and 8 GB image capacity remain open. Physical task stays blocked.",
-          "method": "Real tests/recovery_media_mounts.py v6 through GTK chooser, chooser/review cancellation, apply, exporter and shared media provider on disposable filesystem-level read-only ext4 and FAT loops; source/recovery whole-image hashes and pre-existing destination bytes preserved; old GTK regressions rerun.",
+          "method": "Real tests/recovery_media_mounts.py alias-fix-v1 through GTK chooser, chooser/review cancellation, apply, exporter and shared media provider on disposable filesystem-level read-only ext4 and FAT loops; source/recovery whole-image hashes and pre-existing destination bytes preserved; old GTK regressions rerun.",
           "profile": null,
-          "source_commit": "e54d46c15c68d737b5d844352910ff9ddc33264c",
+          "source_commit": "03cb99996e7ad92eed97c312932463821818ec8e",
           "source_sha256": {
             "configs/host-os/admin-ui.json": "2855513cccb835965899335a6caaee0df3ae82eedfa5fe6c154db0960882634b",
             "runtime/sv08_export.py": "cd73ede827805417903bd9bf8c82bb180624bb9cab1519841c14a6b02acb435b",
             "runtime/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
-            "runtime/sv08_recovery_media.py": "c4db9d201f3479200b875193d34e37f0283facf64b3e4eda9ef02f92440a4c46",
+            "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
             "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
             "scripts/stage_admin_ui.py": "c0f334f07b27615924a586723c19b9086181b849989dae0f0d8e0aafb2d64616",
             "tests/recovery_media_entry.py": "99b2f6d0f74ecc221faa10a4b8d1b007cda6f0ceedf9d2862432ea7c1f48a7c7",
             "tests/recovery_media_mounts.py": "1d681a1fefea9d09363c4b116be50390a903b42093ef45bf1e070475560ffa62",
             "tests/test_export.py": "7212f1b57e6d04ba900ab2ef2b6164fda104326a4f882c934c72ad9aa81f54f4",
-            "tests/test_recovery_media.py": "95d0da40bf2985025c859ab90040e049944e8092810a045ea4b18a9e0781b18a",
+            "tests/test_recovery_media.py": "6c233c8a14871f0211f9dc51e526e54fec895a03bae849f34caeb503b469d6e3",
             "tests/test_stage_admin_ui.py": "80f41ac70a3dfdbd9a776a61c918c8c3ecab939ebfd1532d38567d15303d12b7"
           }
         },
@@ -144,23 +144,23 @@
           "board_revision": null,
           "check": "staging",
           "document": "docs/hardware/host-recovery-media.md",
-          "document_sha256": "c2c917d1279540bfdab31886b0da687b4a4a74485f47fd1bf4eb82f81b2b0780",
+          "document_sha256": "80641c270303c84bc233bba924e37e22b2b1825e3673ba44837160a6f6a3cbae",
           "environment": "offline",
           "limitations": "Workstation/disposable filesystem evidence only; no independent recovery OS boot or physical printer/media/input/power-loss validation. Production image and trusted preparation closure, incremental target package footprint, 512 MiB recovery and 8 GB image capacity remain open. Physical task stays blocked.",
           "method": "Stage before/after payload measurement, required provider source consistency, and tests/recovery_media_entry.py invoking actual staged non-fixture main under Xvfb/private tmpfs for absent, malformed, untrusted and invalid contexts.",
           "profile": null,
-          "source_commit": "e54d46c15c68d737b5d844352910ff9ddc33264c",
+          "source_commit": "03cb99996e7ad92eed97c312932463821818ec8e",
           "source_sha256": {
             "configs/host-os/admin-ui.json": "2855513cccb835965899335a6caaee0df3ae82eedfa5fe6c154db0960882634b",
             "runtime/sv08_export.py": "cd73ede827805417903bd9bf8c82bb180624bb9cab1519841c14a6b02acb435b",
             "runtime/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
-            "runtime/sv08_recovery_media.py": "c4db9d201f3479200b875193d34e37f0283facf64b3e4eda9ef02f92440a4c46",
+            "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
             "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
             "scripts/stage_admin_ui.py": "c0f334f07b27615924a586723c19b9086181b849989dae0f0d8e0aafb2d64616",
             "tests/recovery_media_entry.py": "99b2f6d0f74ecc221faa10a4b8d1b007cda6f0ceedf9d2862432ea7c1f48a7c7",
             "tests/recovery_media_mounts.py": "1d681a1fefea9d09363c4b116be50390a903b42093ef45bf1e070475560ffa62",
             "tests/test_export.py": "7212f1b57e6d04ba900ab2ef2b6164fda104326a4f882c934c72ad9aa81f54f4",
-            "tests/test_recovery_media.py": "95d0da40bf2985025c859ab90040e049944e8092810a045ea4b18a9e0781b18a",
+            "tests/test_recovery_media.py": "6c233c8a14871f0211f9dc51e526e54fec895a03bae849f34caeb503b469d6e3",
             "tests/test_stage_admin_ui.py": "80f41ac70a3dfdbd9a776a61c918c8c3ecab939ebfd1532d38567d15303d12b7"
           }
         }
@@ -169,20 +169,20 @@
       "id": "implement",
       "implementation": {
         "actor": "media_implementer",
-        "run": "f65831d633e34a6c8292ba653cf031e8",
-        "session": "media-implementation-20260912"
+        "run": "449a348a1be942a6929d8edb2b78a7f1",
+        "session": "media-revision-20260912"
       },
-      "repeats": 1,
-      "resumption": null,
-      "status": "blocked",
+      "repeats": 0,
+      "resumption": "Independent production-snapshot reproduction found alias normalization discards a known system identity; retain all alias values and validate both insertion orders before resubmission.",
+      "status": "review",
       "title": "Verified pre-mounted media for recovery export",
       "verification": {
         "decision_sha256": "2ef72aa6885a6e223e396d70e378ff766ecc1fa55c9896630f796cbae924f70a",
-        "evidence_sha256": "28a2ae46184f392b52b6ccd01b94a07d1418b9ca1e6fec5fb3502b40fb89ae90",
-        "outcome": "failed",
-        "rationale": "Reviewed the complete base-to-e54d46c diff and confirmed clean HEAD, submitted source/document hashes, approval hashes, unchanged indexed gitlinks, JSON/Markdown checks, and reported payload measurements. Independently passed all 40 targeted tests and four actual staged non-fixture GTK diagnostic cases. Material admission failure remains at runtime/sv08_recovery_media.py:230: normalizing wwid and device/wwid into one dictionary silently discards an identity. same_identity({'wwid':'known-system-medium','device/wwid':'other-value'}, {'wwid':'known-system-medium'}) returns false. Either alias ordering can lose the known match when the conflicting value occurs last. Reproduced through the production snapshot positive-control harness: adding these conflicting destination attributes allowed a known unmounted system medium; the expected refusal was not raised. This violates the approved requirement to reject system/source media and ambiguous topology. Retain all normalized identity values or refuse conflicting aliases, with regression tests covering both insertion orders and the full production snapshot. Physical recovery, named-profile validation, independent image/preparer integration, 512 MiB recovery closure and 8 GB capacity remain open.",
+        "evidence_sha256": "5f8b1b765a2c17eaebe87a7a6422da066aaa1241af04a4ab8cbc4cba49a188af",
+        "outcome": "passed",
+        "rationale": "Passed the offline implementation checks at clean HEAD 03cb99996e7ad92eed97c312932463821818ec8e. Reviewed the complete delivered diff and focused correction; source, committed document, approval and evidence hashes agree. Independently passed 41 targeted tests, both GTK regressions, four actual staged non-fixture diagnostic cases, and the real GTK/provider/ext4-read-only/FAT fixture. All eight production snapshot alias cases now reject protected media; substituting the rejected comparator reproduces four failures. The real fixture confirmed cancellation, damaged-registry export, source/recovery image and existing-destination preservation, read-only enforcement, shared exclusion through publication/fsync, removal and device-number-reuse refusal, and lease release. Staging consistency, payload measurements, JSON/Markdown checks and indexed gitlinks agree. No remaining material defect was found within the approved offline scope. Independent recovery image/preparer integration, physical and named-profile validation, target dependency footprint, 512 MiB recovery closure and 8 GB capacity remain open.",
         "reviewer": "media_verifier",
-        "session": "media-verification-20260912-e54d46c"
+        "session": "media-verification-20260912-03cb999"
       }
     },
     {
