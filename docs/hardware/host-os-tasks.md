@@ -114,6 +114,12 @@ enumeration were re-established on 2026-09-12; see the
   integrate actual authenticated login, owner provisioning and persistent TLS keys.
 - [ ] Finish bounded browser upload, signature/error/progress presentation and
   jobs that survive a closed browser or dropped LAN connection.
+  [Durable image jobs](host-admin-image-jobs.md) now pass an offline browser/worker
+  fixture; upload transport and authenticated production/physical checks remain open.
+- [ ] Deliver reviewed resolution of ambiguous image-job receipts and bounded
+  history rollover, preserving retry identities and original outcomes. Include
+  RAUC service-side inactivity evidence before releasing the admission gate;
+  current ambiguous/full ledgers remain blocked without automatic replay.
 - [ ] Finish additional-software catalog, dependency/space preview, admitted APT
   install/remove, service configuration and customization reconciliation.
 - [ ] Implement network/access forms, connectivity rollback, host naming/hosts

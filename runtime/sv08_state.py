@@ -109,11 +109,14 @@ class Store:
         self.copy_limit_bytes = copy_limit_bytes
 
     @contextmanager
-    def locked(self):
+    def locked(self, nonblocking=False):
         self.root.mkdir(parents=True, exist_ok=True, mode=0o700)
         fd = os.open(self.root / '.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
         try:
-            fcntl.flock(fd, fcntl.LOCK_EX)
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | (fcntl.LOCK_NB if nonblocking else 0))
+            except BlockingIOError:
+                raise ValueError('System state is busy. Image job progress remains available; refresh shortly.') from None
             yield
         finally:
             os.close(fd)

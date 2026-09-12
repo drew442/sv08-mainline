@@ -1,0 +1,11 @@
+[Unit]
+Description=SV08 reviewed image operation
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_admin_jobs.py %i
+User=root
+UMask=0077
+TimeoutStartSec=infinity
+Restart=no
