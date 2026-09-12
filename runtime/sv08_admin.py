@@ -192,6 +192,16 @@ class Controller:
     def request(self, request):
         if not isinstance(request, dict): raise ValueError('Expected an object')
         method = request.get('method')
+        if method in ('upload.list', 'upload.plan', 'upload.cleanup-plan', 'upload.cleanup'):
+            from sv08_admin_upload import installed_uploads
+            upload = getattr(self, 'uploads', None) or installed_uploads(self)
+            fields = {'upload.list': {'method'}, 'upload.plan': {'method', 'name', 'size'},
+                      'upload.cleanup-plan': {'method', 'name'}, 'upload.cleanup': {'method', 'plan'}}
+            if set(request) != fields[method]: raise ValueError('Unexpected upload request fields')
+            if method == 'upload.list': return upload.listing()
+            if method == 'upload.plan': return upload.plan(request['name'], request['size'])
+            if method == 'upload.cleanup-plan': return upload.cleanup_plan(request['name'])
+            return upload.cleanup(request['plan'])
         expected = {'status': {'method'}, 'plan': {'method', 'action', 'arguments'},
                     'apply': {'method', 'plan'}, 'jobs': {'method'},
                     'image.submit': {'method', 'id', 'plan'}}.get(method)

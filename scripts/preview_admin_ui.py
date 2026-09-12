@@ -47,7 +47,7 @@ window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({val
 const r=await fetch('/request',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Token':TOKEN},body:data});
 return await r.text();}})};'''.replace('TOKEN', json.dumps(token))
                 return self.respond(200, script, 'text/javascript')
-            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/session.js': 'session.js', '/style.css': 'style.css'}
+            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/upload.js': 'upload.js', '/session.js': 'session.js', '/style.css': 'style.css'}
             if self.path not in paths: return self.respond(404, b'{}')
             name = paths[self.path]
             self.respond(200, (root / name).read_bytes(), {'html':'text/html','js':'text/javascript','css':'text/css'}[name.split('.')[-1]])

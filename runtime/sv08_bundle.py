@@ -12,6 +12,11 @@ from pathlib import Path
 import re
 import stat
 import subprocess
+import os
+import selectors
+import signal
+import time
+import sys
 
 
 def validate(info, policy, bundle_size):
@@ -49,14 +54,81 @@ def validate(info, policy, bundle_size):
                 image_hashes={image['slot-class']: image['checksum'] for image in images})
 
 
-def inspect(bundle, policy, keyring, rauc='/usr/bin/rauc'):
+# Finite signed-manifest tooling: stdout + stderr share a 256 KiB budget.
+VERIFY_SECONDS = 60
+VERIFY_OUTPUT = 256 * 1024
+
+
+# A separate supervisor survives parent SIGKILL. Its lifetime pipe has a single
+# writer in the helper; EOF kills the verifier group, including descendants.
+SUPERVISOR = r"""
+import os, select, signal, subprocess, sys, time, ctypes
+if ctypes.CDLL(None).prctl(36, 1, 0, 0, 0) != 0: sys.exit(125)
+life = int(sys.argv[1])
+child = subprocess.Popen(sys.argv[2:], start_new_session=True, close_fds=True)
+try:
+    while child.poll() is None:
+        if select.select([life], [], [], .1)[0] and os.read(life, 1) == b'':
+            break
+finally:
+    try: os.killpg(child.pid, signal.SIGKILL)
+    except ProcessLookupError: pass
+    code = child.wait()
+    while True:
+        try: os.wait()
+        except ChildProcessError: break
+sys.exit(code if code >= 0 else 125)
+"""
+
+
+def manifest_output(command, lease_fd=None, seconds=None):
+    reader, lifetime = os.pipe()
+    try:
+        process = subprocess.Popen([sys.executable, '-c', SUPERVISOR, str(reader), *command],
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                   pass_fds=(reader,) if lease_fd is None else (reader, lease_fd), start_new_session=True)
+    except BaseException:
+        os.close(lifetime); raise
+    finally: os.close(reader)
+    output, errors = bytearray(), bytearray()
+    selector = selectors.DefaultSelector()
+    try:
+        selector.register(process.stdout, selectors.EVENT_READ, output)
+        selector.register(process.stderr, selectors.EVENT_READ, errors)
+        deadline = time.monotonic() + (VERIFY_SECONDS if seconds is None else seconds)
+        while selector.get_map():
+            remaining = deadline - time.monotonic()
+            if remaining <= 0: raise ValueError('Bundle verification timed out')
+            for key, _ in selector.select(min(remaining, 0.25)):
+                chunk = os.read(key.fileobj.fileno(), 8192)
+                if not chunk: selector.unregister(key.fileobj); continue
+                key.data.extend(chunk)
+                if len(output) + len(errors) > VERIFY_OUTPUT:
+                    raise ValueError('Bundle verification output exceeds its budget')
+        try: code = process.wait(timeout=max(0.001, deadline-time.monotonic()))
+        except subprocess.TimeoutExpired: raise ValueError('Bundle verification timed out')
+        if code: raise ValueError('Signed manifest authentication failed')
+        return bytes(output)
+    finally:
+        # Ask the independent supervisor to terminate every verifier descendant.
+        os.close(lifetime)
+        try: process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            # A kernel-stalled verifier remains excluded by the supervisor’s
+            # inherited lease. Never kill only its guardian and orphan children.
+            pass
+        selector.close(); process.stdout.close(); process.stderr.close()
+
+
+
+def inspect(bundle, policy, keyring, rauc='/usr/bin/rauc', lease_fd=None):
     if bundle.is_symlink() or not stat.S_ISREG(bundle.stat().st_mode):
         raise ValueError('Inspect a locally staged regular bundle file')
     before = bundle.stat()
     if not 0 < before.st_size <= policy['max_bundle_bytes']:
         raise ValueError('Bundle exceeds the staging budget')
-    info = json.loads(subprocess.check_output([str(rauc), 'info', '--output-format=json-2',
-                      '--keyring='+str(keyring), str(bundle)], text=True))
+    info = json.loads(manifest_output([str(rauc), 'info', '--output-format=json-2',
+                      '--keyring='+str(keyring), str(bundle)], lease_fd=lease_fd))
     result = validate(info, policy, before.st_size)
     with bundle.open('rb') as stream:
         result['bundle_sha256'] = hashlib.file_digest(stream, 'sha256').hexdigest()

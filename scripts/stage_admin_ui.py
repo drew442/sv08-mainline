@@ -16,7 +16,7 @@ def stage(work, context, execute=False):
     if context not in ('host', 'recovery'): raise ValueError('Unknown UI context')
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir(): raise ValueError('Expected an isolated image rootfs')
-    for name in ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
+    for name in ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
         path = root / 'usr/lib/sv08' / name
         if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
@@ -52,7 +52,7 @@ def stage(work, context, execute=False):
     if context == 'host': files.append(root / 'etc/cockpit/cockpit.conf')
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
-                 ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
+                 ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
     if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))

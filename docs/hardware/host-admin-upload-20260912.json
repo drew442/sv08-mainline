@@ -1,0 +1,287 @@
+{
+  "format_version": 1,
+  "date": "2026-09-12",
+  "scope": "Offline actual Cockpit/PAM/sudo in ARM64 QEMU, real guest RAUC signature inspection; synthetic single-root policy and tiny payloads; no slot backend/hardware/release acceptance",
+  "browser": {
+    "scope": "Actual Cockpit 337/PAM/sudo in disposable ARM64 QEMU; HTTP on private namespace loopback",
+    "physical_hardware": false,
+    "production_tls": false,
+    "bad_login_rejected": true,
+    "uid_proof": {
+      "ordinary_account": "1001",
+      "administrator_unelevated": "1000",
+      "elevated": "0"
+    },
+    "upload_ordinary_denial": true,
+    "ordinary_denial": true,
+    "wrong_password_and_cancel": true,
+    "upload": {
+      "real_signature_tool": "guest /usr/bin/rauc 1.13",
+      "hardware": false,
+      "slot_adapter": false,
+      "installed_sources": {
+        "/usr/lib/sv08/sv08_admin_upload.py": "90bf08e0ff4c124decbefc99ff0770028525d22a5f45ad803e637bc8af906200",
+        "/usr/lib/sv08/sv08_admin.py": "367f5f9e033ec1fbfbd111c016b47ac7548f808b7ac3272c7e6fbb746b9c02eb",
+        "/usr/lib/sv08/sv08_admin_images.py": "571a5ef6c09b17c93159457afc8b5d39bdc278d78bb8ca2ea1eeb6633724ac7b",
+        "/usr/lib/sv08/sv08_staging.py": "8f54fbf7af84f4e978e213e5c9b5309a310321d3787d1418c9c28358e032f65a",
+        "/usr/lib/sv08/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+        "/usr/lib/sv08/sv08_boot.py": "acbb7aeb4f048e3c7dc9f0eee5a7bbbd457eeb25471e11a296d9512d847ac46e",
+        "/usr/lib/sv08/sv08_rauc.py": "02755b3adf5db27381c3bfaf2303d41abaed6e575c8a32c34bb5e14853eb943d",
+        "/usr/share/cockpit/sv08-host/upload.js": "15cfc6d17922e78a9b60885d99e6742608ffc397e6e84109dcb93bf47370aeb7"
+      },
+      "prior_fixture_object_removed_by_explicit_review": true,
+      "review_cancel_no_transfer": true,
+      "normal_review_progress_private_publish": true,
+      "manifest_result": "Signed manifest authenticated. Full payload verification occurs during installation. No image was installed or activated.\nRelease: upload-fixture-1\nProfile: sv08-upload-fixture\nSHA-256: fe55033dc6cfa503da0e72b8f2de183363770dbd46b5008eb20e424c90700598",
+      "cleanup_cancel_preserves": true,
+      "real_signature_failure_no_publication": true,
+      "paused_responsive_exclusion": true,
+      "cancellation_observed_objects": 0,
+      "browser_cancel": true,
+      "process_death_reconnect_retained_partial": true,
+      "lost_completion_reconnect_no_replay": true,
+      "no_upload_slot_boot_or_state_mutation": true
+    },
+    "status_review_jobs_no_state_mutation": true,
+    "cancel_preserves_state": true,
+    "authentication_never_confirms": true,
+    "stale_review_refused": true,
+    "confirmed_helper_apply": true,
+    "delayed_review_after_stop_discarded": true,
+    "delayed_apply_after_stop_preserved": true,
+    "stock_packages_unavailable": true,
+    "guest_journal_secret_scan": true,
+    "explicit_stop_denies_helper": true,
+    "logout_invalidates_old_session": true,
+    "authenticated_reconnect_persistence": true,
+    "missing_api_fails_closed": true,
+    "controlled_stop_failure_visible_and_closed": true,
+    "secret_scan": {
+      "guest_journal": true,
+      "browser_console_and_errors": true,
+      "private_log_and_evidence_files": 6,
+      "violations": 0
+    },
+    "passed": true
+  },
+  "native_signature": {
+    "proof": {
+      "release": "upload-fixture-1",
+      "compatible": "sv08-upload-fixture",
+      "metadata": {
+        "layout": "upload-fixture-v1",
+        "state-schema": "1",
+        "klipper-commit": "f089b5d53c6ca5ed2e7fc5c0e481c2e61aaeffdd"
+      },
+      "image_hashes": {
+        "rootfs": "9d8b615efb007d28cb8259e11ed7f947a0c97c2cf8f6d2d05530529079ac746e",
+        "boot": "4eae44657912523e9fa12fc55df14235bad122730c5bea482bf95c0294b73b1b"
+      },
+      "bundle_sha256": "fe55033dc6cfa503da0e72b8f2de183363770dbd46b5008eb20e424c90700598",
+      "installs_or_activates": false,
+      "full_payload_verified": false
+    },
+    "rejected": [
+      "compatible",
+      "layout",
+      "klipper_commit",
+      "state_schema",
+      "max_bundle_bytes",
+      "tampered-signature",
+      "untrusted-keyring"
+    ],
+    "rauc_sha256": "c4cca3b8e5674504d954fb0b0d5b8552eca800a8fd576be97f11585bd33e5c96",
+    "scope": "native real RAUC signature tooling; tiny synthetic policy; no installation"
+  },
+  "native_memory": {
+    "maximum_rss_kib": 19768,
+    "scope": "native signed-policy suite including RAUC subprocesses; not browser RSS"
+  },
+  "protocol": {
+    "passed": [
+      {
+        "fault": "fragmented-valid",
+        "slices": 4,
+        "maxSlice": 65536,
+        "maxOutstanding": 65536
+      },
+      {
+        "fault": "malformed",
+        "slices": 1,
+        "maxSlice": 65536,
+        "maxOutstanding": 65536
+      },
+      {
+        "fault": "oversized",
+        "slices": 1,
+        "maxSlice": 65536,
+        "maxOutstanding": 65536
+      },
+      {
+        "fault": "wrong-offset",
+        "slices": 1,
+        "maxSlice": 65536,
+        "maxOutstanding": 65536
+      },
+      {
+        "fault": "truncated-utf8",
+        "slices": 4,
+        "maxSlice": 65536,
+        "maxOutstanding": 65536
+      }
+    ],
+    "scope": "Node VM transport algorithm; no authentication or RAUC substitution evidence"
+  },
+  "payload": {
+    "all_staged_runtime_and_host_ui_bytes_before": 192488,
+    "all_staged_runtime_and_host_ui_bytes_after": 220237,
+    "actual_code_growth_bytes": 27749,
+    "newly_included_existing_core_accounting_bytes": 31720,
+    "note": "Logical source file bytes; excludes packages/filesystem overhead; expanded UI-stage hash inventory is not all newly added payload"
+  },
+  "storage": {
+    "guest_image_logical_bytes": 3221225472,
+    "guest_image_allocated_bytes": 1414422528,
+    "bundle_bytes": 542650,
+    "retained_sha256": {
+      "final-prepare.json": "40d634ff78cee021972e61ea826fd6fbf39fcdff11ca6d28b29768ffb75803ce",
+      "final-cleanup.json": "762a304ed0d2afe8a7b869e97f40ca4a9d142ddf6bb0b9a970d0ec91eac5994f",
+      "final-browser-result.json": "6ded97508880ab087481d733a317fe510fdc6e2ce6ab385bea6612ed9c4cd0b2",
+      "final-guest.log": "6e82ce2848e6ec39136f1d402350a66908363e97c5d5103204f035dbec773eff",
+      "final-guest-service-state.txt": "221fa37d48eb3600ff9657517c024d6c30402ec1a78c9bb18d4d52cdfc38addc",
+      "final-package-install.log": "46b921ece4e61df4f9f021159e0e0071fb1c23daaf139471490cb237638874bc",
+      "final-apt-simulation.txt": "0db1f9f281cb1a226984d5f0b200e3165857b35b13c6d2d7f758178637a3f90f",
+      "final-units.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "final-installed-packages.tsv": "871a710108dc1376bb6a6ea42df786878ab5e87dc5911808b2ad944d517547ae",
+      "final-dpkg-audit.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "credentials_in_retained_reports": false,
+    "guest_stopped": true,
+    "guest_and_credentials_removed": true,
+    "private_signing_key_removed": true
+  },
+  "cleanup": {
+    "execute": true,
+    "qemu_stopped": true,
+    "private_pid_and_network": true,
+    "host_identity_files_preserved": true,
+    "host_cockpit_units_preserved": true,
+    "namespace_pid_removed": true
+  },
+  "regressions": {
+    "base": {
+      "passed": true,
+      "physical_hardware": false,
+      "transport": "test Cockpit bridge shim; real disposable Controller",
+      "keyboard_navigation": true,
+      "escape_cancels": true,
+      "policy_persistence": true,
+      "mode_applies_only_on_boot": true,
+      "touch_navigation": true,
+      "unavailable_installer_disabled": true,
+      "uncaught_exceptions": 0
+    },
+    "drafts": {
+      "passed": true,
+      "before": {
+        "hostname": "owner-draft",
+        "mode": "writable",
+        "auto": false
+      },
+      "after": {
+        "hostname": "owner-draft",
+        "mode": "writable",
+        "auto": false
+      },
+      "dwell_ms": 3400,
+      "external_changes_preserve_drafts": true,
+      "untouched_controls_follow_server": true,
+      "cancel_and_stale_review_preserve_drafts": true,
+      "applying_one_preserves_other_drafts": true,
+      "reviewed_arguments_match_drafts": true,
+      "newer_edits_during_apply_preserved": true,
+      "keyboard_selection_and_option_nodes_survive_poll": true,
+      "valid_selections_survive_poll": true,
+      "removed_selections_remain_explicitly_invalid": true,
+      "explicit_reselection_required": true,
+      "transport": "real disposable Controller via test Cockpit bridge",
+      "list_projection": "test-only image/package status lists; no adapter mutation",
+      "physical_hardware": false
+    },
+    "jobs": {
+      "passed": true,
+      "reconnect_ms": 150,
+      "stage_installations": 1,
+      "lost_acknowledgement_retry_same_identity": true,
+      "closed_and_reopened_browser_target": true,
+      "real_systemd_user_worker": true,
+      "unit_state": "MainPID=414240\nExecStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-bundle-upload/tests/admin_jobs_fixture.py /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-bundle-upload/build/upload-regression-jobs f19ecbcbab964e569ea12627258d234f ; ignore_errors=no ; start_time=[Sat 2026-09-12 05:07:13 UTC] ; stop_time=[n/a] ; pid=414240 ; code=(null) ; status=0/0 }\nActiveState=active\n",
+      "transport": "test Cockpit bridge shim",
+      "real_controller_staging_transaction": true,
+      "backend": "disposable disk double, fixture signature verifier",
+      "authenticated_cockpit": false,
+      "physical_hardware": false,
+      "jobs": [
+        {
+          "id": "f19ecbcbab964e569ea12627258d234f",
+          "phase": "succeeded",
+          "action": "image.stage"
+        },
+        {
+          "id": "691b652883404575b9b217feb2ff7a82",
+          "phase": "succeeded",
+          "action": "image.arm"
+        },
+        {
+          "id": "05484f62f3fa4ace949e779643e1436f",
+          "phase": "succeeded",
+          "action": "image.cancel"
+        }
+      ]
+    }
+  },
+  "unit_tests": {
+    "administration": 55,
+    "staging": 8,
+    "bundle_policy": 3,
+    "transaction": 22,
+    "host_boot": 4,
+    "rauc_backend": 5,
+    "host_integration": 1,
+    "ui_staging": 9,
+    "cockpit_fixture": 4
+  },
+  "initial_refusal": {
+    "guest_bytes": 2147483648,
+    "diagnostic": "Insufficient upload space or inodes",
+    "production_reserve_bytes": 805306368,
+    "observed": "Actual browser upload review; no selectable file published"
+  },
+  "source_sha256": {
+    "runtime/sv08_admin.py": "367f5f9e033ec1fbfbd111c016b47ac7548f808b7ac3272c7e6fbb746b9c02eb",
+    "runtime/sv08_admin_images.py": "571a5ef6c09b17c93159457afc8b5d39bdc278d78bb8ca2ea1eeb6633724ac7b",
+    "runtime/sv08_boot.py": "acbb7aeb4f048e3c7dc9f0eee5a7bbbd457eeb25471e11a296d9512d847ac46e",
+    "runtime/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+    "runtime/sv08_rauc.py": "02755b3adf5db27381c3bfaf2303d41abaed6e575c8a32c34bb5e14853eb943d",
+    "runtime/sv08_staging.py": "8f54fbf7af84f4e978e213e5c9b5309a310321d3787d1418c9c28358e032f65a",
+    "scripts/preview_admin_ui.py": "0dfa5cf3c87f4e48d00009196bf5091bfc477b723dfbec4d9fc256de7e9ee40a",
+    "scripts/stage_admin_ui.py": "55626ce546a7949548438d49bfa57a5ee461c892bae91893ecd72e3feb40bd13",
+    "tests/cockpit_browser.mjs": "43370ff69fd98a801a29df7ff752e366775a58cc978ccd096134a34e2a79cab9",
+    "tests/cockpit_fixture.py": "141f077dd540f631d12270c1886aa5860ba9cad973a1f6686dbef4c25b3b5afb",
+    "tests/test_stage_admin_ui.py": "96dacaa3b14c3f24e45c7cb13fc1ca675fe58a61bc9255f2cb8b3e44e946880c",
+    "ui/host/index.html": "3529c93ddbe866d58a9d291b3e5f84c97417aacfef07d37fd0487761c24f8e92",
+    "runtime/sv08_admin_upload.py": "90bf08e0ff4c124decbefc99ff0770028525d22a5f45ad803e637bc8af906200",
+    "tests/cockpit_upload_cases.mjs": "779e2954b81a372b7a28f618b21de6c6e2532ccf9153e40535b4cfe5c9b31957",
+    "tests/test_admin_upload.py": "5f4a17fb13cc22279231730da3ef35e8be747d35bddb4dfd82834a0b54fac597",
+    "tests/upload_fixture.py": "5a16038e429e67b08ad4bd90fc9504af57f27f0ccb2682d76af9ae5bf13aff2b",
+    "tests/upload_protocol.mjs": "aca5f9f56a572b2af1c08f68b945669a4efe6a5698a1aad2be44e51f4fe3c739",
+    "tests/upload_signature_checks.py": "97f1bcbc08f4a2acb5623a0d8cd5a3c0a943b90ed9f5e731df85c08c0ebb4de9",
+    "ui/host/upload.js": "15cfc6d17922e78a9b60885d99e6742608ffc397e6e84109dcb93bf47370aeb7"
+  },
+  "limitations": [
+    "Real guest has no deployable slot/device backend; stage and terminal-cleanup postconditions use explicitly labelled unit doubles.",
+    "Real terminal cleanup retains immutable-root/device validation; command observations are bounded, and no image-install timeout was added.",
+    "Native memory is process-suite maximum RSS, not browser memory; the transport test measures 65536-byte slices and outstanding chunks.",
+    "No printer, physical deployment, production account/TLS provisioning, assembled-image capacity or release compatibility is certified."
+  ]
+}

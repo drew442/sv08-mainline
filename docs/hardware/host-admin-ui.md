@@ -29,7 +29,7 @@ running host's slot identity.
 | Automatic update policy | Review/apply with strict booleans and stale-state checks | Scheduler and authenticated owner provisioning |
 | Immutable/writable selection | Persistent requested mode; rejects a staged/pending update | Controlled idle reboot and assembled mode/config races |
 | Host name | Validated single DNS label saved for next boot; current connection unchanged | Target networking and naming tests |
-| Stage/arm/cancel image | Adapter calls existing signed/private staging + transaction + device backend | Reviewed board inputs and browser upload; [durable offline jobs](host-admin-image-jobs.md) implemented |
+| Stage/arm/cancel image | Adapter calls existing signed/private staging + transaction + device backend | Reviewed board inputs; [authenticated browser upload](host-admin-upload.md) implemented offline; [durable offline jobs](host-admin-image-jobs.md) implemented |
 | Additional software | Catalog selection and reviewed-operation UI contract | Reviewed catalog, dependency/space preview, actual APT adapter and customization reconciliation |
 | Network/access configuration | Scope and unavailable-state explanation | Owner onboarding, persistent credentials/certificates, network forms and rollback |
 | Recovery state inspection | Read-only, including missing/corrupt registry; no initialization | Physical block/filesystem diagnosis adapter |
