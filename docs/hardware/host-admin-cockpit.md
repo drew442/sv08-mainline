@@ -75,8 +75,8 @@ documents the Shell option. Package units remain unmodified.
 ## Reproduce without a printer
 
 Use an already prepared selected ARM64 baseline and the exact downloaded delta
-archives named by the lock. No package resolver or network download occurs during
-fixture preparation. Root is required only for private mounts, synthetic guest
+archives named by the lock. Preparation runs a pinned offline APT simulation; no network download or floating
+update occurs. Root is required only for private mounts, synthetic guest
 ownership and namespace creation; nothing installs into the workstation root.
 A fresh output directory is mandatory. The fixture uses approximately 1.3 GiB of
 allocated storage for a sparse 2 GiB ext4 filesystem plus its private overlay.

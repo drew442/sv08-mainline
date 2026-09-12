@@ -56,3 +56,11 @@ collision, a relocated GPT alternative and further family/boot-patch findings.
 The subsequent [narrow boot-source compilation](host-cb1-boot-compile.md) resolves
 the TF-A pin and produces repeatable U-Boot/BL31 artifacts. It records additional
 configuration discrepancies and does not adopt full Armbian board equivalence.
+
+## Pinned radio and kernel follow-up
+
+The [2026-09-12 source audit](host-radio-kernel-intake-20260912.md) records the
+selected Armbian external-radio source, exact SDIO match and kernel patch-tree
+inventory. It distinguishes those source observations from the running vendor
+binary and from board compatibility. No driver or platform patch set is adopted
+or hardware-validated by this intake.

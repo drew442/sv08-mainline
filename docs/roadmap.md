@@ -98,8 +98,11 @@ outstanding; this is not a flashable replacement image.
 The owner now requires [browser host administration and local recovery UI](hardware/host-admin-ui.md)
 without Linux commands. Initial Cockpit page, GTK recovery screen, guarded policy
 and image-controller tests are implemented offline. Complete software/network
-adapters, authenticated upload, independent recovery writes/export, actual login
-integration and physical input testing remain first-release requirements.
+adapters, authenticated upload, independent recovery writes/export, production
+account/TLS provisioning and physical input testing remain first-release requirements.
+[Actual Cockpit authentication](hardware/host-admin-cockpit.md) now passes
+independent offline review with real ARM64 PAM/sudo, helper/session tests and an
+exact package closure. This does not establish production LAN/TLS or board support.
 [Recovery data export](hardware/host-recovery-export.md) now has a real archive
 backend and [verified pre-mounted media admission](hardware/host-recovery-media.md)
 with GTK cancellation/apply and filesystem/block-read-only source/FAT32 fixtures.

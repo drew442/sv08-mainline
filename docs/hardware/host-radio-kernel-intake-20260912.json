@@ -1,0 +1,90 @@
+{
+  "format_version": 1,
+  "date": "2026-09-12",
+  "status": "source-intake-only-not-adopted-or-built",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "new_hardware_measurements": false,
+  "armbian_commit": "a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015",
+  "radio_commit": "be148d226d22214a173e5b2dfe4287e53685ceda",
+  "armbian_sources": [
+    {
+      "path": "config/sources/mainline-kernel.conf.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/mainline-kernel.conf.sh",
+      "sha256": "a05c0b7365b4514569b354520401c7eb9a0b66d19af2b2785cc3d245d90ba691",
+      "git_blob": "5d4567c5bcce45f30faf36ea1fd589a312815be0"
+    },
+    {
+      "path": "lib/functions/compilation/patch/drivers_network.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/patch/drivers_network.sh",
+      "sha256": "055943c37e4a9037fd4d3518507178a76345e66604ccb8263c4711aaf2cecd29",
+      "git_blob": "72dcf241a11717802c82ea0d779f67fec4a2642c"
+    },
+    {
+      "path": "lib/functions/compilation/patch/drivers-harness.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/patch/drivers-harness.sh",
+      "sha256": "5f7b8785413990adf54b8056da0d90a752fe88084a90bb27f19384160a41b76e",
+      "git_blob": "9a0616d53dc82053c61bcdf8eefb953ec3011632"
+    },
+    {
+      "path": "lib/functions/compilation/kernel-patching.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/kernel-patching.sh",
+      "sha256": "8fcb16b8328b846cd60f9bb0fd529ea737faa5615a00c83ac42bec6acc47495c",
+      "git_blob": "f3dc619928ba9efccb4647387ddac14bb34888f9"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.12/0000.patching_config.yaml",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.12/0000.patching_config.yaml",
+      "sha256": "abd6389675028e884991d22b975531f53c2927723b3b26fb33da8de639c69648",
+      "git_blob": "aa7292099cb8dbbae99db78eb27356927d84c8c3"
+    }
+  ],
+  "radio_sources": [
+    {
+      "path": "Makefile",
+      "url": "https://raw.githubusercontent.com/EvilOlaf/rtl8189ES_linux/be148d226d22214a173e5b2dfe4287e53685ceda/Makefile",
+      "sha256": "0d89125ccdecf2129da332a1143791a2bad571559d8f8f4b70dc1a4349b76b77",
+      "git_blob": "a08d1f687c16846ccb4ff9e559c195782daf76d5"
+    },
+    {
+      "path": "include/rtw_version.h",
+      "url": "https://raw.githubusercontent.com/EvilOlaf/rtl8189ES_linux/be148d226d22214a173e5b2dfe4287e53685ceda/include/rtw_version.h",
+      "sha256": "ba81ff44627319b4d056024868dd0989fb738dc561e36fc55ead3b0c44c03269",
+      "git_blob": "ad5e740d43d7601437ae46d130bcc3fc8f432d6f"
+    },
+    {
+      "path": "os_dep/linux/sdio_intf.c",
+      "url": "https://raw.githubusercontent.com/EvilOlaf/rtl8189ES_linux/be148d226d22214a173e5b2dfe4287e53685ceda/os_dep/linux/sdio_intf.c",
+      "sha256": "60a3beb6fdfcb0249ae9329451d73283c0dc084f542a65a1b21be0bb4441fd96",
+      "git_blob": "4e7117ac4f385a890c9f852e0ae98ea91f17b2d5"
+    }
+  ],
+  "linux_phy_source": {
+    "repository": "https://github.com/gregkh/linux",
+    "tag": "v6.12.107",
+    "commit": "f717995cb7dcd8998ab15516b8006aea09cfde0d",
+    "path": "drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c",
+    "url": "https://raw.githubusercontent.com/gregkh/linux/f717995cb7dcd8998ab15516b8006aea09cfde0d/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c",
+    "sha256": "a2cd4b6702c706151b94b699eaeddd3c5d95f3b88e6a752fe113618e78901138",
+    "git_blob": "4fa69c463dc4636d2cf8c75494da5a5c4ee98065"
+  },
+  "archive_inventory": {
+    "6.12": {
+      "patch_blobs": 457,
+      "sv08_paths": []
+    },
+    "6.18": {
+      "patch_blobs": 526,
+      "sv08_paths": [
+        "dt_64/sun50i-h616-sovol-sv08.dts",
+        "dt_64/sun50i-h616-sovol-sv08-max.dts"
+      ]
+    }
+  },
+  "limitations": [
+    "Patch counts are archive inventory, not applied sets.",
+    "Matching SDIO ID and version token do not identify installed source or prove driver compatibility.",
+    "Upstream PHY table inspection does not audit Debian downstream patches or every display path.",
+    "Electrical/board/boot support, source and firmware license inventory, module compilation and runtime validation remain open."
+  ]
+}
