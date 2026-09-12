@@ -226,10 +226,12 @@ def durable_identity(block):
 
 
 def same_identity(left, right):
-    # An extra attribute must not hide an already known system identity.
-    aliases = lambda value: {key.removeprefix('device/'): item for key, item in value.items()}
-    left, right = aliases(left), aliases(right)
-    return any(key in right and value == right[key] for key, value in left.items())
+    # Keep every value: two differently named attributes may normalize to the
+    # same key, and either value can identify a protected system medium.
+    return any(left_key.removeprefix('device/') == right_key.removeprefix('device/') and
+               left_value == right_value
+               for left_key, left_value in left.items()
+               for right_key, right_value in right.items())
 
 
 class MediaProvider(ExportAdapter):

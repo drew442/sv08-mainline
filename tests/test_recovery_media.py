@@ -13,7 +13,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
                                  POLICY, Unavailable, durable_identity, fingerprint, mount_table,
-                                 opened, production_adapter, trusted_file)
+                                 opened, production_adapter, same_identity, trusted_file)
 from sv08_recovery import installed_controller
 from sv08_state import Store
 
@@ -44,6 +44,10 @@ class RecoveryMediaTests(unittest.TestCase):
             mount_table(line+line.replace('41 ', '42 ', 1))
         with self.assertRaisesRegex(ValueError, 'non-block'):
             Kernel().block({'device':'0:35'})
+
+    def test_identity_matching_supports_disposable_file_identity_lists(self):
+        self.assertTrue(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 11, 1024]}))
+        self.assertFalse(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 12, 1024]}))
 
     def test_absent_and_malformed_production_contexts_are_diagnostic_only(self):
         with patch('sv08_recovery_media.trusted_file', side_effect=FileNotFoundError('Recovery context is absent')):
@@ -160,7 +164,21 @@ class RecoveryMediaTests(unittest.TestCase):
                 self.assertIn('recovery', provider.snapshot())  # Positive control.
                 blocks['/media/usb']['stable'] = {'device/wwid':'unmounted-slot-medium', 'device/serial':'extra-attribute'}
                 with self.assertRaisesRegex(ValueError, 'shares a system/source medium'):provider.snapshot()
+                # Preserve known aliases on either side, regardless of insertion
+                # order or which spelling carries the protected value.
+                protected = {'wwid':'unmounted-slot-medium'}
+                for known_key, other_key in (('wwid', 'device/wwid'), ('device/wwid', 'wwid')):
+                    pairs = [(known_key, 'unmounted-slot-medium'), (other_key, 'other-value')]
+                    for order in (pairs, list(reversed(pairs))):
+                        for side in ('destination', 'inventory'):
+                            with self.subTest(known_key=known_key, order=order, side=side):
+                                blocks['/media/usb']['stable'] = dict(order) if side == 'destination' else protected
+                                policy['system_media'][-1] = protected if side == 'destination' else dict(order)
+                                with self.assertRaisesRegex(ValueError, 'shares a system/source medium'):
+                                    provider.snapshot()
+                policy['system_media'][-1] = protected
                 blocks['/media/usb']['stable'] = {'wwid':'reviewed-3'}
+                self.assertIn('recovery', provider.snapshot())  # Distinct medium still admitted.
                 blocks['/']['filesystem_uuid'] = 'ordinary-readonly-slot-A'
                 with self.assertRaisesRegex(ValueError, 'independently reviewed identities'):provider.snapshot()
                 blocks['/']['filesystem_uuid'] = 'fs-1'

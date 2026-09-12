@@ -83,7 +83,7 @@ remains untested.
 ## Offline evidence and reproduction
 
 Final provider SHA-256:
-`c4db9d201f3479200b875193d34e37f0283facf64b3e4eda9ef02f92440a4c46`.
+`9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32`.
 The implementation and tests use no network or target hardware.
 
 ```sh
@@ -99,7 +99,7 @@ sudo unshare --mount --pid --fork --propagation private \
   --work build/recovery-media-new --execute
 ```
 
-The 40 targeted Python tests and both existing GTK regressions passed. The new
+The 41 targeted Python tests and both existing GTK regressions passed. The new
 [real mount fixture](../../tests/recovery_media_mounts.py) also passed using five
 64 MiB disposable images, private mount/PID namespaces, actual ext4/FAT mounts,
 GTK under Xvfb and the actual controller/export/provider path. It checks 352 MiB
@@ -125,9 +125,19 @@ lease, mount, block-read-only, identity and preservation checks remain shared.
 | Additional negative branches | Controlled kernel-observation doubles verify inconsistent VFS/superblock options, writable source whole medium, non-removable and same-system destinations, and a disk-sequence change during execution. Unit positive controls distinguish RO ordinary A/B/workstation identity and boot-token refusals from simple writable-root refusals. Identified loop media without the fixture exception refuse as unsupported production topology. |
 | Configuration and staging | Missing/mismatched provider sources refuse before staging. Malformed configuration tests cannot reach admission. File validation has a valid-file control; actual permission and symlink behavior is checked with ownership/ancestor observations isolated in the unit test. |
 
-The retained final fixture result is `build/recovery-media-v6/result.json`.
+Independent review rejected the first candidate's identity comparison: normalizing
+`wwid` and `device/wwid` into a dictionary could discard a known system identity.
+The corrected comparison retains every attribute/value pair on both sides,
+including fixture list values. Eight full production-snapshot cases cover both
+alias spellings, insertion orders and destination/inventory sides; each reaches
+the system-medium refusal, with distinct-medium positive controls. Substituting
+the rejected comparator reproduces four failures in that regression. All checks
+above, the real filesystem fixture and staged production-entry checks below were
+rerun against the corrected provider hash.
+
+The retained final fixture result is `build/recovery-media-alias-fix-v1/result.json`.
 Its archive SHA-256 was
-`12b54bb132c7d10908db6ba7594312d8d3b120408a76e977bd7ba9d81f34a806`.
+`5cb88d5d1ed1310ebc40ae7119178197e25c6307331e6afdc68ae4f203cc9823`.
 Generated archives/images and machine-specific context are not committed.
 
 The actual staged non-fixture `main()` was also rendered under Xvfb. This harness
@@ -159,10 +169,10 @@ fresh isolated roots produced:
 
 | UI payload | Before | After | Increase |
 | --- | ---: | ---: | ---: |
-| Host assets/helpers | 60,190 bytes | 84,465 bytes | 24,275 bytes |
-| Recovery assets/helpers | 42,631 bytes | 66,906 bytes | 24,275 bytes |
+| Host assets/helpers | 60,190 bytes | 84,562 bytes | 24,372 bytes |
+| Recovery assets/helpers | 42,631 bytes | 67,003 bytes | 24,372 bytes |
 
-The provider itself is 22,925 bytes. `integrate_host_os.py` already copies every
+The provider itself is 23,022 bytes. `integrate_host_os.py` already copies every
 runtime module; UI staging now requires and hashes this provider with the matching
 runtime. Recovery dependency inputs add one direct package, `util-linux`, for the
 exact-node read-only `blkid -p` probe (which uses libblkid). No Python dependency or
