@@ -252,7 +252,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Assemble, measure and boot the independent recovery candidate",
       "verification": {
         "decision_sha256": "2f9f8ec2650dfca8f661fe5e0211e3f75e590498405b77d9e989d331a967aaf4",
