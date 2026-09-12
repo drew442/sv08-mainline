@@ -136,3 +136,6 @@ physical USB tests remain required; boot/restore are still separate work.
 [Image job evidence](host-admin-image-jobs.md) now records durable receipts, separate
 worker supervision and browser reconnection. Authenticated Cockpit and physical
 validation remain outstanding.
+
+The image-job polling correction [preserves unfinished edits and selections](host-admin-image-jobs.md#independent-review-correction-preserve-unfinished-edits);
+its independent-review history and browser dwell evidence are recorded separately.

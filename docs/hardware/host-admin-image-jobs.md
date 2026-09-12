@@ -131,3 +131,43 @@ Original code fills ADR 0010's project-specific review/durability gap using Pyth
 systemd and Cockpit supported interfaces without new runtime dependencies or
 upstream changes. Retire it if upstream provides equivalent persistence, review
 binding, admission and reconnect semantics; retain the crash and retry regressions.
+
+## Independent review correction: preserve unfinished edits
+
+Independent browser verification rejected candidate
+`7afb16911aadcbbbb98a2986df3c79c08f7fd925`: the 1.5-second status poll rebuilt
+editable controls. A hostname draft `owner-draft`, writable-mode selection and
+unchecked automatic-update policy reverted within two seconds to the host's empty
+hostname, immutable mode and enabled policy. The earlier fast-click browser test
+did not expose that loss. The [original evidence](host-admin-image-jobs-20260912.json)
+remains historical evidence for that rejected candidate, not acceptance of its UI.
+
+The correction keeps each unfinished control separate from current server status.
+Polling updates capability/revision information and untouched controls while
+preserving local edits, including when another session changes the host. Cancelled
+or failed reviews keep drafts. A successful apply clears only its own unchanged
+draft; edits made while the response is pending and drafts in other controls stay.
+Every new review still uses the backend's current state revision.
+
+Image and package selections survive polls when their identifiers remain offered.
+If a selection disappears, the page shows an explicit unavailable-selection
+placeholder and disables the corresponding action until the user chooses again.
+Later polls do not silently select a different item. Unchanged option lists retain
+their existing DOM nodes so polling does not disturb native keyboard interaction.
+
+[Correction evidence](host-admin-image-jobs-drafts-20260912.json) preserves the
+failed before/after observation and records the new real-browser dwell regression,
+external-state changes, stale/cancelled reviews, delayed apply acknowledgement and
+selection removal/reselection checks. Reproduce with a fresh ordinary preview:
+
+```sh
+python3 scripts/preview_admin_ui.py --work build/image-drafts-new --execute
+node tests/admin_drafts_browser.mjs CHROMIUM_BINARY build/image-drafts-new build/image-drafts-browser-new
+```
+
+The browser test uses the actual disposable controller for policy/name writes.
+Its image/package lists are explicitly test-only status projections; it does not
+simulate successful image/package mutation. Unchanged worker, ARM64 diagnostic and
+transaction evidence is inherited from the original candidate with matching
+runtime hashes; it was not rerun or upgraded into production acceptance by this
+UI correction.

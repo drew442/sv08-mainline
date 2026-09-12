@@ -33,12 +33,47 @@ function capability(action, button, reason) {
     $(button).disabled = busy || jobsBusy || !cap.available;
     if (reason) $(reason).textContent = cap.available ? '' : cap.reason;
 }
+// Draft state is local to each editable control, separate from fresh host status.
+const drafts = {
+    'policy.auto': {field: 'auto_update', argument: 'enabled', read: () => $('auto-update').checked, write: value => { $('auto-update').checked = value; }},
+    'policy.mode': {field: 'requested_mode', argument: 'mode', read: () => document.querySelector('[name=mode]:checked').value,
+        write: value => document.querySelectorAll('[name=mode]').forEach(input => { input.checked = input.value === value; })},
+    'config.hostname': {field: 'hostname', argument: 'hostname', read: () => $('hostname').value, write: value => { $('hostname').value = value; }},
+};
+function renderDrafts() {
+    for (const draft of Object.values(drafts)) {
+        // Also detect edits made by autofill or input methods without an event.
+        if (draft.initialized && draft.read() !== draft.painted) draft.dirty = true;
+        if (!draft.dirty) {
+            draft.write(state[draft.field]); draft.painted = state[draft.field];
+        }
+        draft.initialized = true;
+    }
+}
+function appliedDraft(reviewed) {
+    const draft = drafts[reviewed.action];
+    if (draft && draft.read() === reviewed.arguments[draft.argument]) {
+        draft.dirty = false; draft.painted = draft.read();
+    }
+}
 function options(id, values, empty) {
-    const select = $(id); select.replaceChildren();
-    if (!values.length) values = [{id: '', label: empty}];
+    const select = $(id), previous = select.value, initialized = select.dataset.initialized === 'true';
+    const retained = values.some(item => item.id === previous);
+    if (previous && !retained) select.dataset.missing = 'true';
+    if (retained) delete select.dataset.missing;
+    if (!values.length || initialized && !retained) {
+        const label = select.dataset.missing ? 'Previous selection is unavailable. Choose another item.' : (values.length ? 'Choose an item.' : empty);
+        values = [{id: '', label}, ...values];
+    }
+    const unchanged = select.options.length === values.length && values.every((item, index) => select.options[index].value === item.id && select.options[index].textContent === item.label);
+    select.dataset.initialized = 'true';
+    if (unchanged) return; // Preserve native dropdown/focus state across ordinary polls.
+    select.replaceChildren();
     for (const item of values) {
         const option = document.createElement('option'); option.value = item.id; option.textContent = item.label; select.append(option);
     }
+    if (retained) select.value = previous;
+    else if (initialized) select.value = '';
 }
 function render() {
     $('connection').textContent = 'Host connected';
@@ -57,17 +92,15 @@ function render() {
         const text = document.createElement('p'); text.textContent = record ? `${record.release} · ${record.customized ? 'Customized — protected from replacement' : 'Standard release'}` : 'No registered state generation. Image availability must be verified before booting.';
         card.append(title, text); $('slots').append(card);
     }
-    $('auto-update').checked = state.auto_update;
-    document.querySelectorAll('[name=mode]').forEach(input => { input.checked = input.value === state.requested_mode; });
-    $('hostname').value = state.hostname;
+    renderDrafts();
     options('image-choice', state.images, 'No verified uploaded image available');
     options('package-choice', state.catalog, 'No reviewed software catalog available');
     capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
     capability('image.stage', 'stage-image', 'stage-reason'); capability('image.arm', 'arm-image', 'image-reason');
     capability('image.cancel', 'cancel-image'); capability('config.hostname', 'save-hostname', 'hostname-reason');
     capability('software.install', 'install-package', 'software-reason'); capability('software.remove', 'remove-package');
-    if (!state.images.length) $('stage-image').disabled = true;
-    if (!state.catalog.length) { $('install-package').disabled = true; $('remove-package').disabled = true; }
+    if (!$('image-choice').value) $('stage-image').disabled = true;
+    if (!$('package-choice').value) { $('install-package').disabled = true; $('remove-package').disabled = true; }
 }
 function renderJobs(result) {
     const pending = JSON.parse(localStorage.getItem('sv08-image-submission') || 'null');
@@ -121,6 +154,7 @@ $('review').addEventListener('close', async () => {
         if (image) localStorage.setItem('sv08-image-submission', JSON.stringify(message));
         const result = await request(message);
         if (image) localStorage.removeItem('sv08-image-submission');
+        else appliedDraft(plan);
         notice(result.message || 'Change completed.');
     }
     catch (error) { await submissionError(error); }
@@ -138,6 +172,12 @@ $('retry-submission').addEventListener('click', async () => {
     catch (error) { await submissionError(error); }
     finally { busy = false; await refresh(); }
 });
+for (const [selector, action] of [['#auto-update', 'policy.auto'], ['[name=mode]', 'policy.mode'], ['#hostname', 'config.hostname']]) {
+    document.querySelectorAll(selector).forEach(input => {
+        for (const event of ['input', 'change']) input.addEventListener(event, () => { drafts[action].dirty = true; });
+    });
+}
+for (const id of ['image-choice', 'package-choice']) $(id).addEventListener('change', () => { if (state) render(); });
 $('save-auto').addEventListener('click', () => review('policy.auto', {enabled: $('auto-update').checked}));
 $('save-mode').addEventListener('click', () => review('policy.mode', {mode: document.querySelector('[name=mode]:checked').value}));
 $('stage-image').addEventListener('click', () => review('image.stage', {digest: $('image-choice').value}));
