@@ -161,5 +161,10 @@ isolated test harness. It does not replace Cockpit authentication. Retire or
 update the version-sensitive proxy integration when an upstream supported API
 provides the same explicit authority lifecycle; retain these regression cases.
 Production account persistence, reset/onboarding, TLS identity, LAN policy,
-independent recovery closure, actual uploads, hardware and release acceptance
+independent recovery closure, hardware and release acceptance
 remain open in the existing checklist.
+
+The [authenticated upload extension](host-admin-upload.md) adds a real small signed
+bundle fixture via `--upload-fixture`; it uses a sparse 3 GiB disposable guest to
+retain the production upload reserve. The default authentication fixture stays
+2 GiB. Neither fixture is an A/B layout or factory-capacity fit certificate.

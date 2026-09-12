@@ -1,3 +1,4 @@
+import {uploadCases} from './cockpit_upload_cases.mjs';
 import fs from 'node:fs';import {spawn} from 'node:child_process';import {setTimeout as delay} from 'node:timers/promises';import assert from 'node:assert/strict';
 const [W,chrome] = process.argv.slice(2);
 assert(W && chrome);const results={scope:'Actual Cockpit 337/PAM/sudo in disposable ARM64 QEMU; HTTP on private namespace loopback',physical_hardware:false,production_tls:false};
@@ -15,7 +16,7 @@ try{
  const field = (selector,value) => ev(`(()=>{const p=document.querySelector(${JSON.stringify(selector)});p.value=${JSON.stringify(value)};p.dispatchEvent(new Event('input',{bubbles:true}));})()`);
  const navigate = async () => { await send('Page.navigate',{url:'http://127.0.0.1:19090/'}); await until('document.readyState==="complete"'); };
  const login = async (name,password) => ev(`fetch('/cockpit/login',{headers:{Authorization:'Basic '+btoa(${JSON.stringify(name+':'+password)}),'X-Superuser':'none'}}).then(r=>r.status)`);
- const loadShell = async () => { await navigate(); await until('!!window.sv08Session'); await until('!document.querySelector("#authorize").disabled || document.querySelector("#session-status").textContent.includes("unavailable")'); };
+ const loadShell = async () => { await navigate(); await until('!!window.sv08Session'); await until('sv08Session.elevated || !document.querySelector("#authorize").disabled || document.querySelector("#session-status").textContent.includes("unavailable")'); };
  const uid = () => ev(`cockpit.spawn(['id','-u'],{superuser:'require'}).then(x=>x.trim(),e=>e.problem)`);
  const helper = message => ev(`cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin.py'],{superuser:'require',err:'message'}).input(${JSON.stringify(JSON.stringify(message))}).then(x=>JSON.parse(x))`);
  const stateHash = () => ev(`cockpit.spawn(['/usr/bin/sha256sum','/data/sv08/state.json'],{superuser:'require'}).then(x=>x.split(' ')[0])`);
@@ -34,6 +35,8 @@ try{
  results.uid_proof={ordinary_account:await ev(`cockpit.spawn(['id','-u']).then(x=>x.trim())`)};
  const ordinary = await ev(`cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin.py']).input('{"method":"status"}').then(x=>JSON.parse(x))`);
  assert.equal(ordinary.ok,false);assert.match(ordinary.error,/Administrator access/);
+ const ordinaryUpload=await ev(`(()=>{let output='';const p=cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin_upload.py']);p.stream(x=>{output+=x});return p.input('{}\\n').then(()=>output,()=>output)})()`);
+ assert.match(ordinaryUpload,/Administrator access/);results.upload_ordinary_denial=true;
  await click('#authorize');await until('document.querySelector("#authorization").open || document.querySelector("#session-status").textContent.includes("failed")');
  if(await ev('document.querySelector("#authorization").open')) { await field('#authorization-password',creds.fixtureordinary);await click('#answer-authorization'); }
  await until('document.querySelector("#session-status").textContent.includes("failed")');assert.equal(await uid(),'access-denied');await secretsClear();results.ordinary_denial=true;console.log('ordinary denial PASS');
@@ -46,6 +49,8 @@ try{
  // Reset only finite disposable policy between development reruns.
  for(const [action,args] of [['policy.auto',{enabled:true}],['policy.mode',{mode:'immutable'}]]) { const p=await helper({method:'plan',action,arguments:args});assert.equal((await helper({method:'apply',plan:p.result})).ok,true); }
  await ev('refresh()');
+ if (fs.existsSync(W+'/signed.raucb')) { results.upload=await uploadCases({W,ev,send,until,click,helper,stateHash,loadShell,authorize}); console.log('real upload cases PASS'); }
+
  const originalHash=await stateHash();const status=await helper({method:'status'});assert.equal(status.ok,true);assert.equal(status.result.auto_update,true);
  const jobs=await helper({method:'jobs'});assert.equal(jobs.ok,true);assert.deepEqual(jobs.result.jobs,[]);
  const plan=await helper({method:'plan',action:'policy.auto',arguments:{enabled:false}});assert.equal(plan.ok,true);assert.equal(await stateHash(),originalHash);results.status_review_jobs_no_state_mutation=true;

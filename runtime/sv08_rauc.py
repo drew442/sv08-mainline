@@ -17,6 +17,7 @@ from sv08_gpt import inspect as inspect_gpt
 from sv08_bundle import inspect as inspect_bundle
 
 MIB = 1024*1024
+CLEANUP_SECONDS = 10
 SLOT_NAMES = {'rootfs.0': ('root-a', 'ext4', 'A', None),
               'boot.0': ('boot-a', 'vfat', None, 'rootfs.0'),
               'rootfs.1': ('root-b', 'ext4', 'B', None),
@@ -129,15 +130,17 @@ class Backend:
     def command(self, *args):
         return subprocess.check_output(['/usr/bin/rauc', '--conf='+str(self.config), *args], text=True)
 
-    def status(self):
+    def status(self, read_command=None):
+        if read_command:
+            return json.loads(read_command(['/usr/bin/rauc', '--conf='+str(self.config), 'status', '--output-format=json'], text=True))
         return json.loads(self.command('status', '--output-format=json'))
 
-    def validate_context(self, boot):
+    def validate_context(self, boot, read_command=None):
         if os.geteuid() != 0:
             raise ValueError('RAUC backend operations require root')
         if self.fixture:
             if ('sv08.test=rauc-backend' not in Path('/proc/cmdline').read_text().split() or
-                    subprocess.check_output(['systemd-detect-virt', '--vm'], text=True).strip() != 'qemu' or
+                    (read_command or subprocess.check_output)(['systemd-detect-virt', '--vm'], text=True).strip() != 'qemu' or
                     Path('/sys/block/vda/serial').read_text().strip() != 'SV08-QEMU-DISPOSABLE' or
                     self.manifest.get('deployable') is not False):
                 raise ValueError('Backend fixture requires the identified disposable VM')
@@ -153,7 +156,7 @@ class Backend:
         packaged = json.loads(Path('/usr/share/doc/sv08-klipper/release.json').read_text())
         if packaged['source_commit'] != self.policy['klipper_commit']:
             raise ValueError('Installed host Klipper differs from the permitted MCU-compatible pin')
-        verify_devices(self.manifest, boot['slot'])
+        verify_devices(self.manifest, boot['slot'], read_command=read_command)
         validate_config(self.config.read_text(), self.manifest, self.policy, self.keyring)
         info = {name: block_info(path) for name, path in self.manifest['devices'].items()}
         parent = validate_geometry(info, self.layout, self.policy)
@@ -186,18 +189,36 @@ class Backend:
             for part in self.layout['partitions']]
         if gpt['partition_records'] != expected_records:
             raise ValueError('On-disk GPT identities disagree with the running partition map')
-        output = subprocess.check_output(['/usr/bin/fw_printenv', '-c', str(self.env_config),
+        output = (read_command or subprocess.check_output)(['/usr/bin/fw_printenv', '-c', str(self.env_config),
             'sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT'], text=True)
         lines = output.splitlines()
         if len(lines) != 4:
             raise ValueError('Unexpected environment response')
         validate_environment(dict(line.split('=', 1) for line in lines), environment['layout_id'])
-        validate_status(self.status(), self.manifest, self.policy, boot)
+        validate_status(self.status(read_command), self.manifest, self.policy, boot)
         mounted = {line.split()[2] for line in Path('/proc/self/mountinfo').read_text().splitlines()}
         other = 'b' if boot['slot'] == 'A' else 'a'
         if any(info[kind+'-'+other]['number'] in mounted for kind in ('boot', 'root')):
             raise ValueError('Inactive target filesystem is mounted')
         self.boot = dict(boot)
+
+    def cleanup_observation(self, boot, lease_fd):
+        """Bound only new read-only cleanup probes; install duration is unchanged.
+
+        Retains the existing immutable/identified backend context requirement.
+        """
+        import time
+        from sv08_bundle import manifest_output
+        deadline = time.monotonic()+CLEANUP_SECONDS
+        def read(command, **kwargs):
+            remaining = deadline-time.monotonic()
+            if remaining <= 0: raise ValueError('Cleanup backend observation timed out')
+            return manifest_output(command, lease_fd=lease_fd, seconds=remaining).decode()
+        self.validate_context(boot, read_command=read)
+        status = self.status(read)
+        slots = {name: value for item in status['slots'] for name, value in item.items()}
+        return dict(primary={'rootfs.0':'A', 'rootfs.1':'B', None:None}[status['boot_primary']],
+                    good={slot:slots['rootfs.'+str(index)]['boot_status']=='good' for index,slot in enumerate(('A','B'))})
 
     def primary(self):
         return {'rootfs.0': 'A', 'rootfs.1': 'B', None: None}[self.status()['boot_primary']]

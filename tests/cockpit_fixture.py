@@ -104,6 +104,12 @@ def prepare(args):
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, runtime / path.name)
         staging = stage(work, 'host', True)
         # Fixture-only changes below are never produced by production staging.
+        upload_fixture = getattr(args, 'upload_fixture', None)
+        if upload_fixture:
+            shutil.copyfile(upload_fixture / 'policy.json', runtime / 'update-policy.json')
+            (root / 'etc/rauc').mkdir(exist_ok=True)
+            shutil.copyfile(upload_fixture / 'keyring.pem', root / 'etc/rauc/release-keyring.pem')
+            shutil.copyfile(upload_fixture / 'signed.raucb', work / 'signed.raucb')
         config = root / 'etc/cockpit/cockpit.conf'
         config.write_text(config.read_text()+'AllowUnencrypted=true\n')
         credentials = {name: secrets.token_urlsafe(24) for name in ('fixtureadmin', 'fixtureordinary')}
@@ -124,6 +130,7 @@ from pathlib import Path
 from sv08_state import Store
 s=Store('/data/sv08',reserve_bytes=0)
 s.initialize()
+Path('/data/sv08/uploads').mkdir(mode=0o700, exist_ok=True)
 b=s.prepare_boot('A','cockpit-fixture')
 b['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
 Path('/run/sv08').mkdir(exist_ok=True)
@@ -153,14 +160,14 @@ Path('/run/sv08/boot.json').write_text(json.dumps(b))
         for path in owned:
             if path.stat().st_uid != 0 or path.stat().st_mode & 0o022: raise ValueError('Unsafe staged ownership/mode: '+str(path))
         permissions = {str(p.relative_to(root)): dict(uid=p.stat().st_uid, gid=p.stat().st_gid, mode=oct(p.stat().st_mode & 0o7777)) for p in owned}
-        run(['truncate', '-s', '2G', work / 'guest.ext4'])
+        run(['truncate', '-s', '3G' if upload_fixture else '2G', work / 'guest.ext4'])
         run(['mkfs.ext4', '-q', '-F', '-d', root, work / 'guest.ext4'])
         kernel = lower / 'boot/vmlinuz-6.12.107+deb13-arm64'; initrd = lower / 'boot/initrd.img-6.12.107+deb13-arm64'
         report = dict(format_version=1, deployable=False, baseline=before, root=root_inventory, staging=staging,
                       permissions=permissions, pam_and_sudo_policy_preserved=preserved_policy and cockpit_pam,
                       delta_download_bytes=sum(p['bytes'] for p in packages['delta']),
                       kernel=dict(path=str(kernel), sha256=digest(kernel)), initrd=dict(path=str(initrd), sha256=digest(initrd)),
-                      image_sha256=digest(work / 'guest.ext4'), baseline_preserved=None,
+                      image_sha256=digest(work / 'guest.ext4'), image_bytes=(work / 'guest.ext4').stat().st_size, baseline_preserved=None,
                       scope='offline full ARM64 QEMU fixture; synthetic accounts; no printer or production activation')
     finally:
         for path in reversed(mounted): run(['umount', path])
@@ -188,7 +195,7 @@ def boot(args):
         if digest(Path(report[name]['path'])) != report[name]['sha256']: raise ValueError('Boot artifact changed')
     image = work / 'guest.ext4'; image_stat = image.lstat()
     if (not stat.S_ISREG(image_stat.st_mode) or image_stat.st_nlink != 1 or
-            image_stat.st_uid != os.geteuid() or image_stat.st_size != 2 * 1024**3 or
+            image_stat.st_uid != os.geteuid() or image_stat.st_size != report.get('image_bytes', 2 * 1024**3) or
             work.stat().st_mode & 0o077): raise ValueError('Expected a private owned regular fixture image')
     if digest(image) != report['image_sha256']: raise ValueError('Fixture image changed; prepare a fresh image')
     if not args.execute: return dict(execute=False, work=str(work), loopback_port=19090)
@@ -232,5 +239,6 @@ if __name__ == '__main__':
     parser.add_argument('--baseline', type=Path)
     parser.add_argument('--intake', type=Path)
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--upload-fixture', type=Path)
     args = parser.parse_args()
     print(json.dumps(prepare(args) if args.operation == 'prepare' else boot(args), indent=2))

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Private, bounded bundle intake for a future authenticated update service.
 
-No network endpoint or installer. The caller must authorize the uploader, hold
-its state lock, and provide signed-bundle verification. Directory ownership and a
+No network endpoint or installer. Intake admission orders ledger → state → upload,
+then retains only upload through receipt; never reacquire ledger/state under upload.
+Legacy explicit-digest callers may retain state. Callers authorize and verify. Directory ownership and a
 lease prevent an ordinary application from replacing the verified upload. This
 fills the project's staging gap; retire if upstream supplies equivalent intake.
 """
@@ -14,6 +15,7 @@ from pathlib import Path
 import re
 import stat
 import uuid
+import ctypes
 
 MIB = 1024 * 1024
 
@@ -24,6 +26,7 @@ class Staging:
         self.max_bytes, self.reserve_bytes = max_bytes, reserve_bytes
         # owner_uid is injectable for unprivileged tests, not a service option.
         self.owner_uid = owner_uid
+        self.lease_fd = None
         if type(max_bytes) is not int or max_bytes <= 0 or type(reserve_bytes) is not int or reserve_bytes < 0:
             raise ValueError('Invalid staging limits')
         for path in (*reversed(self.root.parents), self.root):
@@ -45,7 +48,10 @@ class Staging:
                     entry.st_nlink != 1 or stat.S_IMODE(entry.st_mode) != 0o600):
                 raise ValueError('Invalid staging lock')
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            yield
+            previous = self.lease_fd
+            self.lease_fd = fd
+            try: yield
+            finally: self.lease_fd = previous
         finally:
             os.close(fd)
 
@@ -72,42 +78,62 @@ class Staging:
             raise ValueError('Authenticated file digest differs from the uploaded digest')
         return proof
 
-    def receive(self, stream, size, digest, verify):
-        destination = self.path(digest)
+    def busy(self):
+        try:
+            with self.locked(): return False
+        except BlockingIOError: return True
+
+    def preflight(self, size):
         if type(size) is not int or not 0 < size <= self.max_bytes:
             raise ValueError('Upload exceeds the bundle budget')
+        if any(path.name != '.lock' for path in self.root.iterdir()):
+            raise ValueError('Resolve existing staged or interrupted uploads first')
+        fs = os.statvfs(self.root)
+        block = fs.f_frsize or fs.f_bsize
+        allocated = ((size + block - 1) // block) * block
+        if fs.f_bavail * block < allocated + self.reserve_bytes or fs.f_favail < 130:
+            raise ValueError('Insufficient upload space or inodes')
+
+    def receive(self, stream, size, digest, verify):
+        self.path(digest)  # Preserve strict explicit-digest API.
         with self.locked():
-            if any(path.name != '.lock' for path in self.root.iterdir()):
-                raise ValueError('Resolve existing staged or interrupted uploads first')
-            fs = os.statvfs(self.root)
-            block = fs.f_frsize or fs.f_bsize
-            allocated = ((size + block - 1) // block) * block
-            if fs.f_bavail * block < allocated + self.reserve_bytes or fs.f_favail < 130:
-                raise ValueError('Insufficient upload space or inodes')
-            temporary = self.root / ('.partial-' + uuid.uuid4().hex)
-            try:
-                fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-                with os.fdopen(fd, 'wb') as output:
-                    remaining, checksum = size, hashlib.sha256()
-                    while remaining:
-                        chunk = stream.read(min(MIB, remaining))
-                        if not isinstance(chunk, bytes) or not chunk or len(chunk) > remaining:
-                            raise ValueError('Truncated or invalid upload stream')
-                        output.write(chunk); checksum.update(chunk); remaining -= len(chunk)
-                    if stream.read(1) != b'':
-                        raise ValueError('Upload exceeds its declared length')
-                    output.flush(); os.fsync(output.fileno())
-                    os.fchmod(output.fileno(), 0o400)
-                    os.fsync(output.fileno())
-                if checksum.hexdigest() != digest:
-                    raise ValueError('Upload checksum mismatch')
-                proof = self.verify_file(temporary, digest, verify)
-                os.rename(temporary, destination)
-                self.sync()
-                return destination, proof
-            finally:
-                temporary.unlink(missing_ok=True)
-                self.sync()
+            return self.receive_locked(stream, size, verify, digest)
+
+    def receive_locked(self, stream, size, verify, digest=None):
+        """Caller owns upload lease for entire call; never acquire higher locks."""
+        self.preflight(size)
+        temporary = self.root / ('.partial-' + uuid.uuid4().hex)
+        try:
+            fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(fd, 'wb') as output:
+                remaining, checksum = size, hashlib.sha256()
+                while remaining:
+                    chunk = stream.read(min(65536, remaining))
+                    if not isinstance(chunk, bytes) or not chunk or len(chunk) > remaining:
+                        raise ValueError('Truncated or invalid upload stream')
+                    output.write(chunk); checksum.update(chunk); remaining -= len(chunk)
+                if stream.read(1) != b'':
+                    raise ValueError('Upload exceeds its declared length')
+                output.flush(); os.fsync(output.fileno())
+                os.fchmod(output.fileno(), 0o400); os.fsync(output.fileno())
+            actual = checksum.hexdigest()
+            if digest is not None and actual != digest:
+                raise ValueError('Upload checksum mismatch')
+            proof = self.verify_file(temporary, actual, verify)
+            destination = self.path(actual)
+            # Linux atomic no-replace publication leaves exactly one name even
+            # under SIGKILL; link/unlink would leave uncleanable hardlink aliases.
+            libc = ctypes.CDLL(None, use_errno=True)
+            rename = getattr(libc, 'renameat2', None)
+            if rename is None: raise ValueError('Atomic no-replace publication unavailable')
+            if rename(-100, os.fsencode(temporary), -100, os.fsencode(destination), 1) != 0:
+                error = ctypes.get_errno()
+                raise OSError(error, os.strerror(error))
+            self.sync()
+            return destination, proof
+        finally:
+            temporary.unlink(missing_ok=True)
+            self.sync()
 
     @contextmanager
     def lease(self, digest, verify):

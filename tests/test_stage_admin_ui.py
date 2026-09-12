@@ -88,3 +88,11 @@ class StageUITests(unittest.TestCase):
         (self.work / 'rootfs/usr/lib/sv08/sv08_admin_jobs.py').unlink()
         with self.assertRaisesRegex(ValueError, 'sv08_admin_jobs'): stage(self.work, 'host', True)
         self.assertFalse((self.work / 'rootfs/usr/share/cockpit').exists())
+
+    def test_upload_dependency_mismatch_refuses_before_staging(self):
+        for name in ('sv08_admin_upload.py','sv08_staging.py','sv08_bundle.py','sv08_rauc.py','sv08_boot.py'):
+            path=self.work/'rootfs/usr/lib/sv08'/name;original=path.read_bytes()
+            path.write_text('older core')
+            with self.assertRaisesRegex(ValueError,name):stage(self.work,'host',True)
+            self.assertFalse((self.work/'rootfs/usr/share/cockpit').exists())
+            path.write_bytes(original)

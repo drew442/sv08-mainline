@@ -33,14 +33,14 @@ def device_number(path):
     return f'{os.major(st.st_rdev)}:{os.minor(st.st_rdev)}'
 
 
-def verify_devices(config, slot):
+def verify_devices(config, slot, read_command=None):
     expected_root = device_number(config['devices']['root-' + slot.lower()])
     expected_data = device_number(config['devices']['data'])
     expected_boot = device_number(config['devices']['boot-' + slot.lower()])
     if len({expected_root, expected_data, expected_boot}) != 3:
         raise ValueError('Root, boot and data must be different partitions')
     for mount, expected in (('/', expected_root), ('/data', expected_data)):
-        actual = subprocess.check_output(['findmnt', '-n', '-o', 'MAJ:MIN', '--mountpoint', mount], text=True).strip()
+        actual = (read_command or subprocess.check_output)(['findmnt', '-n', '-o', 'MAJ:MIN', '--mountpoint', mount], text=True).strip()
         if actual != expected:
             raise ValueError('Mounted device differs from release manifest: ' + mount)
 

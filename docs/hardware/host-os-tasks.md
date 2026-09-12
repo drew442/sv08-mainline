@@ -115,10 +115,11 @@ enumeration were re-established on 2026-09-12; see the
   [Cockpit integration](host-admin-cockpit.md) now pins the host delta and tests
   real isolated PAM/sudo/helper sessions; recovery, production identity/TLS and
   assembled-image acceptance remain open.
-- [ ] Finish bounded browser upload, signature/error/progress presentation and
-  jobs that survive a closed browser or dropped LAN connection.
-  [Durable image jobs](host-admin-image-jobs.md) now pass an offline browser/worker
-  fixture; upload transport and authenticated production/physical checks remain open.
+- [x] Implement bounded browser upload, signature/error/progress presentation and
+  jobs that survive a closed browser or dropped LAN connection offline.
+  [Authenticated upload](host-admin-upload.md) and [durable image jobs](host-admin-image-jobs.md)
+  pass their actual Cockpit and independent-worker fixtures. Production/physical
+  acceptance remains in the release and human checks below.
 - [ ] Deliver reviewed resolution of ambiguous image-job receipts and bounded
   history rollover, preserving retry identities and original outcomes. Include
   RAUC service-side inactivity evidence before releasing the admission gate;
