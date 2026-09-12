@@ -186,7 +186,7 @@
       }
     },
     {
-      "blocker": "Printer offline; reviewed independent recovery candidate and attended physical tests required.",
+      "blocker": "Printer online as of 2026-09-12; reviewed independent recovery image/preparer and attended named-profile physical tests still required.",
       "checks": [
         "physical"
       ],

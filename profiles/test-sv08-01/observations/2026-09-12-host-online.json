@@ -1,0 +1,133 @@
+{
+  "date": "2026-09-12",
+  "profile": "test-sv08-01",
+  "board_revisions": null,
+  "evidence_level": "live-read-only-host-enumeration",
+  "kernel": "5.16.17-sun50iw9",
+  "architecture": "aarch64",
+  "printer_services": {
+    "klipper": "inactive",
+    "moonraker": "inactive",
+    "KlipperScreen": "inactive"
+  },
+  "wifi": {
+    "sdio_vendor": "0x024c",
+    "sdio_device": "0xf179",
+    "sdio_class": "0x07",
+    "driver": "rtl8189fs",
+    "module": "8189fs",
+    "module_version": "v5.7.9_35795.20191128",
+    "module_srcversion": "C42020DF3E916355F46B74F",
+    "module_alias": "sdio:c*v024CdF179*",
+    "module_intree_in_running_vendor_kernel": true,
+    "upstream_support_validated": false,
+    "association_tested": false
+  },
+  "camera": {
+    "usb_vendor": "364d",
+    "usb_product": "6366",
+    "product": "MGS1: MGS1",
+    "driver": "uvcvideo",
+    "descriptor_formats": [
+      "MJPEG",
+      "YUY2"
+    ],
+    "descriptor_mjpeg_sizes": [
+      [
+        1280,
+        720
+      ],
+      [
+        800,
+        480
+      ],
+      [
+        672,
+        456
+      ],
+      [
+        640,
+        480
+      ],
+      [
+        320,
+        240
+      ]
+    ],
+    "descriptor_mjpeg_intervals_100ns": [
+      333333,
+      400000,
+      500000,
+      666666,
+      1000000,
+      2000000
+    ],
+    "v4l2_formats_queried": true,
+    "frames_captured": false,
+    "v4l2_formats": [
+      "MJPG",
+      "YUYV"
+    ],
+    "v4l2_mjpeg_640x480_intervals_seconds": [
+      [
+        1,
+        30
+      ],
+      [
+        1,
+        25
+      ],
+      [
+        1,
+        20
+      ],
+      [
+        1,
+        15
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        1,
+        5
+      ]
+    ],
+    "format_negotiated": false
+  },
+  "display": {
+    "hdmi_status": "connected",
+    "framebuffer": "sun4i-drmdrmfb",
+    "framebuffer_pixels": [
+      1024,
+      600
+    ],
+    "bits_per_pixel": 32,
+    "touch_usb_vendor": "1a86",
+    "touch_usb_product": "e5e3",
+    "touch_input_name": "wch.cn USB2IIC_CTP_CONTROL",
+    "physical_interaction_tested": false
+  },
+  "boot": {
+    "root_device_at_capture": "/dev/mmcblk2p2",
+    "root_filesystem": "ext4",
+    "root_writable": true,
+    "selected_dtb": "sun50i-h616-sovol-emmc.dtb",
+    "uboot_mmc_index_verified": false,
+    "redundant_environment_verified": false
+  },
+  "private_capture_sha256": {
+    "host.json": "67b0b6d594689b8142b9035775198ed6ce4a6eabaae1e15d0496a5e34e01a572",
+    "camera-usb-descriptors.json": "b81e35f7341f013f34cbe88603cf646106e9aa59a3171d676524934de3d85dff",
+    "wifi-module-fields.json": "77960cfb93b4460e0a56896facbbb281560059dbff60c93ae901dff3efa4416c",
+    "boot-files.json": "a1674d9c5d3da6ab3346049127fdb775aa096743f7273aa6ca28a307254b2989",
+    "v4l2-query.json": "506739270914b0c39aab2d7f32da89dc15463a9878d6f153bb46f3bf2094631f",
+    "v4l2-query.py": "c83beb15afa7eb92fb427cb29aaf1e5de504fd1273cf724ec77e4737ea3d7cd8",
+    "v4l2-abi.json": "7d81d74837e8a8db94b433953440fcbe41efe91f0e5f2d1f2ac9e94e7b1eba5a",
+    "v4l2-abi.c": "586fbb48df94a0dc770ade170100b8007be4a30017099a0b869c14dbe34df56e"
+  },
+  "outputs_or_services_activated": false,
+  "printing_validated": false,
+  "record": "docs/hardware/test-sv08-01-online-20260912.md"
+}

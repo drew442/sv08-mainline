@@ -11,6 +11,10 @@ values until inspection. The [stock profile](../../profiles/stock-sv08/profile.j
 is a comparison reference, not inherited electrical or calibration configuration.
 Connection details and raw captures belong in ignored `local/test-sv08-01/`.
 
+The [2026-09-12 return-online inspection](test-sv08-01-online-20260912.md) records
+the bound SDIO radio driver, camera descriptors and display/input enumeration.
+It does not validate the new host image or physical printer operation.
+
 Current follow-up: [firmware artifact evidence](test-sv08-01-firmware.md) and
 [recovery preparation](test-sv08-01-recovery.md). The owner has an ST-Link, an
 eMMC USB reader and a spare nominal 32 GB eMMC module; adapter/module models and

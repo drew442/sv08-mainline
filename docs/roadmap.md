@@ -108,6 +108,13 @@ read volume on the approved fixture while retaining complete-byte integrity chec
 The independent recovery image, trusted premount integration and physical export
 tests remain outstanding.
 
+The printer returned online on 2026-09-12. A
+[read-only host inspection](hardware/test-sv08-01-online-20260912.md) now identifies
+the SDIO radio's bound driver, confirms the retained camera offers MJPEG
+640×480/15 fps through V4L2, and records HDMI/touch enumeration and unresolved
+kernel diagnostics. This is evidence from the existing bring-up image; new-image
+boot, Wi-Fi operation, camera capture and physical UI tests remain open.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with

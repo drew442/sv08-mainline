@@ -1,7 +1,9 @@
 # Host OS completion checklist
 
-Updated 2026-09-11. This is the completion gate for the new host, not a claim
-that all project work is complete. Printer remains offline for this work.
+Updated 2026-09-12. This is the completion gate for the new host, not a claim
+that all project work is complete. Printer availability and read-only host
+enumeration were re-established on 2026-09-12; see the
+[online evidence](test-sv08-01-online-20260912.md).
 
 ## Completed offline
 
@@ -138,9 +140,12 @@ These do not prevent the independent offline work above.
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.
   Do not remove heatsinks or powered components merely to obtain a marking.
-- [ ] Restore printer availability for read-only radio SDIO identity/driver,
-  camera formats, boot environment and display diagnostics. Confirm availability
-  in the session; no probing is needed while it is deliberately offline.
+- [x] Restore printer availability and collect radio SDIO identity/driver,
+  camera descriptor and V4L2 formats, boot-file and display enumeration evidence;
+  [2026-09-12 results](test-sv08-01-online-20260912.md) preserve operation limits.
+- [ ] Test negotiated MJPEG 640×480/15 fps capture; USB descriptors and kernel
+  format enumeration do not validate capture or streaming. Validate Wi-Fi
+  operation on the selected new kernel without disrupting the recovery connection.
 - [ ] Arrange boot-console capture for the first new boot-chain test where
   practical; retain the factory eMMC and the verified private MCU backups.
 - [ ] Preserve current spare-module data/image before writing a future reviewed
