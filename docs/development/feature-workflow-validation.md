@@ -4,6 +4,9 @@ Date: 2026-09-12. Scope: workstation coordination and separate live review.
 Product-pilot implementation and physical acceptance are recorded separately in
 the [media export](../features/recovery-media-export/proposal.md) and
 [readback improvement](../features/recovery-export-readback/proposal.md) records.
+Both offline tasks are complete; the [pilot report](feature-workflow-pilot.md)
+records delivery review, measured results and successful validation from a fresh
+clone. Physical acceptance remains open.
 
 ## Deterministic checks and independent review
 
@@ -64,8 +67,8 @@ That client inherits its parent permissions, so read-only reviewer instructions
 are not an enforced sandbox. The dispatcher launches no processes and grants no
 additional isolation. No printer or private backup access was needed. Unattended
 scheduling remains disabled; deployment requires a restricted runner whose actual
-permissions are verified. This limitation does not prevent the attended offline
-pilot using separate implementer and reviewer sessions.
+permissions are verified. The attended offline pilot completed using separate
+implementer and reviewer sessions under these documented limits.
 
 Repeat the deterministic checks with:
 

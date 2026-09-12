@@ -1,7 +1,9 @@
 # 0011: Feature delivery with delegated agent approval
 
-Date: 2026-09-11. Status: accepted by the owner; implementation and offline pilot
-in progress.
+Date: 2026-09-11. Status: accepted by the owner; implementation and the bounded
+offline pilot completed on 2026-09-12. See the
+[pilot report](../development/feature-workflow-pilot.md). Physical recovery
+acceptance and unattended scheduling remain outside that completion.
 
 ## Decision
 

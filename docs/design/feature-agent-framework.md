@@ -2,7 +2,8 @@
 
 Date: 2026-09-11. Status: approved by the owner, including delegated approval and
 the offline pilot; see [decision 0011](../decisions/0011-feature-agent-workflow.md).
-Implementation follows this design. Scheduling and hardware operations require
+The [implementation and offline pilot](../development/feature-workflow-pilot.md)
+are complete. Scheduling and hardware operations require
 their own applicable configuration and authorization.
 
 ## Recommendation

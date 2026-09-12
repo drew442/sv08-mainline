@@ -8,6 +8,9 @@ review formats and interruption handling. Workstation dependencies are Python
 
 [Offline validation](../docs/development/feature-workflow-validation.md) records
 the deterministic checks, independent review and current runner limitations.
+The completed [offline pilot](../docs/development/feature-workflow-pilot.md)
+records both deliveries, a rejected candidate and independently verified correction,
+and the measured readback improvement.
 
 Read `AGENTS.md`, the project definition, roadmap, applicable profile and relevant
 accepted decisions. Load only the feature records needed for the current work.
