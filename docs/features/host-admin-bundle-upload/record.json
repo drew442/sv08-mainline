@@ -1,0 +1,108 @@
+{
+  "author": "root-upload-design",
+  "checks": [
+    {
+      "description": "Actual authenticated fixed-helper browser upload with real signed RAUC fixture and no OS activation or ordinary-user access.",
+      "environment": "offline",
+      "id": "real-upload"
+    },
+    {
+      "description": "Bounded binary chunk/ack transport, metadata/output/size/time/space limits, real signature and policy refusal, truthful verification scope.",
+      "environment": "offline",
+      "id": "bounds"
+    },
+    {
+      "description": "Cancellation, process loss and reconnect retain truthful managed state; reviewed exact-object cleanup refuses stale/referenced/linked objects and never replays.",
+      "environment": "offline",
+      "id": "disconnect-cleanup"
+    },
+    {
+      "description": "Responsive status and policy during stalled transfer; ordered upload/job/state/lease exclusion under upload/discard/stage races.",
+      "environment": "offline",
+      "id": "concurrency"
+    },
+    {
+      "description": "Fixed installed staging and diagnostics, measured bounds, affected runtime/browser and repository consistency checks with honest evidence boundaries.",
+      "environment": "offline",
+      "id": "integration"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "real-upload",
+          "integration"
+        ],
+        "text": "Dispatch only after the declared Cockpit integration dependency is independently completed, then extend its real authenticated disposable environment. Preserve fixed installed helper/policy/keyring, ordinary-user privilege rejection, existing drafts and job durability, no slot/boot/state initialization or activation, and separate offline versus hardware/release evidence."
+      },
+      {
+        "checks": [
+          "concurrency"
+        ],
+        "text": "Document and test complete lock ordering across intake, discard, Controller capability/status, Jobs.submit/work and Transaction. Brief admission may acquire ledger then state then upload; retain only upload during streaming/verification/publication and never reacquire state or ledger while holding upload. Fresh and stale image submissions during intake must refuse before creating an ambiguous durable job. Deterministically race admission on both sides, including queued/running/interrupted image work; demonstrate responsive status, history and unrelated policy writes. Retain leased stage reauthentication and all current-state/customization/idle guards."
+      },
+      {
+        "checks": [
+          "bounds",
+          "disconnect-cleanup",
+          "integration"
+        ],
+        "text": "Enforce finite server-side metadata, transfer size, chunk/window, inactivity and overall deadlines and bounded output, including RAUC verification subprocess output and duration; browser-only timeouts are insufficient. Release the lease on timeout/process termination without leaving verifier children able to access a published or discarded object. Test malformed/fragmented acknowledgements, truncated/excess input and a stalled verifier, with measured memory/storage bounds. Preserve the explicit-digest API and truthful manifest-only verification scope."
+      },
+      {
+        "checks": [
+          "disconnect-cleanup",
+          "concurrency"
+        ],
+        "text": "Cleanup must reauthorize the exact reviewed managed file under consistent transaction/job and upload exclusion, binding object identity and revision and refusing stale/replaced/linked/referenced or ambiguous objects. Preserve previous partials until separately reviewed, retain diagnostic/reconciliation dependencies, and clean only the current unpublished temporary file automatically. Reconnect and lost final acknowledgement must inspect actual managed state and never infer publication from acknowledged byte count or replay operations."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "f36e33a0e8ffcb5e20209c1ca606dccf47a5c8edd55bd76528616710ad0aa87d",
+    "rationale": "ADR 0010 explicitly requires authenticated bounded upload, signature errors, guarded image staging and usable administration. This finishes that accepted workflow without expanding authority. Current Staging.receive has no browser transport and holds an exclusive staging lease; HostImages only lists completed digest names. Selected cockpit-bridge 337-1+deb13u2 archive hash matches the proposal; its packaged cockpit.js implements binary input, streaming and immediate-return input without a drain promise, supporting the proposed bounded acknowledgement protocol. Jobs.submit currently plans while holding ledger.lock, Controller.status obtains state, and Transaction.source_admitted uses state then upload, so the proposed brief coordinated admission and upload-only transfer requires the concurrency constraints below. sv08_bundle.inspect authenticates a RAUC manifest and explicitly returns full_payload_verified=false; its currently unbounded check_output must not defeat new transport bounds. Reviewed cleanup is necessary because receive currently refuses any existing completed or interrupted upload, and is bounded by existing preservation requirements. Approval covers offline implementation only, after host-admin-cockpit-integration:implement is done; no hardware operation, deployment, activation, account provisioning, publication or job reconciliation is authorized. Primary Cockpit process API https://docs.cockpit-project.org/cockpit-guide/main/guide/cockpit-spawn.html accessed 2026-09-12 corroborates binary streams and repeated input; selected package source is the version-specific evidence. Proposal and requirement hashes were independently computed, and the actual review-context CLI branch computed scope against the private record through a read-only path overlay; the coordinator must compare the unmodified CLI context after byte-identical public staging before importing.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "upload-feature-approver",
+    "scope_sha256": "038ca903323190cb75d02c6aba843dbea68564d471a5e3b760da0f7cd6bf7237",
+    "session": "root-upload-approver-20260912-independent"
+  },
+  "format_version": 1,
+  "id": "host-admin-bundle-upload",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/host-admin-bundle-upload/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "real-upload",
+        "bounds",
+        "disconnect-cleanup",
+        "concurrency",
+        "integration"
+      ],
+      "depends_on": [
+        "host-admin-cockpit-integration:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and verify bounded authenticated bundle intake and cleanup",
+      "verification": null
+    }
+  ],
+  "title": "Upload and inspect signed OS bundles through the authenticated host console"
+}

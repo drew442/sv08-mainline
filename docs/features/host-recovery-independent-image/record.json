@@ -1,0 +1,121 @@
+{
+  "author": "root-recovery-design",
+  "checks": [
+    {
+      "description": "Exact independent pinned recovery package and boot/runtime closure.",
+      "environment": "offline",
+      "id": "closure"
+    },
+    {
+      "description": "Complete populated512MiB recovery filesystem with measured headroom and resource bounds.",
+      "environment": "offline",
+      "id": "capacity"
+    },
+    {
+      "description": "Actual read-only ARM64 recovery GTK service boot and restart with A/B roots absent.",
+      "environment": "offline",
+      "id": "independent-boot"
+    },
+    {
+      "description": "Boot-content identity failures refuse; unsupported media capabilities remain unavailable.",
+      "environment": "offline",
+      "id": "identity-refusal"
+    },
+    {
+      "description": "Reproducible isolated staging/build, preservation, relevant UI and foundation checks.",
+      "environment": "offline",
+      "id": "integration"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "capacity",
+          "independent-boot",
+          "integration"
+        ],
+        "text": "Dispatch only after host-admin-bundle-upload:implement completes. Deliver the full measured 512 MiB filesystem and actual independent ARM64 GTK boot/restart checks before marking this task done. Failed compression/fit or failed boot requires a recorded blocker or changed-method resumption, never a waiver of capacity/boot acceptance. Keep full-disk partition sizes unchanged and preserve separate canonical work for board boot, physical inputs, premounter/provider integration and recovery operations."
+      },
+      {
+        "checks": [
+          "closure",
+          "capacity",
+          "independent-boot",
+          "integration"
+        ],
+        "text": "Resolve and record the exact pinned closure including real UI imports, accessibility/input/fonts, own kernel, generated initramfs and hard/soft module dependencies for the explicit VM profile. Preserve runtime and license material; explain deterministic exclusions and dpkg metadata semantics. Measure populated ext4 usable blocks/inodes, complete compressed and uncompressed sizes, resource peaks and remaining headroom. VM-profile fit must not be labelled complete H616 driver/firmware or final release fit; record additions still requiring sizing. All indispensable VM boot artifacts must also reside in the candidate, with direct QEMU-loaded kernel/initramfs proven byte-identical to those contents."
+      },
+      {
+        "checks": [
+          "closure",
+          "identity-refusal",
+          "independent-boot"
+        ],
+        "text": "For compressed /usr, initramfs must contain its own executable/library/module closure and verify the reviewed manifest binding, fixed image path, size/hash and actual read-only backing/mount identity before executing anything from /usr or enabling the display service. Reject missing, changed, substituted and unexpected backing inputs in actual boot tests. Retain the physical ext4 recovery envelope read-only without journal replay and expose only reviewed bounded runtime writes. The service marker alone cannot bypass this gate, and a manifest hash is not an authenticated-boot claim. Record the final format and boot contract in an ADR."
+      },
+      {
+        "checks": [
+          "independent-boot",
+          "identity-refusal",
+          "integration"
+        ],
+        "text": "Use the real installed UI/controller/service without preview mode, fixture media contexts or workstation runtime dependencies. Keep existing production media admission unchanged and fail closed: export, restore and slot selection remain unavailable with truthful reasons. Exercise diagnostic review/activation/cancellation with VM keyboard and mouse, meaningful independent touch events where available, and record missing virtual coverage. Verify source/candidate preservation and no registry initialization across restart; physical input and successful export remain separate acceptance work."
+      },
+      {
+        "checks": [
+          "closure",
+          "capacity",
+          "integration"
+        ],
+        "text": "Assembly/build/boot tools must default to inspection, restrict writes to reviewed fresh ignored output paths, reject symlink/raw-device/overlapping targets, isolate privileged package scripts and service starts, and clean up only owned namespace/VM resources. No implicit workstation-wide installation, baseline mutation, printer/private backup access or network service activation. Preserve source/toolchain/archive and artifact hashes and repeat-build comparison with explained nondeterminism."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "d384460b459c8bb6e6d804108984cc4981808fd879fd09cd20d6cadca476b317",
+    "rationale": "ADR 0010 requires an independent GTK recovery userspace within 512 MiB, and this bounded offline image/boot delivery directly advances that requirement while leaving trusted media preparation and actual recovery operations as subsequent acceptance work. configs/images/host-ab.json fixes recovery at 512 MiB and the full image at 7818182656 bytes; configs/host-os/admin-ui.json and sv08-recovery-display.service identify the actual GTK/Xorg/libinput/accessibility package and launch contract. The private closure estimate has 273 packages, 707719 KiB declared installed size and two missing dependencies; the fit-options arithmetic leaves 576.83 MiB even after an unrealistically broad documentation/locale removal. These estimates motivate measured compression feasibility but prove neither fit nor impossibility. Compressed /usr on the physical ext4 envelope is a bounded supported-format integration with an ADR, not permission to shrink interfaces or enlarge the layout. runtime/sv08_recovery_media.py currently rejects that extra mount, while runtime/sv08_recovery.py installed_controller and RecoveryController already support useful diagnostics with an unavailable production adapter. Thus real installed diagnostic boot can be delivered without weakening the provider or making false export claims. This approval covers a complete measured candidate and real ARM64 VM boot, not a feasibility report substituted for those checks. Proposal/requirement hashes were independently computed and scope was produced by the actual read-only review-context CLI branch using the private record and proposal-path overlay; the coordinator must compare normal CLI context after byte-identical public staging. No change to owner requirements, release authority, hardware authority or existing upload decision is authorized.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "recovery-image-feature-approver",
+    "scope_sha256": "fcef499aa9db7c5d734503d35eba97abdbdae3a61964c5a913f690c679f593c2",
+    "session": "root-upload-approver-recovery-review-20260912-independent"
+  },
+  "format_version": 1,
+  "id": "host-recovery-independent-image",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/host-recovery-independent-image/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "closure",
+        "capacity",
+        "independent-boot",
+        "identity-refusal",
+        "integration"
+      ],
+      "depends_on": [
+        "host-admin-bundle-upload:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Assemble, measure and boot the independent recovery candidate",
+      "verification": null
+    }
+  ],
+  "title": "Boot an independent measured recovery OS within512MiB"
+}
