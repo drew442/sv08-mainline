@@ -66,15 +66,71 @@
         "recovery-media-export:implement"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "single-pass",
+          "document": "docs/hardware/host-recovery-readback.md",
+          "document_sha256": "bf81ffdac88ffa2b4ca1e71c6de7e1e4d03dc0bcf56e14b40168c37f974b8d68",
+          "environment": "offline",
+          "limitations": "Workstation fixtures and selected ARM64 Python under QEMU only. No physical printer/media, complete recovery image, power-loss or throughput acceptance; canonical physical tasks remain blocked.",
+          "method": "Reproduced the exact approved archive and baseline source: 18,242,915 to 9,123,840 underlying logical bytes, matching independent SHA-256, zero seeks and one EOF read. Real export test forbids writer reads and counts the single readback.",
+          "profile": null,
+          "source_commit": "2a50af2289650b04263d47b6859665d0416c56e0",
+          "source_sha256": {
+            "docs/hardware/host-recovery-readback-20260912.json": "7b32b7ab689500be67dd55cde95e70cf35b791dbd19d5b938ca61c2f8378a397",
+            "runtime/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf",
+            "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+            "tests/measure_export_readback.py": "0de595cdf3d418bd4c6714a02fa22e8f586a9fbca098d960c103997d2f40276e",
+            "tests/recovery_export_gtk.py": "d57ac9381e6b10efdef167da1ad7108695528c70e26babee31c943969c7f6f90",
+            "tests/recovery_media_mounts.py": "1d681a1fefea9d09363c4b116be50390a903b42093ef45bf1e070475560ffa62",
+            "tests/test_export.py": "7212f1b57e6d04ba900ab2ef2b6164fda104326a4f882c934c72ad9aa81f54f4",
+            "tests/test_export_readback.py": "56caef977c4a5182214fc216829802558225ea7acb00b81cab640cff48bd214a",
+            "tests/test_recovery_media.py": "6c233c8a14871f0211f9dc51e526e54fec895a03bae849f34caeb503b469d6e3"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "integrity",
+          "document": "docs/hardware/host-recovery-readback.md",
+          "document_sha256": "bf81ffdac88ffa2b4ca1e71c6de7e1e4d03dc0bcf56e14b40168c37f974b8d68",
+          "environment": "offline",
+          "limitations": "Workstation fixtures and selected ARM64 Python under QEMU only. No physical printer/media, complete recovery image, power-loss or throughput acceptance; canonical physical tasks remain blocked.",
+          "method": "53 targeted workstation tests, 34 selected ARM64 runtime tests, actual GTK directory workflow and real provider GTK/ext4/FAT32 fixture passed. Corruption, final-drain errors, metadata/sparse bounds, source/media preservation, cancellation, shared exclusion and publication failures covered; fresh payload staging measured.",
+          "profile": null,
+          "source_commit": "2a50af2289650b04263d47b6859665d0416c56e0",
+          "source_sha256": {
+            "docs/hardware/host-recovery-readback-20260912.json": "7b32b7ab689500be67dd55cde95e70cf35b791dbd19d5b938ca61c2f8378a397",
+            "runtime/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf",
+            "runtime/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+            "tests/measure_export_readback.py": "0de595cdf3d418bd4c6714a02fa22e8f586a9fbca098d960c103997d2f40276e",
+            "tests/recovery_export_gtk.py": "d57ac9381e6b10efdef167da1ad7108695528c70e26babee31c943969c7f6f90",
+            "tests/recovery_media_mounts.py": "1d681a1fefea9d09363c4b116be50390a903b42093ef45bf1e070475560ffa62",
+            "tests/test_export.py": "7212f1b57e6d04ba900ab2ef2b6164fda104326a4f882c934c72ad9aa81f54f4",
+            "tests/test_export_readback.py": "56caef977c4a5182214fc216829802558225ea7acb00b81cab640cff48bd214a",
+            "tests/test_recovery_media.py": "6c233c8a14871f0211f9dc51e526e54fec895a03bae849f34caeb503b469d6e3"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root_implementer",
+        "run": "3ca53237ea7841ed98e266efcd46313a",
+        "session": "readback-implementation-20260912"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "review",
       "title": "One complete readback pass for recovery archives",
-      "verification": null
+      "verification": {
+        "decision_sha256": "f64a3a80fc1f75ff0797b00e68753097b233013d902f3e593f1db92c5a895fce",
+        "evidence_sha256": "3c18c66fe288e307cf17d83a5307e183d7e70a977b9062c7b300fe3894685b37",
+        "outcome": "passed",
+        "rationale": "Verified the complete eight-file diff from fd4d143 to 2a50af2289650b04263d47b6859665d0416c56e0, clean HEAD, all submitted document/source hashes, and the complete approved decision. Independently reproduced the exact fixture on workstation Python 3.12.3 and selected ARM64 Python 3.13.5: verification reads fall from 18,242,915 to 9,123,840 bytes with the approved SHA-256, zero seeks and one EOF read. Independently passed 29 export-related tests, 9 media tests, 34 ARM64 runtime tests and the actual GTK directory workflow. Reviewed the real provider GTK/ext4/FAT fixture and confirmed its retained result matches the sanitized evidence, including cancellation, exclusion, preservation, removal and device-reuse checks. Corruption, metadata changes, payload/manifest mismatches, truncation, appended bytes and final-drain errors prevent publication. Sparse expansion and invalid member sizes are rejected before extraction; bounded metadata parsing and existing Unicode/PAX, directory, sparse-source and SQLite/WAL behavior remain covered. Held-destination access, source/media revalidation, no-replace publication and fsync/cleanup guards are preserved. Staging hashes and byte totals match the recorded revisions; JSON, local Markdown paths, diff checks and indexed gitlinks agree. No material findings remain. Approval covers offline logical-read and integrity behavior only; physical media, input, power-loss and complete recovery-image acceptance remain explicitly blocked in the parent feature and canonical checklist.",
+        "reviewer": "readback_verifier",
+        "session": "readback-verifier-20260912-final-2a50af2"
+      }
     }
   ],
   "title": "One complete readback pass for recovery archives"
