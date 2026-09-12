@@ -1,0 +1,123 @@
+{
+  "author": "host_next_task",
+  "checks": [
+    {
+      "description": "Real browser close/reopen across a separately supervised stage worker; same durable job finishes once, with separately reviewed arm/cancel.",
+      "environment": "offline",
+      "id": "disconnect"
+    },
+    {
+      "description": "Deduplicate retries/lost acknowledgement; reject changed request content and conflicting operations; review cancellation submits nothing.",
+      "environment": "offline",
+      "id": "submission"
+    },
+    {
+      "description": "Recheck state, boot, customization, deployability, signed upload and idle admission before mutation.",
+      "environment": "offline",
+      "id": "admission"
+    },
+    {
+      "description": "Launch/worker/publication failures, corruption and no-space preserve truthful outcomes; ambiguous work is never replayed automatically.",
+      "environment": "offline",
+      "id": "interruption"
+    },
+    {
+      "description": "Fixed worker/service wiring, bounded private history, installed-context diagnostics and measured payload delta.",
+      "environment": "offline",
+      "id": "staging"
+    },
+    {
+      "description": "Relevant admin, image, staging, transaction/admission tests and repository consistency checks pass.",
+      "environment": "offline",
+      "id": "regression"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "submission",
+          "interruption",
+          "staging"
+        ],
+        "text": "Make retry identity durable before acknowledging admission and bind it to the complete reviewed operation. Define bounded retention so an evicted identifier cannot become a fresh mutation: retain bounded rejection information, use a validated expiry/generation protocol, or refuse admission at capacity. Exercise retries after terminal-history pressure and lost acknowledgement, conflicting content, concurrent processes, and active or ambiguous records that must not be evicted."
+      },
+      {
+        "checks": [
+          "disconnect",
+          "staging"
+        ],
+        "text": "Job reads and reconnect rendering must work while Transaction holds the state lock. Controller.status currently acquires that lock, so a separate job endpoint alone is insufficient if initial page loading or polling still waits for ordinary status first. Test browser reopening while the worker is deliberately blocked inside the transaction, with a bounded response time and visible current job state before releasing the barrier."
+      },
+      {
+        "checks": [
+          "interruption",
+          "submission",
+          "admission"
+        ],
+        "text": "Preserve conservative crash semantics at publication, launch, worker admission, backend mutation and final-result publication boundaries. Worker loss, reboot, uncertain service-start acknowledgement or failed durable result recording must never automatically repeat a possibly executed operation. Reconciliation is observational and must not invent transaction success, rollback or health. Document whether unresolved ambiguity blocks further jobs and the bounded, separately reviewed route for resolving it; do not silently remove it to free capacity."
+      },
+      {
+        "checks": [
+          "admission",
+          "staging",
+          "regression"
+        ],
+        "text": "The fixed production worker must reconstruct trusted installed context and current boot identity, retain privileged helper authorization, and revalidate reviewed revision and capability under the existing transaction lock, including actual idle admission and signed upload lease checks. Do not make browser-supplied plans, identifiers or arguments sources of paths, executables, systemd properties or environment overrides. Preserve the existing recovery distinction and safe image.cancel behavior rather than introducing blanket customization refusal that prevents cancellation."
+      },
+      {
+        "checks": [
+          "disconnect",
+          "staging",
+          "regression"
+        ],
+        "text": "Demonstrate the real browser and separate-process fixture journey, and exercise fixed installed worker/service wiring in isolation, including missing configuration and launch failure. Report separately which evidence used a real worker, an actual service manager, a bridge shim or authenticated Cockpit; unit syntax validation and a synchronous launcher double do not prove supervision. Stage matching runtime and service files, measure payload and persistent-record bounds, and leave factory 8 GB capacity, authenticated production login, ARM64 image and physical acceptance explicitly open where untested."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "28f7842010d8c9235482a975f16af06c50c18e6755e42faf3d24cba67d25109b",
+    "rationale": "ADR 0010 explicitly requires image job progress/history surviving browser disconnects. Actual source confirms the gap: ui/host/app.js awaits synchronous apply through a per-request Cockpit process; Controller.request exposes only status/plan/apply; HostImages.apply directly invokes Transaction. Existing tests/test_admin_images.py supplies an appropriate offline controller, private upload and transaction fixture. The proposal completes an accepted workflow without adding hardware authority or product scope, uses existing systemd/Cockpit facilities, and states a retirement condition. Its before/after behavior and offline evidence boundaries are concrete. Approval is conditional on the following delivery checks, particularly durability across uncertain process outcomes and the interaction between transaction locking and reconnect status.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "image_jobs_approver",
+    "scope_sha256": "dfbca35f4a584f6cbc381407ce004cda7fe233304b6b2faa45184e42ba22e5eb",
+    "session": "/root/image_jobs_approver-2026-09-12"
+  },
+  "format_version": 1,
+  "id": "host-admin-image-jobs",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/host-admin-image-jobs/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "disconnect",
+        "submission",
+        "admission",
+        "interruption",
+        "staging",
+        "regression"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Image operations survive browser disconnection",
+      "verification": null
+    }
+  ],
+  "title": "Image operations survive browser disconnection"
+}
