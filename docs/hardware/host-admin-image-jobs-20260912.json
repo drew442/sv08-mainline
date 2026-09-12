@@ -1,0 +1,199 @@
+{
+  "authenticated_cockpit": false,
+  "base_commit": "cb1257d",
+  "browser": {
+    "authenticated_cockpit": false,
+    "backend": "disposable disk double, fixture signature verifier",
+    "closed_and_reopened_browser_target": true,
+    "jobs": [
+      {
+        "action": "image.stage",
+        "id": "b1fc6b4ac88345c9b7188f3f7ca9c380",
+        "phase": "succeeded"
+      },
+      {
+        "action": "image.arm",
+        "id": "f87da9b5933d4ca9b6288284ec78bf25",
+        "phase": "succeeded"
+      },
+      {
+        "action": "image.cancel",
+        "id": "8d67cc108467457aab5123567af40cca",
+        "phase": "succeeded"
+      }
+    ],
+    "lost_acknowledgement_retry_same_identity": true,
+    "passed": true,
+    "physical_hardware": false,
+    "raw_evidence": "build/image-jobs-browser-v6/result.json",
+    "real_controller_staging_transaction": true,
+    "real_systemd_user_worker": true,
+    "reconnect_ms": 121,
+    "stage_installations": 1,
+    "supervisor": "real workstation systemd user manager; disposable test unit",
+    "transport": "test Cockpit bridge shim"
+  },
+  "date": "2026-09-12",
+  "format_version": 1,
+  "hardware_profile": null,
+  "installed_entry": {
+    "cases": [
+      {
+        "case": "missing-context",
+        "diagnostic": "Image worker refused: [Errno 2] No such file or directory: '/usr/lib/sv08/admin-context.json'",
+        "returncode": 1
+      },
+      {
+        "case": "malformed-context",
+        "diagnostic": "Image worker refused: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+        "returncode": 1
+      },
+      {
+        "case": "recovery-context",
+        "diagnostic": "Image worker refused: The installed administration context is not supported",
+        "returncode": 1
+      },
+      {
+        "case": "missing-boot",
+        "diagnostic": "Image worker refused: [Errno 2] No such file or directory: '/run/sv08/boot.json'",
+        "returncode": 1
+      },
+      {
+        "case": "invalid-receipt",
+        "diagnostic": "Image worker refused: The image worker requires one validated receipt identity",
+        "returncode": 1
+      }
+    ],
+    "runtime_sha256": {
+      "sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
+      "sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+      "sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+      "sv08_admission.py": "e9feef862560fa381f8adde7edab98aade18c5e279363d0c522453f78b78611f",
+      "sv08_boot.py": "c9a8e8c75c7355fde744a151d75e516d997505c51adac22b70d4cb2f1bccaf7f",
+      "sv08_bundle.py": "cfc429ebec9ef181fd34bebc397bae42d3aeb85902d2eb4bc089efe942573613",
+      "sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf",
+      "sv08_gpt.py": "d0c30268e8a5b4458d8646de02e7d02473a0611962b393a705db5ac096ab88dc",
+      "sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+      "sv08_package.py": "82a721afc1734cb871f28f72b57cb5fd28483b19e7a09dde07d46ca448f8fce5",
+      "sv08_rauc.py": "c1dd7d082b458ec44dccddb93bc8a7bdd8c898f1175932de38f56a326f37ea4d",
+      "sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+      "sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+      "sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+      "sv08_staging.py": "95e46b897393fb6753a8378de887816a2b5ba35a21ce940bb6750385ea67b32b",
+      "sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+      "sv08_transaction.py": "17f67d24bcc82717bd0f1073472137f238e7fb49c6effed3ed9315b9d34fe94c"
+    },
+    "scope": "selected ARM64 chroot; private overlay; no service or hardware",
+    "unit_sha256": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414"
+  },
+  "limitations": [
+    "No production system-manager deployment or authenticated Cockpit bridge/session tested.",
+    "Browser uses real transaction/private staging but fixture signed-payload verifier and disk backend. Existing signature/admission regressions supply separate coverage.",
+    "No new rootfs image, full dependency closure, factory 8 GB fit or physical printer behavior established.",
+    "Ambiguous or full history blocks new image jobs; reviewed identity-preserving resolution/rollover is an explicit checklist follow-on.",
+    "ARM64 diagnostics use the selected rootfs in disposable overlay/chroot, not a complete image boot."
+  ],
+  "payload": {
+    "activated": false,
+    "added_payload_bytes": 15399,
+    "base_payload_bytes": 104577,
+    "context": "host",
+    "execute": true,
+    "hashes": {
+      "usr/lib/sv08/admin-context.json": "fefa94482c23bea5804b2077cad031833a9f134a682d98ffd9481c1141405ca2",
+      "usr/lib/sv08/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
+      "usr/lib/sv08/sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+      "usr/lib/sv08/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+      "usr/lib/sv08/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf",
+      "usr/lib/sv08/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+      "usr/lib/sv08/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+      "usr/lib/sv08/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+      "usr/lib/sv08/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+      "usr/lib/systemd/system/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
+      "usr/share/cockpit/sv08-host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
+      "usr/share/cockpit/sv08-host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778",
+      "usr/share/cockpit/sv08-host/manifest.json": "2e23136eb2b25405d326a5eb51a999cc984a713bba0872923f6f5f361b977ed6",
+      "usr/share/cockpit/sv08-host/style.css": "e64852373cbdf77b49c295b9e9b56038ba5fd5d5eafb3f60d92a99799e5d6542"
+    },
+    "payload_bytes": 119976
+  },
+  "persistent_bounds": {
+    "ambiguous_blocks_new_jobs": true,
+    "atomic_publication_extra_bytes": 524288,
+    "eviction": false,
+    "ledger_bytes": 524288,
+    "queue_start_seconds": 30,
+    "receipts": 128
+  },
+  "physical_hardware": false,
+  "source_sha256": {
+    "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
+    "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
+    "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+    "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+    "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
+    "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
+    "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
+    "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
+    "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
+    "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
+    "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
+    "ui/host/app.js": "35cdc21df05af56b3705c077aead7385dff281a41c000ff3dd56db6a82c7647d",
+    "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
+  },
+  "status": "offline implementation; independent verification pending",
+  "validation": [
+    {
+      "command": "python3 -m unittest discover -s tests -p 'test_admin*.py'",
+      "passed": 37
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_stage_admin_ui.py",
+      "passed": 5
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p 'test_*transaction.py'",
+      "passed": 26
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_service_admission.py",
+      "passed": 4
+    },
+    {
+      "command": "test_update_admission loaded from worktree; test.REPO points to primary pinned checkout (source_module only)",
+      "note": "Initial direct discovery failed because isolated worktree submodules are uninitialized. No upstream files changed.",
+      "passed": 10
+    },
+    {
+      "command": "test_staging.py / test_host_state.py / test_host_integration.py / test_bundle_policy.py / test_rauc_backend.py",
+      "passed": [
+        8,
+        14,
+        1,
+        3,
+        5
+      ]
+    },
+    {
+      "command": "systemd-analyze verify configs/host-os/sv08-admin-image-worker@.service",
+      "passed": true
+    },
+    {
+      "command": "node tests/admin_jobs_browser.mjs CHROMIUM FIXTURE OUTPUT",
+      "passed": true
+    },
+    {
+      "command": "node tests/admin_browser.mjs CHROMIUM FIXTURE OUTPUT",
+      "note": "Existing keyboard, Escape, policy persistence, next-boot mode and touch workflow.",
+      "passed": true
+    },
+    {
+      "command": "sudo unshare --mount --propagation private python3 tests/admin_jobs_installed.py --lower SELECTED_ARM64_BASELINE_ROOTFS --work build/image-jobs-installed-v2",
+      "passed": true
+    },
+    {
+      "command": "JSON syntax, touched Markdown local targets, source hashes, git diff checks and indexed gitlink/lock agreement",
+      "passed": true
+    }
+  ]
+}
