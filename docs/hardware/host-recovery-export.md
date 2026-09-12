@@ -4,6 +4,11 @@
 physical USB medium, MCU or eMMC was accessed. This implements the archive/export
 portion of [decision 0010](../decisions/0010-host-administration-and-recovery-ui.md).
 
+The [2026-09-12 media provider](host-recovery-media.md) subsequently connects the
+installed entry to verified pre-mounted admission. Its stronger real fixture checks
+filesystem-superblock and whole-medium read-only state; the earlier read-only bind
+fixture below alone does not establish those conditions.
+
 ## Implemented workflow
 
 The recovery controller can now connect **Save user data** to
@@ -17,9 +22,10 @@ mandatory admission context. That context must identify the running recovery
 system, verify a quiescent/read-only source, verify the selected removable mount,
 and hold exclusive media/export admission throughout each operation. There is
 no default permission, guessed device, mounting command, formatting operation or
-raw device argument accepted from the UI. **Production USB discovery and recovery
-mount admission are still outstanding.** Consequently the installed screen does
-not automatically enable export merely because this library is present.
+raw device argument accepted from the UI. The subsequent pre-mounted provider now
+supplies bounded offline-tested admission; production image/premount integration
+and USB discovery remain outstanding. The installed screen enables export only
+when that provider verifies explicitly prepared trust inputs and media.
 
 Review binds the source/destination directory identities, source inventory and
 size budget into a fingerprint. Apply repeats preflight and rechecks before
@@ -40,9 +46,11 @@ Linux `renameat2(RENAME_NOREPLACE)` publish the archive, followed by directory f
 There is no overwrite fallback on unsupported filesystems. Existing destination
 files remain untouched. An ordinary failure removes only this operation's partial
 file; a process/power interruption can leave an explicitly incomplete `.partial`.
-Failure after rename but before directory fsync is not reported as success. Keep
-such a completed-looking file for explicit inspection; automatic cleanup is not
-implemented. Source files are never repaired, deleted or rewritten by export.
+Failure after rename but before directory fsync is not reported as success. The
+provider integration attempts to remove its newly published output on a detected
+failure; physical removal or power loss may prevent cleanup. Keep any surviving
+completed-looking file for explicit inspection. Source files are never repaired,
+deleted or rewritten by export.
 
 The default archive limit is conservatively below FAT's 4 GiB file limit. The
 verified media provider may configure another reviewed limit for a different
@@ -85,8 +93,9 @@ No archive containing user data is committed.
 
 ## Remaining integration and limits
 
-Finish verified recovery-media discovery/admission, USB removal/error reporting,
-progress/cancellation and safe ejection in the assembled image. Test realistic
+Integrate the verified pre-mounted provider and trusted preparer into the independent
+recovery image; finish USB discovery/removal reporting, progress/cancellation and
+safe ejection. Test realistic
 8 GB occupancy, larger exports, physical input, unplugging and power loss on the
 named profile. The existing UI staging step includes the export helper and refuses
 mismatched runtime sources. No service has been enabled on the printer.
