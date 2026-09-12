@@ -265,7 +265,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Integrate and verify the actual Cockpit console in a disposable isolated root",
       "verification": {
         "decision_sha256": "fb3cab9fc6e89d7d84a76791be055339403bc8517eba44bb2b98d107b2401abc",
