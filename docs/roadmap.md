@@ -103,6 +103,8 @@ integration and physical input testing remain first-release requirements.
 [Recovery data export](hardware/host-recovery-export.md) now has a real archive
 backend and [verified pre-mounted media admission](hardware/host-recovery-media.md)
 with GTK cancellation/apply and filesystem/block-read-only source/FAT32 fixtures.
+[Single-pass verification](hardware/host-recovery-readback.md) now halves logical
+read volume on the approved fixture while retaining complete-byte integrity checks.
 The independent recovery image, trusted premount integration and physical export
 tests remain outstanding.
 

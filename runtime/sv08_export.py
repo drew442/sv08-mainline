@@ -17,6 +17,8 @@ import tarfile
 import uuid
 
 DIRECTORY = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+CHUNK = 1024 * 1024
+TAR_BUFFER = 10240
 
 
 def publish(directory_fd, partial, name):
@@ -88,21 +90,86 @@ class HashReader:
         block = self.stream.read(size); self.hash.update(block); return block
 
 
-def verify_archive(path, expected):
-    """Full file-content readback, never extract an archive onto the recovery OS."""
+class HashWriter:
+    """Record the exact bytes handed to the archive file, without reading it."""
+    def __init__(self, stream):
+        self.stream, self.hash, self.count = stream, hashlib.sha256(), 0
+
+    def tell(self): return self.count
+
+    def write(self, block):
+        count = self.stream.write(block)
+        if count != len(block): raise OSError('Short archive write')
+        self.hash.update(block); self.count += count
+        return count
+
+
+class ReadbackReader:
+    def __init__(self, stream, size, header_bytes):
+        self.stream, self.size = stream, size
+        self.hash, self.count = hashlib.sha256(), 0
+        self.header_depth, self.header_start = 0, 0
+        self.header_budget = header_bytes + TAR_BUFFER
+
+    def read(self, size):
+        if not 0 <= size <= CHUNK: raise ValueError('Unbounded archive readback request')
+        if self.header_depth and self.count - self.header_start + size > self.header_budget:
+            raise ValueError('Archive metadata exceeds its readback budget')
+        block = self.stream.read(size)
+        self.count += len(block); self.hash.update(block)
+        if self.count > self.size: raise ValueError('Archive readback size changed')
+        return block
+
+
+def verify_stream(stream, expected, size, checksum, header_bytes):
+    """One bounded semantic and whole-byte pass over this writer's own archive.
+
+    The trusted writer supplies size/hash and its largest serialized header.
+    A public TarInfo hook bounds cumulative metadata reads, including nested PAX
+    and sparse maps, before corrupt declarations can cause large allocations.
+    See host-recovery-readback.md for buffering limits and upstream provenance.
+    """
+    if type(size) is not int or size < TAR_BUFFER or type(header_bytes) is not int or not 512 <= header_bytes <= size:
+        raise ValueError('Invalid archive readback bounds')
+    reader = ReadbackReader(stream, size, header_bytes)
+    class BudgetInfo(tarfile.TarInfo):
+        @classmethod
+        def fromtarfile(cls, archive):
+            if not reader.header_depth: reader.header_start = reader.count
+            reader.header_depth += 1
+            try: return super().fromtarfile(archive)
+            finally: reader.header_depth -= 1
+
     found = {}
-    with tarfile.open(path, 'r:') as archive:
+    with tarfile.open(fileobj=reader, mode='r|', bufsize=TAR_BUFFER, tarinfo=BudgetInfo) as archive:
         for item in archive:
             if item.name in found: raise ValueError('Duplicate archive member')
+            if item.name not in expected: raise ValueError('Unexpected archive member')
+            # Our writer emits ordinary files, even for sparse source files.
+            # Reject synthetic sparse expansion before extractfile can create it.
+            if item.sparse is not None: raise ValueError('Unexpected sparse archive member')
+            if not 0 <= item.size <= size: raise ValueError('Invalid archive member size')
             if item.isdir():
                 found[item.name] = None
                 continue
             if not item.isfile(): raise ValueError('Unexpected archive member')
-            stream = archive.extractfile(item)
-            digest = hashlib.sha256()
-            while block := stream.read(1024*1024): digest.update(block)
+            with archive.extractfile(item) as payload:
+                digest = hashlib.sha256()
+                while block := payload.read(CHUNK): digest.update(block)
             found[item.name] = digest.hexdigest()
     if found != expected: raise ValueError('Export readback verification failed')
+    # tarfile can stop before EOF, or treat a malformed later header as EOF.
+    # Already buffered bytes have been hashed; drain only the underlying reader.
+    while reader.read(CHUNK): pass
+    if reader.count != size: raise ValueError('Archive readback size changed')
+    if reader.hash.hexdigest() != checksum: raise ValueError('Archive byte readback verification failed')
+    return reader.hash.hexdigest()
+
+
+def verify_archive(path, expected, size, checksum, header_bytes):
+    """Read through the held destination path; never extract onto recovery."""
+    with open(path, 'rb', buffering=0) as stream:
+        return verify_stream(stream, expected, size, checksum, header_bytes)
 
 
 class Export:
@@ -163,9 +230,13 @@ class Export:
                     fd = os.open(partial, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600, dir_fd=target_fd)
                     created = True
                     with os.fdopen(fd, 'w+b') as output:
-                        with tarfile.open(fileobj=output, mode='w', format=tarfile.PAX_FORMAT) as archive:
+                        writer = HashWriter(output)
+                        header_bytes = 512
+                        with tarfile.open(fileobj=writer, mode='w', format=tarfile.PAX_FORMAT) as archive:
                             for relative, stamp in plan['entries']:
                                 info = member(relative, stamp)
+                                header_bytes = max(header_bytes, len(info.tobuf(format=archive.format,
+                                    encoding=archive.encoding, errors=archive.errors)))
                                 if info.isdir():
                                     archive.addfile(info); expected[info.name] = None; continue
                                 with opened(self.source, relative, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK) as source:
@@ -178,18 +249,18 @@ class Export:
                                     records.append(dict(path=info.name, bytes=info.size, sha256=checksum))
                             manifest = json.dumps(dict(format_version=1, kind='user-data-export-not-os-image', files=records), sort_keys=True).encode()
                             info = tarfile.TarInfo('export-manifest.json'); info.size=len(manifest); info.mode=0o600
+                            header_bytes = max(header_bytes, len(info.tobuf(format=archive.format,
+                                encoding=archive.encoding, errors=archive.errors)))
                             archive.addfile(info, io.BytesIO(manifest))
                             expected[info.name] = hashlib.sha256(manifest).hexdigest()
                         output.flush(); os.fsync(output.fileno())
                         if output.tell() > plan['required_bytes']: raise ValueError('Archive exceeded its admitted budget')
-                        output.seek(0)
-                        digest = hashlib.sha256()
-                        while block := output.read(1024*1024): digest.update(block)
                     if inventory(self.source) != plan['entries']: raise ValueError('Source changed during export')
                     with opened(self.source) as now:
                         if identity(os.fstat(now))[:2] != tuple(plan['source_identity']): raise ValueError('Source changed')
                     # Read via the held destination descriptor even if the mount path changes.
-                    verify_archive(f'/proc/self/fd/{target_fd}/{partial}', expected)
+                    checksum = verify_archive(f'/proc/self/fd/{target_fd}/{partial}', expected,
+                                              writer.count, writer.hash.hexdigest(), header_bytes)
                     # Revalidate paths before publishing into the still-held destination.
                     with opened(target) as now:
                         if identity(os.fstat(now))[:2] != tuple(plan['destination_identity']): raise ValueError('Destination changed')
@@ -199,7 +270,7 @@ class Export:
                     os.fsync(target_fd)
                     if guard is not None: guard.recheck()
                     completed = True
-                    return dict(filename=name, sha256=digest.hexdigest(), files=len(records),
+                    return dict(filename=name, sha256=checksum, files=len(records),
                                 message='User data saved and readback verified: '+name+'. Includes private configuration and credentials; keep the destination private.')
                 finally:
                     if published and not completed:
