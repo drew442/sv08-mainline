@@ -137,9 +137,12 @@ enumeration were re-established on 2026-09-12; see the
 - [x] Combine recovery archive verification into one complete bounded readback;
   [measurements and regressions](host-recovery-readback.md) retain corruption,
   truncation, media and publication checks with approximately 50% fewer logical reads.
+- [x] Assemble the complete 512 MiB independent ARM64 recovery diagnostic image;
+  [offline evidence](host-recovery-image.md) covers actual boot/restart, virtual
+  keyboard/mouse/direct touch, identity refusals and retained package metadata.
 - [ ] Connect independent recovery target identification, preserved-slot boot,
   USB/LAN signed restore and export of readable user data without formatting it.
-  Assemble/review the independent image and trusted premounter, including the
+  Integrate/review the trusted premounter with the independent image, including the
   complete system-media inventory and participation by every media mutator.
 - [ ] Add touch text entry for recovery network/credential workflows where needed.
 

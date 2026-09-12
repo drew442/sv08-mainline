@@ -1,0 +1,1599 @@
+{
+  "date": "2026-09-12",
+  "scope": "literal common-license reference review only, not complete license compliance audit",
+  "input_audit_sha256": "ba59fc722f22c2ec91a8b0afa1b818e6dc168f025b2acc7fb799c3fd5a7bcb28",
+  "copyright_records": 284,
+  "copyright_hash_mismatches": [],
+  "unmatched_entries": 96,
+  "unique_tokens": 14,
+  "punctuation_entries_resolved": 95,
+  "literal_missing_entries": 1,
+  "entries": [
+    {
+      "package": "adwaita-icon-theme",
+      "copyright_path": "usr/share/doc/adwaita-icon-theme/copyright",
+      "copyright_sha256": "b8058c6a4e62094c4c4a081b9681b3e67e2ffed995d6b8b5fe43a536745f04ba",
+      "raw_token": "GFDL-1.2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GFDL-1.2",
+      "target_exists": true,
+      "target_sha256": "2652c22ba086f92e55ae4a9f9c890ad4766ffd7814a73d318e22a597edf857a4",
+      "exact_occurrences": [
+        {
+          "line": 2095,
+          "text": " in /usr/share/common-licenses/GFDL-1.2."
+        }
+      ]
+    },
+    {
+      "package": "adwaita-icon-theme",
+      "copyright_path": "usr/share/doc/adwaita-icon-theme/copyright",
+      "copyright_sha256": "b8058c6a4e62094c4c4a081b9681b3e67e2ffed995d6b8b5fe43a536745f04ba",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 2101,
+          "text": " in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "adwaita-icon-theme",
+      "copyright_path": "usr/share/doc/adwaita-icon-theme/copyright",
+      "copyright_sha256": "b8058c6a4e62094c4c4a081b9681b3e67e2ffed995d6b8b5fe43a536745f04ba",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 2115,
+          "text": " in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "base-passwd",
+      "copyright_path": "usr/share/doc/base-passwd/copyright",
+      "copyright_sha256": "0f1cde79bd80a75f9029ae9a8c252b642223027ef36f6989c63a8230aae576a7",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 25,
+          "text": " License version 2 is available in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "cpio",
+      "copyright_path": "usr/share/doc/cpio/copyright",
+      "copyright_sha256": "c6a43a1599ea98a98293f4aead057c5e37cabdb623c8c804902ac7d25e060297",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 18,
+          "text": " /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "cpio",
+      "copyright_path": "usr/share/doc/cpio/copyright",
+      "copyright_sha256": "c6a43a1599ea98a98293f4aead057c5e37cabdb623c8c804902ac7d25e060297",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 39,
+          "text": " /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "cpp-14",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 711,
+          "text": "can be found in /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "cpp-14",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 715,
+          "text": "license be found in /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "cpp-14-aarch64-linux-gnu",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 711,
+          "text": "can be found in /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "cpp-14-aarch64-linux-gnu",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 715,
+          "text": "license be found in /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "dconf-gsettings-backend",
+      "copyright_path": "usr/share/doc/dconf-gsettings-backend/copyright",
+      "copyright_sha256": "a9d427b6a6e5cb665da3b4115039750c9d1092f558d6dee391d20800fb5c850e",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 30,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        },
+        {
+          "line": 46,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "dconf-service",
+      "copyright_path": "usr/share/doc/dconf-service/copyright",
+      "copyright_sha256": "a9d427b6a6e5cb665da3b4115039750c9d1092f558d6dee391d20800fb5c850e",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 30,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        },
+        {
+          "line": 46,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "debianutils",
+      "copyright_path": "usr/share/doc/debianutils/copyright",
+      "copyright_sha256": "aeb68ea374f488431b8963df24f05482692edfa70d7556d7e528dd06d255461c",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 40,
+          "text": " found on Debian systems in the file /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gcc-14-base",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 711,
+          "text": "can be found in /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "gcc-14-base",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 715,
+          "text": "license be found in /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-freedesktop",
+      "copyright_path": "usr/share/doc/gir1.2-freedesktop/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 1048,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-freedesktop",
+      "copyright_path": "usr/share/doc/gir1.2-freedesktop/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 1065,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        },
+        {
+          "line": 1079,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-freedesktop",
+      "copyright_path": "usr/share/doc/gir1.2-freedesktop/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 1093,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-freedesktop",
+      "copyright_path": "usr/share/doc/gir1.2-freedesktop/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 1103,
+          "text": " /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-freedesktop",
+      "copyright_path": "usr/share/doc/gir1.2-freedesktop/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "MPL-1.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/MPL-1.1",
+      "target_exists": true,
+      "target_sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+      "exact_occurrences": [
+        {
+          "line": 1108,
+          "text": " /usr/share/common-licenses/MPL-1.1."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-girepository-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-girepository-2.0/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 1048,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-girepository-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-girepository-2.0/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 1065,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        },
+        {
+          "line": 1079,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-girepository-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-girepository-2.0/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 1093,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-girepository-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-girepository-2.0/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 1103,
+          "text": " /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-girepository-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-girepository-2.0/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "MPL-1.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/MPL-1.1",
+      "target_exists": true,
+      "target_sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+      "exact_occurrences": [
+        {
+          "line": 1108,
+          "text": " /usr/share/common-licenses/MPL-1.1."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-glib-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-glib-2.0/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 1132,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-glib-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-glib-2.0/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 510,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        },
+        {
+          "line": 1170,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-glib-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-glib-2.0/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 513,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        },
+        {
+          "line": 1184,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-glib-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-glib-2.0/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 1194,
+          "text": " /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-glib-2.0",
+      "copyright_path": "usr/share/doc/gir1.2-glib-2.0/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "MPL-1.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/MPL-1.1",
+      "target_exists": true,
+      "target_sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+      "exact_occurrences": [
+        {
+          "line": 516,
+          "text": " /usr/share/common-licenses/MPL-1.1."
+        }
+      ]
+    },
+    {
+      "package": "gir1.2-gtk-3.0",
+      "copyright_path": "usr/share/doc/gir1.2-gtk-3.0/copyright",
+      "copyright_sha256": "ededd0b07c091f82888eacad33ecd01018d0ccdf85e91f0f5d85de58529f6842",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 990,
+          "text": " can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "grep",
+      "copyright_path": "usr/share/doc/grep/copyright",
+      "copyright_sha256": "42d9b4d610396b1e8d1303dcb9487af3f5a2d2709623cf03a04cf76acdf6c5e3",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 45,
+          "text": " /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "gtk-update-icon-cache",
+      "copyright_path": "usr/share/doc/gtk-update-icon-cache/copyright",
+      "copyright_sha256": "298a832781c85409ba3f2876f85606e12b993603cd9963cd7ae7512eacce251e",
+      "raw_token": "Apache-2.0.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/Apache-2.0",
+      "target_exists": true,
+      "target_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "exact_occurrences": [
+        {
+          "line": 440,
+          "text": " can be found in /usr/share/common-licenses/Apache-2.0."
+        }
+      ]
+    },
+    {
+      "package": "gtk-update-icon-cache",
+      "copyright_path": "usr/share/doc/gtk-update-icon-cache/copyright",
+      "copyright_sha256": "298a832781c85409ba3f2876f85606e12b993603cd9963cd7ae7512eacce251e",
+      "raw_token": "CC0-1.0.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/CC0-1.0",
+      "target_exists": true,
+      "target_sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "exact_occurrences": [
+        {
+          "line": 491,
+          "text": " can be found in /usr/share/common-licenses/CC0-1.0."
+        }
+      ]
+    },
+    {
+      "package": "gtk-update-icon-cache",
+      "copyright_path": "usr/share/doc/gtk-update-icon-cache/copyright",
+      "copyright_sha256": "298a832781c85409ba3f2876f85606e12b993603cd9963cd7ae7512eacce251e",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 524,
+          "text": " can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "gtk-update-icon-cache",
+      "copyright_path": "usr/share/doc/gtk-update-icon-cache/copyright",
+      "copyright_sha256": "298a832781c85409ba3f2876f85606e12b993603cd9963cd7ae7512eacce251e",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 546,
+          "text": " be found in /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "gtk-update-icon-cache",
+      "copyright_path": "usr/share/doc/gtk-update-icon-cache/copyright",
+      "copyright_sha256": "298a832781c85409ba3f2876f85606e12b993603cd9963cd7ae7512eacce251e",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 563,
+          "text": " can be found in /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "gzip",
+      "copyright_path": "usr/share/doc/gzip/copyright",
+      "copyright_sha256": "02c197fa26ad056ed2382bb8c3e6323d47edfda4539f727b4ab3f4dbf64ac413",
+      "raw_token": "GFDL-3",
+      "classification": "literal-reference-missing",
+      "candidate_target": "usr/share/common-licenses/GFDL-3",
+      "target_exists": false,
+      "target_sha256": null,
+      "exact_occurrences": [
+        {
+          "line": 50,
+          "text": " License can be found in `/usr/share/common-licenses/GFDL-3'."
+        }
+      ]
+    },
+    {
+      "package": "keyboard-configuration",
+      "copyright_path": "usr/share/doc/keyboard-configuration/copyright",
+      "copyright_sha256": "9aed29abee9d52d714b393c54a3394dba936694091a984b6d367fbb68cc5547c",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 86,
+          "text": "License can be found in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libatomic1",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 711,
+          "text": "can be found in /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libatomic1",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 715,
+          "text": "license be found in /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "libbz2-1.0",
+      "copyright_path": "usr/share/doc/libbz2-1.0/copyright",
+      "copyright_sha256": "832ed535ff3c3d025a8d2348eb1b697b89addcf2eaadbc17650262040b9145e2",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 48,
+          "text": " can be found in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libdconf1",
+      "copyright_path": "usr/share/doc/libdconf1/copyright",
+      "copyright_sha256": "a9d427b6a6e5cb665da3b4115039750c9d1092f558d6dee391d20800fb5c850e",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 30,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        },
+        {
+          "line": 46,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libegl1",
+      "copyright_path": "usr/share/doc/libegl1/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 116,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libegl1",
+      "copyright_path": "usr/share/doc/libegl1/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 112,
+          "text": " can be found in the file /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libgcc-s1",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 711,
+          "text": "can be found in /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libgcc-s1",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 715,
+          "text": "license be found in /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "libgirepository-1.0-1",
+      "copyright_path": "usr/share/doc/libgirepository-1.0-1/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 1048,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libgirepository-1.0-1",
+      "copyright_path": "usr/share/doc/libgirepository-1.0-1/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 1065,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        },
+        {
+          "line": 1079,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libgirepository-1.0-1",
+      "copyright_path": "usr/share/doc/libgirepository-1.0-1/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 1093,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "libgirepository-1.0-1",
+      "copyright_path": "usr/share/doc/libgirepository-1.0-1/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 1103,
+          "text": " /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libgirepository-1.0-1",
+      "copyright_path": "usr/share/doc/libgirepository-1.0-1/copyright",
+      "copyright_sha256": "d3db74633bd67379bf28321c6b53e247af7d9839795ac4118aeb3c0bd5696c78",
+      "raw_token": "MPL-1.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/MPL-1.1",
+      "target_exists": true,
+      "target_sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+      "exact_occurrences": [
+        {
+          "line": 1108,
+          "text": " /usr/share/common-licenses/MPL-1.1."
+        }
+      ]
+    },
+    {
+      "package": "libgl1",
+      "copyright_path": "usr/share/doc/libgl1/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 116,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libgl1",
+      "copyright_path": "usr/share/doc/libgl1/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 112,
+          "text": " can be found in the file /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libglib2.0-0t64",
+      "copyright_path": "usr/share/doc/libglib2.0-0t64/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 1132,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libglib2.0-0t64",
+      "copyright_path": "usr/share/doc/libglib2.0-0t64/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 510,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        },
+        {
+          "line": 1170,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libglib2.0-0t64",
+      "copyright_path": "usr/share/doc/libglib2.0-0t64/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 513,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        },
+        {
+          "line": 1184,
+          "text": " /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "libglib2.0-0t64",
+      "copyright_path": "usr/share/doc/libglib2.0-0t64/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 1194,
+          "text": " /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libglib2.0-0t64",
+      "copyright_path": "usr/share/doc/libglib2.0-0t64/copyright",
+      "copyright_sha256": "b9fe78c8a0720c051c9ac8e8c6f25663b54f228e501d24fc0ba89c66cec7f7c1",
+      "raw_token": "MPL-1.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/MPL-1.1",
+      "target_exists": true,
+      "target_sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+      "exact_occurrences": [
+        {
+          "line": 516,
+          "text": " /usr/share/common-licenses/MPL-1.1."
+        }
+      ]
+    },
+    {
+      "package": "libglvnd0",
+      "copyright_path": "usr/share/doc/libglvnd0/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 116,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libglvnd0",
+      "copyright_path": "usr/share/doc/libglvnd0/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 112,
+          "text": " can be found in the file /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libglx0",
+      "copyright_path": "usr/share/doc/libglx0/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 116,
+          "text": " version 3 can be found in the file /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libglx0",
+      "copyright_path": "usr/share/doc/libglx0/copyright",
+      "copyright_sha256": "37920f219f60efa2fde5d003c51be0608b2159cc74c5eb6d70d630907db2d9a3",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 112,
+          "text": " can be found in the file /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libgmp10",
+      "copyright_path": "usr/share/doc/libgmp10/copyright",
+      "copyright_sha256": "7d366aef5ba325150246de1d7820c4c9926cd27ca61a69948492b26cd3b61601",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 76,
+          "text": " The GNU General Public License v2 text is contained in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libgmp10",
+      "copyright_path": "usr/share/doc/libgmp10/copyright",
+      "copyright_sha256": "7d366aef5ba325150246de1d7820c4c9926cd27ca61a69948492b26cd3b61601",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 91,
+          "text": " The GNU General Public License v3 text is contained in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libgmp10",
+      "copyright_path": "usr/share/doc/libgmp10/copyright",
+      "copyright_sha256": "7d366aef5ba325150246de1d7820c4c9926cd27ca61a69948492b26cd3b61601",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 94,
+          "text": " The GNU Lesser General Public License v3 text is contained in /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libgnutls30t64",
+      "copyright_path": "usr/share/doc/libgnutls30t64/copyright",
+      "copyright_sha256": "a07e99815cf1998f1dabbc21fe199460bfa09b85ead0d56b49a32cac3d1791b5",
+      "raw_token": "GFDL-1.3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GFDL-1.3",
+      "target_exists": true,
+      "target_sha256": "110535522396708cea37c72a802c5e7e81391139f5f7985631c93ef242b206a4",
+      "exact_occurrences": [
+        {
+          "line": 414,
+          "text": "License is available under /usr/share/common-licenses/GFDL-1.3."
+        }
+      ]
+    },
+    {
+      "package": "libgraphite2-3",
+      "copyright_path": "usr/share/doc/libgraphite2-3/copyright",
+      "copyright_sha256": "a33017ba0308c41bdbde4751bff349ab7b26af45fadbb1e3e7ac67c372985572",
+      "raw_token": "GPL-1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-1",
+      "target_exists": true,
+      "target_sha256": "49c007bafb5ad6dd9f9d4dae4d3ac0461975498150c05d684c551f0914ab486c",
+      "exact_occurrences": [
+        {
+          "line": 72,
+          "text": " in /usr/share/common-licenses/GPL-1."
+        }
+      ]
+    },
+    {
+      "package": "libgraphite2-3",
+      "copyright_path": "usr/share/doc/libgraphite2-3/copyright",
+      "copyright_sha256": "a33017ba0308c41bdbde4751bff349ab7b26af45fadbb1e3e7ac67c372985572",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 88,
+          "text": " in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libgraphite2-3",
+      "copyright_path": "usr/share/doc/libgraphite2-3/copyright",
+      "copyright_sha256": "a33017ba0308c41bdbde4751bff349ab7b26af45fadbb1e3e7ac67c372985572",
+      "raw_token": "LGPL-2.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2.1",
+      "target_exists": true,
+      "target_sha256": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+      "exact_occurrences": [
+        {
+          "line": 118,
+          "text": " License in /usr/share/common-licenses/LGPL-2.1."
+        }
+      ]
+    },
+    {
+      "package": "libgraphite2-3",
+      "copyright_path": "usr/share/doc/libgraphite2-3/copyright",
+      "copyright_sha256": "a33017ba0308c41bdbde4751bff349ab7b26af45fadbb1e3e7ac67c372985572",
+      "raw_token": "MPL-1.1.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/MPL-1.1",
+      "target_exists": true,
+      "target_sha256": "f849fc26a7a99981611a3a370e83078deb617d12a45776d6c4cada4d338be469",
+      "exact_occurrences": [
+        {
+          "line": 100,
+          "text": " in /usr/share/common-licenses/MPL-1.1."
+        }
+      ]
+    },
+    {
+      "package": "libgtk-3-0t64",
+      "copyright_path": "usr/share/doc/libgtk-3-0t64/copyright",
+      "copyright_sha256": "ededd0b07c091f82888eacad33ecd01018d0ccdf85e91f0f5d85de58529f6842",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 990,
+          "text": " can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libgtk-3-common",
+      "copyright_path": "usr/share/doc/libgtk-3-common/copyright",
+      "copyright_sha256": "ededd0b07c091f82888eacad33ecd01018d0ccdf85e91f0f5d85de58529f6842",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 990,
+          "text": " can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libhogweed6t64",
+      "copyright_path": "usr/share/doc/libhogweed6t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 659,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libhogweed6t64",
+      "copyright_path": "usr/share/doc/libhogweed6t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 708,
+          "text": " /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libhogweed6t64",
+      "copyright_path": "usr/share/doc/libhogweed6t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 366,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libhogweed6t64",
+      "copyright_path": "usr/share/doc/libhogweed6t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 688,
+          "text": " /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "libidn2-0",
+      "copyright_path": "usr/share/doc/libidn2-0/copyright",
+      "copyright_sha256": "32df8170a3c5e55c553f684576a2911e6a0611320ccd7fd65f7dceae26be61ee",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 74,
+          "text": " License version 2 can be found in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libidn2-0",
+      "copyright_path": "usr/share/doc/libidn2-0/copyright",
+      "copyright_sha256": "32df8170a3c5e55c553f684576a2911e6a0611320ccd7fd65f7dceae26be61ee",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 57,
+          "text": " License version 3 can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libidn2-0",
+      "copyright_path": "usr/share/doc/libidn2-0/copyright",
+      "copyright_sha256": "32df8170a3c5e55c553f684576a2911e6a0611320ccd7fd65f7dceae26be61ee",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 91,
+          "text": " Public License version 3 can be found in /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libmpc3",
+      "copyright_path": "usr/share/doc/libmpc3/copyright",
+      "copyright_sha256": "80763e4cca3963670637b98abff467ee09b83d1737d683ad5ccfb1e919bea94b",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 23,
+          "text": "/usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libmpfr6",
+      "copyright_path": "usr/share/doc/libmpfr6/copyright",
+      "copyright_sha256": "c434a44e656a89e72b5cee13bba6719011e0899bfc626ab9c08205010ab2dbbe",
+      "raw_token": "GFDL-1.2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GFDL-1.2",
+      "target_exists": true,
+      "target_sha256": "2652c22ba086f92e55ae4a9f9c890ad4766ffd7814a73d318e22a597edf857a4",
+      "exact_occurrences": [
+        {
+          "line": 20,
+          "text": "/usr/share/common-licenses/LGPL-3 and /usr/share/common-licenses/GFDL-1.2."
+        }
+      ]
+    },
+    {
+      "package": "libnettle8t64",
+      "copyright_path": "usr/share/doc/libnettle8t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 659,
+          "text": " /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libnettle8t64",
+      "copyright_path": "usr/share/doc/libnettle8t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 708,
+          "text": " /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libnettle8t64",
+      "copyright_path": "usr/share/doc/libnettle8t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "LGPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-2",
+      "target_exists": true,
+      "target_sha256": "cc535c21133c895b56b374c8a1dc1eb948d99003ed2b47372069456b62f42b24",
+      "exact_occurrences": [
+        {
+          "line": 366,
+          "text": " /usr/share/common-licenses/LGPL-2."
+        }
+      ]
+    },
+    {
+      "package": "libnettle8t64",
+      "copyright_path": "usr/share/doc/libnettle8t64/copyright",
+      "copyright_sha256": "344396197142cd506468b20029ea5722d507c980129bb3db4af02424ed6f39c6",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 688,
+          "text": " /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "libstdc++6",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "GPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 711,
+          "text": "can be found in /usr/share/common-licenses/GPL."
+        }
+      ]
+    },
+    {
+      "package": "libstdc++6",
+      "copyright_path": "usr/share/doc/gcc-14-base/copyright",
+      "copyright_sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "raw_token": "LGPL.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 715,
+          "text": "license be found in /usr/share/common-licenses/LGPL."
+        }
+      ]
+    },
+    {
+      "package": "libtasn1-6",
+      "copyright_path": "usr/share/doc/libtasn1-6/copyright",
+      "copyright_sha256": "5f9f7b538d221104bdb561ae80fd794ec5f813eb8fd04650293bddcc0f856e7d",
+      "raw_token": "GFDL-1.3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GFDL-1.3",
+      "target_exists": true,
+      "target_sha256": "110535522396708cea37c72a802c5e7e81391139f5f7985631c93ef242b206a4",
+      "exact_occurrences": [
+        {
+          "line": 80,
+          "text": "can be found in /usr/share/common-licenses/GFDL-1.3."
+        }
+      ]
+    },
+    {
+      "package": "libtasn1-6",
+      "copyright_path": "usr/share/doc/libtasn1-6/copyright",
+      "copyright_sha256": "5f9f7b538d221104bdb561ae80fd794ec5f813eb8fd04650293bddcc0f856e7d",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 63,
+          "text": "License version 3 can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "libvulkan1",
+      "copyright_path": "usr/share/doc/libvulkan1/copyright",
+      "copyright_sha256": "c579213e28f67944a7e407816b8a8e1d2d2406b3d820e420aa923807c450dc07",
+      "raw_token": "Apache-2.0.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/Apache-2.0",
+      "target_exists": true,
+      "target_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "exact_occurrences": [
+        {
+          "line": 52,
+          "text": " /usr/share/common-licenses/Apache-2.0."
+        }
+      ]
+    },
+    {
+      "package": "sysvinit-utils",
+      "copyright_path": "usr/share/doc/sysvinit-utils/copyright",
+      "copyright_sha256": "53c7ef3839f64b24cc25a0937d11ce228517a48be0cc794f0d67b7e209b2a9ba",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 77,
+          "text": " in /usr/share/common-licenses/GPL-2."
+        },
+        {
+          "line": 97,
+          "text": " in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "sysvinit-utils",
+      "copyright_path": "usr/share/doc/sysvinit-utils/copyright",
+      "copyright_sha256": "53c7ef3839f64b24cc25a0937d11ce228517a48be0cc794f0d67b7e209b2a9ba",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 87,
+          "text": " in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "tar",
+      "copyright_path": "usr/share/doc/tar/copyright",
+      "copyright_sha256": "a0a44d41b2a045eb5946a8952487151cfa6ff0cd080bbf4b2eec220751d23024",
+      "raw_token": "GPL-2.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-2",
+      "target_exists": true,
+      "target_sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+      "exact_occurrences": [
+        {
+          "line": 203,
+          "text": " License version 2 can be found in /usr/share/common-licenses/GPL-2."
+        }
+      ]
+    },
+    {
+      "package": "tar",
+      "copyright_path": "usr/share/doc/tar/copyright",
+      "copyright_sha256": "a0a44d41b2a045eb5946a8952487151cfa6ff0cd080bbf4b2eec220751d23024",
+      "raw_token": "GPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/GPL-3",
+      "target_exists": true,
+      "target_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "exact_occurrences": [
+        {
+          "line": 25,
+          "text": " License version 3 can be found in /usr/share/common-licenses/GPL-3."
+        },
+        {
+          "line": 60,
+          "text": " License version 3 can be found in /usr/share/common-licenses/GPL-3."
+        }
+      ]
+    },
+    {
+      "package": "tar",
+      "copyright_path": "usr/share/doc/tar/copyright",
+      "copyright_sha256": "a0a44d41b2a045eb5946a8952487151cfa6ff0cd080bbf4b2eec220751d23024",
+      "raw_token": "LGPL-3.",
+      "classification": "trailing-sentence-period-existing-target",
+      "candidate_target": "usr/share/common-licenses/LGPL-3",
+      "target_exists": true,
+      "target_sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "exact_occurrences": [
+        {
+          "line": 189,
+          "text": " Public License version 3 can be found in /usr/share/common-licenses/LGPL-3."
+        }
+      ]
+    }
+  ],
+  "copyright_inventory": "recovery-copyrights.json",
+  "final_assembly_copyright_bytes_identical": true
+}

@@ -1,0 +1,94 @@
+#!/bin/sh
+# Self-contained busybox early userspace. See ADR 0014; no authenticated-boot claim.
+export PATH=/bin:/sbin
+# Independent guest deadline, including module/hash/mount operations. The watcher
+# is stopped before switch_root; no timer survives into the recovery OS.
+( /bin/busybox sleep 180 & child=$!
+  trap '/bin/busybox kill "$child" 2>/dev/null; exit' TERM
+  wait "$child"
+  echo 'SV08_RECOVERY_REFUSED: early boot deadline' >/dev/console
+  /bin/busybox poweroff -f ) & watcher=$!
+fail() {
+    echo "SV08_RECOVERY_REFUSED: $*" >/dev/console
+    cat /proc/mounts >/dev/console
+    sync
+    sleep 2
+    /bin/busybox poweroff -f
+    while :; do sleep 60; done
+}
+mount -t proc proc /proc || fail "proc mount"
+mount -t sysfs sysfs /sys || fail "sysfs mount"
+mount -t devtmpfs -o size=16m,nr_inodes=4096,mode=755 devtmpfs /dev || fail "device runtime mount"
+mount -t tmpfs -o mode=755,size=96m,nosuid,nodev tmpfs /run || fail "run mount"
+mkdir -p /dev/shm
+mount -t tmpfs -o mode=1777,size=32m,nosuid,nodev tmpfs /dev/shm || fail "shared-memory mount"
+for module in virtio_pci virtio_mmio virtio_blk crc32c_generic ext4 loop squashfs; do
+    modprobe "$module" || fail "required early module $module"
+done
+expected=''
+for arg in $(cat /proc/cmdline); do
+    case "$arg" in
+        sv08.envelope=*) [ -z "$expected" ] || fail 'duplicate manifest binding'; expected=${arg#sv08.envelope=};;
+        root=*) [ "$arg" = 'root=/dev/vda' ] || fail 'unexpected root argument';;
+    esac
+done
+[ "${#expected}" = 64 ] || fail 'missing manifest binding'
+case "$expected" in *[!0-9a-f]*) fail 'invalid manifest binding';; esac
+count=0
+while [ ! -b /dev/vda ]; do sleep 1; count=$((count+1)); [ "$count" -lt 30 ] || fail 'missing recovery block'; done
+[ "$(cat /sys/class/block/vda/size)" = 1048576 ] || fail 'unexpected recovery capacity'
+[ "$(cat /sys/class/block/vda/ro)" = 1 ] || fail 'recovery block must be read-only'
+[ "$(blkid -s UUID -o value /dev/vda)" = '964ed891-6ec4-4a95-8762-e32c91260394' ] || fail 'wrong recovery filesystem UUID'
+mount -t ext4 -o ro,noload /dev/vda /newroot || fail 'ext4 recovery mount'
+manifest=/newroot/etc/sv08/recovery-envelope.manifest
+for path in /newroot/etc /newroot/etc/sv08 "$manifest" /newroot/usr.squashfs /newroot/usr; do
+    [ ! -L "$path" ] || fail "symlink in envelope: $path"
+done
+[ -f "$manifest" ] || fail 'missing envelope manifest'
+[ "$(stat -c '%F:%u:%g:%h' "$manifest")" = 'regular file:0:0:1' ] || fail 'unexpected manifest identity'
+[ "$(stat -c %s "$manifest")" -le 1024 ] || fail 'oversized manifest'
+[ "$(sha256sum "$manifest" | cut -d ' ' -f 1)" = "$expected" ] || fail 'changed envelope manifest'
+[ "$(wc -l < "$manifest")" = 6 ] || fail 'manifest schema'
+[ "$(cat "$manifest" | grep -c '^format=sv08-recovery-usr-v1$')" = 1 ] || fail 'manifest format'
+[ "$(grep -c '^root_uuid=964ed891-6ec4-4a95-8762-e32c91260394$' "$manifest")" = 1 ] || fail 'manifest root identity'
+[ "$(grep -c '^root_bytes=536870912$' "$manifest")" = 1 ] || fail 'manifest root capacity'
+[ "$(grep -c '^usr_path=/usr.squashfs$' "$manifest")" = 1 ] || fail 'unexpected compressed path'
+size=$(grep '^usr_bytes=' "$manifest" | cut -d = -f 2)
+hash=$(grep '^usr_sha256=' "$manifest" | cut -d = -f 2)
+case "$size" in ''|*[!0-9]*) fail 'invalid compressed size';; esac
+[ "${#hash}" = 64 ] || fail 'invalid compressed digest'
+case "$hash" in *[!0-9a-f]*) fail 'invalid compressed digest';; esac
+[ -f /newroot/usr.squashfs ] || fail 'missing compressed userspace'
+[ "$(stat -c '%F:%u:%g:%h' /newroot/usr.squashfs)" = 'regular file:0:0:1' ] || fail 'unexpected compressed identity'
+[ "$(stat -c '%u:%g:%a' /newroot/usr.squashfs)" = '0:0:644' ] || fail 'unexpected compressed ownership/mode'
+[ "$(stat -c %d /newroot/usr.squashfs)" = "$(stat -c %d /newroot)" ] || fail 'unexpected compressed backing filesystem'
+[ "$(stat -c %s /newroot/usr.squashfs)" = "$size" ] || fail 'changed compressed size'
+[ "$(sha256sum /newroot/usr.squashfs | cut -d ' ' -f 1)" = "$hash" ] || fail 'changed compressed digest'
+[ "$(awk '$2=="/newroot" {print $1 ":" $3 ":" $4}' /proc/mounts)" = '/dev/vda:ext4:ro,relatime,norecovery' ] || fail 'unexpected ext4 mount identity/options'
+[ "$(awk '$2 ~ /^\/newroot\// {n++} END {print n+0}' /proc/mounts)" = 0 ] || fail 'unexpected envelope submount'
+for backing in /sys/block/loop*/loop/backing_file; do
+    [ ! -e "$backing" ] || fail 'unexpected preassigned loop mapping'
+done
+losetup -r /dev/loop0 /newroot/usr.squashfs || fail 'read-only loop setup'
+[ "$(cat /sys/block/loop0/loop/backing_file)" = '/newroot/usr.squashfs' ] || fail 'unexpected loop backing path'
+[ "$(cat /sys/block/loop0/loop/offset)" = 0 ] || fail 'unexpected loop offset'
+[ "$(cat /sys/block/loop0/loop/sizelimit)" = 0 ] || fail 'unexpected loop size limit'
+[ "$(cat /sys/block/loop0/ro)" = 1 ] || fail 'loop not read-only'
+mount -t squashfs -o ro,nodev /dev/loop0 /newroot/usr || fail 'compressed userspace mount'
+[ "$(awk '$2=="/newroot/usr" {print $1 ":" $3 ":" $4}' /proc/mounts)" = '/dev/loop0:squashfs:ro,nodev,relatime,errors=continue' ] || fail 'unexpected compressed mount identity/options'
+mkdir -p /run/sv08 /run/recovery-home /run/recovery-var/log /run/recovery-var/tmp /run/recovery-var/cache /run/recovery-var/lib/systemd /run/recovery-var/lib/dbus
+/bin/busybox chmod 0700 /run/recovery-home
+# Marker is created only after all identity checks; service marker alone cannot
+# execute anything because the merged-/usr system is inaccessible before this gate.
+echo "$expected" >/run/sv08/recovery-verified
+cat /proc/mounts >/run/sv08/early-mounts
+cat /proc/meminfo >/run/sv08/early-memory
+mount -t tmpfs -o mode=1777,size=64m,nosuid,nodev tmpfs /newroot/tmp || fail 'temporary runtime mount'
+mount --move /run /newroot/run || fail 'move run'
+mount --move /proc /newroot/proc || fail 'move proc'
+mount --move /sys /newroot/sys || fail 'move sys'
+mount --move /dev /newroot/dev || fail 'move dev'
+echo 'SV08_RECOVERY_VERIFIED: independent envelope and compressed userspace' >/newroot/dev/console
+/bin/busybox kill "$watcher"
+wait "$watcher" 2>/dev/null
+exec switch_root /newroot /sbin/init

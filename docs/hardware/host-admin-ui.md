@@ -33,12 +33,12 @@ running host's slot identity.
 | Additional software | Catalog selection and reviewed-operation UI contract | Reviewed catalog, dependency/space preview, actual APT adapter and customization reconciliation |
 | Network/access configuration | Scope and unavailable-state explanation | Owner onboarding, persistent credentials/certificates, network forms and rollback |
 | Recovery state inspection | Read-only, including missing/corrupt registry; no initialization | Physical block/filesystem diagnosis adapter |
-| Recovery boot/restore/export | Native selection/review/apply; [archive exporter](host-recovery-export.md) and [verified pre-mounted export admission](host-recovery-media.md) with actual GTK/FAT tests | Independent recovery image and trusted premount integration, USB discovery, signed restore and physical export tests |
+| Recovery boot/restore/export | Native selection/review/apply; [archive exporter](host-recovery-export.md) and [verified pre-mounted export admission](host-recovery-media.md) with actual GTK/FAT tests | Trusted premount integration with the independent image, USB discovery, signed restore and physical export tests |
 
 Unavailable operations are disabled and explain the gap; they do not silently
 succeed. **This is not yet a complete no-command administration release.** In
 particular, the current GTK screen cannot restore a real printer until the
-independent recovery backend and image are built and validated.
+independent recovery backend and board image composition are validated.
 
 A requested mode or host-name change does not mutate the currently mounted root
 or restart the printer. Automatic-update opt-out does not cancel an already armed
@@ -52,8 +52,10 @@ recovery GTK dependencies separate. Cockpit `337-1+deb13u2` resolves from the
 existing `20260901T000000Z` Debian security snapshot. GTK/input packages already
 appear in the ordinary host baseline; recovery must contain an independent copy.
 The [actual Cockpit integration](host-admin-cockpit.md) pins and measures the host
-delta and exercises real isolated login and elevation. The independent recovery
-closure and assembled image fit remain unvalidated.
+delta and exercises real isolated login and elevation. The [independent recovery
+image](host-recovery-image.md) now pins its own complete closure, fits 512 MiB and
+boots actual ARM64 GTK diagnostics with virtual input and accessibility; its
+production media operations remain unavailable.
 
 Run [UI staging](../../scripts/stage_admin_ui.py) after the matching core runtime
 has been copied by the image builder. It defaults to inspection, accepts only a
@@ -127,7 +129,7 @@ failure between those publications passes; physical reboot/network checks remain
 
 The [public evidence record](host-admin-ui-20260910.json) records scope. Before
 release, validate production owner/TLS integration and disconnected-browser
-jobs, 8 GB storage occupancy, independent recovery boot and attended HDMI touch,
+jobs, complete 8 GB release occupancy, named-board recovery boot and attended HDMI touch,
 keyboard-only, mouse, USB export and signed restore tests on the named profile.
 
 The [2026-09-11 export work](host-recovery-export.md) adds a real archive backend.
