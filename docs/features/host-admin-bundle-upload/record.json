@@ -264,7 +264,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Implement and verify bounded authenticated bundle intake and cleanup",
       "verification": {
         "decision_sha256": "ab4f6a61a1e19d478e120f8832ea6bd6e6487b71b0dd53bee72b7a6ddbe381b2",
