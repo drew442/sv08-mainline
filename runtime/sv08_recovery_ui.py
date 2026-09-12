@@ -11,7 +11,7 @@ import threading
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
-from sv08_recovery import RecoveryController
+from sv08_recovery import RecoveryController, installed_controller
 from sv08_state import Store
 
 
@@ -132,7 +132,7 @@ def main():
     else:
         if args.screenshot: parser.error('Screenshots require an offline fixture')
         # Missing/damaged registry is displayed without initializing or repairing it.
-        controller = RecoveryController(Store('/data/sv08'))
+        controller = installed_controller()
     window = RecoveryWindow(controller)
     if args.fixture:
         window.set_title('SV08 Recovery · Offline test fixture')

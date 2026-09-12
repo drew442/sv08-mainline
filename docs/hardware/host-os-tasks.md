@@ -119,8 +119,13 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Implement reviewed recovery data export with checksummed/readback-verified
   archives, source/destination change refusal, GTK workflow and actual read-only
   source/FAT32 fixture; [export evidence](host-recovery-export.md).
+- [x] Connect the installed GTK entry to verified pre-mounted export admission;
+  [offline evidence](host-recovery-media.md) covers filesystem/block read-only
+  preservation, actual cancellation/apply, device reuse and shared exclusion.
 - [ ] Connect independent recovery target identification, preserved-slot boot,
   USB/LAN signed restore and export of readable user data without formatting it.
+  Assemble/review the independent image and trusted premounter, including the
+  complete system-media inventory and participation by every media mutator.
 - [ ] Add touch text entry for recovery network/credential workflows where needed.
 
 ## Human and powered-printer tasks
@@ -142,6 +147,8 @@ These do not prevent the independent offline work above.
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.
 - [ ] Test the local recovery UI with HDMI touch only, keyboard only, and
   keyboard + mouse; verify focus, cancellation, USB selection and readable errors.
+  Use a reviewed independently booted recovery candidate with named-profile root,
+  namespace and removable-medium evidence; test actual media removal/replacement.
 - [ ] Attend recovery and power-interruption tests with loads safe and backed-up
   expendable data; demonstrate A→B→A, failed trials, both slots failed and USB-reader
   restoration. Restore MCU backups separately when that test is planned.

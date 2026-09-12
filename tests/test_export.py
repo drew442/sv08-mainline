@@ -105,6 +105,32 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(list(self.target.iterdir()),[])
         self.assertEqual(self.depth,0)
 
+    def test_admission_fingerprint_and_final_rechecks_prevent_publication(self):
+        class Guard:
+            fingerprint='reviewed-media'
+            checks=0
+            fail_at=None
+            def recheck(self):
+                self.checks+=1
+                if self.checks==self.fail_at:raise ValueError('medium changed')
+        guard=Guard()
+        @contextmanager
+        def admission(_):
+            self.depth+=1
+            try:yield guard
+            finally:self.depth-=1
+        self.export.admission=admission
+        plan=self.export.prepare('usb-1')
+        guard.fingerprint='replacement'
+        with self.assertRaisesRegex(ValueError,'media changed'):self.export.execute(plan)
+        guard.fingerprint='reviewed-media'
+        # Rechecks before writing, before publication, and after directory fsync.
+        for failure in (1,2,3):
+            guard.checks=0;guard.fail_at=failure
+            with self.assertRaisesRegex(ValueError,'medium changed'):self.export.execute(plan)
+            self.assertEqual(list(self.target.iterdir()),[])
+            self.assertEqual(self.depth,0)
+
     def test_source_mutation_during_copy_never_publishes(self):
         from sv08_export import HashReader
         plan=self.export.prepare('usb-1');original=HashReader.read
