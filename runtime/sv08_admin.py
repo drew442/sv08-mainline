@@ -111,15 +111,16 @@ class Controller:
     Recovery adapters own device identification and target admission. Missing
     adapters always produce unavailable actions, never simulated success.
     """
-    def __init__(self, store, boot, context='host', adapter=None):
+    def __init__(self, store, boot, context='host', adapter=None, jobs=None):
         if context not in ('host', 'recovery'):
             raise ValueError('Invalid administration context')
         self.store, self.boot, self.context, self.adapter = store, boot, context, adapter
+        self.jobs = jobs
 
     def status(self):
         if not (self.store.root / 'state.json').is_file():
             raise ValueError('Persistent state is unavailable; no initialization or repair was attempted')
-        with self.store.locked():
+        with self.store.locked(nonblocking=True):
             view = snapshot(self.store, self.boot, self.context)
             state, transaction = view['state'], view['transaction']
             capacities = os.statvfs(self.store.root)
@@ -192,9 +193,17 @@ class Controller:
         if not isinstance(request, dict): raise ValueError('Expected an object')
         method = request.get('method')
         expected = {'status': {'method'}, 'plan': {'method', 'action', 'arguments'},
-                    'apply': {'method', 'plan'}}.get(method)
+                    'apply': {'method', 'plan'}, 'jobs': {'method'},
+                    'image.submit': {'method', 'id', 'plan'}}.get(method)
         if expected is None or set(request) != expected:
             raise ValueError('Unknown request or fields')
+        if method == 'jobs':
+            return self.jobs.history() if self.jobs else dict(jobs=[], capacity=0, remaining=0, blocked=False)
+        if method == 'image.submit':
+            if self.jobs is None: raise ValueError('Image worker integration unavailable')
+            return self.jobs.submit(request['id'], request['plan'], self)
+        if method == 'apply' and isinstance(request['plan'], dict) and request['plan'].get('action') in ('image.stage', 'image.arm', 'image.cancel') and self.jobs is not None:
+            raise ValueError('Submit a reviewed image job with a retry identity')
         if method == 'status': return self.status()
         if method == 'plan': return self.plan(request['action'], request['arguments'])
         return self.apply(request['plan'])
@@ -208,7 +217,8 @@ def installed_controller():
         raise ValueError('The installed administration context is not supported')
     boot = json.loads(Path('/run/sv08/boot.json').read_text())
     store = Store('/data/sv08')
-    controller = Controller(store, boot)
+    from sv08_admin_jobs import Jobs
+    controller = Controller(store, boot, jobs=Jobs('/data/sv08/admin-image-jobs', boot['boot_id']))
     # These reviewed build inputs do not yet ship in the non-deployable baseline.
     paths = {name: Path('/usr/lib/sv08') / name for name in
              ('release.json', 'update-policy.json', 'layout.json', 'environment.json')}

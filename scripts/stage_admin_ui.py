@@ -16,7 +16,7 @@ def stage(work, context, execute=False):
     if context not in ('host', 'recovery'): raise ValueError('Unknown UI context')
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir(): raise ValueError('Expected an isolated image rootfs')
-    for name in ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
+    for name in ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
         path = root / 'usr/lib/sv08' / name
         if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
@@ -26,6 +26,8 @@ def stage(work, context, execute=False):
     if context == 'host':
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(REPO / 'ui/host', target)
+        units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(REPO / 'configs/host-os/sv08-admin-image-worker@.service', units / 'sv08-admin-image-worker@.service')
         (root / 'usr/lib/sv08/admin-context.json').write_text(json.dumps(dict(format_version=1, context='host'))+'\n')
     else:
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -34,7 +36,8 @@ def stage(work, context, execute=False):
         shutil.copyfile(REPO / 'configs/host-os/sv08-recovery-display.service', units / 'sv08-recovery-display.service')
     files = [p for p in (target.rglob('*') if target.is_dir() else [target]) if p.is_file()]
     files.extend(root / 'usr/lib/sv08' / name for name in
-                 ('sv08_admin.py', 'sv08_admin_images.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
+                 ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
+    if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
     return dict(execute=True, context=context, activated=False,
