@@ -1,0 +1,132 @@
+{
+  "author": "recovery-composition-suggester",
+  "checks": [
+    {
+      "description": "Exact measured virtual media and coherent immutable policy/manifest bindings.",
+      "environment": "offline",
+      "id": "profile-and-trust"
+    },
+    {
+      "description": "Source whole-medium and partition write exclusion precedes any source mount.",
+      "environment": "offline",
+      "id": "preserve-before-mount"
+    },
+    {
+      "description": "Production provider verifies exactly the reviewed compressed userspace backing chain.",
+      "environment": "offline",
+      "id": "compressed-chain"
+    },
+    {
+      "description": "Actual independent ARM64 installed GTK exports preserved data through reviewed input.",
+      "environment": "offline",
+      "id": "independent-gtk-export"
+    },
+    {
+      "description": "Real shared admission and media-change refusals preserve existing files.",
+      "environment": "offline",
+      "id": "lease-and-change"
+    },
+    {
+      "description": "Exact staged runtime and bounded resources remain within accepted image capacity.",
+      "environment": "offline",
+      "id": "composition-and-bounds"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "profile-and-trust",
+          "composition-and-bounds"
+        ],
+        "text": "Preserve the two declared implementation dependencies and import exactly the reviewed proposal/record scope. Before implementation, reinspect the final independently verified recovery artifact, ADR, initramfs, namespace services and package/module inventory; capture changes in implementation evidence. Before importing/using this decision, compare the normal feature_workflow.py review-context result to these exact proposal/requirement/scope hashes. Material changes to task/check scope require a fresh independent review, not an inferred approval of mutable candidate code."
+      },
+      {
+        "checks": [
+          "profile-and-trust",
+          "compressed-chain"
+        ],
+        "text": "Production preparation must authenticate immutable reviewed policy and both early-envelope/provider manifest bindings before accepting observations; per-boot context may record independently validated measurements but must never manufacture trust by treating current observations as policy. Enumerate the complete supported media topology, including unmounted A/B and additional protected media, and reject omitted, duplicate, ambiguous or unsupported identities. Any new SCSI/virtio identity support must use actual selected-guest sysfs evidence and preserve cross-attribute alias exclusion; no fixture flags, synthetic sysfs or general virtual-storage exemption."
+      },
+      {
+        "checks": [
+          "preserve-before-mount",
+          "lease-and-change"
+        ],
+        "text": "Demonstrate source partition AND whole-medium block-read-only state before the first source filesystem mount, with ext4 journal replay suppressed and reviewed participants excluded under the fixed MediaLease. Use both a QEMU read-only preservation control and a separately disposable initially writable dirty-journal source with observed guest preparation order; clean pre-mounted fixtures alone do not satisfy this. Preserve complete source/recovery image hashes on success and failure. FAT destination mounting is an explicitly target-bound potentially writing preparation action, not read-only inspection; no repair, formatting, automatic trust discovery or UI-refresh preparation."
+      },
+      {
+        "checks": [
+          "compressed-chain",
+          "profile-and-trust",
+          "lease-and-change"
+        ],
+        "text": "Admit only the single reviewed ext4-root/regular-file/read-only-loop/SquashFS /usr chain, with explicit zero offset and bounded effective extent (including how a zero kernel sizelimit is bounded by the immutable file), size/hash/device/inode identity and real post-switch_root metadata. Preserve physical root manifest/policy location, legacy uncompressed behavior, generic stack refusal, full userspace namespace visibility/private propagation and mount/holder/alias checks. Service namespace conflicts require narrowly justified composed configuration, not broad exemptions. State the cooperative writer boundary; no claim that this protocol prevents arbitrary privileged interference."
+      },
+      {
+        "checks": [
+          "independent-gtk-export",
+          "lease-and-change",
+          "composition-and-bounds"
+        ],
+        "text": "Positive acceptance must boot the candidate ARM64 image and use its ordinary installed GTK service/main and production provider/preparer with real emulated removable media. Demonstrate separate touch-only, keyboard-only and keyboard-plus-mouse review/cancel/apply paths using actual guest input events; retain full accessibility closure. Include damaged-registry export without initialization/repair and config/SQLite-WAL/Unicode preservation. Actual USB removal/replacement, lock contention, stale-context, archive-corruption, no-space and operation-owned cleanup failures must not publish a successful result or delete older destination files. Missing/untrusted preparation must leave useful diagnostics."
+      },
+      {
+        "checks": [
+          "composition-and-bounds",
+          "independent-gtk-export",
+          "preserve-before-mount"
+        ],
+        "text": "Keep the accepted 512 MiB recovery partition and factory 7,818,182,656-byte layout unchanged. Measure final added modules/packages/code, compressed and allocated filesystem bytes/inodes, remaining reserve, preparation/export workspace and peak VM memory with the actual composition. Preserve selected source/package pins and exporter single-pass verification; no borrowed A/B/data libraries. Approval covers only offline regular-file VM media and reviewed startup preparation: no physical boot/write/format, expanded hotplug/ejection, restore, slot selection or networking authority. Record unresolved physical/source-license/release acceptance honestly; a partial preparer or fixture-positive test is not completion."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "a808b4a507d5d367018004cc42f242b00cde478794503488e4f68cbe3d2f521f",
+    "rationale": "ADR 0010 expressly requires an independent GTK recovery workflow usable without Linux commands, preserved user data and reviewed apply; ADR 0011 delegates bounded proposal approval. The proposed production premounter plus precise compressed-/usr provider extension closes a concrete existing gap: runtime/sv08_recovery_media.py requires trusted pre-mounted physical ext4 root/source, complete namespaces and a per-boot context, while the mutable independent-image recovery-init uses a separately verified ext4 envelope/SquashFS /usr and supplies no production media context. Existing host-recovery-media/readback evidence is workstation composition, not this independent boot-to-export journey. The proposal reuses those components, selected distro drivers and fixed MediaLease, preserves 512 MiB/factory layout and keeps source writes, fixture exemptions, restoration and physical operation outside its authority. Its declared dependencies appropriately place it after verified independent-image and job-resolution deliveries. Scope is feasible as a bounded offline composition with actual emulated SCSI/USB sysfs evidence, but no virtual identity, namespace configuration, binding scheme or successful test is assumed before measurement. I read the actual requirement, provider/preparation contract, candidate recovery-init, proposal, record and intake, and independently recomputed all three supplied hashes using the framework scope_digest/snapshot functions. Normal review-context currently reports Unknown feature because the record intentionally remains private; the coordinator must compare normal CLI context after unchanged import before relying on this approval. This is design approval only, not verification of mutable implementation, license completeness, hardware compatibility or export durability on physical media.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "feature-approver /root/board_source_review (independent of recovery-composition-suggester)",
+    "scope_sha256": "b062b518fc383819fc6b606bc0485731840970e0989312a17d0bf2ab4f34857c",
+    "session": "board-source-review-recovery-composition-approval-20260912"
+  },
+  "format_version": 1,
+  "id": "host-recovery-export-composition",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 3,
+  "proposal": "docs/features/host-recovery-export-composition/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "profile-and-trust",
+        "preserve-before-mount",
+        "compressed-chain",
+        "independent-gtk-export",
+        "lease-and-change",
+        "composition-and-bounds"
+      ],
+      "depends_on": [
+        "host-recovery-independent-image:implement",
+        "host-image-job-resolution:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Compose trusted recovery media preparation and independent GTK export",
+      "verification": null
+    }
+  ],
+  "title": "Export preserved user data from the independently booted recovery OS"
+}

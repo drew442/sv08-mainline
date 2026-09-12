@@ -1,0 +1,136 @@
+{
+  "author": "source-review-job-suggester",
+  "checks": [
+    {
+      "description": "Read-only bounded evidence review does not reconcile or mutate image state.",
+      "environment": "offline",
+      "id": "review-is-observation"
+    },
+    {
+      "description": "Actual selected RAUC service remains excluded after worker or CLI death.",
+      "environment": "offline",
+      "id": "orphan-service"
+    },
+    {
+      "description": "Same-owner busy-guarded service evidence and refusal on stale or unknown identity.",
+      "environment": "offline",
+      "id": "idle-proof"
+    },
+    {
+      "description": "Every supported RAUC mutation path participates in the admitted writer protocol.",
+      "environment": "offline",
+      "id": "writer-exclusion"
+    },
+    {
+      "description": "Unknown outcomes, retry identity and evidence survive every publication boundary.",
+      "environment": "offline",
+      "id": "disposition-durability"
+    },
+    {
+      "description": "Browser resolution and separately reviewed safe-source cancellation preserve user data.",
+      "environment": "offline",
+      "id": "safe-source-journey"
+    },
+    {
+      "description": "Affected integration, responsive history and finite evidence/capacity bounds pass.",
+      "environment": "offline",
+      "id": "regression-and-bounds"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "review-is-observation",
+          "idle-proof"
+        ],
+        "text": "Review must use bounded non-mutating evidence without Transaction.reconcile, backend marks, hidden service activation or service termination. Bind current boot, immutable original receipt/plan, state and journal snapshot, worker invocation, exact system-bus unique owner, executable/package and configuration/slot identities. Check both owner continuity and freshness across admitted reads; absent, replaced, busy, timed-out, corrupt or unsupported evidence refuses. A changed owner or boot invalidates the reviewed plan; it must never be evidence that the historical operation succeeded. Any later fresh review still needs independently valid current inactivity/context evidence. Do not invent historical transaction linkage for legacy receipts that never stored one."
+      },
+      {
+        "checks": [
+          "orphan-service",
+          "idle-proof"
+        ],
+        "text": "Use an actual signed paired RAUC install in an identified disposable service environment, with a deterministic service-side barrier and CLI/worker death while the service survives. Record exact selected Debian 1.13-3+deb13u1 binary/source and downstream patch provenance and verify its stronger busy probe; candidate 1.15.2 fixtures alone do not satisfy baseline evidence. If final composition selects another version, record and validate that composition separately under existing pinning policy. Reproduce or conclusively reject the public idle/internal busy discrepancy for each supported version. Prove resolution and cancellation refuse during orphan activity, then require fresh same-owner internal-busy-guarded evidence after release. Instrumentation stays out of production and no InstallBundle probe runs against real targets."
+      },
+      {
+        "checks": [
+          "writer-exclusion",
+          "orphan-service",
+          "idle-proof"
+        ],
+        "text": "Document a concrete lock/authorization order and inventory of all supported mutation entry points, covering install and every boot mark (including existing mark-good callers without adding trial-health authority), cancellation, maintenance entry points and the composed D-Bus policy. Supported writers must be excluded continuously across the final evidence check and durable disposition, and across each subsequent backend action; a point-in-time query or two cooperative test callers is insufficient. Exercise an actual independently connected supported writer and an unauthorized ordinary caller under the assembled policy. Account for orphaned service-side installs after client lease loss. Privileged root intervention remains explicitly unsupported, never claimed prevented; observed intervention/identity changes invalidate admission. If this cannot be enforced within the bounded image integration, retain current blocking behavior and report a blocker rather than expanding to a generic broker or shipping acknowledgement alone."
+      },
+      {
+        "checks": [
+          "disposition-durability",
+          "review-is-observation"
+        ],
+        "text": "Specify the legacy-readable disposition schema, authoritative lookup precedence and crash protocol before enabling it. Preserve original identity, every reviewed-plan field and unknown outcome, with canonical or byte binding to the bounded evidence snapshot; administrative disposition is not transaction success/refusal. Same-ID/same-plan returns the historical result and different content refuses, before capacity checks. Cover every publication/fsync boundary, no-space, corrupt/missing evidence, lost acknowledgement, reboot and late queued worker arrival. Resolution must prevent any delayed worker from claiming the old receipt atomically, without globally making interrupted terminal or replaying it. Keep lock order compatible with worker->ledger and state/admission ownership; do not hold ledger locks during service waits, installs or device hashes."
+      },
+      {
+        "checks": [
+          "safe-source-journey",
+          "writer-exclusion",
+          "disposition-durability"
+        ],
+        "text": "Deliver and independently verify the actual browser/helper/service/backend composition for interruption, observation, explicit disposition, reconnect and separately reviewed cancellation below capacity. Preserve deployable-manifest, identified backend, original-source/release, pending-trial, customization and printer-idle gates. Cancellation must verify disarm before clearing pending state and must preserve source/user data; unknown historical outcome remains visible afterwards. Target boot, failed disarm, unavailable adapter and stale boot/revision reviews refuse. Preserve existing separately reviewed safe-source cancellation after a permitted fresh boot; do not silently turn a stale-review check into a new prohibition on the existing recovery path. Do not auto-arm/rearm, replay, reconcile, reboot or confirm trial health."
+      },
+      {
+        "checks": [
+          "regression-and-bounds",
+          "safe-source-journey"
+        ],
+        "text": "Stage helper, worker/runtime, UI and access-policy changes together and test the resulting composition. Record bounded per-evidence, aggregate ledger/disposition and temporary-publication byte budgets plus added installed bytes against the existing factory-capacity policy; corruption/no-space must fail closed without deletion. Keep history responsive during long operations. At 128 receipts, observation and disposition remain usable within their explicit storage budget but no new executable identity or cancellation receipt is admitted; document the separate rollover dependency and never evict, silently reserve extra identities, raise the limit or adopt the illustrative archive ceiling in this delivery. Run affected regression/build/staging checks and the independent verifier; retain offline versus hardware/release distinctions and provenance/retirement documentation."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "8227a40110b8ca1ce48abe3bab3b572dbc8f50bd8ddb8e6bbc33ef508ee972e2",
+    "rationale": "Approved as a bounded offline completion of ADR 0010 browser image administration and durable job history under ADR 0011, contingent on all seven checks and the constraints below. I independently read the proposal, requirement, workflow, project/roadmap, runtime receipt/transaction/backend/admission paths and locally available upstream 1.13/1.15.2 service sources. Jobs.submit rejects all nonterminal receipts and retains duplicate identity before capacity admission; Jobs.work durably publishes running before apply and preserves interrupted outcomes. HostImages.capability and Transaction.cancel provide a useful existing preserved-source cancellation path which the unresolved job gate currently prevents. Transaction.cancel marks the target bad and verifies disarm before clearing pending state; Transaction.reconcile can write arming to armed and therefore cannot serve as observation. Backend.command/install/mark invoke RAUC without the proposed writer exclusion, while Admission only barriers printer services. Both inspected upstream service implementations reset public Operation to idle on InstallBundle rejection while GetSlotStatus checks internal busy; the inspected 1.15.2 policy permits default callers. These actual invariants substantiate the benefit and the nontrivial race; neither CLI death nor a Python flock alone closes it. This review inspected source, not a running Debian service: exact Debian 1.13-3+deb13u1 behavior, binary provenance and final assembled policy remain acceptance work, not established compatibility. The scope can deliver a complete useful below-capacity interruption-to-cancellation journey without an outcome inference or archive protocol. Unknown receipts at full 128 capacity remain a documented incomplete final-release journey pending independently reviewed finite-preserving rollover. No owner requirement, hardware authority, selected upstream pin, release status, spending, license or agent authority changes are approved. One implementation remains active; the existing independent-recovery-image dependency must be honored. Workflow validate passed with six features/seven tasks and next null during this read-only review. Normal public review-context must match these independently computed private-byte bindings exactly before coordinator import.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "independent-feature-approver-job-resolution",
+    "scope_sha256": "6b56f7deece875aefab5ef31d624dcd66971e2a3b745562df5cb1ede53c9c3f2",
+    "session": "root/job_resolution_approver:2026-09-12:proposal-review"
+  },
+  "format_version": 1,
+  "id": "host-image-job-resolution",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/host-image-job-resolution/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "review-is-observation",
+        "orphan-service",
+        "idle-proof",
+        "writer-exclusion",
+        "disposition-durability",
+        "safe-source-journey",
+        "regression-and-bounds"
+      ],
+      "depends_on": [
+        "host-recovery-independent-image:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
+      "verification": null
+    }
+  ],
+  "title": "Resolve interrupted image receipts without guessing their outcome"
+}

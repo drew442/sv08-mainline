@@ -99,6 +99,9 @@ enumeration were re-established on 2026-09-12; see the
   and pass the browser/API file test. See [wheel evidence](host-compiled-wheels.md).
 - [ ] Finish independent rebuilds of the remaining packages/compiled wheels; retain complete source,
   toolchain and license manifests. A successful single build is insufficient.
+- [ ] Harden the recovery intake completion receipt against concurrent lock replacement;
+  retain the independently revalidated assembly gates. See the
+  [recorded reporting limitation](host-recovery-image.md#resources-and-preservation).
 - [ ] Assemble finalized boot/root/recovery/data filesystems and signed release
   artifacts only after boot/persistence integration; capacity fixtures are not
   deployable images. Test complete 8 GB occupancy including update staging/state.
@@ -112,9 +115,10 @@ enumeration were re-established on 2026-09-12; see the
 - [x] Keep recovery diagnostics usable with missing/corrupt read-only state.
 - [ ] Build/pin/measure Cockpit and independent GTK/input/accessibility closures;
   integrate actual authenticated login, owner provisioning and persistent TLS keys.
-  [Cockpit integration](host-admin-cockpit.md) now pins the host delta and tests
-  real isolated PAM/sudo/helper sessions; recovery, production identity/TLS and
-  assembled-image acceptance remain open.
+  [Cockpit integration](host-admin-cockpit.md) pins the host delta and tests
+  real isolated PAM/sudo/helper sessions. The [independent recovery image](host-recovery-image.md)
+  now has a measured closure and actual VM input/accessibility startup. Production
+  identity/TLS and assembled-release acceptance remain open.
 - [x] Implement bounded browser upload, signature/error/progress presentation and
   jobs that survive a closed browser or dropped LAN connection offline.
   [Authenticated upload](host-admin-upload.md) and [durable image jobs](host-admin-image-jobs.md)
@@ -123,7 +127,9 @@ enumeration were re-established on 2026-09-12; see the
 - [ ] Deliver reviewed resolution of ambiguous image-job receipts and bounded
   history rollover, preserving retry identities and original outcomes. Include
   RAUC service-side inactivity evidence before releasing the admission gate;
-  current ambiguous/full ledgers remain blocked without automatic replay.
+  current ambiguous/full ledgers remain blocked without automatic replay. The
+  [approved resolution task](../features/host-image-job-resolution/proposal.md)
+  precedes a separately scoped history-rollover delivery.
 - [ ] Finish additional-software catalog, dependency/space preview, admitted APT
   install/remove, service configuration and customization reconciliation.
 - [ ] Implement network/access forms, connectivity rollback, host naming/hosts
@@ -143,7 +149,9 @@ enumeration were re-established on 2026-09-12; see the
 - [ ] Connect independent recovery target identification, preserved-slot boot,
   USB/LAN signed restore and export of readable user data without formatting it.
   Integrate/review the trusted premounter with the independent image, including the
-  complete system-media inventory and participation by every media mutator.
+  complete system-media inventory and participation by every media mutator. The
+  [approved export composition](../features/host-recovery-export-composition/proposal.md)
+  covers the next independent boot-to-export journey; restoration remains separate.
 - [ ] Add touch text entry for recovery network/credential workflows where needed.
 
 ## Human and powered-printer tasks
