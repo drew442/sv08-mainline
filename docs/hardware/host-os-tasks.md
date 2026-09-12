@@ -122,6 +122,9 @@ that all project work is complete. Printer remains offline for this work.
 - [x] Connect the installed GTK entry to verified pre-mounted export admission;
   [offline evidence](host-recovery-media.md) covers filesystem/block read-only
   preservation, actual cancellation/apply, device reuse and shared exclusion.
+- [x] Combine recovery archive verification into one complete bounded readback;
+  [measurements and regressions](host-recovery-readback.md) retain corruption,
+  truncation, media and publication checks with approximately 50% fewer logical reads.
 - [ ] Connect independent recovery target identification, preserved-slot boot,
   USB/LAN signed restore and export of readable user data without formatting it.
   Assemble/review the independent image and trusted premounter, including the

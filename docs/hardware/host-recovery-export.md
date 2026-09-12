@@ -9,6 +9,11 @@ installed entry to verified pre-mounted admission. Its stronger real fixture che
 filesystem-superblock and whole-medium read-only state; the earlier read-only bind
 fixture below alone does not establish those conditions.
 
+The [single-pass readback improvement](host-recovery-readback.md) also retains
+member verification while matching every byte against the write-time digest and
+completed size. It removes the separate digest scan; measured logical read volume
+falls by approximately 50% on the approved fixture.
+
 ## Implemented workflow
 
 The recovery controller can now connect **Save user data** to
@@ -41,7 +46,8 @@ not loaded into RAM as one image. Inventory/manifest bookkeeping is bounded to
 100,000 entries. Sparse-file expansion, PAX headers, manifest and record padding
 are included in admission, with 32 MiB of free-space reserve by default.
 
-A complete readback checks members and file-content hashes. Only afterward does
+A complete readback checks members, file-content hashes and the whole-file digest
+and size recorded during writing. Only afterward does
 Linux `renameat2(RENAME_NOREPLACE)` publish the archive, followed by directory fsync.
 There is no overwrite fallback on unsupported filesystems. Existing destination
 files remain untouched. An ordinary failure removes only this operation's partial

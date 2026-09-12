@@ -1,0 +1,80 @@
+{
+  "date": "2026-09-12",
+  "scope": "offline workstation and selected ARM64 Python runtime; no printer access",
+  "measurement": {
+    "baseline_commit": "f7a3d53e09f3d12641639808f2cb3277d13cb6cc",
+    "baseline_source_sha256": "0228d0e10d92c89012285af1cddbd0ac616345a034f125f6ac6e5c3ad3533459",
+    "archive_bytes": 9123840,
+    "archive_sha256": "0767efa76615052ca0c1506ec6c76bbdeee2ce989c44dfa5aff434872102aa72",
+    "before_digest_bytes": 9123840,
+    "before_semantic_bytes": 9119075,
+    "before_total_bytes": 18242915,
+    "after_total_bytes": 9123840,
+    "after_maximum_read_request": 1048576,
+    "after_seek_calls": 0,
+    "after_eof_reads": 1,
+    "reduction_bytes": 9119075,
+    "environment": "in-memory workstation fixture",
+    "physical_hardware": false,
+    "limitations": "Logical verification reads only; no elapsed time, physical throughput or exact RSS claim."
+  },
+  "runtime_tests": {
+    "workstation": {
+      "python": "3.12.3",
+      "tests": 53,
+      "passed": true
+    },
+    "target_under_qemu": {
+      "python": "3.13.5",
+      "architecture": "aarch64",
+      "tests": 34,
+      "passed": true,
+      "limits": "Selected Debian interpreter and libraries under user emulation, not a complete OS boot."
+    }
+  },
+  "gtk_directory_fixture_passed": true,
+  "gtk_media_fixture": {
+    "passed": true,
+    "physical_hardware": false,
+    "fixture_root_exception": true,
+    "source_mount_and_superblock_readonly": true,
+    "source_whole_block_readonly": true,
+    "source_image_unchanged": true,
+    "recovery_image_unchanged": true,
+    "damaged_registry_preserved": true,
+    "existing_destination_preserved": true,
+    "archive_bytes": 10240,
+    "archive_sha256": "3a865189ebc42f2540459c9959d2983b62c4447653209563b2026c1a78eafe7a",
+    "events": [
+      "competing-media-process-refused",
+      "gtk-cancel-chooser",
+      "gtk-cancel-review",
+      "lease-held-through-publication",
+      "lease-held-through-directory-fsync",
+      "gtk-apply",
+      "source-alias-refused",
+      "readonly-bind-writable-backing-refused",
+      "inconsistent-vfs-superblock-refused",
+      "unsupported-production-loop-stack-refused",
+      "writable-source-whole-medium-refused",
+      "nonremovable-destination-refused",
+      "same-source-medium-refused",
+      "unexpected-process-namespace-refused",
+      "source-submount-refused",
+      "injected-mid-execution-diskseq-change-no-publication",
+      "mid-execution-removal-no-publication-lease-released",
+      "device-number-reuse-between-review-apply-refused"
+    ]
+  },
+  "staging_payload_bytes": {
+    "before": {
+      "host": 84562,
+      "recovery": 67003
+    },
+    "after": {
+      "host": 88309,
+      "recovery": 70750
+    }
+  },
+  "staging_limits": "Project UI/runtime payload only; no package closure, filesystem occupancy or deployable-image claim."
+}
