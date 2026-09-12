@@ -1,0 +1,129 @@
+{
+  "correction": {
+    "browser": {
+      "after": {
+        "auto": false,
+        "hostname": "owner-draft",
+        "mode": "writable"
+      },
+      "applying_one_preserves_other_drafts": true,
+      "before": {
+        "auto": false,
+        "hostname": "owner-draft",
+        "mode": "writable"
+      },
+      "cancel_and_stale_review_preserve_drafts": true,
+      "dwell_ms": 3400,
+      "explicit_reselection_required": true,
+      "external_changes_preserve_drafts": true,
+      "keyboard_selection_and_option_nodes_survive_poll": true,
+      "list_projection": "test-only image/package status lists; no adapter mutation",
+      "newer_edits_during_apply_preserved": true,
+      "passed": true,
+      "physical_hardware": false,
+      "removed_selections_remain_explicitly_invalid": true,
+      "reviewed_arguments_match_drafts": true,
+      "transport": "real disposable Controller via test Cockpit bridge",
+      "untouched_controls_follow_server": true,
+      "valid_selections_survive_poll": true
+    },
+    "raw_result": "build/image-drafts-browser-v3/result.json",
+    "validation": [
+      {
+        "command": "node tests/admin_drafts_browser.mjs CHROMIUM FIXTURE OUTPUT",
+        "passed": true
+      },
+      {
+        "command": "node tests/admin_browser.mjs CHROMIUM FIXTURE OUTPUT",
+        "passed": true
+      },
+      {
+        "command": "python3 -m unittest discover -s tests -p 'test_admin*.py'",
+        "passed": 37
+      },
+      {
+        "command": "python3 -m unittest discover -s tests -p test_stage_admin_ui.py",
+        "passed": 5
+      },
+      {
+        "command": "node --check ui/host/app.js",
+        "passed": true
+      },
+      {
+        "command": "JSON syntax, local Markdown links, source hashes, diff checks and gitlink/lock agreement",
+        "passed": true
+      }
+    ]
+  },
+  "date": "2026-09-12",
+  "format_version": 1,
+  "inherited_evidence": {
+    "candidate": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
+    "note": "Previous worker/ARM64/transaction checks inherited for unchanged sources, not rerun in this UI correction. Original UI was rejected; fresh corrected browser evidence is above.",
+    "record": "docs/hardware/host-admin-image-jobs-20260912.json",
+    "unchanged_source_sha256": {
+      "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
+      "runtime/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
+      "runtime/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+      "runtime/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+      "scripts/preview_admin_ui.py": "219d8c5948c199040bf7a4ff8e334f63dc9914d7e87fd8837a957360a62728ee",
+      "scripts/stage_admin_ui.py": "fbd6f64754c6e0f92789e6d3dac0a68b56016e2098a9fea27eef873c4594f196",
+      "tests/admin_jobs_browser.mjs": "fcf6f159dd865c328e92da97289a206b7f067b48ce6b7896156cc35a3432c356",
+      "tests/admin_jobs_fixture.py": "e1c76896e3c133ccfe2a95798cb896ca934c7dd6116bf8094a726307bea52d62",
+      "tests/admin_jobs_installed.py": "1ff1d3a2171d26accfaee447ac12f2190b926c8cf6e8ae09852af5f07d6472f4",
+      "tests/test_admin_jobs.py": "e2537b6904c5d57b655c49db7780fbe97fdda4d25befd1d9df0f76df597e0f3c",
+      "tests/test_stage_admin_ui.py": "c29af362dd403a9da50029ecbb1eff1be11e069d0cb7e45671fa72e5efd65ce5",
+      "ui/host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778"
+    }
+  },
+  "limitations": [
+    "No authenticated Cockpit or production service-manager deployment tested.",
+    "Image/package select lists in the draft regression are test-only status projections, without image/package mutation.",
+    "Factory 8 GB fit, complete ARM64 image, physical tests and identity-preserving ambiguous/full history resolution remain open."
+  ],
+  "payload": {
+    "activated": false,
+    "context": "host",
+    "correction_added_bytes": 2442,
+    "execute": true,
+    "hashes": {
+      "usr/lib/sv08/admin-context.json": "fefa94482c23bea5804b2077cad031833a9f134a682d98ffd9481c1141405ca2",
+      "usr/lib/sv08/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
+      "usr/lib/sv08/sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+      "usr/lib/sv08/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+      "usr/lib/sv08/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf",
+      "usr/lib/sv08/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+      "usr/lib/sv08/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+      "usr/lib/sv08/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+      "usr/lib/sv08/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+      "usr/lib/systemd/system/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
+      "usr/share/cockpit/sv08-host/app.js": "bc5477f9933effab63f8c540bcc21741f0d7f6c4588a81c74219021ab2dc0cb3",
+      "usr/share/cockpit/sv08-host/index.html": "e82f51df0e5475908dc795fab9d7d7b361bec2da8edd024129660f73d4a6c778",
+      "usr/share/cockpit/sv08-host/manifest.json": "2e23136eb2b25405d326a5eb51a999cc984a713bba0872923f6f5f361b977ed6",
+      "usr/share/cockpit/sv08-host/style.css": "e64852373cbdf77b49c295b9e9b56038ba5fd5d5eafb3f60d92a99799e5d6542"
+    },
+    "original_candidate_payload_bytes": 119976,
+    "payload_bytes": 122418
+  },
+  "previous_candidate": "7afb16911aadcbbbb98a2986df3c79c08f7fd925",
+  "prior_rejection": {
+    "after": {
+      "auto": true,
+      "hostname": "",
+      "mode": "immutable"
+    },
+    "before": {
+      "auto": false,
+      "hostname": "owner-draft",
+      "mode": "writable"
+    },
+    "dwell_ms": 2000,
+    "finding": "The 1500 ms poll overwrote unfinished hostname, mode and automatic-update controls.",
+    "source": "independent verifier actual browser observation; sanitized from verifier-draft-browser/result.json"
+  },
+  "source_sha256": {
+    "tests/admin_drafts_browser.mjs": "9568864c419e01d54b6df27c7c193a08547f867ff31885a736baa11a72b48395",
+    "ui/host/app.js": "bc5477f9933effab63f8c540bcc21741f0d7f6c4588a81c74219021ab2dc0cb3"
+  },
+  "status": "corrected offline candidate; independent verification pending"
+}

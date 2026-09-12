@@ -22,6 +22,10 @@ class StageUITests(unittest.TestCase):
         result = stage(self.work, 'host', True)
         self.assertTrue((target / 'manifest.json').is_file())
         self.assertFalse(result['activated'])
+        unit = 'usr/lib/systemd/system/sv08-admin-image-worker@.service'
+        self.assertEqual((self.work / 'rootfs' / unit).read_bytes(), (REPO / 'configs/host-os/sv08-admin-image-worker@.service').read_bytes())
+        self.assertIn(unit, result['hashes'])
+        self.assertIn('usr/lib/sv08/sv08_admin_jobs.py', result['hashes'])
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/sockets.target.wants').exists())
         with self.assertRaises(ValueError): stage(self.work, 'host', True)
 
@@ -47,3 +51,8 @@ class StageUITests(unittest.TestCase):
         provider.write_text('older provider')
         with self.assertRaisesRegex(ValueError, 'sv08_recovery_media'): stage(self.work, 'recovery', True)
         self.assertFalse((self.work / 'rootfs/usr/share/xsessions').exists())
+
+    def test_worker_missing_is_refused_before_host_ui_staging(self):
+        (self.work / 'rootfs/usr/lib/sv08/sv08_admin_jobs.py').unlink()
+        with self.assertRaisesRegex(ValueError, 'sv08_admin_jobs'): stage(self.work, 'host', True)
+        self.assertFalse((self.work / 'rootfs/usr/share/cockpit').exists())

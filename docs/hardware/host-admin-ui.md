@@ -29,7 +29,7 @@ running host's slot identity.
 | Automatic update policy | Review/apply with strict booleans and stale-state checks | Scheduler and authenticated owner provisioning |
 | Immutable/writable selection | Persistent requested mode; rejects a staged/pending update | Controlled idle reboot and assembled mode/config races |
 | Host name | Validated single DNS label saved for next boot; current connection unchanged | Target networking and naming tests |
-| Stage/arm/cancel image | Adapter calls existing signed/private staging + transaction + device backend | Reviewed board inputs, browser upload and disconnect-safe jobs |
+| Stage/arm/cancel image | Adapter calls existing signed/private staging + transaction + device backend | Reviewed board inputs and browser upload; [durable offline jobs](host-admin-image-jobs.md) implemented |
 | Additional software | Catalog selection and reviewed-operation UI contract | Reviewed catalog, dependency/space preview, actual APT adapter and customization reconciliation |
 | Network/access configuration | Scope and unavailable-state explanation | Owner onboarding, persistent credentials/certificates, network forms and rollback |
 | Recovery state inspection | Read-only, including missing/corrupt registry; no initialization | Physical block/filesystem diagnosis adapter |
@@ -132,3 +132,10 @@ The [2026-09-11 export work](host-recovery-export.md) adds a real archive backen
 entry to an explicitly configured pre-mounted provider and preserves diagnostic-only
 behavior without valid trust inputs. Production image/premounter integration and
 physical USB tests remain required; boot/restore are still separate work.
+
+[Image job evidence](host-admin-image-jobs.md) now records durable receipts, separate
+worker supervision and browser reconnection. Authenticated Cockpit and physical
+validation remain outstanding.
+
+The image-job polling correction [preserves unfinished edits and selections](host-admin-image-jobs.md#independent-review-correction-preserve-unfinished-edits);
+its independent-review history and browser dwell evidence are recorded separately.
