@@ -112,6 +112,9 @@ enumeration were re-established on 2026-09-12; see the
 - [x] Keep recovery diagnostics usable with missing/corrupt read-only state.
 - [ ] Build/pin/measure Cockpit and independent GTK/input/accessibility closures;
   integrate actual authenticated login, owner provisioning and persistent TLS keys.
+  [Cockpit integration](host-admin-cockpit.md) now pins the host delta and tests
+  real isolated PAM/sudo/helper sessions; recovery, production identity/TLS and
+  assembled-image acceptance remain open.
 - [ ] Finish bounded browser upload, signature/error/progress presentation and
   jobs that survive a closed browser or dropped LAN connection.
   [Durable image jobs](host-admin-image-jobs.md) now pass an offline browser/worker

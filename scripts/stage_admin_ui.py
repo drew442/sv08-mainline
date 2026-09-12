@@ -22,10 +22,24 @@ def stage(work, context, execute=False):
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
     target = root / ('usr/share/cockpit/sv08-host' if context == 'host' else 'usr/share/xsessions/sv08-recovery.desktop')
     if target.exists() or target.is_symlink(): raise ValueError('UI already staged; use a fresh root')
+    extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
+    if context == 'host':
+        extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json'])
+        packages = root / 'usr/share/cockpit'
+        if packages.is_dir() and any(p.name not in ('base1', 'static', 'branding', 'issue', 'motd') for p in packages.iterdir()):
+            raise ValueError('Unexpected Cockpit packages; use the reviewed ws/bridge-only root')
+    for path in [target, *extra]:
+        for parent in [path, *path.parents]:
+            if parent == root: break
+            if parent.is_symlink(): raise ValueError('Symlink in UI staging target: '+str(parent))
+        if path.exists(): raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
     if not execute: return dict(execute=False, context=context, root=str(root))
     if context == 'host':
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(REPO / 'ui/host', target)
+        target.chmod(0o755)
+        config = root / 'etc/cockpit/cockpit.conf'; config.parent.mkdir(parents=True, exist_ok=True)
+        config.write_text('[WebService]\nShell=/sv08-host/index.html\n')
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-admin-image-worker@.service', units / 'sv08-admin-image-worker@.service')
         (root / 'usr/lib/sv08/admin-context.json').write_text(json.dumps(dict(format_version=1, context='host'))+'\n')
@@ -35,6 +49,8 @@ def stage(work, context, execute=False):
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-recovery-display.service', units / 'sv08-recovery-display.service')
     files = [p for p in (target.rglob('*') if target.is_dir() else [target]) if p.is_file()]
+    if context == 'host': files.append(root / 'etc/cockpit/cockpit.conf')
+    for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
                  ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
     if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')

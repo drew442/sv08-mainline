@@ -2,10 +2,11 @@
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SV08 · Host administration</title><link rel="stylesheet" href="style.css">
-<script src="../base1/cockpit.js"></script><script defer src="app.js"></script></head>
+<script src="../base1/cockpit.js"></script><script defer src="session.js"></script><script defer src="app.js"></script></head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header><div class="brand"><b>SV08</b><span>MAINLINE</span></div><div class="header-end"><span id="connection">Connecting…</span><button id="refresh">Refresh</button></div></header>
+<div class="session"><span id="session-status" role="status">Checking session…</span><button id="authorize" disabled>Administrator access</button><button id="stop-authorization" disabled>Stop administrator access</button><button id="logout">Log out</button></div>
 <div id="fixture" class="banner" hidden>OFFLINE TEST — changes affect a disposable fixture, not a printer.</div>
 <div class="layout"><nav aria-label="Host administration">
 <p class="eyebrow">YOUR PRINTER</p>
@@ -33,4 +34,5 @@
 <section id="recovery" class="page" hidden><p class="eyebrow">RECOVERY</p><h1>Get back to a working system.</h1><p class="intro">The recovery screen runs from its own OS, even when the normal images will not start.</p><div class="grid"><article class="card"><h2>Use the printer’s display</h2><ol><li>Start the recovery system using the reviewed boot procedure.</li><li>Choose a preserved system or a signed replacement image.</li><li>Review the target and confirm. Your user data is preserved.</li></ol><p>Touch the large buttons, or use Tab, Shift+Tab and Enter. Escape cancels a confirmation. A mouse works too.</p></article><article class="card"><h2>Before replacing an image</h2><p>Save readable configuration and user files to a USB drive. Recovery never formats user data as part of an OS restore.</p><p class="reason">Recovery boot entry and storage repair require the completed board recovery image. This candidate does not enable them.</p></article></div></section>
 </main></div>
 <dialog id="review" aria-labelledby="review-title"><form method="dialog"><p class="eyebrow">REVIEW CHANGE</p><h2 id="review-title"></h2><p id="review-effect"></p><pre id="review-arguments"></pre><p>Configuration and user files are preserved.</p><div class="actions"><button value="cancel" autofocus>Cancel</button><button id="confirm" class="primary" value="confirm">Apply change</button></div></form></dialog>
+<dialog id="authorization" aria-labelledby="authorization-title"><form id="authorization-form"><h2 id="authorization-title">Administrator access</h2><p id="authorization-prompt"></p><label for="authorization-password">Password</label><input id="authorization-password" type="password" autocomplete="off"><p>Authorization does not apply any pending change.</p><div class="actions"><button id="cancel-authorization" type="button">Cancel</button><button id="answer-authorization" type="submit">Authorize</button></div></form></dialog>
 </body></html>

@@ -29,6 +29,38 @@ class StageUITests(unittest.TestCase):
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/sockets.target.wants').exists())
         with self.assertRaises(ValueError): stage(self.work, 'host', True)
 
+    def test_shell_config_conflict_is_rejected_without_overwrite(self):
+        config = self.work / 'rootfs/etc/cockpit/cockpit.conf'
+        config.parent.mkdir(parents=True); config.write_text('[WebService]\nOrigins=https://owner.example\n')
+        for execute in (False, True):
+            with self.assertRaisesRegex(ValueError, 'conflicts'): stage(self.work, 'host', execute)
+        self.assertIn('Origins=', config.read_text())
+        self.assertFalse((self.work / 'rootfs/usr/share/cockpit/sv08-host').exists())
+
+    def test_symlink_parent_and_stock_package_are_rejected(self):
+        parent = self.work / 'rootfs/usr/share'; parent.mkdir(parents=True)
+        outside = self.work / 'outside'; outside.mkdir()
+        (parent / 'cockpit').symlink_to(outside, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'Symlink'): stage(self.work, 'host', True)
+        self.assertEqual(list(outside.iterdir()), [])
+        (parent / 'cockpit').unlink(); (parent / 'cockpit/shell').mkdir(parents=True)
+        with self.assertRaisesRegex(ValueError, 'Unexpected Cockpit'): stage(self.work, 'host', True)
+
+    def test_manifest_shell_modes_and_no_sudo_grant(self):
+        import json
+        result = stage(self.work, 'host', True)
+        root = self.work / 'rootfs'
+        manifest = json.loads((root / 'usr/share/cockpit/sv08-host/manifest.json').read_text())
+        self.assertEqual(manifest['bridges'], [{'privileged': True,
+            'environ': ['SUDO_ASKPASS=${libexecdir}/cockpit-askpass'],
+            'spawn': ['sudo', '-k', '-A', 'cockpit-bridge', '--privileged']}])
+        self.assertEqual((root / 'etc/cockpit/cockpit.conf').read_text(), '[WebService]\nShell=/sv08-host/index.html\n')
+        self.assertIn('etc/cockpit/cockpit.conf', result['hashes'])
+        self.assertFalse((root / 'etc/sudoers.d').exists())
+        self.assertEqual((root / 'usr/share/cockpit/sv08-host').stat().st_mode & 0o777, 0o755)
+        for path in (root / 'usr/share/cockpit/sv08-host').iterdir():
+            self.assertEqual(path.stat().st_mode & 0o777, 0o644)
+
     def test_recovery_does_not_stage_cockpit_or_enable_service(self):
         result = stage(self.work, 'recovery', True)
         self.assertFalse(result['activated'])

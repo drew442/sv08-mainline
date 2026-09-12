@@ -51,7 +51,9 @@ storage operations cannot obtain arbitrary shell or device arguments from a form
 recovery GTK dependencies separate. Cockpit `337-1+deb13u2` resolves from the
 existing `20260901T000000Z` Debian security snapshot. GTK/input packages already
 appear in the ordinary host baseline; recovery must contain an independent copy.
-The complete new host and recovery package closures have not been measured.
+The [actual Cockpit integration](host-admin-cockpit.md) pins and measures the host
+delta and exercises real isolated login and elevation. The independent recovery
+closure and assembled image fit remain unvalidated.
 
 Run [UI staging](../../scripts/stage_admin_ui.py) after the matching core runtime
 has been copied by the image builder. It defaults to inspection, accepts only a
@@ -64,7 +66,8 @@ python3 scripts/stage_admin_ui.py --work build/my-recovery --context recovery
 ```
 
 Explicit `--execute` copies reviewed assets into those isolated roots. Host staging
-adds `/usr/share/cockpit/sv08-host` and the fixed administration context. Recovery
+adds `/usr/share/cockpit/sv08-host`, a conflict-checked Cockpit shell configuration,
+the selected sudo bridge declaration and the fixed administration context. Recovery
 staging adds a desktop session and an X11 launcher service, conditioned on a
 recovery-image marker. The recovery builder must supply that marker and explicitly
 enable the service only in the recovery root. No root, marker or service is added
@@ -123,7 +126,7 @@ changing the name, so an interruption leaves the old name resolvable. An injecte
 failure between those publications passes; physical reboot/network checks remain.
 
 The [public evidence record](host-admin-ui-20260910.json) records scope. Before
-release, run the actual Cockpit login/bridge/privilege flow, disconnected-browser
+release, validate production owner/TLS integration and disconnected-browser
 jobs, 8 GB storage occupancy, independent recovery boot and attended HDMI touch,
 keyboard-only, mouse, USB export and signed restore tests on the named profile.
 
@@ -134,7 +137,8 @@ behavior without valid trust inputs. Production image/premounter integration and
 physical USB tests remain required; boot/restore are still separate work.
 
 [Image job evidence](host-admin-image-jobs.md) now records durable receipts, separate
-worker supervision and browser reconnection. Authenticated Cockpit and physical
+worker supervision and browser reconnection. [Actual Cockpit tests](host-admin-cockpit.md)
+now cover isolated authenticated helper sessions; production and physical
 validation remain outstanding.
 
 The image-job polling correction [preserves unfinished edits and selections](host-admin-image-jobs.md#independent-review-correction-preserve-unfinished-edits);

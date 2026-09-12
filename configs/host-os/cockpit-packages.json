@@ -1,0 +1,155 @@
+{
+  "format_version": 1,
+  "snapshot": "20260901T000000Z",
+  "version": "337-1+deb13u2",
+  "delta": [
+    {
+      "package": "libnss-systemd",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "sha256": "13e8ced686b74b8b3017cdcc6c9f584c9e3b910f5399784b5de96e1e909d997b",
+      "bytes": 203536,
+      "installed_kib": 544,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/libnss-systemd_257.13-1~deb13u1_arm64.deb",
+      "file": "libnss-systemd_257.13-1~deb13u1_arm64.deb"
+    },
+    {
+      "package": "cockpit-bridge",
+      "version": "337-1+deb13u2",
+      "architecture": "all",
+      "sha256": "8caa8c3f36d6eb2f95561614923518bc6e78d17962673d5be3d43b1967dc4961",
+      "bytes": 386192,
+      "installed_kib": 846,
+      "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/c/cockpit/cockpit-bridge_337-1+deb13u2_all.deb",
+      "file": "cockpit-bridge_337-1+deb13u2_all.deb"
+    },
+    {
+      "package": "libduktape207",
+      "version": "2.7.0-2+b2",
+      "architecture": "arm64",
+      "sha256": "9dcf4d316a8ece7277d21bbdd26b75a5d7d829faf3c7cfd861e30ba89d385516",
+      "bytes": 126528,
+      "installed_kib": 347,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/duktape/libduktape207_2.7.0-2+b2_arm64.deb",
+      "file": "libduktape207_2.7.0-2+b2_arm64.deb"
+    },
+    {
+      "package": "libproxy1v5",
+      "version": "0.5.9-1",
+      "architecture": "arm64",
+      "sha256": "7758242ac0263b1fcefc01622160c6a965a25d7f284ee6a62a46a8784cfedd6e",
+      "bytes": 25376,
+      "installed_kib": 165,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libp/libproxy/libproxy1v5_0.5.9-1_arm64.deb",
+      "file": "libproxy1v5_0.5.9-1_arm64.deb"
+    },
+    {
+      "package": "glib-networking-common",
+      "version": "2.80.1-1",
+      "architecture": "all",
+      "sha256": "aa697ddbd07ba9e16391bd81f73661b2583859c8671d1ce92f28e6a870d37059",
+      "bytes": 86004,
+      "installed_kib": 678,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib-networking/glib-networking-common_2.80.1-1_all.deb",
+      "file": "glib-networking-common_2.80.1-1_all.deb"
+    },
+    {
+      "package": "glib-networking-services",
+      "version": "2.80.1-1",
+      "architecture": "arm64",
+      "sha256": "231f911c07eb9cb4a68b6709e0963aaeddeda523f21d24f10a593d4c2963f982",
+      "bytes": 12248,
+      "installed_kib": 89,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib-networking/glib-networking-services_2.80.1-1_arm64.deb",
+      "file": "glib-networking-services_2.80.1-1_arm64.deb"
+    },
+    {
+      "package": "gsettings-desktop-schemas",
+      "version": "48.0-1",
+      "architecture": "all",
+      "sha256": "151133be02bff0bff4c860260a3418378821fad8c5d11133f588d4de760797a5",
+      "bytes": 699668,
+      "installed_kib": 5689,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gsettings-desktop-schemas/gsettings-desktop-schemas_48.0-1_all.deb",
+      "file": "gsettings-desktop-schemas_48.0-1_all.deb"
+    },
+    {
+      "package": "glib-networking",
+      "version": "2.80.1-1",
+      "architecture": "arm64",
+      "sha256": "06815a6cfd3ad5386eba73db253ea1a25ede4a01b3b92d1dbc5315d001915e21",
+      "bytes": 65472,
+      "installed_kib": 297,
+      "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib-networking/glib-networking_2.80.1-1_arm64.deb",
+      "file": "glib-networking_2.80.1-1_arm64.deb"
+    },
+    {
+      "package": "cockpit-ws",
+      "version": "337-1+deb13u2",
+      "architecture": "arm64",
+      "sha256": "4af22eab0c00d741ee976f1f8cf71a33f2709242ee81be19933ee1fd592202b9",
+      "bytes": 1028896,
+      "installed_kib": 2217,
+      "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/c/cockpit/cockpit-ws_337-1+deb13u2_arm64.deb",
+      "file": "cockpit-ws_337-1+deb13u2_arm64.deb"
+    }
+  ],
+  "provenance_only": {
+    "name": "cockpit-system_337-1+deb13u2_all.deb",
+    "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/c/cockpit/cockpit-system_337-1+deb13u2_all.deb",
+    "sha256": "309f12329a15cf5f465e8f8f328c70a1c24078637bb0e8334c10d88aad274c11",
+    "bytes": 3302580,
+    "purpose": "extracted primary manifest provenance only; not selected for installation"
+  },
+  "baseline_sudo": {
+    "Package": "sudo",
+    "Version": "1.9.16p2-3+deb13u2",
+    "Architecture": "arm64",
+    "Depends": "libapparmor1 (>= 2.7.0~beta1+bzr1772), libaudit1 (>= 1:2.2.1), libc6 (>= 2.38), libpam0g (>= 0.99.7.1), libselinux1 (>= 3.1~), libssl3t64 (>= 3.0.0), zlib1g (>= 1:1.2.0.2), libpam-modules",
+    "Pre-Depends": "init-system-helpers (>= 1.54~)",
+    "Filename": "pool/main/s/sudo/sudo_1.9.16p2-3+deb13u2_arm64.deb",
+    "Size": "1991796",
+    "SHA256": "907d333f72f3369b2ceda64dbcfccf0dc515543b76ac68d5c901e309f118709b",
+    "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/sudo/sudo_1.9.16p2-3+deb13u2_arm64.deb",
+    "baseline_inventory_sha256": "03221eef54116e26b57a310a03fd5f2d21e0a95fd33eaa9a6163cbe1f25702fd",
+    "verified_installed_files": {
+      "usr/bin/sudo": {
+        "archive_sha256": "e52d68cffda9da0a303146d7ab1cb015117870c122a08f5a586df3808fec3862",
+        "baseline_sha256": "e52d68cffda9da0a303146d7ab1cb015117870c122a08f5a586df3808fec3862",
+        "baseline_mode": "0o4755"
+      },
+      "usr/libexec/sudo/sudoers.so": {
+        "archive_sha256": "7a27a3c57bd103b0f0dca799461ac38299a7e78cfacac623a2e3b904167ab384",
+        "baseline_sha256": "7a27a3c57bd103b0f0dca799461ac38299a7e78cfacac623a2e3b904167ab384",
+        "baseline_mode": "0o644"
+      },
+      "etc/pam.d/sudo": {
+        "archive_sha256": "5355ef86ec2f1103fbb9db4f441ec15abdc31383d85774b77849b1fb3bed302e",
+        "baseline_sha256": "5355ef86ec2f1103fbb9db4f441ec15abdc31383d85774b77849b1fb3bed302e",
+        "baseline_mode": "0o644"
+      }
+    }
+  },
+  "source_hashes": {
+    "system/usr/share/cockpit/shell/manifest.json": {
+      "sha256": "5fbc56a1be0f82e5d2543c4c7e313a9d5d3b5c47cf5911b997fc1f4718d8728a"
+    },
+    "system/usr/share/cockpit/shell/shell.js.gz": {
+      "sha256": "33268b057fb96dac16a46f278d461ddad56fbf15a7a202f1a8e5441c7e3a4ff5",
+      "decompressed_sha256": "8f7a8c0040ba9b59f3dda47a8b1ab07b480e4c3c0055d24a8fd83600ec2fccc0"
+    },
+    "bridge/usr/lib/python3/dist-packages/cockpit/superuser.py": {
+      "sha256": "232c52a9429936f7a5bb676a7dd75ceb5018cb1b6f273adf9f6e32e6896ce313"
+    },
+    "bridge/usr/lib/python3/dist-packages/cockpit/packages.py": {
+      "sha256": "556a7cf96d0a190bc09018593ba8334705575c408b992eeffccf20f8491752f7"
+    },
+    "bridge/usr/lib/cockpit/cockpit-askpass": {
+      "sha256": "f17a7b2f161e0ecd9ae88aabdd1a7456cfad30b975fb0e553a0f5def55439ae2"
+    },
+    "ws/etc/pam.d/cockpit": {
+      "sha256": "e757f705f8a1911e5417541d07a60537c8082d29172d055c3fcd918523acdf29"
+    }
+  },
+  "access_date": "2026-09-12"
+}

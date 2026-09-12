@@ -1,0 +1,6585 @@
+{
+  "format_version": 1,
+  "snapshot": "20260901T000000Z",
+  "roots": [
+    "cockpit-bridge",
+    "cockpit-ws",
+    "sudo"
+  ],
+  "method": "Recursive Depends/Pre-Depends closure over exact baseline installed status plus nine pinned delta deb controls; include every installed satisfying alternative/provider, exclude Recommends/Suggests. Archive metadata matched by exact name/version/architecture against existing snapshot indexes. No package installation or guest mutation.",
+  "indexes": [
+    {
+      "file": "snapshot.debian.org_archive_debian-security_20260901T000000Z_dists_trixie-security_main_binary-arm64_Packages",
+      "sha256": "6a15643810815d3efad9b09169138b17732b89952f6d8487a545cf8f48a1ce43"
+    },
+    {
+      "file": "snapshot.debian.org_archive_debian_20260901T000000Z_dists_trixie_main_binary-arm64_Packages",
+      "sha256": "7d45e6f90e5cc4e4f215c4e4965ac2e6076572c9e5cbb5f88dfc880c76002a96"
+    },
+    {
+      "file": "snapshot.debian.org_archive_debian_20260901T000000Z_dists_trixie_non-free-firmware_binary-arm64_Packages",
+      "sha256": "b84b3f3e247cdb9e804ec26f646929bd5cf4f300541cdc5f77919ab70de6e516"
+    }
+  ],
+  "packages": [
+    {
+      "package": "adduser",
+      "version": "3.152",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/a/adduser/adduser_3.152_all.deb",
+          "sha256": "e50984d2e1ef6300e3fd51303839842189a077b10cb5cadff1923df10c61c493",
+          "bytes": 190932
+        }
+      ]
+    },
+    {
+      "package": "base-files",
+      "version": "13.8+deb13u6",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/b/base-files/base-files_13.8+deb13u6_arm64.deb",
+          "sha256": "5f5a571ec846d7db05d9f825f0388a37bc033267b33cbf85b4eaa838dffcc41b",
+          "bytes": 73276
+        }
+      ]
+    },
+    {
+      "package": "base-passwd",
+      "version": "3.6.7",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/b/base-passwd/base-passwd_3.6.7_arm64.deb",
+          "sha256": "c5755fd2cbf76961a1230e708b6bfc12c5400b57f3cd8a255675e9aa11d85848",
+          "bytes": 53392
+        }
+      ]
+    },
+    {
+      "package": "cockpit-bridge",
+      "version": "337-1+deb13u2",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/c/cockpit/cockpit-bridge_337-1+deb13u2_all.deb",
+          "sha256": "8caa8c3f36d6eb2f95561614923518bc6e78d17962673d5be3d43b1967dc4961",
+          "bytes": 386192
+        }
+      ]
+    },
+    {
+      "package": "cockpit-ws",
+      "version": "337-1+deb13u2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/c/cockpit/cockpit-ws_337-1+deb13u2_arm64.deb",
+          "sha256": "4af22eab0c00d741ee976f1f8cf71a33f2709242ee81be19933ee1fd592202b9",
+          "bytes": 1028896
+        }
+      ]
+    },
+    {
+      "package": "dbus",
+      "version": "1.16.2-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/dbus_1.16.2-2_arm64.deb",
+          "sha256": "984e4c740ecd258e862eae9d0aed11ff75f83eff60b95ab27cb6c9a7dd0028c1",
+          "bytes": 70668
+        }
+      ]
+    },
+    {
+      "package": "dbus-bin",
+      "version": "1.16.2-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/dbus-bin_1.16.2-2_arm64.deb",
+          "sha256": "4d8423744f34150c6f20959a868bed986fd0e39740a29c48f65c6da60fa2b328",
+          "bytes": 78832
+        }
+      ]
+    },
+    {
+      "package": "dbus-daemon",
+      "version": "1.16.2-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/dbus-daemon_1.16.2-2_arm64.deb",
+          "sha256": "74650cdf706f6a782f9bb486237c210454a39ebf840e3260492e557013931739",
+          "bytes": 151508
+        }
+      ]
+    },
+    {
+      "package": "dbus-session-bus-common",
+      "version": "1.16.2-2",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/dbus-session-bus-common_1.16.2-2_all.deb",
+          "sha256": "98bd27836c7170839ed9c84b00daad9ed7155bd3d42e3f0ec3faf497aafa5f5f",
+          "bytes": 52264
+        }
+      ]
+    },
+    {
+      "package": "dbus-system-bus-common",
+      "version": "1.16.2-2",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/dbus-system-bus-common_1.16.2-2_all.deb",
+          "sha256": "262e9ec8aae4e38bfa341648f9498b29280a81458601e1c265a36a24771d120a",
+          "bytes": 53540
+        }
+      ]
+    },
+    {
+      "package": "dbus-user-session",
+      "version": "1.16.2-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/dbus-user-session_1.16.2-2_arm64.deb",
+          "sha256": "765c63b00e0054a2ec1e599b14eda13e3a7902c652be3482dda037b8de15cc17",
+          "bytes": 52128
+        }
+      ]
+    },
+    {
+      "package": "dconf-gsettings-backend",
+      "version": "0.40.0-5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dconf/dconf-gsettings-backend_0.40.0-5_arm64.deb",
+          "sha256": "6ba9fcaa892934c9cfc601aeca15cfbac9751cb1377c541b1b0e098ab587a31d",
+          "bytes": 27284
+        }
+      ]
+    },
+    {
+      "package": "dconf-service",
+      "version": "0.40.0-5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dconf/dconf-service_0.40.0-5_arm64.deb",
+          "sha256": "da9d81b0cd090e3933367a9be7562f13edebc9fd06f6f631c9e41fbc0a082fc3",
+          "bytes": 30928
+        }
+      ]
+    },
+    {
+      "package": "debconf",
+      "version": "1.5.91",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/debconf/debconf_1.5.91_all.deb",
+          "sha256": "1ddc7e6c5925f748eefb7ca811d98e049f18c158bb21fbc7e122262ce6011e49",
+          "bytes": 121088
+        }
+      ]
+    },
+    {
+      "package": "dpkg",
+      "version": "1.22.22",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dpkg/dpkg_1.22.22_arm64.deb",
+          "sha256": "1142468e57f69e13d174f517dff739508c61ee97d81c182c120cd6b281d8cdfa",
+          "bytes": 1521436
+        }
+      ]
+    },
+    {
+      "package": "gcc-14-base",
+      "version": "14.2.0-19",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gcc-14/gcc-14-base_14.2.0-19_arm64.deb",
+          "sha256": "34ee90679b018c0e64234747a4c4c0ae6b7f63541115037465a8627c2dfbc594",
+          "bytes": 49444
+        }
+      ]
+    },
+    {
+      "package": "glib-networking",
+      "version": "2.80.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib-networking/glib-networking_2.80.1-1_arm64.deb",
+          "sha256": "06815a6cfd3ad5386eba73db253ea1a25ede4a01b3b92d1dbc5315d001915e21",
+          "bytes": 65472
+        }
+      ]
+    },
+    {
+      "package": "glib-networking-common",
+      "version": "2.80.1-1",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib-networking/glib-networking-common_2.80.1-1_all.deb",
+          "sha256": "aa697ddbd07ba9e16391bd81f73661b2583859c8671d1ce92f28e6a870d37059",
+          "bytes": 86004
+        }
+      ]
+    },
+    {
+      "package": "glib-networking-services",
+      "version": "2.80.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib-networking/glib-networking-services_2.80.1-1_arm64.deb",
+          "sha256": "231f911c07eb9cb4a68b6709e0963aaeddeda523f21d24f10a593d4c2963f982",
+          "bytes": 12248
+        }
+      ]
+    },
+    {
+      "package": "gsettings-desktop-schemas",
+      "version": "48.0-1",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gsettings-desktop-schemas/gsettings-desktop-schemas_48.0-1_all.deb",
+          "sha256": "151133be02bff0bff4c860260a3418378821fad8c5d11133f588d4de760797a5",
+          "bytes": 699668
+        }
+      ]
+    },
+    {
+      "package": "init-system-helpers",
+      "version": "1.69~deb13u1",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/i/init-system-helpers/init-system-helpers_1.69~deb13u1_all.deb",
+          "sha256": "addf78073e1cbc5a5508937e11d2571055e29835e00ee8fab52a66775649378f",
+          "bytes": 39360
+        }
+      ]
+    },
+    {
+      "package": "libacl1",
+      "version": "2.3.2-2+b1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/a/acl/libacl1_2.3.2-2+b1_arm64.deb",
+          "sha256": "10b2399169e42e6d8db55944116cb2ed61caab997cf700acb83de0b0668e5721",
+          "bytes": 32216
+        }
+      ]
+    },
+    {
+      "package": "libapparmor1",
+      "version": "4.1.0-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/a/apparmor/libapparmor1_4.1.0-1_arm64.deb",
+          "sha256": "6e5ec85de21bd5f489327e6d2c85c2825e82ff6f4581dc936704d022a1f164af",
+          "bytes": 42936
+        }
+      ]
+    },
+    {
+      "package": "libatomic1",
+      "version": "14.2.0-19",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gcc-14/libatomic1_14.2.0-19_arm64.deb",
+          "sha256": "7ccff90234484bf21ae5ecb79d25b6a84b2f4038f65dd139085b2e3a937cd8dc",
+          "bytes": 10128
+        }
+      ]
+    },
+    {
+      "package": "libattr1",
+      "version": "1:2.5.2-3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/a/attr/libattr1_2.5.2-3_arm64.deb",
+          "sha256": "25057d7bfba969a76cdf18ae88ce7ff6e664520726ddf02cdde97c03d5e9a43c",
+          "bytes": 22664
+        }
+      ]
+    },
+    {
+      "package": "libaudit-common",
+      "version": "1:4.0.2-2",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/a/audit/libaudit-common_4.0.2-2_all.deb",
+          "sha256": "b6edcd7aa36a2a5a1abd2c52966d69a99eebdb69c8f5cb33cbf415b0875775e3",
+          "bytes": 12692
+        }
+      ]
+    },
+    {
+      "package": "libaudit1",
+      "version": "1:4.0.2-2+b2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/a/audit/libaudit1_4.0.2-2+b2_arm64.deb",
+          "sha256": "a1124818a702c584ee139948c20596f6bb464d8110a14bc2dc748646ae461cab",
+          "bytes": 54568
+        }
+      ]
+    },
+    {
+      "package": "libblkid1",
+      "version": "2.41.5-0+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/u/util-linux/libblkid1_2.41.5-0+deb13u1_arm64.deb",
+          "sha256": "d7d122b4c7a0a8ae6135a1687c9c4ce80a88f9e498c01998f634dd32caab9016",
+          "bytes": 166472
+        }
+      ]
+    },
+    {
+      "package": "libbrotli1",
+      "version": "1.1.0-2+b7",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/b/brotli/libbrotli1_1.1.0-2+b7_arm64.deb",
+          "sha256": "10270398c4842e71c72b4081fa1761728b3225d6c8dce7c58d5baafe58a5e18f",
+          "bytes": 307600
+        }
+      ]
+    },
+    {
+      "package": "libbsd0",
+      "version": "0.12.2-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libb/libbsd/libbsd0_0.12.2-2_arm64.deb",
+          "sha256": "6827c1b3ad8dcbf3478803f9150359433e3376a3bde01c4503888a22eb3924e3",
+          "bytes": 128944
+        }
+      ]
+    },
+    {
+      "package": "libbz2-1.0",
+      "version": "1.0.8-6",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/b/bzip2/libbz2-1.0_1.0.8-6_arm64.deb",
+          "sha256": "3537fe4fc577a60c8a9568873cd577db7ebc135eb8bb1825f18caf8972d9d2f2",
+          "bytes": 37772
+        }
+      ]
+    },
+    {
+      "package": "libc6",
+      "version": "2.41-12+deb13u3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glibc/libc6_2.41-12+deb13u3_arm64.deb",
+          "sha256": "ff529924782d3286181188fc265a6a92e7fe28975fb3a925dc0e05c0ca66e52f",
+          "bytes": 2489480
+        }
+      ]
+    },
+    {
+      "package": "libcap-ng0",
+      "version": "0.8.5-4+b1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libc/libcap-ng/libcap-ng0_0.8.5-4+b1_arm64.deb",
+          "sha256": "eb6da83296e4710a8600c1426692ed9b9eadcab7ebd36dbabc2a562b5c1ab691",
+          "bytes": 17032
+        }
+      ]
+    },
+    {
+      "package": "libcap2",
+      "version": "1:2.75-10+deb13u1+b1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libc/libcap2/libcap2_2.75-10+deb13u1+b1_arm64.deb",
+          "sha256": "c9a77aa670c9ca163c624a00e55c4419df40b770fe516010dc495c04a16c80b0",
+          "bytes": 28424
+        }
+      ]
+    },
+    {
+      "package": "libcom-err2",
+      "version": "1.47.2-3+b11",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/e/e2fsprogs/libcom-err2_1.47.2-3+b11_arm64.deb",
+          "sha256": "99aececea45aa2dcbd8689acd71c43f9c964be43f73b1dfeabcd51ef791f1e8a",
+          "bytes": 24928
+        }
+      ]
+    },
+    {
+      "package": "libcrypt1",
+      "version": "1:4.4.38-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libx/libxcrypt/libcrypt1_4.4.38-1_arm64.deb",
+          "sha256": "b9aaa808aa3812b3de3e54eb5dfb16762c1779db032604abef2354c02fdc29b8",
+          "bytes": 91760
+        }
+      ]
+    },
+    {
+      "package": "libcurl3t64-gnutls",
+      "version": "8.14.1-2+deb13u4",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/c/curl/libcurl3t64-gnutls_8.14.1-2+deb13u4_arm64.deb",
+          "sha256": "ac6e47bea2aaecd61e789c95595ff20f63f3767a30748db010077ee32e209f7b",
+          "bytes": 354344
+        }
+      ]
+    },
+    {
+      "package": "libdb5.3t64",
+      "version": "5.3.28+dfsg2-9",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/db5.3/libdb5.3t64_5.3.28+dfsg2-9_arm64.deb",
+          "sha256": "bfef56508d69fd3f940668f6abd0a466a362cabf63c4cc1c787cc58d28f6e92f",
+          "bytes": 629132
+        }
+      ]
+    },
+    {
+      "package": "libdbus-1-3",
+      "version": "1.16.2-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dbus/libdbus-1-3_1.16.2-2_arm64.deb",
+          "sha256": "ca6bb5f2047ad58d274cb7d14216035a07d8e5aae6f6a0122c4f6293c9c39515",
+          "bytes": 169068
+        }
+      ]
+    },
+    {
+      "package": "libdconf1",
+      "version": "0.40.0-5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/dconf/libdconf1_0.40.0-5_arm64.deb",
+          "sha256": "ff0a3e38b2fb4b96f209a3ae75714cb14e0df14a26a1aded11f5afb87d0eaef9",
+          "bytes": 40416
+        }
+      ]
+    },
+    {
+      "package": "libdebconfclient0",
+      "version": "0.280",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/c/cdebconf/libdebconfclient0_0.280_arm64.deb",
+          "sha256": "8c2976dc62d0f5133018ea62636105335f9b17da77adce7fed1ffb24e2533dba",
+          "bytes": 10784
+        }
+      ]
+    },
+    {
+      "package": "libduktape207",
+      "version": "2.7.0-2+b2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/d/duktape/libduktape207_2.7.0-2+b2_arm64.deb",
+          "sha256": "9dcf4d316a8ece7277d21bbdd26b75a5d7d829faf3c7cfd861e30ba89d385516",
+          "bytes": 126528
+        }
+      ]
+    },
+    {
+      "package": "libexpat1",
+      "version": "2.8.3-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/e/expat/libexpat1_2.8.3-1~deb13u1_arm64.deb",
+          "sha256": "c3248c4beb721c8290e6e34527ae56b1fc965aa6a14982ca602df4458ef0854e",
+          "bytes": 109116
+        }
+      ]
+    },
+    {
+      "package": "libffi8",
+      "version": "3.4.8-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libf/libffi/libffi8_3.4.8-2_arm64.deb",
+          "sha256": "d84a783b818f2386627604e64b793eb4ac5bb9ea1ba321a194a1c9c82fe09a01",
+          "bytes": 21260
+        }
+      ]
+    },
+    {
+      "package": "libgcc-s1",
+      "version": "14.2.0-19",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gcc-14/libgcc-s1_14.2.0-19_arm64.deb",
+          "sha256": "1108bc87879833d6d9a145f22a4a15cddb34e065b4b5f4b97bee586adbac2851",
+          "bytes": 54104
+        }
+      ]
+    },
+    {
+      "package": "libglib2.0-0t64",
+      "version": "2.84.4-3~deb13u3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/glib2.0/libglib2.0-0t64_2.84.4-3~deb13u3_arm64.deb",
+          "sha256": "97d54c95f7e190cc21cc6a94e3e9654c5fac6e7b86db33ca6ff00feae60bced4",
+          "bytes": 1428404
+        }
+      ]
+    },
+    {
+      "package": "libgmp10",
+      "version": "2:6.3.0+dfsg-3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gmp/libgmp10_6.3.0+dfsg-3_arm64.deb",
+          "sha256": "a27bbc27f119161ea9702c8dd66f54131cdf0d2ca73000f50ea91ef2fdfef0fb",
+          "bytes": 535088
+        }
+      ]
+    },
+    {
+      "package": "libgnutls30t64",
+      "version": "3.8.9-3+deb13u4",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/g/gnutls28/libgnutls30t64_3.8.9-3+deb13u4_arm64.deb",
+          "sha256": "337ef41ab360015d051d6a07f85f8aa6706b35712e3dea23157eba9c902196e2",
+          "bytes": 1378804
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/g/gnutls28/libgnutls30t64_3.8.9-3+deb13u4_arm64.deb",
+          "sha256": "337ef41ab360015d051d6a07f85f8aa6706b35712e3dea23157eba9c902196e2",
+          "bytes": 1378804
+        }
+      ]
+    },
+    {
+      "package": "libgssapi-krb5-2",
+      "version": "1.21.3-5+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/k/krb5/libgssapi-krb5-2_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "70803e8f5b9dd0a7167671bdd0b3cd05642384c1fc49e8270d340d85bf6c7d4c",
+          "bytes": 127624
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/k/krb5/libgssapi-krb5-2_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "70803e8f5b9dd0a7167671bdd0b3cd05642384c1fc49e8270d340d85bf6c7d4c",
+          "bytes": 127624
+        }
+      ]
+    },
+    {
+      "package": "libhogweed6t64",
+      "version": "3.10.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/nettle/libhogweed6t64_3.10.1-1_arm64.deb",
+          "sha256": "cb92d5a51c4fd6c7b7cbb62aaa60c7af830d0bea5b410fb1f47ee685e26944d1",
+          "bytes": 331628
+        }
+      ]
+    },
+    {
+      "package": "libidn2-0",
+      "version": "2.3.8-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libi/libidn2/libidn2-0_2.3.8-2_arm64.deb",
+          "sha256": "d2e5cef812f15db1eeb35f0a193158ee102a9e94284036c0e293521f2761d2d7",
+          "bytes": 107232
+        }
+      ]
+    },
+    {
+      "package": "libjson-glib-1.0-0",
+      "version": "1.10.6+ds-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/j/json-glib/libjson-glib-1.0-0_1.10.6+ds-2_arm64.deb",
+          "sha256": "616d3789339acc49ba9bbdfc7e9d5ceb6f9ca6eafa9b466bdbea80f071027da9",
+          "bytes": 59056
+        }
+      ]
+    },
+    {
+      "package": "libjson-glib-1.0-common",
+      "version": "1.10.6+ds-2",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/j/json-glib/libjson-glib-1.0-common_1.10.6+ds-2_all.deb",
+          "sha256": "2c6352e0b10b3bf2fe184eeaa5f4e8cfa69b82053dc2e5ef137f951ba59315c8",
+          "bytes": 62300
+        }
+      ]
+    },
+    {
+      "package": "libk5crypto3",
+      "version": "1.21.3-5+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/k/krb5/libk5crypto3_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "2453e8d4fa3b91b868d5bc10e84a15ad9c7bc4e4cb49379cb1f560bdce50db4a",
+          "bytes": 81416
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/k/krb5/libk5crypto3_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "2453e8d4fa3b91b868d5bc10e84a15ad9c7bc4e4cb49379cb1f560bdce50db4a",
+          "bytes": 81416
+        }
+      ]
+    },
+    {
+      "package": "libkeyutils1",
+      "version": "1.6.3-6",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/k/keyutils/libkeyutils1_1.6.3-6_arm64.deb",
+          "sha256": "5e680f317a6613161986417fb3ed63007c9228343f5ac2348551b103cc7fd7b4",
+          "bytes": 9716
+        }
+      ]
+    },
+    {
+      "package": "libkrb5-3",
+      "version": "1.21.3-5+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/k/krb5/libkrb5-3_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "1f5c46480abf894f662d894696c8a6c6510c2b20616cd453e88b27b11d3be25d",
+          "bytes": 308256
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/k/krb5/libkrb5-3_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "1f5c46480abf894f662d894696c8a6c6510c2b20616cd453e88b27b11d3be25d",
+          "bytes": 308256
+        }
+      ]
+    },
+    {
+      "package": "libkrb5support0",
+      "version": "1.21.3-5+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/k/krb5/libkrb5support0_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "6381bcb54e58854f9ebac2dfa580c3d6112d01b4ca3f725e7263b9374f79608e",
+          "bytes": 32508
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/k/krb5/libkrb5support0_1.21.3-5+deb13u1_arm64.deb",
+          "sha256": "6381bcb54e58854f9ebac2dfa580c3d6112d01b4ca3f725e7263b9374f79608e",
+          "bytes": 32508
+        }
+      ]
+    },
+    {
+      "package": "libldap2",
+      "version": "2.6.10+dfsg-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/o/openldap/libldap2_2.6.10+dfsg-1_arm64.deb",
+          "sha256": "38fae6af20d41e4b0a8ea1b96d0b81a7a5551a61595bc866c9af870eadfdf1bd",
+          "bytes": 179312
+        }
+      ]
+    },
+    {
+      "package": "liblzma5",
+      "version": "5.8.1-1+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/x/xz-utils/liblzma5_5.8.1-1+deb13u1_arm64.deb",
+          "sha256": "6a7b98005f84fc26d66a45e432f70d0793646a734f8c44cd1626b3ffa8edd7c6",
+          "bytes": 302720
+        }
+      ]
+    },
+    {
+      "package": "libmd0",
+      "version": "1.1.0-2+b1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libm/libmd/libmd0_1.1.0-2+b1_arm64.deb",
+          "sha256": "772e86842fd3fa1816a0cfee4833a73996aaa550461491543b886b9c8f999052",
+          "bytes": 33664
+        }
+      ]
+    },
+    {
+      "package": "libmount1",
+      "version": "2.41.5-0+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/u/util-linux/libmount1_2.41.5-0+deb13u1_arm64.deb",
+          "sha256": "14e2d555459f3c0b1442bb49dd2d266ea202a003198c86f65508a1dbfaa18732",
+          "bytes": 200668
+        }
+      ]
+    },
+    {
+      "package": "libncursesw6",
+      "version": "6.5+20250216-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/ncurses/libncursesw6_6.5+20250216-2_arm64.deb",
+          "sha256": "72121aeb08be2d915da321ddfae74f62a0764286f336279b2c2609ba07496d6d",
+          "bytes": 124048
+        }
+      ]
+    },
+    {
+      "package": "libnettle8t64",
+      "version": "3.10.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/nettle/libnettle8t64_3.10.1-1_arm64.deb",
+          "sha256": "16107ce5a7b522da021fa8aba42d42af9c5e90ddabfcda3710aff6ea95808ee0",
+          "bytes": 310548
+        }
+      ]
+    },
+    {
+      "package": "libnghttp2-14",
+      "version": "1.64.0-1.1+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/n/nghttp2/libnghttp2-14_1.64.0-1.1+deb13u1_arm64.deb",
+          "sha256": "ca222b98d5bef2193c05a1e736d0619798ba7a8f8e92526f3e1d06edcd0bf751",
+          "bytes": 71604
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/nghttp2/libnghttp2-14_1.64.0-1.1+deb13u1_arm64.deb",
+          "sha256": "ca222b98d5bef2193c05a1e736d0619798ba7a8f8e92526f3e1d06edcd0bf751",
+          "bytes": 71604
+        }
+      ]
+    },
+    {
+      "package": "libnghttp3-9",
+      "version": "1.8.0-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/nghttp3/libnghttp3-9_1.8.0-1_arm64.deb",
+          "sha256": "26bfb8d1bead043f57d95663bab02f7611e7078fb7cf71383fa480c4b4c24d81",
+          "bytes": 63232
+        }
+      ]
+    },
+    {
+      "package": "libngtcp2-16",
+      "version": "1.11.0-1+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/n/ngtcp2/libngtcp2-16_1.11.0-1+deb13u1_arm64.deb",
+          "sha256": "1ced2874229e4a503060c244730baf75e61b1d5444472b10e5022f1594f4ab88",
+          "bytes": 121080
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/ngtcp2/libngtcp2-16_1.11.0-1+deb13u1_arm64.deb",
+          "sha256": "1ced2874229e4a503060c244730baf75e61b1d5444472b10e5022f1594f4ab88",
+          "bytes": 121080
+        }
+      ]
+    },
+    {
+      "package": "libngtcp2-crypto-gnutls8",
+      "version": "1.11.0-1+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/n/ngtcp2/libngtcp2-crypto-gnutls8_1.11.0-1+deb13u1_arm64.deb",
+          "sha256": "4a220245385ec7222f4a20e444532808b90139b70ea9c7eeab179c927a27b37f",
+          "bytes": 28404
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/ngtcp2/libngtcp2-crypto-gnutls8_1.11.0-1+deb13u1_arm64.deb",
+          "sha256": "4a220245385ec7222f4a20e444532808b90139b70ea9c7eeab179c927a27b37f",
+          "bytes": 28404
+        }
+      ]
+    },
+    {
+      "package": "libnss-systemd",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/libnss-systemd_257.13-1~deb13u1_arm64.deb",
+          "sha256": "13e8ced686b74b8b3017cdcc6c9f584c9e3b910f5399784b5de96e1e909d997b",
+          "bytes": 203536
+        }
+      ]
+    },
+    {
+      "package": "libp11-kit0",
+      "version": "0.25.5-3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/p11-kit/libp11-kit0_0.25.5-3_arm64.deb",
+          "sha256": "78bfc746e68a5217e845f488f69100ed89d10c8886fbd3ffce937acb6a7d88fb",
+          "bytes": 409108
+        }
+      ]
+    },
+    {
+      "package": "libpam-modules",
+      "version": "1.7.0-5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/pam/libpam-modules_1.7.0-5_arm64.deb",
+          "sha256": "3c6c4b0be396f2a90d150effd480e06674d7d22739fe4c54ffbf95587fe2bcf4",
+          "bytes": 172452
+        }
+      ]
+    },
+    {
+      "package": "libpam-modules-bin",
+      "version": "1.7.0-5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/pam/libpam-modules-bin_1.7.0-5_arm64.deb",
+          "sha256": "8c50ad191934474b5177cba48aed2c4023ec8392ef7096808311315c50b3bfec",
+          "bytes": 48272
+        }
+      ]
+    },
+    {
+      "package": "libpam-runtime",
+      "version": "1.7.0-5",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/pam/libpam-runtime_1.7.0-5_all.deb",
+          "sha256": "b02792c9ed6174db695a653b95ef3629fdac3a73ba1eff1754ab161b5711bfbf",
+          "bytes": 248720
+        }
+      ]
+    },
+    {
+      "package": "libpam-systemd",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/libpam-systemd_257.13-1~deb13u1_arm64.deb",
+          "sha256": "05bc0f7e21e896299aae22ea45075185cea0fb25574218a0ad9235f93029b823",
+          "bytes": 275788
+        }
+      ]
+    },
+    {
+      "package": "libpam0g",
+      "version": "1.7.0-5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/pam/libpam0g_1.7.0-5_arm64.deb",
+          "sha256": "2dd0fdc9af8a8a48f0a54581f74005d4d8623baa8aea9ac3d201624c3217b6d3",
+          "bytes": 68776
+        }
+      ]
+    },
+    {
+      "package": "libpcre2-8-0",
+      "version": "10.46-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/pcre2/libpcre2-8-0_10.46-1~deb13u1_arm64.deb",
+          "sha256": "f74d3e1082c2d6d2f7b4d47e41070de4a7e2f7f9d0e6e0c901ebfe0e82cdd3ee",
+          "bytes": 262004
+        }
+      ]
+    },
+    {
+      "package": "libproc2-0",
+      "version": "2:4.0.4-9",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/procps/libproc2-0_4.0.4-9_arm64.deb",
+          "sha256": "e81069b58fe82223c71fcd74c760cb0fd3b0e61792fbaf2e5675fd948dc16dba",
+          "bytes": 62752
+        }
+      ]
+    },
+    {
+      "package": "libproxy1v5",
+      "version": "0.5.9-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libp/libproxy/libproxy1v5_0.5.9-1_arm64.deb",
+          "sha256": "7758242ac0263b1fcefc01622160c6a965a25d7f284ee6a62a46a8784cfedd6e",
+          "bytes": 25376
+        }
+      ]
+    },
+    {
+      "package": "libpsl5t64",
+      "version": "0.21.2-1.1+b1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libp/libpsl/libpsl5t64_0.21.2-1.1+b1_arm64.deb",
+          "sha256": "7ea03d8a7d16edce7b1b1e94980c058c0f1fb3c595eb9154b0e8590d0e7f75af",
+          "bytes": 57076
+        }
+      ]
+    },
+    {
+      "package": "libpython3-stdlib",
+      "version": "3.13.5-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3-defaults/libpython3-stdlib_3.13.5-1_arm64.deb",
+          "sha256": "0e5b09b3c90f34399a357c32e1be08a3f31b39d3c615464f00354b309f82e732",
+          "bytes": 10180
+        }
+      ]
+    },
+    {
+      "package": "libpython3.13-minimal",
+      "version": "3.13.5-2+deb13u3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3.13/libpython3.13-minimal_3.13.5-2+deb13u3_arm64.deb",
+          "sha256": "c5210fcdcbf293d7ccdb1a0ebb33fad11c87d027af89e6f5bb8cd62ed001defe",
+          "bytes": 856300
+        }
+      ]
+    },
+    {
+      "package": "libpython3.13-stdlib",
+      "version": "3.13.5-2+deb13u3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3.13/libpython3.13-stdlib_3.13.5-2+deb13u3_arm64.deb",
+          "sha256": "88f3f041436676c627672955f39269abff8168196546fc65130aa31165c03981",
+          "bytes": 1892732
+        }
+      ]
+    },
+    {
+      "package": "libreadline8t64",
+      "version": "8.2-6",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/r/readline/libreadline8t64_8.2-6_arm64.deb",
+          "sha256": "f78ff432b2a627bc04f7eef0e6e2696501c9e06feca748a5b741d5e594429033",
+          "bytes": 159264
+        }
+      ]
+    },
+    {
+      "package": "librtmp1",
+      "version": "2.4+20151223.gitfa8646d.1-2+b5",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2+b5_arm64.deb",
+          "sha256": "20d52d20c4834158e956ae8e1d42a61d22330062052116d5422daa2d3b1d433b",
+          "bytes": 56840
+        }
+      ]
+    },
+    {
+      "package": "libsasl2-2",
+      "version": "2.1.28+dfsg1-9",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg1-9_arm64.deb",
+          "sha256": "6431628c62524c8397255c1c4a7c7ef63661b801f3be9a59ad41e7a2e46e6210",
+          "bytes": 55628
+        }
+      ]
+    },
+    {
+      "package": "libsasl2-modules-db",
+      "version": "2.1.28+dfsg1-9",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg1-9_arm64.deb",
+          "sha256": "ed6eb05f8ded71ab16a0369845805b373fc8a71c0e7d33f73fa2fb11e83a1977",
+          "bytes": 20144
+        }
+      ]
+    },
+    {
+      "package": "libseccomp2",
+      "version": "2.6.0-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libs/libseccomp/libseccomp2_2.6.0-2_arm64.deb",
+          "sha256": "013d0af0444177960d5899f4673e35d492f31edfc40cb8d5a82bb56147ab2e35",
+          "bytes": 51012
+        }
+      ]
+    },
+    {
+      "package": "libselinux1",
+      "version": "3.8.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libs/libselinux/libselinux1_3.8.1-1_arm64.deb",
+          "sha256": "fc13da4c7783b8f4361d92ef1045931f298d1b0ac78ed1a85c2232615f49fc6f",
+          "bytes": 79352
+        }
+      ]
+    },
+    {
+      "package": "libsemanage-common",
+      "version": "3.8.1-1",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libs/libsemanage/libsemanage-common_3.8.1-1_all.deb",
+          "sha256": "65375d886749c236bd1da4d9990b7c2469d2fe66019a28e5614f6814376d3dcb",
+          "bytes": 7812
+        }
+      ]
+    },
+    {
+      "package": "libsemanage2",
+      "version": "3.8.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libs/libsemanage/libsemanage2_3.8.1-1_arm64.deb",
+          "sha256": "ed73a76d3c39ac5cbd0a447527bba3dc33d3ec3785af7583b70ab41f85fc0243",
+          "bytes": 87840
+        }
+      ]
+    },
+    {
+      "package": "libsepol2",
+      "version": "3.8.1-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libs/libsepol/libsepol2_3.8.1-1_arm64.deb",
+          "sha256": "0119cbb4d12a6b5093430a00714019bac87a446f34f21d834453742f1af35b8b",
+          "bytes": 266256
+        }
+      ]
+    },
+    {
+      "package": "libsmartcols1",
+      "version": "2.41.5-0+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/u/util-linux/libsmartcols1_2.41.5-0+deb13u1_arm64.deb",
+          "sha256": "1881ac0bc2a58a52ecbf6e7690b17552233b71e94129db79e2302656b0d22f24",
+          "bytes": 139452
+        }
+      ]
+    },
+    {
+      "package": "libsqlite3-0",
+      "version": "3.46.1-7+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/sqlite3/libsqlite3-0_3.46.1-7+deb13u1_arm64.deb",
+          "sha256": "69dd4b705eca29fe134c17f18aaa4cc9e7ecd01c0250d5e195358801514c76ac",
+          "bytes": 853772
+        }
+      ]
+    },
+    {
+      "package": "libssh2-1t64",
+      "version": "1.11.1-1+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/libs/libssh2/libssh2-1t64_1.11.1-1+deb13u1_arm64.deb",
+          "sha256": "600c2a845d6d14d292c765382bc7e644898762e1634a4aecf5b85329622dbbfe",
+          "bytes": 235792
+        },
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libs/libssh2/libssh2-1t64_1.11.1-1+deb13u1_arm64.deb",
+          "sha256": "600c2a845d6d14d292c765382bc7e644898762e1634a4aecf5b85329622dbbfe",
+          "bytes": 235792
+        }
+      ]
+    },
+    {
+      "package": "libssl3t64",
+      "version": "3.5.7-1~deb13u2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/o/openssl/libssl3t64_3.5.7-1~deb13u2_arm64.deb",
+          "sha256": "ec131326aa9fa9ec934eca386bc7991f328fe383eaefd3e43bd8901a9199c5ae",
+          "bytes": 2766020
+        }
+      ]
+    },
+    {
+      "package": "libsystemd-shared",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/libsystemd-shared_257.13-1~deb13u1_arm64.deb",
+          "sha256": "b48df445566ff6c39395c9fc571524c9e03803bc2e434d7869fc21e723c64b4d",
+          "bytes": 1921984
+        }
+      ]
+    },
+    {
+      "package": "libsystemd0",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/libsystemd0_257.13-1~deb13u1_arm64.deb",
+          "sha256": "d2f63c408549c29eaefb6f4c948393edce99f45ee8e43c991391bef63fb7d54b",
+          "bytes": 422500
+        }
+      ]
+    },
+    {
+      "package": "libtasn1-6",
+      "version": "4.20.0-2+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libt/libtasn1-6/libtasn1-6_4.20.0-2+deb13u1_arm64.deb",
+          "sha256": "e421da949cd26245f24c594265d6a01900b5e060e80793f68b977f7bfaa009ef",
+          "bytes": 47304
+        }
+      ]
+    },
+    {
+      "package": "libtinfo6",
+      "version": "6.5+20250216-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/ncurses/libtinfo6_6.5+20250216-2_arm64.deb",
+          "sha256": "2a747f7fff3c2347c357387a7133df997410f07ba1b1df1a1461a97bd7fbc2fc",
+          "bytes": 341360
+        }
+      ]
+    },
+    {
+      "package": "libunistring5",
+      "version": "1.3-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libu/libunistring/libunistring5_1.3-2_arm64.deb",
+          "sha256": "4847467a0e47039837895e88f5a99a4a86a3d8266be40c3c896fc7c10d552dc7",
+          "bytes": 452856
+        }
+      ]
+    },
+    {
+      "package": "libuuid1",
+      "version": "2.41.5-0+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/u/util-linux/libuuid1_2.41.5-0+deb13u1_arm64.deb",
+          "sha256": "448ad6b190184dbff24508ef2eda88bd737a5ffc0f9750eb779fcf9885292bea",
+          "bytes": 37648
+        }
+      ]
+    },
+    {
+      "package": "libzstd1",
+      "version": "1.5.7+dfsg-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/libz/libzstd/libzstd1_1.5.7+dfsg-1_arm64.deb",
+          "sha256": "924540bd59fdbfa77a0604360efdaca54411a43daf11c7e002a3c64791b67448",
+          "bytes": 266052
+        }
+      ]
+    },
+    {
+      "package": "login.defs",
+      "version": "1:4.17.4-2",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/shadow/login.defs_4.17.4-2_all.deb",
+          "sha256": "b4bbb8242cbf5588de7aafeb9d578a3dee1db2891f444ab454fd30bd80ccf2b4",
+          "bytes": 186124
+        }
+      ]
+    },
+    {
+      "package": "mawk",
+      "version": "1.3.4.20250131-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/m/mawk/mawk_1.3.4.20250131-1_arm64.deb",
+          "sha256": "0ab946ff4b8a34d93f81727957612f290c86cd0db39e849dc0ae5e3f3a9563d6",
+          "bytes": 133820
+        }
+      ]
+    },
+    {
+      "package": "media-types",
+      "version": "13.0.0",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/m/media-types/media-types_13.0.0_all.deb",
+          "sha256": "0788e4b0b72db1bcf74a19cb24c3511e7770ad0b341f0f30e361701c3072f53e",
+          "bytes": 29336
+        }
+      ]
+    },
+    {
+      "package": "mount",
+      "version": "2.41.5-0+deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/u/util-linux/mount_2.41.5-0+deb13u1_arm64.deb",
+          "sha256": "8b40a9eb9f72647c8732e9264c7328233f8ef8e9d962e516edeb210caa6789b6",
+          "bytes": 161232
+        }
+      ]
+    },
+    {
+      "package": "netbase",
+      "version": "6.5",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/n/netbase/netbase_6.5_all.deb",
+          "sha256": "76bafa92947ebd37b0a6f9ec6570412041f56edebc1c66d323731216d318471e",
+          "bytes": 12436
+        }
+      ]
+    },
+    {
+      "package": "openssl",
+      "version": "3.5.7-1~deb13u2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/o/openssl/openssl_3.5.7-1~deb13u2_arm64.deb",
+          "sha256": "ff38f9e4fdbfef72d9cb31088e5e42f58c83c2fb1d1bbb4e4b4c9adc53c17100",
+          "bytes": 1472236
+        }
+      ]
+    },
+    {
+      "package": "openssl-provider-legacy",
+      "version": "3.5.7-1~deb13u2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian-security/20260901T000000Z/pool/updates/main/o/openssl/openssl-provider-legacy_3.5.7-1~deb13u2_arm64.deb",
+          "sha256": "7628954796eb651fc499ad98d4e51435691c2ccce0b5fbae6b198cbece742db4",
+          "bytes": 313492
+        }
+      ]
+    },
+    {
+      "package": "passwd",
+      "version": "1:4.17.4-2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/shadow/passwd_4.17.4-2_arm64.deb",
+          "sha256": "a6863055a3d53bf805dd0048b836e4b7a3d14a899b832a50d577b047da4202d8",
+          "bytes": 1205920
+        }
+      ]
+    },
+    {
+      "package": "procps",
+      "version": "2:4.0.4-9",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/procps/procps_4.0.4-9_arm64.deb",
+          "sha256": "9afd4ad2e8da92322715114fb9555c63ce92f6c72bf72867e76ab2d6a7a3b541",
+          "bytes": 871348
+        }
+      ]
+    },
+    {
+      "package": "python3",
+      "version": "3.13.5-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3-defaults/python3_3.13.5-1_arm64.deb",
+          "sha256": "8d5be256bf3bb4f07afce1aa86f0595c6939e1a6c2ea939bdcb7b36351cbe021",
+          "bytes": 28244
+        }
+      ]
+    },
+    {
+      "package": "python3-minimal",
+      "version": "3.13.5-1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3-defaults/python3-minimal_3.13.5-1_arm64.deb",
+          "sha256": "b1dff61d3e68c83c747b03399356ba707d491bcaf6e495b575d46be3143cdec8",
+          "bytes": 27244
+        }
+      ]
+    },
+    {
+      "package": "python3.13",
+      "version": "3.13.5-2+deb13u3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3.13/python3.13_3.13.5-2+deb13u3_arm64.deb",
+          "sha256": "47af7a6a254dfe18365f680b2a0dabec9188d054c81d6d3f8caaa55e53e0871a",
+          "bytes": 757384
+        }
+      ]
+    },
+    {
+      "package": "python3.13-minimal",
+      "version": "3.13.5-2+deb13u3",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/p/python3.13/python3.13-minimal_3.13.5-2+deb13u3_arm64.deb",
+          "sha256": "d64a87f3dc9b3b52567cda12096312767b19f8f3995d4051f79a2435d3d994de",
+          "bytes": 2002540
+        }
+      ]
+    },
+    {
+      "package": "readline-common",
+      "version": "8.2-6",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/r/readline/readline-common_8.2-6_all.deb",
+          "sha256": "f77e8aa0bf0de618f11cb0b21658a4ed60f177d63b3cf26d7fc3706b6d0eaaa9",
+          "bytes": 69360
+        }
+      ]
+    },
+    {
+      "package": "sudo",
+      "version": "1.9.16p2-3+deb13u2",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/sudo/sudo_1.9.16p2-3+deb13u2_arm64.deb",
+          "sha256": "907d333f72f3369b2ceda64dbcfccf0dc515543b76ac68d5c901e309f118709b",
+          "bytes": 1991796
+        }
+      ]
+    },
+    {
+      "package": "systemd",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/systemd_257.13-1~deb13u1_arm64.deb",
+          "sha256": "dcc3ba37f0488ecd513820035b4efc300e198849f5b6437a9bac9c2f307149ab",
+          "bytes": 2921364
+        }
+      ]
+    },
+    {
+      "package": "systemd-sysv",
+      "version": "257.13-1~deb13u1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/s/systemd/systemd-sysv_257.13-1~deb13u1_arm64.deb",
+          "sha256": "af3c883fabc97850c7afe9489a9e1808b4db2d9cfdc4dc1639da9e1b0356c97b",
+          "bytes": 64880
+        }
+      ]
+    },
+    {
+      "package": "tar",
+      "version": "1.35+dfsg-3.1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/t/tar/tar_1.35+dfsg-3.1_arm64.deb",
+          "sha256": "c460a8294202ca3802b7c703b0bd70dd8bda1f2fc8785839595cf9d5e060d71b",
+          "bytes": 802008
+        }
+      ]
+    },
+    {
+      "package": "tzdata",
+      "version": "2026b-0+deb13u1",
+      "architecture": "all",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/t/tzdata/tzdata_2026b-0+deb13u1_all.deb",
+          "sha256": "306013b77311e875620e89f43c447765a6c72b7b398e0baa8e5721bcbbdf66cf",
+          "bytes": 264316
+        }
+      ]
+    },
+    {
+      "package": "zlib1g",
+      "version": "1:1.3.dfsg+really1.3.1-1+b1",
+      "architecture": "arm64",
+      "archives": [
+        {
+          "url": "https://snapshot.debian.org/archive/debian/20260901T000000Z/pool/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1+b1_arm64.deb",
+          "sha256": "209aa5cf671e97b9eb0410844fa6df4cae2e75b0c72e7802ab6c8ece13e6ddef",
+          "bytes": 85116
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "cockpit-bridge",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "python3:any",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "python3"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.39",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcrypt1",
+          "1:4.1.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcrypt1"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.68.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgnutls30t64",
+          "3.8.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgnutls30t64"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgssapi-krb5-2",
+          "1.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgssapi-krb5-2"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libjson-glib-1.0-0",
+          "1.5.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libjson-glib-1.0-0"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "1.3.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "237",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "glib-networking",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "glib-networking"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "adduser",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "adduser"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "openssl",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "openssl"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "systemd",
+          "235",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd"
+      ]
+    },
+    {
+      "from": "cockpit-ws",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnss-systemd",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnss-systemd"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "init-system-helpers",
+          "1.54~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "init-system-helpers"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libapparmor1",
+          "2.7.0~beta1+bzr1772",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libapparmor1"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "0.99.7.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.2.0.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "sudo",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam-modules",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam-modules"
+      ]
+    },
+    {
+      "from": "python3",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "python3-minimal",
+          "3.13.5-1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "python3-minimal"
+      ]
+    },
+    {
+      "from": "python3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "python3.13",
+          "3.13.5-1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "python3.13"
+      ]
+    },
+    {
+      "from": "python3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpython3-stdlib",
+          "3.13.5-1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpython3-stdlib"
+      ]
+    },
+    {
+      "from": "libc6",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgcc-s1",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgcc-s1"
+      ]
+    },
+    {
+      "from": "libcrypt1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libatomic1",
+          "4.8",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libatomic1"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libffi8",
+          "3.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libffi8"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libmount1",
+          "2.40~rc2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libmount1"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpcre2-8-0",
+          "10.22",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpcre2-8-0"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libglib2.0-0t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.2.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgmp10",
+          "2:6.3.0+dfsg",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgmp10"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libhogweed6t64",
+          "3.10",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libhogweed6t64"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libidn2-0",
+          "2.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libidn2-0"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnettle8t64",
+          "3.10",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnettle8t64"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libp11-kit0",
+          "0.25.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libp11-kit0"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libtasn1-6",
+          "4.14",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libtasn1-6"
+      ]
+    },
+    {
+      "from": "libgnutls30t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libunistring5",
+          "1.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libunistring5"
+      ]
+    },
+    {
+      "from": "libgssapi-krb5-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libkrb5-3",
+          "1.21.3-5+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libkrb5-3"
+      ]
+    },
+    {
+      "from": "libgssapi-krb5-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libgssapi-krb5-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcom-err2",
+          "1.43.9",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcom-err2"
+      ]
+    },
+    {
+      "from": "libgssapi-krb5-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libk5crypto3",
+          "1.20",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libk5crypto3"
+      ]
+    },
+    {
+      "from": "libgssapi-krb5-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libkrb5support0",
+          "1.21.3-5+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libkrb5support0"
+      ]
+    },
+    {
+      "from": "libjson-glib-1.0-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libjson-glib-1.0-common",
+          "1.10.6+ds-2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libjson-glib-1.0-common"
+      ]
+    },
+    {
+      "from": "libjson-glib-1.0-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libjson-glib-1.0-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "libpam0g",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "libpam0g",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpam0g",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "debconf",
+          "0.5",
+          ">="
+        ],
+        [
+          "debconf-2.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "debconf"
+      ]
+    },
+    {
+      "from": "libsystemd0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.39",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsystemd0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcap2",
+          "1:2.10",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcap2"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgnutls30t64",
+          "3.8.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgnutls30t64"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libproxy1v5",
+          "0.5.3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libproxy1v5"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "glib-networking-services",
+          "2.80.1-1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "glib-networking-services"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "glib-networking-services",
+          "2.80.1-1.1~",
+          "<"
+        ]
+      ],
+      "installed_satisfiers": [
+        "glib-networking-services"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "glib-networking-common",
+          "2.80.1-1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "glib-networking-common"
+      ]
+    },
+    {
+      "from": "glib-networking",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "gsettings-desktop-schemas",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "gsettings-desktop-schemas"
+      ]
+    },
+    {
+      "from": "adduser",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "passwd",
+          "1:4.17.2-5",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "passwd"
+      ]
+    },
+    {
+      "from": "openssl",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "openssl",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.5.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libsystemd-shared",
+          "257.13-1~deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd-shared"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libacl1",
+          "2.2.23",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libacl1"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libapparmor1",
+          "2.13",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libapparmor1"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.41",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libmount1",
+          "2.30",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libmount1"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "0.99.7.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libseccomp2",
+          "2.3.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libseccomp2"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.4.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "257.13-1~deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "mount",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "mount"
+      ]
+    },
+    {
+      "from": "libnss-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.39",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libnss-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcap2",
+          "1:2.10",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcap2"
+      ]
+    },
+    {
+      "from": "libnss-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "systemd",
+          "257.13-1~deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd"
+      ]
+    },
+    {
+      "from": "libapparmor1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libaudit1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit-common",
+          "1:4.0.2-2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit-common"
+      ]
+    },
+    {
+      "from": "libaudit1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libaudit1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcap-ng0",
+          "0.7.9",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcap-ng0"
+      ]
+    },
+    {
+      "from": "libselinux1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libselinux1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpcre2-8-0",
+          "10.22",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpcre2-8-0"
+      ]
+    },
+    {
+      "from": "libssl3t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libssl3t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libzstd1",
+          "1.5.5",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libzstd1"
+      ]
+    },
+    {
+      "from": "libssl3t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.1.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "libssl3t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "openssl-provider-legacy",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "openssl-provider-legacy"
+      ]
+    },
+    {
+      "from": "zlib1g",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libcrypt1",
+          "1:4.3.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcrypt1"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libdb5.3t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdb5.3t64"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "1.4.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "254",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "debconf",
+          "0.5",
+          ">="
+        ],
+        [
+          "debconf-2.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "debconf"
+      ]
+    },
+    {
+      "from": "libpam-modules",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libpam-modules-bin",
+          "1.7.0-5",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam-modules-bin"
+      ]
+    },
+    {
+      "from": "python3-minimal",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "python3.13-minimal",
+          "3.13.5-1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "python3.13-minimal"
+      ]
+    },
+    {
+      "from": "python3-minimal",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dpkg",
+          "1.13.20",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dpkg"
+      ]
+    },
+    {
+      "from": "python3.13",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "python3.13-minimal",
+          "3.13.5-2+deb13u3",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "python3.13-minimal"
+      ]
+    },
+    {
+      "from": "python3.13",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpython3.13-stdlib",
+          "3.13.5-2+deb13u3",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpython3.13-stdlib"
+      ]
+    },
+    {
+      "from": "python3.13",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "media-types",
+          "",
+          ""
+        ],
+        [
+          "mime-support",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "media-types"
+      ]
+    },
+    {
+      "from": "python3.13",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "tzdata",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "tzdata"
+      ]
+    },
+    {
+      "from": "libpython3-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpython3.13-stdlib",
+          "3.13.5-1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpython3.13-stdlib"
+      ]
+    },
+    {
+      "from": "libgcc-s1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "gcc-14-base",
+          "14.2.0-19",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "gcc-14-base"
+      ]
+    },
+    {
+      "from": "libgcc-s1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.35",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libatomic1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "gcc-14-base",
+          "14.2.0-19",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "gcc-14-base"
+      ]
+    },
+    {
+      "from": "libatomic1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libffi8",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libmount1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libblkid1",
+          "2.41.5-0+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libblkid1"
+      ]
+    },
+    {
+      "from": "libmount1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libmount1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libpcre2-8-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libgmp10",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libhogweed6t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libhogweed6t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgmp10",
+          "2:6.3.0+dfsg",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgmp10"
+      ]
+    },
+    {
+      "from": "libhogweed6t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnettle8t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnettle8t64"
+      ]
+    },
+    {
+      "from": "libidn2-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libidn2-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libunistring5",
+          "1.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libunistring5"
+      ]
+    },
+    {
+      "from": "libnettle8t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libp11-kit0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libp11-kit0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libffi8",
+          "3.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libffi8"
+      ]
+    },
+    {
+      "from": "libtasn1-6",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libunistring5",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libkrb5-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libkrb5support0",
+          "1.21.3-5+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libkrb5support0"
+      ]
+    },
+    {
+      "from": "libkrb5-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libkrb5-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcom-err2",
+          "1.43.9",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcom-err2"
+      ]
+    },
+    {
+      "from": "libkrb5-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libk5crypto3",
+          "1.20",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libk5crypto3"
+      ]
+    },
+    {
+      "from": "libkrb5-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libkeyutils1",
+          "1.5.9",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libkeyutils1"
+      ]
+    },
+    {
+      "from": "libkrb5-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "libcom-err2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libk5crypto3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libk5crypto3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libkrb5support0",
+          "1.21.3-5+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libkrb5support0"
+      ]
+    },
+    {
+      "from": "libkrb5support0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libcap2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libproxy1v5",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libproxy1v5",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcurl3t64-gnutls",
+          "7.16.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcurl3t64-gnutls"
+      ]
+    },
+    {
+      "from": "libproxy1v5",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libduktape207",
+          "2.0.3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libduktape207"
+      ]
+    },
+    {
+      "from": "libproxy1v5",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "glib-networking-services",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "glib-networking-services",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "glib-networking-services",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libproxy1v5",
+          "0.5.3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libproxy1v5"
+      ]
+    },
+    {
+      "from": "glib-networking-services",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "glib-networking-common",
+          "2.80.1-1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "glib-networking-common"
+      ]
+    },
+    {
+      "from": "gsettings-desktop-schemas",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dconf-gsettings-backend",
+          "",
+          ""
+        ],
+        [
+          "gsettings-backend",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "dconf-gsettings-backend"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "base-passwd",
+          "3.6.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "base-passwd"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam-modules",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam-modules"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "login.defs",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "login.defs"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libacl1",
+          "2.2.23",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libacl1"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libattr1",
+          "1:2.4.44",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libattr1"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libbsd0",
+          "0.11.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libbsd0"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcrypt1",
+          "1:4.1.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcrypt1"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "0.99.7.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsemanage2",
+          "2.0.32",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsemanage2"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libacl1",
+          "2.2.23",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libacl1"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libblkid1",
+          "2.30.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libblkid1"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.39",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcap2",
+          "1:2.10",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcap2"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcrypt1",
+          "1:4.4.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcrypt1"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libmount1",
+          "2.30",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libmount1"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "0.99.7.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libseccomp2",
+          "2.4.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libseccomp2"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libsystemd-shared",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.4.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "libacl1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libseccomp2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "mount",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libblkid1",
+          "2.41.5-0+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libblkid1"
+      ]
+    },
+    {
+      "from": "mount",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "mount",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libmount1",
+          "2.41.5-0+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libmount1"
+      ]
+    },
+    {
+      "from": "mount",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "mount",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libsmartcols1",
+          "2.41.5-0+deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsmartcols1"
+      ]
+    },
+    {
+      "from": "libcap-ng0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libzstd1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "openssl-provider-legacy",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "openssl-provider-legacy",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.0.3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "libdb5.3t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpam-modules-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "libpam-modules-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpam-modules-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcrypt1",
+          "1:4.3.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcrypt1"
+      ]
+    },
+    {
+      "from": "libpam-modules-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "0.99.7.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "libpam-modules-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libpam-modules-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "254",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "python3.13-minimal",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "python3.13-minimal",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpython3.13-minimal",
+          "3.13.5-2+deb13u3",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpython3.13-minimal"
+      ]
+    },
+    {
+      "from": "python3.13-minimal",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libexpat1",
+          "2.6.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libexpat1"
+      ]
+    },
+    {
+      "from": "python3.13-minimal",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.2.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libbz2-1.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libbz2-1.0"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "liblzma5",
+          "5.4.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "liblzma5"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libmd0",
+          "0.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libmd0"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libzstd1",
+          "1.5.5",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libzstd1"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.1.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "dpkg",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "tar",
+          "1.28-1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "tar"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpython3.13-minimal",
+          "3.13.5-2+deb13u3",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpython3.13-minimal"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "media-types",
+          "",
+          ""
+        ],
+        [
+          "mime-support",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "media-types"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "netbase",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "netbase"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "tzdata",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "tzdata"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libbz2-1.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libbz2-1.0"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdb5.3t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdb5.3t64"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libffi8",
+          "3.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libffi8"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "liblzma5",
+          "5.1.1alpha+20120614",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "liblzma5"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libncursesw6",
+          "6.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libncursesw6"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libreadline8t64",
+          "7.0~beta",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libreadline8t64"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsqlite3-0",
+          "3.36.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsqlite3-0"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libtinfo6",
+          "6",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libtinfo6"
+      ]
+    },
+    {
+      "from": "libpython3.13-stdlib",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libuuid1",
+          "2.20.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libuuid1"
+      ]
+    },
+    {
+      "from": "tzdata",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "debconf",
+          "0.5",
+          ">="
+        ],
+        [
+          "debconf-2.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "debconf"
+      ]
+    },
+    {
+      "from": "libblkid1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libkeyutils1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libbrotli1",
+          "0.6.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libbrotli1"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgnutls30t64",
+          "3.8.6",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgnutls30t64"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgssapi-krb5-2",
+          "1.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgssapi-krb5-2"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libidn2-0",
+          "2.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libidn2-0"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libldap2",
+          "2.6.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libldap2"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnettle8t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnettle8t64"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnghttp2-14",
+          "1.50.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnghttp2-14"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnghttp3-9",
+          "0.15.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnghttp3-9"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libngtcp2-16",
+          "1.1.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libngtcp2-16"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libngtcp2-crypto-gnutls8",
+          "1.1.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libngtcp2-crypto-gnutls8"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpsl5t64",
+          "0.16.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpsl5t64"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "librtmp1",
+          "2.3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "librtmp1"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssh2-1t64",
+          "1.11.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssh2-1t64"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libzstd1",
+          "1.5.5",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libzstd1"
+      ]
+    },
+    {
+      "from": "libcurl3t64-gnutls",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.2.3.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "libduktape207",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dconf-gsettings-backend",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dconf-service",
+          "0.40.0-5.1~",
+          "<"
+        ]
+      ],
+      "installed_satisfiers": [
+        "dconf-service"
+      ]
+    },
+    {
+      "from": "dconf-gsettings-backend",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dconf-service",
+          "0.40.0-5",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dconf-service"
+      ]
+    },
+    {
+      "from": "dconf-gsettings-backend",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdconf1",
+          "0.40.0-5",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdconf1"
+      ]
+    },
+    {
+      "from": "dconf-gsettings-backend",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dconf-gsettings-backend",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "base-passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "base-passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdebconfclient0",
+          "0.145",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdebconfclient0"
+      ]
+    },
+    {
+      "from": "base-passwd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libattr1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libbsd0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libbsd0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libmd0",
+          "1.0.3-2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libmd0"
+      ]
+    },
+    {
+      "from": "libsemanage2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsemanage-common",
+          "3.8.1-1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsemanage-common"
+      ]
+    },
+    {
+      "from": "libsemanage2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "libsemanage2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libbz2-1.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libbz2-1.0"
+      ]
+    },
+    {
+      "from": "libsemanage2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsemanage2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.8.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libsemanage2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsepol2",
+          "3.8.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsepol2"
+      ]
+    },
+    {
+      "from": "libsmartcols1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpython3.13-minimal",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpython3.13-minimal",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.4.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "libexpat1",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.36",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libbz2-1.0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "liblzma5",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libmd0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.33",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "tar",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libacl1",
+          "2.2.23",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libacl1"
+      ]
+    },
+    {
+      "from": "tar",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "tar",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "libncursesw6",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libtinfo6",
+          "6.5+20250216-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libtinfo6"
+      ]
+    },
+    {
+      "from": "libncursesw6",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libreadline8t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "readline-common",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "readline-common"
+      ]
+    },
+    {
+      "from": "libreadline8t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libreadline8t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libtinfo6",
+          "6",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libtinfo6"
+      ]
+    },
+    {
+      "from": "libsqlite3-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libtinfo6",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libuuid1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libbrotli1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.29",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libldap2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libldap2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsasl2-2",
+          "2.1.28+dfsg1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsasl2-2"
+      ]
+    },
+    {
+      "from": "libldap2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "libnghttp2-14",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libnghttp3-9",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libngtcp2-16",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.25",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libngtcp2-crypto-gnutls8",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libngtcp2-crypto-gnutls8",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgnutls30t64",
+          "3.8.2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgnutls30t64"
+      ]
+    },
+    {
+      "from": "libngtcp2-crypto-gnutls8",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libngtcp2-16",
+          "1.1.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libngtcp2-16"
+      ]
+    },
+    {
+      "from": "libpsl5t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libidn2-0",
+          "0.16",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libidn2-0"
+      ]
+    },
+    {
+      "from": "libpsl5t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.33",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpsl5t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libunistring5",
+          "1.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libunistring5"
+      ]
+    },
+    {
+      "from": "librtmp1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "librtmp1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgmp10",
+          "2:6.3.0+dfsg",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgmp10"
+      ]
+    },
+    {
+      "from": "librtmp1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libgnutls30t64",
+          "3.8.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libgnutls30t64"
+      ]
+    },
+    {
+      "from": "librtmp1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libhogweed6t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libhogweed6t64"
+      ]
+    },
+    {
+      "from": "librtmp1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libnettle8t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libnettle8t64"
+      ]
+    },
+    {
+      "from": "librtmp1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.1.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "libssh2-1t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.25",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libssh2-1t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "libssh2-1t64",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "zlib1g",
+          "1:1.1.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "zlib1g"
+      ]
+    },
+    {
+      "from": "dconf-service",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "default-dbus-session-bus",
+          "",
+          ""
+        ],
+        [
+          "dbus-session-bus",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-user-session"
+      ]
+    },
+    {
+      "from": "dconf-service",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdconf1",
+          "0.40.0-5",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdconf1"
+      ]
+    },
+    {
+      "from": "dconf-service",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "procps",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "procps"
+      ]
+    },
+    {
+      "from": "dconf-service",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dconf-service",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "libdconf1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libdconf1",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libglib2.0-0t64",
+          "2.80.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libglib2.0-0t64"
+      ]
+    },
+    {
+      "from": "libdebconfclient0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsepol2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsasl2-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsasl2-modules-db",
+          "2.1.28+dfsg1-9",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsasl2-modules-db"
+      ]
+    },
+    {
+      "from": "libsasl2-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsasl2-2",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libssl3t64",
+          "3.0.0",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libssl3t64"
+      ]
+    },
+    {
+      "from": "dbus-user-session",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-daemon",
+          "1.16.2-2",
+          "="
+        ],
+        [
+          "dbus-broker",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-daemon"
+      ]
+    },
+    {
+      "from": "dbus-user-session",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-session-bus-common",
+          "1.16.2-2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-session-bus-common"
+      ]
+    },
+    {
+      "from": "dbus-user-session",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam-systemd",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam-systemd"
+      ]
+    },
+    {
+      "from": "dbus-user-session",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "systemd",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd"
+      ]
+    },
+    {
+      "from": "procps",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "procps",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libncursesw6",
+          "6",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libncursesw6"
+      ]
+    },
+    {
+      "from": "procps",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libproc2-0",
+          "2:4.0.4",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libproc2-0"
+      ]
+    },
+    {
+      "from": "procps",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "254",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "procps",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libtinfo6",
+          "6",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libtinfo6"
+      ]
+    },
+    {
+      "from": "procps",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "init-system-helpers",
+          "1.29~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "init-system-helpers"
+      ]
+    },
+    {
+      "from": "libsasl2-modules-db",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.17",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libsasl2-modules-db",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdb5.3t64",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdb5.3t64"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-bin",
+          "1.16.2-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-bin"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-session-bus-common",
+          "1.16.2-2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-session-bus-common"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libapparmor1",
+          "2.8.94",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libapparmor1"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libaudit1",
+          "1:2.2.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libaudit1"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcap-ng0",
+          "0.7.9",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcap-ng0"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdbus-1-3",
+          "1.16.2-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdbus-1-3"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libexpat1",
+          "2.1~beta3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libexpat1"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libselinux1",
+          "3.1~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libselinux1"
+      ]
+    },
+    {
+      "from": "dbus-daemon",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.39",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libcap2",
+          "1:2.10",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libcap2"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam0g",
+          "0.99.7.1",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam0g"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "systemd",
+          "257.13-1~deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam-runtime",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam-runtime"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "default-dbus-system-bus",
+          "",
+          ""
+        ],
+        [
+          "dbus-system-bus",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus"
+      ]
+    },
+    {
+      "from": "libpam-systemd",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "systemd-sysv",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd-sysv"
+      ]
+    },
+    {
+      "from": "libproc2-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libproc2-0",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "dbus-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dbus-bin",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdbus-1-3",
+          "1.16.2-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdbus-1-3"
+      ]
+    },
+    {
+      "from": "libdbus-1-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "libdbus-1-3",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "libpam-runtime",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "debconf",
+          "0.5",
+          ">="
+        ],
+        [
+          "debconf-2.0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "debconf"
+      ]
+    },
+    {
+      "from": "libpam-runtime",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "debconf",
+          "1.5.19",
+          ">="
+        ],
+        [
+          "cdebconf",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "debconf"
+      ]
+    },
+    {
+      "from": "libpam-runtime",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libpam-modules",
+          "1.0.1-6",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libpam-modules"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "init-system-helpers",
+          "1.54~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "init-system-helpers"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-bin",
+          "1.16.2-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-bin"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-daemon",
+          "1.16.2-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-daemon"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "dbus-system-bus-common",
+          "1.16.2-2",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "dbus-system-bus-common"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "base-files",
+          "13.4~",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "base-files"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.34",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libdbus-1-3",
+          "1.16.2-2",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libdbus-1-3"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libexpat1",
+          "2.1~beta3",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libexpat1"
+      ]
+    },
+    {
+      "from": "dbus",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libsystemd0",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "libsystemd0"
+      ]
+    },
+    {
+      "from": "systemd-sysv",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "systemd",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd"
+      ]
+    },
+    {
+      "from": "systemd-sysv",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "systemd",
+          "257.13-1~deb13u1",
+          "="
+        ]
+      ],
+      "installed_satisfiers": [
+        "systemd"
+      ]
+    },
+    {
+      "from": "dbus-system-bus-common",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "adduser",
+          "3.130",
+          ">="
+        ],
+        [
+          "systemd-sysusers",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "adduser",
+        "systemd"
+      ]
+    },
+    {
+      "from": "base-files",
+      "field": "Pre-Depends",
+      "alternatives": [
+        [
+          "awk",
+          "",
+          ""
+        ]
+      ],
+      "installed_satisfiers": [
+        "mawk"
+      ]
+    },
+    {
+      "from": "mawk",
+      "field": "Depends",
+      "alternatives": [
+        [
+          "libc6",
+          "2.38",
+          ">="
+        ]
+      ],
+      "installed_satisfiers": [
+        "libc6"
+      ]
+    }
+  ],
+  "unresolved": []
+}

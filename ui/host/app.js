@@ -1,10 +1,12 @@
 'use strict';
 const $ = id => document.getElementById(id);
+let authorityGeneration = 0;
 let state, plan, busy = false, jobsBusy = false, refreshing = false;
 // Production has only Cockpit's authenticated bridge. The test harness supplies
 // that same interface; there is no unauthenticated HTTP fallback in this page.
 async function request(message) {
     if (!window.cockpit) throw new Error('Open this page through the host’s authenticated administration console.');
+    if (!window.sv08Session || !await sv08Session.ready || !sv08Session.elevated) throw new Error('Administrator access is required. Use Administrator access to continue.');
     const process = cockpit.spawn(['/usr/bin/python3', '/usr/lib/sv08/sv08_admin.py'], {superuser: 'require', err: 'message'});
     const raw = await process.input(JSON.stringify(message));
     const response = JSON.parse(raw);
@@ -119,24 +121,31 @@ function renderJobs(result) {
 }
 async function refresh() {
     if (refreshing) return;
-    refreshing = true;
+    refreshing = true; const generation = authorityGeneration;
     try {
         // Job history renders before any state read. Transactions may hold the
         // state lock for minutes; never put status ahead of reconnect progress.
-        const result = await request({method: 'jobs'}); renderJobs(result);
+        const result = await request({method: 'jobs'});
+        if (generation !== authorityGeneration) return;
+        renderJobs(result);
         if (result.blocked) {
             $('connection').textContent = 'Image worker status connected';
             document.querySelectorAll('main button:not([data-open]):not(#retry-submission)').forEach(b => { b.disabled = true; });
             return;
         }
-        state = await request({method: 'status'}); render();
+        const next = await request({method: 'status'});
+        if (generation !== authorityGeneration) return;
+        state = next; render();
     } catch (error) { $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function review(action, args = {}) {
     if (busy || jobsBusy || !state) return;
+    const generation = authorityGeneration;
     try {
-        plan = await request({method: 'plan', action, arguments: args});
+        const reviewed = await request({method: 'plan', action, arguments: args});
+        if (generation !== authorityGeneration) return;
+        plan = reviewed; notice('Review the change before applying.');
         $('review-title').textContent = plan.title; $('review-effect').textContent = plan.effect;
         $('review-arguments').textContent = Object.entries(plan.arguments).map(([key, value]) => `${key}: ${value}`).join('\n') || 'Apply to the current update.';
         $('review').returnValue = 'cancel';
@@ -145,16 +154,17 @@ async function review(action, args = {}) {
 }
 $('review').addEventListener('close', async () => {
     if ($('review').returnValue !== 'confirm' || !plan || busy) { plan = null; return; }
+    const reviewed = plan;
     busy = true; render(); notice('Applying the reviewed change…');
     try {
-        const image = plan.action.startsWith('image.');
-        const message = image ? {method: 'image.submit', id: crypto.randomUUID().replaceAll('-', ''), plan} : {method: 'apply', plan};
+        const image = reviewed.action.startsWith('image.');
+        const message = image ? {method: 'image.submit', id: crypto.randomUUID().replaceAll('-', ''), plan: reviewed} : {method: 'apply', plan: reviewed};
         // Preserve lost-acknowledgement identity across page closure. Refresh only
         // observes server history; it never automatically submits this receipt.
         if (image) localStorage.setItem('sv08-image-submission', JSON.stringify(message));
         const result = await request(message);
         if (image) localStorage.removeItem('sv08-image-submission');
-        else appliedDraft(plan);
+        else appliedDraft(reviewed);
         notice(result.message || 'Change completed.');
     }
     catch (error) { await submissionError(error); }
@@ -186,6 +196,13 @@ $('cancel-image').addEventListener('click', () => review('image.cancel'));
 $('install-package').addEventListener('click', () => review('software.install', {package: $('package-choice').value}));
 $('remove-package').addEventListener('click', () => review('software.remove', {package: $('package-choice').value}));
 $('save-hostname').addEventListener('click', () => review('config.hostname', {hostname: $('hostname').value}));
+window.addEventListener('sv08-authority-changed', () => {
+    ++authorityGeneration;
+    plan = null;
+    if ($('review').open) $('review').close('cancel');
+    if (sv08Session.elevated) void refresh();
+    else $('connection').textContent = 'Administrator access required';
+});
 refresh();
 
 setInterval(refresh, 1500);
