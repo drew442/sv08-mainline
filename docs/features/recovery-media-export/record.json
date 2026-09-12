@@ -174,7 +174,7 @@
       },
       "repeats": 0,
       "resumption": "Independent production-snapshot reproduction found alias normalization discards a known system identity; retain all alias values and validate both insertion orders before resubmission.",
-      "status": "review",
+      "status": "done",
       "title": "Verified pre-mounted media for recovery export",
       "verification": {
         "decision_sha256": "2ef72aa6885a6e223e396d70e378ff766ecc1fa55c9896630f796cbae924f70a",
