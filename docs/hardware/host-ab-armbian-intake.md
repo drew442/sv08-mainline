@@ -69,3 +69,8 @@ The [stock SV08/H616 6.18 follow-up](host-sunxi-618-intake-20260912.md) records
 53 exact source inputs and their display, clock, device-tree and inherited board
 dependencies. It identifies remaining base-kernel and combined-tree checks;
 it does not establish an applied patch set or hardware compatibility.
+
+The [kernel-base follow-up](host-kernel-base-intake-20260912.md) now identifies
+the default stable repository, moving branch, configuration seed and additional
+patch/configuration inputs. An explicit immutable kernel revision and final
+configuration are still required before a reproducible platform build.

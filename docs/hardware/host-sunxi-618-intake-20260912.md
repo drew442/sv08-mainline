@@ -89,3 +89,8 @@ remain authoritative, including the ADR and transitive license review. The
 [U-Boot/TF-A compilation](host-cb1-boot-compile.md) remains separate. No source
 revision is described as tested compatibility, and existing
 [physical acceptance tasks](host-os-tasks.md) remain open.
+
+The subsequent [kernel-base recipe intake](host-kernel-base-intake-20260912.md)
+traces the pinned framework to a moving `linux-6.18.y` branch and exact config
+seed. The selected kernel commit and final configuration remain unresolved;
+the framework pin alone does not reproduce them.

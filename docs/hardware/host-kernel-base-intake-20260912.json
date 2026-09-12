@@ -1,0 +1,284 @@
+{
+  "format_version": 1,
+  "access_date": "2026-09-12",
+  "status": "recipe-traced-exact-base-and-final-config-unresolved",
+  "repository": "https://github.com/armbian/build",
+  "armbian_commit": "a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "new_hardware_measurements": false,
+  "assumed_explicit_selection": {
+    "BOARD": "sovol-sv08",
+    "BRANCH": "current",
+    "user_overrides": "none assumed; no actual build invocation recorded"
+  },
+  "resolved_recipe": {
+    "BOARDFAMILY": "sun50iw9",
+    "LINUXFAMILY": "sunxi64",
+    "ARCH": "arm64",
+    "KERNEL_MAJOR_MINOR": "6.18",
+    "KERNELPATCHDIR": "archive/sunxi-6.18",
+    "LINUXCONFIG": "linux-sunxi64-current",
+    "default_KERNELSOURCE": "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git",
+    "default_KERNELBRANCH": "branch:linux-6.18.y",
+    "source_mirror_and_hooks_may_override": true
+  },
+  "exact_kernel_commit": null,
+  "exact_kernel_patchlevel": null,
+  "final_config_sha256": null,
+  "config_seed": {
+    "path": "config/kernel/linux-sunxi64-current.config",
+    "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/kernel/linux-sunxi64-current.config",
+    "access_date": "2026-09-12",
+    "sha256": "03a427fed857cc598ef95c5c8a2dccb43bb515d513df1eff9c010e6aa56ab155",
+    "git_blob": "55073a1b9915bc599d2411f0433723ea907d91d4",
+    "bytes": 69341
+  },
+  "downloaded_file_count": 14,
+  "downloaded_bytes": 209045,
+  "downloaded_sources": [
+    {
+      "path": "config/boards/sovol-sv08.csc",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/boards/sovol-sv08.csc",
+      "access_date": "2026-09-12",
+      "sha256": "a6545b15a678a37f7bcfb0afd221280ffd76e833961a36dc11389b984999114e",
+      "git_blob": "ebddcdbf08498e2f40477089ea81ad95e98c115a",
+      "bytes": 472
+    },
+    {
+      "path": "config/sources/families/sun50iw9.conf",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/families/sun50iw9.conf",
+      "access_date": "2026-09-12",
+      "sha256": "4b20163c98ced9b15e4c2dd110a4c233ee9efce20f2430223a60228350f43c3f",
+      "git_blob": "5e24abb7ea741ca7243ce6ec6c0b1daa15ffedf5",
+      "bytes": 1203
+    },
+    {
+      "path": "config/sources/families/include/sunxi64_common.inc",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/families/include/sunxi64_common.inc",
+      "access_date": "2026-09-12",
+      "sha256": "365d48689784f2c63f9a1a66ffc0616c983699d3912c5ce6779eab01ffd16684",
+      "git_blob": "28509e5bd6261ba02edb7872f802c56f38aebdfd",
+      "bytes": 2289
+    },
+    {
+      "path": "config/kernel/linux-sunxi64-current.config",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/kernel/linux-sunxi64-current.config",
+      "access_date": "2026-09-12",
+      "sha256": "03a427fed857cc598ef95c5c8a2dccb43bb515d513df1eff9c010e6aa56ab155",
+      "git_blob": "55073a1b9915bc599d2411f0433723ea907d91d4",
+      "bytes": 69341
+    },
+    {
+      "path": "lib/functions/compilation/kernel-config.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/kernel-config.sh",
+      "access_date": "2026-09-12",
+      "sha256": "ea16629b8944525a0baf9e31cf84a6ab6f060432b603ca84b06be295cc9a251b",
+      "git_blob": "d948d5171caa48b8a12b248a57a5b8dc7de40817",
+      "bytes": 12427
+    },
+    {
+      "path": "lib/functions/configuration/main-config.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/configuration/main-config.sh",
+      "access_date": "2026-09-12",
+      "sha256": "60cbf852f9a4e4d2d7ce985d2370c97d9c4552d0bdf965d3106cd23ffd2282fb",
+      "git_blob": "8eb9f029ee47586b70908a06c30e2d85e4da3507",
+      "bytes": 31332
+    },
+    {
+      "path": "config/sources/common.conf",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/common.conf",
+      "access_date": "2026-09-12",
+      "sha256": "fa6bd856d10a5f341d37c9ec188bc05687a19d9a45667cba598951f4bcba9ed6",
+      "git_blob": "5e5db2cbbce7e1628cef4a3e2296ed00390a4b2c",
+      "bytes": 9237
+    },
+    {
+      "path": "config/sources/arm64.conf",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/arm64.conf",
+      "access_date": "2026-09-12",
+      "sha256": "75e57547360eb85dec405f6f5c4cf860fc7cf2cf2eb5f44b11fef12d6b628dff",
+      "git_blob": "e73cc11fe49af0c0f577ffe96a411469a6fb1182",
+      "bytes": 1874
+    },
+    {
+      "path": "config/sources/families/include/crust_firmware.inc",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/families/include/crust_firmware.inc",
+      "access_date": "2026-09-12",
+      "sha256": "deff38206671f9aa4ddb489f8fb373443bc801c5a9db4c62a8104285958b9fc9",
+      "git_blob": "d4b9ab83740ba33c88d850238d6968214d7f3c18",
+      "bytes": 901
+    },
+    {
+      "path": "lib/functions/compilation/kernel-git.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/kernel-git.sh",
+      "access_date": "2026-09-12",
+      "sha256": "233979a74257e6ffb0267657f80cce3a2e0a93ffee46d2d142ae6ac1f09766a1",
+      "git_blob": "f4f346f44d72f80aa030d87a9fb6ac014df00171",
+      "bytes": 1187
+    },
+    {
+      "path": "lib/functions/compilation/kernel.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/kernel.sh",
+      "access_date": "2026-09-12",
+      "sha256": "4ee9722599e10dd7c118fbd20c8dc2470bbdc46fa37e60d9fc45ce56988f6ecb",
+      "git_blob": "2c9c96f8acda79ebaf1ce9fc03ff35b9f6c1dcaf",
+      "bytes": 13651
+    },
+    {
+      "path": "lib/functions/main/config-prepare.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/main/config-prepare.sh",
+      "access_date": "2026-09-12",
+      "sha256": "def6594041ade389d1e7005931f52860965e3dc91d24923185a027f9a8a00f77",
+      "git_blob": "145af7e6be25028847b0813f948f1dffb51adf1c",
+      "bytes": 17462
+    },
+    {
+      "path": "lib/functions/main/config-interactive.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/main/config-interactive.sh",
+      "access_date": "2026-09-12",
+      "sha256": "4c29aceb41c34636d82b0b1a712fe640b4fcc4405f3fc82b263c5000d29c8a96",
+      "git_blob": "be49e8dcaef870fb40b5fad96ca1704e4b2a1dec",
+      "bytes": 1661
+    },
+    {
+      "path": "lib/functions/compilation/armbian-kernel.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/armbian-kernel.sh",
+      "access_date": "2026-09-12",
+      "sha256": "4136564784bd0855173248c447ba288c870cd2271e40b15480bcbcce134f1914",
+      "git_blob": "0f83be644b16829a706ff6a754316061d848c1ff",
+      "bytes": 46008
+    }
+  ],
+  "reused_source_count": 11,
+  "reused_sources": [
+    {
+      "path": "config/sources/mainline-kernel.conf.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/config/sources/mainline-kernel.conf.sh",
+      "access_date": "2026-09-12",
+      "bytes": 2772,
+      "sha256": "a05c0b7365b4514569b354520401c7eb9a0b66d19af2b2785cc3d245d90ba691",
+      "git_blob": "5d4567c5bcce45f30faf36ea1fd589a312815be0",
+      "prior_intake": "host-radio-kernel-intake-20260912.json",
+      "prior_intake_sha256": "6ed6fc365a4ac7703a00e28c3614edb90857a1277bcb40f0160e20dd6b0f117e"
+    },
+    {
+      "path": "lib/functions/compilation/kernel-patching.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/kernel-patching.sh",
+      "access_date": "2026-09-12",
+      "bytes": 6290,
+      "sha256": "8fcb16b8328b846cd60f9bb0fd529ea737faa5615a00c83ac42bec6acc47495c",
+      "git_blob": "f3dc619928ba9efccb4647387ddac14bb34888f9",
+      "prior_intake": "host-radio-kernel-intake-20260912.json",
+      "prior_intake_sha256": "6ed6fc365a4ac7703a00e28c3614edb90857a1277bcb40f0160e20dd6b0f117e"
+    },
+    {
+      "path": "lib/functions/compilation/patch/drivers-harness.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/patch/drivers-harness.sh",
+      "access_date": "2026-09-12",
+      "bytes": 9932,
+      "sha256": "5f7b8785413990adf54b8056da0d90a752fe88084a90bb27f19384160a41b76e",
+      "git_blob": "9a0616d53dc82053c61bcdf8eefb953ec3011632",
+      "prior_intake": "host-radio-kernel-intake-20260912.json",
+      "prior_intake_sha256": "6ed6fc365a4ac7703a00e28c3614edb90857a1277bcb40f0160e20dd6b0f117e"
+    },
+    {
+      "path": "lib/functions/compilation/patch/drivers_network.sh",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/lib/functions/compilation/patch/drivers_network.sh",
+      "access_date": "2026-09-12",
+      "bytes": 42277,
+      "sha256": "055943c37e4a9037fd4d3518507178a76345e66604ccb8263c4711aaf2cecd29",
+      "git_blob": "72dcf241a11717802c82ea0d779f67fec4a2642c",
+      "prior_intake": "host-radio-kernel-intake-20260912.json",
+      "prior_intake_sha256": "6ed6fc365a4ac7703a00e28c3614edb90857a1277bcb40f0160e20dd6b0f117e"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/0000.patching_config.yaml",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/0000.patching_config.yaml",
+      "access_date": "2026-09-12",
+      "bytes": 1940,
+      "sha256": "da90be57048d1b07353591b3a9907198a24eb7672dee02ac09cc41402b5bd572",
+      "git_blob": "42284f1131636a738affe6683874f48f624be937",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/series.conf",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/series.conf",
+      "access_date": "2026-09-12",
+      "bytes": 43382,
+      "sha256": "94db828ca556d3c1620d508359248478d1355a1f5b7b65cc079f9db5fc6241d4",
+      "git_blob": "1d6ce4147c40549d3eed816e6966d0817f5a8417",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/dt_64/sun50i-h616-sovol-sv08.dts",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/dt_64/sun50i-h616-sovol-sv08.dts",
+      "access_date": "2026-09-12",
+      "bytes": 1401,
+      "sha256": "b6dd738949b7cbb5e54f285b275d22b1fd930f40be7959a8723e0394e2f695a6",
+      "git_blob": "3d5be2f83cbf2fb24fb5bc43aa61f2708d090e16",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1.patch",
+      "access_date": "2026-09-12",
+      "bytes": 8780,
+      "sha256": "356a60d32066f56a3e90d95b4ec7099268e39c9ac48752c6ab0e14dd9a4cb845",
+      "git_blob": "4309b44050e332071d95bd9cdc9a79f914ebb6f5",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1-emac1-ac300.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.armbian/arm64-dts-sun50i-h616-bigtreetech-cb1-emac1-ac300.patch",
+      "access_date": "2026-09-12",
+      "bytes": 2574,
+      "sha256": "197e070cad82b3eddfa1975102d8bf71d79d5e7997531429b499bcc5b735a76b",
+      "git_blob": "4229c66615315bf209d2c343f034ae276d551e84",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0035-drm-sun4i-Add-planes-driver.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0035-drm-sun4i-Add-planes-driver.patch",
+      "access_date": "2026-09-12",
+      "bytes": 8358,
+      "sha256": "9a2a20d730fd354db613449eaf377480d6b0d945e9500cd438b2fc0a08578b48",
+      "git_blob": "dad52339bb5a151764b12dc00046dd47b7f6b040",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    },
+    {
+      "path": "patch/kernel/archive/sunxi-6.18/patches.drm/0041-arm64-dts-allwinner-h616-Add-display-pipeline.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/kernel/archive/sunxi-6.18/patches.drm/0041-arm64-dts-allwinner-h616-Add-display-pipeline.patch",
+      "access_date": "2026-09-12",
+      "bytes": 9362,
+      "sha256": "4c204d3af7aa3aff47b743b1c4e0e6a5bad3b73f8a71213ad5d6a58740b763fb",
+      "git_blob": "ab5e11eb4f475d2d0955b89a96e74d0c8eca3001",
+      "prior_intake": "host-sunxi-618-intake-20260912.json",
+      "prior_intake_sha256": "0ce8dc57fa17880a24c1ec6fd36655c09066d9a5ddac2f251bc731ea0ecd9321"
+    }
+  ],
+  "verification": {
+    "downloaded_sha256_and_git_blob_recomputed": true,
+    "downloaded_git_blobs_match_complete_pinned_tree": true,
+    "reused_sha256_and_git_blob_recomputed": true,
+    "reused_records_match_published_intakes": true,
+    "kernel_archive_downloaded": false,
+    "recipe_executed": false,
+    "patches_applied": false,
+    "kernel_or_dts_built": false
+  },
+  "blocking_evidence": "The fixed framework sources default to moving linux-6.18.y and record checked_out_revision only when fetching. No selected build log/pin supplies that exact SHA. Seed config is subsequently modified by hooks and olddefconfig against the selected patched tree.",
+  "limitations": [
+    "Default recipe values assume explicit BOARD=sovol-sv08 BRANCH=current with no overriding user configuration or hooks.",
+    "An exact prior kernel fetch cannot be reconstructed from the current value of a moving branch.",
+    "The seed defconfig precedes configuration hooks and olddefconfig; it is not a final .config.",
+    "Exact base-kernel CB1/SoC transitive includes, applied patch order, configuration, toolchain, firmware and license inventory remain unresolved.",
+    "Source recipe and downloaded revisions do not establish stock-board electrical equivalence or runtime compatibility."
+  ]
+}
