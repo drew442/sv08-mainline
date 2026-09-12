@@ -52,3 +52,27 @@ Check JSON syntax and local Markdown targets when changing those files.
 Update affected documentation with behavior changes. Report the result, evidence,
 and remaining limitations. Do not commit secrets, device dumps, generated images,
 or unrelated upstream changes. Do not publish or push unless requested.
+
+## Feature delivery and delegated review
+
+The owner approved the [feature workflow](.codex/README.md), delegated approval
+and an offline pilot on 2026-09-11; see [decision 0011](docs/decisions/0011-feature-agent-workflow.md).
+For substantive new features or improvements, use that workflow and its durable
+records. Previously approved work needs no repeated product approval.
+
+Spawn a separate feature-approver agent for bounded proposal review and a separate
+feature-verifier agent for delivery review. Invoke a feature-suggester agent when
+triage would help select the next useful task. Give reviewers relevant source and
+evidence, not the author's conversation as justification. Parallel agent work is
+appropriate for independent review or research alongside useful implementation;
+keep one implementation active unless separate ownership is explicitly justified.
+
+Agents may approve bounded work within accepted project requirements. Changes to
+owner requirements, material scope expansion or expanded agent authority require
+the owner's decision. Preserve existing authorization for routine implementation,
+validation, commits and pushes. Feature approval grants no hardware authority.
+
+After finishing or blocking a task, continue the next authorized ready task.
+Record physical dependencies in the existing human task lists and investigate
+small non-destructive alternatives where useful. Keep offline, hardware and release
+evidence distinct. Scheduling remains disabled unless explicitly configured.

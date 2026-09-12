@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "enum": [
+        "passed",
+        "failed"
+      ]
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000
+    },
+    "session": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000
+    },
+    "evidence_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "decision_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "outcome",
+    "reviewer",
+    "session",
+    "rationale",
+    "evidence_sha256",
+    "decision_sha256"
+  ],
+  "additionalProperties": false
+}

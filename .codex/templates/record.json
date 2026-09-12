@@ -1,0 +1,41 @@
+{
+  "format_version": 1,
+  "id": "example",
+  "kind": "feature",
+  "title": "One useful outcome",
+  "author": "proposal-author-session",
+  "created": "2026-09-12",
+  "priority": 2,
+  "proposal": "docs/features/example/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "offline-journey",
+      "description": "Reproduce the complete approved user journey and its preservation failure cases.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and verify the offline journey",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "offline-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}

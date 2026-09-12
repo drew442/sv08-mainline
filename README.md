@@ -41,8 +41,8 @@ are verified on test printer 01. Printing remains unvalidated.
 - [New host build work](docs/hardware/host-ab-build.md): offline Debian baseline,
   factory-capacity layout and driver audit.
 - [Roadmap](docs/roadmap.md): the next work and its acceptance criteria.
-- [Feature agent framework proposal](docs/design/feature-agent-framework.md):
-  suggestion, improvement, approval and continued delivery; awaiting owner approval.
+- [Feature delivery workflow](.codex/README.md): suggestion, improvement,
+  delegated approval and continued delivery; approved design and offline pilot.
 - [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md).
 
 ## Get the sources

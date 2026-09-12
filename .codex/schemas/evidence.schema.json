@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "check": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{0,79}$"
+      },
+      "environment": {
+        "enum": [
+          "offline",
+          "hardware",
+          "human"
+        ]
+      },
+      "document": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 12000
+      },
+      "document_sha256": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "source_sha256": {
+        "type": "object",
+        "minProperties": 1,
+        "maxProperties": 1000,
+        "additionalProperties": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "source_commit": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{40}$"
+      },
+      "method": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 12000
+      },
+      "limitations": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 12000
+      },
+      "profile": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "board_revision": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "check",
+      "environment",
+      "document",
+      "document_sha256",
+      "source_sha256",
+      "source_commit",
+      "method",
+      "limitations",
+      "profile",
+      "board_revision"
+    ],
+    "additionalProperties": false
+  },
+  "minItems": 1,
+  "maxItems": 1000
+}

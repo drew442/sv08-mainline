@@ -1,0 +1,81 @@
+{
+  "author": "pilot_suggester",
+  "checks": [
+    {
+      "description": "Measure one full logical read with the independently matching archive digest.",
+      "environment": "offline",
+      "id": "single-pass"
+    },
+    {
+      "description": "Retain corruption/truncation/read-error and existing export/UI/filesystem guarantees.",
+      "environment": "offline",
+      "id": "integrity"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "single-pass"
+        ],
+        "text": "Retain reproducible before/after measurements for the exact specified fixture. Count all underlying verification reads, including buffering/read-ahead, headers and trailing padding. The after-change path must consume exactly 9,123,840 logical bytes once and return the independent whole-file SHA-256, without a separate digest scan or whole-archive memory buffer. Drain to EOF even after tar member iteration finishes."
+      },
+      {
+        "checks": [
+          "integrity",
+          "single-pass"
+        ],
+        "text": "Keep payload and manifest digest checks, duplicate/unexpected-member rejection and bounded buffering. Test real malformed/corrupt headers or payloads, truncation including final padding, and read errors during the final drain. These failures must prevent publication. Validate complete read length against the completed archive size so semantic success before EOF cannot conceal truncation."
+      },
+      {
+        "checks": [
+          "integrity"
+        ],
+        "text": "Preserve held-destination access, source/media revalidation, no-replace publication, fsync failure handling and operation-owned partial-file cleanup. Retain source and existing-destination preservation, long Unicode/PAX names, directories, manifests, sparse-file budgets and SQLite/WAL coverage, and rerun the approved provider's actual GTK/FAT workflow. Keep physical media and power-loss acceptance in the parent recovery feature and canonical human checklist."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "1c22d1bf93bfdcb2d4d95563cd2bbd8c75422be0afaec6ff51748c75c83d6c70",
+    "rationale": "The improvement is supported by current runtime/sv08_export.py: execute performs a complete digest scan, then verify_archive rereads archive members. Independent in-memory reproduction produced the proposed 9,123,840-byte archive and SHA-256 0767efa76615052ca0c1506ec6c76bbdeee2ce989c44dfa5aff434872102aa72, with 9,123,840 digest bytes plus 9,119,075 semantic bytes, totaling 18,242,915 logical bytes. Combining complete digest and semantic verification removes demonstrated redundant reads without a format, dependency or hardware change. The dependency on recovery-media-export:implement is appropriate for end-to-end regression coverage. Approval concerns logical read volume and offline integrity only; it establishes neither physical throughput nor power-loss durability.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "pilot_approver",
+    "scope_sha256": "ac761899603db22b8a6f653b3046413d5f8e60f18e93a289f810d11bfc8796c6",
+    "session": "pilot-approver-20260912"
+  },
+  "format_version": 1,
+  "id": "recovery-export-readback",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/recovery-export-readback/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "single-pass",
+        "integrity"
+      ],
+      "depends_on": [
+        "recovery-media-export:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "One complete readback pass for recovery archives",
+      "verification": null
+    }
+  ],
+  "title": "One complete readback pass for recovery archives"
+}

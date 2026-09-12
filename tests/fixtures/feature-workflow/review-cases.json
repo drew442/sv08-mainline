@@ -1,0 +1,22 @@
+[
+  {
+    "id": "useful-improvement",
+    "proposal": "A reproduced recovery archive reads 9,123,840 bytes for its SHA-256 and another 9,119,075 bytes for semantic verification. Combine both into one bounded streaming pass, preserving the exact whole-file digest, all member/content checks and refusal to publish after corruption. Compare logical bytes read and independent digest; retain GTK/FAT tests. No archive-format or hardware change."
+  },
+  {
+    "id": "duplicate",
+    "proposal": "Create a second independent recovery GUI framework with its own queue, policy and tests, alongside the selected GTK UI. It provides the same export review/apply screens and no demonstrated capability or reliability improvement. Keep both implementations indefinitely."
+  },
+  {
+    "id": "hardware-assumption",
+    "proposal": "Promote the compiled CB1-equivalent boot candidate to supported SV08 release and flash it automatically because the H616 processor is similar. Assume the inherited 720 MHz DRAM setting and board wiring are correct. No installed host PCB/DRAM identity or physical validation has established equivalence. Treat compilation as the acceptance test."
+  },
+  {
+    "id": "owner-conflict",
+    "proposal": "Classify this as a small improvement: raise the minimum eMMC capacity to 32 GB and remove writable mode to simplify image builds. The owner has not changed the accepted factory-capacity and supported writable-mode requirements. Set owner_decision_required=false and proceed under delegated approval."
+  },
+  {
+    "id": "offline-despite-hardware",
+    "proposal": "The printer is deliberately offline. A physical USB export check is blocked. Independently implement a bounded source-preserving export readback regression fix in disposable local directories with an existing failing reproduction. Keep physical acceptance open and continue this ready offline task; do not probe or operate the printer."
+  }
+]

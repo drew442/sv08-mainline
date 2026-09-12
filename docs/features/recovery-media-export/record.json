@@ -1,0 +1,125 @@
+{
+  "author": "pilot_suggester",
+  "checks": [
+    {
+      "description": "Reject unverified context, unsafe mount aliases/media and competing operations.",
+      "environment": "offline",
+      "id": "admission"
+    },
+    {
+      "description": "Complete actual GTK/provider/export workflow with real disposable mounts and preserved data.",
+      "environment": "offline",
+      "id": "gtk-fat"
+    },
+    {
+      "description": "Stage provider consistently and keep invalid-context entry points diagnostic-only.",
+      "environment": "offline",
+      "id": "staging"
+    },
+    {
+      "description": "Validate actual recovery context, removable media and physical input/failure behavior.",
+      "environment": "hardware",
+      "id": "physical"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "admission",
+          "staging"
+        ],
+        "text": "Bind trusted configuration to the actual running recovery root, mount namespace, mounted source/destination and kernel block ancestry. A marker, configured context string, filesystem label, raw device name or major:minor pair alone is insufficient. Refuse unknown or ambiguous topology, unexpected aliases/submounts, non-removable destinations, and any destination sharing an underlying system/source medium. Include negative tests for an ordinary A/B or workstation root carrying an apparent recovery marker and for unsupported storage stacks."
+      },
+      {
+        "checks": [
+          "admission",
+          "gtk-fat"
+        ],
+        "text": "Require read-only source mount and filesystem-superblock state; reject a read-only bind view backed by a writable filesystem. Establish the recovery environment's source-writer and mount-namespace assumptions explicitly, and refuse when they cannot be verified. Document preservation requirements for premount preparation, including ext4 journal replay; the provider must not mount, repair, replay journals, change block flags or quiesce hardware as a fallback. Test writable backing aliases and inconsistent mount/superblock options."
+      },
+      {
+        "checks": [
+          "admission",
+          "gtk-fat"
+        ],
+        "text": "Use one trusted admission protocol shared by all participating export/media mutators, with exclusive ownership held through writing, verification, publication and directory fsync. An otherwise unused lock is not evidence of system-wide exclusion. Bind mount and medium identity into the reviewed fingerprint, accounting for device-number reuse; recheck under admission before writing and before publication. Test competing processes, media replacement between review/apply, and disappearance or identity change during execution; failure must not publish a completed archive and must release the lease."
+      },
+      {
+        "checks": [
+          "gtk-fat",
+          "staging"
+        ],
+        "text": "Exercise the actual GTK chooser, review, cancellation and apply path through the provider using real disposable read-only source and FAT mounts. Verify a damaged registry remains exportable, source contents and pre-existing destination files remain unchanged, and cancellation creates no archive. Fixture exceptions may identify explicitly marked disposable roots/loop media, but must not bypass shared validation/lease logic or be accepted by the production entry point. Mock mount tables alone do not satisfy this check."
+      },
+      {
+        "checks": [
+          "staging",
+          "physical"
+        ],
+        "text": "Stage the provider with the matching runtime, reject missing/mismatched runtime sources, and keep absent, malformed, untrusted or invalid production context diagnostic-only with a useful reason. Ship no guessed target identities or automatically enabled export context. Record package/dependency and payload-size changes; keep complete 512 MiB recovery closure and 8 GB image-capacity acceptance open. Preserve the canonical human checklist for reviewed recovery boot, actual media removal/input/failure testing and named-profile evidence; no offline result may satisfy physical acceptance."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "34e6b054d4c55a76cc9e8af3a75c763fb9ce1abd7c7a451260731b438d484c0d",
+    "rationale": "This completes a bounded part of accepted decision 0010 without changing owner requirements. runtime/sv08_recovery_ui.py currently constructs its installed controller without an adapter, while runtime/sv08_export.py and docs/hardware/host-recovery-export.md establish reusable export behavior. The improvement is a reachable configured selection/review/export workflow with verified admission. However, tests/recovery_export_mounts.py checks only a read-only bind mount and a vfat destination; that does not establish filesystem-level quiescence, recovery identity or physical-media separation. Approval therefore requires the identity, exclusion and preservation checks below. Physical recovery-system integration remains blocked, the test printer's host PCB revision remains unknown, and this decision grants no hardware authority.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "pilot_approver",
+    "scope_sha256": "5e3b232c5b4c28cd5183843e508777046f34f7ce71a6316126258bea5918b06b",
+    "session": "pilot-approver-20260912"
+  },
+  "format_version": 1,
+  "id": "recovery-media-export",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/recovery-media-export/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "admission",
+        "gtk-fat",
+        "staging"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Verified pre-mounted media for recovery export",
+      "verification": null
+    },
+    {
+      "blocker": "Printer offline; reviewed independent recovery candidate and attended physical tests required.",
+      "checks": [
+        "physical"
+      ],
+      "depends_on": [
+        "recovery-media-export:implement"
+      ],
+      "environment": "hardware",
+      "evidence": [],
+      "human_task": "docs/hardware/host-os-tasks.md#human-and-powered-printer-tasks",
+      "id": "physical",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "blocked",
+      "title": "Validate named recovery hardware and physical interaction",
+      "verification": null
+    }
+  ],
+  "title": "Verified pre-mounted media for recovery export"
+}

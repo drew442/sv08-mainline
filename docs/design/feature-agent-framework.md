@@ -1,7 +1,9 @@
 # Feature suggestion, improvement and delivery framework
 
-Date: 2026-09-11. Status: proposed for owner approval. This document does not
-activate agents, change their authority, schedule work or approve product changes.
+Date: 2026-09-11. Status: approved by the owner, including delegated approval and
+the offline pilot; see [decision 0011](../decisions/0011-feature-agent-workflow.md).
+Implementation follows this design. Scheduling and hardware operations require
+their own applicable configuration and authorization.
 
 ## Recommendation
 
@@ -331,11 +333,11 @@ unnecessary owner interruptions and execution cost. Count neither proposal volum
 nor test count as product progress. Keep logs private and publish only sanitized
 findings. Simplify or remove stages whose overhead exceeds demonstrated benefit.
 
-## Approval requested
+## Approved scope
 
-Approve the proposed role separation, delegated approval of bounded work within
+The owner approved role separation, delegated approval of bounded work within
 existing requirements, persistent continuation and independent delivery checks.
-Approval allows implementing and testing the repository workflow and offline
+This authorizes implementing and testing the repository workflow and offline
 pilot. It does not accept any new product proposal, enable a schedule or authorize
 a hardware operation. Human input should be limited to unresolved material
 decisions and physical tasks, with independent work continuing in the meantime.

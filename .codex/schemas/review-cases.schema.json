@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "outcome": {"enum": ["approved", "approved-with-constraints", "rejected", "needs-research", "deferred"]},
+          "owner_required": {"type": "boolean"},
+          "rationale": {"type": "string"}
+        },
+        "required": ["id", "outcome", "owner_required", "rationale"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["results"],
+  "additionalProperties": false
+}

@@ -13,6 +13,17 @@ __pycache__/
 .DS_Store
 *.swp
 
-# Workspace agent configuration is local, not project guidance.
+# Personal agent configuration stays local; approved project roles are versioned.
 /.agents/
-/.codex/
+/.codex/*
+!/.codex/README.md
+!/.codex/agents/
+/.codex/agents/*
+!/.codex/agents/*.toml
+!/.codex/schemas/
+/.codex/schemas/*
+!/.codex/schemas/*.json
+!/.codex/templates/
+/.codex/templates/*
+!/.codex/templates/*.md
+!/.codex/templates/*.json

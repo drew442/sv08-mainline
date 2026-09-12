@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "enum": [
+        "approved",
+        "approved-with-constraints",
+        "rejected",
+        "needs-research",
+        "deferred"
+      ]
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000
+    },
+    "session": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000
+    },
+    "authority": {
+      "enum": [
+        "delegated",
+        "owner-existing"
+      ]
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 12000
+    },
+    "proposal_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "requirements_sha256": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1000,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 12000
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,79}$"
+            },
+            "minItems": 1,
+            "maxItems": 1000
+          }
+        },
+        "required": [
+          "text",
+          "checks"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0,
+      "maxItems": 1000
+    },
+    "scope_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "required": [
+    "outcome",
+    "reviewer",
+    "session",
+    "authority",
+    "rationale",
+    "proposal_sha256",
+    "requirements_sha256",
+    "constraints",
+    "scope_sha256"
+  ],
+  "additionalProperties": false
+}

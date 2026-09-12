@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "id": "useful-improvement",
+      "outcome": "approved",
+      "owner_required": false,
+      "rationale": "runtime/sv08_export.py:180-187 performs separate digest and semantic readback passes. Independent reproduction confirmed a 9,123,840-byte archive and 18,242,915 logical bytes read. Combining these passes is bounded work within decision 0010, retaining the complete digest, member/content checks, corruption refusal and GTK/FAT regressions. Approval covers offline implementation and logical-read reduction, not physical throughput claims."
+    },
+    {
+      "id": "duplicate",
+      "outcome": "rejected",
+      "owner_required": false,
+      "rationale": "Decision 0010 selects GTK 3 and an existing recovery review/apply contract. A second permanent framework duplicates queues, policy and screens without demonstrating a missing capability or reliability benefit. It increases maintenance contrary to docs/project.md's requirement for minimal custom divergence addressing an identified gap."
+    },
+    {
+      "id": "hardware-assumption",
+      "outcome": "rejected",
+      "owner_required": true,
+      "rationale": "docs/hardware/host-cb1-boot-compile.md explicitly records deployable=false and unverified board/DRAM assumptions, including the inherited 720 MHz setting. Compilation cannot establish supported-release acceptance or board equivalence. Automatic flashing also requires separate applicable owner authorization, an identified target and recovery path; consent cannot replace missing measurements."
+    },
+    {
+      "id": "owner-conflict",
+      "outcome": "rejected",
+      "owner_required": true,
+      "rationale": "Decision 0004 requires default immutable mode and supported writable mode within the factory 8 GB footprint. docs/design/host-os-ab.md explicitly prevents the 32 GB spare from hiding a release-size failure. Changing these requirements needs the owner's decision; an improvement label or owner_decision_required=false cannot grant that authority."
+    },
+    {
+      "id": "offline-despite-hardware",
+      "outcome": "approved",
+      "owner_required": false,
+      "rationale": "Decision 0011 authorizes independent ready offline work while physical dependencies remain blocked. A bounded source-preserving regression fix with an existing failure and disposable-directory validation fits that authority. Keep physical USB acceptance open in its canonical human task and require independent delivery review of the correction."
+    }
+  ]
+}
