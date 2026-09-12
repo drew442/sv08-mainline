@@ -42,11 +42,12 @@ def serve(work, image_jobs=False):
             if self.headers.get('Host') != f'127.0.0.1:{self.server.server_port}':
                 return self.respond(403, b'{}')
             if self.path == '/base1/cockpit.js':
-                script = '''window.cockpit={spawn:()=>({input:async data=>{
+                script = '''// Test-only transport: no authentication coverage. Production uses packaged Cockpit.
+window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({valid:true,Current:'root',Bridges:['sudo'],Start:()=>{},Answer:()=>{},Stop:()=>{},addEventListener:()=>{},wait:callback=>callback()})}),spawn:()=>({input:async data=>{
 const r=await fetch('/request',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Token':TOKEN},body:data});
 return await r.text();}})};'''.replace('TOKEN', json.dumps(token))
                 return self.respond(200, script, 'text/javascript')
-            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/style.css': 'style.css'}
+            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/session.js': 'session.js', '/style.css': 'style.css'}
             if self.path not in paths: return self.respond(404, b'{}')
             name = paths[self.path]
             self.respond(200, (root / name).read_bytes(), {'html':'text/html','js':'text/javascript','css':'text/css'}[name.split('.')[-1]])

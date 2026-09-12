@@ -1,0 +1,277 @@
+{
+  "format_version": 1,
+  "date": "2026-09-12",
+  "status": "offline-cockpit-integration-candidate",
+  "physical_hardware": false,
+  "production_tls": false,
+  "production_accounts": false,
+  "immutable_mounts_tested": false,
+  "ab_devices_or_adapters": false,
+  "preparation": {
+    "format_version": 1,
+    "deployable": false,
+    "baseline": {
+      "sha256": "76e82be434996be27ce967ccbfc4604dabb918820724d2d73b666d3eb03360bf",
+      "files": 21670,
+      "bytes": 1318499182,
+      "measurement": "Sum of regular-file bytes per path, excluding symlinks; includes boot and APT indexes; hardlink aliases may be counted more than once."
+    },
+    "root": {
+      "sha256": "41a54bbef6cf9dcf5101e5c4034d5bc8caad35edb397ce38efb15690e00a85c2",
+      "files": 22240,
+      "bytes": 1329927846,
+      "measurement": "Sum of regular-file bytes per path, excluding symlinks; includes boot and APT indexes; hardlink aliases may be counted more than once."
+    },
+    "staging": {
+      "execute": true,
+      "context": "host",
+      "activated": false,
+      "payload_bytes": 129762,
+      "hashes": {
+        "usr/share/cockpit/sv08-host/index.html": "64a2cce769ec632f0b9cf34517de7601ea39881ca0f42611ee30567cdc4a5deb",
+        "usr/share/cockpit/sv08-host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+        "usr/share/cockpit/sv08-host/app.js": "e071331b8e8617eceb4489e4b96e40f3948e5daa1aa1c60b18a73da0f68cdc4b",
+        "usr/share/cockpit/sv08-host/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+        "usr/share/cockpit/sv08-host/style.css": "5f792229da2ba2bfb0e753e86696da089a1943e6d231b93a7804c14a7b88667a",
+        "etc/cockpit/cockpit.conf": "28c516896dae39b6d7885ba489d8fc4a8fb5d159960f38b96762473c57ba3c7b",
+        "usr/lib/sv08/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc",
+        "usr/lib/sv08/sv08_admin.py": "bdc95ebaa241f66fea66fbe1b41db98ba5c9cdcd9051b39d8f491c8f8ba4378f",
+        "usr/lib/sv08/sv08_admin_images.py": "d9f2d63acf0a9fdf73392a34eb235d8e267759850133644455795c89314ea306",
+        "usr/lib/sv08/sv08_admin_jobs.py": "6bc04d1ecd384871e5b075012bd48a0ae0e0a0daa899bd77b8be0527a404578d",
+        "usr/lib/sv08/sv08_export.py": "0f552bd8923242a019ab937b634acd9fa624eb119c197147a4942502403f1abf",
+        "usr/lib/sv08/sv08_recovery.py": "8ce55e4b6dfe2e0f8c11614e361f47b537e5b98e4dc3afa64bafdcd51b88f1a6",
+        "usr/lib/sv08/sv08_recovery_media.py": "9ad868b1355b4edf5a4621edd56756e3d4987aeb9c92e13e7370633a6b1d7d32",
+        "usr/lib/sv08/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+        "usr/lib/systemd/system/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
+        "usr/lib/sv08/admin-context.json": "fefa94482c23bea5804b2077cad031833a9f134a682d98ffd9481c1141405ca2"
+      },
+      "root": "disposable/rootfs"
+    },
+    "permissions": {
+      "usr/share/cockpit/sv08-host": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o755"
+      },
+      "usr/share/cockpit/sv08-host/index.html": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/share/cockpit/sv08-host/manifest.json": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/share/cockpit/sv08-host/app.js": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/share/cockpit/sv08-host/session.js": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/share/cockpit/sv08-host/style.css": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/lib/sv08": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o755"
+      },
+      "usr/lib/sv08/sv08_admin.py": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/lib/sv08/admin-context.json": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "etc/cockpit/cockpit.conf": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      },
+      "usr/lib/systemd/system/sv08-admin-image-worker@.service": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o644"
+      }
+    },
+    "pam_and_sudo_policy_preserved": true,
+    "delta_download_bytes": 2633920,
+    "kernel": {
+      "path": "selected-baseline/boot/vmlinuz-6.12.107+deb13-arm64",
+      "sha256": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67"
+    },
+    "initrd": {
+      "path": "selected-baseline/boot/initrd.img-6.12.107+deb13-arm64",
+      "sha256": "470d669587382bdf662fceaff09efd0fee8cd5aa58ac69a87bf1ea7744903142"
+    },
+    "image_sha256": "38f8174345adc8b28fefbb5eeaf94b80018681446b549b7fe9034eb2ce64ad05",
+    "baseline_preserved": true,
+    "scope": "offline full ARM64 QEMU fixture; synthetic accounts; no printer or production activation",
+    "root_delta_file_bytes": 11428664
+  },
+  "browser": {
+    "scope": "Actual Cockpit 337/PAM/sudo in disposable ARM64 QEMU; HTTP on private namespace loopback",
+    "physical_hardware": false,
+    "production_tls": false,
+    "bad_login_rejected": true,
+    "uid_proof": {
+      "ordinary_account": "1001",
+      "administrator_unelevated": "1000",
+      "elevated": "0"
+    },
+    "ordinary_denial": true,
+    "wrong_password_and_cancel": true,
+    "status_review_jobs_no_state_mutation": true,
+    "cancel_preserves_state": true,
+    "authentication_never_confirms": true,
+    "stale_review_refused": true,
+    "confirmed_helper_apply": true,
+    "delayed_review_after_stop_discarded": true,
+    "delayed_apply_after_stop_preserved": true,
+    "stock_packages_unavailable": true,
+    "guest_journal_secret_scan": true,
+    "explicit_stop_denies_helper": true,
+    "logout_invalidates_old_session": true,
+    "authenticated_reconnect_persistence": true,
+    "missing_api_fails_closed": true,
+    "controlled_stop_failure_visible_and_closed": true,
+    "secret_scan": {
+      "guest_journal": true,
+      "browser_console_and_errors": true,
+      "private_log_and_evidence_files": 6,
+      "violations": 0
+    },
+    "passed": true
+  },
+  "cleanup": {
+    "execute": true,
+    "qemu_stopped": true,
+    "private_pid_and_network": true,
+    "host_identity_files_preserved": true,
+    "host_cockpit_units_preserved": true,
+    "namespace_pid_removed": true
+  },
+  "regressions": {
+    "controller_image_jobs_tests": 37,
+    "staging_tests": 8,
+    "fixture_target_tests": 4,
+    "admin_browser": {
+      "passed": true,
+      "physical_hardware": false,
+      "transport": "test Cockpit bridge shim; real disposable Controller",
+      "keyboard_navigation": true,
+      "escape_cancels": true,
+      "policy_persistence": true,
+      "mode_applies_only_on_boot": true,
+      "touch_navigation": true,
+      "unavailable_installer_disabled": true,
+      "uncaught_exceptions": 0
+    },
+    "jobs_browser": {
+      "passed": true,
+      "reconnect_ms": 123,
+      "stage_installations": 1,
+      "lost_acknowledgement_retry_same_identity": true,
+      "closed_and_reopened_browser_target": true,
+      "real_systemd_user_worker": true,
+      "unit_state": "MainPID=397362\nExecStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-cockpit-integration/tests/admin_jobs_fixture.py /home/drew/sv08-mainline/local/feature-workflow/worktrees/host-admin-cockpit-integration/build/cockpit-jobs-regression-fixture 58c5c2866cbb4968bc3f5c93c65e7697 ; ignore_errors=no ; start_time=[Sat 2026-09-12 04:26:16 UTC] ; stop_time=[n/a] ; pid=397362 ; code=(null) ; status=0/0 }\nActiveState=active\n",
+      "transport": "test Cockpit bridge shim",
+      "real_controller_staging_transaction": true,
+      "backend": "disposable disk double, fixture signature verifier",
+      "authenticated_cockpit": false,
+      "physical_hardware": false,
+      "jobs": [
+        {
+          "id": "58c5c2866cbb4968bc3f5c93c65e7697",
+          "phase": "succeeded",
+          "action": "image.stage"
+        },
+        {
+          "id": "fb7ff3ff42374073bf772a2cc02a4dfb",
+          "phase": "succeeded",
+          "action": "image.arm"
+        },
+        {
+          "id": "dda189235b0d45a3bc5aeed0875c93c6",
+          "phase": "succeeded",
+          "action": "image.cancel"
+        }
+      ]
+    },
+    "drafts_browser": {
+      "passed": true,
+      "before": {
+        "hostname": "owner-draft",
+        "mode": "writable",
+        "auto": false
+      },
+      "after": {
+        "hostname": "owner-draft",
+        "mode": "writable",
+        "auto": false
+      },
+      "dwell_ms": 3400,
+      "external_changes_preserve_drafts": true,
+      "untouched_controls_follow_server": true,
+      "cancel_and_stale_review_preserve_drafts": true,
+      "applying_one_preserves_other_drafts": true,
+      "reviewed_arguments_match_drafts": true,
+      "newer_edits_during_apply_preserved": true,
+      "keyboard_selection_and_option_nodes_survive_poll": true,
+      "valid_selections_survive_poll": true,
+      "removed_selections_remain_explicitly_invalid": true,
+      "explicit_reselection_required": true,
+      "transport": "real disposable Controller via test Cockpit bridge",
+      "list_projection": "test-only image/package status lists; no adapter mutation",
+      "physical_hardware": false
+    }
+  },
+  "tools": {
+    "qemu": "8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "chromium": "Google Chrome for Testing 145.0.7632.6",
+    "node": "22.23.2"
+  },
+  "source_sha256": {
+    "tests/cockpit_fixture.py": "86592bf39a30e92f3758c10802eec078cedca93dbc9881d3dd4f8f53e5c0f7ae",
+    "tests/cockpit_browser.mjs": "290916fde95fe15f041c6e76b18df63b6aed93dc4cd3974a8a4193eb090f2b2c",
+    "tests/cockpit_closure.py": "87b53b9a94ef5c8844349739ec9b2ad279784fadebfee5c1a80eeb023236c2e9",
+    "scripts/stage_admin_ui.py": "53f6a787f6e07ae73a6549de86a05e7d18f439f23fb5c508cbf07cadb29c0085",
+    "configs/host-os/cockpit-packages.json": "5a61091e88e9409ab3cd6a2890634d5e3d6c459dff3579e82213cc71715b4229"
+  },
+  "closure_sha256": "d966617b9f4b5b77ae1a349ce9593068ed56b533b87a45eb95cdf9438a222b04",
+  "units": {
+    "static_verify": "systemd-analyze verify --man=no inside selected ARM64 root",
+    "actual_execution": "Id=cockpit.socket\nActiveState=active\nSubState=running\n\nId=cockpit.service\nActiveState=active\nSubState=running\n\nId=cockpit-session.socket\nActiveState=active\nSubState=listening\n\nId=cockpit-fixture.service\nActiveState=active\nSubState=exited\n"
+  },
+  "limitations": [
+    "Writable synthetic Store/boot context; no actual immutable/A-B integration",
+    "Namespace loopback HTTP; no production TLS/LAN evidence",
+    "No hardware or production account activation",
+    "Root logical byte measurement is not factory-capacity or recovery closure proof"
+  ],
+  "evidence_sha256": {
+    "apt-simulation.txt": "0db1f9f281cb1a226984d5f0b200e3165857b35b13c6d2d7f758178637a3f90f",
+    "installed-packages.tsv": "871a710108dc1376bb6a6ea42df786878ab5e87dc5911808b2ad944d517547ae",
+    "units.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "guest-service-state.txt": "221fa37d48eb3600ff9657517c024d6c30402ec1a78c9bb18d4d52cdfc38addc",
+    "guest.log": "e022753e2f4be070de370ea70bfa6de2ce8ee1196965c086e502f3198b5dc033"
+  },
+  "foundation": {
+    "json_files_parsed": 76,
+    "changed_markdown_targets_checked": 52,
+    "indexed_gitlinks_match_lock": 7,
+    "submodules": "Seven uninitialized entries in isolated worktree; gitlinks unchanged and match lock",
+    "diff_check": true,
+    "cached_diff_check": true
+  }
+}
