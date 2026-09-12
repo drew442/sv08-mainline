@@ -121,7 +121,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "One complete readback pass for recovery archives",
       "verification": {
         "decision_sha256": "f64a3a80fc1f75ff0797b00e68753097b233013d902f3e593f1db92c5a895fce",
