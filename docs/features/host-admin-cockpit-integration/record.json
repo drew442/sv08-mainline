@@ -1,0 +1,109 @@
+{
+  "author": "cockpit_intake_review",
+  "checks": [
+    {
+      "description": "Verify actual selected Cockpit/PAM bad-credential rejection, ordinary-user privileged denial and synthetic administrator elevated bridge. Use no cached sudo; test wrong elevation password, prompt cancellation, success, Stop and post-Stop denial, clear secret state, no secret storage/logging, and missing-API fail-closed diagnostics. Establish login/elevation/uid before polish; use a disposable QEMU guest if necessary without PAM weakening.",
+      "environment": "offline",
+      "id": "actual-auth"
+    },
+    {
+      "description": "Verify real shell status/review/apply/cancel/staleness, image-job status, logout invalidation and authenticated reconnect over disposable state. Prove auth never confirms review, an old-session request is rejected after logout, and reconnect requires authentication.",
+      "environment": "offline",
+      "id": "helper-session"
+    },
+    {
+      "description": "Record selected snapshot dependency versions, archive/output hashes and measured closure footprint; reproduce no-floating resolution. Include sudo/askpass prerequisites and exact internal API source hashes; do not change production sudo grants.",
+      "environment": "offline",
+      "id": "package-closure"
+    },
+    {
+      "description": "Verify dry-run/staging permissions, supported shell/privilege manifest, absence of unguarded stock UI, isolated services and identities, selected-root unit validity and source-root preservation. Test excluded stock direct URLs and package discovery; preserve existing cockpit.conf or explicitly reject conflicts.",
+      "environment": "offline",
+      "id": "staging-isolation"
+    },
+    {
+      "description": "Run affected controller/image-jobs/staging/browser checks and proportionate foundation, JSON and local Markdown validation; distinguish emulated execution from static checks.",
+      "environment": "offline",
+      "id": "regressions"
+    }
+  ],
+  "created": "2026-09-12",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "actual-auth",
+          "regressions"
+        ],
+        "text": "Use actual selected Cockpit/PAM and sudo elevation with no cached authorization. Prove ordinary-user denial, incorrect elevation credentials, cancellation, success, explicit Stop and post-Stop required-helper denial. Do not weaken PAM, bypass authentication or substitute the browser bridge shim; use the permitted disposable guest fallback if namespace or emulation limitations prevent faithful execution. Missing internal API must refuse elevation."
+      },
+      {
+        "checks": [
+          "actual-auth",
+          "helper-session"
+        ],
+        "text": "Authentication must never confirm or replay a pending operation. Exercise actual shell status/review/apply, cancellation and stale-review refusal over disposable state; prove logout rejects a request using the old session and reconnect requires authentication. Clear credential and prompt state after use, cancellation or failure and keep secrets out of storage, logs and evidence. Verify image-job status over this transport."
+      },
+      {
+        "checks": [
+          "package-closure",
+          "staging-isolation"
+        ],
+        "text": "Pin and hash the resolved selected snapshot closure, including sudo and askpass prerequisites and exact source used for the internal Superuser API. Record footprint and differences from the intake simulation. Production staging must not expand sudo grants, ship excluded stock control packages, silently replace existing cockpit.conf settings or activate network services. Check excluded direct URLs and package discovery, not just shell navigation."
+      },
+      {
+        "checks": [
+          "staging-isolation",
+          "regressions",
+          "package-closure"
+        ],
+        "text": "Keep synthetic accounts, listeners, mounts and state within the disposable environment and demonstrate cleanup plus source-root and host-service preservation. Distinguish real login/bridge, actual service-manager execution, static unit verification and ARM64/emulation evidence. Production account/TLS persistence, full factory-capacity fit, assembled image and physical acceptance remain open in existing release checklists."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "4c63579d8b7cf428dd4a3fee0a25d6fe56de54cb9a9e94853f714ee1ddb36c17",
+    "rationale": "ADR 0010 requires actual Cockpit authentication and administrator authorization through supported extensions. Current scripts/stage_admin_ui.py and ui/host/manifest.json lack the top-level shell configuration and privileged bridge declaration. The extracted Cockpit 337 shell manifest supplies the sudo declaration, packages.py collects bridge configurations, and superuser.py explicitly rejects required privilege without an elevated bridge. This is a concrete prerequisite to authenticated upload, within accepted requirements. The revised proposal includes real authentication, credential failure/cancellation, logout invalidation, bounded helper behavior, package provenance and isolated execution evidence. Its actual login/elevation/uid milestone appropriately resolves namespace/PAM/setuid feasibility before UI expansion; a disposable guest fallback preserves semantics. No hardware, production network, owner identity provisioning or sudo authority is granted. Hashes were independently computed from the exact private draft bytes, actual ADR file and feature_workflow.scope_digest; the coordinator must match the public review-context before import.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+    },
+    "reviewer": "image_jobs_approver",
+    "scope_sha256": "46c8e704cee3bab904e2ea65db220618fbd7292cebcf3ee7de47dc307b0602b7",
+    "session": "/root/image_jobs_approver-cockpit-integration-2026-09-12"
+  },
+  "format_version": 1,
+  "id": "host-admin-cockpit-integration",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/host-admin-cockpit-integration/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "actual-auth",
+        "helper-session",
+        "package-closure",
+        "staging-isolation",
+        "regressions"
+      ],
+      "depends_on": [
+        "host-admin-image-jobs:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Integrate and verify the actual Cockpit console in a disposable isolated root",
+      "verification": null
+    }
+  ],
+  "title": "Integrate the selected Cockpit shell and verify real isolated login and administrator bridge"
+}
