@@ -111,5 +111,21 @@
     "physical_touch_tested": false,
     "dram_root_cause_known": false,
     "boot_reliability_validated": false
+  },
+  "physical_warm_a_reboot": {
+    "boot_observed": true,
+    "new_boot_id": true,
+    "persistent_generation_unchanged": true,
+    "root_partition": "mmcblk2p2",
+    "root_readonly": true,
+    "both_environment_crcs_valid": true,
+    "active_environment_a_left": 1,
+    "active_environment_b_left": 0,
+    "console_sha256": "e2acc050fdbef9eb34d85175fa8540872414375bd3d45bad15b808f4713b8745",
+    "dram_autodetected_ranks": 1,
+    "dram_autodetected_width_bits": 32,
+    "dram_autodetected_columns": 10,
+    "dram_autodetected_rows": 15,
+    "cold_boot_reliability_validated": false
   }
 }

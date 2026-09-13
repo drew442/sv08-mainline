@@ -25,7 +25,8 @@ or restoration exercises below are not prerequisites for this trial.
   and verified across the full image footprint; GPT stayed unchanged and the
   writer was safely ejected.
 - [x] Owner reinstalled/powered the spare. The [first diagnostic A boot](host-board-first-boot.md)
-  reached Linux and SSH; two A attempts remain in the newer environment.
+  reached Linux and SSH. A further captured warm A reboot passed; one A attempt
+  remains in the newer environment.
 - [ ] Report what HDMI displays now; driver state reports an active 1024×600 console.
 
 - [ ] Observe HDMI recovery and physical input behavior when that test is reached.

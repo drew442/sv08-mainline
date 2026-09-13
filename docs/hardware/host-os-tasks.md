@@ -227,7 +227,9 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   condition test passed. The installed image still needs this fix in a future build.
 - [ ] Add pinned supplicant package/closure and locale defaults to the next image.
 - [ ] Correct diagnostic pointer formatting and test with SPL's actual tiny formatter.
-- [ ] Confirm visible HDMI console and physical touch, then test captured repeat boots.
+- [x] Capture one warm A reboot; same persistent generation, new boot ID and
+  one A attempt remaining. MMC numbering changed; PARTUUID mounts passed.
+- [ ] Confirm visible HDMI console/physical touch and test cold-start reliability.
 
 - [ ] With a reviewed bootable candidate: test cold boots, storage/network/USB,
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.

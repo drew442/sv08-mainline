@@ -83,3 +83,26 @@ and independent dpkg-fix review are under ignored
 `local/feature-workflow/spl-diagnostic/`. Source evidence is the exact pinned
 U-Boot `lib/tiny-printf.c` and compiled SPL configuration, the installed Debian
 `dpkg-db-backup.service`, and named-board measurements, read 2026-09-13.
+
+## Captured warm reboot
+
+A subsequent controlled warm reboot completed DRAM initialization and returned
+to SSH in slot A with a different kernel boot ID and the same persistent state
+generation. The readable full SPL sequence reports one rank, 32-bit width,
+10 column bits and 15 row bits before the 1024 MiB result. This is autodetection
+output, not a PCB/chip-marking identification. The two successful diagnostic
+boots do not prove cold-start reliability or identify the earlier failure.
+
+On this warm boot eMMC enumerated as **mmcblk2**, while the first boot used
+mmcblk0; PARTUUID mounts remained correct. A read-only inspection helper refused
+its stale numeric-device assertion, then was corrected to derive the parent
+from the exact root PARTUUID and check partition number/capacity. No write used
+that stale path. Numeric MMC enumeration must not be part of the deployment
+contract.
+
+Both raw environment CRCs remain valid. The newer copy now has one A attempt
+remaining, with B still at zero; no counters were refreshed or marked healthy.
+The temporary dpkg condition was re-applied under `/run` after reboot, and the
+host again has zero failed systemd units. CPU temperature was about 46°C.
+Do not spend the remaining attempt on unrecorded exploratory reboots; select
+and review the next B/recovery or boot-diagnostic operation explicitly.
