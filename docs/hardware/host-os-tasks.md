@@ -225,8 +225,12 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   reliable repeat boots, B and recovery remain unresolved.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
-- [ ] Add pinned supplicant package/closure and locale defaults to the next image.
-- [ ] Correct diagnostic pointer formatting and test with SPL's actual tiny formatter.
+- [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed
+  deterministic `C.UTF-8` locale defaults in the image builders. A fresh image
+  build is still required before physical Wi-Fi/locale validation.
+- [x] Correct diagnostic pointer formatting to the SPL-supported `%08lx` form,
+  regenerate the patch hunk, and extend the native test to cover the shared wait
+  helper. A fresh diagnostic artifact remains subject to independent review.
 - [x] Capture one warm A reboot; same persistent generation, new boot ID and
   one A attempt remaining. MMC numbering changed; PARTUUID mounts passed.
 - [ ] Confirm visible HDMI console/physical touch and test cold-start reliability.

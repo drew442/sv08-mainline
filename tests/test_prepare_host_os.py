@@ -28,6 +28,10 @@ class HostBaselineTests(unittest.TestCase):
         self.assertEqual(parts[-1]['offset_bytes'] + parts[-1]['size_bytes'] + m.MIB,
                          7818182656)
 
+    def test_required_wireless_and_locale_packages_are_pinned(self):
+        self.assertIn('wpasupplicant', self.c['packages'])
+        self.assertIn('locales', self.c['packages'])
+
     def test_oversized_and_asymmetric_slots_rejected(self):
         for delta in [1, -1]:
             c = copy.deepcopy(self.c)

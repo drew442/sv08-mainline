@@ -15,7 +15,7 @@ import tarfile
 
 REPO = Path(__file__).resolve().parents[1]
 PACKAGES = ('systemd-sysv', 'systemd-resolved', 'systemd-timesyncd', 'dbus', 'udev', 'openssh-server',
-            'sudo', 'ca-certificates', 'curl', 'git', 'python3', 'python3-venv',
+            'sudo', 'ca-certificates', 'locales', 'wpasupplicant', 'curl', 'git', 'python3', 'python3-venv',
             'python3-dev', 'build-essential', 'libffi-dev', 'libusb-1.0-0',
             'usbutils', 'initramfs-tools', 'kmod', 'iproute2', 'iputils-ping',
             'e2fsprogs', 'dosfstools', 'wireless-regdb')
@@ -81,6 +81,8 @@ def configure(c, work, archive, keys):
     if not (root / 'debootstrap/debootstrap').is_file():
         raise ValueError('Run bootstrap first; configure requires an unused foreign bootstrap')
     run('chroot', root, '/debootstrap/debootstrap', '--second-stage')
+    # Keep SSH/PAM locale initialization deterministic in the noninteractive image.
+    write(root, 'etc/default/locale', 'LANG=C.UTF-8\n')
     write(root, 'usr/sbin/policy-rc.d', '#!/bin/sh\nexit 101\n', 0o755)
     mirror = f"https://snapshot.debian.org/archive/debian/{c['snapshot']}/"
     security = f"https://snapshot.debian.org/archive/debian-security/{c['snapshot']}/"

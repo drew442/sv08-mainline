@@ -16,6 +16,10 @@ spec.loader.exec_module(builder)
 
 
 class ImageBuilderTests(unittest.TestCase):
+    def test_package_baseline_includes_wireless_and_locale_runtime(self):
+        self.assertIn('wpasupplicant', builder.PACKAGES)
+        self.assertIn('locales', builder.PACKAGES)
+
     def test_layout_rejects_overlap_and_misalignment(self):
         c = json.loads((REPO / 'configs/images/test-sv08-01-host.json').read_text())
         boot, root, size = builder.layout(c)

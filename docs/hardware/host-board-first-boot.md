@@ -58,20 +58,18 @@ bootloader/kernel combinations.
   condition skip and zero failed units with root still read-only. This live test
   **does not persist across reboot**; the installed image has not been rewritten.
 - The radio module loads, but `wpa_supplicant.service` is absent. NetworkManager
-  cannot create the supplicant interface. Add the pinned supplicant package and
-  dependencies to the next host composition and validate association separately;
-  driver enumeration does not establish usable Wi-Fi.
+  cannot create the supplicant interface. The next pinned host baseline now adds
+  `wpasupplicant` and `locales`, with deterministic `C.UTF-8` defaults; the
+  currently installed image is unchanged and Wi-Fi association remains open.
 - SSH PAM logs a missing `/etc/default/locale`; generate the selected locale
   defaults during image finalization. Login succeeds, but the packaging warning
   remains outstanding.
-- The diagnostic shared-wait messages use `%p`, unsupported by the selected SPL
-  tiny formatter. It prints `?` without consuming that argument, shifting the next
-  two labels: the shown `mask` is the register address, the shown `want` is the
-  mask, and the expected value is omitted. Do not treat those labels as valid
-  measurements. The next diagnostic build needs an integer address format and a
-  test against the actual tiny formatter. Earlier native polling tests and ELF
-  review missed this formatter compatibility issue. This does not invalidate
-  later U-Boot/Linux boot evidence.
+- The diagnostic shared-wait messages in the installed image use `%p`, unsupported
+  by the selected SPL tiny formatter. Those labels are shifted and must not be
+  treated as valid measurements. The source patch now uses the supported `%08lx`
+  form with an explicit cast and the native test checks both changed helpers;
+  a fresh artifact is required before using those labels on hardware. This does
+  not invalidate later U-Boot/Linux boot evidence.
 
 The added serial output changes timing, and this successful attempt therefore
 does not establish the cause of the previous stop. Repeat captured boots and

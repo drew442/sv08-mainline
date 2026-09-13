@@ -55,6 +55,8 @@ def stage(work, manifest):
     for command, module in [('sv08-state', 'sv08_state.py'), ('sv08-package', 'sv08_package.py')]:
         (target / module).chmod(0o755)
         (root / 'usr/bin' / command).symlink_to('../lib/sv08/' + module)
+    (root / 'etc/default').mkdir(parents=True, exist_ok=True)
+    (root / 'etc/default/locale').write_text('LANG=C.UTF-8\n')
     (target / 'release.json').write_text(json.dumps(manifest, indent=2) + '\n')
     seed = target / 'seed/config'
     seed.mkdir(parents=True)

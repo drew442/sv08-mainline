@@ -15,9 +15,14 @@ def main():
     parser.add_argument('--source', type=Path, required=True)
     args = parser.parse_args()
     source = (args.source / 'arch/arm/mach-sunxi/dram_sun50i_h616.c').read_text()
+    shared = (args.source / 'arch/arm/mach-sunxi/dram_helpers.c').read_text()
+    assert 'wait reg=%08lx' in shared
+    assert 'reg=%p' not in shared
     start = source.index('static bool sv08_read_calibration_wait(')
     end = source.index('\nstatic bool mctl_phy_read_calibration(', start)
     helper = source[start:end]
+    assert '%p' not in helper
+    assert '%08lx' in helper
     harness = r'''
 #include <assert.h>
 #include <stdbool.h>
