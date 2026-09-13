@@ -1,0 +1,91 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-13",
+  "hardware_profile": "test-sv08-01",
+  "status": "private-diagnostic-image-independently-byte-reviewed",
+  "source_commit": "082ee08f26447fbe30b3a7847c4893cc4669d921",
+  "image": {
+    "filename": "test-sv08-01-ab-diagnostic-20260913.img",
+    "bytes": 7818182656,
+    "sha256": "8777fad2790757ff333f9c6059f75dc14f6bcbc04b56a1266a5c00e6c4e86b94"
+  },
+  "download": {
+    "filename": "test-sv08-01-ab-diagnostic-20260913.img.xz",
+    "bytes": 1084044228,
+    "sha256": "7068ee93ea123a62bc78317cc6665eac3cbf3c37503db953be180ac346c3da82",
+    "full_expansion_matches_reviewed_raw_image": true,
+    "local_transfer_sha256_verified": true
+  },
+  "partition_images": {
+    "boot-a": {
+      "bytes": 201326592,
+      "sha256": "874ef203d02780a7b3e0954765f743d193ab5e8bcf74f8af10784edad889e59b"
+    },
+    "root-a": {
+      "bytes": 2147483648,
+      "sha256": "159a23936d9af7c8576d6a32d22388c67ac6c77df39e6fa2fc0286f94f94d835"
+    },
+    "boot-b": {
+      "bytes": 201326592,
+      "sha256": "9c8214bfe6daf1d2001d20735f068f4b9acf44e49a7641a1082f851881e42976"
+    },
+    "root-b": {
+      "bytes": 2147483648,
+      "sha256": "c162eecd4588767dd0f96c37e1112a0b45a29c5ffb5b20965adb8c96dae77421"
+    },
+    "recovery": {
+      "bytes": 536870912,
+      "sha256": "37b5c631e20936c936176780661d434aa2093b9a074f5a247d714444d7b46fdc"
+    },
+    "data": {
+      "bytes": 2565865472,
+      "sha256": "8a22026523b324ed17e391ba48a3739222c479a9e7f916ac535641bedd10b775"
+    }
+  },
+  "environment_sha256": "20c23ef48869ae729d7a9bccff09dd3f7938a54c741cbf50b04c0caeddb89200",
+  "spl": {
+    "bytes": 786105,
+    "sha256": "2b70feccade6cf5e68953aad99c3f03ae9e0b4d95543bc83e7a670f2ab46907e"
+  },
+  "recovery": {
+    "build_image_sha256": "f3f40bb0dd0be7b5f581a757ee9a38d48be5668447db0d92334750028ea41b01",
+    "final_partition_sha256": "37b5c631e20936c936176780661d434aa2093b9a074f5a247d714444d7b46fdc",
+    "usr_bytes": 241479680,
+    "usr_sha256": "a1c6257fa1d14bd4a48a6e34f45ac9f73b8c62b419ee55028e796cc5240e4f7e",
+    "initrd_sha256": "76b6e767aba5e89b6a0afd6f2753074c5b9b1edcd0b7fa6f53e710ea7ffd44bc",
+    "manifest_sha256": "ec70a1abccebb942ea479bc597ef261335ee027d7a2ca9bc3ed3d9cc3846823b",
+    "free_bytes": 165109760
+  },
+  "host": {
+    "kernel_release": "6.18.51-sv08-candidate1",
+    "initrd_sha256": "bbf2e46073e1c4e40e4fcba7714026e49a1b3bb7adf50a7e61bc18e34662f6b8",
+    "root_free_bytes": 636981248,
+    "release": "0.1.0-board.1",
+    "default_mode": "immutable",
+    "printer_services_masked": true,
+    "rauc_activation_enabled": false,
+    "production_onboarding": false
+  },
+  "validation": {
+    "source_preservation": true,
+    "whole_image_and_embedded_payload_hashes": true,
+    "gpt_crc_geometry_and_reservations": true,
+    "redundant_environment_crc_and_complete_policy": true,
+    "independent_recovery_kernel_and_manifest_binding": true,
+    "filesystem_checks": true,
+    "host_access_permissions_and_boot_hooks": true,
+    "partitioned_recovery_policy_vm": true,
+    "board_kernel_qemu_boot": false,
+    "new_spl_physical_boot": false,
+    "complete_host_physical_boot": false,
+    "physical_recovery_boot": false,
+    "printing": false
+  },
+  "notes": [
+    "Source commit identifies the composer and host integration; the preserved recovery parent has its own recorded runtime/source receipt.",
+    "Private pilot credentials and device evidence are excluded from Git.",
+    "Source inputs and authoritative parent receipts are retained privately.",
+    "No byte-identical repeated full-image build is claimed.",
+    "Three A attempts are seeded; B=0, no automatic health confirmation."
+  ]
+}

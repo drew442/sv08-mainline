@@ -1,5 +1,11 @@
 # Write the spare eMMC on Windows, Linux or macOS
 
+For the **2026-09-13 complete A/B diagnostic image**, use its
+[current download, checksum and first-boot instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot).
+The platform writer/validation workflow below applies, but its original v1
+filename, checksum, capacity and `sovol` account details do not describe the new
+candidate. The new candidate uses `sv08` and private pilot access credentials.
+
 These instructions write the private test-sv08-01 host image to the owner's
 blank nominal 32 GB eMMC through a USB reader. Keep the factory module unchanged
 for host rollback. The image passed offline checks, and the owner reported a successful boot on

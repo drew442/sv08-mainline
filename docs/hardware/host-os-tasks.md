@@ -205,8 +205,11 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Capture the first new kernel trial and return to the original kernel using
   the vendor loader; [physical evidence](host-kernel-trial.md) passed. A new
   U-Boot/A/B loader still requires its own physical trial and capture.
-- [ ] After the complete [board diagnostic image](host-board-image.md) has its
-  independent byte-review result and exact download/hash, shut down and isolate
+- [x] Build the complete factory-sized diagnostic disk and independently verify
+  its bytes, partitions, SPL/environments, recovery and access metadata;
+  [recorded result](host-board-image-20260913.json). Physical boot is separate.
+- [ ] Write `test-sv08-01-ab-diagnostic-20260913.img.xz` using the
+  [current checksum and instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot): shut down and isolate
   the printer, write/verify the spare eMMC through the USB writer, reinstall it,
   and boot with console logging already running. Keep the factory module.
   Do not write its raw environments onto the current single-root layout.

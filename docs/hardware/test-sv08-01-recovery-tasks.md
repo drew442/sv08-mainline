@@ -5,6 +5,27 @@ eMMC as the host rollback baseline and write the new image to the blank 32 GB
 spare. A full factory disk-image file is optional; it does not block this work.
 See the [image guide](test-sv08-01-image.md) and [recovery plan](test-sv08-01-recovery.md).
 
+## Current task: complete A/B host trial, 2026-09-13
+
+The complete [board diagnostic image](host-board-image.md) is built and has
+passed independent byte review. The owner accepted the available backups,
+factory-module rollback and USB-reader/ST-Link recovery paths; additional backup
+or restoration exercises below are not prerequisites for this trial.
+
+- [ ] Coordinate clean shutdown, then disconnect mains and all USB power before
+  removing the spare eMMC. The console connection may keep the host powered.
+- [ ] Write and verify `test-sv08-01-ab-diagnostic-20260913.img.xz` using its
+  [current checksum and platform instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot).
+  This replaces the spare's old bring-up image; keep the factory module.
+- [ ] Reinstall the spare unpowered and arrange console logging before reconnecting
+  USB/power. The new image uses `sv08`, with private pilot credentials; it has
+  three A attempts before recovery and keeps printer services disabled.
+- [ ] Observe HDMI recovery and physical input behavior when that test is reached.
+  Record results separately from the successful offline VM checks.
+
+The following original single-root tasks retain their historical scope; their v1
+filename, account and boot instructions do not apply to the new A/B image.
+
 ## Spare boot reported; capture and validate next
 
 - [x] Owner reported that the new image booted on the new eMMC (2026-09-06).

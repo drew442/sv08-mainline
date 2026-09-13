@@ -102,3 +102,88 @@ it, and boot with console logging already running. Retain the factory module.
 Do not auto-expand/repartition this diagnostic layout on the 32 GB spare. Exact
 artifact location and digest must accompany the write task; this page alone is
 not an instruction to write an unfinished artifact.
+
+## Completed offline result
+
+The first full disk passed independent byte review; the
+[artifact record](host-board-image-20260913.json) contains its hashes and scope.
+The raw image is **7,818,182,656 bytes**, SHA-256:
+
+```text
+8777fad2790757ff333f9c6059f75dc14f6bcbc04b56a1266a5c00e6c4e86b94
+```
+
+Review checked the whole hash, both GPT CRCs and all six exact records, every
+embedded partition against its source, SPL placement, both complete raw
+environments, slot scripts/kernel/initramfs/DT, independent recovery manifest
+binding, filesystem checks and owner-access metadata. The finalized data
+filesystem root is 0755, allowing traversal to the explicitly protected persistent
+tree; private preparation-directory permissions were not assumed to be filesystem
+root permissions. Source preservation and the authoritative recovery parent's
+receipt were rechecked independently.
+
+Each root retains **636,981,248 bytes** free; complete recovery, including its
+independent raw kernel and DT, retains **165,109,760 bytes** free. These are initial
+filesystem measurements, not full-workload/update-space acceptance. All 35 focused
+recovery, boot-identity and composer tests passed. The new SPL, complete host and
+recovery still await their first physical execution.
+
+## Write this candidate and prepare its first boot
+
+Obtain `test-sv08-01-ab-diagnostic-20260913.img.xz` and its matching `.sha256`
+file from the private `artifacts/board-diagnostic-20260913/` directory. These
+files and `owner-access.txt` are not in Git or a public release. The access file
+contains the unique pilot login and identity fingerprints; keep it private.
+Use this candidate's checksum, not the original single-root image's checksum.
+
+The compressed file is **1,084,044,228 bytes** (about 1.01 GiB), SHA-256:
+
+```text
+7068ee93ea123a62bc78317cc6665eac3cbf3c37503db953be180ac346c3da82
+```
+
+Its complete expansion was checked against the raw image's size and SHA-256
+above. The transferred local copy also passed the compressed-file checksum.
+
+Verify the compressed download before selecting the USB writer:
+
+```powershell
+# Windows PowerShell: compare with the matching .sha256 file.
+Get-FileHash .\test-sv08-01-ab-diagnostic-20260913.img.xz -Algorithm SHA256
+```
+
+```sh
+# Linux
+sha256sum -c test-sv08-01-ab-diagnostic-20260913.img.xz.sha256
+# macOS
+shasum -a 256 -c test-sv08-01-ab-diagnostic-20260913.img.xz.sha256
+```
+
+1. Arrange a clean printer shutdown. Disconnect mains power and every possible
+   USB power source, including the console, before removing the spare module.
+   Earlier switch-off with USB attached did not stop host uptime; do not assume
+   the printer switch alone isolates the board.
+2. Fit the spare to the unplugged USB writer, then connect the writer. Cancel
+   operating-system format/initialize prompts. Writing replaces the spare's
+   current bring-up system; retain the factory module unchanged.
+3. Use the [graphical write and validation workflow](flashing-emmc.md#write-and-validate)
+   on Windows, Linux or macOS, selecting **this A/B `.img.xz` filename**. Check
+   the target's identity and capacity, and wait for successful write validation.
+4. Eject the writer, unplug it, and reinstall the spare with all printer power
+   sources disconnected. Keep Ethernet connected for the host test.
+5. Coordinate console logging **before reconnecting USB or powering the host**.
+   The logger must already be watching for the UART adapter because USB may
+   itself supply power. Report which action first causes output; cold-boot
+   electrical isolation remains distinct from a warm-reset capture.
+6. On successful A boot, use the observed DHCP address. SSH uses **`sv08`**, the
+   existing authorized owner key and the new private pilot host-key fingerprint.
+   The administration pilot is at `https://<observed-address>:9090`; compare the
+   certificate fingerprint and use the credentials in `owner-access.txt`.
+
+Expect a host diagnostic system with printer services disabled. Do not request
+heat or motion. Avoid repeated exploratory reboots: the seeded A budget is three
+attempts, followed by recovery. The operator running the test should inspect the
+actual boot/slot/devices, persistent state, service failures, network and thermal
+readings before explicitly refreshing an attempt budget or testing B. Automatic
+health confirmation is absent. Graphical recovery operation and the new loader
+must be recorded as physical results after they run, not inferred from this file.

@@ -89,3 +89,11 @@ Private derivation, VM logs and preservation receipts remain in ignored paths.
 The [complete diagnostic disk](host-board-image.md) must add its independent
 raw kernel, exact DT and `recovery.scr` to partition 5 before the new loader can
 dispatch it. A recovery partition image alone is not a whole-eMMC write image.
+
+The completed board build has **241,479,680 bytes** of compressed `/usr` and
+passed independent source-inventory, filesystem, manifest and compressed-content
+readback checks. Its early initramfs contains four AArch64 ELF files with a
+complete dynamic dependency closure; no `.ko` files are needed because this
+kernel builds the required early drivers into Image. The generated gate matches
+the reviewed profile exactly. Final partition hashes and remaining space after
+whole-disk boot-file insertion are in the [artifact record](host-board-image-20260913.json).
