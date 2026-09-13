@@ -127,5 +127,14 @@
     "dram_autodetected_columns": 10,
     "dram_autodetected_rows": 15,
     "cold_boot_reliability_validated": false
+  },
+  "corrected_diagnostic_v3": {
+    "build": "beelink:/home/drew/sv08-mainline-build/build/sv08-dram-diagnostic-v3",
+    "loader_bytes": 786105,
+    "loader_sha256": "f0cba95ba8434c5cf684d874ded4f5caa937ce952e575fe377c4da7e00661827",
+    "manifest_patch_sha256": "8f979eab1434dc00e9d68ea12365affbfe08a5e0549c1651e3d5f341d2bfd4b7",
+    "native_poll_test_cases": 9,
+    "physical_write": false,
+    "independent_delivery_review": "pending"
   }
 }

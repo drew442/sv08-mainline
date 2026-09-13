@@ -119,3 +119,15 @@ working tree was modified. Remove diagnostic logging after identifying the
 cause; submit a minimal generally useful timeout/error fix upstream only once
 its controller behavior and failure policy have hardware evidence. Retain this
 artifact record as failed/diagnostic evidence, not a supported release.
+
+
+## Corrected v3 build
+
+After the first physical boots, the `%p` formatter issue was corrected and the
+patch was regenerated with valid hunk counts. A fresh Beelink build completed
+from the pinned inputs; its loader is 786,105 bytes with SHA-256
+`f0cba95ba8434c5cf684d874ded4f5caa937ce952e575fe377c4da7e00661827`.
+The native helper test again passes nine scripted cases and now checks the shared
+wait helper's `%08lx` formatting. This v3 artifact is retained for independent
+review; it has not been written to hardware. The installed diagnostic loader is
+unchanged and remains the tested A/boot source.
