@@ -1,0 +1,94 @@
+{
+  "format_version": 1,
+  "date": "2026-09-13",
+  "status": "physical-wired-diagnostic-boot-and-original-fallback-passed",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "kernel_release": "6.18.51-sv08-candidate1",
+  "source_manifest": "../../configs/host-os/kernel-61851-compile-candidate.json",
+  "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "build_environment": {
+    "KBUILD_BUILD_TIMESTAMP": "2026-09-13 00:00:00 UTC",
+    "KBUILD_BUILD_USER": "sv08",
+    "KBUILD_BUILD_HOST": "builder",
+    "KBUILD_BUILD_VERSION": "1"
+  },
+  "config": {
+    "bytes": 240487,
+    "sha256": "e0f0a8bfdc98effeccbe328d165301116de540fe06d68b3e6780593383e46da2"
+  },
+  "Image": {
+    "bytes": 33405440,
+    "sha256": "5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34"
+  },
+  "stock_dtb": {
+    "bytes": 48252,
+    "sha256": "0898a413e58587b681612c25c8464b3ba9b673f1ba23cc4e2ce6d0a86e505b30"
+  },
+  "diagnostic_dtb": {
+    "bytes": 48208,
+    "sha256": "571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f"
+  },
+  "modules_archive": {
+    "bytes": 27487324,
+    "sha256": "030c61dfbbc50d134f89600707036f3e44972285cc7b58dee4dcb0f0703936d9"
+  },
+  "module_files": 2663,
+  "module_runtime_bytes": 99612510,
+  "initrd": {
+    "bytes": 15096397,
+    "sha256": "32f4103f2f1ab6845d9220a4316906803825933d1feb9ab2cc1b32e97d8500d4"
+  },
+  "uInitrd": {
+    "bytes": 15096461,
+    "sha256": "5ae1287259adfe324e1dbd7708ee90b167cbe23d00a68b188d715b73a1631d87"
+  },
+  "initrd_expanded_bytes": 53592576,
+  "radio": {
+    "repository": "https://github.com/EvilOlaf/rtl8189ES_linux",
+    "commit": "be148d226d22214a173e5b2dfe4287e53685ceda",
+    "archive": {
+      "bytes": 2469740,
+      "sha256": "c56e850ab1b1c11baa2489baa1a94ec40e70ee2bc31647061e8df8a94c67c67b"
+    },
+    "module": {
+      "bytes": 3077960,
+      "sha256": "0842d1ff20d7d709bc12602098275fdeadf87fb9529ee7494e2ca1c400fd4cc0"
+    },
+    "alias": "sdio:c*v024CdF179*",
+    "license": "GPL per module/source; source retained",
+    "patched": false,
+    "first_trial_blacklisted": true
+  },
+  "validation": {
+    "kernel_and_modules_build_exit": 0,
+    "radio_build_exit": 0,
+    "diagnostic_dtb_properties_passed": true,
+    "unsafe_dtb_mutations_rejected": 5,
+    "dispatcher_sandbox_invocations_passed": 7,
+    "physical_unarmed_fallback_passed": true,
+    "physical_candidate_boot_passed": true,
+    "dt_schema_passed": false,
+    "byte_identical_rebuild_passed": false,
+    "physical_return_to_original_passed": true
+  },
+  "compiler_warning_counts": {
+    "kernel": 19,
+    "radio": 568
+  },
+  "dispatcher": {
+    "bytes": 1551,
+    "sha256": "3ab8ae4cfa6dbd9e32f44005293f1e953b5916cf9248986c3ab91dcbe639ecff"
+  },
+  "physical": {
+    "date": "2026-09-13",
+    "kernel_seconds": 4.676,
+    "userspace_seconds": 6.448,
+    "failed_systemd_units": 0,
+    "ethernet": "100Mbps/full; DHCP address changed; existing SSH host key verified",
+    "radio": "blacklisted pending source fixes",
+    "printing_validated": false,
+    "console_sha256": "2e129df5cb4720beda91bbefe086af5f03a8e76419aa4b63342a98fd4883d01f",
+    "live_dtb_sha256": "cccd1b76c5446f92f59f716267dc89bc473de4848a79c077677450933d941621"
+  }
+}

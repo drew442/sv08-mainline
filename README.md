@@ -12,10 +12,17 @@ profiles. A profile being present does not mean it has been tested.
 [spare-eMMC host image](docs/hardware/test-sv08-01-image.md) has been built and checked offline
 for test printer 01. It is not a printing system or validated hardware release;
 the owner reported booting it on the spare eMMC on 2026-09-06. Printer
-configuration, MCU firmware replacement and detailed hardware validation remain
-outstanding. [Katapult and matching Klipper candidates](docs/hardware/test-sv08-01-mcu-build.md)
-now build offline; [USB updates and paired MCU communication](docs/hardware/test-sv08-01-mainboard-usb.md)
+configuration and detailed printing validation remain outstanding. Both MCUs now
+have Katapult and matching Klipper installed, with recorded
+[build provenance](docs/hardware/test-sv08-01-mcu-build.md).
+[USB updates and paired MCU communication](docs/hardware/test-sv08-01-mainboard-usb.md)
 are verified on test printer 01. Printing remains unvalidated.
+
+Host work now includes an [exact mainline-kernel compilation experiment](docs/hardware/host-kernel-compile.md)
+and a [one-shot kernel trial path](docs/hardware/host-kernel-trial.md). The host's
+USB serial console, wired Linux 6.18.51 boot and return to the original kernel
+have passed on the printer. Full peripheral validation and the complete A/B host
+remain outstanding.
 
 ## Start here
 
@@ -37,6 +44,7 @@ are verified on test printer 01. Printing remains unvalidated.
 - [Host administration and recovery UI](docs/hardware/host-admin-ui.md): browser/native interfaces and integration status.
 - [Independent recovery image](docs/hardware/host-recovery-image.md): complete 512 MiB ARM64 offline GTK boot, input and refusal evidence.
 - [Host completion checklist](docs/hardware/host-os-tasks.md): remaining offline and human tasks.
+- [Host kernel trial](docs/hardware/host-kernel-trial.md): bounded hardware testing with the existing bootloader.
 - [Host application packaging](docs/hardware/host-apps-build.md): Klipper `.deb` and offline checks.
 - [Armbian source intake](docs/hardware/host-ab-armbian-intake.md): unverified SV08 boot-support candidate.
 - [New host build work](docs/hardware/host-ab-build.md): offline Debian baseline,

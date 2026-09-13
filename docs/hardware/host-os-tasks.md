@@ -44,8 +44,10 @@ enumeration were re-established on 2026-09-12; see the
   TF-A, kernel and driver source/patch pins and licenses; compare board assumptions
   with captured evidence. Do not deploy the unverified CB1-equivalence claim.
   The [exact 6.18.51 compilation experiment](host-kernel-compile.md) now pins and
-  applies the kernel series and compiles checked diagnostic device trees; the
-  [one-shot trial](host-kernel-trial.md) uses the existing working bootloader.
+  applies the kernel series and builds the kernel, modules and checked diagnostic
+  device trees. The [physical one-shot trial](host-kernel-trial.md) reached SSH on
+  6.18.51 and returned to the original kernel using the existing working loader.
+  Fix the isolated radio driver warnings and regulatory database packaging next.
 - [x] Allocate redundant raw environment regions outside GPT/SPL/partitions; test
   real RAUC/libubootenv/sandbox writes, corruption fallback and recovery dispatch.
   See [environment evidence](host-environment-build.md).
@@ -185,8 +187,9 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [ ] Test negotiated MJPEG 640×480/15 fps capture; USB descriptors and kernel
   format enumeration do not validate capture or streaming. Validate Wi-Fi
   operation on the selected new kernel without disrupting the recovery connection.
-- [ ] Arrange boot-console capture for the first new boot-chain test where
-  practical; retain the factory eMMC and the verified private MCU backups.
+- [x] Capture the first new kernel trial and return to the original kernel using
+  the vendor loader; [physical evidence](host-kernel-trial.md) passed. A new
+  U-Boot/A/B loader still requires its own physical trial and capture.
 - [ ] Preserve current spare-module data/image before writing a future reviewed
   whole-device candidate. The current single-root system needs image replacement,
   not an untested live repartition.

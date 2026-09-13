@@ -22,6 +22,12 @@ free and root about 6.09 GB free at inspection. No existing `boot.scr.uimg` or
 extlinux configuration was found in the checked boot locations. UUIDs and raw
 identity/hash records stay under ignored `local/host-kernel-61851/`.
 
+A pre-trial read-only runtime capture reports vendor host temperatures of
+44.774–45.584°C, CPU policy frequency 1.2 GHz, and AXP1530-named DCDC1/2/3
+readbacks of 0.96/1.10/1.50 V. ALDO1/DLDO1 report 1.8/3.3 V. These are kernel
+driver reports, not instrument measurements. The private
+`vendor-runtime-baseline.json` supplies comparison values for the candidate.
+
 ## Dispatcher and staging boundaries
 
 The [template](../../configs/host-os/diagnostic-boot.cmd.in) is rendered with the
@@ -100,5 +106,52 @@ marker deletion and candidate kernel execution remain untested on hardware.
 Private staging evidence and console capture are under
 `local/host-kernel-61851/unarmed-dispatcher/`. The retained console snapshot has
 SHA-256 `4a62517b5be64d869d0d1a3cbf692923230d510d08ab9d4fbea2785d4764fc0a`.
-The added dispatcher remains installed and unarmed, allowing ordinary original
-boots. Removing this newly added file restores the prior dispatcher arrangement.
+## Armed wired trial and return to original
+
+The completed [artifact set](host-kernel-compile-20260913.json) was reviewed,
+installed separately and read back with matching hashes. The dispatcher was
+updated only to add `module_blacklist=8189fs`, isolating the radio source defects
+described in the compile record. Its replacement is 1,551 bytes, SHA-256
+`3ab8ae4cfa6dbd9e32f44005293f1e953b5916cf9248986c3ab91dcbe639ecff`.
+Two independent fresh seven-case sandbox runs passed. Independent review found
+the previously tested unarmed control flow unchanged.
+
+On 2026-09-13 the armed warm reboot consumed its marker, loaded the reviewed
+files, executed `booti`, and reached SSH on **6.18.51-sv08-candidate1**. DHCP
+assigned a different address; the existing SSH host key verified the printer.
+The live DT passed the diagnostic property checks, including the 105°C critical
+trip and absent CPU OPP references. There were no failed systemd units. All three
+printer services were inactive and masked; `8189fs` was absent from loaded modules.
+
+Measured host evidence, with PCB revision still unknown:
+
+- Systemd reported 4.676 seconds kernel and 6.448 seconds userspace, 11.124 total;
+  this excludes bootloader time and is one diagnostic run, not a benchmark.
+- Ethernet negotiated 100 Mbps/full duplex using the AC300 PHY and supported SSH.
+- HDMI reported connected with 1024×600 preferred mode; USB touch, MGS1 camera
+  and both Klipper MCU interfaces enumerated. Display usability, touch events,
+  camera capture and MCU protocol operation were not tested in this trial.
+- Thermal drivers reported approximately 46–48°C. CPU clock reported 1.008 GHz
+  and its supply 1.0 V; GPU/system and DRAM supplies reported 0.96 and 1.50 V.
+  These are driver reports, not instrument measurements or load validation.
+- PWM5 requested the AC300 clock. Its driver has no `get_state` operation, so
+  debugfs's zero/disabled “actual” fields are unavailable readback, not proof of
+  a disabled physical clock. Ethernet operation supplies functional evidence.
+
+The expected CPU-frequency probe failure reflects the intentionally removed OPP
+references. An SDIO voltage-range warning also exists in the vendor baseline.
+The candidate reported invalid/missing wireless regulatory database signature;
+radio packaging must resolve this before Wi-Fi validation. No panic was observed.
+
+A second clean reboot, with the marker absent, returned through the original
+boot.scr to **5.16.17-sun50iw9** and SSH at the prior address. No systemd units
+failed; all five original boot-file hashes remained unchanged. This proves the
+tested warm one-shot trial and subsequent fallback, not power-loss resilience,
+cold boot, A/B deployment, GPU/DVFS, Wi-Fi or printing support.
+
+Private runtime, live DT and fallback receipts are under
+`local/host-kernel-61851/`. The combined console snapshot SHA-256 is
+`2e129df5cb4720beda91bbefe086af5f03a8e76419aa4b63342a98fd4883d01f`.
+Candidate files and the updated dispatcher remain installed **unarmed**; ordinary
+boots use the original kernel. Removing the added dispatcher restores the prior
+dispatcher arrangement.

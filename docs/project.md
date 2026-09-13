@@ -82,5 +82,6 @@ print-tested -> supported are distinct states; promotion requires recorded evide
 6. Complete representative prints and restart/update regression checks.
 7. Demonstrate recovery and repeat the documented installation from a clean state.
 
-Current work establishes the repository and evidence base. None of these hardware
-completion criteria has yet been demonstrated by this project.
+Backups, MCU USB updates and host bring-up have supporting evidence in the
+named test profile. No hardware profile has completed all of these criteria;
+printing and supported-release validation remain outstanding.

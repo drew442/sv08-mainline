@@ -122,12 +122,23 @@ do not claim schema validation. The PWM child nodes include configuration phandl
 targets consumed by the patched PWM driver; verify the PWM5/AC300 Ethernet clock
 on hardware rather than treating those warnings as missing register proof.
 
-## Remaining before the physical trial
+## Completed build and first physical trial
 
-Finish kernel/modules and separately pinned onboard-radio compilation; record
-the final configuration, toolchain and hashes. Assemble the matching modules,
-initramfs and diagnostic DT into a bounded test boot using the existing working
-bootloader. Preserve the vendor boot files as the fallback, and keep printer
-services inactive. The new A/B bootloader/environment integration remains a
-separate milestone. The [verified serial path](test-sv08-01-host-console.md)
-allows the next trial to be observed from early boot through SSH.
+Kernel, modules and separately pinned radio compilation completed successfully.
+The [artifact record](host-kernel-compile-20260913.json) records configuration,
+toolchain, hashes and warning counts. The runtime module directory contains
+2,663 modules; Debian initramfs-tools 0.148.4 built the matching initramfs on the
+bring-up host. Independent inspection checked ARM64 headers, loader memory
+ranges, initramfs ELF/dependency closure and root discovery. This was an
+incremental build, not a demonstrated byte-identical clean rebuild.
+
+Radio compilation emitted 568 warnings, including an overlapping `snprintf` on
+the normal SDIO transmit-thread startup path and two legacy zero-length trailing
+arrays under `-fstrict-flex-arrays=3`. Compile success does not establish runtime
+safety. The first wired trial blacklists `8189fs`; narrow source fixes and radio
+testing remain required. The kernel itself emitted 19 compiler warnings.
+
+The [physical trial and return to the original kernel](host-kernel-trial.md)
+both passed. This uses the existing vendor bootloader and single-root Debian
+bring-up filesystem. New A/B bootloader/environment integration, required radio
+operation and full device/application validation remain separate milestones.
