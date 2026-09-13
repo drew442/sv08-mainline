@@ -49,6 +49,10 @@ enumeration were re-established on 2026-09-12; see the
   6.18.51 and returned to the original kernel using the existing working loader.
   The targeted radio fixes, upstream regulatory signature selection and passive
   scan now pass; production packaging and association remain outstanding.
+  [Debian kernel/board packages](host-kernel-packages.md) pass isolated installation.
+  The [corrected board A/B loader](host-sv08-ab-boot.md) now builds with inspected
+  SPL voltage settings, selected DT and compiled environment guard. Compose clean
+  host/recovery roots and the complete disk before its physical trial.
 - [x] Allocate redundant raw environment regions outside GPT/SPL/partitions; test
   real RAUC/libubootenv/sandbox writes, corruption fallback and recovery dispatch.
   See [environment evidence](host-environment-build.md).

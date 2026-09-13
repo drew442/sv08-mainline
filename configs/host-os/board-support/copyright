@@ -1,0 +1,4 @@
+RTL8189FS: Copyright Realtek Semiconductor Corp.; GPL-2.0 as stated in driver source headers.
+Diagnostic device tree: project override with pinned Armbian/Linux include ancestry; see kernel source manifest.
+Exact source archives and patch closure must accompany redistribution.
+On Debian systems GPL version 2 is available at /usr/share/common-licenses/GPL-2.

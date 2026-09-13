@@ -1,0 +1,11 @@
+Package: sv08-board-support-6.18.51-sv08-candidate1
+Version: 0.1.0~diagnostic.1
+Section: kernel
+Priority: optional
+Architecture: arm64
+Maintainer: SV08 Mainline <noreply@localhost>
+Depends: linux-image-6.18.51-sv08-candidate1 (= 6.18.51+sv08.1-1), kmod
+Description: Diagnostic test-sv08-01 device tree and matched onboard radio module
+ Supplies the explicitly selected diagnostic device tree and patched RTL8189FS
+ module for the named kernel. No boot activation or printer configuration is
+ performed. GPU and CPU frequency scaling remain disabled in this device tree.

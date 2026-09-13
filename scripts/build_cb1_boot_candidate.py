@@ -23,10 +23,15 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('work','uboot_archive','tfa_archive','patch_directory'):
         p.add_argument('--'+name.replace('_','-'),type=Path,required=True)
+    p.add_argument('--config', type=Path,
+        default=REPO/'configs/host-os/cb1-boot-compile-candidate.json')
     p.add_argument('--execute',action='store_true');a=p.parse_args()
-    config=json.loads((REPO/'configs/host-os/cb1-boot-compile-candidate.json').read_text())
-    if config['deployable'] is not False or config['board_mmc_device_index'] is not None:
-        raise ValueError('This builder is exclusively an unverified compile fixture')
+    config=json.loads(a.config.read_text())
+    if config['deployable'] is not False:
+        raise ValueError('This builder never authorizes deployment')
+    integration=config.get('integration')
+    if config['board_mmc_device_index'] is not None and not integration:
+        raise ValueError('A board index requires an explicit integration profile')
     work=work_path(a.work)
     if work.exists():raise ValueError('Use a fresh build directory')
     archives=[(a.uboot_archive,'u_boot','u-boot-source'),(a.tfa_archive,'tf_a','tf-a-source')]
@@ -34,6 +39,11 @@ def main():
         if sha(archive)!=config[key]['archive_sha256']:raise ValueError('Source archive hash mismatch')
     for patch in config['board_patches']:
         if sha(a.patch_directory/patch['name'])!=patch['sha256']:raise ValueError('Board patch hash mismatch')
+    if integration:
+        for item in [*integration['patches'], integration['fragment'], integration['environment'], integration['policy_source']]:
+            source=REPO/item['path']
+            if not source.resolve().is_relative_to(REPO) or sha(source)!=item['sha256']:
+                raise ValueError('Integration input hash/path mismatch')
     print(json.dumps(dict(execute=a.execute,deployable=False,work=str(work),config=config)))
     if not a.execute:return
     work.mkdir(parents=True)
@@ -55,7 +65,24 @@ def main():
     bl31=tfa/'build/sun50i_h616/debug/bl31.bin'
     for patch in config['board_patches']:
         run('u-boot-build.log','patch','--batch','--forward','-d',uboot,'-p1','-i',(a.patch_directory/patch['name']).resolve())
+    if integration:
+        for patch in integration['patches']:
+            run('u-boot-build.log','patch','--batch','--fuzz=0','-d',uboot,'-p1','-i',REPO/patch['path'])
     run('u-boot-build.log','make','-C',uboot,'CROSS_COMPILE=aarch64-linux-gnu-',config['u_boot']['defconfig'])
+    if integration:
+        shutil.copyfile(REPO/integration['environment']['path'],uboot/'sv08-default.env')
+        run('u-boot-build.log','bash',uboot/'scripts/kconfig/merge_config.sh','-m','-O',uboot,
+            uboot/'.config',REPO/integration['fragment']['path'])
+        run('u-boot-build.log','make','-C',uboot,'CROSS_COMPILE=aarch64-linux-gnu-','olddefconfig')
+        effective={}
+        for line in (uboot/'.config').read_text().splitlines():
+            if line.startswith('CONFIG_') and '=' in line:
+                key,value=line.split('=',1);effective[key]=value
+            elif line.startswith('# CONFIG_') and line.endswith(' is not set'):
+                effective[line[2:-11]]='n'
+        for key,value in integration['expected_config'].items():
+            if effective.get(key)!=value:
+                raise ValueError(f'Effective configuration mismatch: {key}: {effective.get(key)} != {value}')
     run('u-boot-build.log','make','-C',uboot,'-j2','CROSS_COMPILE=aarch64-linux-gnu-','BL31='+str(bl31))
     binary=uboot/'u-boot-sunxi-with-spl.bin';fit=uboot/'u-boot-sunxi-with-spl.fit.fit'
     if binary.read_bytes()[4:12]!=b'eGON.BT0' or 8192+binary.stat().st_size>1048576:
@@ -70,7 +97,7 @@ def main():
         spl_header_valid=True,reservation_bytes=[8192,1048576],
         compiler=subprocess.check_output(['aarch64-linux-gnu-gcc','--version'],text=True).splitlines()[0],
         artifacts={f.name:dict(bytes=f.stat().st_size,sha256=sha(f)) for f in artifacts.iterdir()},
-        ab_policy_integrated=False,licenses_fully_audited=False)
+        ab_policy_integrated=bool(integration),licenses_fully_audited=False)
     (work/'result.json').write_text(json.dumps(result,indent=2)+'\n')
 
 

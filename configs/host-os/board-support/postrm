@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+if [ "$1" = remove ] && [ -d /lib/modules/6.18.51-sv08-candidate1/kernel ]; then
+    depmod 6.18.51-sv08-candidate1
+fi

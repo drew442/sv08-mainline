@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-13",
+  "status": "isolated-package-installation-fixture-not-deployable",
+  "packages": {
+    "linux-libc-dev_6.18.51+sv08.1-1_arm64.deb": {
+      "bytes": 1485308,
+      "sha256": "001c55e257024eb628dbc04610894a5573aa2c288a3a3d38b0922796244998e8"
+    },
+    "sv08-board-support-6.18.51-sv08-candidate1_0.1.0~diagnostic.1_arm64.deb": {
+      "bytes": 643112,
+      "sha256": "53a57823343129daad761d2cb43510cccfb16ea9d691e9493cbf0192db38c80c"
+    },
+    "linux-image-6.18.51-sv08-candidate1_6.18.51+sv08.1-1_arm64.deb": {
+      "bytes": 30558312,
+      "sha256": "f47fd1bf51dc10efb8443c0d82ffb5e44aae9b63fc86822464c302ffb8d380b4"
+    }
+  },
+  "kernel_image_matches_physical_trial": true,
+  "board_dtb_and_radio_match_physical_trial": true,
+  "apt_dependency_check_passed": true,
+  "dpkg_audit_empty": true,
+  "initramfs_generated": true,
+  "initramfs_sha256": "a4e12e5e86953d3048663bd590d8577b922ae154d359dbb55221cee291f4a213",
+  "root_source": "host-integration-v3 QEMU fixture; not a clean image source",
+  "headers_package_built": false,
+  "linux_libc_dev_installed": false,
+  "byte_identical_package_rebuild_proven": false,
+  "hardware_package_installation": false
+}

@@ -1,0 +1,102 @@
+{
+  "format_version": 1,
+  "status": "board-ab-compile-candidate-not-hardware-booted",
+  "deployable": false,
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "board_mmc_device_index": 1,
+  "armbian_reference_commit": "a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015",
+  "u_boot": {
+    "commit": "ece349ade2973e220f524ce59e59711cc919263f",
+    "archive_sha256": "2e932cb139c06adfdd2ef1369170135e1f449764287e7bdbc93642ed52249c7e",
+    "defconfig": "bigtreetech_cb1_defconfig",
+    "archive_url": "https://api.github.com/repos/u-boot/u-boot/tarball/ece349ade2973e220f524ce59e59711cc919263f"
+  },
+  "tf_a": {
+    "repository": "https://github.com/ARM-software/arm-trusted-firmware",
+    "tag": "lts-v2.12.9",
+    "commit": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+    "archive_url": "https://codeload.github.com/ARM-software/arm-trusted-firmware/tar.gz/c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+    "archive_sha256": "507a10e4a20d272124ee808c3d3083134c95113486e3d09b8236a6556e901536",
+    "platform": "sun50i_h616",
+    "debug": 1
+  },
+  "board_patches": [
+    {
+      "name": "001-bigtreetech-cb1-dts-and-defconfig.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/u-boot/v2026.07-sunxi64/board_bigtreetech-cb1/001-bigtreetech-cb1-dts-and-defconfig.patch",
+      "sha256": "0bff09f1763dd4e74249e3500bebcbfd84cde79ac66b9556ce706de958318416"
+    },
+    {
+      "name": "002-bigtreetech-cb1-PC3-eMMC-selpin-set-to-pull-down-mode.patch",
+      "url": "https://raw.githubusercontent.com/armbian/build/a4ea8c49cd07b9d6604cbc32234a5f5cdfd99015/patch/u-boot/v2026.07-sunxi64/board_bigtreetech-cb1/002-bigtreetech-cb1-PC3-eMMC-selpin-set-to-pull-down-mode.patch",
+      "sha256": "1fe801e57ce115f9d91dde132f1e756d2cf4a97284db4e4aa85c3bb0905eac81"
+    }
+  ],
+  "not_validated": [
+    "New SPL/TF-A/U-Boot execution on test-sv08-01",
+    "DRAM training, timings and ODT",
+    "PC3 eMMC selection role",
+    "New U-Boot MMC enumeration and raw environment I/O",
+    "Physical A/B and independent board recovery",
+    "Power interruption resilience",
+    "GPU, DVFS and printer operation"
+  ],
+  "source_date_epoch": 1789257600,
+  "build_timestamp": "2026-09-13T00:00:00Z",
+  "integration": {
+    "patches": [
+      {
+        "path": "patches/u-boot/0003-sv08-uboot-diagnostic.patch",
+        "sha256": "a995ac87ad527f6a01e2635433515ba93f82fd550ca9485af0ee61762a19510e"
+      }
+    ],
+    "fragment": {
+      "path": "configs/host-os/sv08-uboot-ab.fragment",
+      "sha256": "57f47d83ee5af3ef21f4ea7a4f89d7ae98e74168f95ae68f0a6a641d873781be"
+    },
+    "environment": {
+      "path": "configs/host-os/sv08-default.env",
+      "sha256": "7b09c2d72a8cb60402187e4ac8904f79fc5b11d552a04d11ce416504561f08bf"
+    },
+    "expected_config": {
+      "CONFIG_DEFAULT_DEVICE_TREE": "\"allwinner/sun50i-h616-sovol-sv08-diagnostic\"",
+      "CONFIG_DRAM_CLK": "720",
+      "CONFIG_AXP_DCDC2_VOLT": "1000",
+      "CONFIG_AXP_DCDC3_VOLT": "1500",
+      "CONFIG_BOOTDELAY": "3",
+      "CONFIG_BOOTSTD": "y",
+      "CONFIG_BOOTSTD_FULL": "y",
+      "CONFIG_BOOTMETH_RAUC": "y",
+      "CONFIG_BOOTMETH_RAUC_PARTITIONS": "\"1,2 3,4\"",
+      "CONFIG_BOOTMETH_RAUC_BOOT_ORDER": "\"A B\"",
+      "CONFIG_BOOTMETH_RAUC_DEFAULT_TRIES": "3",
+      "CONFIG_BOOTMETH_RAUC_RESET_ALL_ZERO_TRIES": "n",
+      "CONFIG_ENV_IS_IN_FAT": "n",
+      "CONFIG_ENV_IS_IN_EXT4": "n",
+      "CONFIG_ENV_IS_NOWHERE": "n",
+      "CONFIG_ENV_IS_IN_MMC": "y",
+      "CONFIG_ENV_REDUNDANT": "y",
+      "CONFIG_ENV_REDUNDANT_UPGRADE": "n",
+      "CONFIG_ENV_MMC_DEVICE_INDEX": "1",
+      "CONFIG_ENV_MMC_EMMC_HW_PARTITION": "0",
+      "CONFIG_ENV_OFFSET": "0x400000",
+      "CONFIG_ENV_OFFSET_REDUND": "0x800000",
+      "CONFIG_ENV_SIZE": "0x10000",
+      "CONFIG_CMD_MMC": "y",
+      "CONFIG_CMD_PART": "y",
+      "CONFIG_CMD_EXT4": "y",
+      "CONFIG_CMD_FAT": "y",
+      "CONFIG_CMD_SOURCE": "y",
+      "CONFIG_CMD_BOOTFLOW": "y",
+      "CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE": "y",
+      "CONFIG_ENV_DEFAULT_ENV_TEXT_FILE": "\"sv08-default.env\"",
+      "CONFIG_OF_LIST": "\"allwinner/sun50i-h616-sovol-sv08-diagnostic\"",
+      "CONFIG_CMD_BOOTMETH": "y"
+    },
+    "policy_source": {
+      "path": "configs/host-os/boot-dispatch.cmd",
+      "sha256": "cbd2601af2843e50665b70bb96f420ea6a4ec9d046666b6beadc3a74d223ec79"
+    }
+  }
+}
