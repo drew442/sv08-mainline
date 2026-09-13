@@ -136,6 +136,15 @@
     "native_poll_test_cases": 9,
     "physical_write": true,
     "physical_write_result": "loader-written-v3-readback-loader-pass-whole-image-baseline-mismatch-at-4MiB",
+    "physical_boot": {
+      "result": "serial-confirmed-v3-boot",
+      "dram_result": "1 GiB",
+      "kernel": "6.18.51-sv08-candidate1",
+      "recovery_ui": true,
+      "klipper_mcus": 2,
+      "camera": "MGS1",
+      "network_validated": false
+    },
     "independent_delivery_review": "pass",
     "independent_delivery_review_record": "local/feature-workflow/spl-diagnostic/v3-delivery-review.md"
   }

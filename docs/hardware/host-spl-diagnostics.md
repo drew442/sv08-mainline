@@ -135,3 +135,9 @@ USB eMMC completed and direct readback verified the v3 loader hash. The strict
 whole-image comparison stopped at 4 MiB because the mutable U-Boot environment
 differs from the factory baseline; no claim of whole-image equality is made. The
 artifact remains diagnostic and is not a release image.
+
+The v3 loader was then booted on `test-sv08-01` after a controlled power cycle.
+Serial evidence shows the corrected DRAM diagnostics, successful 1 GiB result,
+U-Boot bootflow, Linux `6.18.51-sv08-candidate1`, read-only root and `/usr`,
+the recovery UI, both Klipper STM32 devices, and the MGS1 camera. Network access
+was not validated because the previously recorded `.141` address did not answer.
