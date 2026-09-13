@@ -156,7 +156,15 @@ enumeration were re-established on 2026-09-12; see the
 
 ## Human and powered-printer tasks
 
-These do not prevent the independent offline work above.
+New feature development is paused by the owner. Existing host hardware-test
+preparation continues. These physical tasks do not block independent authorized
+preparation; the full checklist is a release gate, not a first-boot prerequisite.
+
+- [ ] Connect the documented USB-C **USB to UART** socket to Beelink and capture
+  a normal boot; follow the [console setup](test-sv08-01-host-console.md).
+  Read-only SSH and the live UART0 console settings were verified on 2026-09-13.
+- [ ] Optionally attach HDMI capture and a controllable USB HID emulator to
+  Beelink for graphical tests, preserving the physical touchscreen input path.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.
@@ -172,6 +180,8 @@ These do not prevent the independent offline work above.
 - [ ] Preserve current spare-module data/image before writing a future reviewed
   whole-device candidate. The current single-root system needs image replacement,
   not an untested live repartition.
+  The owner accepts the existing backups and recovery path; another full backup
+  is optional and must not be imposed as a prerequisite for the first trial.
 - [ ] With a reviewed bootable candidate: test cold boots, storage/network/USB,
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.
 - [ ] Test the local recovery UI with HDMI touch only, keyboard only, and
