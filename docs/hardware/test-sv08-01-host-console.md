@@ -27,6 +27,12 @@ host UART circuit. Do not substitute an SV08 Max/Zero or CB1 connector pinout.
 
 ## Human connection tasks
 
+**Power isolation:** the host continued running across the owner's reported
+printer switch-off/on during this session. Do not assume the printer switch
+isolates the host while external cables are attached. USB back-power is a
+possible explanation, not an electrically verified cause. Disconnect external
+power-bearing cables as well as printer power before physical board work.
+
 ### Connection verified on 2026-09-13
 
 The initial cable produced no USB enumeration, even with printer power on.
@@ -51,6 +57,46 @@ there is no persistent logger running. SPL/U-Boot/early-kernel capture still
 requires starting a logger before a subsequent boot. Normal console open/close
 was exercised without an observed host restart; control-line wiring is not
 established by this check.
+
+### Complete warm-reboot capture
+
+At 02:19:47 UTC a bounded, receive-only logger opened the identified bridge at
+115200 8N1 on Beelink. The owner's subsequent power-on produced a mainboard MCU
+USB reconnect at kernel uptime 382 seconds, rather than a new host boot.
+SSH still reported the existing host boot. With printer services inactive,
+the agent issued `sudo systemctl reboot` through SSH, retaining the serial log
+through shutdown, SPL, BL31, U-Boot, Linux and the Debian login prompt.
+
+The host returned over SSH with a changed boot ID, kernel
+`5.16.17-sun50iw9`, root `/dev/mmcblk2p2`, and no failed systemd units.
+Klipper, Moonraker and KlipperScreen remained inactive. This establishes a
+remotely observable warm reboot of the existing bring-up image, not cold-power
+behavior or validation of the new A/B OS. No firmware or boot settings were
+changed and no heat/motion was commanded.
+
+Measured boot output:
+
+- SPL and U-Boot identify `2021.10-->SPI-CB1`, built 2023-12-30 14:40:23 +0800;
+  DRAM reports 1024 MiB. BL31 identifies v2.7 debug and H616.
+- SPL says `Trying to boot from MMC2`. U-Boot enumerates `mmc@4020000: 0,
+  mmc@4022000: 1`, selects `mmc1`, and loads `/boot.scr` from `mmc 1:1`.
+  Linux later enumerates the spare as `mmcblk2`, 29.1 GiB. These namespaces differ.
+  This mapping applies to the captured boot chain, not an untested replacement.
+- U-Boot cannot read `uboot.env` from `mmc1:1`. The script prints
+  `U-boot loaded from SD` despite the eMMC load path and reports a card voltage
+  selection timeout. Neither that script message nor the missing FAT environment
+  proves the new design's redundant raw environment locations work.
+- BL31 reports an RSB initialization error; Linux reports HDMI-audio, AC200 and
+  Panfrost probe errors. Shutdown reports an unsupported 10-minute watchdog
+  timeout. Boot still completes; these messages are retained as baseline issues,
+  not silently classified as harmless or new-kernel failures.
+
+The logger was stopped after SSH returned. The private raw log is
+`local/test-sv08-01/access-20260913/boot-20260913-01.raw`, SHA-256
+`d491757094ab472e7976fc38196a3d6fdaeeb09b6e4cf68db7de703400ac3a4f`.
+Adjacent event timestamps and `after-reboot.txt` retain capture and live-check
+evidence. No persistent logger remains running. A true cold boot still needs
+an established power-isolation/capture arrangement.
 
 1. With the printer shut down and power disconnected, locate the socket labelled
    **USB to UART** on the actual mainboard and compare it with the linked drawing.

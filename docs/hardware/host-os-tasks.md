@@ -163,8 +163,13 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Connect the documented USB-C **USB to UART** socket to Beelink and verify
   the console; [115200-baud marker capture](test-sv08-01-host-console.md) passed
   after replacing the cable on 2026-09-13. SSH is also reachable.
-- [ ] Start console logging before a subsequent boot and capture SPL/U-Boot/kernel
-  output. The connection probes have finished; no persistent logger is running.
+- [x] Start console logging before a subsequent boot and capture SPL/U-Boot/kernel
+  output. The [2026-09-13 warm reboot](test-sv08-01-host-console.md) reached SSH
+  with a new boot ID and no failed units. The logger has now been stopped.
+- [ ] Establish complete host power isolation for a true cold-boot capture:
+  host uptime continued across the reported printer switch-off/on with the USB
+  console attached. Determine the remaining power source before claiming a
+  cold boot; do not assume the printer switch alone makes board work safe.
 - [ ] Optionally attach HDMI capture and a controllable USB HID emulator to
   Beelink for graphical tests, preserving the physical touchscreen input path.
 
