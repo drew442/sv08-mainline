@@ -62,6 +62,11 @@ def stage(work, manifest):
     units = root / 'etc/systemd/system'
     for path in (REPO / 'configs/host-os/systemd').glob('*.service'):
         shutil.copyfile(path, units / path.name)
+    # Keep Debian's backup job in writable mode; skip its read-only destination.
+    backup_dropin = units / 'dpkg-db-backup.service.d'
+    backup_dropin.mkdir(exist_ok=True)
+    shutil.copyfile(REPO / 'configs/host-os/systemd/dpkg-db-backup.service.d/20-sv08-readonly.conf',
+                    backup_dropin / '20-sv08-readonly.conf')
     # Explicit mount unit so offline unit verification includes the dependency.
     data_device = manifest['devices']['data']
     # initramfs fscks and mounts data before PID 1 needs the persistent machine-id.

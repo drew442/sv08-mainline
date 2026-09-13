@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-13",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-loader-written-verified-ejected-awaiting-physical-boot",
+  "status": "diagnostic-loader-first-a-boot-observed-stability-unvalidated",
   "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
   "manifest_sha256": "758a8212db57510c6361f14c42911116238a80e2da5a937de61d0781725aaca9",
   "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
@@ -71,5 +71,45 @@
       "writer_powered_off": true,
       "writer_path_absent": true
     }
+  },
+  "physical_a_boot": {
+    "observed_at_utc": "2026-09-13T07:15:25Z",
+    "dram_mib": 1024,
+    "slot": "A",
+    "kernel": "6.18.51-sv08-candidate1",
+    "mode": "immutable",
+    "root_partition": "mmcblk0p2",
+    "boot_partition": "mmcblk0p1",
+    "data_partition": "mmcblk0p6",
+    "ssh_host_key_matches_seed": true,
+    "console_snapshot_sha256": "2099744c606452e84e1f417a25013be6574767a333a21b925979e16910e5b904",
+    "console_initial_bytes_garbled": true,
+    "active_environment_a_left": 2,
+    "active_environment_b_left": 0,
+    "hdmi_active_mode": [
+      1024,
+      600
+    ],
+    "web_login": {
+      "tls_fingerprint_matches_private_seed": true,
+      "https_root_status": 200,
+      "cockpit_login_status": 200,
+      "authentication_accepted": true,
+      "browser_ui_actions_tested": false
+    },
+    "camera": {
+      "decoded_frames": 30,
+      "dimensions": [
+        640,
+        480
+      ],
+      "format": "MJPEG",
+      "decoder": "PyMuPDF 1.28.2",
+      "sha256": "b01e07f5df98e59caf3bf4895d8f134b1d4a588ff863ff186e43627ae5f35c07",
+      "public_images": false
+    },
+    "physical_touch_tested": false,
+    "dram_root_cause_known": false,
+    "boot_reliability_validated": false
   }
 }

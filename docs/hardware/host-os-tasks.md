@@ -220,9 +220,15 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Owner returned the spare to the writer. The reviewed loader-only write,
   full-image comparison, GPT inspection and safe ejection passed. The
   [new media digest](host-spl-diagnostics-20260913.json) differs from the original download.
-- [ ] Owner: reinstall the spare with mains/all USB power disconnected, then
-  reconnect console/Ethernet and power on with logging ready. Capture diagnostic
-  output; the exact DRAM failure and successful host/recovery boot remain unresolved.
+- [x] Owner reinstalled/powered the diagnostic spare. The [first A boot](host-board-first-boot.md)
+  reached verified SSH, immutable state and HTTPS login. The earlier DRAM cause,
+  reliable repeat boots, B and recovery remain unresolved.
+- [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
+  condition test passed. The installed image still needs this fix in a future build.
+- [ ] Add pinned supplicant package/closure and locale defaults to the next image.
+- [ ] Correct diagnostic pointer formatting and test with SPL's actual tiny formatter.
+- [ ] Confirm visible HDMI console and physical touch, then test captured repeat boots.
+
 - [ ] With a reviewed bootable candidate: test cold boots, storage/network/USB,
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.
 - [ ] Test the local recovery UI with HDMI touch only, keyboard only, and

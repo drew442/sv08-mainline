@@ -24,9 +24,10 @@ or restoration exercises below are not prerequisites for this trial.
   [diagnostic loader](host-spl-diagnostics.md) was independently reviewed, written
   and verified across the full image footprint; GPT stayed unchanged and the
   writer was safely ejected.
-- [ ] Reinstall the spare with mains and all USB power disconnected. With serial
-  capture already running, reconnect console/Ethernet and power on once. Report
-  power-on even if HDMI remains blank; the diagnostic output is the next evidence.
+- [x] Owner reinstalled/powered the spare. The [first diagnostic A boot](host-board-first-boot.md)
+  reached Linux and SSH; two A attempts remain in the newer environment.
+- [ ] Report what HDMI displays now; driver state reports an active 1024×600 console.
+
 - [ ] Observe HDMI recovery and physical input behavior when that test is reached.
   Record results separately from the successful offline VM checks.
 

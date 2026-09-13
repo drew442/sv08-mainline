@@ -26,8 +26,9 @@ remain outstanding.
 
 The next physical trial uses a [complete board A/B diagnostic image](docs/hardware/host-board-image.md),
 with a [board-specific independent recovery path](docs/hardware/host-recovery-board.md).
-This preparation keeps printer services disabled; complete-image review and
-the new loader's physical boot are separate from the successful kernel trials.
+The [first diagnostic A boot](docs/hardware/host-board-first-boot.md) now reaches
+SSH and authenticated host administration with printer services disabled. Reliable
+DRAM startup, physical B/recovery and printing remain unvalidated.
 
 ## Start here
 

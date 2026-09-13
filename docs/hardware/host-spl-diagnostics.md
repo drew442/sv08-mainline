@@ -105,7 +105,9 @@ Reinstall with mains and every USB power source disconnected.
 Start serial capture before reconnecting USB or switching on. This attempt is
 for diagnosis; HDMI can still remain blank, and no heater or motion request is
 part of it. The factory module and the accepted USB writer/ST-Link paths remain
-available. Physical diagnostic boot and the exact failure cause remain pending.
+available. The [first physical diagnostic A boot](host-board-first-boot.md) succeeded;
+repeatability and the exact earlier failure cause remain unresolved. That report
+also records a tiny-printf formatting defect in these diagnostic messages.
 
 ## Provenance and retirement
 
