@@ -37,3 +37,9 @@
 &gpu {
 	status = "disabled";
 };
+
+/* Preserve the captured vendor CPU critical shutdown threshold. */
+&cpu_critical {
+	temperature = <105000>;
+	hysteresis = <2000>;
+};

@@ -38,8 +38,13 @@ The [kernel.org release index](https://www.kernel.org/) listed 6.18.51 as its
 latest longterm release on 2026-09-13. The exact source archive is
 [linux-6.18.51.tar.xz](https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.51.tar.xz),
 SHA-256 `ba2f60f858bf4d1f929101faa356c93dc8b925b17aaa9f95eabd4627758df613`.
-Its checksum matches kernel.org's published SHA-256 list; signature verification
-is not claimed. The Git tag `v6.18.51` dereferences to the commit above.
+Its checksum matches kernel.org's published SHA-256 list. Independent verification
+of the detached signature over the decompressed archive passes for Greg
+Kroah-Hartman's fingerprint `647F28654894E3BD457199BE38DBBDC86092693E`, checked
+against [kernel.org's signing-key documentation](https://www.kernel.org/signature.html)
+with a key fetched through kernel.org WKD into an isolated keyring. This uses
+official HTTPS identity information, not a personal web-of-trust claim. The Git
+tag `v6.18.51` dereferences to the commit above.
 
 Linux is GPL-2.0-only with its documented syscall exception and per-file licensing;
 retain `COPYING` and `LICENSES/`. Preserve the Armbian source license, patch

@@ -68,7 +68,37 @@ Seven invocations pass against real temporary FAT files and U-Boot 2026.07
 sandbox: marker consumption/returned boot, second invocation, no marker, missing
 Image, deletion refusal using a nonempty directory, wrong-device refusal, and
 subsequent correct-device use of the preserved marker. Only the target interface
-and root UUID are substituted. Real `booti` receives deliberately invalid offline
-payloads and returns; Linux execution is not claimed. The script's original
+and root UUID are substituted. Real `booti` receives dummy offline payloads and
+returns with sandbox's "Booting is not supported" message; neither Linux execution
+nor ARM64 image-header validation is claimed. The script's original
 scanner variables remain unchanged. This is not the vendor 2021.10 binary or a
 power-interruption test. No unattended update policy uses this temporary marker.
+
+## Unarmed physical result
+
+The independently reviewed dispatcher was staged on test-sv08-01 after fresh
+root/boot UUID, capacity and original-file hash checks. Its 1,527-byte legacy
+script image has SHA-256
+`8074e3be0652a9f7ccaecabcd758383351ed210594d430e02f7d0a92f782f430`.
+It was generated from project commit `37385d4`, with a fixed build timestamp,
+the private root UUID and target `mmc 1:1`. Its installed readback matched.
+No trial marker or candidate boot files were staged in this step.
+
+With exclusive serial capture running, an SSH-requested clean reboot produced:
+
+```text
+Found U-Boot script /boot.scr.uimg
+SV08_TRIAL_RETURN_TO_ORIGINAL
+Found U-Boot script /boot.scr
+```
+
+SSH returned on `5.16.17-sun50iw9` with a new boot ID and no failed systemd units.
+The original Image, uInitrd, boot.scr, boot.cmd and BoardEnv hashes were unchanged.
+This verifies actual vendor-loader script precedence and unarmed fallback;
+marker deletion and candidate kernel execution remain untested on hardware.
+
+Private staging evidence and console capture are under
+`local/host-kernel-61851/unarmed-dispatcher/`. The retained console snapshot has
+SHA-256 `4a62517b5be64d869d0d1a3cbf692923230d510d08ab9d4fbea2785d4764fc0a`.
+The added dispatcher remains installed and unarmed, allowing ordinary original
+boots. Removing this newly added file restores the prior dispatcher arrangement.

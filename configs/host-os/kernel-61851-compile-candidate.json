@@ -12,7 +12,11 @@
     "sha256": "ba2f60f858bf4d1f929101faa356c93dc8b925b17aaa9f95eabd4627758df613",
     "bytes": 154658544,
     "checksum_source": "https://cdn.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc",
-    "pgp_signature_verified": false
+    "pgp_signature_verified": true,
+    "signature_url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.51.tar.sign",
+    "signer_fingerprint": "647F28654894E3BD457199BE38DBBDC86092693E",
+    "signer_identity_source": "https://www.kernel.org/signature.html",
+    "verification_scope": "Detached signature over decompressed archive; official HTTPS fingerprint and kernel.org WKD key, no personal web-of-trust claim"
   },
   "armbian": {
     "repository": "https://github.com/armbian/build",

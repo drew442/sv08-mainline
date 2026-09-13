@@ -33,6 +33,9 @@ def verify(path):
         checks[name] = limits
     assert get(symbol('gpu'), 'status') == 'disabled'
     checks['gpu_disabled'] = True
+    assert get(symbol('cpu_critical'), 'temperature', 'u') == '105000'
+    assert get(symbol('cpu_critical'), 'hysteresis', 'u') == '2000'
+    checks['cpu_critical_millicelsius'] = 105000
     for name in ('cpu0', 'cpu1', 'cpu2', 'cpu3'):
         props = subprocess.check_output(
             ['fdtget', '-p', str(path), symbol(name)], text=True

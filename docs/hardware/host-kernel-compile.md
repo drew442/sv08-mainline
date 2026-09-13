@@ -10,7 +10,10 @@ The [candidate manifest](../../configs/host-os/kernel-61851-compile-candidate.js
 pins Linux 6.18.51 and Armbian's source tree, all 774 downloaded files with SHA-256
 and Git blob IDs, and the 521 enabled patches in declared order. All downloaded
 Armbian bytes matched the complete pinned Git tree. Kernel archive SHA-256 matched
-the published kernel.org list; PGP signature verification is not claimed.
+the published kernel.org list. Independent verification of the detached signature
+over the decompressed archive passed for the developer fingerprint recorded in
+the manifest, using kernel.org's official HTTPS fingerprint and WKD key. No
+personal web-of-trust certification is claimed.
 
 Patch application took place in a fresh extracted kernel tree under ignored
 `build/host-kernel-61851-v1/linux-6.18.51/`. It has its own empty Git repository
@@ -36,8 +39,8 @@ patch authorship and DTS SPDX notices with the retained sources.
 
 Start with the pinned `linux-sunxi64-current.config` and run `olddefconfig`.
 For the diagnostic candidate, disable debug information/BTF, set
-`LOCALVERSION=-sv08-candidate1`, and enable built-in device mapper, DM verity and
-the sun8i Ethernet glue. The seed omitted DM verity; it is required by the tested
+`LOCALVERSION=-sv08-candidate1`, and enable DM verity with device mapper as
+modules and built-in sun8i Ethernet glue. The seed omitted DM verity; it is required by the tested
 signed-update format. Built-in Ethernet avoids making initial SSH depend on an
 initramfs module list. Keep the rest of the seed's effective configuration.
 
@@ -48,7 +51,7 @@ scripts/config --file ../output/.config \
   --disable DEBUG_INFO --disable DEBUG_INFO_DWARF5 --enable DEBUG_INFO_NONE \
   --disable DEBUG_INFO_BTF --disable DEBUG_INFO_BTF_MODULES \
   --set-str LOCALVERSION '-sv08-candidate1' \
-  --enable BLK_DEV_DM --enable DM_VERITY --enable DWMAC_SUN8I
+  --module BLK_DEV_DM --module DM_VERITY --enable DWMAC_SUN8I
 make O=../output ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
 KBUILD_BUILD_TIMESTAMP='2026-09-13 00:00:00 UTC' \
 KBUILD_BUILD_USER=sv08 KBUILD_BUILD_HOST=builder KBUILD_BUILD_VERSION=1 \
@@ -66,11 +69,13 @@ alone does not prove reproducibility or a working hardware driver.
 ## Diagnostic board configuration
 
 The [diagnostic DTS](../../configs/host-os/test-sv08-01-diagnostic.dts) includes
-the pinned stock DTS and makes twelve effective property changes: a distinct
-model string, six regulator bound values, four removed CPU OPP references, and
-GPU disabled. An independent full-DTB comparison resolves phandles and confirms
-no other semantic property changes. HDMI, UART, Ethernet, eMMC and optional-node
-states remain intact.
+the pinned stock DTS and changes the model string, six regulator bound values,
+four CPU OPP references, GPU status and the CPU critical temperature. An
+independent full-DTB comparison of the initial twelve-property variant resolved
+phandles and confirmed no other semantic changes. Further thermal review found
+the inherited critical trip increased from the vendor's 105°C to 110°C; the
+diagnostic variant now preserves 105°C with 2°C hysteresis. HDMI, UART, Ethernet,
+eMMC and optional-node states remain intact.
 
 Captured vendor limits are DCDC1 0.81–0.99 V, DCDC2 0.81–1.10 V and DCDC3
 1.35–1.50 V. They are configuration evidence, not measured electrical limits.
@@ -104,7 +109,8 @@ python3 tests/host_diagnostic_dtb.py PATH/TO/test-sv08-01-diagnostic.dtb
 ```
 
 The check verifies regulator bounds, absent CPU OPP references, disabled GPU,
-enabled display/storage/network/console, eMMC width/frequency/no-1.8-V switching,
+enabled display/storage/network/console, preserved CPU critical shutdown threshold,
+eMMC width/frequency/no-1.8-V switching,
 and disabled optional nodes. A mutated GPU-enabled copy was rejected. These are
 binary-property acceptance checks, not electrical or device-tree-schema tests.
 
