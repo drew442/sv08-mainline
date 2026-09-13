@@ -1,0 +1,33 @@
+--- a/include/rtw_rf.h
++++ b/include/rtw_rf.h
+@@ -173,7 +173,7 @@
+ 	_list list;
+ 	char country[2];
+ 	u8 domain;
+-	char regd_name[0];
++	char regd_name[];
+ };
+ 
+ void dump_regd_exc_list(void *sel, struct rf_ctl_t *rfctl);
+--- a/include/hal_data.h
++++ b/include/hal_data.h
+@@ -336,7 +336,7 @@
+ 		[MAX_TX_COUNT];
+ #endif
+ 
+-	char regd_name[0];
++	char regd_name[];
+ };
+ #endif /* CONFIG_TXPWR_LIMIT */
+ 
+--- a/hal/rtl8188f/sdio/rtl8189fs_xmit.c
++++ b/hal/rtl8188f/sdio/rtl8189fs_xmit.c
+@@ -598,7 +598,7 @@
+ 	padapter = (PADAPTER)context;
+ 	pxmitpriv = &padapter->xmitpriv;
+ 
+-	rtw_sprintf(thread_name, 20, "%s-"ADPT_FMT, thread_name, ADPT_ARG(padapter));
++	rtw_sprintf(thread_name, sizeof(thread_name), "RTWHALXT-"ADPT_FMT, ADPT_ARG(padapter));
+ 	thread_enter(thread_name);
+ 
+ 	RTW_INFO("start "FUNC_ADPT_FMT"\n", FUNC_ADPT_ARG(padapter));

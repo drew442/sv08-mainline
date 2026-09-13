@@ -1,16 +1,16 @@
 # Temporary one-shot kernel trial; retire after the A/B loader is validated.
 # Original boot.scr, boot files and persistent U-Boot environment stay intact.
 if test "${devtype} ${devnum}:${distro_bootpart}" = "@TARGET@"; then
-    if test -e @TARGET@ /sv08-trial-61851-c1/armed; then
-        if fatrm @TARGET@ /sv08-trial-61851-c1/armed; then
-            if test -e @TARGET@ /sv08-trial-61851-c1/armed; then
+    if test -e @TARGET@ /@TRIAL_DIR@/armed; then
+        if fatrm @TARGET@ /@TRIAL_DIR@/armed; then
+            if test -e @TARGET@ /@TRIAL_DIR@/armed; then
                 echo SV08_TRIAL_REFUSED_MARKER_REMAINS;
             else
                 echo SV08_TRIAL_MARKER_CONSUMED;
-                if load @TARGET@ ${kernel_addr_r} /sv08-trial-61851-c1/Image; then
-                    if load @TARGET@ ${fdt_addr_r} /sv08-trial-61851-c1/board.dtb; then
-                        if load @TARGET@ ${ramdisk_addr_r} /sv08-trial-61851-c1/uInitrd; then
-                            setenv bootargs "root=UUID=@ROOT_UUID@ rootwait rootfstype=ext4 console=tty0 console=ttyS0,115200 consoleblank=0 loglevel=7 module_blacklist=8189fs systemd.mask=klipper.service systemd.mask=moonraker.service systemd.mask=KlipperScreen.service";
+                if load @TARGET@ ${kernel_addr_r} /@TRIAL_DIR@/Image; then
+                    if load @TARGET@ ${fdt_addr_r} /@TRIAL_DIR@/board.dtb; then
+                        if load @TARGET@ ${ramdisk_addr_r} /@TRIAL_DIR@/uInitrd; then
+                            setenv bootargs "root=UUID=@ROOT_UUID@ rootwait rootfstype=ext4 console=tty0 console=ttyS0,115200 consoleblank=0 loglevel=7 @RADIO_BOOTARG@ systemd.mask=klipper.service systemd.mask=moonraker.service systemd.mask=KlipperScreen.service";
                             echo SV08_TRIAL_HANDOFF;
                             booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r};
                         fi;

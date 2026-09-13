@@ -2,6 +2,7 @@
 """Exercise the one-shot dispatcher in U-Boot sandbox on fresh FAT files only."""
 import argparse
 import json
+import re
 from pathlib import Path
 import subprocess
 
@@ -13,6 +14,7 @@ def main():
     parser.add_argument('--uboot', type=Path, required=True)
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--radio', action='store_true', help='Test the reviewed c2 radio variant')
     args = parser.parse_args()
     work, uboot = args.work.resolve(), args.uboot.resolve()
     if work.exists() or not work.is_relative_to(REPO / 'build'):
@@ -27,8 +29,12 @@ def main():
                               capture_output=True, text=True, timeout=45).stdout
 
     template = (REPO / 'configs/host-os/diagnostic-boot.cmd.in').read_text()
+    trial_dir = 'sv08-trial-61851-c2' if args.radio else 'sv08-trial-61851-c1'
     source = template.replace('@TARGET@', 'host 0:0').replace(
-        '@ROOT_UUID@', '00000000-0000-4000-8000-000000000001')
+        '@ROOT_UUID@', '00000000-0000-4000-8000-000000000001').replace(
+        '@TRIAL_DIR@', trial_dir).replace('@RADIO_BOOTARG@',
+        '' if args.radio else 'module_blacklist=8189fs')
+    assert not re.search(r'@[A-Z_]+@', source)
     (work / 'trial.cmd').write_text(source)
     run(['mkimage', '-A', 'arm', '-T', 'script', '-C', 'none', '-n',
          'offline diagnostic test', '-d', 'trial.cmd', 'trial.scr'])
@@ -39,16 +45,16 @@ def main():
         with disk.open('xb') as out:
             out.truncate(16 * 1024 * 1024)
         run(['mkfs.vfat', '-F', '16', disk])
-        run(['mmd', '-i', disk, '::sv08-trial-61851-c1'])
+        run(['mmd', '-i', disk, '::' + trial_dir])
         run(['mcopy', '-i', disk, 'trial.scr', '::trial.scr'])
         if marker == 'file':
-            run(['mcopy', '-i', disk, 'payload', '::sv08-trial-61851-c1/armed'])
+            run(['mcopy', '-i', disk, 'payload', '::' + trial_dir + '/armed'])
         elif marker == 'directory':
-            run(['mmd', '-i', disk, '::sv08-trial-61851-c1/armed'])
-            run(['mcopy', '-i', disk, 'payload', '::sv08-trial-61851-c1/armed/keep'])
+            run(['mmd', '-i', disk, '::' + trial_dir + '/armed'])
+            run(['mcopy', '-i', disk, 'payload', '::' + trial_dir + '/armed/keep'])
         if payload:
             for target in ('Image', 'board.dtb', 'uInitrd'):
-                run(['mcopy', '-i', disk, 'payload', '::sv08-trial-61851-c1/' + target])
+                run(['mcopy', '-i', disk, 'payload', '::' + trial_dir + '/' + target])
         return disk
 
     def boot(disk, name, devnum='0'):

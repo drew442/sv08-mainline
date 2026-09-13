@@ -32,8 +32,9 @@ driver reports, not instrument measurements. The private
 
 The [template](../../configs/host-os/diagnostic-boot.cmd.in) is rendered with the
 freshly identified root UUID and target **`mmc 1:1`**, then wrapped with
-`mkimage -A arm -T script -C none`. Its fixed trial directory is
-`/sv08-trial-61851-c1/`, containing `Image`, `board.dtb`, `uInitrd` and, only when
+`mkimage -A arm -T script -C none`. Render `@TRIAL_DIR@` as
+`sv08-trial-61851-c1` and `@RADIO_BOOTARG@` as `module_blacklist=8189fs` for
+the first wired trial. Its directory contains `Image`, `board.dtb`, `uInitrd` and, only when
 separately armed, `armed`. Never reuse the marker for another artifact set.
 
 1. Hash and retain the original boot files, confirm the target and absence of
@@ -155,3 +156,22 @@ Private runtime, live DT and fallback receipts are under
 Candidate files and the updated dispatcher remain installed **unarmed**; ordinary
 boots use the original kernel. Removing the added dispatcher restores the prior
 dispatcher arrangement.
+
+## Radio follow-up preparation
+
+The separately reviewed [radio patch](../../patches/rtl8189fs/README.md) addresses
+the three identified startup/strict-array defects. The follow-up uses a new
+`@TRIAL_DIR@` of `sv08-trial-61851-c2` and an empty `@RADIO_BOOTARG@`; all kernel,
+DT and initramfs bytes remain the same. Both template variants pass seven sandbox
+cases. The patched candidate-only module replaces its prior file after retaining
+that file privately; vendor modules are untouched. The c1 marker is not reused.
+
+Debian package `wireless-regdb` version `2026.05.30-1~deb13u1`, installed
+`/usr/share/doc/wireless-regdb/README.Debian` (2026-02-13, read 2026-09-13),
+prescribes `update-alternatives --set regulatory.db /lib/firmware/regulatory.db-upstream`
+for custom upstream kernels. The follow-up selects that existing alternative.
+The database payload is identical; its signature changes to the upstream-trusted
+one. Signature verification stays enabled. The previous shared selection was
+automatic/Debian; restore with `update-alternatives --auto regulatory.db`.
+This is a shared firmware-link change, not a slot-isolated setting. Production
+packaging must choose the appropriate signature for its selected kernel.
