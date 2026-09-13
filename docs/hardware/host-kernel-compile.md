@@ -135,10 +135,13 @@ incremental build, not a demonstrated byte-identical clean rebuild.
 Radio compilation emitted 568 warnings, including an overlapping `snprintf` on
 the normal SDIO transmit-thread startup path and two legacy zero-length trailing
 arrays under `-fstrict-flex-arrays=3`. Compile success does not establish runtime
-safety. The first wired trial blacklists `8189fs`; narrow source fixes and radio
-testing remain required. The kernel itself emitted 19 compiler warnings.
+safety. The first wired trial blacklists `8189fs`. A separately
+[reviewed patch](../../patches/rtl8189fs/README.md) subsequently removed those
+15 targeted warnings; its physical follow-up initialized the radio and completed
+a passive scan. Association and sustained operation remain untested. The kernel
+itself emitted 19 compiler warnings.
 
 The [physical trial and return to the original kernel](host-kernel-trial.md)
 both passed. This uses the existing vendor bootloader and single-root Debian
 bring-up filesystem. New A/B bootloader/environment integration, required radio
-operation and full device/application validation remain separate milestones.
+association and full device/application validation remain separate milestones.

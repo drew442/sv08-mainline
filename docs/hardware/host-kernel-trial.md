@@ -175,3 +175,42 @@ one. Signature verification stays enabled. The previous shared selection was
 automatic/Debian; restore with `update-alternatives --auto regulatory.db`.
 This is a shared firmware-link change, not a slot-isolated setting. Production
 packaging must choose the appropriate signature for its selected kernel.
+
+## Radio and camera physical result
+
+The c2 dispatcher (1,528 bytes, SHA-256
+`756eba5be592466b870fec5f01970af9e7831df4600b9e35cfaa94ab43c29c7f`)
+consumed its new marker and booted the same 6.18.51 kernel. The installed module
+matched the patched, stripped hash recorded above. Both `wlan0` and the driver's
+additional `wlan1` interface appeared. Bringing `wlan0` up and running
+`iw dev wlan0 scan passive` completed successfully with **21 BSS observations**;
+the interface was brought down afterward. Wired SSH remained available.
+The previous regulatory-signature error was absent. Global country remained
+`00` and the driver's per-PHY domain `99`; no country was guessed or programmed.
+Association, authentication, throughput, regulatory behavior and sustained radio
+operation are not established by this scan.
+
+The MGS1 UVC device appeared as `/dev/video1` (the separate Cedrus codec was
+`/dev/video0`). `v4l2-ctl` negotiated MJPEG 640×480 at 15 fps. A bounded mmap
+capture delivered **60 consecutive frames**, all independently decoded as
+640×480. First-to-last timestamps span 3.996001 seconds: **14.7648 fps measured**.
+The private 2,896,552-byte capture has SHA-256
+`8b829863346bdccff5af27bf527ced284abf52fbf465ca01def579dde85590bd`.
+This validates short capture and decoding, not sustained streaming or image
+quality. No images, SSIDs or access-point addresses are published.
+
+The diagnostic tools were installed from the already pinned Debian snapshot:
+`iw` 6.9-1+b1 and `v4l-utils` 1.30.1-1 plus their six runtime dependencies.
+Exact package versions and install logs remain in private evidence. No printer
+services ran, and the captured post-test kernel log contains no warning trace,
+oops or panic. Remaining driver compiler warnings are not waived by this test.
+
+The shared regulatory selection was restored to automatic/Debian, then a clean
+reboot returned to the original 5.16 kernel with a new boot ID, no failed units,
+absent c2 marker and unchanged original boot-file hashes. The c2 files and
+dispatcher remain installed **unarmed**. Any subsequent radio trial must again
+select the reviewed upstream regulatory signature before arming.
+
+Private c2 evidence is under `local/host-kernel-61851/radio-trial/`; combined
+console SHA-256:
+`03b86aa02e2f63e7fc7c2d8ad800eddc392055a3ae56e396fd6b7dd6a037c115`.

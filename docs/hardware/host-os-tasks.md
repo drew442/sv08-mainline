@@ -47,7 +47,8 @@ enumeration were re-established on 2026-09-12; see the
   applies the kernel series and builds the kernel, modules and checked diagnostic
   device trees. The [physical one-shot trial](host-kernel-trial.md) reached SSH on
   6.18.51 and returned to the original kernel using the existing working loader.
-  Fix the isolated radio driver warnings and regulatory database packaging next.
+  The targeted radio fixes, upstream regulatory signature selection and passive
+  scan now pass; production packaging and association remain outstanding.
 - [x] Allocate redundant raw environment regions outside GPT/SPL/partitions; test
   real RAUC/libubootenv/sandbox writes, corruption fallback and recovery dispatch.
   See [environment evidence](host-environment-build.md).
@@ -184,9 +185,12 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Restore printer availability and collect radio SDIO identity/driver,
   camera descriptor and V4L2 formats, boot-file and display enumeration evidence;
   [2026-09-12 results](test-sv08-01-online-20260912.md) preserve operation limits.
-- [ ] Test negotiated MJPEG 640×480/15 fps capture; USB descriptors and kernel
-  format enumeration do not validate capture or streaming. Validate Wi-Fi
-  operation on the selected new kernel without disrupting the recovery connection.
+- [x] Test negotiated MJPEG 640×480/15 fps capture on the new kernel: 60 frames
+  decoded successfully, 14.7648 fps measured. [Physical evidence](host-kernel-trial.md)
+  also records successful radio initialization and a passive scan over wired SSH.
+- [ ] Validate Wi-Fi association/authentication and sustained operation on the
+  selected new kernel without disrupting the recovery connection. Validate
+  sustained camera streaming and UI presentation; short capture is insufficient.
 - [x] Capture the first new kernel trial and return to the original kernel using
   the vendor loader; [physical evidence](host-kernel-trial.md) passed. A new
   U-Boot/A/B loader still requires its own physical trial and capture.
