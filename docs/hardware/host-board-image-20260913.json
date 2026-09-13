@@ -4,6 +4,23 @@
   "hardware_profile": "test-sv08-01",
   "status": "private-diagnostic-image-independently-byte-reviewed",
   "source_commit": "082ee08f26447fbe30b3a7847c4893cc4669d921",
+  "spare_emmc_write": {
+    "recorded_on": "2026-09-13",
+    "reader_usb_id": "05e3:0747",
+    "capacity_bytes": 31272730624,
+    "identification": "Owner-identified spare; capacity and both previous filesystem UUIDs matched before writing",
+    "bytes_written": 7818182656,
+    "bytes_read_back": 7818182656,
+    "readback_sha256": "8777fad2790757ff333f9c6059f75dc14f6bcbc04b56a1266a5c00e6c4e86b94",
+    "source_hash_rechecked_before_write": true,
+    "fsync_completed": true,
+    "direct_io_readback": true,
+    "exact_gpt_readback_verified": true,
+    "kernel_partition_records_verified": 6,
+    "all_partitions_unmounted": true,
+    "writer_powered_off_after_verification": true,
+    "physical_boot_validated": false
+  },
   "image": {
     "filename": "test-sv08-01-ab-diagnostic-20260913.img",
     "bytes": 7818182656,

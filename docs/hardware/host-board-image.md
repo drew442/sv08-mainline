@@ -128,6 +128,19 @@ filesystem measurements, not full-workload/update-space acceptance. All 35 focus
 recovery, boot-identity and composer tests passed. The new SPL, complete host and
 recovery still await their first physical execution.
 
+On 2026-09-13 the owner moved the installed spare to a USB writer. Its measured
+31,272,730,624-byte capacity and both old filesystem UUIDs matched the prior
+printer inspection. The reader identified as USB `05e3:0747`; private identity
+details and logs remain local. The target was unmounted and separate from the
+build host's system disk.
+
+The raw source hash was rechecked, then exactly 7,818,182,656 bytes were written
+through an exclusively opened target, flushed, and completely read back using
+direct I/O. The SHA-256 matched the reviewed image above. GPT readback and all
+six kernel partition identities/sizes also matched. All partitions were unmounted
+and the USB writer was powered off for removal. This establishes a verified spare
+write, not a successful physical boot of the new loader or OS.
+
 ## Write this candidate and prepare its first boot
 
 Obtain `test-sv08-01-ab-diagnostic-20260913.img.xz` and its matching `.sha256`

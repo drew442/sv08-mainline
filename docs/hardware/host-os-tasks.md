@@ -208,11 +208,12 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Build the complete factory-sized diagnostic disk and independently verify
   its bytes, partitions, SPL/environments, recovery and access metadata;
   [recorded result](host-board-image-20260913.json). Physical boot is separate.
-- [ ] Write `test-sv08-01-ab-diagnostic-20260913.img.xz` using the
-  [current checksum and instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot): shut down and isolate
-  the printer, write/verify the spare eMMC through the USB writer, reinstall it,
-  and boot with console logging already running. Keep the factory module.
-  Do not write its raw environments onto the current single-root layout.
+- [x] Write the complete diagnostic image to the owner-identified spare through
+  the USB reader; full direct-I/O readback and GPT checks passed on 2026-09-13.
+  The [write record](host-board-image-20260913.json) distinguishes this from boot validation.
+- [ ] Reinstall the verified spare with mains and USB power disconnected, then
+  reconnect and boot with console logging already running. Keep the factory
+  module. Follow the [current first-boot instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot).
 - [ ] Preserve current spare-module data/image before writing a future reviewed
   whole-device candidate. The current single-root system needs image replacement,
   not an untested live repartition.

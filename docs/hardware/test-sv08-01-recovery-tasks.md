@@ -12,11 +12,11 @@ passed independent byte review. The owner accepted the available backups,
 factory-module rollback and USB-reader/ST-Link recovery paths; additional backup
 or restoration exercises below are not prerequisites for this trial.
 
-- [ ] Coordinate clean shutdown, then disconnect mains and all USB power before
-  removing the spare eMMC. The console connection may keep the host powered.
-- [ ] Write and verify `test-sv08-01-ab-diagnostic-20260913.img.xz` using its
-  [current checksum and platform instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot).
-  This replaces the spare's old bring-up image; keep the factory module.
+- [x] Owner moved the spare to the USB writer on 2026-09-13; old filesystem
+  identities and capacity matched. The preceding shutdown sequence was not observed.
+- [x] Write the reviewed complete image and verify all 7,818,182,656 bytes through
+  direct-I/O readback; [result](host-board-image-20260913.json) matches the source
+  SHA-256 and six-partition GPT. The writer was safely powered off afterward.
 - [ ] Reinstall the spare unpowered and arrange console logging before reconnecting
   USB/power. The new image uses `sv08`, with private pilot credentials; it has
   three A attempts before recovery and keeps printer services disabled.

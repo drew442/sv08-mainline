@@ -96,15 +96,14 @@ separate evidence; these five tests do not simulate raw environment corruption
 or successful physical recovery. A harmless U-Boot ELF section-link warning was
 retained in readelf output; no warning-free-build claim is made.
 
-## Remaining image composition
+## Complete image and remaining physical trial
 
-Integrate the [kernel packages](host-kernel-packages.md) into clean current host
-roots, port the independent recovery early-root selection from its QEMU `/dev/vda`
-fixture to the board partition identity, and assemble the complete six-partition
-factory-capacity image with relocated GPT, new SPL/FIT and both seeded environments.
-Validate layout, boot-file hashes, persistence and recovery references before
-producing the separate USB-writer plan. Keep printer services masked in the first
-host-only hardware trial. Cold boot, power loss, physical A/B and recovery remain
+The [complete diagnostic image](host-board-image.md) now integrates the kernel
+packages into a clean host root, selects the board recovery partition explicitly,
+and includes relocated GPT, this SPL/FIT and both complete seeded environments.
+Independent review verified its disk bytes, geometry, boot files, persistence
+references and independent recovery. Printer services remain masked for its
+first host-only trial. Cold boot, power loss, physical A/B and recovery remain
 hardware tasks. No new backup proof or PCB-photo prerequisite is introduced.
 
 Source evidence is the exact pinned U-Boot/TF-A files above and private
