@@ -134,7 +134,8 @@
     "loader_sha256": "f0cba95ba8434c5cf684d874ded4f5caa937ce952e575fe377c4da7e00661827",
     "manifest_patch_sha256": "8f979eab1434dc00e9d68ea12365affbfe08a5e0549c1651e3d5f341d2bfd4b7",
     "native_poll_test_cases": 9,
-    "physical_write": false,
+    "physical_write": true,
+    "physical_write_result": "loader-written-v3-readback-loader-pass-whole-image-baseline-mismatch-at-4MiB",
     "independent_delivery_review": "pass",
     "independent_delivery_review_record": "local/feature-workflow/spl-diagnostic/v3-delivery-review.md"
   }

@@ -130,5 +130,8 @@ from the pinned inputs; its loader is 786,105 bytes with SHA-256
 The native helper test again passes nine scripted cases and now checks the shared
 wait helper's `%08lx` formatting. An independent `gpt-5.6-sol` medium-effort
 delivery review passed the artifact, source, bounds, configuration, and sandbox
-checks (see the private review record); it has not been written to hardware. The
-installed diagnostic loader is unchanged and remains the tested A/boot source.
+checks (see the private review record). The loader-only write to the identified
+USB eMMC completed and direct readback verified the v3 loader hash. The strict
+whole-image comparison stopped at 4 MiB because the mutable U-Boot environment
+differs from the factory baseline; no claim of whole-image equality is made. The
+artifact remains diagnostic and is not a release image.
