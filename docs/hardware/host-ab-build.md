@@ -32,6 +32,10 @@ RAUC, SSH, GTK/Xorg/libinput, VTE, Realtek firmware, V4L2 tools, FFmpeg and ngin
 These are package candidates, not validated application/driver compatibility.
 NetworkManager is selected for the required Wi-Fi provisioning path; the final
 image must not also configure networkd to manage the same interfaces.
+The reviewed 20260901T000000Z ARM64 package index contains `wpasupplicant`
+version `2:2.10-24` and `locales` version `2.41-12+deb13u3`. They are now pinned
+in the host profile. Locale generation is explicitly seeded as `C.UTF-8` during
+integration so SSH/PAM does not depend on interactive package configuration.
 The first [Klipper package](host-apps-build.md) now passes offline installation
 and file-output checks. The [complete application payload build](host-stack-build.md) now includes
 Moonraker, Mainsail and KlipperScreen with their pinned dependencies. Service
