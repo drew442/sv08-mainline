@@ -160,9 +160,11 @@ New feature development is paused by the owner. Existing host hardware-test
 preparation continues. These physical tasks do not block independent authorized
 preparation; the full checklist is a release gate, not a first-boot prerequisite.
 
-- [ ] Connect the documented USB-C **USB to UART** socket to Beelink and capture
-  a normal boot; follow the [console setup](test-sv08-01-host-console.md).
-  Read-only SSH and the live UART0 console settings were verified on 2026-09-13.
+- [x] Connect the documented USB-C **USB to UART** socket to Beelink and verify
+  the console; [115200-baud marker capture](test-sv08-01-host-console.md) passed
+  after replacing the cable on 2026-09-13. SSH is also reachable.
+- [ ] Start console logging before a subsequent boot and capture SPL/U-Boot/kernel
+  output. The connection probes have finished; no persistent logger is running.
 - [ ] Optionally attach HDMI capture and a controllable USB HID emulator to
   Beelink for graphical tests, preserving the physical touchscreen input path.
 

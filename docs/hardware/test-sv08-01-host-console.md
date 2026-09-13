@@ -27,6 +27,31 @@ host UART circuit. Do not substitute an SV08 Max/Zero or CB1 connector pinout.
 
 ## Human connection tasks
 
+### Connection verified on 2026-09-13
+
+The initial cable produced no USB enumeration, even with printer power on.
+After the owner replaced it with a data cable, Beelink enumerated a QinHeng
+`1a86:7523` USB serial bridge (`bcdDevice=2.64`) using `ch341`, at `ttyUSB0`.
+It has no USB serial number, so the generic by-id name is not unique across
+multiple identical adapters. Private evidence records its physical by-path name.
+No process held the port; ModemManager reported it unsupported by its plugins.
+
+A bounded exclusive-open probe configured 115200 8N1 without flow control and
+sent one carriage return. Initial buffered bytes were garbled; the response was
+a readable `Password:` prompt. No password or login credentials were supplied.
+A second receive-only probe captured the exact ASCII marker
+`SV08-CONSOLE-CHECK-20260913`, written through the printer's authenticated SSH
+connection to `/dev/ttyS0`. This confirms the host-to-Beelink console path at the
+selected settings, rather than relying on a USB descriptor alone. Raw captures
+are in ignored `local/test-sv08-01/access-20260913/console-{probe,marker}.json`.
+
+SSH was reachable again, with Klipper, Moonraker and KlipperScreen inactive.
+No reboot or firmware/settings change was commanded. The probes are finished;
+there is no persistent logger running. SPL/U-Boot/early-kernel capture still
+requires starting a logger before a subsequent boot. Normal console open/close
+was exercised without an observed host restart; control-line wiring is not
+established by this check.
+
 1. With the printer shut down and power disconnected, locate the socket labelled
    **USB to UART** on the actual mainboard and compare it with the linked drawing.
    If the label/location differs or is unreadable, provide a clear photograph
