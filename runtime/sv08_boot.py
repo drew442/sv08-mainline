@@ -24,6 +24,14 @@ def slot_from_cmdline(cmdline):
     return slots[0]
 
 
+def bind_boot_identity(boot):
+    """Bind runtime jobs to this kernel boot, never to persistent machine-id."""
+    value = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
+    if str(uuid.UUID(value)) != value or not uuid.UUID(value).int:
+        raise ValueError('Invalid kernel boot identity')
+    return dict(boot, boot_id=value)
+
+
 def device_number(path):
     if not re.fullmatch(r'/dev/disk/by-partuuid/[0-9a-fA-F-]{36}', path):
         raise ValueError('Expected an explicit GPT PARTUUID device')
@@ -125,7 +133,7 @@ def main():
     initialize_identity(data)
     if Path('/etc/machine-id').read_text().strip() != (data / 'system/machine-id').read_text().strip():
         raise ValueError('Initramfs must prepare persistent identity before systemd starts')
-    boot = store.prepare_boot(slot, config['release'], config['state_schema'])
+    boot = bind_boot_identity(store.prepare_boot(slot, config['release'], config['state_schema']))
     generation = Path(boot['generation'])
     if not store.load()['slots'][slot]['parent_generation']:
         for seed in Path('/usr/lib/sv08/seed/config').glob('*'):

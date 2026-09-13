@@ -1,6 +1,6 @@
 # Host OS completion checklist
 
-Updated 2026-09-12. This is the completion gate for the new host, not a claim
+Updated 2026-09-13. This is the completion gate for the new host, not a claim
 that all project work is complete. Printer availability and read-only host
 enumeration were re-established on 2026-09-12; see the
 [online evidence](test-sv08-01-online-20260912.md).
@@ -53,6 +53,13 @@ enumeration were re-established on 2026-09-12; see the
   The [corrected board A/B loader](host-sv08-ab-boot.md) now builds with inspected
   SPL voltage settings, selected DT and compiled environment guard. Compose clean
   host/recovery roots and the complete disk before its physical trial.
+- [x] Derive the board recovery root without changing the authoritative QEMU
+  assembly, and test partition-only read-only selection with real partitioned
+  VM success/integrity-refusal cases; see [board recovery](host-recovery-board.md).
+- [x] Compose a clean host root with board packages, persistence hooks and
+  administration UI; correct the missing runtime boot ID required by jobs.
+  [Diagnostic composition](host-board-image.md) records first-boot scope and
+  private pilot provisioning, which does not complete production onboarding.
 - [x] Allocate redundant raw environment regions outside GPT/SPL/partitions; test
   real RAUC/libubootenv/sandbox writes, corruption fallback and recovery dispatch.
   See [environment evidence](host-environment-build.md).
@@ -198,6 +205,11 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Capture the first new kernel trial and return to the original kernel using
   the vendor loader; [physical evidence](host-kernel-trial.md) passed. A new
   U-Boot/A/B loader still requires its own physical trial and capture.
+- [ ] After the complete [board diagnostic image](host-board-image.md) has its
+  independent byte-review result and exact download/hash, shut down and isolate
+  the printer, write/verify the spare eMMC through the USB writer, reinstall it,
+  and boot with console logging already running. Keep the factory module.
+  Do not write its raw environments onto the current single-root layout.
 - [ ] Preserve current spare-module data/image before writing a future reviewed
   whole-device candidate. The current single-root system needs image replacement,
   not an untested live repartition.

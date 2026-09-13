@@ -1,0 +1,53 @@
+# Generated board selector; expectations come from the reviewed build profile.
+for module in ext4 loop squashfs; do
+    modprobe "$module" || fail "required early module $module"
+done
+expected=''
+root_count=0
+binding_count=0
+for arg in $(cat /proc/cmdline); do
+    case "$arg" in
+        sv08.envelope=*) binding_count=$((binding_count+1)); expected=${arg#sv08.envelope=};;
+        root=*) root_count=$((root_count+1)); [ "$arg" = 'root=PARTUUID=@PARTUUID@' ] || fail 'unexpected root argument';;
+    esac
+done
+[ "$root_count" = 1 ] || fail 'exactly one recovery root required'
+[ "$binding_count" = 1 ] || fail 'exactly one manifest binding required'
+[ "${#expected}" = 64 ] || fail 'missing manifest binding'
+case "$expected" in *[!0-9a-f]*) fail 'invalid manifest binding';; esac
+count=0
+recovery_device=''
+recovery_identity=''
+while [ -z "$recovery_device" ]; do
+    matches=$(blkid -c /dev/null -t 'PARTUUID=@PARTUUID@' -o device)
+    for candidate in $matches; do
+        canonical=$(readlink -f "$candidate") || fail 'unresolved recovery device'
+        [ -b "$canonical" ] || fail 'recovery target is not a block device'
+        case "$canonical" in /dev/*) ;; *) fail 'unexpected device path';; esac
+        identity=$(stat -c '%t:%T' "$canonical") || fail 'unreadable block identity'
+        major=$((0x${identity%:*}))
+        minor=$((0x${identity#*:}))
+        sysdevice=$(readlink -f "/sys/dev/block/$major:$minor") || fail 'missing block sysfs identity'
+        canonical=/dev/${sysdevice##*/}
+        [ -b "$canonical" ] || fail 'missing canonical block node'
+        [ "$(stat -c '%t:%T' "$canonical")" = "$identity" ] || fail 'canonical block identity mismatch'
+        if [ -n "$recovery_identity" ] && [ "$recovery_identity" != "$identity" ]; then
+            fail 'ambiguous recovery PARTUUID'
+        fi
+        recovery_device=$canonical
+        recovery_identity=$identity
+    done
+    [ -n "$recovery_device" ] && break
+    sleep 1
+    count=$((count+1))
+    [ "$count" -lt 30 ] || fail 'missing recovery block'
+done
+block_name=${recovery_device##*/}
+[ "$(cat /sys/class/block/"$block_name"/partition)" = '@INDEX@' ] || fail 'unexpected recovery partition index'
+[ "$(cat /sys/class/block/"$block_name"/size)" = '@SECTORS@' ] || fail 'unexpected recovery capacity'
+[ "$(blkid -c /dev/null -s PARTUUID -o value "$recovery_device")" = '@PARTUUID@' ] || fail 'changed recovery partition identity'
+[ "$(blkid -c /dev/null -s UUID -o value "$recovery_device")" = '@UUID@' ] || fail 'wrong recovery filesystem UUID'
+/bin/busybox blockdev --setro "$recovery_device" || fail 'cannot protect recovery partition'
+[ "$(/bin/busybox blockdev --getro "$recovery_device")" = 1 ] || fail 'recovery read-only readback failed'
+[ "$(cat /sys/class/block/"$block_name"/ro)" = 1 ] || fail 'recovery sysfs read-only readback failed'
+mount -t ext4 -o ro,noload "$recovery_device" /newroot || fail 'ext4 recovery mount'

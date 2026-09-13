@@ -5,11 +5,31 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_boot import slot_from_cmdline, verify_devices, initialize_identity, prepare_permissions
+from sv08_boot import slot_from_cmdline, verify_devices, initialize_identity, prepare_permissions, bind_boot_identity
 from sv08_state import Store
 
 
 class BootIdentityTests(unittest.TestCase):
+    def test_runtime_jobs_use_changing_kernel_boot_not_persistent_identity(self):
+        from sv08_admin_jobs import Jobs
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+            store.initialize()
+            original = store.prepare_boot('A', 'release-1')
+            first = 'b16f14c8-389c-4ef4-92c9-c123e1bd7975'
+            second = '3902033a-d823-4880-8b2f-14e180165c12'
+            with patch('sv08_boot.Path.read_text', return_value=first):
+                one = bind_boot_identity(original)
+            with patch('sv08_boot.Path.read_text', return_value=second):
+                two = bind_boot_identity(original)
+            self.assertEqual(Jobs(store.root / 'jobs', one['boot_id']).boot_id, first)
+            self.assertEqual(Jobs(store.root / 'jobs', two['boot_id']).boot_id, second)
+            self.assertNotIn('boot_id', original)
+            self.assertNotIn('boot_id', store.load()['slots']['A'])
+            for bad in ('', 'machine-id', '00000000-0000-0000-0000-000000000000'):
+                with patch('sv08_boot.Path.read_text', return_value=bad), self.assertRaises(ValueError):
+                    bind_boot_identity(original)
+
     def test_copied_application_files_receive_application_ownership(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Store(Path(temporary) / 'data', reserve_bytes=0)

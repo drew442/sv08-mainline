@@ -124,6 +124,15 @@ the SDIO radio's bound driver, confirms the retained camera offers MJPEG
 kernel diagnostics. This is evidence from the existing bring-up image; new-image
 boot, Wi-Fi operation, camera capture and physical UI tests remain open.
 
+The subsequent [physical kernel trials](hardware/host-kernel-trial.md) now verify
+wired SSH, a passive onboard-radio scan and decoded camera frames on Linux
+6.18.51, followed by return to the original kernel. The
+[complete A/B diagnostic composition](hardware/host-board-image.md) joins the
+corrected source-built loader, clean host and
+[board recovery](hardware/host-recovery-board.md). These are first-host-test
+inputs; association, sustained workloads, physical A/B/recovery boot and printing
+remain unvalidated. New product features remain paused while this work proceeds.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with

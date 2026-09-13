@@ -24,6 +24,11 @@ USB serial console, wired Linux 6.18.51 boot and return to the original kernel
 have passed on the printer. Full peripheral validation and the complete A/B host
 remain outstanding.
 
+The next physical trial uses a [complete board A/B diagnostic image](docs/hardware/host-board-image.md),
+with a [board-specific independent recovery path](docs/hardware/host-recovery-board.md).
+This preparation keeps printer services disabled; complete-image review and
+the new loader's physical boot are separate from the successful kernel trials.
+
 ## Start here
 
 - [Project definition](docs/project.md): scope, architecture, and success criteria.
