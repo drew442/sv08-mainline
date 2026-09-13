@@ -17,9 +17,12 @@ or restoration exercises below are not prerequisites for this trial.
 - [x] Write the reviewed complete image and verify all 7,818,182,656 bytes through
   direct-I/O readback; [result](host-board-image-20260913.json) matches the source
   SHA-256 and six-partition GPT. The writer was safely powered off afterward.
-- [ ] Reinstall the spare unpowered and arrange console logging before reconnecting
-  USB/power. The new image uses `sv08`, with private pilot credentials; it has
-  three A attempts before recovery and keeps printer services disabled.
+- [x] Owner reinstalled/powered the spare. The logger captured SPL followed by
+  `DRAM:` with no further progress; HDMI stayed blank. See the
+  [physical failure record](host-board-image.md#first-physical-boot-stopped-in-spl-dram-initialization).
+- [ ] Disconnect mains and all USB power before removing the spare. Return it
+  to the USB writer on Beelink for a separately reviewed diagnostic loader.
+  Leave the printer off; repeating this unchanged image is not a remedy.
 - [ ] Observe HDMI recovery and physical input behavior when that test is reached.
   Record results separately from the successful offline VM checks.
 

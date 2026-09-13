@@ -6,8 +6,8 @@ index remain unknown; the candidate manifest explicitly has `deployable=false`.
 
 The [2026-09-13 SV08 A/B composition candidate](host-sv08-ab-boot.md) supersedes
 this artifact for further development. It corrects this fixture's unsuitable
-SPL DRAM-rail default and inherited GPIO controls. Neither bootloader has been
-written to hardware; do not deploy the earlier CB1 binary.
+SPL DRAM-rail default and inherited GPIO controls. The later SV08 candidate has now started on hardware but stopped at `DRAM:`;
+do not deploy this earlier CB1 binary.
 
 [The pinned inputs](../../configs/host-os/cb1-boot-compile-candidate.json) combine
 upstream U-Boot v2026.07 (`ece349ade2973e220f524ce59e59711cc919263f`), the two

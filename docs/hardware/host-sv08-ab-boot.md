@@ -2,7 +2,8 @@
 
 2026-09-13. This source-built SPL/TF-A/U-Boot candidate now includes the existing
 RAUC A/B policy and corrected diagnostic board inputs. It passed offline build
-and independent artifact inspection. **It has not been written to the printer.**
+and independent artifact inspection. **It was written and started on the printer, but stopped at `DRAM:`.**
+See the [first physical result](host-board-image.md#first-physical-boot-stopped-in-spl-dram-initialization).
 The [physical Linux trials](host-kernel-trial.md) used the existing vendor loader.
 
 The [manifest](../../configs/host-os/sv08-boot-compile-candidate.json) retains the

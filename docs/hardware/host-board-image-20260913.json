@@ -104,5 +104,19 @@
     "Source inputs and authoritative parent receipts are retained privately.",
     "No byte-identical repeated full-image build is claimed.",
     "Three A attempts are seeded; B=0, no automatic health confirmation."
-  ]
+  ],
+  "physical_boot": {
+    "observed_at_utc": "2026-09-13T06:50:39Z",
+    "hardware_profile": "test-sv08-01",
+    "board_revision": null,
+    "owner_report": "Spare reinstalled, connected and powered on; HDMI blank",
+    "serial_bytes": 58,
+    "serial_sha256": "c1d066dcc33ae56d865daa8016c2b3e83f68fd71ac4f4437c01bfabac1fe4b9a",
+    "last_output": "U-Boot SPL 2026.07 (Sep 13 2026 - 00:00:00 +0000)\r\nDRAM:",
+    "result": "SPL started; no observed return from DRAM initialization",
+    "linux_boot_observed": false,
+    "ab_dispatch_observed": false,
+    "exact_failure_cause": "unknown",
+    "cold_power_isolation_independently_observed": false
+  }
 }

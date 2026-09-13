@@ -211,14 +211,15 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Write the complete diagnostic image to the owner-identified spare through
   the USB reader; full direct-I/O readback and GPT checks passed on 2026-09-13.
   The [write record](host-board-image-20260913.json) distinguishes this from boot validation.
-- [ ] Reinstall the verified spare with mains and USB power disconnected, then
-  reconnect and boot with console logging already running. Keep the factory
-  module. Follow the [current first-boot instructions](host-board-image.md#write-this-candidate-and-prepare-its-first-boot).
-- [ ] Preserve current spare-module data/image before writing a future reviewed
-  whole-device candidate. The current single-root system needs image replacement,
-  not an untested live repartition.
-  The owner accepts the existing backups and recovery path; another full backup
-  is optional and must not be imposed as a prerequisite for the first trial.
+- [x] Owner reinstalled and powered the spare with logging active. SPL started,
+  then stopped at `DRAM:`; HDMI stayed blank. Cold electrical isolation was not
+  independently observed. [Failure evidence](host-board-image.md#first-physical-boot-stopped-in-spl-dram-initialization).
+- [ ] Prepare and independently review a diagnostic SPL with progress markers
+  and bounded training waits; compare preserved vendor-loader DRAM evidence.
+  Keep electrical settings unchanged until evidence supports a correction.
+- [ ] Owner: disconnect mains and USB power, move the spare back to the USB
+  writer on Beelink, and leave the printer off for the next reviewed loader write.
+  No additional backup prerequisite; preserve the existing image and capture.
 - [ ] With a reviewed bootable candidate: test cold boots, storage/network/USB,
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.
 - [ ] Test the local recovery UI with HDMI touch only, keyboard only, and

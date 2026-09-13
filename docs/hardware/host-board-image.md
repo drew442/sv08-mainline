@@ -125,8 +125,8 @@ receipt were rechecked independently.
 Each root retains **636,981,248 bytes** free; complete recovery, including its
 independent raw kernel and DT, retains **165,109,760 bytes** free. These are initial
 filesystem measurements, not full-workload/update-space acceptance. All 35 focused
-recovery, boot-identity and composer tests passed. The new SPL, complete host and
-recovery still await their first physical execution.
+recovery, boot-identity and composer tests passed. The new SPL was subsequently executed but stopped during DRAM initialization;
+the complete host and recovery have not executed on the printer (see below).
 
 On 2026-09-13 the owner moved the installed spare to a USB writer. Its measured
 31,272,730,624-byte capacity and both old filesystem UUIDs matched the prior
@@ -200,3 +200,36 @@ actual boot/slot/devices, persistent state, service failures, network and therma
 readings before explicitly refreshing an attempt budget or testing B. Automatic
 health confirmation is absent. Graphical recovery operation and the new loader
 must be recorded as physical results after they run, not inferred from this file.
+
+## First physical boot: stopped in SPL DRAM initialization
+
+At 06:50:39 UTC on 2026-09-13, the already-running receive-only serial logger
+captured 58 bytes from test-sv08-01 after the owner reinstalled and powered the
+spare. The complete output was the U-Boot SPL 2026.07 banner followed by `DRAM:`.
+No further output appeared during subsequent checks. The owner reported blank
+HDMI. All-power isolation preceding this attempt was not independently observed;
+PCB revision remains unknown.
+
+The pinned U-Boot source (`board/sunxi/board.c`, lines 659–662, commit
+`ece349ade2973e220f524ce59e59711cc919263f`, read 2026-09-13) prints this marker
+immediately before `sunxi_dram_init()` and the size after its return. This locates
+the observed failure before U-Boot proper, A/B dispatch, recovery and Linux;
+it does not establish a display-driver problem or identify an exact failing
+register. The SHA-256 of the private raw capture is recorded in the linked JSON.
+
+Source inspection found two unbounded read-calibration polling loops in
+`arch/arm/mach-sunxi/dram_sun50i_h616.c`, inside
+`mctl_phy_read_calibration()`. Other waits use the one-second timeout helper in
+`dram_helpers.c`. These are diagnostic leads, not proof that either loop caused
+this stop. The inherited CB1 timing/drive/ODT and address-map settings remain
+unvalidated on this board. Do not guess new voltages or treat the earlier Linux
+clock report as proof of correct DRAM training.
+
+Next preparation is a separately built/reviewed SPL with progress markers and
+bounded training diagnostics, retaining the existing electrical settings, plus
+comparison with the preserved working vendor loader. A UART adapter cannot
+rewrite a processor stopped here: no U-Boot command prompt or OS is available,
+and this CH340 connection is not a FEL USB connection. Return the spare to the
+USB writer with mains and USB power disconnected before removal. Preserve the
+current image/evidence and review any replacement loader and its write range;
+do not repeat the same full image hoping to repair its verified contents.
