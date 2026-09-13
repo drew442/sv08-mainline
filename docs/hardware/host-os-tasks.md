@@ -43,6 +43,9 @@ enumeration were re-established on 2026-09-12; see the
 - [ ] Finish the source-reproducible board boot chain: resolve complete U-Boot,
   TF-A, kernel and driver source/patch pins and licenses; compare board assumptions
   with captured evidence. Do not deploy the unverified CB1-equivalence claim.
+  The [exact 6.18.51 compilation experiment](host-kernel-compile.md) now pins and
+  applies the kernel series and compiles checked diagnostic device trees; the
+  [one-shot trial](host-kernel-trial.md) uses the existing working bootloader.
 - [x] Allocate redundant raw environment regions outside GPT/SPL/partitions; test
   real RAUC/libubootenv/sandbox writes, corruption fallback and recovery dispatch.
   See [environment evidence](host-environment-build.md).

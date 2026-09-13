@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Bounded host-boot experiment, not a production stock-board description.
+ * Include the pinned Armbian stock DTS from the reviewed patched kernel tree.
+ * See docs/decisions/0015-board-kernel-compile-baseline.md.
+ * Captured vendor regulator limits are configuration evidence, not measured
+ * electrical limits. Preserve them pending physical operating-range tests.
+ */
+#include "sun50i-h616-sovol-sv08.dts"
+
+/ {
+	model = "Sovol SV08 test-sv08-01 diagnostic candidate";
+};
+
+&reg_dcdc1 {
+	regulator-min-microvolt = <810000>;
+	regulator-max-microvolt = <990000>;
+};
+
+&reg_dcdc2 {
+	regulator-min-microvolt = <810000>;
+	regulator-max-microvolt = <1100000>;
+};
+
+&reg_dcdc3 {
+	regulator-min-microvolt = <1350000>;
+	regulator-max-microvolt = <1500000>;
+};
+
+/* Keep the bootloader's CPU setup; do not select unvalidated speed-bin OPPs. */
+&cpu0 { /delete-property/ operating-points-v2; };
+&cpu1 { /delete-property/ operating-points-v2; };
+&cpu2 { /delete-property/ operating-points-v2; };
+&cpu3 { /delete-property/ operating-points-v2; };
+
+/* The inherited GPU supply points to the DRAM-labelled rail. HDMI is separate. */
+&gpu {
+	status = "disabled";
+};
