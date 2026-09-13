@@ -214,12 +214,15 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Owner reinstalled and powered the spare with logging active. SPL started,
   then stopped at `DRAM:`; HDMI stayed blank. Cold electrical isolation was not
   independently observed. [Failure evidence](host-board-image.md#first-physical-boot-stopped-in-spl-dram-initialization).
-- [ ] Prepare and independently review a diagnostic SPL with progress markers
-  and bounded training waits; compare preserved vendor-loader DRAM evidence.
-  Keep electrical settings unchanged until evidence supports a correction.
-- [ ] Owner: disconnect mains and USB power, move the spare back to the USB
-  writer on Beelink, and leave the printer off for the next reviewed loader write.
-  No additional backup prerequisite; preserve the existing image and capture.
+- [x] Build and independently review an [instrumented SPL](host-spl-diagnostics.md)
+  with progress markers and bounded read-calibration waits, retaining electrical
+  settings. Nine native poll cases and five A/B guard cases pass.
+- [x] Owner returned the spare to the writer. The reviewed loader-only write,
+  full-image comparison, GPT inspection and safe ejection passed. The
+  [new media digest](host-spl-diagnostics-20260913.json) differs from the original download.
+- [ ] Owner: reinstall the spare with mains/all USB power disconnected, then
+  reconnect console/Ethernet and power on with logging ready. Capture diagnostic
+  output; the exact DRAM failure and successful host/recovery boot remain unresolved.
 - [ ] With a reviewed bootable candidate: test cold boots, storage/network/USB,
   required onboard Wi-Fi and HDMI/touch, camera, thermal/cpufreq and watchdog.
 - [ ] Test the local recovery UI with HDMI touch only, keyboard only, and

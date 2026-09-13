@@ -233,3 +233,7 @@ and this CH340 connection is not a FEL USB connection. Return the spare to the
 USB writer with mains and USB power disconnected before removal. Preserve the
 current image/evidence and review any replacement loader and its write range;
 do not repeat the same full image hoping to repair its verified contents.
+
+The next [instrumented SPL attempt](host-spl-diagnostics.md) retains electrical
+settings and uses a separately reviewed loader-only write. Its resulting media
+identity is distinct from the complete download above.

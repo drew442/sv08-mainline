@@ -1,0 +1,167 @@
+From: SV08 Mainline diagnostic integration
+Subject: [PATCH] sunxi: add temporary H616 DRAM progress and bounded calibration diagnostics
+
+Diagnostic-only patch against U-Boot ece349ade2973e220f524ce59e59711cc919263f.
+Do not infer electrical compatibility or use as a production training fix.
+
+--- a/arch/arm/mach-sunxi/dram_sun50i_h616.c
++++ b/arch/arm/mach-sunxi/dram_sun50i_h616.c
+@@ -13,7 +13,9 @@
+  *
+  */
+ #include <init.h>
++#include <hang.h>
+ #include <log.h>
++#include <time.h>
+ #include <asm/io.h>
+ #include <asm/arch/clock.h>
+ #include <asm/arch/dram.h>
+@@ -378,6 +380,27 @@
+ 	return result;
+ }
+ 
++/* Diagnostic only: retain error/retry semantics, but stop on a stuck PHY. */
++static bool sv08_read_calibration_wait(u32 mask)
++{
++	unsigned long start = timer_get_us();
++	u32 status;
++
++	printf("SV08-DRAM: read-cal wait mask=%08x\n", mask);
++	for (;;) {
++		status = readl(SUNXI_DRAM_PHY0_BASE + 0x184);
++		if ((status & mask) == mask)
++			return true;
++		if (status & 0x20)
++			return false;
++		if (timer_get_us() - start >= 1000000UL) {
++			printf("SV08-DRAM: read-cal timeout reg=%08lx status=%08x mask=%08x\n",
++			      (unsigned long)(SUNXI_DRAM_PHY0_BASE + 0x184), status, mask);
++			hang();
++		}
++	}
++}
++
+ static bool mctl_phy_read_calibration(const struct dram_config *config)
+ {
+ 	bool result = true;
+@@ -392,12 +415,8 @@
+ 	else
+ 		val = 3;
+ 
+-	while ((readl(SUNXI_DRAM_PHY0_BASE + 0x184) & val) != val) {
+-		if (readl(SUNXI_DRAM_PHY0_BASE + 0x184) & 0x20) {
+-			result = false;
+-			break;
+-		}
+-	}
++	if (!sv08_read_calibration_wait(val))
++		result = false;
+ 
+ 	clrbits_le32(SUNXI_DRAM_PHY0_BASE + 8, 1);
+ 
+@@ -408,12 +427,8 @@
+ 
+ 		setbits_le32(SUNXI_DRAM_PHY0_BASE + 8, 1);
+ 
+-		while ((readl(SUNXI_DRAM_PHY0_BASE + 0x184) & val) != val) {
+-			if (readl(SUNXI_DRAM_PHY0_BASE + 0x184) & 0x20) {
+-				result = false;
+-				break;
+-			}
+-		}
++		if (!sv08_read_calibration_wait(val))
++			result = false;
+ 
+ 		clrbits_le32(SUNXI_DRAM_PHY0_BASE + 8, 1);
+ 	}
+@@ -1151,6 +1166,7 @@
+ 	writel(1, &mctl_ctl->swctl);
+ 
+ 	if (para->tpr10 & TPR10_WRITE_LEVELING) {
++		puts("SV08-DRAM: write_leveling\n");
+ 		for (i = 0; i < 5; i++)
+ 			if (mctl_phy_write_leveling(para, config))
+ 				break;
+@@ -1161,6 +1177,7 @@
+ 	}
+ 
+ 	if (para->tpr10 & TPR10_READ_CALIBRATION) {
++		puts("SV08-DRAM: read_calibration\n");
+ 		for (i = 0; i < 5; i++)
+ 			if (mctl_phy_read_calibration(config))
+ 				break;
+@@ -1171,6 +1188,7 @@
+ 	}
+ 
+ 	if (para->tpr10 & TPR10_READ_TRAINING) {
++		puts("SV08-DRAM: read_training\n");
+ 		for (i = 0; i < 5; i++)
+ 			if (mctl_phy_read_training(para, config))
+ 				break;
+@@ -1181,6 +1199,7 @@
+ 	}
+ 
+ 	if (para->tpr10 & TPR10_WRITE_TRAINING) {
++		puts("SV08-DRAM: write_training\n");
+ 		for (i = 0; i < 5; i++)
+ 			if (mctl_phy_write_training(config))
+ 				break;
+@@ -1314,9 +1333,17 @@
+ bool mctl_core_init(const struct dram_para *para,
+ 		    const struct dram_config *config)
+ {
++	bool result;
++
++	printf("SV08-DRAM: core clk=%u ranks=%u width=%u cols=%u rows=%u\n",
++	       para->clk, config->ranks, config->bus_full_width ? 32 : 16,
++	       config->cols, config->rows);
++	puts("SV08-DRAM: sys-init\n");
+ 	mctl_sys_init(para->clk);
+-
+-	return mctl_ctrl_init(para, config);
++	puts("SV08-DRAM: ctrl-init\n");
++	result = mctl_ctrl_init(para, config);
++	printf("SV08-DRAM: core result=%u\n", result);
++	return result;
+ }
+ 
+ static const struct dram_para para = {
+@@ -1346,14 +1373,17 @@
+ 	struct dram_config config;
+ 	unsigned long size;
+ 
++	puts("\nSV08-DRAM: diagnostic v1; rank-width detection\n");
+ 	setbits_le32(prcm + CCU_PRCM_RES_CAL_CTRL, BIT(8));
+ 	clrbits_le32(prcm + CCU_PRCM_OHMS240, 0x3f);
+ 
+ 	mctl_auto_detect_rank_width(&para, &config);
++	puts("SV08-DRAM: size detection\n");
+ 	mctl_auto_detect_dram_size(&para, &config);
+ 
+ 	mctl_core_init(&para, &config);
+ 
++	puts("SV08-DRAM: size validation\n");
+ 	size = mctl_calc_size(&config);
+ 
+ 	mctl_set_master_priority();
+--- a/arch/arm/mach-sunxi/dram_helpers.c
++++ b/arch/arm/mach-sunxi/dram_helpers.c
+@@ -17,11 +17,15 @@
+  */
+ void mctl_await_completion(u32 *reg, u32 mask, u32 val)
+ {
+-	unsigned long tmo = timer_get_us() + 1000000;
++	unsigned long tmo;
++	u32 status;
+ 
+-	while ((readl(reg) & mask) != val) {
++	printf("SV08-DRAM: wait reg=%p mask=%08x want=%08x\n", reg, mask, val);
++	tmo = timer_get_us() + 1000000;
++	while (((status = readl(reg)) & mask) != val) {
+ 		if (timer_get_us() > tmo)
+-			panic("Timeout initialising DRAM\n");
++			panic("SV08-DRAM: timeout reg=%p status=%08x mask=%08x want=%08x\n",
++			      reg, status, mask, val);
+ 	}
+ }
+ 

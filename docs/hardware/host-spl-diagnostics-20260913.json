@@ -1,0 +1,75 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-13",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "status": "diagnostic-loader-written-verified-ejected-awaiting-physical-boot",
+  "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
+  "manifest_sha256": "758a8212db57510c6361f14c42911116238a80e2da5a937de61d0781725aaca9",
+  "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "artifacts": {
+    "u-boot-sunxi-with-spl.fit.fit": {
+      "bytes": 745145,
+      "sha256": "575609afebef87e2004acdc17f6f5e8fa68918cace075fb841b4285b31db4586"
+    },
+    "bl31.bin": {
+      "bytes": 53361,
+      "sha256": "36a39a1859a9c95d3e79239afe798e9fa6f805dcec8685ed2dbbd1ca1133d237"
+    },
+    "u-boot-sunxi-with-spl.map": {
+      "bytes": 320,
+      "sha256": "ed2427983865dabe0e8dcc6235e45f85bee1084ab63204122a5e83798ae9491a"
+    },
+    ".config": {
+      "bytes": 54069,
+      "sha256": "52959a1a8761b00927b04cc460182527c7add51e50019d3b397438f98f7b2fb8"
+    },
+    "u-boot-sunxi-with-spl.bin": {
+      "bytes": 786105,
+      "sha256": "af76765c8d819c04fdc0d2ef968e2fa12ad11f635c6d99ebd0fc19026c0071fa"
+    }
+  },
+  "source_u_boot": "ece349ade2973e220f524ce59e59711cc919263f",
+  "source_tf_a": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+  "configuration_unchanged_from_initial_ab_loader": true,
+  "fit_unchanged_from_initial_ab_loader": true,
+  "native_poll_test_cases": 9,
+  "physical_boot_validated": false,
+  "deployable": false,
+  "independent_delivery": {
+    "passed": true,
+    "reviewer_role": "separate delivery verifier",
+    "egon_rom_length_bytes": 40960,
+    "egon_checksum": "e5c4c8e4",
+    "egon_checksum_recomputed": true,
+    "loader_end_offset": 794297,
+    "spl_elf_text_bytes": 38770,
+    "spl_elf_data_bytes": 504,
+    "spl_elf_bss_bytes": 448,
+    "spl_image_end": "0x299d0",
+    "spl_sram_end": "0x2c000",
+    "calibration_timeout_elf_hang_verified": true,
+    "ab_guard_sandbox_cases": 5,
+    "compiled_environment_sha256": "94572b59ffa5ca7b7a4fb0d3fb3b4b4d0789695bf4c59cb472cc2ffcd1776964",
+    "selected_fit_dtb_matches": true
+  },
+  "spare_write": {
+    "verified": true,
+    "offset": 8192,
+    "bytes_written": 786105,
+    "loader_sha256": "af76765c8d819c04fdc0d2ef968e2fa12ad11f635c6d99ebd0fc19026c0071fa",
+    "image_bytes_read": 7818182656,
+    "image_sha256": "64ae94f42fde30f88891762b144604d27cf2bb8db2769a388b90f4365cba0f9f",
+    "all_other_image_bytes_equal_original": true,
+    "outside_loader_sha256": "4fe2ae2227b49762a240f8a929af6607d72c4f7fc5501937ab7d79e50cd9a47c",
+    "direct_io_readback": true,
+    "physical_boot_validated": false,
+    "verified_at_utc": "2026-09-13T07:11:36Z",
+    "ejection": {
+      "gpt_exact_match": true,
+      "all_partitions_unmounted": true,
+      "writer_powered_off": true,
+      "writer_path_absent": true
+    }
+  }
+}

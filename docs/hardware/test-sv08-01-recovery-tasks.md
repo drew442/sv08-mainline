@@ -20,9 +20,13 @@ or restoration exercises below are not prerequisites for this trial.
 - [x] Owner reinstalled/powered the spare. The logger captured SPL followed by
   `DRAM:` with no further progress; HDMI stayed blank. See the
   [physical failure record](host-board-image.md#first-physical-boot-stopped-in-spl-dram-initialization).
-- [ ] Disconnect mains and all USB power before removing the spare. Return it
-  to the USB writer on Beelink for a separately reviewed diagnostic loader.
-  Leave the printer off; repeating this unchanged image is not a remedy.
+- [x] Owner returned the spare to the USB writer. The
+  [diagnostic loader](host-spl-diagnostics.md) was independently reviewed, written
+  and verified across the full image footprint; GPT stayed unchanged and the
+  writer was safely ejected.
+- [ ] Reinstall the spare with mains and all USB power disconnected. With serial
+  capture already running, reconnect console/Ethernet and power on once. Report
+  power-on even if HDMI remains blank; the diagnostic output is the next evidence.
 - [ ] Observe HDMI recovery and physical input behavior when that test is reached.
   Record results separately from the successful offline VM checks.
 
