@@ -142,3 +142,7 @@ tested temporary `/run/systemd/system/dpkg-db-backup.service.d` condition was
 applied and `systemctl reset-failed` returned the host to zero failed units. That
 runtime change disappears at reboot; the next rebuilt image must carry the
 tracked persistent drop-in.
+
+Read-only inspection after the A boot showed the expected U-Boot attempt update:
+the newer valid environment copy is flag 7 with `BOOT_A_LEFT=2`; its retained
+flag-6 peer has `BOOT_A_LEFT=3`. Both CRCs and the A-only layout remain valid.
