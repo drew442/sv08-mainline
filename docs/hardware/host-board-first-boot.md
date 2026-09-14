@@ -125,3 +125,20 @@ use flags 5 and 6 respectively and both contain `BOOT_ORDER=A`,
 readback matched the complete 128 KiB prepared pair. This only re-arms the
 previously validated diagnostic A boot; it does not validate recovery policy,
 health confirmation, or normal-host operation after this write.
+
+## Rearmed A boot
+
+The rearmed spare booted slot A on 2026-09-14. U-Boot read the redundant MMC
+environment, selected the RAUC bootflow, and Linux `6.18.51-sv08-candidate1`
+reached multi-user mode. The normal host's existing first-boot integration
+created `/data/sv08/state.json` with immutable mode, automatic updates enabled,
+and an uncustomized A generation. Ethernet came up at 100 Mbps with the observed
+MAC `02:00:b2:76:83:5a`; the owner's DHCP reservation supplied
+`192.168.1.141`. SSH and Cockpit HTTPS both responded at that address.
+
+The image still predates the persistent immutable-mode `dpkg-db-backup` condition,
+so its timer initially failed on the read-only package database. The previously
+tested temporary `/run/systemd/system/dpkg-db-backup.service.d` condition was
+applied and `systemctl reset-failed` returned the host to zero failed units. That
+runtime change disappears at reboot; the next rebuilt image must carry the
+tracked persistent drop-in.
