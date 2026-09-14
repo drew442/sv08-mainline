@@ -116,3 +116,12 @@ the reviewed diagnostic policy: `BOOT_ORDER=A`, `BOOT_A_LEFT=3`, and
 `BOOT_B_LEFT=0`. A later target-specific writer must verify the identified eMMC,
 the two current environment copies, and full readback before writing either
 offset `0x400000` or `0x800000`.
+
+On 2026-09-14, the identified spare module was connected through the recorded
+USB reader and both environment regions were rearmed after target/GPT/loader
+validation. The old valid serial flags were 3 and 4; the two new CRC-valid copies
+use flags 5 and 6 respectively and both contain `BOOT_ORDER=A`,
+`BOOT_A_LEFT=3`, `BOOT_B_LEFT=0`, and `sv08_env_layout=ab-8gb-v1`. Direct
+readback matched the complete 128 KiB prepared pair. This only re-arms the
+previously validated diagnostic A boot; it does not validate recovery policy,
+health confirmation, or normal-host operation after this write.
