@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-14",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-loader-size-probe-guard-final-output-built-offline",
+  "status": "diagnostic-loader-v5-written-readback-verified-physical-boot-pending",
   "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
   "manifest_sha256": "4687db21a96cfa702b6bcbef620645ebb8d57e066349e2230bcebda7397d5bf7",
   "build": "beelink:/home/drew/sv08-mainline-v5-source/build/sv08-dram-diagnostic-v5",
@@ -11,7 +11,7 @@
   "source_tf_a": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
   "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "deployable": false,
-  "physical_hardware": false,
+  "physical_hardware": true,
   "artifact": {
     "loader_bytes": 786105,
     "loader_sha256": "78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48",
@@ -37,11 +37,33 @@
     "sandbox_invalid_state_cases": 5,
     "sandbox_selected_fit_dtb_matches": true
   },
-  "review_status": "implementer checks complete; separate delivery review required before a physical loader write",
+  "review_status": "independent delivery review passed; private receipt is local/feature-workflow/spl-diagnostic/v5-delivery-review.md",
+  "spare_write": {
+    "written_at_utc": "2026-09-14T23:53:50Z",
+    "writer_by_id": "/dev/disk/by-id/usb-Generic_STORAGE_DEVICE_000000000819-0:0",
+    "capacity_bytes": 31272730624,
+    "expected_partuuids": [
+      "ba55a9b4-7969-423b-a739-db62e231b7a1",
+      "26c68198-9248-47af-bbd3-643f1b604ef5",
+      "7b6e5211-6c5f-432f-9afc-2ac7e4f80b04",
+      "d8d04a9a-f51f-41b3-a474-e079efe97186",
+      "b28438ed-f895-4b93-9bad-d27d3890ccd3",
+      "4773f966-0678-4cf5-bb83-8ee6fb11d8eb"
+    ],
+    "partitions_unmounted": true,
+    "previous_loader_sha256": "f0cba95ba8434c5cf684d874ded4f5caa937ce952e575fe377c4da7e00661827",
+    "write_offset_bytes": 8192,
+    "bytes_written": 786105,
+    "write_end_offset_bytes": 794297,
+    "direct_readback_sha256": "78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48",
+    "logical_readback_sha256": "78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48",
+    "gpt_geometry_unchanged": true,
+    "writer_powered_off": true
+  },
   "not_established": [
     "Warm or cold boot reliability",
     "DRAM electrical compatibility or a training fix",
-    "Physical execution of the v5 loader",
+    "Physical boot of the v5 loader",
     "A/B or recovery behavior beyond the existing sandbox cases"
   ]
 }

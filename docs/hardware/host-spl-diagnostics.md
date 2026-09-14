@@ -183,3 +183,17 @@ loader SHA-256
 `78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48`.
 Its two linked failure markers contain real newlines, while the FIT, TF-A and
 effective configuration still match v4. It awaits its separate delivery review.
+
+The independent v5 delivery review passed. The identified spare was then checked
+through the recorded USB reader: its capacity, six PARTUUIDs, unmounted state,
+valid raw environments, and v3 loader hash all matched the recorded target. At
+23:53:50 UTC on 2026-09-14, only the 786,105-byte loader span at offset 8192 was
+replaced. A direct-I/O comparison and a separate logical readback both returned
+v5 SHA-256 `78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48`.
+The partition geometry remained unchanged and the USB reader was powered off.
+The [v5 record](host-spl-diagnostics-20260914-v5.json) has the target evidence.
+No full-media equality claim is made because the valid redundant U-Boot
+environment intentionally differs from the earlier factory baseline. Reinstall
+the spare with printer and external USB power disconnected; the next operation
+is a captured physical boot, not a heating, motion, firmware, or environment
+write.
