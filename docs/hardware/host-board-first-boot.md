@@ -146,3 +146,8 @@ tracked persistent drop-in.
 Read-only inspection after the A boot showed the expected U-Boot attempt update:
 the newer valid environment copy is flag 7 with `BOOT_A_LEFT=2`; its retained
 flag-6 peer has `BOOT_A_LEFT=3`. Both CRCs and the A-only layout remain valid.
+
+The MGS1 camera at `/dev/video1` passed a new live capture check: ten 640×480
+MJPEG frames formed a 469,488-byte stream which FFmpeg decoded as MJPEG at the
+requested dimensions. This validates passive camera capture only; printer motion,
+heater controls, and Klipper service activation remain out of scope.
