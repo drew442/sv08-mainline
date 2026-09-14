@@ -94,6 +94,13 @@ def stage(work, manifest):
     resolv.symlink_to('/run/NetworkManager/resolv.conf')
     (root / 'etc/ssh/sshd_config.d').mkdir(exist_ok=True)
     shutil.copyfile(REPO / 'configs/host-os/sshd.conf', root / 'etc/ssh/sshd_config.d/20-sv08.conf')
+    key_seed = root / 'home/sovol/.ssh/authorized_keys'
+    if key_seed.is_symlink() or not key_seed.is_file() or not key_seed.read_text().strip():
+        raise ValueError('Host image must provide a non-empty regular owner authorized-key seed')
+    seed_dir = root / 'usr/lib/sv08/seed'
+    seed_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(key_seed, seed_dir / 'authorized_keys')
+    (seed_dir / 'authorized_keys').chmod(0o644)
     # Only this final stage adds the apt guard, after image package construction.
     shutil.copyfile(REPO / 'configs/host-os/apt-policy.conf', root / 'etc/apt/apt.conf.d/90sv08-policy')
     shutil.copyfile(REPO / 'configs/host-os/policy-rc.d', root / 'usr/sbin/policy-rc.d')

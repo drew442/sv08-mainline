@@ -156,3 +156,15 @@ A later software-initiated warm reboot stopped in the diagnostic SPL DRAM probe
 before U-Boot proper or Linux. Its receive-only serial capture stopped at 68,426
 bytes and did not contain a second `DRAM:  1 GiB` result. The preceding normal A
 boot is therefore not evidence of warm-boot reliability.
+
+The currently running host later rejected the image owner's expected SSH key,
+although its host key remained the image-seeded identity and the serial console
+reached the Debian login prompt. Source and historical-root inspection found the
+cause: `sshd` correctly reads `/data/sv08/users/sv08/.ssh/authorized_keys`, while
+first boot only populated the obsolete `/home/sovol/.ssh/authorized_keys` seed.
+The corrected runtime copies a non-empty regular seed into the persistent path
+only when the persistent file does not already exist, using no-follow creation
+and durable permissions. It preserves owner replacements and rejects symlink
+paths. A rebuilt host image is required before this correction can affect the
+installed spare; neither login recovery nor a live SSH configuration change was
+attempted here.

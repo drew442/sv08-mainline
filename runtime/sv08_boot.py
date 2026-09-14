@@ -93,6 +93,48 @@ def initialize_identity(data):
     fsync_dir(system)
 
 
+def initialize_owner_authorized_keys(data, seed=Path('/usr/lib/sv08/seed/authorized_keys'),
+                                     uid=1000, gid=1000):
+    """Seed the persistent SSH key once, without replacing owner changes."""
+    seed = Path(seed)
+    if seed.is_symlink() or not seed.is_file():
+        raise ValueError('Owner authorized-key seed must be a regular file')
+    contents = seed.read_bytes()
+    if not contents.strip():
+        raise ValueError('Owner authorized-key seed must not be empty')
+    owner = Path(data) / 'users/sv08'
+    ssh = owner / '.ssh'
+    for path in (owner, ssh):
+        if path.is_symlink():
+            raise ValueError('Persistent owner SSH directory must not be a symlink')
+    ssh.mkdir(mode=0o700, exist_ok=True)
+    ssh.chmod(0o700)
+    try:
+        directory = os.open(ssh, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    except OSError as exc:
+        raise ValueError('Unable to safely open persistent owner SSH directory') from exc
+    try:
+        try:
+            key = os.open('authorized_keys', os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                          0o600, dir_fd=directory)
+        except FileExistsError:
+            existing = ssh / 'authorized_keys'
+            if existing.is_symlink() or not existing.is_file():
+                raise ValueError('Persistent owner authorized_keys is not a regular file')
+            return False
+        try:
+            os.write(key, contents)
+            os.fchmod(key, 0o600)
+            os.fchown(key, uid, gid)
+            os.fsync(key)
+        finally:
+            os.close(key)
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+    return True
+
+
 def prepare_permissions(data, generation, uid=1000, gid=1000):
     # Traverse-only parents; registry, host keys and network credentials stay root-owned.
     for path in (data, data / 'generations', Path(generation), data / 'shared', data / 'users'):
@@ -131,6 +173,7 @@ def main():
     store = Store(data)
     store.initialize()
     initialize_identity(data)
+    initialize_owner_authorized_keys(data)
     if Path('/etc/machine-id').read_text().strip() != (data / 'system/machine-id').read_text().strip():
         raise ValueError('Initramfs must prepare persistent identity before systemd starts')
     boot = bind_boot_identity(store.prepare_boot(slot, config['release'], config['state_schema']))

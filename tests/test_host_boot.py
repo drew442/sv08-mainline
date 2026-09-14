@@ -1,11 +1,14 @@
 from pathlib import Path
+import os
 import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_boot import slot_from_cmdline, verify_devices, initialize_identity, prepare_permissions, bind_boot_identity
+from sv08_boot import (slot_from_cmdline, verify_devices, initialize_identity,
+                       initialize_owner_authorized_keys, prepare_permissions,
+                       bind_boot_identity)
 from sv08_state import Store
 
 
@@ -54,6 +57,41 @@ class BootIdentityTests(unittest.TestCase):
             (store.root / 'system/machine-id').symlink_to(outside)
             with self.assertRaisesRegex(ValueError, 'symlinks'):
                 initialize_identity(store.root)
+            self.assertEqual(outside.read_text(), 'preserve')
+
+    def test_owner_key_is_seeded_once_and_preserves_owner_changes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            store = Store(root / 'data', reserve_bytes=0)
+            store.initialize()
+            seed = root / 'authorized_keys'
+            seed.write_text('ssh-ed25519 initial owner-key\n')
+            self.assertTrue(initialize_owner_authorized_keys(
+                store.root, seed, uid=os.getuid(), gid=os.getgid()))
+            key = store.root / 'users/sv08/.ssh/authorized_keys'
+            self.assertEqual(key.read_text(), 'ssh-ed25519 initial owner-key\n')
+            self.assertEqual(key.stat().st_mode & 0o777, 0o600)
+            key.write_text('ssh-ed25519 owner-replacement\n')
+            seed.write_text('ssh-ed25519 image-update-key\n')
+            self.assertFalse(initialize_owner_authorized_keys(
+                store.root, seed, uid=os.getuid(), gid=os.getgid()))
+            self.assertEqual(key.read_text(), 'ssh-ed25519 owner-replacement\n')
+
+    def test_owner_key_symlink_is_rejected_without_touching_target(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            store = Store(root / 'data', reserve_bytes=0)
+            store.initialize()
+            seed = root / 'authorized_keys'
+            seed.write_text('ssh-ed25519 initial owner-key\n')
+            ssh = store.root / 'users/sv08/.ssh'
+            ssh.mkdir()
+            outside = root / 'outside'
+            outside.write_text('preserve')
+            (ssh / 'authorized_keys').symlink_to(outside)
+            with self.assertRaisesRegex(ValueError, 'not a regular'):
+                initialize_owner_authorized_keys(store.root, seed,
+                                                 uid=os.getuid(), gid=os.getgid())
             self.assertEqual(outside.read_text(), 'preserve')
 
     def test_slot_must_be_unambiguous(self):
