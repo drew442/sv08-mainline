@@ -141,3 +141,11 @@ Serial evidence shows the corrected DRAM diagnostics, successful 1 GiB result,
 U-Boot bootflow, Linux `6.18.51-sv08-candidate1`, read-only root and `/usr`,
 the recovery UI, both Klipper STM32 devices, and the MGS1 camera. Network access
 was not validated because the previously recorded `.141` address did not answer.
+
+On 2026-09-14, a controlled warm reboot from the subsequently successful normal
+A host boot did not complete. Receive-only serial output stopped during a later
+DRAM candidate probe after 68,426 bytes, without another `DRAM:  1 GiB`, U-Boot,
+or Linux marker. The capture remained unchanged while the receive service stayed
+healthy. This is a measured diagnostic-loader warm-boot failure, not a conclusion
+about the DRAM hardware cause; no reset, loader write, or environment write was
+issued after observing it.

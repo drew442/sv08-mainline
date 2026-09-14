@@ -151,3 +151,8 @@ The MGS1 camera at `/dev/video1` passed a new live capture check: ten 640×480
 MJPEG frames formed a 469,488-byte stream which FFmpeg decoded as MJPEG at the
 requested dimensions. This validates passive camera capture only; printer motion,
 heater controls, and Klipper service activation remain out of scope.
+
+A later software-initiated warm reboot stopped in the diagnostic SPL DRAM probe
+before U-Boot proper or Linux. Its receive-only serial capture stopped at 68,426
+bytes and did not contain a second `DRAM:  1 GiB` result. The preceding normal A
+boot is therefore not evidence of warm-boot reliability.
