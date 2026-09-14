@@ -197,3 +197,13 @@ environment intentionally differs from the earlier factory baseline. Reinstall
 the spare with printer and external USB power disconnected; the next operation
 is a captured physical boot, not a heating, motion, firmware, or environment
 write.
+
+That captured v5 cold boot completed at 23:55:22 UTC. The failing warm-reboot
+candidate from the prior v3 trace (`cols=8`, `rows=17`) returned success on this
+attempt; the real-newline failure guards did not fire. The trace contains one
+each of `DRAM: 1 GiB`, U-Boot 2026.07, Linux
+`6.18.51-sv08-candidate1`, and the serial `sv08` login prompt. Cockpit HTTPS
+returned 200 and TCP port 22 accepted connections. SSH public-key authentication
+remains rejected because the installed image predates the persistent-key seeding
+correction; no live configuration change was made. This is one successful cold
+boot, not a repeatability result or a DRAM fix.

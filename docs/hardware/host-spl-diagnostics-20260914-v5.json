@@ -60,10 +60,23 @@
     "gpt_geometry_unchanged": true,
     "writer_powered_off": true
   },
+  "physical_cold_boot": {
+    "capture_ready_at_utc": "2026-09-14T23:55:22Z",
+    "console_sha256": "1e99cd98fa885e53d688347fe42bbf242f003395fbad4ae91beb83da49de265f",
+    "console_bytes": 52668,
+    "diagnostic_size_probe_rows_17_result": true,
+    "dram_result": "1 GiB",
+    "u_boot": "2026.07",
+    "kernel": "6.18.51-sv08-candidate1",
+    "serial_login_prompt": true,
+    "cockpit_https_status": 200,
+    "ssh_tcp_port_open": true,
+    "seeded_owner_key_authentication": "rejected by the pre-fix installed image"
+  },
   "not_established": [
-    "Warm or cold boot reliability",
+    "Warm- or cold-boot reliability across repeated cycles",
     "DRAM electrical compatibility or a training fix",
-    "Physical boot of the v5 loader",
+    "Authenticated SSH on the pre-fix installed host image",
     "A/B or recovery behavior beyond the existing sandbox cases"
   ]
 }
