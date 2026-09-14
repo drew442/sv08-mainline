@@ -104,3 +104,15 @@ The temporary dpkg condition was re-applied under `/run` after reboot, and the
 host again has zero failed systemd units. CPU temperature was about 46°C.
 Do not spend the remaining attempt on unrecorded exploratory reboots; select
 and review the next B/recovery or boot-diagnostic operation explicitly.
+
+## Recovery rearm preparation
+
+The subsequent diagnostic boots exhausted the A attempt budget and selected the
+independent recovery image. The normal A boot has already demonstrated the
+first-boot state initializer and LAN services; recovery intentionally does not
+create persistent state. `scripts/prepare_boot_rearm.py` builds a separate,
+inspect-only-by-default pairable 64 KiB U-Boot environment that restores only
+the reviewed diagnostic policy: `BOOT_ORDER=A`, `BOOT_A_LEFT=3`, and
+`BOOT_B_LEFT=0`. A later target-specific writer must verify the identified eMMC,
+the two current environment copies, and full readback before writing either
+offset `0x400000` or `0x800000`.
