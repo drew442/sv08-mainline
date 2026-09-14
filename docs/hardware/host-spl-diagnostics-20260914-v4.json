@@ -1,0 +1,46 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-14",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "status": "diagnostic-loader-size-probe-guard-built-offline",
+  "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
+  "manifest_sha256": "d3c2bd7f194f4523d0295745c5364b6f89c3db98081ee2c0c3523add74c1bed0",
+  "build": "beelink:/home/drew/sv08-mainline-v4-source/build/sv08-dram-diagnostic-v4",
+  "source_u_boot": "ece349ade2973e220f524ce59e59711cc919263f",
+  "source_tf_a": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+  "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "deployable": false,
+  "physical_hardware": false,
+  "artifact": {
+    "loader_bytes": 786105,
+    "loader_sha256": "5ead4d129a42140cbf0502da0ec66c753d4aec97d5f993408f8cdde055ac3d41",
+    "loader_offset_bytes": 8192,
+    "loader_end_offset_bytes": 794297,
+    "fit_bytes": 745145,
+    "fit_sha256": "575609afebef87e2004acdc17f6f5e8fa68918cace075fb841b4285b31db4586",
+    "bl31_bytes": 53361,
+    "bl31_sha256": "36a39a1859a9c95d3e79239afe798e9fa6f805dcec8685ed2dbbd1ca1133d237",
+    "config_sha256": "52959a1a8761b00927b04cc460182527c7add51e50019d3b397438f98f7b2fb8"
+  },
+  "checks": {
+    "egon_length_bytes": 40960,
+    "egon_checksum": "3efafb43",
+    "egon_checksum_recomputed": true,
+    "spl_image_end": "0x29a48",
+    "spl_sram_end": "0x2c000",
+    "fit_equal_to_v3": true,
+    "config_equal_to_v3": true,
+    "guarded_controller_failure_paths_linked": true,
+    "native_calibration_cases": 9,
+    "sandbox_invalid_state_cases": 5,
+    "sandbox_selected_fit_dtb_matches": true
+  },
+  "review_status": "artifact and linked guard paths checked by the implementer; separate delivery review remains required before a physical loader write",
+  "not_established": [
+    "Warm or cold boot reliability",
+    "DRAM electrical compatibility or a training fix",
+    "Physical execution of the v4 loader",
+    "A/B or recovery behavior beyond the existing sandbox cases"
+  ]
+}

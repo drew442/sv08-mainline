@@ -160,3 +160,14 @@ operation, but checks both size-probe calls. On failure it prints either
 calls `hang()` before any DRAM access. This is a fail-stop observability change,
 not a training workaround or a warm-boot fix. It requires a fresh build, artifact
 review, and a loader-only eMMC write before physical testing.
+
+The fresh v4 build is recorded in
+[`host-spl-diagnostics-20260914-v4.json`](host-spl-diagnostics-20260914-v4.json).
+It produced a 786,105-byte loader with SHA-256
+`5ead4d129a42140cbf0502da0ec66c753d4aec97d5f993408f8cdde055ac3d41`.
+The eGON checksum and SPL SRAM boundary were checked, its FIT and effective
+configuration match v3 byte-for-byte, the nine native calibration cases pass,
+and all five sandbox invalid-state cases reach the guarded recovery path. Linked
+disassembly confirms either false size-probe result prints its marker then calls
+`hang()` before the relevant `memcpy`. This remains an offline artifact until a
+separate delivery review accepts it for a bounded loader-only write.
