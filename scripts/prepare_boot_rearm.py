@@ -37,22 +37,35 @@ def digest(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+def valid_copy(value):
+    if len(value) != ENVIRONMENT_BYTES:
+        return False
+    expected = int.from_bytes(value[:4], 'little')
+    actual = __import__('zlib').crc32(value[5:]) & 0xffffffff
+    return expected == actual and b'\0\0' in value[5:]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True,
                         help='Fresh regular file under build/; no block devices')
+    parser.add_argument('--newest-flag', type=int, required=True,
+                        help='Observed newest valid target flag plus two; range 1..254')
     parser.add_argument('--execute', action='store_true',
                         help='Create the file; otherwise print the exact plan')
     args = parser.parse_args()
     output = args.output.resolve()
     if not output.is_relative_to(REPO / 'build') or output.exists() or output.is_symlink():
         raise ValueError('Output must be a fresh regular-file path under build/')
+    if not 1 <= args.newest_flag <= 254:
+        raise ValueError('Newest flag must be in range 1..254')
     if shutil.which('mkenvimage') is None:
         raise ValueError('mkenvimage is required')
     text = environment_text()
-    plan = dict(execute=args.execute, output=str(output), bytes=ENVIRONMENT_BYTES,
+    plan = dict(execute=args.execute, output=str(output), bytes=2 * ENVIRONMENT_BYTES,
                 offsets=list(ENVIRONMENT_OFFSETS), values={key: dict(line.split('=', 1) for line in text.splitlines())[key]
-                for key in ('sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT')})
+                for key in ('sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT')},
+                flags=[args.newest_flag - 1, args.newest_flag])
     if not args.execute:
         print(json.dumps(plan, indent=2))
         return
@@ -62,12 +75,22 @@ def main():
         raise ValueError('Derived text output already exists')
     source.write_text(text, encoding='utf-8')
     try:
-        subprocess.run(['mkenvimage', '-r', '-s', str(ENVIRONMENT_BYTES), '-o', str(output), str(source)], check=True)
+        temporary = output.with_suffix(output.suffix + '.single')
+        subprocess.run(['mkenvimage', '-r', '-s', str(ENVIRONMENT_BYTES), '-o', str(temporary), str(source)], check=True)
+        copy = bytearray(temporary.read_bytes())
+        temporary.unlink()
+        if not valid_copy(copy):
+            raise ValueError('mkenvimage did not produce a valid redundant environment')
+        first, second = bytearray(copy), bytearray(copy)
+        first[4], second[4] = args.newest_flag - 1, args.newest_flag
+        output.write_bytes(first + second)
     finally:
         source.unlink(missing_ok=True)
-    if output.stat().st_size != ENVIRONMENT_BYTES:
-        raise ValueError('Unexpected U-Boot environment size')
-    plan.update(sha256=digest(output), redundant_copies_identical=True)
+    pair = output.read_bytes()
+    if len(pair) != 2 * ENVIRONMENT_BYTES or not all(valid_copy(pair[offset:offset + ENVIRONMENT_BYTES])
+            for offset in (0, ENVIRONMENT_BYTES)):
+        raise ValueError('Invalid U-Boot environment pair')
+    plan.update(sha256=digest(output), redundant_copies_identical=False)
     print(json.dumps(plan, indent=2))
 
 

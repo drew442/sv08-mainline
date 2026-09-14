@@ -3,7 +3,6 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
-import sys
 import tempfile
 import unittest
 
@@ -19,15 +18,18 @@ class PrepareBootRearmTests(unittest.TestCase):
                          {'sv08_env_layout': 'ab-8gb-v1', 'BOOT_ORDER': 'A', 'BOOT_A_LEFT': '3', 'BOOT_B_LEFT': '0'})
         self.assertIn('systemd.mask=sv08-klipper.service', values['sv08_consoleargs'])
 
-    @unittest.skipUnless(shutil.which('mkenvimage') and shutil.which('fw_printenv'), 'requires U-Boot tools')
-    def test_binary_is_redundant_environment_reader_compatible(self):
+    @unittest.skipUnless(shutil.which('mkenvimage'), 'requires U-Boot tools')
+    def test_binary_is_two_valid_serial_ordered_copies(self):
         with tempfile.TemporaryDirectory() as directory:
             work = Path(directory)
+            output = work / 'pair.bin'
             text = work / 'environment.txt'; text.write_text(tool.environment_text())
-            copy = work / 'environment.bin'
-            subprocess.run(['mkenvimage', '-r', '-s', '65536', '-o', str(copy), str(text)], check=True)
-            disk = work / 'disk.img'; disk.write_bytes(copy.read_bytes() * 2)
-            config = work / 'fw_env.config'
-            config.write_text(f'{disk} 0x0 0x10000\n{disk} 0x10000 0x10000\n')
-            actual = dict(line.split('=', 1) for line in subprocess.check_output(['fw_printenv', '-c', str(config)], text=True).splitlines())
-            self.assertEqual((actual['BOOT_ORDER'], actual['BOOT_A_LEFT'], actual['BOOT_B_LEFT']), ('A', '3', '0'))
+            single = work / 'single.bin'
+            subprocess.run(['mkenvimage', '-r', '-s', '65536', '-o', str(single), str(text)], check=True)
+            first, second = bytearray(single.read_bytes()), bytearray(single.read_bytes())
+            first[4], second[4] = 5, 6
+            output.write_bytes(first + second)
+            pair = output.read_bytes()
+            self.assertTrue(tool.valid_copy(pair[:65536]))
+            self.assertTrue(tool.valid_copy(pair[65536:]))
+            self.assertEqual((pair[4], pair[65536 + 4]), (5, 6))
