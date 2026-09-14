@@ -16,8 +16,11 @@ def main():
     args = parser.parse_args()
     source = (args.source / 'arch/arm/mach-sunxi/dram_sun50i_h616.c').read_text()
     shared = (args.source / 'arch/arm/mach-sunxi/dram_helpers.c').read_text()
+    size_helper = (args.source / 'arch/arm/mach-sunxi/dram_dw_helpers.c').read_text()
     assert 'wait reg=%08lx' in shared
     assert 'reg=%p' not in shared
+    assert 'SV08-DRAM: size columns init failed' in size_helper
+    assert 'SV08-DRAM: size rows init failed' in size_helper
     start = source.index('static bool sv08_read_calibration_wait(')
     end = source.index('\nstatic bool mctl_phy_read_calibration(', start)
     helper = source[start:end]

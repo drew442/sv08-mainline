@@ -1,8 +1,10 @@
 From: SV08 Mainline diagnostic integration
-Subject: [PATCH] sunxi: add temporary H616 DRAM progress and bounded calibration diagnostics
+Subject: [PATCH] sunxi: add temporary H616 DRAM progress and safe probe diagnostics
 
 Diagnostic-only patch against U-Boot ece349ade2973e220f524ce59e59711cc919263f.
-Do not infer electrical compatibility or use as a production training fix.
+Do not infer electrical compatibility or use as a production training fix. A
+failed size probe must halt before the generic helper accesses uninitialized
+DRAM.
 
 --- a/arch/arm/mach-sunxi/dram_sun50i_h616.c
 +++ b/arch/arm/mach-sunxi/dram_sun50i_h616.c
@@ -166,3 +168,36 @@ Do not infer electrical compatibility or use as a production training fix.
  	}
  }
  
+--- a/arch/arm/mach-sunxi/dram_dw_helpers.c
++++ b/arch/arm/mach-sunxi/dram_dw_helpers.c
+@@ -8,5 +8,6 @@
+ 
+ #include <init.h>
++#include <hang.h>
+ #include <asm/arch/dram_dw_helpers.h>
+ 
+ void mctl_auto_detect_rank_width(const struct dram_para *para,
+@@ -93,7 +94,10 @@ void mctl_auto_detect_dram_size(const struct dram_para *para,
+ 	/* max. config for columns, but not rows */
+ 	config->cols = 11;
+ 	config->rows = 13;
+-	mctl_core_init(para, config);
++	if (!mctl_core_init(para, config)) {
++		puts("SV08-DRAM: size columns init failed\\n");
++		hang();
++	}
+ 
+ 	/*
+ 	 * Store content so it can be restored later. This is important
+@@ -119,7 +123,10 @@ void mctl_auto_detect_dram_size(const struct dram_para *para,
+ 	/* reconfigure to make sure that all active rows are accessible */
+ 	config->cols = 8;
+ 	config->rows = 17;
+-	mctl_core_init(para, config);
++	if (!mctl_core_init(para, config)) {
++		puts("SV08-DRAM: size rows init failed\\n");
++		hang();
++	}
+ 
+ 	/* store data again as it might be moved */
+ 	memcpy(buffer, (u32 *)CFG_SYS_SDRAM_BASE, sizeof(buffer));

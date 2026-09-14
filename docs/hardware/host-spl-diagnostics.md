@@ -149,3 +149,14 @@ or Linux marker. The capture remained unchanged while the receive service stayed
 healthy. This is a measured diagnostic-loader warm-boot failure, not a conclusion
 about the DRAM hardware cause; no reset, loader write, or environment write was
 issued after observing it.
+
+The final visible candidate was the row-size probe (`cols=8`, `rows=17`), whose
+controller initialization returned false. Upstream `mctl_auto_detect_dram_size()`
+then unconditionally copies to the attempted DRAM address. That makes the
+diagnostic trace stop before it can report the failed probe cleanly. The next
+diagnostic artifact will retain every electrical setting and successful-path
+operation, but checks both size-probe calls. On failure it prints either
+`SV08-DRAM: size columns init failed` or `SV08-DRAM: size rows init failed` and
+calls `hang()` before any DRAM access. This is a fail-stop observability change,
+not a training workaround or a warm-boot fix. It requires a fresh build, artifact
+review, and a loader-only eMMC write before physical testing.
