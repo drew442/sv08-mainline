@@ -176,3 +176,10 @@ Independent review accepted the v4 safety properties, then found that the two
 new marker strings used a literal backslash-n. No hardware action was taken. The
 next fresh artifact corrects that output-only defect before delivery review; v4
 is retained as evidence but is not the artifact to write.
+
+The corrected artifact is
+[`host-spl-diagnostics-20260914-v5.json`](host-spl-diagnostics-20260914-v5.json):
+loader SHA-256
+`78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48`.
+Its two linked failure markers contain real newlines, while the FIT, TF-A and
+effective configuration still match v4. It awaits its separate delivery review.
