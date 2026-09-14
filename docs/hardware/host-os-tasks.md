@@ -169,6 +169,10 @@ enumeration were re-established on 2026-09-12; see the
   complete system-media inventory and participation by every media mutator. The
   [approved export composition](../features/host-recovery-export-composition/proposal.md)
   covers the next independent boot-to-export journey; restoration remains separate.
+- [ ] Integrate the reviewed recovery-media policy and an explicit first-boot state
+  initialization flow. Physical v3 boot confirmed that the current diagnostic image
+  intentionally lacks both policy and `/data/sv08/state.json`, leaving recovery in
+  read-only inspection mode as designed.
 - [ ] Add touch text entry for recovery network/credential workflows where needed.
 
 ## Human and powered-printer tasks
