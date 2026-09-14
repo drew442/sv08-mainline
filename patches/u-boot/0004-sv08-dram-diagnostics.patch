@@ -183,7 +183,7 @@ DRAM.
  	config->rows = 13;
 -	mctl_core_init(para, config);
 +	if (!mctl_core_init(para, config)) {
-+		puts("SV08-DRAM: size columns init failed\\n");
++		puts("SV08-DRAM: size columns init failed\n");
 +		hang();
 +	}
  
@@ -195,7 +195,7 @@ DRAM.
  	config->rows = 17;
 -	mctl_core_init(para, config);
 +	if (!mctl_core_init(para, config)) {
-+		puts("SV08-DRAM: size rows init failed\\n");
++		puts("SV08-DRAM: size rows init failed\n");
 +		hang();
 +	}
  

@@ -171,3 +171,8 @@ and all five sandbox invalid-state cases reach the guarded recovery path. Linked
 disassembly confirms either false size-probe result prints its marker then calls
 `hang()` before the relevant `memcpy`. This remains an offline artifact until a
 separate delivery review accepts it for a bounded loader-only write.
+
+Independent review accepted the v4 safety properties, then found that the two
+new marker strings used a literal backslash-n. No hardware action was taken. The
+next fresh artifact corrects that output-only defect before delivery review; v4
+is retained as evidence but is not the artifact to write.
