@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-v2-a-attempts-exhausted-independent-recovery-booted-rearm-prepared",
+  "status": "diagnostic-v2-rearmed-a-booted-serial-capture-gap-recorded",
   "deployable": false,
   "project_commit": "1fbf8ad",
   "host_release": "0.1.0-board.2",
@@ -237,6 +237,34 @@
     "loader_unchanged_after_write": true,
     "gpt_factory_sized_layout_warning_unchanged": true,
     "reader_powered_off": true
+  },
+  "physical_rearmed_a_boot": {
+    "serial_capture": "The prepared receive-only capture expired before the owner powered on; a later capture began after boot and contains only the login prompt.",
+    "late_capture_sha256": "759e5c5c9ce5a65f9a5146203ad55fcda449a74f08743020b003b5f4b298ffb3",
+    "late_capture_bytes": 358,
+    "ssh_public_key_login": "sv08 succeeded",
+    "linux_memtotal_kib": 999672,
+    "root_mount": "PARTUUID 26c68198-9248-47af-bbd3-643f1b604ef5, ext4 read-only",
+    "state_registry_present": true,
+    "failed_units": 0,
+    "printer_services": "inactive",
+    "boot_environment": {
+      "newer_primary": {
+        "crc_valid": true,
+        "flag": 7,
+        "boot_order": "A",
+        "boot_a_left": 2,
+        "boot_b_left": 0
+      },
+      "retained_redundant": {
+        "crc_valid": true,
+        "flag": 6,
+        "boot_order": "A",
+        "boot_a_left": 3,
+        "boot_b_left": 0
+      },
+      "interpretation": "The observed counter update proves the rearmed normal A path was selected once. It does not replace a complete serial boot capture or establish reliability."
+    }
   },
   "not_established": [
     "Whether rank/width DRAM auto-detection can be made reliable or identifies the board's physical capacity",

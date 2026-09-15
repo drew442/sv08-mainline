@@ -220,6 +220,19 @@ six partition identities remained unchanged. The reader was powered off. The
 existing factory-sized GPT warning on the larger spare was observed but not
 repaired or expanded.
 
+## Rearmed normal A boot
+
+After reinstallation, the normal host again accepted the owner SSH key, mounted
+root A read-only, retained its state registry, found zero failed units and kept
+printer services inactive. The newer CRC-valid environment copy is flag 7 with
+`BOOT_A_LEFT=2`; its flag-6 peer retains the seeded three-attempt state. This
+confirms the rearmed normal A path was selected once.
+
+The receive-only boot capture had been armed, but it expired before power-on.
+A later capture contains only the serial login prompt. The boot therefore has
+SSH, mount, state and environment evidence but no complete SPL/U-Boot trace; it
+does not establish boot reliability or replace a captured test.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

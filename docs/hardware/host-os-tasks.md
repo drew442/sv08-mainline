@@ -252,10 +252,14 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   only the two 64 KiB regions at offsets 4 MiB and 8 MiB, read both back, eject,
   reinstall and capture the next boot. Do not format, resize or auto-repair the
   GPT, and do not write the factory eMMC.
-- [ ] **Human handoff — reinstall the rearmed diagnostic spare and power the
-  printer on after capture readiness is confirmed.** The capture must show the
-  normal A path before any later physical UI, network, B-slot or recovery-media
-  work. The factory eMMC remains untouched.
+- [x] **Human handoff — reinstall the rearmed diagnostic spare and power the
+  printer on after capture readiness is confirmed.** The factory eMMC remains
+  untouched. The initial rearmed cycle reached normal A but its capture expired
+  before power-on; the outstanding repeat below supplies that trace.
+- [ ] Repeat a rearmed normal A boot with a fresh, non-expiring receive-only
+  capture. The first rearmed normal boot is verified by SSH, state, mounts and
+  a flag-7 `BOOT_A_LEFT=2` environment, but its prepared capture expired before
+  the owner powered on and is not boot-trace evidence.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed
