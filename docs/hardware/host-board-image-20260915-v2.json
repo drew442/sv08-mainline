@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "private-diagnostic-image-v2-ready-for-reviewed-emmc-write",
+  "status": "private-diagnostic-image-v2-written-readback-verified-physical-boot-pending",
   "deployable": false,
   "project_commit": "1fbf8ad",
   "host_release": "0.1.0-board.2",
@@ -44,8 +44,28 @@
     "gpt_valid": true,
     "read_only": true
   },
+  "physical_write": {
+    "completed_at_utc": "2026-09-15T01:25:39Z",
+    "reader_by_id": "/dev/disk/by-id/usb-Generic_STORAGE_DEVICE_000000000819-0:0",
+    "target_capacity_bytes": 31272730624,
+    "target_loader_before_write_sha256": "78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48",
+    "target_partuuids_before_write": [
+      "ba55a9b4-7969-423b-a739-db62e231b7a1",
+      "26c68198-9248-47af-bbd3-643f1b604ef5",
+      "7b6e5211-6c5f-432f-9afc-2ac7e4f80b04",
+      "d8d04a9a-f51f-41b3-a474-e079efe97186",
+      "b28438ed-f895-4b93-9bad-d27d3890ccd3",
+      "4773f966-0678-4cf5-bb83-8ee6fb11d8eb"
+    ],
+    "partitions_unmounted": true,
+    "bytes_written": 7818182656,
+    "full_direct_readback_completed_at_utc": "2026-09-15T01:30:33Z",
+    "full_direct_readback_sha256": "31282446a0d20c175c9c6035c1f2c94c2dcd98571d94247dc951317c796ec75b",
+    "partuuids_after_write_match": true,
+    "both_environment_copies_match_composed_image": true,
+    "reader_powered_off": true
+  },
   "not_established": [
-    "Physical eMMC write or readback",
     "Boot of this rebuilt host image",
     "Persistent owner SSH authentication on hardware",
     "A/B, recovery, DRAM reliability, Wi-Fi, printing or heater/motion behavior"

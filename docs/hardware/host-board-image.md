@@ -133,8 +133,16 @@ private raw and compressed files. A standalone read-only verifier independently
 checked the whole raw image, the loader span, both redundant environments, all
 six embedded partition images and GPT validity. XZ integrity and a complete
 decompressed byte-stream hash then matched the recorded raw hash. This remains a
-non-deployable diagnostic candidate; no eMMC write or v2 hardware boot has
-occurred.
+non-deployable diagnostic candidate; the v2 hardware boot has not occurred.
+
+The identified spare was written on 2026-09-15 with the complete 7.82 GB v2
+image. Before writing, its capacity, v5 loader, six PARTUUIDs and unmounted
+state matched the recorded target. A separate direct-I/O readback of the entire
+written footprint returned the reviewed raw hash. The six partition identities
+and both raw environment copies then matched the composed image, and the reader
+was powered off. The [v2 record](host-board-image-20260915-v2.json) contains the
+sanitized evidence. A receive-only serial capture is armed for the first v2
+physical boot; that boot has not yet occurred.
 
 The human step is to power down and isolate the printer, connect its spare eMMC
 to the USB writer, write the reviewed complete file with verification, reinstall
