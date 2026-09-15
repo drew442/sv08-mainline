@@ -128,7 +128,7 @@ DRAM.
  }
  
  static const struct dram_para para = {
-@@ -1346,14 +1373,17 @@
+@@ -1346,14 +1373,20 @@
  	struct dram_config config;
  	unsigned long size;
  
@@ -140,8 +140,11 @@ DRAM.
 +	puts("SV08-DRAM: size detection\n");
  	mctl_auto_detect_dram_size(&para, &config);
  
- 	mctl_core_init(&para, &config);
- 
+	if (!mctl_core_init(&para, &config)) {
+		puts("SV08-DRAM: final size validation init failed\n");
+		hang();
+	}
+
 +	puts("SV08-DRAM: size validation\n");
  	size = mctl_calc_size(&config);
  

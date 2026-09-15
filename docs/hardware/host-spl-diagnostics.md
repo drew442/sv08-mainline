@@ -227,3 +227,20 @@ v2 capture nevertheless reached U-Boot, Linux and the `sv08` login prompt; its
 raw capture hash and read-only host observations are in the
 [v2 board-image record](host-board-image-20260915-v2.json). Further reboot or
 memory-stress testing must use an explicit, reviewed attempt budget.
+
+## Captured final-size-validation failure
+
+After rearming the diagnostic environments, a fresh receive-only capture reached
+the 32-bit rank/width candidate and both size probes, then the final selected
+10-column/15-row `mctl_core_init()` returned false. The existing diagnostic
+source printed `SV08-DRAM: size validation` and continued into size calculation;
+the capture stopped at 16,583 bytes with no `DRAM:` result, U-Boot, Linux or login
+marker. This is the same fail-open diagnostic gap that the earlier two size-probe
+guards were intended to prevent, now observed at final validation.
+
+The next diagnostic source revision adds only a matching final-validation guard:
+on a false final `mctl_core_init()`, it prints
+`SV08-DRAM: final size validation init failed` and calls `hang()` before the size
+calculation. It retains all electrical settings and successful-path behavior.
+The revision needs a fresh build, source/native test, artifact review and a
+separately identified loader-only write before it can be used on hardware.

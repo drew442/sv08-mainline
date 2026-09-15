@@ -52,7 +52,7 @@
       },
       {
         "path": "patches/u-boot/0004-sv08-dram-diagnostics.patch",
-        "sha256": "2b8ed21833a85bdc72c8d2485f2d44403b1cf65bc59321ccae4ca8c0e7deac9c"
+        "sha256": "96588949275456a74f033f7f599288feb8aec232cf75335dc77071e756021791"
       }
     ],
     "fragment": {

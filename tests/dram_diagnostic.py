@@ -21,6 +21,14 @@ def main():
     assert 'reg=%p' not in shared
     assert 'SV08-DRAM: size columns init failed' in size_helper
     assert 'SV08-DRAM: size rows init failed' in size_helper
+    final_marker = 'SV08-DRAM: final size validation init failed'
+    assert final_marker in source
+    init_start = source.index('unsigned long sunxi_dram_init(void)')
+    init_end = source.index('\n};', init_start)
+    init = source[init_start:init_end]
+    final_guard = init.index('if (!mctl_core_init(&para, &config)) {')
+    assert final_marker in init[final_guard:]
+    assert init.index('hang();', final_guard) < init.index('size = mctl_calc_size(&config);')
     start = source.index('static bool sv08_read_calibration_wait(')
     end = source.index('\nstatic bool mctl_phy_read_calibration(', start)
     helper = source[start:end]
