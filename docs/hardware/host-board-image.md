@@ -141,8 +141,26 @@ state matched the recorded target. A separate direct-I/O readback of the entire
 written footprint returned the reviewed raw hash. The six partition identities
 and both raw environment copies then matched the composed image, and the reader
 was powered off. The [v2 record](host-board-image-20260915-v2.json) contains the
-sanitized evidence. A receive-only serial capture is armed for the first v2
-physical boot; that boot has not yet occurred.
+sanitized evidence. A receive-only serial capture was armed before the first v2
+physical boot.
+
+## First v2 physical boot
+
+The first captured v2 boot reached U-Boot, Linux `6.18.51-sv08-candidate1` and
+the `sv08` login prompt. Cockpit HTTPS returned 200 and the seeded owner key
+authenticated as `sv08`. The host started with its intended read-only A root and
+separate writable data partition, found no failed units, and retained both the
+state registry and owner key. NetworkManager obtained the reserved wired address.
+Printer services remained runtime-masked and inactive; this boot issued no
+heater, motion or MCU command.
+
+The same capture reports **512 MiB** DRAM, and Linux exposes 485,376 KiB after
+reservations. Earlier v5 diagnostic evidence reported 1 GiB. The serial trace
+shows multiple attempted geometries before a successful 512 MiB configuration.
+This demonstrates that the rebuilt host can operate with the detected capacity,
+but does not establish the physical DRAM capacity, safe memory reliability or a
+solution to the differing results. The [v2 record](host-board-image-20260915-v2.json)
+contains the capture and read-only host evidence.
 
 The human step is to power down and isolate the printer, connect its spare eMMC
 to the USB writer, write the reviewed complete file with verification, reinstall

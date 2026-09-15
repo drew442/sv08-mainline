@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "private-diagnostic-image-v2-written-readback-verified-physical-boot-pending",
+  "status": "diagnostic-v2-host-booted-admin-verified-dram-capacity-under-investigation",
   "deployable": false,
   "project_commit": "1fbf8ad",
   "host_release": "0.1.0-board.2",
@@ -65,9 +65,26 @@
     "both_environment_copies_match_composed_image": true,
     "reader_powered_off": true
   },
+  "physical_first_boot": {
+    "capture_ready_at_utc": "2026-09-15T01:39:45Z",
+    "console_bytes": 54402,
+    "console_sha256": "8f29192122d15cb1764cc8d55cc492b80f29acd59d624ef5d1bb29f35ff8ea1d",
+    "capture_transmit": false,
+    "dram_result": "512 MiB",
+    "kernel": "6.18.51-sv08-candidate1",
+    "serial_login_prompt": true,
+    "cockpit_https_status": 200,
+    "ssh_public_key_login": "sv08 succeeded",
+    "linux_memtotal_kib": 485376,
+    "root_mount": "PARTUUID 26c68198-9248-47af-bbd3-643f1b604ef5, ext4 read-only",
+    "data_mount": "PARTUUID 4773f966-0678-4cf5-bb83-8ee6fb11d8eb, ext4 read-write nodev,nosuid",
+    "state_registry_present": true,
+    "failed_units": 0,
+    "network": "end0 DHCP 192.168.1.141/24",
+    "printer_services": "runtime masked and inactive"
+  },
   "not_established": [
-    "Boot of this rebuilt host image",
-    "Persistent owner SSH authentication on hardware",
+    "Whether the board has only 512 MiB usable DRAM or DRAM auto-detection underreports the expected capacity",
     "A/B, recovery, DRAM reliability, Wi-Fi, printing or heater/motion behavior"
   ]
 }
