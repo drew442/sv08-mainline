@@ -279,6 +279,9 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   still off before the next power cycle. The logger must record its `ready` event
   against the identified bridge under the account that will retain the capture;
   it must not transmit input.
+- [ ] Preserve the one remaining A attempt until the corrected capture has a
+  recorded `ready` event. The current CRC-valid newest environment is flag 8 with
+  `BOOT_A_LEFT=1`; its flag-7 peer has 2. Do not reboot for routine inspection.
 - [x] Run a bounded non-persistent memory check on the rearmed normal A host.
   A 512 MiB userspace allocation passed full-buffer `0x00`, `0xaa` and `0x55`
   write/read hashes with no failed units. It does not establish full-memory,

@@ -100,6 +100,12 @@
     "data_mount": "PARTUUID 4773f966-0678-4cf5-bb83-8ee6fb11d8eb read-write nodev,nosuid",
     "failed_units": 0,
     "printer_services": "sv08-klipper, sv08-moonraker, klipper and moonraker inactive",
+    "boot_environment": {
+      "newest": {"crc_valid": true, "flag": 8, "boot_order": "A", "boot_a_left": 1, "boot_b_left": 0},
+      "retained": {"crc_valid": true, "flag": 7, "boot_order": "A", "boot_a_left": 2, "boot_b_left": 0},
+      "interpretation": "The observed flag-8 copy confirms U-Boot selected and decremented the remaining A attempt for this boot."
+    },
+    "boot_timing": {"kernel_seconds": 5.068, "userspace_seconds": 13.823, "total_seconds": 18.892, "multi_user_userspace_seconds": 10.321},
     "interpretation": "The normal host reached its serial login and Cockpit endpoint, which is successful-path evidence for this loader. The early SPL trace was missed, so the final-validation marker and fail-stop branch were not directly observed. The historical factory account name sovol was rejected; the rebuilt image account sv08 accepted the owner key. No console input, heater or motion command, MCU write, environment write, or GPT repair was issued."
   },
   "not_established": [

@@ -276,6 +276,13 @@ The factory account name `sovol` was rejected, while the rebuilt image account
 or motion command, MCU write, raw environment write or GPT repair was made. The
 next captured power cycle must verify serial-device access before power is applied.
 
+The live host has `6.18.51-sv08-candidate1`, 999,672 KiB of `MemTotal`, a
+read-only `/dev/mmcblk2p2` root, persistent `/data`, zero failed units and all
+printer services inactive. Its observed boot time is 18.892 seconds. The newest
+raw environment is CRC-valid flag 8 with `BOOT_A_LEFT=1`; the flag-7 peer retains
+two attempts. This confirms U-Boot selected this A boot. Do not consume the one
+remaining A attempt until a receive-only logger has demonstrated its `ready` event.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

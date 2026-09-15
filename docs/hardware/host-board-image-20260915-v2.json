@@ -282,6 +282,25 @@
     "interpretation": "The existing diagnostic source called size calculation after a false final controller initialization. The capture stopped without a boot completion marker. A later reader inspection found the prior flag-7/flag-6 environments unchanged, so U-Boot had not externally recorded another attempt before this SPL failure.",
     "next_artifact": "The reviewed fail-stop guarded v6 loader was written at offset 8192 with positional readback verification. Its physical boot remains pending."
   },
+  "physical_v6_guarded_loader_boot": {
+    "artifact_record": "host-spl-diagnostics-20260915-v6.json",
+    "serial_login": "Debian GNU/Linux 13 sv08 ttyS0",
+    "ssh_owner_key_account": "sv08 succeeded",
+    "cockpit_https_status": 200,
+    "cockpit_port": 9090,
+    "kernel": "6.18.51-sv08-candidate1",
+    "linux_memtotal_kib": 999672,
+    "root_mount": "/dev/mmcblk2p2 read-only",
+    "data_mount": "PARTUUID 4773f966-0678-4cf5-bb83-8ee6fb11d8eb read-write nodev,nosuid",
+    "failed_units": 0,
+    "printer_services": "inactive",
+    "boot_environment": {
+      "newest": {"crc_valid": true, "flag": 8, "boot_a_left": 1, "boot_b_left": 0},
+      "retained": {"crc_valid": true, "flag": 7, "boot_a_left": 2, "boot_b_left": 0}
+    },
+    "early_spl_trace": "not captured because the intended unprivileged logger could not open the dialout-owned bridge",
+    "not_proven": "The final-validation fail-stop branch, DRAM reliability, B-slot fallback, recovery behavior, printing, heat or motion."
+  },
   "physical_memory_check": {
     "scope": "512 MiB userspace allocation on the rearmed normal A host",
     "persistent_writes": false,
