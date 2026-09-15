@@ -22,10 +22,10 @@
     "inactive_pair_verified": true
   },
   "hashes": {
-    "boot_log": "d25db6f98a299c59635ba0144b409e3929c28df7dd159e9dacd784af249c6083",
+    "boot_log": "31552ae50309ba2d3afb5f7a9d1125137b755419bf1e884e1b32e0f3b123cc77",
     "tests/host_qemu_rauc_resolution.py": "f08c2ebb4f5895a226303a8cd41c6d5b863bc741acc9fa12d559e5c75c1da744",
     "tests/fixtures/rauc-resolution/qemu-rauc-resolution.py": "5aa0bdeadb78b97f54b7712f6b5cacfa036fbc4b554aced5c39bc664384e0cb8",
-    "runtime/sv08_rauc_service.py": "c2525844f50ccf3972395f983bb47a4f8080b45677beb8965492f6652fcd41c7",
+    "runtime/sv08_rauc_service.py": "eb250f800b80420409a0a170306f84c30a69729817183c059ed13a47454d2bf5",
     "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
     "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
   },
