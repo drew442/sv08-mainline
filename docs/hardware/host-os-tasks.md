@@ -227,6 +227,13 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [x] Owner reinstalled/powered the diagnostic spare. The [first A boot](host-board-first-boot.md)
   reached verified SSH, immutable state and HTTPS login. The earlier DRAM cause,
   reliable repeat boots, B and recovery remain unresolved.
+- [x] Boot the rebuilt v2 full diagnostic image. Its first captured A boot
+  reached the seeded `sv08` SSH account, Cockpit HTTPS, immutable state and zero
+  failed units. Read-only enumeration found a connected HDMI interface, the
+  touchscreen input and both wireless interfaces. The same loader selected a
+  16-bit/512 MiB DRAM result where its prior v5 boot selected 32-bit/1 GiB; see
+  the [v2 board-image record](host-board-image-20260915-v2.json). This is not a
+  repeatability, touch, Wi-Fi, camera, A/B, recovery, heater or motion test.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed

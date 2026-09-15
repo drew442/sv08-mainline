@@ -154,6 +154,15 @@ state registry and owner key. NetworkManager obtained the reserved wired address
 Printer services remained runtime-masked and inactive; this boot issued no
 heater, motion or MCU command.
 
+Read-only runtime enumeration reports the HDMI connector connected with 1024×600
+among its advertised modes, and exposes the touchscreen as
+`wch.cn USB2IIC_CTP_CONTROL` on `mouse0`/`event0`. The MGS1 camera has two video
+nodes while Cedrus remains `video0`; both wireless interfaces are present but
+unassociated. The machine reached multi-user in 19.379 seconds (5.964 seconds
+kernel plus 13.414 seconds userspace). These are inventory observations only:
+the visible display, touch input, v2 camera capture, Wi-Fi association and
+reliability still need their respective tests.
+
 The same capture reports **512 MiB** DRAM, and Linux exposes 485,376 KiB after
 reservations. Its successful auto-detection is one rank at 16-bit width, with
 10 columns and 15 rows. The exact same v5 loader reported one rank at 32-bit

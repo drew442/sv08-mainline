@@ -87,6 +87,33 @@
     "failed_units": 0,
     "network": "end0 DHCP 192.168.1.141/24",
     "printer_services": "runtime masked and inactive",
+    "display_and_input_inventory": {
+      "hdmi_connector": "card0-HDMI-A-1 connected",
+      "advertised_modes_include": "1024x600",
+      "touch_input": "wch.cn USB2IIC_CTP_CONTROL, mouse0/event0",
+      "physical_touch_tested": false
+    },
+    "camera_inventory": {
+      "codec": "video0 cedrus",
+      "camera_nodes": [
+        "video1 MGS1: MGS1",
+        "video2 MGS1: MGS1"
+      ],
+      "capture_tested_on_v2": false
+    },
+    "wireless_inventory": {
+      "interfaces": [
+        "wlan0 managed",
+        "wlan1 managed"
+      ],
+      "association_tested": false
+    },
+    "boot_timing": {
+      "kernel_seconds": 5.964,
+      "userspace_seconds": 13.414,
+      "total_seconds": 19.379,
+      "multi_user_userspace_seconds": 10.566
+    },
     "boot_environment": {
       "primary": {
         "crc_valid": true,
