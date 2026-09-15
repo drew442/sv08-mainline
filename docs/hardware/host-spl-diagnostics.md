@@ -207,3 +207,22 @@ returned 200 and TCP port 22 accepted connections. SSH public-key authentication
 remains rejected because the installed image predates the persistent-key seeding
 correction; no live configuration change was made. This is one successful cold
 boot, not a repeatability result or a DRAM fix.
+
+## v2 full-image boot: differing auto-detection result
+
+The complete v2 diagnostic image embeds the exact v5 loader, verified by its
+loader-span hash before the eMMC write and by the v2 physical readback. Its
+first captured boot reached Linux and administration services, but the loader
+selected a different successful rank/width candidate: one rank at **16-bit**
+width, 10 columns and 15 rows. It consequently reported **512 MiB**, with Linux
+exposing 485,376 KiB after reservations. The v5 cold capture from the same
+loader source and artifact reported one rank at **32-bit** width with the same
+columns/rows and 1 GiB.
+
+This is evidence that rank/width auto-detection is not yet a reliable basis for
+identifying the installed DRAM capacity. It does not identify the board memory,
+justify an electrical change, or establish a stable fallback configuration. The
+v2 capture nevertheless reached U-Boot, Linux and the `sv08` login prompt; its
+raw capture hash and read-only host observations are in the
+[v2 board-image record](host-board-image-20260915-v2.json). Further reboot or
+memory-stress testing must use an explicit, reviewed attempt budget.

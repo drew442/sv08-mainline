@@ -155,8 +155,10 @@ Printer services remained runtime-masked and inactive; this boot issued no
 heater, motion or MCU command.
 
 The same capture reports **512 MiB** DRAM, and Linux exposes 485,376 KiB after
-reservations. Earlier v5 diagnostic evidence reported 1 GiB. The serial trace
-shows multiple attempted geometries before a successful 512 MiB configuration.
+reservations. Its successful auto-detection is one rank at 16-bit width, with
+10 columns and 15 rows. The exact same v5 loader reported one rank at 32-bit
+width with the same size geometry and **1 GiB** on its earlier cold boot. The
+serial trace records unsuccessful rank/width candidates before each success.
 This demonstrates that the rebuilt host can operate with the detected capacity,
 but does not establish the physical DRAM capacity, safe memory reliability or a
 solution to the differing results. The [v2 record](host-board-image-20260915-v2.json)

@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-14",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-loader-v5-written-readback-verified-physical-boot-pending",
+  "status": "diagnostic-loader-v5-written-readback-verified-physical-booted",
   "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
   "manifest_sha256": "4687db21a96cfa702b6bcbef620645ebb8d57e066349e2230bcebda7397d5bf7",
   "build": "beelink:/home/drew/sv08-mainline-v5-source/build/sv08-dram-diagnostic-v5",

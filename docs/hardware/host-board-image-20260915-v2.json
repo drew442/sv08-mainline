@@ -71,6 +71,11 @@
     "console_sha256": "8f29192122d15cb1764cc8d55cc492b80f29acd59d624ef5d1bb29f35ff8ea1d",
     "capture_transmit": false,
     "dram_result": "512 MiB",
+    "dram_autodetection": {
+      "successful_rank_width": "1 rank, 16-bit width",
+      "successful_size_geometry": "10 columns, 15 rows",
+      "comparison_to_v5": "The same loader record's v5 cold capture selected 1 rank, 32-bit width and reported 1 GiB. The differing result is an observation, not a board-memory identification."
+    },
     "kernel": "6.18.51-sv08-candidate1",
     "serial_login_prompt": true,
     "cockpit_https_status": 200,
