@@ -147,6 +147,31 @@ claims. The complete factory 8 GB fit gate, authenticated production session,
 assembled ARM64 host image, real board backend/idle behavior and physical
 power/disconnect tests remain open in the canonical host checklist.
 
+### Service-backed interrupted-install fixture
+
+The disposable ARM64 QEMU fixture
+[`host_qemu_rauc_resolution.py`](../../tests/host_qemu_rauc_resolution.py) uses
+the selected `rauc 1.15.2-0sv08.1` package and a generated signed paired bundle.
+Its bundle-only pre-install hook holds the real RAUC service at a deterministic
+barrier; neither the hook nor its regular-file slots are staged into an OS image.
+The host harness gives QEMU no network or host block device and requires its
+explicit disposable disk serial, non-deployable metadata, read-only root, and
+the initramfs's fixed test data PARTUUID.
+
+The 2026-09-15 implementation run killed the install client at that barrier and
+observed the surviving service as `Operation=installing`; its internal
+`GetSlotStatus` guard, inspection/disposition, a real cancellation mark request,
+and a second install all refused. An ordinary D-Bus user was denied by the
+assembled policy. After release, the same service owner supplied fresh idle
+evidence, the active pair still matched its original digests, the inactive pair
+matched the signed images, and one explicit unknown disposition was retained.
+The exact command, output hashes and limitations are in the
+[service-backed evidence record](host-admin-image-job-resolution-20260915.json).
+
+This is implementation self-verification, not the required independent feature
+review. It neither verifies a production image or board nor replaces the
+separate browser safe-source cancellation acceptance work.
+
 Original code fills ADR 0010's project-specific review/durability gap using Python,
 systemd and Cockpit supported interfaces without new runtime dependencies or
 upstream changes. Retire it if upstream provides equivalent persistence, review

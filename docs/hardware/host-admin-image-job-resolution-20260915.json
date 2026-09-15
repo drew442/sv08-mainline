@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-15",
+  "physical_hardware": false,
+  "environment": "disposable ARM64 QEMU systemd guest with networking disabled",
+  "command": "sudo python3 tests/host_qemu_rauc_resolution.py --execute",
+  "selected_rauc": {
+    "package": "1.15.2-0sv08.1",
+    "executable_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3"
+  },
+  "result": {
+    "passed": true,
+    "signed_paired_install": true,
+    "client_killed_service_survived": true,
+    "ordinary_dbus_client_denied": true,
+    "operation_while_held": "installing",
+    "internal_busy_guard_refused": true,
+    "receipt_and_cancel_refused_while_busy": true,
+    "writer_exclusion": true,
+    "same_owner_idle_observation": true,
+    "fresh_review_disposition_retained": true,
+    "active_pair_preserved": true,
+    "inactive_pair_verified": true
+  },
+  "hashes": {
+    "boot_log": "d25db6f98a299c59635ba0144b409e3929c28df7dd159e9dacd784af249c6083",
+    "tests/host_qemu_rauc_resolution.py": "f08c2ebb4f5895a226303a8cd41c6d5b863bc741acc9fa12d559e5c75c1da744",
+    "tests/fixtures/rauc-resolution/qemu-rauc-resolution.py": "5aa0bdeadb78b97f54b7712f6b5cacfa036fbc4b554aced5c39bc664384e0cb8",
+    "runtime/sv08_rauc_service.py": "c2525844f50ccf3972395f983bb47a4f8080b45677beb8965492f6652fcd41c7",
+    "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+    "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+  },
+  "limitations": [
+    "The signed hook and regular-file slots are generated only in the disposable fixture.",
+    "This is implementation self-verification; the feature record still requires independent review before integration.",
+    "It does not establish a production image, physical hardware behavior, or a completed browser safe-source journey."
+  ]
+}
