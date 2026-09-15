@@ -275,10 +275,10 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   serial login and Cockpit HTTPS endpoint appeared, but the intended early serial
   capture lacked device permission and retained no SPL output. See the
   [v6 artifact record](host-spl-diagnostics-20260915-v6.json).
-- [ ] Correct and prove receive-only serial capture access while the printer is
-  still off before the next power cycle. The logger must record its `ready` event
-  against the identified bridge under the account that will retain the capture;
-  it must not transmit input.
+- [x] Correct and prove receive-only serial capture access. A root-owned logger
+  exclusively opened the identified bridge at 115200 8N1, recorded `ready`, and
+  transmitted/captured zero bytes before clean closure. Start the same corrected
+  logger before the next power cycle.
 - [ ] Preserve the one remaining A attempt until the corrected capture has a
   recorded `ready` event. The current CRC-valid newest environment is flag 8 with
   `BOOT_A_LEFT=1`; its flag-7 peer has 2. Do not reboot for routine inspection.

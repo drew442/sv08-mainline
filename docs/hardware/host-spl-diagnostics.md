@@ -278,3 +278,8 @@ factory account name `sovol` was rejected, while the rebuilt image account `sv08
 accepted the owner key. No login recovery or live configuration change was
 attempted. The artifact record retains the capture limitation and the next serial
 capture must prove its device access before another power cycle.
+
+A root-owned receive-only preflight subsequently opened the same bridge
+exclusively at 115200 8N1, recorded its `ready` event, captured zero bytes and
+transmitted zero bytes before cleanly closing. The next power-cycle capture must
+use that corrected owner and prove `ready` before power is applied.

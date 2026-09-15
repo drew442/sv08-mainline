@@ -135,6 +135,9 @@ touchscreen's own USB touch connection must remain available for that test.
   owns the capture. The 2026-09-15 v6 boot lost its early trace because the
   unprivileged logger lacked permission for the dialout-owned bridge; a later
   root-owned receive-only logger could open it and record the Debian login prompt.
+  A root-owned preflight later recorded `ready` against the same bridge and closed
+  with zero captured and transmitted bytes. Use that execution identity for the
+  next boot capture.
 - Capture an attended normal boot and confirm readable SPL/U-Boot/kernel output
   and the expected Linux host. A serial getty does not imply password login is
   provisioned: the existing image uses SSH keys. SSH remains the normal shell.

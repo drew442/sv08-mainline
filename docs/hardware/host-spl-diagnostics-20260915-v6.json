@@ -108,10 +108,18 @@
     "boot_timing": {"kernel_seconds": 5.068, "userspace_seconds": 13.823, "total_seconds": 18.892, "multi_user_userspace_seconds": 10.321},
     "interpretation": "The normal host reached its serial login and Cockpit endpoint, which is successful-path evidence for this loader. The early SPL trace was missed, so the final-validation marker and fail-stop branch were not directly observed. The historical factory account name sovol was rejected; the rebuilt image account sv08 accepted the owner key. No console input, heater or motion command, MCU write, environment write, or GPT repair was issued."
   },
+  "serial_capture_preflight": {
+    "completed_at_utc": "2026-09-15T08:41:44Z",
+    "bridge": "/dev/serial/by-path/pci-0000:00:15.0-usb-0:3:1.0-port0",
+    "configuration": "root-owned, receive-only, exclusive-open, 115200 8N1 without flow control",
+    "ready_event_recorded": true,
+    "transmitted_bytes": 0,
+    "captured_bytes": 0,
+    "interpretation": "This proves the corrected capture process can open the live identified bridge without transmitting. It does not replace a capture started before a subsequent power cycle."
+  },
   "not_established": [
     "DRAM training, timings, capacity or reliability",
     "Direct observation of the final-validation guard's failure branch",
-    "Reliable early serial capture until the capture account's device permission is corrected",
     "A/B fallback or recovery behavior for this loader"
   ]
 }
