@@ -193,6 +193,30 @@ flag-2 peer retains two A attempts. One bounded A attempt now remains. The
 alternating 16-bit/512 MiB then 32-bit/1 GiB result confirms only that the
 current auto-detection cannot identify the board capacity reliably.
 
+## Exhaustion and independent recovery boot
+
+The final A attempt again reached serial login and owner-key SSH, with the
+32-bit/1 GiB result and zero failed units. Its flag-4 environment copy recorded
+`BOOT_A_LEFT=0`; B was not admitted. The next captured reboot selected the
+independent recovery partition as designed. Recovery ran its root from
+`/dev/mmcblk1p5` read-only with `norecovery`, mounted its own squashfs `/usr`
+read-only, and started `sv08-recovery-display.service` with no restart or failed
+units. Its startup report showed the dedicated local GTK process active.
+
+This recovery build intentionally has no mounted host state registry and no
+`recovery-media-policy.json`, so it exposes **Check storage** only; boot, export
+and restore actions remain unavailable. The normal host SSH endpoint was not
+reachable from the test network. Physical display appearance and touch behavior
+remain unobserved. The capture confirms independent recovery selection and its
+read-only local UI startup; it does not validate recovery-media integration or
+user-data restoration.
+
+A private 128 KiB rearm pair has been built from the observed newest flag 4. It
+contains independently CRC-valid flag-5 and flag-6 copies with the reviewed
+diagnostic policy (`BOOT_ORDER=A`, `BOOT_A_LEFT=3`, `BOOT_B_LEFT=0`). The image
+is ready for its separately identified USB-writer operation; it has **not** been
+written to the eMMC.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

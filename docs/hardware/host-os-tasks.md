@@ -232,9 +232,17 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   failed units. Read-only enumeration found a connected HDMI interface, the
   touchscreen input and both wireless interfaces. The same loader selected a
   16-bit/512 MiB DRAM result on the first A boot and 32-bit/1 GiB on the second;
-  see the [v2 board-image record](host-board-image-20260915-v2.json). One A
-  attempt remains. This is not a touch, Wi-Fi, camera, A/B, recovery, heater or
-  motion test, and it does not establish repeatability or DRAM capacity.
+  see the [v2 board-image record](host-board-image-20260915-v2.json). The later
+  attempts and recovery transition are recorded below. This is not a touch,
+  Wi-Fi, camera, A/B, recovery, heater or motion test, and it does not establish
+  repeatability or DRAM capacity.
+- [x] Exercise the remaining diagnostic A attempts and the independent recovery
+  selection under receive-only serial capture. The remaining two A boots reached
+  serial login and owner-key SSH; the final counter reached zero and the next
+  boot mounted recovery root and `/usr` read-only, with the local recovery UI
+  process active and no failed units. The current recovery build intentionally
+  lacks host-state/recovery-media integration, so only **Check storage** is
+  available. A reviewable rearm pair is ready but has not been written.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed

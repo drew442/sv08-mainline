@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-v2-host-booted-admin-verified-dram-capacity-under-investigation",
+  "status": "diagnostic-v2-a-attempts-exhausted-independent-recovery-booted-rearm-prepared",
   "deployable": false,
   "project_commit": "1fbf8ad",
   "host_release": "0.1.0-board.2",
@@ -164,8 +164,71 @@
       "interpretation": "The second observed physical A boot consumed the second bounded A attempt. One A attempt remains; no health confirmation or counter refresh was issued."
     }
   },
+  "physical_third_a_reboot": {
+    "capture_sha256": "37d15bf859991340b4fe64affa0a4432001c8087c6fbaf9f27b48f0683a29ff3",
+    "capture_bytes": 62685,
+    "capture_transmit": false,
+    "dram_result": "1 GiB",
+    "successful_rank_width": "1 rank, 32-bit width",
+    "successful_size_geometry": "10 columns, 15 rows",
+    "kernel": "6.18.51-sv08-candidate1",
+    "serial_login_prompt": true,
+    "ssh_public_key_login": "sv08 succeeded",
+    "linux_memtotal_kib": 999672,
+    "failed_units": 0,
+    "boot_environment": {
+      "retained_primary": {
+        "crc_valid": true,
+        "flag": 3,
+        "boot_a_left": 1
+      },
+      "newer_redundant": {
+        "crc_valid": true,
+        "flag": 4,
+        "boot_a_left": 0
+      },
+      "interpretation": "The third observed physical A boot exhausted the A attempt budget. B remains unavailable; the next reboot must select independent recovery."
+    }
+  },
+  "physical_recovery_boot": {
+    "capture_sha256": "1ed3f430e785521bf1943e5c9e8b0a0763efc4867145993cda8cb80d3c857ea9",
+    "capture_bytes": 69696,
+    "capture_transmit": false,
+    "dram_result": "1 GiB",
+    "successful_rank_width": "1 rank, 32-bit width",
+    "kernel": "6.18.51-sv08-candidate1",
+    "root_mount": "/dev/mmcblk1p5 ext4 read-only,norecovery",
+    "usr_mount": "/dev/loop0 squashfs read-only,nodev",
+    "display_service": "active/running, no restart",
+    "failed_units": 0,
+    "state_registry_present": false,
+    "available_action": "recovery.check",
+    "unavailable_actions": {
+      "recovery.boot": "recovery-media-policy.json absent",
+      "recovery.export": "recovery-media-policy.json absent",
+      "recovery.restore": "recovery-media-policy.json absent"
+    },
+    "normal_host_ssh": "unreachable from the test network",
+    "visible_ui_or_touch_tested": false
+  },
+  "rearm_artifact": {
+    "private_filename": "build/v2-physical-rearm-20260915/environment-pair.bin",
+    "sha256": "bd5a2f20268c5d85defbeb398f40e72434898ee0235cf7907d70fe262f76b93e",
+    "bytes": 131072,
+    "offsets_bytes": [4194304, 8388608],
+    "source_newest_valid_flag": 4,
+    "output_flags": [5, 6],
+    "values": {
+      "sv08_env_layout": "ab-8gb-v1",
+      "BOOT_ORDER": "A",
+      "BOOT_A_LEFT": 3,
+      "BOOT_B_LEFT": 0
+    },
+    "both_crc_valid": true,
+    "device_write_completed": false
+  },
   "not_established": [
     "Whether rank/width DRAM auto-detection can be made reliable or identifies the board's physical capacity",
-    "A/B, recovery, DRAM reliability, Wi-Fi, printing or heater/motion behavior"
+    "B-slot activation or fallback, recovery-media integration, DRAM reliability, Wi-Fi, visible recovery UI/touch behavior, printing or heater/motion behavior"
   ]
 }
