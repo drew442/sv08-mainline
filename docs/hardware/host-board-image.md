@@ -118,6 +118,24 @@ artifact record and manifest hash, verifies the target profile and requires the
 reviewed 8192-byte loader placement. It prevents a newly composed image from
 silently using the historical loader record.
 
+## Rebuilt v2 artifact awaiting eMMC write
+
+The private `0.1.0-board.2` diagnostic host root restages the corrected
+first-boot persistent owner-key initializer, the immutable-mode package-backup
+condition and the reviewed host UI. Its owner-key seed byte-matches the
+separately preserved data tree. The root receipt confirms printer and RAUC
+services remain masked and that no QEMU fixture is included. The new complete
+composition binds the independent v5 diagnostic loader record rather than the
+historical loader record.
+
+The [v2 artifact record](host-board-image-20260915-v2.json) identifies the
+private raw and compressed files. A standalone read-only verifier independently
+checked the whole raw image, the loader span, both redundant environments, all
+six embedded partition images and GPT validity. XZ integrity and a complete
+decompressed byte-stream hash then matched the recorded raw hash. This remains a
+non-deployable diagnostic candidate; no eMMC write or v2 hardware boot has
+occurred.
+
 The human step is to power down and isolate the printer, connect its spare eMMC
 to the USB writer, write the reviewed complete file with verification, reinstall
 it, and boot with console logging already running. Retain the factory module.

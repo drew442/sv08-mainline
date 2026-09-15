@@ -1,0 +1,53 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-15",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "status": "private-diagnostic-image-v2-ready-for-reviewed-emmc-write",
+  "deployable": false,
+  "project_commit": "1fbf8ad",
+  "host_release": "0.1.0-board.2",
+  "host_root": {
+    "sha256": "a6a7af4aebd43a651459a33335a09fa1837a1344e7d99d8395fa45d79f2b2a47",
+    "files": 25308,
+    "bytes": 1407273966,
+    "first_boot_owner_key_seed_matches_preserved_data": true,
+    "printer_services_masked": true,
+    "rauc_masked": true,
+    "qemu_fixture_absent": true
+  },
+  "loader": {
+    "record": "host-spl-diagnostics-20260914-v5.json",
+    "sha256": "78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48",
+    "bytes": 786105,
+    "offset_bytes": 8192,
+    "end_offset_bytes": 794297
+  },
+  "raw_image": {
+    "private_filename": "sv08-board-diagnostic.img",
+    "bytes": 7818182656,
+    "sha256": "31282446a0d20c175c9c6035c1f2c94c2dcd98571d94247dc951317c796ec75b"
+  },
+  "compressed_image": {
+    "private_filename": "sv08-board-diagnostic.img.xz",
+    "bytes": 1000516460,
+    "sha256": "2e242858f2f972657e0bf6ca61882ccb939931fdd92a250e922b206a4a1e7579",
+    "xz_integrity_passed": true,
+    "expanded_bytes_match_raw": true,
+    "expanded_sha256_match_raw": true
+  },
+  "independent_byte_review": {
+    "whole_image_sha256_matches_composition": true,
+    "loader_span_matches_v5_record": true,
+    "both_environment_copies_match": true,
+    "all_six_partition_images_match_embedded_bytes": true,
+    "gpt_valid": true,
+    "read_only": true
+  },
+  "not_established": [
+    "Physical eMMC write or readback",
+    "Boot of this rebuilt host image",
+    "Persistent owner SSH authentication on hardware",
+    "A/B, recovery, DRAM reliability, Wi-Fi, printing or heater/motion behavior"
+  ]
+}
