@@ -264,6 +264,10 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   A 512 MiB userspace allocation passed full-buffer `0x00`, `0xaa` and `0x55`
   write/read hashes with no failed units. It does not establish full-memory,
   soak, cold-boot or DRAM-capacity reliability.
+- [x] Validate a short passive MGS1 camera stream on the rearmed normal A host.
+  Thirty 640×480 MJPEG frames decoded successfully from tmpfs storage, and the
+  device was restored to 1280×720/25 fps. This does not establish long-duration
+  streaming, video presentation or camera behavior while printing.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed

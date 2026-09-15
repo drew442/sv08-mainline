@@ -239,6 +239,13 @@ All three expected hashes matched in about 2.7 seconds each, and the host still
 had zero failed units. This is a bounded check of the currently mapped 1 GiB
 configuration, not a full-memory, soak, cold-boot or DRAM-capacity test.
 
+The MGS1 UVC camera at `/dev/video1` also captured and FFmpeg-decoded 30 MJPEG
+frames at 640×480 with a requested 15 fps. The 2,575,264-byte private capture
+was held only in `/tmp` (tmpfs), then the camera was restored to its prior
+1280×720/25 fps format. No systemd unit failed. This is a short passive camera
+test; it does not establish long-duration streaming, video presentation or
+behavior while printing.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

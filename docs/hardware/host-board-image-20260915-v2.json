@@ -289,6 +289,22 @@
     "failed_units_after": 0,
     "not_proven": "Full-memory coverage, long-duration reliability, cold-boot reliability, and the capacity selected by DRAM auto-detection."
   },
+  "physical_camera_check": {
+    "device": "/dev/video1, MGS1: MGS1, uvcvideo",
+    "temporary_capture": {
+      "format": "MJPEG",
+      "dimensions": [640, 480],
+      "requested_fps": 15,
+      "decoded_frames": 30,
+      "bytes": 2575264,
+      "sha256": "d194bfbbf858f2e07dcbe58da1a17c086da0de5f87505b1d62f43ccbc4847e60",
+      "storage": "/tmp tmpfs"
+    },
+    "ffmpeg_decode_passed": true,
+    "restored_device_format": "1280x720 MJPEG, 25 fps",
+    "failed_units_after": 0,
+    "not_proven": "Long-duration streaming, camera use during printing, user-visible video presentation, or camera reliability."
+  },
   "not_established": [
     "Whether rank/width DRAM auto-detection can be made reliable or identifies the board's physical capacity",
     "B-slot activation or fallback, recovery-media integration, DRAM reliability, Wi-Fi, visible recovery UI/touch behavior, printing or heater/motion behavior"
