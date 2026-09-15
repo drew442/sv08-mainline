@@ -283,3 +283,13 @@ A root-owned receive-only preflight subsequently opened the same bridge
 exclusively at 115200 8N1, recorded its `ready` event, captured zero bytes and
 transmitted zero bytes before cleanly closing. The next power-cycle capture must
 use that corrected owner and prove `ready` before power is applied.
+
+The remaining A attempt then received a complete capture. The final selected
+32-bit, 10-column/15-row controller initialization returned success, printed
+`SV08-DRAM: size validation`, reported 1 GiB, and continued through U-Boot
+2026.07, Linux, Debian login, owner-key SSH and Cockpit HTTPS. The 63,792-byte
+receive-only trace has SHA-256
+`da3e73e647f355efe6ee6612e8a9a2456676cf2a7d2ff1d7136a081c06e692ac`.
+This directly validates the guard's successful path; it does not trigger its
+false-return branch. The newest raw environment is flag 9 with A exhausted, so
+the next boot selects recovery unless a separately reviewed rearm is performed.

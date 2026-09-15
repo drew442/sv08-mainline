@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-loader-v6-written-physical-host-booted-early-trace-missed",
+  "status": "diagnostic-loader-v6-written-full-successful-a-boot-captured",
   "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
   "manifest_sha256": "b20da935fc04d1f967bd43da23ab00d5eb73aa4a6ac299f9563d522b205e51a3",
   "project_commit": "0a8d3c72f03f866a3c59e905f4deb545b9bebbd5",
@@ -117,9 +117,34 @@
     "captured_bytes": 0,
     "interpretation": "This proves the corrected capture process can open the live identified bridge without transmitting. It does not replace a capture started before a subsequent power cycle."
   },
+  "physical_final_a_boot": {
+    "capture_ready_at_utc": "2026-09-15T08:43:01Z",
+    "capture_transmit": false,
+    "capture_sha256": "da3e73e647f355efe6ee6612e8a9a2456676cf2a7d2ff1d7136a081c06e692ac",
+    "capture_bytes": 63792,
+    "dram_autodetection": "1 rank, 32-bit width; final 10 columns, 15 rows",
+    "final_controller_initialization_result": true,
+    "final_validation_marker": "SV08-DRAM: size validation",
+    "final_failure_marker_observed": false,
+    "dram_result": "1 GiB",
+    "u_boot": "2026.07",
+    "kernel": "6.18.51-sv08-candidate1",
+    "serial_login_prompt": true,
+    "ssh_owner_key_account": "sv08 succeeded",
+    "cockpit_https_9090_status": 200,
+    "failed_units": 0,
+    "printer_services": "sv08-klipper, sv08-moonraker, klipper, moonraker, KlipperScreen and rauc inactive",
+    "boot_timing": {"kernel_seconds": 5.261, "userspace_seconds": 13.869, "total_seconds": 19.130, "multi_user_userspace_seconds": 10.329},
+    "boot_environment": {
+      "newest": {"crc_valid": true, "flag": 9, "boot_order": "A", "boot_a_left": 0, "boot_b_left": 0},
+      "retained": {"crc_valid": true, "flag": 8, "boot_order": "A", "boot_a_left": 1, "boot_b_left": 0},
+      "interpretation": "All bounded A attempts are now consumed; the next boot selects recovery unless the environments are deliberately rearmed."
+    },
+    "interpretation": "This directly verifies the final controller-initialization successful path before size calculation. It does not exercise the false-return fail-stop branch."
+  },
   "not_established": [
     "DRAM training, timings, capacity or reliability",
     "Direct observation of the final-validation guard's failure branch",
-    "A/B fallback or recovery behavior for this loader"
+    "Recovery selection under this loader"
   ]
 }

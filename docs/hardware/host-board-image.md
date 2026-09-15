@@ -283,6 +283,14 @@ raw environment is CRC-valid flag 8 with `BOOT_A_LEFT=1`; the flag-7 peer retain
 two attempts. This confirms U-Boot selected this A boot. Do not consume the one
 remaining A attempt until a receive-only logger has demonstrated its `ready` event.
 
+After that preflight, the final A attempt was captured completely. The final
+32-bit 10×15 DRAM initialization returned success, followed by the size marker,
+1 GiB result, U-Boot, Linux and the serial login. SSH and Cockpit again passed
+with zero failed units and printer services inactive. The 63,792-byte trace hash
+is `da3e73e647f355efe6ee6612e8a9a2456676cf2a7d2ff1d7136a081c06e692ac`.
+The CRC-valid newest environment is now flag 9 with `BOOT_A_LEFT=0`; its flag-8
+peer retains one. The next boot selects recovery unless a reviewed rearm occurs.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the
