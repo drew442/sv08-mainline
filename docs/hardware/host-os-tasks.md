@@ -283,9 +283,11 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   `ready`. The full trace confirms final DRAM initialization success, 1 GiB,
   U-Boot, Linux, login, owner-key SSH, Cockpit, zero failed units and inactive
   printer services. The newest CRC-valid environment is flag 9 with A exhausted.
-- [ ] Decide whether to capture the v6 recovery selection now. The next boot
-  selects recovery and will leave the normal host unavailable until a separately
-  reviewed environment rearm; do not reboot it for routine inspection.
+- [x] Defer a duplicate v6 recovery-selection boot. The v6 change is confined to
+  SPL before U-Boot; its U-Boot/FIT is byte-identical to the previously captured
+  v5 recovery path, and the complete v6 normal boot validates the changed SPL
+  path. Preserve the running host rather than requiring an unnecessary rearm.
+  Recovery selection under v6 remains explicitly unproven.
 - [x] Run a bounded non-persistent memory check on the rearmed normal A host.
   A 512 MiB userspace allocation passed full-buffer `0x00`, `0xaa` and `0x55`
   write/read hashes with no failed units. It does not establish full-memory,
