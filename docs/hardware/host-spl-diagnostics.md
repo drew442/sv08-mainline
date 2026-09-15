@@ -255,4 +255,15 @@ before `mctl_calc_size()`. Its FIT, TF-A, effective configuration and every byte
 from loader offset 40,960 onward equal v5; 25,980 changed bytes are confined to
 the SPL region. The eGON checksum, SPL bounds, nine native helper cases and five
 sandbox invalid-state cases pass. It remains a non-deployable diagnostic and has
-not been written or physically tested.
+not yet physically booted.
+
+The identified spare was inspected with its two CRC-valid raw environments at
+flags 7 and 6 (`BOOT_A_LEFT=2` and `3`). The v6 loader-only write at byte 8192
+then passed a positional readback hash check, leaving both environments unchanged.
+An initial implementation error wrote the payload immediately after the second
+environment rather than at byte 8192; that 786,105-byte region did not overlap
+either environment and was restored byte-for-byte from the verified v2 full image
+before the successful positional write. The reader was powered off. The factory-
+sized GPT warning on the 32 GB spare remains and was not repaired. Full details,
+including the restoration hash, are in the v6 artifact record. The next operation
+is a captured physical boot.

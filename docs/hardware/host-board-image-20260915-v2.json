@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-v2-rearmed-final-validation-failure-guarded-rebuild-pending",
+  "status": "diagnostic-v2-rearmed-final-validation-failure-guarded-loader-written-boot-pending",
   "deployable": false,
   "project_commit": "1fbf8ad",
   "host_release": "0.1.0-board.2",
@@ -279,8 +279,8 @@
       "Linux",
       "serial login"
     ],
-    "interpretation": "The existing diagnostic source called size calculation after a false final controller initialization. The capture stopped without a boot completion marker. No reset, loader write, or environment write was issued after that observation; the current attempt counter is therefore not externally verified.",
-    "next_artifact": "A fail-stop final-validation guard is under fresh offline build and review; it retains the electrical configuration and must be separately identified before a loader-only write."
+    "interpretation": "The existing diagnostic source called size calculation after a false final controller initialization. The capture stopped without a boot completion marker. A later reader inspection found the prior flag-7/flag-6 environments unchanged, so U-Boot had not externally recorded another attempt before this SPL failure.",
+    "next_artifact": "The reviewed fail-stop guarded v6 loader was written at offset 8192 with positional readback verification. Its physical boot remains pending."
   },
   "physical_memory_check": {
     "scope": "512 MiB userspace allocation on the rearmed normal A host",

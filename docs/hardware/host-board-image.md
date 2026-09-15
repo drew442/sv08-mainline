@@ -255,11 +255,11 @@ initialization, which returned false. The current diagnostic loader printed
 U-Boot, Linux or login. The 16,583-byte receive-only capture has SHA-256
 `2166122bba6a704e81cea45e5b709fd327816108daa4615ce3975d7d8c671c60`.
 
-No reset, environment write or loader write followed that observation, so the
-current attempt counter is not externally verified. A fresh offline loader adds
-a fail-stop check around that final controller initialization before size
-calculation. It preserves the tested electrical settings and requires complete
-artifact review and a newly identified loader-only write before physical use.
+Reader inspection later found the flag-7/flag-6 environments unchanged, with
+`BOOT_A_LEFT=2` and `3` respectively; the failed SPL attempt did not externally
+record another U-Boot attempt. The reviewed v6 loader now adds a fail-stop check
+around that final controller initialization before size calculation. It was
+written with positional readback verification and awaits a captured physical boot.
 
 ## Completed offline result
 

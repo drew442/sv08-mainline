@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-loader-v6-offline-built-and-reviewed-not-written",
+  "status": "diagnostic-loader-v6-written-readback-verified-physical-boot-pending",
   "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
   "manifest_sha256": "b20da935fc04d1f967bd43da23ab00d5eb73aa4a6ac299f9563d522b205e51a3",
   "project_commit": "0a8d3c72f03f866a3c59e905f4deb545b9bebbd5",
@@ -12,7 +12,7 @@
   "source_tf_a": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
   "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
   "deployable": false,
-  "physical_hardware": false,
+  "physical_hardware": true,
   "artifact": {
     "loader_bytes": 786105,
     "loader_sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
@@ -50,12 +50,36 @@
     "sandbox_invalid_state_cases": 5,
     "sandbox_selected_fit_dtb_matches": true
   },
-  "review_status": "Implementation delivery review passed from the built source, linked SPL, binary composition, eGON checksum, native helper test and sandbox checks. This is a diagnostic-only loader and has not been written or physically booted.",
-  "physical_write": null,
+  "review_status": "Implementation delivery review passed from the built source, linked SPL, binary composition, eGON checksum, native helper test and sandbox checks. This remains a diagnostic-only loader; its physical boot is pending.",
+  "physical_write": {
+    "writer_by_id": "/dev/disk/by-id/usb-Generic_STORAGE_DEVICE_000000000819-0:0",
+    "target_capacity_bytes": 31272730624,
+    "target_partuuids_match": true,
+    "target_unmounted": true,
+    "predecessor_loader_sha256": "78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48",
+    "write_offset_bytes": 8192,
+    "bytes_written": 786105,
+    "direct_positional_readback_sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+    "environment_copies_after_write": [
+      {"offset_bytes": 4194304, "crc_valid": true, "flag": 7, "boot_a_left": 2, "boot_b_left": 0},
+      {"offset_bytes": 8388608, "crc_valid": true, "flag": 6, "boot_a_left": 3, "boot_b_left": 0}
+    ],
+    "unintended_write_recovery": {
+      "first_capacity_guard": "A regular-file size API returned zero for the block device and aborted before the target was opened for writing.",
+      "incorrect_write_offset_bytes": 8454144,
+      "incorrect_write_bytes": 786105,
+      "overlap_with_raw_environments": false,
+      "restoration_source": "beelink:/home/drew/sv08-mainline-v6-source/build/board-disk-v2/sv08-board-diagnostic.img",
+      "restored_region_sha256": "25c138ab3168caf3bee0ff2cdd530ce99ab0644f597584f6b91788dc62c198ce",
+      "restoration_exact_readback_match": true,
+      "environments_unchanged_after_restoration": true
+    },
+    "gpt_factory_sized_layout_warning_unchanged": true,
+    "reader_powered_off": true
+  },
   "not_established": [
     "Execution of this loader on test-sv08-01",
     "DRAM training, timings, capacity or reliability",
-    "Current raw environment attempt counters after the captured failed boot",
     "A/B fallback or recovery behavior for this loader"
   ]
 }
