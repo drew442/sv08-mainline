@@ -29,6 +29,22 @@ class StageUITests(unittest.TestCase):
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/sockets.target.wants').exists())
         with self.assertRaises(ValueError): stage(self.work, 'host', True)
 
+    def test_host_refresh_replaces_only_reviewed_ui_outputs(self):
+        stage(self.work, 'host', True)
+        root = self.work / 'rootfs'
+        target = root / 'usr/share/cockpit/sv08-host'
+        (target / 'stale.txt').write_text('obsolete\n')
+        result = stage(self.work, 'host', True, refresh=True)
+        self.assertTrue(result['execute'])
+        self.assertTrue((target / 'manifest.json').is_file())
+        self.assertFalse((target / 'stale.txt').exists())
+        self.assertEqual((root / 'etc/cockpit/cockpit.conf').read_text(),
+                         '[WebService]\nShell=/sv08-host/index.html\n')
+
+    def test_recovery_refresh_is_refused(self):
+        with self.assertRaisesRegex(ValueError, 'only supported'):
+            stage(self.work, 'recovery', True, refresh=True)
+
     def test_shell_config_conflict_is_rejected_without_overwrite(self):
         config = self.work / 'rootfs/etc/cockpit/cockpit.conf'
         config.parent.mkdir(parents=True); config.write_text('[WebService]\nOrigins=https://owner.example\n')

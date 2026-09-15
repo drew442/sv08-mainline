@@ -32,14 +32,25 @@ def validate(manifest):
         raise ValueError('This integration stage is still an offline candidate')
 
 
-def stage(work, manifest):
+def stage(work, manifest, refresh=False):
     validate(manifest)
     root = work / 'rootfs'
-    if root.is_symlink() or not (work / 'refresh-complete').is_file():
+    if root.is_symlink() or not root.is_dir() or not (work / 'refresh-complete').is_file():
         raise ValueError('Use an isolated completed baseline copy')
     target = root / 'usr/lib/sv08'
-    if target.exists():
-        raise ValueError('Integration is already staged; use a fresh copy')
+    target_exists = target.exists() or target.is_symlink()
+    if target_exists:
+        if not refresh:
+            raise ValueError('Integration is already staged; use a fresh copy')
+        if target.is_symlink() or not target.is_dir():
+            raise ValueError('Existing integration target is not a regular directory')
+    command_links = []
+    for command, module in [('sv08-state', 'sv08_state.py'), ('sv08-package', 'sv08_package.py')]:
+        link = root / 'usr/bin' / command
+        if link.exists() or link.is_symlink():
+            if not refresh or not link.is_symlink() or os.readlink(link) != '../lib/sv08/' + module:
+                raise ValueError('Existing runtime command conflicts with integration: ' + command)
+            command_links.append((link, module))
     existing = (root / 'etc/passwd').read_text().splitlines()
     owner = [line.split(':') for line in existing if line.startswith('sv08:')]
     if owner and owner[0][2:4] != ['1000', '1000']:
@@ -49,12 +60,21 @@ def stage(work, manifest):
     groups = (root / 'etc/group').read_text().splitlines()
     if not owner and any(line.split(':')[2] == '1000' for line in groups):
         raise ValueError('GID 1000 is occupied; do not reassign an existing group')
+    key_seed = root / 'home/sovol/.ssh/authorized_keys'
+    if key_seed.is_symlink() or not key_seed.is_file() or not key_seed.read_text().strip():
+        raise ValueError('Host image must provide a non-empty regular owner authorized-key seed')
+    # All refresh preconditions are checked before replacing the existing runtime.
+    if target_exists:
+        shutil.rmtree(target)
     target.mkdir(parents=True)
     for path in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(path, target / path.name)
     for command, module in [('sv08-state', 'sv08_state.py'), ('sv08-package', 'sv08_package.py')]:
         (target / module).chmod(0o755)
-        (root / 'usr/bin' / command).symlink_to('../lib/sv08/' + module)
+        link = root / 'usr/bin' / command
+        if (link, module) in command_links:
+            link.unlink()
+        link.symlink_to('../lib/sv08/' + module)
     (root / 'etc/default').mkdir(parents=True, exist_ok=True)
     (root / 'etc/default/locale').write_text('LANG=C.UTF-8\n')
     (target / 'release.json').write_text(json.dumps(manifest, indent=2) + '\n')
@@ -94,9 +114,6 @@ def stage(work, manifest):
     resolv.symlink_to('/run/NetworkManager/resolv.conf')
     (root / 'etc/ssh/sshd_config.d').mkdir(exist_ok=True)
     shutil.copyfile(REPO / 'configs/host-os/sshd.conf', root / 'etc/ssh/sshd_config.d/20-sv08.conf')
-    key_seed = root / 'home/sovol/.ssh/authorized_keys'
-    if key_seed.is_symlink() or not key_seed.is_file() or not key_seed.read_text().strip():
-        raise ValueError('Host image must provide a non-empty regular owner authorized-key seed')
     seed_dir = root / 'usr/lib/sv08/seed'
     seed_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(key_seed, seed_dir / 'authorized_keys')
@@ -137,15 +154,17 @@ def main():
     p.add_argument('--work', type=Path, required=True)
     p.add_argument('--manifest', type=Path, required=True)
     p.add_argument('--execute', action='store_true')
+    p.add_argument('--refresh', action='store_true',
+                   help='Replace only an already staged runtime in a fresh copied root')
     a = p.parse_args()
     manifest = json.loads(a.manifest.read_text())
     validate(manifest)
     work = work_path(a.work)
-    print(json.dumps(dict(execute=a.execute, work=str(work), release=manifest['release'])))
+    print(json.dumps(dict(execute=a.execute, refresh=a.refresh, work=str(work), release=manifest['release'])))
     if a.execute:
         if os.geteuid() != 0:
             p.error('Staging requires root for filesystem ownership and user creation')
-        stage(work, manifest)
+        stage(work, manifest, a.refresh)
 
 
 if __name__ == '__main__':

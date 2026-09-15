@@ -76,6 +76,16 @@ this initial host test. Installed UI files and pilot login do not establish the
 remaining software/network adapters, production TLS/account persistence, signed
 release delivery or physical recovery operations.
 
+If a reviewed runtime or host-UI correction is required after a diagnostic root
+has been finalized, preserve that root unchanged and copy it to a fresh private
+build directory. The normal staging commands reject an existing runtime/UI.
+The narrowly scoped `--refresh` options may restage only the expected regular
+project directories and outputs in that copied root; they reject symlinks and
+unrecognized files before replacing either directory. Regenerate the initramfs
+and create a new `finalized.json` receipt before composition. This construction
+exception is limited to non-deployable diagnostic roots by
+[decision 0016](../decisions/0016-controlled-host-restaging.md).
+
 ## Assemble and review
 
 After producing the private host `finalized.json` inventory receipt:

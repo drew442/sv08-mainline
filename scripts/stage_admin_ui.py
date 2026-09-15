@@ -12,8 +12,10 @@ import shutil
 from prepare_host_os import REPO, work_path
 
 
-def stage(work, context, execute=False):
+def stage(work, context, execute=False, refresh=False):
     if context not in ('host', 'recovery'): raise ValueError('Unknown UI context')
+    if refresh and context != 'host':
+        raise ValueError('UI refresh is only supported for the host context')
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir(): raise ValueError('Expected an isolated image rootfs')
     for name in ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
@@ -21,20 +23,34 @@ def stage(work, context, execute=False):
         if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
     target = root / ('usr/share/cockpit/sv08-host' if context == 'host' else 'usr/share/xsessions/sv08-recovery.desktop')
-    if target.exists() or target.is_symlink(): raise ValueError('UI already staged; use a fresh root')
+    target_exists = target.exists() or target.is_symlink()
+    if target_exists:
+        if not refresh:
+            raise ValueError('UI already staged; use a fresh root')
+        if target.is_symlink() or not target.is_dir():
+            raise ValueError('Existing host UI target is not a regular directory')
     extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
     if context == 'host':
         extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json'])
         packages = root / 'usr/share/cockpit'
-        if packages.is_dir() and any(p.name not in ('base1', 'static', 'branding', 'issue', 'motd') for p in packages.iterdir()):
+        allowed_packages = {'base1', 'static', 'branding', 'issue', 'motd'}
+        if refresh:
+            allowed_packages.add('sv08-host')
+        if packages.is_dir() and any(p.name not in allowed_packages for p in packages.iterdir()):
             raise ValueError('Unexpected Cockpit packages; use the reviewed ws/bridge-only root')
     for path in [target, *extra]:
         for parent in [path, *path.parents]:
             if parent == root: break
             if parent.is_symlink(): raise ValueError('Symlink in UI staging target: '+str(parent))
-        if path.exists(): raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
+        if path.exists() or path.is_symlink():
+            allowed_refresh_output = refresh and (
+                path == target or (not path.is_symlink() and path.is_file()))
+            if not allowed_refresh_output:
+                raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
     if not execute: return dict(execute=False, context=context, root=str(root))
     if context == 'host':
+        if target_exists:
+            shutil.rmtree(target)
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(REPO / 'ui/host', target)
         target.chmod(0o755)
@@ -66,5 +82,7 @@ if __name__ == '__main__':
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--context', choices=['host', 'recovery'], required=True)
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--refresh', action='store_true',
+                        help='Replace reviewed host UI files in a copied image root')
     args = parser.parse_args()
-    print(json.dumps(stage(work_path(args.work), args.context, args.execute), indent=2))
+    print(json.dumps(stage(work_path(args.work), args.context, args.execute, args.refresh), indent=2))
