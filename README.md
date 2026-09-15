@@ -24,11 +24,11 @@ USB serial console, wired Linux 6.18.51 boot and return to the original kernel
 have passed on the printer. Full peripheral validation and the complete A/B host
 remain outstanding.
 
-The next physical trial uses a [complete board A/B diagnostic image](docs/hardware/host-board-image.md),
-with a [board-specific independent recovery path](docs/hardware/host-recovery-board.md).
-The [first diagnostic A boot](docs/hardware/host-board-first-boot.md) now reaches
-SSH and authenticated host administration with printer services disabled. Reliable
-DRAM startup, physical B/recovery and printing remain unvalidated.
+The [complete board A/B diagnostic image](docs/hardware/host-board-image.md)
+has now reached U-Boot, Linux, serial login, owner-key SSH and Cockpit with
+printer services disabled. Its latest full trace reports a successful 1 GiB DRAM
+initialization, but does not establish DRAM reliability. Physical B/recovery
+under the latest loader and printing remain unvalidated.
 
 ## Start here
 
@@ -56,6 +56,8 @@ DRAM startup, physical B/recovery and printing remain unvalidated.
 - [New host build work](docs/hardware/host-ab-build.md): offline Debian baseline,
   factory-capacity layout and driver audit.
 - [Roadmap](docs/roadmap.md): the next work and its acceptance criteria.
+- [Feature checklist](docs/features/README.md): concise completed and remaining
+  project capabilities.
 - [Feature delivery workflow](.codex/README.md): suggestion, improvement,
   delegated approval and continued delivery; approved design and offline pilot.
 - [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md).
