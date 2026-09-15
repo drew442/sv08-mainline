@@ -22,6 +22,7 @@ from sv08_gpt import inspect
 
 RAW_IMAGE = '5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34'
 MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen')
+HARDWARE_PROFILE = 'test-sv08-01'
 
 
 def run(*args):
@@ -69,9 +70,40 @@ def expected_partitions(profile, parts):
     return result
 
 
+def reviewed_spl(record_path, hardware_profile):
+    record = json.loads(record_path.read_text())
+    if record.get('format_version') != 1 or record.get('deployable') is not False:
+        raise ValueError('SPL record must describe a non-deployable diagnostic artifact')
+    if record.get('hardware_profile') != hardware_profile:
+        raise ValueError('SPL record targets a different hardware profile')
+    manifest_name = record.get('manifest')
+    if not isinstance(manifest_name, str):
+        raise ValueError('SPL record has no manifest binding')
+    manifest_path = (REPO / manifest_name).resolve()
+    if REPO not in manifest_path.parents or not manifest_path.is_file():
+        raise ValueError('SPL manifest is outside the reviewed source tree')
+    if record.get('manifest_sha256') != sha(manifest_path):
+        raise ValueError('SPL manifest changed after its artifact record')
+    artifact = record.get('artifact')
+    if not isinstance(artifact, dict):
+        raise ValueError('SPL record has no artifact')
+    required = ('loader_bytes', 'loader_sha256', 'loader_offset_bytes', 'loader_end_offset_bytes')
+    if any(key not in artifact for key in required):
+        raise ValueError('SPL record artifact is incomplete')
+    if not isinstance(artifact['loader_bytes'], int) or artifact['loader_bytes'] <= 0:
+        raise ValueError('SPL record has an invalid size')
+    if (not isinstance(artifact['loader_sha256'], str) or len(artifact['loader_sha256']) != 64
+            or any(c not in '0123456789abcdef' for c in artifact['loader_sha256'])):
+        raise ValueError('SPL record has an invalid hash')
+    if artifact['loader_offset_bytes'] != 8192 or artifact['loader_end_offset_bytes'] != 8192 + artifact['loader_bytes']:
+        raise ValueError('SPL record has an unexpected placement')
+    return dict(record=record, artifact=artifact, record_path=record_path,
+                manifest_path=manifest_path)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ('host', 'recovery', 'data', 'spl', 'work'):
+    for name in ('host', 'recovery', 'data', 'spl', 'spl-record', 'work'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--execute', action='store_true')
     a = parser.parse_args()
@@ -81,9 +113,10 @@ def main():
     for path in sources.values():
         if work == path or work in path.parents or path in work.parents:
             raise ValueError('Overlapping input/output')
-    input_paths = [Path(__file__), sources['spl'], sources['host'] / 'finalized.json', sources['recovery'] / 'build.json',
+    spl = reviewed_spl(a.spl_record, HARDWARE_PROFILE)
+    input_paths = [Path(__file__), sources['spl'], spl['record_path'], spl['manifest_path'], sources['host'] / 'finalized.json', sources['recovery'] / 'build.json',
                    *[REPO / p for p in ('configs/host-os/recovery-test-sv08-01.json', 'configs/images/host-ab.json',
-                       'configs/host-os/sv08-default.env', 'configs/host-os/slot-boot.cmd', 'docs/hardware/host-sv08-ab-boot-20260913.json')]]
+                       'configs/host-os/sv08-default.env', 'configs/host-os/slot-boot.cmd')]]
     inputs = {str(path): sha(path) for path in input_paths}
     root = sources['host'] / 'rootfs'
     profile = board_profile(REPO / 'configs/host-os/recovery-test-sv08-01.json')
@@ -109,8 +142,8 @@ def main():
         raise ValueError('Recovery build changed')
     if sha(recovery / 'recovery.ext4') != record['image_sha256']:
         raise ValueError('Recovery image changed')
-    spl_record = json.loads((REPO / 'docs/hardware/host-sv08-ab-boot-20260913.json').read_text())['artifacts']['u-boot-sunxi-with-spl.bin']
-    if sha(sources['spl']) != spl_record['sha256'] or sources['spl'].stat().st_size != spl_record['bytes']:
+    spl_record = spl['artifact']
+    if sha(sources['spl']) != spl_record['loader_sha256'] or sources['spl'].stat().st_size != spl_record['loader_bytes']:
         raise ValueError('Wrong SPL/FIT artifact')
     data_before = inventory(sources['data'])
     print(json.dumps(dict(execute=a.execute, image_bytes=config['image_bytes'], work=str(work))), flush=True)
@@ -172,7 +205,7 @@ def main():
         raise ValueError('Composition inputs changed')
     if inspect(disk, environment_regions=regions)['partition_records'] != expected:
         raise ValueError('Final partition table changed')
-    result = dict(status='diagnostic-awaiting-independent-byte-review', image_bytes=disk.stat().st_size, image_sha256=sha(disk), geometry=inspect(disk, environment_regions=regions), partition_images={role: dict(bytes=p.stat().st_size, sha256=sha(p)) for role,p in images.items()}, host_root=host['root'], data=data_before, recovery_build_sha256=sha(recovery / 'build.json'), recovery_envelope=inventory(envelope), spl=spl_record, environment_sha256=sha(env_bin), sources_preserved=True, physical_boot_validated=False)
+    result = dict(status='diagnostic-awaiting-independent-byte-review', image_bytes=disk.stat().st_size, image_sha256=sha(disk), geometry=inspect(disk, environment_regions=regions), partition_images={role: dict(bytes=p.stat().st_size, sha256=sha(p)) for role,p in images.items()}, host_root=host['root'], data=data_before, recovery_build_sha256=sha(recovery / 'build.json'), recovery_envelope=inventory(envelope), spl=dict(record_sha256=sha(spl['record_path']), manifest_sha256=sha(spl['manifest_path']), artifact=spl_record), environment_sha256=sha(env_bin), sources_preserved=True, physical_boot_validated=False)
     result['input_files'] = inputs
     (work / 'composition.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result, indent=2))

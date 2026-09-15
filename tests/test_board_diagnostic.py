@@ -56,5 +56,18 @@ class DiagnosticTests(unittest.TestCase):
         for digest in ('', 'A'*64, 'a'*63, 'a'*64+'; reset'):
             with self.assertRaises(ValueError): m.recovery_script(profile, digest)
 
+    def test_current_dram_record_binds_the_explicit_loader_manifest(self):
+        result = m.reviewed_spl(REPO / 'docs/hardware/host-spl-diagnostics-20260914-v5.json',
+                                'test-sv08-01')
+        self.assertEqual(result['artifact']['loader_offset_bytes'], 8192)
+        self.assertEqual(result['artifact']['loader_sha256'],
+                         '78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48')
+        bad = dict(result['record']); bad['artifact'] = dict(bad['artifact'])
+        bad['artifact']['loader_end_offset_bytes'] += 1
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / 'bad.json'; record.write_text(json.dumps(bad))
+            with self.assertRaisesRegex(ValueError, 'unexpected placement'):
+                m.reviewed_spl(record, 'test-sv08-01')
+
 
 if __name__ == '__main__': unittest.main()

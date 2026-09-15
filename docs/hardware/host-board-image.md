@@ -102,6 +102,7 @@ sudo python3 scripts/assemble_board_diagnostic.py \
   --data build/board-data-v1 \
   --recovery build/board-recovery-image-v1 \
   --spl build/board-inputs/u-boot-sunxi-with-spl.bin \
+  --spl-record docs/hardware/host-spl-diagnostics-20260914-v5.json \
   --work build/board-disk-v1 --execute
 ```
 
@@ -111,6 +112,11 @@ whole image and per-partition hashes. It does not sign a release or claim
 byte-identical repeated builds. Review final disk bytes against each partition,
 SPL and both raw environments, plus filesystem contents and source preservation,
 before issuing the concrete [USB write procedure](flashing-emmc.md).
+
+`--spl-record` is required. It binds the supplied loader to its non-deployable
+artifact record and manifest hash, verifies the target profile and requires the
+reviewed 8192-byte loader placement. It prevents a newly composed image from
+silently using the historical loader record.
 
 The human step is to power down and isolate the printer, connect its spare eMMC
 to the USB writer, write the reviewed complete file with verification, reinstall
