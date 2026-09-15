@@ -107,7 +107,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Interrupted run: Inspected interrupted implementer and its preserved uncommitted worktree; new feature development is paused by the owner, so preserve the work and block rather than resume it.",
       "checks": [
         "review-is-observation",
         "orphan-service",
@@ -124,10 +124,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "job_resolution_implementer",
+        "run": "4b080615e3194fd980fd6feb8501ba2d",
+        "session": "job-resolution-implementation-20260912"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "blocked",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
       "verification": null
     }
