@@ -118,7 +118,7 @@ artifact record and manifest hash, verifies the target profile and requires the
 reviewed 8192-byte loader placement. It prevents a newly composed image from
 silently using the historical loader record.
 
-## Rebuilt v2 artifact awaiting eMMC write
+## Rebuilt v2 artifact and verified eMMC write
 
 The private `0.1.0-board.2` diagnostic host root restages the corrected
 first-boot persistent owner-key initializer, the immutable-mode package-backup
@@ -133,7 +133,7 @@ private raw and compressed files. A standalone read-only verifier independently
 checked the whole raw image, the loader span, both redundant environments, all
 six embedded partition images and GPT validity. XZ integrity and a complete
 decompressed byte-stream hash then matched the recorded raw hash. This remains a
-non-deployable diagnostic candidate; the v2 hardware boot has not occurred.
+non-deployable diagnostic candidate.
 
 The identified spare was written on 2026-09-15 with the complete 7.82 GB v2
 image. Before writing, its capacity, v5 loader, six PARTUUIDs and unmounted
@@ -162,12 +162,12 @@ but does not establish the physical DRAM capacity, safe memory reliability or a
 solution to the differing results. The [v2 record](host-board-image-20260915-v2.json)
 contains the capture and read-only host evidence.
 
-The human step is to power down and isolate the printer, connect its spare eMMC
-to the USB writer, write the reviewed complete file with verification, reinstall
-it, and boot with console logging already running. Retain the factory module.
-Do not auto-expand/repartition this diagnostic layout on the 32 GB spare. Exact
-artifact location and digest must accompany the write task; this page alone is
-not an instruction to write an unfinished artifact.
+Read-only inspection of the raw redundant U-Boot environments found both CRCs
+valid. The retained primary copy is flag 1 with three A attempts, while the
+newer redundant copy is flag 2 with two A attempts. This is the expected bounded
+attempt decrement after the first physical A boot. It is not a health
+confirmation, an A/B rollback result, or permission to spend another attempt on
+an exploratory reboot.
 
 ## Completed offline result
 

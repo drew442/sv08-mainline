@@ -81,7 +81,24 @@
     "state_registry_present": true,
     "failed_units": 0,
     "network": "end0 DHCP 192.168.1.141/24",
-    "printer_services": "runtime masked and inactive"
+    "printer_services": "runtime masked and inactive",
+    "boot_environment": {
+      "primary": {
+        "crc_valid": true,
+        "flag": 1,
+        "boot_order": "A",
+        "boot_a_left": 3,
+        "boot_b_left": 0
+      },
+      "newer_redundant": {
+        "crc_valid": true,
+        "flag": 2,
+        "boot_order": "A",
+        "boot_a_left": 2,
+        "boot_b_left": 0
+      },
+      "interpretation": "The first observed physical A boot consumed one bounded A attempt. This is not health confirmation or an attempt-budget refresh."
+    }
   },
   "not_established": [
     "Whether the board has only 512 MiB usable DRAM or DRAM auto-detection underreports the expected capacity",
