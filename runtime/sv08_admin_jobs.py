@@ -18,7 +18,14 @@ from sv08_state import atomic_json, fsync_dir
 
 UNIT = 'sv08-admin-image-worker@.service'
 LIMIT = 128
-MAX_BYTES = 512 * 1024
+RECEIPT_BYTES = 512 * 1024
+# Every retained unknown outcome may carry at most 16 KiB of review evidence.
+# Reserve another KiB for its plan/outcome JSON framing. The complete receipt
+# file therefore has a finite 2.625 MiB limit, and atomic replacement needs an
+# additional 2.625 MiB temporary-file reserve on /data.
+MAX_EVIDENCE_BYTES = 16 * 1024
+MAX_DISPOSITION_BYTES = MAX_EVIDENCE_BYTES + 1024
+MAX_BYTES = RECEIPT_BYTES + LIMIT * MAX_DISPOSITION_BYTES
 QUEUE_SECONDS = 30
 IMAGE_ACTIONS = ('image.stage', 'image.arm', 'image.cancel')
 TERMINAL = ('succeeded', 'refused')
@@ -35,6 +42,7 @@ def launch(identity):
 class Jobs:
     def __init__(self, root, boot_id, launcher=launch):
         self.root, self.boot_id, self.launcher = Path(root), boot_id, launcher
+        self.queue_seconds = QUEUE_SECONDS
 
     @contextmanager
     def lock(self, name, nonblocking=False):
@@ -64,15 +72,38 @@ class Jobs:
         if not isinstance(rows, list) or len(rows) > LIMIT: raise ValueError('Invalid image job ledger')
         identities = set()
         for row in rows:
-            if (not isinstance(row, dict) or set(row) != {'id', 'plan', 'boot_id', 'phase', 'message', 'queued_at'} or
+            if (not isinstance(row, dict) or set(row) not in ({'id', 'plan', 'boot_id', 'phase', 'message', 'queued_at'},
+                                                               {'id', 'plan', 'boot_id', 'phase', 'message', 'queued_at', 'disposition'}) or
                     not isinstance(row['id'], str) or not re.fullmatch('[0-9a-f]{32}', row['id']) or
                     row['id'] in identities or row['phase'] not in (*TERMINAL, 'queued', 'running', 'interrupted') or
                     type(row['queued_at']) is not int or row['queued_at'] < 0 or not isinstance(row['boot_id'], str) or not isinstance(row['message'], str)):
                 raise ValueError('Invalid image job receipt')
             self.validate_plan(row['plan']); identities.add(row['id'])
-        if sum(row['phase'] not in TERMINAL for row in rows) > 1:
+            self.validate_disposition(row)
+        if sum(self.blocking(row) for row in rows) > 1:
             raise ValueError('Conflicting image job receipts')
         return rows
+
+    @staticmethod
+    def blocking(row):
+        return row['phase'] not in TERMINAL and 'disposition' not in row
+
+    @staticmethod
+    def validate_disposition(row):
+        if 'disposition' not in row:
+            return
+        from sv08_admin import revision
+        from sv08_admin_resolution import KIND, MAX_EVIDENCE
+        value = row['disposition']
+        original = {key: item for key, item in row.items() if key != 'disposition'}
+        if (row['phase'] in TERMINAL or not isinstance(value, dict) or
+                set(value) != {'outcome', 'plan', 'evidence'} or value['outcome'] != 'unknown' or
+                not isinstance(value['evidence'], dict) or
+                value['evidence'].get('original_sha256') != revision(original) or
+                value['plan'] != {'kind': KIND, 'id': row['id'],
+                                  'evidence_sha256': revision(value['evidence'])} or
+                len(json.dumps(value['evidence'], sort_keys=True, separators=(',', ':')).encode()) > MAX_EVIDENCE):
+            raise ValueError('Corrupt or unbound image disposition evidence')
 
     @staticmethod
     def validate_plan(plan):
@@ -86,6 +117,11 @@ class Jobs:
             raise ValueError('Invalid reviewed image operation')
 
     def save(self, rows):
+        originals = [{key: value for key, value in row.items() if key != 'disposition'} for row in rows]
+        if len((json.dumps(originals, indent=2)+'\n').encode()) > RECEIPT_BYTES:
+            raise ValueError('Original image receipts exceed their bound')
+        for row in rows:
+            self.validate_disposition(row)
         if len((json.dumps(rows, indent=2)+'\n').encode()) > MAX_BYTES: raise ValueError('Image job ledger exceeds its bound')
         atomic_json(self.root / 'jobs.json', rows)
         fsync_dir(self.root.parent)
@@ -103,14 +139,39 @@ class Jobs:
                     with self.lock('worker.lock', True):
                         value.update(phase='interrupted', message='Worker exited without a durable result. Reconciliation is required.')
                 except BlockingIOError: pass
+        if row.get('disposition'):
+            value.update(phase='interrupted',
+                         message='Outcome unknown. Administrative review retained; no replay or success was inferred.',
+                         disposition=row['disposition']['plan'])
         return value
+
+    def row(self, identity):
+        if not isinstance(identity, str) or not re.fullmatch('[0-9a-f]{32}', identity):
+            raise ValueError('Invalid image receipt identity')
+        row = next((item for item in self.load() if item['id'] == identity), None)
+        if row is None:
+            raise ValueError('Unknown image receipt')
+        return row
+
+    def worker_evidence(self, identity):
+        unit = 'sv08-admin-image-worker@'+identity+'.service'
+        output = subprocess.check_output(['/usr/bin/systemctl', 'show', unit,
+            '--property=LoadState,ActiveState,SubState,InvocationID,MainPID,ExecMainStartTimestampMonotonic,ExecMainExitTimestampMonotonic,Result'],
+            text=True, timeout=5)
+        if len(output) > 4096:
+            raise ValueError('Worker evidence exceeds its bound')
+        values = dict(line.split('=', 1) for line in output.splitlines())
+        if (values.get('LoadState') != 'loaded' or values.get('ActiveState') not in ('inactive', 'failed') or
+                values.get('MainPID') != '0'):
+            raise ValueError('Image worker is active or its lifecycle is unavailable')
+        return values
 
     def history(self):
         # Never acquire the state/transaction lock, including on initial page load.
         with self.lock('ledger.lock'):
             rows = self.load()
             return dict(jobs=[self.public(row) for row in reversed(rows)], capacity=LIMIT,
-                        remaining=LIMIT-len(rows), blocked=any(row['phase'] not in TERMINAL for row in rows))
+                        remaining=LIMIT-len(rows), blocked=any(self.blocking(row) for row in rows))
 
     def submit(self, identity, plan, controller):
         if not isinstance(identity, str) or not re.fullmatch('[0-9a-f]{32}', identity):
@@ -123,10 +184,22 @@ class Jobs:
                     if row['plan'] != plan: raise ValueError('Retry identity was used for a different review')
                     return self.public(row)
             if len(rows) >= LIMIT: raise ValueError('Image job history is full; reviewed maintenance is required. No receipts were removed.')
-            if any(row['phase'] not in TERMINAL for row in rows):
+            if any(self.blocking(row) for row in rows):
                 raise ValueError('An image job is pending or requires reconciliation')
-            if controller.context != 'host' or controller.plan(plan['action'], plan['arguments']) != plan:
-                raise ValueError('System state changed. Refresh and review again.')
+        # Do not hold the ledger while acquiring the state/admission path.  A
+        # disposition holds worker -> state -> writer before its short ledger
+        # publication, so this avoids a ledger/state inversion.
+        if controller.context != 'host' or controller.plan(plan['action'], plan['arguments']) != plan:
+            raise ValueError('System state changed. Refresh and review again.')
+        with self.lock('ledger.lock'):
+            rows = self.load()
+            for row in rows:
+                if row['id'] == identity:
+                    if row['plan'] != plan: raise ValueError('Retry identity was used for a different review')
+                    return self.public(row)
+            if len(rows) >= LIMIT: raise ValueError('Image job history is full; reviewed maintenance is required. No receipts were removed.')
+            if any(self.blocking(row) for row in rows):
+                raise ValueError('An image job is pending or requires reconciliation')
             row = dict(id=identity, plan=plan, boot_id=self.boot_id, phase='queued', queued_at=int(time.monotonic()),
                        message='Queued for the independent image worker. Never resubmit with a new identity if the outcome is unknown.')
             rows.append(row); self.save(rows)
@@ -145,7 +218,7 @@ class Jobs:
         with self.lock('worker.lock'):
             with self.lock('ledger.lock'):
                 rows = self.load()
-                pending = [r for r in rows if r['phase'] not in TERMINAL]
+                pending = [r for r in rows if self.blocking(r)]
                 if not pending or pending[0]['phase'] != 'queued': return
                 row = pending[0]
                 if identity is not None and row['id'] != identity: return

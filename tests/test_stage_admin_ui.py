@@ -24,7 +24,13 @@ class StageUITests(unittest.TestCase):
         self.assertFalse(result['activated'])
         unit = 'usr/lib/systemd/system/sv08-admin-image-worker@.service'
         self.assertEqual((self.work / 'rootfs' / unit).read_bytes(), (REPO / 'configs/host-os/sv08-admin-image-worker@.service').read_bytes())
+        for relative, source in [('usr/lib/sv08/rauc-service-policy.json', 'rauc-service-policy.json'),
+                                 ('etc/dbus-1/system.d/zz-sv08-rauc.conf', 'sv08-rauc-policy.conf'),
+                                 ('etc/systemd/system/rauc.service.d/sv08.conf', 'sv08-rauc-service.conf')]:
+            self.assertEqual((self.work / 'rootfs' / relative).read_bytes(),
+                             (REPO / 'configs/host-os' / source).read_bytes())
         self.assertIn(unit, result['hashes'])
+        self.assertIn('usr/lib/sv08/rauc-service-policy.json', result['hashes'])
         self.assertIn('usr/lib/sv08/sv08_admin_jobs.py', result['hashes'])
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/sockets.target.wants').exists())
         with self.assertRaises(ValueError): stage(self.work, 'host', True)

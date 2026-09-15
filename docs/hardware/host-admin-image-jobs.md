@@ -39,10 +39,13 @@ receipt. It does not restart automatically and is not enabled at boot.
 
 A private `/data/sv08/admin-image-jobs/jobs.json` retains at most 128 receipts;
 new identities refuse at capacity. No history is evicted, so an old retry cannot
-become a new mutation. Records are bounded to 512 KiB, with one replacement
-publication temporarily requiring another ledger-sized file. Locks and records
-are owner-only. Corruption, unexpected ledger/lock types or permissions, and no-space errors
-refuse; there is no automatic repair or truncation. History never edits the ledger.
+become a new mutation. Original receipts are bounded to 512 KiB. Each explicit
+unknown-outcome disposition carries at most 16 KiB of canonical evidence plus
+1 KiB of framing, so the complete ledger is bounded to 2.625 MiB and atomic
+replacement needs another 2.625 MiB temporary-file reserve. Locks and records
+are owner-only. Corruption,
+unexpected ledger/lock types or permissions, and no-space errors refuse; there
+is no automatic repair or truncation. History never edits the ledger.
 
 Admission publishes and fsyncs the queued receipt before requesting systemd start.
 The worker publishes running before invoking the controller. It repeats current
@@ -68,26 +71,43 @@ as interrupted. Failed launch acknowledgement is conservative even if systemd ma
 have accepted the start. Backend exceptions, worker death, or failure to durably
 publish the result never automatically repeat an operation.
 
-Unresolved work blocks all new image jobs. The transaction journal remains the
-source of slot state; receipt observation never repairs it or declares success.
-Preserve the receipt, `update.json`, `state.json`, current boot identity and matching
-unit status/journal before any recovery. Confirm the matching unit has stopped, no execution lock is held, and the RAUC
-D-Bus service reports no installation still in progress. An exited RAUC CLI or
-inactive worker cgroup alone does not establish service-side inactivity. Use
-read-only journal, boot and backend observations against the independently
-identified backend and preserved source. Do not call `Transaction.reconcile` as
-a read-only check: it can promote arming to armed and obtains admission. Do not infer
-an installation from the receipt, delete the ledger, reset an identity, automatically
-retry staging, or declare a trial healthy. Physical actions retain the existing
-[hardware requirements](host-os-tasks.md#human-and-powered-printer-tasks).
+The transaction journal remains the source of slot state; receipt observation
+never repairs it or declares success. Preserve the receipt, `update.json`,
+`state.json`, current boot identity and matching unit status/journal before any
+recovery. Do not call `Transaction.reconcile` as a read-only check: it can
+promote arming to armed and obtains admission. Do not infer an installation from
+the receipt, delete the ledger, reset an identity, automatically retry staging,
+or declare a trial healthy. Physical actions retain the existing [hardware
+requirements](host-os-tasks.md#human-and-powered-printer-tasks).
 
-There is currently no browser receipt-resolution or history-rollover action.
-A bounded follow-on for ambiguous receipts and capacity rollover must retain original identities and uncertain outcomes, bind
-resolution to the captured journal/boot/unit evidence, and separately review any
-subsequent cancellation or recovery action. Until that path is delivered and
-reviewed, ambiguous or full ledgers remain closed to new job admission. This
-limitation does not change the independent recovery interface or grant hardware
-authority.
+An administrator can now select **Inspect unknown outcome** for a stopped,
+interrupted receipt. Inspection is read-only: it records canonical hashes of
+the original receipt, state and journal snapshot, current boot, worker lifecycle
+and selected RAUC service evidence. It does not reconcile, activate or terminate
+a service, mark a boot slot, retry an install or select a source. A separate
+confirmation durably retains `outcome: unknown`; it preserves the original
+receipt and binds the reviewed evidence hash. Reconnect and repeated confirmation
+return that same disposition. Changed boot, worker, service owner, executable,
+configuration, slot-status busy guard or state evidence refuse a stale review.
+
+The selected service policy is the locally built upstream RAUC
+`1.15.2-0sv08.1` package, with executable hash
+`51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3`.
+The probe uses a non-activating system-bus connection, records the unique owner,
+service process/package/configuration identity and requires both public
+`Operation=idle` and successful `GetSlotStatus`. The pinned RAUC 1.15.2 source
+checks its internal busy flag before that method. The project writer lock spans
+the final evidence read, disposition publication, and every supported install or
+boot-mark route. The assembled D-Bus policy denies ordinary callers; direct root
+intervention remains outside the supported protocol and a changed identity
+invalidates later review rather than being treated as safe.
+
+After disposition the receipt no longer blocks a separately reviewed image
+operation. It still remains visible as unknown. At the 128-receipt limit,
+inspection and disposition of an existing receipt remain available, but no new
+identity, including a cancellation receipt, is admitted. The separately scoped
+history-rollover feature remains required for that final journey. This limitation
+does not change the independent recovery interface or grant hardware authority.
 
 ## Offline reproduction and evidence boundaries
 
