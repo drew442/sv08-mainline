@@ -180,6 +180,19 @@ attempt decrement after the first physical A boot. It is not a health
 confirmation, an A/B rollback result, or permission to spend another attempt on
 an exploratory reboot.
 
+## Second v2 A boot
+
+A controlled warm reboot with a new receive-only console capture again reached
+U-Boot, Linux, the serial login prompt and owner-key SSH. This time the loader
+selected one rank at 32-bit width and reported **1 GiB**; Linux exposed 999,672
+KiB after reservations. The successful size geometry remained 10 columns and 15
+rows. The root was read-only, all five printer service names were inactive, and
+there were no failed systemd units. Both redundant environments remained
+CRC-valid: the newer primary flag-3 copy contains `BOOT_A_LEFT=1`, and its
+flag-2 peer retains two A attempts. One bounded A attempt now remains. The
+alternating 16-bit/512 MiB then 32-bit/1 GiB result confirms only that the
+current auto-detection cannot identify the board capacity reliably.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

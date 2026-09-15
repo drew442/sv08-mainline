@@ -215,9 +215,10 @@ loader-span hash before the eMMC write and by the v2 physical readback. Its
 first captured boot reached Linux and administration services, but the loader
 selected a different successful rank/width candidate: one rank at **16-bit**
 width, 10 columns and 15 rows. It consequently reported **512 MiB**, with Linux
-exposing 485,376 KiB after reservations. The v5 cold capture from the same
-loader source and artifact reported one rank at **32-bit** width with the same
-columns/rows and 1 GiB.
+exposing 485,376 KiB after reservations. A controlled second v2 A boot selected
+one rank at **32-bit** width with the same columns/rows and reported 1 GiB, with
+Linux `MemTotal` of 999,672 KiB. The earlier v5 cold capture from the same loader
+source and artifact also selected 32-bit width and reported 1 GiB.
 
 This is evidence that rank/width auto-detection is not yet a reliable basis for
 identifying the installed DRAM capacity. It does not identify the board memory,

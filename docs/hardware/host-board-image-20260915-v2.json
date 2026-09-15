@@ -132,8 +132,40 @@
       "interpretation": "The first observed physical A boot consumed one bounded A attempt. This is not health confirmation or an attempt-budget refresh."
     }
   },
+  "physical_warm_a_reboot": {
+    "capture_sha256": "c1fdddde090dc0700905ba8222a24193971f0bd063d902d650bda477e6090674",
+    "capture_bytes": 64238,
+    "capture_transmit": false,
+    "dram_result": "1 GiB",
+    "successful_rank_width": "1 rank, 32-bit width",
+    "successful_size_geometry": "10 columns, 15 rows",
+    "kernel": "6.18.51-sv08-candidate1",
+    "serial_login_prompt": true,
+    "ssh_public_key_login": "sv08 succeeded",
+    "linux_memtotal_kib": 999672,
+    "root_mount": "PARTUUID 26c68198-9248-47af-bbd3-643f1b604ef5, ext4 read-only",
+    "failed_units": 0,
+    "printer_services": "inactive",
+    "boot_environment": {
+      "newer_primary": {
+        "crc_valid": true,
+        "flag": 3,
+        "boot_order": "A",
+        "boot_a_left": 1,
+        "boot_b_left": 0
+      },
+      "retained_redundant": {
+        "crc_valid": true,
+        "flag": 2,
+        "boot_order": "A",
+        "boot_a_left": 2,
+        "boot_b_left": 0
+      },
+      "interpretation": "The second observed physical A boot consumed the second bounded A attempt. One A attempt remains; no health confirmation or counter refresh was issued."
+    }
+  },
   "not_established": [
-    "Whether the board has only 512 MiB usable DRAM or DRAM auto-detection underreports the expected capacity",
+    "Whether rank/width DRAM auto-detection can be made reliable or identifies the board's physical capacity",
     "A/B, recovery, DRAM reliability, Wi-Fi, printing or heater/motion behavior"
   ]
 }

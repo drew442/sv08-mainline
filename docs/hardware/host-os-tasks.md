@@ -231,9 +231,10 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   reached the seeded `sv08` SSH account, Cockpit HTTPS, immutable state and zero
   failed units. Read-only enumeration found a connected HDMI interface, the
   touchscreen input and both wireless interfaces. The same loader selected a
-  16-bit/512 MiB DRAM result where its prior v5 boot selected 32-bit/1 GiB; see
-  the [v2 board-image record](host-board-image-20260915-v2.json). This is not a
-  repeatability, touch, Wi-Fi, camera, A/B, recovery, heater or motion test.
+  16-bit/512 MiB DRAM result on the first A boot and 32-bit/1 GiB on the second;
+  see the [v2 board-image record](host-board-image-20260915-v2.json). One A
+  attempt remains. This is not a touch, Wi-Fi, camera, A/B, recovery, heater or
+  motion test, and it does not establish repeatability or DRAM capacity.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed
