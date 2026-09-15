@@ -243,7 +243,7 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   process active and no failed units. The current recovery build intentionally
   lacks host-state/recovery-media integration, so only **Check storage** is
   available. A reviewable rearm pair is ready but has not been written.
-- [ ] **Human handoff — move the installed spare eMMC to the USB writer on
+- [x] **Human handoff — move the installed spare eMMC to the USB writer on
   Beelink.** Power the printer down, remove only the diagnostic spare and insert
   it into the identified USB reader. The prepared private 131,072-byte pair has
   SHA-256 `bd5a2f20268c5d85defbeb398f40e72434898ee0235cf7907d70fe262f76b93e`.
@@ -252,6 +252,10 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   only the two 64 KiB regions at offsets 4 MiB and 8 MiB, read both back, eject,
   reinstall and capture the next boot. Do not format, resize or auto-repair the
   GPT, and do not write the factory eMMC.
+- [ ] **Human handoff — reinstall the rearmed diagnostic spare and power the
+  printer on after capture readiness is confirmed.** The capture must show the
+  normal A path before any later physical UI, network, B-slot or recovery-media
+  work. The factory eMMC remains untouched.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed

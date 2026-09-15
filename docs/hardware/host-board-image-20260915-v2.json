@@ -225,7 +225,18 @@
       "BOOT_B_LEFT": 0
     },
     "both_crc_valid": true,
-    "device_write_completed": false
+    "device_write_completed": true,
+    "physical_write_verification_completed_at_utc": "2026-09-15T02:05:52Z",
+    "writer_by_id": "/dev/disk/by-id/usb-Generic_STORAGE_DEVICE_000000000819-0:0",
+    "target_capacity_bytes": 31272730624,
+    "target_partuuids_match": true,
+    "target_loader_v5_sha256_match": true,
+    "target_initial_flags": [3, 4],
+    "target_unmounted": true,
+    "both_regions_exact_readback_match": true,
+    "loader_unchanged_after_write": true,
+    "gpt_factory_sized_layout_warning_unchanged": true,
+    "reader_powered_off": true
   },
   "not_established": [
     "Whether rank/width DRAM auto-detection can be made reliable or identifies the board's physical capacity",

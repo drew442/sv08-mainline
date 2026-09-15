@@ -214,8 +214,11 @@ user-data restoration.
 A private 128 KiB rearm pair has been built from the observed newest flag 4. It
 contains independently CRC-valid flag-5 and flag-6 copies with the reviewed
 diagnostic policy (`BOOT_ORDER=A`, `BOOT_A_LEFT=3`, `BOOT_B_LEFT=0`). The image
-is ready for its separately identified USB-writer operation; it has **not** been
-written to the eMMC.
+was written only to the identified spare's 4 MiB and 8 MiB environment regions.
+Both copies matched direct readback with valid CRCs and flags 5/6; the loader and
+six partition identities remained unchanged. The reader was powered off. The
+existing factory-sized GPT warning on the larger spare was observed but not
+repaired or expanded.
 
 ## Completed offline result
 
