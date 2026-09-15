@@ -140,11 +140,13 @@ DRAM.
 +	puts("SV08-DRAM: size detection\n");
  	mctl_auto_detect_dram_size(&para, &config);
  
-	if (!mctl_core_init(&para, &config)) {
-		puts("SV08-DRAM: final size validation init failed\n");
-		hang();
-	}
-
+-	mctl_core_init(&para, &config);
+-
++	if (!mctl_core_init(&para, &config)) {
++		puts("SV08-DRAM: final size validation init failed\n");
++		hang();
++	}
++
 +	puts("SV08-DRAM: size validation\n");
  	size = mctl_calc_size(&config);
  
