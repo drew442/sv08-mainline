@@ -260,6 +260,10 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   capture. The first rearmed normal boot is verified by SSH, state, mounts and
   a flag-7 `BOOT_A_LEFT=2` environment, but its prepared capture expired before
   the owner powered on and is not boot-trace evidence.
+- [x] Run a bounded non-persistent memory check on the rearmed normal A host.
+  A 512 MiB userspace allocation passed full-buffer `0x00`, `0xaa` and `0x55`
+  write/read hashes with no failed units. It does not establish full-memory,
+  soak, cold-boot or DRAM-capacity reliability.
 - [x] Fix immutable dpkg backup scheduling in the integrator; temporary physical
   condition test passed. The installed image still needs this fix in a future build.
 - [x] Add `wpasupplicant` and `locales` to the pinned host baseline, and seed

@@ -233,6 +233,12 @@ A later capture contains only the serial login prompt. The boot therefore has
 SSH, mount, state and environment evidence but no complete SPL/U-Boot trace; it
 does not establish boot reliability or replace a captured test.
 
+On this rearmed host, a non-persistent 512 MiB userspace allocation completed
+three full buffer writes and SHA-256 reads using `0x00`, `0xaa` and `0x55`.
+All three expected hashes matched in about 2.7 seconds each, and the host still
+had zero failed units. This is a bounded check of the currently mapped 1 GiB
+configuration, not a full-memory, soak, cold-boot or DRAM-capacity test.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

@@ -266,6 +266,29 @@
       "interpretation": "The observed counter update proves the rearmed normal A path was selected once. It does not replace a complete serial boot capture or establish reliability."
     }
   },
+  "physical_memory_check": {
+    "scope": "512 MiB userspace allocation on the rearmed normal A host",
+    "persistent_writes": false,
+    "patterns": [
+      {
+        "value": "0x00",
+        "sha256": "9acca8e8c22201155389f65abbf6bc9723edc7384ead80503839f49dcc56d767",
+        "seconds": 2.667
+      },
+      {
+        "value": "0xaa",
+        "sha256": "4a77b339502fe0a99f75c6b14e8d898fb196be862ff7a95443b715255f1ae716",
+        "seconds": 2.679
+      },
+      {
+        "value": "0x55",
+        "sha256": "b51dfe2b75f17ee394307f878b9b161d58f04a9d142411952f97e68b32bc9131",
+        "seconds": 2.668
+      }
+    ],
+    "failed_units_after": 0,
+    "not_proven": "Full-memory coverage, long-duration reliability, cold-boot reliability, and the capacity selected by DRAM auto-detection."
+  },
   "not_established": [
     "Whether rank/width DRAM auto-detection can be made reliable or identifies the board's physical capacity",
     "B-slot activation or fallback, recovery-media integration, DRAM reliability, Wi-Fi, visible recovery UI/touch behavior, printing or heater/motion behavior"
