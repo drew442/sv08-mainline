@@ -184,7 +184,10 @@ the initramfs's fixed test data PARTUUID.
 The 2026-09-15 implementation run killed the install client at that barrier and
 observed the surviving service as `Operation=installing`; its internal
 `GetSlotStatus` guard, inspection/disposition, a real cancellation mark request,
-and a second install all refused. An ordinary D-Bus user was denied by the
+and a second install all refused. Immediately after that rejected second install,
+the actual public `Operation` changed to `idle` while `GetSlotStatus` still
+refused as internally busy. A separately started supported writer process also
+could not acquire the writer lease. An ordinary D-Bus user was denied by the
 assembled policy. After release, the same service owner supplied fresh idle
 evidence, the active pair still matched its original digests, the inactive pair
 matched the signed images, and one explicit unknown disposition was retained.

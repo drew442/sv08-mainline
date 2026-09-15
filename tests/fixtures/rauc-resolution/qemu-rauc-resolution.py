@@ -177,6 +177,22 @@ def main():
                                 text=True, capture_output=True)
         if second.returncode == 0:
             raise AssertionError('A second RAUC install started while the first was held')
+        post_rejection = service.call(owner, 'org.freedesktop.DBus.Properties', 'Get', 'ss',
+                                      policy['bus_name'] + '.Installer', 'Operation')[0]
+        if not isinstance(post_rejection, dict) or post_rejection.get('data') not in ('idle', 'installing'):
+            raise AssertionError('RAUC returned an unexpected public operation after rejection')
+        # Some RAUC versions reset this public property when rejecting a second
+        # InstallBundle even though their internal busy flag remains set.  Record
+        # the observed value and require the stronger guard in either case.
+        if post_rejection['data'] == 'idle':
+            with service.writer():
+                try:
+                    service.call(owner, policy['bus_name'] + '.Installer', 'GetSlotStatus')
+                except ValueError as error:
+                    if 'internally busy' not in str(error):
+                        raise
+                else:
+                    raise AssertionError('Public idle hid no internal busy guard')
         for request in ({'method': 'image.inspect', 'id': 'e' * 32},
                         {'method': 'image.dispose', 'plan': initial['plan']}):
             try:
@@ -197,27 +213,26 @@ def main():
         if store.load()['pending'] is None or transaction.load()['phase'] != 'armed':
             raise AssertionError('Failed cancellation changed durable transaction state')
 
-        # Writer exclusion covers every project participant, including marks.
-        contender = Service()
+        # Writer exclusion covers a separately connected supported writer,
+        # including marks.  This must be another process, not merely a second
+        # Python object sharing this interpreter's state.
         with service.writer():
-            try:
-                with contender.writer():
-                    pass
-            except ValueError as error:
-                if 'writer is active' not in str(error):
-                    raise
-            else:
-                raise AssertionError('A second supported writer acquired the lease')
+            contender = subprocess.run(['/usr/bin/python3', '-c',
+                'import sys\nsys.path.insert(0, "/usr/lib/sv08")\n'
+                'from sv08_rauc_service import Service\n'
+                'with Service().writer():\n    pass\n'], text=True, capture_output=True)
+            if contender.returncode == 0 or 'writer is active' not in contender.stderr:
+                raise AssertionError('A separately connected supported writer acquired the lease')
 
         (fixture / 'release-barrier').touch()
         def idle():
             try:
-                current_owner = service.owner(policy['bus_name'])
-                value = service.call(current_owner, 'org.freedesktop.DBus.Properties', 'Get', 'ss',
-                                     policy['bus_name'] + '.Installer', 'Operation')[0]
-                return isinstance(value, dict) and value.get('data') == 'idle'
+                # Public idle alone is intentionally insufficient: wait until
+                # the same full internal-busy guarded observation succeeds.
+                with service.writer():
+                    return service.observe()
             except ValueError:
-                return False
+                return None
         wait('the surviving RAUC service to finish', idle, seconds=90)
         with service.writer():
             fresh_service = service.observe()
@@ -240,6 +255,8 @@ def main():
         result = dict(passed=True, physical_hardware=False, selected_rauc=policy['version'],
                       signed_paired_install=True, client_killed_service_survived=True,
                       ordinary_dbus_client_denied=True, operation_while_held=operation['data'],
+                      operation_after_rejected_install=post_rejection['data'],
+                      public_idle_internal_busy=(post_rejection['data'] == 'idle'),
                       internal_busy_guard_refused=True, receipt_and_cancel_refused_while_busy=True,
                       writer_exclusion=True, same_owner_idle_observation=True,
                       fresh_review_disposition_retained=True,
