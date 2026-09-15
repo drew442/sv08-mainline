@@ -246,6 +246,21 @@ was held only in `/tmp` (tmpfs), then the camera was restored to its prior
 test; it does not establish long-duration streaming, video presentation or
 behavior while printing.
 
+## Captured rearmed boot failure
+
+A later rearmed A attempt was captured from before power-on. It selected the
+32-bit rank/width candidate and reached the final 10-column/15-row controller
+initialization, which returned false. The current diagnostic loader printed
+`SV08-DRAM: size validation` and then stopped before a DRAM capacity result,
+U-Boot, Linux or login. The 16,583-byte receive-only capture has SHA-256
+`2166122bba6a704e81cea45e5b709fd327816108daa4615ce3975d7d8c671c60`.
+
+No reset, environment write or loader write followed that observation, so the
+current attempt counter is not externally verified. A fresh offline loader adds
+a fail-stop check around that final controller initialization before size
+calculation. It preserves the tested electrical settings and requires complete
+artifact review and a newly identified loader-only write before physical use.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

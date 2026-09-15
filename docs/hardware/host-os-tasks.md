@@ -256,10 +256,21 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   printer on after capture readiness is confirmed.** The factory eMMC remains
   untouched. The initial rearmed cycle reached normal A but its capture expired
   before power-on; the outstanding repeat below supplies that trace.
-- [ ] Repeat a rearmed normal A boot with a fresh, non-expiring receive-only
-  capture. The first rearmed normal boot is verified by SSH, state, mounts and
-  a flag-7 `BOOT_A_LEFT=2` environment, but its prepared capture expired before
-  the owner powered on and is not boot-trace evidence.
+- [x] Repeat a rearmed A boot with a fresh receive-only capture. The captured
+  attempt stopped after a false final DRAM controller initialization and before
+  `DRAM:`, U-Boot, Linux or login. No reset, loader or environment write followed;
+  the current counter is not externally verified. See the
+  [v2 board-image record](host-board-image-20260915-v2.json).
+- [x] Build and review a guarded diagnostic loader that fail-stops before size
+  calculation when final DRAM controller initialization fails. The offline v6
+  artifact is recorded in [host-spl-diagnostics-20260915-v6.json](host-spl-diagnostics-20260915-v6.json);
+  it has not been written or physically tested.
+- [ ] **Human handoff — move the installed diagnostic spare to the USB reader on
+  Beelink.** The next action is a bounded loader-only write of the v6 reviewed
+  786,105-byte artifact at offset 8192. Identify the reader and both current raw
+  environments afresh before writing; do not infer the remaining attempt counter
+  from the failed boot. Do not format, resize or repair the GPT, and do not write
+  the factory eMMC.
 - [x] Run a bounded non-persistent memory check on the rearmed normal A host.
   A 512 MiB userspace allocation passed full-buffer `0x00`, `0xaa` and `0x55`
   write/read hashes with no failed units. It does not establish full-memory,

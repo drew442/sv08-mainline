@@ -1,0 +1,61 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-15",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "status": "diagnostic-loader-v6-offline-built-and-reviewed-not-written",
+  "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
+  "manifest_sha256": "b20da935fc04d1f967bd43da23ab00d5eb73aa4a6ac299f9563d522b205e51a3",
+  "project_commit": "0a8d3c72f03f866a3c59e905f4deb545b9bebbd5",
+  "build": "beelink:/home/drew/sv08-mainline-v8-source/build/sv08-dram-diagnostic-v7",
+  "source_u_boot": "ece349ade2973e220f524ce59e59711cc919263f",
+  "source_tf_a": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+  "compiler": "aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "deployable": false,
+  "physical_hardware": false,
+  "artifact": {
+    "loader_bytes": 786105,
+    "loader_sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+    "loader_offset_bytes": 8192,
+    "loader_end_offset_bytes": 794297,
+    "fit_bytes": 745145,
+    "fit_sha256": "575609afebef87e2004acdc17f6f5e8fa68918cace075fb841b4285b31db4586",
+    "bl31_bytes": 53361,
+    "bl31_sha256": "36a39a1859a9c95d3e79239afe798e9fa6f805dcec8685ed2dbbd1ca1133d237",
+    "config_bytes": 54069,
+    "config_sha256": "52959a1a8761b00927b04cc460182527c7add51e50019d3b397438f98f7b2fb8"
+  },
+  "change_review": {
+    "source_diff_from_v5": "Only the unguarded final mctl_core_init call in sunxi_dram_init changed: false now prints the final-validation marker and calls hang before mctl_calc_size.",
+    "electrical_configuration_changed": false,
+    "loader_bytes_changed_from_v5": 25980,
+    "changed_byte_range_from_v5": [12, 39546],
+    "all_changed_bytes_before_fit": true,
+    "tail_from_offset_40960_equal_to_v5": true,
+    "fit_equal_to_v5": true,
+    "bl31_equal_to_v5": true,
+    "effective_config_equal_to_v5": true
+  },
+  "checks": {
+    "egon_length_bytes": 40960,
+    "egon_checksum": "30890838",
+    "egon_checksum_recomputed": true,
+    "spl_image_end": "0x29a80",
+    "spl_sram_end": "0x2c000",
+    "spl_bss_bytes": 448,
+    "final_guard_source_verified": true,
+    "final_failure_marker_linked": true,
+    "linked_final_path": "A false mctl_core_init result branches to the marker then hang before the mctl_calc_size call.",
+    "native_calibration_cases": 9,
+    "sandbox_invalid_state_cases": 5,
+    "sandbox_selected_fit_dtb_matches": true
+  },
+  "review_status": "Implementation delivery review passed from the built source, linked SPL, binary composition, eGON checksum, native helper test and sandbox checks. This is a diagnostic-only loader and has not been written or physically booted.",
+  "physical_write": null,
+  "not_established": [
+    "Execution of this loader on test-sv08-01",
+    "DRAM training, timings, capacity or reliability",
+    "Current raw environment attempt counters after the captured failed boot",
+    "A/B fallback or recovery behavior for this loader"
+  ]
+}

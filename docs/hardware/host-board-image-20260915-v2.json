@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-v2-rearmed-a-booted-serial-capture-gap-recorded",
+  "status": "diagnostic-v2-rearmed-final-validation-failure-guarded-rebuild-pending",
   "deployable": false,
   "project_commit": "1fbf8ad",
   "host_release": "0.1.0-board.2",
@@ -265,6 +265,22 @@
       },
       "interpretation": "The observed counter update proves the rearmed normal A path was selected once. It does not replace a complete serial boot capture or establish reliability."
     }
+  },
+  "physical_rearmed_capture_attempt": {
+    "capture_ready_at_utc": "2026-09-15T04:04:14Z",
+    "capture_transmit": false,
+    "capture_sha256": "2166122bba6a704e81cea45e5b709fd327816108daa4615ce3975d7d8c671c60",
+    "capture_bytes": 16583,
+    "last_diagnostic_result": "1 rank, 32-bit width; final 10 columns, 15 rows; mctl_core_init result 0",
+    "last_marker": "SV08-DRAM: size validation",
+    "not_observed": [
+      "DRAM capacity result",
+      "U-Boot",
+      "Linux",
+      "serial login"
+    ],
+    "interpretation": "The existing diagnostic source called size calculation after a false final controller initialization. The capture stopped without a boot completion marker. No reset, loader write, or environment write was issued after that observation; the current attempt counter is therefore not externally verified.",
+    "next_artifact": "A fail-stop final-validation guard is under fresh offline build and review; it retains the electrical configuration and must be separately identified before a loader-only write."
   },
   "physical_memory_check": {
     "scope": "512 MiB userspace allocation on the rearmed normal A host",

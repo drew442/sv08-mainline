@@ -244,3 +244,15 @@ on a false final `mctl_core_init()`, it prints
 calculation. It retains all electrical settings and successful-path behavior.
 The revision needs a fresh build, source/native test, artifact review and a
 separately identified loader-only write before it can be used on hardware.
+
+The guarded v6 artifact is now recorded in
+[`host-spl-diagnostics-20260915-v6.json`](host-spl-diagnostics-20260915-v6.json).
+It is 786,105 bytes and has SHA-256
+`166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40`.
+The built source changes only the final `mctl_core_init()` failure path. Linked
+SPL disassembly confirms a false return prints the new marker and calls `hang()`
+before `mctl_calc_size()`. Its FIT, TF-A, effective configuration and every byte
+from loader offset 40,960 onward equal v5; 25,980 changed bytes are confined to
+the SPL region. The eGON checksum, SPL bounds, nine native helper cases and five
+sandbox invalid-state cases pass. It remains a non-deployable diagnostic and has
+not been written or physically tested.
