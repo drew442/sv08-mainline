@@ -79,9 +79,12 @@ class Service:
         process = Path('/proc') / str(pid)
         if (process / 'exe').resolve() != Path(policy['executable']) or self.digest(process / 'exe') != policy['executable_sha256']:
             raise ValueError('Unexpected RAUC service executable')
-        version = subprocess.check_output(['/usr/bin/dpkg-query', '-W', '-f=${Version}', policy['package']], text=True, timeout=TIMEOUT, env={'PATH': '/usr/bin:/bin', 'LC_ALL': 'C'}).strip()
+        try:
+            version = subprocess.check_output(['/usr/bin/dpkg-query', '-W', '-f=${Version}', policy['package']], text=True, timeout=TIMEOUT, env={'PATH': '/usr/bin:/bin', 'LC_ALL': 'C'}).strip()
+            unit = subprocess.check_output(['/usr/bin/systemctl', 'show', policy['service'], '--property=MainPID,InvocationID,ActiveState,FragmentPath,DropInPaths'], text=True, timeout=TIMEOUT, env={'PATH': '/usr/bin:/bin', 'LC_ALL': 'C'})
+        except (OSError, subprocess.SubprocessError) as error:
+            raise ValueError('RAUC service process identity is unavailable') from error
         if version != policy['version']: raise ValueError('Unexpected RAUC service package version')
-        unit = subprocess.check_output(['/usr/bin/systemctl', 'show', policy['service'], '--property=MainPID,InvocationID,ActiveState,FragmentPath,DropInPaths'], text=True, timeout=TIMEOUT, env={'PATH': '/usr/bin:/bin', 'LC_ALL': 'C'})
         values = dict(line.split('=', 1) for line in unit.splitlines())
         if (values.get('MainPID') != str(pid) or values.get('ActiveState') != 'active' or not re.fullmatch('[0-9a-f]{32}', values.get('InvocationID', '')) or values.get('FragmentPath') != '/usr/lib/systemd/system/rauc.service' or values.get('DropInPaths') != '/etc/systemd/system/rauc.service.d/sv08.conf'):
             raise ValueError('Unexpected RAUC systemd invocation')

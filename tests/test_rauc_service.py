@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -47,6 +48,22 @@ class ServiceTests(unittest.TestCase):
         malformed = Service(self.policy, self.lock, lambda *args, **kwargs: type('R', (), {'returncode': 0, 'stdout': '{}', 'stderr': ''})())
         with self.assertRaisesRegex(ValueError, 'Invalid'):
             malformed.call(':1.4', 'de.pengutronix.rauc.Installer', 'GetSlotStatus')
+
+    def test_identity_refuses_package_or_systemd_execution_failure(self):
+        service = Service(self.policy, self.lock)
+        service.call = lambda *_: [os.getpid()]
+        policy = service.policy()
+        failures = {
+            'package': [subprocess.TimeoutExpired('dpkg-query', 10)],
+            'systemd': [policy['version'], subprocess.TimeoutExpired('systemctl', 10)],
+        }
+        for name, side_effect in failures.items():
+            with self.subTest(name=name), \
+                 patch('sv08_rauc_service.Path.resolve', return_value=Path('/usr/bin/rauc')), \
+                 patch.object(Service, 'digest', return_value=policy['executable_sha256']), \
+                 patch('sv08_rauc_service.subprocess.check_output', side_effect=side_effect):
+                with self.assertRaisesRegex(ValueError, 'process identity is unavailable'):
+                    service.identity(':1.41', policy)
 
     def test_observation_requires_writer_and_uses_internal_busy_guard(self):
         calls = []
