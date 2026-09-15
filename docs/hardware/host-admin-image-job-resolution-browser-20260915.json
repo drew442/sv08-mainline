@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-15",
+  "physical_hardware": false,
+  "environment": "disposable loopback browser fixture using Node 22, Chromium and a marked Cockpit bridge shim",
+  "command": "python3 scripts/preview_admin_ui.py --work build/host-image-resolution-browser-v3 --image-resolution-fixture --execute; NODE22 tests/admin_resolution_browser.mjs CHROMIUM_BINARY build/host-image-resolution-browser-v3 build/host-image-resolution-browser-result-v4",
+  "result_sha256": "7b628a338ebf96b2b1a5acd63a633294f1416672d1a582efece8af4c09cea38b",
+  "result": {
+    "passed": true,
+    "interrupted_receipt_inspected": true,
+    "unknown_disposition_retained_after_reload": true,
+    "separately_reviewed_cancelled": true,
+    "source_selected": "A",
+    "pending_cleared_after_disarm": true,
+    "new_installations": 0
+  },
+  "hashes": {
+    "tests/admin_resolution_browser.mjs": "df534a62c3496105c84e82a3dbd8090b4e54b67fe096997d90cf812bfa3804ac",
+    "tests/admin_jobs_fixture.py": "c21e973bd9afbc6b71ff445d68e3de26a6d20ad0bf5f4734f6b7f77ee7c773d5",
+    "scripts/preview_admin_ui.py": "4f86d275296b1c0038f7e2d5c7489c5466e8d4fd439ef9eb5fb5f02c53771393",
+    "ui/host/app.js": "need0e2d76d8256f2a9fd590aefd47790f99b99511d9258358700f1825f47def4"
+  },
+  "limitations": [
+    "The image backend, worker lifecycle and Cockpit bridge are disposable test doubles.",
+    "This is browser composition evidence; service-side RAUC exclusion is covered separately by the ARM64 QEMU fixture.",
+    "This is implementation self-verification and does not close the required independent review, production-image validation or physical acceptance."
+  ]
+}

@@ -147,6 +147,29 @@ claims. The complete factory 8 GB fit gate, authenticated production session,
 assembled ARM64 host image, real board backend/idle behavior and physical
 power/disconnect tests remain open in the canonical host checklist.
 
+### Browser disposition fixture
+
+The disposable browser composition fixture starts with a deliberately interrupted
+receipt and preserved source slot. It drives the actual host page through
+**Inspect unknown outcome**, verifies that the explicit `unknown` disposition
+survives a browser reload, and only then separately reviews cancellation. The
+cancel worker must durably publish `cancelled`, clear pending state, retain source
+slot A, and leave no installation artifact. It uses the real controller, jobs,
+staging and transaction code, but a marked fake image backend and test worker
+status; it does not claim RAUC service behavior.
+
+```sh
+python3 scripts/preview_admin_ui.py --work build/image-resolution-browser-new --image-resolution-fixture --execute
+NODE22 tests/admin_resolution_browser.mjs CHROMIUM_BINARY build/image-resolution-browser-new build/image-resolution-browser-result-new
+```
+
+`NODE22` must be a Node 22 executable because the CDP client uses its built-in
+WebSocket. The preview remains loopback-only and uses the marked unauthenticated
+Cockpit bridge shim. The observed result and exact source hashes are recorded in
+[browser disposition evidence](host-admin-image-job-resolution-browser-20260915.json).
+This composition result complements, but does not replace, the service-backed
+QEMU check or the required independent review.
+
 ### Service-backed interrupted-install fixture
 
 The disposable ARM64 QEMU fixture
