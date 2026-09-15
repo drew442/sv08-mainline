@@ -82,9 +82,10 @@ build directory. The normal staging commands reject an existing runtime/UI.
 The narrowly scoped `--refresh` options may restage only the expected regular
 project directories and outputs in that copied root; they reject symlinks and
 unrecognized files before replacing either directory. Regenerate the initramfs
-and create a new `finalized.json` receipt before composition. This construction
-exception is limited to non-deployable diagnostic roots by
-[decision 0016](../decisions/0016-controlled-host-restaging.md).
+and create a new `finalized.json` receipt with
+[`finalize_diagnostic_host.py`](../../scripts/finalize_diagnostic_host.py)
+before composition. This construction exception is limited to non-deployable
+diagnostic roots by [decision 0016](../decisions/0016-controlled-host-restaging.md).
 
 A clean root may receive its first-boot owner public-key seed from the separate
 preserved data tree with `integrate_host_os.py --owner-key PATH`. The input must
