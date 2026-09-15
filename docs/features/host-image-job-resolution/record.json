@@ -124,10 +124,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "5137b955708547f68c340dad90f5115e",
+        "session": "job-resolution-implementation-20260915"
+      },
       "repeats": 0,
       "resumption": "The owner resumed development on 2026-09-15. Review the preserved interrupted draft, then continue only from a fresh worktree at current integration HEAD.",
-      "status": "pending",
+      "status": "running",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
       "verification": null
     }
