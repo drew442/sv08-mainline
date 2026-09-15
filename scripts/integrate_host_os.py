@@ -32,7 +32,17 @@ def validate(manifest):
         raise ValueError('This integration stage is still an offline candidate')
 
 
-def stage(work, manifest, refresh=False):
+def owner_key_source(root, owner_key):
+    source = Path(owner_key) if owner_key is not None else root / 'home/sovol/.ssh/authorized_keys'
+    if source.is_symlink() or not source.is_file():
+        raise ValueError('Host image must provide a non-empty regular owner authorized-key seed')
+    content = source.read_bytes()
+    if not content.strip():
+        raise ValueError('Host image must provide a non-empty regular owner authorized-key seed')
+    return content
+
+
+def stage(work, manifest, refresh=False, owner_key=None):
     validate(manifest)
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir() or not (work / 'refresh-complete').is_file():
@@ -60,9 +70,7 @@ def stage(work, manifest, refresh=False):
     groups = (root / 'etc/group').read_text().splitlines()
     if not owner and any(line.split(':')[2] == '1000' for line in groups):
         raise ValueError('GID 1000 is occupied; do not reassign an existing group')
-    key_seed = root / 'home/sovol/.ssh/authorized_keys'
-    if key_seed.is_symlink() or not key_seed.is_file() or not key_seed.read_text().strip():
-        raise ValueError('Host image must provide a non-empty regular owner authorized-key seed')
+    key_seed = owner_key_source(root, owner_key)
     # All refresh preconditions are checked before replacing the existing runtime.
     if target_exists:
         shutil.rmtree(target)
@@ -116,7 +124,7 @@ def stage(work, manifest, refresh=False):
     shutil.copyfile(REPO / 'configs/host-os/sshd.conf', root / 'etc/ssh/sshd_config.d/20-sv08.conf')
     seed_dir = root / 'usr/lib/sv08/seed'
     seed_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(key_seed, seed_dir / 'authorized_keys')
+    (seed_dir / 'authorized_keys').write_bytes(key_seed)
     (seed_dir / 'authorized_keys').chmod(0o644)
     # Only this final stage adds the apt guard, after image package construction.
     shutil.copyfile(REPO / 'configs/host-os/apt-policy.conf', root / 'etc/apt/apt.conf.d/90sv08-policy')
@@ -156,15 +164,18 @@ def main():
     p.add_argument('--execute', action='store_true')
     p.add_argument('--refresh', action='store_true',
                    help='Replace only an already staged runtime in a fresh copied root')
+    p.add_argument('--owner-key', type=Path,
+                   help='Non-empty regular public-key file to seed on first boot')
     a = p.parse_args()
     manifest = json.loads(a.manifest.read_text())
     validate(manifest)
     work = work_path(a.work)
-    print(json.dumps(dict(execute=a.execute, refresh=a.refresh, work=str(work), release=manifest['release'])))
+    print(json.dumps(dict(execute=a.execute, refresh=a.refresh, work=str(work), release=manifest['release'],
+                          owner_key=bool(a.owner_key))))
     if a.execute:
         if os.geteuid() != 0:
             p.error('Staging requires root for filesystem ownership and user creation')
-        stage(work, manifest, a.refresh)
+        stage(work, manifest, a.refresh, a.owner_key)
 
 
 if __name__ == '__main__':

@@ -28,6 +28,11 @@ disk composition. It never alters the original root or its receipt. The feature
 does not authorize an eMMC write, a live-host change, package installation,
 service activation, kernel/bootloader replacement, or a deployable release.
 
+The integrator accepts an optional `--owner-key` input for clean board roots
+whose reviewed owner public key already resides in the separately preserved data
+tree. It accepts only a non-empty regular file and copies it into the runtime's
+first-boot seed. The public key is not printed by the tool or stored in Git.
+
 ## Validation and retirement
 
 Unit tests prove a recognized runtime/UI refresh removes stale project files,

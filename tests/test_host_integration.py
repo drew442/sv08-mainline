@@ -40,13 +40,14 @@ class IntegrationManifestTests(unittest.TestCase):
             (root / directory).mkdir(parents=True, exist_ok=True)
         (root / 'etc/passwd').write_text('sv08:x:1000:1000::/home/sv08:/bin/bash\n')
         (root / 'etc/group').write_text('sv08:x:1000:\n')
-        (root / 'home/sovol/.ssh/authorized_keys').write_text('ssh-ed25519 fixture owner\n')
+        owner_key = work / 'owner-authorized_keys'
+        owner_key.write_text('ssh-ed25519 fixture owner\n')
         target = root / 'usr/lib/sv08'; target.mkdir(parents=True)
         (target / 'stale.py').write_text('obsolete runtime\n')
         command = root / 'usr/bin/sv08-state'
         command.symlink_to('../lib/sv08/sv08_state.py')
 
-        stage(work, self.manifest(), refresh=True)
+        stage(work, self.manifest(), refresh=True, owner_key=owner_key)
 
         self.assertFalse((target / 'stale.py').exists())
         self.assertEqual((target / 'seed/authorized_keys').read_text(),

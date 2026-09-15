@@ -86,6 +86,11 @@ and create a new `finalized.json` receipt before composition. This construction
 exception is limited to non-deployable diagnostic roots by
 [decision 0016](../decisions/0016-controlled-host-restaging.md).
 
+A clean root may receive its first-boot owner public-key seed from the separate
+preserved data tree with `integrate_host_os.py --owner-key PATH`. The input must
+be a non-empty regular public-key file and is copied into the runtime seed; do
+not print it, add it to source control, or substitute credentials for it.
+
 ## Assemble and review
 
 After producing the private host `finalized.json` inventory receipt:
