@@ -271,9 +271,14 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   off. The temporary wrong-offset write was restored byte-for-byte before the
   successful positional write; details are in
   [host-spl-diagnostics-20260915-v6.json](host-spl-diagnostics-20260915-v6.json).
-- [ ] **Human handoff — reinstall the diagnostic spare and power the printer on
-  only after the receive-only serial capture is ready.** Do not change the raw
-  environments, repair the GPT, request heat or motion, or write MCU firmware.
+- [x] Reinstall the diagnostic spare and boot the v6 loader. The normal Debian
+  serial login and Cockpit HTTPS endpoint appeared, but the intended early serial
+  capture lacked device permission and retained no SPL output. See the
+  [v6 artifact record](host-spl-diagnostics-20260915-v6.json).
+- [ ] Correct and prove receive-only serial capture access while the printer is
+  still off before the next power cycle. The logger must record its `ready` event
+  against the identified bridge under the account that will retain the capture;
+  it must not transmit input.
 - [x] Run a bounded non-persistent memory check on the rearmed normal A host.
   A 512 MiB userspace allocation passed full-buffer `0x00`, `0xaa` and `0x55`
   write/read hashes with no failed units. It does not establish full-memory,

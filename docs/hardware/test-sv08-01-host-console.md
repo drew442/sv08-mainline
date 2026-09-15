@@ -130,6 +130,11 @@ touchscreen's own USB touch connection must remain available for that test.
   control**, initially without transmitting input. Retain timestamped output in
   ignored `local/test-sv08-01/`. Identify any bridge-specific control-line/reset
   behavior before interactive use; do not assume ST-Link serial support.
+- Treat a logger's process start as insufficient. Before the next power cycle,
+  require a recorded `ready` event after an exclusive open by the account that
+  owns the capture. The 2026-09-15 v6 boot lost its early trace because the
+  unprivileged logger lacked permission for the dialout-owned bridge; a later
+  root-owned receive-only logger could open it and record the Debian login prompt.
 - Capture an attended normal boot and confirm readable SPL/U-Boot/kernel output
   and the expected Linux host. A serial getty does not imply password login is
   provisioned: the existing image uses SSH keys. SSH remains the normal shell.

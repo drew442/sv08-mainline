@@ -261,6 +261,21 @@ record another U-Boot attempt. The reviewed v6 loader now adds a fail-stop check
 around that final controller initialization before size calculation. It was
 written with positional readback verification and awaits a captured physical boot.
 
+## Guarded-loader physical boot
+
+The v6 guarded loader subsequently reached the normal Debian 13 `sv08` serial
+login and Cockpit HTTPS endpoint at `https://192.168.1.141:9090/`. The intended
+early receive-only capture lacked permission to open the dialout-owned USB bridge
+when it appeared, so it did not retain SPL output. A late root-owned capture has
+SHA-256 `d3e70740e1daa1d59109d753c282be4b9ef3374603b7573b6a757d119b48b099`
+and records the login prompt only. This demonstrates the loader's successful
+path but does not directly exercise the new final-validation fail-stop branch.
+
+The factory account name `sovol` was rejected, while the rebuilt image account
+`sv08` accepted the owner key. No serial input, live configuration change, heater
+or motion command, MCU write, raw environment write or GPT repair was made. The
+next captured power cycle must verify serial-device access before power is applied.
+
 ## Completed offline result
 
 The first full disk passed independent byte review; the

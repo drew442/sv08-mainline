@@ -266,4 +266,15 @@ either environment and was restored byte-for-byte from the verified v2 full imag
 before the successful positional write. The reader was powered off. The factory-
 sized GPT warning on the 32 GB spare remains and was not repaired. Full details,
 including the restoration hash, are in the v6 artifact record. The next operation
-is a captured physical boot.
+was a captured physical boot.
+
+The physical v6 boot reached the normal Debian 13 `sv08` serial login and Cockpit
+HTTPS endpoint at port 9090. The intended early serial capture did not open: its
+unprivileged account lacked permission for the dialout-owned bridge when it
+appeared. A late root-owned receive-only capture records the normal login prompt
+but cannot show SPL output. Thus the successful loader path ran, while the new
+false-final-initialization marker and fail-stop branch remain unobserved. The
+factory account name `sovol` was rejected, while the rebuilt image account `sv08`
+accepted the owner key. No login recovery or live configuration change was
+attempted. The artifact record retains the capture limitation and the next serial
+capture must prove its device access before another power cycle.

@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-15",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "diagnostic-loader-v6-written-readback-verified-physical-boot-pending",
+  "status": "diagnostic-loader-v6-written-physical-host-booted-early-trace-missed",
   "manifest": "configs/host-os/sv08-boot-dram-diagnostic.json",
   "manifest_sha256": "b20da935fc04d1f967bd43da23ab00d5eb73aa4a6ac299f9563d522b205e51a3",
   "project_commit": "0a8d3c72f03f866a3c59e905f4deb545b9bebbd5",
@@ -77,9 +77,35 @@
     "gpt_factory_sized_layout_warning_unchanged": true,
     "reader_powered_off": true
   },
+  "physical_boot": {
+    "host_address": "192.168.1.141",
+    "serial_capture": {
+      "intended_capture_started_at_utc": "2026-09-15T07:59:00Z",
+      "failure": "The capture account lacked permission to open the dialout-owned USB serial device when it appeared, so it retained no early boot bytes.",
+      "late_root_capture_started_at_utc": "2026-09-15T08:34:19Z",
+      "late_capture_bytes": 314,
+      "late_capture_sha256": "d3e70740e1daa1d59109d753c282be4b9ef3374603b7573b6a757d119b48b099",
+      "late_capture_observation": "Debian GNU/Linux 13 sv08 ttyS0 and the serial login prompt were observed."
+    },
+    "network": {
+      "icmp_replied": true,
+      "ssh_tcp_22_open": true,
+      "cockpit_https_9090_status": 200,
+      "cockpit_address": "https://192.168.1.141:9090/"
+    },
+    "owner_ssh_key": {"account": "sv08", "authentication": "succeeded"},
+    "kernel": "6.18.51-sv08-candidate1",
+    "linux_memtotal_kib": 999672,
+    "root_mount": "/dev/mmcblk2p2 read-only",
+    "data_mount": "PARTUUID 4773f966-0678-4cf5-bb83-8ee6fb11d8eb read-write nodev,nosuid",
+    "failed_units": 0,
+    "printer_services": "sv08-klipper, sv08-moonraker, klipper and moonraker inactive",
+    "interpretation": "The normal host reached its serial login and Cockpit endpoint, which is successful-path evidence for this loader. The early SPL trace was missed, so the final-validation marker and fail-stop branch were not directly observed. The historical factory account name sovol was rejected; the rebuilt image account sv08 accepted the owner key. No console input, heater or motion command, MCU write, environment write, or GPT repair was issued."
+  },
   "not_established": [
-    "Execution of this loader on test-sv08-01",
     "DRAM training, timings, capacity or reliability",
+    "Direct observation of the final-validation guard's failure branch",
+    "Reliable early serial capture until the capture account's device permission is corrected",
     "A/B fallback or recovery behavior for this loader"
   ]
 }
