@@ -255,7 +255,7 @@ before `mctl_calc_size()`. Its FIT, TF-A, effective configuration and every byte
 from loader offset 40,960 onward equal v5; 25,980 changed bytes are confined to
 the SPL region. The eGON checksum, SPL bounds, nine native helper cases and five
 sandbox invalid-state cases pass. It remains a non-deployable diagnostic and has
-not yet physically booted.
+not yet physically booted at this point in the chronological record.
 
 The identified spare was inspected with its two CRC-valid raw environments at
 flags 7 and 6 (`BOOT_A_LEFT=2` and `3`). The v6 loader-only write at byte 8192
