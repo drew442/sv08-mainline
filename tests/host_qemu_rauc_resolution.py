@@ -31,10 +31,22 @@ def asset_repo():
 
 ASSETS = asset_repo()
 BASE = ASSETS / 'build/host-rauc-v1/rootfs'
+BASE_DEBIAN_113 = ASSETS / 'build/host-ab-baseline-v1/rootfs'
 NATIVE_RAUC = ASSETS / 'build/rauc-native-v2/rauc'
 KERNEL = BASE / 'boot/vmlinuz-6.12.107+deb13-arm64'
 INITRD = BASE / 'boot/initrd.img-6.12.107+deb13-arm64'
 GUEST = REPO / 'tests/fixtures/rauc-resolution/qemu-rauc-resolution.py'
+PROFILES = {
+    'selected-1152': {
+        'base': BASE, 'package': '1.15.2-0sv08.1', 'version_output': 'rauc 1.15.2',
+        'executable_sha256': '51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3',
+    },
+    'debian-113': {
+        'base': BASE_DEBIAN_113, 'package': '1.13-3+deb13u1', 'version_output': 'rauc 1.13',
+        'executable_sha256': '83e71fb2b88f2bf650baa5718dd172d3f7f4b8d94f3e9ac10f4f543e25d1d83b',
+    },
+}
+PROFILE = PROFILES['selected-1152']
 
 
 def digest(path):
@@ -55,6 +67,19 @@ def write(path, content, mode=0o644):
 def require(path, description):
     if not path.is_file() or path.is_symlink():
         raise ValueError('Missing reviewed ' + description + ': ' + str(path))
+
+
+def service_policy(profile):
+    """Fixture-only immutable identity policy for a retained binary."""
+    return json.dumps({
+        'format_version': 1, 'package': 'rauc', 'version': profile['package'],
+        'executable': '/usr/bin/rauc', 'executable_sha256': profile['executable_sha256'],
+        'service': 'rauc.service', 'bus_name': 'de.pengutronix.rauc',
+        'config_paths': ['/etc/rauc/system.conf', '/etc/rauc/release-keyring.pem',
+                         '/etc/fw_env.config', '/usr/lib/systemd/system/rauc.service',
+                         '/etc/systemd/system/rauc.service.d/sv08.conf',
+                         '/etc/dbus-1/system.d/zz-sv08-rauc.conf'],
+    }, indent=2) + '\n'
 
 
 def bundle(work):
@@ -133,17 +158,46 @@ def prepare(work):
     # in the fixture instead of replacing it with a systemd mount unit.
     (root / 'etc/systemd/system/data.mount').unlink(missing_ok=True)
     (root / 'etc/systemd/system/local-fs.target.wants/data.mount').unlink(missing_ok=True)
+    (root / 'data').mkdir(exist_ok=True)
+    # The older baseline initramfs has no project data-mount contract. Mount
+    # only this fixture's fixed disposable data partition under systemd.
+    write(root / 'etc/systemd/system/data.mount', '''[Unit]
+Before=local-fs.target
+
+[Mount]
+What=/dev/disk/by-partuuid/4773f966-0678-4cf5-bb83-8ee6fb11d8eb
+Where=/data
+Type=ext4
+Options=rw,nosuid,nodev
+
+[Install]
+WantedBy=local-fs.target
+''')
     runtime = root / 'usr/lib/sv08'
+    runtime.mkdir(parents=True, exist_ok=True)
     for source in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(source, runtime / source.name)
+    write(runtime / 'release.json', '{"deployable":false}\n')
     for source, destination in [
-        (REPO / 'configs/host-os/rauc-service-policy.json', runtime / 'rauc-service-policy.json'),
         (REPO / 'configs/host-os/sv08-rauc-policy.conf', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf'),
         (REPO / 'configs/host-os/sv08-rauc-service.conf', root / 'etc/systemd/system/rauc.service.d/sv08.conf'),
         (GUEST, runtime / 'qemu-rauc-resolution.py'),
     ]:
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, destination)
+    write(runtime / 'rauc-service-policy.json', service_policy(PROFILE))
+    # Debian's baseline package provides the exact executable but predates the
+    # project service integration. This unit is fixture-only and is included in
+    # the measured immutable identity, never in a host image.
+    write(root / 'usr/lib/systemd/system/rauc.service', '''[Unit]
+Description=Disposable RAUC Update Service
+After=dbus.service
+
+[Service]
+Type=dbus
+BusName=de.pengutronix.rauc
+ExecStart=/usr/bin/rauc --mount=/run/rauc service
+''')
     (runtime / 'qemu-rauc-resolution.py').chmod(0o755)
     write(root / 'usr/lib/systemd/system/qemu-rauc-resolution.service', '''[Unit]
 Description=Disposable RAUC interrupted-job resolution test
@@ -196,6 +250,8 @@ parent=rootfs.1
     # uses RAUC's custom test boot chooser instead of a U-Boot environment.
     write(root / 'etc/fw_env.config', '# disposable RAUC-resolution fixture\n')
     fixture = seed / 'fixture'; slots = fixture / 'slots'; slots.mkdir(parents=True)
+    write(fixture / 'rauc.json', json.dumps({key: PROFILE[key] for key in
+          ('package', 'version_output', 'executable_sha256')}, indent=2) + '\n')
     source = {}
     for slot in ('A', 'B'):
         for name in ('rootfs', 'boot'):
@@ -224,6 +280,7 @@ path.write_text(json.dumps(state))
     write(fixture / 'expected.json', json.dumps({'source': source, 'installed': images}, indent=2) + '\n')
     run(['systemctl', '--root', root, 'enable', 'qemu-rauc-resolution.service'],
         stdout=subprocess.DEVNULL)
+    run(['systemctl', '--root', root, 'enable', 'data.mount'], stdout=subprocess.DEVNULL)
     (root / 'etc/machine-id').write_text('')
     for path in (root / 'etc/ssh').glob('ssh_host_*'):
         path.unlink()
@@ -271,18 +328,25 @@ def execute(work):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, default=ASSETS / 'build/host-qemu-rauc-resolution-v1')
+    parser.add_argument('--profile', choices=sorted(PROFILES), default='selected-1152')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
+    global BASE, KERNEL, INITRD, PROFILE
+    PROFILE = PROFILES[args.profile]
+    BASE = PROFILE['base']
+    KERNEL = BASE / 'boot/vmlinuz-6.12.107+deb13-arm64'
+    INITRD = BASE / 'boot/initrd.img-6.12.107+deb13-arm64'
     for path, description in [(BASE / 'usr/bin/rauc', 'selected ARM64 root'), (NATIVE_RAUC, 'native RAUC bundle tool'),
                               (KERNEL, 'ARM64 kernel'), (INITRD, 'ARM64 initramfs'), (GUEST, 'guest fixture')]:
         require(path, description)
-    if digest(BASE / 'usr/bin/rauc') != '51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3':
+    if digest(BASE / 'usr/bin/rauc') != PROFILE['executable_sha256']:
         raise ValueError('Selected root does not contain the pinned RAUC executable')
     work = args.work.resolve()
     if not work.is_relative_to(ASSETS / 'build') or work == ASSETS / 'build':
         raise ValueError('Fixture output must be a fresh directory below build/')
     print(json.dumps({'execute': args.execute, 'work': str(work), 'base': str(BASE),
-                      'rauc': '1.15.2-0sv08.1', 'network': 'disabled', 'hardware': False}, indent=2))
+                      'rauc': PROFILE['package'], 'profile': args.profile,
+                      'network': 'disabled', 'hardware': False}, indent=2))
     if not args.execute:
         return
     if os.geteuid() != 0:

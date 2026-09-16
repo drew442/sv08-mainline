@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-16",
+  "physical_hardware": false,
+  "environment": "disposable ARM64 QEMU systemd guest with networking disabled",
+  "command": "sudo python3 tests/host_qemu_rauc_resolution.py --profile debian-113 --work /home/drew/sv08-mainline/build/host-qemu-rauc-resolution-113-v7 --execute",
+  "fixture_work": "build/host-qemu-rauc-resolution-113-v7",
+  "baseline": {
+    "package": "1.13-3+deb13u1",
+    "executable_sha256": "83e71fb2b88f2bf650baa5718dd172d3f7f4b8d94f3e9ac10f4f543e25d1d83b",
+    "source_root": "build/host-ab-baseline-v1/rootfs"
+  },
+  "result": {
+    "passed": true,
+    "signed_paired_install": true,
+    "client_killed_service_survived": true,
+    "operation_while_held": "installing",
+    "operation_after_rejected_install": "idle",
+    "public_idle_internal_busy": true,
+    "internal_busy_guard_refused": true,
+    "writer_exclusion": true,
+    "fresh_review_disposition_retained": true
+  },
+  "hashes": {
+    "boot_log": "754bcb06c3d52a4755f5ddfdb627d5265245ad9b24fac05812bc9d52d1ef7b9c",
+    "tests/host_qemu_rauc_resolution.py": "6a133b39d716fa6882fc8d01a98d0a0f044f93bd37ff8952078cd4f9543f8493",
+    "tests/fixtures/rauc-resolution/qemu-rauc-resolution.py": "90a3749de95215e4b6645b02ad516fb046f24129efdef0d66b935cb6a8e8950b",
+    "runtime/sv08_rauc_service.py": "eb250f800b80420409a0a170306f84c30a69729817183c059ed13a47454d2bf5"
+  },
+  "limitations": [
+    "The service unit, data mount, signed hook and raw slots are fixture-only additions around the retained Debian binary.",
+    "This does not select Debian 1.13 for the host image; the selected package remains 1.15.2-0sv08.1.",
+    "This is offline implementation evidence, not production-image or physical-hardware acceptance."
+  ]
+}

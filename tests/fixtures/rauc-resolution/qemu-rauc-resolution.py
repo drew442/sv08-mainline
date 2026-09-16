@@ -39,9 +39,17 @@ def sha256(path):
 
 def main():
     command_line = Path('/proc/cmdline').read_text().split()
+    root_source = next((line.split()[0] for line in Path('/proc/mounts').read_text().splitlines()
+                        if len(line.split()) >= 2 and line.split()[1] == '/'), None)
+    if root_source is None:
+        raise ValueError('Fixture root mount is unavailable')
+    if not root_source.startswith('/dev/'):
+        raise ValueError('Fixture root is not an explicit block device')
+    root_disk = Path(root_source).name
     if ('sv08.test=rauc-resolution' not in command_line or
             output(['systemd-detect-virt', '--vm']) != 'qemu' or
-            Path('/sys/block/vda/serial').read_text().strip() != 'SV08-QEMU-DISPOSABLE'):
+            not (Path('/sys/block') / root_disk / 'serial').is_file() or
+            (Path('/sys/block') / root_disk / 'serial').read_text().strip() != 'SV08-QEMU-DISPOSABLE'):
         raise ValueError('Refusing anything other than the marked disposable QEMU guest')
     if json.loads(Path('/usr/lib/sv08/release.json').read_text()).get('deployable') is not False:
         raise ValueError('Fixture metadata must be non-deployable')
@@ -57,6 +65,7 @@ def main():
 
     fixture = Path('/data/fixture')
     expected = json.loads((fixture / 'expected.json').read_text())
+    selected = json.loads((fixture / 'rauc.json').read_text())
     service = Service()
     boot_id = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
     boot = None
@@ -65,9 +74,9 @@ def main():
         run(['systemctl', 'start', 'rauc.service'])
         wait('the selected RAUC service', lambda: output(['systemctl', 'is-active', 'rauc.service']) == 'active')
         policy = service.policy()
-        if policy['version'] != '1.15.2-0sv08.1':
+        if policy['version'] != selected['package']:
             raise ValueError('The selected RAUC package changed')
-        if output(['/usr/bin/rauc', '--version']) != 'rauc 1.15.2':
+        if output(['/usr/bin/rauc', '--version']) != selected['version_output']:
             raise ValueError('The selected RAUC executable changed')
 
         # The assembled D-Bus policy denies an ordinary local client.  Root is
@@ -253,6 +262,7 @@ def main():
         if retained['phase'] != 'interrupted' or jobs.history()['blocked']:
             raise AssertionError('Unknown outcome was not durably retained')
         result = dict(passed=True, physical_hardware=False, selected_rauc=policy['version'],
+                      executable_sha256=selected['executable_sha256'],
                       signed_paired_install=True, client_killed_service_survived=True,
                       ordinary_dbus_client_denied=True, operation_while_held=operation['data'],
                       operation_after_rejected_install=post_rejection['data'],
@@ -280,4 +290,7 @@ if __name__ == '__main__':
             pass
         subprocess.run(['journalctl', '-b', '-u', 'rauc.service', '--no-pager'], check=False)
     finally:
-        subprocess.run(['systemctl', 'poweroff'], check=False, timeout=20)
+        try:
+            subprocess.run(['systemctl', 'poweroff'], check=False, timeout=20)
+        except subprocess.TimeoutExpired:
+            subprocess.run(['systemctl', '--force', 'poweroff'], check=False)

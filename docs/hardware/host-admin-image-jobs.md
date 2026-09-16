@@ -198,6 +198,14 @@ This is implementation self-verification, not the required independent feature
 review. It neither verifies a production image or board nor replaces the
 separate browser safe-source cancellation acceptance work.
 
+The retained Debian baseline `rauc 1.13-3+deb13u1` has the same service exercise
+in a separate disposable guest. It uses the baseline's exact ARM64 executable;
+the fixture supplies only its non-deployable metadata, data mount and service
+unit. Its result also observed public `idle` while `GetSlotStatus` refused as
+internally busy. The [Debian baseline evidence](host-admin-image-job-resolution-debian-113-20260916.json)
+records the binary hash and exact command. It does not change the selected 1.15.2
+package or make either test fixture a deployable image.
+
 Original code fills ADR 0010's project-specific review/durability gap using Python,
 systemd and Cockpit supported interfaces without new runtime dependencies or
 upstream changes. Retire it if upstream provides equivalent persistence, review
