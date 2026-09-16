@@ -214,6 +214,14 @@ results with QEMU networking disabled and no host devices attached. The remainin
 authenticated Cockpit/helper/identified-device-backend composition check is still
 separate work; this repeat does not claim it.
 
+An independent re-review of the merged tree then reran the 96 focused Python
+transaction, jobs, resolution, staging, backend, service and upload tests
+successfully. It confirmed the selected and Debian service evidence, including
+the separate-process writer contender. It did not accept the feature: the one
+remaining blocker is an actual authenticated Cockpit browser session traversing
+the privileged helper, identified partition backend and real RAUC service through
+the interrupted-receipt and preserved-source cancellation journey.
+
 Original code fills ADR 0010's project-specific review/durability gap using Python,
 systemd and Cockpit supported interfaces without new runtime dependencies or
 upstream changes. Retire it if upstream provides equivalent persistence, review
