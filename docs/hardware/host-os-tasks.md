@@ -141,12 +141,12 @@ enumeration were re-established on 2026-09-12; see the
   [Authenticated upload](host-admin-upload.md) and [durable image jobs](host-admin-image-jobs.md)
   pass their actual Cockpit and independent-worker fixtures. Production/physical
   acceptance remains in the release and human checks below.
-- [ ] Deliver reviewed resolution of ambiguous image-job receipts and bounded
-  history rollover, preserving retry identities and original outcomes. Include
-  RAUC service-side inactivity evidence before releasing the admission gate;
-  current ambiguous/full ledgers remain blocked without automatic replay. The
-  [approved resolution task](../features/host-image-job-resolution/proposal.md)
-  precedes a separately scoped history-rollover delivery.
+- [ ] Complete independent ARM64 service-backed verification of ambiguous
+  image-job disposition, including an orphaned RAUC install and writer exclusion.
+  The implemented browser inspection/disposition retains the original unknown
+  outcome and refuses new identities at full history; bounded history rollover
+  remains a separately scoped delivery. See the [approved resolution
+  task](../features/host-image-job-resolution/proposal.md).
 - [ ] Finish additional-software catalog, dependency/space preview, admitted APT
   install/remove, service configuration and customization reconciliation.
 - [ ] Implement network/access forms, connectivity rollback, host naming/hosts

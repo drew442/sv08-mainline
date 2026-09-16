@@ -12,19 +12,21 @@ from sv08_state import Store
 from prepare_host_os import REPO, work_path
 
 
-def serve(work, image_jobs=False):
+def serve(work, image_jobs=False, image_resolution=False):
     if work.exists(): raise ValueError('Use a fresh disposable build directory')
     work.mkdir(parents=True)
     store = Store(work / 'state', reserve_bytes=0)
     store.initialize(); boot = store.prepare_boot('A', '0.1.0-ui-fixture')
-    boot['boot_id'] = 'ui-fixture'
+    # Resolution binds its observation to a real current-boot identity.  The
+    # ordinary jobs fixture intentionally keeps its historical fixed value.
+    boot['boot_id'] = Path('/proc/sys/kernel/random/boot_id').read_text().strip() if image_resolution else 'ui-fixture'
     (work / 'ui-fixture.json').write_text(json.dumps(boot))
     controller = Controller(store, boot)
-    if image_jobs:
+    if image_jobs or image_resolution:
         sys.path.insert(0, str(REPO / 'tests'))
-        from admin_jobs_fixture import initialize, make_controller
-        initialize(work, boot)
-        controller = make_controller(work)
+        from admin_jobs_fixture import initialize, initialize_resolution, make_controller
+        (initialize_resolution if image_resolution else initialize)(work, boot)
+        controller = make_controller(work, resolution=image_resolution)
     token = secrets.token_hex(32)
     root = REPO / 'ui/host'
 
@@ -79,7 +81,8 @@ if __name__ == '__main__':
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--image-jobs-fixture', action='store_true', help='Disposable systemd user-worker fixture only')
+    parser.add_argument('--image-resolution-fixture', action='store_true', help='Disposable interrupted-receipt browser fixture only')
     args = parser.parse_args()
     work = work_path(args.work)
     if not args.execute: print(json.dumps({'execute': False, 'work': str(work)}))
-    else: serve(work, args.image_jobs_fixture)
+    else: serve(work, args.image_jobs_fixture, args.image_resolution_fixture)

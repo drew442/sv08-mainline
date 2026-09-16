@@ -204,7 +204,9 @@ class Controller:
             return upload.cleanup(request['plan'])
         expected = {'status': {'method'}, 'plan': {'method', 'action', 'arguments'},
                     'apply': {'method', 'plan'}, 'jobs': {'method'},
-                    'image.submit': {'method', 'id', 'plan'}}.get(method)
+                    'image.submit': {'method', 'id', 'plan'},
+                    'image.inspect': {'method', 'id'},
+                    'image.dispose': {'method', 'plan'}}.get(method)
         if expected is None or set(request) != expected:
             raise ValueError('Unknown request or fields')
         if method == 'jobs':
@@ -212,6 +214,14 @@ class Controller:
         if method == 'image.submit':
             if self.jobs is None: raise ValueError('Image worker integration unavailable')
             return self.jobs.submit(request['id'], request['plan'], self)
+        if method == 'image.inspect':
+            if self.jobs is None: raise ValueError('Image worker integration unavailable')
+            from sv08_admin_resolution import inspect
+            return inspect(self.jobs, request['id'], self)
+        if method == 'image.dispose':
+            if self.jobs is None: raise ValueError('Image worker integration unavailable')
+            from sv08_admin_resolution import apply
+            return apply(self.jobs, request['plan'], self)
         if method == 'apply' and isinstance(request['plan'], dict) and request['plan'].get('action') in ('image.stage', 'image.arm', 'image.cancel') and self.jobs is not None:
             raise ValueError('Submit a reviewed image job with a retry identity')
         if method == 'status': return self.status()

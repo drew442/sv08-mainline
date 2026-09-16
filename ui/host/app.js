@@ -111,11 +111,18 @@ function renderJobs(result) {
     $('submission-pending').hidden = !unresolved; $('retry-submission').hidden = !unresolved;
     $('retry-submission').disabled = busy;
     jobsBusy = result.blocked || unresolved;
-    $('jobs-summary').textContent = result.blocked ? 'An image operation is pending or needs reconciliation. You can close this page safely.' : 'No image operation is running.';
+    $('jobs-summary').textContent = result.blocked ? 'An image operation is pending or needs outcome review. You can close this page safely.' : 'No image operation is running.';
     $('jobs').replaceChildren();
     for (const job of result.jobs) {
         const item = document.createElement('p'); item.dataset.jobId = job.id; item.dataset.phase = job.phase;
         item.textContent = `${job.action} · ${job.phase} · ${job.id} — ${job.message}`;
+        if (job.phase === 'interrupted' && !job.disposition) {
+            const button = document.createElement('button');
+            button.textContent = 'Inspect unknown outcome'; button.dataset.inspectJob = job.id;
+            button.disabled = busy;
+            button.addEventListener('click', () => inspectJob(job.id));
+            item.append(button);
+        }
         $('jobs').append(item);
     }
 }
@@ -130,14 +137,27 @@ async function refresh() {
         renderJobs(result);
         if (result.blocked) {
             $('connection').textContent = 'Image worker status connected';
-            document.querySelectorAll('main button:not([data-open]):not(#retry-submission)').forEach(b => { b.disabled = true; });
+            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job])').forEach(b => { b.disabled = true; });
             return;
         }
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
-    } catch (error) { $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission)').forEach(b => { b.disabled = true; }); }
+    } catch (error) { $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job])').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
+}
+async function inspectJob(id) {
+    if (busy) return;
+    const generation = authorityGeneration;
+    try {
+        const result = await request({method: 'image.inspect', id});
+        if (generation !== authorityGeneration || !result.plan) return;
+        plan = result.plan;
+        $('review-title').textContent = 'Retain unknown outcome';
+        $('review-effect').textContent = result.message;
+        $('review-arguments').textContent = JSON.stringify(result.evidence, null, 2);
+        $('review').returnValue = 'cancel'; $('review').showModal();
+    } catch (error) { notice(error.message); }
 }
 async function review(action, args = {}) {
     if (busy || jobsBusy || !state) return;
@@ -155,16 +175,17 @@ async function review(action, args = {}) {
 $('review').addEventListener('close', async () => {
     if ($('review').returnValue !== 'confirm' || !plan || busy) { plan = null; return; }
     const reviewed = plan;
-    busy = true; render(); notice('Applying the reviewed change…');
+    busy = true; if (state) render(); notice('Applying the reviewed change…');
     try {
-        const image = reviewed.action.startsWith('image.');
-        const message = image ? {method: 'image.submit', id: crypto.randomUUID().replaceAll('-', ''), plan: reviewed} : {method: 'apply', plan: reviewed};
+        const disposition = reviewed.kind === 'retain-unknown-v1';
+        const image = !disposition && reviewed.action.startsWith('image.');
+        const message = disposition ? {method: 'image.dispose', plan: reviewed} : image ? {method: 'image.submit', id: crypto.randomUUID().replaceAll('-', ''), plan: reviewed} : {method: 'apply', plan: reviewed};
         // Preserve lost-acknowledgement identity across page closure. Refresh only
         // observes server history; it never automatically submits this receipt.
         if (image) localStorage.setItem('sv08-image-submission', JSON.stringify(message));
         const result = await request(message);
         if (image) localStorage.removeItem('sv08-image-submission');
-        else appliedDraft(reviewed);
+        else if (!disposition) appliedDraft(reviewed);
         notice(result.message || 'Change completed.');
     }
     catch (error) { await submissionError(error); }

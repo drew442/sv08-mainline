@@ -15,6 +15,7 @@ import subprocess
 from sv08_boot import verify_devices
 from sv08_gpt import inspect as inspect_gpt
 from sv08_bundle import inspect as inspect_bundle
+from sv08_rauc_service import Service
 
 MIB = 1024*1024
 CLEANUP_SECONDS = 10
@@ -126,6 +127,15 @@ class Backend:
         self.manifest, self.policy, self.layout, self.environment = manifest, policy, layout, environment
         self.config, self.keyring, self.env_config, self.fixture = config, keyring, env_config, fixture
         self.boot = None
+        self.service = Service()
+
+    def writer(self):
+        return self.service.writer()
+
+    def resolution_evidence(self, boot):
+        """Read current backend evidence plus the selected service's busy guard."""
+        self.validate_context(boot)
+        return self.service.observe()
 
     def command(self, *args):
         return subprocess.check_output(['/usr/bin/rauc', '--conf='+str(self.config), *args], text=True)
@@ -228,30 +238,32 @@ class Backend:
         return slots['rootfs.'+str(('A', 'B').index(slot))]['boot_status'] == 'good'
 
     def mark(self, action, slot):
-        if self.boot is None:
-            raise ValueError('Validate the running context before bootloader writes')
-        self.validate_context(self.boot)
-        self.command('status', action, 'rootfs.'+str(('A', 'B').index(slot)))
+        with self.writer():
+            if self.boot is None:
+                raise ValueError('Validate the running context before bootloader writes')
+            self.validate_context(self.boot)
+            self.command('status', action, 'rootfs.'+str(('A', 'B').index(slot)))
 
     def mark_active(self, slot): self.mark('mark-active', slot)
     def mark_bad(self, slot): self.mark('mark-bad', slot)
     def mark_good(self, slot): self.mark('mark-good', slot)
 
     def install(self, bundle, proof, target):
-        if self.boot is None or target == self.boot['slot']:
-            raise ValueError('Validate the source and choose the inactive target')
-        self.validate_context(self.boot)
-        actual = inspect_bundle(bundle, self.policy, self.keyring)
-        if actual != proof:
-            raise ValueError('Staged file or signed admission proof changed')
-        source = self.boot['slot'].lower()
-        sizes = {'boot': self.policy['image_bytes']['boot'], 'root': self.policy['image_bytes']['rootfs']}
-        devices = self.manifest['devices']
-        before = {kind: digest_device(devices[kind+'-'+source], size) for kind, size in sizes.items()}
-        self.command('install', str(bundle))
-        for kind, size in sizes.items():
-            if digest_device(devices[kind+'-'+source], size) != before[kind]:
-                raise ValueError('Active slot changed during installation')
-            expected = proof['image_hashes']['rootfs' if kind == 'root' else 'boot']
-            if digest_device(devices[kind+'-'+target.lower()], size) != expected:
-                raise ValueError('Inactive image does not match the authenticated digest')
+        with self.writer():
+            if self.boot is None or target == self.boot['slot']:
+                raise ValueError('Validate the source and choose the inactive target')
+            self.validate_context(self.boot)
+            actual = inspect_bundle(bundle, self.policy, self.keyring)
+            if actual != proof:
+                raise ValueError('Staged file or signed admission proof changed')
+            source = self.boot['slot'].lower()
+            sizes = {'boot': self.policy['image_bytes']['boot'], 'root': self.policy['image_bytes']['rootfs']}
+            devices = self.manifest['devices']
+            before = {kind: digest_device(devices[kind+'-'+source], size) for kind, size in sizes.items()}
+            self.command('install', str(bundle))
+            for kind, size in sizes.items():
+                if digest_device(devices[kind+'-'+source], size) != before[kind]:
+                    raise ValueError('Active slot changed during installation')
+                expected = proof['image_hashes']['rootfs' if kind == 'root' else 'boot']
+                if digest_device(devices[kind+'-'+target.lower()], size) != expected:
+                    raise ValueError('Inactive image does not match the authenticated digest')

@@ -1,0 +1,10 @@
+{
+  "format_version": 1,
+  "package": "rauc",
+  "version": "1.15.2-0sv08.1",
+  "executable": "/usr/bin/rauc",
+  "executable_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
+  "service": "rauc.service",
+  "bus_name": "de.pengutronix.rauc",
+  "config_paths": ["/etc/rauc/system.conf", "/etc/rauc/release-keyring.pem", "/etc/fw_env.config", "/usr/lib/systemd/system/rauc.service", "/etc/systemd/system/rauc.service.d/sv08.conf", "/etc/dbus-1/system.d/zz-sv08-rauc.conf"]
+}
