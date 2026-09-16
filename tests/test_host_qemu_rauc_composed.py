@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from host_qemu_rauc_composed import LAYOUT, ROLES, create_media, fixture_manifest, partition_layout, sgdisk_arguments
+from host_qemu_rauc_composed import LAYOUT, ROLES, create_media, fixture_manifest, format_media, partition_layout, sgdisk_arguments
 
 
 class ComposedRaucFixtureLayoutTests(unittest.TestCase):
@@ -42,3 +42,11 @@ class ComposedRaucFixtureLayoutTests(unittest.TestCase):
             self.assertEqual([row[1] for row in result['partitions']], list(ROLES))
             self.assertEqual([row[4] for row in result['partitions']],
                              [self.uuids[name] for name in ROLES])
+
+    def test_formatting_is_bounded_to_the_reviewed_partitions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            image = Path(directory) / 'guest.img'
+            create_media(image, self.uuids)
+            formatted = format_media(image)
+            self.assertEqual(set(formatted), set(ROLES))
+            self.assertEqual(formatted['root-a']['size_bytes'], 2048 * 1024 * 1024)

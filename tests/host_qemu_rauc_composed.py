@@ -88,3 +88,24 @@ def create_media(image, partuuids, layout=LAYOUT):
     except BaseException:
         image.unlink(missing_ok=True)
         raise
+
+
+def format_media(image, parts=None):
+    """Format only the reviewed extents of a verified disposable GPT file."""
+    image = Path(image)
+    parts = partition_layout() if parts is None else parts
+    if image.is_symlink() or not image.is_file() or image.stat().st_size != LAYOUT['image_bytes']:
+        raise ValueError('Expected the fresh disposable fixture image')
+    by_name = {part['name']: part for part in parts}
+    for name in ('boot-a', 'boot-b'):
+        part = by_name[name]
+        subprocess.run(['mkfs.vfat', '-F', '16', '--offset', str(part['offset_bytes'] // 512),
+                        '-n', name.upper(), image, str(part['size_bytes'] // 512)],
+                       check=True, capture_output=True, text=True)
+    for name in ('root-a', 'root-b', 'recovery', 'data'):
+        part = by_name[name]
+        subprocess.run(['mkfs.ext4', '-q', '-F', '-E', 'offset='+str(part['offset_bytes']),
+                        '-L', name, image, str(part['size_bytes'] // 4096)],
+                       check=True, capture_output=True, text=True)
+    return {part['name']: dict(offset_bytes=part['offset_bytes'], size_bytes=part['size_bytes'])
+            for part in parts}
