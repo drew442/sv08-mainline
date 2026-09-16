@@ -109,3 +109,16 @@ def format_media(image, parts=None):
                        check=True, capture_output=True, text=True)
     return {part['name']: dict(offset_bytes=part['offset_bytes'], size_bytes=part['size_bytes'])
             for part in parts}
+
+
+def filesystem_types(image, parts=None):
+    """Read only bounded filesystem signatures from the disposable image."""
+    image = Path(image)
+    parts = partition_layout() if parts is None else parts
+    result = {}
+    for part in parts:
+        output = subprocess.check_output(['blkid', '-p', '-o', 'export', '-O', str(part['offset_bytes']),
+                                          '-S', str(part['size_bytes']), image], text=True)
+        values = dict(line.split('=', 1) for line in output.splitlines() if '=' in line)
+        result[part['name']] = values.get('TYPE')
+    return result
