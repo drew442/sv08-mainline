@@ -122,3 +122,42 @@ def filesystem_types(image, parts=None):
         values = dict(line.split('=', 1) for line in output.splitlines() if '=' in line)
         result[part['name']] = values.get('TYPE')
     return result
+
+
+def populate_ext4_partition(image, name, source, work, parts=None):
+    """Copy a regular source tree into one bounded ext4 fixture partition.
+
+    The intermediate is a sparse regular file. ``dd`` is given a fixed count
+    and seek, so it cannot affect the GPT, raw environment reservations or an
+    adjacent partition.
+    """
+    image, source, work = Path(image), Path(source), Path(work)
+    parts = partition_layout() if parts is None else parts
+    part = next((item for item in parts if item['name'] == name), None)
+    if part is None or name not in ('root-a', 'root-b', 'recovery', 'data'):
+        raise ValueError('Expected one reviewed ext4 fixture partition')
+    if image.is_symlink() or not image.is_file() or image.stat().st_size != LAYOUT['image_bytes']:
+        raise ValueError('Expected the fresh disposable fixture image')
+    if source.is_symlink() or not source.is_dir() or work.is_symlink():
+        raise ValueError('Source and work must be regular fixture directories')
+    work.mkdir(mode=0o700, parents=True, exist_ok=True)
+    intermediate = work / (name + '.ext4')
+    if intermediate.exists() or intermediate.is_symlink():
+        raise ValueError('Use a fresh partition work file')
+    with intermediate.open('xb') as stream:
+        stream.truncate(part['size_bytes'])
+    try:
+        subprocess.run(['mkfs.ext4', '-q', '-F', '-d', source, '-L', name, intermediate],
+                       check=True, capture_output=True, text=True)
+        if filesystem_types(intermediate, [dict(part, offset_bytes=0)]) != {name: 'ext4'}:
+            raise ValueError('Intermediate filesystem creation failed')
+        if part['offset_bytes'] % MIB or part['size_bytes'] % MIB:
+            raise ValueError('Fixture partition is not MiB aligned')
+        subprocess.run(['dd', 'if='+str(intermediate), 'of='+str(image), 'bs=1M',
+                        'seek='+str(part['offset_bytes'] // MIB),
+                        'count='+str(part['size_bytes'] // MIB), 'conv=notrunc,sparse', 'status=none'],
+                       check=True)
+        return dict(name=name, source_files=sum(1 for item in source.rglob('*') if item.is_file()),
+                    partition_offset_bytes=part['offset_bytes'], partition_size_bytes=part['size_bytes'])
+    finally:
+        intermediate.unlink(missing_ok=True)

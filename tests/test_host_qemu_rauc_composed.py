@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from host_qemu_rauc_composed import LAYOUT, ROLES, create_media, filesystem_types, fixture_manifest, format_media, partition_layout, sgdisk_arguments
+from host_qemu_rauc_composed import LAYOUT, ROLES, create_media, filesystem_types, fixture_manifest, format_media, partition_layout, populate_ext4_partition, sgdisk_arguments
 
 
 class ComposedRaucFixtureLayoutTests(unittest.TestCase):
@@ -51,3 +51,12 @@ class ComposedRaucFixtureLayoutTests(unittest.TestCase):
             self.assertEqual(set(formatted), set(ROLES))
             self.assertEqual(formatted['root-a']['size_bytes'], 2048 * 1024 * 1024)
             self.assertEqual(filesystem_types(image), dict(zip(ROLES, ('vfat', 'ext4', 'vfat', 'ext4', 'ext4', 'ext4'))))
+
+    def test_source_tree_population_is_limited_to_root_a(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); image = root / 'guest.img'; source = root / 'source'; source.mkdir()
+            (source / 'proof.txt').write_text('fixture only\n')
+            create_media(image, self.uuids); format_media(image)
+            result = populate_ext4_partition(image, 'root-a', source, root / 'work')
+            self.assertEqual(result['name'], 'root-a')
+            self.assertEqual(filesystem_types(image)['root-a'], 'ext4')
