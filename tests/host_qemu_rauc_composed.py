@@ -8,6 +8,7 @@ backend.  It never accepts an existing image or a block device.
 """
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import uuid
 
@@ -161,3 +162,16 @@ def populate_ext4_partition(image, name, source, work, parts=None):
                     partition_offset_bytes=part['offset_bytes'], partition_size_bytes=part['size_bytes'])
     finally:
         intermediate.unlink(missing_ok=True)
+
+
+def copy_guest_root(source, destination):
+    """Copy a source root without importing host runtime mounts or devices."""
+    source, destination = Path(source), Path(destination)
+    if source.is_symlink() or not source.is_dir() or destination.exists() or destination.is_symlink():
+        raise ValueError('Use a regular source root and fresh destination')
+    ignored = {'dev', 'proc', 'sys', 'run', 'tmp'}
+    shutil.copytree(source, destination, symlinks=True,
+                    ignore=lambda directory, names: ignored if Path(directory) == source else set())
+    for name in sorted(ignored):
+        (destination / name).mkdir()
+    return destination

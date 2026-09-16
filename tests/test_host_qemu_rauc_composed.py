@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from host_qemu_rauc_composed import LAYOUT, ROLES, create_media, filesystem_types, fixture_manifest, format_media, partition_layout, populate_ext4_partition, sgdisk_arguments
+from host_qemu_rauc_composed import LAYOUT, ROLES, copy_guest_root, create_media, filesystem_types, fixture_manifest, format_media, partition_layout, populate_ext4_partition, sgdisk_arguments
 
 
 class ComposedRaucFixtureLayoutTests(unittest.TestCase):
@@ -60,3 +60,14 @@ class ComposedRaucFixtureLayoutTests(unittest.TestCase):
             result = populate_ext4_partition(image, 'root-a', source, root / 'work')
             self.assertEqual(result['name'], 'root-a')
             self.assertEqual(filesystem_types(image)['root-a'], 'ext4')
+
+    def test_root_copy_excludes_runtime_mounts_and_preserves_regular_content(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / 'source'; source.mkdir()
+            (source / 'etc').mkdir(); (source / 'etc/proof').write_text('copied\n')
+            for name in ('dev', 'proc', 'sys', 'run', 'tmp'):
+                (source / name).mkdir(); (source / name / 'excluded').write_text(name)
+            copied = copy_guest_root(source, Path(directory) / 'copy')
+            self.assertEqual((copied / 'etc/proof').read_text(), 'copied\n')
+            self.assertTrue(all((copied / name).is_dir() and not (copied / name / 'excluded').exists()
+                                for name in ('dev', 'proc', 'sys', 'run', 'tmp')))
