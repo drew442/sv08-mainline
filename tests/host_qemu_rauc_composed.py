@@ -8,6 +8,7 @@ backend.  It never accepts an existing image or a block device.
 """
 import json
 from pathlib import Path
+import subprocess
 import uuid
 
 
@@ -62,3 +63,28 @@ def sgdisk_arguments(image, parts, partuuids):
                         f"--partition-guid={part['number']}:{partuuids[part['name']]}",
                         f"--typecode={part['number']}:8300"])
     return [*command, image]
+
+
+def create_media(image, partuuids, layout=LAYOUT):
+    """Create and immediately read back a sparse disposable GPT image."""
+    image = Path(image)
+    parts = partition_layout(layout)
+    command = sgdisk_arguments(image, parts, partuuids)
+    image.parent.mkdir(parents=True, exist_ok=True)
+    with image.open('xb') as stream:
+        stream.truncate(layout['image_bytes'])
+    try:
+        subprocess.run(command, check=True, capture_output=True, text=True)
+        observed = json.loads(subprocess.check_output(['sfdisk', '--json', image], text=True))
+        rows = observed['partitiontable']['partitions']
+        expected = [(part['number'], part['name'], part['offset_bytes'] // 512,
+                     part['size_bytes'] // 512, str(uuid.UUID(partuuids[part['name']])))
+                    for part in parts]
+        actual = [(index, row['name'], row['start'], row['size'], row['uuid'])
+                  for index, row in enumerate(rows, 1)]
+        if actual != expected:
+            raise ValueError('Disposable GPT readback differs from the reviewed layout')
+        return dict(image_bytes=image.stat().st_size, partitions=actual)
+    except BaseException:
+        image.unlink(missing_ok=True)
+        raise

@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from host_qemu_rauc_composed import LAYOUT, ROLES, fixture_manifest, partition_layout, sgdisk_arguments
+from host_qemu_rauc_composed import LAYOUT, ROLES, create_media, fixture_manifest, partition_layout, sgdisk_arguments
 
 
 class ComposedRaucFixtureLayoutTests(unittest.TestCase):
@@ -33,3 +33,12 @@ class ComposedRaucFixtureLayoutTests(unittest.TestCase):
         self.assertIn('--partition-guid=6:00000000-0000-4000-8000-000000000006', command)
         with self.assertRaisesRegex(ValueError, 'new regular'):
             sgdisk_arguments('/dev/vda', self.parts, self.uuids)
+
+    def test_sparse_disposable_gpt_readback_matches_every_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            image = Path(directory) / 'guest.img'
+            result = create_media(image, self.uuids)
+            self.assertEqual(result['image_bytes'], LAYOUT['image_bytes'])
+            self.assertEqual([row[1] for row in result['partitions']], list(ROLES))
+            self.assertEqual([row[4] for row in result['partitions']],
+                             [self.uuids[name] for name in ROLES])
