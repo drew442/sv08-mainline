@@ -206,6 +206,14 @@ internally busy. The [Debian baseline evidence](host-admin-image-job-resolution-
 records the binary hash and exact command. It does not change the selected 1.15.2
 package or make either test fixture a deployable image.
 
+After integration on `main`, the selected-package guest was rebuilt and run from
+the merged tree. The [main-tree record](host-admin-image-job-resolution-main-20260916.json)
+retains its new bundle, root, data and boot-log hashes. It repeated the same
+orphan-service, public-idle/internal-busy, writer-exclusion and paired-slot
+results with QEMU networking disabled and no host devices attached. The remaining
+authenticated Cockpit/helper/identified-device-backend composition check is still
+separate work; this repeat does not claim it.
+
 Original code fills ADR 0010's project-specific review/durability gap using Python,
 systemd and Cockpit supported interfaces without new runtime dependencies or
 upstream changes. Retire it if upstream provides equivalent persistence, review

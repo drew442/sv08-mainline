@@ -1,0 +1,40 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-16",
+  "project_commit": "931b689",
+  "environment": "offline disposable ARM64 QEMU guest",
+  "physical_hardware": false,
+  "command": "sudo python3 tests/host_qemu_rauc_resolution.py --profile selected-1152 --work /home/drew/sv08-mainline/build/host-qemu-rauc-resolution-main-20260916 --execute",
+  "profile": "selected-1152",
+  "network": "disabled",
+  "host_devices": "none attached",
+  "result": {
+    "passed": true,
+    "selected_rauc": "1.15.2-0sv08.1",
+    "executable_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
+    "signed_paired_install": true,
+    "client_killed_service_survived": true,
+    "ordinary_dbus_client_denied": true,
+    "operation_while_held": "installing",
+    "operation_after_rejected_install": "idle",
+    "public_idle_internal_busy": true,
+    "internal_busy_guard_refused": true,
+    "receipt_and_cancel_refused_while_busy": true,
+    "writer_exclusion": true,
+    "same_owner_idle_observation": true,
+    "fresh_review_disposition_retained": true,
+    "active_pair_preserved": true,
+    "inactive_pair_verified": true
+  },
+  "artifacts": {
+    "bundle_sha256": "38c1b3781a398e6291aa390fb7207732c36ff4ecdae48834bb0037d29c658500",
+    "root_sha256": "8ca138b0be8bbbbd3219f98936b5cb418d11f54a6b58df32e36ca7b70dcb99c3",
+    "data_sha256": "874ab7c607d3ade4449dfd488bff351a9e35602dab0c76e07ffa1b8041ba93bc",
+    "boot_log_sha256": "02a25770beb8580d47589b680b64ace616a53406ce6e316326261aed6812e1a6"
+  },
+  "limitations": [
+    "The signed bundle, regular-file slots and service hook are fixture-only.",
+    "This service-backed check does not compose an authenticated Cockpit browser session with the identified partitioned device backend.",
+    "This does not validate a production image, board, eMMC or printer operation."
+  ]
+}
