@@ -30,8 +30,9 @@ def main():
  finally:
   run(['umount',root/'dev']);run(['umount',root/'proc'])
  # Stage only fixed QEMU fixture inputs; production paths never select this mode.
- from scripts.stage_admin_ui import stage
- stage(w,'host',True)
+ import importlib.util
+ sys.path.insert(0,str(REPO/'scripts'))
+ spec=importlib.util.spec_from_file_location('stage_admin_ui',REPO/'scripts/stage_admin_ui.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);module.stage(w,'host',True)
  runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True,exist_ok=True)
  for source in (REPO/'runtime').glob('*.py'):shutil.copyfile(source,runtime/source.name)
  def put(path,text,mode=0o644):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text);path.chmod(mode)
