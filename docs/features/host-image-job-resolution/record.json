@@ -130,7 +130,7 @@
         "session": "job-resolution-implementation-20260915"
       },
       "repeats": 0,
-      "resumption": "At main commit 89790e0 independent review accepted the Debian 1.13 service baseline, post-rejection public-idle/internal-busy guard and separate-process writer exclusion. Composed disposable GPT media now boots a read-only selected RAUC root and reaches real Cockpit PAM/sudo over a loopback-only QEMU forward; a static disposable certificate is required because Cockpit's normal generator writes /etc. Continue the actual authenticated Cockpit browser -> privileged helper -> identified six-partition QEMU backend -> real RAUC-service journey, covering interruption, unknown disposition, reconnect and preserved-source cancellation. Do not reuse a generated disk, alter hardware, or mark this task complete until that composed check is independently reviewed.",
+      "resumption": "At main commit eeef183, the manually assembled disposable QEMU guest completed authenticated Cockpit PAM/sudo -> helper -> identified six-partition RAUC backend service observation, durable unknown disposition, reconnect and queued preserved-source cancellation. The source harness still needs to encode the exact composed root/data/certificate/browser runner before a fresh independent verifier may mark this feature complete. Do not reuse generated media or alter hardware.",
       "status": "running",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
       "verification": null

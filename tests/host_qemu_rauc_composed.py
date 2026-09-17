@@ -56,7 +56,7 @@ def sgdisk_arguments(image, parts, partuuids):
     image = Path(image)
     if image.exists() or image.is_symlink() or image.parent == Path('/dev'):
         raise ValueError('Fixture target must be a new regular file outside /dev')
-    command = ['sgdisk', '--clear']
+    command = ['sgdisk', '--clear', '--move-main-table=4096']
     for part in parts:
         start, end = part['offset_bytes'] // 512, part['end_bytes'] // 512 - 1
         command.extend([f"--new={part['number']}:{start}:{end}",

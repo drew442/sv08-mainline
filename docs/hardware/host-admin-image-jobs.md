@@ -277,3 +277,11 @@ disposable Cockpit certificate because Cockpit's normal certificate helper write
 under `/etc`. The remaining acceptance journey is the privileged helper's real
 RAUC service/backend actions and interrupted receipt disposition; it is neither
 hardware validation nor authority for a printer write.
+
+On 2026-09-17, the assembled disposable guest completed the authenticated
+browser journey against the real selected RAUC 1.15.2 service and an identified
+six-partition backend: an interrupted receipt was observed and durably retained
+as unknown, the browser session was re-established, and a separate queued
+preserved-source cancellation completed. The guest was QEMU-only (`sv08.test=rauc-backend`,
+serial `SV08-QEMU-DISPOSABLE`), used a non-deployable manifest and loopback-only
+forwarding. No printer device or network endpoint was used.
