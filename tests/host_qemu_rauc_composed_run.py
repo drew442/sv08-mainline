@@ -30,11 +30,11 @@ def main():
  finally:
   run(['umount',root/'dev']);run(['umount',root/'proc'])
  # Stage only fixed QEMU fixture inputs; production paths never select this mode.
+ runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True,exist_ok=True)
+ for source in (REPO/'runtime').glob('*.py'):shutil.copyfile(source,runtime/source.name)
  import importlib.util
  sys.path.insert(0,str(REPO/'scripts'))
  spec=importlib.util.spec_from_file_location('stage_admin_ui',REPO/'scripts/stage_admin_ui.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);module.stage(w,'host',True)
- runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True,exist_ok=True)
- for source in (REPO/'runtime').glob('*.py'):shutil.copyfile(source,runtime/source.name)
  def put(path,text,mode=0o644):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text);path.chmod(mode)
  manifest={'release':'0.1.0-offline.3','state_schema':1,'deployable':False,'devices':{n:'/dev/disk/by-partuuid/'+v for n,v in UUIDS.items()}}
  policy=json.loads((REPO/'build/rauc-bundle-metadata-v1/policy.json').read_text());env=json.loads((REPO/'configs/host-os/environment-layout.json').read_text());env['board_mmc_device_index']=10
