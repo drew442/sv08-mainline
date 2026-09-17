@@ -81,7 +81,7 @@ def create_media(image, partuuids, layout=LAYOUT):
         expected = [(part['number'], part['name'], part['offset_bytes'] // 512,
                      part['size_bytes'] // 512, str(uuid.UUID(partuuids[part['name']])))
                     for part in parts]
-        actual = [(index, row['name'], row['start'], row['size'], row['uuid'])
+        actual = [(index, row['name'], row['start'], row['size'], str(uuid.UUID(row['uuid'])) )
                   for index, row in enumerate(rows, 1)]
         if actual != expected:
             raise ValueError('Disposable GPT readback differs from the reviewed layout')

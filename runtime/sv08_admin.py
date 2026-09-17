@@ -229,6 +229,18 @@ class Controller:
         return self.apply(request['plan'])
 
 
+def disposable_backend_fixture(manifest):
+    """Allow the QEMU-only backend guard to be selected from fixed inputs.
+
+    ``Backend.validate_context`` independently verifies the boot marker, QEMU
+    VM identity, disk serial and non-deployable manifest before any operation.
+    This helper merely prevents the installed controller from silently treating
+    the disposable composition fixture as a deployable printer.
+    """
+    return (manifest.get('deployable') is False and
+            'sv08.test=rauc-backend' in Path('/proc/cmdline').read_text().split())
+
+
 def installed_controller():
     if os.geteuid() != 0: raise ValueError('Administrator access is required')
     # Fixed paths only. No request can override roots, devices or executables.
@@ -248,7 +260,8 @@ def installed_controller():
         from sv08_admission import Admission
         from sv08_staging import Staging
         documents = {name: json.loads(path.read_text()) for name, path in paths.items()}
-        backend = Backend(*(documents[name] for name in paths))
+        backend = Backend(*(documents[name] for name in paths),
+                          fixture=disposable_backend_fixture(documents['release.json']))
         controller.adapter = HostImages(store, boot, backend,
             Staging('/data/sv08/uploads'), Admission())
     return controller

@@ -31,7 +31,8 @@ class HostImages:
     def capability(self, action, view, leased=False):
         if action not in ('image.stage', 'image.arm', 'image.cancel'):
             return False, 'This operation requires its reviewed host service integration.'
-        if self.backend.manifest.get('deployable') is not True:
+        if (self.backend.manifest.get('deployable') is not True and
+                not getattr(self.backend, 'fixture', False)):
             return False, 'The board image is not approved for hardware writes.'
         state, tx, boot = view['state'], view['transaction'], view['boot']
         live = tx and tx['phase'] not in ('complete', 'cancelled', 'failed')

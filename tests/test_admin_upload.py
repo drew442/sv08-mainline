@@ -44,6 +44,13 @@ class UploadTests(unittest.TestCase):
     def receive(self):
         return self.u.receive(self.u.plan('local display.raucb',len(self.data)),io.BytesIO(self.data))
 
+    def test_only_identified_backend_fixture_can_expose_image_actions_without_deployable_manifest(self):
+        view = {'state': self.store.load(), 'transaction': None, 'boot': self.boot}
+        self.backend.manifest = {'deployable': False}
+        self.assertFalse(self.adapter.capability('image.stage', view)[0])
+        self.backend.fixture = True
+        self.assertTrue(self.adapter.capability('image.stage', view)[0])
+
     def test_receive_lists_truthful_scope_and_exact_cleanup(self):
         before=self.store.load(); result=self.receive()
         self.assertFalse(result['proof']['full_payload_verified']); self.assertEqual(before,self.store.load())

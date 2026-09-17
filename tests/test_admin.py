@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_admin import Controller
+from sv08_admin import Controller, disposable_backend_fixture
 from sv08_state import Store
 from sv08_recovery import RecoveryController
 
@@ -114,3 +114,12 @@ class RecoveryIndependenceTests(unittest.TestCase):
             controller.apply(controller.plan('recovery.check', {}))
             self.assertEqual((root / 'state.json').read_text(), 'damaged')
             self.assertFalse((root / '.lock').exists())
+
+
+class DisposableBackendSelectionTests(unittest.TestCase):
+    def test_only_non_deployable_manifest_with_exact_marker_selects_fixture(self):
+        with patch('sv08_admin.Path.read_text', return_value='root=/dev/vda2 sv08.test=rauc-backend'):
+            self.assertTrue(disposable_backend_fixture({'deployable': False}))
+            self.assertFalse(disposable_backend_fixture({'deployable': True}))
+        with patch('sv08_admin.Path.read_text', return_value='root=/dev/vda2'):
+            self.assertFalse(disposable_backend_fixture({'deployable': False}))

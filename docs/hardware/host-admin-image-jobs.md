@@ -266,3 +266,14 @@ simulate successful image/package mutation. Unchanged worker, ARM64 diagnostic a
 transaction evidence is inherited from the original candidate with matching
 runtime hashes; it was not rerun or upgraded into production acceptance by this
 UI correction.
+
+### Composed disposable-guest preparation (2026-09-17)
+
+The selected RAUC root boots from a fresh non-deployable six-partition GPT image
+made from `configs/images/host-ab.json`, retaining the data PARTUUID used by its
+initramfs. Cockpit is reachable only through a QEMU loopback forward and supports
+real PAM/sudo browser authorization. The read-only guest needs a pre-generated,
+disposable Cockpit certificate because Cockpit's normal certificate helper writes
+under `/etc`. The remaining acceptance journey is the privileged helper's real
+RAUC service/backend actions and interrupted receipt disposition; it is neither
+hardware validation nor authority for a printer write.
