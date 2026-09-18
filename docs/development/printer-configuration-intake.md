@@ -39,6 +39,18 @@ This closure is the smallest implementation handoff. The bounded controls slice 
 
 ## Offline next actions
 
+The coordinator reran the unchanged private candidate on 2026-09-18 using a
+disposable native Python 3.12 environment and a clean archive of pinned Klipper
+`f0892d82b0f1c1228454f09eb508eddde2250f4b`. With file output explicitly enabled
+and the preserved matching dictionary (SHA-256
+`86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b`)
+supplied for both MCUs, the process exited successfully and configured two
+simulated MCUs without a configuration error or shutdown. Dependency consistency
+also passed. The environment, source/input hashes and logs remain in the ignored
+coordinator workspace. This establishes a usable local baseline for the queued
+controls tests; it does not validate the new include, ARM64 runtime, physical
+connections, temperatures or motion. The pinned upstream checkout was unchanged.
+
 1. Bind the supplied section inventory to the pinned host/MCU revision pair and mark each gap `resolved`, `deferred`, or `blocked` with a source path.
 2. Run the existing file-output configuration check against the exact candidate; retain output and hashes in the coordinator's evidence path.
 3. Prepare H01/H02/H05 requests with target identity, preconditions, capture owner, expected observations and stop conditions.
