@@ -78,6 +78,7 @@ def prepare(work):
     data = work / 'data'
     data.mkdir(parents=True)
     (data / 'fixture').mkdir()
+    put(data / 'fixture/user-data-sentinel', 'preserved fixture data\n', 0o600)
     install_cockpit(root)
 
     # These service-only inputs are deliberately incomplete.  Mask the selected
