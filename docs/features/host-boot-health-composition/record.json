@@ -1,89 +1,147 @@
 {
+  "author": "host_execution_prep/root-contract-refinement",
+  "checks": [
+    {
+      "description": "Missing/malformed boot record, unknown field, boot ID mismatch, or invalid generation: Refuse before transition; retain gate and bounded diagnostics; no reboot.",
+      "environment": "offline",
+      "id": "hbh-01"
+    },
+    {
+      "description": "Cmdline slot, RAUC observed slot, state slot, or installed release/schema disagree: Refuse before bootloader work; preserve both slots and logs; no reboot.",
+      "environment": "offline",
+      "id": "hbh-02"
+    },
+    {
+      "description": "`reconcile` returns `needs-arm`: Arm exactly once through staging admission; never replenish an armed trial.",
+      "environment": "offline",
+      "id": "hbh-03"
+    },
+    {
+      "description": "Target trial has no printer config, no MCU, or no Moonraker printer provider: OS health may still pass; Klipper remains gated, while host-only Moonraker diagnostics may run; no printer readiness is inferred.",
+      "environment": "offline",
+      "id": "hbh-04"
+    },
+    {
+      "description": "OS health check fails, times out, or is unstable during the target trial: Keep gate; persist reason/generation evidence; invoke fallback only after positive trial/context validation.",
+      "environment": "offline",
+      "id": "hbh-05"
+    },
+    {
+      "description": "Boot admission for target `reconcile` or `confirm` cannot be acquired or accidentally invokes service-stopping admission: Refuse the transition; tests must prove the injected boot admission reacquires neither state/writer lock and calls no Klipper quiesce/stop.",
+      "environment": "offline",
+      "id": "hbh-06"
+    },
+    {
+      "description": "`confirm` or backend mark-good fails after OS checks pass: Keep gate and journal in retryable confirming state; do not report success or reboot on an unknown outcome.",
+      "environment": "offline",
+      "id": "hbh-07"
+    },
+    {
+      "description": "Source boot after target fallback returns `needs-cancel`: Revalidate source slot/release/boot ID, disarm target, then clear pending state through `Transaction.cancel`.",
+      "environment": "offline",
+      "id": "hbh-08"
+    },
+    {
+      "description": "Ordinary source boot, missing access point/DHCP, missing MCU, or absent printer config: Diagnostics remain available; no reboot loop and no trial failure is inferred.",
+      "environment": "offline",
+      "id": "hbh-09"
+    },
+    {
+      "description": "Required resource, output, journal, or stable-window bound is exceeded: Fail closed with bounded diagnostics; preserve the gate and do not silently retry.",
+      "environment": "offline",
+      "id": "hbh-10"
+    },
+    {
+      "description": "Early `sv08_boot.py` generation/state copy is interrupted or loses power: The next boot uses the existing journal and generation markers; incomplete copy/migration blocks confirmation and preserves source state. The coordinator only tests and consumes this handoff; it does not own the copy.",
+      "environment": "offline",
+      "id": "hbh-11"
+    },
+    {
+      "description": "Failed trial fallback requested without a positively validated target trial: Refuse fallback/reboot; preserve evidence for recovery review.",
+      "environment": "offline",
+      "id": "hbh-12"
+    }
+  ],
+  "created": "2026-09-18",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "hbh-06",
+          "hbh-07"
+        ],
+        "text": "Transaction alone retains the state lock and RAUC writer. The injected boot admission owns only a distinct boot-coordination exclusion, reacquires neither lock, never calls the Klipper quiesce path, and is used for both target reconcile and confirm. Transaction.confirm must invoke the real bounded OS-health callback exactly once inside state lock then boot admission then writer ordering, before mark-good; no precomputed or stubbed success is permitted."
+      },
+      {
+        "checks": [
+          "hbh-01",
+          "hbh-04",
+          "hbh-05",
+          "hbh-07",
+          "hbh-09"
+        ],
+        "text": "Klipper must retain the trial and printer-config conditions and additionally consume the boot-local /run/sv08/os-health-ready marker after the health unit. The health unit has no skip condition. Publish the ready marker only after validated nontrial reconciliation or durable successful trial confirmation, never on malformed, unknown, failed or interrupted outcomes; a failed coordinator must leave Klipper blocked."
+      },
+      {
+        "checks": [
+          "hbh-02",
+          "hbh-09"
+        ],
+        "text": "Keep ordinary writable nontrial boots usable and eligible for the ready marker when no live image transaction requires immutable validation. Apply immutable-root and full RAUC confirmation checks to image-trial transitions; do not weaken those checks or reject a normal writable source merely because trial-only validation is inapplicable."
+      },
+      {
+        "checks": [
+          "hbh-03",
+          "hbh-05",
+          "hbh-07",
+          "hbh-08",
+          "hbh-12"
+        ],
+        "text": "A failed target-health reboot is allowed only after exact target, transaction, boot and backend validation. It consumes the existing finite attempt budget and never rearms, replenishes or resets it. Do not cancel or mark the target directly from the target boot; preserve unknown confirming outcomes without reboot, and disarm through Transaction.cancel only after the validated source boot returns needs-cancel."
+      },
+      {
+        "checks": [
+          "hbh-05",
+          "hbh-10",
+          "hbh-11"
+        ],
+        "text": "Enforce the proposed 5-second stable-health interval, 60-second coordinator deadline, 64 KiB per-boot diagnostic bound and 1 MiB retained failed-generation bound. Preserve the source generation, failed-target logs and incomplete-copy evidence until reviewed cleanup or recovery export; exceeding a bound fails closed without silent retry."
+      },
+      {
+        "checks": [
+          "hbh-04",
+          "hbh-05",
+          "hbh-09",
+          "hbh-12"
+        ],
+        "text": "Keep OS health independent of printer configuration, MCU reachability, sensors, heaters, motion, Wi-Fi association and display availability. Report unit and disposable QEMU results as offline evidence only; leave H02 and H07, physical power-loss/fallback, printer readiness and release qualification open, and perform no hardware operation under this approval."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "d2e7e9124735047f1b734ed84dc53fc014f8315009edd037cfdb859acf4c5003",
+    "rationale": "Approved as bounded completion of the accepted A/B host workflow under decision 0011. The before/after is concrete: trial boots currently create a permanent Klipper gate but have no production reconciliation, OS-health confirmation, failed-trial disposition or gate release; the proposal adds one boot coordinator, a narrow transaction admission override and explicit systemd ordering while retaining RAUC, the existing state journal and U-Boot's pinned three-attempt policy as authorities. Source review confirms current Transaction.reconcile and confirm acquire state, admission and writer in that order; confirm invokes the supplied health callback before mark-good; the selected design keeps those locks in Transaction, injects only a non-stopping boot exclusion, and evaluates the real callback exactly once rather than supplying cached success. The existing Admission does stop Klipper and Moonraker, so separating it from target reconciliation and confirmation is necessary and supported by decision 0009. The explicit volatile os-health-ready marker plus the retained trial marker closes the systemd condition-skip ambiguity before Klipper can start. The proposal also preserves ordinary writable nontrial boots: reconcile returns idle before immutable RAUC validation when no live transaction exists, while trial confirmation continues through the immutable backend checks. Failed target health consumes existing attempts without replenishment, preserves the source generation and diagnostics, and defers cancellation until the source boot. No MCU, sensor, heater, motion, network association or display state is treated as OS health. Offline unit and disposable QEMU evidence are appropriate for implementation review but cannot close H02/H07, physical fallback, printer readiness or release acceptance. The constraints bind lock ownership, readiness-marker publication, writable-mode behavior, rollback preservation, bounded resources and evidence levels.",
+    "requirements_sha256": {
+      "docs/decisions/0009-atomic-idle-admission.md": "649cb53e46089b0ed5999f39c9c98f9bc01dd35ddd54160a80ff10322744ecd4",
+      "docs/design/host-os-ab.md": "37da87c53fa40587e9cb50cd1ff260eba0df039b37203b545be9907bea7b3299"
+    },
+    "reviewer": "feature_approver/host_health_review",
+    "scope_sha256": "1d54ba62c6cb75022a5343f6a5aa7818bac603455306ee55a6e859e63660b7ba",
+    "session": "2026-09-18-host-boot-health-composition-independent-review-sol-medium"
+  },
   "format_version": 1,
   "id": "host-boot-health-composition",
   "kind": "feature",
-  "title": "Confirm OS trials without bypassing printer safety gates",
-  "author": "host_execution_prep/root-contract-refinement",
-  "created": "2026-09-18",
+  "owner_decision_required": false,
   "priority": 3,
   "proposal": "docs/features/host-boot-health-composition/proposal.md",
   "requirements": [
     "docs/design/host-os-ab.md",
     "docs/decisions/0009-atomic-idle-admission.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "hbh-01",
-      "description": "Missing/malformed boot record, unknown field, boot ID mismatch, or invalid generation: Refuse before transition; retain gate and bounded diagnostics; no reboot.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-02",
-      "description": "Cmdline slot, RAUC observed slot, state slot, or installed release/schema disagree: Refuse before bootloader work; preserve both slots and logs; no reboot.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-03",
-      "description": "`reconcile` returns `needs-arm`: Arm exactly once through staging admission; never replenish an armed trial.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-04",
-      "description": "Target trial has no printer config, no MCU, or no Moonraker printer provider: OS health may still pass; Klipper remains gated, while host-only Moonraker diagnostics may run; no printer readiness is inferred.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-05",
-      "description": "OS health check fails, times out, or is unstable during the target trial: Keep gate; persist reason/generation evidence; invoke fallback only after positive trial/context validation.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-06",
-      "description": "Boot admission for target `reconcile` or `confirm` cannot be acquired or accidentally invokes service-stopping admission: Refuse the transition; tests must prove the injected boot admission reacquires neither state/writer lock and calls no Klipper quiesce/stop.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-07",
-      "description": "`confirm` or backend mark-good fails after OS checks pass: Keep gate and journal in retryable confirming state; do not report success or reboot on an unknown outcome.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-08",
-      "description": "Source boot after target fallback returns `needs-cancel`: Revalidate source slot/release/boot ID, disarm target, then clear pending state through `Transaction.cancel`.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-09",
-      "description": "Ordinary source boot, missing access point/DHCP, missing MCU, or absent printer config: Diagnostics remain available; no reboot loop and no trial failure is inferred.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-10",
-      "description": "Required resource, output, journal, or stable-window bound is exceeded: Fail closed with bounded diagnostics; preserve the gate and do not silently retry.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-11",
-      "description": "Early `sv08_boot.py` generation/state copy is interrupted or loses power: The next boot uses the existing journal and generation markers; incomplete copy/migration blocks confirmation and preserves source state. The coordinator only tests and consumes this handoff; it does not own the copy.",
-      "environment": "offline"
-    },
-    {
-      "id": "hbh-12",
-      "description": "Failed trial fallback requested without a positively validated target trial: Refuse fallback/reboot; preserve evidence for recovery review.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Compose boot reconciliation and bounded OS health confirmation",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [
-        "host-image-job-resolution:implement"
-      ],
+      "blocker": null,
       "checks": [
         "hbh-01",
         "hbh-02",
@@ -98,13 +156,20 @@
         "hbh-11",
         "hbh-12"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [
+        "host-image-job-resolution:implement"
+      ],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Compose boot reconciliation and bounded OS health confirmation",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Confirm OS trials without bypassing printer safety gates"
 }
