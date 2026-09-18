@@ -1,66 +1,115 @@
 {
+  "author": "printer_execution_prep",
+  "checks": [
+    {
+      "description": "Controls file uses only the pinned upstream section interfaces and contains no vendor-only Python extras, shell commands, power-loss, timelapse, homing, motion, heat, calibration or macro sections",
+      "environment": "offline",
+      "id": "pc-01"
+    },
+    {
+      "description": "Exact private overlay plus controls include has one `[virtual_sdcard]` at `/run/sv08/printer_data/gcodes`, one `[pause_resume]`, `[display_status]` and `[respond]`; no duplicate section ownership",
+      "environment": "offline",
+      "id": "pc-02"
+    },
+    {
+      "description": "Synthetic file-output execution covers `SDCARD_PRINT_FILE`/`M24`, pause, resume and cancel paths; tests assert the pinned behavior rather than merely command registration",
+      "environment": "offline",
+      "id": "pc-03"
+    },
+    {
+      "description": "`virtual_sdcard` omits `on_error_gcode` and retains upstream default `TURN_OFF_HEATERS`; test exercises only the documented G-code error path and records that physical heater shutdown remains unverified",
+      "environment": "offline",
+      "id": "pc-04"
+    },
+    {
+      "description": "`display_status` standalone commands `M73`, `M117`, `SET_DISPLAY_TEXT` and `respond` commands are covered without adding physical display hardware",
+      "environment": "offline",
+      "id": "pc-05"
+    },
+    {
+      "description": "Existing service paths remain coherent: Klipper reads `/run/sv08/printer_data/config/printer.cfg`, Moonraker uses `/run/sv08/printer_data/config/moonraker.conf` and `/run/sv08/printer_data`; no service unit change is needed",
+      "environment": "offline",
+      "id": "pc-06"
+    },
+    {
+      "description": "File-output configuration validation passes for the exact paired host/MCU revision and private overlay, while heater protections and all machine values remain unchanged",
+      "environment": "offline",
+      "id": "pc-07"
+    },
+    {
+      "description": "H01/H02/H05 remain prerequisites for any H06 control use; output-bearing resume/cancel behavior and all commissioned macros remain explicit later H06 work",
+      "environment": "offline",
+      "id": "pc-08"
+    }
+  ],
+  "created": "2026-09-18",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "pc-01",
+          "pc-03",
+          "pc-05",
+          "pc-06",
+          "pc-08"
+        ],
+        "text": "Deliver only the inactive include and offline fixtures. Do not activate the include, start printer services for this feature, invoke its exposed commands on hardware, or represent synthetic/file-output results as printer readiness or physical output evidence."
+      },
+      {
+        "checks": [
+          "pc-01",
+          "pc-04",
+          "pc-07"
+        ],
+        "text": "Omit on_error_gcode so the pinned upstream default remains in force; do not substitute a blank, no-op, recursive or weaker error handler. Preserve all existing heater protections and machine values, and label the synthetic caught-G-code error result as offline evidence only."
+      },
+      {
+        "checks": [
+          "pc-02",
+          "pc-07"
+        ],
+        "text": "Keep private machine configuration unavailable to implementation and review children. The coordinator performs the exact private-overlay checks for duplicate sections, unchanged machine values and paired host/MCU binding, then supplies only sanitized include-tree evidence and hashes suitable for independent verification."
+      },
+      {
+        "checks": [
+          "pc-03",
+          "pc-08"
+        ],
+        "text": "Treat upstream PAUSE, RESUME and CANCEL_PRINT semantics as interface behavior only: RESUME may move and resume arbitrary G-code, PAUSE does not provide thermal shutdown, and bare cancellation does not guarantee heater, fan or streaming-host shutdown. Keep output-safe wrappers, slicer start/end contracts and actual use deferred to the separately reviewed ordered H06 gates after H01, H02 and H05 remain valid."
+      },
+      {
+        "checks": [
+          "pc-01",
+          "pc-02",
+          "pc-06",
+          "pc-07"
+        ],
+        "text": "Keep the change additive and reversible: add no service-unit or upstream-source modification, create no new dependency, leave the private overlay and existing machine sections unchanged, and require the established persistent gcodes path to exist before any later activation review."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "f8e5a6520a4dc5c80817d50ad6f3091a64b580516a2d4f7fc5fde53203016fed",
+    "rationale": "Approved as a bounded offline configuration improvement under decision 0011 and the accepted project requirement to replace or explicitly omit vendor-specific features with documented behavior. The before/after is concrete: the current candidate omits standard file, pause/resume/cancel, status and response interfaces; the delivery adds one inactive include using only the pinned Klipper f0892d82b0f1c1228454f09eb508eddde2250f4b implementations. Source review confirms virtual_sdcard registers the proposed commands and defaults caught G-code errors to conditional TURN_OFF_HEATERS; pause_resume RESUME performs RESTORE_GCODE_STATE with MOVE=1 and restarts file execution, while bare CANCEL_PRINT only cancels virtual SD and clears pause state; display_status and respond are independently loadable upstream extras. The proposal now states those limits and does not claim safe printing. The fixed /run/sv08/printer_data/gcodes path agrees with the existing runtime view of persistent shared gcodes, and no service edit, dependency, upstream modification, hardware action or activation is in scope. Offline parser and synthetic file-output evidence are proportionate for this reusable interface include, while physical heater shutdown, motion, extrusion, fan identity, pause/resume/cancel behavior and print readiness remain under the unchanged H01/H02/H05/H06 commissioning gates. The constraints preserve the inactive boundary, default error protection, private configuration separation, additive rollback and honest evidence levels.",
+    "requirements_sha256": {
+      "docs/project.md": "a2875043c55a97be6bc28b777ec82670f5d63a23d336caf855cbc1274fcc5a82"
+    },
+    "reviewer": "feature_approver/host_health_review",
+    "scope_sha256": "f3feb5f8af936ad54e39242203cfe125bd06a0c8593ee5e50b67c034f17a90cb",
+    "session": "2026-09-18-printer-interface-config-independent-review-sol-medium"
+  },
   "format_version": 1,
   "id": "printer-interface-config",
   "kind": "feature",
-  "title": "Reusable inactive upstream printer interface configuration",
-  "author": "printer_execution_prep",
-  "created": "2026-09-18",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/printer-interface-config/proposal.md",
   "requirements": [
     "docs/project.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "pc-01",
-      "description": "Controls file uses only the pinned upstream section interfaces and contains no vendor-only Python extras, shell commands, power-loss, timelapse, homing, motion, heat, calibration or macro sections",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-02",
-      "description": "Exact private overlay plus controls include has one `[virtual_sdcard]` at `/run/sv08/printer_data/gcodes`, one `[pause_resume]`, `[display_status]` and `[respond]`; no duplicate section ownership",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-03",
-      "description": "Synthetic file-output execution covers `SDCARD_PRINT_FILE`/`M24`, pause, resume and cancel paths; tests assert the pinned behavior rather than merely command registration",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-04",
-      "description": "`virtual_sdcard` omits `on_error_gcode` and retains upstream default `TURN_OFF_HEATERS`; test exercises only the documented G-code error path and records that physical heater shutdown remains unverified",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-05",
-      "description": "`display_status` standalone commands `M73`, `M117`, `SET_DISPLAY_TEXT` and `respond` commands are covered without adding physical display hardware",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-06",
-      "description": "Existing service paths remain coherent: Klipper reads `/run/sv08/printer_data/config/printer.cfg`, Moonraker uses `/run/sv08/printer_data/config/moonraker.conf` and `/run/sv08/printer_data`; no service unit change is needed",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-07",
-      "description": "File-output configuration validation passes for the exact paired host/MCU revision and private overlay, while heater protections and all machine values remain unchanged",
-      "environment": "offline"
-    },
-    {
-      "id": "pc-08",
-      "description": "H01/H02/H05 remain prerequisites for any H06 control use; output-bearing resume/cancel behavior and all commissioned macros remain explicit later H06 work",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Add upstream interface include and validate offline behavior",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "pc-01",
         "pc-02",
@@ -71,13 +120,18 @@
         "pc-07",
         "pc-08"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Add upstream interface include and validate offline behavior",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Reusable inactive upstream printer interface configuration"
 }
