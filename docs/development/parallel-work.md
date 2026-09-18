@@ -49,9 +49,10 @@ remain open. Human H04/H07 tasks are not requested by this offline checkpoint.
 
 The [printer interface feature](../features/printer-interface-config/record.json)
 is independently approved with constraints and queued behind the active recovery
-implementation. Private-overlay validation stays with the coordinator. The host
-boot-health intake records a selected callback/lock contract and explicit
-success marker; it remains preparation pending formal implementation approval.
+implementation. Private-overlay validation stays with the coordinator. The [host boot-health feature](../features/host-boot-health-composition/record.json)
+is also independently approved with constraints, including the selected real
+callback/lock contract and explicit successful-health marker. It is queued after
+the printer interface slice; neither approval grants hardware authority.
 
 1. Complete the three independent source-backed packets in parallel. Each must
    name actual paths, existing reusable evidence, smallest next slice and checks.
