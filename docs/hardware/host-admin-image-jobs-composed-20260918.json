@@ -1,5 +1,5 @@
 {
-  "guest_sha256": "66a3922ad8fb8c0df942ca38454cf24e208036d80ea6c4dcd66c8b67598fb4e1",
+  "guest_sha256": "8a1db1907345193dfebc0269b6d22b092dc34fcee817b09d0f8f178c5c761104",
   "base_rauc_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
   "cockpit_delta_sha256": {
     "libnss-systemd_257.13-1~deb13u1_arm64.deb": "13e8ced686b74b8b3017cdcc6c9f584c9e3b910f5399784b5de96e1e909d997b",
@@ -13,13 +13,15 @@
     "cockpit-ws_337-1+deb13u2_arm64.deb": "4af22eab0c00d741ee976f1f8cf71a33f2709242ee81be19933ee1fd592202b9"
   },
   "browser": {
-    "disposition": "interrupted",
+    "disposition": "unknown",
     "cancellation": "succeeded",
-    "reconnect": true
+    "reconnect": true,
+    "source_slot": "A",
+    "data_sentinel_preserved": true
   },
-  "browser_result_sha256": "77f1793ab7be55b9275e58e6370e1cbd8f3e9bfcbd2bc3e6a48287222d50dce7",
-  "boot_log_sha256": "6d45644453612c33b3c90b690bf4223217861e6651927a89b74e9ad39ec10479",
-  "source_commit": "e19ae6444ab8caa4520e4060af27b154e3ca3818",
+  "browser_result_sha256": "368559a1f2f0852a156e5b2693c738fdb6f6c2e633dd78f22a2f1f2ec0068a68",
+  "boot_log_sha256": "746bac6be7adaaf4f89395a7da10bf7213fc507c4eb23a4cc75be7479f2cc7e0",
+  "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
   "physical_hardware": false,
-  "evidence_scope": "Fresh independent disposable ARM64 QEMU composition; no physical hardware, deployable release, or printer action."
+  "evidence_scope": "Fresh disposable ARM64 QEMU composition; no physical hardware, deployable release, or printer action."
 }

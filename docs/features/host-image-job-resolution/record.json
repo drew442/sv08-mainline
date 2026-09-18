@@ -123,19 +123,123 @@
       "environment": "offline",
       "evidence": [
         {
-          "check": "safe-source-journey",
           "environment": "offline",
           "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
-          "document_sha256": "fba83dd7627629cef1838b0b7afa298f615f2c7d7c3efc92a998d5c4d6e48fed",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
           "source_sha256": {
-            "tests/host_qemu_rauc_composed_run.py": "e8c29fbe7bb77e40ad541ac08750d5f02da1450a4766da1dae7eb8ea2b8c8ad2",
-            "tests/cockpit_composed_browser.mjs": "3922407c91ddf438f8245caf433d572ee76d7d953c7c20124fbeb437711ce491"
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
           },
-          "source_commit": "e19ae6444ab8caa4520e4060af27b154e3ca3818",
-          "method": "Fresh independent disposable ARM64 QEMU run with Cockpit/PAM/sudo browser flow, interrupted disposition, reconnect, and RAUC-backed cancellation.",
-          "limitations": "Offline QEMU fixture only; no physical printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
           "profile": "qemu-disposable-rauc-backend",
-          "board_revision": null
+          "board_revision": null,
+          "check": "review-is-observation"
+        },
+        {
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+          },
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null,
+          "check": "orphan-service"
+        },
+        {
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+          },
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null,
+          "check": "idle-proof"
+        },
+        {
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+          },
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null,
+          "check": "writer-exclusion"
+        },
+        {
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+          },
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null,
+          "check": "disposition-durability"
+        },
+        {
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+          },
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null,
+          "check": "safe-source-journey"
+        },
+        {
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "bd43a9fe2fe93b4d285577282515906a274dd23376f91af42798e6ce38116535",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e11fd4f56465af43a26ae129eced7086970fac602bf51e945309cd041c39207e",
+            "tests/cockpit_composed_browser.mjs": "2713ad167f7026cdad8b85ba0eefd92b2f727a1371e6089c9b970f7d77f75a02",
+            "runtime/sv08_admin_resolution.py": "57ade790aa2117e6134a923f7a5d1fbda1c1954762190185d44b9cbf407f0a30",
+            "runtime/sv08_transaction.py": "464a20b6fc56552775c1bed6c49db5731b1ac9c826aa436d93501f27f1cd2876"
+          },
+          "source_commit": "97081b38a78d82e95e61254dec3ef7685b4524e5",
+          "method": "Fresh disposable ARM64 QEMU composition with real Cockpit/PAM/sudo, service-backed RAUC helper, durable resolution and cancellation.",
+          "limitations": "Offline QEMU only; no printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null,
+          "check": "regression-and-bounds"
         }
       ],
       "human_task": null,
@@ -146,7 +250,7 @@
         "session": "job-resolution-implementation-20260915"
       },
       "repeats": 0,
-      "resumption": "Independent verifier is reviewing the committed fresh evidence; do not alter hardware or mark complete before its final result.",
+      "resumption": "Request final independent verification of the new committed evidence; no hardware changes.",
       "status": "running",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
       "verification": null
