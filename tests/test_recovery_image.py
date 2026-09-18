@@ -11,6 +11,18 @@ SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).reso
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 
 class RecoveryImageTests(unittest.TestCase):
+    def test_recovery_masks_unused_binfmt_service_and_automount(self):
+        with tempfile.TemporaryDirectory() as directory:
+            units=Path(directory)
+            for name in ('systemd-binfmt.service','proc-sys-fs-binfmt_misc.automount'):
+                (units/name).write_text('unmasked fixture')
+            m.mask_recovery_units(units)
+            self.assertIn('systemd-binfmt.service',m.RECOVERY_MASKED_UNITS)
+            self.assertIn('proc-sys-fs-binfmt_misc.automount',m.RECOVERY_MASKED_UNITS)
+            for name in m.RECOVERY_MASKED_UNITS:
+                self.assertTrue((units/name).is_symlink(),name)
+                self.assertEqual((units/name).readlink(),Path('/dev/null'))
+
     def test_builder_rejects_stale_assembly_integration_inputs(self):
         with tempfile.TemporaryDirectory(dir=m.REPO/'build') as directory:
             source=Path(directory)/'assembly';root=source/'rootfs'

@@ -25,6 +25,20 @@ KERNEL = '6.12.107+deb13-arm64'
 SIZE = 512 * 1024**2
 UUID = '964ed891-6ec4-4a95-8762-e32c91260394'
 EPOCH = 1788220800
+RECOVERY_MASKED_UNITS = (
+    'systemd-remount-fs.service', 'systemd-machine-id-commit.service',
+    'systemd-random-seed.service', 'systemd-pstore.service',
+    'systemd-update-utmp.service', 'systemd-update-utmp-runlevel.service',
+    'systemd-journal-flush.service', 'getty.target', 'serial-getty@ttyAMA0.service',
+    'console-getty.service', 'systemd-networkd.service', 'systemd-networkd.socket',
+    'systemd-resolved.service', 'e2scrub_all.timer', 'e2scrub_reap.service',
+    'fstrim.timer', 'dpkg-db-backup.timer', 'dpkg-db-backup.service',
+    'systemd-hostnamed.socket', 'systemd-hostnamed.service',
+    # binfmt is unused in this fixed-architecture appliance. Its automount plus
+    # realized filesystem otherwise creates two records for one mount path,
+    # which correctly fails the recovery provider's ambiguity check.
+    'systemd-binfmt.service', 'proc-sys-fs-binfmt_misc.automount',
+)
 
 
 def board_profile(path):
@@ -158,6 +172,13 @@ def installed_provider_inputs(root):
     if not all(path.is_file() for path in paths.values()):
         raise ValueError('Installed recovery provider input is missing')
     return {name:sha(path) for name,path in paths.items()}
+
+
+def mask_recovery_units(units):
+    for name in RECOVERY_MASKED_UNITS:
+        path = units/name
+        path.unlink(missing_ok=True)
+        path.symlink_to('/dev/null')
 
 
 def clean_path(path, *, output=False):
@@ -313,8 +334,7 @@ def assemble(a):
     write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-prepare.service\nAllowIsolate=yes\n')
     write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
     p=units/'default.target';p.unlink(missing_ok=True);p.symlink_to('sv08-recovery.target')
-    for name in ('systemd-remount-fs.service','systemd-machine-id-commit.service','systemd-random-seed.service','systemd-pstore.service','systemd-update-utmp.service','systemd-update-utmp-runlevel.service','systemd-journal-flush.service','getty.target','serial-getty@ttyAMA0.service','console-getty.service','systemd-networkd.service','systemd-networkd.socket','systemd-resolved.service','e2scrub_all.timer','e2scrub_reap.service','fstrim.timer','dpkg-db-backup.timer','dpkg-db-backup.service','systemd-hostnamed.socket','systemd-hostnamed.service'):
-        p=units/name;p.unlink(missing_ok=True);p.symlink_to('/dev/null')
+    mask_recovery_units(units)
     write(units/'systemd-tmpfiles-setup.service.d/recovery.conf','[Service]\nExecStart=\nExecStart=systemd-tmpfiles --create --remove --boot --prefix=/run --prefix=/tmp --prefix=/var/log --prefix=/var/cache --prefix=/var/lib/systemd --prefix=/var/lib/dbus\n')
     write(root/'etc/systemd/journald.conf.d/recovery.conf','[Journal]\nStorage=volatile\nRuntimeMaxUse=16M\nForwardToConsole=yes\n')
     # /var writes are volatile under /run; /etc, root and /usr remain read-only.
