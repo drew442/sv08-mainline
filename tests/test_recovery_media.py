@@ -131,6 +131,7 @@ class RecoveryMediaTests(unittest.TestCase):
                   if key not in ('image_manifest_sha256', 'system_media')}
         policy.update(format_version=2, envelope_manifest_sha256='2'*64,
                       source_path='/data',
+                      recovery={'stable':recovery}, source={'stable':source},
                       media=[dict(stable=recovery), dict(stable=source), dict(stable=usb)],
                       protected=[], destinations={'usb':dict(identity=dict(stable=usb),
                                       path='/media/usb', label='Reviewed USB')})
@@ -140,6 +141,11 @@ class RecoveryMediaTests(unittest.TestCase):
         changed = copy.deepcopy(context); changed['source'] = '/other'
         with self.assertRaisesRegex(ValueError, 'immutable source'):
             MediaProvider(policy, changed)
+        aliased = copy.deepcopy(policy)
+        aliased['protected'] = [dict(role='slot-a', identity=dict(stable=usb))]
+        aliased_context = {**context, 'policy_sha256':fingerprint(aliased)}
+        with self.assertRaisesRegex(ValueError, 'whole disk aliases protected'):
+            MediaProvider(aliased, aliased_context)
 
     def test_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export(self):
         # The old display-service marker says nothing about the actual root.

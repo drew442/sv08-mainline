@@ -143,6 +143,23 @@ def compose_provider_manifest(policy_sha256, inputs):
                 inputs=inputs)
 
 
+def require_recorded_integration_inputs(recorded, current, stage):
+    if recorded.get('integration_inputs') != current:
+        raise ValueError('Stale '+stage+' integration inputs; create a fresh assembly')
+
+
+def installed_provider_inputs(root):
+    paths = {
+        'runtime/sv08_recovery_media.py': root/'usr/lib/sv08/sv08_recovery_media.py',
+        'runtime/sv08_recovery_prepare.py': root/'usr/lib/sv08/sv08_recovery_prepare.py',
+        'configs/host-os/sv08-recovery-prepare.service':
+            root/'etc/systemd/system/sv08-recovery-prepare.service',
+    }
+    if not all(path.is_file() for path in paths.values()):
+        raise ValueError('Installed recovery provider input is missing')
+    return {name:sha(path) for name,path in paths.items()}
+
+
 def clean_path(path, *, output=False):
     path = Path(os.path.abspath(path))
     if any(p.is_symlink() for p in [path, *path.parents]):
@@ -307,11 +324,7 @@ def assemble(a):
         elif p.exists():shutil.rmtree(p)
         p.parent.mkdir(parents=True,exist_ok=True);p.symlink_to('/run/recovery-var/'+name)
     write(root/'etc/X11/xorg.conf.d/10-recovery-vm.conf','Section "Device"\n Identifier "virtio"\n Driver "modesetting"\n Option "AccelMethod" "none"\nEndSection\n')
-    provider_inputs = {
-        str(path.relative_to(REPO)): sha(path) for path in
-        (REPO/'runtime/sv08_recovery_media.py', REPO/'runtime/sv08_recovery_prepare.py',
-         REPO/'configs/host-os/sv08-recovery-prepare.service')
-    }
+    provider_inputs = installed_provider_inputs(root)
     write(root/'etc/sv08/recovery-image.json', json.dumps(dict(
         format_version=1, kind='sv08-independent-recovery-provider',
         protocol='sv08-recovery-media-v1', inputs=provider_inputs),
@@ -453,6 +466,7 @@ def derive(a):
     if work.exists():raise ValueError('Derivation requires a fresh output')
     original=clean_path(source/'rootfs');receipt=clean_path(source/'assembly.json')
     receipt_hash=sha(receipt);recorded=json.loads(receipt.read_text());before=inventory(original)
+    require_recorded_integration_inputs(recorded, inputs, 'parent assembly')
     if before!=recorded['root']:raise ValueError('Assembly source changed since completion')
     for package in profile['packages']:
         archive=clean_path(packages/package['filename'])
@@ -522,8 +536,9 @@ def build(a):
     if not root.is_dir() or not (source/'assembly.json').is_file():raise ValueError('Complete assembly required')
     for name in ['usr','boot','boot/vmlinuz-'+kernel,'usr/bin/busybox']:
         clean_path(root/name)
-    recorded=json.loads((source/'assembly.json').read_text())
     if work.exists():raise ValueError('Build requires a fresh output')
+    recorded=json.loads((source/'assembly.json').read_text())
+    require_recorded_integration_inputs(recorded, inputs, 'build assembly')
     if not a.execute:return dict(execute=False,stage='build',work=str(work),bytes=SIZE)
     private()
     before=inventory(root)
@@ -564,11 +579,7 @@ def build(a):
         policy = compose_media_policy(profile_value, hashlib.sha256(manifest.encode()).hexdigest())
         policy_text = json.dumps(policy, sort_keys=True, separators=(',', ':'))+'\n'
         write(envelope/'etc/sv08/recovery-media-policy.json', policy_text)
-        provider_inputs = {
-            str(path.relative_to(REPO)): sha(path) for path in
-            (REPO/'runtime/sv08_recovery_media.py', REPO/'runtime/sv08_recovery_prepare.py',
-             REPO/'configs/host-os/sv08-recovery-prepare.service')
-        }
+        provider_inputs = installed_provider_inputs(root)
         provider = compose_provider_manifest(hashlib.sha256(policy_text.encode()).hexdigest(),
                                              provider_inputs)
         write(envelope/'etc/sv08/recovery-image.json',

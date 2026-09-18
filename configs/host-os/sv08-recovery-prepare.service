@@ -12,3 +12,5 @@ RemainAfterExit=yes
 TimeoutStartSec=60
 RuntimeDirectory=sv08-recovery
 RuntimeDirectoryMode=0700
+StandardOutput=journal+console
+StandardError=journal+console

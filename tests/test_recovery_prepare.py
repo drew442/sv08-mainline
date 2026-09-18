@@ -39,8 +39,10 @@ class FakeKernel:
         self.events.append('mounts')
         return [dict(path='/', device=root['device'])]
 
-    def set_readonly(self, identity):
+    def set_readonly(self, identity, observer):
         self.events.append(('setro', identity['device']))
+        observer('source-whole-ro', device=identity['disk_device'], readonly=True)
+        observer('source-partition-ro', device=identity['device'], readonly=True)
 
     def mount(self, identity, path, options, filesystem):
         self.events.append(('mount', identity['device'], str(path), options, filesystem))
@@ -49,10 +51,11 @@ class FakeKernel:
         self.events.append(('unmount', str(path)))
 
 
-def medium(name, stable, device, *, filesystem, uuid, partition=0, removable=False):
+def medium(name, stable, device, *, filesystem, uuid, partition=0, removable=False,
+           disk_device=None):
     value = dict(node='/dev/'+name, device=device, sysfs='/sys/devices/'+name,
                  sysfs_inode=100+len(name), disk='/sys/devices/'+name.rstrip('1'),
-                 disk_device=device if partition == 0 else device.split(':')[0]+':0',
+                 disk_device=disk_device or device,
                  diskseq=10+len(name), partition=partition, start=2048 if partition else 0,
                  sectors=131072, readonly=False, disk_readonly=False, removable=removable,
                  filesystem_uuid=uuid, filesystem=filesystem, partuuid='part-'+uuid)
@@ -62,17 +65,22 @@ def medium(name, stable, device, *, filesystem, uuid, partition=0, removable=Fal
 class RecoveryPrepareTests(unittest.TestCase):
     def setUp(self):
         recovery = medium('vda', {'serial':'recovery'}, '254:0', filesystem='ext4', uuid='root')
-        source = medium('sda1', {'device/wwid':'source'}, '8:1', filesystem='ext4', uuid='source', partition=1)
-        destination = medium('sdb1', {'device/serial':'usb'}, '8:17', filesystem='vfat', uuid='fat', partition=1, removable=True)
+        source = medium('sda1', {'device/wwid':'source'}, '8:1', filesystem='ext4', uuid='source',
+                        partition=1, disk_device='8:0')
+        destination = medium('sdb1', {'device/serial':'usb'}, '8:17', filesystem='vfat', uuid='fat',
+                             partition=1, removable=True, disk_device='8:16')
         self.inventory = [
             dict(name='vda', device='254:0', sysfs='/sys/devices/vda', sysfs_inode=1,
-                 diskseq=1, stable={'serial':'recovery'}, sectors=recovery['sectors'], readonly=True,
+                 diskseq=1, disk='/sys/devices/vda', disk_device='254:0',
+                 stable={'serial':'recovery'}, sectors=recovery['sectors'], readonly=True,
                  removable=False, transport='virtio', filesystem_uuid='root', filesystem='ext4', partitions=[]),
             dict(name='sda', device='8:0', sysfs='/sys/devices/sda', sysfs_inode=2,
-                 diskseq=2, stable={'device/wwid':'source'}, sectors=262144, readonly=False,
+                 diskseq=2, disk='/sys/devices/sda', disk_device='8:0',
+                 stable={'device/wwid':'source'}, sectors=262144, readonly=False,
                  removable=False, transport='scsi', filesystem_uuid='', filesystem='', partitions=[source]),
             dict(name='sdb', device='8:16', sysfs='/sys/devices/sdb', sysfs_inode=3,
-                 diskseq=3, stable={'device/serial':'usb'}, sectors=262144, readonly=False,
+                 diskseq=3, disk='/sys/devices/sdb', disk_device='8:16',
+                 stable={'device/serial':'usb'}, sectors=262144, readonly=False,
                  removable=True, transport='usb-scsi', filesystem_uuid='', filesystem='', partitions=[destination]),
         ]
         self.policy = dict(format_version=2, kind='independent-recovery', protocol=PROTOCOL,
@@ -114,13 +122,20 @@ class RecoveryPrepareTests(unittest.TestCase):
             return kernel, result
 
     def test_complete_reviewed_topology_prepares_in_safe_order_then_publishes(self):
-        kernel, result = self.run_preparer()
+        observed_events = []
+        with patch('sv08_recovery_prepare.emit',
+                   side_effect=lambda event, **fields: observed_events.append((event, fields))):
+            kernel, result = self.run_preparer()
         self.assertEqual(kernel.events[0:2], ['inventory', 'mounts'])
         self.assertEqual(kernel.events[2], ('setro', '8:1'))
         self.assertEqual(kernel.events[3][1:], ('8:1', '/run/sv08-recovery/source',
                                                'ro,noload,nosuid,nodev,noexec', 'ext4'))
         self.assertEqual(kernel.events[4][1:], ('8:17', '/run/sv08-recovery/destinations/usb',
                                                'rw,nosuid,nodev,noexec,umask=0077', 'vfat'))
+        self.assertEqual([event for event, _ in observed_events],
+                         ['source-whole-ro', 'source-partition-ro',
+                          'source-mount-begin', 'source-mount-complete'])
+        self.assertEqual(observed_events[2][1]['options'], 'ro,noload,nosuid,nodev,noexec')
         self.assertEqual(result['format_version'], 2)
 
     def test_omission_replacement_and_duplicate_stable_identity_refuse(self):
@@ -186,6 +201,24 @@ class RecoveryPrepareTests(unittest.TestCase):
                 with self.assertRaisesRegex(OSError, 'destination failure'): preparer.prepare()
             self.assertIn(('unmount', '/run/sv08-recovery/source'), kernel.events)
             self.assertFalse(context.exists())
+
+    def test_destination_partition_cannot_share_a_protected_whole_disk(self):
+        observed = copy.deepcopy(self.inventory)
+        protected = medium('sdb2', {'device/serial':'usb'}, '8:18', filesystem='ext4',
+                           uuid='protected', partition=2, removable=True, disk_device='8:16')
+        protected['start'] = 133120
+        observed[2]['partitions'].append(protected)
+        policy = copy.deepcopy(self.policy)
+        policy['media'] = reviewed_inventory(observed)
+        policy['protected'] = [dict(role='additional-protected', identity=dict(
+            stable={'device/serial':'usb'}, partition=2, start=133120,
+            sectors=131072, filesystem_uuid='protected'))]
+        kernel = FakeKernel(observed)
+        preparer = RecoveryPreparer(policy, kernel=kernel)
+        with patch('sv08_recovery_prepare.MediaLease', FakeLease), patch.object(preparer, 'authenticate'):
+            with self.assertRaisesRegex(ValueError, 'whole disk aliases protected'):
+                preparer.prepare()
+        self.assertEqual(kernel.events, ['inventory'])
 
     def test_context_observations_do_not_select_or_authorize_media(self):
         observed = copy.deepcopy(self.inventory)

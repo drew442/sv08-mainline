@@ -292,10 +292,19 @@ class MediaProvider(ExportAdapter):
         if policy['format_version'] == 1:
             system_media = policy['system_media']
         else:
-            destination_media = [value['identity']['stable'] for value in policy['destinations'].values()]
-            system_media = [medium['stable'] for medium in policy['media']
-                            if not any(same_identity(medium['stable'], target)
-                                       for target in destination_media)]
+            system_media = [policy['recovery']['stable'], policy['source']['stable'],
+                            *[value['identity']['stable'] for value in policy['protected']]]
+            system_media = [value for index, value in enumerate(system_media)
+                            if value not in system_media[:index]]
+            destination_media = [value['identity']['stable']
+                                 for value in policy['destinations'].values()]
+            require(all(not any(same_identity(destination, protected)
+                                for protected in system_media)
+                        for destination in destination_media) and
+                    all(not same_identity(left, right)
+                        for index, left in enumerate(destination_media)
+                        for right in destination_media[index+1:]),
+                    'Destination whole disk aliases protected or another destination media')
         require(type(system_media) is list and 1 <= len(system_media) <= 8 and
                 all(type(medium) is dict and medium for medium in system_media),
                 'An independently reviewed inventory of all system media is required')

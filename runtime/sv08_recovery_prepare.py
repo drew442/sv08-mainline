@@ -22,6 +22,12 @@ from sv08_recovery_media import (CONTEXT, ENVELOPE_MANIFEST, POLICY,
                                  trusted_file)
 
 
+def emit(event, **fields):
+    print('SV08_RECOVERY_PREPARE '+json.dumps(dict(event=event, **fields),
+                                              sort_keys=True, separators=(',', ':')),
+          flush=True)
+
+
 class PreparationKernel:
     """Narrow block and mount interface; no label-cache or scan-driven mount."""
     def _probe(self, node):
@@ -78,6 +84,7 @@ class PreparationKernel:
             whole = self._identity(disk)
             result.append(dict(name=disk.name, device=whole['device'], sysfs=str(disk),
                                sysfs_inode=disk.stat().st_ino, diskseq=whole['diskseq'],
+                               disk=str(disk), disk_device=whole['disk_device'],
                                stable=stable, sectors=whole['sectors'], readonly=whole['readonly'],
                                removable=whole['removable'], transport=transport,
                                filesystem_uuid=whole['filesystem_uuid'], filesystem=whole['filesystem'],
@@ -115,14 +122,17 @@ class PreparationKernel:
     def mounts(self):
         return mount_table(Path('/proc/self/mountinfo').read_text())
 
-    def set_readonly(self, identity):
+    def set_readonly(self, identity, observer=emit):
         # Whole-medium exclusion is established before the selected partition.
         disk_name = Path(identity['disk']).name
         subprocess.run(['/sbin/blockdev', '--setro', '/dev/'+disk_name], check=True, timeout=5)
+        require((Path(identity['disk']) / 'ro').read_text().strip() == '1',
+                'Source whole medium did not become read-only')
+        observer('source-whole-ro', device=identity['disk_device'], readonly=True)
         subprocess.run(['/sbin/blockdev', '--setro', identity['node']], check=True, timeout=5)
-        require((Path(identity['disk']) / 'ro').read_text().strip() == '1' and
-                (Path(identity['sysfs']) / 'ro').read_text().strip() == '1',
-                'Source whole medium and partition did not become read-only')
+        require((Path(identity['sysfs']) / 'ro').read_text().strip() == '1',
+                'Source partition did not become read-only')
+        observer('source-partition-ro', device=identity['device'], readonly=True)
 
     def mount(self, identity, path, options, filesystem):
         path.mkdir(parents=True, exist_ok=False)
@@ -250,15 +260,15 @@ class RecoveryPreparer:
                 source = find_identity(observed, self.policy['source'])
                 require(source['filesystem'] == 'ext4' and source['partition'] > 0,
                         'Reviewed source must be a selected ext4 partition')
-                mounts = self.kernel.mounts()
-                require(any(m['path'] == '/' and m['device'] == recovery['device'] for m in mounts),
-                        'Reviewed recovery root is not the running root')
-                media_devices = {value['device'] for disk in observed
-                                 for value in [disk, *disk['partitions']]}
-                require(all(m['device'] not in media_devices or
-                            (m['device'] == recovery['device'] and m['path'] == '/') for m in mounts),
-                        'Reviewed media has an unexpected active mount')
+                protected = []
+                for item in self.policy['protected']:
+                    require(set(item) == {'role', 'identity'} and
+                            re.fullmatch(r'[A-Za-z0-9_-]{1,64}', item['role']) is not None,
+                            'Invalid protected-media role')
+                    protected.append(find_identity(observed, item['identity']))
                 selected_devices = {source['device']}
+                protected_disks = {recovery['disk_device'], source['disk_device'],
+                                   *(item['disk_device'] for item in protected)}
                 destinations = {}
                 for key, spec in self.policy['destinations'].items():
                     require(re.fullmatch(r'[A-Za-z0-9_-]{1,64}', key) is not None and
@@ -268,15 +278,13 @@ class RecoveryPreparer:
                             identity['removable'] and not identity['readonly'] and
                             not identity['disk_readonly'],
                             'Reviewed destination must be a writable removable FAT partition')
-                    require(identity['device'] not in selected_devices, 'Prepared media roles alias')
+                    require(identity['device'] not in selected_devices and
+                            identity['disk_device'] not in protected_disks and
+                            all(identity['disk_device'] != other['disk_device']
+                                for _, other in destinations.values()),
+                            'Destination whole disk aliases protected or another prepared medium')
                     selected_devices.add(identity['device'])
                     destinations[key] = (spec, identity)
-                protected = []
-                for item in self.policy['protected']:
-                    require(set(item) == {'role', 'identity'} and
-                            re.fullmatch(r'[A-Za-z0-9_-]{1,64}', item['role']) is not None,
-                            'Invalid protected-media role')
-                    protected.append(find_identity(observed, item['identity']))
                 require(len({item['device'] for item in protected}) == len(protected) and
                         not selected_devices.intersection(item['device'] for item in protected),
                         'Protected media roles are duplicate or alias prepared media')
@@ -285,14 +293,27 @@ class RecoveryPreparer:
                 require(leaf_devices == selected_devices | {recovery['device']} |
                         {item['device'] for item in protected},
                         'Protected media inventory is incomplete')
+                mounts = self.kernel.mounts()
+                require(any(m['path'] == '/' and m['device'] == recovery['device'] for m in mounts),
+                        'Reviewed recovery root is not the running root')
+                media_devices = {value['device'] for disk in observed
+                                 for value in [disk, *disk['partitions']]}
+                require(all(m['device'] not in media_devices or
+                            (m['device'] == recovery['device'] and m['path'] == '/') for m in mounts),
+                        'Reviewed media has an unexpected active mount')
                 require(not any(m['device'] in selected_devices for m in mounts),
                         'Source or destination is already mounted')
-                self.kernel.set_readonly(source)
+                self.kernel.set_readonly(source, emit)
                 source_path = Path(self.policy['source_path'])
                 require(str(source_path) == '/run/sv08-recovery/source', 'Unreviewed source mount path')
                 created.append(source_path)
-                self.kernel.mount(source, source_path, 'ro,noload,nosuid,nodev,noexec', 'ext4')
+                source_options = 'ro,noload,nosuid,nodev,noexec'
+                emit('source-mount-begin', device=source['device'], path=str(source_path),
+                     filesystem='ext4', options=source_options)
+                self.kernel.mount(source, source_path, source_options, 'ext4')
                 mounted.append(source_path)
+                emit('source-mount-complete', device=source['device'], path=str(source_path),
+                     filesystem='ext4', options=source_options)
                 context_targets = {}
                 for key, (spec, identity) in destinations.items():
                     path = Path(spec['path'])

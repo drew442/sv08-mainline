@@ -11,6 +11,30 @@ SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).reso
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 
 class RecoveryImageTests(unittest.TestCase):
+    def test_builder_rejects_stale_assembly_integration_inputs(self):
+        with tempfile.TemporaryDirectory(dir=m.REPO/'build') as directory:
+            source=Path(directory)/'assembly';root=source/'rootfs'
+            (root/'usr/bin').mkdir(parents=True);(root/'boot').mkdir()
+            (root/'usr/bin/busybox').write_bytes(b'busybox')
+            (root/'boot'/('vmlinuz-'+m.KERNEL)).write_bytes(b'kernel')
+            (source/'assembly.json').write_text(json.dumps(dict(integration_inputs={'stale':'digest'})))
+            args=SimpleNamespace(work=Path(directory)/'output',assembly=source,execute=False,
+                                 board_profile=None,media_profile=None)
+            with self.assertRaisesRegex(ValueError,'Stale build assembly'):
+                m.build(args)
+
+    def test_vm_adds_provider_binding_only_for_complete_composition_receipt(self):
+        spec=importlib.util.spec_from_file_location('recovery_vm',m.REPO/'tests/recovery_vm.py')
+        vm=importlib.util.module_from_spec(spec);spec.loader.exec_module(vm)
+        legacy={'manifest_sha256':'1'*64}
+        self.assertEqual(vm.boot_bindings(legacy),'sv08.envelope='+'1'*64)
+        composed={**legacy,'media_profile_sha256':'2'*64,'policy_sha256':'3'*64,
+                  'provider_manifest_sha256':'4'*64}
+        self.assertEqual(vm.boot_bindings(composed),
+                         'sv08.envelope='+'1'*64+' sv08.recovery='+'4'*64)
+        with self.assertRaisesRegex(ValueError,'Incomplete'):
+            vm.boot_bindings({**legacy,'provider_manifest_sha256':'4'*64})
+
     def test_inventory_binds_root_xattrs_and_hardlinks(self):
         import os
         with tempfile.TemporaryDirectory() as t:
