@@ -1,0 +1,25 @@
+{
+  "guest_sha256": "ab922fd46691762defb8e5ea01106f8b367678dd2fa2ccc43d842435fe490da0",
+  "base_rauc_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
+  "cockpit_delta_sha256": {
+    "libnss-systemd_257.13-1~deb13u1_arm64.deb": "13e8ced686b74b8b3017cdcc6c9f584c9e3b910f5399784b5de96e1e909d997b",
+    "cockpit-bridge_337-1+deb13u2_all.deb": "8caa8c3f36d6eb2f95561614923518bc6e78d17962673d5be3d43b1967dc4961",
+    "libduktape207_2.7.0-2+b2_arm64.deb": "9dcf4d316a8ece7277d21bbdd26b75a5d7d829faf3c7cfd861e30ba89d385516",
+    "libproxy1v5_0.5.9-1_arm64.deb": "7758242ac0263b1fcefc01622160c6a965a25d7f284ee6a62a46a8784cfedd6e",
+    "glib-networking-common_2.80.1-1_all.deb": "aa697ddbd07ba9e16391bd81f73661b2583859c8671d1ce92f28e6a870d37059",
+    "glib-networking-services_2.80.1-1_arm64.deb": "231f911c07eb9cb4a68b6709e0963aaeddeda523f21d24f10a593d4c2963f982",
+    "gsettings-desktop-schemas_48.0-1_all.deb": "151133be02bff0bff4c860260a3418378821fad8c5d11133f588d4de760797a5",
+    "glib-networking_2.80.1-1_arm64.deb": "06815a6cfd3ad5386eba73db253ea1a25ede4a01b3b92d1dbc5315d001915e21",
+    "cockpit-ws_337-1+deb13u2_arm64.deb": "4af22eab0c00d741ee976f1f8cf71a33f2709242ee81be19933ee1fd592202b9"
+  },
+  "browser": {
+    "disposition": "interrupted",
+    "cancellation": "succeeded",
+    "reconnect": true
+  },
+  "browser_result_sha256": "77f1793ab7be55b9275e58e6370e1cbd8f3e9bfcbd2bc3e6a48287222d50dce7",
+  "boot_log_sha256": "90cf9f2a52a8e064cfcbf3b4e43b6c3c0ac80d0d943f10e474442ef5c3a7272e",
+  "source_commit": "f51e26bc6c923c5be50ebff9cc22d6a17e67eb01",
+  "physical_hardware": false,
+  "evidence_scope": "Fresh disposable ARM64 QEMU composition; no physical hardware, deployable release, or printer action."
+}

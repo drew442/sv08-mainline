@@ -1,4 +1,5 @@
-import WebSocket from '/usr/share/nodejs/ws/index.js';
+import { createRequire } from 'node:module';
+const WebSocket=createRequire(import.meta.url)('ws');
 const uploadCases=async()=>({skipped:'composed backend fixture checks cancellation separately'});
 import fs from 'node:fs';import {spawn} from 'node:child_process';import {setTimeout as delay} from 'node:timers/promises';import assert from 'node:assert/strict';
 const [W,chrome] = process.argv.slice(2);
@@ -47,59 +48,5 @@ try{
  await click('#cancel-authorization');await until('!document.querySelector("#authorization").open && !document.querySelector("#authorize").disabled');await secretsClear();assert.equal(await uid(),'access-denied');results.wrong_password_and_cancel=true;console.log('wrong password and cancel PASS');
  results.uid_proof.administrator_unelevated=await ev(`cockpit.spawn(['id','-u']).then(x=>x.trim())`);
  await authorize();await secretsClear();results.uid_proof.elevated=await uid(); const inspected=await helper({method:'image.inspect',id:'dddddddddddddddddddddddddddddddd'});assert.equal(inspected.ok,true);const disposed=await helper({method:'image.dispose',plan:inspected.result.plan});assert.equal(disposed.ok,true);await click('#logout');await until('!window.sv08Session');assert.equal(await login('fixtureadmin',creds.fixtureadmin),200);await loadShell();await authorize();const cancelPlan=await helper({method:'plan',action:'image.cancel',arguments:{}});assert.equal(cancelPlan.ok,true);const submitted=await helper({method:'image.submit',id:'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',plan:cancelPlan.result});assert.equal(submitted.ok,true);for(let i=0;i<100;i++){const h=await helper({method:'jobs'});if(h.result.jobs.find(x=>x.id==='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')?.phase==='succeeded')break;await delay(200)}const end=await helper({method:'jobs'});assert.equal(end.result.jobs.find(x=>x.id==='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee').phase,'succeeded');const finalStatus=await helper({method:'status'});assert.equal(finalStatus.result.pending,null);results.composed={disposition:disposed.result.phase,cancellation:'succeeded',reconnect:true};results.passed=true;fs.writeFileSync(W+'/composed-result.json',JSON.stringify(results,null,2)+'\n');console.log('COMPOSED_RESULT '+JSON.stringify(results.composed));
- if (false) { // Retained Cockpit regression cases run in cockpit_browser.mjs.
- // Reset only finite disposable policy between development reruns.
- for(const [action,args] of [['policy.auto',{enabled:true}],['policy.mode',{mode:'immutable'}]]) { const p=await helper({method:'plan',action,arguments:args});assert.equal((await helper({method:'apply',plan:p.result})).ok,true); }
- await ev('refresh()');
- if (fs.existsSync(W+'/signed.raucb')) { results.upload=await uploadCases({W,ev,send,until,click,helper,stateHash,loadShell,authorize}); console.log('real upload cases PASS'); }
 
- const originalHash=await stateHash();const status=await helper({method:'status'});assert.equal(status.ok,true);assert.equal(status.result.auto_update,true);
- const jobs=await helper({method:'jobs'});assert.equal(jobs.ok,true);assert.deepEqual(jobs.result.jobs,[]);
- const plan=await helper({method:'plan',action:'policy.auto',arguments:{enabled:false}});assert.equal(plan.ok,true);assert.equal(await stateHash(),originalHash);results.status_review_jobs_no_state_mutation=true;
- await click('[data-page="images"]');await click('#auto-update');await click('#save-auto');await until('document.querySelector("#review").open');await ev('document.querySelector("#review").close("cancel")');assert.equal(await stateHash(),originalHash);results.cancel_preserves_state=true;
- // Stop invalidates an open review; later authentication must not confirm it.
- await click('#save-auto');await until('document.querySelector("#review").open');await ev('document.querySelector("#stop-authorization").click()');await until('!sv08Session.elevated && !document.querySelector("#authorize").disabled');assert.equal(await ev('document.querySelector("#review").open'),false);await authorize();assert.equal(await stateHash(),originalHash);assert.equal(await ev('document.querySelector("#review").open'),false);results.authentication_never_confirms=true;
- // A review based on old policy must be refused by the real installed helper.
- await click('#save-auto');await until('document.querySelector("#review").open');
- const other=await helper({method:'plan',action:'policy.mode',arguments:{mode:'writable'}});assert.equal((await helper({method:'apply',plan:other.result})).ok,true);
- await click('#confirm');await until('document.querySelector("#notice").textContent.toLowerCase().includes("changed")');assert.equal((await helper({method:'status'})).result.auto_update,true);results.stale_review_refused=true;
- await click('#save-auto');await until('document.querySelector("#review").open');await click('#confirm');await until('document.querySelector("#notice").textContent.startsWith("Saved.")');assert.equal((await helper({method:'status'})).result.auto_update,false);results.confirmed_helper_apply=true;console.log('real helper review/apply PASS');
- // Hold a real response locally to reproduce authority-transition races without
- // replacing the authenticated transport or helper's result.
- await ev(`window.realRequest=request;window.delayedReady=false;request=async message=>{const result=await realRequest(message);if(message.method==='plan'){window.delayedReady=true;await new Promise(resolve=>window.releaseDelayed=resolve);}return result;}`);
- await click('#auto-update');await click('#save-auto');await until('window.delayedReady');await stopped();await ev('window.releaseDelayed();request=window.realRequest');await delay(200);assert.equal(await ev('document.querySelector("#review").open'),false);results.delayed_review_after_stop_discarded=true;await authorize();
- await ev(`window.delayedReady=false;request=async message=>{const result=await realRequest(message);if(message.method==='apply'){window.delayedReady=true;await new Promise(resolve=>window.releaseDelayed=resolve);}return result;}`);
- await click('#save-auto');await until('document.querySelector("#review").open');await click('#confirm');await until('window.delayedReady');await stopped();await ev('window.releaseDelayed();request=window.realRequest');await delay(200);assert(!String(await text('#notice')).includes('null'));await authorize();assert.equal((await helper({method:'status'})).result.auto_update,true);results.delayed_apply_after_stop_preserved=true;
- // Selected packages must expose no alternate unguarded stock applications.
- const manifests=await ev(`fetch('/cockpit/@localhost/manifests.json').then(r=>r.json())`);
- for(const name of ['shell','system','storage','packagekit','terminal'])assert(!(name in manifests));
- for(const name of ['shell','system','storage','packagekit'])assert.equal(await ev(`fetch('/cockpit/@localhost/${name}/index.html').then(r=>r.status)`),404);
- results.stock_packages_unavailable=true;
- const journal=await ev(`cockpit.spawn(['journalctl','--no-pager','--output=short','-b'],{superuser:'require'}).then(x=>x)`);
- const forbidden=Object.entries(creds).flatMap(([name,password])=>[password,Buffer.from(name+':'+password).toString('base64')]);
- for(const value of forbidden)assert(!journal.includes(value),'Credential found in guest journal');
- results.guest_journal_secret_scan=true;
- const serviceState=await ev(`cockpit.spawn(['systemctl','show','cockpit.socket','cockpit.service','cockpit-session.socket','cockpit-fixture.service','-p','Id','-p','ActiveState','-p','SubState'],{superuser:'require'}).then(x=>x)`);
- assert.equal((serviceState.match(/ActiveState=active/g)||[]).length,4);fs.writeFileSync(W+'/guest-service-state.txt',serviceState);
- const cookie=(await send('Network.getCookies',{urls:['http://127.0.0.1:19091/']})).cookies.map(c=>c.name+'='+c.value).join(';');assert(cookie);
- await stopped();await secretsClear();results.explicit_stop_denies_helper=true;await click('#logout');await until('!window.sv08Session');
- assert.equal((await fetch('http://127.0.0.1:19091/cockpit/login',{headers:{Cookie:cookie}})).status,401);
- assert.equal(await ev(`fetch('/cockpit/login').then(r=>r.status)`),401);results.logout_invalidates_old_session=true;
- assert.equal(await login('fixtureadmin',creds.fixtureadmin),200);await loadShell();assert.equal(await uid(),'access-denied');await authorize();assert.equal((await helper({method:'status'})).result.auto_update,true);results.authenticated_reconnect_persistence=true;
- // API absence is a controlled browser fault, not real authorization evidence.
- const injected=await send('Page.addScriptToEvaluateOnNewDocument',{source:`Object.defineProperty(window,'cockpit',{configurable:true,set(value){value.dbus=undefined;Object.defineProperty(window,'cockpit',{value,writable:true,configurable:true});}});`});
- await loadShell();assert.match(await text('#session-status'),/required Cockpit 337 session API/);assert.equal(await ev('sv08Session.available'),false);assert.equal(await ev('document.querySelector("#authorize").disabled'),true);results.missing_api_fails_closed=true;
- await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:injected.identifier});
- // Failed Stop diagnostic regression uses an explicit controlled proxy fault.
- const fault=await send('Page.addScriptToEvaluateOnNewDocument',{source:`Object.defineProperty(window,'cockpit',{configurable:true,set(value){value.dbus=()=>({addEventListener:()=>{},proxy:()=>({valid:true,Current:'sudo',Bridges:['sudo'],Start:()=>{},Answer:()=>{},Stop:()=>Promise.reject(Error('fixture')),addEventListener:()=>{},wait:cb=>cb()})});Object.defineProperty(window,'cockpit',{value,writable:true,configurable:true});}});`});
- await navigate();await until('!!window.sv08Session && sv08Session.elevated');await click('#stop-authorization');await until('document.querySelector("#session-status").textContent.includes("Could not stop")');assert.equal(await ev('sv08Session.elevated'),false);await secretsClear();results.controlled_stop_failure_visible_and_closed=true;
- await send('Page.removeScriptToEvaluateOnNewDocument',{identifier:fault.identifier});
- const scanned=[];
- function scanFile(path){const bytes=fs.readFileSync(path);for(const value of forbidden)assert(!bytes.includes(Buffer.from(value)),'Credential found in private log/evidence');scanned.push(path);}
- for(const name of ['guest.log','package-install.log','apt-simulation.txt','units.txt','prepare.json','guest-service-state.txt'])scanFile(W+'/'+name);
- for(const value of forbidden)assert(!JSON.stringify(browserEvents).includes(value),'Credential found in browser console/error');
- for(const value of forbidden)assert(!JSON.stringify(results).includes(value),'Credential found in report');
- results.secret_scan={guest_journal:true,browser_console_and_errors:true,private_log_and_evidence_files:scanned.length,violations:0};
- results.passed=true;fs.writeFileSync(W+'/browser-result.json',JSON.stringify(results,null,2)+'\n');console.log('Actual Cockpit authentication, helper/session and transition tests PASS');
-}
 }finally{socket?.close();child.kill()}

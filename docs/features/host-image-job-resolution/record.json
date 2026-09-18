@@ -121,7 +121,9 @@
         "host-recovery-independent-image:implement"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        "docs/hardware/host-admin-image-jobs-composed-20260918.json"
+      ],
       "human_task": null,
       "id": "implement",
       "implementation": {
@@ -130,16 +132,10 @@
         "session": "job-resolution-implementation-20260915"
       },
       "repeats": 0,
-      "resumption": "Independent verifier at 241a37c failed the composed delivery: restore retained fixture tests (done at f9fdf81), then encode a fresh self-contained composed runner from pinned inputs, including root/data/certificate/browser assembly and result hashes. Add its evidence and request a fresh independent verification. Do not alter hardware or mark complete.",
+      "resumption": "Fresh composition passed at source worktree state after the source runner is committed. Request a new independent verifier; do not alter hardware or mark complete before it passes.",
       "status": "running",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
-      "verification": {
-        "actor": "independent-feature-verifier-composed-review",
-        "commit": "241a37ca30414a6aa53c393d91a5805d11206bd5",
-        "outcome": "failed",
-        "evidence_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-        "reason": "The claimed composed browser journey is not reproducible from committed sources; encode its fresh root/data/certificate/browser runner and public evidence before re-verification."
-      }
+      "verification": null
     }
   ],
   "title": "Resolve interrupted image receipts without guessing their outcome"
