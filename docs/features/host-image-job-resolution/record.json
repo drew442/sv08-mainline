@@ -292,10 +292,17 @@
         "session": "job-resolution-implementation-20260915"
       },
       "repeats": 0,
-      "resumption": "Final independent verification requested against the single assembled evidence revision; no hardware changes.",
-      "status": "running",
+      "resumption": null,
+      "status": "done",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
-      "verification": null
+      "verification": {
+        "outcome": "passed",
+        "reviewer": "independent-feature-verifier-composed-review",
+        "session": "root/composed_review:2026-09-18:final",
+        "rationale": "Passed all seven approved offline acceptance checks for assembled source revision 7ae091807a0177639cb0d1ddc9e33f8e70f9ca08. Fresh independent QEMU composition verified authenticated Cockpit/PAM/sudo, durable unknown disposition, reconnect, and preserved-source cancellation; historical records cover the remaining named checks. Scope remains offline QEMU only.",
+        "evidence_sha256": "b1a0a70d5ecc3ceb88453caca191900384ce20d3e79cad9857d88ae1cc99edf3",
+        "decision_sha256": "2ec2bae0edd61dfc16bc8affa75daa895d9be497b8ca1195318c30b3412dbfa2"
+      }
     }
   ],
   "title": "Resolve interrupted image receipts without guessing their outcome"
