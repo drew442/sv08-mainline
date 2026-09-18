@@ -132,6 +132,7 @@ def main():
         context = dict(format_version=1, protocol=PROTOCOL, policy_sha256=fingerprint(policy),
                        source=str(work / 'source'), destinations={'fixture-fat': dict(path=str(target), label='Disposable FAT medium')})
         provider = MediaProvider(policy, context, fixture=fixture)
+        assert provider.policy['format_version'] == 1  # Legacy uncompressed admission remains supported.
         context['expected'] = provider.snapshot()
         initial = copy.deepcopy(context['expected'])
         (work / 'run/media-context.json').write_text(json.dumps(context))

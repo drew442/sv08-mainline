@@ -13,7 +13,8 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
                                  POLICY, Unavailable, durable_identity, fingerprint, mount_table,
-                                 opened, production_adapter, same_identity, trusted_file)
+                                 canonical_json, opened, production_adapter, same_identity, strict_envelope_manifest,
+                                 trusted_file)
 from sv08_recovery import installed_controller
 from sv08_state import Store
 
@@ -28,7 +29,7 @@ class RecoveryMediaTests(unittest.TestCase):
                             expected={})
 
     def adapter(self, policy, context):
-        with patch('sv08_recovery_media.trusted_file', side_effect=[json.dumps(policy).encode(), json.dumps(context).encode()]):
+        with patch('sv08_recovery_media.trusted_file', side_effect=[canonical_json(policy), json.dumps(context).encode()]):
             return production_adapter()
 
     def test_mount_parser_distinguishes_vfs_from_superblock_and_decodes_paths(self):
@@ -48,6 +49,53 @@ class RecoveryMediaTests(unittest.TestCase):
     def test_identity_matching_supports_disposable_file_identity_lists(self):
         self.assertTrue(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 11, 1024]}))
         self.assertFalse(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 12, 1024]}))
+
+    def test_envelope_manifest_parser_is_fixed_and_unambiguous(self):
+        data = (b'format=sv08-recovery-usr-v1\nroot_uuid=root\nroot_bytes=536870912\n'
+                b'usr_path=/usr.squashfs\nusr_bytes=513\nusr_sha256=' + b'a'*64 + b'\n')
+        value = strict_envelope_manifest(data)
+        self.assertEqual(value['usr_bytes'], 513)
+        for damaged in (data+b'extra=x\n', data.replace(b'usr_path=', b'path='), data.rstrip(b'\n')):
+            with self.assertRaisesRegex(ValueError, 'manifest'): strict_envelope_manifest(damaged)
+
+    def test_compressed_chain_binds_file_loop_extent_and_squashfs_mount(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); backing = root/'usr.squashfs'; backing.write_bytes(b'x'*513)
+            digest = hashlib.sha256(backing.read_bytes()).hexdigest()
+            actual = backing.stat(); provider = MediaProvider.__new__(MediaProvider); provider.root = root
+            mount = dict(path='/usr', root='/', filesystem='squashfs', options=['ro'],
+                         super_options=['ro'], device='7:0')
+            recovery = dict(directory=[actual.st_dev, root.stat().st_ino])
+            envelope = dict(usr_path='/usr.squashfs', usr_bytes=513, usr_sha256=digest)
+            node = Path('/sys/devices/virtual/block/loop0')
+            values = {str(node/'ro'):'1', str(node/'loop/offset'):'0',
+                      str(node/'loop/sizelimit'):'0', str(node/'size'):'2',
+                      str(node/'loop/backing_file'):'/usr.squashfs'}
+            original_fstat, original_stat = os.fstat, os.stat
+            def owned(fd):
+                value=list(original_fstat(fd));value[4]=value[5]=0
+                return os.stat_result(value)
+            def stat_path(path, *args, **kwargs):
+                if str(path) == '/usr.squashfs':
+                    value=list(original_stat(backing));value[4]=value[5]=0
+                    return os.stat_result(value)
+                return original_stat(path, *args, **kwargs)
+            def read(path, *args, **kwargs): return values[str(path)]
+            with patch('sv08_recovery_media.os.fstat', owned), \
+                 patch('sv08_recovery_media.os.stat', stat_path), \
+                 patch('sv08_recovery_media.Path.resolve', return_value=node), \
+                 patch('sv08_recovery_media.Path.read_text', read), \
+                 patch('sv08_recovery_media.Path.iterdir', return_value=[]), \
+                 patch('sv08_recovery_media.Path.is_dir', return_value=True), \
+                 patch('sv08_recovery_media.Path.stat', return_value=SimpleNamespace(st_ino=88)):
+                result = provider.compressed_userspace([mount], recovery, envelope)
+                self.assertEqual(result['backing'][2], 513)
+                values[str(node/'loop/offset')] = '1'
+                with self.assertRaisesRegex(ValueError, 'offset'):
+                    provider.compressed_userspace([mount], recovery, envelope)
+                values[str(node/'loop/offset')] = '0'; values[str(node/'loop/sizelimit')] = '1024'
+                with self.assertRaisesRegex(ValueError, 'extent'):
+                    provider.compressed_userspace([mount], recovery, envelope)
 
     def test_absent_and_malformed_production_contexts_are_diagnostic_only(self):
         with patch('sv08_recovery_media.trusted_file', side_effect=FileNotFoundError('Recovery context is absent')):
@@ -76,6 +124,22 @@ class RecoveryMediaTests(unittest.TestCase):
         adapter = self.adapter(policy, context)
         self.assertIsInstance(adapter, Unavailable)
         self.assertIn('independent recovery', adapter.reason)
+
+    def test_v2_policy_derives_protected_system_media_without_trusting_context(self):
+        recovery = {'serial':'recovery'}; source = {'device/wwid':'source'}; usb = {'device/wwid':'usb'}
+        policy = {key:value for key,value in self.policy.items()
+                  if key not in ('image_manifest_sha256', 'system_media')}
+        policy.update(format_version=2, envelope_manifest_sha256='2'*64,
+                      source_path='/data',
+                      media=[dict(stable=recovery), dict(stable=source), dict(stable=usb)],
+                      protected=[], destinations={'usb':dict(identity=dict(stable=usb),
+                                      path='/media/usb', label='Reviewed USB')})
+        context = {**self.context, 'format_version':2, 'policy_sha256':fingerprint(policy)}
+        provider = MediaProvider(policy, context)
+        self.assertEqual(provider.system_media, [recovery, source])
+        changed = copy.deepcopy(context); changed['source'] = '/other'
+        with self.assertRaisesRegex(ValueError, 'immutable source'):
+            MediaProvider(policy, changed)
 
     def test_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export(self):
         # The old display-service marker says nothing about the actual root.

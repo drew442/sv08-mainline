@@ -22,11 +22,17 @@ PROTOCOL = 'sv08-recovery-media-v1'
 POLICY = Path('/etc/sv08/recovery-media-policy.json')
 CONTEXT = Path('/run/sv08-recovery/media-context.json')
 LOCK = Path('/run/sv08-recovery/media.lock')
+PROVIDER_MANIFEST = Path('/etc/sv08/recovery-image.json')
+ENVELOPE_MANIFEST = Path('/etc/sv08/recovery-envelope.manifest')
 WRITER_MODEL = 'reviewed-recovery-only; all-media-mutators-use-MediaLease'
 
 
 def fingerprint(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+def canonical_json(value):
+    return (json.dumps(value, sort_keys=True, separators=(',', ':'))+'\n').encode()
 
 
 def require(condition, reason):
@@ -186,7 +192,7 @@ class Kernel:
             stable = dict(disposable_backing=backing, identity=fixture['images'][backing])
         else:
             stable = {}
-            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial'):
+            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
                 file = disk / name
                 if file.is_file() and file.read_text().strip():
                     stable[name] = file.read_text().strip()
@@ -234,22 +240,66 @@ def same_identity(left, right):
                for right_key, right_value in right.items())
 
 
+def strict_envelope_manifest(data):
+    """Parse the fixed early-boot manifest without shell or JSON ambiguity."""
+    try:
+        text = data.decode('ascii')
+    except (AttributeError, UnicodeDecodeError):
+        raise ValueError('Invalid recovery envelope manifest encoding') from None
+    lines = text.splitlines()
+    require(len(lines) == 6 and text.endswith('\n'), 'Invalid recovery envelope manifest schema')
+    pairs = []
+    for line in lines:
+        require(line.count('=') == 1, 'Invalid recovery envelope manifest schema')
+        pairs.append(line.split('=', 1))
+    require([key for key, _ in pairs] ==
+            ['format', 'root_uuid', 'root_bytes', 'usr_path', 'usr_bytes', 'usr_sha256'],
+            'Invalid recovery envelope manifest schema')
+    value = dict(pairs)
+    require(value['format'] == 'sv08-recovery-usr-v1' and value['usr_path'] == '/usr.squashfs' and
+            value['root_bytes'].isdigit() and int(value['root_bytes']) > 0 and
+            value['usr_bytes'].isdigit() and int(value['usr_bytes']) > 0 and
+            re.fullmatch(r'[0-9a-f]{64}', value['usr_sha256']) is not None,
+            'Invalid recovery envelope manifest values')
+    value['root_bytes'] = int(value['root_bytes'])
+    value['usr_bytes'] = int(value['usr_bytes'])
+    return value
+
+
 class MediaProvider(ExportAdapter):
     """No production fixtures, guessed identities or implicit trust inputs."""
-    def __init__(self, policy, context, *, fixture=None):
+    def __init__(self, policy, context, *, fixture=None, policy_sha256=None):
         self.policy, self.context, self.fixture = policy, context, fixture
+        self.policy_sha256 = policy_sha256 or hashlib.sha256(canonical_json(policy)).hexdigest()
         self.kernel = Kernel()
         require(type(policy) is dict and type(context) is dict, 'Invalid recovery configuration objects')
         require(type(policy['format_version']) is int and type(context['format_version']) is int and
-                policy['format_version'] == context['format_version'] == 1 and
+                policy['format_version'] == context['format_version'] and policy['format_version'] in (1, 2) and
                 policy['protocol'] == context['protocol'] == PROTOCOL and
                 policy['writer_model'] == WRITER_MODEL and
                 context['policy_sha256'] == fingerprint(policy), 'Invalid recovery preparation contract')
         require(policy['kind'] == ('disposable-recovery-fixture' if fixture else 'independent-recovery'),
                 'This is not an approved independent recovery context')
-        require(type(policy['system_media']) is list and 1 <= len(policy['system_media']) <= 8 and
-                all(type(medium) is dict and medium for medium in policy['system_media']),
+        if policy['format_version'] == 2:
+            require(set(policy) == {'format_version', 'kind', 'protocol', 'writer_model',
+                    'envelope_manifest_sha256', 'recovery',
+                    'source', 'source_path', 'media', 'protected', 'destinations'} and
+                    set(context) in ({'format_version', 'protocol', 'policy_sha256', 'source',
+                                      'destinations'},
+                                     {'format_version', 'protocol', 'policy_sha256', 'source',
+                                      'destinations', 'expected'}),
+                    'Invalid composed recovery policy/context schema')
+        if policy['format_version'] == 1:
+            system_media = policy['system_media']
+        else:
+            destination_media = [value['identity']['stable'] for value in policy['destinations'].values()]
+            system_media = [medium['stable'] for medium in policy['media']
+                            if not any(same_identity(medium['stable'], target)
+                                       for target in destination_media)]
+        require(type(system_media) is list and 1 <= len(system_media) <= 8 and
+                all(type(medium) is dict and medium for medium in system_media),
                 'An independently reviewed inventory of all system media is required')
+        self.system_media = system_media
         self.root = clean_path(fixture['root']) if fixture else Path('/')
         self.lock = clean_path(fixture['lock']) if fixture else LOCK
         if fixture:
@@ -270,6 +320,11 @@ class MediaProvider(ExportAdapter):
                     all(ord(c) >= 32 for c in value['label']), 'Invalid destination selection')
             targets[key] = dict(path=clean_path(value['path']), label=value['label'])
         require(len({v['path'] for v in targets.values()}) == len(targets), 'Duplicate destinations')
+        if policy['format_version'] == 2:
+            reviewed_targets = {key: dict(path=clean_path(value['path']), label=value['label'])
+                                for key, value in policy['destinations'].items()}
+            require(self.source == clean_path(policy['source_path']) and targets == reviewed_targets,
+                    'Per-boot context differs from immutable source/destination policy')
         super().__init__(Export(self.source, targets, self.admission))
 
     def snapshot(self):
@@ -321,25 +376,59 @@ class MediaProvider(ExportAdapter):
         require(durable_identity(recovery['block']) == self.policy['recovery'] and
                 durable_identity(source['block']) == self.policy['source'],
                 'Running recovery or source does not match independently reviewed identities')
-        require(all(item['block']['stable'] in self.policy['system_media'] for item in (recovery, source)),
+        require(all(item['block']['stable'] in self.system_media for item in (recovery, source)),
                 'Reviewed system media inventory omits recovery or source')
-        manifest = self.root / 'etc/sv08/recovery-image.json'
+        manifest = self.root / PROVIDER_MANIFEST.relative_to('/')
         with opened(manifest, flags=os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK) as fd:
             info = os.fstat(fd)
             require(stat.S_ISREG(info.st_mode) and info.st_dev == recovery['directory'][0] and
                     info.st_size <= 1024*1024, 'Recovery image manifest is outside its reviewed root')
             with os.fdopen(os.dup(fd), 'rb') as stream:
-                digest = hashlib.sha256(stream.read(1024*1024+1)).hexdigest()
-        require(digest == self.policy['image_manifest_sha256'], 'Recovery image manifest does not match review')
+                manifest_data = stream.read(1024*1024+1)
+                digest = hashlib.sha256(manifest_data).hexdigest()
+        if self.policy['format_version'] == 1:
+            require(digest == self.policy['image_manifest_sha256'],
+                    'Recovery image manifest does not match review')
+        else:
+            try:
+                provider_manifest = json.loads(manifest_data)
+            except (OSError, ValueError, TypeError):
+                raise ValueError('Invalid recovery provider manifest') from None
+            require(manifest_data == canonical_json(provider_manifest) and
+                    set(provider_manifest) == {'format_version', 'kind', 'protocol',
+                    'policy_sha256', 'inputs'} and provider_manifest['format_version'] == 2 and
+                    provider_manifest['kind'] == 'sv08-independent-recovery-provider' and
+                    provider_manifest['protocol'] == PROTOCOL and
+                    type(provider_manifest['inputs']) is dict and provider_manifest['inputs'] and
+                    provider_manifest['policy_sha256'] == self.policy_sha256,
+                    'Recovery provider manifest does not bind the reviewed policy')
         if not self.fixture:
             args = Path('/proc/cmdline').read_text().split()
             require([a for a in args if a.startswith('sv08.recovery=')] == ['sv08.recovery='+digest],
                     'Kernel boot selection does not identify the reviewed recovery image')
             with opened(POLICY, flags=os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK) as fd:
                 require(os.fstat(fd).st_dev == recovery['directory'][0], 'Recovery policy is outside the immutable recovery root')
+        compressed = None
+        if self.policy['format_version'] == 2:
+            envelope_path = self.root / ENVELOPE_MANIFEST.relative_to('/')
+            envelope_data = trusted_file(envelope_path)
+            envelope_digest = hashlib.sha256(envelope_data).hexdigest()
+            require(envelope_digest == self.policy['envelope_manifest_sha256'],
+                    'Recovery envelope manifest does not match review')
+            args = Path('/proc/cmdline').read_text().split()
+            require([a for a in args if a.startswith('sv08.envelope=')] ==
+                    ['sv08.envelope='+envelope_digest],
+                    'Kernel boot selection does not identify the reviewed recovery envelope')
+            envelope = strict_envelope_manifest(envelope_data)
+            require(envelope['root_uuid'] == recovery['block']['filesystem_uuid'] and
+                    envelope['root_bytes'] == recovery['block']['sectors'] * 512,
+                    'Recovery envelope root identity differs from the mounted root')
+            compressed = self.compressed_userspace(mounts, recovery, envelope)
         destinations = {key: selected(value['path'], 'Destination') for key, value in self.exporter.targets.items()}
         if not self.fixture:
             selected_paths = {'/', str(self.source), *(str(v['path']) for v in self.exporter.targets.values())}
+            if compressed is not None:
+                selected_paths.add('/usr')
             kernel_filesystems = {'proc', 'sysfs', 'devtmpfs', 'tmpfs', 'devpts', 'cgroup2'}
             require(all(m['path'] in selected_paths or (m['filesystem'] in kernel_filesystems and
                         any(Path(m['path']).is_relative_to(base) for base in ('/proc', '/sys', '/dev', '/run', '/tmp')))
@@ -348,12 +437,61 @@ class MediaProvider(ExportAdapter):
         require(len({d['block']['disk'] for d in destinations.values()}) == len(destinations),
                 'Destination aliases another destination medium')
         require(all(d['block']['disk'] not in protected and
-                    not any(same_identity(d['block']['stable'], medium) for medium in self.policy['system_media'])
+                    not any(same_identity(d['block']['stable'], medium) for medium in self.system_media)
                     for d in destinations.values()), 'Destination shares a system/source medium')
         # Bind every mount, including expected system mounts, so topology changes
         # outside the chosen directory also invalidate the reviewed operation.
-        return dict(session=session, mounts=fingerprint(mounts), recovery=recovery,
-                    source=source, destinations=destinations)
+        result = dict(session=session, mounts=fingerprint(mounts), recovery=recovery,
+                      source=source, destinations=destinations)
+        if compressed is not None:
+            result['compressed_userspace'] = compressed
+        return result
+
+    def compressed_userspace(self, mounts, recovery, envelope):
+        """Admit only the independently reviewed ext4/file/loop/SquashFS chain."""
+        backing = self.root / envelope['usr_path'].removeprefix('/')
+        with opened(backing, flags=os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK) as fd:
+            info = os.fstat(fd)
+            require(stat.S_ISREG(info.st_mode) and info.st_uid == info.st_gid == 0 and
+                    info.st_nlink == 1 and info.st_dev == recovery['directory'][0] and
+                    info.st_size == envelope['usr_bytes'],
+                    'Compressed userspace backing identity changed')
+            with os.fdopen(os.dup(fd), 'rb') as stream:
+                digest = hashlib.file_digest(stream, 'sha256').hexdigest()
+        require(digest == envelope['usr_sha256'], 'Compressed userspace digest changed')
+        matches = [m for m in mounts if m['path'] == '/usr']
+        require(len(matches) == 1, 'Compressed userspace must be an exact mountpoint')
+        mount = matches[0]
+        require(mount['root'] == '/' and mount['filesystem'] == 'squashfs' and
+                'ro' in mount['options'] and 'ro' in mount['super_options'] and
+                'rw' not in mount['options'] + mount['super_options'] and
+                not any(Path(m['path']).is_relative_to('/usr') and m != mount for m in mounts),
+                'Compressed userspace mount identity/options changed')
+        require(sum(m['device'] == mount['device'] for m in mounts) == 1,
+                'Compressed userspace has an unexpected mount alias')
+        node = (Path('/sys/dev/block') / mount['device']).resolve(strict=True)
+        require(node.is_relative_to('/sys/devices/virtual/block') and node.name.startswith('loop') and
+                (node / 'loop').is_dir() and (node / 'ro').read_text().strip() == '1',
+                'Compressed userspace requires a read-only loop')
+        require(not list((node / 'holders').iterdir()) and not list((node / 'slaves').iterdir()),
+                'Compressed userspace loop has unexpected topology')
+        loop = node / 'loop'
+        require((loop / 'offset').read_text().strip() == '0', 'Compressed userspace loop offset changed')
+        limit = int((loop / 'sizelimit').read_text().strip())
+        require(limit in (0, info.st_size), 'Compressed userspace loop extent changed')
+        sectors = int((node / 'size').read_text().strip())
+        require(info.st_size <= sectors * 512 < info.st_size + 512,
+                'Compressed userspace loop exceeds its immutable backing file')
+        kernel_backing = (loop / 'backing_file').read_text().strip()
+        require(kernel_backing == '/usr.squashfs', 'Compressed userspace loop backing path changed')
+        backing_info = os.stat(kernel_backing, follow_symlinks=False)
+        require((backing_info.st_dev, backing_info.st_ino, backing_info.st_size) ==
+                (info.st_dev, info.st_ino, info.st_size),
+                'Compressed userspace loop backing inode changed')
+        return dict(mount=mount, backing=[info.st_dev, info.st_ino, info.st_size],
+                    sha256=digest, loop_device=mount['device'], loop_sysfs=str(node),
+                    loop_sysfs_inode=node.stat().st_ino, offset=0, sizelimit=limit,
+                    sectors=sectors)
 
     @contextmanager
     def admission(self, destination):
@@ -390,8 +528,10 @@ class Unavailable:
 def production_adapter():
     """Fixed installed trust paths; no CLI/env override enables fixture media."""
     try:
-        policy, context = json.loads(trusted_file(POLICY)), json.loads(trusted_file(CONTEXT))
-        provider = MediaProvider(policy, context)
+        policy_data, context_data = trusted_file(POLICY), trusted_file(CONTEXT)
+        policy, context = json.loads(policy_data), json.loads(context_data)
+        require(policy_data == canonical_json(policy), 'Recovery policy is not canonical reviewed input')
+        provider = MediaProvider(policy, context, policy_sha256=hashlib.sha256(policy_data).hexdigest())
         with provider.admission(next(iter(provider.exporter.targets))):
             pass
         return provider
