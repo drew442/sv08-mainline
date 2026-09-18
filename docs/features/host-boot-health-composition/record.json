@@ -1,0 +1,110 @@
+{
+  "format_version": 1,
+  "id": "host-boot-health-composition",
+  "kind": "feature",
+  "title": "Confirm OS trials without bypassing printer safety gates",
+  "author": "host_execution_prep/root-contract-refinement",
+  "created": "2026-09-18",
+  "priority": 3,
+  "proposal": "docs/features/host-boot-health-composition/proposal.md",
+  "requirements": [
+    "docs/design/host-os-ab.md",
+    "docs/decisions/0009-atomic-idle-admission.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "hbh-01",
+      "description": "Missing/malformed boot record, unknown field, boot ID mismatch, or invalid generation: Refuse before transition; retain gate and bounded diagnostics; no reboot.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-02",
+      "description": "Cmdline slot, RAUC observed slot, state slot, or installed release/schema disagree: Refuse before bootloader work; preserve both slots and logs; no reboot.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-03",
+      "description": "`reconcile` returns `needs-arm`: Arm exactly once through staging admission; never replenish an armed trial.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-04",
+      "description": "Target trial has no printer config, no MCU, or no Moonraker printer provider: OS health may still pass; Klipper remains gated, while host-only Moonraker diagnostics may run; no printer readiness is inferred.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-05",
+      "description": "OS health check fails, times out, or is unstable during the target trial: Keep gate; persist reason/generation evidence; invoke fallback only after positive trial/context validation.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-06",
+      "description": "Boot admission for target `reconcile` or `confirm` cannot be acquired or accidentally invokes service-stopping admission: Refuse the transition; tests must prove the injected boot admission reacquires neither state/writer lock and calls no Klipper quiesce/stop.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-07",
+      "description": "`confirm` or backend mark-good fails after OS checks pass: Keep gate and journal in retryable confirming state; do not report success or reboot on an unknown outcome.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-08",
+      "description": "Source boot after target fallback returns `needs-cancel`: Revalidate source slot/release/boot ID, disarm target, then clear pending state through `Transaction.cancel`.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-09",
+      "description": "Ordinary source boot, missing access point/DHCP, missing MCU, or absent printer config: Diagnostics remain available; no reboot loop and no trial failure is inferred.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-10",
+      "description": "Required resource, output, journal, or stable-window bound is exceeded: Fail closed with bounded diagnostics; preserve the gate and do not silently retry.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-11",
+      "description": "Early `sv08_boot.py` generation/state copy is interrupted or loses power: The next boot uses the existing journal and generation markers; incomplete copy/migration blocks confirmation and preserves source state. The coordinator only tests and consumes this handoff; it does not own the copy.",
+      "environment": "offline"
+    },
+    {
+      "id": "hbh-12",
+      "description": "Failed trial fallback requested without a positively validated target trial: Refuse fallback/reboot; preserve evidence for recovery review.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Compose boot reconciliation and bounded OS health confirmation",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [
+        "host-image-job-resolution:implement"
+      ],
+      "checks": [
+        "hbh-01",
+        "hbh-02",
+        "hbh-03",
+        "hbh-04",
+        "hbh-05",
+        "hbh-06",
+        "hbh-07",
+        "hbh-08",
+        "hbh-09",
+        "hbh-10",
+        "hbh-11",
+        "hbh-12"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
