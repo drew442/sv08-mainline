@@ -122,7 +122,21 @@
       ],
       "environment": "offline",
       "evidence": [
-        "docs/hardware/host-admin-image-jobs-composed-20260918.json"
+        {
+          "check": "safe-source-journey",
+          "environment": "offline",
+          "document": "docs/hardware/host-admin-image-jobs-composed-20260918.json",
+          "document_sha256": "fba83dd7627629cef1838b0b7afa298f615f2c7d7c3efc92a998d5c4d6e48fed",
+          "source_sha256": {
+            "tests/host_qemu_rauc_composed_run.py": "e8c29fbe7bb77e40ad541ac08750d5f02da1450a4766da1dae7eb8ea2b8c8ad2",
+            "tests/cockpit_composed_browser.mjs": "3922407c91ddf438f8245caf433d572ee76d7d953c7c20124fbeb437711ce491"
+          },
+          "source_commit": "e19ae6444ab8caa4520e4060af27b154e3ca3818",
+          "method": "Fresh independent disposable ARM64 QEMU run with Cockpit/PAM/sudo browser flow, interrupted disposition, reconnect, and RAUC-backed cancellation.",
+          "limitations": "Offline QEMU fixture only; no physical printer, deployable release, production TLS identity, factory-capacity fit, or hardware activation.",
+          "profile": "qemu-disposable-rauc-backend",
+          "board_revision": null
+        }
       ],
       "human_task": null,
       "id": "implement",
@@ -132,7 +146,7 @@
         "session": "job-resolution-implementation-20260915"
       },
       "repeats": 0,
-      "resumption": "Fresh composition passed at source worktree state after the source runner is committed. Request a new independent verifier; do not alter hardware or mark complete before it passes.",
+      "resumption": "Independent verifier is reviewing the committed fresh evidence; do not alter hardware or mark complete before its final result.",
       "status": "running",
       "title": "Deliver reviewed interrupted-job disposition and supported RAUC writer exclusion",
       "verification": null

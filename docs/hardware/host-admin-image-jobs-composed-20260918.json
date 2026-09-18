@@ -1,5 +1,5 @@
 {
-  "guest_sha256": "ab922fd46691762defb8e5ea01106f8b367678dd2fa2ccc43d842435fe490da0",
+  "guest_sha256": "66a3922ad8fb8c0df942ca38454cf24e208036d80ea6c4dcd66c8b67598fb4e1",
   "base_rauc_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
   "cockpit_delta_sha256": {
     "libnss-systemd_257.13-1~deb13u1_arm64.deb": "13e8ced686b74b8b3017cdcc6c9f584c9e3b910f5399784b5de96e1e909d997b",
@@ -18,8 +18,8 @@
     "reconnect": true
   },
   "browser_result_sha256": "77f1793ab7be55b9275e58e6370e1cbd8f3e9bfcbd2bc3e6a48287222d50dce7",
-  "boot_log_sha256": "90cf9f2a52a8e064cfcbf3b4e43b6c3c0ac80d0d943f10e474442ef5c3a7272e",
-  "source_commit": "f51e26bc6c923c5be50ebff9cc22d6a17e67eb01",
+  "boot_log_sha256": "6d45644453612c33b3c90b690bf4223217861e6651927a89b74e9ad39ec10479",
+  "source_commit": "e19ae6444ab8caa4520e4060af27b154e3ca3818",
   "physical_hardware": false,
-  "evidence_scope": "Fresh disposable ARM64 QEMU composition; no physical hardware, deployable release, or printer action."
+  "evidence_scope": "Fresh independent disposable ARM64 QEMU composition; no physical hardware, deployable release, or printer action."
 }
