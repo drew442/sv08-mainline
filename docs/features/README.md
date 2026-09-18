@@ -52,8 +52,9 @@ host and hardware acceptance work remains in the
   staging policy tested offline.
 - [x] Browser upload, reconnect-safe image jobs and recovery archive export tested
   offline.
-- [ ] Finish interrupted image-job resolution and history rollover; the approved
-  implementation is blocked while new feature work is paused.
+- [x] Interrupted image-job resolution independently verified offline; see the
+  [delivery record](host-image-job-resolution/record.json).
+- [ ] Deliver bounded image-job history rollover as a separate reviewed task.
 - [ ] Add production onboarding, TLS, network/access forms, software catalog and
   complete assembled-system update testing.
 

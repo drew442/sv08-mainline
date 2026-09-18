@@ -1,5 +1,9 @@
 # Roadmap
 
+For the current execution order, dependencies and first-print versus release gates,
+see the [remaining-work plan](remaining-work-plan.md) (2026-09-18). Historical
+phase notes below retain their original evidence boundaries.
+
 ## 0. Foundation — initial intake complete
 
 - Define the stock-first, modified-electronics-capable scope and agent workflow.
