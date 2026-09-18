@@ -25,6 +25,12 @@ inferred from a historical report. Inspect current state before acting.
 
 ## Session dispatch and result record
 
+The printer lane now has a [shared commissioning session form](test-sv08-01-commissioning-session.md)
+for H01/H02/H05/H06. Its blank fields are preparation, not a request to repeat
+existing evidence. The coordinator has already supplied the
+[sanitized candidate section inventory](../development/printer-candidate-sections.md);
+the owner does not need to recreate it or expose private configuration to agents.
+
 Each request must list: H IDs, exact physical target/action, prerequisites that have
 passed, which agent has armed capture, expected observations, stop conditions and
 the next ready action while the setup remains connected. Do not ask for a media
