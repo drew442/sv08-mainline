@@ -1,0 +1,11 @@
+[Unit]
+Description=Make recovery mount propagation private
+After=sysinit.target basic.target
+Before=sv08-recovery-prepare.service sv08-recovery-display.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/mount --make-rprivate /
+RemainAfterExit=yes
+StandardOutput=journal+console
+StandardError=journal+console

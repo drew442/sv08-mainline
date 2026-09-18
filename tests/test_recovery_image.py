@@ -11,6 +11,32 @@ SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).reso
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 
 class RecoveryImageTests(unittest.TestCase):
+    def test_recovery_stages_post_pid1_private_mount_gate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            units=Path(directory)
+            m.stage_recovery_units(units)
+            private=(units/'sv08-recovery-private-mounts.service').read_text()
+            prepare=(units/'sv08-recovery-prepare.service').read_text()
+            display=(units/'sv08-recovery-display.service.d/independent.conf').read_text()
+            target=(units/'sv08-recovery.target').read_text()
+        self.assertEqual(private.count('ExecStart=/bin/mount --make-rprivate /'),1)
+        self.assertIn('After=sysinit.target basic.target',private)
+        self.assertIn('Before=sv08-recovery-prepare.service sv08-recovery-display.service',
+                      private)
+        for sandbox in ('PrivateMounts=', 'MountFlags='):
+            self.assertNotIn(sandbox,private)
+        self.assertIn('Requires=sv08-recovery-private-mounts.service',prepare)
+        self.assertIn('After=systemd-udev-settle.service sv08-recovery-private-mounts.service',
+                      prepare)
+        self.assertIn('Before=sv08-recovery-display.service',prepare)
+        self.assertIn('Wants=systemd-udev-settle.service sv08-recovery-private-mounts.service',
+                      display)
+        self.assertIn('After=sv08-recovery-private-mounts.service',display)
+        self.assertIn('Wants=sv08-recovery-private-mounts.service ',target)
+        self.assertIn('After=sysinit.target basic.target sv08-recovery-private-mounts.service ',
+                      target)
+        self.assertNotIn('Requires=sv08-recovery-private-mounts.service',target)
+
     def test_recovery_masks_unused_binfmt_service_and_automount(self):
         with tempfile.TemporaryDirectory() as directory:
             units=Path(directory)

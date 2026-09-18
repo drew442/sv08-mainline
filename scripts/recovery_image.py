@@ -125,7 +125,7 @@ def run(args, **kw):
 
 
 def integration_inputs():
-    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
+    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
     paths.append(REPO/'configs/host-os/recovery-board-root')
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
@@ -168,6 +168,8 @@ def installed_provider_inputs(root):
         'runtime/sv08_recovery_prepare.py': root/'usr/lib/sv08/sv08_recovery_prepare.py',
         'configs/host-os/sv08-recovery-prepare.service':
             root/'etc/systemd/system/sv08-recovery-prepare.service',
+        'configs/host-os/sv08-recovery-private-mounts.service':
+            root/'etc/systemd/system/sv08-recovery-private-mounts.service',
     }
     if not all(path.is_file() for path in paths.values()):
         raise ValueError('Installed recovery provider input is missing')
@@ -179,6 +181,15 @@ def mask_recovery_units(units):
         path = units/name
         path.unlink(missing_ok=True)
         path.symlink_to('/dev/null')
+
+
+def stage_recovery_units(units):
+    for name in ('sv08-recovery-private-mounts.service',
+                 'sv08-recovery-prepare.service'):
+        shutil.copyfile(REPO/'configs/host-os'/name, units/name)
+    write(units/'sv08-recovery-display.service.d/independent.conf','[Unit]\nWants=systemd-udev-settle.service sv08-recovery-private-mounts.service\nAfter=sv08-recovery-private-mounts.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n')
+    write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-private-mounts.service sv08-recovery-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-private-mounts.service sv08-recovery-prepare.service\nAllowIsolate=yes\n')
+    write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
 
 
 def clean_path(path, *, output=False):
@@ -327,12 +338,7 @@ def assemble(a):
     from stage_admin_ui import stage
     stage(work,'recovery',True)
     units=root/'etc/systemd/system';units.mkdir(parents=True,exist_ok=True)
-    shutil.copyfile(REPO/'configs/host-os/sv08-recovery-prepare.service',
-                    units/'sv08-recovery-prepare.service')
-    write(units/'sv08-recovery-display.service.d/independent.conf','[Unit]\nWants=systemd-udev-settle.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n')
-    # Exact image uses a focused boot target, eliminating unrelated boot jobs.
-    write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-prepare.service\nAllowIsolate=yes\n')
-    write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
+    stage_recovery_units(units)
     p=units/'default.target';p.unlink(missing_ok=True);p.symlink_to('sv08-recovery.target')
     mask_recovery_units(units)
     write(units/'systemd-tmpfiles-setup.service.d/recovery.conf','[Service]\nExecStart=\nExecStart=systemd-tmpfiles --create --remove --boot --prefix=/run --prefix=/tmp --prefix=/var/log --prefix=/var/cache --prefix=/var/lib/systemd --prefix=/var/lib/dbus\n')

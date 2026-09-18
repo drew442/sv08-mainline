@@ -1,6 +1,7 @@
 [Unit]
 Description=Prepare reviewed recovery export media
-After=systemd-udev-settle.service
+Requires=sv08-recovery-private-mounts.service
+After=systemd-udev-settle.service sv08-recovery-private-mounts.service
 Before=sv08-recovery-display.service
 ConditionPathExists=/run/sv08/recovery-verified
 ConditionPathExists=/etc/sv08/recovery-media-policy.json
