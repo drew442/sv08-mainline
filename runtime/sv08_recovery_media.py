@@ -224,7 +224,160 @@ class Kernel:
                     sectors=int((node / 'size').read_text()),
                     readonly=flag(node / 'ro'), disk_readonly=flag(disk / 'ro'),
                     removable=flag(disk / 'removable'),
-                    filesystem_uuid=filesystem['UUID'])
+                    filesystem_uuid=filesystem['UUID'], filesystem=filesystem['TYPE'],
+                    partuuid=filesystem.get('PART_ENTRY_UUID', ''))
+
+    def _probe(self, node):
+        result = subprocess.run(['/usr/sbin/blkid', '-p', '-o', 'export', str(node)],
+                                check=False, capture_output=True, text=True, timeout=5)
+        if result.returncode not in (0, 2):
+            raise ValueError('Block identity probe failed: '+str(node))
+        return dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
+
+    def _flag(self, path):
+        value = path.read_text().strip()
+        require(value in ('0', '1'), 'Unknown kernel block property: '+path.name)
+        return value == '1'
+
+    def _identity(self, sysfs):
+        require(sysfs.is_relative_to('/sys/devices'), 'Unresolved block topology')
+        topology_value = {}
+        for topology in ('holders', 'slaves'):
+            directory = sysfs / topology
+            topology_value[topology] = (sorted(item.name for item in directory.iterdir())
+                                        if directory.exists() else [])
+            require(not topology_value[topology],
+                    'Block device has an unexpected '+topology[:-1])
+        device = (sysfs / 'dev').read_text().strip()
+        uevent = dict(line.split('=', 1) for line in (sysfs / 'uevent').read_text().splitlines())
+        name = uevent['DEVNAME']
+        require(re.fullmatch(r'[A-Za-z0-9_-]+', name) is not None, 'Unsupported block device name')
+        path = Path('/dev') / name
+        info = os.stat(path, follow_symlinks=False)
+        require(stat.S_ISBLK(info.st_mode) and
+                f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' == device,
+                'Block device node identity changed')
+        probe = self._probe(path)
+        partition = int((sysfs / 'partition').read_text()) if (sysfs / 'partition').exists() else 0
+        disk = sysfs.parent if partition else sysfs
+        sequence = int((disk / 'diskseq').read_text())
+        require(sequence > 0, 'Kernel disk sequence is unavailable')
+        return dict(node=str(path), device=device, sysfs=str(sysfs),
+                    sysfs_inode=sysfs.stat().st_ino,
+                    disk=str(disk), disk_device=(disk / 'dev').read_text().strip(),
+                    diskseq=sequence, partition=partition,
+                    start=int((sysfs / 'start').read_text()) if partition else 0,
+                    sectors=int((sysfs / 'size').read_text()), readonly=self._flag(sysfs / 'ro'),
+                    disk_readonly=self._flag(disk / 'ro'), removable=self._flag(disk / 'removable'),
+                    filesystem_uuid=probe.get('UUID', ''), filesystem=probe.get('TYPE', ''),
+                    partuuid=probe.get('PART_ENTRY_UUID', ''), **topology_value)
+
+    def inventory(self):
+        result = []
+        links = list(Path('/sys/class/block').iterdir())
+        for link in sorted(links):
+            disk = link.resolve(strict=True)
+            if (disk / 'partition').exists() or disk.name.startswith(('loop', 'ram', 'zram')):
+                continue
+            require(not list((disk / 'slaves').iterdir()) and not list((disk / 'holders').iterdir()),
+                    'Unsupported active or stacked block medium')
+            path_text = str(disk)
+            if '/usb' in path_text:
+                transport = 'usb-scsi'
+            elif '/target' in path_text:
+                transport = 'scsi'
+            elif '/virtio' in path_text:
+                transport = 'virtio'
+            elif '/mmc' in path_text:
+                transport = 'mmc'
+            else:
+                raise ValueError('Unsupported block transport: '+disk.name)
+            stable = {}
+            for name in ('wwid', 'device/wwid', 'device/cid', 'device/serial', 'serial'):
+                item = disk / name
+                if item.is_file():
+                    value = item.read_text().strip()
+                    if value:
+                        stable[name] = value
+            require(stable, 'Stable medium identity is unavailable: '+disk.name)
+            children = sorted((link.resolve() for link in links
+                               if (link.resolve().parent == disk and
+                                   (link.resolve() / 'partition').exists())),
+                              key=lambda child: int((child / 'partition').read_text()))
+            require(len(children) <= 16, 'Recovery medium has too many partitions')
+            whole = self._identity(disk)
+            result.append(dict(**whole, name=disk.name, stable=stable, transport=transport,
+                               partitions=[self._identity(child) for child in children]))
+        require(1 <= len(result) <= 8, 'Recovery requires a bounded complete media inventory')
+        require(sum(1 + len(disk['partitions']) for disk in result) <= 64,
+                'Recovery media topology is too large')
+        return result
+
+    def active_loops(self):
+        result = []
+        for link in sorted(Path('/sys/class/block').iterdir()):
+            node = link.resolve(strict=True)
+            if not node.name.startswith('loop') or not (node / 'loop/backing_file').is_file():
+                continue
+            require(node.is_relative_to('/sys/devices/virtual/block'),
+                    'Unsupported active loop topology')
+            backing = (node / 'loop/backing_file').read_text().strip()
+            if not backing:
+                continue
+            device = (node/'dev').read_text().strip()
+            uevent = dict(line.split('=', 1) for line in (node/'uevent').read_text().splitlines())
+            name = uevent['DEVNAME']
+            require(re.fullmatch(r'loop[0-9]+', name) is not None,
+                    'Unsupported active loop device name')
+            device_path = Path('/dev')/name
+            device_info = os.stat(device_path, follow_symlinks=False)
+            require(stat.S_ISBLK(device_info.st_mode) and
+                    f'{os.major(device_info.st_rdev)}:{os.minor(device_info.st_rdev)}' == device,
+                    'Active loop device node identity changed')
+            sequence = int((node/'diskseq').read_text())
+            require(sequence > 0, 'Active loop disk sequence is unavailable')
+            info = os.stat(backing, follow_symlinks=False)
+            result.append(dict(node=str(device_path), device=device, sysfs=str(node),
+                               sysfs_inode=node.stat().st_ino,
+                               diskseq=sequence, backing=backing,
+                               backing_identity=[info.st_dev, info.st_ino, info.st_size],
+                               backing_mode=info.st_mode, backing_uid=info.st_uid,
+                               backing_gid=info.st_gid, backing_nlink=info.st_nlink,
+                               readonly=self._flag(node/'ro'),
+                               offset=int((node/'loop/offset').read_text()),
+                               sizelimit=int((node/'loop/sizelimit').read_text()),
+                               sectors=int((node/'size').read_text()),
+                               holders=sorted(item.name for item in (node/'holders').iterdir()),
+                               slaves=sorted(item.name for item in (node/'slaves').iterdir())))
+        return result
+
+
+def reviewed_inventory(observed):
+    """Drop observations that change per boot; retain every trust-relevant field."""
+    result = []
+    for disk in observed:
+        result.append(dict(stable=disk['stable'], sectors=disk['sectors'],
+                           removable=disk['removable'], transport=disk['transport'],
+                           filesystem_uuid=disk['filesystem_uuid'], filesystem=disk['filesystem'],
+                           partitions=[{name: part[name] for name in
+                                       ('partition', 'start', 'sectors', 'filesystem_uuid',
+                                        'filesystem', 'partuuid')}
+                                      for part in disk['partitions']]))
+    return sorted(result, key=lambda value: json.dumps(value['stable'], sort_keys=True))
+
+
+def validate_usr_loop_inventory(loops):
+    require(type(loops) is list and len(loops) == 1,
+            'Exactly one active compressed-userspace loop is required')
+    loop = loops[0]
+    size = loop['backing_identity'][2]
+    require(loop['backing'] == '/usr.squashfs' and
+            stat.S_ISREG(loop['backing_mode']) and loop['backing_uid'] == loop['backing_gid'] == 0 and
+            loop['backing_nlink'] == 1 and loop['readonly'] and loop['offset'] == 0 and
+            loop['sizelimit'] in (0, size) and not loop['holders'] and not loop['slaves'] and
+            size <= loop['sectors'] * 512 < size + 512,
+            'Active compressed-userspace loop identity or extent changed')
+    return loop
 
 
 def durable_identity(block):
@@ -336,7 +489,24 @@ class MediaProvider(ExportAdapter):
                     'Per-boot context differs from immutable source/destination policy')
         super().__init__(Export(self.source, targets, self.admission))
 
+    def complete_inventory(self):
+        if self.policy['format_version'] == 1:
+            return None
+        observed = self.kernel.inventory()
+        require(reviewed_inventory(observed) == self.policy['media'],
+                'Observed media topology differs from immutable reviewed policy')
+        stable = [disk['stable'] for disk in observed]
+        require(all(not same_identity(left, right) for index, left in enumerate(stable)
+                    for right in stable[index+1:]),
+                'Duplicate or aliased stable media identities')
+        loops = self.kernel.active_loops()
+        validate_usr_loop_inventory(loops)
+        return dict(media=observed, active_loops=loops)
+
     def snapshot(self):
+        complete_inventory = self.complete_inventory()
+        active_usr_loop = (complete_inventory['active_loops'][0]
+                           if complete_inventory is not None else None)
         mounts = self.kernel.mounts()
         require(not any(m['optional'] for m in mounts), 'Recovery mounts must be private and unambiguous')
         proc = [m for m in mounts if m['path'] == '/proc']
@@ -346,6 +516,27 @@ class MediaProvider(ExportAdapter):
         require(any(m['path'] == '/sys' and m['filesystem'] == 'sysfs' and m['root'] == '/'
                     for m in mounts), 'Kernel sysfs block topology is unavailable')
         session = self.kernel.session()
+
+        def bind_complete_inventory(block):
+            if complete_inventory is None:
+                return
+            matches = []
+            for disk in complete_inventory['media']:
+                for item in [disk, *disk['partitions']]:
+                    if item['device'] == block['device']:
+                        matches.append((disk, item))
+            require(len(matches) == 1, 'Selected block is absent or ambiguous in complete inventory')
+            disk, item = matches[0]
+            observed = dict(device=item['device'], sysfs=item['sysfs'],
+                            sysfs_inode=item['sysfs_inode'], disk=item['disk'],
+                            disk_device=item['disk_device'], diskseq=item['diskseq'],
+                            stable=disk['stable'], partition=item['partition'], start=item['start'],
+                            sectors=item['sectors'], readonly=item['readonly'],
+                            disk_readonly=item['disk_readonly'], removable=item['removable'],
+                            filesystem_uuid=item['filesystem_uuid'], filesystem=item['filesystem'],
+                            partuuid=item['partuuid'])
+            require(observed == {name:block[name] for name in observed},
+                    'Selected block differs from complete inventory observation')
 
         def selected(path, role):
             match = [m for m in mounts if m['path'] == str(path)]
@@ -369,6 +560,7 @@ class MediaProvider(ExportAdapter):
             require(f'{os.major(info.st_dev)}:{os.minor(info.st_dev)}' == mount['device'] and
                     bool(fs.f_flag & os.ST_RDONLY) == readonly, role+' mount identity/options changed')
             block = self.kernel.block(mount, self.fixture)
+            bind_complete_inventory(block)
             if readonly:
                 require(block['readonly'] and block['disk_readonly'],
                         role+' requires premounted read-only partition AND whole medium')
@@ -433,6 +625,11 @@ class MediaProvider(ExportAdapter):
                     envelope['root_bytes'] == recovery['block']['sectors'] * 512,
                     'Recovery envelope root identity differs from the mounted root')
             compressed = self.compressed_userspace(mounts, recovery, envelope)
+            require(active_usr_loop['device'] == compressed['loop_device'] and
+                    active_usr_loop['sysfs'] == compressed['loop_sysfs'] and
+                    active_usr_loop['sysfs_inode'] == compressed['loop_sysfs_inode'] and
+                    active_usr_loop['backing_identity'] == compressed['backing'],
+                    'Active compressed-userspace loop differs from the /usr mount')
         destinations = {key: selected(value['path'], 'Destination') for key, value in self.exporter.targets.items()}
         if not self.fixture:
             selected_paths = {'/', str(self.source), *(str(v['path']) for v in self.exporter.targets.values())}
@@ -454,6 +651,7 @@ class MediaProvider(ExportAdapter):
                       source=source, destinations=destinations)
         if compressed is not None:
             result['compressed_userspace'] = compressed
+            result['complete_inventory'] = complete_inventory
         return result
 
     def compressed_userspace(self, mounts, recovery, envelope):

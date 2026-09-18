@@ -4,6 +4,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -33,6 +34,14 @@ class FakeKernel:
     def inventory(self):
         self.events.append('inventory')
         return copy.deepcopy(self.value)
+
+    def active_loops(self):
+        self.events.append('loops')
+        return [dict(device='7:0', sysfs='/sys/devices/virtual/block/loop0', sysfs_inode=70,
+                     diskseq=7, backing='/usr.squashfs', backing_identity=[1, 2, 4096],
+                     backing_mode=stat.S_IFREG | 0o644, backing_uid=0, backing_gid=0,
+                     backing_nlink=1, readonly=True, offset=0, sizelimit=0, sectors=8,
+                     holders=[], slaves=[])]
 
     def mounts(self):
         root = self.value[0]
@@ -126,11 +135,11 @@ class RecoveryPrepareTests(unittest.TestCase):
         with patch('sv08_recovery_prepare.emit',
                    side_effect=lambda event, **fields: observed_events.append((event, fields))):
             kernel, result = self.run_preparer()
-        self.assertEqual(kernel.events[0:2], ['inventory', 'mounts'])
-        self.assertEqual(kernel.events[2], ('setro', '8:1'))
-        self.assertEqual(kernel.events[3][1:], ('8:1', '/run/sv08-recovery/source',
+        self.assertEqual(kernel.events[0:3], ['inventory', 'loops', 'mounts'])
+        self.assertEqual(kernel.events[3], ('setro', '8:1'))
+        self.assertEqual(kernel.events[4][1:], ('8:1', '/run/sv08-recovery/source',
                                                'ro,noload,nosuid,nodev,noexec', 'ext4'))
-        self.assertEqual(kernel.events[4][1:], ('8:17', '/run/sv08-recovery/destinations/usb',
+        self.assertEqual(kernel.events[5][1:], ('8:17', '/run/sv08-recovery/destinations/usb',
                                                'rw,nosuid,nodev,noexec,umask=0077', 'vfat'))
         self.assertEqual([event for event, _ in observed_events],
                          ['source-whole-ro', 'source-partition-ro',
@@ -218,7 +227,20 @@ class RecoveryPrepareTests(unittest.TestCase):
         with patch('sv08_recovery_prepare.MediaLease', FakeLease), patch.object(preparer, 'authenticate'):
             with self.assertRaisesRegex(ValueError, 'whole disk aliases protected'):
                 preparer.prepare()
-        self.assertEqual(kernel.events, ['inventory'])
+        self.assertEqual(kernel.events, ['inventory', 'loops'])
+
+    def test_extra_active_usr_loop_refuses_before_mount_or_block_change(self):
+        kernel = FakeKernel(self.inventory)
+        original = kernel.active_loops
+        def extra_loops():
+            loops = original()
+            return loops + [{**loops[0], 'device':'7:1'}]
+        kernel.active_loops = extra_loops
+        preparer = RecoveryPreparer(self.policy, kernel=kernel)
+        with patch('sv08_recovery_prepare.MediaLease', FakeLease), patch.object(preparer, 'authenticate'):
+            with self.assertRaisesRegex(ValueError, 'Exactly one'):
+                preparer.prepare()
+        self.assertEqual(kernel.events, ['inventory', 'loops'])
 
     def test_context_observations_do_not_select_or_authorize_media(self):
         observed = copy.deepcopy(self.inventory)

@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
                                  POLICY, Unavailable, durable_identity, fingerprint, mount_table,
                                  canonical_json, opened, production_adapter, same_identity, strict_envelope_manifest,
-                                 trusted_file)
+                                 reviewed_inventory, trusted_file)
 from sv08_recovery import installed_controller
 from sv08_state import Store
 
@@ -146,6 +146,66 @@ class RecoveryMediaTests(unittest.TestCase):
         aliased_context = {**context, 'policy_sha256':fingerprint(aliased)}
         with self.assertRaisesRegex(ValueError, 'whole disk aliases protected'):
             MediaProvider(aliased, aliased_context)
+
+    def test_v2_complete_inventory_rechecks_unmounted_media_and_active_loops(self):
+        def disk(index, stable, uuid, removable=False):
+            device=f'{index}:0'
+            return dict(name='disk'+str(index), node='/dev/disk'+str(index), device=device,
+                        sysfs='/sys/devices/disk'+str(index), sysfs_inode=100+index,
+                        disk='/sys/devices/disk'+str(index), disk_device=device,
+                        diskseq=200+index, partition=0, start=0, sectors=131072,
+                        readonly=index == 1, disk_readonly=index == 1,
+                        removable=removable, filesystem_uuid=uuid, filesystem='ext4',
+                        partuuid='', holders=[], slaves=[], stable=stable,
+                        transport='usb-scsi' if removable else 'scsi', partitions=[])
+        observed = [disk(1, {'device/wwid':'recovery'}, 'root'),
+                    disk(2, {'device/wwid':'source'}, 'source'),
+                    disk(3, {'device/wwid':'protected'}, 'protected'),
+                    disk(4, {'device/wwid':'usb'}, 'fat', True)]
+        loop = dict(device='7:0', sysfs='/sys/devices/virtual/block/loop0', sysfs_inode=70,
+                    diskseq=9, backing='/usr.squashfs', backing_identity=[1, 2, 4096],
+                    backing_mode=stat.S_IFREG | 0o644, backing_uid=0, backing_gid=0,
+                    backing_nlink=1, readonly=True, offset=0, sizelimit=0, sectors=8,
+                    holders=[], slaves=[])
+        identity = lambda value: dict(stable=value['stable'], partition=0, start=0,
+                                      sectors=value['sectors'], filesystem_uuid=value['filesystem_uuid'])
+        policy = dict(format_version=2, kind='independent-recovery', protocol=PROTOCOL,
+                      writer_model=WRITER_MODEL, envelope_manifest_sha256='2'*64,
+                      recovery=identity(observed[0]), source=identity(observed[1]),
+                      source_path='/data', media=reviewed_inventory(observed),
+                      protected=[dict(role='slot-a', identity=identity(observed[2]))],
+                      destinations={'usb':dict(identity=identity(observed[3]),
+                                      path='/media/usb', label='Reviewed USB')})
+        context = dict(format_version=2, protocol=PROTOCOL, policy_sha256=fingerprint(policy),
+                       source='/data', destinations={'usb':dict(path='/media/usb', label='Reviewed USB')})
+        provider = MediaProvider(policy, context)
+        with patch.object(provider.kernel, 'inventory', return_value=copy.deepcopy(observed)), \
+             patch.object(provider.kernel, 'active_loops', return_value=[copy.deepcopy(loop)]):
+            initial = provider.complete_inventory()
+        self.assertEqual(initial['media'][2]['stable'], {'device/wwid':'protected'})
+        changed = copy.deepcopy(observed); changed[2]['diskseq'] += 1
+        with patch.object(provider.kernel, 'inventory', return_value=changed), \
+             patch.object(provider.kernel, 'active_loops', return_value=[copy.deepcopy(loop)]):
+            self.assertNotEqual(provider.complete_inventory(), initial)
+        for mutation in ('removal', 'replacement', 'insertion'):
+            changed = copy.deepcopy(observed)
+            if mutation == 'removal': changed.pop(2)
+            elif mutation == 'replacement': changed[2]['stable'] = {'device/wwid':'replacement'}
+            else: changed.append(disk(5, {'device/wwid':'unexpected'}, 'extra'))
+            with self.subTest(mutation=mutation), \
+                 patch.object(provider.kernel, 'inventory', return_value=changed), \
+                 patch.object(provider.kernel, 'active_loops', return_value=[copy.deepcopy(loop)]):
+                with self.assertRaisesRegex(ValueError, 'topology'):
+                    provider.complete_inventory()
+        with patch.object(provider.kernel, 'inventory', return_value=copy.deepcopy(observed)), \
+             patch.object(provider.kernel, 'active_loops', return_value=[loop, {**loop, 'device':'7:1'}]):
+            with self.assertRaisesRegex(ValueError, 'Exactly one'):
+                provider.complete_inventory()
+        bad_loop = {**loop, 'sectors':9}
+        with patch.object(provider.kernel, 'inventory', return_value=copy.deepcopy(observed)), \
+             patch.object(provider.kernel, 'active_loops', return_value=[bad_loop]):
+            with self.assertRaisesRegex(ValueError, 'extent'):
+                provider.complete_inventory()
 
     def test_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export(self):
         # The old display-service marker says nothing about the actual root.
