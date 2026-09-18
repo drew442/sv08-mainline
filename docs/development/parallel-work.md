@@ -22,6 +22,23 @@ their acceptance evidence exists; finishing a packet is not finishing a lane.
 
 ## Execution order and shared resources
 
+Execution started 2026-09-18. The recovery feature is claimed under session
+`recovery-composition-20260918` in the dedicated
+`feature/host-recovery-export-composition` worktree. Its implementer owns the
+preparer/provider, staging unit and focused tests identified in the recovery
+packet. The coordinator holds the heavy-build lease for the locked ARM64
+baseline and real guest media-identity capture; no printer access is involved.
+Printer preparation owns commissioning forms and configuration intake only;
+host preparation owns the boot-health intake only. Their completion does not
+change the feature's running status or imply code delivery.
+
+The [commissioning form](../hardware/test-sv08-01-commissioning-session.md),
+[sanitized section inventory](printer-candidate-sections.md),
+[printer intake](printer-configuration-intake.md) and
+[boot-health intake](host-boot-health-intake.md) are the resulting preparation
+artifacts. Boot-health safety/order changes require independent proposal review
+before implementation; trial markers must not be bypassed just to report health.
+
 1. Complete the three independent source-backed packets in parallel. Each must
    name actual paths, existing reusable evidence, smallest next slice and checks.
 2. Assign the implementation lease to the approved recovery export composition.
