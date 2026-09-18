@@ -49,21 +49,25 @@ The smallest safe slice is consequently:
    writer. It must not call the Klipper quiesce socket or stop either printer
    service. `Transaction.reconcile` and `Transaction.confirm` already own the
    state lock and writer, so the injected admission is entered inside those
-   existing critical sections and may only serialize boot coordination. The
-   API shape is a needs-design item; one candidate is:
+   existing state-lock scope, before the writer scope, and may only serialize boot coordination. The
+   selected proposed API (coordinator decision, 2026-09-18) is:
 
    ```text
    Transaction.reconcile(boot, *, admission=boot_admission)
        -> classification
-   Transaction.confirm(boot, health, *, admission=boot_admission)
+   Transaction.confirm(boot, os_health, *, admission=boot_admission)
        -> completed transaction
    ```
 
    The implementation may preserve the current default staging admission for
    callers, but the boot coordinator must pass the non-stopping boot admission
    to both target `reconcile` and `confirm`. The coordinator must never pass a
-   callback stub as production health. The final signature and lock ordering
-   require implementation review before coding.
+   callback stub as production health. Transaction retains the ordering state lock → selected admission → backend
+   writer. The real `os_health` callback runs exactly once inside `confirm`,
+   after identity checks and before mark-good; no precomputed `True` is passed.
+   Health reads must not reacquire these locks. The bounded health window can
+   hold the writer exclusion; its deadline limits that delay. Formal proposal
+   review remains required before coding.
 3. Define `HostHealth(boot) -> True` as OS health only. It must work on a fresh
    image with no `printer.cfg` and no connected MCUs. It checks the boot
    identity, selected slot, installed release/schema, persistent mounts,
@@ -85,7 +89,8 @@ The smallest safe slice is consequently:
    record and 1 MiB retained per failed generation, with retention until the
    next reviewed cleanup or recovery export; these values need implementation
    review and are not existing behavior.
-   On success, call `confirm` under the confirmation lease, verify the backend
+   Pass the real bounded health callback to `confirm` under the confirmation
+   lease; do not evaluate it first and substitute cached success. Verify the backend
    reports the target good and primary, durably clear the pending trial, and
    only then remove `/run/sv08/trial`. The marker must remain if any write or
    verification fails.
@@ -109,9 +114,12 @@ The unit ordering must make the existing Klipper condition evaluate after a
 successful coordinator run: the proposed Klipper unit has
 `Requires=sv08-prepare.service sv08-boot-health.service`,
 `After=sv08-prepare.service sv08-boot-health.service`, and retains
-`ConditionPathExists=!/run/sv08/trial`. A failed or skipped health unit then
-prevents Klipper from starting, while a source boot can pass the coordinator's
-non-trial no-op and start normally. The existing missing-`printer.cfg`
+`ConditionPathExists=!/run/sv08/trial`. Additionally require `ConditionPathExists=/run/sv08/os-health-ready` on
+Klipper. The coordinator writes that volatile boot-local marker only after
+successful validated nontrial reconciliation or durable trial confirmation.
+Do not put skip conditions on the health unit. `Requires=` alone does not turn
+a condition-skipped dependency into failure; the explicit marker closes that
+case. A failed/skipped coordinator cannot release either gate. The existing missing-`printer.cfg`
 condition remains valid. Moonraker is not claimed to be trial-gated; its
 host-only `provider: none` mode may run after prepare for diagnostics, subject
 to its own config condition, without starting Klipper or printer output.
@@ -148,8 +156,9 @@ fallback(boot, transaction_id, reason) -> recorded orderly reboot request
 ```
 
 `run` calls `reconcile` once. `needs-arm` calls `arm` once through normal
-staging admission; `needs-health` evaluates only `os_health`, then calls
-`confirm` through the non-stopping boot admission; `needs-cancel` calls
+staging admission; `needs-health` calls
+`confirm` with the real `os_health` callback through the non-stopping boot
+admission, and `confirm` owns its exactly-once evaluation; `needs-cancel` calls
 `cancel` only from the validated preserved source boot. `idle`, `staged`, and
 `awaiting-reboot` are classifications, not reasons to reboot. No coordinator
 branch directly calls RAUC, U-Boot, `mark_good`, `mark_bad`, or a bootloader
