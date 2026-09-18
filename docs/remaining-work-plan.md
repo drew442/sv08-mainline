@@ -5,6 +5,11 @@ not new hardware authorization or a supported-release claim. Detailed acceptance
 requirements remain in the [host checklist](hardware/host-os-tasks.md),
 [project definition](project.md), and approved feature records.
 
+Execution assignments and shared resource ownership are in the
+[parallel delivery plan](development/parallel-work.md). Use its
+[single human dispatch queue](hardware/coordinated-human-tasks.md) to combine
+physical actions across workstreams without duplicating the detailed checklists.
+
 ## Milestones and priorities
 
 1. **First working printer:** reliable normal host boot, matching host/MCUs,

@@ -38,6 +38,7 @@ Owned files, or read-only scope:
 Allowed commands/environment and fixture directory/ports (for execution):
 Existing results to reuse; unresolved question:
 Completion condition and result format:
+Shared human dependency IDs and offline work that can proceed while waiting:
 ```
 
 For existing approved work, pass its record; do not request product approval again.
@@ -53,6 +54,14 @@ verification. Children return to the coordinator rather than delegating further.
 Reuse an existing research session for related questions; avoid duplicate scans.
 Review a stable revision or explicit diff, not files another worker is changing.
 Stop testing once the relevant checks pass unless new evidence warrants more.
+
+Use the [parallel assignments](../docs/development/parallel-work.md) and
+[coordinated human queue](../docs/hardware/coordinated-human-tasks.md). Children
+send physical dependencies to the coordinator under existing H IDs; they do not
+independently ask the owner for actions. The coordinator combines ready consumers,
+arms capture before power/media reconnection, and records one result with links
+for every applicable consumer. Reuse evidence only while its target and test
+conditions remain valid; retain separate thermal/motion safety gates.
 
 Integration workers require assigned disposable resources. Only one worker owns
 a shared QEMU image, port or build directory at a time. A failed command is not

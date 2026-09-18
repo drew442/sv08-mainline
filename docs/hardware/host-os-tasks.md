@@ -178,6 +178,10 @@ enumeration were re-established on 2026-09-12; see the
 
 ## Human and powered-printer tasks
 
+Dispatch physical actions through the [coordinated human queue](coordinated-human-tasks.md).
+Reuse one applicable observation across all consumers; the entries below retain
+their detailed acceptance criteria and historical evidence.
+
 New feature development is paused by the owner. Existing host hardware-test
 preparation continues. These physical tasks do not block independent authorized
 preparation; the full checklist is a release gate, not a first-boot prerequisite.

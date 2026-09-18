@@ -1,5 +1,9 @@
 # Test printer 01: hands-on recovery and image tasks
 
+Use the [coordinated human queue](coordinated-human-tasks.md) for new physical
+requests. It groups these requirements with host and printer commissioning so
+media moves, captures and inspections are not independently requested by agents.
+
 Updated 2026-09-05 to follow the owner's selected workflow: retain the factory
 eMMC as the host rollback baseline and write the new image to the blank 32 GB
 spare. A full factory disk-image file is optional; it does not block this work.
