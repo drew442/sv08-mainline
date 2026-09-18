@@ -43,9 +43,23 @@ Checkpoint: recovery source commits `265c1ed` and corrective `e0e6dab` are on
 `feature/host-recovery-export-composition`, not merged as a completed delivery.
 Independent component review reproduced 29 focused tests and confirmed fixes for
 whole-disk destination/protected separation and stale assembly provenance.
-The integration agent now owns the exclusive build/VM lease and fresh assembly
-from `e0e6dab`. Full dirty-journal, installed GTK, failure and resource acceptance
-remain open. Human H04/H07 tasks are not requested by this offline checkpoint.
+The integration agent owns the exclusive build/VM lease. Subsequent actual ARM64
+boots exposed composition gaps before export: duplicate binfmt mounts, shared
+mount propagation, and selected systemd kernel API mounts. The `1327ea0` boot
+observed whole-source and partition read-only verification before `ro,noload`
+mounting; preparation then refused shared propagation, published no context, and
+preserved all four media hashes. This is preservation/refusal evidence, not a
+successful export.
+
+Reviewed corrections through `8c56596` mask unused binfmt units, recheck complete
+mounted and unmounted media plus exactly one compressed userspace loop on every
+admission, make propagation private after PID1 startup, and admit only the exact
+measured kernel API mount tuples. Preparation requires the propagation gate;
+display waits for its attempt but can still show diagnostics on failure. The
+implementer reports 34 focused tests passing; independent source review found no
+remaining blocker in these corrections. The branch is pushed but remains
+unmerged pending a fresh build and full installed GTK, failure and resource
+acceptance. Human H04/H07 tasks are not requested by this offline checkpoint.
 
 The [printer interface feature](../features/printer-interface-config/record.json)
 is independently approved with constraints and queued behind the active recovery
