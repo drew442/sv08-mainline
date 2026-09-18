@@ -39,6 +39,20 @@ The [commissioning form](../hardware/test-sv08-01-commissioning-session.md),
 artifacts. Boot-health safety/order changes require independent proposal review
 before implementation; trial markers must not be bypassed just to report health.
 
+Checkpoint: recovery source commits `265c1ed` and corrective `e0e6dab` are on
+`feature/host-recovery-export-composition`, not merged as a completed delivery.
+Independent component review reproduced 29 focused tests and confirmed fixes for
+whole-disk destination/protected separation and stale assembly provenance.
+The integration agent now owns the exclusive build/VM lease and fresh assembly
+from `e0e6dab`. Full dirty-journal, installed GTK, failure and resource acceptance
+remain open. Human H04/H07 tasks are not requested by this offline checkpoint.
+
+The [printer interface feature](../features/printer-interface-config/record.json)
+is independently approved with constraints and queued behind the active recovery
+implementation. Private-overlay validation stays with the coordinator. The host
+boot-health intake records a selected callback/lock contract and explicit
+success marker; it remains preparation pending formal implementation approval.
+
 1. Complete the three independent source-backed packets in parallel. Each must
    name actual paths, existing reusable evidence, smallest next slice and checks.
 2. Assign the implementation lease to the approved recovery export composition.
