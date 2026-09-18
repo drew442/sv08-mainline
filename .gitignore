@@ -17,6 +17,7 @@ __pycache__/
 /.agents/
 /.codex/*
 !/.codex/README.md
+!/.codex/agent-guide.md
 !/.codex/agents/
 /.codex/agents/*
 !/.codex/agents/*.toml

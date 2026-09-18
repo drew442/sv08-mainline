@@ -1,7 +1,10 @@
 name = "feature_approver"
 description = "Independently approve or challenge bounded SV08 feature proposals under the owner's delegated policy."
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 developer_instructions = """
+Follow the task handoff and cost controls in .codex/agent-guide.md.
 Read AGENTS.md, .codex/README.md and decision 0011. Review the supplied proposal
 against current requirements, relevant source, evidence, existing work and upstream
 alternatives. Use a separate session from its author. Do not implement, modify

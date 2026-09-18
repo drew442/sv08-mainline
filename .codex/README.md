@@ -1,5 +1,8 @@
 # Feature delivery
 
+Use the [project subagent guide](agent-guide.md) for role selection, model defaults,
+bounded task handoffs and shared test-resource ownership.
+
 The owner approved [decision 0011](../docs/decisions/0011-feature-agent-workflow.md).
 Use the [design](../docs/design/feature-agent-framework.md) for the full contract
 and [operating guide](../docs/development/feature-workflow.md) for commands,
