@@ -26,6 +26,30 @@ PROVIDER_MANIFEST = Path('/etc/sv08/recovery-image.json')
 ENVELOPE_MANIFEST = Path('/etc/sv08/recovery-envelope.manifest')
 WRITER_MODEL = 'reviewed-recovery-only; all-media-mutators-use-MediaLease'
 
+# systemd v257.13 creates these kernel API mounts before ordinary units. Keep
+# this selected-userspace composition finite: a filesystem type alone never
+# authorizes another path, and generic /sys or /dev ancestry is insufficient.
+KERNEL_API_MOUNTS = {
+    '/sys/kernel/security': ('securityfs', 'securityfs',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+    '/sys/fs/pstore': ('pstore', 'pstore',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+    '/sys/fs/bpf': ('bpf', 'bpf',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('mode=700', 'rw')),
+    '/dev/mqueue': ('mqueue', 'mqueue',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+    '/sys/kernel/tracing': ('tracefs', 'tracefs',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+    '/sys/kernel/debug': ('debugfs', 'debugfs',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+    '/dev/hugepages': ('hugetlbfs', 'hugetlbfs',
+        ('nodev', 'nosuid', 'relatime', 'rw'), ('pagesize=2M', 'rw')),
+    '/sys/fs/fuse/connections': ('fusectl', 'fusectl',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+    '/sys/kernel/config': ('configfs', 'configfs',
+        ('nodev', 'noexec', 'nosuid', 'relatime', 'rw'), ('rw',)),
+}
+
 
 def fingerprint(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
@@ -82,6 +106,22 @@ def mount_table(text):
     require(len({m['id'] for m in result}) == len(result) and
             len({m['path'] for m in result}) == len(result), 'Ambiguous overmounted paths')
     return result
+
+
+def admitted_system_mount(mount, selected_paths):
+    """Admit selected mounts or the exact measured kernel API composition."""
+    if mount['path'] in selected_paths:
+        return True
+    expected = KERNEL_API_MOUNTS.get(mount['path'])
+    if expected is not None:
+        filesystem, source, options, super_options = expected
+        return (mount['root'] == '/' and mount['filesystem'] == filesystem and
+                mount['source'] == source and tuple(mount['options']) == options and
+                tuple(mount['super_options']) == super_options)
+    kernel_filesystems = {'proc', 'sysfs', 'devtmpfs', 'tmpfs', 'devpts', 'cgroup2'}
+    return (mount['filesystem'] in kernel_filesystems and
+            any(Path(mount['path']).is_relative_to(base)
+                for base in ('/proc', '/sys', '/dev', '/run', '/tmp')))
 
 
 class MediaLease:
@@ -635,10 +675,8 @@ class MediaProvider(ExportAdapter):
             selected_paths = {'/', str(self.source), *(str(v['path']) for v in self.exporter.targets.values())}
             if compressed is not None:
                 selected_paths.add('/usr')
-            kernel_filesystems = {'proc', 'sysfs', 'devtmpfs', 'tmpfs', 'devpts', 'cgroup2'}
-            require(all(m['path'] in selected_paths or (m['filesystem'] in kernel_filesystems and
-                        any(Path(m['path']).is_relative_to(base) for base in ('/proc', '/sys', '/dev', '/run', '/tmp')))
-                        for m in mounts), 'Unexpected recovery system mount; independent userspace is unverified')
+            require(all(admitted_system_mount(m, selected_paths) for m in mounts),
+                    'Unexpected recovery system mount; independent userspace is unverified')
         protected = {recovery['block']['disk'], source['block']['disk']}
         require(len({d['block']['disk'] for d in destinations.values()}) == len(destinations),
                 'Destination aliases another destination medium')

@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
-                                 POLICY, Unavailable, durable_identity, fingerprint, mount_table,
+                                 POLICY, Unavailable, admitted_system_mount, durable_identity, fingerprint, mount_table,
                                  canonical_json, opened, production_adapter, same_identity, strict_envelope_manifest,
                                  reviewed_inventory, trusted_file)
 from sv08_recovery import installed_controller
@@ -38,6 +38,31 @@ class RecoveryMediaTests(unittest.TestCase):
         self.assertIn('ro', mounts[0]['options'])
         self.assertIn('rw', mounts[0]['super_options'])
         self.assertNotIn('ro', mounts[0]['super_options'])
+
+    def test_only_exact_selected_kernel_api_mounts_are_admitted(self):
+        text = '''
+34 27 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime - securityfs securityfs rw
+37 27 0:31 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime - pstore pstore rw
+38 27 0:32 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime - bpf bpf rw,mode=700
+39 28 0:23 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw
+41 27 0:13 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime - tracefs tracefs rw
+42 27 0:8 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime - debugfs debugfs rw
+40 28 0:35 / /dev/hugepages rw,nosuid,nodev,relatime - hugetlbfs hugetlbfs rw,pagesize=2M
+45 27 0:37 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime - fusectl fusectl rw
+46 27 0:38 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime - configfs configfs rw
+'''.strip()
+        mounts = mount_table(text)
+        self.assertTrue(all(admitted_system_mount(mount, set()) for mount in mounts))
+        for mount in mounts:
+            mutations = {
+                'path': '/sys/kernel/not-reviewed', 'root': '/subtree',
+                'filesystem': 'sysfs', 'source': 'unreviewed',
+                'options': mount['options'][1:], 'super_options': ['ro'],
+            }
+            for field, value in mutations.items():
+                changed = {**mount, field:value}
+                with self.subTest(path=mount['path'], field=field):
+                    self.assertFalse(admitted_system_mount(changed, set()))
 
     def test_ambiguous_mounts_and_nonblock_topology_refused(self):
         line = '41 30 8:1 / /data ro - ext4 /dev/sda1 ro\n'
