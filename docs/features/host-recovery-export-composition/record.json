@@ -120,10 +120,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "recovery_implementer",
+        "run": "9d6289caf84a473cb6bff5f5eeb7d472",
+        "session": "recovery-composition-20260918"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Compose trusted recovery media preparation and independent GTK export",
       "verification": null
     }
