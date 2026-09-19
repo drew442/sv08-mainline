@@ -13,12 +13,24 @@ m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 class RecoveryImageTests(unittest.TestCase):
     def test_recovery_stages_post_pid1_private_mount_gate(self):
         with tempfile.TemporaryDirectory() as directory:
-            units=Path(directory)
+            root=Path(directory);units=root/'etc/systemd/system';units.mkdir(parents=True)
             m.stage_recovery_units(units)
             private=(units/'sv08-recovery-private-mounts.service').read_text()
             prepare=(units/'sv08-recovery-prepare.service').read_text()
             display=(units/'sv08-recovery-display.service.d/independent.conf').read_text()
             target=(units/'sv08-recovery.target').read_text()
+            udev=(units/'systemd-udevd.service.d/recovery-namespace.conf').read_text()
+            logind=(units/'systemd-logind.service.d/recovery-namespace.conf').read_text()
+            runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
+            for name in ('sv08_recovery_media.py', 'sv08_recovery_prepare.py'):
+                (runtime/name).write_text(name)
+            bound=m.installed_provider_inputs(root)
+            destination_hashes = {
+                'configs/host-os/recovery-systemd-udevd.conf':
+                    m.sha(units/'systemd-udevd.service.d/recovery-namespace.conf'),
+                'configs/host-os/recovery-systemd-logind.conf':
+                    m.sha(units/'systemd-logind.service.d/recovery-namespace.conf'),
+            }
         self.assertEqual(private.count('ExecStart=/bin/mount --make-rprivate /'),1)
         self.assertIn('After=sysinit.target basic.target',private)
         self.assertIn('Before=sv08-recovery-prepare.service sv08-recovery-display.service',
@@ -36,6 +48,16 @@ class RecoveryImageTests(unittest.TestCase):
         self.assertIn('After=sysinit.target basic.target sv08-recovery-private-mounts.service ',
                       target)
         self.assertNotIn('Requires=sv08-recovery-private-mounts.service',target)
+        self.assertEqual(udev,'[Service]\nPrivateMounts=no\n')
+        self.assertEqual(logind,('[Service]\nPrivateMounts=no\nPrivateTmp=no\n'
+                                 'ProtectSystem=no\nProtectHome=no\n'
+                                 'ProtectKernelModules=no\nProtectKernelLogs=no\n'
+                                 'ProtectControlGroups=no\nReadWritePaths=\n'))
+        current=m.integration_inputs()
+        for source, digest in destination_hashes.items():
+            self.assertEqual(current[source],m.sha(m.REPO/source))
+            self.assertEqual(current[source],digest)
+            self.assertEqual(bound[source],digest)
 
     def test_recovery_masks_unused_binfmt_service_and_automount(self):
         with tempfile.TemporaryDirectory() as directory:

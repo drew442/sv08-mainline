@@ -125,7 +125,7 @@ def run(args, **kw):
 
 
 def integration_inputs():
-    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
+    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-systemd-udevd.conf',REPO/'configs/host-os/recovery-systemd-logind.conf',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
     paths.append(REPO/'configs/host-os/recovery-board-root')
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
@@ -170,6 +170,10 @@ def installed_provider_inputs(root):
             root/'etc/systemd/system/sv08-recovery-prepare.service',
         'configs/host-os/sv08-recovery-private-mounts.service':
             root/'etc/systemd/system/sv08-recovery-private-mounts.service',
+        'configs/host-os/recovery-systemd-udevd.conf':
+            root/'etc/systemd/system/systemd-udevd.service.d/recovery-namespace.conf',
+        'configs/host-os/recovery-systemd-logind.conf':
+            root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
     }
     if not all(path.is_file() for path in paths.values()):
         raise ValueError('Installed recovery provider input is missing')
@@ -187,6 +191,11 @@ def stage_recovery_units(units):
     for name in ('sv08-recovery-private-mounts.service',
                  'sv08-recovery-prepare.service'):
         shutil.copyfile(REPO/'configs/host-os'/name, units/name)
+    for unit, source in (('systemd-udevd.service', 'recovery-systemd-udevd.conf'),
+                         ('systemd-logind.service', 'recovery-systemd-logind.conf')):
+        dropin = units/(unit+'.d')/'recovery-namespace.conf'
+        dropin.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(REPO/'configs/host-os'/source, dropin)
     write(units/'sv08-recovery-display.service.d/independent.conf','[Unit]\nWants=systemd-udev-settle.service sv08-recovery-private-mounts.service\nAfter=sv08-recovery-private-mounts.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n')
     write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-private-mounts.service sv08-recovery-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-private-mounts.service sv08-recovery-prepare.service\nAllowIsolate=yes\n')
     write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
