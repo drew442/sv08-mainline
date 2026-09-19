@@ -16,7 +16,7 @@ from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
                                  POLICY, Unavailable, admitted_system_mount, durable_identity, fingerprint, mount_table,
                                  canonical_json, opened, production_adapter, same_identity, strict_envelope_manifest,
                                  reviewed_inventory, trusted_file)
-from sv08_recovery import installed_controller
+from sv08_recovery import RecoveryController, installed_controller
 from sv08_state import Store
 
 
@@ -420,3 +420,50 @@ class RecoveryMediaTests(unittest.TestCase):
             self.assertIn('Untrusted', status['capabilities']['recovery.export']['reason'])
             self.assertTrue(status['capabilities']['recovery.check']['available'])
             self.assertFalse(root.exists())
+
+    def test_installed_controller_refresh_retries_trust_and_uses_configured_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);fallback=root/'fallback';source=root/'configured-source'
+            registry=source/'sv08';registry.mkdir(parents=True)
+            (registry/'state.json').write_text('distinct damaged configured registry')
+            provider=MediaProvider.__new__(MediaProvider);provider.source=source
+            provider.capability=lambda action, view:(action == 'recovery.export',
+                '' if action == 'recovery.export' else 'Unavailable')
+            provider.images=lambda:[]
+            provider.destinations=lambda:[{'id':'usb','label':'Reviewed USB'}]
+            stores=[]
+            def configured_store(path):
+                selected=fallback if str(path) == '/data/sv08' else Path(path)
+                stores.append(selected)
+                return Store(selected)
+            with patch('sv08_recovery_media.production_adapter',
+                       side_effect=[Unavailable('Another recovery media operation owns admission'),
+                                    provider]) as factory, \
+                 patch('sv08_state.Store', side_effect=configured_store):
+                controller=installed_controller()
+                initial=controller.status()
+                refreshed=controller.status()
+            self.assertEqual(factory.call_count,2)
+            self.assertFalse(initial['capabilities']['recovery.export']['available'])
+            self.assertIn('Another recovery media operation',
+                          initial['capabilities']['recovery.export']['reason'])
+            self.assertTrue(refreshed['capabilities']['recovery.export']['available'])
+            self.assertEqual(refreshed['destinations'],[{'id':'usb','label':'Reviewed USB'}])
+            self.assertEqual(controller.store.root,registry)
+            self.assertEqual(stores,[fallback,registry])
+            self.assertIn('damaged',refreshed['diagnostic'])
+            self.assertEqual((registry/'state.json').read_text(),
+                             'distinct damaged configured registry')
+            self.assertFalse(fallback.exists())
+
+    def test_injected_recovery_adapter_is_stable_across_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            adapter=Unavailable('Injected fixture diagnostic')
+            controller=RecoveryController(Store(Path(directory)/'missing'),adapter)
+            with patch('sv08_recovery_media.production_adapter',
+                       side_effect=AssertionError('Injected adapters must not refresh')):
+                first=controller.status();second=controller.status()
+            self.assertIs(controller.adapter,adapter)
+            self.assertEqual(first['capabilities'],second['capabilities'])
+            self.assertIn('Injected fixture',
+                          second['capabilities']['recovery.export']['reason'])
