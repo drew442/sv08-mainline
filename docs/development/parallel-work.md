@@ -61,6 +61,17 @@ remaining blocker in these corrections. The branch is pushed but remains
 unmerged pending a fresh build and full installed GTK, failure and resource
 acceptance. Human H04/H07 tasks are not requested by this offline checkpoint.
 
+The subsequent `8c56596` boot reached process-namespace admission and refused
+the selected udev service's private mount namespace. A separate diagnostic boot
+then identified logind as the only additional userspace namespace producer after
+Xorg started. Recovery-only overrides proved all 15 early and 24 late observed
+userspace tasks shared PID 1's mount and PID namespaces, including the complete
+accessibility stack. The ordinary installed preparer completed and export became
+available with the damaged registry left untouched. This instrumented result is
+diagnosis, not final acceptance. Independently reviewed and pushed commit
+`10d61fb` stages and hash-binds exactly those two service overrides; fresh ordinary
+image acceptance is in progress. No process exemption was added.
+
 The [printer interface feature](../features/printer-interface-config/record.json)
 is independently approved with constraints and queued behind the active recovery
 implementation. Private-overlay validation stays with the coordinator. The [host boot-health feature](../features/host-boot-health-composition/record.json)
