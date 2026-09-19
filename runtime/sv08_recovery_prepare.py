@@ -42,8 +42,10 @@ class PreparationKernel(Kernel):
                 'Source partition did not become read-only')
         observer('source-partition-ro', device=identity['device'], readonly=True)
 
-    def mount(self, identity, path, options, filesystem):
+    def create_mountpoint(self, path):
         path.mkdir(parents=True, exist_ok=False)
+
+    def mount(self, identity, path, options, filesystem):
         subprocess.run(['/bin/mount', '-t', filesystem, '-o', options, identity['node'], str(path)],
                        check=True, timeout=15)
 
@@ -121,21 +123,25 @@ class RecoveryPreparer:
                 'Recovery preparation runtime must be root-owned and private')
         temporary = parent / ('.'+self.context.name+'.new')
         payload = (json.dumps(value, sort_keys=True, separators=(',', ':'))+'\n').encode()
+        temporary_created = False
         try:
             fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            temporary_created = True
             try:
                 os.write(fd, payload)
                 os.fsync(fd)
             finally:
                 os.close(fd)
             os.replace(temporary, self.context)
+            temporary_created = False
             directory = os.open(parent, os.O_RDONLY | os.O_DIRECTORY)
             try:
                 os.fsync(directory)
             finally:
                 os.close(directory)
         except BaseException:
-            temporary.unlink(missing_ok=True)
+            if temporary_created:
+                temporary.unlink(missing_ok=True)
             raise
 
     def prepare(self, lease=None):
@@ -201,6 +207,7 @@ class RecoveryPreparer:
                 self.kernel.set_readonly(source, emit)
                 source_path = Path(self.policy['source_path'])
                 require(str(source_path) == '/run/sv08-recovery/source', 'Unreviewed source mount path')
+                self.kernel.create_mountpoint(source_path)
                 created.append(source_path)
                 source_options = 'ro,noload,nosuid,nodev,noexec'
                 emit('source-mount-begin', device=source['device'], path=str(source_path),
@@ -214,6 +221,7 @@ class RecoveryPreparer:
                     path = Path(spec['path'])
                     require(str(path) == '/run/sv08-recovery/destinations/'+key,
                             'Unreviewed destination mount path')
+                    self.kernel.create_mountpoint(path)
                     created.append(path)
                     self.kernel.mount(identity, path, 'rw,nosuid,nodev,noexec,umask=0077', 'vfat')
                     mounted.append(path)

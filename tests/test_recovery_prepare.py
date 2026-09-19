@@ -53,6 +53,9 @@ class FakeKernel:
         observer('source-whole-ro', device=identity['disk_device'], readonly=True)
         observer('source-partition-ro', device=identity['device'], readonly=True)
 
+    def create_mountpoint(self, path):
+        pass
+
     def mount(self, identity, path, options, filesystem):
         self.events.append(('mount', identity['device'], str(path), options, filesystem))
 
@@ -209,6 +212,53 @@ class RecoveryPrepareTests(unittest.TestCase):
             with patch('sv08_recovery_prepare.MediaLease', FakeLease), patch.object(preparer, 'authenticate'):
                 with self.assertRaisesRegex(OSError, 'destination failure'): preparer.prepare()
             self.assertIn(('unmount', '/run/sv08-recovery/source'), kernel.events)
+            self.assertFalse(context.exists())
+
+    def test_preexisting_mountpoints_are_never_cleanup_owned(self):
+        class OwnershipKernel(FakeKernel):
+            def __init__(self, inventory, preexisting):
+                super().__init__(inventory)
+                self.preexisting=set(preexisting);self.owned=set()
+            def create_mountpoint(self, path):
+                value=str(path)
+                if value in self.preexisting:
+                    raise FileExistsError(value)
+                self.owned.add(value)
+        source='/run/sv08-recovery/source'
+        destination='/run/sv08-recovery/destinations/usb'
+        for existing, removed_expected in ((source, []), (destination, [source])):
+            with self.subTest(existing=existing), tempfile.TemporaryDirectory() as directory:
+                kernel=OwnershipKernel(self.inventory,{existing})
+                context=Path(directory)/'run/media-context.json';context.parent.mkdir(mode=0o700)
+                preparer=RecoveryPreparer(self.policy,kernel=kernel,context=context)
+                removed=[]
+                def remove(path):
+                    value=str(path);removed.append(value);kernel.owned.remove(value)
+                with patch('sv08_recovery_prepare.MediaLease',FakeLease), \
+                     patch.object(preparer,'authenticate'), \
+                     patch('sv08_recovery_prepare.Path.rmdir',remove):
+                    with self.assertRaises(FileExistsError):preparer.prepare()
+                self.assertEqual(removed,removed_expected)
+                self.assertIn(existing,kernel.preexisting)
+                self.assertNotIn(existing,removed)
+                self.assertEqual(kernel.owned,set())
+                self.assertFalse(context.exists())
+
+    def test_preexisting_publication_temporary_is_preserved(self):
+        with tempfile.TemporaryDirectory() as directory:
+            context=Path(directory)/'run/media-context.json';context.parent.mkdir(mode=0o700)
+            temporary=context.parent/('.'+context.name+'.new')
+            temporary.write_text('preexisting unowned temporary')
+            preparer=RecoveryPreparer(self.policy,kernel=FakeKernel(self.inventory),context=context)
+            original_stat=Path.stat
+            def trusted_runtime(path,*args,**kwargs):
+                value=original_stat(path,*args,**kwargs)
+                if path == context.parent:
+                    return SimpleNamespace(st_uid=0,st_mode=value.st_mode)
+                return value
+            with patch('sv08_recovery_prepare.Path.stat',trusted_runtime):
+                with self.assertRaises(FileExistsError):preparer._publish({'value':'new'})
+            self.assertEqual(temporary.read_text(),'preexisting unowned temporary')
             self.assertFalse(context.exists())
 
     def test_destination_partition_cannot_share_a_protected_whole_disk(self):
