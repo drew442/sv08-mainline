@@ -25,6 +25,7 @@ LOCK = Path('/run/sv08-recovery/media.lock')
 PROVIDER_MANIFEST = Path('/etc/sv08/recovery-image.json')
 ENVELOPE_MANIFEST = Path('/etc/sv08/recovery-envelope.manifest')
 WRITER_MODEL = 'reviewed-recovery-only; all-media-mutators-use-MediaLease'
+PROC_DISAPPEARED = (FileNotFoundError, ProcessLookupError)
 
 # systemd v257.13 creates these kernel API mounts before ordinary units. Keep
 # this selected-userspace composition finite: a filesystem type alone never
@@ -174,6 +175,85 @@ class Kernel:
     def mounts(self):
         return mount_table(Path('/proc/self/mountinfo').read_text())
 
+    @staticmethod
+    def _pinned_stat(directory_fd):
+        flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW
+        fd = os.open('stat', flags, dir_fd=directory_fd)
+        try:
+            data = os.read(fd, 4097)
+            require(len(data) <= 4096 and os.read(fd, 1) == b'',
+                    'Malformed process stat information')
+        finally:
+            os.close(fd)
+        try:
+            fields = data.decode().rsplit(')', 1)[1].split()
+            require(len(fields) > 6 and fields[0] in
+                    ('R', 'S', 'D', 'Z', 'T', 't', 'X', 'x', 'K', 'W', 'P', 'I'),
+                    'Malformed process stat information')
+            int(fields[6])
+        except (UnicodeDecodeError, IndexError, ValueError):
+            raise ValueError('Malformed process stat information') from None
+        return fields
+
+    def _pinned_terminated(self, directory_fd):
+        try:
+            return self._pinned_stat(directory_fd)[0] in ('Z', 'X', 'x')
+        except PROC_DISAPPEARED:
+            return True
+
+    def _pinned_process(self, process_fd, namespace, pid_namespace):
+        directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW
+        try:
+            task_fd = os.open('task', directory_flags, dir_fd=process_fd)
+        except PROC_DISAPPEARED:
+            if self._pinned_terminated(process_fd):
+                return
+            raise
+        try:
+            try:tasks = os.listdir(task_fd)
+            except PROC_DISAPPEARED:
+                if self._pinned_terminated(process_fd):
+                    return
+                raise
+            for name in tasks:
+                if not name.isdecimal():
+                    raise ValueError('Invalid process task identity')
+                try:thread_fd = os.open(name, directory_flags, dir_fd=task_fd)
+                except PROC_DISAPPEARED:continue
+                try:
+                    try:
+                        # PF_KTHREAD (include/linux/sched.h): kernel tasks have
+                        # no userspace mount namespace.
+                        fields = self._pinned_stat(thread_fd)
+                        if fields[0] in ('Z', 'X', 'x') or int(fields[6]) & 0x00200000:
+                            continue
+                        mount_namespace = os.readlink('ns/mnt', dir_fd=thread_fd)
+                        task_pid_namespace = os.readlink('ns/pid', dir_fd=thread_fd)
+                    except PROC_DISAPPEARED:
+                        if self._pinned_terminated(thread_fd):
+                            continue
+                        raise
+                    require(mount_namespace == namespace and task_pid_namespace == pid_namespace,
+                            'Unexpected process namespace; source-writer assumptions unverified')
+                finally:
+                    os.close(thread_fd)
+        finally:
+            os.close(task_fd)
+
+    def _namespace_census(self, namespace, pid_namespace, proc='/proc'):
+        directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW
+        proc_fd = os.open(proc, directory_flags)
+        try:
+            for name in os.listdir(proc_fd):
+                if not name.isdecimal():
+                    continue
+                try:process_fd = os.open(name, directory_flags, dir_fd=proc_fd)
+                except PROC_DISAPPEARED:continue
+                try:self._pinned_process(process_fd, namespace, pid_namespace)
+                finally:os.close(process_fd)
+        finally:
+            os.close(proc_fd)
+
     def session(self):
         require(os.geteuid() == 0, 'Recovery admission requires root')
         namespace = os.readlink('/proc/self/ns/mnt')
@@ -188,18 +268,7 @@ class Kernel:
         # No hidepid/proc subset, unreadable tasks or other mount namespaces are
         # supported. Block RO below prevents ordinary filesystem/raw writers;
         # reviewed userspace must prohibit uncoordinated RO-flag/namespace changes.
-        for process in Path('/proc').iterdir():
-            if process.name.isdecimal():
-                for task in (process / 'task').iterdir():
-                    # PF_KTHREAD (include/linux/sched.h): kernel tasks have no
-                    # userspace mount namespace. Do not excuse missing userspace
-                    # task information or infer this from a display name.
-                    fields = (task / 'stat').read_text().rsplit(')', 1)[1].split()
-                    if int(fields[6]) & 0x00200000:
-                        continue
-                    require(os.readlink(task / 'ns/mnt') == namespace and
-                            os.readlink(task / 'ns/pid') == pid_namespace,
-                            'Unexpected process namespace; source-writer assumptions unverified')
+        self._namespace_census(namespace, pid_namespace)
         return dict(boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
                     mount_namespace=namespace, pid_namespace=pid_namespace,
                     process_root=[root.st_dev, root.st_ino])

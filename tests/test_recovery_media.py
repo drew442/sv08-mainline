@@ -1,4 +1,5 @@
 import copy
+import errno
 import json
 import hashlib
 import os
@@ -70,6 +71,69 @@ class RecoveryMediaTests(unittest.TestCase):
             mount_table(line+line.replace('41 ', '42 ', 1))
         with self.assertRaisesRegex(ValueError, 'non-block'):
             Kernel().block({'device':'0:35'})
+
+    @staticmethod
+    def proc_fixture(root, namespace='mnt:[1]', pid_namespace='pid:[1]'):
+        task=root/'101/task/101';(task/'ns').mkdir(parents=True)
+        (task/'stat').write_text('101 (fixture) S 1 1 1 0 -1 0\n')
+        (task/'ns/mnt').symlink_to(namespace)
+        (task/'ns/pid').symlink_to(pid_namespace)
+        return root/'101',task
+
+    def test_namespace_census_skips_only_pinned_disappearing_entries(self):
+        original_open=os.open
+        for stage, error in (('process', FileNotFoundError()),
+                             ('thread', ProcessLookupError()),
+                             ('stat', FileNotFoundError())):
+            with self.subTest(stage=stage), tempfile.TemporaryDirectory() as directory:
+                proc=Path(directory);self.proc_fixture(proc);numeric_opens=0
+                def opening(path, flags, mode=0o777, *, dir_fd=None):
+                    nonlocal numeric_opens
+                    if str(path) == '101':
+                        numeric_opens += 1
+                        if ((stage == 'process' and numeric_opens == 1) or
+                                (stage == 'thread' and numeric_opens == 2)):
+                            raise error
+                    if stage == 'stat' and path == 'stat':
+                        raise error
+                    return original_open(path, flags, mode, dir_fd=dir_fd)
+                with patch('sv08_recovery_media.os.open', side_effect=opening):
+                    Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+
+    def test_pinned_process_cannot_redirect_to_reused_pid_path(self):
+        original_open=os.open
+        with tempfile.TemporaryDirectory() as directory:
+            proc=Path(directory);process,_=self.proc_fixture(proc);replaced=False
+            def opening(path, flags, mode=0o777, *, dir_fd=None):
+                nonlocal replaced
+                fd=original_open(path, flags, mode, dir_fd=dir_fd)
+                if path == '101' and not replaced:
+                    replaced=True
+                    process.rename(proc/'old')
+                    self.proc_fixture(proc, namespace='mnt:[different]')
+                return fd
+            with patch('sv08_recovery_media.os.open', side_effect=opening):
+                Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+            with self.assertRaisesRegex(ValueError, 'Unexpected process namespace'):
+                Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+
+    def test_namespace_census_refuses_live_errors_malformed_stat_and_mismatch(self):
+        original_open=os.open
+        for failure in ('permission', 'io', 'missing-namespace', 'malformed', 'mismatch'):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as directory:
+                proc=Path(directory);_,task=self.proc_fixture(proc)
+                if failure == 'missing-namespace':(task/'ns/mnt').unlink()
+                elif failure == 'malformed':(task/'stat').write_text('malformed\n')
+                elif failure == 'mismatch':
+                    (task/'ns/mnt').unlink();(task/'ns/mnt').symlink_to('mnt:[different]')
+                def opening(path, flags, mode=0o777, *, dir_fd=None):
+                    if path == 'stat' and failure == 'permission':raise PermissionError(errno.EACCES, 'denied')
+                    if path == 'stat' and failure == 'io':raise OSError(errno.EIO, 'io')
+                    return original_open(path, flags, mode, dir_fd=dir_fd)
+                expected = ValueError if failure in ('malformed', 'mismatch') else OSError
+                with patch('sv08_recovery_media.os.open', side_effect=opening), \
+                     self.assertRaises(expected):
+                    Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
 
     def test_identity_matching_supports_disposable_file_identity_lists(self):
         self.assertTrue(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 11, 1024]}))
