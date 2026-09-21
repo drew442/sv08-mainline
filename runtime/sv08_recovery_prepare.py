@@ -64,8 +64,9 @@ class PreparationKernel(Kernel):
             require(stat.S_ISBLK(info.st_mode) and
                     f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' == expected,
                     'Reviewed block identity changed before mutation')
-            require(sysfs.stat().st_ino == identity['sysfs_inode'],
-                    'Reviewed block sysfs identity changed before mutation')
+            if not whole:
+                require(sysfs.stat().st_ino == identity['sysfs_inode'],
+                        'Reviewed block sysfs identity changed before mutation')
             sequence = int((Path(identity['disk']) / 'diskseq').read_text())
             require(sequence == identity['diskseq'], 'Reviewed disk sequence changed before mutation')
         except BaseException:
