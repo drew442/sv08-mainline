@@ -88,12 +88,25 @@ class PreparationKernel(Kernel):
             current = current.parent
         require(current.is_dir() and not current.is_symlink(),
                 'Recovery mountpoint parent is not a directory')
-        for directory in reversed(missing):
-            directory.mkdir(mode=0o700, exist_ok=False)
-            info = directory.stat()
-            require(info.st_uid == 0 and stat.S_IMODE(info.st_mode) == 0o700,
-                    'Recovery mountpoint is not private')
-        return missing
+        created = []
+        try:
+            for directory in reversed(missing):
+                directory.mkdir(mode=0o700, exist_ok=False)
+                created.append(directory)
+                info = directory.stat()
+                require(info.st_uid == 0 and stat.S_IMODE(info.st_mode) == 0o700,
+                        'Recovery mountpoint is not private')
+        except BaseException:
+            for directory in reversed(created):
+                try:
+                    directory.rmdir()
+                except OSError:
+                    pass
+            raise
+        # Return only directories created by this call, in parent-to-leaf
+        # order.  An existing mountpoint is unowned and must never be removed
+        # by the operation's failure cleanup.
+        return created
 
     def mount(self, identity, path, options, filesystem):
         fd = self._open_identity(identity, whole=False)
@@ -288,7 +301,7 @@ class RecoveryPreparer:
                 self.kernel.set_readonly(source, emit)
                 source_path = Path(self.policy['source_path'])
                 require(str(source_path) == '/run/sv08-recovery/source', 'Unreviewed source mount path')
-                created.extend(self.kernel.create_mountpoint(source_path) or [source_path])
+                created.extend(self.kernel.create_mountpoint(source_path) or [])
                 source_options = 'ro,noload,nosuid,nodev,noexec'
                 emit('source-mount-begin', device=source['device'], path=str(source_path),
                      filesystem='ext4', options=source_options)
@@ -301,7 +314,7 @@ class RecoveryPreparer:
                     path = Path(spec['path'])
                     require(str(path) == '/run/sv08-recovery/destinations/'+key,
                             'Unreviewed destination mount path')
-                    created.extend(self.kernel.create_mountpoint(path) or [path])
+                    created.extend(self.kernel.create_mountpoint(path) or [])
                     self.kernel.mount(identity, path, 'rw,nosuid,nodev,noexec,umask=0077', 'vfat')
                     mounted.append(path)
                     context_targets[key] = dict(path=str(path), label=spec['label'])

@@ -224,6 +224,7 @@ class RecoveryPrepareTests(unittest.TestCase):
                 if value in self.preexisting:
                     raise FileExistsError(value)
                 self.owned.add(value)
+                return [path]
         source='/run/sv08-recovery/source'
         destination='/run/sv08-recovery/destinations/usb'
         for existing, removed_expected in ((source, []), (destination, [source])):
