@@ -111,4 +111,6 @@ offline suite passes 58 tests on the current feature branch. The retained VM
 candidate predates this runtime hash, so it is not evidence for the correction;
 the archive-corruption and operation-owned cleanup-failure journeys remain open
 until a reproducibly rebuilt candidate carries the new `runtime/sv08_export.py`
-hash and both journeys show visible refusal with no new or malformed archive.
+hash (`0f4530bcd0b1286ad1a875b72b37ba9f902b892b1cbda86df06a40e06306f17e`),
+the regression source hash (`f2f1640b720feb413d5e2d266c5360198ec4eb203dced902b6e9a85aeab9ea47`),
+and both journeys show visible refusal with no new or malformed archive.
