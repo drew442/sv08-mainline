@@ -717,10 +717,14 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     # Re-read visible state after the serial report using the
                     # same modality as the journey.  Initial nonblocking lease
                     # contention is valid and must recover through Refresh.
-                    if journey in ("keyboard", "keyboard-mouse"):
+                    if journey == "keyboard":
                         step("keyboard-preflight-refresh",
                              lambda: (client.key("tab"), client.key("tab"),
                                       client.key("tab"), client.key("ret")), 35)
+                    elif journey == "keyboard-mouse":
+                        # Establish the post-report state with the mouse, then
+                        # exercise the mixed keyboard-plus-mouse review path.
+                        step("mouse-preflight-refresh", lambda: client.click(760, 308), 35)
                     elif journey == "touch":
                         step("touch-preflight-refresh", lambda: client.touch(760, 308), 35)
                     else:
