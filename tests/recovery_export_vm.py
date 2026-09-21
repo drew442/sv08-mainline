@@ -417,7 +417,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
     return ["qemu-system-aarch64", "-machine", "virt", "-cpu", "cortex-a53",
         "-accel", "tcg,thread=multi", "-smp", "2", "-m", "768",
         "-kernel", candidate / "vmlinuz", "-initrd", initrd or candidate / "initrd.img",
-        "-append", f"console=tty0 console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell systemd.log_target=console systemd.show_status=yes",
+        "-append", f"console=tty0 console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell=ttyAMA0 systemd.log_target=console systemd.show_status=yes",
         "-drive", f"if=none,id=recovery,format=raw,file={candidate / 'recovery.ext4'},readonly=on",
         "-device", "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
         "-device", "virtio-scsi-pci,id=scsi0", "-device", "qemu-xhci,id=usb0",
@@ -584,7 +584,7 @@ ln -s ../sv08-namespace-late-report.service /run/systemd/system/sv08-recovery.ta
                            build["provider_manifest_sha256"], initrd=packed)
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     serial = (output / "serial.log").open("wb")
-    process = subprocess.Popen([str(x) for x in command], stdin=subprocess.DEVNULL,
+    process = subprocess.Popen([str(x) for x in command], stdin=subprocess.PIPE,
                                stdout=serial, stderr=subprocess.STDOUT)
     client = None
     started = time.monotonic()
@@ -774,6 +774,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                 return
     sampler = threading.Thread(target=sample_memory, daemon=True)
     sampler.start()
+    def serial_command(value):
+        if process.stdin is None:
+            raise RuntimeError("QEMU serial input is unavailable")
+        process.stdin.write(value.encode())
+        process.stdin.flush()
     try:
         while process.poll() is None and time.monotonic() - started < seconds:
             try:
@@ -791,16 +796,13 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                 # then leave an operation-created marker behind and terminate
                 # the preparer.  Its normal rollback must report the failed
                 # rmdir rather than silently deleting an unrelated file.
-                client.key("ctrl", "alt", "f9")
-                time.sleep(2)
-                client.text(
+                serial_command(
                     "while [ ! -e /run/sv08-recovery/destinations/export-usb ]; do sleep 1; done;"
                     " touch /run/sv08-recovery/destinations/export-usb/marker;"
                     " pkill -TERM -f sv08_recovery_prepare.py\n")
                 time.sleep(2)
-                client.key("ctrl", "alt", "f1")
                 cleanup_injected = True
-                actions.append("vt-debug-shell-cleanup-fault")
+                actions.append("serial-debug-shell-cleanup-fault")
             text = (output / "serial.log").read_text(errors="replace")
             if client and "SV08_RECOVERY_BOOT_REPORT " in text:
                 for line in text.splitlines():
@@ -852,46 +854,32 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  "bus": "uas0.0", "removable": "on",
                                  "wwn": "0x5000000000000003"}), 35)
                     elif fault == "archive-corruption":
-                        client.key("ctrl", "alt", "f9")
-                        time.sleep(4)
-                        client.key("ret")
-                        time.sleep(1)
-                        client.text(
+                        serial_command(
                             "touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
                             " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
                             " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && sync && break 2; done; done &\n")
                         time.sleep(3)
-                        client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f1"})
                         time.sleep(5)
-                        actions.append("vt-debug-shell-archive-corruptor")
+                        actions.append("serial-debug-shell-archive-corruptor")
                     elif fault == "lock-contention":
                         # systemd.debug_shell is enabled only on this QEMU
                         # command line.  The lock holder is a real root process
                         # in the ordinary candidate guest, and the UI must
                         # refuse the first apply until the lease is released.
-                        client.key("ctrl", "alt", "f9")
-                        time.sleep(2)
-                        client.text("flock -n /run/sv08-recovery/media.lock sleep 90\n")
-                        time.sleep(2)
-                        client.key("ctrl", "alt", "f1")
+                        serial_command("flock -n /run/sv08-recovery/media.lock sleep 90\n")
                         time.sleep(5)
                         time.sleep(2)
-                        actions.append("vt-debug-shell-lock-holder")
+                        actions.append("serial-debug-shell-lock-holder")
                     if fault == "cleanup-failure":
-                        client.key("ctrl", "alt", "f9")
-                        time.sleep(4)
-                        client.key("ret")
-                        time.sleep(1)
-                        client.text(
+                        serial_command(
                             "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
                             " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
                             " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && rm -f $f && mkdir $f && break 2; done; done &\n")
                         time.sleep(2)
                         time.sleep(3)
-                        client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f1"})
-                        actions.append("vt-debug-shell-partial-cleanup-blocker")
+                        actions.append("serial-debug-shell-partial-cleanup-blocker")
                     if fault in ("archive-corruption", "cleanup-failure"):
                         step("mouse-apply", lambda: (client.click(680, 500),
                                                        client.key("tab"), client.key("tab"),
