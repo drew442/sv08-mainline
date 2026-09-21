@@ -431,7 +431,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
         "-device", "virtio-gpu-pci,id=video0,xres=1024,yres=768",
         "-device", "virtio-multitouch-pci,display=video0", "-device", "usb-kbd",
         "-device", "usb-mouse", "-device", "usb-tablet", "-nic", "none",
-        "-display", "none", "-serial", "stdio", "-qmp", f"unix:{qmp},server=on,wait=off",
+        "-display", "none", "-serial", "mon:stdio", "-qmp", f"unix:{qmp},server=on,wait=off",
         "-no-reboot"]
 
 
