@@ -362,7 +362,9 @@ class QMP:
         """Type a small shell command through the QEMU keyboard device."""
         shifted = {"/": "slash", "-": "minus", "_": ("shift", "minus"), ".": "dot",
                    "[": "bracket_left", "]": "bracket_right", "!": ("shift", "1"),
-                   ";": "semicolon", "&": ("shift", "7")}
+                   ";": "semicolon", "&": ("shift", "7"), "*": ("shift", "8"),
+                   "$": ("shift", "4")}
+        plain = {"=": "equal", ",": "comma"}
         for char in value:
             if char == " ":
                 self.key("spc")
@@ -371,6 +373,8 @@ class QMP:
             elif char in shifted:
                 keys = shifted[char]
                 self.key(*keys) if isinstance(keys, tuple) else self.key(keys)
+            elif char in plain:
+                self.key(plain[char])
             else:
                 self.key(char.lower())
 
@@ -863,17 +867,14 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  "bus": "uas0.0", "removable": "on",
                                  "wwn": "0x5000000000000003"}), 35)
                     elif fault == "archive-corruption":
-                        def corrupt_guest_block():
-                            time.sleep(15)
-                            try:
-                                reply = client.call("human-monitor-command", {"command-line":
-                                    'qemu-io destination "write -P 0 2615296 4096"'})
-                                write(output / "archive-corruption-qmp.txt", str(reply) + "\n")
-                            except (OSError, EOFError, RuntimeError):
-                                pass
-                        corruption_thread = threading.Thread(target=corrupt_guest_block, daemon=True)
-                        corruption_thread.start()
-                        actions.append("qmp-corrupt-destination-during-apply")
+                        client.key("ctrl", "alt", "f9")
+                        time.sleep(2)
+                        client.text(
+                            "while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
+                            " do dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc; break; done; sleep 1; done &\n")
+                        time.sleep(2)
+                        client.key("ctrl", "alt", "f1")
+                        actions.append("vt-debug-shell-archive-corruptor")
                     elif fault == "lock-contention":
                         # systemd.debug_shell is enabled only on this QEMU
                         # command line.  The lock holder is a real root process
@@ -887,14 +888,15 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         time.sleep(2)
                         actions.append("vt-debug-shell-lock-holder")
                     if fault == "cleanup-failure":
-                        def remove_during_apply():
-                            time.sleep(15)
-                            try:
-                                client.call("device_del", {"id": "destination-device"})
-                            except (OSError, EOFError, RuntimeError):
-                                pass
-                        threading.Thread(target=remove_during_apply, daemon=True).start()
-                        actions.append("qmp-remove-destination-during-apply")
+                        client.key("ctrl", "alt", "f9")
+                        time.sleep(2)
+                        client.text(
+                            "while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
+                            " do mount -o remount,ro /run/sv08-recovery/destinations/export-usb; break;"
+                            " done; sleep 1; done &\n")
+                        time.sleep(2)
+                        client.key("ctrl", "alt", "f1")
+                        actions.append("vt-debug-shell-partial-cleanup-blocker")
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":

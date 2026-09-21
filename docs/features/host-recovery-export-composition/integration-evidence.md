@@ -34,10 +34,12 @@ regular-file media fixture.
   command line; a real guest `flock` holder was started before Apply. The UI refused
   export and preserved the prior destination file. The replacement run also retained
   the replacement medium's older file and published no archive; its before/after
-  backing hashes are recorded in `result.json`. The cleanup-failure run removed the
-  destination during the active Apply path, forcing operation-owned partial-output
-  cleanup; it published no archive and preserved the older file. Archive-integrity
-  during publication/readback remains the one missing production-entry journey.
+  backing hashes are recorded in `result.json`. The archive-corruption run used a
+  real guest process to corrupt the operation's private partial file during Apply;
+  readback refused publication, leaving no new archive and preserving the older file.
+  A follow-up cleanup-failure run used a guest remount fault against the same partial
+  path and also published no archive while preserving the older file; the UI result
+  and retained raw-media evidence are recorded for independent review.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
@@ -79,6 +81,8 @@ Retained local evidence directories:
 - `recovery-composition-replace-destination-rerun-1dca3f7`
 - `recovery-composition-lock-contention-rerun-1dca3f7`
 - `recovery-composition-cleanup-failure-publish-rerun-1dca3f7`
+- `recovery-composition-archive-corruption-guest-1dca3f7`
+- `recovery-composition-cleanup-failure-remount-1dca3f7`
 
 The candidate build record SHA256 is
 `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
@@ -98,6 +102,9 @@ The lock-contention rerun result JSON is
 `c83641faca236b816dc0dc8bdaa7ba7a2a0eda35e29b9660227d664ba5234b76`.
 The cleanup-failure publication rerun result JSON is
 `8e5a0f84bcb5dbc0d63f87ca406fb8f68d052e0d84bd0daff93fd11ee49b8cc2`.
+The archive-corruption and remount cleanup runs are
+`33aadd2a385bd3d1a96d519f3b141b2bb7183283ff9e90c0d9cd7395c60285aa` and
+`5a374dbfc9bc352dfa746c1d39cb5722467a74c69cb1a85d26df46be0aeb09ac`.
 
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
