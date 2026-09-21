@@ -764,7 +764,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     step("mouse-review", lambda: client.click(620, 430), 35)
                     if fault == "remove-destination":
                         step("qmp-remove-destination",
-                             lambda: client.call("device_del", {"id": "destination-device"}), 5)
+                             lambda: client.call("device_del", {"id": "destination-device"}), 35)
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
