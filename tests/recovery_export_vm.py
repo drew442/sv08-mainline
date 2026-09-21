@@ -458,22 +458,6 @@ def alter_fat_identity(image):
         stream.flush(); os.fsync(stream.fileno())
 
 
-def corrupt_destination_raw(image, stop):
-    """Continuously corrupt a data-sector range while the guest publishes an archive."""
-    block = b"\x00" * 4096
-    while not stop.wait(.5):
-        try:
-            with image.open("r+b") as stream:
-                stream.seek(DESTINATION_START * 512)
-                payload = stream.read(DESTINATION_SECTORS * 512)
-                marker = payload.find(b"ustar")
-                if marker >= 0:
-                    stream.seek(DESTINATION_START * 512 + max(0, marker - 512))
-                    stream.write(block); stream.flush(); os.fsync(stream.fileno())
-        except OSError:
-            return
-
-
 def namespace_diagnostic(candidate, fixture, output, seconds=120, overrides=False):
     """Instrument /run only to report selected-guest task namespaces.
 
@@ -766,8 +750,6 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         replacement_before = sha(replacement_path)
         if fault == "stale-context":
             alter_fat_identity(replacement_path)
-    corruption_stop = threading.Event()
-    corruption_thread = None
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     before = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
               "protected": sha(fixture / "protected.raw"), "destination": sha(fixture / "destination.raw")}
@@ -953,9 +935,6 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     finally:
         sample_stop.set()
         sampler.join(timeout=2)
-        corruption_stop.set()
-        if corruption_thread is not None:
-            corruption_thread.join(timeout=2)
         peak = max(peak, peak_sample[0])
         if process.poll() is None:
             if client:

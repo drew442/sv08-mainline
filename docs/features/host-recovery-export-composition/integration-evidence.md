@@ -100,3 +100,15 @@ rejected because it reports success while leaving a directory named `*.tar`.
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
 board identity, hardware display/input, and factory-image behavior remain unverified.
+
+## Current source correction pending candidate rebuild
+
+Commit `bf6c98f` records the written partial's device, inode, mode and link count
+and rejects publication when the destination pathname no longer names that exact
+single-link regular file. Its cleanup path leaves a foreign replacement directory
+untouched, and the regression test reproduces the replacement race. The focused
+offline suite passes 58 tests on the current feature branch. The retained VM
+candidate predates this runtime hash, so it is not evidence for the correction;
+the archive-corruption and operation-owned cleanup-failure journeys remain open
+until a reproducibly rebuilt candidate carries the new `runtime/sv08_export.py`
+hash and both journeys show visible refusal with no new or malformed archive.
