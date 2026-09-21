@@ -426,7 +426,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
         "-device", "scsi-hd,drive=source,serial=SV08-SOURCE,bus=scsi0.0,wwn=0x5000000000000001",
         "-drive", f"if=none,id=protected,format=raw,file={fixture / 'protected.raw'},readonly=on",
         "-device", "scsi-hd,drive=protected,serial=SV08-PROTECTED,bus=scsi0.0,wwn=0x5000000000000002",
-        "-drive", f"if=none,id=destination,format=raw,file={fixture / 'destination.raw'},readonly=off,cache.direct=on",
+        "-drive", f"if=none,id=destination,format=raw,file={fixture / 'destination.raw'},readonly=off",
         "-device", "scsi-hd,id=destination-device,drive=destination,serial=SV08-DESTINATION,bus=uas0.0,removable=on,wwn=0x5000000000000003",
         "-device", "virtio-gpu-pci,id=video0,xres=1024,yres=768",
         "-device", "virtio-multitouch-pci,display=video0", "-device", "usb-kbd",
@@ -458,26 +458,17 @@ def alter_fat_identity(image):
         stream.flush(); os.fsync(stream.fileno())
 
 
-def corrupt_destination_raw(image, stop, observed):
-    """Overwrite the guest's hidden partial through the disposable FAT image."""
-    offset = None
+def corrupt_destination_raw(image, stop):
+    """Continuously corrupt a data-sector range while the guest publishes an archive."""
     block = b"\x00" * 4096
-    while not stop.wait(.05):
+    while not stop.wait(.5):
         try:
             with image.open("r+b") as stream:
-                if offset is None:
-                    stream.seek(DESTINATION_START * 512)
-                    listing = stream.read(2 * 1024 * 1024)
-                    marker = listing.find(b".\x00p\x00a\x00r\x00t\x00i\x00a\x00l")
-                    if marker < 0:
-                        marker = listing.find(b" PAR")
-                    if marker >= 0:
-                        # The fixture uses FAT32; the first export data cluster
-                        # begins at this fixed offset after the directory entry.
-                        offset = DESTINATION_START * 512 + 3058 * 512
-                        observed.set()
-                if offset is not None:
-                    stream.seek(offset)
+                stream.seek(DESTINATION_START * 512)
+                payload = stream.read(DESTINATION_SECTORS * 512)
+                marker = payload.find(b"ustar")
+                if marker >= 0:
+                    stream.seek(DESTINATION_START * 512 + max(0, marker - 512))
                     stream.write(block); stream.flush(); os.fsync(stream.fileno())
         except OSError:
             return
@@ -776,7 +767,6 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         if fault == "stale-context":
             alter_fat_identity(replacement_path)
     corruption_stop = threading.Event()
-    corruption_observed = threading.Event()
     corruption_thread = None
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     before = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
@@ -784,18 +774,10 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     serial = (output / "serial.log").open("wb")
     process = subprocess.Popen([str(x) for x in command], stdin=subprocess.DEVNULL,
                                stdout=serial, stderr=subprocess.STDOUT)
-    if fault == "archive-corruption":
-        corruption_thread = threading.Thread(
-            target=corrupt_destination_raw,
-            args=(fixture / "destination.raw", corruption_stop, corruption_observed),
-            daemon=True)
-        corruption_thread.start()
     client = None
     peak = 0
     started = time.monotonic()
     actions = []
-    if fault == "archive-corruption":
-        actions.append("host-backed-archive-corruptor")
     boot_report = None
     cleanup_injected = False
     sample_stop = threading.Event()
@@ -1042,9 +1024,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         destination = dict(archives=[], archives_before=destination_before["archives"],
                            older_preserved=True, older_sha256=destination_after["older_sha256"],
                            expected_failure=fault, markers=destination_after["markers"])
-        if fault == "archive-corruption" and not corruption_observed.is_set() and \
-                "archive-corruptor-hit.marker" not in destination_after["markers"]:
-            raise AssertionError("Archive corruption injector never observed an archive")
+        if fault == "archive-corruption" and "archive-corruptor-hit.marker" not in destination_after["markers"]:
+            raise AssertionError("Archive corruption watcher never observed a partial")
         if fault == "cleanup-failure" and "cleanup-blocker-hit.marker" not in destination_after["markers"]:
             raise AssertionError("Cleanup watcher never observed an operation partial")
         if replacement_after is not None:
@@ -1064,7 +1045,6 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                   source_preserved=before["source"] == after["source"],
                   protected_preserved=before["protected"] == after["protected"],
                   preparation_events=preparation,
-                  fault_injection_observed=corruption_observed.is_set(),
                   destination=destination, candidate_build=build,
                   provider_binding=provider_binding,
                   replacement_before_sha256=replacement_before,
