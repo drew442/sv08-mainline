@@ -458,10 +458,10 @@ def alter_fat_identity(image):
         stream.flush(); os.fsync(stream.fileno())
 
 
-def corrupt_destination_raw(image, stop):
+def corrupt_destination_raw(image, stop, observed):
     """Continuously corrupt a data-sector range while the guest publishes an archive."""
     block = b"\x00" * 4096
-    while not stop.wait(.5):
+    while not stop.wait(.05):
         try:
             with image.open("r+b") as stream:
                 stream.seek(DESTINATION_START * 512)
@@ -470,6 +470,8 @@ def corrupt_destination_raw(image, stop):
                 if marker >= 0:
                     stream.seek(DESTINATION_START * 512 + max(0, marker - 512))
                     stream.write(block); stream.flush(); os.fsync(stream.fileno())
+                    observed.set()
+                    return
         except OSError:
             return
 
@@ -767,6 +769,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         if fault == "stale-context":
             alter_fat_identity(replacement_path)
     corruption_stop = threading.Event()
+    corruption_observed = threading.Event()
     corruption_thread = None
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     before = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
@@ -774,6 +777,13 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     serial = (output / "serial.log").open("wb")
     process = subprocess.Popen([str(x) for x in command], stdin=subprocess.DEVNULL,
                                stdout=serial, stderr=subprocess.STDOUT)
+    if fault == "archive-corruption":
+        corruption_thread = threading.Thread(
+            target=corrupt_destination_raw,
+            args=(fixture / "destination.raw", corruption_stop, corruption_observed),
+            daemon=True)
+        corruption_thread.start()
+        actions.append("host-backed-archive-corruptor")
     client = None
     peak = 0
     started = time.monotonic()
@@ -1019,8 +1029,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         destination = dict(archives=[], archives_before=destination_before["archives"],
                            older_preserved=True, older_sha256=destination_after["older_sha256"],
                            expected_failure=fault, markers=destination_after["markers"])
-        if fault == "archive-corruption" and "archive-corruptor-hit.marker" not in destination_after["markers"]:
-            raise AssertionError("Archive corruption watcher never observed a partial")
+        if fault == "archive-corruption" and not corruption_observed.is_set() and \
+                "archive-corruptor-hit.marker" not in destination_after["markers"]:
+            raise AssertionError("Archive corruption injector never observed an archive")
         if fault == "cleanup-failure" and "cleanup-blocker-hit.marker" not in destination_after["markers"]:
             raise AssertionError("Cleanup watcher never observed an operation partial")
         if replacement_after is not None:
@@ -1040,6 +1051,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                   source_preserved=before["source"] == after["source"],
                   protected_preserved=before["protected"] == after["protected"],
                   preparation_events=preparation,
+                  fault_injection_observed=corruption_observed.is_set(),
                   destination=destination, candidate_build=build,
                   provider_binding=provider_binding,
                   replacement_before_sha256=replacement_before,
