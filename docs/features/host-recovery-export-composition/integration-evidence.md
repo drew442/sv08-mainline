@@ -34,7 +34,7 @@ regular-file media fixture.
   command line; a real guest `flock` holder was started before Apply. The UI refused
   export and preserved the prior destination file. The replacement run also retained
   the replacement medium's older file and published no archive; its before/after
-  backing hashes are recorded in `result.json`. The archive-corruption journey exposed a publication-path race: the watcher replaced the partial pathname with a directory while the exporter held the original inode, and the UI reported success without a regular archive. That run is rejected and retained only as negative evidence. The runtime now revalidates the partial pathname inode/type before publication, and the harness rejects malformed `.tar` paths; archive-corruption and operation-owned cleanup-failure require reruns against a rebuilt candidate.
+  backing hashes are recorded in `result.json`. The archive-corruption journey exposed a publication-path race: the watcher replaced the partial pathname with a directory while the exporter held the original inode, and the UI reported success without a regular archive. That run is rejected and retained only as negative evidence. The runtime now revalidates the partial pathname inode/type before publication, and the harness rejects malformed `.tar` paths. A corrected-candidate rerun observed both guest watcher markers, showed the visible `Export readback verification failed` result, published no regular or malformed archive, preserved the older file, and preserved all protected media hashes. Operation-owned cleanup-failure remains open.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
@@ -76,6 +76,7 @@ Retained local evidence directories:
 - `recovery-composition-replace-destination-rerun-1dca3f7`
 - `recovery-composition-lock-contention-rerun-1dca3f7`
 - `recovery-composition-archive-corruption-observed-1dca3f7` (rejected negative evidence; malformed publication race)
+- `recovery-composition-archive-corruption-qualified-1dca3f7` (corrected-candidate refusal; result JSON `dddc052ad5ea4c86a12f77926af8776966060661d43863e872da89c1292f2d55`)
 
 The candidate build record SHA256 is
 `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
@@ -101,7 +102,7 @@ The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
 board identity, hardware display/input, and factory-image behavior remain unverified.
 
-## Current source correction pending candidate rebuild
+## Current source correction and remaining cleanup check
 
 Commit `bf6c98f` records the written partial's device, inode, mode and link count
 and rejects publication when the destination pathname no longer names that exact
@@ -109,21 +110,19 @@ single-link regular file. Its cleanup path leaves a foreign replacement director
 untouched, and the regression test reproduces the replacement race. The focused
 offline suite passes 58 tests on the current feature branch. The retained VM
 candidate predates this runtime hash, so it is not evidence for the correction;
-the archive-corruption and operation-owned cleanup-failure journeys remain open
-until a reproducibly rebuilt candidate carries the new `runtime/sv08_export.py`
+the operation-owned cleanup-failure journey remains open. The locally rebuilt
+candidate carries the new `runtime/sv08_export.py`
 hash (`0f4530bcd0b1286ad1a875b72b37ba9f902b892b1cbda86df06a40e06306f17e`),
 the regression source hash (`f2f1640b720feb413d5e2d266c5360198ec4eb203dced902b6e9a85aeab9ea47`),
-and both journeys show visible refusal with no new or malformed archive.
+and the archive-corruption journey now shows visible refusal with no new or
+malformed archive; cleanup-failure still needs its own qualifying run.
 
 A locally regenerated candidate carrying that runtime hash booted and passed a
 keyboard-only positive export with a coherent build record (`result.json` SHA256
 `e28cfaf76c518c62bd6da1c0248a4270b6992af03cd7cfbb6b5be4aa5a48464f`; recovery
 image SHA256 `4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`).
 Its archive-corruption attempt did not observe a partial and is not acceptance
-evidence; no cleanup-failure journey has qualified. Two further disposable
-reruns (harness commits `a695413`, `f4d722e`, and `3f33515`) used the guest QEMU
-keyboard path with an unquoted shell watcher; `3f33515` also exposes both the
-framebuffer and serial consoles. None observed a partial and each published an
-archive. Those outputs were deleted after inspection to preserve the VM's
-nearly-full root filesystem. They remain failed diagnostic attempts, not
-acceptance evidence.
+evidence. The harness then moved fault setup to a serial debug shell, masked the
+serial getty, and used QEMU's `mon:stdio` input (`8644869`, `3799f97`). The
+corrected `smoke` journey observed both watcher markers and produced the
+qualified refusal recorded above. No cleanup-failure journey has qualified.

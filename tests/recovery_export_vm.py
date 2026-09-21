@@ -654,9 +654,12 @@ def destination_state(fixture, output, name, raw_name="destination.raw"):
         raise AssertionError("Older destination file changed or disappeared")
     archives = {p.name: sha(p) for p in extracted.glob("*.tar") if p.is_file()}
     malformed_archives = sorted(p.name for p in extracted.glob("*.tar") if not p.is_file())
+    partials = sorted(p.name for p in extracted.glob(".*.tar.partial") if p.is_file())
+    malformed_partials = sorted(p.name for p in extracted.glob(".*.tar.partial") if not p.is_file())
     markers = sorted(p.name for p in extracted.glob("*.marker"))
     return dict(partition=partition, extracted=extracted, archives=archives,
                 malformed_archives=malformed_archives,
+                partials=partials, malformed_partials=malformed_partials,
                 older_sha256=sha(older), markers=markers)
 
 
@@ -876,7 +879,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                             "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
                             " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
-                            " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && rm -f $f && mkdir $f && break 2; done; done &\n")
+                            " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && sync"
+                            " && mount -o remount,ro /run/sv08-recovery/destinations/export-usb"
+                            " && break 2; done; done &\n")
                         time.sleep(2)
                         time.sleep(3)
                         actions.append("serial-debug-shell-partial-cleanup-blocker")
@@ -992,11 +997,15 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  ", ".join(destination_after["malformed_archives"]))
         destination = dict(archives=[], archives_before=destination_before["archives"],
                            older_preserved=True, older_sha256=destination_after["older_sha256"],
-                           expected_failure=fault, markers=destination_after["markers"])
+                           expected_failure=fault, markers=destination_after["markers"],
+                           partials=destination_after["partials"],
+                           malformed_partials=destination_after["malformed_partials"])
         if fault == "archive-corruption" and "archive-corruptor-hit.marker" not in destination_after["markers"]:
             raise AssertionError("Archive corruption watcher never observed a partial")
         if fault == "cleanup-failure" and "cleanup-blocker-hit.marker" not in destination_after["markers"]:
             raise AssertionError("Cleanup watcher never observed an operation partial")
+        if fault == "cleanup-failure" and not destination_after["partials"]:
+            raise AssertionError("Cleanup failure did not leave the owned partial")
         if replacement_after is not None:
             replacement_state = destination_state(fixture, output, "replacement-after",
                                                    output / "destination-replacement-after.raw")
