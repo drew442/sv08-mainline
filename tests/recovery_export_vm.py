@@ -669,8 +669,9 @@ def destination_state(fixture, output, name, raw_name="destination.raw"):
             b"existing destination file must survive\n").hexdigest():
         raise AssertionError("Older destination file changed or disappeared")
     archives = {p.name: sha(p) for p in extracted.glob("*.tar")}
+    markers = sorted(p.name for p in extracted.glob("*.marker"))
     return dict(partition=partition, extracted=extracted, archives=archives,
-                older_sha256=sha(older))
+                older_sha256=sha(older), markers=markers)
 
 
 def verify_destination(fixture, output, expected_payload, before):
@@ -870,10 +871,15 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         client.key("ctrl", "alt", "f9")
                         time.sleep(2)
                         client.text(
-                            "while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
-                            " do dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc; break; done; sleep 1; done &\n")
+                            "touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-started.marker;"
+                            " sleep 5; while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
+                            " do touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker;"
+                            " while true; do dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc; sync;"
+                            " sysctl -w vm.drop_caches=3; sleep 1; done;"
+                            " done; sleep 1; done &\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
+                        time.sleep(5)
                         actions.append("vt-debug-shell-archive-corruptor")
                     elif fault == "lock-contention":
                         # systemd.debug_shell is enabled only on this QEMU
@@ -885,19 +891,27 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         client.text("flock -n /run/sv08-recovery/media.lock sleep 90\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
+                        time.sleep(5)
                         time.sleep(2)
                         actions.append("vt-debug-shell-lock-holder")
                     if fault == "cleanup-failure":
                         client.key("ctrl", "alt", "f9")
                         time.sleep(2)
                         client.text(
-                            "while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
-                            " do mount -o remount,ro /run/sv08-recovery/destinations/export-usb; break;"
-                            " done; sleep 1; done &\n")
+                            "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
+                            " sleep 5; while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
+                            " do touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker;"
+                            " mount -o remount,ro /run/sv08-recovery/destinations/export-usb; break; done; sleep 1; done &\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
                         actions.append("vt-debug-shell-partial-cleanup-blocker")
-                    step("mouse-apply", lambda: client.click(680, 500), 120)
+                    if fault in ("archive-corruption", "cleanup-failure"):
+                        step("mouse-apply", lambda: (client.click(680, 500),
+                                                       client.key("tab"), client.key("tab"),
+                                                       client.key("ret"), client.key("tab"),
+                                                       client.key("ret")), 120)
+                    else:
+                        step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
                     step("touch-open-cancel", lambda: client.touch(760, 240))
@@ -1001,7 +1015,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
             raise AssertionError("Failure path published an archive: " + ", ".join(new_names))
         destination = dict(archives=[], archives_before=destination_before["archives"],
                            older_preserved=True, older_sha256=destination_after["older_sha256"],
-                           expected_failure=fault)
+                           expected_failure=fault, markers=destination_after["markers"])
+        if fault == "archive-corruption" and "archive-corruptor-hit.marker" not in destination_after["markers"]:
+            raise AssertionError("Archive corruption watcher never observed a partial")
+        if fault == "cleanup-failure" and "cleanup-blocker-hit.marker" not in destination_after["markers"]:
+            raise AssertionError("Cleanup watcher never observed an operation partial")
         if replacement_after is not None:
             replacement_state = destination_state(fixture, output, "replacement-after",
                                                    output / "destination-replacement-after.raw")
