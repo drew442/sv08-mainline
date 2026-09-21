@@ -668,7 +668,7 @@ def destination_state(fixture, output, name, raw_name="destination.raw"):
     if not older.is_file() or sha(older) != hashlib.sha256(
             b"existing destination file must survive\n").hexdigest():
         raise AssertionError("Older destination file changed or disappeared")
-    archives = {p.name: sha(p) for p in extracted.glob("*.tar")}
+    archives = {p.name: sha(p) for p in extracted.glob("*.tar") if p.is_file()}
     markers = sorted(p.name for p in extracted.glob("*.marker"))
     return dict(partition=partition, extracted=extracted, archives=archives,
                 older_sha256=sha(older), markers=markers)
@@ -872,11 +872,10 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         time.sleep(2)
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-started.marker;"
-                            " sleep 5; while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
-                            " do touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker;"
-                            " while true; do dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc; sync;"
-                            " sysctl -w vm.drop_caches=3; sleep 1; done;"
-                            " done; sleep 1; done &\n")
+                            " sleep 5; while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
+                            " do test -e $f && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
+                            " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && sync"
+                            " && rm -f $f && mkdir $f && break; done; sleep 1; done &\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
                         time.sleep(5)
@@ -899,9 +898,10 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         time.sleep(2)
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
-                            " sleep 5; while true; do for f in /run/sv08-recovery/destinations/export-usb/*partial;"
-                            " do touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker;"
-                            " mount -o remount,ro /run/sv08-recovery/destinations/export-usb; break; done; sleep 1; done &\n")
+                            " sleep 5; while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
+                            " do test -e $f && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
+                            " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && rm -f $f && mkdir $f"
+                            " && break; done; sleep 1; done &\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
                         actions.append("vt-debug-shell-partial-cleanup-blocker")

@@ -34,10 +34,11 @@ regular-file media fixture.
   command line; a real guest `flock` holder was started before Apply. The UI refused
   export and preserved the prior destination file. The replacement run also retained
   the replacement medium's older file and published no archive; its before/after
-  backing hashes are recorded in `result.json`. The attempted archive-corruption and
-  cleanup-failure journeys are not counted: their retained screenshots did not prove
-  entry into Apply or observation of an operation-owned partial. They remain open
-  verifier tasks.
+  backing hashes are recorded in `result.json`. The archive-corruption journey now
+  uses a guest watcher that records a hit marker only after observing the dot-prefixed
+  operation partial, corrupts and replaces that partial, and leaves no published
+  archive while preserving the older file. Operation-owned cleanup-failure remains
+  open; its current attempts do not yet prove partial observation and cleanup entry.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
@@ -78,6 +79,7 @@ Retained local evidence directories:
 - `recovery-composition-replace-destination-1dca3f7`
 - `recovery-composition-replace-destination-rerun-1dca3f7`
 - `recovery-composition-lock-contention-rerun-1dca3f7`
+- `recovery-composition-archive-corruption-observed-1dca3f7`
 
 The candidate build record SHA256 is
 `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
@@ -95,6 +97,8 @@ the corrected replacement rerun is
 `9753c8a0def33a2c89864c4344a46f501b7d265910fff053223eb67efa2dbddb`.
 The lock-contention rerun result JSON is
 `c83641faca236b816dc0dc8bdaa7ba7a2a0eda35e29b9660227d664ba5234b76`.
+The observed archive-corruption result JSON is
+`77fa47ca92c83c81012544bc42923c5be7d5d6bc8881c2a41473544de32c5b71`.
 
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
