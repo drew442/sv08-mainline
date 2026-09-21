@@ -103,7 +103,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Independent verification requires a fresh corrected candidate rebuild and missing production refusal/resource evidence.",
       "checks": [
         "profile-and-trust",
         "preserve-before-mount",
@@ -120,16 +120,19 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "recovery_implementer",
-        "run": "9d6289caf84a473cb6bff5f5eeb7d472",
-        "session": "recovery-composition-20260918"
-      },
+      "implementation": null,
       "repeats": 0,
-      "resumption": null,
-      "status": "running",
+      "resumption": "Corrected mountpoint ownership transaction and added focused regression coverage.",
+      "status": "blocked",
       "title": "Compose trusted recovery media preparation and independent GTK export",
-      "verification": null
+      "verification": {
+        "outcome": "failed",
+        "reviewer": "feature-verifier /root/recovery_review",
+        "session": "recovery-review-formal-20260921-r2",
+        "rationale": "The mountpoint ownership bug is corrected and focused tests pass, but the retained ARM64 results are bound to the earlier c408f3e runtime. The corrected candidate was not rebuilt. Required production no-space, USB replacement, shared-lock, stale-context, archive-corruption, cleanup-failure, and complete resource/layout measurement evidence remains absent.",
+        "decision_sha256": "89e2691780b501f90dec57d7b1cc086be2d0a2e53318e1c87bf8f06376a9f2a0",
+        "evidence_sha256": "15d767e3dc80daf5a8344d2ad6be869b6971f4415a07c2fe089dd6d9aa6f6cfa"
+      }
     }
   ],
   "title": "Export preserved user data from the independently booted recovery OS"
