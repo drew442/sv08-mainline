@@ -37,7 +37,7 @@ regular-file media fixture.
   backing hashes are recorded in `result.json`. The archive-corruption journey exposed a publication-path race: the watcher replaced the partial pathname with a directory while the exporter held the original inode, and the UI reported success without a regular archive. That run is rejected and retained only as negative evidence. The runtime now revalidates the partial pathname inode/type before publication, and the harness rejects malformed `.tar` paths. A corrected-candidate rerun observed both guest watcher markers, showed the visible `Export readback verification failed` result, published no regular or malformed archive, preserved the older file, and preserved all protected media hashes. The operation-owned cleanup-failure rerun then observed both cleanup markers, showed the visible `Errno 16 Device or resource busy` diagnostic, retained the owned partial, published no regular or malformed archive, and preserved the older file and all protected media hashes.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
-  56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
+  49081 free ext4 blocks, 30017 free inodes, and peak QEMU RSS of 2136940544 bytes.
   The build source inventory is 20,451 files / 899,801,608 bytes. The staged
   recovery-specific delta is 18 tracked files, 2,898 added lines before the final
   cleanup/evidence revisions, 0 new Debian packages, and 0 new kernel modules; the

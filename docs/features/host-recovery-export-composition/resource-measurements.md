@@ -1,21 +1,21 @@
 # Corrected candidate resource measurements
 
-These values are from candidate `recovery-composition-candidate-1dca3f7`, whose
+These values are from candidate `recovery-composition-candidate-export-rebuilt-1dca3f7`, whose
 `recovery.ext4` SHA256 is
-`a4f61ea2635e4c4c203f284e4064b4f0051212f9f6f807d09825782e28ce0d41`.
+`4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`.
 
 | Item | Measurement |
 | --- | ---: |
 | Recovery image size | 536,870,912 bytes (512 MiB) |
 | Allocated ext4 blocks | 327,692,288 bytes |
 | ext4 block count | 131,072 |
-| ext4 free blocks | 56,355 |
+| ext4 free blocks | 49,081 |
 | ext4 inode count | 32,768 |
-| ext4 free inodes | 31,045 |
+| ext4 free inodes | 30,017 |
 | SquashFS `/usr` | 241,356,800 bytes |
 | Source inventory | 20,451 files / 899,801,608 bytes |
-| Peak QEMU RSS | 2,035,699,712 bytes (keyboard-plus-mouse run) |
-| Candidate build record SHA256 | `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906` |
+| Peak QEMU RSS | 2,136,940,544 bytes (cleanup-failure run; archive-corruption run 2,112,851,968 bytes) |
+| Candidate build record SHA256 | `363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595` |
 
 The accepted factory-sized layout is 7,818,182,656 bytes, recorded by the
 source-backed board image evidence in `docs/hardware/host-board-image-20260915-v2.json`.
@@ -31,6 +31,8 @@ Hash-bound result records:
 - wrong provider: `cb2705355ebc62371f4ef3ccb39d9539ce4eca32b8565532b9243c147f6c4bcf`
 - destination removal: `5105fad2a4bf49e777244d6fda43447747afb6f972c129bb8c87d37134532af8`
 - no space: `5b2964234ea3b68c64dc5c13f165704e7d13d6cd6de04674df320a69dcb4ba8e`
+- archive corruption: `dddc052ad5ea4c86a12f77926af8776966060661d43863e872da89c1292f2d55`
+- operation-owned cleanup failure: `bdf8baea2c38e51dab6c9613e9d42510299b1d5421e80606a2b91c632ffe7c42`
 
 Preparation and export workspace are disposable per-run output directories. Their
 largest retained positive result is approximately 224 MiB, and the candidate build
