@@ -426,7 +426,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
         "-device", "scsi-hd,drive=source,serial=SV08-SOURCE,bus=scsi0.0,wwn=0x5000000000000001",
         "-drive", f"if=none,id=protected,format=raw,file={fixture / 'protected.raw'},readonly=on",
         "-device", "scsi-hd,drive=protected,serial=SV08-PROTECTED,bus=scsi0.0,wwn=0x5000000000000002",
-        "-drive", f"if=none,id=destination,format=raw,file={fixture / 'destination.raw'},readonly=off",
+        "-drive", f"if=none,id=destination,format=raw,file={fixture / 'destination.raw'},readonly=off,cache.direct=on",
         "-device", "scsi-hd,id=destination-device,drive=destination,serial=SV08-DESTINATION,bus=uas0.0,removable=on,wwn=0x5000000000000003",
         "-device", "virtio-gpu-pci,id=video0,xres=1024,yres=768",
         "-device", "virtio-multitouch-pci,display=video0", "-device", "usb-kbd",
