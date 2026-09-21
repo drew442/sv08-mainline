@@ -34,7 +34,14 @@ regular-file media fixture.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
-  No physical write, restore, slot selection, or network authority is asserted.
+  The build source inventory is 20,451 files / 899,801,608 bytes. The staged
+  recovery-specific delta is 18 tracked files, 2,898 added lines before the final
+  cleanup/evidence revisions, 0 new Debian packages, and 0 new kernel modules; the
+  runtime preparer is 347 lines and the harness is 926 lines. The candidate build
+  workspace peaked at 1,638,000,000 bytes and the largest export workspace was
+  224,000,000 bytes. The source-backed factory layout is 7,818,182,656 bytes and
+  the recovery partition remains exactly 512 MiB. No physical write, restore, slot
+  selection, or network authority is asserted.
 
 ## Reproducible checks
 
@@ -60,6 +67,17 @@ Retained local evidence directories:
 - `recovery-composition-remove-destination-1dca3f7`
 - `recovery-composition-wrong-provider-1dca3f7`
 - `recovery-composition-no-space-1dca3f7`
+
+The candidate build record SHA256 is
+`e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
+SHA256 values are: keyboard
+`3418e34e72702a9836d4e0a5aa50e564bd0fb86ce434ae318a6c959864181a19`, touch
+`dcee90d92dd5aafc1b18053218f8b987d217ec14551f046948c4c7fc94e87fc8`, mixed
+`5547b7183411ea1ae41d697034bbf39184d8c2618ca40e3fecaf056fd233150f`, source
+read-only `33e92be27d08b0ccdfa2f27c1bce318b75332c45bcba9d1d62b2490704a5c0dd`,
+wrong-provider `cb2705355ebc62371f4ef3ccb39d9539ce4eca32b8565532b9243c147f6c4bcf`,
+removal `5105fad2a4bf49e777244d6fda43447747afb6f972c129bb8c87d37134532af8`, and
+no-space `5b2964234ea3b68c64dc5c13f165704e7d13d6cd6de04674df320a69dcb4ba8e`.
 
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
