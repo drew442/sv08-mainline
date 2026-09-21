@@ -729,7 +729,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         step("touch-preflight-refresh", lambda: client.touch(760, 308), 35)
                     else:
                         step("mouse-preflight-refresh", lambda: client.click(760, 308), 35)
-                if journey == "smoke" and fault != "wrong-provider":
+                if fault == "wrong-provider":
+                    pass
+                elif journey == "smoke":
                     step("keyboard-open", lambda: client.key("alt", "s"))
                     step("keyboard-cancel", lambda: client.key("esc"))
                     step("mouse-open", lambda: client.click(760, 240))
