@@ -97,11 +97,15 @@ class PreparationKernel(Kernel):
                 require(info.st_uid == 0 and stat.S_IMODE(info.st_mode) == 0o700,
                         'Recovery mountpoint is not private')
         except BaseException:
+            cleanup_errors = []
             for directory in reversed(created):
                 try:
                     directory.rmdir()
-                except OSError:
-                    pass
+                except OSError as error:
+                    cleanup_errors.append(str(error))
+            if cleanup_errors:
+                raise RuntimeError('Recovery mountpoint creation cleanup was incomplete: '
+                                   + '; '.join(cleanup_errors))
             raise
         # Return only directories created by this call, in parent-to-leaf
         # order.  An existing mountpoint is unowned and must never be removed

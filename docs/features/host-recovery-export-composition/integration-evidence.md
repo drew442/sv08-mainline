@@ -2,7 +2,7 @@
 
 This document records the offline integration run for `host-recovery-export-composition`.
 It is evidence for the approved six-check task, not a claim of physical-printer
-compatibility. The candidate was built from feature commit `1dca3f7` and run as an
+compatibility. The candidate was built from feature commit `c408f3e` and run as an
 ARM64 QEMU guest with the reviewed 512 MiB recovery image and disposable regular-file
 media fixture.
 
@@ -64,5 +64,5 @@ The retained VM result directories are disposable local evidence under
 - `recovery-composition-remove-destination-c408f3e`
 - `recovery-composition-wrong-provider-c408f3e-v2`
 
-The mountpoint ownership transaction was independently reviewed and corrected in `1dca3f7`; pre-existing directories are never operation-owned, and partial nested creation is rolled back. The independent verifier must inspect these results and this document before the task can be marked complete. Physical media, board identity, hardware display/input, and
+The mountpoint ownership transaction was independently reviewed and corrected after the retained candidate run; pre-existing directories are never operation-owned, and partial nested creation is rolled back. The corrected source is covered by focused unit tests, but a fresh candidate rebuild is required before completion. Physical media, board identity, hardware display/input, and
 factory-image behavior remain unverified.
