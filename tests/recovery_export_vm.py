@@ -853,6 +853,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  "wwn": "0x5000000000000003"}), 35)
                     elif fault == "archive-corruption":
                         client.key("ctrl", "alt", "f9")
+                        client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f9"})
                         time.sleep(4)
                         client.key("ret")
                         time.sleep(1)
@@ -862,7 +863,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                             " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
                             " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && sync && break 2; done; sleep .1; done &\n")
                         time.sleep(3)
-                        client.key("ctrl", "alt", "f1")
+                        client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f1"})
                         time.sleep(5)
                         actions.append("vt-debug-shell-archive-corruptor")
                     elif fault == "lock-contention":
@@ -880,6 +881,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         actions.append("vt-debug-shell-lock-holder")
                     if fault == "cleanup-failure":
                         client.key("ctrl", "alt", "f9")
+                        client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f9"})
                         time.sleep(4)
                         client.key("ret")
                         time.sleep(1)
@@ -890,7 +892,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                             " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && rm -f $f && mkdir $f && break 2; done; sleep .1; done &\n")
                         time.sleep(2)
                         time.sleep(3)
-                        client.key("ctrl", "alt", "f1")
+                        client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f1"})
                         actions.append("vt-debug-shell-partial-cleanup-blocker")
                     if fault in ("archive-corruption", "cleanup-failure"):
                         step("mouse-apply", lambda: (client.click(680, 500),
