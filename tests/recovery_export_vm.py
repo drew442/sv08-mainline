@@ -417,7 +417,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
     return ["qemu-system-aarch64", "-machine", "virt", "-cpu", "cortex-a53",
         "-accel", "tcg,thread=multi", "-smp", "2", "-m", "768",
         "-kernel", candidate / "vmlinuz", "-initrd", initrd or candidate / "initrd.img",
-        "-append", f"console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell systemd.log_target=console systemd.show_status=yes",
+        "-append", f"console=tty0 console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell systemd.log_target=console systemd.show_status=yes",
         "-drive", f"if=none,id=recovery,format=raw,file={candidate / 'recovery.ext4'},readonly=on",
         "-device", "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
         "-device", "virtio-scsi-pci,id=scsi0", "-device", "qemu-xhci,id=usb0",
