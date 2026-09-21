@@ -467,7 +467,10 @@ def corrupt_destination_raw(image, stop, observed):
             with image.open("r+b") as stream:
                 if offset is None:
                     stream.seek(DESTINATION_START * 512)
-                    payload = stream.read(DESTINATION_SECTORS * 512)
+                    # FAT allocates the first export near the start of the
+                    # reviewed data partition. Keep the polling read bounded;
+                    # scanning the whole 96 MiB image misses small exports.
+                    payload = stream.read(2 * 1024 * 1024)
                     marker = payload.find(b"ustar")
                     if marker >= 0:
                         offset = DESTINATION_START * 512 + max(0, marker - 512)
