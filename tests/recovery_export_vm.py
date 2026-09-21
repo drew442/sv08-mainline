@@ -459,18 +459,24 @@ def alter_fat_identity(image):
 
 
 def corrupt_destination_raw(image, stop, observed):
-    """Continuously corrupt a data-sector range while the guest publishes an archive."""
-    block = b"\x00" * 4096
-    # The fixture's first free FAT data cluster is stable and the exporter
-    # creates its archive there. Corrupt that cluster continuously so the
-    # mutation happens before publication rather than after a short export.
-    offset = DESTINATION_START * 512 + 522000
-    observed.set()
+    """Overwrite the guest's hidden partial through the disposable FAT image."""
+    image_arg = f"{image}@@{DESTINATION_START * 512}"
+    block_path = Path(tempfile.gettempdir()) / "sv08-export-corrupt-block"
+    block_path.write_bytes(b"\x00" * 4096)
     while not stop.wait(.05):
         try:
-            with image.open("r+b") as stream:
-                stream.seek(offset)
-                stream.write(block); stream.flush(); os.fsync(stream.fileno())
+            listing = subprocess.run(
+                ["mdir", "-a", "-i", image_arg, "::"], capture_output=True,
+                text=True, check=False).stdout
+            partial = next((line.split()[-1] for line in listing.splitlines()
+                            if line.rstrip().endswith(".partial")), None)
+            if partial:
+                subprocess.run(["mcopy", "-o", "-i", image_arg,
+                                str(block_path), "::" + partial],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                               check=False)
+                observed.set()
+                return
         except OSError:
             return
 
