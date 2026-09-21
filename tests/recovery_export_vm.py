@@ -639,6 +639,29 @@ def verify_destination(fixture, output, expected_payload, before):
                 archives_before=before["archives"])
 
 
+def fill_destination(fixture, output):
+    """Fill the disposable FAT partition so the admitted export cannot fit."""
+    partition = output / "destination-no-space.fat"
+    with (fixture / "destination.raw").open("rb") as source, partition.open("wb") as target:
+        source.seek(DESTINATION_START * 512)
+        remaining = DESTINATION_SECTORS * 512
+        while remaining:
+            block = source.read(min(1024 * 1024, remaining))
+            if not block:
+                raise ValueError("Short destination partition")
+            target.write(block); remaining -= len(block)
+    filler = output / "destination-filler.bin"
+    with filler.open("wb") as stream:
+        stream.truncate(DESTINATION_SECTORS * 512 - 2 * 1024 * 1024)
+    run(["mcopy", "-i", partition, str(filler), "::/destination-filler.bin"])
+    with partition.open("rb") as source, (fixture / "destination.raw").open("r+b") as target:
+        target.seek(DESTINATION_START * 512)
+        while True:
+            block = source.read(1024 * 1024)
+            if not block: break
+            target.write(block)
+
+
 def execute(candidate, fixture, output, seconds, journey, fault, source_readonly,
             diagnostic_initrd=None):
     candidate, fixture = safe_regular(candidate), safe_regular(fixture)
@@ -662,6 +685,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         raise ValueError("Candidate lacks the immutable provider manifest binding")
     output.mkdir(parents=True, mode=0o700)
     destination_before = destination_state(fixture, output, "destination-before")
+    if fault == "no-space":
+        fill_destination(fixture, output)
+        destination_before = destination_state(fixture, output, "destination-before-no-space")
     endpoint = Path(tempfile.mkdtemp(prefix="sv08-export-qmp-"))
     qmp = endpoint / "qmp.sock"
     boot_provider = "0" * 64 if fault == "wrong-provider" else provider_binding
@@ -864,7 +890,7 @@ def main():
     parser.add_argument("--seconds", type=int, default=180)
     parser.add_argument("--journey", choices=("smoke", "touch", "keyboard", "keyboard-mouse"),
                         default="smoke")
-    parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination"),
+    parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination", "no-space"),
                         default="none")
     parser.add_argument("--source-readonly", action="store_true")
     parser.add_argument("--namespace-overrides", action="store_true",
