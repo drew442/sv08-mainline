@@ -783,11 +783,12 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
             args=(fixture / "destination.raw", corruption_stop, corruption_observed),
             daemon=True)
         corruption_thread.start()
-        actions.append("host-backed-archive-corruptor")
     client = None
     peak = 0
     started = time.monotonic()
     actions = []
+    if fault == "archive-corruption":
+        actions.append("host-backed-archive-corruptor")
     boot_report = None
     cleanup_injected = False
     sample_stop = threading.Event()
