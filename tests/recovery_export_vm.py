@@ -358,6 +358,20 @@ class QMP:
                   for k in reversed(keys)]
         self.call("input-send-event", {"events": events})
 
+    def text(self, value):
+        """Type a small shell command through the QEMU keyboard device."""
+        shifted = {"/": "slash", "-": "minus", "_": ("shift", "minus"), ".": "dot"}
+        for char in value:
+            if char == " ":
+                self.key("spc")
+            elif char == "\n":
+                self.key("ret")
+            elif char in shifted:
+                keys = shifted[char]
+                self.key(*keys) if isinstance(keys, tuple) else self.key(keys)
+            else:
+                self.key(char.lower())
+
     def click(self, x, y):
         mice = self.call("query-mice")
         tablet = next((item for item in mice if item.get("absolute") and
@@ -397,7 +411,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
     return ["qemu-system-aarch64", "-machine", "virt", "-cpu", "cortex-a53",
         "-accel", "tcg,thread=multi", "-smp", "2", "-m", "768",
         "-kernel", candidate / "vmlinuz", "-initrd", initrd or candidate / "initrd.img",
-        "-append", f"console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.log_target=console systemd.show_status=yes",
+        "-append", f"console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell systemd.log_target=console systemd.show_status=yes",
         "-drive", f"if=none,id=recovery,format=raw,file={candidate / 'recovery.ext4'},readonly=on",
         "-device", "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
         "-device", "virtio-scsi-pci,id=scsi0", "-device", "qemu-xhci,id=usb0",
@@ -831,6 +845,18 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                             target=corrupt_destination_raw,
                             args=(fixture / "destination.raw", corruption_stop), daemon=True)
                         corruption_thread.start()
+                    elif fault == "lock-contention":
+                        # systemd.debug_shell is enabled only on this QEMU
+                        # command line.  The lock holder is a real root process
+                        # in the ordinary candidate guest, and the UI must
+                        # refuse the first apply until the lease is released.
+                        client.key("ctrl", "alt", "f9")
+                        time.sleep(2)
+                        client.text("flock -n /run/sv08-recovery/media.lock sleep 90\n")
+                        time.sleep(2)
+                        client.key("ctrl", "alt", "f1")
+                        time.sleep(2)
+                        actions.append("vt-debug-shell-lock-holder")
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
@@ -974,7 +1000,7 @@ def main():
     parser.add_argument("--journey", choices=("smoke", "touch", "keyboard", "keyboard-mouse"),
                         default="smoke")
     parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination", "stale-context",
-                                             "replace-destination", "archive-corruption", "no-space"),
+                                             "replace-destination", "archive-corruption", "lock-contention", "no-space"),
                         default="none")
     parser.add_argument("--source-readonly", action="store_true")
     parser.add_argument("--namespace-overrides", action="store_true",

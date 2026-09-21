@@ -29,10 +29,13 @@ regular-file media fixture.
 - **lease-and-change — partial pending independent verification.** Corrected
   wrong-provider, settled destination-removal, no-space, stale-context, and
   destination-replacement runs refused preparation/export, retained prior archives,
-  and preserved source/protected/recovery media. The replacement run also retained
+  and preserved source/protected/recovery media. The lock-contention run used the
+  ordinary candidate with a temporary systemd debug shell enabled only by the QEMU
+  command line; a real guest `flock` holder was started before Apply. The UI refused
+  export and preserved the prior destination file. The replacement run also retained
   the replacement medium's older file and published no archive; its before/after
   backing hashes are recorded in `result.json`. Focused unit tests cover shared-lock,
-  archive-integrity, and operation-owned cleanup paths, but those three remain to be
+  archive-integrity and operation-owned cleanup paths, but those two remain to be
   exercised as separate ordinary-candidate production-entry journeys before this
   check can pass.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
@@ -74,6 +77,7 @@ Retained local evidence directories:
 - `recovery-composition-stale-context-1dca3f7`
 - `recovery-composition-replace-destination-1dca3f7`
 - `recovery-composition-replace-destination-rerun-1dca3f7`
+- `recovery-composition-lock-contention-rerun-1dca3f7`
 
 The candidate build record SHA256 is
 `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
@@ -89,6 +93,8 @@ The stale-context and destination-replacement result JSON values are
 `3ff7e89c0c31c5745cf23575e96d3038877f108980850ba5b1e4f647d43a85e6` and
 the corrected replacement rerun is
 `9753c8a0def33a2c89864c4344a46f501b7d265910fff053223eb67efa2dbddb`.
+The lock-contention rerun result JSON is
+`c83641faca236b816dc0dc8bdaa7ba7a2a0eda35e29b9660227d664ba5234b76`.
 
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
