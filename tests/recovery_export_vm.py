@@ -360,7 +360,9 @@ class QMP:
 
     def text(self, value):
         """Type a small shell command through the QEMU keyboard device."""
-        shifted = {"/": "slash", "-": "minus", "_": ("shift", "minus"), ".": "dot"}
+        shifted = {"/": "slash", "-": "minus", "_": ("shift", "minus"), ".": "dot",
+                   "[": "bracket_left", "]": "bracket_right", "!": ("shift", "1"),
+                   ";": "semicolon", "&": ("shift", "7")}
         for char in value:
             if char == " ":
                 self.key("spc")
@@ -770,6 +772,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     started = time.monotonic()
     actions = []
     boot_report = None
+    cleanup_injected = False
     sample_stop = threading.Event()
     peak_sample = [0]
     def sample_memory():
@@ -792,6 +795,23 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                 pass
             if client is None and qmp.exists():
                 client = QMP(qmp)
+            serial_text = (output / "serial.log").read_text(errors="replace")
+            if (client and fault == "cleanup-prep-failure" and not cleanup_injected and
+                    "debug-shell.service" in serial_text):
+                # Let the ordinary preparer create its destination mountpoint,
+                # then leave an operation-created marker behind and terminate
+                # the preparer.  Its normal rollback must report the failed
+                # rmdir rather than silently deleting an unrelated file.
+                client.key("ctrl", "alt", "f9")
+                time.sleep(2)
+                client.text(
+                    "while [ ! -e /run/sv08-recovery/destinations/export-usb ]; do sleep 1; done;"
+                    " touch /run/sv08-recovery/destinations/export-usb/marker;"
+                    " pkill -TERM -f sv08_recovery_prepare.py\n")
+                time.sleep(2)
+                client.key("ctrl", "alt", "f1")
+                cleanup_injected = True
+                actions.append("vt-debug-shell-cleanup-fault")
             text = (output / "serial.log").read_text(errors="replace")
             if client and "SV08_RECOVERY_BOOT_REPORT " in text:
                 for line in text.splitlines():
@@ -804,6 +824,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     client.call("screendump", {"filename": str(output / (name + ".ppm"))})
                 if fault == "wrong-provider":
                     actions.append("diagnostic-only-wrong-provider-binding")
+                elif fault == "cleanup-prep-failure":
+                    actions.append("cleanup-failure-observed")
                 else:
                     # Re-read visible state after the serial report using the
                     # same modality as the journey.  Initial nonblocking lease
@@ -820,7 +842,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         step("touch-preflight-refresh", lambda: client.touch(760, 308), 35)
                     else:
                         step("mouse-preflight-refresh", lambda: client.click(760, 308), 35)
-                if fault == "wrong-provider":
+                if fault in ("wrong-provider", "cleanup-prep-failure"):
                     pass
                 elif journey == "smoke":
                     step("keyboard-open", lambda: client.key("alt", "s"))
@@ -841,10 +863,17 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  "bus": "uas0.0", "removable": "on",
                                  "wwn": "0x5000000000000003"}), 35)
                     elif fault == "archive-corruption":
-                        corruption_thread = threading.Thread(
-                            target=corrupt_destination_raw,
-                            args=(fixture / "destination.raw", corruption_stop), daemon=True)
+                        def corrupt_guest_block():
+                            time.sleep(15)
+                            try:
+                                reply = client.call("human-monitor-command", {"command-line":
+                                    'qemu-io destination "write -P 0 2615296 4096"'})
+                                write(output / "archive-corruption-qmp.txt", str(reply) + "\n")
+                            except (OSError, EOFError, RuntimeError):
+                                pass
+                        corruption_thread = threading.Thread(target=corrupt_guest_block, daemon=True)
                         corruption_thread.start()
+                        actions.append("qmp-corrupt-destination-during-apply")
                     elif fault == "lock-contention":
                         # systemd.debug_shell is enabled only on this QEMU
                         # command line.  The lock holder is a real root process
@@ -857,6 +886,15 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         client.key("ctrl", "alt", "f1")
                         time.sleep(2)
                         actions.append("vt-debug-shell-lock-holder")
+                    if fault == "cleanup-failure":
+                        def remove_during_apply():
+                            time.sleep(15)
+                            try:
+                                client.call("device_del", {"id": "destination-device"})
+                            except (OSError, EOFError, RuntimeError):
+                                pass
+                        threading.Thread(target=remove_during_apply, daemon=True).start()
+                        actions.append("qmp-remove-destination-during-apply")
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
@@ -930,7 +968,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     order = [item.get("event") for item in preparation]
     required_order = ["source-whole-ro", "source-partition-ro", "source-mount-begin",
                       "source-mount-complete"]
-    if fault != "wrong-provider":
+    if fault not in ("wrong-provider", "cleanup-prep-failure"):
         positions = [order.index(event) for event in required_order]
         if positions != sorted(positions) or len(set(positions)) != len(positions):
             raise AssertionError("Production source preservation order was not observed")
@@ -943,6 +981,10 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         # below is the positive proof that installed export became available.
         if not boot_report or boot_report.get("failed_units"):
             raise AssertionError("Production startup report is missing or has failed units")
+    elif fault == "cleanup-prep-failure":
+        if not any("cleanup" in line.lower() and "incomplete" in line.lower()
+                   for line in (output / "serial.log").read_text(errors="replace").splitlines()):
+            raise AssertionError("Production cleanup failure was not reported")
     elif (not boot_report or
           boot_report["status"]["capabilities"]["recovery.export"]["available"] or
           not boot_report["status"]["capabilities"]["recovery.export"]["reason"]):
@@ -1000,7 +1042,8 @@ def main():
     parser.add_argument("--journey", choices=("smoke", "touch", "keyboard", "keyboard-mouse"),
                         default="smoke")
     parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination", "stale-context",
-                                             "replace-destination", "archive-corruption", "lock-contention", "no-space"),
+                                             "replace-destination", "archive-corruption", "lock-contention",
+                                             "cleanup-failure", "cleanup-prep-failure", "no-space"),
                         default="none")
     parser.add_argument("--source-readonly", action="store_true")
     parser.add_argument("--namespace-overrides", action="store_true",
