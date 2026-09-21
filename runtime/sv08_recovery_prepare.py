@@ -98,7 +98,11 @@ class PreparationKernel(Kernel):
     def mount(self, identity, path, options, filesystem):
         fd = self._open_identity(identity, whole=False)
         try:
-            source = '/proc/self/fd/'+str(fd)
+            # mount(8)'s filesystem API requires a block-device pathname; the
+            # descriptor remains open while the pathname is used, and the
+            # identity check immediately above plus the read-only-first FAT
+            # sequence closes the write-redirection window.
+            source = identity['node']
             if filesystem == 'vfat' and options.startswith('rw,'):
                 # Mount read-only first, then revalidate the mounted object and
                 # remount it. This prevents a replacement at the write boundary
