@@ -889,13 +889,15 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  "wwn": "0x5000000000000003"}), 35)
                     elif fault == "archive-corruption":
                         client.key("ctrl", "alt", "f9")
-                        time.sleep(2)
+                        time.sleep(4)
+                        client.key("ret")
+                        time.sleep(1)
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
                             " do test -f \"$f\" && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
                             " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && sync && break 2; done; sleep .1; done &\n")
-                        time.sleep(2)
+                        time.sleep(3)
                         client.key("ctrl", "alt", "f1")
                         time.sleep(5)
                         actions.append("vt-debug-shell-archive-corruptor")
@@ -914,13 +916,16 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         actions.append("vt-debug-shell-lock-holder")
                     if fault == "cleanup-failure":
                         client.key("ctrl", "alt", "f9")
-                        time.sleep(2)
+                        time.sleep(4)
+                        client.key("ret")
+                        time.sleep(1)
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
                             " do test -f \"$f\" && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
                             " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && rm -f \"$f\" && mkdir \"$f\" && break 2; done; sleep .1; done &\n")
                         time.sleep(2)
+                        time.sleep(3)
                         client.key("ctrl", "alt", "f1")
                         actions.append("vt-debug-shell-partial-cleanup-blocker")
                     if fault in ("archive-corruption", "cleanup-failure"):
