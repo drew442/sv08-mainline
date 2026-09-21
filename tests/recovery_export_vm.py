@@ -762,12 +762,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     step("keyboard-apply", lambda: client.key("ret"), 120)
                 elif journey == "keyboard-mouse":
                     step("mouse-open-keyboard-cancel", lambda: client.click(760, 240))
-                    step("mouse-cancel-selection", lambda: client.click(500, 430))
+                    step("keyboard-cancel-selection", lambda: client.key("esc"))
                     step("mouse-open-keyboard-review", lambda: client.click(760, 240))
-                    step("mouse-review-keyboard-cancel", lambda: client.click(620, 430), 35)
-                    step("keyboard-cancel-review", lambda: client.key("esc"))
-                    step("mouse-open-keyboard-apply", lambda: client.click(760, 240))
-                    step("mouse-review-apply", lambda: client.click(620, 430), 35)
+                    step("mouse-review-keyboard-apply", lambda: client.click(620, 430), 35)
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                 else:
                     raise ValueError("Journey is not implemented: " + journey)
