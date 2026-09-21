@@ -438,6 +438,18 @@ def alter_fat_identity(image):
         stream.flush(); os.fsync(stream.fileno())
 
 
+def corrupt_destination_raw(image, stop):
+    """Continuously corrupt a data-sector range while the guest publishes an archive."""
+    offset = DESTINATION_START * 512 + 2 * 1024 * 1024
+    block = b"\x00" * 4096
+    while not stop.wait(.5):
+        try:
+            with image.open("r+b") as stream:
+                stream.seek(offset); stream.write(block); stream.flush()
+        except OSError:
+            return
+
+
 def namespace_diagnostic(candidate, fixture, output, seconds=120, overrides=False):
     """Instrument /run only to report selected-guest task namespaces.
 
@@ -611,9 +623,12 @@ ln -s ../sv08-namespace-late-report.service /run/systemd/system/sv08-recovery.ta
     return result
 
 
-def destination_state(fixture, output, name):
+def destination_state(fixture, output, name, raw_name="destination.raw"):
     partition = output / (name + ".fat")
-    with (fixture / "destination.raw").open("rb") as source, partition.open("wb") as target:
+    raw = Path(raw_name)
+    if not raw.is_absolute():
+        raw = fixture / raw
+    with raw.open("rb") as source, partition.open("wb") as target:
         source.seek(DESTINATION_START * 512)
         remaining = DESTINATION_SECTORS * 512
         while remaining:
@@ -718,10 +733,14 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                            boot_provider, source_readonly=source_readonly,
                            initrd=diagnostic_initrd)
     replacement_path = None
+    replacement_before = None
     if fault in ("stale-context", "replace-destination"):
         replacement_path = add_replacement_drive(command, fixture)
+        replacement_before = sha(replacement_path)
         if fault == "stale-context":
             alter_fat_identity(replacement_path)
+    corruption_stop = threading.Event()
+    corruption_thread = None
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     before = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
               "protected": sha(fixture / "protected.raw"), "destination": sha(fixture / "destination.raw")}
@@ -803,6 +822,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                              else "SV08-DESTINATION-REPLACEMENT"),
                                  "bus": "uas0.0", "removable": "on",
                                  "wwn": "0x5000000000000003"}), 35)
+                    elif fault == "archive-corruption":
+                        corruption_thread = threading.Thread(
+                            target=corrupt_destination_raw,
+                            args=(fixture / "destination.raw", corruption_stop), daemon=True)
+                        corruption_thread.start()
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
@@ -840,6 +864,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     finally:
         sample_stop.set()
         sampler.join(timeout=2)
+        corruption_stop.set()
+        if corruption_thread is not None:
+            corruption_thread.join(timeout=2)
         peak = max(peak, peak_sample[0])
         if process.poll() is None:
             if client:
@@ -856,6 +883,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                 except subprocess.TimeoutExpired:
                     process.kill(); process.wait(timeout=10)
         serial.close()
+        if replacement_path is not None:
+            shutil.copyfile(replacement_path, output / "destination-replacement-after.raw")
+            replacement_after = sha(replacement_path)
+        else:
+            replacement_after = None
         if replacement_path is not None:
             replacement_path.unlink(missing_ok=True)
         shutil.rmtree(endpoint)
@@ -896,6 +928,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         destination = dict(archives=[], archives_before=destination_before["archives"],
                            older_preserved=True, older_sha256=destination_after["older_sha256"],
                            expected_failure=fault)
+        if replacement_after is not None:
+            replacement_state = destination_state(fixture, output, "replacement-after",
+                                                   output / "destination-replacement-after.raw")
+            destination["replacement_archives"] = replacement_state["archives"]
+            destination["replacement_older_sha256"] = replacement_state["older_sha256"]
     result = dict(format_version=1, acceptance=diagnostic_initrd is None,
                   diagnostic_initrd_sha256=(sha(diagnostic_initrd)
                                             if diagnostic_initrd else None),
@@ -909,7 +946,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                   protected_preserved=before["protected"] == after["protected"],
                   preparation_events=preparation,
                   destination=destination, candidate_build=build,
-                  provider_binding=provider_binding)
+                  provider_binding=provider_binding,
+                  replacement_before_sha256=replacement_before,
+                  replacement_after_sha256=replacement_after)
     write(output / "result.json", json.dumps(result, indent=2) + "\n")
     if not all((result["recovery_preserved"], result["source_preserved"],
                 result["protected_preserved"])):
@@ -931,7 +970,7 @@ def main():
     parser.add_argument("--journey", choices=("smoke", "touch", "keyboard", "keyboard-mouse"),
                         default="smoke")
     parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination", "stale-context",
-                                             "replace-destination", "no-space"),
+                                             "replace-destination", "archive-corruption", "no-space"),
                         default="none")
     parser.add_argument("--source-readonly", action="store_true")
     parser.add_argument("--namespace-overrides", action="store_true",
