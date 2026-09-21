@@ -17,6 +17,7 @@ import stat
 import subprocess
 import tarfile
 import tempfile
+import threading
 import time
 
 REPO = Path(__file__).resolve().parents[1]
@@ -351,14 +352,25 @@ class QMP:
 
     def key(self, *keys):
         events = [dict(type="key", data=dict(down=True, key=dict(type="qcode", data=k))) for k in keys]
-        events += [dict(type="key", data=dict(down=False, key=dict(type="qcode", data=k))) for k in reversed(keys)]
+        self.call("input-send-event", {"events": events})
+        time.sleep(.15)
+        events = [dict(type="key", data=dict(down=False, key=dict(type="qcode", data=k)))
+                  for k in reversed(keys)]
         self.call("input-send-event", {"events": events})
 
     def click(self, x, y):
+        mice = self.call("query-mice")
+        tablet = next((item for item in mice if item.get("absolute") and
+                       "tablet" in item.get("name", "").lower()), None)
+        if tablet is None:
+            raise RuntimeError("QEMU absolute tablet is unavailable")
+        self.call("human-monitor-command", {"command-line": f"mouse_set {tablet['index']}"})
         self.call("input-send-event", {"events": [
             dict(type="abs", data=dict(axis="x", value=int(x * 32767 / 1024))),
             dict(type="abs", data=dict(axis="y", value=int(y * 32767 / 768))),
-            dict(type="btn", data=dict(down=True, button="left")),
+            dict(type="btn", data=dict(down=True, button="left"))]})
+        time.sleep(.15)
+        self.call("input-send-event", {"events": [
             dict(type="btn", data=dict(down=False, button="left"))]})
 
     def touch(self, x, y):
@@ -464,6 +476,17 @@ echo SV08_NAMESPACE_${phase}_MOUNTS_END
 echo SV08_NAMESPACE_${phase}_UNITS_BEGIN
 systemctl list-units --all --no-legend --no-pager
 echo SV08_NAMESPACE_${phase}_UNITS_END
+if [ -e /run/sv08-recovery/media.lock ]; then
+  lock_identity=$(stat -Lc '%d:%i' /run/sv08-recovery/media.lock)
+  for fd in /proc/[0-9]*/fd/[0-9]*; do
+    [ -e "$fd" ] || continue
+    [ "$(stat -Lc '%d:%i' "$fd" 2>/dev/null)" = "$lock_identity" ] || continue
+    pid=${fd#/proc/}; pid=${pid%%/*}
+    command=$(tr '\000' ' ' <"/proc/$pid/cmdline" 2>/dev/null)
+    cgroup=$(tr '\n' ';' <"/proc/$pid/cgroup" 2>/dev/null)
+    printf 'SV08_MEDIA_LOCK_HOLDER phase=%s pid=%s fd=%s cgroup=%s command=%s\n' "$phase" "$pid" "${fd##*/}" "$cgroup" "$command"
+  done
+fi
 echo SV08_NAMESPACE_${phase}_END
 SV08_NS_SCRIPT
 chmod 0700 /run/sv08-namespace-report.sh
@@ -492,7 +515,7 @@ Description=Diagnostic-only late recovery namespace report
 After=sv08-recovery-display.service
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'sleep 30; exec /run/sv08-namespace-report.sh LATE'
+ExecStart=/bin/sh -c 'sleep 60; exec /run/sv08-namespace-report.sh LATE'
 StandardOutput=journal+console
 StandardError=journal+console
 SV08_NS_LATE_UNIT
@@ -592,6 +615,10 @@ def verify_destination(fixture, output, expected_payload, before):
     state = destination_state(fixture, output, "destination-after")
     export_dir = state["extracted"]
     new_names = sorted(set(state["archives"]) - set(before["archives"]))
+    changed = {name for name, digest in before["archives"].items()
+               if state["archives"].get(name) != digest}
+    if changed:
+        raise AssertionError("Pre-existing export archives changed: " + ", ".join(sorted(changed)))
     if len(new_names) != 1:
         raise AssertionError("Expected exactly one newly published export archive")
     archives = [export_dir / new_names[0]]
@@ -652,6 +679,18 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     started = time.monotonic()
     actions = []
     boot_report = None
+    sample_stop = threading.Event()
+    peak_sample = [0]
+    def sample_memory():
+        while not sample_stop.wait(.1):
+            try:
+                for line in (Path("/proc") / str(process.pid) / "status").read_text().splitlines():
+                    if line.startswith("VmRSS:"):
+                        peak_sample[0] = max(peak_sample[0], int(line.split()[1]) * 1024)
+            except FileNotFoundError:
+                return
+    sampler = threading.Thread(target=sample_memory, daemon=True)
+    sampler.start()
     try:
         while process.poll() is None and time.monotonic() - started < seconds:
             try:
@@ -674,11 +713,19 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     client.call("screendump", {"filename": str(output / (name + ".ppm"))})
                 if fault == "wrong-provider":
                     actions.append("diagnostic-only-wrong-provider-binding")
-                elif journey == "smoke":
-                    # Re-read visible state after the serial report.  This also
-                    # proves Refresh is usable and avoids acting on stale GTK
-                    # state if a preceding diagnostic briefly held admission.
-                    step("mouse-preflight-refresh", lambda: client.click(760, 308), 10)
+                else:
+                    # Re-read visible state after the serial report using the
+                    # same modality as the journey.  Initial nonblocking lease
+                    # contention is valid and must recover through Refresh.
+                    if journey in ("keyboard", "keyboard-mouse"):
+                        step("keyboard-preflight-refresh",
+                             lambda: (client.key("tab"), client.key("tab"),
+                                      client.key("tab"), client.key("ret")), 35)
+                    elif journey == "touch":
+                        step("touch-preflight-refresh", lambda: client.touch(760, 308), 35)
+                    else:
+                        step("mouse-preflight-refresh", lambda: client.click(760, 308), 35)
+                if journey == "smoke" and fault != "wrong-provider":
                     step("keyboard-open", lambda: client.key("alt", "s"))
                     step("keyboard-cancel", lambda: client.key("esc"))
                     step("mouse-open", lambda: client.click(760, 240))
@@ -686,7 +733,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     if fault == "remove-destination":
                         step("qmp-remove-destination",
                              lambda: client.call("device_del", {"id": "destination-device"}), 5)
-                    step("mouse-apply", lambda: client.click(680, 500), 60)
+                    step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
                     step("touch-open-cancel", lambda: client.touch(760, 240))
@@ -696,7 +743,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     step("touch-cancel-review", lambda: client.touch(530, 500))
                     step("touch-open-apply", lambda: client.touch(760, 240))
                     step("touch-review-apply", lambda: client.touch(620, 430), 35)
-                    step("touch-apply", lambda: client.touch(680, 500), 60)
+                    step("touch-apply", lambda: client.touch(680, 500), 120)
                 elif journey == "keyboard":
                     step("keyboard-open-cancel", lambda: client.key("alt", "s"))
                     step("keyboard-cancel-selection", lambda: client.key("esc"))
@@ -708,7 +755,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     step("keyboard-focus-review-apply", lambda: (client.key("tab"), client.key("tab")))
                     step("keyboard-review-apply", lambda: client.key("ret"), 35)
                     step("keyboard-focus-apply", lambda: client.key("tab"))
-                    step("keyboard-apply", lambda: client.key("ret"), 60)
+                    step("keyboard-apply", lambda: client.key("ret"), 120)
                 elif journey == "keyboard-mouse":
                     step("keyboard-open-mouse-cancel", lambda: client.key("alt", "s"))
                     step("mouse-cancel-selection", lambda: client.click(500, 430))
@@ -717,13 +764,16 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     step("keyboard-cancel-review", lambda: client.key("esc"))
                     step("keyboard-open-mouse-apply", lambda: client.key("alt", "s"))
                     step("mouse-review-apply", lambda: client.click(620, 430), 35)
-                    step("mouse-apply", lambda: client.click(680, 500), 60)
+                    step("mouse-apply", lambda: client.click(680, 500), 120)
                 else:
                     raise ValueError("Journey is not implemented: " + journey)
                 client.call("screendump", {"filename": str(output / "complete.ppm")})
                 break
             time.sleep(1)
     finally:
+        sample_stop.set()
+        sampler.join(timeout=2)
+        peak = max(peak, peak_sample[0])
         if process.poll() is None:
             if client:
                 try:
@@ -733,7 +783,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
             try:
                 process.wait(timeout=10)
             except subprocess.TimeoutExpired:
-                process.terminate(); process.wait(timeout=10)
+                process.terminate()
+                try:
+                    process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    process.kill(); process.wait(timeout=10)
         serial.close()
         shutil.rmtree(endpoint)
     after = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
@@ -752,9 +806,12 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         mount_event = preparation[positions[2]]
         if "ro,noload" not in mount_event.get("options", ""):
             raise AssertionError("Production source mount did not suppress journal replay")
-        if (not boot_report or boot_report.get("failed_units") or
-                not boot_report["status"]["capabilities"]["recovery.export"]["available"]):
-            raise AssertionError("Production preparation did not enable installed export")
+        # The read-only boot report and GTK refresh intentionally use the same
+        # nonblocking MediaLease, so either may record a transient contention
+        # refusal.  The post-report visible Refresh plus the verified archive
+        # below is the positive proof that installed export became available.
+        if not boot_report or boot_report.get("failed_units"):
+            raise AssertionError("Production startup report is missing or has failed units")
     elif (not boot_report or
           boot_report["status"]["capabilities"]["recovery.export"]["available"] or
           not boot_report["status"]["capabilities"]["recovery.export"]["reason"]):

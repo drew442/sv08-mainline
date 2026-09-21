@@ -7,11 +7,13 @@ then mounts only the policy-selected source and destination while holding the
 same MediaLease used by export.
 """
 import hashlib
+import fcntl
 import json
 import os
 from pathlib import Path
 import re
 import stat
+import struct
 import subprocess
 from contextlib import nullcontext
 
@@ -31,23 +33,97 @@ def emit(event, **fields):
 class PreparationKernel(Kernel):
     """Narrow block and mount interface; no label-cache or scan-driven mount."""
     def set_readonly(self, identity, observer=emit):
-        # Whole-medium exclusion is established before the selected partition.
-        disk_name = Path(identity['disk']).name
-        subprocess.run(['/sbin/blockdev', '--setro', '/dev/'+disk_name], check=True, timeout=5)
-        require((Path(identity['disk']) / 'ro').read_text().strip() == '1',
-                'Source whole medium did not become read-only')
-        observer('source-whole-ro', device=identity['disk_device'], readonly=True)
-        subprocess.run(['/sbin/blockdev', '--setro', identity['node']], check=True, timeout=5)
-        require((Path(identity['sysfs']) / 'ro').read_text().strip() == '1',
-                'Source partition did not become read-only')
+        # Resolve and hold both exact block nodes while changing their flags.
+        # Never reopen a mutable /dev name after the reviewed inventory.
+        disk = self._open_identity(identity, whole=True)
+        partition = self._open_identity(identity, whole=False)
+        try:
+            self._setro_fd(disk)
+            require((Path(identity['disk']) / 'ro').read_text().strip() == '1',
+                    'Source whole medium did not become read-only')
+            observer('source-whole-ro', device=identity['disk_device'], readonly=True)
+            self._setro_fd(partition)
+            require((Path(identity['sysfs']) / 'ro').read_text().strip() == '1',
+                    'Source partition did not become read-only')
+        finally:
+            os.close(partition)
+            os.close(disk)
         observer('source-partition-ro', device=identity['device'], readonly=True)
 
+    @staticmethod
+    def _open_identity(identity, *, whole):
+        sysfs = Path(identity['disk'] if whole else identity['sysfs'])
+        uevent = dict(line.split('=', 1) for line in (sysfs / 'uevent').read_text().splitlines())
+        name = uevent.get('DEVNAME')
+        require(name and re.fullmatch(r'[A-Za-z0-9_-]+', name), 'Untrusted block device name')
+        node = Path('/dev') / name
+        fd = os.open(node, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_CLOEXEC)
+        info = os.fstat(fd)
+        expected = identity['disk_device'] if whole else identity['device']
+        try:
+            require(stat.S_ISBLK(info.st_mode) and
+                    f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' == expected,
+                    'Reviewed block identity changed before mutation')
+            require(sysfs.stat().st_ino == identity['sysfs_inode'],
+                    'Reviewed block sysfs identity changed before mutation')
+            sequence = int((Path(identity['disk']) / 'diskseq').read_text())
+            require(sequence == identity['diskseq'], 'Reviewed disk sequence changed before mutation')
+        except BaseException:
+            os.close(fd)
+            raise
+        return fd
+
+    @staticmethod
+    def _setro_fd(fd):
+        # BLKROSET acts on the already-open block object and avoids reopening a
+        # potentially reused device-node pathname.
+        fcntl.ioctl(fd, 0x125d, struct.pack('I', 1))
+
     def create_mountpoint(self, path):
-        path.mkdir(parents=True, exist_ok=False)
+        missing = []
+        current = path
+        while not current.exists():
+            missing.append(current)
+            current = current.parent
+        require(current.is_dir() and not current.is_symlink(),
+                'Recovery mountpoint parent is not a directory')
+        for directory in reversed(missing):
+            directory.mkdir(mode=0o700, exist_ok=False)
+            info = directory.stat()
+            require(info.st_uid == 0 and stat.S_IMODE(info.st_mode) == 0o700,
+                    'Recovery mountpoint is not private')
+        return missing
 
     def mount(self, identity, path, options, filesystem):
-        subprocess.run(['/bin/mount', '-t', filesystem, '-o', options, identity['node'], str(path)],
-                       check=True, timeout=15)
+        fd = self._open_identity(identity, whole=False)
+        try:
+            source = '/proc/self/fd/'+str(fd)
+            if filesystem == 'vfat' and options.startswith('rw,'):
+                # Mount read-only first, then revalidate the mounted object and
+                # remount it. This prevents a replacement at the write boundary
+                # from receiving FAT metadata writes through a reused /dev name.
+                ro_options = 'ro,' + options[3:]
+                subprocess.run(['/bin/mount', '--no-canonicalize', '-t', filesystem,
+                                '-o', ro_options, source, str(path)],
+                               check=True, timeout=15)
+                try:
+                    node = (Path('/sys/dev/block') / identity['device']).resolve(strict=True)
+                    observed = self._identity(node)
+                    require(observed['device'] == identity['device'] and
+                            observed['diskseq'] == identity['diskseq'] and
+                            observed['filesystem_uuid'] == identity['filesystem_uuid'],
+                            'Destination identity changed at mount boundary')
+                    subprocess.run(['/bin/mount', '-o', 'remount,'+options, str(path)],
+                                   check=True, timeout=15)
+                except BaseException:
+                    subprocess.run(['/bin/umount', str(path)], check=False, timeout=15)
+                    raise
+            else:
+                subprocess.run(['/bin/mount', '--no-canonicalize', '-t', filesystem,
+                                '-o', options, source, str(path)],
+                               check=True, timeout=15)
+        finally:
+            os.close(fd)
 
     def unmount(self, path):
         subprocess.run(['/bin/umount', str(path)], check=True, timeout=15)
@@ -207,8 +283,7 @@ class RecoveryPreparer:
                 self.kernel.set_readonly(source, emit)
                 source_path = Path(self.policy['source_path'])
                 require(str(source_path) == '/run/sv08-recovery/source', 'Unreviewed source mount path')
-                self.kernel.create_mountpoint(source_path)
-                created.append(source_path)
+                created.extend(self.kernel.create_mountpoint(source_path) or [source_path])
                 source_options = 'ro,noload,nosuid,nodev,noexec'
                 emit('source-mount-begin', device=source['device'], path=str(source_path),
                      filesystem='ext4', options=source_options)
@@ -221,8 +296,7 @@ class RecoveryPreparer:
                     path = Path(spec['path'])
                     require(str(path) == '/run/sv08-recovery/destinations/'+key,
                             'Unreviewed destination mount path')
-                    self.kernel.create_mountpoint(path)
-                    created.append(path)
+                    created.extend(self.kernel.create_mountpoint(path) or [path])
                     self.kernel.mount(identity, path, 'rw,nosuid,nodev,noexec,umask=0077', 'vfat')
                     mounted.append(path)
                     context_targets[key] = dict(path=str(path), label=spec['label'])
