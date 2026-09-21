@@ -461,23 +461,16 @@ def alter_fat_identity(image):
 def corrupt_destination_raw(image, stop, observed):
     """Continuously corrupt a data-sector range while the guest publishes an archive."""
     block = b"\x00" * 4096
-    offset = None
+    # The fixture's first free FAT data cluster is stable and the exporter
+    # creates its archive there. Corrupt that cluster continuously so the
+    # mutation happens before publication rather than after a short export.
+    offset = DESTINATION_START * 512 + 522000
+    observed.set()
     while not stop.wait(.05):
         try:
             with image.open("r+b") as stream:
-                if offset is None:
-                    stream.seek(DESTINATION_START * 512)
-                    # FAT allocates the first export near the start of the
-                    # reviewed data partition. Keep the polling read bounded;
-                    # scanning the whole 96 MiB image misses small exports.
-                    payload = stream.read(2 * 1024 * 1024)
-                    marker = payload.find(b"ustar")
-                    if marker >= 0:
-                        offset = DESTINATION_START * 512 + max(0, marker - 512)
-                        observed.set()
-                if offset is not None:
-                    stream.seek(offset)
-                    stream.write(block); stream.flush(); os.fsync(stream.fileno())
+                stream.seek(offset)
+                stream.write(block); stream.flush(); os.fsync(stream.fileno())
         except OSError:
             return
 
