@@ -417,7 +417,7 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
     return ["qemu-system-aarch64", "-machine", "virt", "-cpu", "cortex-a53",
         "-accel", "tcg,thread=multi", "-smp", "2", "-m", "768",
         "-kernel", candidate / "vmlinuz", "-initrd", initrd or candidate / "initrd.img",
-        "-append", f"console=tty0 console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell=ttyAMA0 systemd.log_target=console systemd.show_status=yes",
+        "-append", f"console=tty0 console=ttyAMA0 root=/dev/vda ro sv08.envelope={binding} sv08.recovery={provider} systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console systemd.show_status=yes",
         "-drive", f"if=none,id=recovery,format=raw,file={candidate / 'recovery.ext4'},readonly=on",
         "-device", "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
         "-device", "virtio-scsi-pci,id=scsi0", "-device", "qemu-xhci,id=usb0",
@@ -584,7 +584,7 @@ ln -s ../sv08-namespace-late-report.service /run/systemd/system/sv08-recovery.ta
                            build["provider_manifest_sha256"], initrd=packed)
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     serial = (output / "serial.log").open("wb")
-    process = subprocess.Popen([str(x) for x in command], stdin=subprocess.PIPE,
+    process = subprocess.Popen([str(x) for x in command], stdin=subprocess.DEVNULL,
                                stdout=serial, stderr=subprocess.STDOUT)
     client = None
     started = time.monotonic()
@@ -754,7 +754,7 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     before = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
               "protected": sha(fixture / "protected.raw"), "destination": sha(fixture / "destination.raw")}
     serial = (output / "serial.log").open("wb")
-    process = subprocess.Popen([str(x) for x in command], stdin=subprocess.DEVNULL,
+    process = subprocess.Popen([str(x) for x in command], stdin=subprocess.PIPE,
                                stdout=serial, stderr=subprocess.STDOUT)
     client = None
     peak = 0
@@ -938,6 +938,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     process.wait(timeout=10)
                 except subprocess.TimeoutExpired:
                     process.kill(); process.wait(timeout=10)
+        if process.stdin is not None:
+            process.stdin.close()
         serial.close()
         if replacement_path is not None:
             shutil.copyfile(replacement_path, output / "destination-replacement-after.raw")
