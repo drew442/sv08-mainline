@@ -852,7 +852,6 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                                  "bus": "uas0.0", "removable": "on",
                                  "wwn": "0x5000000000000003"}), 35)
                     elif fault == "archive-corruption":
-                        client.key("ctrl", "alt", "f9")
                         client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f9"})
                         time.sleep(4)
                         client.key("ret")
@@ -880,7 +879,6 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         time.sleep(2)
                         actions.append("vt-debug-shell-lock-holder")
                     if fault == "cleanup-failure":
-                        client.key("ctrl", "alt", "f9")
                         client.call("human-monitor-command", {"command-line": "sendkey ctrl-alt-f9"})
                         time.sleep(4)
                         client.key("ret")
