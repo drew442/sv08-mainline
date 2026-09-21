@@ -21,12 +21,12 @@ regular-file media fixture.
 - **compressed-chain — pass.** Positive boot reports show an immutable read-only ext4
   root and exactly one read-only SquashFS `/usr` loop, with the preparation service
   active and no failed units. Corrected candidate image SHA256 is
-  `a4f61ea2635e4c4c203f284e4064b4f0051212f9f6f807d09825782e28ce0d41`.
+  `4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`.
 - **independent-gtk-export — pass.** The installed ARM64 GTK service and production
   provider completed keyboard, touch, and keyboard-plus-mouse review/cancel/apply
   journeys. Archives preserved the damaged registry, configuration, SQLite database
   and WAL, Unicode data, and an older archive.
-- **lease-and-change — partial pending independent verification.** Corrected
+- **lease-and-change — pass.** Corrected
   wrong-provider, settled destination-removal, no-space, stale-context, and
   destination-replacement runs refused preparation/export, retained prior archives,
   and preserved source/protected/recovery media. The lock-contention run used the
@@ -34,7 +34,7 @@ regular-file media fixture.
   command line; a real guest `flock` holder was started before Apply. The UI refused
   export and preserved the prior destination file. The replacement run also retained
   the replacement medium's older file and published no archive; its before/after
-  backing hashes are recorded in `result.json`. The archive-corruption journey exposed a publication-path race: the watcher replaced the partial pathname with a directory while the exporter held the original inode, and the UI reported success without a regular archive. That run is rejected and retained only as negative evidence. The runtime now revalidates the partial pathname inode/type before publication, and the harness rejects malformed `.tar` paths. A corrected-candidate rerun observed both guest watcher markers, showed the visible `Export readback verification failed` result, published no regular or malformed archive, preserved the older file, and preserved all protected media hashes. Operation-owned cleanup-failure remains open.
+  backing hashes are recorded in `result.json`. The archive-corruption journey exposed a publication-path race: the watcher replaced the partial pathname with a directory while the exporter held the original inode, and the UI reported success without a regular archive. That run is rejected and retained only as negative evidence. The runtime now revalidates the partial pathname inode/type before publication, and the harness rejects malformed `.tar` paths. A corrected-candidate rerun observed both guest watcher markers, showed the visible `Export readback verification failed` result, published no regular or malformed archive, preserved the older file, and preserved all protected media hashes. The operation-owned cleanup-failure rerun then observed both cleanup markers, showed the visible `Errno 16 Device or resource busy` diagnostic, retained the owned partial, published no regular or malformed archive, and preserved the older file and all protected media hashes.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
@@ -46,6 +46,18 @@ regular-file media fixture.
   224,000,000 bytes. The source-backed factory layout is 7,818,182,656 bytes and
   the recovery partition remains exactly 512 MiB. No physical write, restore, slot
   selection, or network authority is asserted.
+
+## Six-check evidence binding
+
+The six acceptance checks above are bound to the corrected candidate image SHA256
+`4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`, candidate
+build record SHA256 `363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595`,
+and harness source SHA256 `6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803`.
+The lease-and-change fault evidence is retained in the archive-corruption result
+`dddc052ad5ea4c86a12f77926af8776966060661d43863e872da89c1292f2d55` and the
+operation-owned cleanup-failure result
+`bdf8baea2c38e51dab6c9613e9d42510299b1d5421e80606a2b91c632ffe7c42`; both
+results preserve the older destination and protected media hashes.
 
 ## Reproducible checks
 
@@ -77,9 +89,10 @@ Retained local evidence directories:
 - `recovery-composition-lock-contention-rerun-1dca3f7`
 - `recovery-composition-archive-corruption-observed-1dca3f7` (rejected negative evidence; malformed publication race)
 - `recovery-composition-archive-corruption-qualified-1dca3f7` (corrected-candidate refusal; result JSON `dddc052ad5ea4c86a12f77926af8776966060661d43863e872da89c1292f2d55`)
+- `recovery-composition-cleanup-failure-bind-1dca3f7` (operation-owned cleanup refusal; result JSON `bdf8baea2c38e51dab6c9613e9d42510299b1d5421e80606a2b91c632ffe7c42`; independent review qualifies the retained partial and visible `Errno 16 Device or resource busy` diagnostic)
 
 The candidate build record SHA256 is
-`e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
+`363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595`. Result JSON
 SHA256 values are: keyboard
 `3418e34e72702a9836d4e0a5aa50e564bd0fb86ce434ae318a6c959864181a19`, touch
 `dcee90d92dd5aafc1b18053218f8b987d217ec14551f046948c4c7fc94e87fc8`, mixed
@@ -102,7 +115,7 @@ The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
 board identity, hardware display/input, and factory-image behavior remain unverified.
 
-## Current source correction and remaining cleanup check
+## Current source correction and completed cleanup check
 
 Commit `bf6c98f` records the written partial's device, inode, mode and link count
 and rejects publication when the destination pathname no longer names that exact
@@ -115,7 +128,9 @@ candidate carries the new `runtime/sv08_export.py`
 hash (`0f4530bcd0b1286ad1a875b72b37ba9f902b892b1cbda86df06a40e06306f17e`),
 the regression source hash (`f2f1640b720feb413d5e2d266c5360198ec4eb203dced902b6e9a85aeab9ea47`),
 and the archive-corruption journey now shows visible refusal with no new or
-malformed archive; cleanup-failure still needs its own qualifying run.
+malformed archive. The cleanup-failure journey uses an operation-owned bind mount
+to force `EBUSY`; it shows the visible diagnostic, retains the corrupted partial,
+publishes no regular or malformed archive, and preserves the older file.
 
 A locally regenerated candidate carrying that runtime hash booted and passed a
 keyboard-only positive export with a coherent build record (`result.json` SHA256
@@ -124,5 +139,8 @@ image SHA256 `4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`)
 Its archive-corruption attempt did not observe a partial and is not acceptance
 evidence. The harness then moved fault setup to a serial debug shell, masked the
 serial getty, and used QEMU's `mon:stdio` input (`8644869`, `3799f97`). The
-corrected `smoke` journey observed both watcher markers and produced the
-qualified refusal recorded above. No cleanup-failure journey has qualified.
+corrected `smoke` journeys observed both watcher marker pairs and produced the
+qualified archive-corruption and cleanup-failure refusals recorded above. The
+current harness source hash is `6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803`;
+the candidate build record hash is `363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595`,
+and the cleanup-failure result hash is `bdf8baea2c38e51dab6c9613e9d42510299b1d5421e80606a2b91c632ffe7c42`.
