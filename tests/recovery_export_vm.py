@@ -393,7 +393,7 @@ def image_policy(image):
 
 
 def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=False,
-                 initrd=None):
+                 initrd=None, replacement=False):
     return ["qemu-system-aarch64", "-machine", "virt", "-cpu", "cortex-a53",
         "-accel", "tcg,thread=multi", "-smp", "2", "-m", "768",
         "-kernel", candidate / "vmlinuz", "-initrd", initrd or candidate / "initrd.img",
@@ -413,6 +413,29 @@ def qemu_command(candidate, fixture, qmp, binding, provider, *, source_readonly=
         "-device", "usb-mouse", "-device", "usb-tablet", "-nic", "none",
         "-display", "none", "-serial", "stdio", "-qmp", f"unix:{qmp},server=on,wait=off",
         "-no-reboot"]
+
+
+def add_replacement_drive(command, fixture):
+    """Attach a second removable medium, initially absent from the guest bus.
+
+    QMP replacement journeys use a distinct stable identity while preserving
+    the reviewed destination path and filesystem contents.  The ordinary
+    candidate is unchanged; this is only a host-side fixture operation.
+    """
+    replacement = fixture / "destination-replacement.raw"
+    shutil.copyfile(fixture / "destination.raw", replacement)
+    command.extend(["-drive", f"if=none,id=replacement,format=raw,file={replacement},readonly=off"])
+    return replacement
+
+
+def alter_fat_identity(image):
+    """Change the FAT volume serial in a fixture copy without changing its size."""
+    with image.open("r+b") as stream:
+        stream.seek(DESTINATION_START * 512 + 67)
+        value = int.from_bytes(stream.read(4), "little") ^ 0x5A17C0DE
+        stream.seek(DESTINATION_START * 512 + 67)
+        stream.write(value.to_bytes(4, "little"))
+        stream.flush(); os.fsync(stream.fileno())
 
 
 def namespace_diagnostic(candidate, fixture, output, seconds=120, overrides=False):
@@ -694,6 +717,11 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
     command = qemu_command(candidate, fixture, qmp, build["manifest_sha256"],
                            boot_provider, source_readonly=source_readonly,
                            initrd=diagnostic_initrd)
+    replacement_path = None
+    if fault in ("stale-context", "replace-destination"):
+        replacement_path = add_replacement_drive(command, fixture)
+        if fault == "stale-context":
+            alter_fat_identity(replacement_path)
     write(output / "command.json", json.dumps([str(x) for x in command], indent=2) + "\n")
     before = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
               "protected": sha(fixture / "protected.raw"), "destination": sha(fixture / "destination.raw")}
@@ -765,6 +793,16 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                     if fault == "remove-destination":
                         step("qmp-remove-destination",
                              lambda: client.call("device_del", {"id": "destination-device"}), 35)
+                    elif fault in ("stale-context", "replace-destination"):
+                        step("qmp-remove-destination",
+                             lambda: client.call("device_del", {"id": "destination-device"}), 35)
+                        step("qmp-add-replacement",
+                             lambda: client.call("device_add", {"driver": "scsi-hd",
+                                 "id": "destination-replacement-device", "drive": "replacement",
+                                 "serial": ("SV08-DESTINATION" if fault == "stale-context"
+                                             else "SV08-DESTINATION-REPLACEMENT"),
+                                 "bus": "uas0.0", "removable": "on",
+                                 "wwn": "0x5000000000000003"}), 35)
                     step("mouse-apply", lambda: client.click(680, 500), 120)
                     step("touch-refresh", lambda: client.touch(760, 300))
                 elif journey == "touch":
@@ -818,6 +856,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                 except subprocess.TimeoutExpired:
                     process.kill(); process.wait(timeout=10)
         serial.close()
+        if replacement_path is not None:
+            replacement_path.unlink(missing_ok=True)
         shutil.rmtree(endpoint)
     after = {"recovery": sha(candidate / "recovery.ext4"), "source": sha(fixture / "source.raw"),
              "protected": sha(fixture / "protected.raw"), "destination": sha(fixture / "destination.raw")}
@@ -890,7 +930,8 @@ def main():
     parser.add_argument("--seconds", type=int, default=180)
     parser.add_argument("--journey", choices=("smoke", "touch", "keyboard", "keyboard-mouse"),
                         default="smoke")
-    parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination", "no-space"),
+    parser.add_argument("--fault", choices=("none", "wrong-provider", "remove-destination", "stale-context",
+                                             "replace-destination", "no-space"),
                         default="none")
     parser.add_argument("--source-readonly", action="store_true")
     parser.add_argument("--namespace-overrides", action="store_true",

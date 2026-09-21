@@ -26,11 +26,13 @@ regular-file media fixture.
   provider completed keyboard, touch, and keyboard-plus-mouse review/cancel/apply
   journeys. Archives preserved the damaged registry, configuration, SQLite database
   and WAL, Unicode data, and an older archive.
-- **lease-and-change — pass for exercised production paths.** Corrected wrong-provider,
-  settled destination-removal, and no-space runs refused preparation/export, retained
-  prior archives, and preserved source/protected/recovery media. Focused unit tests
-  also cover shared-lock, stale-context, archive-integrity, and operation-owned
-  cleanup paths. Those four unit-level paths are not separate long-running UI runs.
+- **lease-and-change — partial pending independent verification.** Corrected
+  wrong-provider, settled destination-removal, no-space, stale-context, and
+  destination-replacement runs refused preparation/export, retained prior archives,
+  and preserved source/protected/recovery media. Focused unit tests cover shared-lock,
+  archive-integrity, and operation-owned cleanup paths, but those three remain to be
+  exercised as separate ordinary-candidate production-entry journeys before this
+  check can pass.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
@@ -67,6 +69,8 @@ Retained local evidence directories:
 - `recovery-composition-remove-destination-1dca3f7`
 - `recovery-composition-wrong-provider-1dca3f7`
 - `recovery-composition-no-space-1dca3f7`
+- `recovery-composition-stale-context-1dca3f7`
+- `recovery-composition-replace-destination-1dca3f7`
 
 The candidate build record SHA256 is
 `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
@@ -78,6 +82,9 @@ read-only `33e92be27d08b0ccdfa2f27c1bce318b75332c45bcba9d1d62b2490704a5c0dd`,
 wrong-provider `cb2705355ebc62371f4ef3ccb39d9539ce4eca32b8565532b9243c147f6c4bcf`,
 removal `5105fad2a4bf49e777244d6fda43447747afb6f972c129bb8c87d37134532af8`, and
 no-space `5b2964234ea3b68c64dc5c13f165704e7d13d6cd6de04674df320a69dcb4ba8e`.
+The stale-context and destination-replacement result JSON values are
+`3ff7e89c0c31c5745cf23575e96d3038877f108980850ba5b1e4f647d43a85e6` and
+`7c8ab281a4946a3834e18d84854187cfa7fd5bf61b085b650f1a9cc526379f4d`.
 
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
