@@ -121,8 +121,9 @@ keyboard-only positive export with a coherent build record (`result.json` SHA256
 image SHA256 `4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`).
 Its archive-corruption attempt did not observe a partial and is not acceptance
 evidence; no cleanup-failure journey has qualified. Two further disposable
-reruns (harness commits `a695413` and `f4d722e`) used the guest QEMU keyboard
-path with an unquoted shell watcher, but neither observed a partial and each
-published an archive. Those outputs were deleted after inspection to preserve
-the VM's nearly-full root filesystem. They remain failed diagnostic attempts,
-not acceptance evidence.
+reruns (harness commits `a695413`, `f4d722e`, and `3f33515`) used the guest QEMU
+keyboard path with an unquoted shell watcher; `3f33515` also exposes both the
+framebuffer and serial consoles. None observed a partial and each published an
+archive. Those outputs were deleted after inspection to preserve the VM's
+nearly-full root filesystem. They remain failed diagnostic attempts, not
+acceptance evidence.
