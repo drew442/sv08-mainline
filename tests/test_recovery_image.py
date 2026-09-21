@@ -11,6 +11,90 @@ SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).reso
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
 
 class RecoveryImageTests(unittest.TestCase):
+    def test_recovery_stages_post_pid1_private_mount_gate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);units=root/'etc/systemd/system';units.mkdir(parents=True)
+            m.stage_recovery_units(units)
+            private=(units/'sv08-recovery-private-mounts.service').read_text()
+            prepare=(units/'sv08-recovery-prepare.service').read_text()
+            display=(units/'sv08-recovery-display.service.d/independent.conf').read_text()
+            target=(units/'sv08-recovery.target').read_text()
+            udev=(units/'systemd-udevd.service.d/recovery-namespace.conf').read_text()
+            logind=(units/'systemd-logind.service.d/recovery-namespace.conf').read_text()
+            runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
+            for name in ('sv08_recovery_media.py', 'sv08_recovery_prepare.py'):
+                (runtime/name).write_text(name)
+            bound=m.installed_provider_inputs(root)
+            destination_hashes = {
+                'configs/host-os/recovery-systemd-udevd.conf':
+                    m.sha(units/'systemd-udevd.service.d/recovery-namespace.conf'),
+                'configs/host-os/recovery-systemd-logind.conf':
+                    m.sha(units/'systemd-logind.service.d/recovery-namespace.conf'),
+            }
+        self.assertEqual(private.count('ExecStart=/bin/mount --make-rprivate /'),1)
+        self.assertIn('After=sysinit.target basic.target',private)
+        self.assertIn('Before=sv08-recovery-prepare.service sv08-recovery-display.service',
+                      private)
+        for sandbox in ('PrivateMounts=', 'MountFlags='):
+            self.assertNotIn(sandbox,private)
+        self.assertIn('Requires=sv08-recovery-private-mounts.service',prepare)
+        self.assertIn('After=systemd-udev-settle.service sv08-recovery-private-mounts.service',
+                      prepare)
+        self.assertIn('Before=sv08-recovery-display.service',prepare)
+        self.assertIn('Wants=systemd-udev-settle.service sv08-recovery-private-mounts.service',
+                      display)
+        self.assertIn('After=sv08-recovery-private-mounts.service',display)
+        self.assertIn('Wants=sv08-recovery-private-mounts.service ',target)
+        self.assertIn('After=sysinit.target basic.target sv08-recovery-private-mounts.service ',
+                      target)
+        self.assertNotIn('Requires=sv08-recovery-private-mounts.service',target)
+        self.assertEqual(udev,'[Service]\nPrivateMounts=no\n')
+        self.assertEqual(logind,('[Service]\nPrivateMounts=no\nPrivateTmp=no\n'
+                                 'ProtectSystem=no\nProtectHome=no\n'
+                                 'ProtectKernelModules=no\nProtectKernelLogs=no\n'
+                                 'ProtectControlGroups=no\nReadWritePaths=\n'))
+        current=m.integration_inputs()
+        for source, digest in destination_hashes.items():
+            self.assertEqual(current[source],m.sha(m.REPO/source))
+            self.assertEqual(current[source],digest)
+            self.assertEqual(bound[source],digest)
+
+    def test_recovery_masks_unused_binfmt_service_and_automount(self):
+        with tempfile.TemporaryDirectory() as directory:
+            units=Path(directory)
+            for name in ('systemd-binfmt.service','proc-sys-fs-binfmt_misc.automount'):
+                (units/name).write_text('unmasked fixture')
+            m.mask_recovery_units(units)
+            self.assertIn('systemd-binfmt.service',m.RECOVERY_MASKED_UNITS)
+            self.assertIn('proc-sys-fs-binfmt_misc.automount',m.RECOVERY_MASKED_UNITS)
+            for name in m.RECOVERY_MASKED_UNITS:
+                self.assertTrue((units/name).is_symlink(),name)
+                self.assertEqual((units/name).readlink(),Path('/dev/null'))
+
+    def test_builder_rejects_stale_assembly_integration_inputs(self):
+        with tempfile.TemporaryDirectory(dir=m.REPO/'build') as directory:
+            source=Path(directory)/'assembly';root=source/'rootfs'
+            (root/'usr/bin').mkdir(parents=True);(root/'boot').mkdir()
+            (root/'usr/bin/busybox').write_bytes(b'busybox')
+            (root/'boot'/('vmlinuz-'+m.KERNEL)).write_bytes(b'kernel')
+            (source/'assembly.json').write_text(json.dumps(dict(integration_inputs={'stale':'digest'})))
+            args=SimpleNamespace(work=Path(directory)/'output',assembly=source,execute=False,
+                                 board_profile=None,media_profile=None)
+            with self.assertRaisesRegex(ValueError,'Stale build assembly'):
+                m.build(args)
+
+    def test_vm_adds_provider_binding_only_for_complete_composition_receipt(self):
+        spec=importlib.util.spec_from_file_location('recovery_vm',m.REPO/'tests/recovery_vm.py')
+        vm=importlib.util.module_from_spec(spec);spec.loader.exec_module(vm)
+        legacy={'manifest_sha256':'1'*64}
+        self.assertEqual(vm.boot_bindings(legacy),'sv08.envelope='+'1'*64)
+        composed={**legacy,'media_profile_sha256':'2'*64,'policy_sha256':'3'*64,
+                  'provider_manifest_sha256':'4'*64}
+        self.assertEqual(vm.boot_bindings(composed),
+                         'sv08.envelope='+'1'*64+' sv08.recovery='+'4'*64)
+        with self.assertRaisesRegex(ValueError,'Incomplete'):
+            vm.boot_bindings({**legacy,'provider_manifest_sha256':'4'*64})
+
     def test_inventory_binds_root_xattrs_and_hardlinks(self):
         import os
         with tempfile.TemporaryDirectory() as t:

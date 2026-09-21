@@ -1,4 +1,5 @@
 import copy
+import errno
 import json
 import hashlib
 import os
@@ -12,9 +13,10 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
-                                 POLICY, Unavailable, durable_identity, fingerprint, mount_table,
-                                 opened, production_adapter, same_identity, trusted_file)
-from sv08_recovery import installed_controller
+                                 POLICY, Unavailable, admitted_system_mount, durable_identity, fingerprint, mount_table,
+                                 canonical_json, opened, production_adapter, same_identity, strict_envelope_manifest,
+                                 reviewed_inventory, trusted_file)
+from sv08_recovery import RecoveryController, installed_controller
 from sv08_state import Store
 
 
@@ -28,7 +30,7 @@ class RecoveryMediaTests(unittest.TestCase):
                             expected={})
 
     def adapter(self, policy, context):
-        with patch('sv08_recovery_media.trusted_file', side_effect=[json.dumps(policy).encode(), json.dumps(context).encode()]):
+        with patch('sv08_recovery_media.trusted_file', side_effect=[canonical_json(policy), json.dumps(context).encode()]):
             return production_adapter()
 
     def test_mount_parser_distinguishes_vfs_from_superblock_and_decodes_paths(self):
@@ -38,6 +40,31 @@ class RecoveryMediaTests(unittest.TestCase):
         self.assertIn('rw', mounts[0]['super_options'])
         self.assertNotIn('ro', mounts[0]['super_options'])
 
+    def test_only_exact_selected_kernel_api_mounts_are_admitted(self):
+        text = '''
+34 27 0:7 / /sys/kernel/security rw,nosuid,nodev,noexec,relatime - securityfs securityfs rw
+37 27 0:31 / /sys/fs/pstore rw,nosuid,nodev,noexec,relatime - pstore pstore rw
+38 27 0:32 / /sys/fs/bpf rw,nosuid,nodev,noexec,relatime - bpf bpf rw,mode=700
+39 28 0:23 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw
+41 27 0:13 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime - tracefs tracefs rw
+42 27 0:8 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime - debugfs debugfs rw
+40 28 0:35 / /dev/hugepages rw,nosuid,nodev,relatime - hugetlbfs hugetlbfs rw,pagesize=2M
+45 27 0:37 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime - fusectl fusectl rw
+46 27 0:38 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime - configfs configfs rw
+'''.strip()
+        mounts = mount_table(text)
+        self.assertTrue(all(admitted_system_mount(mount, set()) for mount in mounts))
+        for mount in mounts:
+            mutations = {
+                'path': '/sys/kernel/not-reviewed', 'root': '/subtree',
+                'filesystem': 'sysfs', 'source': 'unreviewed',
+                'options': mount['options'][1:], 'super_options': ['ro'],
+            }
+            for field, value in mutations.items():
+                changed = {**mount, field:value}
+                with self.subTest(path=mount['path'], field=field):
+                    self.assertFalse(admitted_system_mount(changed, set()))
+
     def test_ambiguous_mounts_and_nonblock_topology_refused(self):
         line = '41 30 8:1 / /data ro - ext4 /dev/sda1 ro\n'
         with self.assertRaisesRegex(ValueError, 'Ambiguous'):
@@ -45,9 +72,119 @@ class RecoveryMediaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'non-block'):
             Kernel().block({'device':'0:35'})
 
+    @staticmethod
+    def proc_fixture(root, namespace='mnt:[1]', pid_namespace='pid:[1]'):
+        task=root/'101/task/101';(task/'ns').mkdir(parents=True)
+        (task/'stat').write_text('101 (fixture) S 1 1 1 0 -1 0\n')
+        (task/'ns/mnt').symlink_to(namespace)
+        (task/'ns/pid').symlink_to(pid_namespace)
+        return root/'101',task
+
+    def test_namespace_census_skips_only_pinned_disappearing_entries(self):
+        original_open=os.open
+        for stage, error in (('process', FileNotFoundError()),
+                             ('thread', ProcessLookupError()),
+                             ('stat', FileNotFoundError())):
+            with self.subTest(stage=stage), tempfile.TemporaryDirectory() as directory:
+                proc=Path(directory);self.proc_fixture(proc);numeric_opens=0
+                def opening(path, flags, mode=0o777, *, dir_fd=None):
+                    nonlocal numeric_opens
+                    if str(path) == '101':
+                        numeric_opens += 1
+                        if ((stage == 'process' and numeric_opens == 1) or
+                                (stage == 'thread' and numeric_opens == 2)):
+                            raise error
+                    if stage == 'stat' and path == 'stat':
+                        raise error
+                    return original_open(path, flags, mode, dir_fd=dir_fd)
+                with patch('sv08_recovery_media.os.open', side_effect=opening):
+                    Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+
+    def test_pinned_process_cannot_redirect_to_reused_pid_path(self):
+        original_open=os.open
+        with tempfile.TemporaryDirectory() as directory:
+            proc=Path(directory);process,_=self.proc_fixture(proc);replaced=False
+            def opening(path, flags, mode=0o777, *, dir_fd=None):
+                nonlocal replaced
+                fd=original_open(path, flags, mode, dir_fd=dir_fd)
+                if path == '101' and not replaced:
+                    replaced=True
+                    process.rename(proc/'old')
+                    self.proc_fixture(proc, namespace='mnt:[different]')
+                return fd
+            with patch('sv08_recovery_media.os.open', side_effect=opening):
+                Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+            with self.assertRaisesRegex(ValueError, 'Unexpected process namespace'):
+                Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+
+    def test_namespace_census_refuses_live_errors_malformed_stat_and_mismatch(self):
+        original_open=os.open
+        for failure in ('permission', 'io', 'missing-namespace', 'malformed', 'mismatch'):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as directory:
+                proc=Path(directory);_,task=self.proc_fixture(proc)
+                if failure == 'missing-namespace':(task/'ns/mnt').unlink()
+                elif failure == 'malformed':(task/'stat').write_text('malformed\n')
+                elif failure == 'mismatch':
+                    (task/'ns/mnt').unlink();(task/'ns/mnt').symlink_to('mnt:[different]')
+                def opening(path, flags, mode=0o777, *, dir_fd=None):
+                    if path == 'stat' and failure == 'permission':raise PermissionError(errno.EACCES, 'denied')
+                    if path == 'stat' and failure == 'io':raise OSError(errno.EIO, 'io')
+                    return original_open(path, flags, mode, dir_fd=dir_fd)
+                expected = ValueError if failure in ('malformed', 'mismatch') else OSError
+                with patch('sv08_recovery_media.os.open', side_effect=opening), \
+                     self.assertRaises(expected):
+                    Kernel()._namespace_census('mnt:[1]', 'pid:[1]', proc)
+
     def test_identity_matching_supports_disposable_file_identity_lists(self):
         self.assertTrue(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 11, 1024]}))
         self.assertFalse(same_identity({'identity':[7, 11, 1024]}, {'identity':[7, 12, 1024]}))
+
+    def test_envelope_manifest_parser_is_fixed_and_unambiguous(self):
+        data = (b'format=sv08-recovery-usr-v1\nroot_uuid=root\nroot_bytes=536870912\n'
+                b'usr_path=/usr.squashfs\nusr_bytes=513\nusr_sha256=' + b'a'*64 + b'\n')
+        value = strict_envelope_manifest(data)
+        self.assertEqual(value['usr_bytes'], 513)
+        for damaged in (data+b'extra=x\n', data.replace(b'usr_path=', b'path='), data.rstrip(b'\n')):
+            with self.assertRaisesRegex(ValueError, 'manifest'): strict_envelope_manifest(damaged)
+
+    def test_compressed_chain_binds_file_loop_extent_and_squashfs_mount(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); backing = root/'usr.squashfs'; backing.write_bytes(b'x'*513)
+            digest = hashlib.sha256(backing.read_bytes()).hexdigest()
+            actual = backing.stat(); provider = MediaProvider.__new__(MediaProvider); provider.root = root
+            mount = dict(path='/usr', root='/', filesystem='squashfs', options=['ro'],
+                         super_options=['ro'], device='7:0')
+            recovery = dict(directory=[actual.st_dev, root.stat().st_ino])
+            envelope = dict(usr_path='/usr.squashfs', usr_bytes=513, usr_sha256=digest)
+            node = Path('/sys/devices/virtual/block/loop0')
+            values = {str(node/'ro'):'1', str(node/'loop/offset'):'0',
+                      str(node/'loop/sizelimit'):'0', str(node/'size'):'2',
+                      str(node/'loop/backing_file'):'/usr.squashfs'}
+            original_fstat, original_stat = os.fstat, os.stat
+            def owned(fd):
+                value=list(original_fstat(fd));value[4]=value[5]=0
+                return os.stat_result(value)
+            def stat_path(path, *args, **kwargs):
+                if str(path) == '/usr.squashfs':
+                    value=list(original_stat(backing));value[4]=value[5]=0
+                    return os.stat_result(value)
+                return original_stat(path, *args, **kwargs)
+            def read(path, *args, **kwargs): return values[str(path)]
+            with patch('sv08_recovery_media.os.fstat', owned), \
+                 patch('sv08_recovery_media.os.stat', stat_path), \
+                 patch('sv08_recovery_media.Path.resolve', return_value=node), \
+                 patch('sv08_recovery_media.Path.read_text', read), \
+                 patch('sv08_recovery_media.Path.iterdir', return_value=[]), \
+                 patch('sv08_recovery_media.Path.is_dir', return_value=True), \
+                 patch('sv08_recovery_media.Path.stat', return_value=SimpleNamespace(st_ino=88)):
+                result = provider.compressed_userspace([mount], recovery, envelope)
+                self.assertEqual(result['backing'][2], 513)
+                values[str(node/'loop/offset')] = '1'
+                with self.assertRaisesRegex(ValueError, 'offset'):
+                    provider.compressed_userspace([mount], recovery, envelope)
+                values[str(node/'loop/offset')] = '0'; values[str(node/'loop/sizelimit')] = '1024'
+                with self.assertRaisesRegex(ValueError, 'extent'):
+                    provider.compressed_userspace([mount], recovery, envelope)
 
     def test_absent_and_malformed_production_contexts_are_diagnostic_only(self):
         with patch('sv08_recovery_media.trusted_file', side_effect=FileNotFoundError('Recovery context is absent')):
@@ -76,6 +213,88 @@ class RecoveryMediaTests(unittest.TestCase):
         adapter = self.adapter(policy, context)
         self.assertIsInstance(adapter, Unavailable)
         self.assertIn('independent recovery', adapter.reason)
+
+    def test_v2_policy_derives_protected_system_media_without_trusting_context(self):
+        recovery = {'serial':'recovery'}; source = {'device/wwid':'source'}; usb = {'device/wwid':'usb'}
+        policy = {key:value for key,value in self.policy.items()
+                  if key not in ('image_manifest_sha256', 'system_media')}
+        policy.update(format_version=2, envelope_manifest_sha256='2'*64,
+                      source_path='/data',
+                      recovery={'stable':recovery}, source={'stable':source},
+                      media=[dict(stable=recovery), dict(stable=source), dict(stable=usb)],
+                      protected=[], destinations={'usb':dict(identity=dict(stable=usb),
+                                      path='/media/usb', label='Reviewed USB')})
+        context = {**self.context, 'format_version':2, 'policy_sha256':fingerprint(policy)}
+        provider = MediaProvider(policy, context)
+        self.assertEqual(provider.system_media, [recovery, source])
+        changed = copy.deepcopy(context); changed['source'] = '/other'
+        with self.assertRaisesRegex(ValueError, 'immutable source'):
+            MediaProvider(policy, changed)
+        aliased = copy.deepcopy(policy)
+        aliased['protected'] = [dict(role='slot-a', identity=dict(stable=usb))]
+        aliased_context = {**context, 'policy_sha256':fingerprint(aliased)}
+        with self.assertRaisesRegex(ValueError, 'whole disk aliases protected'):
+            MediaProvider(aliased, aliased_context)
+
+    def test_v2_complete_inventory_rechecks_unmounted_media_and_active_loops(self):
+        def disk(index, stable, uuid, removable=False):
+            device=f'{index}:0'
+            return dict(name='disk'+str(index), node='/dev/disk'+str(index), device=device,
+                        sysfs='/sys/devices/disk'+str(index), sysfs_inode=100+index,
+                        disk='/sys/devices/disk'+str(index), disk_device=device,
+                        diskseq=200+index, partition=0, start=0, sectors=131072,
+                        readonly=index == 1, disk_readonly=index == 1,
+                        removable=removable, filesystem_uuid=uuid, filesystem='ext4',
+                        partuuid='', holders=[], slaves=[], stable=stable,
+                        transport='usb-scsi' if removable else 'scsi', partitions=[])
+        observed = [disk(1, {'device/wwid':'recovery'}, 'root'),
+                    disk(2, {'device/wwid':'source'}, 'source'),
+                    disk(3, {'device/wwid':'protected'}, 'protected'),
+                    disk(4, {'device/wwid':'usb'}, 'fat', True)]
+        loop = dict(device='7:0', sysfs='/sys/devices/virtual/block/loop0', sysfs_inode=70,
+                    diskseq=9, backing='/usr.squashfs', backing_identity=[1, 2, 4096],
+                    backing_mode=stat.S_IFREG | 0o644, backing_uid=0, backing_gid=0,
+                    backing_nlink=1, readonly=True, offset=0, sizelimit=0, sectors=8,
+                    holders=[], slaves=[])
+        identity = lambda value: dict(stable=value['stable'], partition=0, start=0,
+                                      sectors=value['sectors'], filesystem_uuid=value['filesystem_uuid'])
+        policy = dict(format_version=2, kind='independent-recovery', protocol=PROTOCOL,
+                      writer_model=WRITER_MODEL, envelope_manifest_sha256='2'*64,
+                      recovery=identity(observed[0]), source=identity(observed[1]),
+                      source_path='/data', media=reviewed_inventory(observed),
+                      protected=[dict(role='slot-a', identity=identity(observed[2]))],
+                      destinations={'usb':dict(identity=identity(observed[3]),
+                                      path='/media/usb', label='Reviewed USB')})
+        context = dict(format_version=2, protocol=PROTOCOL, policy_sha256=fingerprint(policy),
+                       source='/data', destinations={'usb':dict(path='/media/usb', label='Reviewed USB')})
+        provider = MediaProvider(policy, context)
+        with patch.object(provider.kernel, 'inventory', return_value=copy.deepcopy(observed)), \
+             patch.object(provider.kernel, 'active_loops', return_value=[copy.deepcopy(loop)]):
+            initial = provider.complete_inventory()
+        self.assertEqual(initial['media'][2]['stable'], {'device/wwid':'protected'})
+        changed = copy.deepcopy(observed); changed[2]['diskseq'] += 1
+        with patch.object(provider.kernel, 'inventory', return_value=changed), \
+             patch.object(provider.kernel, 'active_loops', return_value=[copy.deepcopy(loop)]):
+            self.assertNotEqual(provider.complete_inventory(), initial)
+        for mutation in ('removal', 'replacement', 'insertion'):
+            changed = copy.deepcopy(observed)
+            if mutation == 'removal': changed.pop(2)
+            elif mutation == 'replacement': changed[2]['stable'] = {'device/wwid':'replacement'}
+            else: changed.append(disk(5, {'device/wwid':'unexpected'}, 'extra'))
+            with self.subTest(mutation=mutation), \
+                 patch.object(provider.kernel, 'inventory', return_value=changed), \
+                 patch.object(provider.kernel, 'active_loops', return_value=[copy.deepcopy(loop)]):
+                with self.assertRaisesRegex(ValueError, 'topology'):
+                    provider.complete_inventory()
+        with patch.object(provider.kernel, 'inventory', return_value=copy.deepcopy(observed)), \
+             patch.object(provider.kernel, 'active_loops', return_value=[loop, {**loop, 'device':'7:1'}]):
+            with self.assertRaisesRegex(ValueError, 'Exactly one'):
+                provider.complete_inventory()
+        bad_loop = {**loop, 'sectors':9}
+        with patch.object(provider.kernel, 'inventory', return_value=copy.deepcopy(observed)), \
+             patch.object(provider.kernel, 'active_loops', return_value=[bad_loop]):
+            with self.assertRaisesRegex(ValueError, 'extent'):
+                provider.complete_inventory()
 
     def test_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export(self):
         # The old display-service marker says nothing about the actual root.
@@ -201,3 +420,50 @@ class RecoveryMediaTests(unittest.TestCase):
             self.assertIn('Untrusted', status['capabilities']['recovery.export']['reason'])
             self.assertTrue(status['capabilities']['recovery.check']['available'])
             self.assertFalse(root.exists())
+
+    def test_installed_controller_refresh_retries_trust_and_uses_configured_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);fallback=root/'fallback';source=root/'configured-source'
+            registry=source/'sv08';registry.mkdir(parents=True)
+            (registry/'state.json').write_text('distinct damaged configured registry')
+            provider=MediaProvider.__new__(MediaProvider);provider.source=source
+            provider.capability=lambda action, view:(action == 'recovery.export',
+                '' if action == 'recovery.export' else 'Unavailable')
+            provider.images=lambda:[]
+            provider.destinations=lambda:[{'id':'usb','label':'Reviewed USB'}]
+            stores=[]
+            def configured_store(path):
+                selected=fallback if str(path) == '/data/sv08' else Path(path)
+                stores.append(selected)
+                return Store(selected)
+            with patch('sv08_recovery_media.production_adapter',
+                       side_effect=[Unavailable('Another recovery media operation owns admission'),
+                                    provider]) as factory, \
+                 patch('sv08_state.Store', side_effect=configured_store):
+                controller=installed_controller()
+                initial=controller.status()
+                refreshed=controller.status()
+            self.assertEqual(factory.call_count,2)
+            self.assertFalse(initial['capabilities']['recovery.export']['available'])
+            self.assertIn('Another recovery media operation',
+                          initial['capabilities']['recovery.export']['reason'])
+            self.assertTrue(refreshed['capabilities']['recovery.export']['available'])
+            self.assertEqual(refreshed['destinations'],[{'id':'usb','label':'Reviewed USB'}])
+            self.assertEqual(controller.store.root,registry)
+            self.assertEqual(stores,[fallback,registry])
+            self.assertIn('damaged',refreshed['diagnostic'])
+            self.assertEqual((registry/'state.json').read_text(),
+                             'distinct damaged configured registry')
+            self.assertFalse(fallback.exists())
+
+    def test_injected_recovery_adapter_is_stable_across_status(self):
+        with tempfile.TemporaryDirectory() as directory:
+            adapter=Unavailable('Injected fixture diagnostic')
+            controller=RecoveryController(Store(Path(directory)/'missing'),adapter)
+            with patch('sv08_recovery_media.production_adapter',
+                       side_effect=AssertionError('Injected adapters must not refresh')):
+                first=controller.status();second=controller.status()
+            self.assertIs(controller.adapter,adapter)
+            self.assertEqual(first['capabilities'],second['capabilities'])
+            self.assertIn('Injected fixture',
+                          second['capabilities']['recovery.export']['reason'])

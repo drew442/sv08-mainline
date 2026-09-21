@@ -1,0 +1,17 @@
+[Unit]
+Description=Prepare reviewed recovery export media
+Requires=sv08-recovery-private-mounts.service
+After=systemd-udev-settle.service sv08-recovery-private-mounts.service
+Before=sv08-recovery-display.service
+ConditionPathExists=/run/sv08/recovery-verified
+ConditionPathExists=/etc/sv08/recovery-media-policy.json
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_prepare.py
+RemainAfterExit=yes
+TimeoutStartSec=60
+RuntimeDirectory=sv08-recovery
+RuntimeDirectoryMode=0700
+StandardOutput=journal+console
+StandardError=journal+console

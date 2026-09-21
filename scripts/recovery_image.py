@@ -25,6 +25,20 @@ KERNEL = '6.12.107+deb13-arm64'
 SIZE = 512 * 1024**2
 UUID = '964ed891-6ec4-4a95-8762-e32c91260394'
 EPOCH = 1788220800
+RECOVERY_MASKED_UNITS = (
+    'systemd-remount-fs.service', 'systemd-machine-id-commit.service',
+    'systemd-random-seed.service', 'systemd-pstore.service',
+    'systemd-update-utmp.service', 'systemd-update-utmp-runlevel.service',
+    'systemd-journal-flush.service', 'getty.target', 'serial-getty@ttyAMA0.service',
+    'console-getty.service', 'systemd-networkd.service', 'systemd-networkd.socket',
+    'systemd-resolved.service', 'e2scrub_all.timer', 'e2scrub_reap.service',
+    'fstrim.timer', 'dpkg-db-backup.timer', 'dpkg-db-backup.service',
+    'systemd-hostnamed.socket', 'systemd-hostnamed.service',
+    # binfmt is unused in this fixed-architecture appliance. Its automount plus
+    # realized filesystem otherwise creates two records for one mount path,
+    # which correctly fails the recovery provider's ambiguity check.
+    'systemd-binfmt.service', 'proc-sys-fs-binfmt_misc.automount',
+)
 
 
 def board_profile(path):
@@ -111,13 +125,80 @@ def run(args, **kw):
 
 
 def integration_inputs():
-    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
+    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-systemd-udevd.conf',REPO/'configs/host-os/recovery-systemd-logind.conf',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
     paths.append(REPO/'configs/host-os/recovery-board-root')
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
 
 def sha(path):
     with path.open('rb') as f: return hashlib.file_digest(f, 'sha256').hexdigest()
+
+
+def compose_media_policy(profile, envelope_digest):
+    """Bind reviewed topology to final immutable manifests, never observations."""
+    required = {'recovery', 'source', 'source_path', 'media', 'protected', 'destinations'}
+    if type(profile) is not dict or set(profile) != required:
+        raise ValueError('Invalid reviewed recovery media profile schema')
+    if re.fullmatch('[0-9a-f]{64}', envelope_digest or '') is None:
+        raise ValueError('Invalid immutable recovery manifest binding')
+    if profile['source_path'] != '/run/sv08-recovery/source' or not profile['destinations']:
+        raise ValueError('Invalid reviewed recovery media paths')
+    return dict(format_version=2, kind='independent-recovery',
+                protocol='sv08-recovery-media-v1',
+                writer_model='reviewed-recovery-only; all-media-mutators-use-MediaLease',
+                envelope_manifest_sha256=envelope_digest, **profile)
+
+
+def compose_provider_manifest(policy_sha256, inputs):
+    if re.fullmatch('[0-9a-f]{64}', policy_sha256 or '') is None:
+        raise ValueError('Invalid reviewed policy binding')
+    return dict(format_version=2, kind='sv08-independent-recovery-provider',
+                protocol='sv08-recovery-media-v1', policy_sha256=policy_sha256,
+                inputs=inputs)
+
+
+def require_recorded_integration_inputs(recorded, current, stage):
+    if recorded.get('integration_inputs') != current:
+        raise ValueError('Stale '+stage+' integration inputs; create a fresh assembly')
+
+
+def installed_provider_inputs(root):
+    paths = {
+        'runtime/sv08_recovery_media.py': root/'usr/lib/sv08/sv08_recovery_media.py',
+        'runtime/sv08_recovery_prepare.py': root/'usr/lib/sv08/sv08_recovery_prepare.py',
+        'configs/host-os/sv08-recovery-prepare.service':
+            root/'etc/systemd/system/sv08-recovery-prepare.service',
+        'configs/host-os/sv08-recovery-private-mounts.service':
+            root/'etc/systemd/system/sv08-recovery-private-mounts.service',
+        'configs/host-os/recovery-systemd-udevd.conf':
+            root/'etc/systemd/system/systemd-udevd.service.d/recovery-namespace.conf',
+        'configs/host-os/recovery-systemd-logind.conf':
+            root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
+    }
+    if not all(path.is_file() for path in paths.values()):
+        raise ValueError('Installed recovery provider input is missing')
+    return {name:sha(path) for name,path in paths.items()}
+
+
+def mask_recovery_units(units):
+    for name in RECOVERY_MASKED_UNITS:
+        path = units/name
+        path.unlink(missing_ok=True)
+        path.symlink_to('/dev/null')
+
+
+def stage_recovery_units(units):
+    for name in ('sv08-recovery-private-mounts.service',
+                 'sv08-recovery-prepare.service'):
+        shutil.copyfile(REPO/'configs/host-os'/name, units/name)
+    for unit, source in (('systemd-udevd.service', 'recovery-systemd-udevd.conf'),
+                         ('systemd-logind.service', 'recovery-systemd-logind.conf')):
+        dropin = units/(unit+'.d')/'recovery-namespace.conf'
+        dropin.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(REPO/'configs/host-os'/source, dropin)
+    write(units/'sv08-recovery-display.service.d/independent.conf','[Unit]\nWants=systemd-udev-settle.service sv08-recovery-private-mounts.service\nAfter=sv08-recovery-private-mounts.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n')
+    write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-private-mounts.service sv08-recovery-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-private-mounts.service sv08-recovery-prepare.service\nAllowIsolate=yes\n')
+    write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
 
 
 def clean_path(path, *, output=False):
@@ -266,13 +347,9 @@ def assemble(a):
     from stage_admin_ui import stage
     stage(work,'recovery',True)
     units=root/'etc/systemd/system';units.mkdir(parents=True,exist_ok=True)
-    write(units/'sv08-recovery-display.service.d/independent.conf','[Unit]\nWants=systemd-udev-settle.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n')
-    # Exact image uses a focused boot target, eliminating unrelated boot jobs.
-    write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-report.service\nAfter=sysinit.target basic.target\nAllowIsolate=yes\n')
-    write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
+    stage_recovery_units(units)
     p=units/'default.target';p.unlink(missing_ok=True);p.symlink_to('sv08-recovery.target')
-    for name in ('systemd-remount-fs.service','systemd-machine-id-commit.service','systemd-random-seed.service','systemd-pstore.service','systemd-update-utmp.service','systemd-update-utmp-runlevel.service','systemd-journal-flush.service','getty.target','serial-getty@ttyAMA0.service','console-getty.service','systemd-networkd.service','systemd-networkd.socket','systemd-resolved.service','e2scrub_all.timer','e2scrub_reap.service','fstrim.timer','dpkg-db-backup.timer','dpkg-db-backup.service','systemd-hostnamed.socket','systemd-hostnamed.service'):
-        p=units/name;p.unlink(missing_ok=True);p.symlink_to('/dev/null')
+    mask_recovery_units(units)
     write(units/'systemd-tmpfiles-setup.service.d/recovery.conf','[Service]\nExecStart=\nExecStart=systemd-tmpfiles --create --remove --boot --prefix=/run --prefix=/tmp --prefix=/var/log --prefix=/var/cache --prefix=/var/lib/systemd --prefix=/var/lib/dbus\n')
     write(root/'etc/systemd/journald.conf.d/recovery.conf','[Journal]\nStorage=volatile\nRuntimeMaxUse=16M\nForwardToConsole=yes\n')
     # /var writes are volatile under /run; /etc, root and /usr remain read-only.
@@ -282,6 +359,11 @@ def assemble(a):
         elif p.exists():shutil.rmtree(p)
         p.parent.mkdir(parents=True,exist_ok=True);p.symlink_to('/run/recovery-var/'+name)
     write(root/'etc/X11/xorg.conf.d/10-recovery-vm.conf','Section "Device"\n Identifier "virtio"\n Driver "modesetting"\n Option "AccelMethod" "none"\nEndSection\n')
+    provider_inputs = installed_provider_inputs(root)
+    write(root/'etc/sv08/recovery-image.json', json.dumps(dict(
+        format_version=1, kind='sv08-independent-recovery-provider',
+        protocol='sv08-recovery-media-v1', inputs=provider_inputs),
+        sort_keys=True, separators=(',', ':'))+'\n')
     # Keep every package runtime, translation, manual and copyright file.
     # Exclude only generated machine/runtime state and the unused generated initrd.
     for p in (root/'boot').glob('initrd.img*'):p.unlink()
@@ -419,6 +501,7 @@ def derive(a):
     if work.exists():raise ValueError('Derivation requires a fresh output')
     original=clean_path(source/'rootfs');receipt=clean_path(source/'assembly.json')
     receipt_hash=sha(receipt);recorded=json.loads(receipt.read_text());before=inventory(original)
+    require_recorded_integration_inputs(recorded, inputs, 'parent assembly')
     if before!=recorded['root']:raise ValueError('Assembly source changed since completion')
     for package in profile['packages']:
         archive=clean_path(packages/package['filename'])
@@ -488,8 +571,9 @@ def build(a):
     if not root.is_dir() or not (source/'assembly.json').is_file():raise ValueError('Complete assembly required')
     for name in ['usr','boot','boot/vmlinuz-'+kernel,'usr/bin/busybox']:
         clean_path(root/name)
-    recorded=json.loads((source/'assembly.json').read_text())
     if work.exists():raise ValueError('Build requires a fresh output')
+    recorded=json.loads((source/'assembly.json').read_text())
+    require_recorded_integration_inputs(recorded, inputs, 'build assembly')
     if not a.execute:return dict(execute=False,stage='build',work=str(work),bytes=SIZE)
     private()
     before=inventory(root)
@@ -521,6 +605,20 @@ def build(a):
     # Line-oriented fixed manifest is parseable by the self-contained busybox gate.
     manifest=f'format=sv08-recovery-usr-v1\nroot_uuid={UUID}\nroot_bytes={SIZE}\nusr_path=/usr.squashfs\nusr_bytes={usr.stat().st_size}\nusr_sha256={sha(usr)}\n'
     write(envelope/'etc/sv08/recovery-envelope.manifest',manifest)
+    media_profile = getattr(a, 'media_profile', None)
+    media_profile_hash = None
+    if media_profile:
+        profile_path = clean_path(media_profile); separate(work, profile_path)
+        profile_value = json.loads(profile_path.read_text())
+        media_profile_hash = sha(profile_path)
+        policy = compose_media_policy(profile_value, hashlib.sha256(manifest.encode()).hexdigest())
+        policy_text = json.dumps(policy, sort_keys=True, separators=(',', ':'))+'\n'
+        write(envelope/'etc/sv08/recovery-media-policy.json', policy_text)
+        provider_inputs = installed_provider_inputs(root)
+        provider = compose_provider_manifest(hashlib.sha256(policy_text.encode()).hexdigest(),
+                                             provider_inputs)
+        write(envelope/'etc/sv08/recovery-image.json',
+              json.dumps(provider, sort_keys=True, separators=(',', ':'))+'\n')
     for p in [envelope,*envelope.rglob('*')]:os.utime(p,(EPOCH,EPOCH),follow_symlinks=False)
     disk=work/'recovery.ext4'
     with disk.open('xb') as f:f.truncate(SIZE)
@@ -533,6 +631,10 @@ def build(a):
     after=inventory(root)
     if before!=after:raise ValueError('Assembly source changed during build')
     result=dict(format_version=1,status='offline-vm-candidate',image_bytes=SIZE,image_sha256=sha(disk),allocated_bytes=disk.stat().st_blocks*512,manifest_sha256=hashlib.sha256(manifest.encode()).hexdigest(),usr_bytes=usr.stat().st_size,usr_sha256=sha(usr),source=before,source_preserved=before==after,kernel_sha256=sha(work/'vmlinuz'),initrd_sha256=sha(work/'initrd.img'),envelope=inventory(envelope),boot_gate_sha256=sha(REPO/'configs/host-os/recovery-init'),builder_sha256=sha(Path(__file__)),assembly_record_sha256=sha(source/'assembly.json'))
+    if media_profile_hash:
+        result['media_profile_sha256'] = media_profile_hash
+        result['policy_sha256'] = sha(envelope/'etc/sv08/recovery-media-policy.json')
+        result['provider_manifest_sha256'] = sha(envelope/'etc/sv08/recovery-image.json')
     if integration_inputs()!=inputs:raise ValueError('Integration inputs changed during build')
     result['integration_inputs']=inputs
     if profile:
@@ -546,5 +648,6 @@ def main():
     p.add_argument('--work',type=Path,required=True);p.add_argument('--execute',action='store_true')
     p.add_argument('--intake',type=Path);p.add_argument('--lock',type=Path,default=REPO/'configs/host-os/recovery-packages.json');p.add_argument('--assembly',type=Path);p.add_argument('--reuse-usr',type=Path)
     p.add_argument('--board-profile',type=Path);p.add_argument('--packages',type=Path)
+    p.add_argument('--media-profile',type=Path)
     a=p.parse_args();print(json.dumps(globals()[a.stage](a),indent=2))
 if __name__=='__main__':main()

@@ -5,23 +5,39 @@ Reading state is diagnostic only. A separately verified recovery adapter owns
 partition identity, signed restore and boot-selection operations. Never borrow
 host A/B assumptions or initialize missing state in recovery.
 """
+import threading
+
 from sv08_admin import ACTIONS, RECOVERY_ACTIONS, Controller, revision
 
 
 def installed_controller():
     from sv08_recovery_media import MediaProvider, production_adapter
     from sv08_state import Store
-    adapter = production_adapter()
-    # Export the complete configured data filesystem; its registry is diagnostic.
-    registry = adapter.source / 'sv08' if isinstance(adapter, MediaProvider) else '/data/sv08'
-    return RecoveryController(Store(registry), adapter)
+    def refresh():
+        adapter = production_adapter()
+        # A successful trust refresh also selects the configured data source for
+        # diagnostics. A failed refresh never invents a source path.
+        store = Store(adapter.source / 'sv08') if isinstance(adapter, MediaProvider) else None
+        return adapter, store
+    return RecoveryController(Store('/data/sv08'), adapter_factory=refresh)
 
 
 class RecoveryController(Controller):
-    def __init__(self, store, adapter=None):
+    def __init__(self, store, adapter=None, adapter_factory=None):
         super().__init__(store, {}, 'recovery', adapter)
+        self._adapter_factory = adapter_factory
+        self._adapter_lock = threading.RLock()
 
     def status(self):
+        with self._adapter_lock:
+            if self._adapter_factory is not None:
+                adapter, store = self._adapter_factory()
+                self.adapter = adapter
+                if store is not None:
+                    self.store = store
+            return self._status()
+
+    def _status(self):
         try:
             state = self.store.load()  # No lock file creation on read-only data.
             diagnostic = 'The state registry is readable. Physical partition health has not been verified.'
@@ -49,22 +65,24 @@ class RecoveryController(Controller):
                     destinations=self.adapter.destinations() if self.adapter else [])
 
     def plan(self, action, arguments):
-        plan = super().plan(action, arguments)
-        if action == 'recovery.export':
-            if self.adapter is None or not hasattr(self.adapter, 'review_export'):
-                raise ValueError('Export preflight is unavailable')
-            plan['export'] = self.adapter.review_export(arguments['destination'])
-            detail = plan['export']
-            plan['effect'] = (f"Save user data to {detail['label']}. Allow up to "
-                              f"{detail['required_bytes'] / 1024**2:.1f} MiB for {detail['entries']} entries. "
-                              'The archive includes private configuration and credentials. Keep the destination private. '
-                              'The source and existing destination files are preserved.')
-        return plan
+        with self._adapter_lock:
+            plan = super().plan(action, arguments)
+            if action == 'recovery.export':
+                if self.adapter is None or not hasattr(self.adapter, 'review_export'):
+                    raise ValueError('Export preflight is unavailable')
+                plan['export'] = self.adapter.review_export(arguments['destination'])
+                detail = plan['export']
+                plan['effect'] = (f"Save user data to {detail['label']}. Allow up to "
+                                  f"{detail['required_bytes'] / 1024**2:.1f} MiB for {detail['entries']} entries. "
+                                  'The archive includes private configuration and credentials. Keep the destination private. '
+                                  'The source and existing destination files are preserved.')
+            return plan
 
     def apply(self, plan):
-        if not isinstance(plan, dict) or plan != self.plan(plan.get('action'), plan.get('arguments')):
-            raise ValueError('Recovery state changed. Review the operation again.')
-        if plan['action'] == 'recovery.check':
-            return dict(message=self.status()['diagnostic'])
-        if self.adapter is None: raise ValueError('Verified recovery backend unavailable')
-        return self.adapter.apply(plan)
+        with self._adapter_lock:
+            if not isinstance(plan, dict) or plan != self.plan(plan.get('action'), plan.get('arguments')):
+                raise ValueError('Recovery state changed. Review the operation again.')
+            if plan['action'] == 'recovery.check':
+                return dict(message=self.status()['diagnostic'])
+            if self.adapter is None: raise ValueError('Verified recovery backend unavailable')
+            return self.adapter.apply(plan)

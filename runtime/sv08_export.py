@@ -255,6 +255,9 @@ class Export:
                             expected[info.name] = hashlib.sha256(manifest).hexdigest()
                         output.flush(); os.fsync(output.fileno())
                         if output.tell() > plan['required_bytes']: raise ValueError('Archive exceeded its admitted budget')
+                        partial_stat = os.fstat(output.fileno())
+                        partial_identity = (partial_stat.st_dev, partial_stat.st_ino,
+                                             partial_stat.st_mode, partial_stat.st_nlink)
                     if inventory(self.source) != plan['entries']: raise ValueError('Source changed during export')
                     with opened(self.source) as now:
                         if identity(os.fstat(now))[:2] != tuple(plan['source_identity']): raise ValueError('Source changed')
@@ -264,6 +267,14 @@ class Export:
                     # Revalidate paths before publishing into the still-held destination.
                     with opened(target) as now:
                         if identity(os.fstat(now))[:2] != tuple(plan['destination_identity']): raise ValueError('Destination changed')
+                    # The pathname may have been replaced while verification used the
+                    # held descriptor.  Publish only the same single-link regular file
+                    # that was written and verified; never rename a replacement inode.
+                    current = os.stat(partial, dir_fd=target_fd, follow_symlinks=False)
+                    current_identity = (current.st_dev, current.st_ino, current.st_mode, current.st_nlink)
+                    if (not stat.S_ISREG(current.st_mode) or current.st_nlink != 1 or
+                            current_identity != partial_identity):
+                        raise ValueError('Archive partial changed before publication')
                     if guard is not None: guard.recheck()
                     publish(target_fd, partial, name)
                     published = True
@@ -280,7 +291,7 @@ class Export:
                         os.fsync(target_fd)
                     if created:
                         try: os.unlink(partial, dir_fd=target_fd)
-                        except FileNotFoundError: pass
+                        except (FileNotFoundError, IsADirectoryError): pass
 
 
 class ExportAdapter:

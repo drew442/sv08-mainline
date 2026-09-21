@@ -17,6 +17,19 @@ import stat
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from recovery_image import clean_path, separate, private, sha, write, SIZE
 
+def boot_bindings(report, envelope_override=None):
+    envelope = envelope_override or report['manifest_sha256']
+    bindings = 'sv08.envelope='+envelope
+    composition = {name:report.get(name) for name in
+                   ('media_profile_sha256', 'policy_sha256', 'provider_manifest_sha256')}
+    if any(composition.values()):
+        if not all(isinstance(value, str) and len(value) == 64 and
+                   all(character in '0123456789abcdef' for character in value)
+                   for value in composition.values()):
+            raise ValueError('Incomplete recovery composition receipt')
+        bindings += ' sv08.recovery='+composition['provider_manifest_sha256']
+    return bindings
+
 class QMP:
     def __init__(self,path):
         self.sock=socket.socket(socket.AF_UNIX);self.sock.settimeout(5);self.sock.connect(str(path));self.file=self.sock.makefile('rwb');self.read();self.call('qmp_capabilities')
@@ -80,7 +93,7 @@ def main():
     endpoint=Path(tempfile.mkdtemp(prefix='sv08-recovery-'))
     endpoint.chmod(0o700);qmp=endpoint/'qmp.sock'
     before=sha(image);log=(work/'serial.log').open('wb')
-    command=['qemu-system-aarch64','-machine','virt','-cpu','cortex-a53','-accel','tcg,thread=multi','-smp','2','-m','768','-kernel',str(source/'vmlinuz'),'-initrd',str(source/'initrd.img'),'-append','console=ttyAMA0 root=/dev/vda ro sv08.envelope='+(a.binding or report['manifest_sha256'])+' systemd.log_target=console systemd.show_status=yes','-drive','if=none,id=recovery,format=raw,file='+str(image)+',readonly='+('off' if a.writable else 'on'),'-device','virtio-blk-pci,drive=recovery','-device','virtio-gpu-pci,id=video0,xres=1024,yres=768','-device','virtio-multitouch-pci,display=video0','-device','qemu-xhci','-device','usb-kbd','-device','usb-mouse','-device','usb-tablet','-nic','none','-display','none','-serial','stdio','-qmp','unix:'+str(qmp)+',server=on,wait=off','-no-reboot']
+    command=['qemu-system-aarch64','-machine','virt','-cpu','cortex-a53','-accel','tcg,thread=multi','-smp','2','-m','768','-kernel',str(source/'vmlinuz'),'-initrd',str(source/'initrd.img'),'-append','console=ttyAMA0 root=/dev/vda ro '+boot_bindings(report,a.binding)+' systemd.log_target=console systemd.show_status=yes','-drive','if=none,id=recovery,format=raw,file='+str(image)+',readonly='+('off' if a.writable else 'on'),'-device','virtio-blk-pci,drive=recovery','-device','virtio-gpu-pci,id=video0,xres=1024,yres=768','-device','virtio-multitouch-pci,display=video0','-device','qemu-xhci','-device','usb-kbd','-device','usb-mouse','-device','usb-tablet','-nic','none','-display','none','-serial','stdio','-qmp','unix:'+str(qmp)+',server=on,wait=off','-no-reboot']
     write(work/'command.json',json.dumps(command,indent=2)+'\n')
     process=subprocess.Popen(command,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT)
     peak=0;started=time.monotonic();q=None;ready=False
