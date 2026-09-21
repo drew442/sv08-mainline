@@ -669,8 +669,10 @@ def destination_state(fixture, output, name, raw_name="destination.raw"):
             b"existing destination file must survive\n").hexdigest():
         raise AssertionError("Older destination file changed or disappeared")
     archives = {p.name: sha(p) for p in extracted.glob("*.tar") if p.is_file()}
+    malformed_archives = sorted(p.name for p in extracted.glob("*.tar") if not p.is_file())
     markers = sorted(p.name for p in extracted.glob("*.marker"))
     return dict(partition=partition, extracted=extracted, archives=archives,
+                malformed_archives=malformed_archives,
                 older_sha256=sha(older), markers=markers)
 
 
@@ -1013,6 +1015,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
         new_names = sorted(set(destination_after["archives"]) - set(destination_before["archives"]))
         if new_names:
             raise AssertionError("Failure path published an archive: " + ", ".join(new_names))
+        if destination_after["malformed_archives"]:
+            raise AssertionError("Failure path published malformed archive path: " +
+                                 ", ".join(destination_after["malformed_archives"]))
         destination = dict(archives=[], archives_before=destination_before["archives"],
                            older_preserved=True, older_sha256=destination_after["older_sha256"],
                            expected_failure=fault, markers=destination_after["markers"])

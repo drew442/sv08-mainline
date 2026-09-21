@@ -105,6 +105,24 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(list(self.target.iterdir()),[])
         self.assertEqual(self.depth,0)
 
+    def test_partial_path_replacement_never_publishes_replacement_inode(self):
+        plan=self.export.prepare('usb-1')
+        import sv08_export
+        original=sv08_export.verify_archive
+        def replace_after_readback(path, expected, size, checksum, header_bytes):
+            result=original(path, expected, size, checksum, header_bytes)
+            partial=self.target/'.sv08-user-data-race.tar.partial'
+            partial.rename(self.target/'detached-partial')
+            partial.mkdir()
+            return result
+        with (patch('sv08_export.uuid.uuid4',return_value=SimpleNamespace(hex='race')),
+              patch('sv08_export.verify_archive',side_effect=replace_after_readback)):
+            with self.assertRaisesRegex(ValueError,'partial changed'):
+                self.export.execute(plan)
+        self.assertTrue((self.target/'detached-partial').is_file())
+        self.assertTrue((self.target/'.sv08-user-data-race.tar.partial').is_dir())
+        self.assertEqual(list(self.target.glob('*.tar')),[])
+
     def test_admission_fingerprint_and_final_rechecks_prevent_publication(self):
         class Guard:
             fingerprint='reviewed-media'

@@ -34,11 +34,7 @@ regular-file media fixture.
   command line; a real guest `flock` holder was started before Apply. The UI refused
   export and preserved the prior destination file. The replacement run also retained
   the replacement medium's older file and published no archive; its before/after
-  backing hashes are recorded in `result.json`. The archive-corruption journey now
-  uses a guest watcher that records a hit marker only after observing the dot-prefixed
-  operation partial, corrupts and replaces that partial, and leaves no published
-  archive while preserving the older file. Operation-owned cleanup-failure remains
-  open; its current attempts do not yet prove partial observation and cleanup entry.
+  backing hashes are recorded in `result.json`. The archive-corruption journey exposed a publication-path race: the watcher replaced the partial pathname with a directory while the exporter held the original inode, and the UI reported success without a regular archive. That run is rejected and retained only as negative evidence. The runtime now revalidates the partial pathname inode/type before publication, and the harness rejects malformed `.tar` paths; archive-corruption and operation-owned cleanup-failure require reruns against a rebuilt candidate.
 - **composition-and-bounds — pass offline.** The corrected candidate is a
   536870912-byte image with 327692288 allocated bytes, a 241356800-byte SquashFS,
   56355 free ext4 blocks, 31045 free inodes, and peak QEMU RSS of 2035699712 bytes.
@@ -79,7 +75,7 @@ Retained local evidence directories:
 - `recovery-composition-replace-destination-1dca3f7`
 - `recovery-composition-replace-destination-rerun-1dca3f7`
 - `recovery-composition-lock-contention-rerun-1dca3f7`
-- `recovery-composition-archive-corruption-observed-1dca3f7`
+- `recovery-composition-archive-corruption-observed-1dca3f7` (rejected negative evidence; malformed publication race)
 
 The candidate build record SHA256 is
 `e6db81f7cc20462d25ff752790186210df50496203623a2398227acb7556d906`. Result JSON
@@ -98,7 +94,8 @@ the corrected replacement rerun is
 The lock-contention rerun result JSON is
 `c83641faca236b816dc0dc8bdaa7ba7a2a0eda35e29b9660227d664ba5234b76`.
 The observed archive-corruption result JSON is
-`77fa47ca92c83c81012544bc42923c5be7d5d6bc8881c2a41473544de32c5b71`.
+`77fa47ca92c83c81012544bc42923c5be7d5d6bc8881c2a41473544de32c5b71`; it is
+rejected because it reports success while leaving a directory named `*.tar`.
 
 The candidate contains corrected preparer SHA256
 `7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82`. Physical media,
