@@ -116,8 +116,8 @@ the regression source hash (`f2f1640b720feb413d5e2d266c5360198ec4eb203dced902b6e
 and both journeys show visible refusal with no new or malformed archive.
 
 A locally regenerated candidate carrying that runtime hash booted and passed a
-keyboard-only positive export (`result.json` SHA256
-`8eda7db7e5f29e08478f87769b836fa44a1b4b51c62919018d1f93b03061c203`; recovery
+keyboard-only positive export with a coherent build record (`result.json` SHA256
+`e28cfaf76c518c62bd6da1c0248a4270b6992af03cd7cfbb6b5be4aa5a48464f`; recovery
 image SHA256 `4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52`).
 Its archive-corruption attempt did not observe a partial and is not acceptance
 evidence; no cleanup-failure journey has qualified.
