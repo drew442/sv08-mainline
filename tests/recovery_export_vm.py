@@ -440,12 +440,16 @@ def alter_fat_identity(image):
 
 def corrupt_destination_raw(image, stop):
     """Continuously corrupt a data-sector range while the guest publishes an archive."""
-    offset = DESTINATION_START * 512 + 2 * 1024 * 1024
     block = b"\x00" * 4096
     while not stop.wait(.5):
         try:
             with image.open("r+b") as stream:
-                stream.seek(offset); stream.write(block); stream.flush()
+                stream.seek(DESTINATION_START * 512)
+                payload = stream.read(DESTINATION_SECTORS * 512)
+                marker = payload.find(b"ustar")
+                if marker >= 0:
+                    stream.seek(DESTINATION_START * 512 + max(0, marker - 512))
+                    stream.write(block); stream.flush(); os.fsync(stream.fileno())
         except OSError:
             return
 
