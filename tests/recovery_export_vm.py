@@ -880,7 +880,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
                             " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
                             " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && sync"
-                            " && blockdev --setro /dev/sdc"
+                            " && cp $f /tmp/sv08-partial-hold"
+                            " && mount --bind /tmp/sv08-partial-hold $f"
                             " && break 2; done; done &\n")
                         time.sleep(2)
                         time.sleep(3)
