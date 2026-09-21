@@ -103,7 +103,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Independent verification requires a fresh corrected candidate rebuild and missing production refusal/resource evidence.",
+      "blocker": "Independent verification still requires five separate production-entry lease/change journeys: lock contention, stale context, archive corruption, operation-owned cleanup failure, and destination replacement/reused identity.",
       "checks": [
         "profile-and-trust",
         "preserve-before-mount",
@@ -128,10 +128,10 @@
       "verification": {
         "outcome": "failed",
         "reviewer": "feature-verifier /root/recovery_review",
-        "session": "recovery-review-formal-20260921-r2",
-        "rationale": "The mountpoint ownership bug is corrected and focused tests pass, but the retained ARM64 results are bound to the earlier c408f3e runtime. The corrected candidate was not rebuilt. Required production no-space, USB replacement, shared-lock, stale-context, archive-corruption, cleanup-failure, and complete resource/layout measurement evidence remains absent.",
+        "session": "recovery-review-formal-20260921-r5",
+        "rationale": "Corrected candidate and seven production result hashes are bound and the offline measurements are consolidated. Completion still fails lease-and-change because shared-lock contention, stale-context/review, archive-corruption, operation-owned cleanup failure, and destination replacement/reused identity lack separate production-entry journeys. Those are required by the approved acceptance contract.",
         "decision_sha256": "89e2691780b501f90dec57d7b1cc086be2d0a2e53318e1c87bf8f06376a9f2a0",
-        "evidence_sha256": "15d767e3dc80daf5a8344d2ad6be869b6971f4415a07c2fe089dd6d9aa6f6cfa"
+        "evidence_sha256": "e0af9a373a55fcff295ed9b96de27624848208cb0727feb8ce705d3cb26d89a9"
       }
     }
   ],
