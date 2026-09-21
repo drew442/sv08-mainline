@@ -874,10 +874,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         time.sleep(2)
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-started.marker;"
-                            " while true; do f=$(find /run/sv08-recovery/destinations/export-usb -maxdepth 1 -type f -name '.*.partial' -print -quit);"
-                            " test -n \"$f\" && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
-                            " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && sync"
-                            " && rm -f \"$f\" && mkdir \"$f\" && break; sleep 1; done &\n")
+                            " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
+                            " do test -f \"$f\" && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
+                            " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && sync && break 2; done; sleep .1; done &\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
                         time.sleep(5)
@@ -900,10 +899,9 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         time.sleep(2)
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
-                            " while true; do f=$(find /run/sv08-recovery/destinations/export-usb -maxdepth 1 -type f -name '.*.partial' -print -quit);"
-                            " test -n \"$f\" && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
-                            " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc"
-                            " && rm -f \"$f\" && mkdir \"$f\" && break; sleep 1; done &\n")
+                            " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
+                            " do test -f \"$f\" && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
+                            " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && rm -f \"$f\" && mkdir \"$f\" && break 2; done; sleep .1; done &\n")
                         time.sleep(2)
                         client.key("ctrl", "alt", "f1")
                         actions.append("vt-debug-shell-partial-cleanup-blocker")
