@@ -859,8 +859,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
-                            " do test -f \"$f\" && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
-                            " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && sync && break 2; done; sleep .1; done &\n")
+                            " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/archive-corruptor-hit.marker"
+                            " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && sync && break 2; done; sleep .1; done &\n")
                         time.sleep(3)
                         client.key("ctrl", "alt", "f1")
                         time.sleep(5)
@@ -886,8 +886,8 @@ def execute(candidate, fixture, output, seconds, journey, fault, source_readonly
                         client.text(
                             "touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-started.marker;"
                             " while true; do for f in /run/sv08-recovery/destinations/export-usb/.*partial;"
-                            " do test -f \"$f\" && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
-                            " && dd if=/dev/zero of=\"$f\" bs=512 count=1 conv=notrunc && rm -f \"$f\" && mkdir \"$f\" && break 2; done; sleep .1; done &\n")
+                            " do test -f $f && touch /run/sv08-recovery/destinations/export-usb/cleanup-blocker-hit.marker"
+                            " && dd if=/dev/zero of=$f bs=512 count=1 conv=notrunc && rm -f $f && mkdir $f && break 2; done; sleep .1; done &\n")
                         time.sleep(2)
                         time.sleep(3)
                         client.key("ctrl", "alt", "f1")
