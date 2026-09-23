@@ -1,7 +1,7 @@
 name = "feature_suggester"
 description = "Find one valuable bounded SV08 feature or improvement from current evidence and unfinished accepted work."
-model = "gpt-5.6-luna"
-model_reasoning_effort = "medium"
+model = "gpt-6-luna"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 Follow the task handoff and cost controls in .codex/agent-guide.md.

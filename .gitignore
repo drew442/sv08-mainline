@@ -18,6 +18,8 @@ __pycache__/
 /.codex/*
 !/.codex/README.md
 !/.codex/agent-guide.md
+!/.codex/config.toml
+!/.codex/current-goals.md
 !/.codex/agents/
 /.codex/agents/*
 !/.codex/agents/*.toml

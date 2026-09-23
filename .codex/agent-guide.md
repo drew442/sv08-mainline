@@ -7,15 +7,17 @@ durable records, authorized hardware operations and commits/publication.
 
 | Agent | Model / effort | Useful assignment |
 | --- | --- | --- |
-| `project_researcher` | GPT-5.6 Luna / medium | Trace a recovery or boot code path; reconcile pin provenance; find a supported upstream configuration |
-| `feature_suggester` | GPT-5.6 Luna / medium | Select one useful task when triage is needed; prefer finishing accepted work |
-| `project_implementer` | GPT-5.6 Sol / medium | Implement an approved recovery, host administration, image assembly or printer configuration slice |
-| `project_integration` | GPT-5.6 Sol / medium | Exercise installed packages, GTK/web flows and ARM64 VM/image acceptance checks |
-| `feature_approver` | GPT-5.6 Sol / medium | Independently challenge scope, requirements and acceptance checks before substantive work |
-| `feature_verifier` | GPT-5.6 Sol / medium | Independently assess the complete delivery diff and evidence against approved checks |
+| `project_researcher` | GPT-6 Luna / high | Trace one recovery or boot code path; reconcile pin provenance; find a supported upstream configuration |
+| `feature_suggester` | GPT-6 Luna / high | Select one useful task when triage is needed; prefer finishing accepted work |
+| `project_implementer` | GPT-6 Sol / medium | Implement an approved recovery, host administration, image assembly or printer configuration slice |
+| `project_integration` | GPT-6 Sol / medium | Exercise installed packages, GTK/web flows and ARM64 VM/image acceptance checks |
+| `feature_approver` | GPT-6 Sol / high | Independently challenge scope, requirements and acceptance checks before substantive work |
+| `feature_verifier` | GPT-6 Sol / high | Independently assess the complete delivery diff and evidence against approved checks |
 
 Luna handles narrow information gathering; Sol handles stateful implementation
-and review. These are starting choices, not measured cost or quality guarantees.
+and review. High effort on the two reviewer roles reflects the safety and evidence
+burden; ordinary implementation and integration start at medium. These are
+starting choices, not measured cost or quality guarantees.
 No high-effort or premium-model worker is launched by default. If a task exceeds
 the assigned model's capabilities, return the specific unresolved problem and
 evidence to the coordinator; do not silently escalate or keep retrying.
@@ -55,7 +57,8 @@ Reuse an existing research session for related questions; avoid duplicate scans.
 Review a stable revision or explicit diff, not files another worker is changing.
 Stop testing once the relevant checks pass unless new evidence warrants more.
 
-Use the [parallel assignments](../docs/development/parallel-work.md) and
+Use the [current subclient goals](current-goals.md),
+[parallel assignments](../docs/development/parallel-work.md) and
 [coordinated human queue](../docs/hardware/coordinated-human-tasks.md). Children
 send physical dependencies to the coordinator under existing H IDs; they do not
 independently ask the owner for actions. The coordinator combines ready consumers,
@@ -88,7 +91,7 @@ needing reproduction writes should use an authorized disposable environment;
 otherwise request execution evidence from the coordinator and state the limit.
 
 Configuration format follows the official [Codex subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents),
-accessed 2026-09-18. Profiles use standalone project TOML files with explicit model,
+checked 2026-09-23. Profiles use standalone project TOML files with explicit model,
 reasoning effort, sandbox defaults and developer instructions. TOML/schema checks
 validate configuration structure, not actual model availability or future task
 quality. Tune these choices from observed retries and successful delivery, rather
