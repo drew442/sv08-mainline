@@ -119,120 +119,127 @@
       "environment": "offline",
       "evidence": [
         {
+          "board_revision": null,
           "check": "profile-and-trust",
-          "environment": "offline",
           "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
           "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
-          "source_sha256": {
-            "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
-            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
-            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
-            "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
-          },
-          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
+          "environment": "offline",
+          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
           "method": "Reviewed immutable envelope/provider bindings and complete media inventory using the recorded wrong-provider refusal; result SHA256 cb2705355ebc62371f4ef3ccb39d9539ce4eca32b8565532b9243c147f6c4bcf. The source, protected and recovery hashes remained unchanged.",
-          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
           "profile": null,
-          "board_revision": null
-        },
-        {
-          "check": "preserve-before-mount",
-          "environment": "offline",
-          "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
-          "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
-          "source_sha256": {
-            "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
-            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
-            "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
-          },
           "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
-          "method": "Reviewed guest event order showing whole-medium and partition read-only before the first ro,noload source mount, plus the separately retained read-only source control SHA256 33e92be27d08b0ccdfa2f27c1bce318b75332c45bcba9d1d62b2490704a5c0dd. Positive input journeys and failures retained protected-media hashes.",
-          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
-          "profile": null,
-          "board_revision": null
-        },
-        {
-          "check": "compressed-chain",
-          "environment": "offline",
-          "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
-          "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
           "source_sha256": {
-            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
-            "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
             "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+            "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
             "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
-          },
-          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
-          "method": "Reviewed positive boot reports for the immutable ext4 root and single read-only loop-backed SquashFS /usr, with production preparation active and no failed units. Corrected candidate image SHA256 4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52 and build record SHA256 363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595.",
-          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
-          "profile": null,
-          "board_revision": null
+          }
         },
         {
-          "check": "independent-gtk-export",
-          "environment": "offline",
+          "board_revision": null,
+          "check": "preserve-before-mount",
           "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
           "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
+          "environment": "offline",
+          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
+          "method": "Reviewed guest event order showing whole-medium and partition read-only before the first ro,noload source mount, plus the separately retained read-only source control SHA256 33e92be27d08b0ccdfa2f27c1bce318b75332c45bcba9d1d62b2490704a5c0dd. Positive input journeys and failures retained protected-media hashes.",
+          "profile": null,
+          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
           "source_sha256": {
+            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+            "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+            "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "compressed-chain",
+          "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
+          "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
+          "environment": "offline",
+          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
+          "method": "Reviewed positive boot reports for the immutable ext4 root and single read-only loop-backed SquashFS /usr, with production preparation active and no failed units. Corrected candidate image SHA256 4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52 and build record SHA256 363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595.",
+          "profile": null,
+          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
+          "source_sha256": {
+            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+            "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+            "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "independent-gtk-export",
+          "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
+          "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
+          "environment": "offline",
+          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
+          "method": "Reviewed installed ARM64 GTK production service/provider export journeys using keyboard, touch and keyboard-plus-mouse, with review/cancel/apply and preservation of damaged registry, configuration, SQLite WAL, Unicode data and an older archive. Result SHA256 values: corrected-candidate keyboard e28cfaf76c518c62bd6da1c0248a4270b6992af03cd7cfbb6b5be4aa5a48464f; prior keyboard 3418e34e72702a9836d4e0a5aa50e564bd0fb86ce434ae318a6c959864181a19; touch dcee90d92dd5aafc1b18053218f8b987d217ec14551f046948c4c7fc94e87fc8; mixed 5547b7183411ea1ae41d697034bbf39184d8c2618ca40e3fecaf056fd233150f.",
+          "profile": null,
+          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
+          "source_sha256": {
+            "runtime/sv08_export.py": "0f4530bcd0b1286ad1a875b72b37ba9f902b892b1cbda86df06a40e06306f17e",
             "runtime/sv08_recovery.py": "04f1877666d57122ecf73b8e4cdbc038c59c6173b8eaa29e9be6ac58cbc1d1aa",
             "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
-            "runtime/sv08_export.py": "0f4530bcd0b1286ad1a875b72b37ba9f902b892b1cbda86df06a40e06306f17e",
             "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
-          },
-          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
-          "method": "Reviewed installed ARM64 GTK production service/provider export journeys using keyboard, touch and keyboard-plus-mouse, with review/cancel/apply and preservation of damaged registry, configuration, SQLite WAL, Unicode data and an older archive. Result SHA256 values: corrected-candidate keyboard e28cfaf76c518c62bd6da1c0248a4270b6992af03cd7cfbb6b5be4aa5a48464f; prior keyboard 3418e34e72702a9836d4e0a5aa50e564bd0fb86ce434ae318a6c959864181a19; touch dcee90d92dd5aafc1b18053218f8b987d217ec14551f046948c4c7fc94e87fc8; mixed 5547b7183411ea1ae41d697034bbf39184d8c2618ca40e3fecaf056fd233150f.",
-          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
-          "profile": null,
-          "board_revision": null
+          }
         },
         {
+          "board_revision": null,
           "check": "lease-and-change",
-          "environment": "offline",
           "document": "docs/features/host-recovery-export-composition/integration-evidence.md",
           "document_sha256": "ae312c5733d900bbb8c3184f132f67dc3366a0b30b1a8b28377a6fdc8bc1bf3a",
+          "environment": "offline",
+          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
+          "method": "Reviewed separate guest production-entry refusal journeys for lock contention, stale context, archive corruption, operation-owned cleanup failure, destination removal/replacement and no space. Qualified corruption result SHA256 dddc052ad5ea4c86a12f77926af8776966060661d43863e872da89c1292f2d55 and cleanup failure result SHA256 bdf8baea2c38e51dab6c9613e9d42510299b1d5421e80606a2b91c632ffe7c42 observed diagnostics, no published archive, preserved older file and protected hashes. The earlier malformed-publication run was rejected.",
+          "profile": null,
+          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
           "source_sha256": {
-            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
             "runtime/sv08_export.py": "0f4530bcd0b1286ad1a875b72b37ba9f902b892b1cbda86df06a40e06306f17e",
+            "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
             "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803",
             "tests/test_export.py": "f2f1640b720feb413d5e2d266c5360198ec4eb203dced902b6e9a85aeab9ea47"
-          },
-          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
-          "method": "Reviewed separate guest production-entry refusal journeys for lock contention, stale context, archive corruption, operation-owned cleanup failure, destination removal/replacement and no space. Qualified corruption result SHA256 dddc052ad5ea4c86a12f77926af8776966060661d43863e872da89c1292f2d55 and cleanup failure result SHA256 bdf8baea2c38e51dab6c9613e9d42510299b1d5421e80606a2b91c632ffe7c42 observed diagnostics, no published archive, preserved older file and protected hashes. The earlier malformed-publication run was rejected.",
-          "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
-          "profile": null,
-          "board_revision": null
+          }
         },
         {
+          "board_revision": null,
           "check": "composition-and-bounds",
-          "environment": "offline",
           "document": "docs/features/host-recovery-export-composition/resource-measurements.md",
           "document_sha256": "9c4f105cd64a1cc4e06d1054bb844a3fd7a11e6f553e609cff615ad5937dcf6f",
-          "source_sha256": {
-            "scripts/recovery_image.py": "a96d60d7c3366ae73ccf7f131dc69116fccec8405282e0e4606eb0a4df6de156",
-            "configs/host-os/recovery-packages.json": "166c410341c360ef0e5f6e07887d783fcef8750472760ed12f4dc146694cb01b",
-            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
-            "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803",
-            "docs/hardware/host-board-image-20260915-v2.json": "a2bc0a5d1cb546fea3fb1f1c79f1d1fcf952fae44a64ba5d8246da2b738ccd24"
-          },
-          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
-          "method": "Reviewed corrected candidate image SHA256 4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52 and build record SHA256 363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595: 536870912-byte image, 327692288 allocated bytes, 49081 free ext4 blocks, 30017 free inodes, 241356800-byte SquashFS /usr and 2136940544-byte peak QEMU RSS. Recovery size and 7818182656-byte source-backed factory layout remain accepted.",
+          "environment": "offline",
           "limitations": "Offline ARM64 QEMU and regular-file media only; physical identity, board boot, display/input, real removable media and complete release fit remain unverified.",
+          "method": "Reviewed corrected candidate image SHA256 4b8b4869d5059d424379c32fb3d9b10b15558fedb8b966966d6fdaf797080c52 and build record SHA256 363fda0dea64a8ca4d3268ce17c18e2f9228b17423fb8e04670c5d079b762595: 536870912-byte image, 327692288 allocated bytes, 49081 free ext4 blocks, 30017 free inodes, 241356800-byte SquashFS /usr and 2136940544-byte peak QEMU RSS. Recovery size and 7818182656-byte source-backed factory layout remain accepted.",
           "profile": null,
-          "board_revision": null
+          "source_commit": "0c91fff42438964dd6c97de8be55608efed64d63",
+          "source_sha256": {
+            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+            "configs/host-os/recovery-packages.json": "166c410341c360ef0e5f6e07887d783fcef8750472760ed12f4dc146694cb01b",
+            "docs/hardware/host-board-image-20260915-v2.json": "a2bc0a5d1cb546fea3fb1f1c79f1d1fcf952fae44a64ba5d8246da2b738ccd24",
+            "scripts/recovery_image.py": "a96d60d7c3366ae73ccf7f131dc69116fccec8405282e0e4606eb0a4df6de156",
+            "tests/recovery_export_vm.py": "6bab388bc663be994a430cb883a09a53b1a1846b57da5395a0c44cc303af1803"
+          }
         }
       ],
       "human_task": null,
       "id": "implement",
       "implementation": {
         "actor": "recovery_implementer",
-        "session": "recovery-composition-20260918",
-        "run": "9d6289caf84a473cb6bff5f5eeb7d472"
+        "run": "9d6289caf84a473cb6bff5f5eeb7d472",
+        "session": "recovery-composition-20260918"
       },
       "repeats": 0,
       "resumption": "Corrected publication and operation-owned cleanup behavior; six offline checks have passing retained evidence at source revision 0c91fff and await fresh record-bound independent verification.",
-      "status": "review",
+      "status": "done",
       "title": "Compose trusted recovery media preparation and independent GTK export",
-      "verification": null
+      "verification": {
+        "decision_sha256": "89e2691780b501f90dec57d7b1cc086be2d0a2e53318e1c87bf8f06376a9f2a0",
+        "evidence_sha256": "4b9a82f7a7cb75c8e036e45b1b49502a5f54a830af70d2e62d014786627bb674",
+        "outcome": "passed",
+        "rationale": "At clean main daed4a1, the six offline evidence rows and approved scope match review-context; the separate lease worktree is clean at source_commit 0c91fff. I checked the full run-base 4268315..0c91fff diff, including modes and gitlinks, and found no hidden upstream change. Every recorded source/document SHA256 matches the historical commit, and main differs from that commit only in this record. The corrected 512 MiB recovery.ext4 and build.json match their retained hashes; the build integration-input inventory matches committed source. Retained ARM64 QEMU results demonstrate immutable binding and wrong-provider refusal, whole-medium and partition RO before ro,noload source mount plus a separate read-only-source control, the exact compressed /usr boot chain, corrected-candidate installed GTK keyboard review/cancel/apply export with damaged-registry/config/SQLite-WAL/Unicode and older-file preservation, prior touch and mixed-input journeys, and lock/media-change/stale/no-space/corruption/owned-cleanup refusals. The two corrected fault runs observed their watcher markers, visible errors, no published archive and unchanged protected media; the earlier malformed-publication run is rejected. Resource measurements retain the accepted 512 MiB recovery image and 7,818,182,656-byte factory layout, with 327,692,288 allocated bytes, 49,081 free ext4 blocks, 30,017 free inodes and 2,136,940,544 peak QEMU RSS. The workflow validates; this verdict covers offline regular-file VM composition only. Physical board boot, display/input, removable media, source durability and release fit remain open.",
+        "reviewer": "feature-verifier /root/recovery_record_verify (independent fresh session)",
+        "session": "recovery-record-reconcile-independent-20260923"
+      }
     }
   ],
   "title": "Export preserved user data from the independently booted recovery OS"
