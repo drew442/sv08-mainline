@@ -18,7 +18,9 @@ Luna handles narrow information gathering; Sol handles stateful implementation
 and review. High effort on the two reviewer roles reflects the safety and evidence
 burden; ordinary implementation and integration start at medium. These are
 starting choices, not measured cost or quality guarantees.
-No high-effort or premium-model worker is launched by default. If a task exceeds
+Only focused research and independent review default to high effort; Sol
+implementation and integration default to medium. No Astra worker is launched
+by default. If a task exceeds
 the assigned model's capabilities, return the specific unresolved problem and
 evidence to the coordinator; do not silently escalate or keep retrying.
 

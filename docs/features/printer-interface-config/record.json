@@ -122,15 +122,155 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "pc-01",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Strict four-section parser and pinned upstream source inspection; focused unit test passed.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-02",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Coordinator parsed the unchanged private 30-section candidate plus byte-identical include; 34 distinct sections, one of each new interface and fixed G-code path.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-03",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Pinned Klippy synthetic file-output RPC executed SDCARD_PRINT_FILE, M23/M24, PAUSE, RESUME and CANCEL_PRINT; focused unit test passed.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-04",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "No on_error_gcode override; synthetic caught G-code error changed a fixture heater target from 40 to 0 through pinned upstream default.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-05",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Pinned Klippy synthetic file-output RPC asserted M73, M117, SET_DISPLAY_TEXT, M118 and RESPOND behavior; no physical display.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-06",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Inspected unchanged Klipper/Moonraker service paths and persistent G-code runtime view; focused unit test passed.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-07",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Coordinator file-output tested exact private candidate with relative include under pinned host and matching dictionary for both simulated MCUs: exit 0, two configured, no error/shutdown; candidate byte prefix unchanged.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "pc-08",
+          "document": "docs/features/printer-interface-config/integration-evidence.md",
+          "document_sha256": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+          "environment": "offline",
+          "limitations": "Offline synthetic or private-candidate file-output only; no printer activation, physical input, heater shutdown, motion, pause/resume/cancel or print-readiness claim. H01/H02/H05/H06 and board release checks remain.",
+          "method": "Include comments and commissioned human queue retain H01/H02/H05 before H06, with output behavior deferred.",
+          "profile": null,
+          "source_commit": "72000d3f377f4e773036718b4d6d4d84d3cdc537",
+          "source_sha256": {
+            "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+            "docs/features/printer-interface-config/integration-evidence.md": "e8d9f88863d99feb3e0bfbe1357401e543bffcb2be40ba1fc7393f1bc01cf99b",
+            "tests/test_printer_controls.py": "ff518482d7884e1d9b36cf3ca4298c42c6b13cd7688474ee851480d14bc99e61"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "printer_interface_implementer",
+        "run": "7271eb7f87f344d98a1b73f0ed09fd26",
+        "session": "printer-interface-implementation-20260923"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Add upstream interface include and validate offline behavior",
-      "verification": null
+      "verification": {
+        "decision_sha256": "dbfd161159f5967ad9e325777c4efb8ea3bf04d0a43b1a7207ee182838487b21",
+        "evidence_sha256": "d7ecaea65937f547903c362a25b55bcba1bb696bc7acfd921a766beb9b300347",
+        "outcome": "passed",
+        "rationale": "At clean source worktree HEAD 72000d3f377f4e773036718b4d6d4d84d3cdc537, reviewed the complete db33359..72000d3 diff (three added regular files; no unit, upstream, gitlink or other changes), checked proposal and requirement hashes, every source/document hash, and all approved constraints. pc-01: the inactive include has exactly four pinned upstream sections and no machine, macro, vendor, shell or output code. pc-02: the coordinator sanitized exact private-overlay check reports 30 unchanged original sections plus exactly one of each control section, with fixed gcodes path; private values were intentionally unavailable to this reviewer. pc-03/04/05: independently reran five focused tests with pinned Klipper f0892d8 and dictionary SHA-256 86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b; synthetic file-output exercised file selection, pause, resume, cancel, display and response commands and default caught-error TURN_OFF_HEATERS target 40 to 0. pc-06: service and runtime mount paths agree and the diff makes no service change. pc-07: the coordinator sanitized exact private-candidate two-MCU file-output result reports exit 0, both MCUs configured, no error/shutdown, candidate SHA-256 695a5e1c10b89a09df8a3c39852479cba786378fc33774c4a92c2d5def241842 and run-log SHA-256 06492c7fdfd803db9234f8551b516a35fc9f94de73e006e941c7cc451d61d204; this is coordinator evidence rather than independent access to private configuration. pc-08: include and commissioning queue retain H01/H02/H05 before H06 and defer output-safe wrappers and first print. Offline verification passes for the bounded inactive artifact only; no installation, physical heater shutdown, motion, or printer readiness was established.",
+        "reviewer": "feature-verifier /root/printer_interface_verify (independent session)",
+        "session": "printer-interface-independent-20260923"
+      }
     }
   ],
   "title": "Reusable inactive upstream printer interface configuration"
