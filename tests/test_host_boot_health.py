@@ -3,13 +3,15 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import time
 import unittest
 import uuid
 from unittest.mock import Mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_boot_health import (HealthFailure, HostHealth, bounded_json, observed_rauc_slot, record_failure,
-                              run, validate_boot)
+from sv08_boot_health import (CoordinatorDeadline, HealthFailure, HostHealth,
+                              bounded_json, coordinator_deadline, main,
+                              observed_rauc_slot, record_failure, run, validate_boot)
 from sv08_state import Store
 from sv08_transaction import Transaction
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
@@ -138,8 +140,22 @@ class BootHealthTests(unittest.TestCase):
 
     def test_failed_health_retains_gate_and_requests_only_validated_fallback(self):
         target = self.trial(); gate = self.root / 'trial'; gate.touch()
-        fallback = Mock()
-        result = run(target, self.tx, Mock(side_effect=HealthFailure('failed')), admitted,
+        calls = []
+        @contextmanager
+        def boot_admission():
+            calls.append('boot'); yield
+        @contextmanager
+        def writer():
+            calls.append('writer'); yield
+        self.tx.writer = writer
+        def fallback(boot, transaction_id, reason):
+            self.assertEqual(transaction_id, self.tx.load()['id'])
+            self.assertEqual(calls[-2:], ['boot', 'writer'])
+            with self.assertRaisesRegex(ValueError, 'busy'):
+                with self.store.locked(nonblocking=True):
+                    pass
+        fallback = Mock(side_effect=fallback)
+        result = run(target, self.tx, Mock(side_effect=HealthFailure('failed')), boot_admission,
                      fallback, ready=self.ready, trial_marker=gate,
                      validate=lambda: self.validate(target))
         self.assertEqual(result, 'needs-health')
@@ -162,6 +178,115 @@ class BootHealthTests(unittest.TestCase):
         self.assertTrue(gate.exists())
         self.assertFalse(self.ready.exists())
         self.assertEqual(self.tx.load()['phase'], 'confirming')
+
+    def test_cleared_trial_with_incomplete_journal_resumes_on_next_target_boot(self):
+        target = self.trial(); gate = self.root / 'trial'; gate.touch()
+        original_save = self.tx.save
+        def interrupted(tx, phase):
+            if phase == 'complete':
+                raise OSError('power loss before complete journal')
+            return original_save(tx, phase)
+        with unittest.mock.patch.object(self.tx, 'save', side_effect=interrupted):
+            with self.assertRaises(OSError):
+                run(target, self.tx, Mock(return_value=True), admitted, Mock(),
+                    ready=self.ready, trial_marker=gate,
+                    validate=lambda: self.validate(target))
+        self.assertIsNone(self.store.load()['pending'])
+        self.assertEqual(self.tx.load()['phase'], 'confirming')
+        self.assertTrue(gate.exists())
+        self.assertFalse(self.ready.exists())
+        # /run is recreated at the next boot; early preparation keeps the
+        # target generation and records the new kernel boot identity.
+        gate.unlink()
+        resumed = self.store.prepare_boot('B', 'release-2')
+        resumed['boot_id'] = str(uuid.uuid4())
+        self.current_boot_id = resumed['boot_id']
+        self.assertFalse(resumed['trial'])
+        self.backend.selected = 'A'
+        with self.assertRaisesRegex(ValueError, 'good and primary'):
+            run(resumed, self.tx, Mock(return_value=True), admitted, Mock(),
+                ready=self.ready, validate=lambda: self.validate(resumed))
+        self.assertFalse(self.ready.exists())
+        self.backend.selected = 'B'
+        health = Mock(return_value=True)
+        self.assertEqual(run(resumed, self.tx, health, admitted, Mock(),
+                             ready=self.ready, validate=lambda: self.validate(resumed)), 'idle')
+        health.assert_called_once_with(resumed)
+        self.assertTrue(self.ready.exists())
+        self.assertEqual(self.tx.load()['phase'], 'complete')
+
+    def test_interrupted_generation_copy_preserves_source_and_retries_handoff(self):
+        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
+        self.tx.stage('bundle', proof, self.boot)
+        self.tx.arm(self.boot)
+        source = self.store.load()['slots']['A']['generation']
+        with unittest.mock.patch('sv08_state.snapshot', side_effect=OSError('interrupted copy')):
+            with self.assertRaises(OSError):
+                self.store.prepare_boot('B', 'release-2')
+        self.assertEqual(self.store.load()['slots']['A']['generation'], source)
+        self.assertNotIn('B', self.store.load()['slots'])
+        self.assertEqual(self.tx.load()['phase'], 'armed')
+        target = self.store.prepare_boot('B', 'release-2')
+        target['boot_id'] = str(uuid.uuid4())
+        self.current_boot_id = target['boot_id']
+        self.manifest['release'] = 'release-2'
+        gate = self.root / 'trial'; gate.touch()
+        self.assertEqual(run(target, self.tx, Mock(return_value=True), admitted, Mock(),
+                             ready=self.ready, trial_marker=gate,
+                             validate=lambda: self.validate(target)), 'idle')
+        self.assertEqual(self.tx.load()['phase'], 'complete')
+
+    def test_same_boot_restart_clears_stale_ready_before_bad_input(self):
+        self.ready.touch()
+        real_path = Path
+        def path(value):
+            return self.ready if str(value) == '/run/sv08/os-health-ready' else real_path(value)
+        def bad_input(value, **kwargs):
+            if str(value).endswith('/release.json'):
+                raise ValueError('bad input')
+            return bounded_json(value, **kwargs)
+        with unittest.mock.patch('sv08_boot_health.os.geteuid', return_value=0), \
+             unittest.mock.patch('sv08_boot_health.Path', side_effect=path), \
+             unittest.mock.patch('sv08_boot_health.bounded_json', side_effect=bad_input), \
+             unittest.mock.patch('sv08_boot_health.Store', return_value=self.store), \
+             unittest.mock.patch('sv08_boot_health.record_failure') as record:
+            with self.assertRaisesRegex(ValueError, 'bad input'):
+                main()
+        self.assertFalse(self.ready.exists())
+        record.assert_called_once()
+
+    def test_process_deadline_interrupts_blocked_probe_and_releases_state_lock(self):
+        def command(args, **_):
+            return 'active\n' if args[0] == 'systemctl' else '/data-device\n'
+        self.manifest['devices'] = {'data': '/data-device'}
+        self.backend.validate_context = lambda _boot: time.sleep(0.2)
+        health = HostHealth(self.backend, self.manifest, command=command)
+        with self.assertRaises(CoordinatorDeadline):
+            with coordinator_deadline(0.05), self.store.locked():
+                health.probe(self.boot)
+        with self.store.locked(nonblocking=True):
+            pass
+
+    def test_deadline_before_run_records_bounded_startup_failure(self):
+        self.ready.touch()
+        real_path = Path
+        def path(value):
+            return self.ready if str(value) == '/run/sv08/os-health-ready' else real_path(value)
+        def blocked(path, **kwargs):
+            if str(path).endswith('/release.json'):
+                time.sleep(0.2)
+            return bounded_json(path, **kwargs)
+        with unittest.mock.patch('sv08_boot_health.os.geteuid', return_value=0), \
+             unittest.mock.patch('sv08_boot_health.Path', side_effect=path), \
+             unittest.mock.patch('sv08_boot_health.bounded_json', side_effect=blocked), \
+             unittest.mock.patch('sv08_boot_health.Store', return_value=self.store):
+            with self.assertRaises(CoordinatorDeadline):
+                main(deadline_seconds=0.05)
+        self.assertFalse(self.ready.exists())
+        records = list((self.store.root / 'shared/logs/journal/boot-health').glob('*.json'))
+        self.assertEqual(len(records), 1)
+        self.assertLessEqual(records[0].stat().st_size, 64 * 1024)
+        self.assertIn('deadline', records[0].read_text())
 
     def test_host_health_does_not_require_printer_or_network(self):
         clock = [0.0]

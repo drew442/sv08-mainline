@@ -9,21 +9,27 @@ release, registry generation and paired devices before a transition. A distinct
 non-stopping boot admission is passed to target reconciliation and confirmation;
 the existing staging admission remains in use for arming. Transaction retains
 state-lock and writer ownership and evaluates the real OS health callback once
-before mark-good. The 5-second stable interval has a 45-second callback budget
-inside the service's 60-second timeout. Successful nontrial reconciliation or
+before mark-good. The 5-second stable interval has a 40-second callback budget
+inside a 50-second process deadline and the service's 60-second timeout. A
+stalled backend probe raises a coordinator deadline and retains a bounded
+failure record when the initialized state store is available. Successful nontrial reconciliation or
 durable target confirmation publishes `/run/sv08/os-health-ready`; Klipper also
 retains its trial and private-config gates. Failed trial health records bounded
 diagnostics and requests fallback only after renewed target/journal/backend
-validation. Full target confirmation still depends on the reviewed production
+validation under the state, boot-admission and writer locks. An interrupted
+final confirmation journal write is retryable only for the exact validated
+target; it does not trigger fallback. A same-boot service restart clears an
+old ready marker before reading fallible inputs. Full target confirmation still depends on the reviewed production
 RAUC policy, layout and environment inputs in the final image.
 
 The focused command
 `python3 -m unittest tests.test_host_boot_health tests.test_host_boot tests.test_transaction tests.test_host_integration tests.test_stage_admin_ui`
-passed 54 tests. Python compilation and `git diff --check` passed. Tests cover
+passed 59 tests. Python compilation and `git diff --check` passed. Tests cover
 malformed/mismatched boot records, writable nontrial and staged boots, target
 confirmation and failure, unknown backend outcomes, missing printer/network
 prerequisites, admission call order, unit ordering, installed enablement link,
-and existing transaction and early-boot behavior.
+interrupted confirmation, bounded RAUC observation and probe deadline,
+complete/interrupted early-boot handoff, and existing transaction behavior.
 
 The existing `tests/host_qemu_rauc_composed_run.py` VM fixture masks
 `sv08-prepare.service` and synthesizes only a source-A boot record. It does not

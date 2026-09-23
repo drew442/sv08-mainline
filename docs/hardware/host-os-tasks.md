@@ -87,7 +87,9 @@ enumeration were re-established on 2026-09-12; see the
   select non-stopping boot admission for reconcile/confirm, check host OS health
   during a target trial, retain bounded failure evidence and gate Klipper until
   durable confirmation. The host image integration enables the health unit; this
-  is unit and staging evidence. A composed QEMU A→B boot, H02 and H07 hardware
+  has a 50-second process deadline within its 60-second systemd limit and
+  bounded persistent failure records when the state store is usable. This is
+  unit and staging evidence. A composed QEMU A→B boot, H02 and H07 hardware
   acceptance remain open.
 - [ ] Finish board configuration, physical boot-service reconciliation,
   health confirmation, fallback, independent recovery and offline

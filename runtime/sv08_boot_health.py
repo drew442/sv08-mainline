@@ -5,6 +5,8 @@ import json
 import os
 from contextlib import contextmanager
 from pathlib import Path
+import selectors
+import signal
 import subprocess
 import time
 import uuid
@@ -52,9 +54,36 @@ def validate_boot(boot, store, manifest, *, boot_id, cmdline, observed_slot,
     return state
 
 
-def observed_rauc_slot(command=subprocess.check_output):
-    output = command(['/usr/bin/rauc', 'status', '--output-format=json'],
-                     text=True, timeout=3)
+def bounded_rauc_output():
+    process = subprocess.Popen(['/usr/bin/rauc', 'status', '--output-format=json'],
+                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    data = bytearray()
+    deadline = time.monotonic() + 3
+    try:
+        with selectors.DefaultSelector() as selector:
+            selector.register(process.stdout, selectors.EVENT_READ)
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0 or not selector.select(remaining):
+                    raise ValueError('RAUC boot observation timed out')
+                block = os.read(process.stdout.fileno(), min(4096, 32 * 1024 + 1 - len(data)))
+                if not block:
+                    break
+                data.extend(block)
+                if len(data) > 32 * 1024:
+                    raise ValueError('RAUC boot observation exceeds bound')
+        if process.wait(timeout=max(0, deadline - time.monotonic())) != 0:
+            raise ValueError('RAUC boot observation failed')
+        return data.decode()
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait()
+
+
+def observed_rauc_slot(command=None):
+    output = (command(['/usr/bin/rauc', 'status', '--output-format=json'],
+                      text=True, timeout=3) if command else bounded_rauc_output())
     if len(output.encode()) > 32 * 1024:
         raise ValueError('RAUC boot observation exceeds bound')
     slot = json.loads(output)['booted']
@@ -80,10 +109,34 @@ class HealthFailure(ValueError):
     pass
 
 
+class CoordinatorDeadline(Exception):
+    pass
+
+
+@contextmanager
+def coordinator_deadline(seconds=50):
+    """Interrupt a stuck backend probe before systemd's 60-second unit limit."""
+    if not 0 < seconds <= 50:
+        raise ValueError('Unreviewed coordinator deadline')
+    previous_handler = signal.getsignal(signal.SIGALRM)
+    previous_timer = signal.getitimer(signal.ITIMER_REAL)
+    def expired(_signum, _frame):
+        raise CoordinatorDeadline('Boot coordinator exceeded its execution deadline')
+    signal.signal(signal.SIGALRM, expired)
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, previous_handler)
+        if previous_timer[0]:
+            signal.setitimer(signal.ITIMER_REAL, *previous_timer)
+
+
 class HostHealth:
     def __init__(self, backend, manifest, *, now=time.monotonic, sleep=time.sleep,
                  command=subprocess.check_output, stable=STABLE_SECONDS,
-                 deadline=DEADLINE_SECONDS - 15):
+                 deadline=DEADLINE_SECONDS - 20):
         self.backend, self.manifest = backend, manifest
         self.now, self.sleep, self.command = now, sleep, command
         if not 0 < stable <= 5 or not stable < deadline <= 60:
@@ -112,6 +165,8 @@ class HostHealth:
             except (OSError, subprocess.SubprocessError, ValueError):
                 stable_since = None
             else:
+                if self.now() - start > self.deadline:
+                    break  # A slow probe cannot become a late success.
                 if stable_since is None:
                     stable_since = self.now()
                 if self.now() - stable_since >= self.stable:
@@ -159,20 +214,49 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
         outcome = 'idle'
     elif outcome == 'needs-health':
         if (not tx or boot['slot'] != tx['slot'] or boot['release'] != tx['release'] or
-                not boot['trial'] or not state['pending'] or state['pending']['id'] != tx['id'] or
                 boot['mode'] != 'immutable'):
+            raise ValueError('Target trial identity is unverified')
+        source = state['slots'].get(tx['previous_slot'])
+        target = state['slots'].get(tx['slot'])
+        if (not source or source['release'] != tx['previous_release'] or
+                not target or target['release'] != tx['release'] or
+                target['parent_generation'] != source['generation']):
+            raise ValueError('Target generation does not descend from preserved source')
+        pending = state['pending']
+        prepared_trial = (boot['trial'] and pending is not None and
+                          pending['phase'] == 'trial' and pending['id'] == tx['id'])
+        retrying_confirming = (tx['phase'] == 'confirming' and pending is None and
+                               not boot['trial'])
+        if retrying_confirming:
+            # State was durably cleared but the final journal write failed.
+            # Re-observe the selected target before retrying mark-good.
+            transaction.backend.validate_context(boot)
+            if (transaction.backend.primary() != tx['slot'] or
+                    not transaction.backend.good(tx['slot'])):
+                raise ValueError('Confirming target is not good and primary')
+        elif not prepared_trial:
             raise ValueError('Target trial identity is unverified')
         try:
             transaction.confirm(boot, os_health, admission=admission)
         except HealthFailure as exc:
             record(transaction.store, boot, exc)
-            # The selected target, transaction, current boot and backend were
-            # checked above. Never rearm or directly mark/cancel the target.
-            transaction.backend.validate_context(boot)
-            if (transaction.load()['id'] != tx['id'] or
-                    transaction.store.load()['pending']['id'] != tx['id']):
-                raise ValueError('Failed trial backend or journal changed before fallback')
-            fallback(boot, tx['id'], str(exc))
+            if retrying_confirming:
+                # A cleared trial is an unknown confirming outcome, not a
+                # remaining boot attempt that may be consumed by fallback.
+                raise
+            # Hold the same ordering as Transaction while making the final
+            # decision and sending the orderly reboot request. No bootloader
+            # counter is touched here.
+            with transaction.store.locked(), admission(), transaction.writer():
+                current = transaction.load()
+                pending_now = transaction.store.load()['pending']
+                transaction.backend.validate_context(boot)
+                if (not current or current['id'] != tx['id'] or
+                        current['phase'] not in ('armed', 'confirming') or
+                        not pending_now or pending_now['id'] != tx['id'] or
+                        pending_now['phase'] != 'trial'):
+                    raise ValueError('Failed trial backend or journal changed before fallback')
+                fallback(boot, tx['id'], str(exc))
             return 'needs-health'
         outcome = 'idle'
     if outcome in ('idle', 'staged', 'awaiting-reboot', 'needs-arm'):
@@ -186,9 +270,11 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
     return outcome
 
 
-def main():
+def _main():
     if os.geteuid() != 0:
         raise ValueError('Boot health requires root')
+    # A same-boot unit restart must not inherit a previous successful marker.
+    Path('/run/sv08/os-health-ready').unlink(missing_ok=True)
     root = Path('/usr/lib/sv08')
     manifest = bounded_json(root / 'release.json')
     boot = bounded_json('/run/sv08/boot.json')
@@ -227,6 +313,28 @@ def main():
                   validate=validate)
     if outcome not in ('idle', 'staged', 'awaiting-reboot', 'needs-arm', 'needs-health'):
         raise ValueError('Unsupported boot outcome')
+
+
+def main(deadline_seconds=50):
+    try:
+        with coordinator_deadline(deadline_seconds):
+            _main()
+    except Exception as exc:
+        # The boot record itself may be malformed. Bind a compact diagnostic to
+        # the kernel boot ID without trusting its unvalidated fields.
+        try:
+            boot_id = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
+            if str(uuid.UUID(boot_id)) != boot_id:
+                raise ValueError('Invalid boot identity')
+            store = Store('/data/sv08')
+            bounded_json(store.root / 'state.json')
+            store.load()  # Never create diagnostics in uninitialized/damaged state.
+            record_failure(store,
+                           dict(boot_id=boot_id, slot='unknown', release='unknown',
+                                generation='unvalidated'), exc)
+        except (OSError, ValueError, KeyError):
+            pass  # Storage may be unavailable; the unit remains failed and gated.
+        raise
 
 
 if __name__ == '__main__':
