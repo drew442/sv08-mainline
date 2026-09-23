@@ -31,11 +31,19 @@ prerequisites, admission call order, unit ordering, installed enablement link,
 interrupted confirmation, bounded RAUC observation and probe deadline,
 complete/interrupted early-boot handoff, and existing transaction behavior.
 
-The existing `tests/host_qemu_rauc_composed_run.py` VM fixture masks
-`sv08-prepare.service` and synthesizes only a source-A boot record. It does not
-exercise this service or a second target-B boot. A distinct two-boot persistent
-fixture with reviewed update policy, layout and environment inputs is still
-needed for disposable QEMU A→B confirmation and target-health fallback.
-Physical cold/warm boot and fallback remain H02/H07 in the
+The disposable [boot-health QEMU fixture](../../../tests/host_qemu_boot_health.py)
+ran against runtime commit `3174f141914d098ecb86a082f100442ca04619ce`
+on a persistent six-partition disk with the production prepare and health units.
+The healthy A→B path produced distinct boot IDs, confirmed B good/primary,
+cleared pending state, and published the ready marker without printer config or
+MCU. In a separate A→B→A path, failed B health requested an orderly reboot;
+host-selected A then cancelled/disarmed B and retained the B failure record.
+The ignored `build/boot-health-qemu-v1/result.json` and
+`execution-receipt.json` record five serial-log hashes, kernel/initrd and RAUC
+hashes, QEMU 8.2.2, and `physical_hardware=false`. The run exited 0 and used
+about 6.8 GiB peak additional disk. Seven composed-fixture tests also passed.
+The harness selected roots and seeded a staged transaction for a pre-populated
+B; it did not test signed bundle installation, automatic U-Boot selection or
+attempt decrement. Physical cold/warm boot and fallback remain H02/H07 in the
 [coordinated task queue](../../hardware/coordinated-human-tasks.md). These open
-checks must not be inferred from the unit tests or the existing QEMU fixture.
+checks must not be inferred from offline tests.
