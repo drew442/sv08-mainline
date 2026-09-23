@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-23",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "offline-byte-reviewed-awaiting-physical-H03",
+  "status": "spare-written-and-readback-verified-awaiting-H02-boot",
   "deployable": false,
   "physical_hardware": false,
   "project_commit": "33bba60f04660ed1d79946a5aad53fec085264dc",
@@ -75,11 +75,31 @@
     "printer_services_masked": true,
     "boot_health_service_installed": true
   },
-  "physical_write": false,
+  "spare_preservation": {
+    "full_capacity_bytes": 31272730624,
+    "complete_private_beelink_capture": true,
+    "capture_sha256_recorded_privately": true,
+    "six_partition_layout_readable": true,
+    "data_state_registry_readable": true
+  },
+  "physical_write": true,
+  "writer_evidence": {
+    "date": "2026-09-23",
+    "reader_usb_id": "05e3:0747",
+    "target_capacity_bytes": 31272730624,
+    "target_partitions_unmounted": true,
+    "exclusive_write_bytes": 7818182656,
+    "fsync_and_device_flush": true,
+    "direct_device_readback_bytes": 7818182656,
+    "direct_device_readback_sha256": "d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56",
+    "six_partition_layout_and_guid_match": true,
+    "usb_reader_powered_off": true,
+    "private_receipt_on_beelink": true
+  },
   "physical_boot": false,
   "limitations": [
     "Diagnostic image reuses the 0.1.0-board.2 release label with refreshed runtime; it is not a signed A/B update or release.",
-    "The preserved data tree is the earlier reviewed build input, not a capture of the currently installed spare module.",
-    "Physical H03 write, H02 boot/DRAM/slot checks, H04 display/input and H07 fallback remain open."
+    "The composed data tree is the earlier reviewed build input; the spare's pre-write state was separately captured in full on Beelink and retained privately.",
+    "Reinstallation and H02 boot/DRAM/slot checks, H04 display/input and H07 fallback remain open."
   ]
 }

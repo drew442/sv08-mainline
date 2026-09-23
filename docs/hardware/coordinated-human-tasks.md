@@ -23,12 +23,11 @@ inferred from a historical report. Inspect current state before acting.
 | H07 — Controlled failure/recovery session | Reliable baseline, reviewed failure plan, expendable data, loads safe, captures and restoration artifacts ready | Power interruption, A/B exhausted/bad trials, watchdog, physical checks consuming recovery delivery's reviewed export/restore artifacts, partial MCU update and USB-reader recovery checks | Group ready cases in one session but preserve individual outcomes and distinct safe states. Deliberate interruption is not bundled into heating/printing; final artifact changes require relevant retests |
 | H08 — Release decisions and stock access | Concise unresolved license/omission choices and a stock qualification plan; no re-asking settled OS/backup decisions | Owner license decision, any actual required-feature omission, access to an actual stock profile for supported-stock qualification | Record decisions once; modified test printer first print is independent of stock access, and never certifies stock support |
 
-The [2026-09-23 v3 board candidate](host-board-image-20260923-v3.json) is
-offline-byte-reviewed and its compressed transfer copy is staged on Beelink.
-H03 is still pending: account for current spare-module user artifacts before a
-full-media overwrite, then combine any writer move with an H02 capture-ready
-boot and the available H04 display/input setup. No media move is requested by
-this preparation note.
+The [2026-09-23 v3 board candidate](host-board-image-20260923-v3.json) passed
+offline byte review and the installed spare was captured in full before its
+verified writer transfer. The USB reader has been powered off. Reinstallation is
+the remaining H03 human action; the Beelink receive-only logger was armed before
+any serial reconnection for H02. H04 display/input observations follow the boot.
 
 ## Session dispatch and result record
 
