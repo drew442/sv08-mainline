@@ -1,0 +1,16 @@
+[Unit]
+Description=Validate SV08 host boot and reconcile image trial
+Requires=sv08-prepare.service
+After=sv08-prepare.service
+Before=sv08-klipper.service
+
+[Service]
+Type=oneshot
+User=root
+Environment=PYTHONDONTWRITEBYTECODE=1
+TimeoutStartSec=60
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_boot_health.py
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

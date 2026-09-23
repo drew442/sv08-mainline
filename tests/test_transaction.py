@@ -87,6 +87,27 @@ class TransactionTests(unittest.TestCase):
         self.tx.cancel(self.boot)
         self.assertEqual(self.backend.primary(), 'A')
 
+    def test_boot_reconcile_and_confirm_use_non_stopping_admission(self):
+        calls = []
+        @contextmanager
+        def staging():
+            calls.append('staging'); yield
+        @contextmanager
+        def boot_admission():
+            calls.append('boot'); yield
+        self.tx.admission = staging
+        target = self.trial()
+        self.assertIn('staging', calls)
+        calls.clear()
+        self.assertEqual(self.tx.reconcile(target, admission=boot_admission), 'needs-health')
+        self.assertEqual(calls, ['boot'])
+        calls.clear()
+        checks = []
+        self.tx.confirm(target, lambda current: checks.append(current['boot_id']) or True,
+                        admission=boot_admission)
+        self.assertEqual(calls, ['boot'])
+        self.assertEqual(checks, [target['boot_id']])
+
     def test_automatic_flag_requires_boolean(self):
         for value in ('false', 'true', 0, 1, None):
             with self.subTest(value=value), self.assertRaisesRegex(ValueError, 'boolean'):

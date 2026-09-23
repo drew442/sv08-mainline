@@ -156,7 +156,7 @@ class Transaction:
             self.save(tx, 'failed' if failed else 'cancelled')
             return tx
 
-    def reconcile(self, boot):
+    def reconcile(self, boot, *, admission=None):
         """Classify a prepared boot without selecting slots or asserting health.
 
         The sole repair promotes an interrupted arming journal when the exact
@@ -164,7 +164,7 @@ class Transaction:
         The coordinator must execute the returned next step under its normal
         checks. It must not release the trial gate merely because this returns.
         """
-        with self.store.locked(), self.admission(), self.writer():
+        with self.store.locked(), (admission or self.admission)(), self.writer():
             state, tx = self.store.load(), self.load()
             pending = state['pending']
             if not tx or tx['phase'] in ('complete', 'cancelled', 'failed'):
@@ -206,9 +206,9 @@ class Transaction:
                 return 'awaiting-reboot'
             raise ValueError('Confirmation journal cannot resume from the source boot')
 
-    def confirm(self, boot, health):
+    def confirm(self, boot, health, *, admission=None):
         """Health callback must check this boot; success is never inferred here."""
-        with self.store.locked(), self.admission(), self.writer():
+        with self.store.locked(), (admission or self.admission)(), self.writer():
             state, tx = self.store.load(), self.load()
             if (not tx or tx['phase'] not in ('armed', 'confirming') or
                     boot['slot'] != tx['slot'] or boot['release'] != tx['release']):

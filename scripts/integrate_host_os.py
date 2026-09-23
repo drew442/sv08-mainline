@@ -153,7 +153,15 @@ def stage(work, manifest, refresh=False, owner_key=None):
         if path.exists() or path.is_symlink():
             path.unlink()
         path.symlink_to('/dev/null')
-    # No printer config is seeded, and no unit is enabled by this staging tool.
+    # The health handoff must run on each boot, including boots with no printer
+    # configuration. Klipper remains gated by its config, trial and health markers.
+    health_wants = units / 'multi-user.target.wants'
+    health_wants.mkdir(exist_ok=True)
+    health_link = health_wants / 'sv08-boot-health.service'
+    if health_link.exists() or health_link.is_symlink():
+        health_link.unlink()
+    health_link.symlink_to('../sv08-boot-health.service')
+    # No printer config is seeded, and printer units are not enabled here.
     (work / 'integration-staged.json').write_text(json.dumps(manifest, indent=2)+'\n')
 
 

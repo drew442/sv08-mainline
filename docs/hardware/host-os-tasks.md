@@ -83,7 +83,13 @@ enumeration were re-established on 2026-09-12; see the
   authenticated LAN endpoint and assembled coordinator wiring remain open.
 - [x] Implement transaction reconciliation classification and interrupted-arming
   journal repair with failure-injection tests; no slot selection or inferred health.
-- [ ] Finish board configuration, boot-service reconciliation wiring,
+- [x] Compose the offline boot-health service: validate the prepared boot record,
+  select non-stopping boot admission for reconcile/confirm, check host OS health
+  during a target trial, retain bounded failure evidence and gate Klipper until
+  durable confirmation. The host image integration enables the health unit; this
+  is unit and staging evidence. A composed QEMU A→B boot, H02 and H07 hardware
+  acceptance remain open.
+- [ ] Finish board configuration, physical boot-service reconciliation,
   health confirmation, fallback, independent recovery and offline
   release-key handling. Signed metadata admission and device backend tests are
   complete; they do not make the candidate deployable.
