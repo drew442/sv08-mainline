@@ -1,0 +1,85 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-23",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "status": "offline-byte-reviewed-awaiting-physical-H03",
+  "deployable": false,
+  "physical_hardware": false,
+  "project_commit": "33bba60f04660ed1d79946a5aad53fec085264dc",
+  "host_release": "0.1.0-board.2",
+  "source_receipts": {
+    "restored_host_finalized_sha256": "bd80de6ca76e5b927aec5e62f0d9d1aed9800cd5e19765919f174019482a3a8c",
+    "refreshed_host_finalized_sha256": "5d8cec69b01de7d78c09398b307ac41029191b9cf3bb75be58fcf840b986c75e",
+    "recovery_build_sha256": "170d77cb7f886678375c5ab9eba09fa453f69979445a8f926dcd1944f286633e",
+    "data_inventory_sha256": "8688f9586d2713a452ca1b7fddd98e32e362a55ecd132aa9b9e4bef263a61410"
+  },
+  "loader": {
+    "record": "host-spl-diagnostics-20260915-v6.json",
+    "sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+    "bytes": 786105,
+    "offset_bytes": 8192
+  },
+  "raw_image": {
+    "private_filename": "sv08-board-diagnostic.img",
+    "bytes": 7818182656,
+    "sha256": "d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56",
+    "composition_receipt_sha256": "f817ffc4ee08534e22170117863053ce63d3a8317c3eb3dc73e19f8ac65c767c"
+  },
+  "compressed_image": {
+    "private_filename": "sv08-board-diagnostic.img.xz",
+    "bytes": 1083954064,
+    "sha256": "320a49e7da360e3142a3256dd989b164ff8026e6c3cbdd831a6d4eb17c577c12",
+    "expanded_bytes_verified": 7818182656,
+    "expanded_sha256_verified": "d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56",
+    "beelink_transfer_hash_verified": true
+  },
+  "partition_images": {
+    "boot-a": {
+      "bytes": 201326592,
+      "sha256": "8825dc6fa587d0ae8bae6502722d0f8dc6ac5a457fa0ea2f2e2b01ceb95a4b92"
+    },
+    "root-a": {
+      "bytes": 2147483648,
+      "sha256": "50923f2aab34fd17ab5184dd8167dae7102438b8ea555c48e06c02cc7deaf84f"
+    },
+    "boot-b": {
+      "bytes": 201326592,
+      "sha256": "d10992db847f79ab8855a73ee9fd1b803bcb6fda832272183b9f3278e81c3306"
+    },
+    "root-b": {
+      "bytes": 2147483648,
+      "sha256": "46eab54104ad5f7be83d83b43c5dd0853f4403fc367d131e3d8e5bef0eb61094"
+    },
+    "recovery": {
+      "bytes": 536870912,
+      "sha256": "9b22fc316c41407b6cea2477bda70c7f8c59942c449d825d0d5d1eec56f336fe"
+    },
+    "data": {
+      "bytes": 2565865472,
+      "sha256": "eff84da1691e67b38c9bc244c859c2c9a86261ada5bbd6426e49a1bbc3727a00"
+    }
+  },
+  "independent_byte_review": {
+    "outcome": "passed",
+    "profile": "test-sv08-01",
+    "environment": "offline-regular-file",
+    "whole_image_hash_recomputed": true,
+    "six_embedded_partition_hashes_match_components": true,
+    "primary_and_backup_gpt_crc_valid": true,
+    "exact_v6_loader_at_recorded_offset": true,
+    "redundant_environment_crc_and_policy_valid": true,
+    "source_inventories_match_receipts": true,
+    "both_boot_payloads_and_rootfs_match": true,
+    "recovery_manifest_binding_valid": true,
+    "printer_services_masked": true,
+    "boot_health_service_installed": true
+  },
+  "physical_write": false,
+  "physical_boot": false,
+  "limitations": [
+    "Diagnostic image reuses the 0.1.0-board.2 release label with refreshed runtime; it is not a signed A/B update or release.",
+    "The preserved data tree is the earlier reviewed build input, not a capture of the currently installed spare module.",
+    "Physical H03 write, H02 boot/DRAM/slot checks, H04 display/input and H07 fallback remain open."
+  ]
+}

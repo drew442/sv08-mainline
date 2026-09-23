@@ -29,6 +29,8 @@ has now reached U-Boot, Linux, serial login, owner-key SSH and Cockpit with
 printer services disabled. Its latest full trace reports a successful 1 GiB DRAM
 initialization, but does not establish DRAM reliability. Physical B/recovery
 under the latest loader and printing remain unvalidated.
+The newer v3 image has passed offline byte review but has not been written or
+booted on the printer.
 
 ## Start here
 

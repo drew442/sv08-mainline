@@ -5,6 +5,30 @@ not a supported printing release. The [kernel trials](host-kernel-trial.md)
 passed using the original loader; the [new SPL/U-Boot](host-sv08-ab-boot.md)
 requires its own physical boot and console capture.
 
+## New offline candidate: 2026-09-23
+
+The [v3 composition record](host-board-image-20260923-v3.json) binds the exact
+reviewed v6 SPL, a refreshed copy of the diagnostic host with boot-health and
+administration UI, and the preserved data and recovery build inputs. The
+7,818,182,656-byte raw image has SHA-256
+`d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56`.
+Independent read-only review checked the complete image, all six embedded
+partitions, GPT CRCs, loader placement, both redundant environments and source
+inventories. A 1,083,954,064-byte `.xz` copy, SHA-256
+`320a49e7da360e3142a3256dd989b164ff8026e6c3cbdd831a6d4eb17c577c12`,
+expanded to the exact raw size and hash and was staged on Beelink for a future
+writer session. These are offline results; the v3 image has not been written to
+eMMC or booted on the printer.
+
+The refreshed host retains the non-deployable `0.1.0-board.2` diagnostic
+release label to agree with the preserved data registry. It is not a signed
+in-place A/B update. That data tree is the earlier build input, not a capture
+of the spare eMMC's current user state. Before any H03 media write, review
+preservation of the installed module's user artifacts and coordinate H02 serial
+capture and H04 display observations in the [shared queue](coordinated-human-tasks.md).
+The write instructions and download hashes later in this document describe
+earlier artifacts; use the v3 record's hashes if this candidate is selected.
+
 ## Composition contract
 
 [The diagnostic composer](../../scripts/assemble_board_diagnostic.py) accepts
