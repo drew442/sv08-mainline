@@ -11,8 +11,9 @@ delivered. It does not certify a printer or a release.
 | --- | --- | --- | --- | --- |
 | Reconcile recovery export record — done | `project_implementer`, GPT-6 Sol / medium, then separate `feature_verifier`, GPT-6 Sol / high | `docs/features/host-recovery-export-composition/record.json` and only the evidence bookkeeping needed to bind the merged implementation | Six schema-valid offline checks and independent verdict passed; `feature_workflow.py validate` and `next` succeeded at `db33359`. | H04/H07 remain open for physical UI, media and recovery tests. |
 | Finish approved inactive printer interface configuration — done | `project_implementer`, GPT-6 Sol / medium, then separate verifier | Approved `printer-interface-config` scope: inactive include and focused tests | Five pinned Klipper tests, coordinator private overlay file-output check, and independent pc-01–pc-08 verdict passed at `72000d3`; no physical claim. | H01/H02/H05/H06 for identification, boot, inputs and attended outputs. |
-| Compose approved boot health — next | `project_implementer`, GPT-6 Sol / medium, then separate verifier | Approved `host-boot-health-composition` coordinator, transaction admission, unit ordering and image enablement | Source-backed Luna handoff complete; implement approved hb checks, then prove trial/normal/writable behavior in offline tests and independent review. | H02/H07 for later board boot and fallback tests. |
+| Compose approved boot health — done | `project_implementer`, GPT-6 Sol / medium, separate `project_integration`, and independent verifier | Approved `host-boot-health-composition` coordinator, transaction admission, unit ordering and image enablement | All 12 offline checks passed independent review at `316be5f`: 59 focused tests and clean-source disposable QEMU A→B/A fallback. The harness selected roots and seeded a staged transaction; signed install and U-Boot attempt decrement remain untested. | H02/H07 for later board boot and fallback tests. |
 | Prepare the next board artifact — research done | `project_researcher`, GPT-6 Luna / high | Read-only input receipt, capacity and resource audit | About 36 GiB free at audit; canonical v6 SPL, host, data and recovery inputs absent from expected paths. Compose only after reviewed exact inputs are selected; use inspect-only assembler first. | H03 only if a later reviewed image must be written through the reader; H02/H04 for boot and UI. |
+| Reconstruct reviewed board-image inputs — next | `project_researcher`, GPT-6 Luna / high; one Sol implementer only if an exact safe input repair is identified | Existing host-image build receipts and assembly paths, without running a full image build | Exact source/hash map for v6 SPL and host/data/recovery inputs, reproducible minimal commands, disk estimate and any precise missing human input. Do not substitute v5 SPL or declare a downloaded image tested. | H03 only when a later reviewed write is ready; H02/H04 for installed boot and display. |
 
 Run at most one production implementer at a time. A verifier never reviews its
 own implementation. Research can proceed while the implementation lease is held.
@@ -26,5 +27,5 @@ hold the offline goals above.
 The VM had about 36 GiB free at the board artifact audit on 2026-09-23.
 Inventory old `build/` outputs before a factory-sized image or concurrent VM
 run. Retain only accepted evidence; never remove another worker's fixtures.
-The recovery record and inactive printer interface have passed independent
-offline review. Neither result certifies physical board behavior.
+The recovery record, inactive printer interface and boot-health composition
+have passed independent offline review. None certifies physical board behavior.
