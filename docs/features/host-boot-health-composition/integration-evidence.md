@@ -38,10 +38,13 @@ The healthy A→B path produced distinct boot IDs, confirmed B good/primary,
 cleared pending state, and published the ready marker without printer config or
 MCU. In a separate A→B→A path, failed B health requested an orderly reboot;
 host-selected A then cancelled/disarmed B and retained the B failure record.
-The ignored `build/boot-health-qemu-v1/result.json` and
-`execution-receipt.json` record five serial-log hashes, kernel/initrd and RAUC
-hashes, QEMU 8.2.2, and `physical_hardware=false`. The run exited 0 and used
-about 6.8 GiB peak additional disk. Seven composed-fixture tests also passed.
+The first ignored `build/boot-health-qemu-v1` run used untracked fixture files
+and is not source-bound acceptance evidence. The clean committed-source rerun
+at `691a543261df69fe3f494e211df121f9ffd7dc9a` exited 0 with an empty
+source dirty state. Its `build/boot-health-qemu-v2/result.json` records five
+serial-log hashes, kernel/initrd and RAUC hashes, QEMU 8.2.2, and
+`physical_hardware=false`. The runtime and fixture files are unchanged by the
+subsequent documentation correction. Seven composed-fixture tests also passed.
 The harness selected roots and seeded a staged transaction for a pre-populated
 B; it did not test signed bundle installation, automatic U-Boot selection or
 attempt decrement. Physical cold/warm boot and fallback remain H02/H07 in the

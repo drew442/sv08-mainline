@@ -89,8 +89,9 @@ enumeration were re-established on 2026-09-12; see the
   durable confirmation. The host image integration enables the health unit; this
   has a 50-second process deadline within its 60-second systemd limit and
   bounded persistent failure records when the state store is usable. This is
-  unit and staging evidence. A composed QEMU A→B boot, H02 and H07 hardware
-  acceptance remain open.
+  unit, staging and host-selected disposable QEMU A→B/A fallback evidence.
+  Signed installation, automatic U-Boot selection and attempt decrement, and
+  H02/H07 hardware acceptance remain open.
 - [ ] Finish board configuration, physical boot-service reconciliation,
   health confirmation, fallback, independent recovery and offline
   release-key handling. Signed metadata admission and device backend tests are
