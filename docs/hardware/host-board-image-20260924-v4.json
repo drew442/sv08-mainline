@@ -3,9 +3,9 @@
   "recorded_on": "2026-09-24",
   "hardware_profile": "test-sv08-01",
   "board_revision": "H616_JC_6Z_V1.2 (owner-reported marking; not a full identity validation)",
-  "status": "offline-reviewed-diagnostic-awaiting-spare-write-and-boot",
+  "status": "written-and-readback-verified-diagnostic-awaiting-reinstall-and-boot",
   "deployable": false,
-  "physical_hardware": false,
+  "physical_hardware": true,
   "project_commit": "33bba60f04660ed1d79946a5aad53fec085264dc",
   "host_release": "0.1.0-board.2",
   "source_receipts": {
@@ -61,12 +61,28 @@
     "uses_owner_accepted_existing_backup_and_recovery_path": true,
     "new_full_backup_required": false
   },
-  "physical_write": false,
+  "physical_write": true,
+  "writer_evidence": {
+    "date": "2026-09-24",
+    "reader_usb_id": "05e3:0747",
+    "target_capacity_bytes": 31272730624,
+    "target_partitions_unmounted": true,
+    "exclusive_write_bytes": 7818182656,
+    "exclusive_block_device_open": true,
+    "fsync_and_device_flush": true,
+    "direct_device_readback_bytes": 7818182656,
+    "direct_device_readback_sha256": "7e41e123c7a219feb63e549f2e00425f2a75de548b95b1129f459a20cd8a0d13",
+    "six_partition_layout_and_guids_match": true,
+    "gpt_backup_header_at_image_end_expected_for_8gb_footprint": true,
+    "remaining_32gb_capacity_left_unused": true,
+    "usb_reader_powered_off": true,
+    "private_receipt_on_beelink": true
+  },
   "physical_boot": false,
   "limitations": [
     "This is a diagnostic image, not a deployable/signed release.",
     "Offline byte review does not verify this image boots on the physical board.",
     "B-slot, recovery under this loader, DRAM reliability, persistent Wi-Fi and printer outputs remain unvalidated.",
-    "The next action is a single H03 move of the installed spare eMMC to the Beelink USB writer; target identification and immediate pre-write review remain mandatory before writing."
+    "The exact image is written and readback-verified, but v4 physical boot has not yet been attempted; next is to reinstall this spare eMMC and capture the first boot."
   ]
 }

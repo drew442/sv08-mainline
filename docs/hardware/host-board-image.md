@@ -16,11 +16,17 @@ private `.xz` is 966,683,880 bytes with SHA-256
 integrity and full expanded hash checks passed. Independent GPT-6 Sol offline
 review checked the image hash, all six partitions, GPT, the v6 loader at byte
 8192, redundant U-Boot environments and representative boot, root, data and
-recovery payloads. The exact artifacts have not yet been written or booted on
-hardware. Before writing, freshly identify the unmounted spare eMMC and reader,
-confirm capacity and target, and obtain immediate independent pre-write review.
-Then write the complete image and verify the whole written footprint by direct
-device readback. Do not use the factory eMMC.
+recovery payloads. **Update:** the owner-installed spare was written on
+2026-09-24 after fresh target identification and immediate independent GPT-6
+Sol pre-write review. The 05e3:0747 reader exposed the unmounted
+31,272,730,624-byte target. An exclusive block-device write transferred exactly
+7,818,182,656 bytes; flushes completed, and direct-I/O readback of all 1,864
+4 MiB blocks returned the exact raw-image SHA-256 above. The six partition
+identities match. The backup GPT is intentionally at the end of the 8GB image,
+leaving the remainder of the module unused; no GPT relocation or expansion was
+performed. The reader was powered off safely. Private target identity and the
+full write receipt are on Beelink. The spare still needs reinstall and a
+captured physical boot. Do not use the factory eMMC.
 
 2026-09-13, test-sv08-01. This continues authorized physical host testing. It is
 not a supported printing release. The [kernel trials](host-kernel-trial.md)
