@@ -14,6 +14,7 @@ durable records, authorized hardware operations and commits/publication.
 | `project_integration` | GPT-6 Sol / medium | Exercise installed packages, GTK/web flows and ARM64 VM/image acceptance checks |
 | `feature_approver` | GPT-6 Sol / medium | Independently challenge scope, requirements and acceptance checks before substantive work |
 | `feature_verifier` | GPT-6 Sol / medium | Independently assess the complete delivery diff and evidence against approved checks |
+| `high_consequence_reviewer` | GPT-6 Sol / medium | Review the exact hardware, boot-policy, commissioning or release action before execution |
 
 Luna handles narrow research and corrections; Sol handles complex implementation,
 integration and independent review. Medium is the default effort across profiles.
@@ -53,6 +54,13 @@ Use bounded searches/output and one shared physical task queue. A slow build or
 VM run is a reason to wait on its existing handle, not to launch duplicate work.
 Reserve Sol review for substantive acceptance; use direct coordinator checks for
 small documented corrections that the workflow classifies as normal review.
+Before an eMMC/MCU write, a boot-policy change, heater/motion commissioning, or
+a release decision, the coordinator must spawn a separate `high_consequence_reviewer`
+on Sol/medium with the exact proposed operation. Raise that review to Sol/high if board
+identity, artifact provenance, recovery, safety limits, or acceptance evidence
+remain materially uncertain. This is one independent review, not a second
+implementation lane. If named profiles are unavailable, use a separate Sol agent
+and pass it the profile instructions explicitly. Wait for its review before action.
 
 For existing approved work, pass its record; do not request product approval again.
 For new substantive work, use the existing proposal/approval/verification contracts.

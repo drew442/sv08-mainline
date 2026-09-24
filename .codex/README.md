@@ -6,6 +6,11 @@ For a small, already-scoped correction, use the Luna
 [`project_narrow_implementer`](agents/project-narrow-implementer.toml) or work
 locally. Keep Sol for complex implementation and independent substantive review;
 the repository profiles cannot switch an existing chat's model.
+The coordinator routes eMMC/MCU writes, boot-policy changes, heater/motion
+commissioning, and release decisions through the independent
+[`high_consequence_reviewer`](agents/high-consequence-reviewer.toml) on GPT-6 Sol.
+This profile reviews the specific action; it cannot authorize or perform hardware
+operations.
 The [current subclient goals](current-goals.md) assign the next bounded work and
 share physical dependencies through one human queue.
 

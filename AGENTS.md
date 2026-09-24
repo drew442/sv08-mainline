@@ -38,6 +38,15 @@ electronics, starting with stock. No hardware combination is validated yet.
   recovery path; follow the user's authorization for the action.
 - Preserve heater protections and validate sensor behavior before heat or motion.
   Do not turn off protections to make a migration appear successful.
+- Immediately before an eMMC/MCU write, boot-policy change, heater/motion
+  commissioning step, or release decision, spawn a separate reviewer using
+  `.codex/agents/high-consequence-reviewer.toml` and GPT-6 Sol. Give it the exact
+  target, artifact/configuration, planned operation and acceptance checks. If the
+  runtime cannot load named project profiles, use a separate GPT-6 Sol agent and
+  pass it that profile's instructions explicitly.
+  Use Sol/medium by default and Sol/high when material uncertainty remains.
+  The review cannot grant hardware authority or replace owner authorization;
+  the coordinator records the review result before acting.
 
 ## Validation and reporting
 
