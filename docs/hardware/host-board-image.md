@@ -1,5 +1,27 @@
 # First complete board A/B diagnostic image
 
+## v4 fresh-root candidate: 2026-09-24
+
+The [v4 artifact record](host-board-image-20260924-v4.json) describes the
+current diagnostic candidate. It was rebuilt from the fresh Debian baseline
+after the v3 root was found to omit required Wi-Fi userspace. v4 includes
+NetworkManager and the supplied Wi-Fi profile in the persistent data image;
+the credential is kept private and is not in the repository. The image remains
+non-deployable, with printer services masked.
+
+The reviewed raw image is 7,818,182,656 bytes with SHA-256
+`7e41e123c7a219feb63e549f2e00425f2a75de548b95b1129f459a20cd8a0d13`. The
+private `.xz` is 966,683,880 bytes with SHA-256
+`7b60bf88483be861119ac3fcb4e95bb6cc5c0c6f36f22cf3bb35cfb4578ac7bc`; XZ
+integrity and full expanded hash checks passed. Independent GPT-6 Sol offline
+review checked the image hash, all six partitions, GPT, the v6 loader at byte
+8192, redundant U-Boot environments and representative boot, root, data and
+recovery payloads. The exact artifacts have not yet been written or booted on
+hardware. Before writing, freshly identify the unmounted spare eMMC and reader,
+confirm capacity and target, and obtain immediate independent pre-write review.
+Then write the complete image and verify the whole written footprint by direct
+device readback. Do not use the factory eMMC.
+
 2026-09-13, test-sv08-01. This continues authorized physical host testing. It is
 not a supported printing release. The [kernel trials](host-kernel-trial.md)
 passed using the original loader; the [new SPL/U-Boot](host-sv08-ab-boot.md)

@@ -1,0 +1,72 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-24",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": "H616_JC_6Z_V1.2 (owner-reported marking; not a full identity validation)",
+  "status": "offline-reviewed-diagnostic-awaiting-spare-write-and-boot",
+  "deployable": false,
+  "physical_hardware": false,
+  "project_commit": "33bba60f04660ed1d79946a5aad53fec085264dc",
+  "host_release": "0.1.0-board.2",
+  "source_receipts": {
+    "host_finalized_sha256": "bd392db3c137f20eecfed1a424bf5c492bfd0e02fb78e550124c272a3396f91f",
+    "data_inventory_sha256": "f1802f267d11a386dbd1647f36ede5e2fa39fbff9e0996a3e3b14e0095313a44",
+    "recovery_build_sha256": "170d77cb7f886678375c5ab9eba09fa453f69979445a8f926dcd1944f286633e"
+  },
+  "loader": {
+    "record": "host-spl-diagnostics-20260915-v6.json",
+    "sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+    "bytes": 786105,
+    "offset_bytes": 8192
+  },
+  "raw_image": {
+    "private_filename": "sv08-board-diagnostic.img",
+    "bytes": 7818182656,
+    "sha256": "7e41e123c7a219feb63e549f2e00425f2a75de548b95b1129f459a20cd8a0d13",
+    "composition_receipt_sha256": "5df6c91055136de1f27bbb513be3a3696150894d092b3dd7ae59243e591f9e98"
+  },
+  "compressed_image": {
+    "private_filename": "sv08-board-diagnostic.img.xz",
+    "bytes": 966683880,
+    "sha256": "7b60bf88483be861119ac3fcb4e95bb6cc5c0c6f36f22cf3bb35cfb4578ac7bc",
+    "integrity_tested": true,
+    "expanded_bytes_verified": 7818182656,
+    "expanded_sha256_verified": "7e41e123c7a219feb63e549f2e00425f2a75de548b95b1129f459a20cd8a0d13",
+    "beelink_transfer_hash_verified": true,
+    "private_staging_directory": "/home/drew/sv08-captures/board-v4-write-20260924",
+    "private_file_mode": "0600"
+  },
+  "partition_images": {
+    "boot-a": {"bytes": 201326592, "sha256": "5a0e9cdb5deb7d79305b618c12b0fa6530074d6e28c279d18fc8455747e27f5e"},
+    "root-a": {"bytes": 2147483648, "sha256": "f12f4eb1e8cb6f89831a413c29bc3eccd1032545fadac9fe5f02a938905eef87"},
+    "boot-b": {"bytes": 201326592, "sha256": "c3897c0af3a88ba69d4e6da45bc6fd589eeebb29246af01cf80000e649a7dbfe"},
+    "root-b": {"bytes": 2147483648, "sha256": "e04ebf8012f7baa887db28ca3eb124be13760d8392051f785927d8f975457e85"},
+    "recovery": {"bytes": 536870912, "sha256": "0d01912339c6b1212e3ec833efa4b4cda5753be53df41a055b67d5460a0927fa"},
+    "data": {"bytes": 2565865472, "sha256": "75fafa0f6b525a6baa2a395eb2998e81644d8848aa504fa02cc56d8a5855eced"}
+  },
+  "independent_byte_review": {
+    "outcome": "passed",
+    "reviewer": "GPT-6 Sol",
+    "environment": "offline-regular-file",
+    "whole_image_hash_recomputed": true,
+    "six_embedded_partition_hashes_match_components": true,
+    "primary_and_backup_gpt_valid": true,
+    "exact_v6_loader_at_recorded_offset": true,
+    "redundant_environment_crc_and_policy_valid": true,
+    "boot_root_data_and_recovery_payloads_checked": true,
+    "printer_services_masked": true,
+    "wifi_profile_present_without_publication_of_secret": true
+  },
+  "spare_preservation": {
+    "uses_owner_accepted_existing_backup_and_recovery_path": true,
+    "new_full_backup_required": false
+  },
+  "physical_write": false,
+  "physical_boot": false,
+  "limitations": [
+    "This is a diagnostic image, not a deployable/signed release.",
+    "Offline byte review does not verify this image boots on the physical board.",
+    "B-slot, recovery under this loader, DRAM reliability, persistent Wi-Fi and printer outputs remain unvalidated.",
+    "The next action is a single H03 move of the installed spare eMMC to the Beelink USB writer; target identification and immediate pre-write review remain mandatory before writing."
+  ]
+}
