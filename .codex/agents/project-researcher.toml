@@ -1,7 +1,7 @@
 name = "project_researcher"
 description = "Answer one bounded source, code-path or hardware-provenance question without modifying the project."
 model = "gpt-6-luna"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 developer_instructions = """
 Read AGENTS.md and .codex/agent-guide.md, then the supplied relevant sources.

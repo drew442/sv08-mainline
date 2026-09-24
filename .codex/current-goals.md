@@ -1,6 +1,6 @@
 # Current subclient goals
 
-Updated 2026-09-23. These are bounded assignments under the existing
+Updated 2026-09-24. These are bounded assignments under the existing
 [remaining-work plan](../docs/remaining-work-plan.md) and
 [parallel delivery plan](../docs/development/parallel-work.md). The owner has
 paused optional new features; these goals finish approved work and correct
@@ -13,7 +13,7 @@ delivered. It does not certify a printer or a release.
 | Finish approved inactive printer interface configuration — done | `project_implementer`, GPT-6 Sol / medium, then separate verifier | Approved `printer-interface-config` scope: inactive include and focused tests | Five pinned Klipper tests, coordinator private overlay file-output check, and independent pc-01–pc-08 verdict passed at `72000d3`; no physical claim. | H01/H02/H05/H06 for identification, boot, inputs and attended outputs. |
 | Compose approved boot health — done | `project_implementer`, GPT-6 Sol / medium, separate `project_integration`, and independent verifier | Approved `host-boot-health-composition` coordinator, transaction admission, unit ordering and image enablement | All 12 offline checks passed independent review at `316be5f`: 59 focused tests and clean-source disposable QEMU A→B/A fallback. The harness selected roots and seeded a staged transaction; signed install and U-Boot attempt decrement remain untested. | H02/H07 for later board boot and fallback tests. |
 | Prepare the next board artifact — research done | `project_researcher`, GPT-6 Luna / high | Read-only input receipt, capacity and resource audit | Identified the exact v6 SPL and retained reviewed host/data/recovery inputs on Beelink; the resulting candidate is recorded below. | H03 for writer access; H02/H04 for boot and UI. |
-| Compose and write v3 board diagnostic candidate — writer done | Coordinator with independent Sol offline byte review | Restored reviewed host/data/recovery inputs, refreshed host runtime and initrd, exact v6 SPL; identified spare writer target | The 7,818,182,656-byte raw image has SHA-256 `d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56`; independent offline review passed. The current spare was captured in full on Beelink before exclusive write; direct full-footprint readback matched, six partitions matched, reader powered off. See [the v3 record](../docs/hardware/host-board-image-20260923-v3.json). | Reinstall spare; H02 capture-ready boot and H04 display/input checks. H07 remains later. |
+| Compose and write v3 board diagnostic candidate — physical A boot observed | Coordinator with independent Sol offline byte review | Reviewed v3 composition and spare writer transfer | Complete image readback matched SHA-256 `d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56`; [physical A boot, HDMI/KVM login and temporary Wi-Fi](../docs/hardware/host-board-v3-first-boot.md) are recorded. | Corrected image needed for persistent Wi-Fi and diagnostic boot-health; one A boot attempt remained at last read. H04 touch, H07 and output gates remain open. |
 
 Run at most one production implementer at a time. A verifier never reviews its
 own implementation. Research can proceed while the implementation lease is held.

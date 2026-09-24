@@ -7,29 +7,30 @@ durable records, authorized hardware operations and commits/publication.
 
 | Agent | Model / effort | Useful assignment |
 | --- | --- | --- |
-| `project_researcher` | GPT-6 Luna / high | Trace one recovery or boot code path; reconcile pin provenance; find a supported upstream configuration |
-| `feature_suggester` | GPT-6 Luna / high | Select one useful task when triage is needed; prefer finishing accepted work |
+| `project_researcher` | GPT-6 Luna / medium | Trace one bounded code path or source question |
+| `feature_suggester` | GPT-6 Luna / medium | Select one useful task only when triage is needed |
+| `project_narrow_implementer` | GPT-6 Luna / medium | Make a small, already-scoped documentation, test or tooling correction |
 | `project_implementer` | GPT-6 Sol / medium | Implement an approved recovery, host administration, image assembly or printer configuration slice |
 | `project_integration` | GPT-6 Sol / medium | Exercise installed packages, GTK/web flows and ARM64 VM/image acceptance checks |
-| `feature_approver` | GPT-6 Sol / high | Independently challenge scope, requirements and acceptance checks before substantive work |
-| `feature_verifier` | GPT-6 Sol / high | Independently assess the complete delivery diff and evidence against approved checks |
+| `feature_approver` | GPT-6 Sol / medium | Independently challenge scope, requirements and acceptance checks before substantive work |
+| `feature_verifier` | GPT-6 Sol / medium | Independently assess the complete delivery diff and evidence against approved checks |
 
-Luna handles narrow information gathering; Sol handles stateful implementation
-and review. High effort on the two reviewer roles reflects the safety and evidence
-burden; ordinary implementation and integration start at medium. These are
-starting choices, not measured cost or quality guarantees.
-Only focused research and independent review default to high effort; Sol
-implementation and integration default to medium. No Astra worker is launched
-by default. If a task exceeds
-the assigned model's capabilities, return the specific unresolved problem and
-evidence to the coordinator; do not silently escalate or keep retrying.
+Luna handles narrow research and corrections; Sol handles complex implementation,
+integration and independent review. Medium is the default effort across profiles.
+Use Sol/high for a bounded review involving firmware writes, boot/recovery policy,
+heater or motion safety, data-loss risk, or an unresolved conflicting source;
+record why the higher effort is needed in the handoff. No Astra worker is launched
+by default. If a task exceeds its assigned model, return the specific gap and
+evidence to the coordinator for reassignment instead of retrying broadly. These
+are routing defaults, not measured cost or quality guarantees.
 
 ## Assignments and cost controls
 
 Use an agent only for a concrete task that benefits from delegation. Small local
 edits do not need an entire team. Keep one implementation active. Research or
-review may run alongside independent work; normally use one or two children,
-up to three only with separate useful assignments and sufficient resources.
+review may run alongside independent work; normally use one child and at most
+two active children for distinct assignments. Run required independent approval
+and verification sequentially when parallel work would only duplicate context.
 Profiles do not start agents or schedules automatically.
 
 Give each child a concise handoff rather than the full conversation:
@@ -44,6 +45,14 @@ Existing results to reuse; unresolved question:
 Completion condition and result format:
 Shared human dependency IDs and offline work that can proceed while waiting:
 ```
+
+Supply paths and acceptance IDs, not pasted whole documents or long raw logs.
+First inspect existing evidence and current file hashes; rerun a check only when
+its inputs changed, it failed, or the existing result cannot answer the question.
+Use bounded searches/output and one shared physical task queue. A slow build or
+VM run is a reason to wait on its existing handle, not to launch duplicate work.
+Reserve Sol review for substantive acceptance; use direct coordinator checks for
+small documented corrections that the workflow classifies as normal review.
 
 For existing approved work, pass its record; do not request product approval again.
 For new substantive work, use the existing proposal/approval/verification contracts.
@@ -79,7 +88,10 @@ certify a printer through simulation.
 
 Definitions live in [agents/](agents/). Their `name` fields identify the roles.
 The model and effort are explicit in each file to avoid inheriting an unnecessarily
-expensive coordinator setting. No project-wide model default is changed.
+expensive coordinator setting. No project-wide model default is changed. These
+TOML defaults apply when a client loads these custom profiles; they do not change
+an already running chat or pre-registered agent role whose model/effort is fixed
+by its runtime. The coordinator must verify the effective role settings at launch.
 If the current session does not expose a new role, start a new session. If a
 client cannot load custom agents, pass the profile instructions, model and effort
 explicitly to a supported separate agent session. Report unavailable models and

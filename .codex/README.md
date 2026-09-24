@@ -2,6 +2,10 @@
 
 Use the [project subagent guide](agent-guide.md) for role selection, model defaults,
 bounded task handoffs and shared test-resource ownership.
+For a small, already-scoped correction, use the Luna
+[`project_narrow_implementer`](agents/project-narrow-implementer.toml) or work
+locally. Keep Sol for complex implementation and independent substantive review;
+the repository profiles cannot switch an existing chat's model.
 The [current subclient goals](current-goals.md) assign the next bounded work and
 share physical dependencies through one human queue.
 
