@@ -17,6 +17,7 @@ class PrepareBootRearmTests(unittest.TestCase):
         self.assertEqual({key: values[key] for key in ('sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT')},
                          {'sv08_env_layout': 'ab-8gb-v1', 'BOOT_ORDER': 'A', 'BOOT_A_LEFT': '3', 'BOOT_B_LEFT': '0'})
         self.assertIn('systemd.mask=sv08-klipper.service', values['sv08_consoleargs'])
+        self.assertIn('systemd.mask=sv08-boot-health.service', values['sv08_consoleargs'])
 
     @unittest.skipUnless(shutil.which('mkenvimage'), 'requires U-Boot tools')
     def test_binary_is_two_valid_serial_ordered_copies(self):

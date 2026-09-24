@@ -29,10 +29,10 @@ identified, unmounted `05e3:0747` USB reader then received exactly
 7,818,182,656 bytes through an exclusive block-device open. After flush, a
 direct read of the complete written footprint returned the reviewed raw SHA-256
 above. All six partition positions, sizes, IDs and the disk GUID matched the
-image. The reader was powered off for safe removal. These establish the spare
-write, **not** a printer boot. A receive-only serial watcher was armed on Beelink
-before reconnection; reinstallation and H02/H04 observations remain in the
-[shared queue](coordinated-human-tasks.md).
+image. The reader was powered off for safe removal. The subsequent
+[physical v3 A boot](host-board-v3-first-boot.md) reached Debian, HDMI/KVM login
+and temporary Wi-Fi. Boot-health and persistent Wi-Fi remain open, as do B,
+recovery, touch and output checks in the [shared queue](coordinated-human-tasks.md).
 The write instructions and download hashes later in this document describe
 earlier artifacts; use the v3 record's hashes if this candidate is selected.
 

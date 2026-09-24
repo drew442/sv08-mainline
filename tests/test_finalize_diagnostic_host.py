@@ -6,7 +6,7 @@ import unittest
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from finalize_diagnostic_host import finalize
+from finalize_diagnostic_host import MASKS, WIFI_FILES, finalize
 
 
 class FinalizeDiagnosticHostTests(unittest.TestCase):
@@ -25,8 +25,11 @@ class FinalizeDiagnosticHostTests(unittest.TestCase):
         data_key = self.data / 'sv08/users/sv08/.ssh/authorized_keys'; data_key.parent.mkdir(parents=True)
         data_key.write_bytes(key)
         unit_dir = self.root / 'etc/systemd/system'; unit_dir.mkdir(parents=True)
-        for name in ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen', 'rauc'):
+        for name in MASKS:
             (unit_dir / (name + '.service')).symlink_to('/dev/null')
+        for name in WIFI_FILES:
+            path = self.root / name; path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('fixture\n')
         self.source = self.base / 'source-finalized.json'
         self.source.write_text(json.dumps(dict(root=dict(schema=2, sha256='0' * 64, files=0, bytes=0))))
 
@@ -34,11 +37,25 @@ class FinalizeDiagnosticHostTests(unittest.TestCase):
         result = finalize(self.work, self.data, self.source, execute=True)
         self.assertEqual(result['schema'], 3)
         self.assertTrue(result['checks']['owner_key_seeded'])
+        self.assertTrue(result['checks']['boot_health_masked'])
+        self.assertTrue(result['checks']['wifi_userspace_present'])
         self.assertTrue((self.work / 'finalized.json').is_file())
 
     def test_mismatched_owner_key_refuses_without_receipt(self):
         (self.data / 'sv08/users/sv08/.ssh/authorized_keys').write_text('other\n')
         with self.assertRaisesRegex(ValueError, 'seeds differ'):
+            finalize(self.work, self.data, self.source, execute=True)
+        self.assertFalse((self.work / 'finalized.json').exists())
+
+    def test_missing_wifi_userspace_refuses_without_receipt(self):
+        (self.root / WIFI_FILES[0]).unlink()
+        with self.assertRaisesRegex(ValueError, 'missing Wi-Fi userspace'):
+            finalize(self.work, self.data, self.source, execute=True)
+        self.assertFalse((self.work / 'finalized.json').exists())
+
+    def test_unmasked_boot_health_refuses_without_receipt(self):
+        (self.root / 'etc/systemd/system/sv08-boot-health.service').unlink()
+        with self.assertRaisesRegex(ValueError, 'sv08-boot-health'):
             finalize(self.work, self.data, self.source, execute=True)
         self.assertFalse((self.work / 'finalized.json').exists())
 

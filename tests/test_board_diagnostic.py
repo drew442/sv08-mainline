@@ -42,6 +42,7 @@ class DiagnosticTests(unittest.TestCase):
             self.assertEqual((actual['BOOT_ORDER'], actual['BOOT_A_LEFT'], actual['BOOT_B_LEFT']), ('A', '3', '0'))
             self.assertIn('bootflow scan -b', actual['sv08_dispatch'])
             self.assertIn('systemd.mask=sv08-klipper.service', actual['sv08_consoleargs'])
+            self.assertIn('systemd.mask=sv08-boot-health.service', actual['sv08_consoleargs'])
             # A bad first copy must retain the same complete policy via its peer.
             with disk.open('r+b') as stream: stream.write(b'BAD!')
             self.assertEqual(subprocess.check_output(['fw_printenv', '-c', str(config)], text=True), output)
@@ -57,11 +58,11 @@ class DiagnosticTests(unittest.TestCase):
             with self.assertRaises(ValueError): m.recovery_script(profile, digest)
 
     def test_current_dram_record_binds_the_explicit_loader_manifest(self):
-        result = m.reviewed_spl(REPO / 'docs/hardware/host-spl-diagnostics-20260914-v5.json',
+        result = m.reviewed_spl(REPO / 'docs/hardware/host-spl-diagnostics-20260915-v6.json',
                                 'test-sv08-01')
         self.assertEqual(result['artifact']['loader_offset_bytes'], 8192)
         self.assertEqual(result['artifact']['loader_sha256'],
-                         '78948fdaf6ca695c126d35d52b76493c04b49828d3a8ff183719faccdb9f9e48')
+                         '166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40')
         bad = dict(result['record']); bad['artifact'] = dict(bad['artifact'])
         bad['artifact']['loader_end_offset_bytes'] += 1
         with tempfile.TemporaryDirectory() as directory:

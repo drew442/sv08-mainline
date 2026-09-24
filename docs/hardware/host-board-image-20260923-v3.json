@@ -3,9 +3,9 @@
   "recorded_on": "2026-09-23",
   "hardware_profile": "test-sv08-01",
   "board_revision": null,
-  "status": "spare-written-and-readback-verified-awaiting-H02-boot",
+  "status": "physical-A-boot-and-temporary-Wi-Fi-verified-diagnostic-gaps-open",
   "deployable": false,
-  "physical_hardware": false,
+  "physical_hardware": true,
   "project_commit": "33bba60f04660ed1d79946a5aad53fec085264dc",
   "host_release": "0.1.0-board.2",
   "source_receipts": {
@@ -96,10 +96,28 @@
     "usb_reader_powered_off": true,
     "private_receipt_on_beelink": true
   },
-  "physical_boot": false,
+  "physical_boot": true,
+  "physical_boot_evidence": {
+    "date": "2026-09-24",
+    "profile": "test-sv08-01",
+    "serial_first_two_boots_private_sha256": "38129bc658b9d06a3812ff857d6ec3bc781eaad86f872396d99b497a78bfdf3c",
+    "serial_first_two_boots_bytes": 106085,
+    "spl_dram_and_uboot_slot_a": true,
+    "reported_dram_mib": 1024,
+    "kernel": "6.18.51-sv08-candidate1",
+    "root_slot": "A",
+    "root_read_only": true,
+    "hdmi_kvm_capture_and_keyboard_login": true,
+    "wifi_runtime_association_and_ssh": true,
+    "wifi_persistent_after_reboot": false,
+    "printer_outputs_tested": false,
+    "uboot_attempts_remaining_at_last_read": 1
+  },
   "limitations": [
     "Diagnostic image reuses the 0.1.0-board.2 release label with refreshed runtime; it is not a signed A/B update or release.",
     "The composed data tree is the earlier reviewed build input; the spare's pre-write state was separately captured in full on Beelink and retained privately.",
-    "Reinstallation and H02 boot/DRAM/slot checks, H04 display/input and H07 fallback remain open."
+    "Physical A boot, HDMI capture and USB keyboard login passed; touch input, B, recovery and H07 fallback remain open.",
+    "Current diagnostic root omits wpa_supplicant and RAUC configuration despite the package plan; Wi-Fi works only with a temporary runtime supplicant until a corrected image is installed.",
+    "The diagnostic boot-health unit fails because RAUC is masked; no boot-health confirmation was issued. One A attempt remained at the last read; coordinate any reboot or rearm."
   ]
 }

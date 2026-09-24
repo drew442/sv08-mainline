@@ -14,7 +14,10 @@ from integrate_host_os import validate
 from prepare_host_os import work_path
 from recovery_image import inventory, sha
 
-MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen', 'rauc')
+MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen', 'rauc', 'sv08-boot-health')
+WIFI_FILES = ('usr/sbin/wpa_supplicant',
+              'usr/share/dbus-1/system.d/wpa_supplicant.conf',
+              'usr/share/dbus-1/system-services/fi.w1.wpa_supplicant1.service')
 
 
 def checks(root, data):
@@ -30,11 +33,15 @@ def checks(root, data):
     for name in MASKS:
         link = root / 'etc/systemd/system' / (name + '.service')
         if not link.is_symlink() or os.readlink(link) != '/dev/null':
-            raise ValueError('Printer/RAUC service is not masked: ' + name)
+            raise ValueError('Diagnostic service is not masked: ' + name)
+    for name in WIFI_FILES:
+        if not (root / name).is_file():
+            raise ValueError('Diagnostic host is missing Wi-Fi userspace: ' + name)
     if (root / 'usr/lib/sv08/qemu-probe.py').exists() or (root / 'etc/systemd/system/qemu-probe.service').exists():
         raise ValueError('QEMU fixture must not be finalized')
     return dict(release=release['release'], deployable=False,
                 owner_key_seeded=True, printer_services_masked=True,
+                boot_health_masked=True, wifi_userspace_present=True,
                 qemu_fixture_absent=True)
 
 

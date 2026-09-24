@@ -29,8 +29,10 @@ has now reached U-Boot, Linux, serial login, owner-key SSH and Cockpit with
 printer services disabled. Its latest full trace reports a successful 1 GiB DRAM
 initialization, but does not establish DRAM reliability. Physical B/recovery
 under the latest loader and printing remain unvalidated.
-The newer v3 image passed offline byte review and direct eMMC readback; it has
-not yet been booted on the printer.
+The newer v3 image passed offline byte review, direct eMMC readback and a
+[physical slot-A boot](docs/hardware/host-board-v3-first-boot.md). HDMI/KVM login
+and a temporary Wi-Fi connection passed; boot health, persistent Wi-Fi, B,
+recovery and printing remain open.
 
 ## Start here
 

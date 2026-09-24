@@ -16,7 +16,7 @@ import subprocess
 REPO = Path(__file__).resolve().parents[1]
 ENVIRONMENT_BYTES = 65536
 ENVIRONMENT_OFFSETS = (0x400000, 0x800000)
-DIAGNOSTIC_MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen')
+DIAGNOSTIC_MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen', 'rauc', 'sv08-boot-health')
 
 
 def environment_text(source=REPO / 'configs/host-os/sv08-default.env'):

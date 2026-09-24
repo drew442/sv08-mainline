@@ -16,12 +16,13 @@ import subprocess
 import sys
 
 from prepare_host_os import layout, work_path
+from finalize_diagnostic_host import checks as check_diagnostic_host
 from recovery_image import REPO, board_profile, check_board_artifacts, inventory, sha
 sys.path.insert(0, str(REPO / 'runtime'))
 from sv08_gpt import inspect
 
 RAW_IMAGE = '5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34'
-MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen')
+MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen', 'rauc', 'sv08-boot-health')
 HARDWARE_PROFILE = 'test-sv08-01'
 
 
@@ -119,6 +120,9 @@ def main():
                        'configs/host-os/sv08-default.env', 'configs/host-os/slot-boot.cmd')]]
     inputs = {str(path): sha(path) for path in input_paths}
     root = sources['host'] / 'rootfs'
+    # Recheck the current root, even when its finalization receipt predates a
+    # newly required diagnostic safety or package check.
+    check_diagnostic_host(root, sources['data'])
     profile = board_profile(REPO / 'configs/host-os/recovery-test-sv08-01.json')
     config = json.loads((REPO / 'configs/images/host-ab.json').read_text())
     parts = layout(config)

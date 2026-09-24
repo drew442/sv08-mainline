@@ -24,10 +24,14 @@ inferred from a historical report. Inspect current state before acting.
 | H08 — Release decisions and stock access | Concise unresolved license/omission choices and a stock qualification plan; no re-asking settled OS/backup decisions | Owner license decision, any actual required-feature omission, access to an actual stock profile for supported-stock qualification | Record decisions once; modified test printer first print is independent of stock access, and never certifies stock support |
 
 The [2026-09-23 v3 board candidate](host-board-image-20260923-v3.json) passed
-offline byte review and the installed spare was captured in full before its
-verified writer transfer. The USB reader has been powered off. Reinstallation is
-the remaining H03 human action; the Beelink receive-only logger was armed before
-any serial reconnection for H02. H04 display/input observations follow the boot.
+offline byte review and direct readback on the identified spare. The owner
+reinstalled the spare, and [H02/H04 partial evidence](host-board-v3-first-boot.md)
+now covers captured slot-A boot, HDMI/KVM video, USB keyboard login and temporary
+Wi-Fi association. H03's physical reinstall is complete for this candidate.
+The printer still needs the corrected host image for persistent Wi-Fi and normal
+boot-health integration. One A boot attempt remained at the last read; coordinate
+any reboot or rearm before consuming it. Touch, B/recovery and output checks
+remain separate open H04/H02/H05-H07 work.
 
 ## Session dispatch and result record
 
