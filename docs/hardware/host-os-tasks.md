@@ -191,6 +191,29 @@ Dispatch physical actions through the [coordinated human queue](coordinated-huma
 Reuse one applicable observation across all consumers; the entries below retain
 their detailed acceptance criteria and historical evidence.
 
+### Latest board-image commissioning result — 2026-09-25
+
+The v4 image was physically attempted after its verified write. Slot A failed
+in `sv08-prepare.service`; on the next boot, changed SPL DRAM geometry was
+reported, U-Boot found no valid slot, and the independent recovery GUI started.
+The service exception is not in the receive-only capture. Offline image
+inspection found that v4's boot initramfs omitted the persistent-identity hook
+staged into rootfs, the likely cause of the prepare failure. The integrator now
+regenerates the target initramfs, and finalization rejects an image without the
+hook. The isolated recovery GUI reports that its own `/data/sv08/state.json`
+and `recovery-media-policy.json` are absent; the built data filesystem contains
+`state.json`, and the recovery message does not show device-side data loss. See
+the [v4 first-boot record](host-board-image-20260924-v4-first-boot.md).
+
+At the owner's request, the GL-RM1V2's persistent EDID was changed from its
+2560×1440@60 `2k60` mode to a custom 1024×600@60 preferred mode. The updater
+accepted it and the recovery display remains visible. The KVM's 2560×1440
+capture format is independent; the printer's selected HDMI mode and the exact
+touchscreen timing still need physical validation. The owner need not change
+any cable or power state for this EDID record. A future A retry requires a
+separate reviewed readback/rearm of the installed spare through H03; do not
+request that eMMC move until the read/review procedure and artifacts are ready.
+
 New feature development is paused by the owner. Existing host hardware-test
 preparation continues. These physical tasks do not block independent authorized
 preparation; the full checklist is a release gate, not a first-boot prerequisite.

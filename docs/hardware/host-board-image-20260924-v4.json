@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-24",
   "hardware_profile": "test-sv08-01",
   "board_revision": "H616_JC_6Z_V1.2 (owner-reported marking; not a full identity validation)",
-  "status": "written-and-readback-verified-diagnostic-awaiting-reinstall-and-boot",
+  "status": "written-and-readback-verified-diagnostic-first-boot-failed-recovery-visible",
   "deployable": false,
   "physical_hardware": true,
   "project_commit": "33bba60f04660ed1d79946a5aad53fec085264dc",
@@ -78,11 +78,14 @@
     "usb_reader_powered_off": true,
     "private_receipt_on_beelink": true
   },
-  "physical_boot": false,
+  "physical_boot": true,
+  "physical_boot_success": false,
+  "physical_boot_record": "host-board-image-20260924-v4-first-boot.md",
+  "physical_boot_result": "Slot A failed in sv08-prepare.service; the next attempt reported changed DRAM geometry, U-Boot found no valid slot, and the independent recovery UI started. Offline artifact inspection found that the boot initramfs omits the persistent identity hook present in rootfs, a likely direct cause of the service failure.",
   "limitations": [
     "This is a diagnostic image, not a deployable/signed release.",
-    "Offline byte review does not verify this image boots on the physical board.",
+    "The first physical boot did not reach a working host; sv08-prepare.service failed and recovery was selected on the subsequent boot. The omitted initramfs identity hook is a likely cause; the exception was not captured.",
     "B-slot, recovery under this loader, DRAM reliability, persistent Wi-Fi and printer outputs remain unvalidated.",
-    "The exact image is written and readback-verified, but v4 physical boot has not yet been attempted; next is to reinstall this spare eMMC and capture the first boot."
+    "The exact image is written and readback-verified, but the sv08-prepare.service exception was not captured and reliable DRAM initialization remains unresolved."
   ]
 }

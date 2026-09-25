@@ -30,9 +30,14 @@ printer services disabled. Its latest full trace reports a successful 1 GiB DRAM
 initialization, but does not establish DRAM reliability. Physical B/recovery
 under the latest loader and printing remain unvalidated.
 The newer v3 image passed offline byte review, direct eMMC readback and a
-[physical slot-A boot](docs/hardware/host-board-v3-first-boot.md). HDMI/KVM login
-and a temporary Wi-Fi connection passed; boot health, persistent Wi-Fi, B,
-recovery and printing remain open.
+[physical slot-A boot](docs/hardware/host-board-v3-first-boot.md). The v4 image
+was subsequently written and read back, but its first A attempt failed in
+`sv08-prepare.service`; inspection found the boot initramfs omitted the staged
+persistent-identity hook, a likely cause. The next boot entered independent recovery. The
+[v4 first-boot record](docs/hardware/host-board-image-20260924-v4-first-boot.md)
+tracks this failure and the custom 1024×600 EDID now applied to the GL-RM1V2.
+The exact A failure and selected touchscreen mode remain unverified; this is
+not a supported host or printing system.
 
 ## Start here
 

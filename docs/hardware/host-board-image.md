@@ -110,9 +110,11 @@ regulatory alternative and verify the complete board artifact inventory.
 
 Run [core integration](../../scripts/integrate_host_os.py) with the six explicit
 PARTUUIDs and a non-deployable diagnostic release, then
-[host UI staging](../../scripts/stage_admin_ui.py). Regenerate the host initramfs
-after installing the rendered data-mount hook and `FSTYPE=ext4`; inspect its
-fsck/logsave closure and exact persistent partition identity. The boot slots use
+[host UI staging](../../scripts/stage_admin_ui.py). Core integration regenerates
+the host initramfs after installing the rendered data-mount hook and
+`FSTYPE=ext4`; the finalizer and composer reject a boot initramfs that omits the
+identity hook. Inspect its fsck/logsave closure and exact persistent partition
+identity. The boot slots use
 decompressed **raw Image** and raw gzip initramfs with an explicit byte count,
 not packaged gzip `vmlinuz` or the earlier legacy `uInitrd` wrapper.
 

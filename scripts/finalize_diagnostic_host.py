@@ -9,6 +9,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import subprocess
 
 from integrate_host_os import validate
 from prepare_host_os import work_path
@@ -18,6 +19,13 @@ MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScree
 WIFI_FILES = ('usr/sbin/wpa_supplicant',
               'usr/share/dbus-1/system.d/wpa_supplicant.conf',
               'usr/share/dbus-1/system-services/fi.w1.wpa_supplicant1.service')
+
+
+def initramfs_entries(path):
+    result = subprocess.run(['lsinitramfs', str(path)], check=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, timeout=120)
+    return set(result.stdout.splitlines())
 
 
 def checks(root, data):
@@ -37,6 +45,16 @@ def checks(root, data):
     for name in WIFI_FILES:
         if not (root / name).is_file():
             raise ValueError('Diagnostic host is missing Wi-Fi userspace: ' + name)
+    hook = root / 'etc/initramfs-tools/scripts/local-bottom/sv08-data'
+    expected_hook_line = "DATA_DEVICE='" + release['devices']['data'] + "'"
+    if hook.is_symlink() or not hook.is_file() or expected_hook_line not in hook.read_text():
+        raise ValueError('Host image is missing the rendered persistent identity hook')
+    initrds = sorted((root / 'boot').glob('initrd.img-*'))
+    if not initrds:
+        raise ValueError('Host image has no kernel initramfs')
+    for initrd in initrds:
+        if 'scripts/local-bottom/sv08-data' not in initramfs_entries(initrd):
+            raise ValueError('Kernel initramfs omits the persistent identity hook: ' + initrd.name)
     if (root / 'usr/lib/sv08/qemu-probe.py').exists() or (root / 'etc/systemd/system/qemu-probe.service').exists():
         raise ValueError('QEMU fixture must not be finalized')
     return dict(release=release['release'], deployable=False,

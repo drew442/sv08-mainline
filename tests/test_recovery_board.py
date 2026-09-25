@@ -162,7 +162,7 @@ mount() { echo "MOUNT:$*"; }
         with tempfile.TemporaryDirectory(dir=REPO/'build') as directory:
             base=Path(directory);source=base/'parent';root=source/'rootfs';root.mkdir(parents=True)
             (root/'identity').write_text('original')
-            receipt=source/'assembly.json';receipt.write_text(json.dumps(dict(root=m.inventory(root))))
+            receipt=source/'assembly.json';receipt.write_text(json.dumps(dict(root=m.inventory(root),integration_inputs=m.integration_inputs())))
             packages=base/'packages';packages.mkdir()
             profile=copy.deepcopy(self.profile)
             for package in profile['packages']:
@@ -201,7 +201,7 @@ mount() { echo "MOUNT:$*"; }
         with tempfile.TemporaryDirectory(dir=REPO/'build') as directory:
             base=Path(directory);source=base/'derived';root=source/'rootfs';root.mkdir(parents=True)
             recorded=m.inventory(root)
-            (source/'assembly.json').write_text(json.dumps(dict(root=recorded,board_profile=self.profile)))
+            (source/'assembly.json').write_text(json.dumps(dict(root=recorded,board_profile=self.profile,integration_inputs=m.integration_inputs())))
             cache=base/'old-cache';cache.mkdir()
             (cache/'build.json').write_text(json.dumps(dict(source={'sha256':'old-parent'},usr_sha256='0'*64)))
             args=SimpleNamespace(work=base/'output',assembly=source,board_profile=REPO/'configs/host-os/recovery-test-sv08-01.json',reuse_usr=cache,execute=True)

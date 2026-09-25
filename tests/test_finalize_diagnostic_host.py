@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 import uuid
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from finalize_diagnostic_host import MASKS, WIFI_FILES, finalize
@@ -30,11 +31,19 @@ class FinalizeDiagnosticHostTests(unittest.TestCase):
         for name in WIFI_FILES:
             path = self.root / name; path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text('fixture\n')
+        hook = self.root / 'etc/initramfs-tools/scripts/local-bottom/sv08-data'
+        hook.parent.mkdir(parents=True)
+        hook.write_text("DATA_DEVICE='" + devices['data'] + "'\n")
+        initrd = self.root / 'boot/initrd.img-fixture'
+        initrd.parent.mkdir(parents=True)
+        initrd.write_bytes(b'fixture initramfs')
         self.source = self.base / 'source-finalized.json'
         self.source.write_text(json.dumps(dict(root=dict(schema=2, sha256='0' * 64, files=0, bytes=0))))
 
     def test_writes_a_receipt_for_matching_non_deployable_inputs(self):
-        result = finalize(self.work, self.data, self.source, execute=True)
+        with patch('finalize_diagnostic_host.initramfs_entries', return_value={
+                'scripts/local-bottom/sv08-data'}):
+            result = finalize(self.work, self.data, self.source, execute=True)
         self.assertEqual(result['schema'], 3)
         self.assertTrue(result['checks']['owner_key_seeded'])
         self.assertTrue(result['checks']['boot_health_masked'])
@@ -57,6 +66,12 @@ class FinalizeDiagnosticHostTests(unittest.TestCase):
         (self.root / 'etc/systemd/system/sv08-boot-health.service').unlink()
         with self.assertRaisesRegex(ValueError, 'sv08-boot-health'):
             finalize(self.work, self.data, self.source, execute=True)
+        self.assertFalse((self.work / 'finalized.json').exists())
+
+    def test_rejects_initramfs_without_persistent_identity_hook(self):
+        with patch('finalize_diagnostic_host.initramfs_entries', return_value=set()):
+            with self.assertRaisesRegex(ValueError, 'omits the persistent identity hook'):
+                finalize(self.work, self.data, self.source, execute=True)
         self.assertFalse((self.work / 'finalized.json').exists())
 
 

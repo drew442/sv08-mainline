@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 import uuid
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from integrate_host_os import stage, validate
@@ -47,7 +48,9 @@ class IntegrationManifestTests(unittest.TestCase):
         command = root / 'usr/bin/sv08-state'
         command.symlink_to('../lib/sv08/sv08_state.py')
 
-        stage(work, self.manifest(), refresh=True, owner_key=owner_key)
+        with patch('integrate_host_os.rebuild_initramfs') as rebuild:
+            stage(work, self.manifest(), refresh=True, owner_key=owner_key)
+        rebuild.assert_called_once_with(root)
 
         self.assertFalse((target / 'stale.py').exists())
         self.assertEqual((target / 'seed/authorized_keys').read_text(),

@@ -339,7 +339,10 @@ class BootHealthTests(unittest.TestCase):
         manifest = dict(release='fixture-1', state_schema=1, deployable=False,
                         devices={name: '/dev/disk/by-partuuid/' + str(uuid.uuid4())
                                  for name in ('boot-a', 'root-a', 'boot-b', 'root-b', 'data', 'recovery')})
-        stage(work, manifest, owner_key=key)
+        from unittest.mock import patch
+        with patch('integrate_host_os.rebuild_initramfs') as rebuild:
+            stage(work, manifest, owner_key=key)
+        rebuild.assert_called_once_with(root)
         wants = root / 'etc/systemd/system/multi-user.target.wants'
         self.assertEqual({path.name for path in wants.iterdir()}, {'sv08-boot-health.service'})
         self.assertTrue((wants / 'sv08-boot-health.service').resolve().is_file())

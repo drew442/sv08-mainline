@@ -42,6 +42,16 @@ def owner_key_source(root, owner_key):
     return content
 
 
+def rebuild_initramfs(root):
+    """Make the staged identity/data hooks part of every target initramfs."""
+    result = subprocess.run(
+        ['chroot', str(root), 'update-initramfs', '-u', '-k', 'all'],
+        check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, timeout=900)
+    if result.stdout:
+        print(result.stdout, end='')
+
+
 def stage(work, manifest, refresh=False, owner_key=None):
     validate(manifest)
     root = work / 'rootfs'
@@ -153,6 +163,10 @@ def stage(work, manifest, refresh=False, owner_key=None):
         if path.exists() or path.is_symlink():
             path.unlink()
         path.symlink_to('/dev/null')
+    # This runs after rendering the data PARTUUID and local-bottom hook. The
+    # original package build's initramfs predates these files; using it would
+    # leave /etc/machine-id unbound and make sv08-prepare fail on first boot.
+    rebuild_initramfs(root)
     # The health handoff must run on each boot, including boots with no printer
     # configuration. Klipper remains gated by its config, trial and health markers.
     health_wants = units / 'multi-user.target.wants'

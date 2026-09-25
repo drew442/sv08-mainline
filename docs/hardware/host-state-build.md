@@ -27,9 +27,10 @@ sudo unshare --mount --propagation private python3 tests/host_mount_namespace.py
 ```
 
 The manifest used here has random fixture UUIDs, not printer partition identities.
-After staging, rebuild the initramfs with the target
-`update-initramfs -u -k 6.12.107+deb13-arm64`; staging alone does not rebuild it.
-The new hook prepares identity before PID 1. Debian's standard ext4 fsck hook is
+Staging now runs the target `update-initramfs -u -k all` after rendering the
+PARTUUID and hooks. The diagnostic finalizer and image composer inspect every
+initramfs and reject one that omits `scripts/local-bottom/sv08-data`; the hook
+prepares persistent identity before PID 1. Debian's standard ext4 fsck hook is
 selected explicitly because this image uses mount units instead of fstab entries.
 The target's klibc mount utility needs `-o bind`, not util-linux's `--bind`.
 

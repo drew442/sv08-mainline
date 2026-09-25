@@ -137,6 +137,16 @@ corrected source-built loader, clean host and
 inputs; association, sustained workloads, physical A/B/recovery boot and printing
 remain unvalidated. New product features remain paused while this work proceeds.
 
+The [v4 physical first boot](hardware/host-board-image-20260924-v4-first-boot.md)
+then exposed an A-slot `sv08-prepare.service` failure followed by U-Boot selecting
+independent recovery. The initramfs omitted the staged persistent-identity hook,
+which is a likely cause; the service exception is not yet captured. The recovery UI
+is visible through the GL-RM1V2. Its persistent EDID was changed from the KVM's
+2560×1440@60 preset to a custom 1024×600@60 mode, but the selected HDMI mode on
+the printer and compatibility with the unidentified touchscreen remain to be
+verified. These findings do not establish eMMC data loss or a cause for the A
+failure.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with
