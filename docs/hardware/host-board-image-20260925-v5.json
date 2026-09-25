@@ -3,7 +3,7 @@
   "recorded_on": "2026-09-25",
   "hardware_profile": "test-sv08-01",
   "board_revision": "H616_JC_6Z_V1.2 (owner-reported marking; not a full identity validation)",
-  "status": "independently-reviewed-and-staged-awaiting-spare-emmc-connection",
+  "status": "written-and-direct-readback-verified-awaiting-physical-boot",
   "deployable": false,
   "physical_hardware": true,
   "project_commit": "212d3df",
@@ -73,12 +73,29 @@
       "sha256": "cb880b6e5316e342b4edabe36b6b2f3c623051c34ee79fac5370003a0eeb4f19"
     }
   },
-  "physical_write": false,
+  "physical_write": true,
+  "writer_evidence": {
+    "date": "2026-09-25",
+    "reader_usb_id": "05e3:0747",
+    "target_capacity_bytes": 31272730624,
+    "target_identity_confirmed_from_v4_disk_guid_six_partuuids_and_loader": true,
+    "target_partitions_unmounted": true,
+    "exclusive_write_bytes": 7818182656,
+    "exclusive_block_device_open": true,
+    "fsync_and_device_flush": true,
+    "direct_device_readback_bytes": 7818182656,
+    "direct_device_readback_sha256": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+    "six_partition_layout_and_guids_match": true,
+    "backup_gpt_at_8gb_image_boundary_intentionally_not_relocated": true,
+    "usb_reader_safely_powered_off_before_removal": true,
+    "private_receipt_on_beelink": "/home/drew/sv08-captures/board-v5-write-20260925/write-receipt.json",
+    "private_receipt_sha256": "00257e6ad490591ecf1dd1a3380bb699d6ebaf41d619b40f2ee082e7c15a3293"
+  },
   "physical_boot": false,
   "limitations": [
     "This remains a non-deployable diagnostic candidate, not a printing system or supported release.",
     "The corrected host initramfs contains the persistent identity hook and passes the offline finalizer; physical boot is not yet validated.",
-    "Independent byte review passed for offline bytes only; eMMC write/readback and physical A/B/recovery, DRAM, Wi-Fi, display, printer-output and printing checks remain outstanding.",
+    "eMMC write and full direct-I/O readback match the reviewed image; physical boot, A/B/recovery, DRAM, Wi-Fi, display, printer-output and printing checks remain outstanding.",
     "The GL-RM1V2 advertises a custom 1024x600@60 EDID, but the exact touchscreen identity and selected HDMI mode remain unverified."
   ]
 }

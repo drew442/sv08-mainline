@@ -213,9 +213,10 @@ touchscreen timing still need physical validation. The owner need not change
 any cable or power state for this EDID record. A future A retry requires a
 separate reviewed write/readback through H03.
 The [v5 replacement candidate](host-board-image-20260925-v5.md) has since passed
-independent offline review and is staged on Beelink with its compressed-file
-hash verified. H03 is now ready for the one required spare-eMMC move; it has not
-been written or booted.
+independent offline review, was written once to the identified spare eMMC, and
+passed a full direct-I/O readback hash. H03 now needs the spare reinstalled in
+the printer for a captured first boot; a receive-only serial capture is already
+armed on Beelink because connecting that cable powers the host.
 
 New feature development is paused by the owner. Existing host hardware-test
 preparation continues. These physical tasks do not block independent authorized
