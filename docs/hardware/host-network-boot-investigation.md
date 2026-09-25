@@ -8,12 +8,12 @@ change or firmware write.
 ## Finding
 
 This is worth pursuing as an optional development and recovery path. Keep the
-eMMC as the default source and use a removable card to start a known, small
-launcher that retrieves a candidate system over the wired LAN. For the first
-prototype, serve the Linux kernel/initramfs and mount a read-only NFS root from
-Beelink. This avoids copying a multi-gigabyte root filesystem onto the card or
-eMMC for each test. A small volatile `/data` can isolate tests from user state.
-It is a development convenience, not yet a recovery guarantee or release feature.
+eMMC as the default source and use a removable card to load a known, small
+bootloader/kernel/initramfs. Let Linux initramfs obtain an ordinary DHCP lease
+over wired Ethernet and mount a read-only NFS root from Beelink. This avoids
+copying a multi-gigabyte root filesystem onto the card or eMMC for each test.
+Keep writes volatile for the first trial. This is a development convenience,
+not yet a recovery guarantee or release feature.
 
 ## Evidence and limits
 
@@ -27,8 +27,9 @@ It is a development convenience, not yet a recovery guarantee or release feature
 - The pinned source-built U-Boot configuration contains DHCP and TFTP commands
   and a `SUN8I_EMAC` driver selection. Its SV08 U-Boot device tree currently
   inherits the H616 `emac0` node disabled. The selected driver and H616 GMAC
-  clock/PHY integration have not been validated in U-Boot. Therefore network
-  fetching from the bootloader is not presently established.
+  clock/PHY integration have not been validated in U-Boot. Do not make the
+  first prototype depend on TFTP or DHCP in U-Boot; keep the kernel and initramfs
+  local on SD and use Linux's network initialization and NFS-root path instead.
 - The H616 reference manual names SMHC0 as the external SD interface and SMHC2
   as eMMC. BIGTREETECH's CB1 eMMC instructions state that SD has boot priority
   over onboard eMMC. This is encouraging because the SV08 host shares H616/CB1
@@ -37,19 +38,17 @@ It is a development convenience, not yet a recovery guarantee or release feature
 - Beelink detects the inserted 2 GB FAT card, but its current filesystem is
   already populated and has no observed Linux boot files. The owner has said
   its contents may be erased. No files or media have been changed.
-- U-Boot's official documentation describes DHCP/TFTP boot workflows, but those
-  commands alone do not supply an enabled H616 network device. The documented
-  Linux `nfsroot` path remains the simpler first implementation if SD can start
-  the tested Linux kernel.
+- The Linux kernel documents a DHCP plus NFS-root boot path. The selected kernel's
+  built-in NFS/root autoconfiguration options still need checking.
 
 ## Network configuration choice
 
 Do not add DHCP boot-file or TFTP-server options to the router for the first
-prototype. Let the printer obtain an ordinary DHCP lease, while the SD boot
-configuration contains the Beelink TFTP/NFS server address. That keeps network
-boot isolated to the removable media and Beelink. A stable Beelink address (a
-DHCP reservation or a locally configured address) is needed before writing that
-configuration. No addresses or credentials belong in tracked project files.
+prototype. Let Linux initramfs obtain an ordinary DHCP lease and place the
+Beelink NFS server address in the SD boot configuration. Beelink currently uses
+a DHCP lease, so reserve its address (or configure a stable local address) before
+writing that configuration. No addresses or credentials belong in tracked
+project files.
 
 The printer must be connected by Ethernet to the same LAN as Beelink. Its
 existing Wi-Fi is initialized by Linux and cannot be assumed to be available in
@@ -77,8 +76,8 @@ power-loss behavior and physical boot/fallback tests pass.
 2. Build a minimal SD launcher with the already-tested kernel and a read-only
    NFS-root prototype. Check memory use against the measured 1 GiB host and keep
    all mutable state volatile for the first trial.
-3. Independently inspect the SD image and test its boot script, network timeout
-   and NFS-root refusal/fallback behavior offline.
+3. Independently inspect the SD image and test its boot script, network timeout,
+   read-only NFS root and refusal/fallback behavior offline.
 4. Reconcile the current A-slot trial state and UART capture before requesting
    one supervised physical boot test.
 
@@ -89,6 +88,9 @@ onboard eMMC; that is a related-board statement, not SV08 validation. The
 [U-Boot environment variables](https://docs.u-boot.org/en/latest/usage/environment.html)
 and [PXE boot method](https://docs.u-boot.org/en/latest/develop/bootstd/pxelinux.html)
 documents describe DHCP/TFTP flows but do not establish an enabled H616 Ethernet
-device here. The H616 controller mapping is from the pinned U-Boot source and
-Allwinner H616 User Manual v1.0, §3. The board-specific manual copy is referenced
-in the local [SV08 hardware inventory](stock-sv08.md).
+device here. Linux documents the kernel `ip=dhcp` and `nfsroot=` path in its
+[NFS-root guide](https://docs.kernel.org/admin-guide/nfs/nfsroot.html); the
+selected kernel's built-in NFS/root autoconfiguration options still need checking.
+The H616 controller mapping is from the pinned U-Boot source and Allwinner H616
+User Manual v1.0, §3. The board-specific manual copy is referenced in the local
+[SV08 hardware inventory](stock-sv08.md).
