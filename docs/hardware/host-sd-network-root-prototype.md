@@ -113,13 +113,14 @@ Ganesha or rpcbind process remained. The results are in ignored
 
 ## Physical gate and stop conditions
 
-Before a supervised SD write/boot, independently review the final image bytes,
-the compiled environment/device tree and this evidence. Reconcile the current
-eMMC v5 A-slot trial under its separate reviewed procedure first; its
-boot-health confirmation is masked and two attempts were left after the
-recorded boot. Reserve a stable Beelink address, configure a temporary
-read-only root export there from the sanitized generated tree, connect printer
-Ethernet to the same LAN, and start receive-only UART capture before power-on.
+Before the supervised physical boot, independently review the final image
+bytes, compiled environment/device tree and this evidence. The eMMC v5 A-slot
+health confirmation remains masked; a separately reviewed live operation
+re-armed three A attempts without rebooting. Recheck that same A boot and its
+counter before serial reconnection; do not treat this as health confirmation.
+Reserve Beelink's hardcoded address, confirm its temporary read-only NFS export
+from the generated tree, connect printer Ethernet to the same LAN, and start
+receive-only UART capture before serial reconnection/power-on.
 Use the owner-approved spare SD only. If the UART does not clearly show the SD
 loader, the boot path reaches eMMC/RAUC, the expected NFS root cannot be
 mounted, the probe does not report a read-only root and tmpfs `/data`, or any

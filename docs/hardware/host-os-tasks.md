@@ -245,12 +245,19 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   read-only network root. The [investigation](host-network-boot-investigation.md)
   finds this worthwhile. The [offline 192 MiB SD/NFS diagnostic prototype](host-sd-network-root-prototype.md)
   keeps U-Boot on SD and uses the unchanged candidate Linux initramfs for DHCP
-  and NFS. Independent image review and physical SD priority remain open.
-  Reconcile the current eMMC A-slot trial before any supervised SD write/boot;
-  capture UART from before power-on. Once that preparation is complete, reserve
-  Beelink's address, offer only the sanitized read-only export, and connect
-  printer Ethernet to the same LAN. Use ordinary DHCP and configure Beelink's
-  stable server address on the SD; do not change router boot options.
+  and NFS. The physical-address image was independently inspected, written to
+  the disposable SD and passed direct readback; see the [media-write record](host-sd-network-card-write-20260925.md).
+  The v5 A counter was separately re-armed to three attempts, but A remains
+  unconfirmed; see its [re-arm record](host-board-image-20260925-v5-a-rearm.md).
+  Remaining steps are deduplicated in [H09](coordinated-human-tasks.md): reserve
+  Beelink's current `192.168.1.136` to MAC `84:39:be:9e:10:d9`, confirm the
+  reservation, connect printer Ethernet, and seat the SD only with all printer
+  power isolated. The temporary sanitized NFSv3 export is serving read-only;
+  Beelink mounted it read-only and verified the init hash and rejected a write.
+  UART capture is already active but must be confirmed ready immediately before
+  serial reconnection. Then make one supervised boot. Physical SD priority,
+  printer-to-Beelink network root, eMMC isolation and fallback remain
+  unverified. Do not change router PXE/TFTP options.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.

@@ -22,6 +22,7 @@ inferred from a historical report. Inspect current state before acting.
 | H06 — Attended staged output and printing session | H05 passes; reviewed limits/homing/stop procedure; operator can stop immediately; safe mechanics and clear workspace | Separate gated steps: fans/shutdown → bounded motor direction → X/Y sensorless and Z probe homing → controlled heat/reference → PID/extrusion → leveling/mesh/manual Z offset → first layer/prints/pause/cancel | Each step has its own result and must pass before dependent action. Reuse host UI/camera observations during safe prints; changes to mechanics/sensors/firmware/config invalidate relevant results |
 | H07 — Controlled failure/recovery session | Reliable baseline, reviewed failure plan, expendable data, loads safe, captures and restoration artifacts ready | Power interruption, A/B exhausted/bad trials, watchdog, physical checks consuming recovery delivery's reviewed export/restore artifacts, partial MCU update and USB-reader recovery checks | Group ready cases in one session but preserve individual outcomes and distinct safe states. Deliberate interruption is not bundled into heating/printing; final artifact changes require relevant retests |
 | H08 — Release decisions and stock access | Concise unresolved license/omission choices and a stock qualification plan; no re-asking settled OS/backup decisions | Owner license decision, any actual required-feature omission, access to an actual stock profile for supported-stock qualification | Record decisions once; modified test printer first print is independent of stock access, and never certifies stock support |
+| H09 — One supervised SD/NFS diagnostic boot | Physical-address SD image independently inspected, written and directly read back; spare A counter re-armed under review but still unconfirmed; temporary read-only NFSv3 export mounted successfully from Beelink and content hash checked; DHCP reservation for Beelink `.136` still required; receive-only UART process is active; separate high-consequence review says no-go until reservation and final identity checks pass | Before the session, owner reserves Beelink MAC `84:39:be:9e:10:d9` to `192.168.1.136` and confirms the reservation is active. In one session, connect printer Ethernet to the same LAN, fully isolate printer power including serial back-power, move the written SD from reader to printer, stand printer upright, arm/verify receive-only UART capture, then reconnect serial (which can start the host). Make one attempt only. Stop if the loader path is unclear, eMMC U-Boot/RAUC appears, or the diagnostic probe does not prove the NFS root; if eMMC boot occurs, record its A counter before any retry. The H02 capture is reused for this boot | Reuse the exact SD image hash, SD write receipt, Beelink export manifest/log, one boot ID and one UART trace. Success requires SD-loader, DHCP, read-only NFS-root and exact `SV08_SD_NFS_PASS root_ro=1 data_tmpfs=1 dhcp_address=1` evidence followed by diagnostic power-off. SSH/HDMI are not expected. Any failed or inconclusive selection is not proof of safe fallback or eMMC isolation |
 
 The [2026-09-23 v3 board candidate](host-board-image-20260923-v3.json) passed
 offline byte review and direct readback on the identified spare. The owner
@@ -62,9 +63,27 @@ The [2026-09-25 v5 diagnostic image](host-board-image-20260925-v5.md) passed
 independent offline byte review, was written to the identified spare, and passed
 full direct-I/O readback. Its compressed and expanded hashes match the receipt;
 the six partition identities and sizes are correct. The backup GPT remains at
-the reviewed 8 GB image boundary. V5 has not yet booted. Receive-only serial
-capture is armed on Beelink and waiting; H03 now needs only the spare's physical
-reinstallation before the captured first boot.
+the reviewed 8 GB image boundary. V5 has booted A and reached SSH/Wi-Fi and HDMI;
+see the [first-boot record](host-board-image-20260925-v5-first-boot.md). Health
+confirmation remains masked. A was re-armed to three attempts without rebooting;
+see the [re-arm record](host-board-image-20260925-v5-a-rearm.md). H03 is complete
+for this image. H09 now groups the SD/NFS diagnostic boot prerequisites; its SD
+priority and physical network root remain unverified.
+
+H09 software preparation is ready, pending the owner's DHCP reservation and
+physical media session. The [disposable SD/NFS image](host-sd-network-root-prototype.md)
+was independently inspected, written to the USB-reader SD card and passed a
+192 MiB direct readback. The spare eMMC remains on its v5 A root; a separate
+reviewed operation restored three A attempts without rebooting, but A health
+remains unconfirmed. See the [SD write receipt](host-sd-network-card-write-20260925.md)
+and [A-counter re-arm record](host-board-image-20260925-v5-a-rearm.md). Beelink
+currently owns `192.168.1.136` at MAC `84:39:be:9e:10:d9`; a local NFSv3/TCP
+client mounted the sanitized export read-only and verified its init hash. The
+export is also configured read-only with root-squash. The SD image hardcodes
+`.136`, so reserve this address before booting. Receive-only UART capture is
+active, but its connection readiness must be rechecked immediately before the
+session. One high-consequence review says no-go until reservation and final
+identity checks pass. The printer SD boot has not been attempted.
 
 ## Session dispatch and result record
 
