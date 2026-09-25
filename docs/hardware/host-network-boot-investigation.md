@@ -5,10 +5,6 @@ development/recovery system without rewriting the installed eMMC. This is a
 read-only investigation; it does not authorize a printer reboot, boot-policy
 change or firmware write.
 
-Follow-on offline implementation and QEMU evidence are in the
-[SD/NFS-root prototype record](host-sd-network-root-prototype.md). No SD card
-or printer was changed by that work.
-
 ## Finding
 
 This is worth pursuing as an optional development and recovery path. Keep the
