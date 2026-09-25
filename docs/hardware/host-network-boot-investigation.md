@@ -30,6 +30,15 @@ not yet a recovery guarantee or release feature.
   clock/PHY integration have not been validated in U-Boot. Do not make the
   first prototype depend on TFTP or DHCP in U-Boot; keep the kernel and initramfs
   local on SD and use Linux's network initialization and NFS-root path instead.
+- The current 6.18.51 candidate's generated config has built-in DHCP autoconfig
+  (`CONFIG_IP_PNP_DHCP=y`) and the H616 sun8i Ethernet driver
+  (`CONFIG_DWMAC_SUN8I=y`). NFS and SunRPC are modules, but the candidate
+  initramfs contains both modules plus Debian's `scripts/nfs` and `ipconfig`.
+  Config SHA-256 is `e0f0a8bfdc98effeccbe328d165301116de540fe06d68b3e6780593383e46da2`;
+  initramfs SHA-256 is `8be88ee081ad61c64de216425b031b8988447d6fb009022edeffaf53f115d09e`.
+  This makes an initramfs-driven NFS root technically plausible without adding
+  U-Boot Ethernet support, but it is still offline image evidence, not proof the
+  initramfs network interface and printer port link work together.
 - The H616 reference manual names SMHC0 as the external SD interface and SMHC2
   as eMMC. BIGTREETECH's CB1 eMMC instructions state that SD has boot priority
   over onboard eMMC. This is encouraging because the SV08 host shares H616/CB1
@@ -38,8 +47,9 @@ not yet a recovery guarantee or release feature.
 - Beelink detects the inserted 2 GB FAT card, but its current filesystem is
   already populated and has no observed Linux boot files. The owner has said
   its contents may be erased. No files or media have been changed.
-- The Linux kernel documents a DHCP plus NFS-root boot path. The selected kernel's
-  built-in NFS/root autoconfiguration options still need checking.
+- The Linux kernel documents a DHCP plus NFS-root boot path. The candidate's
+  initramfs includes the required NFS modules and scripts; the combined boot
+  command line, NFS export policy and actual printer link still need testing.
 
 ## Network configuration choice
 
@@ -79,7 +89,9 @@ power-loss behavior and physical boot/fallback tests pass.
 3. Independently inspect the SD image and test its boot script, network timeout,
    read-only NFS root and refusal/fallback behavior offline.
 4. Reconcile the current A-slot trial state and UART capture before requesting
-   one supervised physical boot test.
+   one supervised physical boot test. The likely SD configuration is local
+   kernel/initramfs, `ip=dhcp`, and `root=/dev/nfs` with a read-only Beelink NFS
+   export; verify the exact root path/options against the initramfs before use.
 
 Primary documentation accessed 2026-09-25: BIGTREETECH's [CB1 repository
 README](https://github.com/bigtreetech/CB1#cb1-emmc-version) says its eMMC
