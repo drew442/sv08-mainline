@@ -53,7 +53,11 @@ preferred mode and basic two-channel LPCM audio. The GL updater returned
 `/etc/kvmd/user/edid.txt` and matches private artifact
 `local/test-sv08-01/kvm-20260925/edid-1024x600.bin` (SHA-256
 `932c187a061cf4b042667486f723d3a6663bf2636c274338b79e7531cdb669f9`). The
-previous 2560×1440 EDID is preserved privately for rollback.
+previous 2560×1440 EDID is preserved privately for rollback. On 2026-09-25,
+the saved text copy was re-imported through `kvmd-edidconf` from that exact
+binary after validation found it truncated; exporting it again produced a
+byte-for-byte match to the 256-byte source (same SHA-256). This verifies the
+persistent KVM configuration parses and survives a round trip.
 
 This timing is a generic 1024×600@60 GTF mode. The exact touchscreen model and
 its accepted timing have not been identified, so native panel compatibility is

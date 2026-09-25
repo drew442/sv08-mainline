@@ -211,8 +211,11 @@ accepted it and the recovery display remains visible. The KVM's 2560×1440
 capture format is independent; the printer's selected HDMI mode and the exact
 touchscreen timing still need physical validation. The owner need not change
 any cable or power state for this EDID record. A future A retry requires a
-separate reviewed readback/rearm of the installed spare through H03; do not
-request that eMMC move until the read/review procedure and artifacts are ready.
+separate reviewed write/readback through H03.
+The [v5 replacement candidate](host-board-image-20260925-v5.md) has since passed
+independent offline review and is staged on Beelink with its compressed-file
+hash verified. H03 is now ready for the one required spare-eMMC move; it has not
+been written or booted.
 
 New feature development is paused by the owner. Existing host hardware-test
 preparation continues. These physical tasks do not block independent authorized

@@ -1,0 +1,84 @@
+{
+  "format_version": 1,
+  "recorded_on": "2026-09-25",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": "H616_JC_6Z_V1.2 (owner-reported marking; not a full identity validation)",
+  "status": "independently-reviewed-and-staged-awaiting-spare-emmc-connection",
+  "deployable": false,
+  "physical_hardware": true,
+  "project_commit": "212d3df",
+  "host_release": "0.1.0-board.3",
+  "source_receipts": {
+    "host_finalized_sha256": "ad70090b7c839170690aee022d4146d7b46cf408441b0abc5b4d2c0a8ceacdfc",
+    "data_inventory_sha256": "f1802f267d11a386dbd1647f36ede5e2fa39fbff9e0996a3e3b14e0095313a44",
+    "recovery_build_sha256": "170d77cb7f886678375c5ab9eba09fa453f69979445a8f926dcd1944f286633e"
+  },
+  "loader": {
+    "record": "host-spl-diagnostics-20260915-v6.json",
+    "sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+    "bytes": 786105,
+    "offset_bytes": 8192
+  },
+  "raw_image": {
+    "private_filename": "sv08-board-diagnostic.img",
+    "bytes": 7818182656,
+    "sha256": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+    "composition_receipt_sha256": "85da7fe81590818cdec11b46dfae80cb1e9e206440670d5f4f9ab6d8f7cca395"
+  },
+  "compressed_image": {
+    "private_filename": "sv08-board-diagnostic.img.xz",
+    "bytes": 1050437428,
+    "sha256": "09fb7efb7637e3b360bbb6c76e5b2b3cf7e0164a69082122b18a05ac567d34a1",
+    "integrity_tested": true,
+    "expanded_bytes_verified": 7818182656,
+    "expanded_sha256_verified": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+    "staged_on": "Beelink:/home/drew/sv08-captures/board-v5-write-20260925/sv08-board-diagnostic.img.xz",
+    "staged_sha256_verified": true,
+    "private_file_mode": "0600"
+  },
+  "independent_byte_review": {
+    "reviewed_on": "2026-09-25",
+    "reviewer_model": "GPT-5.6-Sol medium",
+    "result": "pass-for-offline-byte-review-only",
+    "image_sha256": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+    "gpt_validation": "valid",
+    "partition_filesystems": "read-only checks passed",
+    "both_boot_partitions_contain_persistent_data_initramfs_hook": true,
+    "physical_write_authorized_by_review": false,
+    "physical_boot_verified": false
+  },
+  "partition_images": {
+    "boot-a": {
+      "bytes": 201326592,
+      "sha256": "88e810f69791be9e4bfe0e020a43f6895b75a545024692aac1d33002063c5b77"
+    },
+    "root-a": {
+      "bytes": 2147483648,
+      "sha256": "f45e3e39908dbbbf7464cbce90194bbb7c90fbc3f13c6737279d409f37e5555f"
+    },
+    "boot-b": {
+      "bytes": 201326592,
+      "sha256": "0635626188c96abd27d5aca64e07681c12781b25cb6ccc2ba539b4368d26123c"
+    },
+    "root-b": {
+      "bytes": 2147483648,
+      "sha256": "dcb1e6a1bfd91e0b63a4d2ec337bae3005d34c7c6b7eb8acf180fc6275c905db"
+    },
+    "recovery": {
+      "bytes": 536870912,
+      "sha256": "c83975508e1cafca51e23c6ad9e19408fa01b5d35be583b39a38c5b13ad2345c"
+    },
+    "data": {
+      "bytes": 2565865472,
+      "sha256": "cb880b6e5316e342b4edabe36b6b2f3c623051c34ee79fac5370003a0eeb4f19"
+    }
+  },
+  "physical_write": false,
+  "physical_boot": false,
+  "limitations": [
+    "This remains a non-deployable diagnostic candidate, not a printing system or supported release.",
+    "The corrected host initramfs contains the persistent identity hook and passes the offline finalizer; physical boot is not yet validated.",
+    "Independent byte review passed for offline bytes only; eMMC write/readback and physical A/B/recovery, DRAM, Wi-Fi, display, printer-output and printing checks remain outstanding.",
+    "The GL-RM1V2 advertises a custom 1024x600@60 EDID, but the exact touchscreen identity and selected HDMI mode remain unverified."
+  ]
+}
