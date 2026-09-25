@@ -73,15 +73,96 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "snr-01",
+          "document": "docs/hardware/host-sd-network-root-prototype.md",
+          "document_sha256": "4f5cbcb3eb19b1b01fac9e797f454a1f2379ffd0b25dfb3b8ff88f66a79e7dbe",
+          "environment": "offline",
+          "limitations": "Offline composition only. No block device was written. No physical SD priority, ROM selection, eMMC isolation, physical Ethernet or fallback behavior is established.",
+          "method": "Built the fixed-size regular-file image from pinned U-Boot/TF-A/patch/kernel/initramfs inputs; verified image capacity, GPT/SPL/partition bounds, direct payload readback hashes and effective compiled U-Boot configuration/default commands/device tree. Ran focused composer unit tests and static script checks.",
+          "profile": null,
+          "source_commit": "872b8557fc469b0262a38a8253dd6764c280f1b4",
+          "source_sha256": {
+            "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+            "configs/host-os/sv08-sd-network.fragment": "5d1eadb0b0de52e8781fcb6e76e1b52d4d5f73ed2656c7278cd4b710fefb9b1f",
+            "docs/hardware/host-network-boot-investigation.md": "634b82b3a0ada1e6bf2c5be103d48c7236a484226571a249a320b198e003fb24",
+            "docs/hardware/host-os-tasks.md": "83bea14d8d6af930865969c91b919023d82b20900cf901fd79d2e9391530a277",
+            "docs/hardware/host-sd-network-root-prototype.md": "4f5cbcb3eb19b1b01fac9e797f454a1f2379ffd0b25dfb3b8ff88f66a79e7dbe",
+            "patches/u-boot/0005-sv08-sd-network-diagnostic.patch": "4d85539b76f365f1a231e32e07b9a84e10e9eea7aff74409e357aa156f0d12f7",
+            "scripts/build_sd_network_image.py": "f03f4a61c032762437122375bdc8bb23f82c970b0f757897be2b58e0b571fa14",
+            "tests/fixtures/sd-network-root/init.c": "5f863f0ec3c3b6d5f91c93546d2dfab8289f9a81de402bbf14307e3211c17806",
+            "tests/host_qemu_sd_network.py": "6eb8046e817c2278216d48c11101325cd747d0b8f63f2a030b0961e98de9ab4e",
+            "tests/test_sd_network_image.py": "bbb73c657fb4ee07e00d4a2c3b4f6ce8bf496fd6a41174f21824b96b88ce7d07"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "snr-02",
+          "document": "docs/hardware/host-sd-network-root-prototype.md",
+          "document_sha256": "4f5cbcb3eb19b1b01fac9e797f454a1f2379ffd0b25dfb3b8ff88f66a79e7dbe",
+          "environment": "offline",
+          "limitations": "Emulated virt platform only, not H616 board boot, ROM SD selection, real Ethernet, installed eMMC isolation or printer services. Server-missing timing was measured with a NIC present; absent NIC can take up to 180 seconds.",
+          "method": "Booted the exact kernel and unchanged initramfs bytes in disposable ARM64 QEMU with USB CDC networking and PCI serial. Captured DHCP, readonly NFS-root probe, tmpfs /data and write refusal; repeated with the NFS server absent; checked bounded stop and process cleanup.",
+          "profile": null,
+          "source_commit": "872b8557fc469b0262a38a8253dd6764c280f1b4",
+          "source_sha256": {
+            "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+            "configs/host-os/sv08-sd-network.fragment": "5d1eadb0b0de52e8781fcb6e76e1b52d4d5f73ed2656c7278cd4b710fefb9b1f",
+            "docs/hardware/host-network-boot-investigation.md": "634b82b3a0ada1e6bf2c5be103d48c7236a484226571a249a320b198e003fb24",
+            "docs/hardware/host-os-tasks.md": "83bea14d8d6af930865969c91b919023d82b20900cf901fd79d2e9391530a277",
+            "docs/hardware/host-sd-network-root-prototype.md": "4f5cbcb3eb19b1b01fac9e797f454a1f2379ffd0b25dfb3b8ff88f66a79e7dbe",
+            "patches/u-boot/0005-sv08-sd-network-diagnostic.patch": "4d85539b76f365f1a231e32e07b9a84e10e9eea7aff74409e357aa156f0d12f7",
+            "scripts/build_sd_network_image.py": "f03f4a61c032762437122375bdc8bb23f82c970b0f757897be2b58e0b571fa14",
+            "tests/fixtures/sd-network-root/init.c": "5f863f0ec3c3b6d5f91c93546d2dfab8289f9a81de402bbf14307e3211c17806",
+            "tests/host_qemu_sd_network.py": "6eb8046e817c2278216d48c11101325cd747d0b8f63f2a030b0961e98de9ab4e",
+            "tests/test_sd_network_image.py": "bbb73c657fb4ee07e00d4a2c3b4f6ce8bf496fd6a41174f21824b96b88ce7d07"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "snr-03",
+          "document": "docs/hardware/host-sd-network-root-prototype.md",
+          "document_sha256": "4f5cbcb3eb19b1b01fac9e797f454a1f2379ffd0b25dfb3b8ff88f66a79e7dbe",
+          "environment": "offline",
+          "limitations": "Human checklist remains before any physical trial: reconcile A-slot, reserve stable server address, configure read-only NFS export, connect printer Ethernet, and start UART capture. SD priority, Ethernet and fallback are unverified.",
+          "method": "Reviewed prototype guide, investigation record, and hardware task list against approved scope and acceptance constraints. Physical prerequisites and stop conditions are explicitly listed.",
+          "profile": null,
+          "source_commit": "872b8557fc469b0262a38a8253dd6764c280f1b4",
+          "source_sha256": {
+            "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+            "configs/host-os/sv08-sd-network.fragment": "5d1eadb0b0de52e8781fcb6e76e1b52d4d5f73ed2656c7278cd4b710fefb9b1f",
+            "docs/hardware/host-network-boot-investigation.md": "634b82b3a0ada1e6bf2c5be103d48c7236a484226571a249a320b198e003fb24",
+            "docs/hardware/host-os-tasks.md": "83bea14d8d6af930865969c91b919023d82b20900cf901fd79d2e9391530a277",
+            "docs/hardware/host-sd-network-root-prototype.md": "4f5cbcb3eb19b1b01fac9e797f454a1f2379ffd0b25dfb3b8ff88f66a79e7dbe",
+            "patches/u-boot/0005-sv08-sd-network-diagnostic.patch": "4d85539b76f365f1a231e32e07b9a84e10e9eea7aff74409e357aa156f0d12f7",
+            "scripts/build_sd_network_image.py": "f03f4a61c032762437122375bdc8bb23f82c970b0f757897be2b58e0b571fa14",
+            "tests/fixtures/sd-network-root/init.c": "5f863f0ec3c3b6d5f91c93546d2dfab8289f9a81de402bbf14307e3211c17806",
+            "tests/host_qemu_sd_network.py": "6eb8046e817c2278216d48c11101325cd747d0b8f63f2a030b0961e98de9ab4e",
+            "tests/test_sd_network_image.py": "bbb73c657fb4ee07e00d4a2c3b4f6ce8bf496fd6a41174f21824b96b88ce7d07"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "f66178dcc018414496cc51263f6f44b6",
+        "session": "sd-network-root-approval-hash-repair-20260925"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Reverted nonessential edit to a cited approval input; retaining its preapproved bytes. Resubmit and reverify the exact source commit.",
+      "status": "done",
       "title": "Compose and validate an offline SD/NFS-root prototype",
-      "verification": null
+      "verification": {
+        "outcome": "passed",
+        "reviewer": "/root/sd_network_root_verifier",
+        "session": "independent-sd-network-root-reverification-20260925",
+        "rationale": "Commit 872b8557fc469b0262a38a8253dd6764c280f1b4 is clean. Its sole change from the reviewed implementation restores the approved investigation document; the implementation and offline test results are unchanged. All three refreshed evidence entries match the final commit and source hashes. Physical SD boot remains unverified and gated on A-slot reconciliation.",
+        "decision_sha256": "9193ce3cf8568c23006292cf417cfa5e25173487795acf5a0761034b33a1b804",
+        "evidence_sha256": "60cf6dae66d328c484a392edf446246df20ee7a5c0709e2c4b7f5255373c3af1"
+      }
     }
   ],
   "title": "Disposable SD boot with a read-only network root"
