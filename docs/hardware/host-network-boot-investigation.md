@@ -30,9 +30,10 @@ It is a development convenience, not yet a recovery guarantee or release feature
   clock/PHY integration have not been validated in U-Boot. Therefore network
   fetching from the bootloader is not presently established.
 - The H616 reference manual names SMHC0 as the external SD interface and SMHC2
-  as eMMC. The board has not yet been tested for SD-first ROM selection with
-  both devices installed. SD startup must be physically observed before relying
-  on it.
+  as eMMC. BIGTREETECH's CB1 eMMC instructions state that SD has boot priority
+  over onboard eMMC. This is encouraging because the SV08 host shares H616/CB1
+  lineage, but it is not measured evidence for this integrated SV08 board; the
+  current board must still be tested before relying on SD-first selection.
 - Beelink detects the inserted 2 GB FAT card, but its current filesystem is
   already populated and has no observed Linux boot files. The owner has said
   its contents may be erased. No files or media have been changed.
@@ -81,9 +82,13 @@ power-loss behavior and physical boot/fallback tests pass.
 4. Reconcile the current A-slot trial state and UART capture before requesting
    one supervised physical boot test.
 
-The [U-Boot DHCP/TFTP documentation](https://docs.u-boot.org/en/latest/usage/environment.html)
-and [U-Boot PXE boot method](https://docs.u-boot.org/en/latest/develop/bootstd/pxelinux.html)
-were accessed 2026-09-25. The H616 controller mapping is from the pinned U-Boot
-source and the Allwinner H616 User Manual v1.0, §3. The board-specific manual
-copy is referenced in the local [SV08 hardware inventory](stock-sv08.md) and is
-not evidence that SD boot has been tested on this printer.
+Primary documentation accessed 2026-09-25: BIGTREETECH's [CB1 repository
+README](https://github.com/bigtreetech/CB1#cb1-emmc-version) says its eMMC
+version accepts an SD card as the OS source and gives SD higher priority than
+onboard eMMC; that is a related-board statement, not SV08 validation. The
+[U-Boot environment variables](https://docs.u-boot.org/en/latest/usage/environment.html)
+and [PXE boot method](https://docs.u-boot.org/en/latest/develop/bootstd/pxelinux.html)
+documents describe DHCP/TFTP flows but do not establish an enabled H616 Ethernet
+device here. The H616 controller mapping is from the pinned U-Boot source and
+Allwinner H616 User Manual v1.0, §3. The board-specific manual copy is referenced
+in the local [SV08 hardware inventory](stock-sv08.md).
