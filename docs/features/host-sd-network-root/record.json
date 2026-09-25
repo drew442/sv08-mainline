@@ -1,50 +1,88 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "A bounded regular-file SD image has validated SPL/partition bounds, exact boot payload hashes and SD-only boot policy, with no eMMC write or environment-counter command.",
+      "environment": "offline",
+      "id": "snr-01"
+    },
+    {
+      "description": "Disposable ARM64 QEMU boots the same candidate kernel/initramfs from local media, obtains DHCP, mounts a read-only NFS root, keeps /data volatile, and fails boundedly when the NFS server is unavailable.",
+      "environment": "offline",
+      "id": "snr-02"
+    },
+    {
+      "description": "Documentation records exact physical prerequisites and explicitly distinguishes offline evidence from SD-priority, Ethernet, eMMC-isolation, printer and release validation.",
+      "environment": "offline",
+      "id": "snr-03"
+    }
+  ],
+  "created": "2026-09-25",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "snr-01"
+        ],
+        "text": "Build a distinct SD-only U-Boot configuration. Prove from the compiled configuration and generated commands that it cannot load or save the eMMC environment, invoke RAUC boot selection, scan eMMC boot devices, or modify boot counters. Do not reuse the current MMC-device-1 redundant-environment configuration. Bind the SD loader, kernel, initramfs, device tree and script to recorded hashes."
+      },
+      {
+        "checks": [
+          "snr-01",
+          "snr-02"
+        ],
+        "text": "Show that the SD image fits the measured card and that SPL, environment reservations and partitions do not overlap. Bound the boot-time network failure and report memory use against the observed 1 GiB host. QEMU must exercise the selected kernel and initramfs with DHCP and an isolated read-only NFS root; confirm that /data and other mutable paths remain volatile and that host cleanup completes."
+      },
+      {
+        "checks": [
+          "snr-02",
+          "snr-03"
+        ],
+        "text": "Prevent the candidate root's normal host services, mount rules and generators from mounting or writing installed eMMC partitions or operating printer outputs. Document the exact physical test stop conditions. Reconcile the current A-slot trial under its separate reviewed procedure before any supervised SD boot, because failed SD priority could otherwise consume another eMMC attempt. Keep SD priority, physical Ethernet, eMMC isolation and fallback explicitly unverified until measured."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "651a6d4a5dce34fb591616fcc10b24834fe79311941e5b2e2dde7955be9b432b",
+    "rationale": "The proposal addresses the documented need to test host candidates without repeated eMMC writes. Before: each candidate requires a spare-eMMC write. Intended after: SD loads local boot artifacts and Linux mounts a disposable read-only NFS root. The 2 GB card and existing kernel/initramfs contents make an offline prototype plausible. Physical SD priority and Ethernet remain unproven. The existing U-Boot configuration reads a redundant environment from MMC device 1 and uses RAUC boot selection, so reusing it could access the installed eMMC or consume an A-slot attempt. The v5 record shows only two A attempts remain. Approval covers offline implementation and review only; it grants no SD write, printer reboot, boot-policy change, or release authority.",
+    "requirements_sha256": {
+      "docs/design/host-os-ab.md": "37da87c53fa40587e9cb50cd1ff260eba0df039b37203b545be9907bea7b3299",
+      "docs/hardware/host-network-boot-investigation.md": "634b82b3a0ada1e6bf2c5be103d48c7236a484226571a249a320b198e003fb24"
+    },
+    "reviewer": "/root/sd_network_root_approver",
+    "scope_sha256": "7cf07eb8f29508469b893c1531b59ba8f4ded8dc525e113d3004ac05860ccd8d",
+    "session": "independent-review-2026-09-25-6b2c235"
+  },
   "format_version": 1,
   "id": "host-sd-network-root",
   "kind": "feature",
-  "title": "Disposable SD boot with a read-only network root",
-  "author": "root/coordinator",
-  "created": "2026-09-25",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/host-sd-network-root/proposal.md",
   "requirements": [
     "docs/design/host-os-ab.md",
     "docs/hardware/host-network-boot-investigation.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "snr-01",
-      "description": "A bounded regular-file SD image has validated SPL/partition bounds, exact boot payload hashes and SD-only boot policy, with no eMMC write or environment-counter command.",
-      "environment": "offline"
-    },
-    {
-      "id": "snr-02",
-      "description": "Disposable ARM64 QEMU boots the same candidate kernel/initramfs from local media, obtains DHCP, mounts a read-only NFS root, keeps /data volatile, and fails boundedly when the NFS server is unavailable.",
-      "environment": "offline"
-    },
-    {
-      "id": "snr-03",
-      "description": "Documentation records exact physical prerequisites and explicitly distinguishes offline evidence from SD-priority, Ethernet, eMMC-isolation, printer and release validation.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Compose and validate an offline SD/NFS-root prototype",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
-      "checks": ["snr-01", "snr-02", "snr-03"],
-      "human_task": null,
       "blocker": null,
-      "implementation": null,
+      "checks": [
+        "snr-01",
+        "snr-02",
+        "snr-03"
+      ],
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Compose and validate an offline SD/NFS-root prototype",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Disposable SD boot with a read-only network root"
 }
