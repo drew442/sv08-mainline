@@ -27,10 +27,16 @@ host and hardware acceptance work remains in the
 - [x] Source-built diagnostic host image, recovery root and A/B disk composition.
 - [x] Physical diagnostic-host boot with full SPL, U-Boot, Linux, serial-login,
   SSH and Cockpit evidence; read-only root and persistent data verified.
+- [ ] The latest v5 A-slot boot reached SSH and persistent `/data`; Cockpit
+  failed on immutable root and A-slot trial confirmation is masked. See its
+  [first-boot findings](../hardware/host-board-image-20260925-v5-first-boot.md).
+- [ ] Optional SD/network boot is under read-only investigation; it is not a
+  supported recovery path. See the [investigation](../hardware/host-network-boot-investigation.md).
 - [x] DRAM diagnostic loader with bounded failures and a captured successful
   final-validation path.
-- [ ] Re-arm normal A attempts before a routine reboot; the next boot currently
-  selects recovery.
+- [ ] Reconcile the unconfirmed v5 A-slot trial before a routine reboot. The
+  current boot-health and RAUC units are masked; one A attempt has been consumed
+  and the read-back environment showed two remaining after boot.
 - [ ] Complete reproducible production boot-chain pins, physical power-loss tests,
   health confirmation and release-image assembly.
 

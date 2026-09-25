@@ -21,6 +21,9 @@ class StageUITests(unittest.TestCase):
         self.assertFalse(target.exists())
         result = stage(self.work, 'host', True)
         self.assertTrue((target / 'manifest.json').is_file())
+        self.assertEqual((self.work / 'rootfs/etc/cockpit/ws-certs.d').readlink(),
+                         Path('/data/sv08/system/cockpit/ws-certs.d'))
+        self.assertFalse((self.work / 'rootfs/etc/systemd/system/cockpit.service.d').exists())
         self.assertFalse(result['activated'])
         unit = 'usr/lib/systemd/system/sv08-admin-image-worker@.service'
         self.assertEqual((self.work / 'rootfs' / unit).read_bytes(), (REPO / 'configs/host-os/sv08-admin-image-worker@.service').read_bytes())
@@ -46,6 +49,26 @@ class StageUITests(unittest.TestCase):
         self.assertFalse((target / 'stale.txt').exists())
         self.assertEqual((root / 'etc/cockpit/cockpit.conf').read_text(),
                          '[WebService]\nShell=/sv08-host/index.html\n')
+        self.assertEqual((root / 'etc/cockpit/ws-certs.d').readlink(),
+                         Path('/data/sv08/system/cockpit/ws-certs.d'))
+
+    def test_certificate_directory_must_be_empty_and_unlinked_before_first_stage(self):
+        certs = self.work / 'rootfs/etc/cockpit/ws-certs.d'
+        certs.mkdir(parents=True)
+        (certs / 'owner.cert').write_text('preserve')
+        with self.assertRaisesRegex(ValueError, 'must be empty'):
+            stage(self.work, 'host', True)
+        self.assertEqual((certs / 'owner.cert').read_text(), 'preserve')
+        (certs / 'owner.cert').unlink()
+        stage(self.work, 'host', True)
+        self.assertTrue(certs.is_symlink())
+
+    def test_unexpected_certificate_directory_link_is_rejected(self):
+        certs = self.work / 'rootfs/etc/cockpit/ws-certs.d'
+        certs.parent.mkdir(parents=True)
+        certs.symlink_to('/tmp/unrelated', target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'Unexpected Cockpit certificate'):
+            stage(self.work, 'host', True)
 
     def test_recovery_refresh_is_refused(self):
         with self.assertRaisesRegex(ValueError, 'only supported'):
@@ -78,6 +101,7 @@ class StageUITests(unittest.TestCase):
             'spawn': ['sudo', '-k', '-A', 'cockpit-bridge', '--privileged']}])
         self.assertEqual((root / 'etc/cockpit/cockpit.conf').read_text(), '[WebService]\nShell=/sv08-host/index.html\n')
         self.assertIn('etc/cockpit/cockpit.conf', result['hashes'])
+        self.assertIn('etc/cockpit/ws-certs.d', result['hashes'])
         self.assertFalse((root / 'etc/sudoers.d').exists())
         self.assertEqual((root / 'usr/share/cockpit/sv08-host').stat().st_mode & 0o777, 0o755)
         for path in (root / 'usr/share/cockpit/sv08-host').iterdir():

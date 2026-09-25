@@ -3,10 +3,10 @@
   "recorded_on": "2026-09-25",
   "hardware_profile": "test-sv08-01",
   "board_revision": "H616_JC_6Z_V1.2 (owner-reported marking; not a full identity validation)",
-  "status": "written-and-direct-readback-verified-awaiting-physical-boot",
+  "status": "physical-a-slot-booted-diagnostic-findings-recorded",
   "deployable": false,
   "physical_hardware": true,
-  "project_commit": "212d3df",
+  "project_commit": "6064628",
   "host_release": "0.1.0-board.3",
   "source_receipts": {
     "host_finalized_sha256": "ad70090b7c839170690aee022d4146d7b46cf408441b0abc5b4d2c0a8ceacdfc",
@@ -91,11 +91,24 @@
     "private_receipt_on_beelink": "/home/drew/sv08-captures/board-v5-write-20260925/write-receipt.json",
     "private_receipt_sha256": "00257e6ad490591ecf1dd1a3380bb699d6ebaf41d619b40f2ee082e7c15a3293"
   },
-  "physical_boot": false,
+  "physical_boot": true,
+  "first_boot_evidence": {
+    "document": "host-board-image-20260925-v5-first-boot.md",
+    "slot": "A",
+    "ssh_reachable": true,
+    "persistent_data_mounted": true,
+    "state_registry_present": true,
+    "wifi_address": "192.168.1.141",
+    "cockpit_available": false,
+    "serial_boot_log_complete": false,
+    "reboot_safe": false
+  },
   "limitations": [
     "This remains a non-deployable diagnostic candidate, not a printing system or supported release.",
     "The corrected host initramfs contains the persistent identity hook and passes the offline finalizer; physical boot is not yet validated.",
-    "eMMC write and full direct-I/O readback match the reviewed image; physical boot, A/B/recovery, DRAM, Wi-Fi, display, printer-output and printing checks remain outstanding.",
+    "The A slot reached SSH and persistent data mounted, but U-Boot trial confirmation is masked and one A attempt was consumed; do not reboot before reviewed re-arming or replacement.",
+    "Cockpit is unavailable on the immutable root because its TLS certificate directory was not persistent; repair is in progress for a later candidate.",
+    "Physical DRAM stability, repeatable cold boot, B/recovery, printer-output and printing checks remain outstanding.",
     "The GL-RM1V2 advertises a custom 1024x600@60 EDID, but the exact touchscreen identity and selected HDMI mode remain unverified."
   ]
 }

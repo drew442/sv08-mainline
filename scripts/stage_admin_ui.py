@@ -7,6 +7,7 @@ this after core integration. Do not treat staged UI files as a bootable image.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 from prepare_host_os import REPO, work_path
@@ -32,6 +33,15 @@ def stage(work, context, execute=False, refresh=False):
     extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
     if context == 'host':
         extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json', root / 'usr/lib/sv08/rauc-service-policy.json', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf', root / 'etc/systemd/system/rauc.service.d/sv08.conf'])
+        cert_dir = root / 'etc/cockpit/ws-certs.d'
+        extra.append(cert_dir)
+        persistent_cert_dir = '/data/sv08/system/cockpit/ws-certs.d'
+        if cert_dir.is_symlink():
+            if os.readlink(cert_dir) != persistent_cert_dir:
+                raise ValueError('Unexpected Cockpit certificate directory link')
+        elif cert_dir.exists():
+            if not cert_dir.is_dir() or any(cert_dir.iterdir()):
+                raise ValueError('Cockpit certificate directory must be empty before persistence staging')
         packages = root / 'usr/share/cockpit'
         allowed_packages = {'base1', 'static', 'branding', 'issue', 'motd'}
         if refresh:
@@ -41,8 +51,17 @@ def stage(work, context, execute=False, refresh=False):
     for path in [target, *extra]:
         for parent in [path, *path.parents]:
             if parent == root: break
-            if parent.is_symlink(): raise ValueError('Symlink in UI staging target: '+str(parent))
+            if parent.is_symlink():
+                if (context == 'host' and path == root / 'etc/cockpit/ws-certs.d' and
+                        parent == path and os.readlink(parent) == '/data/sv08/system/cockpit/ws-certs.d'):
+                    continue
+                raise ValueError('Symlink in UI staging target: '+str(parent))
         if path.exists() or path.is_symlink():
+            if context == 'host' and path == root / 'etc/cockpit/ws-certs.d':
+                if path.is_symlink() and os.readlink(path) == '/data/sv08/system/cockpit/ws-certs.d':
+                    continue
+                if path.is_dir() and not any(path.iterdir()):
+                    continue
             allowed_refresh_output = refresh and (
                 path == target or (not path.is_symlink() and path.is_file()))
             if not allowed_refresh_output:
@@ -56,6 +75,11 @@ def stage(work, context, execute=False, refresh=False):
         target.chmod(0o755)
         config = root / 'etc/cockpit/cockpit.conf'; config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text('[WebService]\nShell=/sv08-host/index.html\n')
+        cert_dir = root / 'etc/cockpit/ws-certs.d'
+        if cert_dir.exists() and not cert_dir.is_symlink():
+            cert_dir.rmdir()
+        if not cert_dir.is_symlink():
+            cert_dir.symlink_to('/data/sv08/system/cockpit/ws-certs.d')
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-admin-image-worker@.service', units / 'sv08-admin-image-worker@.service')
         for source, destination in [('rauc-service-policy.json', 'usr/lib/sv08/rauc-service-policy.json'), ('sv08-rauc-policy.conf', 'etc/dbus-1/system.d/zz-sv08-rauc.conf'), ('sv08-rauc-service.conf', 'etc/systemd/system/rauc.service.d/sv08.conf')]:
@@ -75,9 +99,12 @@ def stage(work, context, execute=False, refresh=False):
     if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
+    hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    if context == 'host':
+        hashes['etc/cockpit/ws-certs.d'] = hashlib.sha256(
+            os.readlink(root / 'etc/cockpit/ws-certs.d').encode()).hexdigest()
     return dict(execute=True, context=context, activated=False,
-                payload_bytes=sum(p.stat().st_size for p in files),
-                hashes={str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files})
+                payload_bytes=sum(p.stat().st_size for p in files), hashes=hashes)
 
 
 if __name__ == '__main__':

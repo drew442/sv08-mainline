@@ -147,6 +147,15 @@ the printer and compatibility with the unidentified touchscreen remain to be
 verified. These findings do not establish eMMC data loss or a cause for the A
 failure.
 
+On 2026-09-25 the reviewed v5 replacement booted from slot A and reached SSH over
+Wi-Fi with persistent `/data` mounted. Cockpit failed because TLS certificate
+generation targeted the read-only root. Boot-health confirmation remains masked
+and the latest environment reports two remaining A attempts, so no further reboot
+is planned until that state is reconciled. The [v5 record](hardware/host-board-image-20260925-v5-first-boot.md)
+retains the evidence and limitations. A removable-SD/network-root path is under
+[read-only investigation](hardware/host-network-boot-investigation.md); its
+U-Boot Ethernet path and board SD priority remain unproven.
+
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 
 The first image assembles fresh Debian 13 arm64 from a dated snapshot with

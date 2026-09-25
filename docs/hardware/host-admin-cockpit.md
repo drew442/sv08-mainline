@@ -16,9 +16,23 @@ and [release checklist](host-os-tasks.md) retain those requirements.
 [SV08 package manifest](../../ui/host/manifest.json). It refuses existing
 configuration, existing output, symlink destinations and unexpected Cockpit
 packages before writing. It does not install/enable services or change sudo grants.
+The host image links Cockpit's supported `ws-certs.d` directory to
+`/data/sv08/system/cockpit/ws-certs.d`. Boot initialization creates the target
+on the writable data partition and keeps it root-owned with mode 0700, so a
+device-specific generated TLS certificate and key survive slot changes while
+the immutable root stays read-only. Staging accepts only a missing or empty
+package directory; a populated directory is preserved and refused for manual
+review. Refresh accepts the exact persistent link and leaves its contents alone.
+The host's early `sv08-prepare.service` runs as part of local filesystem setup,
+before the normal Cockpit socket/service targets, so the persistent certificate
+directory exists before Cockpit generates or reads its certificate.
 Only the ws/bridge packages and their dependencies are selected; stock shell,
 terminal, storage, system, and PackageKit pages are excluded. An administrator's
 existing OS powers are unchanged by this appliance navigation.
+The 2026-09-25 [TLS persistence correction](host-admin-cockpit-tls-persistence-evidence.md)
+proves the real service returns HTTPS 200 in an ARM64 QEMU guest with immutable
+root and writable `/data`; the generated certificate/key are read back from the
+persistent ext4 fixture. It is offline evidence, not physical TLS acceptance.
 
 The manifest reuses the selected upstream shell's sudo declaration:
 `sudo -k -A cockpit-bridge --privileged`, with packaged `cockpit-askpass`.

@@ -8,12 +8,14 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
-**Status: hardware research and first host-image candidate.** A private
-[spare-eMMC host image](docs/hardware/test-sv08-01-image.md) has been built and checked offline
-for test printer 01. It is not a printing system or validated hardware release;
-the owner reported booting it on the spare eMMC on 2026-09-06. Printer
-configuration and detailed printing validation remain outstanding. Both MCUs now
-have Katapult and matching Klipper installed, with recorded
+**Status: diagnostic host image physically boots; printer commissioning and
+release work remain open.** The v5 image was written to the spare eMMC with
+verified readback and reached Debian, SSH, Wi-Fi, and persistent `/data`. Cockpit
+failed because its TLS certificate path was on the immutable root; the boot-health
+confirmation is intentionally masked, so do not reboot before a reviewed next
+step. This is not a printing system or supported hardware release. Printer
+configuration and detailed printing validation remain outstanding. Both MCUs have
+Katapult and matching Klipper installed, with recorded
 [build provenance](docs/hardware/test-sv08-01-mcu-build.md).
 [USB updates and paired MCU communication](docs/hardware/test-sv08-01-mainboard-usb.md)
 are verified on test printer 01. Printing remains unvalidated.
@@ -25,10 +27,11 @@ have passed on the printer. Full peripheral validation and the complete A/B host
 remain outstanding.
 
 The [complete board A/B diagnostic image](docs/hardware/host-board-image.md)
-has now reached U-Boot, Linux, serial login, owner-key SSH and Cockpit with
-printer services disabled. Its latest full trace reports a successful 1 GiB DRAM
-initialization, but does not establish DRAM reliability. Physical B/recovery
-under the latest loader and printing remain unvalidated.
+has reached Linux, owner-key SSH and read-only-root operation with printer
+services disabled. The earlier loader trace reports a successful 1 GiB DRAM
+initialization, but does not establish DRAM reliability. The latest v5 boot
+revealed Cockpit's immutable-root certificate defect, now under correction.
+Physical B/recovery under the current image and printing remain unvalidated.
 The newer v3 image passed offline byte review, direct eMMC readback and a
 [physical slot-A boot](docs/hardware/host-board-v3-first-boot.md). The v4 image
 was subsequently written and read back, but its first A attempt failed in

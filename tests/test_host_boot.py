@@ -48,6 +48,39 @@ class BootIdentityTests(unittest.TestCase):
             self.assertIn(unittest.mock.call(copied, 1000, 1000), chown.call_args_list)
             self.assertNotIn(unittest.mock.call(config, 1000, 1000), chown.call_args_list)
 
+    def test_cockpit_certificate_store_is_private_root_owned_persistent_state(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+            store.initialize()
+            certs = store.root / 'system/cockpit/ws-certs.d'
+            self.assertTrue(certs.is_dir())
+            cert = certs / 'fixture.crt'
+            key = certs / 'fixture.key'
+            cert.write_text('certificate sentinel')
+            key.write_text('private key sentinel')
+            with patch('sv08_boot.os.chown') as chown:
+                prepare_permissions(store.root, store.prepare_boot('A', 'release-1')['generation'])
+            self.assertEqual(certs.stat().st_mode & 0o777, 0o700)
+            self.assertIn(unittest.mock.call(certs, 0, 0), chown.call_args_list)
+            store.initialize()
+            store.expect_trial('B', 'release-2', 'A')
+            with patch('sv08_boot.os.chown'):
+                prepare_permissions(store.root, store.prepare_boot('B', 'release-2')['generation'])
+            self.assertEqual(cert.read_text(), 'certificate sentinel')
+            self.assertEqual(key.read_text(), 'private key sentinel')
+
+    def test_cockpit_certificate_store_symlink_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+            store.initialize()
+            certs = store.root / 'system/cockpit/ws-certs.d'
+            certs.rmdir()
+            outside = Path(temporary) / 'outside'
+            outside.mkdir()
+            certs.symlink_to(outside, target_is_directory=True)
+            with patch('sv08_boot.os.chown'), self.assertRaisesRegex(ValueError, 'real persistent directory'):
+                prepare_permissions(store.root, store.prepare_boot('A', 'release-1')['generation'])
+
     def test_identity_symlink_does_not_modify_target(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Store(Path(temporary) / 'data')

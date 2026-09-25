@@ -8,6 +8,7 @@ See docs/hardware/host-admin-cockpit.md for the reproducible invocation.
 """
 import argparse
 import hashlib
+import http.client
 import json
 import os
 import re
@@ -16,6 +17,7 @@ import secrets
 import signal
 import stat
 import shutil
+import ssl
 import subprocess
 import sys
 import time
@@ -120,29 +122,38 @@ def prepare(args):
             inside(['chpasswd'], input=name+':'+password+'\n', text=True)
         inside(['usermod', '-aG', 'sudo', 'fixtureadmin'])
         for path in (root / 'etc/ssh').glob('ssh_host_*'): path.unlink()
-        (root / 'etc/machine-id').write_text('')
+        (root / 'etc/machine-id').write_text('0123456789abcdef0123456789abcdef\n')
         (root / 'etc/hostname').write_text('sv08-cockpit-fixture\n')
         (root / 'etc/systemd/network/80-fixture.network').write_text('[Match]\nName=en*\n[Network]\nDHCP=yes\n')
         # A test-only boot service initializes finite disposable state; no adapters,
         # devices, update backend, printer services or shipped credential grants.
-        (runtime / 'cockpit-fixture.py').write_text("""import json
+        (runtime / 'cockpit-fixture.py').write_text("""import json, subprocess
 from pathlib import Path
 from sv08_state import Store
+from sv08_boot import prepare_permissions
 s=Store('/data/sv08',reserve_bytes=0)
 s.initialize()
 Path('/data/sv08/uploads').mkdir(mode=0o700, exist_ok=True)
 b=s.prepare_boot('A','cockpit-fixture')
+prepare_permissions(s.root, b['generation'])
 b['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
 Path('/run/sv08').mkdir(exist_ok=True)
 Path('/run/sv08/boot.json').write_text(json.dumps(b))
+Path('/data/sv08/boot-mount-evidence.json').write_text(json.dumps({
+    'root_options':subprocess.check_output(['findmnt','-no','OPTIONS','/'],text=True).strip(),
+    'data_options':subprocess.check_output(['findmnt','-no','OPTIONS','/data'],text=True).strip()}))
 """)
-        (root / 'usr/lib/systemd/system/cockpit-fixture.service').write_text('[Unit]\nDescription=Disposable Cockpit test state\nBefore=cockpit.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/cockpit-fixture.py\nRemainAfterExit=yes\n[Install]\nWantedBy=multi-user.target\n')
-        for unit in ('systemd-networkd.service', 'cockpit.socket', 'cockpit-fixture.service'):
+        (root / 'data').mkdir(exist_ok=True)
+        (root / 'etc/systemd/system/data.mount').write_text('[Unit]\nDescription=Disposable persistent state fixture\nBefore=sv08-prepare.service\n[Mount]\nWhat=/dev/vdb\nWhere=/data\nType=ext4\nOptions=rw,nodev,nosuid\n[Install]\nWantedBy=local-fs.target\n')
+        (root / 'usr/lib/systemd/system/sv08-prepare.service').write_text('[Unit]\nDescription=Disposable SV08 persistent state setup\nDefaultDependencies=no\nRequires=data.mount\nAfter=data.mount\nBefore=local-fs.target\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/cockpit-fixture.py\nRemainAfterExit=yes\n[Install]\nWantedBy=local-fs.target\n')
+        for unit in ('data.mount', 'systemd-networkd.service', 'cockpit.socket', 'sv08-prepare.service'):
             run(['systemctl', '--root', root, 'enable', unit], stdout=subprocess.DEVNULL)
-        for unit in ('nginx.service', 'NetworkManager.service', 'ssh.service', 'ssh.socket', 'apt-daily.timer', 'apt-daily-upgrade.timer', 'systemd-timesyncd.service'):
+        for unit in ('nginx.service', 'NetworkManager.service', 'ssh.service', 'ssh.socket', 'apt-daily.timer', 'apt-daily-upgrade.timer', 'systemd-timesyncd.service', 'systemd-random-seed.service'):
             run(['systemctl', '--root', root, 'mask', unit], stdout=subprocess.DEVNULL)
         with (work / 'units.txt').open('w') as output:
-            inside(['systemd-analyze', 'verify', '--man=no', 'cockpit.service', 'cockpit.socket', 'cockpit-session@fixture.service', 'cockpit-fixture.service'], stdout=output, stderr=subprocess.STDOUT)
+            inside(['systemd-analyze', 'verify', '--man=no', 'data.mount', 'sv08-prepare.service',
+                    'cockpit.service', 'cockpit.socket', 'cockpit-session@fixture.service'],
+                   stdout=output, stderr=subprocess.STDOUT)
         closure = inside(['dpkg-query', '-W', '-f=${binary:Package}\t${Version}\t${Installed-Size}\n'], capture_output=True, text=True).stdout
         (work / 'installed-packages.tsv').write_text(closure)
         # Unmount volatile content before mkfs copies the tree, so /proc, devices,
@@ -162,12 +173,16 @@ Path('/run/sv08/boot.json').write_text(json.dumps(b))
         permissions = {str(p.relative_to(root)): dict(uid=p.stat().st_uid, gid=p.stat().st_gid, mode=oct(p.stat().st_mode & 0o7777)) for p in owned}
         run(['truncate', '-s', '3G' if upload_fixture else '2G', work / 'guest.ext4'])
         run(['mkfs.ext4', '-q', '-F', '-d', root, work / 'guest.ext4'])
+        run(['truncate', '-s', '256M', work / 'guest-data.ext4'])
+        run(['mkfs.ext4', '-q', '-F', work / 'guest-data.ext4'])
         kernel = lower / 'boot/vmlinuz-6.12.107+deb13-arm64'; initrd = lower / 'boot/initrd.img-6.12.107+deb13-arm64'
         report = dict(format_version=1, deployable=False, baseline=before, root=root_inventory, staging=staging,
                       permissions=permissions, pam_and_sudo_policy_preserved=preserved_policy and cockpit_pam,
                       delta_download_bytes=sum(p['bytes'] for p in packages['delta']),
                       kernel=dict(path=str(kernel), sha256=digest(kernel)), initrd=dict(path=str(initrd), sha256=digest(initrd)),
-                      image_sha256=digest(work / 'guest.ext4'), image_bytes=(work / 'guest.ext4').stat().st_size, baseline_preserved=None,
+                      image_sha256=digest(work / 'guest.ext4'), image_bytes=(work / 'guest.ext4').stat().st_size,
+                      data_image_sha256=digest(work / 'guest-data.ext4'), data_image_bytes=(work / 'guest-data.ext4').stat().st_size,
+                      baseline_preserved=None,
                       scope='offline full ARM64 QEMU fixture; synthetic accounts; no printer or production activation')
     finally:
         for path in reversed(mounted): run(['umount', path])
@@ -198,6 +213,12 @@ def boot(args):
             image_stat.st_uid != os.geteuid() or image_stat.st_size != report.get('image_bytes', 2 * 1024**3) or
             work.stat().st_mode & 0o077): raise ValueError('Expected a private owned regular fixture image')
     if digest(image) != report['image_sha256']: raise ValueError('Fixture image changed; prepare a fresh image')
+    data_image = work / 'guest-data.ext4'; data_stat = data_image.lstat()
+    if (not stat.S_ISREG(data_stat.st_mode) or data_stat.st_nlink != 1 or
+            data_stat.st_uid != os.geteuid() or data_stat.st_size != report['data_image_bytes']):
+        raise ValueError('Expected a private owned regular persistent-data fixture image')
+    if digest(data_image) != report['data_image_sha256']:
+        raise ValueError('Persistent-data fixture changed; prepare a fresh image')
     if not args.execute: return dict(execute=False, work=str(work), loopback_port=19090)
     namespace('net'); namespace('pid')
     host_before = host_state()
@@ -207,15 +228,50 @@ def boot(args):
     (work / 'namespace-pid').write_text(pid)
     command = ['qemu-system-aarch64', '-M', 'virt', '-cpu', 'cortex-a53', '-m', '1024', '-smp', '2',
                '-kernel', report['kernel']['path'], '-initrd', report['initrd']['path'],
-               '-append', 'root=/dev/vda rw console=ttyAMA0 systemd.unit=multi-user.target',
-               '-drive', f'file={work}/guest.ext4,format=raw,if=virtio',
+               '-append', 'root=/dev/vda ro console=ttyAMA0 systemd.unit=multi-user.target',
+               '-drive', f'file={work}/guest.ext4,format=raw,if=virtio,readonly=on',
+               '-drive', f'file={work}/guest-data.ext4,format=raw,if=virtio',
                '-netdev', 'user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:19090-:9090',
                '-device', 'virtio-net-pci,netdev=net0', '-display', 'none', '-monitor', 'none',
                '-serial', f'file:{work}/guest.log']
     def interrupted(_signum, _frame): raise KeyboardInterrupt
     signal.signal(signal.SIGTERM, interrupted)
     child = subprocess.Popen(command)
-    try: child.wait()
+    tls_status = None
+    tls_error = None
+    try:
+        if args.tls_smoke:
+            deadline = time.monotonic() + 150
+            last_error = None
+            # Do not connect while sockets.target is still being activated:
+            # a socket-activated service requested during that transaction can
+            # create a false systemd ordering cycle in the fixture.
+            ready = False
+            while time.monotonic() < deadline:
+                try:
+                    ready = ' login:' in (work / 'guest.log').read_text(errors='replace')
+                except OSError:
+                    pass
+                if ready:
+                    break
+                time.sleep(1)
+            while ready and time.monotonic() < deadline:
+                try:
+                    connection = http.client.HTTPSConnection('127.0.0.1', 19090,
+                        context=ssl._create_unverified_context(), timeout=3)
+                    connection.request('GET', '/')
+                    response = connection.getresponse()
+                    tls_status = response.status
+                    response.read(4096)
+                    connection.close()
+                    break
+                except (OSError, http.client.HTTPException) as error:
+                    last_error = str(error)
+                    time.sleep(1)
+            if tls_status is None:
+                tls_error = str(last_error)
+        else:
+            child.wait()
     except KeyboardInterrupt: pass
     finally:
         child.terminate()
@@ -229,6 +285,33 @@ def boot(args):
     (work / 'cleanup.json').write_text(json.dumps(cleanup, indent=2)+'\n')
     if not cleanup['host_identity_files_preserved'] or not cleanup['host_cockpit_units_preserved']:
         raise AssertionError('Workstation identity/service state changed')
+    if args.tls_smoke:
+        fsck = subprocess.run(['e2fsck', '-pf', data_image], capture_output=True, text=True)
+        if fsck.returncode > 1:
+            raise RuntimeError('Persistent-data fixture fsck failed: '+fsck.stdout+fsck.stderr)
+        directory = (work / 'tls-certs').resolve()
+        directory.mkdir(mode=0o700, exist_ok=True)
+        listing = subprocess.run(['debugfs', '-R', 'ls -l /sv08/system/cockpit/ws-certs.d', data_image],
+                                 check=True, capture_output=True, text=True).stdout
+        mounts = subprocess.run(['debugfs', '-R', 'cat /sv08/boot-mount-evidence.json', data_image],
+                                check=True, capture_output=True, text=True).stdout
+        subprocess.run(['debugfs', '-R', f'rdump /sv08/system/cockpit/ws-certs.d {directory}', data_image],
+                       check=True, capture_output=True, text=True)
+        files = sorted(p for p in directory.rglob('*') if p.is_file())
+        tls_files = {p.name: dict(bytes=p.stat().st_size, sha256=digest(p)) for p in files}
+        try: mount_evidence=json.loads(mounts)
+        except json.JSONDecodeError: mount_evidence={}
+        result = dict(cleanup, passed=(tls_status == 200 and
+                      {'0-self-signed.cert','0-self-signed.key'} <= set(tls_files) and
+                      'ro' in mount_evidence.get('root_options','').split(',') and
+                      'rw' in mount_evidence.get('data_options','').split(',') and
+                      re.search(r'\b40700\b.*\b0\s+0\b', listing) is not None),
+                      https_status=tls_status, https_error=tls_error, persistent_certificates=tls_files,
+                      certificate_directory_listing=listing,
+                      mount_evidence=mount_evidence,
+                      root_block_opened_read_only=True, data_partition_separate=True)
+        (work / 'tls-smoke.json').write_text(json.dumps(result, indent=2)+'\n')
+        return result
     return cleanup
 
 
@@ -240,5 +323,7 @@ if __name__ == '__main__':
     parser.add_argument('--intake', type=Path)
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--upload-fixture', type=Path)
+    parser.add_argument('--tls-smoke', action='store_true',
+                        help='Boot once with immutable root and verify Cockpit HTTPS certificates on persistent data')
     args = parser.parse_args()
     print(json.dumps(prepare(args) if args.operation == 'prepare' else boot(args), indent=2))

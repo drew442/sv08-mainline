@@ -139,6 +139,11 @@ def prepare_permissions(data, generation, uid=1000, gid=1000):
     # Traverse-only parents; registry, host keys and network credentials stay root-owned.
     for path in (data, data / 'generations', Path(generation), data / 'shared', data / 'users'):
         os.chmod(path, 0o711)
+    cockpit_certs = data / 'system/cockpit/ws-certs.d'
+    if cockpit_certs.is_symlink() or not cockpit_certs.is_dir():
+        raise ValueError('Cockpit certificate storage must be a real persistent directory')
+    os.chown(cockpit_certs, 0, 0)
+    os.chmod(cockpit_certs, 0o700)
     for name in ('config', 'database', 'ui'):
         directory = Path(generation) / name
         # copytree/copy2 preserve mode and times, but not ownership. Repair only

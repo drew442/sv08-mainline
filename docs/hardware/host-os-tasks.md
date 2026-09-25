@@ -139,12 +139,13 @@ enumeration were re-established on 2026-09-12; see the
 - [x] Connect policy and image transaction adapters; test stale review, preserved
   generations, cancellation and customization guards without hardware writes.
 - [x] Keep recovery diagnostics usable with missing/corrupt read-only state.
-- [ ] Build/pin/measure Cockpit and independent GTK/input/accessibility closures;
-  integrate actual authenticated login, owner provisioning and persistent TLS keys.
+- [x] Build/pin/measure Cockpit and independent GTK/input/accessibility closures;
+  the immutable-root Cockpit TLS path now stores its generated identity under
+  `/data` in an offline ARM64 service boot; see the [evidence](host-admin-cockpit-tls-persistence-evidence.md).
   [Cockpit integration](host-admin-cockpit.md) pins the host delta and tests
   real isolated PAM/sudo/helper sessions. The [independent recovery image](host-recovery-image.md)
-  now has a measured closure and actual VM input/accessibility startup. Production
-  identity/TLS and assembled-release acceptance remain open.
+  now has a measured closure and actual VM input/accessibility startup. Physical
+  TLS, production owner provisioning and assembled-release acceptance remain open.
 - [x] Implement bounded browser upload, signature/error/progress presentation and
   jobs that survive a closed browser or dropped LAN connection offline.
   [Authenticated upload](host-admin-upload.md) and [durable image jobs](host-admin-image-jobs.md)
@@ -212,11 +213,15 @@ capture format is independent; the printer's selected HDMI mode and the exact
 touchscreen timing still need physical validation. The owner need not change
 any cable or power state for this EDID record. A future A retry requires a
 separate reviewed write/readback through H03.
-The [v5 replacement candidate](host-board-image-20260925-v5.md) has since passed
+The [v5 replacement candidate](host-board-image-20260925-v5.md) passed
 independent offline review, was written once to the identified spare eMMC, and
-passed a full direct-I/O readback hash. H03 now needs the spare reinstalled in
-the printer for a captured first boot; a receive-only serial capture is already
-armed on Beelink because connecting that cable powers the host.
+passed a full direct-I/O readback hash. On 2026-09-25 the owner reinstalled it;
+the A slot reached SSH with `/data` and Wi-Fi working. Cockpit failed because
+TLS certificate generation targeted the immutable root. One A trial attempt
+was consumed and trial confirmation remains masked; avoid reboot until the next
+reviewed action. See the [v5 first-boot record](host-board-image-20260925-v5-first-boot.md).
+The receive-only UART watcher missed SPL/U-Boot because its first device path was
+stale; the corrected listener was opened after this boot and cannot recover it.
 
 New feature development is paused by the owner. Existing host hardware-test
 preparation continues. These physical tasks do not block independent authorized
@@ -227,13 +232,23 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   after replacing the cable on 2026-09-13. SSH is also reachable.
 - [x] Start console logging before a subsequent boot and capture SPL/U-Boot/kernel
   output. The [2026-09-13 warm reboot](test-sv08-01-host-console.md) reached SSH
-  with a new boot ID and no failed units. The logger has now been stopped.
+  with a new boot ID and no failed units. For the 2026-09-25 v5 boot the initial
+  listener path was stale; a corrected listener was ready only after boot.
 - [ ] Establish complete host power isolation for a true cold-boot capture:
   host uptime continued across the reported printer switch-off/on with the USB
   console attached. Determine the remaining power source before claiming a
   cold boot; do not assume the printer switch alone makes board work safe.
 - [ ] Optionally attach HDMI capture and a controllable USB HID emulator to
   Beelink for graphical tests, preserving the physical touchscreen input path.
+
+- [ ] Optional development/recovery path: qualify a removable SD launcher and
+  read-only network root. The [investigation](host-network-boot-investigation.md)
+  finds this worthwhile, but U-Boot H616 Ethernet and SD-first selection are not
+  yet proven. Before its supervised physical test, build and independently inspect
+  the image, keep eMMC counters safe, and capture UART from before power-on. Once
+  that preparation is complete, connect printer Ethernet to the same LAN as
+  Beelink; use ordinary DHCP and configure the stable Beelink server address on
+  the SD rather than changing router boot options.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.
