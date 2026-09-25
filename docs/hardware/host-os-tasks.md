@@ -243,12 +243,14 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 
 - [ ] Optional development/recovery path: qualify a removable SD launcher and
   read-only network root. The [investigation](host-network-boot-investigation.md)
-  finds this worthwhile, but U-Boot H616 Ethernet and SD-first selection are not
-  yet proven. Before its supervised physical test, build and independently inspect
-  the image, keep eMMC counters safe, and capture UART from before power-on. Once
-  that preparation is complete, connect printer Ethernet to the same LAN as
-  Beelink; use ordinary DHCP and configure the stable Beelink server address on
-  the SD rather than changing router boot options.
+  finds this worthwhile. The [offline 192 MiB SD/NFS diagnostic prototype](host-sd-network-root-prototype.md)
+  keeps U-Boot on SD and uses the unchanged candidate Linux initramfs for DHCP
+  and NFS. Independent image review and physical SD priority remain open.
+  Reconcile the current eMMC A-slot trial before any supervised SD write/boot;
+  capture UART from before power-on. Once that preparation is complete, reserve
+  Beelink's address, offer only the sanitized read-only export, and connect
+  printer Ethernet to the same LAN. Use ordinary DHCP and configure Beelink's
+  stable server address on the SD; do not change router boot options.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.

@@ -1,0 +1,22 @@
+{
+  "format_version": 1,
+  "hardware_profile": "test-sv08-01",
+  "deployable": false,
+  "card_capacity_bytes": 1977614336,
+  "image_bytes": 201326592,
+  "boot_partition_offset_bytes": 16777216,
+  "boot_partition_bytes": 134217728,
+  "u_boot_archive_sha256": "2e932cb139c06adfdd2ef1369170135e1f449764287e7bdbc93642ed52249c7e",
+  "tf_a_archive_sha256": "507a10e4a20d272124ee808c3d3083134c95113486e3d09b8236a6556e901536",
+  "kernel_gzip_sha256": "f20fa139d726159e4539e3d7eaec2ec31c75df713f3005dd443bbd4a738c500e",
+  "kernel_raw_sha256": "5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34",
+  "initrd_sha256": "8be88ee081ad61c64de216425b031b8988447d6fb009022edeffaf53f115d09e",
+  "dtb_sha256": "571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f",
+  "armbian_patches": [
+    ["001-bigtreetech-cb1-dts-and-defconfig.patch", "0bff09f1763dd4e74249e3500bebcbfd84cde79ac66b9556ce706de958318416"],
+    ["002-bigtreetech-cb1-PC3-eMMC-selpin-set-to-pull-down-mode.patch", "1fe801e57ce115f9d91dde132f1e756d2cf4a97284db4e4aa85c3bb0905eac81"]
+  ],
+  "u_boot_commit": "ece349ade2973e220f524ce59e59711cc919263f",
+  "tf_a_commit": "c2a0e7080d64d69940be4ad0ff6578501f3cbf9e",
+  "source_date_epoch": 1789257600
+}
