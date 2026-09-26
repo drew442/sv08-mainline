@@ -1,6 +1,6 @@
 # H616 writerless adapter: offline candidate
 
-Status: offline implementation complete; full synthetic QEMU integration and
+Status: offline implementation and synthetic QEMU integration complete;
 independent delivery review pending. Date: 2026-09-26. Hardware profile:
 test-sv08-01, reported PCB `H616_JC_6Z_V1.2`; this report contains **no new
 physical measurement or write**. The H10 read-only probe identified one
@@ -100,11 +100,32 @@ The synthetic policy/job/signature/verifier hashes are respectively
 and `ee3b19c1538b4ce509616e4dc44f697161095ab1d2c0b3f1b0c26589f44cf434`.
 These are public test identities and **cannot authenticate a physical job**.
 
-The full synthetic H616 QEMU transfer, failure and replay matrix has not yet
-run. The assigned integration worker should reuse the Beelink SD composition,
-extracted NFS packages and bounded namespace from the prior
-[QEMU-mode run](host-network-emmc-reimage-mode-qemu-20260926.md), with a fresh
-work directory for each case. The command adds `--commissioning`:
+The full synthetic H616 QEMU transfer, identity refusal, injected failure and
+replay matrix has now run on Beelink. The durable summary is
+[the QEMU evidence record](host-network-emmc-h616-adapter-qemu-evidence-20260926.json);
+raw receipts remain in ignored `local/integration-evidence/` and the summary
+SHA-256 is recorded there. The integration used the SD composition and extracted
+NFS packages from the prior
+[QEMU-mode run](host-network-emmc-reimage-mode-qemu-20260926.md), in a bounded
+network/mount namespace, with a fresh disposable regular-file target per case.
+The full run transferred and independently re-read the complete 7,818,182,656
+byte source. Guest and host readback hashes matched; `sgdisk -v` validated both
+GPT copies, and disk GUID plus all six partition records matched. The expected
+61,079,552-sector (31,272,730,624-byte) target capacity was reported.
+
+All three identity faults (wrong CID, wrong `dev_t`, ambiguous inventory)
+refused before modifying the target. The before-write injected fault also left
+the target unchanged. Partial-write, flush and readback injections wrote only
+the first 1 MiB, which independently matched the source prefix; each consumed
+the one-shot claim, rejected replay with HTTP 409 and emitted no success receipt.
+The flush and readback injections exercise their respective post-write paths on
+that 1 MiB prefix only, not after a complete image transfer. Full-run time was
+43:07.79 (maximum RSS 2,311,932 KiB); fault-case times and receipt hashes are
+in the evidence JSON. One guest `GFP_ATOMIC` warning appeared in the full run;
+there was no OOM or NFS failure.
+
+These results establish only synthetic QEMU integration. The exact command
+shape for reproduction is:
 
 ```sh
 sudo unshare -n -m -- python3 tests/host_qemu_sd_network_emmc_write.py \
@@ -114,14 +135,12 @@ sudo unshare -n -m -- python3 tests/host_qemu_sd_network_emmc_write.py \
   --commissioning --execute
 ```
 
-Run separate `--identity-fault wrong-cid`, `--identity-fault wrong-dev`,
-`--identity-fault ambiguous`, `--fault before-write`, `--fault partial-write`,
-`--fault flush`, and `--fault readback` cases as resource limits permit; each
-uses a fresh one-shot claim and disposable target. The harness itself generates
-the sparse 7.8 GB nonbootable source and verifies its pinned hash, so no
-physical image or private backup is needed. Beelink must have at least 9 GB
-free and 3 GiB available memory. No raw 7.8 GB image should be staged on the
-space-limited development VM.
+The full completed matrix used each of those identity/fault options, plus the
+no-fault `--commissioning --execute` transfer, each with a fresh claim and
+disposable target. The harness generates the sparse 7.8 GB nonbootable source
+and verifies its pinned hash, so no physical image or private backup is
+included. Beelink had more than 10 GB free before and after the runs and over
+7 GB available memory. No raw image was staged on the development VM.
 
 Physical candidate construction is blocked until the selected image's exact
 SHA-256 and disk GUID are independently recorded together. The plain HTTP claim transport, port supplied in boot arguments, independent
