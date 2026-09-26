@@ -1,9 +1,31 @@
 # Removable SD and network-boot investigation
 
-Date: 2026-09-25. Scope: assess whether a removable SD card can boot a
-development/recovery system without rewriting the installed eMMC. This is a
-read-only investigation; it does not authorize a printer reboot, boot-policy
-change or firmware write.
+Started 2026-09-25; physical diagnostic result added 2026-09-26. Scope: assess
+whether a removable SD card can boot a development/recovery system without
+rewriting the installed eMMC. The owner's later authorization allowed one
+reviewed disposable-SD write and one supervised boot; it did not authorize
+eMMC/MCU writes or make this a supported recovery path.
+
+## Physical result and assessment (2026-09-26)
+
+The corrected SD-only image passed independent review, was written to the
+disposable card with full prefix readback, and booted the SD loader, local Linux
+kernel/initramfs, and a read-only NFS root on Beelink. Wired DHCP used the
+reserved MAC and `.141`; the probe confirmed read-only root and volatile
+`/data`, then powered down. See the
+[physical result](host-sd-network-first-boot-20260926.md).
+
+This is useful for development: root-filesystem candidates can be staged on
+Beelink without rewriting eMMC, while SD still carries U-Boot, kernel and
+initramfs. It does not yet boot the actual Debian host root or printer stack.
+The tested U-Boot has no Ethernet driver, so changing the kernel or initramfs
+still requires an SD update. The NFS root is intentionally read-only and only
+contains a diagnostic init. Keep this as an engineering tool, not a release
+recovery promise. A release recovery path also needs authenticated boot/root
+content, missing-server behavior, eMMC isolation/fallback validation and
+power-loss testing.
+
+The evidence below records the assessment before the physical trial.
 
 ## Finding
 
@@ -15,7 +37,7 @@ copying a multi-gigabyte root filesystem onto the card or eMMC for each test.
 Keep writes volatile for the first trial. This is a development convenience,
 not yet a recovery guarantee or release feature.
 
-## Evidence and limits
+## Evidence before the physical trial (2026-09-25)
 
 - The current diagnostic Linux identifies the board as `Sovol SV08 test-sv08-01`
   and the device-tree compatibility as `sovol,sv08`, `bigtreetech,cb1`,
@@ -44,9 +66,9 @@ not yet a recovery guarantee or release feature.
   over onboard eMMC. This is encouraging because the SV08 host shares H616/CB1
   lineage, but it is not measured evidence for this integrated SV08 board; the
   current board must still be tested before relying on SD-first selection.
-- Beelink detects the inserted 2 GB FAT card, but its current filesystem is
-  already populated and has no observed Linux boot files. The owner has said
-  its contents may be erased. No files or media have been changed.
+- At the initial 2026-09-25 inspection, Beelink detected the supplied 2 GB card;
+  its previous contents were not important to the owner. The later reviewed
+  operation wrote only the bounded 192 MiB image prefix; see the media record.
 - The Linux kernel documents a DHCP plus NFS-root boot path. The candidate's
   initramfs includes the required NFS modules and scripts; the combined boot
   command line, NFS export policy and actual printer link still need testing.
@@ -78,20 +100,21 @@ server is missing, and never write eMMC without explicit user action. Do not
 advertise network boot as a supported recovery option until signature policy,
 power-loss behavior and physical boot/fallback tests pass.
 
-## Next gates
+## Further development gates
 
-1. Correct U-Boot DT/driver support for the measured H616 GMAC and compile it;
-   alternatively prove that the selected known-good loader can boot a kernel
-   from the SD without changing persistent eMMC state.
-2. Build a minimal SD launcher with the already-tested kernel and a read-only
-   NFS-root prototype. Check memory use against the measured 1 GiB host and keep
-   all mutable state volatile for the first trial.
-3. Independently inspect the SD image and test its boot script, network timeout,
-   read-only NFS root and refusal/fallback behavior offline.
-4. Reconcile the current A-slot trial state and UART capture before requesting
-   one supervised physical boot test. The likely SD configuration is local
-   kernel/initramfs, `ip=dhcp`, and `root=/dev/nfs` with a read-only Beelink NFS
-   export; verify the exact root path/options against the initramfs before use.
+1. Decide whether an NFS-root build of the complete Debian host is valuable for
+   development. If pursued, keep its server export separate, disable printer
+   outputs and all eMMC-writing/RAUC paths, and expose no mutable state during
+   the first test. The current minimal diagnostic does not satisfy this gate.
+2. Build and test that candidate offline, with exact kernel/initramfs/root
+   hashes, bounded DHCP/NFS failure, low-memory measurements and QEMU evidence.
+   Do not reuse the minimal diagnostic init as proof of host OS behavior.
+3. Treat U-Boot Ethernet/TFTP support as a separate option: it would remove the
+   need to update SD for kernel/initramfs changes, but is unnecessary for
+   iterating on a network-resident root filesystem.
+4. Before any later physical boot, inspect the current eMMC A counter under a
+   separate reviewed procedure and prepare a fresh exact-image review and
+   capture. The single supervised attempt for this diagnostic is complete.
 
 Primary documentation accessed 2026-09-25: BIGTREETECH's [CB1 repository
 README](https://github.com/bigtreetech/CB1#cb1-emmc-version) says its eMMC

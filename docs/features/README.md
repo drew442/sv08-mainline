@@ -30,8 +30,10 @@ host and hardware acceptance work remains in the
 - [ ] The latest v5 A-slot boot reached SSH and persistent `/data`; Cockpit
   failed on immutable root and A-slot trial confirmation is masked. See its
   [first-boot findings](../hardware/host-board-image-20260925-v5-first-boot.md).
-- [ ] Optional SD/network boot is under read-only investigation; it is not a
-  supported recovery path. See the [investigation](../hardware/host-network-boot-investigation.md).
+- [x] Disposable SD launcher and read-only NFS-root diagnostic boot passed on
+  `test-sv08-01`; see the [physical result](../hardware/host-sd-network-first-boot-20260926.md).
+- [ ] Complete-host network root and an authenticated SD/network recovery path
+  remain unvalidated; see the [development assessment](../hardware/host-network-boot-investigation.md).
 - [x] DRAM diagnostic loader with bounded failures and a captured successful
   final-validation path.
 - [ ] Reconcile the unconfirmed v5 A-slot trial before a routine reboot. The

@@ -241,27 +241,23 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
 - [ ] Optionally attach HDMI capture and a controllable USB HID emulator to
   Beelink for graphical tests, preserving the physical touchscreen input path.
 
-- [ ] Optional development/recovery path: qualify a removable SD launcher and
+- [x] Development path: qualify a disposable SD launcher and read-only NFS root
+  for a bounded Linux diagnostic. The physical v2 test passed; see the
+  [result](host-sd-network-first-boot-20260926.md). This is not a full host OS
+  or a supported recovery path. Keep the remaining distinction clear: the
+  complete Debian host root has not been booted over NFS, and kernel/initramfs
+  updates still require updating the SD. See the continuing
+  [development assessment](host-network-boot-investigation.md).
+- [ ] Optional release recovery path: qualify a removable SD launcher and
   read-only network root. The [investigation](host-network-boot-investigation.md)
-  finds this worthwhile. The [offline 192 MiB SD/NFS diagnostic prototype](host-sd-network-root-prototype.md)
-  keeps U-Boot on SD and uses the unchanged candidate Linux initramfs for DHCP
-  and NFS. The physical-address image was independently inspected, written to
-  the disposable SD and passed direct readback; see the [media-write record](host-sd-network-card-write-20260925.md).
-  The v5 A counter was separately re-armed to three attempts, but A remains
-  unconfirmed; see its [re-arm record](host-board-image-20260925-v5-a-rearm.md).
-  The first [physical SD attempt](host-sd-network-first-boot-20260925.md)
-  proved SD-loader selection but stopped before Linux: the image omitted
-  `CONFIG_HASH_VERIFY`, required by its existing `hash -v` checks. The SD-only
-  configuration intentionally has serial console and no U-Boot Ethernet, so
-  blank HDMI and `No ethernet found` at U-Boot were expected. DHCP traffic used
-  the previously identified Wi-Fi MAC, not proof of wired Linux networking.
-  H09 in [the coordinated task list](coordinated-human-tasks.md) groups the
-  corrected artifact review, SD rewrite/readback and one supervised network-root
-  boot are complete; see the [v2 result](host-sd-network-first-boot-20260926.md).
-  The temporary sanitized NFSv3 export is serving read-only; Beelink mounted it
-  read-only and verified its init hash and write refusal. Physical Linux DHCP,
-  NFS root, eMMC isolation and fallback remain unverified. Do not change router
-  PXE/TFTP options.
+  finds this potentially useful. The [192 MiB SD/NFS diagnostic](host-sd-network-root-prototype.md)
+  passed one physical trial: SD loader, Linux, wired DHCP and read-only NFS root;
+  see the [v2 result](host-sd-network-first-boot-20260926.md) and completed
+  [H09 record](coordinated-human-tasks.md). The v1 trial stopped at the missing
+  U-Boot `CONFIG_HASH_VERIFY` setting; the corrected v2 passed. This demonstrates
+  a disposable development boot, not an authenticated recovery product or
+  complete host OS. Complete-host NFS boot, current eMMC counter state, signed
+  recovery and fallback remain unverified. Do not change router PXE/TFTP options.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.
