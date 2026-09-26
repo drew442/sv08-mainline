@@ -102,15 +102,111 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "nrm-01",
+          "document": "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md",
+          "document_sha256": "ea594567d9256cec3c81ba9fb49ca847576a3f1fef9c909458e2fcc1c79cb277",
+          "environment": "offline",
+          "limitations": "Disposable QEMU only. No physical H616 CID-to-descriptor mapping, SD boot-chain trust, physical eMMC write, recovery validation or release qualification is established. The signed job and keys are synthetic test material. H12 remains open.",
+          "method": "Compared the dedicated qemu-reimage builder path and resulting bundle/manifest against the default read-only diagnostic builder. Confirmed only the dedicated mode includes writer material; it emits no H616 SD image, loader, claim trigger or deployable boot path.",
+          "profile": "QEMU virt with synthetic MMC inventory mapped to disposable regular-file-backed target",
+          "source_commit": "d85b5e572464d1526c2d96266c602b1661dc7fd5",
+          "source_sha256": {
+            "scripts/build_qemu_reimage_mode.py": "b9dc2bd02b17d1f326445367e3f2d3d362452a3309cb1dedd8a2a41d93484824",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "9b9c16892aadcb1e231785fb5248d823821e499afb0b5fd5b4c9ff958026e79a",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-signing-key.pem": "d491f5e13641ca40b22e2b0f87c277c2faa87793c3f7be1ea11ec7c82acff1af",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-verification-key.pem": "ee3b19c1538b4ce509616e4dc44f697161095ab1d2c0b3f1b0c26589f44cf434",
+            "tests/host_qemu_sd_network_emmc_write.py": "873fd9c22637bb8f86e7b54a133c9da9a43caa9b5c7f1344c451263eae6766d0",
+            "tests/sv08_reimage_signature.py": "367cfb50392249d1578ea4a2bab045b28e66ce216739044a34ca4f4ddccb2cc4",
+            "tests/test_qemu_reimage_mode.py": "2c6b6900d7f0f6af73a8f7cbdf603aa766f0e9c79b0bdc5bfc339d49533365cf",
+            "tests/test_sd_network_emmc_write.py": "59f4573cf5491eb507e0d90bc16f8a7de19f80919bb7fe1233b779d4cf884a56"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nrm-02",
+          "document": "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md",
+          "document_sha256": "ea594567d9256cec3c81ba9fb49ca847576a3f1fef9c909458e2fcc1c79cb277",
+          "environment": "offline",
+          "limitations": "Disposable QEMU only. No physical H616 CID-to-descriptor mapping, SD boot-chain trust, physical eMMC write, recovery validation or release qualification is established. The signed job and keys are synthetic test material. H12 remains open.",
+          "method": "Ran focused tests for canonical signed-job admission, trusted policy separation, altered/unsigned/stale/wrong-key rejection, identity/source/layout refusal and guest pinned-byte checks. Strictly compiled the shared ARM64 writer. Used only committed synthetic verification/signing keys and synthetic CID.",
+          "profile": "QEMU virt with synthetic MMC inventory mapped to disposable regular-file-backed target",
+          "source_commit": "d85b5e572464d1526c2d96266c602b1661dc7fd5",
+          "source_sha256": {
+            "scripts/build_qemu_reimage_mode.py": "b9dc2bd02b17d1f326445367e3f2d3d362452a3309cb1dedd8a2a41d93484824",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "9b9c16892aadcb1e231785fb5248d823821e499afb0b5fd5b4c9ff958026e79a",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-signing-key.pem": "d491f5e13641ca40b22e2b0f87c277c2faa87793c3f7be1ea11ec7c82acff1af",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-verification-key.pem": "ee3b19c1538b4ce509616e4dc44f697161095ab1d2c0b3f1b0c26589f44cf434",
+            "tests/host_qemu_sd_network_emmc_write.py": "873fd9c22637bb8f86e7b54a133c9da9a43caa9b5c7f1344c451263eae6766d0",
+            "tests/sv08_reimage_signature.py": "367cfb50392249d1578ea4a2bab045b28e66ce216739044a34ca4f4ddccb2cc4",
+            "tests/test_qemu_reimage_mode.py": "2c6b6900d7f0f6af73a8f7cbdf603aa766f0e9c79b0bdc5bfc339d49533365cf",
+            "tests/test_sd_network_emmc_write.py": "59f4573cf5491eb507e0d90bc16f8a7de19f80919bb7fe1233b779d4cf884a56"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nrm-03",
+          "document": "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md",
+          "document_sha256": "ea594567d9256cec3c81ba9fb49ca847576a3f1fef9c909458e2fcc1c79cb277",
+          "environment": "offline",
+          "limitations": "Disposable QEMU only. No physical H616 CID-to-descriptor mapping, SD boot-chain trust, physical eMMC write, recovery validation or release qualification is established. The signed job and keys are synthetic test material. H12 remains open.",
+          "method": "Ran three disposable QEMU cases on Beelink: full transfer plus guest and independent host readback, wrong CID refusal/replay, and injected partial write/replay. Checked source/readback hashes, GPT CRCs, disk GUID, six partition entries, claim consumption, target prefix/unchanged target and no success/retry. Raw receipts remain under local/integration-evidence/network-emmc-reimage-mode.",
+          "profile": "QEMU virt with synthetic MMC inventory mapped to disposable regular-file-backed target",
+          "source_commit": "d85b5e572464d1526c2d96266c602b1661dc7fd5",
+          "source_sha256": {
+            "scripts/build_qemu_reimage_mode.py": "b9dc2bd02b17d1f326445367e3f2d3d362452a3309cb1dedd8a2a41d93484824",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "9b9c16892aadcb1e231785fb5248d823821e499afb0b5fd5b4c9ff958026e79a",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-signing-key.pem": "d491f5e13641ca40b22e2b0f87c277c2faa87793c3f7be1ea11ec7c82acff1af",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-verification-key.pem": "ee3b19c1538b4ce509616e4dc44f697161095ab1d2c0b3f1b0c26589f44cf434",
+            "tests/host_qemu_sd_network_emmc_write.py": "873fd9c22637bb8f86e7b54a133c9da9a43caa9b5c7f1344c451263eae6766d0",
+            "tests/sv08_reimage_signature.py": "367cfb50392249d1578ea4a2bab045b28e66ce216739044a34ca4f4ddccb2cc4",
+            "tests/test_qemu_reimage_mode.py": "2c6b6900d7f0f6af73a8f7cbdf603aa766f0e9c79b0bdc5bfc339d49533365cf",
+            "tests/test_sd_network_emmc_write.py": "59f4573cf5491eb507e0d90bc16f8a7de19f80919bb7fe1233b779d4cf884a56"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nrm-04",
+          "document": "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md",
+          "document_sha256": "ea594567d9256cec3c81ba9fb49ca847576a3f1fef9c909458e2fcc1c79cb277",
+          "environment": "offline",
+          "limitations": "Disposable QEMU only. No physical H616 CID-to-descriptor mapping, SD boot-chain trust, physical eMMC write, recovery validation or release qualification is established. The signed job and keys are synthetic test material. H12 remains open.",
+          "method": "Ran 23 focused unit tests, strict static ARM64 writer compilation, deterministic bundle reproducibility, git/diff and documentation checks, plus the bounded Beelink QEMU integration with preflight capacity and resource logging. Review report records exact source, receipt, resource and artifact hashes.",
+          "profile": "QEMU virt with synthetic MMC inventory mapped to disposable regular-file-backed target",
+          "source_commit": "d85b5e572464d1526c2d96266c602b1661dc7fd5",
+          "source_sha256": {
+            "scripts/build_qemu_reimage_mode.py": "b9dc2bd02b17d1f326445367e3f2d3d362452a3309cb1dedd8a2a41d93484824",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "9b9c16892aadcb1e231785fb5248d823821e499afb0b5fd5b4c9ff958026e79a",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-signing-key.pem": "d491f5e13641ca40b22e2b0f87c277c2faa87793c3f7be1ea11ec7c82acff1af",
+            "tests/fixtures/sd-network-root/synthetic-keys/test-verification-key.pem": "ee3b19c1538b4ce509616e4dc44f697161095ab1d2c0b3f1b0c26589f44cf434",
+            "tests/host_qemu_sd_network_emmc_write.py": "873fd9c22637bb8f86e7b54a133c9da9a43caa9b5c7f1344c451263eae6766d0",
+            "tests/sv08_reimage_signature.py": "367cfb50392249d1578ea4a2bab045b28e66ce216739044a34ca4f4ddccb2cc4",
+            "tests/test_qemu_reimage_mode.py": "2c6b6900d7f0f6af73a8f7cbdf603aa766f0e9c79b0bdc5bfc339d49533365cf",
+            "tests/test_sd_network_emmc_write.py": "59f4573cf5491eb507e0d90bc16f8a7de19f80919bb7fe1233b779d4cf884a56"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-reimage-mode",
-      "implementation": null,
+      "implementation": {
+        "actor": "reimage_mode_implementer",
+        "run": "5c9d21f623704f9fb9f91e5a6bc2017b",
+        "session": "implement-network-emmc-reimage-mode-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Implement and verify the isolated QEMU-backed reimage image mode",
-      "verification": null
+      "verification": {
+        "decision_sha256": "65cac0c9572645a92c188596626e769e9eccca2c25b9a7ea9fd90ecd86902fba",
+        "evidence_sha256": "f28df5372d9128e937fbcbf3d4f7ca4801ed0b101a0cb75ec0536ad2e17fd332",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete nine-file diff at clean HEAD d85b5e572464d1526c2d96266c602b1661dc7fd5. Source and report hashes match the submitted evidence. Reproduced 23 focused tests; the strict ARM64 build and workflow checks passed. Beelink receipts confirm full-image QEMU write and readback, both GPT checks, and terminal wrong-CID and partial-write cases with consumed claims and no retry. No material concerns within the approved offline scope. Physical eMMC behavior and H616 target identity remain unverified under H12.",
+        "reviewer": "/root/verify_network_reimage_mode",
+        "session": "feature-verifier-network-emmc-reimage-mode-20260926"
+      }
     }
   ],
   "title": "Build a separate one-shot network eMMC reimage image"
