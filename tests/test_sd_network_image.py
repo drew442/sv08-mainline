@@ -43,6 +43,8 @@ class SdNetworkImageTests(unittest.TestCase):
 # CONFIG_BOOTSTD is not set
 # CONFIG_CMD_SAVEENV is not set
 CONFIG_CMD_HASH=y
+CONFIG_HASH_VERIFY=y
+CONFIG_SHA256=y
 CONFIG_MMC_SUNXI_SLOT_EXTRA=-1
 CONFIG_DEFAULT_DEVICE_TREE="allwinner/sun50i-h616-sovol-sv08-sd-network"
 CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="sv08-sd-network.env"
@@ -53,6 +55,35 @@ CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="sv08-sd-network.env"
             self.assertEqual(sd.inspect_config(path)['CONFIG_ENV_IS_NOWHERE'], 'y')
             path.write_text(safe.replace('# CONFIG_ENV_IS_IN_MMC is not set',
                                          'CONFIG_ENV_IS_IN_MMC=y'))
+            with self.assertRaisesRegex(ValueError, 'Unsafe effective'):
+                sd.inspect_config(path)
+
+    def test_effective_config_requires_hash_verification_command(self):
+        safe = '''CONFIG_ENV_IS_NOWHERE=y
+# CONFIG_ENV_IS_IN_MMC is not set
+# CONFIG_ENV_IS_IN_FAT is not set
+# CONFIG_ENV_IS_IN_EXT4 is not set
+# CONFIG_ENV_REDUNDANT is not set
+# CONFIG_BOOTMETH_RAUC is not set
+# CONFIG_BOOTSTD is not set
+# CONFIG_CMD_SAVEENV is not set
+CONFIG_CMD_HASH=y
+CONFIG_HASH_VERIFY=y
+CONFIG_SHA256=y
+CONFIG_MMC_SUNXI_SLOT_EXTRA=-1
+CONFIG_DEFAULT_DEVICE_TREE="allwinner/sun50i-h616-sovol-sv08-sd-network"
+CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="sv08-sd-network.env"
+'''
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / '.config'
+            path.write_text(safe.replace('CONFIG_HASH_VERIFY=y',
+                                         '# CONFIG_HASH_VERIFY is not set'))
+            with self.assertRaisesRegex(ValueError, 'Unsafe effective'):
+                sd.inspect_config(path)
+            path.write_text(safe)
+            self.assertEqual(sd.inspect_config(path)['CONFIG_HASH_VERIFY'], 'y')
+            path.write_text(safe.replace('CONFIG_SHA256=y',
+                                         '# CONFIG_SHA256 is not set'))
             with self.assertRaisesRegex(ValueError, 'Unsafe effective'):
                 sd.inspect_config(path)
 

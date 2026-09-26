@@ -150,11 +150,15 @@ failure.
 On 2026-09-25 the reviewed v5 replacement booted from slot A and reached SSH over
 Wi-Fi with persistent `/data` mounted. Cockpit failed because TLS certificate
 generation targeted the read-only root. Boot-health confirmation remains masked
-and the latest environment reports two remaining A attempts, so no further reboot
-is planned until that state is reconciled. The [v5 record](hardware/host-board-image-20260925-v5-first-boot.md)
+and a separately reviewed live re-arm set `BOOT_A_LEFT=3` without rebooting.
+That does not confirm A healthy; the counter has not been re-read after the later
+SD trial. The [v5 record](hardware/host-board-image-20260925-v5-first-boot.md)
 retains the evidence and limitations. A removable-SD/network-root path is under
-[read-only investigation](hardware/host-network-boot-investigation.md); its
-U-Boot Ethernet path and board SD priority remain unproven.
+[read-only investigation](hardware/host-network-boot-investigation.md). The
+first physical trial selected the SD loader, proving SD priority on this board,
+but stopped at U-Boot script verification before Linux. U-Boot networking is
+intentionally absent; physical Linux Ethernet and NFS-root behavior remain open.
+See the [first-boot record](hardware/host-sd-network-first-boot-20260925.md).
 
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 

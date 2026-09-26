@@ -111,23 +111,28 @@ running the root probe after 35.03 seconds. The harness exited and no QEMU,
 Ganesha or rpcbind process remained. The results are in ignored
 `qemu-result.json` and serial logs; only sanitized outcomes are recorded here.
 
-## Physical gate and stop conditions
+## Physical result and retry gate
 
-Before the supervised physical boot, independently review the final image
-bytes, compiled environment/device tree and this evidence. The eMMC v5 A-slot
-health confirmation remains masked; a separately reviewed live operation
-re-armed three A attempts without rebooting. Recheck that same A boot and its
-counter before serial reconnection; do not treat this as health confirmation.
-Reserve Beelink's hardcoded address, confirm its temporary read-only NFS export
-from the generated tree, connect printer Ethernet to the same LAN, and start
-receive-only UART capture before serial reconnection/power-on.
-Use the owner-approved spare SD only. If the UART does not clearly show the SD
-loader, the boot path reaches eMMC/RAUC, the expected NFS root cannot be
-mounted, the probe does not report a read-only root and tmpfs `/data`, or any
-printer output activates, stop the trial and preserve the trace. Do not use a
-failed boot as evidence of SD priority or eMMC isolation. The HDMI/GUI and
-printer stack are outside this prototype. On success, the diagnostic init powers
-the host off; removing the card and restoring normal power is a human step.
+The [first physical result](host-sd-network-first-boot-20260925.md) shows two
+SD loader starts, establishing that SD is selected on this printer with the
+card present. U-Boot stopped before Linux because the reviewed v1 configuration
+did not enable `CONFIG_HASH_VERIFY`, even though its script uses `hash -v`.
+U-Boot has no Ethernet driver by design; it never reached the kernel NFS path.
+This test does not establish eMMC isolation, network-root operation, or safe
+fallback. The exact cause of the repeated loader start is not established.
+
+Before retrying, independently review the corrected v2 image bytes and compiled
+configuration. The eMMC v5 A-slot health confirmation remains masked; a
+separately reviewed live operation had re-armed three A attempts before this
+trial. The current counter has not been re-read since the trial, so do not infer
+its present value. The owner confirmed Beelink's reserved hardcoded address and
+the sanitized read-only export has passed a local NFSv3/TCP mount, hash check
+and write-refusal test. Re-arm receive-only UART capture before serial
+reconnection/power-on. Use only the owner-approved disposable SD and make one
+retry. Stop if the SD loader is not clear, eMMC U-Boot/RAUC appears, the NFS
+root/probe fails, or any printer output activates. HDMI/GUI and the printer
+stack are outside this prototype; the diagnostic init powers the host off on
+success.
 
 The local investigation and source limits are in
 [`host-network-boot-investigation.md`](host-network-boot-investigation.md).

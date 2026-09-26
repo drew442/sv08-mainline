@@ -30,13 +30,11 @@ the source image. The resulting partition 1 is the expected 128 MiB FAT boot
 partition. The private target-identity, write, and readback transcript is in
 ignored `local/sd-network-physical-20260925/`.
 
-## Not yet physically tested
+## Physical result
 
-The SD has not been inserted in the printer and no boot was attempted. The
-printer still runs its v5 eMMC A image; the separate
-[A-attempt re-arm record](host-board-image-20260925-v5-a-rearm.md) documents
-its reviewed counter update and confirms that no reboot occurred. SD priority,
-printer Ethernet/NFS path, eMMC isolation and fallback remain unverified. The
+The owner later inserted this card into the printer. The [first-boot record](host-sd-network-first-boot-20260925.md)
+shows two SD-loader starts and a fail-closed U-Boot script stop before Linux.
+The printer's Ethernet/NFS path, eMMC isolation and fallback remain unverified. The
 temporary sanitized export at `/srv/sv08-sd-nfs` is configured for NFSv3 with
 read-only and root-squash options. A Beelink-local NFSv3/TCP client mounted it
 read-only, confirmed the init hash
@@ -46,3 +44,26 @@ server/export path only, not printer reachability. Beelink currently has
 `192.168.1.136` at MAC `84:39:be:9e:10:d9`; the image hardcodes `.136`, so the
 owner must reserve that address before a physical test. Receive-only UART
 capture is active and must be confirmed ready before serial reconnection.
+
+## Corrected retry candidate
+
+The first physical attempt reached SD U-Boot but failed before Linux because
+the `hash -v` command was missing from the compiled configuration. The
+corrected, cleanly rebuilt v2 image is 201,326,592 bytes with SHA-256
+`53cc0b2696add39dae2446c76e1b075f324174713fbc9025aaf20a9aa63d08a`. Its
+matching ignored receipt is
+`local/sd-network-physical-20260925/composition-v2.json`. An independent
+high-consequence review returned **GO WITH CONDITIONS** for that exact hash.
+Before writing, freshly identify the unmounted SU02G card by CID, capacity and
+reader path, transfer and verify the exact image hash, write only the first
+192 MiB, flush, and read back that prefix directly to the same hash. Keep the
+factory eMMC stored. Do not extend or sanitize the remainder of the SD card.
+
+For the one retry, verify Beelink's `.136` reservation and the read-only export,
+fully isolate printer power (including USB-serial back-power) during the card
+move, and arm receive-only UART before reconnecting serial. Send no serial
+input. The eMMC A boot counter is unknown after the two prior SD-loader starts;
+do not infer that it remains at three. Stop after this single attempt or at any
+repeated reset, eMMC/RAUC selection, hash/NFS failure or printer output. Inspect
+the counter before considering another boot. The actual Linux Ethernet/DHCP/NFS
+path has not yet been proven.

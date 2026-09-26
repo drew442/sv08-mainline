@@ -249,15 +249,18 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   the disposable SD and passed direct readback; see the [media-write record](host-sd-network-card-write-20260925.md).
   The v5 A counter was separately re-armed to three attempts, but A remains
   unconfirmed; see its [re-arm record](host-board-image-20260925-v5-a-rearm.md).
-  Remaining steps are deduplicated in [H09](coordinated-human-tasks.md): reserve
-  Beelink's current `192.168.1.136` to MAC `84:39:be:9e:10:d9`, confirm the
-  reservation, connect printer Ethernet, and seat the SD only with all printer
-  power isolated. The temporary sanitized NFSv3 export is serving read-only;
-  Beelink mounted it read-only and verified the init hash and rejected a write.
-  UART capture is already active but must be confirmed ready immediately before
-  serial reconnection. Then make one supervised boot. Physical SD priority,
-  printer-to-Beelink network root, eMMC isolation and fallback remain
-  unverified. Do not change router PXE/TFTP options.
+  The first [physical SD attempt](host-sd-network-first-boot-20260925.md)
+  proved SD-loader selection but stopped before Linux: the image omitted
+  `CONFIG_HASH_VERIFY`, required by its existing `hash -v` checks. The SD-only
+  configuration intentionally has serial console and no U-Boot Ethernet, so
+  blank HDMI and `No ethernet found` at U-Boot were expected. DHCP traffic used
+  the previously identified Wi-Fi MAC, not proof of wired Linux networking.
+  H09 in [the coordinated task list](coordinated-human-tasks.md) groups the
+  corrected artifact review, one SD rewrite/readback and one supervised retry.
+  The temporary sanitized NFSv3 export is serving read-only; Beelink mounted it
+  read-only and verified its init hash and write refusal. Physical Linux DHCP,
+  NFS root, eMMC isolation and fallback remain unverified. Do not change router
+  PXE/TFTP options.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.

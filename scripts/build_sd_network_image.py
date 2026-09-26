@@ -119,7 +119,9 @@ def inspect_config(config):
         'CONFIG_ENV_IS_IN_FAT': 'n', 'CONFIG_ENV_IS_IN_EXT4': 'n',
         'CONFIG_ENV_REDUNDANT': 'n', 'CONFIG_BOOTMETH_RAUC': 'n',
         'CONFIG_BOOTSTD': 'n', 'CONFIG_CMD_SAVEENV': 'n',
-        'CONFIG_CMD_HASH': 'y', 'CONFIG_MMC_SUNXI_SLOT_EXTRA': '-1',
+        'CONFIG_CMD_HASH': 'y', 'CONFIG_HASH_VERIFY': 'y',
+        'CONFIG_SHA256': 'y',
+        'CONFIG_MMC_SUNXI_SLOT_EXTRA': '-1',
         'CONFIG_DEFAULT_DEVICE_TREE': '"allwinner/sun50i-h616-sovol-sv08-sd-network"',
         'CONFIG_ENV_DEFAULT_ENV_TEXT_FILE': '"sv08-sd-network.env"',
     }
