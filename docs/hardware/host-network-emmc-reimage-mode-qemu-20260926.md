@@ -1,6 +1,6 @@
 # Isolated QEMU reimage mode
 
-Status: implementation and focused checks complete; full QEMU integration and
+Status: implementation and three disposable QEMU integration cases passed;
 independent delivery review pending. Date: 2026-09-26. Scope: disposable QEMU
 `virt` only. This is **not a deployable printer image**.
 
@@ -65,7 +65,32 @@ passed
 
 The builder reproducibility test makes two independent roots from the same
 signed job and compares their full manifest and writer bytes. Full QEMU
-transfer, readback, GPT checks, runtime and resource numbers must be added from
-the assigned Beelink integration run before this feature can pass `nrm-03`.
-The test must use a bounded disposable regular-file target and recheck free
-space first; the development VM is too full for a whole-image run.
+transfer, readback and failure tests ran on Beelink 2026-09-26 from source
+commit `7e2dee5f336cead95a7be951b4dfc8dee5a46167` (tree
+`c596c2032e2688b70e77a95cd32a0c76246ad059`, matching staged file digest
+`81d5095be576e853770991ca8c971fe88b57e82ec97dd987ed2ca79095c12b4a`). The
+work used a private network/mount namespace, bounded `timeout -k 10 4700`,
+2 GiB ARM64 QEMU guest and disposable regular-file-backed target. Beelink had
+10,758,328,320 bytes free and 7,398,158,336 bytes `MemAvailable` at preflight;
+after cleanup it had 10,749,894,656 bytes free. The development VM was not used
+for raw image or target storage.
+
+| Case | Result | Elapsed / max RSS | Claim and target | Receipt SHA-256 | Serial SHA-256 |
+| --- | --- | --- | --- | --- | --- |
+| Full signed-job transfer | Passed: source, guest readback and independent host readback all matched 7,818,182,656 bytes at SHA-256 `7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec`; primary and backup GPT CRCs, disk GUID and all six partition records matched. | 43:51.62 / 2,311,484 KiB | Claim consumed before write; 32,000,000,000-byte QEMU target; source extent remained 7,818,182,656 bytes. | `23b42f83656fdaf2c88de58ca297d2fb032b5e88ce12af25cabfe44893d76d58` | `4d5c4ee4374e3ea7210135102fb0ab7865d528b6473812b76828d15086756824` |
+| Wrong CID | Passed refusal at `SV08_QEMU_REIMAGE_REFUSED_SYNTHETIC_MMC`; claim consumed, replay HTTP 409, target unchanged, no success receipt. | 1:26.33 / 387,828 KiB | Separate disposable target. | `63bfe3690539d453c86e8c134448ebb9f5ea9531135706f7aa0962e6c86a3359` | `0d3cdf0f9822781926619cf8d7f24ab4fc04819a92ed68c3e5544bce31bd7635` |
+| Partial write | Passed terminal stop at `SV08_QEMU_REIMAGE_INJECTED_PARTIAL_WRITE`; first 1 MiB matched the source, claim consumed, replay HTTP 409, no success receipt or retry. | 17:14.76 / 2,306,260 KiB | Separate disposable target. | `6680de6814e18379bc32e6e5c69ac8e414b4f1753a553cb0165ebbe26b346fef` | `3f24aa8557ae85a66fb08dd1bee64e082f25ce6965b7210cac66fa9c64fd3870` |
+
+The full guest emitted two `GFP_ATOMIC` allocation warnings, but no OOM kill or
+NFS failure; transfer, guest readback and independent host validation passed.
+Peak guest-host RSS values come from `/usr/bin/time -v`; exact raw result JSON,
+serial logs and timing records are retained privately under
+`local/integration-evidence/network-emmc-reimage-mode/{full,wrong-cid,partial-write}`.
+The public receipt hashes above were checked against those private files.
+
+This is still only QEMU synthetic evidence. In particular, it does not show
+that the H616 kernel maps the live eMMC CID to the expected opened descriptor,
+does not test physical eMMC power-loss or recovery behavior, and does not
+authorize an eMMC or boot-policy write. H12 still requires live CID comparison,
+exact image/target/recovery review, independent high-consequence review and
+explicit action authorization before a physical test.
