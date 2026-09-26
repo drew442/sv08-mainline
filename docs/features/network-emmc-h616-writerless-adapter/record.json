@@ -112,10 +112,14 @@
       "evidence": [],
       "human_task": null,
       "id": "commissioning-adapter",
-      "implementation": null,
+      "implementation": {
+        "actor": "h616_reimage_implementer",
+        "run": "f3f6d02acedc4827ab31abd6c58fbec7",
+        "session": "implement-network-emmc-h616-adapter-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Build and test the opt-in H616 commissioning adapter",
       "verification": null
     }
