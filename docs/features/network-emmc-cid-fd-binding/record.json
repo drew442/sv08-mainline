@@ -103,15 +103,94 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ncfb-01",
+          "document": "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md",
+          "document_sha256": "c8943130e1b0a4a4a9ad68fd116e5e987e9053b2c92d7fd2bf2b58e4995f7159",
+          "environment": "offline",
+          "limitations": "Synthetic MMC inventory only. The expected CID is not a real printer CID, and QEMU USB /dev/sda does not establish the H616 kernel's eMMC topology.",
+          "method": "36 focused tests include synthetic matching/mismatched, malformed, wrong-type/capacity, renamed and ambiguous-card refusal, plus coverage that network job input has no expected-CID override. The QEMU-admitted expected CID is compiled-in and test-only.",
+          "profile": "QEMU synthetic MMC adapter mapped to disposable USB disk major/minor 8:0",
+          "source_commit": "dcc2c34a98ef3209b1dd3bafde7153565a2b934b",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "7b706c5632ee964630be5920b1e2d11c18f7d662911d40608f996db33472382a",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "f74c80317dfa6f40d0999b8398ce46468aa9ce92cef2e86f787131edeb631de0",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "1b120953a35ea848ed858f1986666813f53ce890bcb35b824e4479db87359a30",
+            "tests/test_sd_network_emmc_write.py": "9c3509a5a7fd903ee64267785189d02e79e03401d6f4a36fdccf5a581eead837"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ncfb-02",
+          "document": "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md",
+          "document_sha256": "c8943130e1b0a4a4a9ad68fd116e5e987e9053b2c92d7fd2bf2b58e4995f7159",
+          "environment": "offline",
+          "limitations": "Synthetic mapping and QEMU block adapter only; does not prove live H616 mapping or eliminate all hotplug/kernel mapping races.",
+          "method": "Writer compares the opened /dev/sda st_rdev with the admitted synthetic MMC dev_t and real QEMU sysfs /sys/block/sda/dev, rechecks synthetic CID/inventory/dev_t immediately before first write, and retains the same descriptor through write, flush and full readback. Wrong-CID QEMU receipt proves refusal before any target block allocation; native tests cover malformed and changed mappings.",
+          "profile": "QEMU synthetic MMC adapter mapped to disposable USB disk major/minor 8:0",
+          "source_commit": "dcc2c34a98ef3209b1dd3bafde7153565a2b934b",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "7b706c5632ee964630be5920b1e2d11c18f7d662911d40608f996db33472382a",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "f74c80317dfa6f40d0999b8398ce46468aa9ce92cef2e86f787131edeb631de0",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "1b120953a35ea848ed858f1986666813f53ce890bcb35b824e4479db87359a30",
+            "tests/test_sd_network_emmc_write.py": "9c3509a5a7fd903ee64267785189d02e79e03401d6f4a36fdccf5a581eead837"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ncfb-03",
+          "document": "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md",
+          "document_sha256": "c8943130e1b0a4a4a9ad68fd116e5e987e9053b2c92d7fd2bf2b58e4995f7159",
+          "environment": "offline",
+          "limitations": "QEMU USB target and explicit synthetic MMC-to-USB dev_t adapter only. No printer, physical eMMC, live CID, physical write, or real H616 sysfs mapping used. Nine guest GFP_ATOMIC warnings occurred without OOM/NFS errors.",
+          "method": "Fresh bounded QEMU full transfer/host readback passed for all 7,818,182,656 bytes, source SHA-256 7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec; both GPT CRCs and six partition entries matched. Result JSON SHA-256 711507ab2d2ade46ddc3120f3c15950597a824429e7d3d254155750112b5d4cc. Wrong-CID refusal result SHA-256 0acb6ba2e83d18ad476774f7f748948b55bf822b3138de1a6df58ad4336d4437; partial-write result SHA-256 c8e5db759906a403179ffa7349dec6a9a8e210cd9af8bc58e0cb63c4a2cc9223. All claim states remained consumed, replay was 409, and failures had no success receipt or retry. QEMU integration ran with disposable regular-file media and isolated namespaces on Beelink; full run took 44:11.84 with 2,309,768 KiB max RSS and >10.7GB free scratch after completion.",
+          "profile": "QEMU synthetic target SV08_QEMU_REIMAGE_TEST_ONLY",
+          "source_commit": "dcc2c34a98ef3209b1dd3bafde7153565a2b934b",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "f74c80317dfa6f40d0999b8398ce46468aa9ce92cef2e86f787131edeb631de0",
+            "tests/host_qemu_sd_network_emmc_write.py": "396fb5337e3052e48fc0c59080f26508c033cf45d23981bec8505dc4e0db60d5"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ncfb-04",
+          "document": "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md",
+          "document_sha256": "c8943130e1b0a4a4a9ad68fd116e5e987e9053b2c92d7fd2bf2b58e4995f7159",
+          "environment": "offline",
+          "limitations": "Offline and QEMU-only evidence. Production SD/NFS builder and diagnostic remain unchanged; H12, live CID comparison, exact artifact/target/recovery review, high-consequence review and physical authorization remain open.",
+          "method": "36 focused tests passed, strict static ARM64 build passed with -Os -D_FORTIFY_SOURCE=2 -Wall -Wextra -Werror, git diff --check passed, workflow validation passed, and report links/source/result hashes were checked. Diff changes only test fixtures/harness/tests and this report; scripts/build_sd_network_image.py and tests/fixtures/sd-network-root/init.c are unchanged.",
+          "profile": "QEMU/offline only; not a validated printer hardware profile",
+          "source_commit": "dcc2c34a98ef3209b1dd3bafde7153565a2b934b",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "7b706c5632ee964630be5920b1e2d11c18f7d662911d40608f996db33472382a",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "f74c80317dfa6f40d0999b8398ce46468aa9ce92cef2e86f787131edeb631de0",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "1b120953a35ea848ed858f1986666813f53ce890bcb35b824e4479db87359a30",
+            "tests/host_qemu_sd_network_emmc_write.py": "396fb5337e3052e48fc0c59080f26508c033cf45d23981bec8505dc4e0db60d5",
+            "tests/test_sd_network_emmc_write.py": "9c3509a5a7fd903ee64267785189d02e79e03401d6f4a36fdccf5a581eead837"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-cid-fd-binding",
-      "implementation": null,
+      "implementation": {
+        "actor": "feature-implementer",
+        "run": "30254038d9c941fe818222fe0b25eb79",
+        "session": "implement-network-emmc-cid-fd-binding-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Join synthetic CID admission to the opened QEMU writer descriptor",
-      "verification": null
+      "verification": {
+        "decision_sha256": "5c9a36008bb357e5f0f775bb7de68f92c91ebe1daa1aa79a879d11cff1795b75",
+        "evidence_sha256": "626ecdd87f956e74da9ba8b3d0e917dd67f1d57f5882e447d2dc17d126fcafd3",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete six-file diff from 8e54f26 to clean HEAD dcc2c34, the approved scope, source and report hashes, and three hashed QEMU result receipts. Reproduced all 36 focused tests and the strict static ARM64 build; both passed. The production SD/NFS builder and init are unchanged. Evidence supports the synthetic QEMU CID-to-descriptor binding and its refusal and interrupted-write behavior. It does not establish live H616 eMMC mapping or authorize a printer write; H12 remains open.",
+        "reviewer": "feature-verifier /root/verify_cid_fd_binding",
+        "session": "independent-network-emmc-cid-fd-binding-verification-20260926"
+      }
     }
   ],
   "title": "Bind synthetic eMMC CID admission to the opened QEMU writer descriptor"
