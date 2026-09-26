@@ -187,19 +187,25 @@ class TransactionTests(unittest.TestCase):
         self.assertNotIn('bad', self.backend.calls)
         self.assertNotIn('install', self.backend.calls)
 
-    def test_disarm_write_failure_restores_only_exact_partial_policy(self):
+    def test_disarm_write_failure_does_not_restore_unrecognized_intermediate(self):
+        # Exercise B as a still-bootable previous fallback. Production writes
+        # BOOT_ORDER first, then the attempt counter, so interruption between
+        # those writes leaves this exact intermediate state.
+        self.backend.states['B'] = True
+        self.backend.policy['BOOT_B_LEFT'] = '3'
         def partial_disarm(target, source):
-            # Model fw_setenv succeeding on the attempt counter but failing
-            # before the order update; the journal is still preparing.
-            self.backend.policy['BOOT_'+target+'_LEFT'] = '0'
-            raise OSError('power loss between policy variables')
+            self.backend.policy['BOOT_ORDER'] = 'A'
+            raise OSError('power loss before counter write')
         with patch.object(self.backend, 'disarm_target', side_effect=partial_disarm):
-            with self.assertRaisesRegex(OSError, 'between policy'):
+            with self.assertRaisesRegex(OSError, 'before counter'):
                 self.stage()
         self.assertEqual(self.tx.load()['phase'], 'preparing')
-        self.assertEqual(self.tx.reconcile(self.boot), 'restored-pre-disarm')
-        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A B')
+        with self.assertRaisesRegex(ValueError, 'unexpected boot policy state'):
+            self.tx.reconcile(self.boot)
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
+        self.assertEqual(self.backend.policy['BOOT_B_LEFT'], '3')
         self.assertTrue(self.backend.good('A'))
+        self.assertEqual(self.backend.primary(), 'A')
         self.assertNotIn('install', self.backend.calls)
 
     def test_unknown_partial_disarm_is_left_disabled_and_not_repaired(self):
