@@ -143,3 +143,14 @@ initialization failure repeats, stop using network boot for H10 and use the
 USB-reader path. Do not interpret the halted boot as an eMMC read result or
 infer current A/B counters. Keep the factory module stored and do not change MCU
 firmware.
+
+
+## Current physical precondition
+
+After the retry review, the owner clarified that the spare eMMC is currently not
+installed in the printer. No second boot has occurred. Keep USB serial
+disconnected while reinstalling the spare with all host power removed; leave the
+written SD card in place and the factory eMMC stored. The reviewer subsequently confirmed the same PASS WITH CONDITIONS applies
+once that precondition is met; no new review is needed solely for reinstalling
+the same module. Repeat the NFS/hash/capture checks immediately before the boot.
+Do not reconnect serial or begin the retry while the eMMC is absent.

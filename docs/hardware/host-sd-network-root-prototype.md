@@ -167,5 +167,6 @@ export entry is present. The mount test originated from Beelink's `.136`
 address, not the printer. The independent [Sol high-consequence review](host-sd-network-emmc-probe-review-20260926.md) permits exactly one further supervised boot with conditions. The exact SD image
 was written and passed full direct-I/O readback; see the [H10 write
 receipt](host-sd-network-emmc-probe-card-write-20260926.md) and [current H10
-record](host-sd-network-emmc-probe-20260926.md). The spare eMMC is installed;
-the factory module remains stored.
+record](host-sd-network-emmc-probe-20260926.md). The owner has since confirmed the spare eMMC is not installed. Do not run the
+reviewed retry until it is reinstalled with all host power removed; the factory
+module remains stored.
