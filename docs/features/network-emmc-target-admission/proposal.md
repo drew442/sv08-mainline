@@ -31,8 +31,10 @@ are rejected. Preserve current probe output and read-only behavior.
 
 This supplies a directly testable target-admission building block for later
 writer integration. It does not add or authorize an eMMC writer and does not
-change the QEMU USB-disk target. The helper stays outside the production SD
-image builder until separately reviewed.
+change the QEMU USB-disk target. The shared helper may be compiled into the
+existing production SD image's read-only diagnostic probe; the builder must
+include the helper's source in its provenance manifest. No writer code or
+write-target operation is added to that image.
 
 ## Scope and alternatives
 
@@ -58,8 +60,9 @@ independent high-consequence review and explicit hardware authorization.
   controller, undersized/oversized candidate and multiple matching MMCs all
   fail closed; tests also cover malformed sector metadata.
 - **nta-03** — The existing read-only probe uses the shared helper with no
-  output/probe behavior regression; no block node is opened by the helper and
-  the production SD image builder does not include a writer.
+  output/probe behavior regression; no block node is opened by the helper, its
+  source hash is bound into the builder's provenance manifest, and the
+  production SD image contains no writer.
 - **nta-04** — Existing SD/NFS probe tests, focused native tests, JSON/Markdown
   checks and feature workflow validation pass. Documentation records that the
   helper does not establish unique CID identity or physical write safety.
