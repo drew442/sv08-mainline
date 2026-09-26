@@ -1,10 +1,83 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Separately selected builder mode produces a distinct reimage image; default diagnostic remains read-only with no writer or trigger.",
+      "environment": "offline",
+      "id": "nrm-01"
+    },
+    {
+      "description": "The actual reimage writer path is tested through an explicit synthetic QEMU adapter with separate trusted CID policy and signed job; identity/source/layout failures refuse before target writes.",
+      "environment": "offline",
+      "id": "nrm-02"
+    },
+    {
+      "description": "Disposable QEMU validates full write, flush, same-fd readback, independent host hash/GPT/partition checks, and consumed terminal behavior on wrong identity and interruption.",
+      "environment": "offline",
+      "id": "nrm-03"
+    },
+    {
+      "description": "Focused tests, strict ARM64 build, reproducible artifacts, workflow and documentation checks pass; physical and H616 limits remain explicit and H12 stays open.",
+      "environment": "offline",
+      "id": "nrm-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "nrm-01",
+          "nrm-02",
+          "nrm-04"
+        ],
+        "text": "Keep this output explicitly nondeployable and QEMU-only. The dedicated mode must use an explicit synthetic target adapter and must refuse physical block targets even when that mode is selected. Production target provisioning, trigger, and physical adapter require a later separately reviewed scope. Verify that the default diagnostic contains no writer, claim trigger, or write-capable service."
+      },
+      {
+        "checks": [
+          "nrm-02"
+        ],
+        "text": "Specify and test the signed-job contract: a test-local trusted verification key outside the network job, canonical signed fields binding job ID, source hash and length, exact 8 GB GPT/six-partition map, and the separately trusted target policy. Reject unsigned, altered, stale, or wrong-key jobs before target open. Commit only synthetic keys and CIDs; defer production key provisioning."
+      },
+      {
+        "checks": [
+          "nrm-02",
+          "nrm-03"
+        ],
+        "text": "Keep the durable single-use claim bound to the verified job digest and completed before target open. Hold one source descriptor and the admitted target descriptor through transfer and full readback; recheck CID-to-dev_t at the write boundary. A changed source, claim uncertainty, identity drift, interruption, flush failure, or readback failure must produce no success or automatic retry and must leave a terminal record."
+      },
+      {
+        "checks": [
+          "nrm-02",
+          "nrm-03",
+          "nrm-04"
+        ],
+        "text": "Run full-image QEMU work on Beelink only after checking its free space and a bounded scratch allocation; the VM's roughly 4.4 GB free is insufficient. Use the observed 61,079,552-sector target capacity in the synthetic H616 admission test while retaining the reviewed 8 GB image extent. Record exact source, output, and readback hashes, both GPTs, all six partitions, runtime/resource use, and QEMU-only evidence limits."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "62b5ab48b46289abc615e47fd6d3da68ebe472302242c719a3bddd3f3fbce23f",
+    "rationale": "Decision 0018 authorizes an offline QEMU prototype toward the owner's writerless reimage goal. The proposal addresses the gap shown by the read-only SD/NFS builder and the joined CID-to-descriptor QEMU report: the reviewed writer is still a test fixture, and H12 has no production writer or current live-CID match. A separate image mode is useful if it exercises shared writer logic while preserving the diagnostic image. Approval covers offline development and disposable QEMU evidence only. Decision 0018 explicitly excludes a deployable image and physical-write authority, so the mode must remain incapable of addressing a physical target in this delivery. H12 retains exact artifact and live-target review, recovery planning, independent high-consequence review, and explicit action authorization.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-cid-admission/proposal.md": "937ea3353d36f39f62d754ca07ff28885ce4f500a54d90ed7a73dd69a57697c9",
+      "docs/features/network-emmc-cid-fd-binding/proposal.md": "32c57df09a8f937a677784c7c5e3d08d12674f3a4670317bb0c8899cd1a6cbea",
+      "docs/features/network-emmc-fd-binding/proposal.md": "5d17c68783a95afa437b3e2a135565dce0d723eabb7e2389e6163867cd8b0518",
+      "docs/features/network-emmc-one-shot/proposal.md": "5aec86dc704622d55be31125704191745d68d7a9f3cab6be3ef419bf6abf2da4",
+      "docs/features/network-emmc-reimage/proposal.md": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md": "c8943130e1b0a4a4a9ad68fd116e5e987e9053b2c92d7fd2bf2b58e4995f7159",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf"
+    },
+    "reviewer": "/root/approve_network_reimage_mode",
+    "scope_sha256": "9ca09f547c377d027ae6f14b37fd2404bf15f2d0f79a5148ae426066e4eb13e0",
+    "session": "feature-approver-network-emmc-reimage-mode-20260926"
+  },
   "format_version": 1,
   "id": "network-emmc-reimage-mode",
   "kind": "feature",
-  "title": "Build a separate one-shot network eMMC reimage image",
-  "author": "root/coordinator",
-  "created": "2026-09-26",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/network-emmc-reimage-mode/proposal.md",
   "requirements": [
@@ -18,50 +91,27 @@
     "docs/hardware/coordinated-human-tasks.md",
     "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "nrm-01",
-      "description": "Separately selected builder mode produces a distinct reimage image; default diagnostic remains read-only with no writer or trigger.",
-      "environment": "offline"
-    },
-    {
-      "id": "nrm-02",
-      "description": "The actual reimage writer path is tested through an explicit synthetic QEMU adapter with separate trusted CID policy and signed job; identity/source/layout failures refuse before target writes.",
-      "environment": "offline"
-    },
-    {
-      "id": "nrm-03",
-      "description": "Disposable QEMU validates full write, flush, same-fd readback, independent host hash/GPT/partition checks, and consumed terminal behavior on wrong identity and interruption.",
-      "environment": "offline"
-    },
-    {
-      "id": "nrm-04",
-      "description": "Focused tests, strict ARM64 build, reproducible artifacts, workflow and documentation checks pass; physical and H616 limits remain explicit and H12 stays open.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "qemu-reimage-mode",
-      "title": "Implement and verify the isolated QEMU-backed reimage image mode",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "nrm-01",
         "nrm-02",
         "nrm-03",
         "nrm-04"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "qemu-reimage-mode",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and verify the isolated QEMU-backed reimage image mode",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Build a separate one-shot network eMMC reimage image"
 }
