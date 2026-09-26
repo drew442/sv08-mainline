@@ -80,15 +80,107 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": "Owner-reported H616_JC_6Z_V1.2",
+          "check": "host-number-independent",
+          "document": "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+          "document_sha256": "cd08046ff45412869965c3b6c6293cf6e4dd42f7fe406529db5fab8fb27dd298",
+          "environment": "offline",
+          "limitations": "Synthetic sysfs fixture and QEMU do not establish physical eMMC initialization.",
+          "method": "Ran `python3 -m unittest tests.test_sd_network_env_probe tests.test_sd_network_image -v`; the locator fixture accepts the 32 GB MMC under mmc0, ignores small SD under mmc2, and rejects a second qualifying MMC.",
+          "profile": "test-sv08-01",
+          "source_commit": "2b51bbfb26d2a33aba21597e5bf63797cfef4a7b",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-probe-review-20260926.md": "abe3010bf53cd78d0dd9015f2074eb05dafbef4c117d5348fe855ba007d0d972",
+            "scripts/build_sd_network_image.py": "4d4fc1885e42c6cf52f7c812e851e62821daa392c1bfa3b8eda02ed21a67624e",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "e55de52ed179afece6803c8a4b123e27bc8fc151e6982ff48b3060874f3dc519",
+            "tests/fixtures/sd-network-root/init.c": "d92230d5252f1ae0c11ebf9785e75953961d6b206de4fac3a96e415cef867468",
+            "tests/host_qemu_sd_network.py": "744d25dd48ff6e9f11cf4952e1e0047fd0633b629cc14f792c8341ae53671b70",
+            "tests/test_sd_network_env_probe.py": "7ed66893cce07b450f871d34d6f214fff45b2331e23a4617762d84aed7f2f5a4",
+            "tests/test_sd_network_image.py": "a09333ca5d25cffb7ba3eb81d220db03c4c2f70fe8fe5e0442fca6a9224f5198"
+          }
+        },
+        {
+          "board_revision": "Owner-reported H616_JC_6Z_V1.2",
+          "check": "nfs-default-port",
+          "document": "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+          "document_sha256": "cd08046ff45412869965c3b6c6293cf6e4dd42f7fe406529db5fab8fb27dd298",
+          "environment": "offline",
+          "limitations": "The local mount originated from Beelink, not the printer address. Printer-side NFS mount is not yet measured; mountd registration is manually restarted and not persistent.",
+          "method": "On Beelink 192.168.1.136, mountd v3/TCP was registered at port 20048; a default NFSv3/TCP mount without mountport fetched the deployed init hash, and a write attempt returned Read-only file system. The export table contains 192.168.1.141 with ro/root_squash.",
+          "profile": "test-sv08-01",
+          "source_commit": "2b51bbfb26d2a33aba21597e5bf63797cfef4a7b",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-probe-review-20260926.md": "abe3010bf53cd78d0dd9015f2074eb05dafbef4c117d5348fe855ba007d0d972",
+            "scripts/build_sd_network_image.py": "4d4fc1885e42c6cf52f7c812e851e62821daa392c1bfa3b8eda02ed21a67624e",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "e55de52ed179afece6803c8a4b123e27bc8fc151e6982ff48b3060874f3dc519",
+            "tests/fixtures/sd-network-root/init.c": "d92230d5252f1ae0c11ebf9785e75953961d6b206de4fac3a96e415cef867468",
+            "tests/host_qemu_sd_network.py": "744d25dd48ff6e9f11cf4952e1e0047fd0633b629cc14f792c8341ae53671b70",
+            "tests/test_sd_network_env_probe.py": "7ed66893cce07b450f871d34d6f214fff45b2331e23a4617762d84aed7f2f5a4",
+            "tests/test_sd_network_image.py": "a09333ca5d25cffb7ba3eb81d220db03c4c2f70fe8fe5e0442fca6a9224f5198"
+          }
+        },
+        {
+          "board_revision": "Owner-reported H616_JC_6Z_V1.2",
+          "check": "reviewed-deployment",
+          "document": "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+          "document_sha256": "cd08046ff45412869965c3b6c6293cf6e4dd42f7fe406529db5fab8fb27dd298",
+          "environment": "offline",
+          "limitations": "High-consequence review is not hardware authorization and does not prove the next physical boot will reach eMMC. No physical retry has occurred.",
+          "method": "Static ARM64 init built with -Wall -Wextra -Werror; corrected source, binary and manifest hashes are recorded. Exact binary hash matches the live Beelink export. QEMU NFS online and missing-server cases passed; separate GPT-6 Sol high-consequence review returned PASS WITH CONDITIONS for exactly one supervised retry.",
+          "profile": "test-sv08-01",
+          "source_commit": "2b51bbfb26d2a33aba21597e5bf63797cfef4a7b",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-probe-review-20260926.md": "abe3010bf53cd78d0dd9015f2074eb05dafbef4c117d5348fe855ba007d0d972",
+            "scripts/build_sd_network_image.py": "4d4fc1885e42c6cf52f7c812e851e62821daa392c1bfa3b8eda02ed21a67624e",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "e55de52ed179afece6803c8a4b123e27bc8fc151e6982ff48b3060874f3dc519",
+            "tests/fixtures/sd-network-root/init.c": "d92230d5252f1ae0c11ebf9785e75953961d6b206de4fac3a96e415cef867468",
+            "tests/host_qemu_sd_network.py": "744d25dd48ff6e9f11cf4952e1e0047fd0633b629cc14f792c8341ae53671b70",
+            "tests/test_sd_network_env_probe.py": "7ed66893cce07b450f871d34d6f214fff45b2331e23a4617762d84aed7f2f5a4",
+            "tests/test_sd_network_image.py": "a09333ca5d25cffb7ba3eb81d220db03c4c2f70fe8fe5e0442fca6a9224f5198"
+          }
+        },
+        {
+          "board_revision": "Owner-reported H616_JC_6Z_V1.2",
+          "check": "honest-hardware-record",
+          "document": "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+          "document_sha256": "cd08046ff45412869965c3b6c6293cf6e4dd42f7fe406529db5fab8fb27dd298",
+          "environment": "hardware",
+          "limitations": "Raw serial evidence remains private on Beelink; no eMMC contents or counters were read in this attempt.",
+          "method": "Recorded the 2026-09-26 receive-only trace hash and exact measured boot result: DHCP succeeded, NFS root was refused, no probe marker occurred, mmc0 failed non-removable card initialization, mmc2 was SD, and eMMC counters remain unknown.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "source_commit": "2b51bbfb26d2a33aba21597e5bf63797cfef4a7b",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-probe-review-20260926.md": "abe3010bf53cd78d0dd9015f2074eb05dafbef4c117d5348fe855ba007d0d972",
+            "scripts/build_sd_network_image.py": "4d4fc1885e42c6cf52f7c812e851e62821daa392c1bfa3b8eda02ed21a67624e",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "e55de52ed179afece6803c8a4b123e27bc8fc151e6982ff48b3060874f3dc519",
+            "tests/fixtures/sd-network-root/init.c": "d92230d5252f1ae0c11ebf9785e75953961d6b206de4fac3a96e415cef867468",
+            "tests/host_qemu_sd_network.py": "744d25dd48ff6e9f11cf4952e1e0047fd0633b629cc14f792c8341ae53671b70",
+            "tests/test_sd_network_env_probe.py": "7ed66893cce07b450f871d34d6f214fff45b2331e23a4617762d84aed7f2f5a4",
+            "tests/test_sd_network_image.py": "a09333ca5d25cffb7ba3eb81d220db03c4c2f70fe8fe5e0442fca6a9224f5198"
+          }
+        }
+      ],
       "human_task": null,
       "id": "correct-diagnostic",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "d2102b78ef1f4bc1b768facf9e0dbeee",
+        "session": "h10-probe-correction-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "review",
       "title": "Correct probe host discovery and NFS evidence",
-      "verification": null
+      "verification": {
+        "decision_sha256": "762e415643c9bcce221a118a38a4c4ab16ffc715801c6f0aad1326e014bb4cf9",
+        "evidence_sha256": "8508cfd0ae61154c12d841856af6e4b74c8a1d72cbbbe8b8739aeb9dfd98c3b4",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete a94c86a..2b51bbf diff and clean implementation worktree. All four acceptance checks are supported: 10 focused tests reproduced successfully; the locator is restricted to controller 4022000, accepts a uniquely sized MMC regardless of host number, and rejects ambiguity; the corrected executable and manifest hashes match the composition receipt; and the record accurately states that the physical attempt stopped before the probe. The Beelink NFS test originated locally, and physical eMMC initialization and current counters remain unverified. The separate supervised retry conditions remain mandatory.",
+        "reviewer": "independent feature verifier",
+        "session": "h10-probe-correction-verification-20260926"
+      }
     }
   ],
   "title": "Correct the existing H10 read-only network eMMC diagnostic after a measured NFS failure"
