@@ -1,0 +1,111 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "One durable atomic claim is consumed before target open; duplicate/concurrent claims, lost acknowledgement, stale or changed descriptor and unavailable service fail closed with no automatic rearm.",
+      "environment": "offline",
+      "id": "nwo-01"
+    },
+    {
+      "description": "QEMU uses only disposable regular-file media with independent read-only source and target. Descriptor binds source hash/length, synthetic target identity/capacity and complete layout; write, flush, independent full readback and GPT checks pass, while mismatches refuse or never produce success.",
+      "environment": "offline",
+      "id": "nwo-02"
+    },
+    {
+      "description": "Injected interruption before/during write, flush and readback leaves the job consumed, without automatic retry, reboot or success, and records uncertainty.",
+      "environment": "offline",
+      "id": "nwo-03"
+    },
+    {
+      "description": "Production SD image remains without writer/trigger, H12 remains the only physical task, and docs distinguish QEMU evidence from physical identity, review and authorization gates.",
+      "environment": "offline",
+      "id": "nwo-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "nwo-01",
+          "nwo-03"
+        ],
+        "text": "Define the durable server transition precisely: verify a pinned descriptor, atomically persist one consumed claim and sync its file and containing directory before acknowledging it. Prove duplicate and concurrent callers, service restart, corrupted or missing state, and lost acknowledgment cannot grant another claim. No timeout, failure path or new guest boot may re-arm it."
+      },
+      {
+        "checks": [
+          "nwo-01",
+          "nwo-02",
+          "nwo-04"
+        ],
+        "text": "Bind both sides of the claim to the same immutable descriptor digest and job ID, including synthetic target identity and capacity, exact 8 GB image extent and GPT map, source length and SHA-256. Changed or unavailable descriptor and uncertain claim response must refuse before the guest opens the target. State clearly that the QEMU protocol proves single-use sequencing only; it supplies neither live CID admission nor production authentication or hardware authority."
+      },
+      {
+        "checks": [
+          "nwo-02",
+          "nwo-03",
+          "nwo-04"
+        ],
+        "text": "Retain the regular-file-only host admission, read-only independent NFS source, full write/flush/independent readback and both-GPT/six-partition validation. Keep success separate from consumption. Inject faults after claim at each specified phase and retain a consumed, uncertain outcome with no automatic retry or reboot. Discard disposable test media as the offline rollback; preserve the stored factory eMMC and USB-reader fallback for later H12 planning."
+      },
+      {
+        "checks": [
+          "nwo-01",
+          "nwo-02",
+          "nwo-04"
+        ],
+        "text": "Keep the existing 9 GB scratch and 3 GiB available-memory gates, 2 GiB guest cap and 75-minute host limit unless a separately reviewed tighter bound is demonstrated. Measure and report claim-service storage, memory and runtime overhead alongside the before/after replay behavior. Keep the writer and claim trigger out of the production SD image and distinguish synthetic QEMU evidence from H12 physical acceptance."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "5aec86dc704622d55be31125704191745d68d7a9f3cab6be3ef419bf6abf2da4",
+    "rationale": "Decision 0018 authorizes a bounded offline whole-image reimage prototype. The existing QEMU report proves a synthetic 7,818,182,656-byte transfer, flush, full readback and GPT checks, while the readiness audit and SD/NFS source show that the production diagnostic has no writer or durable job marker. A durable claim service addresses a concrete replay gap without changing owner requirements, provided the result is described as offline single-use sequencing, not physical write authorization or authenticated production admission. The current writer hard-codes a QEMU USB serial and /dev/sda; the completed read-only H616 locator does not establish a live CID. The claim protocol must not silently bridge that gap. Existing signed A/B updates cover only inactive OS slots, and the USB writer remains the manual whole-image recovery alternative. No supported upstream service is established by the reviewed local evidence as supplying this exact offline claim contract; the proposal includes a retirement condition if one is found. The prior QEMU run documented a 9 GB scratch gate, 3 GiB available host memory gate, 2 GiB guest cap and 75-minute host limit. These constraints preserve those bounds and require measured claim-service overhead. Physical H12, factory-module preservation and independent high-consequence review remain separate.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-reimage/proposal.md": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
+      "docs/hardware/coordinated-human-tasks.md": "bb4d4c5c26733e8fd54d3d2bdf0ac0b6d518d113bc41fd72bdc7ac010cceed12",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "b229576e0c69c68c0de61470226280b0120ef45be351a5427a7df0626d22df08",
+      "docs/hardware/host-sd-network-root-prototype.md": "500bb9ea7702b4beb71abd6f26b6d2eb99efe13f3d248a0b2b2a2c7b5b4ee0cc"
+    },
+    "reviewer": "feature_approver /root/approve_network_emmc_one_shot",
+    "scope_sha256": "a97f3634f5b3a3445c2cfa5d0eb92d93f60229798c9cf50f11c5cb09e0082d0c",
+    "session": "independent-network-emmc-one-shot-review-20260926"
+  },
+  "format_version": 1,
+  "id": "network-emmc-one-shot",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-one-shot/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-reimage/proposal.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "docs/hardware/host-sd-network-root-prototype.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "nwo-01",
+        "nwo-02",
+        "nwo-03",
+        "nwo-04"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "qemu-one-shot",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and verify the offline single-use network reimage protocol",
+      "verification": null
+    }
+  ],
+  "title": "Consume a network eMMC reimage job exactly once"
+}
