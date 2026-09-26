@@ -96,4 +96,7 @@ Remaining work: finish the joined signed-feed/RAUC/boot-health/fallback journey
 in a disposable ARM64 VM, produce and independently review a deployable board
 image, install its release feed and trust anchors, verify the complete 8 GB
 image budget, then obtain the independent high-consequence review and physical
-H11 evidence. The current diagnostic image remains non-deployable.
+H11 evidence. A space-bounded QEMU run now separately exercises the existing
+trial health and fallback path; its [supporting evidence](host-unattended-update-qemu-health-support-20260926.json)
+records that the signed install and automatic U-Boot handoff are still untested.
+The current diagnostic image remains non-deployable.

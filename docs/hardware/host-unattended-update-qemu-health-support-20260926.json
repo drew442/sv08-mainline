@@ -1,0 +1,140 @@
+{
+  "format_version": 1,
+  "feature": "host-unattended-ab-updates",
+  "check": "qemu-ab-journey",
+  "evidence_scope": "supporting boot-health/fallback exercise only; not acceptance of the joined signed-feed update check",
+  "status": "partial",
+  "implementation_commit": "cb0c0da6e4c594dbf47b2c700cca8ba8c4b28a80",
+  "runtime_source_commit": "a2f0b8f515a39c50d57d8ff03248942dfc358c4b",
+  "harness_sha256": "bb1808d2f4bd4dbfb8664f979d7c8afa8e2f6b12387d5df7012ebaab8904f733",
+  "result_file": "build/host-unattended-qemu-health-v6/result.json",
+  "result_sha256": "5cbbe14fc15a5baf8235a8bd2ea4b761995166c3b3f010c19e93dac6536898c4",
+  "qemu_version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+  "artifact_sha256": {
+    "rauc": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
+    "kernel": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67",
+    "initrd": "86be724657cd9798305242fa3a5e7699fd8acce81d777e5f940246bdf2b0400b"
+  },
+  "scenarios": {
+    "success": [
+      {
+        "result": {
+          "boot_id": "48aff09f-2d9a-47a7-9aa1-5d3e20b76496",
+          "health_ready": true,
+          "host_selected_root": true,
+          "mcu": false,
+          "passed": true,
+          "physical_hardware": false,
+          "printer_config": false,
+          "scenario": "success",
+          "slot": "A",
+          "step": 0,
+          "trial": false
+        },
+        "log_file": "build/host-unattended-qemu-health-v6/success-boot-0.log",
+        "log_bytes": 46482,
+        "log_sha256": "7a7831fc84695f5cbb8eee422770a3632f7754b34f09258edb4ada5182410aee",
+        "observed_log_sha256": "7a7831fc84695f5cbb8eee422770a3632f7754b34f09258edb4ada5182410aee"
+      },
+      {
+        "result": {
+          "boot_id": "a7f3537d-c3db-44cf-8f26-8747a1042629",
+          "health_ready": true,
+          "host_selected_root": true,
+          "mcu": false,
+          "passed": true,
+          "physical_hardware": false,
+          "printer_config": false,
+          "scenario": "success",
+          "slot": "B",
+          "step": 1,
+          "trial": true
+        },
+        "log_file": "build/host-unattended-qemu-health-v6/success-boot-1.log",
+        "log_bytes": 45892,
+        "log_sha256": "72e18997cc46e08c7e0e0a6ff8b913beec3d2bdda7e4bbb7e3a4f3dbc75e2735",
+        "observed_log_sha256": "72e18997cc46e08c7e0e0a6ff8b913beec3d2bdda7e4bbb7e3a4f3dbc75e2735"
+      }
+    ],
+    "fallback": [
+      {
+        "result": {
+          "boot_id": "f1499cf9-2b93-4825-8e3b-a20e4e8c24e2",
+          "health_ready": true,
+          "host_selected_root": true,
+          "mcu": false,
+          "passed": true,
+          "physical_hardware": false,
+          "printer_config": false,
+          "scenario": "fallback",
+          "slot": "A",
+          "step": 0,
+          "trial": false
+        },
+        "log_file": "build/host-unattended-qemu-health-v6/fallback-boot-0.log",
+        "log_bytes": 46827,
+        "log_sha256": "19df3046d4d697f392efcf4cb721afd5636f565922f6cfe5de90017320bd61d6",
+        "observed_log_sha256": "19df3046d4d697f392efcf4cb721afd5636f565922f6cfe5de90017320bd61d6"
+      },
+      {
+        "result": {
+          "scenario": "fallback",
+          "slot": "B",
+          "fallback_reboot_observed": true
+        },
+        "log_file": "build/host-unattended-qemu-health-v6/fallback-boot-1.log",
+        "log_bytes": 45672,
+        "log_sha256": "c83c34404a82b7c3cd5936aa191c1832f26de5b76013ea3625323664953f5684",
+        "observed_log_sha256": "c83c34404a82b7c3cd5936aa191c1832f26de5b76013ea3625323664953f5684"
+      },
+      {
+        "result": {
+          "boot_id": "864da90b-1ca6-47c1-81e8-1ac395dcb169",
+          "health_ready": true,
+          "host_selected_root": true,
+          "mcu": false,
+          "passed": true,
+          "physical_hardware": false,
+          "printer_config": false,
+          "scenario": "fallback",
+          "slot": "A",
+          "step": 1,
+          "trial": false
+        },
+        "log_file": "build/host-unattended-qemu-health-v6/fallback-boot-2.log",
+        "log_bytes": 45894,
+        "log_sha256": "e2a7010f08cfacc376d627efb87f5d22cd92bd6b351ddd6286d15cf2b6ce8b06",
+        "observed_log_sha256": "e2a7010f08cfacc376d627efb87f5d22cd92bd6b351ddd6286d15cf2b6ce8b06"
+      }
+    ]
+  },
+  "disk_sha256": {
+    "success": "a083bfcaf52ba23361c13dad7c0258ce37095b5e16a4f9e9fb6cc9a8c6d402b5",
+    "fallback": "bafdce95239126d7e1d9e6e594497e146e22d6b790c15d68adda7341e860e2dd"
+  },
+  "checks": {
+    "A_to_B_trial_health_confirmation": true,
+    "failed_B_health_requests_reboot": true,
+    "A_fallback_boot_and_failed_trial_cancellation": true,
+    "signed_feed_installation": false,
+    "automatic_uboot_boot_selection": false,
+    "physical_hardware": false
+  },
+  "method_limitations": [
+    "The guest disk started with both target roots pre-populated; no signed RAUC bundle or signed network feed was installed.",
+    "The host harness selected the A or B root explicitly; U-Boot automatic slot selection is not exercised.",
+    "Health failure was injected by a QEMU-only systemctl wrapper visible only to HostHealth; production files are unchanged.",
+    "The board image and feed trust configuration remain non-deployable; physical H11 validation remains pending."
+  ],
+  "capacity": {
+    "preflight_required_free": "8 GiB",
+    "minimum_free_reserve": "2 GiB",
+    "observed_initial_free": "9.9 GiB",
+    "observed_during_fixture_free": "4.5 GiB",
+    "observed_fixture_du": "5.4 GiB",
+    "note": "These are df/du snapshots, not a continuously sampled minimum. The harness enforces the reserve after its success case and deletes disposable root/GPT/key material after a passing run."
+  },
+  "source_commit": "3564337b0fbbd0c6def66f7f537a8b9b7323c0c0",
+  "source_dirty_state": [],
+  "reviewed_runtime_commit": "a2f0b8f"
+}
