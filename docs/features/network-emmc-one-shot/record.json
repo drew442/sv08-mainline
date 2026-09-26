@@ -60,17 +60,17 @@
     ],
     "outcome": "approved-with-constraints",
     "proposal_sha256": "5aec86dc704622d55be31125704191745d68d7a9f3cab6be3ef419bf6abf2da4",
-    "rationale": "Decision 0018 authorizes a bounded offline whole-image reimage prototype. The existing QEMU report proves a synthetic 7,818,182,656-byte transfer, flush, full readback and GPT checks, while the readiness audit and SD/NFS source show that the production diagnostic has no writer or durable job marker. A durable claim service addresses a concrete replay gap without changing owner requirements, provided the result is described as offline single-use sequencing, not physical write authorization or authenticated production admission. The current writer hard-codes a QEMU USB serial and /dev/sda; the completed read-only H616 locator does not establish a live CID. The claim protocol must not silently bridge that gap. Existing signed A/B updates cover only inactive OS slots, and the USB writer remains the manual whole-image recovery alternative. No supported upstream service is established by the reviewed local evidence as supplying this exact offline claim contract; the proposal includes a retirement condition if one is found. The prior QEMU run documented a 9 GB scratch gate, 3 GiB available host memory gate, 2 GiB guest cap and 75-minute host limit. These constraints preserve those bounds and require measured claim-service overhead. Physical H12, factory-module preservation and independent high-consequence review remain separate.",
+    "rationale": "I reviewed the current requirement files and the exact H12/readiness diff from approved base b714b74. H12 now names the synthetic QEMU single-use claim prototype, while retaining the sole physical task, stored factory eMMC, live CID match, exact artifact and target review, recovery, stop conditions, and separate write authorization. The readiness audit distinguishes QEMU claim evidence from the still absent production writer, trigger, CID admission and high-consequence review. These edits report offline progress within decision 0018; they do not change an owner requirement or grant hardware authority. The proposal and all nwo-01 through nwo-04 task/check definitions are unchanged. This refresh preserves every prior constraint and updates only the two changed requirement hashes. It approves the bounded design scope, not the delivered implementation or physical operation.",
     "requirements_sha256": {
       "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
       "docs/features/network-emmc-reimage/proposal.md": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
-      "docs/hardware/coordinated-human-tasks.md": "bb4d4c5c26733e8fd54d3d2bdf0ac0b6d518d113bc41fd72bdc7ac010cceed12",
-      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "b229576e0c69c68c0de61470226280b0120ef45be351a5427a7df0626d22df08",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf",
       "docs/hardware/host-sd-network-root-prototype.md": "500bb9ea7702b4beb71abd6f26b6d2eb99efe13f3d248a0b2b2a2c7b5b4ee0cc"
     },
-    "reviewer": "feature_approver /root/approve_network_emmc_one_shot",
+    "reviewer": "feature-approver /root/approve_network_emmc_one_shot",
     "scope_sha256": "a97f3634f5b3a3445c2cfa5d0eb92d93f60229798c9cf50f11c5cb09e0082d0c",
-    "session": "independent-network-emmc-one-shot-review-20260926"
+    "session": "independent-network-emmc-one-shot-freshness-review-20260926"
   },
   "format_version": 1,
   "id": "network-emmc-one-shot",
@@ -96,15 +96,98 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "nwo-01",
+          "document": "docs/hardware/host-network-emmc-one-shot-qemu-20260926.md",
+          "document_sha256": "f1ddc2ccd3f239eb2cd050372f874ba3129706ea74c3254baced63b7f8fbe434",
+          "environment": "offline",
+          "limitations": "QEMU-only, unauthenticated test protocol and synthetic job identity; it proves one-shot sequencing, not production authentication, live CID identity, hardware authorization, or physical eMMC power-loss behavior.",
+          "method": "Current-head native tests raced 12 claimers, reopened persisted state after service restart, rejected stale/missing/corrupt state, dropped the first HTTP acknowledgment after durable claim, and confirmed replay conflict. A current-head ARM64 QEMU claim-only run used the isolated user network, verified the pinned descriptor, persisted one claim, and exited with target_opened=false. The full guest makes one claim request; the claim record and directory are synced before acknowledgment.",
+          "profile": null,
+          "source_commit": "bdb2f42749e691e749433f7e2f9b0e093d664dcb",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-one-shot-qemu-20260926.json": "e2f738f1421d08bdbca3bf8d30ef83d06d3b0ada0e5352bb48b6c8c686b81241",
+            "tests/host_qemu_sd_network_emmc_write.py": "d482f7850c3ae2e5889d35e09fdc810082feaa9b63c83da908db5b6572fd1ac5",
+            "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89",
+            "tests/test_emmc_job.py": "19dbffe4f965bd8051a52fec408f885a65233f3d4dcebfef1782f7a25560acd2"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nwo-02",
+          "document": "docs/hardware/host-network-emmc-one-shot-qemu-20260926.md",
+          "document_sha256": "f1ddc2ccd3f239eb2cd050372f874ba3129706ea74c3254baced63b7f8fbe434",
+          "environment": "offline",
+          "limitations": "No physical block device, H616 boot stage, real eMMC CID or bootable production image was used. The QEMU fixture is synthetic and mostly sparse; it validates protocol and bytes, not physical eMMC performance or boot.",
+          "method": "A full 42-minute QEMU run on Beelink under sudo unshare -n -m wrote the 7,818,182,656-byte synthetic nonbootable image to one regular-file-backed 32 GB virtual USB target, flushed it, read it back in the guest, and independently read and checked it on the host. Source and both readbacks matched SHA-256 7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec; protective MBR, primary and backup GPT CRCs, disk GUID and all six partition records passed. The successful guest execution used commit f44b887; submitted commit bdb2f42 carries identical writer/service behavior, the claim-server cleanup guard, the clarified restart unit test, and the report. Current-head claim-only and fault runs also passed.",
+          "profile": null,
+          "source_commit": "bdb2f42749e691e749433f7e2f9b0e093d664dcb",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-one-shot-qemu-20260926.json": "e2f738f1421d08bdbca3bf8d30ef83d06d3b0ada0e5352bb48b6c8c686b81241",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "c6996a43c0f1870fe9fba597e1316a6dc20183a167eb9c97651175308ef2e576",
+            "tests/host_qemu_sd_network_emmc_write.py": "d482f7850c3ae2e5889d35e09fdc810082feaa9b63c83da908db5b6572fd1ac5",
+            "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nwo-03",
+          "document": "docs/hardware/host-network-emmc-one-shot-qemu-20260926.md",
+          "document_sha256": "f1ddc2ccd3f239eb2cd050372f874ba3129706ea74c3254baced63b7f8fbe434",
+          "environment": "offline",
+          "limitations": "These are controlled QEMU termination boundaries, not physical power cuts or eMMC failure tests. The guest powers off after uncertain outcomes; no retry/reboot path is present. Physical recovery remains H12.",
+          "method": "Four current-head ARM64 QEMU runs injected terminal faults in the actual guest writer before the first write, after a real 1 MiB partial write, after a real write plus successful fsync/BLKFLSBUF, and during readback after write/flush. Each preserved the 154-byte durable consumed claim, refused replay with HTTP 409, emitted its expected phase marker and no success/readback receipt, and powered off. The pre-write target remained unchanged; later target prefixes matched source bytes. Raw QEMU result.json receipts and serial hashes were compared field-by-field against the committed report. The initial native-only placeholder test was removed; service restart persistence remains a distinct unit test.",
+          "profile": null,
+          "source_commit": "bdb2f42749e691e749433f7e2f9b0e093d664dcb",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-one-shot-qemu-20260926.json": "e2f738f1421d08bdbca3bf8d30ef83d06d3b0ada0e5352bb48b6c8c686b81241",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "c6996a43c0f1870fe9fba597e1316a6dc20183a167eb9c97651175308ef2e576",
+            "tests/host_qemu_sd_network_emmc_write.py": "d482f7850c3ae2e5889d35e09fdc810082feaa9b63c83da908db5b6572fd1ac5",
+            "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89",
+            "tests/test_emmc_job.py": "19dbffe4f965bd8051a52fec408f885a65233f3d4dcebfef1782f7a25560acd2",
+            "tests/test_sd_network_emmc_write.py": "ec99c8d8db5106047f8eed44fc82229ca00ad0ab49079c978b292998cad7667d"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nwo-04",
+          "document": "docs/hardware/host-network-emmc-one-shot-qemu-20260926.md",
+          "document_sha256": "f1ddc2ccd3f239eb2cd050372f874ba3129706ea74c3254baced63b7f8fbe434",
+          "environment": "offline",
+          "limitations": "No production network service, real CID match, printer operation or hardware write was performed; H12 and physical validation remain open.",
+          "method": "Inspected and preserved the production SD image builder without adding writer, network claim service, or trigger. The QEMU writer/service remain under tests/ only. H12 remains the single deduplicated human task with live CID match, exact artifact and target review, recovery and physical authorization requirements. The report states the diagnostic's power-off and SD-boot limitations and makes no physical operation claim.",
+          "profile": null,
+          "source_commit": "bdb2f42749e691e749433f7e2f9b0e093d664dcb",
+          "source_sha256": {
+            "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+            "docs/hardware/host-network-emmc-one-shot-qemu-20260926.json": "e2f738f1421d08bdbca3bf8d30ef83d06d3b0ada0e5352bb48b6c8c686b81241",
+            "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf",
+            "docs/hardware/host-sd-network-emmc-reimage-qemu.md": "d6f6c220aa1b9c1d1ac6c7c28489ac7a419a0c9b545bb2b1cabe6513c9ead9d2",
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-one-shot",
-      "implementation": null,
+      "implementation": {
+        "actor": "codex",
+        "run": "42126de417864baca218b02f7e7c6ff7",
+        "session": "independent-network-emmc-one-shot-freshness-review-20260926"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Fresh delegated approval refreshed the exact requirement hashes after approved-scope readiness and H12 documentation updates; clear stale verification and revalidate the unchanged implementation.",
+      "status": "done",
       "title": "Implement and verify the offline single-use network reimage protocol",
-      "verification": null
+      "verification": {
+        "decision_sha256": "ce9e7c4fcbd78b9409e1e5ed1355b303639f20882ada0d39022b5c2971eed2d5",
+        "evidence_sha256": "ec6733267bc837ac98297207cf0626dee20e59bef279346fa75a0d237da602ee",
+        "outcome": "passed",
+        "rationale": "At clean submitted HEAD bdb2f42749e691e749433f7e2f9b0e093d664dcb, nwo-01 through nwo-04 satisfy the refreshed approval within their offline scope. I inspected the complete b714b74..bdb2f42 diff, entry points, claim persistence, writer failure paths, production image exclusion, and H12 documentation. Approval requirement hashes and every submitted document/source hash match. The six raw QEMU receipts match the committed report, including full-image hash/readback/GPT results, claim-only target exclusion, and four consumed fault outcomes. I reproduced 19 focused native tests successfully. The successful full QEMU transfer ran at f44b887; subsequent submitted code changes only guard test-service cleanup, with writer and claim behavior unchanged. This does not establish production authentication, live eMMC CID admission, physical write or power-loss safety, printer boot, or hardware authority; H12 remains open.",
+        "reviewer": "feature-verifier /root/network_emmc_fresh_verify",
+        "session": "independent-network-emmc-one-shot-fresh-verification-20260926"
+      }
     }
   ],
   "title": "Consume a network eMMC reimage job exactly once"
