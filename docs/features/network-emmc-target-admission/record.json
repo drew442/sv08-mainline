@@ -1,0 +1,104 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "A unique H10-sized MMC below the exact H616 eMMC controller is admitted independent of mmc_host numbering using sysfs metadata only.",
+      "environment": "offline",
+      "id": "nta-01"
+    },
+    {
+      "description": "Absent, wrong-type/controller, undersized/oversized, malformed-capacity and ambiguous targets are rejected by tests.",
+      "environment": "offline",
+      "id": "nta-02"
+    },
+    {
+      "description": "The read-only diagnostic consumes the reusable helper without behavior regression; the helper opens no block node and no writer enters the production SD image.",
+      "environment": "offline",
+      "id": "nta-03"
+    },
+    {
+      "description": "Focused and existing SD/NFS tests, documentation checks and feature-workflow validation pass with physical identity and write limitations clearly stated.",
+      "environment": "offline",
+      "id": "nta-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "nta-01",
+          "nta-02"
+        ],
+        "text": "For this measured test profile, require exactly 61,079,552 sectors. Do not carry forward the current 60\u201364 million-sector heuristic as write-target admission; a different module capacity requires an explicit reviewed profile value."
+      },
+      {
+        "checks": [
+          "nta-02"
+        ],
+        "text": "Fail closed when any additional MMC card or malformed/unreadable MMC candidate appears below the selected controller, even if one valid-capacity candidate exists. Test malformed numbers, trailing junk, overflow and ambiguous inventory; unrelated SD cards must remain ignored."
+      },
+      {
+        "checks": [
+          "nta-03",
+          "nta-04"
+        ],
+        "text": "Keep the helper limited to sysfs metadata and the existing read-only diagnostic. Preserve diagnostic output and behavior, add no block-node open or writer to the helper or production SD image, and do not treat its returned path as sufficient identity for a later write."
+      },
+      {
+        "checks": [
+          "nta-04"
+        ],
+        "text": "Document that H10 has no CID evidence and that offline fixture success does not prove installed-module identity, data preservation, rollback or physical write safety. H12 remains the separate hardware gate."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "dfbc0d0ef39f72350a63beeb9e604523f630d64867990cd36fb16c2c80d54854",
+    "rationale": "H10 physically observed one MMC under the exact 4022000.mmc controller at 61,079,552 sectors, while the independently verified QEMU writer targets only a synthetic USB disk. Factoring the existing read-only locator provides a useful, bounded improvement: before, discovery is embedded in init.c and tested only for host numbering and two in-range candidates; after, a reusable helper can reject malformed and ambiguous inventory offline. Decision 0018 and H12 still require a separately reviewed image, exact physical target, recovery path and authorization before any eMMC write. H10 recorded no CID, so controller/type/capacity alone cannot establish unique module identity or physical write safety. The helper adds negligible runtime/storage cost and no required dependency.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/hardware/coordinated-human-tasks.md": "858b15a3600b8b8374c1dd9c9b1dda1b03534923cfd274f693f7f2cc6ba265a1",
+      "docs/hardware/host-sd-network-emmc-probe-20260926.md": "e88ea22e4b3d9f8808cfa2d8f8d3eccc6e21cb8ee89461d1a02668ce304cc400",
+      "docs/hardware/host-sd-network-emmc-reimage-qemu.md": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c"
+    },
+    "reviewer": "feature-approver /root/approve_emmc_target_admission",
+    "scope_sha256": "07532846b0f52d85dcc421a4a8098f8525f44de86fac1398ff696ce4c72851cf",
+    "session": "approve-emmc-target-admission-20260926"
+  },
+  "format_version": 1,
+  "id": "network-emmc-target-admission",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-target-admission/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+    "docs/hardware/host-sd-network-emmc-reimage-qemu.md",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "nta-01",
+        "nta-02",
+        "nta-03",
+        "nta-04"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "locator-refactor",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Factor and test read-only H616 eMMC target admission",
+      "verification": null
+    }
+  ],
+  "title": "Reuse H616 eMMC target admission"
+}
