@@ -1,0 +1,67 @@
+{
+  "format_version": 1,
+  "id": "network-emmc-reimage-mode",
+  "kind": "feature",
+  "title": "Build a separate one-shot network eMMC reimage image",
+  "author": "root/coordinator",
+  "created": "2026-09-26",
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-reimage-mode/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-reimage/proposal.md",
+    "docs/features/network-emmc-one-shot/proposal.md",
+    "docs/features/network-emmc-cid-admission/proposal.md",
+    "docs/features/network-emmc-fd-binding/proposal.md",
+    "docs/features/network-emmc-cid-fd-binding/proposal.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "nrm-01",
+      "description": "Separately selected builder mode produces a distinct reimage image; default diagnostic remains read-only with no writer or trigger.",
+      "environment": "offline"
+    },
+    {
+      "id": "nrm-02",
+      "description": "The actual reimage writer path is tested through an explicit synthetic QEMU adapter with separate trusted CID policy and signed job; identity/source/layout failures refuse before target writes.",
+      "environment": "offline"
+    },
+    {
+      "id": "nrm-03",
+      "description": "Disposable QEMU validates full write, flush, same-fd readback, independent host hash/GPT/partition checks, and consumed terminal behavior on wrong identity and interruption.",
+      "environment": "offline"
+    },
+    {
+      "id": "nrm-04",
+      "description": "Focused tests, strict ARM64 build, reproducible artifacts, workflow and documentation checks pass; physical and H616 limits remain explicit and H12 stays open.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "qemu-reimage-mode",
+      "title": "Implement and verify the isolated QEMU-backed reimage image mode",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "nrm-01",
+        "nrm-02",
+        "nrm-03",
+        "nrm-04"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
