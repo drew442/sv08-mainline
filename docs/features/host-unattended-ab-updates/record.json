@@ -81,7 +81,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Administrative pause to reapprove the unchanged acceptance checks split into offline implementation and a dependent QEMU journey; committed work remains pushed at 02b4cf1.",
+      "blocker": null,
       "checks": [
         "signed-feed",
         "automatic-admission",
@@ -94,13 +94,13 @@
       "human_task": null,
       "id": "implement-offline",
       "implementation": {
-        "actor": "project_implementer",
-        "run": "36ba6ba4f7e2445dbdded7e071f524d2",
-        "session": "unattended-ab-implementation-20260926"
+        "actor": "project-implementer",
+        "run": "85b5c8a51e0540a4852a1e3e4c122738",
+        "session": "unattended-ab-implementation-reviewed-20260926"
       },
       "repeats": 0,
-      "resumption": null,
-      "status": "blocked",
+      "resumption": "Independent delegated approver confirmed that only task sequencing changed; all six accepted checks remain assigned and physical validation now depends on the separate QEMU task.",
+      "status": "running",
       "title": "Implement signed feed polling and unattended guarded A/B staging",
       "verification": null
     },
