@@ -1,0 +1,90 @@
+{
+  "format_version": 1,
+  "id": "host-unattended-ab-updates",
+  "kind": "feature",
+  "title": "Unattended signed network delivery through the existing A/B OS updater",
+  "author": "root-coordinator",
+  "created": "2026-09-26",
+  "priority": 1,
+  "proposal": "docs/features/host-unattended-ab-updates/proposal.md",
+  "requirements": [
+    "docs/decisions/0004-os-operating-modes.md",
+    "docs/decisions/0017-unattended-network-os-updates.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "signed-feed",
+      "description": "Strictly authenticate a bounded, fresh, monotonic release index and a separately signed RAUC bundle; reject wrong profile, replay/downgrade, redirects outside the fixed HTTPS origin, corruption and size/time overflow.",
+      "environment": "offline"
+    },
+    {
+      "id": "automatic-admission",
+      "description": "With automatic policy enabled, stage and arm exactly one compatible update through existing RAUC transaction and idle admission; with opt-out, active print, writable/customized mode, changed state or full disk, do not mutate.",
+      "environment": "offline"
+    },
+    {
+      "id": "crash-replay",
+      "description": "Repeated checks and injected process/power loss at fetch, publication, RAUC write, journal and arm boundaries preserve the active/fallback slots and never blindly replay an uncertain mutation.",
+      "environment": "offline"
+    },
+    {
+      "id": "qemu-ab-journey",
+      "description": "Using a local signed feed and disposable QEMU block device, verify inactive-pair-only write, next-normal-boot activation, health confirmation and A/B fallback; verify shared GPT/environment/recovery/data and MCU artifacts stay unchanged.",
+      "environment": "offline"
+    },
+    {
+      "id": "physical-ab-validation",
+      "description": "On the named test printer and independently reviewed deployable candidate, validate unattended inactive-slot update, next boot/health path and rollback readiness without removing eMMC or using the USB writer.",
+      "environment": "hardware"
+    },
+    {
+      "id": "integration-boundaries",
+      "description": "Verify fixed systemd/network configuration, truthful admin UI status, automatic-update opt-out, no automatic reboot, and repository/payload/8 GB/recovery boundaries.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement-offline",
+      "title": "Implement signed feed polling and unattended guarded A/B staging",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "signed-feed",
+        "automatic-admission",
+        "crash-replay",
+        "qemu-ab-journey",
+        "integration-boundaries"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    },
+    {
+      "id": "physical-validation",
+      "title": "Commission one unattended A/B update on the test printer",
+      "status": "pending",
+      "environment": "hardware",
+      "depends_on": [
+        "host-unattended-ab-updates:implement-offline"
+      ],
+      "checks": [
+        "physical-ab-validation"
+      ],
+      "human_task": "docs/hardware/coordinated-human-tasks.md",
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
