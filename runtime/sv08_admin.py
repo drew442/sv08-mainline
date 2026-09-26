@@ -138,6 +138,19 @@ class Controller:
                 elif self.adapter is not None:
                     available, reason = self.adapter.capability(action, view)
                 capabilities[action] = dict(available=available, reason=reason)
+            feed_status = None
+            feed_path = self.store.root / 'feed-status.json'
+            if self.context == 'host' and feed_path.is_file() and not feed_path.is_symlink():
+                try:
+                    if feed_path.stat().st_size <= 2048:
+                        candidate = json.loads(feed_path.read_text())
+                        if (isinstance(candidate, dict) and candidate.get('format_version') == 1 and
+                                candidate.get('result') in ('blocked', 'already-considered', 'armed-next-boot') and
+                                isinstance(candidate.get('reason'), str) and len(candidate['reason']) <= 240 and
+                                type(candidate.get('checked_at')) is int):
+                            feed_status = candidate
+                except (ValueError, OSError):
+                    pass  # Advisory status cannot take down host administration.
             return dict(context=self.context, revision=revision(view), boot=self.boot,
                         requested_mode=state['requested_mode'], auto_update=state['auto_update'],
                         slots=state['slots'], pending=state['pending'], transaction=transaction,
@@ -146,7 +159,7 @@ class Controller:
                         catalog=self.adapter.catalog() if self.adapter else [],
                         destinations=self.adapter.destinations() if self.adapter else [],
                         images=self.adapter.images() if self.adapter else [],
-                        hostname=view['hostname'] or '')
+                        hostname=view['hostname'] or '', feed_status=feed_status)
 
     def plan(self, action, arguments):
         validate_arguments(action, arguments)

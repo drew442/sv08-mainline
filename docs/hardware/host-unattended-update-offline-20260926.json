@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-26",
+  "scope": "Offline signed-feed and guarded A/B update implementation. No printer access or write; separate disposable QEMU boot journey is still pending.",
+  "physical_hardware": false,
+  "implementation_commit": "251f7e2",
+  "checks": {
+    "signed-feed": {
+      "passed": true,
+      "method": "Thirteen focused tests used a local HTTPS server, disposable CMS signer and injected disposable bundle verifier. Covered exact CMS signed bytes, schema/profile/expiry, replay and same-sequence metadata equivocation, redirects, truncation, signed-index retry, and the tracked 8 GB capacity bound.",
+      "limitations": "Bundle verification is the test double; no RAUC bundle was installed. No production release signer, feed endpoint or trust-anchor package exists yet."
+    },
+    "automatic-admission": {
+      "passed": true,
+      "method": "Feed tests exercised opt-out before network and after download, customized/writable source, pending transaction, policy rechecks, and stage/arm ordering. Existing Transaction and RAUC backend tests were rerun in the same focused suite.",
+      "limitations": "Feed tests use a transaction test double. Existing RAUC backend tests are independent fixtures and do not show a feed-driven slot write."
+    },
+    "crash-replay": {
+      "passed": true,
+      "method": "Tests exercised staged retry, uncertain installing/arming journals, killed-download partial cleanup, unjournaled published-bundle cleanup, persistent sequence damage/missing state, clock rollback, and repeated polls. Cleanup is limited to private, managed filenames under state/staging locks.",
+      "limitations": "Injected interruption tests do not remove power from an ARM64 guest or physical device."
+    },
+    "integration-boundaries": {
+      "passed": true,
+      "method": "A static capacity regression test reads the tracked 8 GB layout and 1 GiB maximum bundle policy. The data partition is 2447 MiB; bundle plus 768 MiB required free reserve is 1792 MiB, leaving at most 655 MiB of preexisting use while the gate passes. Staging and transaction checks enforce free-space and copy reserves dynamically. Unit tests verified fixed timer/service installation, no feed config by default, UI status integration, automatic opt-out state, and host-only staging.",
+      "limitations": "This establishes nominal partition arithmetic and fail-closed thresholds, not free-space headroom in a composed release or printer. The ARM64 QEMU journey and installed service/timer run are separate pending work; the current image baseline is explicitly non-bootable. No recovery or physical acceptance is claimed."
+    }
+  },
+  "validation": {
+    "command": "PYTHONPATH=tests python3 -m unittest tests.test_sv08_feed tests.test_stage_admin_ui tests.test_staging tests.test_transaction tests.test_staged_transaction tests.test_rauc_backend tests.test_rauc_service tests.test_admin tests.test_admin_images tests.test_admin_jobs tests.test_admin_resolution tests.test_admin_upload tests.test_package_rauc",
+    "result": "141 tests passed in 12.295 seconds",
+    "additional": [
+      "node --check ui/host/app.js passed",
+      "python3 -m py_compile runtime/sv08_feed.py scripts/stage_admin_ui.py passed",
+      "git diff --check passed"
+    ]
+  }
+}

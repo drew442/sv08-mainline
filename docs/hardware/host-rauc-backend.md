@@ -76,10 +76,12 @@ run used the backend revision recorded separately in the public evidence.
 
 ## Remaining gates
 
-The low-level backend is connected and tested, but configuration rendering for a
-reviewed board, owned staging/upload paths, automatic idle/next-boot policy,
-boot-time transaction reconciliation and production health confirmation remain
-open. The test uses an offline-only signed bundle with dummy boot content; it must
+The low-level backend is connected and tested. Offline code now supplies
+[signed feed delivery and an idle-gated timer](host-unattended-updates.md), but
+its release configuration/trust anchors, disposable full A/B journey and physical
+commissioning remain open. Configuration rendering for a reviewed board and
+production health confirmation also remain release gates. The earlier backend
+test uses an offline-only signed bundle with dummy boot content; it must
 not be written to a printer. Complete OS recovery, service/onboarding UI and named
 hardware commissioning remain on the [task list](host-os-tasks.md).
 

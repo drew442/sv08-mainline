@@ -23,6 +23,11 @@ def stage(work, context, execute=False, refresh=False):
         path = root / 'usr/lib/sv08' / name
         if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
+    if context == 'host':
+        name = 'sv08_feed.py'
+        path = root / 'usr/lib/sv08' / name
+        if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
+            raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
     target = root / ('usr/share/cockpit/sv08-host' if context == 'host' else 'usr/share/xsessions/sv08-recovery.desktop')
     target_exists = target.exists() or target.is_symlink()
     if target_exists:
@@ -33,6 +38,9 @@ def stage(work, context, execute=False, refresh=False):
     extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
     if context == 'host':
         extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json', root / 'usr/lib/sv08/rauc-service-policy.json', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf', root / 'etc/systemd/system/rauc.service.d/sv08.conf'])
+        extra.extend(root / name for name in ('usr/lib/systemd/system/sv08-feed.service',
+                                               'usr/lib/systemd/system/sv08-feed.timer',
+                                               'etc/systemd/system/timers.target.wants/sv08-feed.timer'))
         cert_dir = root / 'etc/cockpit/ws-certs.d'
         extra.append(cert_dir)
         persistent_cert_dir = '/data/sv08/system/cockpit/ws-certs.d'
@@ -55,8 +63,16 @@ def stage(work, context, execute=False, refresh=False):
                 if (context == 'host' and path == root / 'etc/cockpit/ws-certs.d' and
                         parent == path and os.readlink(parent) == '/data/sv08/system/cockpit/ws-certs.d'):
                     continue
+                if (context == 'host' and refresh and parent == path and
+                        path == root / 'etc/systemd/system/timers.target.wants/sv08-feed.timer' and
+                        os.readlink(parent) == '/usr/lib/systemd/system/sv08-feed.timer'):
+                    continue
                 raise ValueError('Symlink in UI staging target: '+str(parent))
         if path.exists() or path.is_symlink():
+            if (context == 'host' and refresh and
+                    path == root / 'etc/systemd/system/timers.target.wants/sv08-feed.timer' and
+                    path.is_symlink() and os.readlink(path) == '/usr/lib/systemd/system/sv08-feed.timer'):
+                continue
             if context == 'host' and path == root / 'etc/cockpit/ws-certs.d':
                 if path.is_symlink() and os.readlink(path) == '/data/sv08/system/cockpit/ws-certs.d':
                     continue
@@ -82,6 +98,12 @@ def stage(work, context, execute=False, refresh=False):
             cert_dir.symlink_to('/data/sv08/system/cockpit/ws-certs.d')
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-admin-image-worker@.service', units / 'sv08-admin-image-worker@.service')
+        for unit in ('sv08-feed.service', 'sv08-feed.timer'):
+            shutil.copyfile(REPO / 'configs/host-os' / unit, units / unit)
+        wanted = root / 'etc/systemd/system/timers.target.wants'
+        wanted.mkdir(parents=True, exist_ok=True)
+        if not (wanted / 'sv08-feed.timer').is_symlink():
+            (wanted / 'sv08-feed.timer').symlink_to('/usr/lib/systemd/system/sv08-feed.timer')
         for source, destination in [('rauc-service-policy.json', 'usr/lib/sv08/rauc-service-policy.json'), ('sv08-rauc-policy.conf', 'etc/dbus-1/system.d/zz-sv08-rauc.conf'), ('sv08-rauc-service.conf', 'etc/systemd/system/rauc.service.d/sv08.conf')]:
             path = root / destination; path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO / 'configs/host-os' / source, path)
@@ -92,17 +114,20 @@ def stage(work, context, execute=False, refresh=False):
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-recovery-display.service', units / 'sv08-recovery-display.service')
     files = [p for p in (target.rglob('*') if target.is_dir() else [target]) if p.is_file()]
-    if context == 'host': files.extend(root / name for name in ('etc/cockpit/cockpit.conf', 'usr/lib/sv08/rauc-service-policy.json', 'etc/dbus-1/system.d/zz-sv08-rauc.conf', 'etc/systemd/system/rauc.service.d/sv08.conf'))
+    if context == 'host': files.extend(root / name for name in ('etc/cockpit/cockpit.conf', 'usr/lib/sv08/rauc-service-policy.json', 'etc/dbus-1/system.d/zz-sv08-rauc.conf', 'etc/systemd/system/rauc.service.d/sv08.conf', 'usr/lib/systemd/system/sv08-feed.service', 'usr/lib/systemd/system/sv08-feed.timer'))
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
                  ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
     if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
+    if context == 'host': files.append(root / 'usr/lib/sv08/sv08_feed.py')
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
     hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     if context == 'host':
         hashes['etc/cockpit/ws-certs.d'] = hashlib.sha256(
             os.readlink(root / 'etc/cockpit/ws-certs.d').encode()).hexdigest()
+        hashes['etc/systemd/system/timers.target.wants/sv08-feed.timer'] = hashlib.sha256(
+            os.readlink(root / 'etc/systemd/system/timers.target.wants/sv08-feed.timer').encode()).hexdigest()
     return dict(execute=True, context=context, activated=False,
                 payload_bytes=sum(p.stat().st_size for p in files), hashes=hashes)
 
