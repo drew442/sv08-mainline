@@ -1,9 +1,9 @@
 # Network-boot eMMC environment read candidate
 
-Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: reviewed offline
-candidate, awaiting exact SD write/readback and one supervised physical test. This is a method to
-complete the existing H10 read-only environment inspection without removing
-the eMMC to use a USB writer. It is not a supported recovery image. The owner
+Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: reviewed
+candidate; SD write/readback is complete, awaiting spare-eMMC reinstallation
+and one supervised physical test. This method completes the existing H10
+read-only environment inspection without removing the eMMC to use a USB writer. It is not a supported recovery image. The owner
 reports that the spare eMMC is currently out of the printer. It must be
 reinstalled before this network test can access its environment; NFS does not
 make a physically absent device available.
@@ -12,9 +12,9 @@ Beelink is measured at `192.168.1.136`. Its NFSv3/TCP export of
 `/srv/sv08-sd-nfs` is currently read-only with root-squash and limited to
 Beelink (`192.168.1.136`) and the expected printer reservation (`192.168.1.141`).
 A local NFSv3/TCP mount read the deployed init at the hash below, and a write
-probe was refused with `Read-only file system`. The disposable SD reader is not
-currently enumerated on Beelink, so the reviewed image has not yet been written
-to the card.
+probe was refused with `Read-only file system`. The reviewed SD image has now
+been written to the disposable SU02G card and passed full image-sized direct-I/O
+readback; see the [write receipt](host-sd-network-emmc-probe-card-write-20260926.md).
 
 ## Why the existing network boot could not read eMMC
 
@@ -117,14 +117,14 @@ supervised boot of the exact SD image above. It confirmed the PC3 selector setup
 U-Boot eMMC isolation, bounded read-only probe, and stop behavior; PC3's effect
 on this SV08 remains an inference until measured. The review requires exact SD
 direct-I/O readback, only the spare eMMC reinstalled while fully powered off,
-receive-only serial capture armed before power, and one supervised boot. In one
-side-lying session with the printer fully off, the owner moves only the disposable
-SD to Beelink's writer, writes this reviewed image, and provides direct-I/O
-readback matching the exact image hash. The owner reinstalls the spare eMMC in
-the printer and the reviewed SD; the factory eMMC stays stored. Before power-on,
-arm receive-only serial capture. One supervised SD boot should mount the
-read-only NFS root, show the explicit eMMC result, then power down. Any absent
-or ambiguous card, read error, CRC/layout failure, or unexpected boot path ends
-the test without another reboot. If Linux still cannot see the eMMC, use the
+receive-only serial capture armed before power, and one supervised boot. The
+reviewed SD image has been written and read back exactly. With the printer fully
+off and serial disconnected, the owner now reinstalls only the spare eMMC and
+this SD; the factory eMMC stays stored. The printer should be upright with
+Ethernet connected. Before serial is reconnected, arm receive-only capture
+because the cable powers the host. One supervised SD-to-NFS boot should show
+the explicit eMMC result, then power down. Any absent or ambiguous card, read
+error, CRC/layout failure, or unexpected boot path ends the test without another
+reboot. If Linux still cannot see the eMMC, use the
 already-approved USB-reader path for H10; do not attempt an eMMC write or
 change MCU firmware.

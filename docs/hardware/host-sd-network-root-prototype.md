@@ -158,6 +158,7 @@ missing or ambiguous cards and unrecognized layouts. The general
 separate `READ_ONLY_VALID_PAIR` eMMC line to report the target and both CRC-valid
 copies. QEMU has no eMMC and therefore tests only refusal behavior. Independent
 review passed with conditions, the updated init is deployed on Beelink and its
-NFSv3/TCP export was locally verified read-only with root-squash. The exact SD
-image still requires a write and full direct-I/O readback before a supervised
-physical boot; see the [current H10 record](host-sd-network-emmc-probe-20260926.md).
+NFSv3/TCP export was locally verified read-only with root-squash. The exact SD image has now been written and passed full direct-I/O readback; see
+the [H10 write receipt](host-sd-network-emmc-probe-card-write-20260926.md) and
+[current H10 record](host-sd-network-emmc-probe-20260926.md). The spare eMMC
+reinstallation and one captured physical boot remain pending.

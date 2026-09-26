@@ -34,7 +34,8 @@ have passed independent offline review. None certifies physical board behavior.
 `feature_workflow.py next` currently returns `null`; optional features remain
 paused. The next physical dependency is H10: the reviewed image and updated NFS probe
 are ready, and Beelink's restricted read-only export is verified. The disposable
-SD is not attached to Beelink; owner must move it to the reader for writing and
-readback, then reinstall the spare eMMC plus SD (factory module stays stored)
-for one read-only network probe boot.
+SD is written and direct-I/O readback matches. The owner now needs to reinstall
+the spare eMMC plus SD with the printer fully off (factory module stays stored),
+stand it upright, and reconnect Ethernet. Arm receive-only serial capture before
+the USB cable is reconnected, then run one read-only probe boot.
 Continue offline checklist preparation while waiting.
