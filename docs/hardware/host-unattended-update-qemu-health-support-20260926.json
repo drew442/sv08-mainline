@@ -7,8 +7,8 @@
   "implementation_commit": "cb0c0da6e4c594dbf47b2c700cca8ba8c4b28a80",
   "runtime_source_commit": "a2f0b8f515a39c50d57d8ff03248942dfc358c4b",
   "harness_sha256": "bb1808d2f4bd4dbfb8664f979d7c8afa8e2f6b12387d5df7012ebaab8904f733",
-  "result_file": "build/host-unattended-qemu-health-v5/result.json",
-  "result_sha256": "8711ca5fb2ca9fe90cda0ac320266e357d456b73b111c3f48ed51fc7e67df216",
+  "result_file": "build/host-unattended-qemu-health-v6/result.json",
+  "result_sha256": "5cbbe14fc15a5baf8235a8bd2ea4b761995166c3b3f010c19e93dac6536898c4",
   "qemu_version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
   "artifact_sha256": {
     "rauc": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
@@ -19,7 +19,7 @@
     "success": [
       {
         "result": {
-          "boot_id": "be3655cc-6b71-44fc-81e1-9a0e7cd80252",
+          "boot_id": "48aff09f-2d9a-47a7-9aa1-5d3e20b76496",
           "health_ready": true,
           "host_selected_root": true,
           "mcu": false,
@@ -31,14 +31,14 @@
           "step": 0,
           "trial": false
         },
-        "log_file": "build/host-unattended-qemu-health-v5/success-boot-0.log",
-        "log_bytes": 46826,
-        "log_sha256": "1245505a62bb30f49a456c50025c319d431e57acfcd308622689163c97489d82",
-        "observed_log_sha256": "1245505a62bb30f49a456c50025c319d431e57acfcd308622689163c97489d82"
+        "log_file": "build/host-unattended-qemu-health-v6/success-boot-0.log",
+        "log_bytes": 46482,
+        "log_sha256": "7a7831fc84695f5cbb8eee422770a3632f7754b34f09258edb4ada5182410aee",
+        "observed_log_sha256": "7a7831fc84695f5cbb8eee422770a3632f7754b34f09258edb4ada5182410aee"
       },
       {
         "result": {
-          "boot_id": "51d1e388-1ee3-4ed7-a009-b0417e50a1a8",
+          "boot_id": "a7f3537d-c3db-44cf-8f26-8747a1042629",
           "health_ready": true,
           "host_selected_root": true,
           "mcu": false,
@@ -50,16 +50,16 @@
           "step": 1,
           "trial": true
         },
-        "log_file": "build/host-unattended-qemu-health-v5/success-boot-1.log",
-        "log_bytes": 45175,
-        "log_sha256": "774041eb57ff1aeab7d8b66734ddaa66cedb44972976dd449e9d37be73713579",
-        "observed_log_sha256": "774041eb57ff1aeab7d8b66734ddaa66cedb44972976dd449e9d37be73713579"
+        "log_file": "build/host-unattended-qemu-health-v6/success-boot-1.log",
+        "log_bytes": 45892,
+        "log_sha256": "72e18997cc46e08c7e0e0a6ff8b913beec3d2bdda7e4bbb7e3a4f3dbc75e2735",
+        "observed_log_sha256": "72e18997cc46e08c7e0e0a6ff8b913beec3d2bdda7e4bbb7e3a4f3dbc75e2735"
       }
     ],
     "fallback": [
       {
         "result": {
-          "boot_id": "1dfe33a5-72a9-4cd3-98b2-74be83db9541",
+          "boot_id": "f1499cf9-2b93-4825-8e3b-a20e4e8c24e2",
           "health_ready": true,
           "host_selected_root": true,
           "mcu": false,
@@ -71,10 +71,10 @@
           "step": 0,
           "trial": false
         },
-        "log_file": "build/host-unattended-qemu-health-v5/fallback-boot-0.log",
-        "log_bytes": 46483,
-        "log_sha256": "5d6f47523fcd1b4eee48da18edb2032e0807c0c5cd0c64c8692cbb60d0a12802",
-        "observed_log_sha256": "5d6f47523fcd1b4eee48da18edb2032e0807c0c5cd0c64c8692cbb60d0a12802"
+        "log_file": "build/host-unattended-qemu-health-v6/fallback-boot-0.log",
+        "log_bytes": 46827,
+        "log_sha256": "19df3046d4d697f392efcf4cb721afd5636f565922f6cfe5de90017320bd61d6",
+        "observed_log_sha256": "19df3046d4d697f392efcf4cb721afd5636f565922f6cfe5de90017320bd61d6"
       },
       {
         "result": {
@@ -82,14 +82,14 @@
           "slot": "B",
           "fallback_reboot_observed": true
         },
-        "log_file": "build/host-unattended-qemu-health-v5/fallback-boot-1.log",
-        "log_bytes": 45124,
-        "log_sha256": "6870b19e71816087b8c6b226358cc9a81dc41747558ec8e23d2cd31219f6c6f2",
-        "observed_log_sha256": "6870b19e71816087b8c6b226358cc9a81dc41747558ec8e23d2cd31219f6c6f2"
+        "log_file": "build/host-unattended-qemu-health-v6/fallback-boot-1.log",
+        "log_bytes": 45672,
+        "log_sha256": "c83c34404a82b7c3cd5936aa191c1832f26de5b76013ea3625323664953f5684",
+        "observed_log_sha256": "c83c34404a82b7c3cd5936aa191c1832f26de5b76013ea3625323664953f5684"
       },
       {
         "result": {
-          "boot_id": "83f73e02-38b1-4f5b-8222-bd93fc11d892",
+          "boot_id": "864da90b-1ca6-47c1-81e8-1ac395dcb169",
           "health_ready": true,
           "host_selected_root": true,
           "mcu": false,
@@ -101,16 +101,16 @@
           "step": 1,
           "trial": false
         },
-        "log_file": "build/host-unattended-qemu-health-v5/fallback-boot-2.log",
-        "log_bytes": 46443,
-        "log_sha256": "016b9f06860f0ece315b21f2ae6f6b062fc9db20a79d2311ae02fbcd75103cea",
-        "observed_log_sha256": "016b9f06860f0ece315b21f2ae6f6b062fc9db20a79d2311ae02fbcd75103cea"
+        "log_file": "build/host-unattended-qemu-health-v6/fallback-boot-2.log",
+        "log_bytes": 45894,
+        "log_sha256": "e2a7010f08cfacc376d627efb87f5d22cd92bd6b351ddd6286d15cf2b6ce8b06",
+        "observed_log_sha256": "e2a7010f08cfacc376d627efb87f5d22cd92bd6b351ddd6286d15cf2b6ce8b06"
       }
     ]
   },
   "disk_sha256": {
-    "success": "6d10f5e35c61101572f58d486d8cda27161e5fdb61a79493acd9dc0a64c30086",
-    "fallback": "94912a9136edf2792b36d7de92bfe06344bb3760d7fbafa21c24f055fbbe6cd8"
+    "success": "a083bfcaf52ba23361c13dad7c0258ce37095b5e16a4f9e9fb6cc9a8c6d402b5",
+    "fallback": "bafdce95239126d7e1d9e6e594497e146e22d6b790c15d68adda7341e860e2dd"
   },
   "checks": {
     "A_to_B_trial_health_confirmation": true,
@@ -133,5 +133,8 @@
     "observed_during_fixture_free": "4.5 GiB",
     "observed_fixture_du": "5.4 GiB",
     "note": "These are df/du snapshots, not a continuously sampled minimum. The harness enforces the reserve after its success case and deletes disposable root/GPT/key material after a passing run."
-  }
+  },
+  "source_commit": "3564337b0fbbd0c6def66f7f537a8b9b7323c0c0",
+  "source_dirty_state": [],
+  "reviewed_runtime_commit": "a2f0b8f"
 }
