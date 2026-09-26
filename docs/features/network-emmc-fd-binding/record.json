@@ -1,0 +1,108 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Opened target block descriptor major/minor is matched to the synthetic target sysfs dev identity before the first write; mismatch or malformed identity refuses.",
+      "environment": "offline",
+      "id": "nfb-01"
+    },
+    {
+      "description": "One open descriptor is retained through write, flush and full readback; failures never emit success or retry.",
+      "environment": "offline",
+      "id": "nfb-02"
+    },
+    {
+      "description": "Disposable QEMU full-image write/flush/readback remains correct with exact synthetic target serial, capacity, source hash and GPT evidence.",
+      "environment": "offline",
+      "id": "nfb-03"
+    },
+    {
+      "description": "Focused native/static ARM64 and existing one-shot/CID/SD-NFS tests and workflow/document checks pass, with no production-image or physical claims.",
+      "environment": "offline",
+      "id": "nfb-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "nfb-01"
+        ],
+        "text": "Compare a verified block descriptor's st_rdev major/minor with a strictly parsed sysfs dev value before the first write. Refuse missing, malformed, mismatched, or changed synthetic identity without claiming success."
+      },
+      {
+        "checks": [
+          "nfb-02"
+        ],
+        "text": "Use the same open target descriptor for write, fsync, block flush, seek, and full readback, including injected fault paths. Preserve the durable claim-before-open sequence and terminal no-retry behavior on every failure."
+      },
+      {
+        "checks": [
+          "nfb-03"
+        ],
+        "text": "Run the full-image test only against disposable regular-file-backed QEMU media with an independent read-only source. Preserve exact synthetic serial, capacity, source hash, full readback, GPT and partition checks, and report runtime and storage use."
+      },
+      {
+        "checks": [
+          "nfb-04"
+        ],
+        "text": "Keep the writer and new tests out of the production SD/NFS image. Use only synthetic identity values; do not access private CID evidence, add a physical writer or trigger, change boot policy, or claim printer validation. Retain H12 and its later exact-operation review and recovery gates."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "5d17c68783a95afa437b3e2a135565dce0d723eabb7e2389e6163867cd8b0518",
+    "rationale": "The current QEMU-only writer opens /dev/sda after a durable claim, checks its block type, capacity and synthetic USB serial, then closes and reopens the pathname for readback. The injected readback fault path also reopens it. Binding the opened descriptor's st_rdev to the synthetic target's sysfs dev identity and retaining that descriptor through flush and readback closes this specific path-resolution gap. The before/after behavior is testable without expanding into a production writer. ADR 0018 and the one-shot and CID-admission proposals require synthetic offline evidence, preserved single-use failure behavior, and separate physical authorization. The existing 7,818,182,656-byte QEMU result establishes the baseline, not the proposed binding. The proposal retains the read-only independent source, disposable regular-file-backed QEMU target, full verification, production SD image exclusion, and H12 as the sole later physical task. This decision approves only the bounded offline change.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-cid-admission/proposal.md": "937ea3353d36f39f62d754ca07ff28885ce4f500a54d90ed7a73dd69a57697c9",
+      "docs/features/network-emmc-one-shot/proposal.md": "5aec86dc704622d55be31125704191745d68d7a9f3cab6be3ef419bf6abf2da4",
+      "docs/features/network-emmc-reimage/proposal.md": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-one-shot-qemu-20260926.md": "f1ddc2ccd3f239eb2cd050372f874ba3129706ea74c3254baced63b7f8fbe434",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf"
+    },
+    "reviewer": "root/approve_fd_binding",
+    "scope_sha256": "417ecde4bab772b4d4dd222e094844e33a38e822267e54686d8abd6ccb84dc59",
+    "session": "independent-network-emmc-fd-binding-review-20260926"
+  },
+  "format_version": 1,
+  "id": "network-emmc-fd-binding",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-fd-binding/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-reimage/proposal.md",
+    "docs/features/network-emmc-one-shot/proposal.md",
+    "docs/features/network-emmc-cid-admission/proposal.md",
+    "docs/hardware/host-network-emmc-one-shot-qemu-20260926.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "nfb-01",
+        "nfb-02",
+        "nfb-03",
+        "nfb-04"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "qemu-fd-binding",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Bind one QEMU target descriptor from admission through readback",
+      "verification": null
+    }
+  ],
+  "title": "Bind the QEMU writer's opened target through readback"
+}
