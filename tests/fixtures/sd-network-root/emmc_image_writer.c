@@ -29,7 +29,7 @@
 #define SYNTHETIC_MMC_DEVICE "/dev/mmcblk0"
 /* QEMU USB disk is deliberately not H616 MMC. This test-local adapter maps
  * one synthetic MMC inventory entry to its USB block descriptor by dev_t. */
-#define SV08_EMMC_SECTORS (TARGET_BYTES / 512ULL)
+#define SV08_EMMC_SECTORS 61079552ULL
 #define SV08_CID_NO_OPEN_WRAPPER 1
 #include "emmc_cid_admission.h"
 #ifndef SV08_JOB_ID
@@ -37,6 +37,21 @@
 #endif
 #ifndef SV08_JOB_DESCRIPTOR_SHA256
 #define SV08_JOB_DESCRIPTOR_SHA256 ""
+#endif
+#ifndef SV08_TARGET_POLICY_SHA256
+#define SV08_TARGET_POLICY_SHA256 ""
+#endif
+#ifndef SV08_JOB_NOT_BEFORE
+#define SV08_JOB_NOT_BEFORE 0LL
+#endif
+#ifndef SV08_JOB_EXPIRES
+#define SV08_JOB_EXPIRES 0LL
+#endif
+#ifndef SV08_SOURCE_SHA256
+#define SV08_SOURCE_SHA256 ""
+#endif
+#ifndef SV08_JOB_SIGNATURE_SHA256
+#define SV08_JOB_SIGNATURE_SHA256 ""
 #endif
 #ifndef SV08_TEST_FAULT
 #define SV08_TEST_FAULT ""
@@ -173,7 +188,7 @@ static int synthetic_mmc_identity_at(const char *base,dev_t *number) {
   char device[64],path[1024];unsigned long long sectors=0;
   if(!sv08_emmc_cid_device_at(base,SYNTHETIC_MMC_CID,
                               device,sizeof(device),&sectors)||
-     strcmp(device,SYNTHETIC_MMC_DEVICE)||sectors!=TARGET_BYTES/512ULL)return 0;
+     strcmp(device,SYNTHETIC_MMC_DEVICE)||sectors!=SV08_EMMC_SECTORS)return 0;
   /* This adapter has one fixed synthetic card path. A renamed card may still
    * pass the locator, but cannot pass this fixed mapping and is refused. */
   if(snprintf(path,sizeof(path),"%s/mmc0/mmc0:0001/block/mmcblk0/dev",base)>=
@@ -194,6 +209,32 @@ static int hash_file(const char *path,char hex[65]) {
     sha_update(&hash,buffer,(size_t)n);
   }
   close(fd);sha_final(&hash,hex);return 1;
+}
+static int bundle_files_match(const char *root) {
+  const char *names[]={"job.json","job.sig","synthetic-target-policy.json"};
+  const char *expected[]={SV08_JOB_DESCRIPTOR_SHA256,SV08_JOB_SIGNATURE_SHA256,
+                          SV08_TARGET_POLICY_SHA256};
+  char path[1024],actual[65];
+  for(size_t i=0;i<3;i++) {
+    if(strlen(expected[i])!=64||
+       snprintf(path,sizeof(path),"%s/%s",root,names[i])>=(int)sizeof(path)||
+       !hash_file(path,actual)||strcmp(actual,expected[i]))return 0;
+  }
+  return 1;
+}
+static int qemu_virt_only(void) {
+  char compatible[256];int fd=open("/proc/device-tree/compatible",O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+  if(fd<0)return 0;
+  ssize_t n=read(fd,compatible,sizeof(compatible));close(fd);
+  if(n<=0||n==(ssize_t)sizeof(compatible))return 0;
+  /* QEMU's virt board, never the physical Allwinner H616 device tree. */
+  for(size_t at=0;at<(size_t)n;) {
+    size_t len=strnlen(compatible+at,(size_t)n-at);
+    if(len==(size_t)n-at)return 0;
+    if(len==16&&!memcmp(compatible+at,"linux,dummy-virt",16))return 1;
+    at+=len+1;
+  }
+  return 0;
 }
 static int claim_once(const char *cmd,const char *descriptor_hash) {
   char *port_arg=strstr(cmd,"sv08.claim_port=");char *end=NULL;
@@ -309,6 +350,11 @@ int main(void) {
   puts("block-rdev match mismatch malformed changed nonblock refused");
   return 0;
 }
+#elif defined(SV08_BUNDLE_SELFTEST)
+int main(int argc,char **argv) {
+  if(argc!=2||!bundle_files_match(argv[1])) {puts("refused");return 0;}
+  puts("admitted");return 0;
+}
 #else
 int main(void) {
   const char *source="/image.bin",*target="/dev/sda";
@@ -319,10 +365,13 @@ int main(void) {
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");
   if(mount("devtmpfs","/dev","devtmpfs",0,"mode=0755")&&!mounted("/dev","devtmpfs","rw"))finish("REFUSED_DEV");
   f=fopen("/proc/cmdline","r");if(!f||!fgets(cmd,sizeof(cmd),f))finish("REFUSED_CMDLINE");fclose(f);
-  if(!strstr(cmd,"sv08.qemu_reimage=1")||!(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
+  if(!strstr(cmd,"sv08.qemu_reimage=1")||!qemu_virt_only()||
+     !(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
+  if((long long)started<SV08_JOB_NOT_BEFORE||(long long)started>=SV08_JOB_EXPIRES)
+    finish("REFUSED_STALE_JOB");
   if(!exact_usb_serial()||!exact_usb_capacity()||access("/sys/block/sdb",F_OK)==0)finish("REFUSED_TARGET_ID");
-  if(!hash_file("/job.json",descriptor_hash)||strlen(SV08_JOB_DESCRIPTOR_SHA256)!=64||
-     strcmp(descriptor_hash,SV08_JOB_DESCRIPTOR_SHA256))finish("REFUSED_DESCRIPTOR");
+  if(!bundle_files_match(""))finish("REFUSED_BUNDLE");
+  if(!hash_file("/job.json",descriptor_hash))finish("REFUSED_DESCRIPTOR");
   /* One request only. A timeout/lost response consumes the server-side job
    * but cannot reach target open; a later boot will be refused as consumed. */
   if(!claim_once(cmd,descriptor_hash))finish("REFUSED_OR_UNCERTAIN_CLAIM");
@@ -332,7 +381,8 @@ int main(void) {
   if(!synthetic_mmc_identity(&admitted_dev))finish("REFUSED_SYNTHETIC_MMC");
   f=fopen("/expected.sha256","r");if(!f||!fgets(expected,sizeof(expected),f))finish("REFUSED_MANIFEST");fclose(f);
   expected[strcspn(expected,"\n")]=0;
-  if(strlen(expected)!=64||strspn(expected,"0123456789abcdef")!=64)finish("REFUSED_MANIFEST");
+  if(strlen(expected)!=64||strspn(expected,"0123456789abcdef")!=64||
+     strcmp(expected,SV08_SOURCE_SHA256))finish("REFUSED_MANIFEST");
   in=open(source,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
   if(in<0||fstat(in,&ss)||!S_ISREG(ss.st_mode)||(uint64_t)ss.st_size!=IMAGE_BYTES)
     finish("REFUSED_SOURCE");
@@ -361,7 +411,6 @@ int main(void) {
     if(!strcmp(SV08_TEST_FAULT,"partial-write"))finish("INJECTED_PARTIAL_WRITE");
     if(fsync(out)||ioctl(out,BLKFLSBUF,0))finish("FAILED_FLUSH");
     if(!strcmp(SV08_TEST_FAULT,"flush"))finish("INJECTED_AFTER_FLUSH");
-    close(in);
     if(lseek(out,0,SEEK_SET)!=0||!exact_read(out,CHUNK))finish("FAILED_READBACK");
     finish("INJECTED_DURING_READBACK");
   }
@@ -374,12 +423,11 @@ int main(void) {
   sha_final(&hash,actual);
   if(strcmp(actual,expected))finish("FAILED_SOURCE_CHANGED");
   if(fsync(out)||ioctl(out,BLKFLSBUF,0)||lseek(out,0,SEEK_SET)!=0)finish("FAILED_FLUSH");
-  close(in);
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(out,n))finish("FAILED_READBACK");
     sha_update(&hash,buffer,n);done+=n;}
-  sha_final(&hash,readback);close(out);
+  sha_final(&hash,readback);close(out);close(in);
   if(strcmp(readback,expected))finish("FAILED_READBACK_HASH");
   printf("SV08_QEMU_REIMAGE_SOURCE bytes=%llu sha256=%s root_nfs_ro=1\n",IMAGE_BYTES,actual);
   printf("SV08_QEMU_REIMAGE_READBACK bytes=%llu sha256=%s target=/dev/sda target_serial=SV08_QEMU_REIMAGE_TEST_ONLY target_bytes=%llu\n",IMAGE_BYTES,readback,(unsigned long long)capacity);

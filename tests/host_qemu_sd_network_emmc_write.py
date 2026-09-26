@@ -25,9 +25,14 @@ import tracemalloc
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'scripts'))
+sys.path.insert(0, str(REPO / 'tests'))
 from prepare_host_os import layout  # noqa: E402
 from sv08_emmc_job import (ClaimHTTPServer, ClaimState, canonical_json,
-                           make_descriptor, sha256_bytes)  # noqa: E402
+                           sha256_bytes)  # noqa: E402
+from sv08_reimage_signature import (FORMAT, policy, policy_hash,
+                                    sign_test_job)  # noqa: E402
+sys.path.insert(0, str(REPO / 'scripts'))
+from build_qemu_reimage_mode import build as build_reimage_root  # noqa: E402
 
 IMAGE_BYTES = 7_818_182_656
 TARGET_BYTES = 32_000_000_000
@@ -273,18 +278,18 @@ def synthetic_mmc_fixture(root, identity_fault=None):
     (card / 'type').write_text('MMC\n')
     (card / 'cid').write_text(('00000000000000000000000000000002' if
                              identity_fault == 'wrong-cid' else SYNTHETIC_CID) + '\n')
-    (block / 'size').write_text(f'{TARGET_BYTES // SECTOR}\n')
+    (block / 'size').write_text(f'{policy()["sectors"]}\n')
     (block / 'dev').write_text('8:1\n' if identity_fault == 'wrong-dev' else '8:0\n')
     if identity_fault == 'ambiguous':
         other = base / 'mmc1/mmc1:0001/block/mmcblk1'
         other.mkdir(parents=True)
         (other.parent.parent / 'type').write_text('MMC\n')
         (other.parent.parent / 'cid').write_text(SYNTHETIC_CID + '\n')
-        (other / 'size').write_text(f'{TARGET_BYTES // SECTOR}\n')
+        (other / 'size').write_text(f'{policy()["sectors"]}\n')
         (other / 'dev').write_text('8:1\n')
 
 
-def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *,
+def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signature, *,
             claim_only=False, fault=None, identity_fault=None):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
@@ -296,23 +301,14 @@ def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *,
         raise ValueError('QEMU host needs at least 3 GiB available memory')
     root = work / 'nfs-root'
     root.mkdir(mode=0o755)
-    for name in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
-        (root / name).mkdir()
+    mode_manifest = build_reimage_root(root, canonical_json(descriptor), signature,
+                                       fault=fault, claim_only=claim_only)
+    if mode_manifest['status'] != 'nondeployable-qemu-only':
+        raise ValueError('Untrusted QEMU mode artifact')
     synthetic_mmc_fixture(root, identity_fault)
     descriptor_bytes = canonical_json(descriptor)
     descriptor_hash = sha256_bytes(descriptor_bytes)
-    (root / 'job.json').write_bytes(descriptor_bytes)
     (root / 'job.json').chmod(0o444)
-    writer = root / 'sd-network-init'
-    compile_args = ['aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
-         f'-DSV08_JOB_ID="{descriptor["job_id"]}"',
-         f'-DSV08_JOB_DESCRIPTOR_SHA256="{descriptor_hash}"',
-         '-Wall', '-Wextra', '-Werror']
-    if claim_only:
-        compile_args.append('-DSV08_CLAIM_ONLY=1')
-    if fault:
-        compile_args.append(f'-DSV08_TEST_FAULT="{fault}"')
-    run(compile_args + ['-o', writer, REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'])
     (root / 'expected.sha256').write_text(IMAGE_SHA256 + '\n')
     os.link(work / 'source.img', root / 'image.bin')
     run(['mount', '--make-rprivate', '/'])
@@ -483,13 +479,19 @@ def main():
                        'image_bytes': IMAGE_BYTES,
                        'backup_gpt_at_image_end': True,
                        'partitions': expected_records()}
-            descriptor = make_descriptor(
-                job_id='qemu-reimage-test-001', source_bytes=IMAGE_BYTES,
-                source_sha256=IMAGE_SHA256, target_serial=SERIAL,
-                target_bytes=TARGET_BYTES, image_bytes=IMAGE_BYTES,
-                image_sha256=IMAGE_SHA256, gpt=gpt_map)
+            issued = int(time.time())
+            descriptor = {
+                'format': FORMAT, 'job_id': 'qemu-reimage-test-001',
+                'issued_unix': issued, 'expires_unix': issued + 7200,
+                'source': {'bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
+                           'mode': 'read-only-nfs'},
+                'target_policy_sha256': policy_hash(policy()),
+                'image': {'bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
+                          'layout': gpt_map},
+            }
+            signature = sign_test_job(descriptor)
             claim_evidence = execute(work, Path(os.path.abspath(args.sd_work)),
-                                     args.package_root, fd, kernel_args, descriptor,
+                                     args.package_root, fd, kernel_args, descriptor, signature,
                                      claim_only=args.claim_only, fault=args.fault,
                                      identity_fault=args.identity_fault)
             if args.fault or args.identity_fault:
