@@ -205,9 +205,16 @@
       },
       "repeats": 0,
       "resumption": "Corrected the evidence test count from eleven to thirteen and pushed the new frozen implementation/evidence revision 4a60015; resubmitting with updated document and source-commit hashes.",
-      "status": "review",
+      "status": "done",
       "title": "Implement signed feed polling and unattended guarded A/B staging",
-      "verification": null
+      "verification": {
+        "decision_sha256": "c4afffe27e70b6325fb638d7ea8d3fe48e1b9f5711e758bcb7ad1b9a63b815c8",
+        "evidence_sha256": "b47e660ee8ee76ac8b538350240af89d334e3e5612a73bb4668a82b2bd6c4385",
+        "outcome": "passed",
+        "rationale": "Verified the complete d50813f..47307c4 diff and clean source worktree. All four submitted evidence entries match the document and source hashes. Reproduced 141 focused tests, JavaScript syntax, Python compilation, diff checks, and workflow validation. This passes only the approved offline implementation checks. The evidence accurately limits the 8 GB result to nominal capacity arithmetic and leaves installed RAUC/QEMU, physical validation, and release qualification pending.",
+        "reviewer": "independent-feature-verifier",
+        "session": "unattended-update-verification-20260926-final"
+      }
     },
     {
       "blocker": null,
