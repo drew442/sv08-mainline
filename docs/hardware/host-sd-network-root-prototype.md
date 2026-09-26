@@ -121,8 +121,9 @@ U-Boot has no Ethernet driver by design; it never reached the kernel NFS path.
 This test does not establish eMMC isolation, network-root operation, or safe
 fallback. The exact cause of the repeated loader start is not established.
 
-Before retrying, independently review the corrected v2 image bytes and compiled
-configuration. The eMMC v5 A-slot health confirmation remains masked; a
+The corrected v2 image passed independent review, was written to the identified
+disposable SD, and passed full direct-I/O readback. The eMMC v5 A-slot health
+confirmation remains masked; a
 separately reviewed live operation had re-armed three A attempts before this
 trial. The current counter has not been re-read since the trial, so do not infer
 its present value. The owner confirmed Beelink's reserved hardcoded address and

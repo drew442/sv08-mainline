@@ -64,8 +64,11 @@ The new regular-file image is in ignored
 matching private receipt is `composition-v2.json`. It records the corrected
 fragment hash and effective U-Boot configuration, including
 `CONFIG_HASH_VERIFY=y` and `CONFIG_SHA256=y`. Independent review returned
-**GO WITH CONDITIONS** for this exact artifact. It has not been written to
-hardware; the conditions are recorded in the media write procedure and H09.
+**GO WITH CONDITIONS** for this exact artifact. On 2026-09-26, the coordinator
+wrote its 192 MiB prefix to the identified, unmounted SU02G SD card and
+completed direct-I/O readback with the exact same hash. The CID and write
+transcript remain private on Beelink. The card is ready for the single retry;
+the review conditions are recorded in the media write procedure and H09.
 
 See the [media write record](host-sd-network-card-write-20260925.md) and
 [coordinated H09 task](coordinated-human-tasks.md).

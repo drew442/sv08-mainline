@@ -54,16 +54,22 @@ corrected, cleanly rebuilt v2 image is 201,326,592 bytes with SHA-256
 matching ignored receipt is
 `local/sd-network-physical-20260925/composition-v2.json`. An independent
 high-consequence review returned **GO WITH CONDITIONS** for that exact hash.
-Before writing, freshly identify the unmounted SU02G card by CID, capacity and
-reader path, transfer and verify the exact image hash, write only the first
-192 MiB, flush, and read back that prefix directly to the same hash. Keep the
-factory eMMC stored. Do not extend or sanitize the remainder of the SD card.
+On 2026-09-26, Beelink freshly identified the unmounted card as SD model `SU02G`
+with capacity 1,977,614,336 bytes through the USB SD reader. The transferred
+image hash was verified before writing. The coordinator wrote exactly 48 x
+4 MiB blocks at offset zero, flushed the device, and read the same prefix back
+using direct I/O. The 201,326,592-byte readback hash matched the candidate
+exactly. The card's remaining capacity was not written or sanitized. The
+private target identity and write/readback receipt are in
+`/home/drew/sv08-captures/sd-network-20260925/write-v2-receipt.txt` on Beelink; the
+readback file is retained beside it. The factory eMMC remains stored.
 
-For the one retry, verify Beelink's `.136` reservation and the read-only export,
-fully isolate printer power (including USB-serial back-power) during the card
-move, and arm receive-only UART before reconnecting serial. Send no serial
-input. The eMMC A boot counter is unknown after the two prior SD-loader starts;
-do not infer that it remains at three. Stop after this single attempt or at any
-repeated reset, eMMC/RAUC selection, hash/NFS failure or printer output. Inspect
-the counter before considering another boot. The actual Linux Ethernet/DHCP/NFS
-path has not yet been proven.
+The next physical action is to power the printer fully off, reinstall only this
+SD card, and stand the printer upright. Keep Ethernet connected. The receive-only
+serial listener is waiting for the USB serial device to reconnect; reconnecting
+it powers the host, so do so only after the coordinator confirms capture
+readiness. Do not send serial input. The eMMC A counter is unknown after two SD
+loader starts; stop after one supervised retry or at any repeated reset,
+eMMC/RAUC selection, hash or NFS failure, or printer output. Inspect the counter
+before any further boot. The actual Linux Ethernet/DHCP/NFS path is not yet
+proven.
