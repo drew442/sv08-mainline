@@ -171,7 +171,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Correct probe host discovery and NFS evidence",
       "verification": {
         "decision_sha256": "762e415643c9bcce221a118a38a4c4ab16ffc715801c6f0aad1326e014bb4cf9",
