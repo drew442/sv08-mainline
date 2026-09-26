@@ -48,26 +48,26 @@
           "automatic-admission",
           "integration-boundaries"
         ],
-        "text": "Bound the complete download, temporary publication and retained bundle within the 8 GB data budget before any slot write. Keep opt-out and state-change checks at the actual staging and arming boundaries, including after a long download."
+        "text": "Bound the complete download, temporary publication and retained bundle within the 8 GB data budget before any slot write. Recheck opt-out and current state at staging and arming, including after a long download."
       },
       {
         "checks": [
           "qemu-ab-journey",
           "physical-ab-validation"
         ],
-        "text": "Treat the running source slot as the rollback copy during inactive-slot replacement. In the physical test, permit only the reviewed inactive boot/root write and the separately reviewed arming environment delta. Require the exact deployable candidate, target map, recovery route, owner authorization and independent high-consequence review before hardware writes."
+        "text": "Keep the running source slot as the rollback copy. Verify the inactive boot/root write and separate arming environment delta in QEMU before physical validation. Hardware writing still requires the exact deployable candidate, target map, recovery route, owner authorization and independent high-consequence review."
       }
     ],
     "outcome": "approved-with-constraints",
     "proposal_sha256": "c6bcfa54d6d5a383575e56473649ee32aa1d477e03f9913d552203639d139436",
-    "rationale": "Decision 0017 explicitly authorizes unattended signed network delivery through RAUC to the inactive OS slot; decision 0004 preserves opt-out, immutable mode, customization refusal, idle admission and A/B rollback. The proposal addresses the current manual upload requirement and distinguishes this bounded update from raw whole-eMMC flashing. Existing Transaction, RAUC backend and admission code provide relevant guards, but no production scheduler or physical write validation exists. H10 established only read-only eMMC visibility. The revised proposal correctly distinguishes unchanged environment banks during staging from the reviewed boot-selection change during arming. Offline implementation is approved; this decision does not authorize an eMMC write or certify the current non-deployable image.",
+    "rationale": "Commit c11f85d changes only task sequencing. The proposal, requirements and six acceptance checks are unchanged. The new QEMU task retains the previously approved qemu-ab-journey check, and physical validation now waits for it. This stays within the owner's authorization in decision 0017 and the delegated workflow in decision 0011; it does not require another owner decision. Completing implement-offline must not be reported as completing QEMU, physical validation, or the feature. The current board image remains non-deployable, and H10 established read-only eMMC access only.",
     "requirements_sha256": {
       "docs/decisions/0004-os-operating-modes.md": "8b8de6e89c34900e40e4d8865340a374b28dfca96e7fb3d346cc7c594753c94c",
       "docs/decisions/0017-unattended-network-os-updates.md": "4d5adfc5502686299802d7fa33d9577a62f78bb28e5fa8d843bda5e0c5dcc5a3"
     },
-    "reviewer": "independent-feature-approver",
-    "scope_sha256": "94b196440e08ffd6b67e03f79ef7048f4b68a0f6c53055391fc886b9f2c27f44",
-    "session": "unattended-update-approval-20260926"
+    "reviewer": "independent-feature-approver-task-split",
+    "scope_sha256": "515985abeef9d908f96c9fe54b6f03d0d014df3af53e1efba4b9e80d83a8b341",
+    "session": "unattended-update-task-split-review-20260926"
   },
   "format_version": 1,
   "id": "host-unattended-ab-updates",
@@ -81,7 +81,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Administrative pause to reapprove the unchanged acceptance checks split into offline implementation and a dependent QEMU journey; committed work remains pushed at 02b4cf1.",
       "checks": [
         "signed-feed",
         "automatic-admission",
@@ -100,7 +100,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "blocked",
       "title": "Implement signed feed polling and unattended guarded A/B staging",
       "verification": null
     },
