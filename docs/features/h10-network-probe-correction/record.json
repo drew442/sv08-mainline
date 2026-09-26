@@ -1,0 +1,95 @@
+{
+  "author": "root",
+  "checks": [
+    {
+      "description": "Host tests demonstrate discovery under the exact eMMC controller for a target with a non-assumed Linux mmcN number, ignore an unrelated small SD, and reject multiple matching MMC cards.",
+      "environment": "offline",
+      "id": "host-number-independent"
+    },
+    {
+      "description": "Beelink succeeds with default NFSv3/TCP mountd port discovery without explicit mountport and confirms export write refusal.",
+      "environment": "offline",
+      "id": "nfs-default-port"
+    },
+    {
+      "description": "Warnings-as-errors init build, refreshed exact-hash NFS manifest/composition evidence, and separate high-consequence review before another physical boot.",
+      "environment": "offline",
+      "id": "reviewed-deployment"
+    },
+    {
+      "description": "Record the first supervised attempt as NFS failure before probe execution, preserve private trace hash, and leave current eMMC boot counters unknown.",
+      "environment": "hardware",
+      "id": "honest-hardware-record"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "host-number-independent",
+          "honest-hardware-record"
+        ],
+        "text": "Search only beneath the exact 4022000.mmc controller, retain unique nominal-32GB MMC selection and read-only fixed-offset access, and fail closed on ambiguity. Passing fixture tests does not establish physical eMMC initialization."
+      },
+      {
+        "checks": [
+          "nfs-default-port",
+          "reviewed-deployment"
+        ],
+        "text": "Verify default NFSv3/TCP mountd discovery, read-only refusal, and the expected printer-address export. Record how mountd registration is maintained for the proposed retry; persistent Beelink configuration changes require separate scope review."
+      },
+      {
+        "checks": [
+          "honest-hardware-record",
+          "reviewed-deployment"
+        ],
+        "text": "Record the first boot as an NFS failure before probe execution, with current counters unknown. Before another physical boot, obtain a separate GPT-6 Sol high-consequence review of exact deployed hashes, NFS state, MMC initialization evidence, and single-boot stop conditions."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "22f83841c7b6786eb7a81f13964c40927cd3b4ae50a2459c999a9ad6d32f2e92",
+    "rationale": "The correction addresses the measured NFS refusal and the probe's unstable mmc2 assumption within the approved disposable diagnostic. The physical trace contains no probe result and shows a non-removable MMC initialization failure, so eMMC visibility and current counters remain unknown. The existing approved proposal excludes persistent Beelink configuration changes and hardware writes.",
+    "requirements_sha256": {
+      "AGENTS.md": "16a54a5a4aeb6d8d1c05cf39db8902f90037a7848ffa7bb8d317124ec4f41cb6",
+      "docs/features/host-sd-network-root/proposal.md": "651a6d4a5dce34fb591616fcc10b24834fe79311941e5b2e2dde7955be9b432b"
+    },
+    "reviewer": "independent feature approver",
+    "scope_sha256": "0c21227d8decbdad803f907c9c37e9385b33894fdbed81666379eff1eaed3b84",
+    "session": "h10-probe-bugfix-approval-rebound-20260926"
+  },
+  "format_version": 1,
+  "id": "h10-network-probe-correction",
+  "kind": "fix",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/h10-network-probe-correction/proposal.md",
+  "requirements": [
+    "docs/features/host-sd-network-root/proposal.md",
+    "AGENTS.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "host-number-independent",
+        "nfs-default-port",
+        "reviewed-deployment",
+        "honest-hardware-record"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "correct-diagnostic",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Correct probe host discovery and NFS evidence",
+      "verification": null
+    }
+  ],
+  "title": "Correct the existing H10 read-only network eMMC diagnostic after a measured NFS failure"
+}
