@@ -33,9 +33,9 @@ have passed independent offline review. None certifies physical board behavior.
 
 `feature_workflow.py next` returns `null`; optional features remain paused. H10's
 first supervised attempt failed before the probe due NFS mountd registration;
-current eMMC counters remain unknown. The owner has clarified the spare eMMC is not installed. The printer is halted,
-and receive-only serial capture is available on Beelink; do not reboot before
-reinstalling the spare with all host power removed. The bounded probe correction
+current eMMC counters remain unknown. The owner has reinstalled the spare eMMC and SD with USB serial disconnected.
+The printer is halted and fresh receive-only serial capture is waiting on
+Beelink. The bounded probe correction
 is approved, and offline NFS/default-port, `.141` export and hash checks pass.
 The Sol high-consequence reviewer approved one further read-only boot with
 conditions and confirmed the review remains valid after the spare is reinstalled.

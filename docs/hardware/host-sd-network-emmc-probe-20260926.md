@@ -153,4 +153,7 @@ disconnected while reinstalling the spare with all host power removed; leave the
 written SD card in place and the factory eMMC stored. The reviewer subsequently confirmed the same PASS WITH CONDITIONS applies
 once that precondition is met; no new review is needed solely for reinstalling
 the same module. Repeat the NFS/hash/capture checks immediately before the boot.
-Do not reconnect serial or begin the retry while the eMMC is absent.
+The owner subsequently reported reinstalling the spare eMMC and same SD card
+with USB serial disconnected. Beelink has reconfirmed the mountd service,
+`.141` export and executable hash; fresh receive-only capture is waiting. The
+remaining action is one serial reconnect to start the reviewed boot.
