@@ -1,10 +1,84 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Default read-only diagnostic remains writer- and trigger-free; only explicit commissioning mode includes the H616 adapter, and its candidate is non-deployable.",
+      "environment": "offline",
+      "id": "h616-01"
+    },
+    {
+      "description": "The H616 adapter binds a local trusted target identity and controller/type/capacity/dev_t to one opened descriptor; job data cannot override policy and all identity failures refuse before writing.",
+      "environment": "offline",
+      "id": "h616-02"
+    },
+    {
+      "description": "Signed exact-image job and durable one-shot claim gate full write/readback; synthetic H616-shaped QEMU passes success and terminal refusal/interruption/fault cases without retry or rearm.",
+      "environment": "offline",
+      "id": "h616-03"
+    },
+    {
+      "description": "Strict ARM64 build, regressions, artifact hashes and limitations pass review; H12 remains the sole physical commissioning task and physical behavior is not claimed.",
+      "environment": "offline",
+      "id": "h616-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "h616-01",
+          "h616-02",
+          "h616-04"
+        ],
+        "text": "The explicit H616 commissioning build must remain nondeployable and inert without separately provisioned local identity and signing material. The default diagnostic must remain writer and trigger free. Do not include private CID or production keys in source or generated evidence."
+      },
+      {
+        "checks": [
+          "h616-02",
+          "h616-03"
+        ],
+        "text": "Exercise the actual candidate adapter and writer code in synthetic H616-shaped QEMU. Refusal must precede writes for missing, ambiguous, changed or mismatched CID, controller, type, capacity and descriptor device number; a job cannot override local identity policy."
+      },
+      {
+        "checks": [
+          "h616-03",
+          "h616-04"
+        ],
+        "text": "Demonstrate a durable claim before target open, no automatic retry or rearm after uncertainty, and no fallback boot after an uncertain write. Record full readback and independent GPT/partition checks. Bound integration scratch, memory and runtime; avoid staging a second raw image in the space-limited VM."
+      },
+      {
+        "checks": [
+          "h616-04"
+        ],
+        "text": "Label all acceptance evidence offline and synthetic. H12 still requires a fresh live CID comparison, exact image and target map, reviewed recovery procedure, independent high-consequence review and explicit authorization before any physical eMMC write."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "7acb5d46d549494db3d8ec69a57e7f610c9d0581fbc74363152155788e81d541",
+    "rationale": "The owner explicitly requested reimaging the installed eMMC without removing it or using the USB writer. Decision 0018, the completed QEMU-only reimage feature, and the H12 readiness audit identify a separately reviewed H616 adapter as the next gap. This proposal is a bounded offline commissioning candidate within that goal, not a material expansion of product scope or hardware authority. H10 measured controller, type and capacity but did not establish a current CID-to-open-descriptor mapping; the synthetic QEMU reports do not establish physical behavior. The proposal gives a concrete before/after result, preserves the read-only diagnostic and USB-reader recovery fallback, and leaves one supervised H12 action for physical validation. The conditions below keep the candidate inert until the exact target, artifact, trigger and recovery operation receive their separate review. No production key provisioning, physical write, boot-policy change or release is approved here.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-cid-admission/proposal.md": "937ea3353d36f39f62d754ca07ff28885ce4f500a54d90ed7a73dd69a57697c9",
+      "docs/features/network-emmc-cid-fd-binding/proposal.md": "32c57df09a8f937a677784c7c5e3d08d12674f3a4670317bb0c8899cd1a6cbea",
+      "docs/features/network-emmc-one-shot/proposal.md": "5aec86dc704622d55be31125704191745d68d7a9f3cab6be3ef419bf6abf2da4",
+      "docs/features/network-emmc-reimage-mode/proposal.md": "62b5ab48b46289abc615e47fd6d3da68ebe472302242c719a3bddd3f3fbce23f",
+      "docs/features/network-emmc-reimage-mode/record.json": "82e2047315ba9bb229cc0c0f3c70567eb00a9dc3169ab6dda15ca4bec8420cb5",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md": "c8943130e1b0a4a4a9ad68fd116e5e987e9053b2c92d7fd2bf2b58e4995f7159",
+      "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md": "ea594567d9256cec3c81ba9fb49ca847576a3f1fef9c909458e2fcc1c79cb277",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf",
+      "docs/hardware/host-sd-network-emmc-probe-20260926.md": "e88ea22e4b3d9f8808cfa2d8f8d3eccc6e21cb8ee89461d1a02668ce304cc400"
+    },
+    "reviewer": "/root/approve_h616_reimage_adapter",
+    "scope_sha256": "6b3c349c044202e916f3ebe9c0f22073b1f00b42a41ec36eac8adc531c1bc614",
+    "session": "feature-approver-h616-writerless-adapter-20260926"
+  },
   "format_version": 1,
   "id": "network-emmc-h616-writerless-adapter",
   "kind": "feature",
-  "title": "Prepare an opt-in H616 writerless reimage candidate",
-  "author": "root/coordinator",
-  "created": "2026-09-26",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/network-emmc-h616-writerless-adapter/proposal.md",
   "requirements": [
@@ -20,54 +94,31 @@
     "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md",
     "docs/hardware/coordinated-human-tasks.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "h616-01",
-      "description": "Default read-only diagnostic remains writer- and trigger-free; only explicit commissioning mode includes the H616 adapter, and its candidate is non-deployable.",
-      "environment": "offline"
-    },
-    {
-      "id": "h616-02",
-      "description": "The H616 adapter binds a local trusted target identity and controller/type/capacity/dev_t to one opened descriptor; job data cannot override policy and all identity failures refuse before writing.",
-      "environment": "offline"
-    },
-    {
-      "id": "h616-03",
-      "description": "Signed exact-image job and durable one-shot claim gate full write/readback; synthetic H616-shaped QEMU passes success and terminal refusal/interruption/fault cases without retry or rearm.",
-      "environment": "offline"
-    },
-    {
-      "id": "h616-04",
-      "description": "Strict ARM64 build, regressions, artifact hashes and limitations pass review; H12 remains the sole physical commissioning task and physical behavior is not claimed.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "commissioning-adapter",
-      "title": "Build and test the opt-in H616 commissioning adapter",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [
-        "network-emmc-reimage-mode:qemu-reimage-mode",
-        "network-emmc-one-shot:qemu-one-shot",
-        "network-emmc-cid-fd-binding:qemu-cid-fd-binding"
-      ],
+      "blocker": null,
       "checks": [
         "h616-01",
         "h616-02",
         "h616-03",
         "h616-04"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [
+        "network-emmc-reimage-mode:qemu-reimage-mode",
+        "network-emmc-one-shot:qemu-one-shot",
+        "network-emmc-cid-fd-binding:qemu-cid-fd-binding"
+      ],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "commissioning-adapter",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Build and test the opt-in H616 commissioning adapter",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Prepare an opt-in H616 writerless reimage candidate"
 }
