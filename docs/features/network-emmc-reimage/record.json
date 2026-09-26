@@ -1,0 +1,106 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Disposable QEMU boots the SD/NFS-root source and writes the exact pinned full-image fixture to a distinct virtual eMMC target while proving the running source is outside the target and no host/physical block device is opened.",
+      "environment": "offline",
+      "id": "nwr-01"
+    },
+    {
+      "description": "A complete flush and full readback match the exact source bytes/hash and expected GPT/partition layout; ambiguous, wrong, undersized, overlapping, missing, truncated, changed, failed or timed-out writes fail closed without a success record.",
+      "environment": "offline",
+      "id": "nwr-02"
+    },
+    {
+      "description": "Tests and documentation preserve the offline-only evidence boundary and add one deduplicated future physical commissioning entry with prerequisites and stop conditions, without requesting the physical action now.",
+      "environment": "offline",
+      "id": "nwr-03"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "owner-existing",
+    "constraints": [
+      {
+        "checks": [
+          "nwr-01"
+        ],
+        "text": "Use only disposable regular-file-backed QEMU media. Keep the guest network-root source independent of the virtual destination; verify the active root and image source cannot resolve to that destination. The host harness must refuse block-device paths, symlinks to block devices and paths outside its assigned disposable directory. State which SD/NFS Linux path QEMU reproduces and which H616 boot stages it does not model."
+      },
+      {
+        "checks": [
+          "nwr-02"
+        ],
+        "text": "Pin source image length, SHA-256 and complete GPT layout. Test a full raw-image transfer including loader/GPT regions, flush and independent full-length readback. Compare bytes through the image boundary and validate both GPT headers and every expected partition boundary and identity. A changed source, short transfer, timeout or failed flush/readback must never produce a success record."
+      },
+      {
+        "checks": [
+          "nwr-01",
+          "nwr-02"
+        ],
+        "text": "Do not accept a path, label, nominal capacity or serial alone as target identity. Bind QEMU target to the configured virtual disk and observed device identity; test substituted, ambiguous, undersized and source-overlap cases. QEMU checks are prototype evidence only; physical eMMC identification needs a separate reviewed adapter."
+      },
+      {
+        "checks": [
+          "nwr-02",
+          "nwr-03"
+        ],
+        "text": "Bound fixture size, disk allocation, memory and test time. State the fixture geometry and retain the factory 8 GB image-footprint requirement; a small synthetic fixture or 32 GB virtual target does not establish release sizing."
+      },
+      {
+        "checks": [
+          "nwr-03"
+        ],
+        "text": "Keep H12 queued as the single future physical commissioning task. Before use it needs an exact candidate image and target map, proof spare contents are expendable or exported, recovery plan, explicit authorization and independent high-consequence review immediately before write. Interruption or uncertainty must stop without automatic retry. This approval grants no physical write authority."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
+    "rationale": "Decision 0018 authorizes this bounded offline pilot. The H09/H10 records establish a supervised SD/NFS boot and read-only access to the installed spare eMMC; they do not establish write safety. The existing signed A/B updater changes only inactive OS slots, so a complete-image test addresses a distinct part of the owner's writerless goal. The bounded prototype therefore uses disposable QEMU media. Neither approval nor a passing QEMU test authorizes a printer write.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/hardware/coordinated-human-tasks.md": "858b15a3600b8b8374c1dd9c9b1dda1b03534923cfd274f693f7f2cc6ba265a1",
+      "docs/hardware/host-sd-network-emmc-probe-20260926.md": "e88ea22e4b3d9f8808cfa2d8f8d3eccc6e21cb8ee89461d1a02668ce304cc400",
+      "docs/hardware/host-sd-network-root-prototype.md": "500bb9ea7702b4beb71abd6f26b6d2eb99efe13f3d248a0b2b2a2c7b5b4ee0cc",
+      "docs/hardware/host-unattended-updates.md": "90cb456073ecc5f9d6ea58a9c8c852dddc08c3659557092eac804150b4540278"
+    },
+    "reviewer": "feature-approver/approve_network_emmc_reimage",
+    "scope_sha256": "1f0b07c8b35e0eb3d14341a951b5ec5862d6968f1e377a4562fbcbe371d150c7",
+    "session": "network-emmc-reimage-offline-rereview-20260926"
+  },
+  "format_version": 1,
+  "id": "network-emmc-reimage",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-reimage/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/hardware/host-sd-network-root-prototype.md",
+    "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "docs/hardware/host-unattended-updates.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "nwr-01",
+        "nwr-02",
+        "nwr-03"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "qemu-prototype",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and verify a network-root full-image QEMU prototype",
+      "verification": null
+    }
+  ],
+  "title": "Write and verify a full image to virtual eMMC from SD/NFS root"
+}
