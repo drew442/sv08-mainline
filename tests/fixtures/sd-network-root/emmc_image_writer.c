@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT */
-/* Disposable QEMU init only. Never install this in the SD diagnostic image. */
+/* Explicit nondeployable reimage init. Never install in the SD diagnostic. */
 #define _GNU_SOURCE
 #include <errno.h>
 #include <fcntl.h>
@@ -21,12 +21,48 @@
 #include <unistd.h>
 
 #define IMAGE_BYTES 7818182656ULL
-#define TARGET_BYTES 32000000000ULL
+#ifndef SV08_TARGET_BYTES
+#define SV08_TARGET_BYTES 32000000000ULL
+#endif
+#define TARGET_BYTES SV08_TARGET_BYTES
 #define CHUNK (1024 * 1024)
 #define DEADLINE_SECONDS 4200
 #define SYNTHETIC_MMC_BASE "/synthetic-mmc"
 #define SYNTHETIC_MMC_CID "00000000000000000000000000000001"
 #define SYNTHETIC_MMC_DEVICE "/dev/mmcblk0"
+#if defined(SV08_H616_COMMISSIONING)
+#ifndef SV08_H616_EXPECTED_CID
+#error "H616 commissioning requires a locally provisioned CID"
+#endif
+#ifndef SV08_H616_EXPECTED_DEV_T
+#error "H616 commissioning requires a locally provisioned dev_t"
+#endif
+#ifndef SV08_H616_BOARD_COMPATIBLE
+#error "H616 commissioning requires a locally provisioned board compatible"
+#endif
+#ifndef SV08_H616_CLAIM_SERVER
+#error "H616 commissioning requires a locally provisioned claim server"
+#endif
+#if defined(SV08_H616_SYNTHETIC_TEST)
+#define SV08_MMC_BASE SYNTHETIC_MMC_BASE
+#define SV08_TARGET "/dev/sda"
+#define SV08_TARGET_DEV_SYSFS "/sys/block/sda/dev"
+#else
+#define SV08_MMC_BASE SV08_EMMC_HOST_SYSFS
+#define SV08_TARGET "/dev/mmcblk0"
+#define SV08_TARGET_DEV_SYSFS "/sys/block/mmcblk0/dev"
+#endif
+#define SV08_TARGET_POLICY_FILE "commissioning-target-policy.json"
+#define SV08_MODE_PARAMETER "sv08.h616_commissioning=1"
+#define SV08_RESULT_PREFIX "SV08_H616_COMMISSIONING_"
+#else
+#define SV08_MMC_BASE SYNTHETIC_MMC_BASE
+#define SV08_TARGET "/dev/sda"
+#define SV08_TARGET_DEV_SYSFS "/sys/block/sda/dev"
+#define SV08_TARGET_POLICY_FILE "synthetic-target-policy.json"
+#define SV08_MODE_PARAMETER "sv08.qemu_reimage=1"
+#define SV08_RESULT_PREFIX "SV08_QEMU_REIMAGE_"
+#endif
 /* QEMU USB disk is deliberately not H616 MMC. This test-local adapter maps
  * one synthetic MMC inventory entry to its USB block descriptor by dev_t. */
 #define SV08_EMMC_SECTORS 61079552ULL
@@ -114,6 +150,7 @@ static int mounted(const char *where,const char *fs,const char *flag) {
   }
   fclose(f);return found;
 }
+#if !defined(SV08_H616_COMMISSIONING)
 static int exact_usb_serial(void) {
   char serial[128];
   char *resolved=realpath("/sys/block/sda/device",NULL);
@@ -148,6 +185,7 @@ static int exact_usb_capacity(void) {
   int ok=fscanf(f,"%llu",&sectors)==1;fclose(f);
   return ok&&sectors==TARGET_BYTES/512;
 }
+#endif
 /* Compare the opened block descriptor, not a second resolution of /dev/sda,
  * with the kernel's major:minor for this disposable QEMU target. */
 static int read_sysfs_dev(const char *path,dev_t *number) {
@@ -184,6 +222,7 @@ static int sysfs_dev_matches(const struct stat *opened,const char *path) {
   dev_t number;
   return S_ISBLK(opened->st_mode)&&read_sysfs_dev(path,&number)&&opened->st_rdev==number;
 }
+#if !defined(SV08_H616_COMMISSIONING) || defined(SV08_IDENTITY_SELFTEST)
 static int synthetic_mmc_identity_at(const char *base,dev_t *number) {
   char device[64],path[1024];unsigned long long sectors=0;
   if(!sv08_emmc_cid_device_at(base,SYNTHETIC_MMC_CID,
@@ -195,8 +234,48 @@ static int synthetic_mmc_identity_at(const char *base,dev_t *number) {
      (int)sizeof(path))return 0;
   return read_sysfs_dev(path,number)&&*number==makedev(8,0);
 }
+#endif
+#if !defined(SV08_H616_COMMISSIONING)
 static int synthetic_mmc_identity(dev_t *number) {
   return synthetic_mmc_identity_at(SYNTHETIC_MMC_BASE,number);
+}
+#endif
+#if defined(SV08_H616_COMMISSIONING)
+static int h616_controller_matches(void) {
+#if defined(SV08_H616_SYNTHETIC_TEST)
+  return 1; /* QEMU cannot model the physical kernel controller path. */
+#else
+  char *controller=realpath(SV08_EMMC_HOST_SYSFS,NULL);
+  char *card=realpath("/sys/block/mmcblk0/device",NULL);
+  int ok=0;
+  if(controller&&card) {
+    size_t length=strlen(controller);
+    ok=!strncmp(card,controller,length)&&card[length]=='/';
+  }
+  free(controller);free(card);
+  return ok;
+#endif
+}
+static int h616_mmc_identity_at(const char *base,const char *dev_sysfs,dev_t *number) {
+  char device[64],dev_text[64];unsigned long long sectors=0;
+  if(!sv08_emmc_cid_device_at(base,SV08_H616_EXPECTED_CID,
+                              device,sizeof(device),&sectors)||
+     strcmp(device,"/dev/mmcblk0")||sectors!=SV08_EMMC_SECTORS||
+     !h616_controller_matches()||
+     !read_sysfs_dev(dev_sysfs,number))return 0;
+  snprintf(dev_text,sizeof(dev_text),"%u:%u",major(*number),minor(*number));
+  return !strcmp(dev_text,SV08_H616_EXPECTED_DEV_T);
+}
+static int h616_mmc_identity(dev_t *number) {
+  return h616_mmc_identity_at(SV08_MMC_BASE,SV08_TARGET_DEV_SYSFS,number);
+}
+#endif
+static int admitted_mmc_identity(dev_t *number) {
+#if defined(SV08_H616_COMMISSIONING)
+  return h616_mmc_identity(number);
+#else
+  return synthetic_mmc_identity(number);
+#endif
 }
 static int hash_file(const char *path,char hex[65]) {
   int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);struct sha256 hash;
@@ -211,7 +290,7 @@ static int hash_file(const char *path,char hex[65]) {
   close(fd);sha_final(&hash,hex);return 1;
 }
 static int bundle_files_match(const char *root) {
-  const char *names[]={"job.json","job.sig","synthetic-target-policy.json"};
+  const char *names[]={"job.json","job.sig",SV08_TARGET_POLICY_FILE};
   const char *expected[]={SV08_JOB_DESCRIPTOR_SHA256,SV08_JOB_SIGNATURE_SHA256,
                           SV08_TARGET_POLICY_SHA256};
   char path[1024],actual[65];
@@ -222,8 +301,14 @@ static int bundle_files_match(const char *root) {
   }
   return 1;
 }
-static int qemu_virt_only(void) {
+static int board_compatible(void) {
   char compatible[256];int fd=open("/proc/device-tree/compatible",O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+#if defined(SV08_H616_COMMISSIONING)
+  int board=0;
+#if !defined(SV08_H616_SYNTHETIC_TEST)
+  int soc=0;
+#endif
+#endif
   if(fd<0)return 0;
   ssize_t n=read(fd,compatible,sizeof(compatible));close(fd);
   if(n<=0||n==(ssize_t)sizeof(compatible))return 0;
@@ -231,10 +316,26 @@ static int qemu_virt_only(void) {
   for(size_t at=0;at<(size_t)n;) {
     size_t len=strnlen(compatible+at,(size_t)n-at);
     if(len==(size_t)n-at)return 0;
+#if defined(SV08_H616_COMMISSIONING)
+#if defined(SV08_H616_SYNTHETIC_TEST)
+    if(len==16&&!memcmp(compatible+at,"linux,dummy-virt",16))board=1;
+#else
+    if(len==strlen(SV08_H616_BOARD_COMPATIBLE)&&
+       !memcmp(compatible+at,SV08_H616_BOARD_COMPATIBLE,len))board=1;
+    if(len==21&&!memcmp(compatible+at,"allwinner,sun50i-h616",21))soc=1;
+#endif
+#else
     if(len==16&&!memcmp(compatible+at,"linux,dummy-virt",16))return 1;
+#endif
     at+=len+1;
   }
+#if defined(SV08_H616_SYNTHETIC_TEST)
+  return board;
+#elif defined(SV08_H616_COMMISSIONING)
+  return board&&soc;
+#else
   return 0;
+#endif
 }
 static int claim_once(const char *cmd,const char *descriptor_hash) {
   char *port_arg=strstr(cmd,"sv08.claim_port=");char *end=NULL;
@@ -249,14 +350,24 @@ static int claim_once(const char *cmd,const char *descriptor_hash) {
                          descriptor_hash,SV08_JOB_ID);
   if(body_size<0||(size_t)body_size>=sizeof(body))return 0;
   int request_size=snprintf(request,sizeof(request),
-      "POST /claim HTTP/1.1\r\nHost: 10.0.2.2:%ld\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s",
+      "POST /claim HTTP/1.1\r\nHost: "
+#if defined(SV08_H616_COMMISSIONING)
+      SV08_H616_CLAIM_SERVER
+#else
+      "10.0.2.2"
+#endif
+      ":%ld\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s",
       port,body_size,body);
   if(request_size<0||(size_t)request_size>=sizeof(request))return 0;
   fd=socket(AF_INET,SOCK_STREAM|SOCK_CLOEXEC,0);if(fd<0)return 0;
   setsockopt(fd,SOL_SOCKET,SO_RCVTIMEO,&timeout,sizeof(timeout));
   setsockopt(fd,SOL_SOCKET,SO_SNDTIMEO,&timeout,sizeof(timeout));
   memset(&address,0,sizeof(address));address.sin_family=AF_INET;address.sin_port=htons((uint16_t)port);
+#if defined(SV08_H616_COMMISSIONING)
+  if(inet_pton(AF_INET,SV08_H616_CLAIM_SERVER,&address.sin_addr)!=1||
+#else
   if(inet_pton(AF_INET,"10.0.2.2",&address.sin_addr)!=1||
+#endif
      connect(fd,(struct sockaddr *)&address,sizeof(address))) {close(fd);return 0;}
   size_t sent=0;
   while(sent<(size_t)request_size) { n=send(fd,request+sent,(size_t)request_size-sent,0);
@@ -298,7 +409,7 @@ static int expired(time_t started) {
   return now<started || now-started>DEADLINE_SECONDS;
 }
 static void finish(const char *status) {
-  printf("SV08_QEMU_REIMAGE_%s\n",status);fflush(stdout);sync();reboot(RB_POWER_OFF);for(;;)pause();
+  printf("%s%s\n",SV08_RESULT_PREFIX,status);fflush(stdout);sync();reboot(RB_POWER_OFF);for(;;)pause();
 }
 #if defined(SV08_SHA_SELFTEST)
 int main(void) {
@@ -332,6 +443,14 @@ int main(int argc,char **argv) {
   }
   printf("admitted %u:%u\n",major(number),minor(number));return 0;
 }
+#elif defined(SV08_H616_IDENTITY_SELFTEST)
+int main(int argc,char **argv) {
+  dev_t number;
+  if(argc!=3||!h616_mmc_identity_at(argv[1],argv[2],&number)) {
+    puts("refused");return 0;
+  }
+  printf("admitted %u:%u\n",major(number),minor(number));return 0;
+}
 #elif defined(SV08_BINDING_SELFTEST)
 int main(void) {
   char path[]="/tmp/sv08-sysfs-dev-test-XXXXXX";
@@ -357,7 +476,7 @@ int main(int argc,char **argv) {
 }
 #else
 int main(void) {
-  const char *source="/image.bin",*target="/dev/sda";
+  const char *source="/image.bin",*target=SV08_TARGET;
   char cmd[1024],expected[65],actual[65],readback[65],descriptor_hash[65];
   struct stat ss,ts;uint64_t capacity=0;struct sha256 hash;dev_t admitted_dev,confirmed_dev;
   int in=-1,out=-1;FILE *f;time_t started=time(NULL);
@@ -365,11 +484,13 @@ int main(void) {
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");
   if(mount("devtmpfs","/dev","devtmpfs",0,"mode=0755")&&!mounted("/dev","devtmpfs","rw"))finish("REFUSED_DEV");
   f=fopen("/proc/cmdline","r");if(!f||!fgets(cmd,sizeof(cmd),f))finish("REFUSED_CMDLINE");fclose(f);
-  if(!strstr(cmd,"sv08.qemu_reimage=1")||!qemu_virt_only()||
+  if(!strstr(cmd,SV08_MODE_PARAMETER)||!board_compatible()||
      !(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
   if((long long)started<SV08_JOB_NOT_BEFORE||(long long)started>=SV08_JOB_EXPIRES)
     finish("REFUSED_STALE_JOB");
+#if !defined(SV08_H616_COMMISSIONING)
   if(!exact_usb_serial()||!exact_usb_capacity()||access("/sys/block/sdb",F_OK)==0)finish("REFUSED_TARGET_ID");
+#endif
   if(!bundle_files_match(""))finish("REFUSED_BUNDLE");
   if(!hash_file("/job.json",descriptor_hash))finish("REFUSED_DESCRIPTOR");
   /* One request only. A timeout/lost response consumes the server-side job
@@ -378,7 +499,7 @@ int main(void) {
 #if defined(SV08_CLAIM_ONLY)
   finish("CLAIM_ONLY_PASS");
 #endif
-  if(!synthetic_mmc_identity(&admitted_dev))finish("REFUSED_SYNTHETIC_MMC");
+  if(!admitted_mmc_identity(&admitted_dev))finish("REFUSED_TARGET_ID");
   f=fopen("/expected.sha256","r");if(!f||!fgets(expected,sizeof(expected),f))finish("REFUSED_MANIFEST");fclose(f);
   expected[strcspn(expected,"\n")]=0;
   if(strlen(expected)!=64||strspn(expected,"0123456789abcdef")!=64||
@@ -390,8 +511,10 @@ int main(void) {
   out=open(target,O_RDWR|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
   if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||
      (uint64_t)ss.st_size!=IMAGE_BYTES||ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
+#if !defined(SV08_H616_COMMISSIONING)
      !exact_usb_serial()||!exact_usb_capacity()||
-     !sysfs_dev_matches(&ts,"/sys/block/sda/dev")||ts.st_rdev!=admitted_dev||
+#endif
+     !sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS)||ts.st_rdev!=admitted_dev||
      (ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
     finish("REFUSED_INPUT");
   sha_init(&hash);
@@ -401,8 +524,8 @@ int main(void) {
   sha_final(&hash,actual);
   if(strcmp(actual,expected)||lseek(in,0,SEEK_SET)!=0)finish("REFUSED_SOURCE_HASH");
   /* Recheck CID, inventory and dev_t after hashing, at the write boundary. */
-  if(!synthetic_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
-     !sysfs_dev_matches(&ts,"/sys/block/sda/dev"))finish("REFUSED_SYNTHETIC_MMC_CHANGED");
+  if(!admitted_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
+     !sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS))finish("REFUSED_TARGET_ID_CHANGED");
 #if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
   if(!strcmp(SV08_TEST_FAULT,"before-write"))finish("INJECTED_BEFORE_WRITE");
   if(!strcmp(SV08_TEST_FAULT,"partial-write")||
@@ -429,8 +552,8 @@ int main(void) {
     sha_update(&hash,buffer,n);done+=n;}
   sha_final(&hash,readback);close(out);close(in);
   if(strcmp(readback,expected))finish("FAILED_READBACK_HASH");
-  printf("SV08_QEMU_REIMAGE_SOURCE bytes=%llu sha256=%s root_nfs_ro=1\n",IMAGE_BYTES,actual);
-  printf("SV08_QEMU_REIMAGE_READBACK bytes=%llu sha256=%s target=/dev/sda target_serial=SV08_QEMU_REIMAGE_TEST_ONLY target_bytes=%llu\n",IMAGE_BYTES,readback,(unsigned long long)capacity);
+  printf("%sSOURCE bytes=%llu sha256=%s root_nfs_ro=1\n",SV08_RESULT_PREFIX,IMAGE_BYTES,actual);
+  printf("%sREADBACK bytes=%llu sha256=%s target=%s target_bytes=%llu\n",SV08_RESULT_PREFIX,IMAGE_BYTES,readback,target,(unsigned long long)capacity);
   finish("PASS");
 }
 #endif
