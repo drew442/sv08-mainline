@@ -13,6 +13,7 @@ class StageUITests(unittest.TestCase):
         self.work = Path(temporary.name)
         target = self.work / 'rootfs/usr/lib/sv08'; target.mkdir(parents=True)
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, target / path.name)
+        (target / 'sv08_rauc_bootloader.py').chmod(0o755)
 
     def test_dry_run_and_explicit_host_staging(self):
         result = stage(self.work, 'host')

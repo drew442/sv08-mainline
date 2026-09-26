@@ -5,13 +5,16 @@ No command-line activation. Callers supply reviewed image/policy/layout inputs
 and hold the transaction/admission locks. Hardware access is refused for ordinary
 non-deployable manifests; the sole fixture exception requires an identified VM.
 """
+from contextlib import contextmanager
 import configparser
 import hashlib
 import json
 import os
 from pathlib import Path
+import secrets
 import stat
 import subprocess
+import tempfile
 from sv08_boot import verify_devices
 from sv08_gpt import inspect as inspect_gpt
 from sv08_bundle import inspect as inspect_bundle
@@ -25,17 +28,25 @@ SLOT_NAMES = {'rootfs.0': ('root-a', 'ext4', 'A', None),
               'boot.1': ('boot-b', 'vfat', None, 'rootfs.1')}
 
 
+def root_disk_name():
+    """Return the whole-disk sysfs name that backs the current root filesystem."""
+    root = os.stat('/')
+    device = Path('/sys/dev/block') / f'{os.major(root.st_dev)}:{os.minor(root.st_dev)}'
+    return device.resolve(strict=True).parent.name
+
+
 def validate_config(text, manifest, policy, keyring):
     config = configparser.ConfigParser(interpolation=None)
     config.read_string(text)
-    if set(config.sections()) != {'system', 'keyring', *('slot.'+name for name in SLOT_NAMES)}:
+    if set(config.sections()) != {'system', 'keyring', 'handlers', *('slot.'+name for name in SLOT_NAMES)}:
         raise ValueError('Unexpected RAUC sections or handlers')
-    required = {'compatible': policy['compatible'], 'bootloader': 'uboot',
+    required = {'compatible': policy['compatible'], 'bootloader': 'custom',
                 'bundle-formats': 'verity', 'activate-installed': 'false',
-                'boot-attempts': '3', 'boot-attempts-primary': '3',
                 'data-directory': '/var/lib/rauc', 'perform-pre-check': 'true'}
     if dict(config['system']) != required or dict(config['keyring']) != {'path': str(keyring)}:
         raise ValueError('RAUC must use the reviewed non-activating paired update configuration')
+    if dict(config['handlers']) != {'bootloader-custom-backend': '/usr/lib/sv08/sv08_rauc_bootloader.py'}:
+        raise ValueError('RAUC custom bootloader handler differs from the reviewed fail-closed backend')
     for name, (role, kind, bootname, parent) in SLOT_NAMES.items():
         expected = {'device': manifest['devices'][role], 'type': kind}
         expected.update({'bootname': bootname} if bootname else {'parent': parent})
@@ -140,6 +151,35 @@ class Backend:
     def command(self, *args):
         return subprocess.check_output(['/usr/bin/rauc', '--conf='+str(self.config), *args], text=True)
 
+    @contextmanager
+    def operation(self, action, slot):
+        """Authorize one exact RAUC state mutation for the custom handler."""
+        marker = Path('/run/sv08/rauc-operation.json')
+        marker.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
+        if marker.exists() or marker.is_symlink():
+            raise ValueError('An unresolved RAUC operation marker already exists')
+        record = dict(format_version=1, action=action, slot=slot,
+                      boot_id=Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
+                      nonce=secrets.token_hex(16))
+        payload = json.dumps(record, sort_keys=True, separators=(',', ':')).encode()+b'\n'
+        fd, temporary = tempfile.mkstemp(prefix='.rauc-operation-', dir=marker.parent)
+        try:
+            os.fchmod(fd, 0o600)
+            with os.fdopen(fd, 'wb') as stream:
+                stream.write(payload)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, marker)
+            yield
+        finally:
+            try:
+                current = json.loads(marker.read_text())
+            except (FileNotFoundError, json.JSONDecodeError):
+                current = None
+            if current == record:
+                marker.unlink()
+            Path(temporary).unlink(missing_ok=True)
+
     def status(self, read_command=None):
         if read_command:
             return json.loads(read_command(['/usr/bin/rauc', '--conf='+str(self.config), 'status', '--output-format=json'], text=True))
@@ -151,7 +191,8 @@ class Backend:
         if self.fixture:
             if ('sv08.test=rauc-backend' not in Path('/proc/cmdline').read_text().split() or
                     (read_command or subprocess.check_output)(['systemd-detect-virt', '--vm'], text=True).strip() != 'qemu' or
-                    Path('/sys/block/vda/serial').read_text().strip() != 'SV08-QEMU-DISPOSABLE' or
+                    Path('/sys/block', root_disk_name(), 'serial').read_text().strip() not in
+                    ('SV08-QEMU-TARGET', 'SV08-QEMU-DISPOSABLE') or
                     self.manifest.get('deployable') is not False):
                 raise ValueError('Backend fixture requires the identified disposable VM')
         elif (self.manifest.get('deployable') is not True or
@@ -242,25 +283,86 @@ class Backend:
             if self.boot is None:
                 raise ValueError('Validate the running context before bootloader writes')
             self.validate_context(self.boot)
-            self.command('status', action, 'rootfs.'+str(('A', 'B').index(slot)))
+            handler_action = {'mark-active': 'set-primary', 'mark-bad': 'set-bad',
+                              'mark-good': 'set-good'}[action]
+            with self.operation(handler_action, slot):
+                self.command('status', action, 'rootfs.'+str(('A', 'B').index(slot)))
 
     def mark_active(self, slot): self.mark('mark-active', slot)
     def mark_bad(self, slot): self.mark('mark-bad', slot)
     def mark_good(self, slot): self.mark('mark-good', slot)
+
+    def validate_bundle(self, bundle, proof, target):
+        if self.boot is None or target == self.boot['slot']:
+            raise ValueError('Validate the running source before inspecting a target bundle')
+        actual = inspect_bundle(bundle, self.policy, self.keyring)
+        if actual != proof:
+            raise ValueError('Staged file or signed admission proof changed')
+
+    def boot_policy(self):
+        names = ('sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT')
+        output = subprocess.check_output(['/usr/bin/fw_printenv', '-c', str(self.env_config), *names], text=True)
+        lines = output.splitlines()
+        if len(lines) != len(names):
+            raise ValueError('Unexpected U-Boot policy response')
+        values = dict(line.split('=', 1) for line in lines)
+        validate_environment(values, self.environment['layout_id'])
+        return values
+
+    def disarm_target(self, target, source):
+        if target == source or self.primary() != source:
+            raise ValueError('Pre-disarm requires a selected source and a distinct inactive target')
+        before = self.boot_policy()
+        self.mark_bad(target)
+        after = self.boot_policy()
+        expected = dict(before)
+        expected['BOOT_ORDER'] = ' '.join(name for name in before['BOOT_ORDER'].split() if name != target)
+        expected['BOOT_'+target+'_LEFT'] = '0'
+        if (after != expected or self.primary() != source or self.good(source) is not True or
+                self.good(target)):
+            raise ValueError('Pre-disarm did not retain the selected source and disable the target')
+
+    def restore_pre_disarm(self, previous, target, source):
+        """Restore the journaled policy only in preparing, before RAUC is called."""
+        validate_environment(previous, self.environment['layout_id'])
+        if target == source or self.primary() != source or not self.good(source):
+            raise ValueError('Safe pre-disarm restoration conditions are not satisfied')
+        current = self.boot_policy()
+        expected_disarmed = dict(previous)
+        expected_disarmed['BOOT_ORDER'] = ' '.join(
+            name for name in previous['BOOT_ORDER'].split() if name != target)
+        expected_disarmed['BOOT_'+target+'_LEFT'] = '0'
+        if current not in (previous, expected_disarmed):
+            raise ValueError('Boot environment is neither the journaled pre-disarm nor expected post-disarm state')
+        if current == previous:
+            return  # Power failed before changing policy; do not rewrite counters.
+        if target in current['BOOT_ORDER'].split() or current['BOOT_'+target+'_LEFT'] != '0':
+            raise ValueError('Refusing to restore target policy when disarm is incomplete')
+        # Restore attempts first while the target is absent from BOOT_ORDER;
+        # restoring the old order last keeps the proven source selected.
+        for name in ('BOOT_A_LEFT', 'BOOT_B_LEFT'):
+            if current[name] != previous[name]:
+                subprocess.run(['/usr/bin/fw_setenv', '-c', str(self.env_config), name, previous[name]],
+                               check=True, timeout=5)
+        if current['BOOT_ORDER'] != previous['BOOT_ORDER']:
+            subprocess.run(['/usr/bin/fw_setenv', '-c', str(self.env_config), 'BOOT_ORDER', previous['BOOT_ORDER']],
+                           check=True, timeout=5)
+        after = self.boot_policy()
+        if after != previous or self.primary() != source or not self.good(source):
+            raise ValueError('Journaled boot policy could not be restored with the source still selected')
 
     def install(self, bundle, proof, target):
         with self.writer():
             if self.boot is None or target == self.boot['slot']:
                 raise ValueError('Validate the source and choose the inactive target')
             self.validate_context(self.boot)
-            actual = inspect_bundle(bundle, self.policy, self.keyring)
-            if actual != proof:
-                raise ValueError('Staged file or signed admission proof changed')
+            self.validate_bundle(bundle, proof, target)
             source = self.boot['slot'].lower()
             sizes = {'boot': self.policy['image_bytes']['boot'], 'root': self.policy['image_bytes']['rootfs']}
             devices = self.manifest['devices']
             before = {kind: digest_device(devices[kind+'-'+source], size) for kind, size in sizes.items()}
-            self.command('install', str(bundle))
+            with self.operation('install', target):
+                self.command('install', str(bundle))
             for kind, size in sizes.items():
                 if digest_device(devices[kind+'-'+source], size) != before[kind]:
                     raise ValueError('Active slot changed during installation')

@@ -1,12 +1,13 @@
 [system]
 compatible=@COMPATIBLE@
-bootloader=uboot
+bootloader=custom
 bundle-formats=verity
 activate-installed=false
-boot-attempts=3
-boot-attempts-primary=3
 data-directory=/var/lib/rauc
 perform-pre-check=true
+
+[handlers]
+bootloader-custom-backend=/usr/lib/sv08/sv08_rauc_bootloader.py
 
 [keyring]
 path=/etc/rauc/release-keyring.pem

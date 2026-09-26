@@ -30,7 +30,7 @@ UUIDS = {
     'data': '4773f966-0678-4cf5-bb83-8ee6fb11d8eb',
 }
 RAUC_SHA256 = '51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3'
-RUNTIME_REVISION = '3174f141914d098ecb86a082f100442ca04619ce'
+RUNTIME_REVISION = 'a2f0b8f'
 
 
 def assets():
@@ -86,6 +86,7 @@ def install_root(base, root, release, policy, *, fail_health, work):
     runtime = root / 'usr/lib/sv08'
     for source in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(source, runtime / source.name)
+    (runtime / 'sv08_rauc_bootloader.py').chmod(0o755)
     for name in ('sv08-prepare.service', 'sv08-boot-health.service', 'sv08-klipper.service'):
         shutil.copyfile(REPO / 'configs/host-os/systemd' / name,
                         root / 'etc/systemd/system' / name)
@@ -98,9 +99,6 @@ def install_root(base, root, release, policy, *, fail_health, work):
                         ('environment.json', environment)]:
         write(runtime / name, json.dumps(value) + '\n')
     service_policy = json.loads((REPO / 'configs/host-os/rauc-service-policy.json').read_text())
-    if fail_health:
-        # RAUC context remains valid; service identity fails inside real HostHealth.
-        service_policy['executable_sha256'] = '0' * 64
     write(runtime / 'rauc-service-policy.json', json.dumps(service_policy) + '\n')
     seed = runtime / 'seed/authorized_keys'
     write(seed, (work / 'fixture-key.pub').read_text())
@@ -141,6 +139,20 @@ StandardError=journal+console
 [Install]
 WantedBy=multi-user.target
 ''')
+    if fail_health:
+        # Fail only HostHealth's prepare-unit observation. Keep the real unit
+        # active and RAUC identity/configuration intact so fallback can recheck
+        # the target before requesting its reboot.
+        wrapper = runtime / 'qemu-test-bin/systemctl'
+        write(wrapper, '''#!/usr/bin/python3
+import os, sys
+if sys.argv[1:] == ['is-active', 'sv08-prepare.service']:
+    print('inactive')
+    raise SystemExit(3)
+os.execv('/usr/bin/systemctl', ['systemctl', *sys.argv[1:]])
+''', 0o755)
+        write(root / 'etc/systemd/system/sv08-boot-health.service.d/qemu-fail-health.conf',
+              '[Service]\nEnvironment="PATH=/usr/lib/sv08/qemu-test-bin:/usr/bin:/bin"\n')
     write(root / 'etc/systemd/system/sv08-boot-health.service.d/console.conf',
           '[Service]\nStandardOutput=journal+console\nStandardError=journal+console\n')
     write(root / 'etc/systemd/system/data.mount', '''[Unit]
@@ -220,17 +232,33 @@ def execute(work, base, source):
     a, good, bad = (work / name for name in ('root-a', 'root-b-good', 'root-b-bad'))
     install_root(base, a, '0.1.0-offline.3', policy, fail_health=False, work=work)
     install_root(base, good, 'qemu-boot-health-b', policy, fail_health=False, work=work)
-    install_root(base, bad, 'qemu-boot-health-b', policy, fail_health=True, work=work)
     reports = {}
-    for scenario, root_b, slots in [('success', good, ('A', 'B')),
-                                     ('fallback', bad, ('A', 'B', 'A'))]:
+    # Keep only one target-root copy at a time. The old fixture retained A,
+    # good B and bad B together, forcing a 20 GiB guard despite each scenario
+    # using only one B image. This sequence preserves the same checks while
+    # fitting the project's constrained VM.
+    minimum_free = 2 * 1024**3
+    for scenario, root_b, slots in [('success', good, ('A', 'B'))]:
         disk = make_disk(work, a, root_b, scenario)
         reports[scenario] = [boot(base, disk, work, scenario, slot, i)
                              for i, slot in enumerate(slots)]
         reports[scenario + '_disk_sha256'] = digest(disk)
-        disk.unlink()  # Own disposable media only; logs and measured digest remain.
+        disk.unlink()
         shutil.rmtree(work / 'parts')
         shutil.rmtree(work / 'data-seed')
+        shutil.rmtree(good)
+        stat = os.statvfs(work)
+        if stat.f_bavail * stat.f_frsize < minimum_free:
+            raise ValueError('QEMU fixture fell below the 2 GiB free-space safety reserve')
+    install_root(base, bad, 'qemu-boot-health-b', policy, fail_health=True, work=work)
+    scenario, root_b, slots = 'fallback', bad, ('A', 'B', 'A')
+    disk = make_disk(work, a, root_b, scenario)
+    reports[scenario] = [boot(base, disk, work, scenario, slot, i)
+                         for i, slot in enumerate(slots)]
+    reports[scenario + '_disk_sha256'] = digest(disk)
+    disk.unlink()
+    shutil.rmtree(work / 'parts')
+    shutil.rmtree(work / 'data-seed')
     source_commit = run(['git', '-C', REPO, 'rev-parse', 'HEAD'],
                         capture_output=True, text=True).stdout.strip()
     dirty_state = run(['git', '-C', REPO, 'status', '--short'],
@@ -242,9 +270,18 @@ def execute(work, base, source):
                   base_rauc_sha256=digest(base / 'usr/bin/rauc'),
                   kernel_sha256=digest(base / 'boot/vmlinuz-6.12.107+deb13-arm64'),
                   initrd_sha256=digest(base / 'boot/initrd.img-6.12.107+deb13-arm64'),
-                  physical_hardware=False, automatic_boot_selection_tested=False,
+                  physical_hardware=False, health_failure_injection='health-probe-systemctl-wrapper',
+                  automatic_boot_selection_tested=False,
                   signed_installation_tested=False, scenarios=reports)
     write(work / 'result.json', json.dumps(report, indent=2) + '\n', 0o600)
+    # Keep only reproducible small evidence. Root-tree copies, signing keys and
+    # the disposable GPT have served their purpose and otherwise consume most
+    # of the workstation filesystem between runs.
+    shutil.rmtree(a)
+    shutil.rmtree(bad)
+    for name in ('fixture-key', 'fixture-key.pub', 'fixture-tls.key', 'fixture-keyring.pem',
+                 'fw-seed', 'fw_env.config'):
+        (work / name).unlink(missing_ok=True)
     return report
 
 
@@ -258,15 +295,17 @@ def main():
     work = args.work.resolve()
     if not work.is_relative_to(source / 'build') or work == source / 'build':
         raise ValueError('Fixture must use a fresh ignored build directory')
+    required_peak_bytes = 8 * 1024**3
     print(json.dumps(dict(execute=args.execute, work=str(work), source_commit=RUNTIME_REVISION,
-                          physical_hardware=False, required_peak_bytes=20 * 1024**3), indent=2))
+                          physical_hardware=False, required_peak_bytes=required_peak_bytes,
+                          retained_target_root_copies=1, free_space_reserve_bytes=2*1024**3), indent=2))
     if not args.execute:
         return
     if os.geteuid() != 0 or work.exists():
         raise ValueError('Execution needs root and an unoccupied fixture directory')
     stat = os.statvfs(source / 'build')
-    if stat.f_bavail * stat.f_frsize < 20 * 1024**3:
-        raise ValueError('Less than 20 GiB free for isolated QEMU construction')
+    if stat.f_bavail * stat.f_frsize < required_peak_bytes:
+        raise ValueError('Less than 8 GiB free for sequential isolated QEMU construction')
     if subprocess.run(['pgrep', '-f', '^qemu-system-aarch64'], stdout=subprocess.DEVNULL).returncode == 0:
         raise ValueError('Another QEMU process is active')
     work.mkdir(mode=0o700)

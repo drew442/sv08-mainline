@@ -25,7 +25,7 @@ class Transaction:
             return None
         tx = json.loads(self.path.read_text())
         if tx['format_version'] != 1 or tx['phase'] not in (
-                'installing', 'staged', 'arming', 'armed', 'confirming', 'complete', 'cancelled', 'failed'):
+                'preparing', 'installing', 'staged', 'arming', 'armed', 'confirming', 'complete', 'cancelled', 'failed'):
             raise ValueError('Unsupported update journal')
         if tx['slot'] not in ('A', 'B') or tx['previous_slot'] not in ('A', 'B') or tx['slot'] == tx['previous_slot']:
             raise ValueError('Invalid transaction slots')
@@ -97,10 +97,18 @@ class Transaction:
         target = 'B' if boot['slot'] == 'A' else 'A'
         if self.backend.primary() != boot['slot']:
             raise ValueError('Boot selection differs from the running source')
-        tx = dict(format_version=1, id=uuid.uuid4().hex, phase='installing',
+        self.backend.validate_bundle(bundle, proof, target)
+        policy = self.backend.boot_policy()
+        tx = dict(format_version=1, id=uuid.uuid4().hex, phase='preparing',
                   slot=target, previous_slot=boot['slot'], previous_release=boot['release'],
                   release=proof['release'], bundle_sha256=proof['bundle_sha256'],
-                  boot_id=identifier(boot['boot_id']))
+                  boot_id=identifier(boot['boot_id']), previous_boot_policy=policy)
+        # This durable record precedes the deliberate boot-policy write. A
+        # crash in "preparing" can restore the untouched target's old policy.
+        self.save(tx, 'preparing')
+        self.backend.disarm_target(target, boot['slot'])
+        if self.backend.primary() != boot['slot'] or self.backend.good(target):
+            raise ValueError('Pre-disarm must leave the running source selected and target disabled')
         self.save(tx, 'installing')
         # Backend must verify this exact proof/file and both inactive hashes,
         # preserve source devices, and use activate-installed=false.
@@ -188,6 +196,12 @@ class Transaction:
                 return 'needs-health'
             if boot['slot'] != tx['previous_slot'] or boot['release'] != tx['previous_release']:
                 raise ValueError('Running release is outside the transaction')
+            if tx['phase'] == 'preparing':
+                if boot['boot_id'] != tx['boot_id']:
+                    raise ValueError('Pre-disarm recovery requires the original source boot')
+                self.backend.restore_pre_disarm(tx['previous_boot_policy'], tx['slot'], tx['previous_slot'])
+                self.save(tx, 'failed')
+                return 'restored-pre-disarm'
             if pending and pending['phase'] != 'armed':
                 raise ValueError('Prepare fallback state before reconciliation')
             if boot['boot_id'] != tx['boot_id']:

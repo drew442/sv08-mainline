@@ -13,20 +13,39 @@ from sv08_transaction import Transaction
 class Backend:
     def __init__(self):
         self.selected = 'A'; self.states = {'A': True, 'B': False}; self.calls = []
+        self.policy = dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B', BOOT_A_LEFT='3', BOOT_B_LEFT='0')
     def validate_context(self, boot):
         pass
     def primary(self):
         return self.selected
     def good(self, slot):
         return self.states[slot]
+    def validate_bundle(self, bundle, proof, target):
+        self.calls.append('bundle-validated')
     def install(self, bundle, proof, target):
         self.calls.append('install'); self.states[target] = False
     def mark_active(self, slot):
         self.calls.append('active'); self.selected = slot; self.states[slot] = True
     def mark_bad(self, slot):
         self.calls.append('bad'); self.states[slot] = False
+        self.policy['BOOT_'+slot+'_LEFT'] = '0'
+        self.policy['BOOT_ORDER'] = ' '.join(value for value in self.policy['BOOT_ORDER'].split() if value != slot)
         if self.selected == slot:
             self.selected = 'B' if slot == 'A' else 'A'
+    def boot_policy(self):
+        return dict(self.policy)
+    def disarm_target(self, target, source):
+        self.mark_bad(target)
+    def restore_pre_disarm(self, previous, target, source):
+        self.calls.append('restore')
+        expected = dict(previous)
+        expected['BOOT_ORDER'] = ' '.join(value for value in previous['BOOT_ORDER'].split() if value != target)
+        expected['BOOT_'+target+'_LEFT'] = '0'
+        if self.policy not in (previous, expected) or self.selected != source or not self.good(source):
+            raise ValueError('unexpected boot policy state')
+        self.policy = dict(previous)
+        self.states[target] = previous['BOOT_'+target+'_LEFT'] != '0'
+        self.selected = source
     def mark_good(self, slot):
         self.calls.append('good'); self.states[slot] = True
 
@@ -117,6 +136,8 @@ class TransactionTests(unittest.TestCase):
     def test_stage_does_not_copy_state_or_select_target(self):
         self.stage()
         self.assertEqual(self.backend.primary(), 'A')
+        self.assertEqual(self.backend.calls[:3], ['bundle-validated', 'bad', 'install'])
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
         self.assertIsNone(self.store.load()['pending'])
         self.assertNotIn('B', self.store.load()['slots'])
 
@@ -137,6 +158,102 @@ class TransactionTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.stage()
         self.assertEqual(self.tx.cancel(self.boot)['phase'], 'cancelled')
         self.stage()
+
+    def test_crash_after_pre_disarm_restores_old_policy_before_any_slot_write(self):
+        original = self.tx.save
+        def fail(tx, phase):
+            if phase == 'installing':
+                raise OSError('power loss after disarm')
+            original(tx, phase)
+        with patch.object(self.tx, 'save', side_effect=fail):
+            with self.assertRaises(OSError):
+                self.stage()
+        tx = self.tx.load()
+        self.assertEqual(tx['phase'], 'preparing')
+        self.assertNotIn('install', self.backend.calls)
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
+        self.assertEqual(self.tx.reconcile(self.boot), 'restored-pre-disarm')
+        self.assertEqual(self.backend.policy, tx['previous_boot_policy'])
+        self.assertEqual(self.backend.primary(), 'A')
+        self.assertNotIn('install', self.backend.calls)
+
+    def test_preparing_journal_failure_has_no_policy_or_slot_writes(self):
+        with patch.object(self.tx, 'save', side_effect=OSError('journal fsync failed')):
+            with self.assertRaisesRegex(OSError, 'fsync'):
+                self.stage()
+        self.assertIsNone(self.tx.load())
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A B')
+        self.assertTrue(self.backend.good('A'))
+        self.assertNotIn('bad', self.backend.calls)
+        self.assertNotIn('install', self.backend.calls)
+
+    def test_disarm_write_failure_does_not_restore_unrecognized_intermediate(self):
+        # Exercise B as a still-bootable previous fallback. Production writes
+        # BOOT_ORDER first, then the attempt counter, so interruption between
+        # those writes leaves this exact intermediate state.
+        self.backend.states['B'] = True
+        self.backend.policy['BOOT_B_LEFT'] = '3'
+        def partial_disarm(target, source):
+            self.backend.policy['BOOT_ORDER'] = 'A'
+            raise OSError('power loss before counter write')
+        with patch.object(self.backend, 'disarm_target', side_effect=partial_disarm):
+            with self.assertRaisesRegex(OSError, 'before counter'):
+                self.stage()
+        self.assertEqual(self.tx.load()['phase'], 'preparing')
+        with self.assertRaisesRegex(ValueError, 'unexpected boot policy state'):
+            self.tx.reconcile(self.boot)
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
+        self.assertEqual(self.backend.policy['BOOT_B_LEFT'], '3')
+        self.assertTrue(self.backend.good('A'))
+        self.assertEqual(self.backend.primary(), 'A')
+        self.assertNotIn('install', self.backend.calls)
+
+    def test_unknown_partial_disarm_is_left_disabled_and_not_repaired(self):
+        def unexpected_disarm(target, source):
+            self.backend.policy['BOOT_'+target+'_LEFT'] = '0'
+            self.backend.policy['BOOT_ORDER'] = 'B A'
+            raise OSError('unexpected boot policy mutation')
+        with patch.object(self.backend, 'disarm_target', side_effect=unexpected_disarm):
+            with self.assertRaisesRegex(OSError, 'unexpected'):
+                self.stage()
+        with self.assertRaisesRegex(ValueError, 'unexpected boot policy state'):
+            self.tx.reconcile(self.boot)
+        self.assertEqual(self.backend.primary(), 'A')
+        self.assertFalse(self.backend.good('B'))
+        self.assertNotIn('install', self.backend.calls)
+
+    def test_failure_at_first_slot_write_never_restores_target_policy(self):
+        def first_write_then_power_loss(bundle, proof, target):
+            self.backend.calls.append('first-slot-write')
+            self.backend.states[target] = False  # target now contains a partial image
+            raise OSError('power loss at first slot write')
+        with patch.object(self.backend, 'install', side_effect=first_write_then_power_loss):
+            with self.assertRaisesRegex(OSError, 'first slot write'):
+                self.stage()
+        self.assertEqual(self.tx.load()['phase'], 'installing')
+        self.assertEqual(self.backend.primary(), 'A')
+        self.assertTrue(self.backend.good('A'))
+        self.assertFalse(self.backend.good('B'))
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
+        self.assertEqual(self.tx.reconcile(self.boot), 'needs-cancel')
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
+
+    def test_invalid_bundle_is_rejected_before_policy_journal_or_disarm(self):
+        with patch.object(self.backend, 'validate_bundle', side_effect=ValueError('bad signature')):
+            with self.assertRaisesRegex(ValueError, 'bad signature'):
+                self.stage()
+        self.assertIsNone(self.tx.load())
+        self.assertEqual(self.backend.primary(), 'A')
+        self.assertEqual(self.backend.calls, [])
+
+    def test_installing_crash_keeps_target_disarmed_and_requires_cancel(self):
+        with patch.object(self.backend, 'install', side_effect=OSError('unknown write progress')):
+            with self.assertRaises(OSError):
+                self.stage()
+        self.assertEqual(self.tx.load()['phase'], 'installing')
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
+        self.assertEqual(self.tx.reconcile(self.boot), 'needs-cancel')
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'A')
 
     def test_crash_after_boot_selection_can_resume_only_in_same_boot(self):
         self.stage(); original = self.tx.save
