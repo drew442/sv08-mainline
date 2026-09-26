@@ -10,7 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef SV08_EMMC_SECTORS
 #define SV08_EMMC_SECTORS 61079552ULL
+#endif
 #define SV08_EMMC_HOST_SYSFS "/sys/bus/platform/devices/4022000.mmc/mmc_host"
 
 static int sv08_named_number(const char *name, const char *prefix) {

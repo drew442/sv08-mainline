@@ -95,6 +95,7 @@ static int sv08_emmc_cid_device_at(const char *base, const char *expected_cid,
 
 /* The callback is deliberately supplied by the caller so a synthetic test can
  * prove that no block open is requested on any failed identity check. */
+#ifndef SV08_CID_NO_OPEN_WRAPPER
 static int sv08_emmc_cid_open_at(const char *base, const char *expected_cid,
                                  int (*target_open)(const char *, void *), void *context) {
     char device[64];
@@ -104,5 +105,6 @@ static int sv08_emmc_cid_open_at(const char *base, const char *expected_cid,
                                  &sectors)) return -1;
     return target_open(device, context);
 }
+#endif
 
 #endif

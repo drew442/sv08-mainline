@@ -24,6 +24,14 @@
 #define TARGET_BYTES 32000000000ULL
 #define CHUNK (1024 * 1024)
 #define DEADLINE_SECONDS 4200
+#define SYNTHETIC_MMC_BASE "/synthetic-mmc"
+#define SYNTHETIC_MMC_CID "00000000000000000000000000000001"
+#define SYNTHETIC_MMC_DEVICE "/dev/mmcblk0"
+/* QEMU USB disk is deliberately not H616 MMC. This test-local adapter maps
+ * one synthetic MMC inventory entry to its USB block descriptor by dev_t. */
+#define SV08_EMMC_SECTORS (TARGET_BYTES / 512ULL)
+#define SV08_CID_NO_OPEN_WRAPPER 1
+#include "emmc_cid_admission.h"
 #ifndef SV08_JOB_ID
 #define SV08_JOB_ID "qemu-reimage-test-001"
 #endif
@@ -127,7 +135,7 @@ static int exact_usb_capacity(void) {
 }
 /* Compare the opened block descriptor, not a second resolution of /dev/sda,
  * with the kernel's major:minor for this disposable QEMU target. */
-static int sysfs_dev_matches(const struct stat *opened,const char *path) {
+static int read_sysfs_dev(const char *path,dev_t *number) {
   char value[64];size_t used=0;unsigned int major_num=0,minor_num=0;
   int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
   if(fd<0)return 0;
@@ -140,7 +148,7 @@ static int sysfs_dev_matches(const struct stat *opened,const char *path) {
     if(used==sizeof(value)){close(fd);return 0;}
   }
   close(fd);
-  if(!S_ISBLK(opened->st_mode)||used<4)return 0;
+  if(used<4)return 0;
   size_t pos=0;
   for(int field=0;field<2;field++) {
     unsigned int number=0;size_t start=pos;
@@ -154,7 +162,26 @@ static int sysfs_dev_matches(const struct stat *opened,const char *path) {
     if(field==0) {if(pos==used||value[pos++]!=':')return 0;}
   }
   if(pos>=used||value[pos++]!='\n'||pos!=used||major_num==0)return 0;
-  return major(opened->st_rdev)==major_num&&minor(opened->st_rdev)==minor_num;
+  *number=makedev(major_num,minor_num);
+  return major(*number)==major_num&&minor(*number)==minor_num;
+}
+static int sysfs_dev_matches(const struct stat *opened,const char *path) {
+  dev_t number;
+  return S_ISBLK(opened->st_mode)&&read_sysfs_dev(path,&number)&&opened->st_rdev==number;
+}
+static int synthetic_mmc_identity_at(const char *base,dev_t *number) {
+  char device[64],path[1024];unsigned long long sectors=0;
+  if(!sv08_emmc_cid_device_at(base,SYNTHETIC_MMC_CID,
+                              device,sizeof(device),&sectors)||
+     strcmp(device,SYNTHETIC_MMC_DEVICE)||sectors!=TARGET_BYTES/512ULL)return 0;
+  /* This adapter has one fixed synthetic card path. A renamed card may still
+   * pass the locator, but cannot pass this fixed mapping and is refused. */
+  if(snprintf(path,sizeof(path),"%s/mmc0/mmc0:0001/block/mmcblk0/dev",base)>=
+     (int)sizeof(path))return 0;
+  return read_sysfs_dev(path,number)&&*number==makedev(8,0);
+}
+static int synthetic_mmc_identity(dev_t *number) {
+  return synthetic_mmc_identity_at(SYNTHETIC_MMC_BASE,number);
 }
 static int hash_file(const char *path,char hex[65]) {
   int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);struct sha256 hash;
@@ -256,6 +283,14 @@ int main(void) {
   puts("short-read short-write flush-failure timeout rw-proto refused");
   return 0;
 }
+#elif defined(SV08_IDENTITY_SELFTEST)
+int main(int argc,char **argv) {
+  dev_t number;
+  if(argc!=2||!synthetic_mmc_identity_at(argv[1],&number)) {
+    puts("refused");return 0;
+  }
+  printf("admitted %u:%u\n",major(number),minor(number));return 0;
+}
 #elif defined(SV08_BINDING_SELFTEST)
 int main(void) {
   char path[]="/tmp/sv08-sysfs-dev-test-XXXXXX";
@@ -278,7 +313,7 @@ int main(void) {
 int main(void) {
   const char *source="/image.bin",*target="/dev/sda";
   char cmd[1024],expected[65],actual[65],readback[65],descriptor_hash[65];
-  struct stat ss,ts;uint64_t capacity=0;struct sha256 hash;
+  struct stat ss,ts;uint64_t capacity=0;struct sha256 hash;dev_t admitted_dev,confirmed_dev;
   int in=-1,out=-1;FILE *f;time_t started=time(NULL);
   if(mount("proc","/proc","proc",0,NULL)&&!mounted("/proc","proc","rw"))finish("REFUSED_PROC");
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");
@@ -294,6 +329,7 @@ int main(void) {
 #if defined(SV08_CLAIM_ONLY)
   finish("CLAIM_ONLY_PASS");
 #endif
+  if(!synthetic_mmc_identity(&admitted_dev))finish("REFUSED_SYNTHETIC_MMC");
   f=fopen("/expected.sha256","r");if(!f||!fgets(expected,sizeof(expected),f))finish("REFUSED_MANIFEST");fclose(f);
   expected[strcspn(expected,"\n")]=0;
   if(strlen(expected)!=64||strspn(expected,"0123456789abcdef")!=64)finish("REFUSED_MANIFEST");
@@ -305,11 +341,19 @@ int main(void) {
   if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||
      (uint64_t)ss.st_size!=IMAGE_BYTES||ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
      !exact_usb_serial()||!exact_usb_capacity()||
-     !sysfs_dev_matches(&ts,"/sys/block/sda/dev")||(ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
+     !sysfs_dev_matches(&ts,"/sys/block/sda/dev")||ts.st_rdev!=admitted_dev||
+     (ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
     finish("REFUSED_INPUT");
+  sha_init(&hash);
+  for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
+    if(expired(started)||!exact_read(in,n))finish("FAILED_SOURCE_READ");
+    sha_update(&hash,buffer,n);done+=n;}
+  sha_final(&hash,actual);
+  if(strcmp(actual,expected)||lseek(in,0,SEEK_SET)!=0)finish("REFUSED_SOURCE_HASH");
+  /* Recheck CID, inventory and dev_t after hashing, at the write boundary. */
+  if(!synthetic_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
+     !sysfs_dev_matches(&ts,"/sys/block/sda/dev"))finish("REFUSED_SYNTHETIC_MMC_CHANGED");
 #if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
-  /* Test-only QEMU interruptions. These markers terminate the guest through
-   * the same fail-closed power-off path; they never emit a success receipt. */
   if(!strcmp(SV08_TEST_FAULT,"before-write"))finish("INJECTED_BEFORE_WRITE");
   if(!strcmp(SV08_TEST_FAULT,"partial-write")||
      !strcmp(SV08_TEST_FAULT,"flush")||!strcmp(SV08_TEST_FAULT,"readback")) {
@@ -322,12 +366,6 @@ int main(void) {
     finish("INJECTED_DURING_READBACK");
   }
 #endif
-  sha_init(&hash);
-  for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
-    if(expired(started)||!exact_read(in,n))finish("FAILED_SOURCE_READ");
-    sha_update(&hash,buffer,n);done+=n;}
-  sha_final(&hash,actual);
-  if(strcmp(actual,expected)||lseek(in,0,SEEK_SET)!=0)finish("REFUSED_SOURCE_HASH");
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(in,n)||!exact_write(out,n))finish("FAILED_WRITE");

@@ -178,6 +178,18 @@ class WriterAdmissionTests(unittest.TestCase):
         self.assertIn('lseek(out,0,SEEK_SET)!=0||!exact_read(out,CHUNK)', writer)
         self.assertIn('lseek(out,0,SEEK_SET)!=0)finish("FAILED_FLUSH")', writer)
 
+    def test_combined_identity_gate_and_prewrite_recheck(self):
+        source = SOURCE.read_text()
+        self.assertIn('SYNTHETIC_MMC_CID "00000000000000000000000000000001"', source)
+        self.assertIn('sv08_emmc_cid_device_at(base,SYNTHETIC_MMC_CID,', source)
+        self.assertIn('ts.st_rdev!=admitted_dev', source)
+        self.assertLess(source.index('synthetic_mmc_identity(&admitted_dev)'),
+                        source.index('out=open(target,O_RDWR'))
+        self.assertLess(source.index('synthetic_mmc_identity(&confirmed_dev)'),
+                        source.index('exact_write(out,n)'))
+        self.assertIn('confirmed_dev!=admitted_dev', source)
+        self.assertNotIn('cid', (REPO / 'tests/sv08_emmc_job.py').read_text().lower())
+
     def test_timeout_and_flush_failure_never_mark_guest_success(self):
         source = SOURCE.read_text()
         self.assertIn('expired(started)||!exact_read(in,n)', source)
@@ -209,6 +221,48 @@ class WriterNativeFailureTests(unittest.TestCase):
     def test_opened_block_descriptor_matches_strict_sysfs_dev(self):
         self.assertEqual(self.compile_run('SV08_BINDING_SELFTEST'),
                          'block-rdev match mismatch malformed changed nonblock refused')
+
+    def test_synthetic_cid_dev_adapter_refuses_changed_and_ambiguous_inventory(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            fixture = root / 'nfs'
+            fixture.mkdir()
+            writer.synthetic_mmc_fixture(fixture)
+            binary = root / 'identity-test'
+            subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror',
+                            '-Wno-unused-function', '-DSV08_IDENTITY_SELFTEST',
+                            str(SOURCE), '-o', str(binary)], check=True)
+            base = fixture / 'synthetic-mmc'
+            def result():
+                return subprocess.check_output([str(binary), str(base)], text=True).strip()
+            card = base / 'mmc0/mmc0:0001'
+            block = card / 'block/mmcblk0'
+            self.assertEqual(result(), 'admitted 8:0')
+            (card / 'cid').write_text('00000000000000000000000000000002\n')
+            self.assertEqual(result(), 'refused')
+            (card / 'cid').write_text('not-a-cid\n')
+            self.assertEqual(result(), 'refused')
+            (card / 'cid').write_text(writer.SYNTHETIC_CID + '\n')
+            for invalid in ('8:1\n', '8:0 extra\n', '8:0\n8:1\n',
+                            '4294967295:4294967295\n'):
+                (block / 'dev').write_text(invalid)
+                self.assertEqual(result(), 'refused')
+            (block / 'dev').write_text('8:0\n')
+            (block / 'size').write_text('62500001\n')
+            self.assertEqual(result(), 'refused')
+            (block / 'size').write_text('62500000\n')
+            (card / 'type').write_text('SD\n')
+            self.assertEqual(result(), 'refused')
+            (card / 'type').write_text('MMC\n')
+            other = base / 'mmc1/mmc1:0001/block/mmcblk1'
+            other.mkdir(parents=True)
+            (other.parent.parent / 'type').write_text('MMC\n')
+            (other.parent.parent / 'cid').write_text(writer.SYNTHETIC_CID + '\n')
+            (other / 'size').write_text('62500000\n')
+            self.assertEqual(result(), 'refused')
+            shutil.rmtree(base / 'mmc1')
+            (base / 'mmc0').rename(base / 'mmc7')
+            self.assertEqual(result(), 'refused')
 
 
 if __name__ == '__main__':

@@ -33,6 +33,7 @@ IMAGE_BYTES = 7_818_182_656
 TARGET_BYTES = 32_000_000_000
 SECTOR = 512
 SERIAL = 'SV08_QEMU_REIMAGE_TEST_ONLY'
+SYNTHETIC_CID = '00000000000000000000000000000001'
 DISK_GUID = '8aae17d2-09b3-47ab-8e35-8e91e63cf2b0'
 PART_GUIDS = (
     'ed49c82b-2455-4709-8f41-66fd41664e01',
@@ -263,8 +264,28 @@ FAULT_MARKERS = {
 }
 
 
+def synthetic_mmc_fixture(root, identity_fault=None):
+    """Explicit test adapter: synthetic MMC dev=8:0 maps to QEMU USB /dev/sda."""
+    base = root / 'synthetic-mmc'
+    card = base / 'mmc0/mmc0:0001'
+    block = card / 'block/mmcblk0'
+    block.mkdir(parents=True)
+    (card / 'type').write_text('MMC\n')
+    (card / 'cid').write_text(('00000000000000000000000000000002' if
+                             identity_fault == 'wrong-cid' else SYNTHETIC_CID) + '\n')
+    (block / 'size').write_text(f'{TARGET_BYTES // SECTOR}\n')
+    (block / 'dev').write_text('8:1\n' if identity_fault == 'wrong-dev' else '8:0\n')
+    if identity_fault == 'ambiguous':
+        other = base / 'mmc1/mmc1:0001/block/mmcblk1'
+        other.mkdir(parents=True)
+        (other.parent.parent / 'type').write_text('MMC\n')
+        (other.parent.parent / 'cid').write_text(SYNTHETIC_CID + '\n')
+        (other / 'size').write_text(f'{TARGET_BYTES // SECTOR}\n')
+        (other / 'dev').write_text('8:1\n')
+
+
 def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *,
-            claim_only=False, fault=None):
+            claim_only=False, fault=None, identity_fault=None):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
     if free < 9_000_000_000:
@@ -277,6 +298,7 @@ def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *,
     root.mkdir(mode=0o755)
     for name in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
         (root / name).mkdir()
+    synthetic_mmc_fixture(root, identity_fault)
     descriptor_bytes = canonical_json(descriptor)
     descriptor_hash = sha256_bytes(descriptor_bytes)
     (root / 'job.json').write_bytes(descriptor_bytes)
@@ -352,13 +374,14 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                 guest.kill(); guest.wait()
                 raise TimeoutError('QEMU image write timed out; result uncertain')
         serial = (work / 'serial.log').read_text(errors='replace')
-        expected_marker = (FAULT_MARKERS[fault] if fault else
+        expected_marker = ('SV08_QEMU_REIMAGE_REFUSED_SYNTHETIC_MMC' if identity_fault else
+                           FAULT_MARKERS[fault] if fault else
                            'SV08_QEMU_REIMAGE_CLAIM_ONLY_PASS' if claim_only else
                            'SV08_QEMU_REIMAGE_PASS')
-        if expected_marker not in serial or (not fault and not claim_only and
+        if expected_marker not in serial or (not fault and not identity_fault and not claim_only and
                 'SV08_QEMU_REIMAGE_READBACK ' not in serial):
             raise RuntimeError('Guest did not produce the expected terminal receipt')
-        if fault and ('SV08_QEMU_REIMAGE_PASS' in serial or
+        if (fault or identity_fault) and ('SV08_QEMU_REIMAGE_PASS' in serial or
                       'SV08_QEMU_REIMAGE_READBACK ' in serial):
             raise RuntimeError('Faulted writer emitted success evidence')
         if state.armed.exists() or not state.claimed.exists():
@@ -368,26 +391,27 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                 claim_record.get('descriptor_sha256') != descriptor_hash or
                 claim_record.get('state') != 'consumed-before-write'):
             raise RuntimeError('Persisted claim does not match immutable descriptor')
-        if fault:
+        if fault or identity_fault:
             target_prefix = os.pread(target_fd, 1024 * 1024, 0)
             source_fd = os.open(work / 'source.img', os.O_RDONLY | os.O_CLOEXEC)
             try:
                 source_prefix = os.pread(source_fd, 1024 * 1024, 0)
             finally:
                 os.close(source_fd)
-            if fault == 'before-write' and target_prefix != bytes(1024 * 1024):
+            if (fault == 'before-write' or identity_fault) and target_prefix != bytes(1024 * 1024):
                 raise RuntimeError('Before-write fault changed the target')
-            if fault != 'before-write' and target_prefix != source_prefix:
+            if fault and fault != 'before-write' and target_prefix != source_prefix:
                 raise RuntimeError('Fault marker did not follow a real target write')
             retry = state.consume({'job_id': descriptor['job_id'],
                                    'descriptor_sha256': descriptor_hash})
             if retry[0] != 409 or retry[1] != b'CONSUMED\n':
                 raise RuntimeError('Interrupted job was rearmed or accepted a retry')
             return {
-                'fault': fault, 'terminal_marker': expected_marker,
+                'fault': fault, 'identity_fault': identity_fault,
+                'terminal_marker': expected_marker,
                 'success_receipt': False, 'claim_retry_status': retry[0],
-                'target_prefix_matches_source': fault != 'before-write',
-                'target_unchanged': fault == 'before-write',
+                'target_prefix_matches_source': bool(fault and fault != 'before-write'),
+                'target_unchanged': bool(identity_fault or fault == 'before-write'),
                 'claim': {'status': 'consumed-before-write',
                           'job_id': descriptor['job_id'],
                           'descriptor_sha256': descriptor_hash,
@@ -432,6 +456,8 @@ def main():
                         help='Test QEMU claim transport without opening or writing the target')
     parser.add_argument('--fault', choices=tuple(FAULT_MARKERS),
                         help='Inject a QEMU guest interruption in the actual writer phase')
+    parser.add_argument('--identity-fault', choices=('wrong-cid', 'wrong-dev', 'ambiguous'),
+                        help='Inject a synthetic MMC identity refusal in the QEMU guest')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     work = fresh_work(args.work)
@@ -464,8 +490,9 @@ def main():
                 image_sha256=IMAGE_SHA256, gpt=gpt_map)
             claim_evidence = execute(work, Path(os.path.abspath(args.sd_work)),
                                      args.package_root, fd, kernel_args, descriptor,
-                                     claim_only=args.claim_only, fault=args.fault)
-            if args.fault:
+                                     claim_only=args.claim_only, fault=args.fault,
+                                     identity_fault=args.identity_fault)
+            if args.fault or args.identity_fault:
                 result = {'status': 'qemu-injected-fault-pass', 'target_serial': SERIAL,
                           'fault_evidence': claim_evidence,
                           'guest_serial_sha256': digest(work / 'serial.log')}
