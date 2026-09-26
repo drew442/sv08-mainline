@@ -225,19 +225,63 @@
         "host-unattended-ab-updates:implement-offline"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "qemu-ab-journey",
+          "document": "docs/hardware/host-unattended-update-qemu-evidence-20260926.json",
+          "document_sha256": "b550c5da36758902819d4b123a88d85f3acab2740a535e63c828676e6376d748",
+          "environment": "offline",
+          "limitations": "QEMU host selects each slot and passes it via root=PARTUUID; no automatic H616 SPL/U-Boot proof, no physical printer test, no deployable image/release trust-anchor approval, and no full-device eMMC reflash. The extra failure-boundary cases are unit-level fault injection, not power-cut tests on physical U-Boot environment media.",
+          "method": "Six-boot joined QEMU journey with authenticated signed feed and RAUC bundle; real RAUC writes to disposable inactive boot/root pairs; A-to-B health confirmation; B-to-A staging with journaled pre-disarm; three failed health attempts for deliberately bad A; fallback to B. Additional 90 focused unit tests include failures at preparing journal, interrupted BOOT_ORDER-first partial disarm of a bootable fallback, unexpected policy state, installing journal, and first slot write.",
+          "profile": "Disposable ARM64 QEMU fixture; no connected hardware profile",
+          "source_commit": "2c846cb6c2d805cfb116def84d0d792a7e7f104f",
+          "source_sha256": {
+            "configs/host-os/rauc-service-policy.json": "5b532261b8d63bbfb1b0654d5b4c6fd1dc7dd80649a077655d8506c5c63fadb5",
+            "configs/host-os/rauc-system.conf.in": "b128bc83c37073540aac481b7335cb5b78a48a3eca9b42f19717552b098d11e2",
+            "docs/hardware/host-unattended-update-qemu-evidence-20260926.json": "b550c5da36758902819d4b123a88d85f3acab2740a535e63c828676e6376d748",
+            "docs/hardware/host-unattended-update-rauc-stage-review-20260926.md": "8888b52332023e001872ea7dafa20fd318ba81162d1d66c08f2d7b49873dd387",
+            "docs/hardware/host-unattended-updates.md": "90cb456073ecc5f9d6ea58a9c8c852dddc08c3659557092eac804150b4540278",
+            "runtime/sv08_boot_health.py": "c40ae6591f71611ce2c1c21ac420fc14999af4161257aa003d2314bde2667bfe",
+            "runtime/sv08_rauc.py": "061030ac89920cdbcaa6e3a90179eed577c30d01306c767206f27ac08f7e0fc4",
+            "runtime/sv08_rauc_bootloader.py": "b7ab5d71b944259c91ec42152d1557846a131a752c4501bab23f56c4dcd84753",
+            "runtime/sv08_transaction.py": "20e0b86641af02bc754c1af08806e1445248815661cdd334773736d87b76a81e",
+            "scripts/integrate_host_os.py": "fce4b8bd589d2a76ccccb9592653af8d3c366d4d56315733182d32ac7c6fb3a8",
+            "scripts/stage_admin_ui.py": "b86b7291df4f36ea4fd0a41e4a1573c128ba24ec114dad72968771c29bf488f7",
+            "tests/fixtures/boot-health/qemu-boot-health-diagnostic.py": "6f6e045192ad2473a855b588c04289af036fcdef2cae67752554dfa8a87df776",
+            "tests/fixtures/boot-health/qemu-fw-env-setup.py": "1500cddc1ff0e0785209f16a6e8b2f80421055a3ae285dbbc911c131b9a5cb02",
+            "tests/fixtures/boot-health/qemu-unattended-update.py": "72f3978b9f47093153556cfba8e7ddeca04680a41b833b024379273a438358bd",
+            "tests/host_qemu_boot_health.py": "50c7fbf2bf110d7f91855f8d6b5d8aafab52e520afee3ea46da811921cd672a3",
+            "tests/host_qemu_rauc_composed_run.py": "a1f38687a0a426e1a333cd38d8c446333b419da02c9b4ecc297834f434af94bb",
+            "tests/host_qemu_rauc_resolution.py": "d7b8da70c29395184be33d71567dccb4a1b6b376af5fcc2790f0f53644d486d0",
+            "tests/host_qemu_unattended_update.py": "5c4a400b87533ac83476072411ad5a0ec83741848183f9963008db209b68eddb",
+            "tests/test_host_boot_health.py": "87ad5835f6c5f14d44e4ff51172cff30ffe04379c08333b65595bea6395631ad",
+            "tests/test_rauc_backend.py": "50e2800db244c4b0f7c8c81dd0022402bca5057e20ac2bfd29728ee58e83512d",
+            "tests/test_rauc_bootloader.py": "25e44d57aa0f5c046ec49bcda0ff55753812cd29849bd44d1a3c2c686d561cd8",
+            "tests/test_stage_admin_ui.py": "62e638d212929812cbf67e790456ac8cd59f93b706e9d524c3dd313af2e45222",
+            "tests/test_transaction.py": "fb902665274284fba56ecb5b7165cae09127802e827c2602119d74361cf77497"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-ab-journey",
       "implementation": {
         "actor": "project-implementer",
-        "run": "dc7eda705e684785b9dad960c99fa8c4",
-        "session": "unattended-ab-qemu-journey-20260926"
+        "run": "4cfe7c9e9b8841e1a5852b838ecafcbd",
+        "session": "unattended-ab-qemu-final-review-20260926"
       },
       "repeats": 0,
-      "resumption": null,
-      "status": "running",
+      "resumption": "Corrected partial-disarm fault injection to model BOOT_ORDER-first update of a bootable fallback; resubmitting evidence bound to new frozen commit.",
+      "status": "done",
       "title": "Exercise signed inactive-slot update, boot health and fallback in disposable QEMU",
-      "verification": null
+      "verification": {
+        "decision_sha256": "c4afffe27e70b6325fb638d7ea8d3fe48e1b9f5711e758bcb7ad1b9a63b815c8",
+        "evidence_sha256": "b4ef6c26347de16f1811993a8da6e54219d4289e7f45047d80826c94b660dd0c",
+        "outcome": "passed",
+        "rationale": "Verified clean HEAD 2c846cb against the complete c3b18d3..2c846cb diff, including file modes and gitlinks. The submitted evidence document and all 23 source hashes match; the decision hashes match the approved proposal, requirements, scope and constraints. The six-boot disposable ARM64 QEMU result exercises signed-feed RAUC writes, A-to-B health confirmation, B-to-A staging with journaled pre-disarm, three failed A trials and fallback to B. The harness checks source preservation, raw environment-copy stability during staging, arm deltas, GPT and recovery hashes, and persistent user data. The corrected fault tests cover journal, partial disarm and first-write recovery boundaries; independent review reproduced 89 focused tests. This passes only the offline qemu-ab-journey check. Slot selection was supplied by the host QEMU harness, and fault injections were unit-level. H616 U-Boot behavior, physical printer operation, deployable image and release qualification remain unverified.",
+        "reviewer": "independent-feature-verifier",
+        "session": "unattended-ab-qemu-independent-verification-20260926"
+      }
     },
     {
       "blocker": null,
