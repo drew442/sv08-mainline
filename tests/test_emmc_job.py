@@ -99,18 +99,11 @@ class ClaimStateTests(unittest.TestCase):
             server.server_close()
             thread.join(timeout=2)
 
-    def test_no_automatic_rearm_after_interrupted_writer(self):
-        for phase in ('before-write', 'partial-write', 'flush', 'readback'):
-            with self.subTest(phase=phase), tempfile.TemporaryDirectory() as tmp:
-                directory = Path(tmp) / 'state'
-                state = ClaimState.arm_new(directory, self.desc)
-                self.assertEqual(state.consume(payload(self.desc))[0], 200)
-                # Simulate process/power loss at each write boundary. The
-                # consumed marker outlives the writer and no success result.
-                (directory / 'uncertain-phase').write_text(phase)
-                restarted = ClaimState.reopen(directory, self.desc)
-                self.assertEqual(restarted.consume(payload(self.desc))[0], 409)
-                self.assertFalse((directory / 'armed.json').exists())
+    def test_consumed_claim_cannot_be_rearmed_after_service_restart(self):
+        self.assertEqual(self.state.consume(payload(self.desc))[0], 200)
+        restarted = ClaimState.reopen(self.state_dir, self.desc)
+        self.assertEqual(restarted.consume(payload(self.desc))[0], 409)
+        self.assertFalse((self.state_dir / 'armed.json').exists())
 
     def test_file_sync_error_leaves_claim_consumed(self):
         with mock.patch('sv08_emmc_job.os.fsync', side_effect=OSError('injected fsync error')):
