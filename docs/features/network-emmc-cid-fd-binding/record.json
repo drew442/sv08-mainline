@@ -1,0 +1,118 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Synthetic admission binds one exact expected CID/controller/type/capacity candidate to a block major/minor, with malformed, changed, mismatched and ambiguous identities refused; the job cannot override the expected CID.",
+      "environment": "offline",
+      "id": "ncfb-01"
+    },
+    {
+      "description": "Opened descriptor identity is checked against that admitted candidate and rechecked before writing; refusals write zero bytes and the same fd is retained through full readback.",
+      "environment": "offline",
+      "id": "ncfb-02"
+    },
+    {
+      "description": "Disposable QEMU full transfer, identity refusal and interrupted-write tests preserve one-shot claims, source hash, full readback, GPT checks and terminal failure behavior.",
+      "environment": "offline",
+      "id": "ncfb-03"
+    },
+    {
+      "description": "Native/static ARM64 and relevant regression/workflow/docs checks pass; production builder stays unchanged and physical/H12 limits are explicit.",
+      "environment": "offline",
+      "id": "ncfb-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "ncfb-01",
+          "ncfb-02"
+        ],
+        "text": "The expected CID must come from an obviously synthetic, test-local trusted input. The network descriptor must have no field or override path for it. Tests must cover ambiguous cards, malformed metadata, changing CID or major/minor, and rejection before the first target write."
+      },
+      {
+        "checks": [
+          "ncfb-02",
+          "ncfb-03",
+          "ncfb-04"
+        ],
+        "text": "The integrated QEMU run must actually execute the combined CID-to-descriptor gate through an explicit synthetic MMC adapter or fixture. State how the synthetic MMC association maps to QEMU's USB block descriptor. A separate native helper test plus the unchanged QEMU writer does not satisfy this check or prove a live H616 mapping."
+      },
+      {
+        "checks": [
+          "ncfb-02",
+          "ncfb-04"
+        ],
+        "text": "Retain one opened target descriptor through write, flush, and full readback. Recheck the synthetic CID/device-number association immediately before writing, and fail without writing if it changed. Document that this does not eliminate all physical hotplug or kernel mapping races."
+      },
+      {
+        "checks": [
+          "ncfb-03"
+        ],
+        "text": "Use only disposable regular-file-backed virtual media with bounded scratch and runtime. Record exact source and target hashes, GPT and six-partition results, consumed claim and replay refusal, one identity refusal, and one interrupted-write receipt with no success or automatic retry."
+      },
+      {
+        "checks": [
+          "ncfb-04"
+        ],
+        "text": "Keep the production SD/NFS builder and diagnostic unchanged. Report QEMU-only evidence and leave H12, live private CID comparison, exact artifact/target/recovery review, independent high-consequence review, and physical authorization open."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "32c57df09a8f937a677784c7c5e3d08d12674f3a4670317bb0c8899cd1a6cbea",
+    "rationale": "The existing CID helper admits a synthetic MMC path before open, while the QEMU writer independently compares its opened descriptor with USB sysfs metadata. Joining these checks closes a specific offline test gap. Before, no test connected the admitted CID to the descriptor receiving bytes; after, the combined test can show that a changed or mismatched synthetic association refuses before writing. Decision 0018 and the prior proposals permit bounded offline work, while the readiness audit and H12 retain physical commissioning, recovery, and separate write authorization. This approval covers test fixtures only. QEMU's USB /dev/sda cannot establish the real H616 MMC CID mapping. The full transfer is resource intensive, so use one bounded integration run on disposable media and retain exact hashes, time, and storage evidence.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-cid-admission/proposal.md": "937ea3353d36f39f62d754ca07ff28885ce4f500a54d90ed7a73dd69a57697c9",
+      "docs/features/network-emmc-fd-binding/proposal.md": "5d17c68783a95afa437b3e2a135565dce0d723eabb7e2389e6163867cd8b0518",
+      "docs/features/network-emmc-one-shot/proposal.md": "5aec86dc704622d55be31125704191745d68d7a9f3cab6be3ef419bf6abf2da4",
+      "docs/features/network-emmc-reimage/proposal.md": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf"
+    },
+    "reviewer": "feature-approver /root/approve_cid_fd_binding",
+    "scope_sha256": "1827411c0bfd6c40662d8e6ddc08d315405a4dde8391edaefd0cab11e2fd17e1",
+    "session": "independent-network-emmc-cid-fd-binding-review-20260926"
+  },
+  "format_version": 1,
+  "id": "network-emmc-cid-fd-binding",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-cid-fd-binding/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-reimage/proposal.md",
+    "docs/features/network-emmc-one-shot/proposal.md",
+    "docs/features/network-emmc-cid-admission/proposal.md",
+    "docs/features/network-emmc-fd-binding/proposal.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "ncfb-01",
+        "ncfb-02",
+        "ncfb-03",
+        "ncfb-04"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "qemu-cid-fd-binding",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Join synthetic CID admission to the opened QEMU writer descriptor",
+      "verification": null
+    }
+  ],
+  "title": "Bind synthetic eMMC CID admission to the opened QEMU writer descriptor"
+}
