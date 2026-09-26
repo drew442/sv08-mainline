@@ -111,7 +111,7 @@ class WriterAdmissionTests(unittest.TestCase):
                 path.write_bytes(b'source')
                 return writer.IMAGE_SHA256
 
-            def uncertain(*args):
+            def uncertain(*args, **kwargs):
                 os.write(args[3], b'partly written')
                 raise OSError('injected first-write failure')
 
@@ -153,11 +153,12 @@ class WriterAdmissionTests(unittest.TestCase):
 
     def test_guest_identity_and_root_refusals_precede_target_open(self):
         source = SOURCE.read_text()
-        gate = source.index('if(!exact_usb_serial()')
         target_open = source.index('out=open(target,O_RDWR')
         self.assertLess(source.index('sv08.qemu_reimage=1'), target_open)
         self.assertLess(source.index('mounted("/","nfs","ro")'), target_open)
-        self.assertLess(gate, target_open)
+        self.assertLess(source.index('if(!exact_usb_serial()'), target_open)
+        self.assertLess(source.index('if(!claim_once('), target_open)
+        self.assertLess(source.index('if(!hash_file("/job.json"'), target_open)
         self.assertIn('access("/sys/block/sdb",F_OK)', source)
         self.assertIn('target="/dev/sda"', source)
         self.assertIn('capacity!=TARGET_BYTES', source)

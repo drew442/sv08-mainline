@@ -17,13 +17,17 @@ import stat
 import struct
 import subprocess
 import sys
+import threading
 import time
 import uuid
 import zlib
+import tracemalloc
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'scripts'))
 from prepare_host_os import layout  # noqa: E402
+from sv08_emmc_job import (ClaimHTTPServer, ClaimState, canonical_json,
+                           make_descriptor, sha256_bytes)  # noqa: E402
 
 IMAGE_BYTES = 7_818_182_656
 TARGET_BYTES = 32_000_000_000
@@ -246,7 +250,12 @@ def isolated():
             raise ValueError(f'Private {name} namespace required')
 
 
-def execute(work, sd_work, packages, target_fd, kernel_args):
+def process_rss_bytes():
+    pages = int(Path('/proc/self/statm').read_text().split()[1])
+    return pages * os.sysconf('SC_PAGE_SIZE')
+
+
+def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *, claim_only=False):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
     if free < 9_000_000_000:
@@ -259,10 +268,18 @@ def execute(work, sd_work, packages, target_fd, kernel_args):
     root.mkdir(mode=0o755)
     for name in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
         (root / name).mkdir()
+    descriptor_bytes = canonical_json(descriptor)
+    descriptor_hash = sha256_bytes(descriptor_bytes)
+    (root / 'job.json').write_bytes(descriptor_bytes)
+    (root / 'job.json').chmod(0o444)
     writer = root / 'sd-network-init'
-    run(['aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
-         '-Wall', '-Wextra', '-Werror',
-         '-o', writer, REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'])
+    compile_args = ['aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
+         f'-DSV08_JOB_ID="{descriptor["job_id"]}"',
+         f'-DSV08_JOB_DESCRIPTOR_SHA256="{descriptor_hash}"',
+         '-Wall', '-Wextra', '-Werror']
+    if claim_only:
+        compile_args.append('-DSV08_CLAIM_ONLY=1')
+    run(compile_args + ['-o', writer, REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'])
     (root / 'expected.sha256').write_text(IMAGE_SHA256 + '\n')
     os.link(work / 'source.img', root / 'image.bin')
     run(['mount', '--make-rprivate', '/'])
@@ -279,6 +296,12 @@ NFS_CORE_PARAM {{ Protocols = 3,4; mount_path_pseudo = true; Plugins_Dir = "{pre
 EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Type = RO; Squash = Root_Squash; SecType = sys; Protocols = 3,4; Transports = TCP; FSAL {{ Name = VFS; }} }}
 ''')
     processes = []
+    state = ClaimState.arm_new(work / 'claim-state', descriptor)
+    tracemalloc.start()
+    memory_before = tracemalloc.get_traced_memory()[0]
+    rss_before = process_rss_bytes()
+    claim_server = ClaimHTTPServer(('0.0.0.0', 0), state)
+    claim_thread = threading.Thread(target=claim_server.serve_forever, daemon=True)
     try:
         processes.append(subprocess.Popen([str(packages / 'sbin/rpcbind'), '-f', '-s'], env=env,
                                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL))
@@ -297,9 +320,11 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
         else:
             raise TimeoutError('NFS service did not become ready')
         # QEMU opens exactly the already admitted regular file descriptor.
+        claim_thread.start()
         command = ['qemu-system-aarch64', '-machine', 'virt', '-cpu', 'cortex-a53', '-smp', '2',
                    '-m', '2048', '-kernel', sd_work / 'boot/Image',
-                   '-initrd', sd_work / 'boot/initrd.img', '-append', kernel_args,
+                   '-initrd', sd_work / 'boot/initrd.img', '-append',
+                   f'{kernel_args} sv08.claim_port={claim_server.server_port}',
                    '-display', 'none', '-serial', 'null', '-no-reboot',
                    '-device', 'qemu-xhci,id=xhci', '-device', 'usb-net,netdev=n0',
                    '-netdev', 'user,id=n0', '-drive',
@@ -316,9 +341,33 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                 guest.kill(); guest.wait()
                 raise TimeoutError('QEMU image write timed out; result uncertain')
         serial = (work / 'serial.log').read_text(errors='replace')
-        if 'SV08_QEMU_REIMAGE_PASS' not in serial or 'SV08_QEMU_REIMAGE_READBACK ' not in serial:
+        expected_marker = ('SV08_QEMU_REIMAGE_CLAIM_ONLY_PASS' if claim_only
+                           else 'SV08_QEMU_REIMAGE_PASS')
+        if expected_marker not in serial or (not claim_only and 'SV08_QEMU_REIMAGE_READBACK ' not in serial):
             raise RuntimeError('Guest did not prove full write and readback')
+        if state.armed.exists() or not state.claimed.exists():
+            raise RuntimeError('Claim state is not durably consumed')
+        claim_record = json.loads(state.claimed.read_text())
+        if (claim_record.get('job_id') != descriptor['job_id'] or
+                claim_record.get('descriptor_sha256') != descriptor_hash or
+                claim_record.get('state') != 'consumed-before-write'):
+            raise RuntimeError('Persisted claim does not match immutable descriptor')
+        memory_after, memory_peak = tracemalloc.get_traced_memory()
+        claim_storage_bytes = sum(path.stat().st_size for path in state.state_dir.iterdir())
+        return {
+            'claim': {'status': 'consumed-before-write', 'job_id': descriptor['job_id'],
+                      'descriptor_sha256': descriptor_hash,
+                      'persisted_bytes': claim_storage_bytes,
+                      'latency_ms': state.last_claim_ms,
+                      'python_tracemalloc_delta_bytes': max(0, memory_after - memory_before),
+                      'python_tracemalloc_peak_bytes': memory_peak,
+                      'host_rss_delta_bytes': max(0, process_rss_bytes() - rss_before)},
+        }
     finally:
+        claim_server.shutdown()
+        claim_server.server_close()
+        claim_thread.join(timeout=5)
+        tracemalloc.stop()
         for process in reversed(processes):
             if process.poll() is None:
                 process.send_signal(signal.SIGTERM)
@@ -333,6 +382,8 @@ def main():
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--sd-work', type=Path, required=True)
     parser.add_argument('--package-root', type=Path)
+    parser.add_argument('--claim-only', action='store_true',
+                        help='Test QEMU claim transport without opening or writing the target')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     work = fresh_work(args.work)
@@ -354,7 +405,26 @@ def main():
                 return
             if args.package_root is None:
                 raise ValueError('--package-root required to execute')
-            execute(work, Path(os.path.abspath(args.sd_work)), args.package_root, fd, kernel_args)
+            gpt_map = {'disk_guid': DISK_GUID,
+                       'image_bytes': IMAGE_BYTES,
+                       'backup_gpt_at_image_end': True,
+                       'partitions': expected_records()}
+            descriptor = make_descriptor(
+                job_id='qemu-reimage-test-001', source_bytes=IMAGE_BYTES,
+                source_sha256=IMAGE_SHA256, target_serial=SERIAL,
+                target_bytes=TARGET_BYTES, image_bytes=IMAGE_BYTES,
+                image_sha256=IMAGE_SHA256, gpt=gpt_map)
+            claim_evidence = execute(work, Path(os.path.abspath(args.sd_work)),
+                                     args.package_root, fd, kernel_args, descriptor,
+                                     claim_only=args.claim_only)
+            if args.claim_only:
+                result = {'status': 'qemu-claim-only-pass',
+                          'target_opened': False,
+                          'claim': claim_evidence['claim'],
+                          'guest_serial_sha256': digest(work / 'serial.log')}
+                (work / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+                print(json.dumps(result), flush=True)
+                return
             os.fsync(fd)
             admit_target(work, fd, source)
             validate_source(source)
@@ -366,7 +436,8 @@ def main():
             result = {'status': 'qemu-only-pass', 'source_bytes': IMAGE_BYTES,
                       'readback_bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
                       'target_bytes': TARGET_BYTES, 'target_serial': SERIAL,
-                      'gpt': gpt, 'guest_serial_sha256': digest(work / 'serial.log')}
+                      'gpt': gpt, 'claim': claim_evidence['claim'],
+                      'guest_serial_sha256': digest(work / 'serial.log')}
             (work / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
             print(json.dumps(result), flush=True)
         finally:

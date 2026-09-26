@@ -5,6 +5,13 @@ Scope: offline ARM64 QEMU, synthetic regular files only. This is a separate
 whole-image recovery experiment from signed A/B OS updates. It has no production
 writer and does not change the existing read-only SD/NFS diagnostic.
 
+This report records the original direct-transfer prototype. The later
+[one-shot protocol evidence](host-network-emmc-one-shot-qemu-20260926.md)
+extends the harness with a durable, descriptor-bound claim before target open,
+lost-acknowledgment/concurrency tests, and a second full QEMU write/readback.
+The newer evidence remains synthetic and does not establish physical target
+identity or hardware-write authority.
+
 The [prototype guest writer](../../tests/fixtures/sd-network-root/emmc_image_writer.c)
 is compiled only by the [QEMU harness](../../tests/host_qemu_sd_network_emmc_write.py)
 as a temporary `/sd-network-init` in a private NFS export. The original
@@ -45,6 +52,7 @@ The local low-cost checks are:
 
 ```sh
 PYTHONPATH=tests python3 -m unittest test_sd_network_emmc_write -q
+PYTHONPATH=tests python3 -m unittest test_emmc_job -q
 aarch64-linux-gnu-gcc -static -Os -Wall -Wextra -Werror -o /tmp/sv08-emmc-image-writer tests/fixtures/sd-network-root/emmc_image_writer.c
 python3 -m py_compile tests/host_qemu_sd_network_emmc_write.py
 ```

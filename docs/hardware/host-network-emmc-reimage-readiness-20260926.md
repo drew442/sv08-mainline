@@ -8,7 +8,7 @@ or perform an eMMC write.
 
 | Prerequisite | Current evidence | Status and limit |
 | --- | --- | --- |
-| Full-image transfer prototype | The [QEMU report](host-sd-network-emmc-reimage-qemu.md) records a passing full source hash, write, flush, full readback, and GPT check to a disposable regular-file-backed virtual USB disk. | Met for synthetic QEMU only. It hard-codes `/dev/sda`, a test-only serial, 32,000,000,000-byte target, and a non-bootable fixture hash. It is not the printer writer. |
+| Full-image transfer prototype | The [QEMU report](host-sd-network-emmc-reimage-qemu.md) records the passing write/flush/readback path. The later [one-shot evidence](host-network-emmc-one-shot-qemu-20260926.md) also proves durable claim-before-open and denial of replay in QEMU. | Met for synthetic QEMU only. It hard-codes `/dev/sda`, a test-only serial, 32,000,000,000-byte target, and a nonbootable fixture hash. It is not the printer writer. |
 | Target admission | [H10](host-sd-network-emmc-probe-20260926.md) measured one `MMC` under the H616 `4022000.mmc` controller, `/dev/mmcblk0`, 61,079,552 sectors (31,272,730,624 bytes), and read both environment copies without writing. The [locator improvement](host-network-emmc-target-admission.md) now requires that exact capacity and refuses malformed or additional MMC inventory. | Offline admission checks are complete. H10 did not record the card CID. The returned path and capacity alone are not sufficient write identity. The v5 A-rearm record reports that a CID was captured privately, but the live card has not been compared with it for H12. |
 | Candidate image | The [v5 artifact manifest](host-board-image-20260925-v5.json) records a 7,818,182,656-byte raw image, SHA-256 `ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`, and six partition image hashes. Its compressed file on Beelink was read-only checked on 2026-09-26: 1,050,437,428 bytes and SHA-256 `09fb7efb7637e3b360bbb6c76e5b2b3cf7e0164a69082122b18a05ac567d34a1`, matching the manifest. | Available for a writer-path commissioning test only. The v5 artifact is marked `deployable: false`; it is not a supported printer release. Do not describe the synthetic QEMU image as this candidate. |
 | Image/target map | [`host-board-image.md`](host-board-image.md), [`test-sv08-01-host.json`](../../configs/images/test-sv08-01-host.json), the v5 manifest, and its [offline byte review](host-board-image-20260925-v5.md) bind the 8 GB image footprint, six partition identities, SPL at byte 8192, and redundant environment regions. The physical eMMC user area measured by H10 is larger at 31,272,730,624 bytes. | Reviewed for the USB-writer v5 operation and its prior complete readback. A fresh reviewer must bind the exact network-writer behavior, candidate hash, target size/identity, and policy. The GPT remains at the 8 GB image boundary by design; the unused eMMC tail is not expanded. |
@@ -25,14 +25,15 @@ the remaining physical exclusions; the wording is corrected in the write note.
 
 ## Next work and physical gate
 
-The next implementation must connect the existing read-only H616 admission
-helper to a separately reviewed, one-shot network writer; verify the exact
-compressed and expanded candidate hashes, single target identity and capacity;
-preserve the immutable source/target separation; flush and read back the whole
-image; validate both GPT copies and all six partitions; and stop without retry
-on interruption or uncertainty. It must not be placed into the diagnostic
-image until that writer is independently reviewed. The live target identity
-must be confirmed against the private CID evidence before any write.
+The offline QEMU one-shot protocol is implemented and independently reviewed.
+It does not yet connect the read-only H616 admission helper to a production
+writer or trigger. The remaining implementation must define and separately
+review production job creation/consumption, read-only source delivery, live CID
+admission, full image write/flush/readback, both GPT copies and all six
+partitions, and terminal reporting. Do not place a physical writer in the
+diagnostic image or enable a live job until its exact target and behavior have
+separate review. The live target identity must be confirmed against the private
+CID evidence before any write.
 
 The VM has only 4.5 GiB free, below the QEMU writer report's documented 9 GB
 scratch minimum; do not stage a second raw image or virtual target there. On
