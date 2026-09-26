@@ -406,9 +406,13 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                       'host_rss_delta_bytes': max(0, process_rss_bytes() - rss_before)},
         }
     finally:
-        claim_server.shutdown()
+        # BaseServer.shutdown() waits for serve_forever() to set its internal
+        # event. If NFS setup fails before the thread starts, calling it here
+        # can hang cleanup forever instead of returning a bounded test failure.
+        if claim_thread.ident is not None:
+            claim_server.shutdown()
+            claim_thread.join(timeout=5)
         claim_server.server_close()
-        claim_thread.join(timeout=5)
         tracemalloc.stop()
         for process in reversed(processes):
             if process.poll() is None:
