@@ -89,15 +89,95 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "nca-01",
+          "document": "docs/hardware/host-network-emmc-cid-admission-validation-20260926.md",
+          "document_sha256": "7167526f434a4041462d399f4fa6497d54947d5a01f1ff850bce33a08193b5be",
+          "environment": "offline",
+          "limitations": "Synthetic fixtures only. The pinned printer kernel has not been checked, no live CID was read, and no block device or printer was accessed.",
+          "method": "Ran the synthetic sysfs C fixture through the native and static ARM64 test harness. Exact fake CID and current locator controller/type/capacity criteria admit; missing/malformed/wrong-case/mismatched CID and absent, wrong-type, wrong-capacity, or multiple MMC candidates refuse.",
+          "profile": "test-sv08-01 controller/capacity shape with synthetic CID values",
+          "source_commit": "71320a888fe95c57c3291bf9b3bb6c674d0962e3",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "da8c5512af1b20c283a065ac3b57d57bdf98b0647f3fbd6c6b1937835bb9fbc3",
+            "tests/fixtures/sd-network-root/emmc_cid_admission_test.c": "a0112608cb8f4ffd72db9d7120196d322cb4ec0978f1d141df044db74f189a18",
+            "tests/test_sd_network_cid_admission.py": "37c313f5b266b8c2d07dd2f7e0c13e936a74f2ddfb70ecbbc94cabcfb06a91e1"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nca-02",
+          "document": "docs/hardware/host-network-emmc-cid-admission-validation-20260926.md",
+          "document_sha256": "7167526f434a4041462d399f4fa6497d54947d5a01f1ff850bce33a08193b5be",
+          "environment": "offline",
+          "limitations": "This proves callback ordering in a synthetic fixture, not the eventual writer's block-device open binding or end-to-end network descriptor handling.",
+          "method": "Open-spy callback remains at zero for every refusal and runs once only after a matching admission. The API accepts expected CID separately and has no network-job parameter; this task contains no descriptor parser or path-to-opened-device binding.",
+          "profile": null,
+          "source_commit": "71320a888fe95c57c3291bf9b3bb6c674d0962e3",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "da8c5512af1b20c283a065ac3b57d57bdf98b0647f3fbd6c6b1937835bb9fbc3",
+            "tests/fixtures/sd-network-root/emmc_cid_admission_test.c": "a0112608cb8f4ffd72db9d7120196d322cb4ec0978f1d141df044db74f189a18",
+            "tests/test_sd_network_cid_admission.py": "37c313f5b266b8c2d07dd2f7e0c13e936a74f2ddfb70ecbbc94cabcfb06a91e1"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nca-03",
+          "document": "docs/hardware/host-network-emmc-cid-admission-validation-20260926.md",
+          "document_sha256": "7167526f434a4041462d399f4fa6497d54947d5a01f1ff850bce33a08193b5be",
+          "environment": "offline",
+          "limitations": "No fresh image composition or target-kernel integration was performed; no private CID, writer, trigger, or boot-policy change is included.",
+          "method": "Compared the submitted diff and source hashes: the test-only helper/fixture and regression test are added; existing read-only init.c and production image builder are unchanged. The helper is not included in the production image build.",
+          "profile": null,
+          "source_commit": "71320a888fe95c57c3291bf9b3bb6c674d0962e3",
+          "source_sha256": {
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c",
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "da8c5512af1b20c283a065ac3b57d57bdf98b0647f3fbd6c6b1937835bb9fbc3",
+            "tests/fixtures/sd-network-root/emmc_cid_admission_test.c": "a0112608cb8f4ffd72db9d7120196d322cb4ec0978f1d141df044db74f189a18",
+            "tests/fixtures/sd-network-root/init.c": "7d61a51304a8e05da242f993d25bfb61f3bfbf1b952b8dfc988a5b43534652a0",
+            "tests/test_sd_network_cid_admission.py": "37c313f5b266b8c2d07dd2f7e0c13e936a74f2ddfb70ecbbc94cabcfb06a91e1"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nca-04",
+          "document": "docs/hardware/host-network-emmc-cid-admission-validation-20260926.md",
+          "document_sha256": "7167526f434a4041462d399f4fa6497d54947d5a01f1ff850bce33a08193b5be",
+          "environment": "offline",
+          "limitations": "Offline synthetic only. The CID expected-value provisioning source, match to the live printer, identity-to-opened-device binding, physical write and printer boot remain unvalidated; H12 is still required.",
+          "method": "`python3 -m unittest tests.test_sd_network_cid_admission tests.test_sd_network_env_probe tests.test_sd_network_image -q` passed 13 tests; `python3 -m py_compile tests/test_sd_network_cid_admission.py`, static ARM64 `-Wall -Wextra -Werror` compile, local Markdown target check and `git diff --check` passed. Feature-workflow validation is run at integration.",
+          "profile": "test-sv08-01 synthetic admission only",
+          "source_commit": "71320a888fe95c57c3291bf9b3bb6c674d0962e3",
+          "source_sha256": {
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c",
+            "tests/fixtures/sd-network-root/emmc_cid_admission.h": "da8c5512af1b20c283a065ac3b57d57bdf98b0647f3fbd6c6b1937835bb9fbc3",
+            "tests/fixtures/sd-network-root/emmc_cid_admission_test.c": "a0112608cb8f4ffd72db9d7120196d322cb4ec0978f1d141df044db74f189a18",
+            "tests/fixtures/sd-network-root/init.c": "7d61a51304a8e05da242f993d25bfb61f3bfbf1b952b8dfc988a5b43534652a0",
+            "tests/test_sd_network_cid_admission.py": "37c313f5b266b8c2d07dd2f7e0c13e936a74f2ddfb70ecbbc94cabcfb06a91e1"
+          }
+        }
+      ],
       "human_task": null,
       "id": "cid-admission",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "2fec010ba37642378524909a68bbed39",
+        "session": "implement-cid-admission-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Implement and verify synthetic CID-bound eMMC target admission",
-      "verification": null
+      "verification": {
+        "decision_sha256": "0ac576f5f7f462f26190e3e95176979161e3be81e57bd9e0f9727d96933a163a",
+        "evidence_sha256": "67c6d804960b34990e17f30755df892c4f1c1d7ea3217408ff7de4d48f5cace0",
+        "outcome": "passed",
+        "rationale": "Checks nca-01 through nca-04 pass at clean source commit 71320a888fe95c57c3291bf9b3bb6c674d0962e3 within their approved offline synthetic scope. Exact lowercase 32-character expected and live CIDs, existing controller/type/capacity and unique MMC inventory gate the callback; missing, malformed, mismatched and ambiguous fixtures refuse before target-open. The API takes expected CID separately and has no network-job parameter; descriptor parsing and trusted provisioning are outside this slice. Production init.c and SD/NFS builder are unchanged. Native tests and static AArch64 compilation pass (13 tests total); the pinned upstream Linux source citation supports the format while printer-kernel behavior remains unverified. The submitted evidence and complete diff are bound to clean HEAD. Path-to-opened-device identity, live CID comparison, writer integration and physical use remain unvalidated under H12.",
+        "reviewer": "root/verify_cid_admission",
+        "session": "independent-cid-admission-delivery-review-20260926"
+      }
     }
   ],
   "title": "Require pinned eMMC identity before writer target open"
