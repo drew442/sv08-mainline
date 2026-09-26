@@ -2,8 +2,9 @@
 
 This is an offline-reviewed and physically written diagnostic image for the
 reported stock `H616_JC_6Z_V1.2` board. It is not a printer release: its
-manifest keeps `deployable` and `physical_boot` false. The v5 JSON file records
-all component and image hashes; the raw image is 7,818,182,656 bytes with SHA-256
+manifest keeps `deployable` false. The later [first-boot record](host-board-image-20260925-v5-first-boot.md)
+records the observed A-slot boot. The v5 JSON file records all component and
+image hashes; the raw image is 7,818,182,656 bytes with SHA-256
 `ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`.
 
 An independent GPT-5.6-Sol medium review on 2026-09-25 passed the offline byte
@@ -28,8 +29,9 @@ After readback and partition checks, the USB reader was safely powered off with
 `sgdisk -v` reports that the secondary GPT header is not at the physical 32 GB
 device end. This is expected: the image intentionally preserves the 8 GB disk
 footprint, with the backup GPT at the end of that image. It was not relocated or
-expanded. The spare has not yet been booted with v5. V4's exact prepare exception
-was not captured; the missing initramfs hook is a strong, reproduced candidate
-cause, not a measured device-side exception. Physical DRAM stability, Wi-Fi,
-display/touch behavior, printer outputs, heat, motion, and printing remain
-unverified.
+expanded. The subsequent [v5 first-boot record](host-board-image-20260925-v5-first-boot.md)
+reports an A-slot boot with persistent data mounted. V4's exact prepare
+exception was not captured; the missing initramfs hook is a strong, reproduced
+candidate cause, not a measured device-side exception. Physical DRAM stability,
+Wi-Fi reliability, display/touch behavior, printer outputs, heat, motion, and
+printing remain unverified.
