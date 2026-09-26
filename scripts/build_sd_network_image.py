@@ -23,6 +23,7 @@ SPEC = REPO / 'configs/host-os/sv08-sd-network-inputs.json'
 FRAGMENT = REPO / 'configs/host-os/sv08-sd-network.fragment'
 PATCH = REPO / 'patches/u-boot/0005-sv08-sd-network-diagnostic.patch'
 PROBE = REPO / 'tests/fixtures/sd-network-root/init.c'
+EMMC_LOCATOR = REPO / 'tests/fixtures/sd-network-root/emmc_locator.h'
 KERNEL_RELEASE = '6.18.51-sv08-candidate1'
 
 
@@ -162,7 +163,7 @@ def main():
         if digest(regular_input(patch_dir / name)) != expected:
             raise ValueError(f'Board patch hash mismatch: {name}')
     inputs = {str(path): digest(path) for path in
-              [*sources.values(), SPEC, FRAGMENT, PATCH, PROBE,
+              [*sources.values(), SPEC, FRAGMENT, PATCH, PROBE, EMMC_LOCATOR,
                *[patch_dir / name for name, _ in spec['armbian_patches']]]}
     print(json.dumps({'execute': a.execute, 'regular_file_only': True,
                       'image_bytes': spec['image_bytes'], 'work': str(work)}), flush=True)

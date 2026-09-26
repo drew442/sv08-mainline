@@ -1,11 +1,11 @@
 /* SPDX-License-Identifier: MIT */
-/* Host-only tests for exact-controller eMMC discovery. */
-#define main sd_network_probe_main
-#include "init.c"
-#undef main
-
-#include <limits.h>
+/* Synthetic sysfs tests: no device nodes are opened. */
+#define _GNU_SOURCE
+#include "emmc_locator.h"
 #include <ftw.h>
+#include <limits.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 static char fixture_root[] = "/tmp/sv08-mmc-host-XXXXXX";
 
@@ -42,26 +42,88 @@ static int make_card(const char *base, const char *host, const char *card,
             (int)sizeof(type_path) ||
         snprintf(size_path, sizeof(size_path), "%s/%s/%s/block/%s/size", base,
                  host, card, block) >= (int)sizeof(size_path)) return 0;
-    return put(type_path, type) && put(size_path, sectors);
+    return (!type || put(type_path, type)) && (!sectors || put(size_path, sectors));
 }
 
+static int admission(const char *base, int expected, const char *expected_device) {
+    char device[64] = "stale";
+    unsigned long long sectors = 123;
+    int actual = sv08_emmc_device_at(base, device, sizeof(device), &sectors);
+    if (actual != expected) return 0;
+    if (expected)
+        return !strcmp(device, expected_device) && sectors == SV08_EMMC_SECTORS;
+    return !device[0] && sectors == 0;
+}
+
+static int scenario(const char *name, char *path, size_t cap) {
+    return snprintf(path, cap, "%s/%s", fixture_root, name) < (int)cap &&
+           mkdir(path, 0700) == 0;
+}
+
+#define REQUIRE(x) do { if (!(x)) { fprintf(stderr, "failed line %d: %s\n", __LINE__, #x); return 1; } } while (0)
+
 int main(void) {
-    char *temp = fixture_root;
-    char device[64] = {0};
-    unsigned long long sectors = 0;
-    if (!mkdtemp(temp)) return 1;
+    char path[PATH_MAX], other[PATH_MAX];
+    REQUIRE(mkdtemp(fixture_root));
     atexit(cleanup_fixture);
-    /* Linux numbering is intentionally unlike the guessed mmc2 mapping:
-     * the target MMC is mmc0, while mmc2 carries a small SD card. */
-    if (!make_card(temp, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", "61000000\n") ||
-        !make_card(temp, "mmc2", "mmc2:0001", "mmcblk2", "SD\n", "3900000\n"))
-        return 2;
-    if (!emmc_device_at(temp, device, sizeof(device), &sectors) ||
-        strcmp(device, "/dev/mmcblk0") || sectors != 61000000ULL) return 3;
-    /* A second matching MMC on the same controller is ambiguous and rejected. */
-    if (!make_card(temp, "mmc1", "mmc1:0001", "mmcblk1", "MMC\n", "62000000\n"))
-        return 4;
-    if (emmc_device_at(temp, device, sizeof(device), &sectors)) return 5;
-    puts("eMMC controller locator numbering/uniqueness checks passed");
+    REQUIRE(scenario("absent", path, sizeof(path)));
+    REQUIRE(admission(path, 0, NULL));
+
+    REQUIRE(scenario("numbering", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc7", "mmc7:0001", "mmcblk0", "MMC\n", "61079552\n"));
+    REQUIRE(make_card(path, "mmc2", "mmc2:0001", "mmcblk2", "SD\n", "3900000\n"));
+    REQUIRE(admission(path, 1, "/dev/mmcblk0"));
+    REQUIRE(scenario("other_controller", other, sizeof(other)));
+    REQUIRE(make_card(other, "mmc0", "mmc0:0001", "mmcblk1", "MMC\n", "61079552\n"));
+    REQUIRE(admission(path, 1, "/dev/mmcblk0"));
+    REQUIRE(admission(other, 1, "/dev/mmcblk1"));
+    REQUIRE(scenario("selected_controller_empty", path, sizeof(path)));
+    REQUIRE(admission(path, 0, NULL));
+
+    REQUIRE(scenario("sd_only", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "SD\n", "61079552\n"));
+    REQUIRE(admission(path, 0, NULL));
+
+    REQUIRE(scenario("short", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", "61079551\n"));
+    REQUIRE(admission(path, 0, NULL));
+    REQUIRE(scenario("large", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", "61079553\n"));
+    REQUIRE(admission(path, 0, NULL));
+
+    const char *bad_numbers[] = {"", "abc\n", "+61079552\n", " 61079552\n",
+                                 "61079552junk\n", "61079552\nother\n",
+                                 "18446744073709551616\n"};
+    for (size_t i = 0; i < sizeof(bad_numbers) / sizeof(bad_numbers[0]); i++) {
+        char name[24];
+        REQUIRE(snprintf(name, sizeof(name), "invalid%zu", i) < (int)sizeof(name));
+        REQUIRE(scenario(name, path, sizeof(path)));
+        REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", bad_numbers[i]));
+        REQUIRE(admission(path, 0, NULL));
+    }
+
+    REQUIRE(scenario("unreadable_type", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", NULL, "61079552\n"));
+    REQUIRE(admission(path, 0, NULL));
+    REQUIRE(scenario("unreadable_size", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", NULL));
+    REQUIRE(admission(path, 0, NULL));
+    REQUIRE(scenario("unknown_type", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "mystery\n", "61079552\n"));
+    REQUIRE(admission(path, 0, NULL));
+
+    REQUIRE(scenario("ambiguous", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", "61079552\n"));
+    REQUIRE(make_card(path, "mmc1", "mmc1:0001", "mmcblk1", "MMC\n", "61079552\n"));
+    REQUIRE(admission(path, 0, NULL));
+    REQUIRE(scenario("extra_bad_size", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", "61079552\n"));
+    REQUIRE(make_card(path, "mmc1", "mmc1:0001", "mmcblk1", "MMC\n", "junk\n"));
+    REQUIRE(admission(path, 0, NULL));
+    REQUIRE(scenario("extra_no_type", path, sizeof(path)));
+    REQUIRE(make_card(path, "mmc0", "mmc0:0001", "mmcblk0", "MMC\n", "61079552\n"));
+    REQUIRE(make_card(path, "mmc1", "mmc1:0001", "mmcblk1", NULL, "61079552\n"));
+    REQUIRE(admission(path, 0, NULL));
+    puts("eMMC controller locator numbering/uniqueness/refusal checks passed");
     return 0;
 }

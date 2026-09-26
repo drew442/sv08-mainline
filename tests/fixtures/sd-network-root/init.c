@@ -15,15 +15,12 @@
 #include <sys/reboot.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <ctype.h>
+#include "emmc_locator.h"
 
 #define ENV_SIZE 0x10000
 #define ENV_DATA_OFFSET 5
 #define ENV_A_OFFSET 0x400000
 #define ENV_B_OFFSET 0x800000
-#ifndef EMMC_HOST_SYSFS
-#define EMMC_HOST_SYSFS "/sys/bus/platform/devices/4022000.mmc/mmc_host"
-#endif
 
 struct env_result {
     int crc_ok;
@@ -87,84 +84,10 @@ static int parse_env(const unsigned char *env, struct env_result *result) {
     return 1;
 }
 
-static int named_number(const char *name, const char *prefix) {
-    size_t n = strlen(prefix);
-    if (strncmp(name, prefix, n) || !isdigit((unsigned char)name[n])) return 0;
-    for (const char *p = name + n; *p; p++)
-        if (!isdigit((unsigned char)*p)) return 0;
-    return 1;
-}
-
-/* Locate one 32 GB MMC below the H616 eMMC controller's exact sysfs path.
- * Linux mmc_host numbers are assigned by probe order and are not stable. */
-static int emmc_device_at(const char *base, char *device, size_t device_cap,
-                          unsigned long long *target_sectors) {
-    DIR *hosts = opendir(base);
-    struct dirent *host_entry;
-    int found = 0;
-    if (!hosts) return 0;
-    while ((host_entry = readdir(hosts)) != NULL) {
-        char host_path[512];
-        DIR *cards;
-        struct dirent *card;
-        if (!named_number(host_entry->d_name, "mmc")) continue;
-        if (snprintf(host_path, sizeof(host_path), "%s/%s", base,
-                     host_entry->d_name) >= (int)sizeof(host_path)) continue;
-        cards = opendir(host_path);
-        if (!cards) continue;
-        while ((card = readdir(cards)) != NULL) {
-            char card_path[768], type_path[896], value[32];
-            FILE *f;
-            DIR *blocks;
-            struct dirent *block;
-            if (strncmp(card->d_name, host_entry->d_name, strlen(host_entry->d_name)) ||
-                card->d_name[strlen(host_entry->d_name)] != ':') continue;
-            if (snprintf(card_path, sizeof(card_path), "%s/%s", host_path,
-                         card->d_name) >= (int)sizeof(card_path) ||
-                snprintf(type_path, sizeof(type_path), "%s/type", card_path) >=
-                    (int)sizeof(type_path)) continue;
-            f = fopen(type_path, "r");
-            if (!f) continue;
-            if (!fgets(value, sizeof(value), f)) { fclose(f); continue; }
-            fclose(f);
-            if (strcmp(value, "MMC\n") && strcmp(value, "MMC")) continue;
-            char block_path[896];
-            if (snprintf(block_path, sizeof(block_path), "%s/block", card_path) >=
-                (int)sizeof(block_path)) continue;
-            blocks = opendir(block_path);
-            if (!blocks) continue;
-            while ((block = readdir(blocks)) != NULL) {
-                char size_path[1024];
-                unsigned long long sectors = 0;
-                if (!named_number(block->d_name, "mmcblk")) continue;
-                if (snprintf(size_path, sizeof(size_path), "%s/%s/size", block_path,
-                             block->d_name) >= (int)sizeof(size_path)) continue;
-                f = fopen(size_path, "r");
-                if (!f) continue;
-                int valid = fscanf(f, "%llu", &sectors) == 1;
-                fclose(f);
-                /* Restrict to the known nominal 32 GB module size range. */
-                if (!valid || sectors < 60000000ULL || sectors > 64000000ULL)
-                    continue;
-                if (found) { found = 2; break; }
-                if (snprintf(device, device_cap, "/dev/%s", block->d_name) >=
-                    (int)device_cap) continue;
-                *target_sectors = sectors;
-                found = 1;
-            }
-            closedir(blocks);
-            if (found == 2) break;
-        }
-        closedir(cards);
-        if (found == 2) break;
-    }
-    closedir(hosts);
-    return found == 1;
-}
-
 static int emmc_device(char *device, size_t device_cap,
                        unsigned long long *target_sectors) {
-    return emmc_device_at(EMMC_HOST_SYSFS, device, device_cap, target_sectors);
+    return sv08_emmc_device_at(SV08_EMMC_HOST_SYSFS, device, device_cap,
+                                target_sectors);
 }
 
 static int pread_exact(int fd, unsigned char *buffer, size_t size, off_t offset) {
