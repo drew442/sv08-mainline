@@ -35,6 +35,11 @@ without a change, failure or unresolved integration question that justifies it.
   a prerequisite for ordinary updates.
 - The diagnostic host has booted physically into Linux, SSH and Cockpit. Repeatable
   cold boot/DRAM behavior and complete physical A/B behavior remain unproven.
+- The disposable SD diagnostic has booted its local loader/kernel/initramfs and
+  mounted Beelink's read-only NFS root on the printer. It proves this limited
+  development path without an eMMC write, not a complete host OS or recovery
+  product. Before another eMMC-selected boot, inspect the current redundant
+  environment and A counter read-only; the SD diagnostic did not access them.
 - Klipper, Moonraker, Mainsail and KlipperScreen packages have offline evidence.
   Full printer services and printing remain uncommissioned.
 - A/B transactions, persistent state and operating modes have component/VM
@@ -42,9 +47,10 @@ without a change, failure or unresolved integration question that justifies it.
 - Interrupted image-job resolution is independently verified offline in its
   [delivery record](features/host-image-job-resolution/record.json). History
   rollover remains separate work.
-- Independent recovery diagnostics fit 512 MiB; trusted boot-to-export composition
-  is the next approved ready task. Restore and production first-boot provisioning
-  are separate unfinished requirements.
+- Independent recovery diagnostics fit 512 MiB; approved boot-to-export
+  composition and offline implementation are complete. Physical UI/media
+  validation remains open; restore and production first-boot provisioning are
+  separate unfinished requirements.
 - Existing factory media, images and MCU backups are accepted by the owner.
   Additional preservation recommendations must not become a new prerequisite for
   proceeding. Recovery demonstrations remain acceptance tests, not demands for
