@@ -37,25 +37,32 @@
         "checks": [
           "nta-02"
         ],
-        "text": "Fail closed when any additional MMC card or malformed/unreadable MMC candidate appears below the selected controller, even if one valid-capacity candidate exists. Test malformed numbers, trailing junk, overflow and ambiguous inventory; unrelated SD cards must remain ignored."
+        "text": "Fail closed when any additional MMC card or malformed/unreadable MMC candidate appears below the selected controller, even if one valid-capacity candidate exists. Test malformed numbers, trailing junk, overflow and ambiguous inventory; unrelated SD cards remain ignored."
       },
       {
         "checks": [
           "nta-03",
           "nta-04"
         ],
-        "text": "Keep the helper limited to sysfs metadata and the existing read-only diagnostic. Preserve diagnostic output and behavior, add no block-node open or writer to the helper or production SD image, and do not treat its returned path as sufficient identity for a later write."
+        "text": "Keep the helper limited to sysfs metadata and the existing read-only diagnostic. Preserve diagnostic output and behavior. The helper opens no block node; the existing diagnostic alone retains its bounded read-only environment open. Bind the helper source hash into the SD/NFS builder provenance manifest. Add no writer or write-target operation to the diagnostic composition, and do not treat the helper's returned path as sufficient identity for a later write."
+      },
+      {
+        "checks": [
+          "nta-03",
+          "nta-04"
+        ],
+        "text": "Reconcile the proposal's statement excluding changes to the production SD image with its permission to compile the helper into the existing diagnostic: document that only the existing read-only NFS diagnostic and its build provenance may change, with no boot-chain or writer change."
       },
       {
         "checks": [
           "nta-04"
         ],
-        "text": "Document that H10 has no CID evidence and that offline fixture success does not prove installed-module identity, data preservation, rollback or physical write safety. H12 remains the separate hardware gate."
+        "text": "Document that H10 has no CID evidence and offline fixture success does not prove installed-module identity, data preservation, rollback or physical write safety. H12 remains the separate hardware gate."
       }
     ],
     "outcome": "approved-with-constraints",
-    "proposal_sha256": "dfbc0d0ef39f72350a63beeb9e604523f630d64867990cd36fb16c2c80d54854",
-    "rationale": "H10 physically observed one MMC under the exact 4022000.mmc controller at 61,079,552 sectors, while the independently verified QEMU writer targets only a synthetic USB disk. Factoring the existing read-only locator provides a useful, bounded improvement: before, discovery is embedded in init.c and tested only for host numbering and two in-range candidates; after, a reusable helper can reject malformed and ambiguous inventory offline. Decision 0018 and H12 still require a separately reviewed image, exact physical target, recovery path and authorization before any eMMC write. H10 recorded no CID, so controller/type/capacity alone cannot establish unique module identity or physical write safety. The helper adds negligible runtime/storage cost and no required dependency.",
+    "proposal_sha256": "6bf3250f857a015edac80f96abd213cc40fc8027f9013e0c27562070ff83ecd6",
+    "rationale": "H10 physically observed one MMC under the exact 4022000.mmc controller at 61,079,552 sectors. The separately verified QEMU writer targets only a synthetic USB disk. Before this improvement, the read-only locator is embedded in init.c, uses a 60\u201364 million-sector range, and tests only host numbering plus two in-range candidates. A small shared sysfs helper with exact measured-capacity and malformed/ambiguous-inventory refusal is a useful bounded improvement. The revised proposal permits compiling it into the existing read-only diagnostic; the builder currently hashes init.c as an input and must also hash the new helper source. The diagnostic executable is served by read-only NFS root, so the proposal's references to the production SD image must be interpreted as the existing SD/NFS diagnostic composition, not a new eMMC writer or write operation. H10 recorded no CID; controller, type and capacity cannot establish unique module identity or physical write safety. Decision 0018 and H12 retain the separate image, target, recovery, review and authorization gates. The helper adds negligible resource cost and no new runtime dependency.",
     "requirements_sha256": {
       "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
       "docs/hardware/coordinated-human-tasks.md": "858b15a3600b8b8374c1dd9c9b1dda1b03534923cfd274f693f7f2cc6ba265a1",
@@ -64,7 +71,7 @@
     },
     "reviewer": "feature-approver /root/approve_emmc_target_admission",
     "scope_sha256": "07532846b0f52d85dcc421a4a8098f8525f44de86fac1398ff696ce4c72851cf",
-    "session": "approve-emmc-target-admission-20260926"
+    "session": "approve-emmc-target-admission-rereview-20260926"
   },
   "format_version": 1,
   "id": "network-emmc-target-admission",
@@ -89,15 +96,107 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "nta-01",
+          "document": "docs/hardware/host-network-emmc-target-admission-validation-20260926.md",
+          "document_sha256": "27856fd204132a449c7bad75779abcdb01ee4c5291d43204d5d1e5a7d7e71dc9",
+          "environment": "offline",
+          "limitations": "Offline synthetic sysfs evidence only. No fresh SD image composition, physical eMMC identity, physical write, data preservation, rollback, or printer boot validation. H10 has no CID evidence; H12 remains required before whole-eMMC writes.",
+          "method": "Reviewed the exact approved proposal and source diff; ran 10 focused SD/NFS and locator unit tests, static AArch64 diagnostic compilation with -Werror and _FORTIFY_SOURCE=2, py_compile, feature-workflow validation, local Markdown checks, and git diff --check. No image build or hardware access.",
+          "profile": "test-sv08-01 measured H10 controller and 61,079,552-sector module profile",
+          "source_commit": "7aa0a605af8fdae2403c93d5d20b8d470760e476",
+          "source_sha256": {
+            "docs/features/network-emmc-target-admission/proposal.md": "6bf3250f857a015edac80f96abd213cc40fc8027f9013e0c27562070ff83ecd6",
+            "docs/hardware/host-network-emmc-target-admission.md": "32f7b6af6deb2fcd8670ddff1eb57a56f5f61ba7dd51efe0c41a867a775c0028",
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "cda9636460414b3a0213445c05c3d4af8c48b6f5d1dc76254381077d8c0c75ea",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "d26d4c926092d75d8beeed3bce63d5275bda5f7bf0e7d6a6548129d04dd45e55",
+            "tests/fixtures/sd-network-root/init.c": "7d61a51304a8e05da242f993d25bfb61f3bfbf1b952b8dfc988a5b43534652a0",
+            "tests/test_sd_network_env_probe.py": "efe7301a1532054853ef0f79ff3d40321749a8398840dcc44cdfeff1c15a642d"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nta-02",
+          "document": "docs/hardware/host-network-emmc-target-admission-validation-20260926.md",
+          "document_sha256": "27856fd204132a449c7bad75779abcdb01ee4c5291d43204d5d1e5a7d7e71dc9",
+          "environment": "offline",
+          "limitations": "Offline synthetic sysfs evidence only. No fresh SD image composition, physical eMMC identity, physical write, data preservation, rollback, or printer boot validation. H10 has no CID evidence; H12 remains required before whole-eMMC writes.",
+          "method": "Reviewed the exact approved proposal and source diff; ran 10 focused SD/NFS and locator unit tests, static AArch64 diagnostic compilation with -Werror and _FORTIFY_SOURCE=2, py_compile, feature-workflow validation, local Markdown checks, and git diff --check. No image build or hardware access.",
+          "profile": "test-sv08-01 measured H10 controller and 61,079,552-sector module profile",
+          "source_commit": "7aa0a605af8fdae2403c93d5d20b8d470760e476",
+          "source_sha256": {
+            "docs/features/network-emmc-target-admission/proposal.md": "6bf3250f857a015edac80f96abd213cc40fc8027f9013e0c27562070ff83ecd6",
+            "docs/hardware/host-network-emmc-target-admission.md": "32f7b6af6deb2fcd8670ddff1eb57a56f5f61ba7dd51efe0c41a867a775c0028",
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "cda9636460414b3a0213445c05c3d4af8c48b6f5d1dc76254381077d8c0c75ea",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "d26d4c926092d75d8beeed3bce63d5275bda5f7bf0e7d6a6548129d04dd45e55",
+            "tests/fixtures/sd-network-root/init.c": "7d61a51304a8e05da242f993d25bfb61f3bfbf1b952b8dfc988a5b43534652a0",
+            "tests/test_sd_network_env_probe.py": "efe7301a1532054853ef0f79ff3d40321749a8398840dcc44cdfeff1c15a642d"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nta-03",
+          "document": "docs/hardware/host-network-emmc-target-admission-validation-20260926.md",
+          "document_sha256": "27856fd204132a449c7bad75779abcdb01ee4c5291d43204d5d1e5a7d7e71dc9",
+          "environment": "offline",
+          "limitations": "Offline synthetic sysfs evidence only. No fresh SD image composition, physical eMMC identity, physical write, data preservation, rollback, or printer boot validation. H10 has no CID evidence; H12 remains required before whole-eMMC writes.",
+          "method": "Reviewed the exact approved proposal and source diff; ran 10 focused SD/NFS and locator unit tests, static AArch64 diagnostic compilation with -Werror and _FORTIFY_SOURCE=2, py_compile, feature-workflow validation, local Markdown checks, and git diff --check. No image build or hardware access.",
+          "profile": "test-sv08-01 measured H10 controller and 61,079,552-sector module profile",
+          "source_commit": "7aa0a605af8fdae2403c93d5d20b8d470760e476",
+          "source_sha256": {
+            "docs/features/network-emmc-target-admission/proposal.md": "6bf3250f857a015edac80f96abd213cc40fc8027f9013e0c27562070ff83ecd6",
+            "docs/hardware/host-network-emmc-target-admission.md": "32f7b6af6deb2fcd8670ddff1eb57a56f5f61ba7dd51efe0c41a867a775c0028",
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "cda9636460414b3a0213445c05c3d4af8c48b6f5d1dc76254381077d8c0c75ea",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "d26d4c926092d75d8beeed3bce63d5275bda5f7bf0e7d6a6548129d04dd45e55",
+            "tests/fixtures/sd-network-root/init.c": "7d61a51304a8e05da242f993d25bfb61f3bfbf1b952b8dfc988a5b43534652a0",
+            "tests/test_sd_network_env_probe.py": "efe7301a1532054853ef0f79ff3d40321749a8398840dcc44cdfeff1c15a642d"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nta-04",
+          "document": "docs/hardware/host-network-emmc-target-admission-validation-20260926.md",
+          "document_sha256": "27856fd204132a449c7bad75779abcdb01ee4c5291d43204d5d1e5a7d7e71dc9",
+          "environment": "offline",
+          "limitations": "Offline synthetic sysfs evidence only. No fresh SD image composition, physical eMMC identity, physical write, data preservation, rollback, or printer boot validation. H10 has no CID evidence; H12 remains required before whole-eMMC writes.",
+          "method": "Reviewed the exact approved proposal and source diff; ran 10 focused SD/NFS and locator unit tests, static AArch64 diagnostic compilation with -Werror and _FORTIFY_SOURCE=2, py_compile, feature-workflow validation, local Markdown checks, and git diff --check. No image build or hardware access.",
+          "profile": "test-sv08-01 measured H10 controller and 61,079,552-sector module profile",
+          "source_commit": "7aa0a605af8fdae2403c93d5d20b8d470760e476",
+          "source_sha256": {
+            "docs/features/network-emmc-target-admission/proposal.md": "6bf3250f857a015edac80f96abd213cc40fc8027f9013e0c27562070ff83ecd6",
+            "docs/hardware/host-network-emmc-target-admission.md": "32f7b6af6deb2fcd8670ddff1eb57a56f5f61ba7dd51efe0c41a867a775c0028",
+            "scripts/build_sd_network_image.py": "f6856232f29f6f28b9cf37bbfdb4a1d60cfed42809c13a41bfec912967ab673c",
+            "tests/fixtures/sd-network-root/emmc_locator.h": "cda9636460414b3a0213445c05c3d4af8c48b6f5d1dc76254381077d8c0c75ea",
+            "tests/fixtures/sd-network-root/emmc_locator_test.c": "d26d4c926092d75d8beeed3bce63d5275bda5f7bf0e7d6a6548129d04dd45e55",
+            "tests/fixtures/sd-network-root/init.c": "7d61a51304a8e05da242f993d25bfb61f3bfbf1b952b8dfc988a5b43534652a0",
+            "tests/test_sd_network_env_probe.py": "efe7301a1532054853ef0f79ff3d40321749a8398840dcc44cdfeff1c15a642d"
+          }
+        }
+      ],
       "human_task": null,
       "id": "locator-refactor",
-      "implementation": null,
+      "implementation": {
+        "actor": "project-implementer",
+        "run": "d75dd8ef634e41a9bd6d1b50adc8a1d9",
+        "session": "network-emmc-target-admission-20260926-final"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Proposal correction is committed at a0680e7 and the fresh approval binds that content; reapply unchanged offline implementation on this current base.",
+      "status": "done",
       "title": "Factor and test read-only H616 eMMC target admission",
-      "verification": null
+      "verification": {
+        "decision_sha256": "c7fd2fd5bb384df3ce3ebf32b4620aace7fc73682528d77f2a0f725d7e30a77a",
+        "evidence_sha256": "08fc597e33ba6c058127a7322b87c0478173513f0cba6e567d7559c72d3df47a",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete eight-file diff from recorded run base a0680e7d03a0eb8ba5a03da05312aca6a6e56203 to clean feature worktree HEAD 7aa0a605af8fdae2403c93d5d20b8d470760e476, including modes and gitlinks. The corrected approved proposal is committed in the run base and its hash matches the complete current approved decision. All four refreshed evidence entries, document and source hashes match the submitted commit and offline checks nta-01..nta-04. Reproduced 10 focused locator/SD-NFS tests, static AArch64 diagnostic compilation, workflow validation and diff checks. The implementation tree is unchanged from the earlier independently reviewed source: exact 61,079,552-sector sysfs-only MMC admission, fail-closed malformed/unreadable and extra MMC inventory, SD/SDIO exclusion, unchanged read-only diagnostic output and bounded O_RDONLY environment reads, and helper source hash in builder composition inputs. No writer or boot-policy change appears in the diff. Documentation preserves H10 missing-CID and physical identity, data-preservation, rollback and write-safety limitations; H12 remains the separate hardware gate. No image was composed or booted and no hardware support or release is certified.",
+        "reviewer": "feature-verifier /root/verify_emmc_admission",
+        "session": "verify-network-emmc-target-admission-rebased-20260926"
+      }
     }
   ],
   "title": "Reuse H616 eMMC target admission"
