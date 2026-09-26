@@ -55,11 +55,12 @@ card. That warning is expected from the reviewed prefix-only image; boot and
 the NFS probe succeeded, and no GPT repair or write beyond the image prefix was
 attempted.
 
-This test did not assess visible HDMI output, persistent root filesystems,
-eMMC boot-counter state or eMMC isolation under every boot path. It did not
-test MCU firmware, printer control, motion or heaters. Do not infer that the A
-counter still has three attempts; inspect it before any future boot that may
-select eMMC.
+This H09 test did not assess visible HDMI output, persistent root filesystems,
+or eMMC isolation under every boot path. The later, separately reviewed H10
+read-only test measured both redundant environment copies and their differing
+A counters; see the [H10 result](host-sd-network-emmc-probe-20260926.md). Neither
+test executed boot policy. H09 did not test MCU firmware, printer control,
+motion or heaters.
 
 See the [image and media record](host-sd-network-card-write-20260925.md) and
 [H09 coordination record](coordinated-human-tasks.md).

@@ -32,10 +32,15 @@ The STM32F103C8T6 in the listing must not be recorded as either printer MCU.
 | eMMC settings | Decoded EXT_CSD and partition table captured read-only | Review settings against identified spare; RPMB not captured |
 | Mainboard firmware | Two matching full 512 KiB SWD reads and option-byte captures; vendor binary matches installed prefix | Physical markings and restore test |
 | Toolhead firmware | Two matching full 128 KiB SWD reads and option captures; embedded identity matches runtime | Physical markings and restore test |
-| Spare eMMC | Owner reports 32 GB capacity | Model, electrical/mechanical compatibility, actual capacity and restore test |
+| Spare eMMC | H10 SD/NFS probe read `/dev/mmcblk0`, 61,079,552 sectors, and two CRC/layout-valid environment copies on the installed spare | Module model and full-capacity imaging/readback/restore evidence; H10 was not a full-disk backup |
 
 See [discovery](test-sv08-01-discovery.md) and
 [firmware evidence](test-sv08-01-firmware.md) for the completed checks.
+
+The [H10 diagnostic record](host-sd-network-emmc-probe-20260926.md) reports
+copy-specific A/B values without modifying eMMC. It is evidence that this Linux
+boot could read the expected environment offsets; it is not evidence of a
+complete backup or boot-policy behavior.
 
 ## Latest intake
 

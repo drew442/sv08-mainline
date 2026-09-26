@@ -126,11 +126,12 @@ loader start is not established.
 The corrected v2 image passed independent review, was written to the identified
 disposable SD, and passed full direct-I/O readback. The eMMC v5 A-slot health
 confirmation remains masked; a separately reviewed live operation had
-re-armed three A attempts before the SD trials. The counter has not been
-re-read since those trials, so its current value is unknown. Beelink's reserved
+re-armed three A attempts before the SD trials. The H10 result subsequently
+read the current redundant environment records; their A counters are 3 and 2,
+with order A and B=0 in both. Beelink's reserved
 address and sanitized read-only export were confirmed, and the physical NFS
 root probe passed. The diagnostic init powered down after success. HDMI
-visibility, a complete host operating system, eMMC counter state, printer
+visibility, a complete host operating system, execution of eMMC boot policy, printer
 control, MCU, motion and heaters remain outside this test.
 
 The local investigation and source limits are in
@@ -164,9 +165,11 @@ the locator correction cannot prove that Linux can read the installed eMMC.
 Beelink's mountd registration is corrected, the default NFSv3/TCP path and
 read-only refusal pass locally, and the expected `.141` read-only/root-squash
 export entry is present. The mount test originated from Beelink's `.136`
-address, not the printer. The independent [Sol high-consequence review](host-sd-network-emmc-probe-review-20260926.md) permits exactly one further supervised boot with conditions. The exact SD image
+address, not the printer. The independent [Sol high-consequence review](host-sd-network-emmc-probe-review-20260926.md) permitted exactly one further supervised boot with conditions. The exact SD image
 was written and passed full direct-I/O readback; see the [H10 write
 receipt](host-sd-network-emmc-probe-card-write-20260926.md) and [current H10
-record](host-sd-network-emmc-probe-20260926.md). The owner has since confirmed the spare eMMC is not installed. Do not run the
-reviewed retry until it is reinstalled with all host power removed; the factory
-module remains stored.
+record](host-sd-network-emmc-probe-20260926.md). That retry passed: Linux
+enumerated the installed spare as `/dev/mmcblk0`, both environment copies passed
+CRC/layout validation, and the SD/NFS checks passed. The probe powered the host
+down after reporting success. The raw serial trace is private on Beelink; see
+the H10 record for its hash and bounded findings.

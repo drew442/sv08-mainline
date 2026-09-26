@@ -256,8 +256,8 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   [H09 record](coordinated-human-tasks.md). The v1 trial stopped at the missing
   U-Boot `CONFIG_HASH_VERIFY` setting; the corrected v2 passed. This demonstrates
   a disposable development boot, not an authenticated recovery product or
-  complete host OS. Complete-host NFS boot, current eMMC counter state, signed
-  recovery and fallback remain unverified. Do not change router PXE/TFTP options.
+  complete host OS. Complete-host NFS boot, eMMC boot-policy execution, signed recovery and
+  fallback remain unverified. Do not change router PXE/TFTP options.
 
 - [ ] When access is convenient, provide readable host PCB revision, DRAM/radio
   and PMIC markings/photos, or board documents that identify the installed host.

@@ -50,5 +50,5 @@ supervised boot with these conditions:
   network method; use the existing USB-reader H10 path.
 
 No eMMC, MCU or boot-policy write is included. Factory eMMC remains stored;
-the spare remains the installed target. Current counters remain unknown until a
-valid probe marker is captured.
+the spare remains the installed target. This review authorized one supervised
+read-only boot, now completed; see the [measured result](host-sd-network-emmc-probe-20260926.md).

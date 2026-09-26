@@ -157,11 +157,15 @@ retains the evidence and limitations. The disposable
 [SD/NFS-root diagnostic](hardware/host-sd-network-root-prototype.md) passed its
 single corrected physical retry: SD loader, Linux kernel, wired DHCP and
 read-only NFS root all reached the exact diagnostic pass marker before poweroff.
-This proves remote Linux-root testing without writing the eMMC. Kernel and
-initramfs still reside on SD because U-Boot has no Ethernet driver; the test is
-not a complete host OS and does not establish normal printer operation or eMMC
-counter state. See the [first-attempt record](hardware/host-sd-network-first-boot-20260925.md)
-and [successful result](hardware/host-sd-network-first-boot-20260926.md).
+The separately reviewed H10 retry also read both current U-Boot environment
+copies from the spare eMMC with CRC/layout checks; their recorded A counters
+differ (3 and 2). This proves remote Linux-root testing and a bounded read
+without writing the eMMC. Kernel and initramfs still reside on SD because U-Boot
+has no Ethernet driver; the test is not a complete host OS, does not establish
+which redundant environment U-Boot selects, and does not establish normal
+printer operation. See the [first-attempt record](hardware/host-sd-network-first-boot-20260925.md),
+[successful H09 result](hardware/host-sd-network-first-boot-20260926.md), and
+[H10 eMMC result](hardware/host-sd-network-emmc-probe-20260926.md).
 
 ## 3. Reproducible builds and offline validation — host and MCU candidates built
 

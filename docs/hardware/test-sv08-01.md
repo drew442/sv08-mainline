@@ -15,6 +15,11 @@ The [2026-09-12 return-online inspection](test-sv08-01-online-20260912.md) recor
 the bound SDIO radio driver, camera descriptors and display/input enumeration.
 It does not validate the new host image or physical printer operation.
 
+The [2026-09-26 H10 SD/NFS test](host-sd-network-emmc-probe-20260926.md)
+measured a read-only view of the installed spare eMMC and passed the bounded
+U-Boot environment CRC/layout checks. It did not test boot-policy execution,
+normal host services, MCU behavior or printing.
+
 Current follow-up: [firmware artifact evidence](test-sv08-01-firmware.md) and
 [recovery preparation](test-sv08-01-recovery.md). The owner has an ST-Link, an
 eMMC USB reader and a spare nominal 32 GB eMMC module; adapter/module models and

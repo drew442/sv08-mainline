@@ -1,9 +1,9 @@
-# Network-boot eMMC environment read candidate
+# Network-boot eMMC environment read
 
-Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: the first supervised attempt stopped before the eMMC probe. The corrected
-read-only init is served, and a separate GPT-6 Sol review permits one further
-supervised attempt with conditions. The diagnostic is not a supported recovery
-image; current eMMC counters remain unknown.
+Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: the second,
+reviewed supervised attempt passed the bounded read-only probe. The diagnostic
+is not a supported recovery image and does not validate normal host or printer
+operation.
 
 Beelink is measured at `192.168.1.136`. Its NFSv3/TCP export of
 `/srv/sv08-sd-nfs` is currently read-only with root-squash and limited to
@@ -13,14 +13,14 @@ default port discovery. The printer attempt showed repeated connection refusal
 before the init executable ran. Beelink's mountd was restarted and registered
 with rpcbind on TCP/UDP port 20048; a local default NFSv3/TCP mount (without an
 explicit mountd port) then read the deployed init at the hash below, and a write
-probe was refused with `Read-only file system`. Printer-side mount success is
-still unmeasured. The reviewed SD image was written to the disposable SU02G
-card and passed full image-sized direct-I/O readback; see the [write
+probe was refused with `Read-only file system`. The later supervised printer
+boot mounted this export successfully. The reviewed SD image was written to the
+disposable SU02G card and passed full image-sized direct-I/O readback; see the [write
 receipt](host-sd-network-emmc-probe-card-write-20260926.md).
 
 ## Why the existing network boot could not read eMMC
 
-The 2026-09-26 supervised attempt booted the reviewed SD loader and Linux,
+The first 2026-09-26 supervised attempt booted the reviewed SD loader and Linux,
 obtained wired DHCP at `192.168.1.141`, then halted after NFSv3 root mount
 refusals. The probe did not run, so it produced no eMMC environment/counter
 result. The measured MMC trace reports controllers `4021000`, `4022000`, and
@@ -30,12 +30,16 @@ shows that Linux host numbering does not match the assumed controller-local
 `mmc2` path. The full receive-only trace is private on Beelink at
 `/home/drew/sv08-captures/h10-emmc-read-20260926/console.raw`, SHA-256
 `89dc52360d9c242d5b5348c3abc1ec3e902ad8bd6dbd7248457ca2108c54d4c5` (28,893
-bytes). No second boot has occurred.
+bytes). At the time this first-attempt record was written, no second boot had
+occurred; the supervised retry result is recorded below.
 
 The candidate Linux DTB has `/soc/mmc@4022000` enabled as H616 eMMC; its
 kernel configuration has `CONFIG_MMC_SUNXI=y` and `CONFIG_MMC_BLOCK=y`. These
 are offline configuration facts and do not by themselves prove card visibility.
-The physical failed initialization is the measured result.
+The physical failed initialization was the measured result of that first
+attempt. In the second attempt, after the reviewed SD-loader selector correction
+and corrected NFS service setup, Linux enumerated the spare eMMC as
+`/dev/mmcblk0`; the result is recorded below.
 
 Source inspection explains the gap: the SD U-Boot fragment sets
 `CONFIG_MMC_SUNXI_SLOT_EXTRA=-1`, which prevents U-Boot from initializing
@@ -80,8 +84,8 @@ fixtures. New locator fixtures put the target beneath `mmc0`, an unrelated
 small SD beneath `mmc2`, and verify ambiguity rejection. A retained historical
 128 KiB environment pair was also parsed. That historical
 pair parsed as CRC-valid flags 3 and 2, `BOOT_ORDER=A`, A counters 3 and 2,
-and B counter 0; it does not describe the current eMMC state. The current
-counter remains unknown.
+and B counter 0; it does not describe the current eMMC state. The supervised
+physical result below later measured those same values on the spare eMMC.
 
 ## Offline artifact evidence
 
@@ -123,37 +127,42 @@ removes stale serial logs
 before each launch; a fresh run completed online NFS-root checks in 28.02 seconds
 and server-missing DHCP/halt checks in 35.03 seconds. Both are offline results.
 
-## Next action and stop conditions
+## Supervised physical result
 
-The first high-consequence review authorized one supervised boot of the exact
-SD image above. That authorization is consumed. The measured boot stopped at
-NFS root mount and MMC numbering contradicted the probe's hard-coded host
-index. The corrected executable is now served, and Beelink verifies its hash
-through a default NFSv3/TCP mount with no explicit mountd port. A write attempt
-was refused as read-only. The server reports mountd versions 1–3 over TCP on
-port 20048; `/var/lib/nfs/etab` contains the expected printer address
-`192.168.1.141` with `ro,root_squash`. The NFS mount test originated on Beelink
-(`192.168.1.136`), so it does not prove a client request from the printer
-address. A separate GPT-6 Sol high-consequence review approved exactly one further
-supervised read-only attempt with the checks and stop conditions in the
-[retry review](host-sd-network-emmc-probe-review-20260926.md). Immediately
-before that attempt, recheck mountd registration, the `.141` export and deployed
-init hash, then arm fresh receive-only capture. If the non-removable-card
-initialization failure repeats, stop using network boot for H10 and use the
-USB-reader path. Do not interpret the halted boot as an eMMC read result or
-infer current A/B counters. Keep the factory module stored and do not change MCU
-firmware.
+The same reviewed disposable SU02G SD and spare eMMC were installed with host
+power removed; the factory eMMC stayed stored. Beelink's receive-only serial
+capture was armed before the owner reconnected USB serial. The printer obtained
+the reserved address `192.168.1.141` on Ethernet and mounted the NFS root. The
+probe emitted:
 
+```text
+SV08_EMMC_ENV status=READ_ONLY_VALID_PAIR device=/dev/mmcblk0 sectors=61079552 copy4_crc=valid copy4_flag=3 copy4_order=A copy4_A=3 copy4_B=0 copy8_crc=valid copy8_flag=2 copy8_order=A copy8_A=2 copy8_B=0
+SV08_SD_NFS_PASS root_ro=1 data_tmpfs=1 immutable_refusal=1 volatile_write=1 dhcp_address=1
+```
 
-## Current physical precondition
+This confirms that this boot exposed one nominal 32 GB MMC below the selected
+`4022000.mmc` controller and both 64 KiB redundant U-Boot environment records
+passed CRC and recognized-layout/policy checks using read-only opens and fixed
+offset `pread`. The two copies contain the values shown; the probe did not
+write, repair, normalize, or select a copy. Treat the discrepancy in A counters
+(3 vs 2) as recorded data, not an invitation to alter the environment. The
+general SD/NFS line separately confirms a read-only root, tmpfs data behavior,
+write refusal on immutable root, and DHCP. This does not prove full-disk backup,
+boot-policy behavior on reboot, recovery, host services, MCU, motion, heaters,
+or printing.
 
-After the retry review, the owner clarified that the spare eMMC is currently not
-installed in the printer. No second boot has occurred. Keep USB serial
-disconnected while reinstalling the spare with all host power removed; leave the
-written SD card in place and the factory eMMC stored. The reviewer subsequently confirmed the same PASS WITH CONDITIONS applies
-once that precondition is met; no new review is needed solely for reinstalling
-the same module. Repeat the NFS/hash/capture checks immediately before the boot.
-The owner subsequently reported reinstalling the spare eMMC and same SD card
-with USB serial disconnected. Beelink has reconfirmed the mountd service,
-`.141` export and executable hash; fresh receive-only capture is waiting. The
-remaining action is one serial reconnect to start the reviewed boot.
+The private raw receive-only serial trace is on Beelink at
+`/home/drew/sv08-captures/h10-emmc-read-retry-20260926/console.raw`, 28,789
+bytes, SHA-256
+`570d727f97ae0770390641ed5fd58c9009828e2058473917b278deb537536f9f`. Keep it
+outside the repository. The trace ends with the diagnostic's intentional
+`reboot: Power down`; no second boot was initiated.
+
+## Stop conditions and limits
+
+The one retry authorized by the independent GPT-6 Sol review is complete and
+consumed. It passed the read-only H10 acceptance checks above. Do not repeat the
+network boot solely to reread counters. Any future boot-policy or eMMC write
+needs its own target identification, reviewed artifact, recovery path, and
+authorization. Keep the factory module stored and do not change MCU firmware
+under this test.
