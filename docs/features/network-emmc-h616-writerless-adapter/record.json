@@ -1,0 +1,73 @@
+{
+  "format_version": 1,
+  "id": "network-emmc-h616-writerless-adapter",
+  "kind": "feature",
+  "title": "Prepare an opt-in H616 writerless reimage candidate",
+  "author": "root/coordinator",
+  "created": "2026-09-26",
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-h616-writerless-adapter/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-reimage-mode/proposal.md",
+    "docs/features/network-emmc-reimage-mode/record.json",
+    "docs/features/network-emmc-one-shot/proposal.md",
+    "docs/features/network-emmc-cid-admission/proposal.md",
+    "docs/features/network-emmc-cid-fd-binding/proposal.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/host-sd-network-emmc-probe-20260926.md",
+    "docs/hardware/host-network-emmc-cid-fd-binding-qemu-20260926.md",
+    "docs/hardware/host-network-emmc-reimage-mode-qemu-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "h616-01",
+      "description": "Default read-only diagnostic remains writer- and trigger-free; only explicit commissioning mode includes the H616 adapter, and its candidate is non-deployable.",
+      "environment": "offline"
+    },
+    {
+      "id": "h616-02",
+      "description": "The H616 adapter binds a local trusted target identity and controller/type/capacity/dev_t to one opened descriptor; job data cannot override policy and all identity failures refuse before writing.",
+      "environment": "offline"
+    },
+    {
+      "id": "h616-03",
+      "description": "Signed exact-image job and durable one-shot claim gate full write/readback; synthetic H616-shaped QEMU passes success and terminal refusal/interruption/fault cases without retry or rearm.",
+      "environment": "offline"
+    },
+    {
+      "id": "h616-04",
+      "description": "Strict ARM64 build, regressions, artifact hashes and limitations pass review; H12 remains the sole physical commissioning task and physical behavior is not claimed.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "commissioning-adapter",
+      "title": "Build and test the opt-in H616 commissioning adapter",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [
+        "network-emmc-reimage-mode:qemu-reimage-mode",
+        "network-emmc-one-shot:qemu-one-shot",
+        "network-emmc-cid-fd-binding:qemu-cid-fd-binding"
+      ],
+      "checks": [
+        "h616-01",
+        "h616-02",
+        "h616-03",
+        "h616-04"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
