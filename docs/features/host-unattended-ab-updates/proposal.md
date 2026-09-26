@@ -78,9 +78,13 @@ server, the production updater/transaction code, and a disposable QEMU disk.
 Test opt-out, busy printing, custom/writable mode, stale and replayed metadata,
 redirects, truncation, disk exhaustion, current-state races, repeated polls and
 process/power loss around the RAUC write. Confirm that A stays running during
-staging, only B's pair changes, and automatic activation still waits for a
-normal reboot and real health confirmation. Run rollback and prove no
-partition-table/environment/recovery/data/MCU write.
+staging and only B's boot/root pair changes. Hash both environment banks before
+staging and verify staging leaves them byte-identical. Arming is a separate,
+expected environment write: verify its exact reviewed order/counter/flag delta
+and that all other environment fields are unchanged. Automatic activation
+still waits for a normal reboot and real health confirmation. Run rollback and
+prove the GPT, recovery/data partitions, shared bootloader regions and MCU are
+unchanged.
 
 Before enabling the service on a printer, independently review the complete
 candidate, its deployable board manifest, signature keyring, target backend,
