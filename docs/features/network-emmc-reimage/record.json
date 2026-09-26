@@ -91,15 +91,81 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "nwr-01",
+          "document": "docs/hardware/host-sd-network-emmc-reimage-qemu.md",
+          "document_sha256": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c",
+          "environment": "offline",
+          "limitations": "Test-only QEMU evidence. It does not emulate H616 Boot ROM/SPL/U-Boot, physical eMMC identification, physical write behavior, or printer boot. Five transient GFP_ATOMIC allocation warnings occurred during emulated network traffic, without observed dropped packets, TCP timeout, NFS error, panic or hash mismatch.",
+          "method": "On Beelink, QEMU 8.2.2 booted the verified SD/NFS kernel/initramfs with read-only NFS root in a private network and mount namespace. It wrote a pinned synthetic 7,818,182,656-byte image to the one held-descriptor regular-file-backed 32,000,000,000-byte USB disk, checking exact guest path, serial, capacity and source separation. Guest and host did not open a host block device.",
+          "profile": null,
+          "source_commit": "b49173f0e662ec83ef5470f3d99f5e565087da46",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-reimage-qemu-20260926.json": "48da94466358268528ad860402739a8a6e88ffe63d28bf78e565e717b262ee6e",
+            "docs/hardware/host-sd-network-emmc-reimage-qemu.md": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "3a0e7a11385fb8fc9b6bb4edf7a133d2bb759e63b3143e44299a3d03d16eef44",
+            "tests/host_qemu_sd_network_emmc_write.py": "891d14fece0548eb831690d90b2201ad6dbd4bd9ddac95b8a32fcd5db9e7599f",
+            "tests/test_sd_network_emmc_write.py": "84ae3ce3eeaaca62fdec26b4a4eaa44e96c48a2216e409279c2443f894edb767"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nwr-02",
+          "document": "docs/hardware/host-sd-network-emmc-reimage-qemu.md",
+          "document_sha256": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c",
+          "environment": "offline",
+          "limitations": "The 32 GB destination and image are synthetic; this does not authorize or validate physical eMMC writes. Failure injection tests are unit/native tests; QEMU success is the positive end-to-end write/readback path. The sparse image does not model worst-case allocation or flash wear.",
+          "method": "The guest SHA-256 checked the entire source before write and during transfer, flushed the target, reopened and read the full image back; the full guest readback matched the source pin. The host independently read back the entire target extent and checked protective MBR, primary and backup GPT CRCs, disk GUID, and all six partition numbers, names, GUIDs, offsets and sizes. Ten focused tests cover changed/truncated source, GPT damage, target identity/size/path substitutions and ambiguity, source overlap, failed host readback, short I/O, timeout and flush refusal. Earlier QEMU attempts refused or stopped before any target write and produced no success receipt.",
+          "profile": null,
+          "source_commit": "b49173f0e662ec83ef5470f3d99f5e565087da46",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-reimage-qemu-20260926.json": "48da94466358268528ad860402739a8a6e88ffe63d28bf78e565e717b262ee6e",
+            "docs/hardware/host-sd-network-emmc-reimage-qemu.md": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "3a0e7a11385fb8fc9b6bb4edf7a133d2bb759e63b3143e44299a3d03d16eef44",
+            "tests/host_qemu_sd_network_emmc_write.py": "891d14fece0548eb831690d90b2201ad6dbd4bd9ddac95b8a32fcd5db9e7599f",
+            "tests/test_sd_network_emmc_write.py": "84ae3ce3eeaaca62fdec26b4a4eaa44e96c48a2216e409279c2443f894edb767"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nwr-03",
+          "document": "docs/hardware/host-sd-network-emmc-reimage-qemu.md",
+          "document_sha256": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c",
+          "environment": "offline",
+          "limitations": "H12 remains queued and has not run. No real image was written and no printer, MCU, or physical block device was contacted.",
+          "method": "The prototype is explicitly test-only and is not in the SD diagnostic image builder. Documentation records its invocation, synthetic source/target map, resource bounds, evidence hashes, failure boundaries, and a single queued H12 physical commissioning task with prerequisites and stop conditions.",
+          "profile": null,
+          "source_commit": "b49173f0e662ec83ef5470f3d99f5e565087da46",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-emmc-reimage-qemu-20260926.json": "48da94466358268528ad860402739a8a6e88ffe63d28bf78e565e717b262ee6e",
+            "docs/hardware/host-sd-network-emmc-reimage-qemu.md": "8681dbb64d9ea010633bdc03a9e46d62e7d4cd4e93bfe5b19d44f5c24138965c",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "3a0e7a11385fb8fc9b6bb4edf7a133d2bb759e63b3143e44299a3d03d16eef44",
+            "tests/host_qemu_sd_network_emmc_write.py": "891d14fece0548eb831690d90b2201ad6dbd4bd9ddac95b8a32fcd5db9e7599f",
+            "tests/test_sd_network_emmc_write.py": "84ae3ce3eeaaca62fdec26b4a4eaa44e96c48a2216e409279c2443f894edb767"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-prototype",
-      "implementation": null,
+      "implementation": {
+        "actor": "project-implementer",
+        "run": "90a72e99537f4aeca9872f2f38c2585b",
+        "session": "network-emmc-reimage-qemu-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Implement and verify a network-root full-image QEMU prototype",
-      "verification": null
+      "verification": {
+        "decision_sha256": "b4d137b06b86e1665d17f4c7e50fdcf7ab5b3a17bf67e28ffd4c55fbbc733452",
+        "evidence_sha256": "dfd6c7d24865653a7c971d9ee0022a0d3b4e92c9ab89dedf2e78f7207fd0b2fb",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete five-file diff from e85e2f8 to clean HEAD b49173f, approved constraints, source hashes, and committed QEMU receipt. Reproduced all 10 focused tests, static ARM64 compilation, Python syntax, JSON parsing, Markdown link checks, and diff checks. The recorded run supports a complete synthetic-image write, guest flush/readback, independent host hash and GPT validation using disposable regular-file-backed QEMU media. The five transient guest allocation warnings did not coincide with a recorded transfer or integrity failure. This passes the offline prototype checks only; H616 boot stages, physical eMMC identity and writes, and printer boot remain unverified under H12.",
+        "reviewer": "feature-verifier/verify_network_emmc_reimage",
+        "session": "network-emmc-reimage-independent-verification-20260926"
+      }
     }
   ],
   "title": "Write and verify a full image to virtual eMMC from SD/NFS root"
