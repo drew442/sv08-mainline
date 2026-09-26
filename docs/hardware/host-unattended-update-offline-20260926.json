@@ -6,7 +6,7 @@
   "checks": {
     "signed-feed": {
       "passed": true,
-      "method": "Eleven focused tests used a local HTTPS server, disposable CMS signer and injected disposable bundle verifier. Covered exact CMS signed bytes, schema/profile/expiry, replay and same-sequence metadata equivocation, redirects, truncation, and signed-index retry.",
+      "method": "Thirteen focused tests used a local HTTPS server, disposable CMS signer and injected disposable bundle verifier. Covered exact CMS signed bytes, schema/profile/expiry, replay and same-sequence metadata equivocation, redirects, truncation, signed-index retry, and the tracked 8 GB capacity bound.",
       "limitations": "Bundle verification is the test double; no RAUC bundle was installed. No production release signer, feed endpoint or trust-anchor package exists yet."
     },
     "automatic-admission": {
