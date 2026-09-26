@@ -21,8 +21,8 @@
     "job_id": "qemu-reimage-test-001",
     "descriptor_sha256": "22a060143dabff9d91f10a6da785efb10e62f7bd648b3f90c95da687ecbf8563",
     "persisted_bytes": 154,
-    "latency_ms": 5.399634130299091,
-    "python_tracemalloc_delta_bytes": 151232,
+    "latency_ms": 4.943855106830597,
+    "python_tracemalloc_delta_bytes": 151320,
     "python_tracemalloc_peak_bytes": 246336,
     "host_rss_delta_bytes": 835584
   },
@@ -37,37 +37,143 @@
     "disk_guid": "8aae17d2-09b3-47ab-8e35-8e91e63cf2b0",
     "backup_gpt_at_image_end": true,
     "partitions": [
-      {"number": 1, "name": "boot-a", "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e01", "offset_bytes": 16777216, "size_bytes": 201326592},
-      {"number": 2, "name": "root-a", "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e02", "offset_bytes": 218103808, "size_bytes": 2147483648},
-      {"number": 3, "name": "boot-b", "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e03", "offset_bytes": 2365587456, "size_bytes": 201326592},
-      {"number": 4, "name": "root-b", "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e04", "offset_bytes": 2566914048, "size_bytes": 2147483648},
-      {"number": 5, "name": "recovery", "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e05", "offset_bytes": 4714397696, "size_bytes": 536870912},
-      {"number": 6, "name": "data", "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e06", "offset_bytes": 5251268608, "size_bytes": 2565865472}
+      {
+        "number": 1,
+        "name": "boot-a",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e01",
+        "offset_bytes": 16777216,
+        "size_bytes": 201326592
+      },
+      {
+        "number": 2,
+        "name": "root-a",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e02",
+        "offset_bytes": 218103808,
+        "size_bytes": 2147483648
+      },
+      {
+        "number": 3,
+        "name": "boot-b",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e03",
+        "offset_bytes": 2365587456,
+        "size_bytes": 201326592
+      },
+      {
+        "number": 4,
+        "name": "root-b",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e04",
+        "offset_bytes": 2566914048,
+        "size_bytes": 2147483648
+      },
+      {
+        "number": 5,
+        "name": "recovery",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e05",
+        "offset_bytes": 4714397696,
+        "size_bytes": 536870912
+      },
+      {
+        "number": 6,
+        "name": "data",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e06",
+        "offset_bytes": 5251268608,
+        "size_bytes": 2565865472
+      }
     ]
   },
   "claim_only": {
     "status": "qemu-claim-only-pass",
     "target_opened": false,
+    "execution_commit": "d916b231561e410faa063bbb7458fead59f58a81",
     "persisted_bytes": 154,
-    "latency_ms": 5.3372011308645935,
-    "python_tracemalloc_delta_bytes": 150429,
-    "python_tracemalloc_peak_bytes": 246203,
-    "host_rss_delta_bytes": 823296,
-    "guest_serial_sha256": "11255214abbe26a646a197de649baa55e60a32e2607d5d010da447730b25a3fa"
+    "latency_ms": 4.905381938442588,
+    "python_tracemalloc_delta_bytes": 150597,
+    "python_tracemalloc_peak_bytes": 246204,
+    "host_rss_delta_bytes": 827392,
+    "guest_serial_sha256": "4ecd2abd0b78406e6cd17c28112c432a491578af57d21aa982b4bc6ac76e1085"
   },
-  "full_run_guest_serial_sha256": "338d80dd32502c6b702fb71b9de26038e1a63aff54aabefb95206690433469d4",
-  "failure_injection": "Native tests: 12 concurrent claims; restart/replay; lost HTTP acknowledgment; changed descriptor; missing/corrupt state; fsync error; interrupted before write, partial write, flush and readback; no success receipt on uncertain QEMU writer outcome.",
+  "full_run_guest_serial_sha256": "955f56a1e028474e1a02575ce793c4f9372ff51167840f06a8dd212d25030e3b",
+  "failure_injection": {
+    "execution_commit": "d916b231561e410faa063bbb7458fead59f58a81",
+    "all_claims_consumed": true,
+    "all_replay_statuses": [
+      409,
+      409,
+      409,
+      409
+    ],
+    "all_success_receipts_absent": true,
+    "phases": [
+      {
+        "phase": "before-write",
+        "terminal_marker": "SV08_QEMU_REIMAGE_INJECTED_BEFORE_WRITE",
+        "target_unchanged": true,
+        "target_prefix_matches_source": false,
+        "claim_persisted_bytes": 154,
+        "claim_latency_ms": 4.918765043839812,
+        "replay_status": 409,
+        "success_receipt": false,
+        "guest_serial_sha256": "2b804cb7b5f0ab44ee28c618d096eab272541f1ba6ad05a2a54fda04249c7d41"
+      },
+      {
+        "phase": "partial-write",
+        "terminal_marker": "SV08_QEMU_REIMAGE_INJECTED_PARTIAL_WRITE",
+        "target_unchanged": false,
+        "target_prefix_matches_source": true,
+        "claim_persisted_bytes": 154,
+        "claim_latency_ms": 4.247175995260477,
+        "replay_status": 409,
+        "success_receipt": false,
+        "guest_serial_sha256": "d380e054e804886e6ef4bf6b093ea577047f423e57cc45dba6fbf41ec40e1828"
+      },
+      {
+        "phase": "flush",
+        "terminal_marker": "SV08_QEMU_REIMAGE_INJECTED_AFTER_FLUSH",
+        "target_unchanged": false,
+        "target_prefix_matches_source": true,
+        "claim_persisted_bytes": 154,
+        "claim_latency_ms": 5.2402440924197435,
+        "replay_status": 409,
+        "success_receipt": false,
+        "guest_serial_sha256": "c9811dfc46f4518c35bb2319064150fc5e8d5b7d84c978f2712146138a47a1bb"
+      },
+      {
+        "phase": "readback",
+        "terminal_marker": "SV08_QEMU_REIMAGE_INJECTED_DURING_READBACK",
+        "target_unchanged": false,
+        "target_prefix_matches_source": true,
+        "claim_persisted_bytes": 154,
+        "claim_latency_ms": 5.149101139977574,
+        "replay_status": 409,
+        "success_receipt": false,
+        "guest_serial_sha256": "2b3ab42dfcd4efeb8f10912a779c257f9f78c552dac524f6486d77ea649c2676"
+      }
+    ]
+  },
   "source_files": {
-    "tests/host_qemu_sd_network_emmc_write.py": "866e0695b2fcee11851e86ebb67e16d3971befb9a9e4372b6b9b565dd581b7a0",
+    "tests/host_qemu_sd_network_emmc_write.py": "d482f7850c3ae2e5889d35e09fdc810082feaa9b63c83da908db5b6572fd1ac5",
     "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89",
-    "tests/fixtures/sd-network-root/emmc_image_writer.c": "14e55d80361d8b246594b838765a926fe3cb19c073056cf98e56f29e9573bc9f",
-    "tests/test_emmc_job.py": "d46e66a353a91770ac8fba551b07083102f96edca7d34daf75d1fcaa7aedf204",
+    "tests/fixtures/sd-network-root/emmc_image_writer.c": "c6996a43c0f1870fe9fba597e1316a6dc20183a167eb9c97651175308ef2e576",
+    "tests/test_emmc_job.py": "19dbffe4f965bd8051a52fec408f885a65233f3d4dcebfef1782f7a25560acd2",
     "tests/test_sd_network_emmc_write.py": "ec99c8d8db5106047f8eed44fc82229ca00ad0ab49079c978b292998cad7667d"
   },
   "limitations": [
     "No H616 ROM/SPL/U-Boot behavior or real eMMC CID was tested.",
-    "The image and target are synthetic; no printer, physical block device, MCU, or production SD image was modified.",
+    "The image and target are synthetic and nonbootable; no printer, physical block device, MCU, or production SD image was modified.",
     "The QEMU claim protocol is unauthenticated test-only sequencing, not production admission or hardware-write authorization.",
-    "No power-loss or physical eMMC failure behavior is proven."
-  ]
+    "The injected faults are controlled guest termination boundaries, not physical power-cut or eMMC-failure tests.",
+    "Three QEMU guest GFP_ATOMIC page-allocation warnings occurred during the successful NFS transfer; no OOM kill or NFS error occurred."
+  ],
+  "current_verification_head": "d916b231561e410faa063bbb7458fead59f58a81",
+  "positive_execution_commit": "f44b887d2998ad23d075a83a56801f8cdd048c0d",
+  "positive_execution_minutes_approx": 42,
+  "guest_kernel_observations": {
+    "page_allocation_warnings": 3,
+    "message": "Three GFP_ATOMIC page-allocation warnings from QEMU guest network worker threads; no OOM kill or NFS error, and full image/readback/GPT checks completed successfully."
+  },
+  "positive_execution_source_files": {
+    "tests/host_qemu_sd_network_emmc_write.py": "a49a14755aa92d41620f9b84813371495cb94866d12d22620b64487fb1c85150",
+    "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89",
+    "tests/fixtures/sd-network-root/emmc_image_writer.c": "c6996a43c0f1870fe9fba597e1316a6dc20183a167eb9c97651175308ef2e576"
+  }
 }
