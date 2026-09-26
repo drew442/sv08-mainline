@@ -93,10 +93,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement-offline",
-      "implementation": null,
+      "implementation": {
+        "actor": "project-implementer",
+        "run": "4d8368cc2a36422bbe75a2abac0c3d59",
+        "session": "unattended-ab-implementation-final-20260926"
+      },
       "repeats": 0,
       "resumption": "Corrected the evidence test count from eleven to thirteen and pushed the new frozen implementation/evidence revision 4a60015; resubmitting with updated document and source-commit hashes.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement signed feed polling and unattended guarded A/B staging",
       "verification": null
     },
