@@ -70,5 +70,8 @@ completed direct-I/O readback with the exact same hash. The CID and write
 transcript remain private on Beelink. The card is ready for the single retry;
 the review conditions are recorded in the media write procedure and H09.
 
+The corrected v2 boot passed on 2026-09-26; see the
+[physical result](host-sd-network-first-boot-20260926.md).
+
 See the [media write record](host-sd-network-card-write-20260925.md) and
 [coordinated H09 task](coordinated-human-tasks.md).

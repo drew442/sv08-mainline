@@ -256,8 +256,9 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   blank HDMI and `No ethernet found` at U-Boot were expected. DHCP traffic used
   the previously identified Wi-Fi MAC, not proof of wired Linux networking.
   H09 in [the coordinated task list](coordinated-human-tasks.md) groups the
-  corrected artifact review and SD rewrite/readback are complete. One supervised
-  retry remains. The temporary sanitized NFSv3 export is serving read-only; Beelink mounted it
+  corrected artifact review, SD rewrite/readback and one supervised network-root
+  boot are complete; see the [v2 result](host-sd-network-first-boot-20260926.md).
+  The temporary sanitized NFSv3 export is serving read-only; Beelink mounted it
   read-only and verified its init hash and write refusal. Physical Linux DHCP,
   NFS root, eMMC isolation and fallback remain unverified. Do not change router
   PXE/TFTP options.

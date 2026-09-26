@@ -1,10 +1,10 @@
-# Disposable SD/NFS-root prototype
+# Disposable SD/NFS-root diagnostic
 
-Date: 2026-09-25. Profile: `test-sv08-01`; host PCB marking
-`H616_JC_6Z_V1.2` is owner-reported. This is an offline development
-prototype, not a printable host image, supported recovery path, or physical
-SD-boot result. The owner has permitted erasing the supplied SD card, but this
-task writes only a regular image file.
+Built 2026-09-25 and physically tested 2026-09-26. Profile: `test-sv08-01`;
+host PCB marking `H616_JC_6Z_V1.2` is owner-reported. This is a disposable
+network-root diagnostic, not a printable host image or supported recovery
+path. The physical test passed SD loader, Linux DHCP and read-only NFS-root
+checks; it does not provide a full host user space or printer control.
 
 ## What the prototype does
 
@@ -111,29 +111,25 @@ running the root probe after 35.03 seconds. The harness exited and no QEMU,
 Ganesha or rpcbind process remained. The results are in ignored
 `qemu-result.json` and serial logs; only sanitized outcomes are recorded here.
 
-## Physical result and retry gate
+## Physical result
 
 The [first physical result](host-sd-network-first-boot-20260925.md) shows two
-SD loader starts, establishing that SD is selected on this printer with the
-card present. U-Boot stopped before Linux because the reviewed v1 configuration
-did not enable `CONFIG_HASH_VERIFY`, even though its script uses `hash -v`.
-U-Boot has no Ethernet driver by design; it never reached the kernel NFS path.
-This test does not establish eMMC isolation, network-root operation, or safe
-fallback. The exact cause of the repeated loader start is not established.
+SD loader starts and the v1 `hash -v` configuration failure before Linux. On
+2026-09-26, the corrected v2 image booted Linux, received wired DHCP and
+mounted the read-only NFS root; see the [successful result](host-sd-network-first-boot-20260926.md).
+This establishes the tested SD-to-NFS-root path, but not eMMC isolation under
+every boot path or safe eMMC fallback. The exact cause of the repeated first
+loader start is not established.
 
 The corrected v2 image passed independent review, was written to the identified
 disposable SD, and passed full direct-I/O readback. The eMMC v5 A-slot health
-confirmation remains masked; a
-separately reviewed live operation had re-armed three A attempts before this
-trial. The current counter has not been re-read since the trial, so do not infer
-its present value. The owner confirmed Beelink's reserved hardcoded address and
-the sanitized read-only export has passed a local NFSv3/TCP mount, hash check
-and write-refusal test. Re-arm receive-only UART capture before serial
-reconnection/power-on. Use only the owner-approved disposable SD and make one
-retry. Stop if the SD loader is not clear, eMMC U-Boot/RAUC appears, the NFS
-root/probe fails, or any printer output activates. HDMI/GUI and the printer
-stack are outside this prototype; the diagnostic init powers the host off on
-success.
+confirmation remains masked; a separately reviewed live operation had
+re-armed three A attempts before the SD trials. The counter has not been
+re-read since those trials, so its current value is unknown. Beelink's reserved
+address and sanitized read-only export were confirmed, and the physical NFS
+root probe passed. The diagnostic init powered down after success. HDMI
+visibility, a complete host operating system, eMMC counter state, printer
+control, MCU, motion and heaters remain outside this test.
 
 The local investigation and source limits are in
 [`host-network-boot-investigation.md`](host-network-boot-investigation.md).
