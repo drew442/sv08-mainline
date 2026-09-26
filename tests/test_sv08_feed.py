@@ -18,6 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_feed import Feed, SameOrigin, origin
 from sv08_staging import Staging
 
+REPO = Path(__file__).resolve().parents[1]
+
 NOW = 1790380800
 BUNDLE = b'disposable signed-bundle fixture; real RAUC authentication is delegated to verify_bundle'
 
@@ -119,6 +121,15 @@ class FeedTests(unittest.TestCase):
 
     def tearDown(self):
         self.server.shutdown(); self.server.server_close(); self.tmp.cleanup()
+
+    def test_declared_bundle_and_staging_reserve_fit_eight_gib_data_partition(self):
+        layout = json.loads((REPO / 'configs/images/host-ab.json').read_text())
+        policy_record = json.loads((REPO / 'docs/hardware/host-bundle-policy-20260910.json').read_text())
+        data_mib = next(part['mib'] for part in layout['partitions'] if part['name'] == 'data')
+        max_bundle = policy_record['policy']['max_bundle_bytes']
+        required_free = max_bundle + 768 * 1024 * 1024
+        self.assertLessEqual(required_free, data_mib * 1024 * 1024)
+        self.assertEqual((data_mib * 1024 * 1024 - required_free) // (1024 * 1024), 655)
 
     def verify(self, path):
         contents = path.read_bytes()
