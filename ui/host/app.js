@@ -87,6 +87,14 @@ function render() {
     $('space').textContent = `${(state.free_bytes / 1024 ** 3).toFixed(2)} GiB`;
     $('update-title').textContent = state.transaction ? `Update: ${state.transaction.phase}` : 'No update waiting';
     $('update-detail').textContent = state.pending ? `Slot ${state.pending.slot} · ${state.pending.release}. State is copied when the new release boots.` : 'The running system stays active until you select a verified release for the next boot.';
+    if (state.feed_status && !state.pending) {
+        const feed = state.feed_status;
+        $('update-detail').textContent = feed.result === 'blocked'
+            ? `Last automatic check was blocked: ${feed.reason}`
+            : feed.result === 'armed-next-boot'
+                ? `Last automatic check armed ${feed.release} for a normal boot. Current selection is shown in the update state.`
+                : `Last automatic check already considered ${feed.release}. Current selection is shown in the update state.`;
+    }
     $('slots').replaceChildren();
     for (const name of ['A', 'B']) {
         const record = state.slots[name], card = document.createElement('article'); card.className = 'card';
