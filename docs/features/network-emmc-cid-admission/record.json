@@ -1,0 +1,104 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Synthetic candidate admission requires exact expected/live CID plus existing controller/type/capacity conditions and refuses missing, malformed, mismatched or ambiguous candidates.",
+      "environment": "offline",
+      "id": "nca-01"
+    },
+    {
+      "description": "All identity failures happen before any block-node open, and untrusted network job input cannot override the expected CID.",
+      "environment": "offline",
+      "id": "nca-02"
+    },
+    {
+      "description": "The read-only diagnostic and production SD/NFS builder remain unchanged and contain no writer or private CID.",
+      "environment": "offline",
+      "id": "nca-03"
+    },
+    {
+      "description": "Focused native/static ARM64 and existing locator/SD-NFS regression tests plus workflow/document checks pass with synthetic-only limits recorded.",
+      "environment": "offline",
+      "id": "nca-04"
+    }
+  ],
+  "created": "2026-09-26",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "nca-01"
+        ],
+        "text": "Require a complete, canonical 32-hex-character CID from both trusted expected configuration and live sysfs; reject missing, malformed, or mismatched values and any ambiguous MMC inventory."
+      },
+      {
+        "checks": [
+          "nca-02"
+        ],
+        "text": "Keep the expected CID outside network job fields and repository fixtures. Prove every identity refusal precedes block-node open; record that path-to-opened-device binding remains for later writer integration."
+      },
+      {
+        "checks": [
+          "nca-03"
+        ],
+        "text": "Do not add the helper or any writer, trigger, private CID, or CID provisioning mechanism to the production SD/NFS image or change the existing read-only probe or boot policy."
+      },
+      {
+        "checks": [
+          "nca-04"
+        ],
+        "text": "Use synthetic identifiers only, run the named offline tests and hash/document checks, and report the limited evidence level and unresolved live CID comparison under H12. This approval grants no physical action or release authority."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "937ea3353d36f39f62d754ca07ff28885ce4f500a54d90ed7a73dd69a57697c9",
+    "rationale": "The existing locator admits a controller/type/capacity candidate but explicitly lacks unique module identity. H10 did not record a CID, the later private CID has not been compared with the live card, and the QEMU writer uses a synthetic USB target. Adding synthetic CID admission before target open is a bounded improvement within decision 0018 and advances the writerless goal. The proposal keeps H12 as the single physical gate and does not change production imaging, boot policy, or hardware authority. This approval covers offline test sources only; synthetic matching cannot prove the installed printer module is safe to write.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-reimage/proposal.md": "7c96f277f6edc4b2eca96c6afdf46a5cc9d31b4d693c46e1de7f43d55e4b8ebf",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf",
+      "docs/hardware/host-network-emmc-target-admission.md": "32f7b6af6deb2fcd8670ddff1eb57a56f5f61ba7dd51efe0c41a867a775c0028"
+    },
+    "reviewer": "root/approve_cid_admission",
+    "scope_sha256": "c054e46f6363a73442a803d88b1297cf407d75263b4fe1b00616661900a9e242",
+    "session": "independent-network-emmc-cid-admission-review-20260926"
+  },
+  "format_version": 1,
+  "id": "network-emmc-cid-admission",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-cid-admission/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-reimage/proposal.md",
+    "docs/hardware/host-network-emmc-target-admission.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "nca-01",
+        "nca-02",
+        "nca-03",
+        "nca-04"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "cid-admission",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and verify synthetic CID-bound eMMC target admission",
+      "verification": null
+    }
+  ],
+  "title": "Require pinned eMMC identity before writer target open"
+}
