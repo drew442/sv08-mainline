@@ -94,10 +94,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement-offline",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "36ba6ba4f7e2445dbdded7e071f524d2",
+        "session": "unattended-ab-implementation-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Implement signed feed polling and unattended guarded A/B staging",
       "verification": null
     },
