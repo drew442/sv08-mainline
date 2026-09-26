@@ -77,13 +77,17 @@ run used the backend revision recorded separately in the public evidence.
 ## Remaining gates
 
 The low-level backend is connected and tested. Offline code now supplies
-[signed feed delivery and an idle-gated timer](host-unattended-updates.md), but
-its release configuration/trust anchors, disposable full A/B journey and physical
-commissioning remain open. Configuration rendering for a reviewed board and
-production health confirmation also remain release gates. The earlier backend
-test uses an offline-only signed bundle with dummy boot content; it must
-not be written to a printer. Complete OS recovery, service/onboarding UI and named
-hardware commissioning remain on the [task list](host-os-tasks.md).
+[signed feed delivery and an idle-gated timer](host-unattended-updates.md). The
+joined signed A→B→A installation and health/fallback journey passed in
+disposable QEMU; see the [joined evidence](host-unattended-update-qemu-evidence-20260926.json).
+Release configuration/trust anchors and physical commissioning remain open.
+Automatic selection by the H616 U-Boot and actual target-board attempt
+decrement are not established by the host-selected QEMU harness. Configuration
+rendering for a reviewed board and production health confirmation also remain
+release gates. The earlier backend test uses an offline-only signed bundle with
+dummy boot content; it must not be written to a printer. Complete OS recovery,
+service/onboarding UI and named hardware commissioning remain on the
+[task list](host-os-tasks.md).
 
 Primary source used: pinned RAUC `src/bootloaders/uboot.c` and `src/main.c` at
 `4fb7c798d6ae412344fb8f8d310d773046af3441`, inspected locally on 2026-09-10;
