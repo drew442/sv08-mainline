@@ -228,10 +228,14 @@
       "evidence": [],
       "human_task": null,
       "id": "qemu-ab-journey",
-      "implementation": null,
+      "implementation": {
+        "actor": "project-implementer",
+        "run": "dc7eda705e684785b9dad960c99fa8c4",
+        "session": "unattended-ab-qemu-journey-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Exercise signed inactive-slot update, boot health and fallback in disposable QEMU",
       "verification": null
     },

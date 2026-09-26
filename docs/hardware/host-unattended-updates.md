@@ -6,6 +6,27 @@ through the existing signed RAUC bundle, [transaction](host-rauc-backend.md),
 idle-admission and boot-health code. H11 and deployable-board review remain
 required before any physical inactive-slot write.
 
+## What this path can update
+
+The goal here is to update the installed eMMC without removing it from the
+printer or connecting the USB writer. Once a supported host image is booted from
+the eMMC, RAUC can write only the inactive boot/root pair, keep the running pair
+as fallback, and arm the new pair for the next boot. The signed feed can perform
+that sequence automatically when the user has enabled automatic updates and
+the existing idle and image-integrity checks pass. No user command or physical
+interaction is needed to stage or arm that routine update; it becomes active
+at the next normal boot. The updater does not force a reboot.
+
+This is an A/B operating-system update, not a whole-device reflash. It does not
+replace the GPT, U-Boot/SPL, redundant boot environment, recovery partition,
+persistent data or MCU firmware. Initial provisioning or recovery from a damaged
+boot chain remains a separate operation and needs a supported recovery image.
+The current SD/NFS diagnostic can enumerate the installed eMMC, but its H10
+probe opens the device read-only, and Beelink serves its NFS root read-only; it
+is not an eMMC writer. The current board image and release-signing configuration
+are not deployable, so neither the diagnostic probe nor the offline feed code
+can safely be used to write the printer today.
+
 The image includes `sv08-feed.timer` and `sv08-feed.service`. The service is
 conditioned on `/usr/lib/sv08/feed.json`; the current image has no feed file or
 release-signing trust anchor, so the timer cannot fetch or stage an update.
@@ -71,7 +92,8 @@ not expose a browser-controlled URL, keyring, executable or device path. This
 custom feed shim can be retired if upstream RAUC gains equivalent signed
 discovery, anti-replay, printer-idle admission and A/B transaction semantics.
 
-Remaining release work: install an actual signed feed and trust anchors, verify
-the complete 8 GB image budget and real RAUC installed-service journey in a
-disposable ARM64 VM, then obtain the independent high-consequence review and
-physical H11 evidence. The current diagnostic image remains non-deployable.
+Remaining work: finish the joined signed-feed/RAUC/boot-health/fallback journey
+in a disposable ARM64 VM, produce and independently review a deployable board
+image, install its release feed and trust anchors, verify the complete 8 GB
+image budget, then obtain the independent high-consequence review and physical
+H11 evidence. The current diagnostic image remains non-deployable.
