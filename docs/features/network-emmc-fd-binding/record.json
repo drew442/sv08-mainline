@@ -93,15 +93,87 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "nfb-01",
+          "document": "docs/hardware/host-network-emmc-fd-binding-qemu-20260926.md",
+          "document_sha256": "d5772bdf134ebab35d2f0ed0fb3405ebf649a70355e804642b556490f7872bd2",
+          "environment": "offline",
+          "limitations": "Synthetic sysfs metadata only. No live eMMC CID or physical block-device identity measured; writer remains test-only and absent from production SD/NFS image.",
+          "method": "Strict parser and native selftest cover exact major/minor match, mismatch, malformed, overflow, trailing bytes, missing newline, and non-block metadata; focused test checks identity before first write.",
+          "profile": "QEMU synthetic target SV08_QEMU_REIMAGE_TEST_ONLY",
+          "source_commit": "eb68f7907a955ea848b2ffba673db03130f78707",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "b31cd1a724e841e3a97b7096b82491220bd11737a8d6b38f5997d3e5425ae3b8",
+            "tests/test_sd_network_emmc_write.py": "fe112c074723f783a316b8fe3895c8afa3f754557b1f767f7f0a21ea09f61757"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nfb-02",
+          "document": "docs/hardware/host-network-emmc-fd-binding-qemu-20260926.md",
+          "document_sha256": "d5772bdf134ebab35d2f0ed0fb3405ebf649a70355e804642b556490f7872bd2",
+          "environment": "offline",
+          "limitations": "Regular-file-backed QEMU block emulation only; no unplug/race or physical device behavior tested.",
+          "method": "Source inspection and source-structure tests verify a single target open and same descriptor retained for write, flush, and full readback including injected readback-failure path. QEMU readback-fault receipt confirms bytes reached the target and no success receipt was issued.",
+          "profile": "QEMU synthetic target SV08_QEMU_REIMAGE_TEST_ONLY",
+          "source_commit": "eb68f7907a955ea848b2ffba673db03130f78707",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "b31cd1a724e841e3a97b7096b82491220bd11737a8d6b38f5997d3e5425ae3b8",
+            "tests/test_sd_network_emmc_write.py": "fe112c074723f783a316b8fe3895c8afa3f754557b1f767f7f0a21ea09f61757"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nfb-03",
+          "document": "docs/hardware/host-network-emmc-fd-binding-qemu-20260926.md",
+          "document_sha256": "d5772bdf134ebab35d2f0ed0fb3405ebf649a70355e804642b556490f7872bd2",
+          "environment": "offline",
+          "limitations": "Full QEMU emulation only; no printer/eMMC hardware or physical CID. An earlier attempt was stopped prematurely and is explicitly inconclusive; run-002 supersedes it. 12 guest GFP_ATOMIC warnings occurred without OOM/NFS errors.",
+          "method": "Fresh disposable QEMU run-002 wrote and fully read back 7,818,182,656 bytes to a 32,000,000,000-byte virtual target. Independent host SHA-256, both GPT CRCs, disk GUID and six partition records matched; claim was consumed before write. Receipt JSON SHA-256 37c551fe91534d2914047ea5b56648c2490b5f61d7d51765eb0eeb0b44979cda. Four fresh fault runs: readback receipt 06b26e67005155a97b4d4e183c9fe35a48c1552d4820a5dd4e68816ec8323e94; before-write 24d449c2b26dd5e4b394a1afd6a91be0372e8e230c3e0e40499f448361ea03bc; partial-write fc98af545cf33538c77422f982665a6ebe7546928320bcc63c37f50e603d6597; flush c52610431a62cce499a0fe75d55c1d292f27579a27b4a5af4dba6000e9413abc.",
+          "profile": "QEMU synthetic target SV08_QEMU_REIMAGE_TEST_ONLY",
+          "source_commit": "eb68f7907a955ea848b2ffba673db03130f78707",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "b31cd1a724e841e3a97b7096b82491220bd11737a8d6b38f5997d3e5425ae3b8",
+            "tests/test_sd_network_emmc_write.py": "fe112c074723f783a316b8fe3895c8afa3f754557b1f767f7f0a21ea09f61757"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "nfb-04",
+          "document": "docs/hardware/host-network-emmc-fd-binding-qemu-20260926.md",
+          "document_sha256": "d5772bdf134ebab35d2f0ed0fb3405ebf649a70355e804642b556490f7872bd2",
+          "environment": "offline",
+          "limitations": "Workflow and independent review remain tracked separately. No production SD/NFS image change, printer access, physical eMMC test, firmware change or hardware write.",
+          "method": "31 focused Python/native tests passed across one-shot, eMMC job, SD/NFS probe/image, plus 3 CID-admission tests passed separately; strict static AArch64 GCC build with -Wall -Wextra -Werror passed; report relative-link check and git diff --check passed. Disposable regular-file-backed QEMU evidence and measured storage accounting are recorded in the report.",
+          "profile": "Offline plus QEMU host emulation; not a validated printer hardware profile",
+          "source_commit": "eb68f7907a955ea848b2ffba673db03130f78707",
+          "source_sha256": {
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "b31cd1a724e841e3a97b7096b82491220bd11737a8d6b38f5997d3e5425ae3b8",
+            "tests/test_sd_network_emmc_write.py": "fe112c074723f783a316b8fe3895c8afa3f754557b1f767f7f0a21ea09f61757"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-fd-binding",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "d6758921ae514ad9ad4a09340261a36a",
+        "session": "implement-fd-binding-evidence-20260926"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Added measured QEMU scratch allocation and post-run free-space figures; added focused CID-admission test evidence.",
+      "status": "done",
       "title": "Bind one QEMU target descriptor from admission through readback",
-      "verification": null
+      "verification": {
+        "decision_sha256": "1d290fc1036cd04b3da5d73515f4500d9d33f6c148e5e528212f16eddba7bbfe",
+        "evidence_sha256": "90fbfb6ceb7dee9aef94b87b33eab13004f26306b8cb42c38b196397647278fe",
+        "outcome": "passed",
+        "rationale": "At clean HEAD eb68f7907a955ea848b2ffba673db03130f78707, all nfb-01 through nfb-04 checks and approval constraints passed. The complete diff contains only the QEMU test writer, its focused tests, and the report. The writer checks the opened block descriptor against sysfs before writing and retains that descriptor through flush and readback. I reproduced 31 focused tests, 3 CID tests, and the strict static ARM64 build. The five QEMU receipt hashes, source and document hashes, report links, workflow validation, and measured post-run storage figures checked out. This verifies offline QEMU behavior only; it does not establish physical printer write safety.",
+        "reviewer": "root/verify_fd_binding",
+        "session": "independent-network-emmc-fd-binding-verification-20260926"
+      }
     }
   ],
   "title": "Bind the QEMU writer's opened target through readback"
