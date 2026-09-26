@@ -255,7 +255,16 @@ def process_rss_bytes():
     return pages * os.sysconf('SC_PAGE_SIZE')
 
 
-def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *, claim_only=False):
+FAULT_MARKERS = {
+    'before-write': 'SV08_QEMU_REIMAGE_INJECTED_BEFORE_WRITE',
+    'partial-write': 'SV08_QEMU_REIMAGE_INJECTED_PARTIAL_WRITE',
+    'flush': 'SV08_QEMU_REIMAGE_INJECTED_AFTER_FLUSH',
+    'readback': 'SV08_QEMU_REIMAGE_INJECTED_DURING_READBACK',
+}
+
+
+def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *,
+            claim_only=False, fault=None):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
     if free < 9_000_000_000:
@@ -279,6 +288,8 @@ def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, *, clai
          '-Wall', '-Wextra', '-Werror']
     if claim_only:
         compile_args.append('-DSV08_CLAIM_ONLY=1')
+    if fault:
+        compile_args.append(f'-DSV08_TEST_FAULT="{fault}"')
     run(compile_args + ['-o', writer, REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'])
     (root / 'expected.sha256').write_text(IMAGE_SHA256 + '\n')
     os.link(work / 'source.img', root / 'image.bin')
@@ -341,10 +352,15 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                 guest.kill(); guest.wait()
                 raise TimeoutError('QEMU image write timed out; result uncertain')
         serial = (work / 'serial.log').read_text(errors='replace')
-        expected_marker = ('SV08_QEMU_REIMAGE_CLAIM_ONLY_PASS' if claim_only
-                           else 'SV08_QEMU_REIMAGE_PASS')
-        if expected_marker not in serial or (not claim_only and 'SV08_QEMU_REIMAGE_READBACK ' not in serial):
-            raise RuntimeError('Guest did not prove full write and readback')
+        expected_marker = (FAULT_MARKERS[fault] if fault else
+                           'SV08_QEMU_REIMAGE_CLAIM_ONLY_PASS' if claim_only else
+                           'SV08_QEMU_REIMAGE_PASS')
+        if expected_marker not in serial or (not fault and not claim_only and
+                'SV08_QEMU_REIMAGE_READBACK ' not in serial):
+            raise RuntimeError('Guest did not produce the expected terminal receipt')
+        if fault and ('SV08_QEMU_REIMAGE_PASS' in serial or
+                      'SV08_QEMU_REIMAGE_READBACK ' in serial):
+            raise RuntimeError('Faulted writer emitted success evidence')
         if state.armed.exists() or not state.claimed.exists():
             raise RuntimeError('Claim state is not durably consumed')
         claim_record = json.loads(state.claimed.read_text())
@@ -352,6 +368,32 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                 claim_record.get('descriptor_sha256') != descriptor_hash or
                 claim_record.get('state') != 'consumed-before-write'):
             raise RuntimeError('Persisted claim does not match immutable descriptor')
+        if fault:
+            target_prefix = os.pread(target_fd, 1024 * 1024, 0)
+            source_fd = os.open(work / 'source.img', os.O_RDONLY | os.O_CLOEXEC)
+            try:
+                source_prefix = os.pread(source_fd, 1024 * 1024, 0)
+            finally:
+                os.close(source_fd)
+            if fault == 'before-write' and target_prefix != bytes(1024 * 1024):
+                raise RuntimeError('Before-write fault changed the target')
+            if fault != 'before-write' and target_prefix != source_prefix:
+                raise RuntimeError('Fault marker did not follow a real target write')
+            retry = state.consume({'job_id': descriptor['job_id'],
+                                   'descriptor_sha256': descriptor_hash})
+            if retry[0] != 409 or retry[1] != b'CONSUMED\n':
+                raise RuntimeError('Interrupted job was rearmed or accepted a retry')
+            return {
+                'fault': fault, 'terminal_marker': expected_marker,
+                'success_receipt': False, 'claim_retry_status': retry[0],
+                'target_prefix_matches_source': fault != 'before-write',
+                'target_unchanged': fault == 'before-write',
+                'claim': {'status': 'consumed-before-write',
+                          'job_id': descriptor['job_id'],
+                          'descriptor_sha256': descriptor_hash,
+                          'persisted_bytes': sum(path.stat().st_size for path in state.state_dir.iterdir()),
+                          'latency_ms': state.last_claim_ms},
+            }
         memory_after, memory_peak = tracemalloc.get_traced_memory()
         claim_storage_bytes = sum(path.stat().st_size for path in state.state_dir.iterdir())
         return {
@@ -384,6 +426,8 @@ def main():
     parser.add_argument('--package-root', type=Path)
     parser.add_argument('--claim-only', action='store_true',
                         help='Test QEMU claim transport without opening or writing the target')
+    parser.add_argument('--fault', choices=tuple(FAULT_MARKERS),
+                        help='Inject a QEMU guest interruption in the actual writer phase')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     work = fresh_work(args.work)
@@ -416,7 +460,14 @@ def main():
                 image_sha256=IMAGE_SHA256, gpt=gpt_map)
             claim_evidence = execute(work, Path(os.path.abspath(args.sd_work)),
                                      args.package_root, fd, kernel_args, descriptor,
-                                     claim_only=args.claim_only)
+                                     claim_only=args.claim_only, fault=args.fault)
+            if args.fault:
+                result = {'status': 'qemu-injected-fault-pass', 'target_serial': SERIAL,
+                          'fault_evidence': claim_evidence,
+                          'guest_serial_sha256': digest(work / 'serial.log')}
+                (work / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+                print(json.dumps(result), flush=True)
+                return
             if args.claim_only:
                 result = {'status': 'qemu-claim-only-pass',
                           'target_opened': False,

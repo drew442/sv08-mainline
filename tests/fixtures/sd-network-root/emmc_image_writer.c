@@ -29,6 +29,9 @@
 #ifndef SV08_JOB_DESCRIPTOR_SHA256
 #define SV08_JOB_DESCRIPTOR_SHA256 ""
 #endif
+#ifndef SV08_TEST_FAULT
+#define SV08_TEST_FAULT ""
+#endif
 static unsigned char buffer[CHUNK];
 
 /* SHA-256 as specified by FIPS 180-4, used independently for source/readback. */
@@ -253,6 +256,21 @@ int main(void) {
      (uint64_t)ss.st_size!=IMAGE_BYTES||ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
      !exact_usb_serial()||!exact_usb_capacity()||(ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
     finish("REFUSED_INPUT");
+#if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
+  /* Test-only QEMU interruptions. These markers terminate the guest through
+   * the same fail-closed power-off path; they never emit a success receipt. */
+  if(!strcmp(SV08_TEST_FAULT,"before-write"))finish("INJECTED_BEFORE_WRITE");
+  if(!strcmp(SV08_TEST_FAULT,"partial-write")||
+     !strcmp(SV08_TEST_FAULT,"flush")||!strcmp(SV08_TEST_FAULT,"readback")) {
+    if(!exact_read(in,CHUNK)||!exact_write(out,CHUNK))finish("FAILED_TEST_PHASE_WRITE");
+    if(!strcmp(SV08_TEST_FAULT,"partial-write"))finish("INJECTED_PARTIAL_WRITE");
+    if(fsync(out)||ioctl(out,BLKFLSBUF,0))finish("FAILED_FLUSH");
+    if(!strcmp(SV08_TEST_FAULT,"flush"))finish("INJECTED_AFTER_FLUSH");
+    close(in);close(out);out=open(target,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+    if(out<0||!exact_read(out,CHUNK))finish("FAILED_READBACK");
+    finish("INJECTED_DURING_READBACK");
+  }
+#endif
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(in,n))finish("FAILED_SOURCE_READ");
