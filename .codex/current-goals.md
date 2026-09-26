@@ -14,7 +14,7 @@ delivered. It does not certify a printer or a release.
 | Compose approved boot health — done | `project_implementer`, GPT-6 Sol / medium, separate `project_integration`, and independent verifier | Approved `host-boot-health-composition` coordinator, transaction admission, unit ordering and image enablement | All 12 offline checks passed independent review at `316be5f`: 59 focused tests and clean-source disposable QEMU A→B/A fallback. The harness selected roots and seeded a staged transaction; signed install and U-Boot attempt decrement remain untested. | H02/H07 for later board boot and fallback tests. |
 | Prepare the next board artifact — research done | `project_researcher`, GPT-6 Luna / high | Read-only input receipt, capacity and resource audit | Identified the exact v6 SPL and retained reviewed host/data/recovery inputs on Beelink; the resulting candidate is recorded below. | H03 for writer access; H02/H04 for boot and UI. |
 | Compose and write v3 board diagnostic candidate — physical A boot observed | Coordinator with independent Sol offline byte review | Reviewed v3 composition and spare writer transfer | Complete image readback matched SHA-256 `d6dde04282cf33908a7d3f051faefbb4b027c4348b41f2beb311320b778d5d56`; [physical A boot, HDMI/KVM login and temporary Wi-Fi](../docs/hardware/host-board-v3-first-boot.md) are recorded. | Corrected image needed for persistent Wi-Fi and diagnostic boot-health; one A boot attempt remained at last read. H04 touch, H07 and output gates remain open. |
-| Complete approved disposable SD/NFS diagnostic — done 2026-09-26 | Coordinator with independent artifact reviewer | Approved `host-sd-network-root` scope and one supervised physical retry | Corrected hash-verifying image passed review and direct write/readback; printer booted SD→Linux→wired DHCP→read-only NFS root and powered down on the exact pass marker. [Result](../docs/hardware/host-sd-network-first-boot-20260926.md), commits `8d964e8`–`fe39756` pushed. | H10 remains open. The owner reports the spare eMMC is currently removed, so the network probe requires its reinstallation; no current counter is assumed. Candidate adds PC3 selection for Linux and requires a separately reviewed SD reflash. |
+| Complete approved disposable SD/NFS diagnostic — base path passed; H10 follow-up active | Coordinator with independent artifact reviewer | Existing SD-to-Linux-to-read-only-NFS path plus the bounded H10 probe correction | The SD image passed physical write/readback and booted Linux with wired DHCP. The 2026-09-26 H10 attempt then failed before probe execution because NFSv3 mount requests were refused; the receive-only trace also shows `mmc0` non-removable-card initialization failure and the disposable SD as `mmc2`. No current eMMC counter was read. See [H10 record](../docs/hardware/host-sd-network-emmc-probe-20260926.md). | H10 follow-up: finish default NFSv3 and expected `.141` export verification, refresh served init hash/manifest, obtain fresh independent Sol high-consequence review, then one supervised attempt. Spare eMMC remains installed; factory eMMC remains stored. |
 
 Run at most one production implementer at a time. A verifier never reviews its
 own implementation. Research can proceed while the implementation lease is held.
@@ -31,11 +31,13 @@ run. Retain only accepted evidence; never remove another worker's fixtures.
 The recovery record, inactive printer interface and boot-health composition
 have passed independent offline review. None certifies physical board behavior.
 
-`feature_workflow.py next` currently returns `null`; optional features remain
-paused. The next physical dependency is H10: the reviewed image and updated NFS probe
-are ready, and Beelink's restricted read-only export is verified. The disposable
-SD is written and direct-I/O readback matches. The owner now needs to reinstall
-the spare eMMC plus SD with the printer fully off (factory module stays stored),
-stand it upright, and reconnect Ethernet. Arm receive-only serial capture before
-the USB cable is reconnected, then run one read-only probe boot.
-Continue offline checklist preparation while waiting.
+`feature_workflow.py next` returns `null`; optional features remain paused. H10's
+first supervised attempt failed before the probe due NFS mountd registration;
+current eMMC counters remain unknown. The spare eMMC is installed and the printer
+is halted with receive-only serial capture available on Beelink. The bounded
+probe correction is approved with constraints; offline NFS/default-port and
+`.141` export and refreshed manifest checks pass. A fresh Sol high-consequence
+review approved exactly one further read-only boot with conditions. Immediately
+recheck NFS registration/export/hash and arm receive-only capture; the owner then
+unplugs and reconnects USB serial once to reset the halted host. If MMC
+initialization still fails, stop network probing and use the USB-reader path.

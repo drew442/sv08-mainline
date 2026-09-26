@@ -83,10 +83,14 @@
       "evidence": [],
       "human_task": null,
       "id": "correct-diagnostic",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "d2102b78ef1f4bc1b768facf9e0dbeee",
+        "session": "h10-probe-correction-20260926"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Correct probe host discovery and NFS evidence",
       "verification": null
     }

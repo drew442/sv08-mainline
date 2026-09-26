@@ -1,29 +1,36 @@
 # Network-boot eMMC environment read candidate
 
-Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: reviewed
-candidate; SD write/readback is complete, awaiting spare-eMMC reinstallation
-and one supervised physical test. This method completes the existing H10
-read-only environment inspection without removing the eMMC to use a USB writer. It is not a supported recovery image. The owner
-reports that the spare eMMC is currently out of the printer. It must be
-reinstalled before this network test can access its environment; NFS does not
-make a physically absent device available.
+Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: the first supervised attempt stopped before the eMMC probe. The corrected
+read-only init is served, and a separate GPT-6 Sol review permits one further
+supervised attempt with conditions. The diagnostic is not a supported recovery
+image; current eMMC counters remain unknown.
 
 Beelink is measured at `192.168.1.136`. Its NFSv3/TCP export of
 `/srv/sv08-sd-nfs` is currently read-only with root-squash and limited to
 Beelink (`192.168.1.136`) and the expected printer reservation (`192.168.1.141`).
-A local NFSv3/TCP mount read the deployed init at the hash below, and a write
-probe was refused with `Read-only file system`. The reviewed SD image has now
-been written to the disposable SU02G card and passed full image-sized direct-I/O
-readback; see the [write receipt](host-sd-network-emmc-probe-card-write-20260926.md).
+A local NFSv3/TCP mount initially used an explicit mountd port and did not prove
+default port discovery. The printer attempt showed repeated connection refusal
+before the init executable ran. Beelink's mountd was restarted and registered
+with rpcbind on TCP/UDP port 20048; a local default NFSv3/TCP mount (without an
+explicit mountd port) then read the deployed init at the hash below, and a write
+probe was refused with `Read-only file system`. Printer-side mount success is
+still unmeasured. The reviewed SD image was written to the disposable SU02G
+card and passed full image-sized direct-I/O readback; see the [write
+receipt](host-sd-network-emmc-probe-card-write-20260926.md).
 
 ## Why the existing network boot could not read eMMC
 
-The 2026-09-26 physical SD/NFS trace measured Linux messages for
-`4022000.mmc` followed by `mmc2: Failed to initialize a non-removable card`.
-It enumerated the disposable SD as `mmcblk0` and the Wi-Fi SDIO card, but no
-eMMC block device. The trace is private on Beelink at
-`/home/drew/sv08-captures/sd-network-20260925/console.raw`, SHA-256
-`3594c7586321e0f9644cfa0eb10f9a9d93bdfecff3b124f0ec6d38d1ff1dc155`.
+The 2026-09-26 supervised attempt booted the reviewed SD loader and Linux,
+obtained wired DHCP at `192.168.1.141`, then halted after NFSv3 root mount
+refusals. The probe did not run, so it produced no eMMC environment/counter
+result. The measured MMC trace reports controllers `4021000`, `4022000`, and
+`4020000` initialized; `mmc0` failed to initialize a non-removable card,
+`mmc2` enumerated the disposable SU02G SD, and `mmc1` enumerated SDIO. This
+shows that Linux host numbering does not match the assumed controller-local
+`mmc2` path. The full receive-only trace is private on Beelink at
+`/home/drew/sv08-captures/h10-emmc-read-20260926/console.raw`, SHA-256
+`89dc52360d9c242d5b5348c3abc1ec3e902ad8bd6dbd7248457ca2108c54d4c5` (28,893
+bytes). No second boot has occurred.
 
 The candidate Linux DTB has `/soc/mmc@4022000` enabled as H616 eMMC; its
 kernel configuration has `CONFIG_MMC_SUNXI=y` and `CONFIG_MMC_BLOCK=y`. These
@@ -50,8 +57,10 @@ eMMC in U-Boot. Its purpose is to leave the eMMC selected for the Linux DT's
 SMHC2 probe. Whether this brings up the installed module on this board remains
 unmeasured until a reviewed physical test.
 
-The NFS init then searches only under the SMHC2 sysfs controller path for one
-32 GB MMC card. It opens that card's main user-area block node with
+The NFS init searches host directories below only the exact SMHC2/eMMC
+controller sysfs path and does not assume a Linux `mmcN` index. It accepts
+exactly one 32 GB MMC card under that controller, rejecting ambiguous matches.
+It opens that card's main user-area block node with
 `O_RDONLY|O_NOFOLLOW`, reads exactly 64 KiB at byte offsets `0x400000` and
 `0x800000` with `pread`, validates both U-Boot environment CRCs, and accepts
 only the `ab-8gb-v1` layout and bounded boot-policy values. It emits the
@@ -67,7 +76,9 @@ unreadable, corrupt, or unrecognized results fail closed and the init powers
 down; it does not fall through to another boot.
 
 The parser was exercised against synthetic valid/corrupt/invalid-policy
-fixtures and a retained historical 128 KiB environment pair. That historical
+fixtures. New locator fixtures put the target beneath `mmc0`, an unrelated
+small SD beneath `mmc2`, and verify ambiguity rejection. A retained historical
+128 KiB environment pair was also parsed. That historical
 pair parsed as CRC-valid flags 3 and 2, `BOOT_ORDER=A`, A counters 3 and 2,
 and B counter 0; it does not describe the current eMMC state. The current
 counter remains unknown.
@@ -87,8 +98,9 @@ configuration are source-controlled. Key outputs:
 | Linux `Image` | 33,405,440 bytes | `5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34` |
 | Linux initramfs | 15,233,015 bytes | `8be88ee081ad61c64de216425b031b8988447d6fb009022edeffaf53f115d09e` |
 | Linux DTB | 48,208 bytes | `571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f` |
-| NFS init executable | 772,784 bytes | `18271a75e14af6b2c8351c6fce697d77877b64dab7ffa5f8a65d1888a16833ad` |
-| NFS root manifest | — | `011236722e40bdac7e567b5e103bcfaaa278c66841ca26da52da27e527c28616` |
+| Init executable used in failed physical attempt | 772,784 bytes | `18271a75e14af6b2c8351c6fce697d77877b64dab7ffa5f8a65d1888a16833ad` |
+| Corrected init executable currently served | 772,864 bytes | `1e7afa9aaf337ccffdb4c7431648f7aba934dcc600b04e11751743e345e1dc11` |
+| Corrected NFS root manifest | — | `47928b1378278af64a307effe6c35d2ffe54d5b187172f23a4d0e77e5b131007` |
 
 The patched U-Boot source was inspected after build: `board_mmc_init()` applies
 the PC3 input/pull-down, and the effective configuration still has
@@ -104,27 +116,30 @@ checks passed. With NFS unavailable, DHCP completed, the kernel halted without
 running the probe, and the harness cleaned up QEMU and server processes. QEMU
 does not model the H616 PC3 selector or eMMC and cannot validate the H10 read.
 
-The refreshed NFS executable is served over the network, so this correction does
-not change the SD image hash. The manifest and composition receipt bind the new
-executable to the same image. The QEMU harness now removes stale serial logs
+The refreshed NFS executable is served over the network, so a probe-only
+correction does not change the SD image hash. The manifest and composition
+receipt must bind any new executable to the same image. The QEMU harness now
+removes stale serial logs
 before each launch; a fresh run completed online NFS-root checks in 28.02 seconds
 and server-missing DHCP/halt checks in 35.03 seconds. Both are offline results.
 
 ## Next action and stop conditions
 
-Independent high-consequence review returned PASS WITH CONDITIONS for one
-supervised boot of the exact SD image above. It confirmed the PC3 selector setup,
-U-Boot eMMC isolation, bounded read-only probe, and stop behavior; PC3's effect
-on this SV08 remains an inference until measured. The review requires exact SD
-direct-I/O readback, only the spare eMMC reinstalled while fully powered off,
-receive-only serial capture armed before power, and one supervised boot. The
-reviewed SD image has been written and read back exactly. With the printer fully
-off and serial disconnected, the owner now reinstalls only the spare eMMC and
-this SD; the factory eMMC stays stored. The printer should be upright with
-Ethernet connected. Before serial is reconnected, arm receive-only capture
-because the cable powers the host. One supervised SD-to-NFS boot should show
-the explicit eMMC result, then power down. Any absent or ambiguous card, read
-error, CRC/layout failure, or unexpected boot path ends the test without another
-reboot. If Linux still cannot see the eMMC, use the
-already-approved USB-reader path for H10; do not attempt an eMMC write or
-change MCU firmware.
+The first high-consequence review authorized one supervised boot of the exact
+SD image above. That authorization is consumed. The measured boot stopped at
+NFS root mount and MMC numbering contradicted the probe's hard-coded host
+index. The corrected executable is now served, and Beelink verifies its hash
+through a default NFSv3/TCP mount with no explicit mountd port. A write attempt
+was refused as read-only. The server reports mountd versions 1–3 over TCP on
+port 20048; `/var/lib/nfs/etab` contains the expected printer address
+`192.168.1.141` with `ro,root_squash`. The NFS mount test originated on Beelink
+(`192.168.1.136`), so it does not prove a client request from the printer
+address. A separate GPT-6 Sol high-consequence review approved exactly one further
+supervised read-only attempt with the checks and stop conditions in the
+[retry review](host-sd-network-emmc-probe-review-20260926.md). Immediately
+before that attempt, recheck mountd registration, the `.141` export and deployed
+init hash, then arm fresh receive-only capture. If the non-removable-card
+initialization failure repeats, stop using network boot for H10 and use the
+USB-reader path. Do not interpret the halted boot as an eMMC read result or
+infer current A/B counters. Keep the factory module stored and do not change MCU
+firmware.

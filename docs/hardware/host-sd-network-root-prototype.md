@@ -151,14 +151,21 @@ separate diagnostic DT already enables SMHC2. The reasoning and limits are in
 [`host-sd-network-emmc-probe-20260926.md`](host-sd-network-emmc-probe-20260926.md).
 
 The NFS init reads only the 64 KiB environment regions at 4 MiB and 8 MiB via
-`O_RDONLY`/`pread`, maps the card by SMHC2 sysfs ancestry and 32 GB capacity,
+`O_RDONLY`/`pread`, maps a unique card by exact SMHC2 sysfs ancestry and 32 GB
+capacity without assuming its Linux `mmcN` host number,
 checks each U-Boot CRC, and emits only boot-order/counter values. It rejects
 missing or ambiguous cards and unrecognized layouts. The general
 `SV08_SD_NFS_PASS` marker proves only the NFS-root checks; H10 requires the
 separate `READ_ONLY_VALID_PAIR` eMMC line to report the target and both CRC-valid
-copies. QEMU has no eMMC and therefore tests only refusal behavior. Independent
-review passed with conditions, the updated init is deployed on Beelink and its
-NFSv3/TCP export was locally verified read-only with root-squash. The exact SD image has now been written and passed full direct-I/O readback; see
-the [H10 write receipt](host-sd-network-emmc-probe-card-write-20260926.md) and
-[current H10 record](host-sd-network-emmc-probe-20260926.md). The spare eMMC
-reinstallation and one captured physical boot remain pending.
+copies. QEMU has no eMMC and therefore tests only refusal behavior. The first
+H10 physical attempt reached DHCP but failed at NFS root mount before the probe
+ran. Its trace recorded `mmc0` failing non-removable-card initialization; thus
+the locator correction cannot prove that Linux can read the installed eMMC.
+Beelink's mountd registration is corrected, the default NFSv3/TCP path and
+read-only refusal pass locally, and the expected `.141` read-only/root-squash
+export entry is present. The mount test originated from Beelink's `.136`
+address, not the printer. The independent [Sol high-consequence review](host-sd-network-emmc-probe-review-20260926.md) permits exactly one further supervised boot with conditions. The exact SD image
+was written and passed full direct-I/O readback; see the [H10 write
+receipt](host-sd-network-emmc-probe-card-write-20260926.md) and [current H10
+record](host-sd-network-emmc-probe-20260926.md). The spare eMMC is installed;
+the factory module remains stored.
