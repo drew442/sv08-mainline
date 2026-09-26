@@ -2,7 +2,7 @@
   "date": "2026-09-26",
   "scope": "Offline signed-feed and guarded A/B update implementation. No printer access or write; separate disposable QEMU boot journey is still pending.",
   "physical_hardware": false,
-  "implementation_commit": "febceb8",
+  "implementation_commit": "251f7e2",
   "checks": {
     "signed-feed": {
       "passed": true,
