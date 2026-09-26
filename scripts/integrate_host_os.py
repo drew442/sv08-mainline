@@ -87,6 +87,7 @@ def stage(work, manifest, refresh=False, owner_key=None):
     target.mkdir(parents=True)
     for path in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(path, target / path.name)
+    (target / 'sv08_rauc_bootloader.py').chmod(0o755)
     for command, module in [('sv08-state', 'sv08_state.py'), ('sv08-package', 'sv08_package.py')]:
         (target / module).chmod(0o755)
         link = root / 'usr/bin' / command

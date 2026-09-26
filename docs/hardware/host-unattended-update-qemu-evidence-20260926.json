@@ -1,0 +1,210 @@
+{
+  "policy": {
+    "compatible": "sv08-offline-test-only",
+    "layout": "ab-8gb-v1",
+    "state_schema": 1,
+    "klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+    "max_bundle_bytes": 1073741824,
+    "image_bytes": {
+      "boot": 201326592,
+      "rootfs": 2147483648
+    }
+  },
+  "disk_sha256_before": "ab46d9e01bc60a5a37bbd6e091f5947b4959024f0b33c7a5913429063586b664",
+  "feed_disk_sha256": "7676b1ba38b05a1698947dc940e447999cea9e6e9562291185136c2f5c4a2f47",
+  "bundles": [
+    {
+      "release": "qemu-feed-b-1",
+      "bundle": "qemu-feed-b-1.raucb",
+      "bytes": 611723255,
+      "sha256": "0b334cd41fb44155b5bdb3d4a73b4ec0bb2ab618ec98ec6488f2afec3b7acecd",
+      "root_image_sha256": "31ec8531887706c2764b6adcceb63ee2f36b00bd0cdb1362999769a1b0b2628d",
+      "boot_image_sha256": "5fada6622332a622582f867db3ca9f01460b9c36b2278dcd57e47bcf0e618bbc",
+      "target_health_fails": false
+    },
+    {
+      "release": "qemu-feed-a-bad-2",
+      "bundle": "qemu-feed-a-bad-2.raucb",
+      "bytes": 611682299,
+      "sha256": "ff2cb929c9346984bf411c4ae2a67d4034a63b512bf655d98df950ed9d801a6e",
+      "root_image_sha256": "a78598771041d3bda6cabbf2a03813ca39beb3efd8bee79fdd51a1bdac19bddf",
+      "boot_image_sha256": "4a6d4272f6d16e7dd60ef9d56efdedfd678991bb522c6d55ac524550e2f46677",
+      "target_health_fails": true
+    }
+  ],
+  "feed_indexes": [
+    {
+      "format_version": 1,
+      "channel": "stable",
+      "sequence": 1,
+      "issued": 1790399940,
+      "expires": 1790486400,
+      "compatible": "sv08-offline-test-only",
+      "release": "qemu-feed-b-1",
+      "bundle": "qemu-feed-b-1.raucb",
+      "bytes": 611723255,
+      "sha256": "0b334cd41fb44155b5bdb3d4a73b4ec0bb2ab618ec98ec6488f2afec3b7acecd"
+    },
+    {
+      "format_version": 1,
+      "channel": "stable",
+      "sequence": 2,
+      "issued": 1790399940,
+      "expires": 1790486400,
+      "compatible": "sv08-offline-test-only",
+      "release": "qemu-feed-a-bad-2",
+      "bundle": "qemu-feed-a-bad-2.raucb",
+      "bytes": 611682299,
+      "sha256": "ff2cb929c9346984bf411c4ae2a67d4034a63b512bf655d98df950ed9d801a6e"
+    }
+  ],
+  "physical_hardware": false,
+  "boots": [
+    {
+      "number": 1,
+      "slot": "A",
+      "attempt": {
+        "before": {
+          "BOOT_A_LEFT": "3",
+          "BOOT_B_LEFT": "0",
+          "BOOT_ORDER": "A",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "consumed_slot": "A",
+        "before_count": 3,
+        "after_count": 2
+      },
+      "log_sha256": "330f7fa6b1e86108aeefd8bdc932ae9b521f51acac694f0753663e87d7616b45",
+      "log_bytes": 49936,
+      "exit_status": 0
+    },
+    {
+      "number": 2,
+      "slot": "B",
+      "attempt": {
+        "before": {
+          "BOOT_A_LEFT": "2",
+          "BOOT_B_LEFT": "3",
+          "BOOT_ORDER": "B A",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "consumed_slot": "B",
+        "before_count": 3,
+        "after_count": 2
+      },
+      "log_sha256": "93cbae1185abdb6f0f480e867d6a8913275243eeb0c909499ea74d182f5b034d",
+      "log_bytes": 50068,
+      "exit_status": 0
+    },
+    {
+      "number": 3,
+      "slot": "A",
+      "attempt": {
+        "before": {
+          "BOOT_A_LEFT": "3",
+          "BOOT_B_LEFT": "3",
+          "BOOT_ORDER": "A B",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "consumed_slot": "A",
+        "before_count": 3,
+        "after_count": 2
+      },
+      "log_sha256": "c989639a0961c8056dcb6dc44a3489eca1c619f5a1dac30dc6352ddcae8b3aba",
+      "log_bytes": 65464,
+      "exit_status": 0
+    },
+    {
+      "number": 4,
+      "slot": "A",
+      "attempt": {
+        "before": {
+          "BOOT_A_LEFT": "2",
+          "BOOT_B_LEFT": "3",
+          "BOOT_ORDER": "A B",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "consumed_slot": "A",
+        "before_count": 2,
+        "after_count": 1
+      },
+      "log_sha256": "689a0a40f2c86c9a758d54416a87d96a32bec8669d212271a54c6a8bfb0ded15",
+      "log_bytes": 65982,
+      "exit_status": 0
+    },
+    {
+      "number": 5,
+      "slot": "A",
+      "attempt": {
+        "before": {
+          "BOOT_A_LEFT": "1",
+          "BOOT_B_LEFT": "3",
+          "BOOT_ORDER": "A B",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "consumed_slot": "A",
+        "before_count": 1,
+        "after_count": 0
+      },
+      "log_sha256": "1bd9997084621e84567fc7165717877193ffce8b72cac685be420c20be1d0b55",
+      "log_bytes": 66592,
+      "exit_status": 0
+    },
+    {
+      "number": 6,
+      "slot": "B",
+      "attempt": {
+        "before": {
+          "BOOT_A_LEFT": "0",
+          "BOOT_B_LEFT": "3",
+          "BOOT_ORDER": "A B",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "consumed_slot": "B",
+        "before_count": 3,
+        "after_count": 2
+      },
+      "log_sha256": "484e105786bd028d2557175dfc8a6db57baae1dd74907c725a9297ee48328720",
+      "log_bytes": 49428,
+      "exit_status": 0
+    }
+  ],
+  "primary_gpt_sha256": "c010966ed254f14028f662c4b999dde5e68fdc560226e6fed7082750d79fe57c",
+  "backup_gpt_sha256": "644a55de315a2a2a1db8d85027538b4827174c932ef55cf7cacb198ddb8a81bd",
+  "recovery_sha256": "0bc9703427f0991ebe09d35296a9ede99ad32309f1ba3ae62b40ca6896f8c5ca",
+  "disk_sha256_after": "59fb2b1721bb3e34b34c8de883fa4b9586eb9c6257834b22f9a58763d6abd726",
+  "free_after": 1831014400,
+  "boot_selection": "Host test model read real redundant environment and consumed attempts; QEMU kernel slot argument was host supplied.",
+  "assertions": {
+    "first_stage_only": false,
+    "full_journey_passed": true,
+    "signed_index_cms": true,
+    "signed_rauc_bundles": true,
+    "real_rauc_inactive_pair_install": true,
+    "stage_environment_copies_unchanged": true,
+    "arm_environment_delta_allowlisted": true,
+    "target_boot_health_confirmed": true,
+    "failed_target_health_retries_then_falls_back": true,
+    "fallback_transaction_cancelled": true,
+    "active_source_preserved": true,
+    "primary_and_backup_gpt_unchanged": true,
+    "recovery_partition_unchanged": true,
+    "user_data_sentinel_preserved": true,
+    "mcu_artifacts_written": false,
+    "automatic_uboot_execution": false,
+    "physical_hardware": false
+  },
+  "test_environment": {
+    "qemu_version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "guest_kernel": "Debian arm64 6.12.107+deb13-arm64",
+    "kernel_sha256": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67",
+    "initrd_sha256": "86be724657cd9798305242fa3a5e7699fd8acce81d777e5f940246bdf2b0400b",
+    "guest_rauc_package": "1.15.2-0sv08.1",
+    "guest_rauc_executable_sha256": "51d7c057c7fb00917287b5324303c747e71c5406f4c1363a678578ac7a3b12e3",
+    "bundle_builder_sha256": "4a60a0d9123e370ec4e316458cc34877022aad81d61809a6d56a5279943a789b",
+    "scratch": "/dev/shm tmpfs",
+    "physical_hardware": false,
+    "automatic_h616_uboot_execution": false,
+    "mcu_artifacts_written": false
+  }
+}

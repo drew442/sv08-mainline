@@ -114,18 +114,22 @@ class CoordinatorDeadline(Exception):
 
 
 @contextmanager
-def coordinator_deadline(seconds=50):
-    """Interrupt a stuck backend probe before systemd's 60-second unit limit."""
-    if not 0 < seconds <= 50:
+def coordinator_deadline(seconds=50, *, disposable_fixture=False):
+    """Bound boot reconciliation; only identified QEMU fixtures get extra time."""
+    def reset(value, *, fixture=False):
+        if not 0 < value or value > (180 if fixture else 50):
+            raise ValueError('Unreviewed coordinator deadline')
+        signal.setitimer(signal.ITIMER_REAL, value)
+    if (not 0 < seconds or seconds > (180 if disposable_fixture else 50)):
         raise ValueError('Unreviewed coordinator deadline')
     previous_handler = signal.getsignal(signal.SIGALRM)
     previous_timer = signal.getitimer(signal.ITIMER_REAL)
     def expired(_signum, _frame):
         raise CoordinatorDeadline('Boot coordinator exceeded its execution deadline')
     signal.signal(signal.SIGALRM, expired)
-    signal.setitimer(signal.ITIMER_REAL, seconds)
+    reset(seconds, fixture=disposable_fixture)
     try:
-        yield
+        yield reset
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, previous_handler)
@@ -136,12 +140,14 @@ def coordinator_deadline(seconds=50):
 class HostHealth:
     def __init__(self, backend, manifest, *, now=time.monotonic, sleep=time.sleep,
                  command=subprocess.check_output, stable=STABLE_SECONDS,
-                 deadline=DEADLINE_SECONDS - 20):
+                 deadline=DEADLINE_SECONDS - 20, disposable_fixture=False):
         self.backend, self.manifest = backend, manifest
         self.now, self.sleep, self.command = now, sleep, command
-        if not 0 < stable <= 5 or not stable < deadline <= 60:
+        deadline_limit = 180 if disposable_fixture else 60
+        if not 0 < stable <= 5 or not stable < deadline <= deadline_limit:
             raise ValueError('Unreviewed host health bounds')
         self.stable, self.deadline = stable, deadline
+        self.last_probe_failure = None
 
     def probe(self, boot):
         unit = self.command(['systemctl', 'is-active', 'sv08-prepare.service'],
@@ -152,7 +158,9 @@ class HostHealth:
                             text=True, timeout=3).strip()
         if Path(data).resolve() != Path(self.manifest['devices']['data']).resolve():
             raise HealthFailure('Persistent data mount differs from manifest')
-        self.backend.validate_context(boot)
+        # resolution_evidence performs the backend context validation and then
+        # samples the writer/busy guard. Do not repeat the expensive device and
+        # RAUC identity walk immediately before that same observation.
         self.backend.resolution_evidence(boot)
 
     def __call__(self, boot):
@@ -162,9 +170,11 @@ class HostHealth:
         while self.now() - start <= self.deadline:
             try:
                 self.probe(boot)
-            except (OSError, subprocess.SubprocessError, ValueError):
+            except (OSError, subprocess.SubprocessError, ValueError) as exc:
+                self.last_probe_failure = f'{type(exc).__name__}: {exc}'[:512]
                 stable_since = None
             else:
+                self.last_probe_failure = None
                 if self.now() - start > self.deadline:
                     break  # A slow probe cannot become a late success.
                 if stable_since is None:
@@ -172,7 +182,9 @@ class HostHealth:
                 if self.now() - stable_since >= self.stable:
                     return True
             self.sleep(min(0.5, max(0, self.deadline - (self.now() - start))))
-        raise HealthFailure('Host OS health was not stable within deadline')
+        detail = (f'; last probe failed: {self.last_probe_failure}'
+                  if self.last_probe_failure else '')
+        raise HealthFailure('Host OS health was not stable within deadline' + detail)
 
 
 def record_failure(store, boot, reason):
@@ -270,7 +282,7 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
     return outcome
 
 
-def _main():
+def _main(*, disposable_fixture=False):
     if os.geteuid() != 0:
         raise ValueError('Boot health requires root')
     # A same-boot unit restart must not inherit a previous successful marker.
@@ -306,8 +318,15 @@ def _main():
     from sv08_admission import Admission
     tx = Transaction(store, backend, Admission())
     def fallback(_boot, _id, _reason):
+        if disposable_fixture:
+            # Keep the disposable guest available for its failure reporter;
+            # production fallback continues to request the normal reboot.
+            atomic_json(Path('/run/sv08/qemu-fallback-requested.json'),
+                        dict(id=_id, reason=str(_reason)[:512]))
+            return
         subprocess.run(['/usr/bin/systemctl', 'reboot'], check=True, timeout=5)
-    health = HostHealth(backend, manifest)
+    health = HostHealth(backend, manifest, deadline=120 if disposable_fixture else DEADLINE_SECONDS - 20,
+                        disposable_fixture=disposable_fixture)
     outcome = run(boot, tx, health, boot_admission, fallback,
                   ready='/run/sv08/os-health-ready', trial_marker='/run/sv08/trial',
                   validate=validate)
@@ -315,10 +334,20 @@ def _main():
         raise ValueError('Unsupported boot outcome')
 
 
-def main(deadline_seconds=50):
+def main(deadline_seconds=None):
+    # A restart may not inherit a previous success if fixture detection or
+    # manifest loading fails before _main begins.
+    Path('/run/sv08/os-health-ready').unlink(missing_ok=True)
     try:
-        with coordinator_deadline(deadline_seconds):
-            _main()
+        with coordinator_deadline(deadline_seconds if deadline_seconds is not None else 50) as reset_deadline:
+            manifest = bounded_json('/usr/lib/sv08/release.json')
+            cmdline = Path('/proc/cmdline').read_text().split()
+            fixture = (manifest.get('deployable') is False and 'sv08.test=rauc-backend' in cmdline and
+                       subprocess.check_output(['/usr/bin/systemd-detect-virt', '--vm'], text=True,
+                                               timeout=3).strip() == 'qemu')
+            if deadline_seconds is None and fixture:
+                reset_deadline(180, fixture=True)
+            _main(disposable_fixture=fixture)
     except Exception as exc:
         # The boot record itself may be malformed. Bind a compact diagnostic to
         # the kernel boot ID without trusting its unvalidated fields.

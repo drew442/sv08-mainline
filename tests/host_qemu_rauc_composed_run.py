@@ -95,6 +95,7 @@ def prepare(work):
     runtime.mkdir(parents=True, exist_ok=True)
     for source in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(source, runtime / source.name)
+    (runtime / 'sv08_rauc_bootloader.py').chmod(0o755)
     sys.path.insert(0, str(REPO / 'scripts'))
     spec = importlib.util.spec_from_file_location('stage_admin_ui', REPO / 'scripts/stage_admin_ui.py')
     module = importlib.util.module_from_spec(spec)

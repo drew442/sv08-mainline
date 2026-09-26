@@ -76,7 +76,8 @@ def service_policy(profile):
         'executable': '/usr/bin/rauc', 'executable_sha256': profile['executable_sha256'],
         'service': 'rauc.service', 'bus_name': 'de.pengutronix.rauc',
         'config_paths': ['/etc/rauc/system.conf', '/etc/rauc/release-keyring.pem',
-                         '/etc/fw_env.config', '/usr/lib/systemd/system/rauc.service',
+                         '/etc/fw_env.config', '/usr/lib/sv08/sv08_rauc_bootloader.py',
+                         '/usr/lib/systemd/system/rauc.service',
                          '/etc/systemd/system/rauc.service.d/sv08.conf',
                          '/etc/dbus-1/system.d/zz-sv08-rauc.conf'],
     }, indent=2) + '\n'
@@ -177,6 +178,8 @@ WantedBy=local-fs.target
     runtime.mkdir(parents=True, exist_ok=True)
     for source in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(source, runtime / source.name)
+    (runtime / 'sv08_rauc_bootloader.py').chmod(0o755)
+    (runtime / 'sv08_rauc_bootloader.py').chmod(0o755)
     write(runtime / 'release.json', '{"deployable":false}\n')
     for source, destination in [
         (REPO / 'configs/host-os/sv08-rauc-policy.conf', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf'),

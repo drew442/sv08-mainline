@@ -29,9 +29,15 @@ class Backend:
         self.calls = []
     def writer(self): return admitted()
     def validate_context(self, boot): self.calls.append('validate')
-    def resolution_evidence(self, boot): return {'operation': 'idle'}
+    def resolution_evidence(self, boot):
+        self.validate_context(boot)
+        return {'operation': 'idle'}
     def primary(self): return self.selected
     def good(self, slot): return self.states[slot]
+    def validate_bundle(self, bundle, proof, target): pass
+    def boot_policy(self): return dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B', BOOT_A_LEFT='3', BOOT_B_LEFT='0')
+    def disarm_target(self, target, source): self.calls.append('bad'); self.states[target] = False
+    def restore_pre_disarm(self, previous, target, source): self.calls.append('restore')
     def install(self, bundle, proof, target): self.calls.append('install'); self.states[target] = False
     def mark_active(self, slot): self.calls.append('active'); self.selected = slot; self.states[slot] = True
     def mark_good(self, slot): self.calls.append('good'); self.states[slot] = True
@@ -266,6 +272,25 @@ class BootHealthTests(unittest.TestCase):
                 health.probe(self.boot)
         with self.store.locked(nonblocking=True):
             pass
+
+    def test_extended_startup_deadline_is_limited_to_identified_fixture_callers(self):
+        with self.assertRaises(ValueError):
+            with coordinator_deadline(51): pass
+        with coordinator_deadline(0.01, disposable_fixture=True):
+            pass
+        with self.assertRaises(ValueError):
+            with coordinator_deadline(181, disposable_fixture=True): pass
+        with self.assertRaises(ValueError):
+            HostHealth(self.backend, self.manifest, deadline=61)
+        HostHealth(self.backend, self.manifest, deadline=61, disposable_fixture=True)
+
+    def test_health_probe_uses_one_backend_context_validation(self):
+        def command(args, **_):
+            return 'active\n' if args[0] == 'systemctl' else '/data-device\n'
+        self.manifest['devices'] = {'data': '/data-device'}
+        self.backend.calls.clear()
+        HostHealth(self.backend, self.manifest, command=command).probe(self.boot)
+        self.assertEqual(self.backend.calls, ['validate'])
 
     def test_deadline_before_run_records_bounded_startup_failure(self):
         self.ready.touch()

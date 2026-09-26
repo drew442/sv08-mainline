@@ -92,11 +92,31 @@ not expose a browser-controlled URL, keyring, executable or device path. This
 custom feed shim can be retired if upstream RAUC gains equivalent signed
 discovery, anti-replay, printer-idle admission and A/B transaction semantics.
 
-Remaining work: finish the joined signed-feed/RAUC/boot-health/fallback journey
-in a disposable ARM64 VM, produce and independently review a deployable board
-image, install its release feed and trust anchors, verify the complete 8 GB
-image budget, then obtain the independent high-consequence review and physical
-H11 evidence. A space-bounded QEMU run now separately exercises the existing
-trial health and fallback path; its [supporting evidence](host-unattended-update-qemu-health-support-20260926.json)
-records that the signed install and automatic U-Boot handoff are still untested.
-The current diagnostic image remains non-deployable.
+The first combined signed-feed QEMU run reached actual RAUC installation and
+wrote the disposable inactive slot pair, then failed the staging invariant
+because stock RAUC changed `BOOT_ORDER` before the separate arm. An initial
+rerun with the custom handler failed earlier because the QEMU guest could not
+start `rauc.service`. Both were harness/design failures, not passing evidence.
+The independent review and owner-authorized pre-disarm revision are recorded in
+the [RAUC staging review](host-unattended-update-rauc-stage-review-20260926.md).
+The helper journals pre-disarm, keeps the live source selected, restores the
+previous target policy only while the journal proves RAUC was never called, and
+leaves the target disabled after an uncertain install start.
+
+The joined six-boot signed-feed/RAUC/health/fallback QEMU run now passes. It
+performed A-to-B, confirmed B healthy, performed B-to-A after disarming A,
+rejected an intentionally unhealthy A trial through all configured attempts,
+and returned to B with the failed trial canceled. It verified the disposable
+inactive pairs, environment-copy integrity and exact arm deltas, unchanged
+primary/backup GPT and recovery partition, and a persistent user-data sentinel.
+Its [machine-readable result and boot-log hashes](host-unattended-update-qemu-evidence-20260926.json)
+record the exact assertions and limits. The harness models attempt consumption
+using the real redundant environment but supplies each slot on QEMU's kernel
+command line; it does not prove H616 SPL/U-Boot selection or physical behavior.
+The existing independent
+[trial-health QEMU evidence](host-unattended-update-qemu-health-support-20260926.json)
+remains supporting-only. The board image is still non-deployable. A separate
+deployable image, release trust anchors, full 8 GB image-budget check,
+high-consequence review and physical H11 validation remain required. This does
+not establish a whole-device eMMC reflasher; the SD/NFS diagnostic remains
+read-only.

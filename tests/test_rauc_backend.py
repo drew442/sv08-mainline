@@ -41,7 +41,8 @@ class BackendPolicyTests(unittest.TestCase):
 
     def test_auto_activation_custom_handler_wrong_device_or_keyring_refused(self):
         for text in [self.text.replace('activate-installed=false', 'activate-installed=true'),
-                     self.text+'\n[handlers]\npost-install=/unexpected\n',
+                     self.text.replace('/usr/lib/sv08/sv08_rauc_bootloader.py', '/unexpected'),
+                     self.text+'\n[unexpected]\nkey=value\n',
                      self.text.replace('/explicit/root-b', '/wrong/device'),
                      self.text.replace('parent=rootfs.1', 'parent=rootfs.0'),
                      self.text.replace('/etc/rauc/release-keyring.pem', '/wrong/keyring')]:

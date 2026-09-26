@@ -86,6 +86,7 @@ def install_root(base, root, release, policy, *, fail_health, work):
     runtime = root / 'usr/lib/sv08'
     for source in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(source, runtime / source.name)
+    (runtime / 'sv08_rauc_bootloader.py').chmod(0o755)
     for name in ('sv08-prepare.service', 'sv08-boot-health.service', 'sv08-klipper.service'):
         shutil.copyfile(REPO / 'configs/host-os/systemd' / name,
                         root / 'etc/systemd/system' / name)
