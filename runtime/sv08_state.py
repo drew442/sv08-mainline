@@ -165,7 +165,7 @@ class Store:
             for name in ('generations', 'shared/gcodes', 'shared/timelapse', 'shared/logs', 'shared/logs/journal',
                          'system/ssh', 'system/network-connections', 'system/network-state',
                          'system/rauc', 'system/timesync', 'system/rfkill', 'system/linger',
-                         'system/cockpit/ws-certs.d', 'users/sv08'):
+                         'system/cockpit/ws-certs.d', 'users/sv08', 'feed-bundles'):
                 path = self.root / name
                 if any(p.is_symlink() for p in (path, *path.parents)):
                     raise ValueError('Unexpected persistent directory link')

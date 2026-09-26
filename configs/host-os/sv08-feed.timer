@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodic signed SV08 OS release check
+
+[Timer]
+OnBootSec=10min
+OnUnitInactiveSec=6h
+Persistent=true
+Unit=sv08-feed.service
+
+[Install]
+WantedBy=timers.target

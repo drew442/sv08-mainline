@@ -1,0 +1,14 @@
+[Unit]
+Description=Check the fixed signed SV08 OS release feed
+Requires=sv08-prepare.service sv08-boot-health.service
+After=sv08-prepare.service sv08-boot-health.service network-online.target time-sync.target
+ConditionPathExists=/usr/lib/sv08/feed.json
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_feed.py
+TimeoutStartSec=30min
+Restart=no

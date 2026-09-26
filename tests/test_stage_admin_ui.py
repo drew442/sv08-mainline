@@ -33,6 +33,15 @@ class StageUITests(unittest.TestCase):
             self.assertEqual((self.work / 'rootfs' / relative).read_bytes(),
                              (REPO / 'configs/host-os' / source).read_bytes())
         self.assertIn(unit, result['hashes'])
+        for unit_name in ('sv08-feed.service', 'sv08-feed.timer'):
+            name = 'usr/lib/systemd/system/' + unit_name
+            self.assertEqual((self.work / 'rootfs' / name).read_bytes(),
+                             (REPO / 'configs/host-os' / unit_name).read_bytes())
+            self.assertIn(name, result['hashes'])
+        self.assertEqual((self.work / 'rootfs/etc/systemd/system/timers.target.wants/sv08-feed.timer').readlink(),
+                         Path('/usr/lib/systemd/system/sv08-feed.timer'))
+        self.assertIn('ConditionPathExists=/usr/lib/sv08/feed.json',
+                      (self.work / 'rootfs/usr/lib/systemd/system/sv08-feed.service').read_text())
         self.assertIn('usr/lib/sv08/rauc-service-policy.json', result['hashes'])
         self.assertIn('usr/lib/sv08/sv08_admin_jobs.py', result['hashes'])
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/sockets.target.wants').exists())
