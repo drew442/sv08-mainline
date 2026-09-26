@@ -166,6 +166,17 @@ class WriterAdmissionTests(unittest.TestCase):
         self.assertIn('SV08_QEMU_REIMAGE_TEST_ONLY', source)
         self.assertIn('finish("REFUSED_TARGET_ID")', source)
         self.assertIn('finish("REFUSED_INPUT")', source)
+        self.assertIn('sysfs_dev_matches(&ts,"/sys/block/sda/dev")', source)
+
+    def test_guest_readback_keeps_the_admitted_descriptor(self):
+        source = SOURCE.read_text()
+        writer = source.split('/* This is the first target open.', 1)[1]
+        self.assertEqual(writer.count('out=open(target,'), 1)
+        self.assertEqual(writer.count('close(out)'), 1)
+        self.assertLess(writer.index('sysfs_dev_matches(&ts,"/sys/block/sda/dev")'),
+                        writer.index('exact_write(out,CHUNK)'))
+        self.assertIn('lseek(out,0,SEEK_SET)!=0||!exact_read(out,CHUNK)', writer)
+        self.assertIn('lseek(out,0,SEEK_SET)!=0)finish("FAILED_FLUSH")', writer)
 
     def test_timeout_and_flush_failure_never_mark_guest_success(self):
         source = SOURCE.read_text()
@@ -194,6 +205,10 @@ class WriterNativeFailureTests(unittest.TestCase):
     def test_short_read_write_and_flush_fail_closed(self):
         self.assertEqual(self.compile_run('SV08_IO_SELFTEST'),
                          'short-read short-write flush-failure timeout rw-proto refused')
+
+    def test_opened_block_descriptor_matches_strict_sysfs_dev(self):
+        self.assertEqual(self.compile_run('SV08_BINDING_SELFTEST'),
+                         'block-rdev match mismatch malformed changed nonblock refused')
 
 
 if __name__ == '__main__':

@@ -16,6 +16,7 @@
 #include <sys/reboot.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <sys/sysmacros.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -124,6 +125,37 @@ static int exact_usb_capacity(void) {
   int ok=fscanf(f,"%llu",&sectors)==1;fclose(f);
   return ok&&sectors==TARGET_BYTES/512;
 }
+/* Compare the opened block descriptor, not a second resolution of /dev/sda,
+ * with the kernel's major:minor for this disposable QEMU target. */
+static int sysfs_dev_matches(const struct stat *opened,const char *path) {
+  char value[64];size_t used=0;unsigned int major_num=0,minor_num=0;
+  int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+  if(fd<0)return 0;
+  for(;;) {
+    ssize_t n=read(fd,value+used,sizeof(value)-used);
+    if(n<0&&errno==EINTR)continue;
+    if(n<0){close(fd);return 0;}
+    if(n==0)break;
+    used+=(size_t)n;
+    if(used==sizeof(value)){close(fd);return 0;}
+  }
+  close(fd);
+  if(!S_ISBLK(opened->st_mode)||used<4)return 0;
+  size_t pos=0;
+  for(int field=0;field<2;field++) {
+    unsigned int number=0;size_t start=pos;
+    while(pos<used&&value[pos]>='0'&&value[pos]<='9') {
+      unsigned int digit=(unsigned int)(value[pos]-'0');
+      if(number>(UINT32_MAX-digit)/10)return 0;
+      number=number*10+digit;pos++;
+    }
+    if(pos==start)return 0;
+    if(field==0)major_num=number;else minor_num=number;
+    if(field==0) {if(pos==used||value[pos++]!=':')return 0;}
+  }
+  if(pos>=used||value[pos++]!='\n'||pos!=used||major_num==0)return 0;
+  return major(opened->st_rdev)==major_num&&minor(opened->st_rdev)==minor_num;
+}
 static int hash_file(const char *path,char hex[65]) {
   int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);struct sha256 hash;
   if(fd<0)return 0;
@@ -224,6 +256,24 @@ int main(void) {
   puts("short-read short-write flush-failure timeout rw-proto refused");
   return 0;
 }
+#elif defined(SV08_BINDING_SELFTEST)
+int main(void) {
+  char path[]="/tmp/sv08-sysfs-dev-test-XXXXXX";
+  struct stat opened={0};int fd=mkstemp(path);
+  if(fd<0)return 1;
+  opened.st_mode=S_IFBLK;opened.st_rdev=makedev(8,0);
+  const char *cases[]={"8:0\n","8:1\n","broken\n","8:0 extra\n","4294967296:0\n","8:0\n8:1\n","8:0"};
+  for(size_t i=0;i<sizeof(cases)/sizeof(cases[0]);i++) {
+    if(ftruncate(fd,0)||lseek(fd,0,SEEK_SET)!=0||write(fd,cases[i],strlen(cases[i]))!=(ssize_t)strlen(cases[i]))return 2;
+    int matched=sysfs_dev_matches(&opened,path);
+    if(matched!=(i==0))return 3;
+  }
+  opened.st_mode=S_IFREG;
+  if(sysfs_dev_matches(&opened,path))return 4;
+  close(fd);unlink(path);
+  puts("block-rdev match mismatch malformed changed nonblock refused");
+  return 0;
+}
 #else
 int main(void) {
   const char *source="/image.bin",*target="/dev/sda";
@@ -254,7 +304,8 @@ int main(void) {
   out=open(target,O_RDWR|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
   if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||
      (uint64_t)ss.st_size!=IMAGE_BYTES||ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
-     !exact_usb_serial()||!exact_usb_capacity()||(ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
+     !exact_usb_serial()||!exact_usb_capacity()||
+     !sysfs_dev_matches(&ts,"/sys/block/sda/dev")||(ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
     finish("REFUSED_INPUT");
 #if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
   /* Test-only QEMU interruptions. These markers terminate the guest through
@@ -266,8 +317,8 @@ int main(void) {
     if(!strcmp(SV08_TEST_FAULT,"partial-write"))finish("INJECTED_PARTIAL_WRITE");
     if(fsync(out)||ioctl(out,BLKFLSBUF,0))finish("FAILED_FLUSH");
     if(!strcmp(SV08_TEST_FAULT,"flush"))finish("INJECTED_AFTER_FLUSH");
-    close(in);close(out);out=open(target,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
-    if(out<0||!exact_read(out,CHUNK))finish("FAILED_READBACK");
+    close(in);
+    if(lseek(out,0,SEEK_SET)!=0||!exact_read(out,CHUNK))finish("FAILED_READBACK");
     finish("INJECTED_DURING_READBACK");
   }
 #endif
@@ -285,9 +336,7 @@ int main(void) {
   sha_final(&hash,actual);
   if(strcmp(actual,expected))finish("FAILED_SOURCE_CHANGED");
   if(fsync(out)||ioctl(out,BLKFLSBUF,0)||lseek(out,0,SEEK_SET)!=0)finish("FAILED_FLUSH");
-  close(in);close(out);out=open(target,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
-  if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES)
-    finish("FAILED_READBACK_OPEN");
+  close(in);
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(out,n))finish("FAILED_READBACK");
