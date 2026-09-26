@@ -1,12 +1,20 @@
 # Network-boot eMMC environment read candidate
 
-Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: offline
-candidate, awaiting independent boot-policy/artifact review. This is a method to
+Date: 2026-09-26 UTC. Hardware profile: `test-sv08-01`. Status: reviewed offline
+candidate, awaiting exact SD write/readback and one supervised physical test. This is a method to
 complete the existing H10 read-only environment inspection without removing
 the eMMC to use a USB writer. It is not a supported recovery image. The owner
 reports that the spare eMMC is currently out of the printer. It must be
 reinstalled before this network test can access its environment; NFS does not
 make a physically absent device available.
+
+Beelink is measured at `192.168.1.136`. Its NFSv3/TCP export of
+`/srv/sv08-sd-nfs` is currently read-only with root-squash and limited to
+Beelink (`192.168.1.136`) and the expected printer reservation (`192.168.1.141`).
+A local NFSv3/TCP mount read the deployed init at the hash below, and a write
+probe was refused with `Read-only file system`. The disposable SD reader is not
+currently enumerated on Beelink, so the reviewed image has not yet been written
+to the card.
 
 ## Why the existing network boot could not read eMMC
 
@@ -48,10 +56,13 @@ The NFS init then searches only under the SMHC2 sysfs controller path for one
 `0x800000` with `pread`, validates both U-Boot environment CRCs, and accepts
 only the `ab-8gb-v1` layout and bounded boot-policy values. It emits the
 device path, sector count, CRC validity, flags, order, and A/B counters; it
-never prints raw environment data, CID, or other variables. The general
-`SV08_SD_NFS_PASS` line is separate and cannot be used as H10 counter evidence.
-H10 passes only if the eMMC line identifies the single expected 32 GB card and
-both copies report valid CRCs and parseable policy values. Missing, ambiguous,
+never prints raw environment data, CID, or other variables. It reports
+`READ_ONLY_VALID_PAIR` only if both copies have valid CRCs and parseable policy
+values; otherwise it reports `READ_ONLY_INCOMPLETE_PAIR` or a specific
+discovery/read/format failure. The general `SV08_SD_NFS_PASS` line is separate
+and cannot be used as H10 counter evidence. H10 passes only if the eMMC line
+identifies the single expected 32 GB card and both copies report valid CRCs and
+parseable policy values. Missing, ambiguous,
 unreadable, corrupt, or unrecognized results fail closed and the init powers
 down; it does not fall through to another boot.
 
@@ -76,8 +87,8 @@ configuration are source-controlled. Key outputs:
 | Linux `Image` | 33,405,440 bytes | `5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34` |
 | Linux initramfs | 15,233,015 bytes | `8be88ee081ad61c64de216425b031b8988447d6fb009022edeffaf53f115d09e` |
 | Linux DTB | 48,208 bytes | `571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f` |
-| NFS init executable | 772,808 bytes | `428669f4d60d25edfb3ec121ddb639fee94d23845786e71516e01c7f93933502` |
-| NFS root manifest | — | `26a395aa56abe83fd356895c48ce0935e172d381f21caa66c7658e8e29538fce` |
+| NFS init executable | 772,784 bytes | `18271a75e14af6b2c8351c6fce697d77877b64dab7ffa5f8a65d1888a16833ad` |
+| NFS root manifest | — | `011236722e40bdac7e567b5e103bcfaaa278c66841ca26da52da27e527c28616` |
 
 The patched U-Boot source was inspected after build: `board_mmc_init()` applies
 the PC3 input/pull-down, and the effective configuration still has
@@ -93,11 +104,21 @@ checks passed. With NFS unavailable, DHCP completed, the kernel halted without
 running the probe, and the harness cleaned up QEMU and server processes. QEMU
 does not model the H616 PC3 selector or eMMC and cannot validate the H10 read.
 
+The refreshed NFS executable is served over the network, so this correction does
+not change the SD image hash. The manifest and composition receipt bind the new
+executable to the same image. The QEMU harness now removes stale serial logs
+before each launch; a fresh run completed online NFS-root checks in 28.02 seconds
+and server-missing DHCP/halt checks in 35.03 seconds. Both are offline results.
+
 ## Next action and stop conditions
 
-An independent review must approve the exact image, PC3 setting, eMMC isolation
-in U-Boot, NFS init, and stop behavior before media preparation. In one side-
-lying session with the printer fully off, the owner moves only the disposable
+Independent high-consequence review returned PASS WITH CONDITIONS for one
+supervised boot of the exact SD image above. It confirmed the PC3 selector setup,
+U-Boot eMMC isolation, bounded read-only probe, and stop behavior; PC3's effect
+on this SV08 remains an inference until measured. The review requires exact SD
+direct-I/O readback, only the spare eMMC reinstalled while fully powered off,
+receive-only serial capture armed before power, and one supervised boot. In one
+side-lying session with the printer fully off, the owner moves only the disposable
 SD to Beelink's writer, writes this reviewed image, and provides direct-I/O
 readback matching the exact image hash. The owner reinstalls the spare eMMC in
 the printer and the reviewed SD; the factory eMMC stays stored. Before power-on,

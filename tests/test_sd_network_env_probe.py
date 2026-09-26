@@ -29,6 +29,14 @@ class SdNetworkEnvProbeTests(unittest.TestCase):
         self.assertNotRegex(source, r'\b(pwrite|write|ioctl|system|popen)\s*\(')
         self.assertNotIn('O_RDWR', source)
 
+    def test_probe_distinguishes_complete_and_incomplete_environment_pairs(self):
+        source = SOURCE.read_text()
+        self.assertIn('a.crc_ok && b.crc_ok ? "READ_ONLY_VALID_PAIR" :', source)
+        self.assertIn('"READ_ONLY_INCOMPLETE_PAIR"', source)
+        self.assertIn('return a.crc_ok && b.crc_ok;', source)
+        self.assertIn('copy4_flag=%s', source)
+        self.assertIn('copy8_flag=%s', source)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -155,7 +155,9 @@ The NFS init reads only the 64 KiB environment regions at 4 MiB and 8 MiB via
 checks each U-Boot CRC, and emits only boot-order/counter values. It rejects
 missing or ambiguous cards and unrecognized layouts. The general
 `SV08_SD_NFS_PASS` marker proves only the NFS-root checks; H10 requires the
-separate eMMC line to report the target and both CRC-valid copies. QEMU has no
-eMMC and therefore tests only refusal behavior. The candidate still needs
-independent review and direct SD-media readback before a supervised physical
-boot; no NFS export or SD card has yet been changed for this follow-on.
+separate `READ_ONLY_VALID_PAIR` eMMC line to report the target and both CRC-valid
+copies. QEMU has no eMMC and therefore tests only refusal behavior. Independent
+review passed with conditions, the updated init is deployed on Beelink and its
+NFSv3/TCP export was locally verified read-only with root-squash. The exact SD
+image still requires a write and full direct-I/O readback before a supervised
+physical boot; see the [current H10 record](host-sd-network-emmc-probe-20260926.md).

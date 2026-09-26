@@ -95,6 +95,10 @@ CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="sv08-sd-network.env"
         self.assertIn('CONFIG_MMC_SUNXI_SLOT_EXTRA=-1', sd.FRAGMENT.read_text())
         self.assertNotIn('sunxi_mmc_init(2)', patch)
 
+    def test_qemu_harness_removes_old_serial_evidence_before_each_boot(self):
+        source = (REPO / 'tests/host_qemu_sd_network.py').read_text()
+        self.assertIn('serial_path.unlink(missing_ok=True)', source)
+
 
 if __name__ == '__main__':
     unittest.main()

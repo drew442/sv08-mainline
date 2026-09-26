@@ -145,6 +145,7 @@ static int report_emmc(void) {
     unsigned char env_a[ENV_SIZE], env_b[ENV_SIZE];
     struct env_result a, b;
     struct stat st;
+    char a_flag[8], b_flag[8];
     unsigned long long sectors = 0;
     int fd;
     if (!emmc_device(path, sizeof(path), &sectors)) {
@@ -164,12 +165,19 @@ static int report_emmc(void) {
         puts("SV08_EMMC_ENV status=ENV_FORMAT_UNRECOGNIZED");
         return 0;
     }
-    printf("SV08_EMMC_ENV status=READ_ONLY device=%s sectors=%llu copy4_crc=%s copy4_flag=%u copy4_order=%s copy4_A=%s copy4_B=%s copy8_crc=%s copy8_flag=%u copy8_order=%s copy8_A=%s copy8_B=%s\n",
-           path, sectors, a.crc_ok ? "valid" : "bad", a.flag, a.crc_ok ? a.order : "unknown",
+    if (a.crc_ok) snprintf(a_flag, sizeof(a_flag), "%u", a.flag);
+    else strcpy(a_flag, "unknown");
+    if (b.crc_ok) snprintf(b_flag, sizeof(b_flag), "%u", b.flag);
+    else strcpy(b_flag, "unknown");
+    printf("SV08_EMMC_ENV status=%s device=%s sectors=%llu copy4_crc=%s copy4_flag=%s copy4_order=%s copy4_A=%s copy4_B=%s copy8_crc=%s copy8_flag=%s copy8_order=%s copy8_A=%s copy8_B=%s\n",
+           a.crc_ok && b.crc_ok ? "READ_ONLY_VALID_PAIR" : "READ_ONLY_INCOMPLETE_PAIR",
+           path, sectors, a.crc_ok ? "valid" : "bad", a_flag,
+           a.crc_ok ? a.order : "unknown",
            a.crc_ok ? a.a_left : "unknown", a.crc_ok ? a.b_left : "unknown",
-           b.crc_ok ? "valid" : "bad", b.flag, b.crc_ok ? b.order : "unknown",
+           b.crc_ok ? "valid" : "bad", b_flag,
+           b.crc_ok ? b.order : "unknown",
            b.crc_ok ? b.a_left : "unknown", b.crc_ok ? b.b_left : "unknown");
-    return a.crc_ok || b.crc_ok;
+    return a.crc_ok && b.crc_ok;
 }
 
 static int has_mount(const char *where, const char *type, const char *option) {

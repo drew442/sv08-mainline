@@ -108,6 +108,7 @@ EXPORT {{ Export_Id = 1; Path = "{nfs_root}"; Pseudo = "/srv/sv08-sd-nfs"; Acces
 
         def guest(name, marker, timeout):
             serial_path = work / f'qemu-{name}-serial.log'
+            serial_path.unlink(missing_ok=True)
             command = qemu + ['-chardev', f'file,id=serial,path={serial_path}',
                               '-device', 'pci-serial,chardev=serial']
             began = time.monotonic()
