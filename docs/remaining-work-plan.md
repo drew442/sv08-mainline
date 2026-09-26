@@ -38,8 +38,11 @@ without a change, failure or unresolved integration question that justifies it.
 - The disposable SD diagnostic has booted its local loader/kernel/initramfs and
   mounted Beelink's read-only NFS root on the printer. It proves this limited
   development path without an eMMC write, not a complete host OS or recovery
-  product. Before another eMMC-selected boot, inspect the current redundant
-  environment and A counter read-only; the SD diagnostic did not access them.
+  product. Before another eMMC-selected boot, read the current redundant
+  environment and A counter through a separately reviewed H10 SD/NFS candidate
+  if Linux can see SMHC2; the exact SD image still needs review and readback.
+  If that path fails, use the accepted USB-reader route. Do not infer current
+  counters from earlier captures.
 - Klipper, Moonraker, Mainsail and KlipperScreen packages have offline evidence.
   Full printer services and printing remain uncommissioned.
 - A/B transactions, persistent state and operating modes have component/VM

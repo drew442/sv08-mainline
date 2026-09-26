@@ -34,3 +34,24 @@ new file mode 100644
 +	regulator-min-microvolt = <1350000>;
 +	regulator-max-microvolt = <1500000>;
 +};
+
+diff --git a/board/sunxi/board.c b/board/sunxi/board.c
+index 63f4d51..6dd88f2 100644
+--- a/board/sunxi/board.c
++++ b/board/sunxi/board.c
+@@ -514,6 +514,15 @@ int board_mmc_init(struct bd_info *bis)
+ {
++	/*
++	 * The SV08 H616 board uses PC3 as the external eMMC select. Keep the
++	 * controller disabled in this SD-only U-Boot, but select eMMC before
++	 * Linux probes SMHC2. This matches the PC3 input/pull-down setup in the
++	 * pinned CB1 board patch without initializing or reading the eMMC here.
++	 */
++	sunxi_gpio_set_cfgpin(SUNXI_GPC(3), SUNXI_GPIO_INPUT);
++	sunxi_gpio_set_pull(SUNXI_GPC(3), SUNXI_GPIO_PULL_DOWN);
++	sunxi_gpio_set_drv(SUNXI_GPC(3), 3);
+ 	/*
+ 	 * The BROM always accesses MMC port 0 (typically an SD card), and
+ 	 * most boards seem to have such a slot. The others haven't reported
+ 	 * any problem with unconditionally enabling this in the SPL.
+ 	 */

@@ -112,9 +112,12 @@ power-loss behavior and physical boot/fallback tests pass.
 3. Treat U-Boot Ethernet/TFTP support as a separate option: it would remove the
    need to update SD for kernel/initramfs changes, but is unnecessary for
    iterating on a network-resident root filesystem.
-4. Before any later physical boot, inspect the current eMMC A counter under a
-   separate reviewed procedure and prepare a fresh exact-image review and
-   capture. The single supervised attempt for this diagnostic is complete.
+4. Before a later eMMC-selected boot, inspect the current A counter using the
+   [H10 network probe candidate](host-sd-network-emmc-probe-20260926.md). It
+   requires a fresh review and a new SD write because this U-Boot has no network
+   loader. The installed eMMC stays in place; use the accepted USB-reader path
+   only if the SD/NFS kernel still cannot enumerate it. H09's supervised
+   network-root trial is complete; H10 is a distinct test.
 
 Primary documentation accessed 2026-09-25: BIGTREETECH's [CB1 repository
 README](https://github.com/bigtreetech/CB1#cb1-emmc-version) says its eMMC

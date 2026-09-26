@@ -15,7 +15,9 @@ separately built SPL/TF-A/U-Boot at byte 8192, relocates the GPT table to sector
 U-Boot environment regions. The generated U-Boot has `ENV_IS_NOWHERE`, no RAUC
 boot method, no boot-standard scanner, no `saveenv`, and no extra sunxi MMC
 slot. Its board DT enables external SD as `mmc0` and disables Wi-Fi SDIO and
-eMMC. Compiled default commands load only `mmc 0:1`, verify the script SHA-256,
+eMMC. The H10 follow-on candidate additionally selects the eMMC path for Linux
+by applying the CB1 PC3 input/pull-down, while still leaving the U-Boot eMMC
+controller disabled. Compiled default commands load only `mmc 0:1`, verify the script SHA-256,
 then the script verifies the local kernel, initramfs and device tree hashes
 before `booti`. The loader does not use Ethernet.
 
@@ -136,3 +138,24 @@ The local investigation and source limits are in
 The H616 controller mapping comes from the pinned U-Boot source and Allwinner
 H616 User Manual v1.0, §3, cited there. Source and offline evidence were
 inspected on 2026-09-25.
+
+## H10 network counter-read candidate (2026-09-26)
+
+The H09 serial trace records `mmc2: Failed to initialize a non-removable
+card`; it enumerated the SD but no eMMC block device. Source inspection found
+that the SD-only U-Boot build sets `CONFIG_MMC_SUNXI_SLOT_EXTRA=-1`, so its
+`board_mmc_init()` skipped the vendor CB1 PC3 input/pull-down that selects the
+eMMC path. The follow-on U-Boot patch now applies those same GPIO settings but
+keeps the eMMC controller disabled and never calls `sunxi_mmc_init(2)`. Linux's
+separate diagnostic DT already enables SMHC2. The reasoning and limits are in
+[`host-sd-network-emmc-probe-20260926.md`](host-sd-network-emmc-probe-20260926.md).
+
+The NFS init reads only the 64 KiB environment regions at 4 MiB and 8 MiB via
+`O_RDONLY`/`pread`, maps the card by SMHC2 sysfs ancestry and 32 GB capacity,
+checks each U-Boot CRC, and emits only boot-order/counter values. It rejects
+missing or ambiguous cards and unrecognized layouts. The general
+`SV08_SD_NFS_PASS` marker proves only the NFS-root checks; H10 requires the
+separate eMMC line to report the target and both CRC-valid copies. QEMU has no
+eMMC and therefore tests only refusal behavior. The candidate still needs
+independent review and direct SD-media readback before a supervised physical
+boot; no NFS export or SD card has yet been changed for this follow-on.

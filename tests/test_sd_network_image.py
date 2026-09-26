@@ -80,12 +80,20 @@ CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="sv08-sd-network.env"
                                          '# CONFIG_HASH_VERIFY is not set'))
             with self.assertRaisesRegex(ValueError, 'Unsafe effective'):
                 sd.inspect_config(path)
+
             path.write_text(safe)
             self.assertEqual(sd.inspect_config(path)['CONFIG_HASH_VERIFY'], 'y')
             path.write_text(safe.replace('CONFIG_SHA256=y',
                                          '# CONFIG_SHA256 is not set'))
             with self.assertRaisesRegex(ValueError, 'Unsafe effective'):
                 sd.inspect_config(path)
+
+    def test_board_selects_emmc_for_linux_without_uboot_mmc2_probe(self):
+        patch = sd.PATCH.read_text()
+        self.assertIn('sunxi_gpio_set_cfgpin(SUNXI_GPC(3), SUNXI_GPIO_INPUT)', patch)
+        self.assertIn('sunxi_gpio_set_pull(SUNXI_GPC(3), SUNXI_GPIO_PULL_DOWN)', patch)
+        self.assertIn('CONFIG_MMC_SUNXI_SLOT_EXTRA=-1', sd.FRAGMENT.read_text())
+        self.assertNotIn('sunxi_mmc_init(2)', patch)
 
 
 if __name__ == '__main__':
