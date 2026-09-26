@@ -86,7 +86,6 @@
         "signed-feed",
         "automatic-admission",
         "crash-replay",
-        "qemu-ab-journey",
         "integration-boundaries"
       ],
       "depends_on": [],
@@ -108,10 +107,29 @@
     {
       "blocker": null,
       "checks": [
-        "physical-ab-validation"
+        "qemu-ab-journey"
       ],
       "depends_on": [
         "host-unattended-ab-updates:implement-offline"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "qemu-ab-journey",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Exercise signed inactive-slot update, boot health and fallback in disposable QEMU",
+      "verification": null
+    },
+    {
+      "blocker": null,
+      "checks": [
+        "physical-ab-validation"
+      ],
+      "depends_on": [
+        "host-unattended-ab-updates:qemu-ab-journey"
       ],
       "environment": "hardware",
       "evidence": [],
