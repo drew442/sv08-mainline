@@ -43,8 +43,9 @@ mode. Before opening `/dev/mmcblk0`, it checks the pinned bundle hashes and
 signed-job time window, then requires a successful one-shot claim response.
 The H616 adapter scans the `4022000.mmc` sysfs inventory for one MMC of the
 expected CID/type/sector count, checks the controller path and expected
-`dev_t`, opens the target once, and compares `fstat(st_rdev)` with the sysfs
-device number. It rechecks the inventory and dev number before the first
+`dev_t`, and compares the card inventory's device number with block sysfs.
+It opens the target once and compares `fstat(st_rdev)` with that same number.
+It rechecks the inventory and dev number before the first
 write. The same descriptor is used for the complete write, flush and full
 readback. Any refusal or uncertain write ends in a poweroff path; there is no
 retry or rearm code in the guest. The server-side durable claim is the existing
@@ -66,7 +67,7 @@ Offline checks on the implementation tree:
 
 ```text
 python3 -m unittest tests.test_h616_reimage_candidate tests.test_qemu_reimage_mode tests.test_sd_network_emmc_write tests.test_sd_network_image -q
-29 tests passed (15.49 s)
+31 tests passed (15.59 s)
 aarch64-linux-gnu-gcc -static -Os -D_FORTIFY_SOURCE=2 -Wall -Wextra -Werror ... emmc_image_writer.c
 physical and synthetic H616 compile checks passed
 python3 -m py_compile scripts/build_h616_reimage_candidate.py tests/host_qemu_sd_network_emmc_write.py tests/test_h616_reimage_candidate.py
@@ -79,16 +80,19 @@ The local tests cover missing/changed/stale/incorrectly signed job inputs,
 exact 0600 private input permissions, wrong but mutually consistent policy and
 job GPT fields, output-parent symlink refusal, unchanged default diagnostic,
 deterministic synthetic artifact construction, and a native execution of the H616 identity
-adapter against single, changed and ambiguous synthetic inventory. Existing
+adapter against single, changed and ambiguous synthetic inventory. Additional
+regressions assert the H616 fixture's exact 61,079,552-sector inventory across
+all three identity faults, and pass the H616 target capacity through both host
+admission checks and the success receipt. Existing
 QEMU-mode and writer regressions also passed. The synthetic artifact built
 from the fixed public test inputs in `tests/test_h616_reimage_candidate.py`
-has writer SHA-256 `eb99f1cf3566ff841702a4a9b96585ca6f5f7542242aecbe5ad4c3e7f0f1a5a6`
+has writer SHA-256 `723ca2d058408471b01c2f626aba2cfac4d019b5e8e8c94fa446eb748cc50af4`
 and ARM64 binary SHA-256
-`5dd3d5fb8c6cb73b5b38ca3240d298690c7fdf613366343da7dc04a24af23b6e`.
+`49602427e3520438f08e3a0355ce6ae92594cfbf9e39fedb0332f1e1f0c5d28a`.
 The builder, QEMU harness and H616 test source hashes are respectively
 `03fd74de5bc43d6116eeb4822ac89f7f5ba69876f678b661edd0a1c1769b8b73`,
-`61c206e5cb18a97cf0df8f64210d032a74d5e26afe97e32d9449eb6b91ef6419`,
-and `ba6ac4f0bd26d416d2a7e8f004a764a438a8e8063f35515cfc3735c89bc3c07a`.
+`5d31e20940364e4e67ad8ae19e3e7b136ac09dd5ab17482b7a3712df3b42b64c`,
+and `060b0a6259c3df60db5d908e0d972338a419790e9a2371eb7dd1068db3260436`.
 The synthetic policy/job/signature/verifier hashes are respectively
 `61814a3ee45841e4d082fc0318dd10f130f21dab54b20c60650f7d7438b2149b`,
 `172c6da19a532b81e27eaf8ef09a65d3641ac4c7a47548292592ca26e21532e7`,

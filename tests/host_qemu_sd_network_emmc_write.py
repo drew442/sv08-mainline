@@ -273,8 +273,9 @@ FAULT_MARKERS = {
 }
 
 
-def synthetic_mmc_fixture(root, identity_fault=None):
+def synthetic_mmc_fixture(root, identity_fault=None, *, commissioning=False):
     """Explicit test adapter: synthetic MMC dev=8:0 maps to QEMU USB /dev/sda."""
+    sectors = h616_synthetic_policy()['sectors'] if commissioning else policy()['sectors']
     base = root / 'synthetic-mmc'
     card = base / 'mmc0/mmc0:0001'
     block = card / 'block/mmcblk0'
@@ -282,14 +283,14 @@ def synthetic_mmc_fixture(root, identity_fault=None):
     (card / 'type').write_text('MMC\n')
     (card / 'cid').write_text(('00000000000000000000000000000002' if
                              identity_fault == 'wrong-cid' else SYNTHETIC_CID) + '\n')
-    (block / 'size').write_text(f'{policy()["sectors"]}\n')
+    (block / 'size').write_text(f'{sectors}\n')
     (block / 'dev').write_text('8:1\n' if identity_fault == 'wrong-dev' else '8:0\n')
     if identity_fault == 'ambiguous':
         other = base / 'mmc1/mmc1:0001/block/mmcblk1'
         other.mkdir(parents=True)
         (other.parent.parent / 'type').write_text('MMC\n')
         (other.parent.parent / 'cid').write_text(SYNTHETIC_CID + '\n')
-        (other / 'size').write_text(f'{policy()["sectors"]}\n')
+        (other / 'size').write_text(f'{sectors}\n')
         (other / 'dev').write_text('8:1\n')
 
 
@@ -347,7 +348,7 @@ def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signatu
                                         fault=fault, claim_only=claim_only))
     if mode_manifest['status'] != ('nondeployable-commissioning-candidate' if commissioning else 'nondeployable-qemu-only'):
         raise ValueError('Untrusted QEMU mode artifact')
-    synthetic_mmc_fixture(root, identity_fault)
+    synthetic_mmc_fixture(root, identity_fault, commissioning=commissioning)
     descriptor_bytes = canonical_json(descriptor)
     descriptor_hash = sha256_bytes(descriptor_bytes)
     (root / 'job.json').chmod(0o444)
@@ -562,7 +563,7 @@ def main():
                 print(json.dumps(result), flush=True)
                 return
             os.fsync(fd)
-            admit_target(work, fd, source)
+            admit_target(work, fd, source, target_bytes)
             validate_source(source)
             if digest(target, IMAGE_BYTES) != IMAGE_SHA256:
                 raise ValueError('Independent host full readback differs')
@@ -571,7 +572,7 @@ def main():
                 raise ValueError('GPT partition map differs')
             result = {'status': 'qemu-only-pass', 'source_bytes': IMAGE_BYTES,
                       'readback_bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
-                      'target_bytes': TARGET_BYTES, 'target_serial': SERIAL,
+                      'target_bytes': target_bytes, 'target_serial': SERIAL,
                       'gpt': gpt, 'claim': claim_evidence['claim'],
                       'guest_serial_sha256': digest(work / 'serial.log')}
             (work / 'result.json').write_text(json.dumps(result, indent=2) + '\n')

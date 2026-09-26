@@ -241,6 +241,31 @@ static int synthetic_mmc_identity(dev_t *number) {
 }
 #endif
 #if defined(SV08_H616_COMMISSIONING)
+static int h616_inventory_dev_at(const char *base,dev_t *number) {
+  DIR *hosts=opendir(base);struct dirent *host,*card;int found=0,ok=1,next=0;
+  if(!hosts)return 0;
+  while(ok&&(next=sv08_next_entry(hosts,&host))>0) {
+    if(!sv08_named_number(host->d_name,"mmc"))continue;
+    char host_path[512];
+    if(snprintf(host_path,sizeof(host_path),"%s/%s",base,host->d_name)>=(int)sizeof(host_path)) {ok=0;break;}
+    DIR *cards=opendir(host_path);int card_next=0;
+    if(!cards){ok=0;break;}
+    while(ok&&(card_next=sv08_next_entry(cards,&card))>0) {
+      size_t host_length=strlen(host->d_name);
+      if(strncmp(card->d_name,host->d_name,host_length)||card->d_name[host_length]!=':')continue;
+      char type_path[896],type[32],dev_path[1024];
+      if(snprintf(type_path,sizeof(type_path),"%s/%s/type",host_path,card->d_name)>=(int)sizeof(type_path)||
+         !sv08_read_line(type_path,type,sizeof(type))) {ok=0;break;}
+      if(!strcmp(type,"SD")||!strcmp(type,"SDIO"))continue;
+      if(strcmp(type,"MMC")||++found!=1||
+         snprintf(dev_path,sizeof(dev_path),"%s/%s/block/mmcblk0/dev",host_path,card->d_name)>=(int)sizeof(dev_path)||
+         !read_sysfs_dev(dev_path,number)) {ok=0;break;}
+    }
+    if(card_next<0||closedir(cards))ok=0;
+  }
+  if(next<0||closedir(hosts))ok=0;
+  return ok&&found==1;
+}
 static int h616_controller_matches(void) {
 #if defined(SV08_H616_SYNTHETIC_TEST)
   return 1; /* QEMU cannot model the physical kernel controller path. */
@@ -257,12 +282,13 @@ static int h616_controller_matches(void) {
 #endif
 }
 static int h616_mmc_identity_at(const char *base,const char *dev_sysfs,dev_t *number) {
-  char device[64],dev_text[64];unsigned long long sectors=0;
+  char device[64],dev_text[64];unsigned long long sectors=0;dev_t inventory_dev;
   if(!sv08_emmc_cid_device_at(base,SV08_H616_EXPECTED_CID,
                               device,sizeof(device),&sectors)||
      strcmp(device,"/dev/mmcblk0")||sectors!=SV08_EMMC_SECTORS||
      !h616_controller_matches()||
-     !read_sysfs_dev(dev_sysfs,number))return 0;
+     !h616_inventory_dev_at(base,&inventory_dev)||
+     !read_sysfs_dev(dev_sysfs,number)||inventory_dev!=*number)return 0;
   snprintf(dev_text,sizeof(dev_text),"%u:%u",major(*number),minor(*number));
   return !strcmp(dev_text,SV08_H616_EXPECTED_DEV_T);
 }

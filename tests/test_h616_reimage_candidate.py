@@ -1,10 +1,13 @@
 """Offline tests for the inert H616 commissioning candidate and shared adapter."""
 import copy
+from contextlib import redirect_stdout
+import io
 import json
 from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 from scripts.build_h616_reimage_candidate import (
     REPO, WRITER, IMAGE_BYTES, SECTORS, TARGET_BYTES, build, digest,
@@ -13,6 +16,7 @@ from scripts.build_h616_reimage_candidate import (
 from tests.host_qemu_sd_network_emmc_write import (
     DISK_GUID, IMAGE_SHA256, expected_records, synthetic_mmc_fixture,
 )
+from tests import host_qemu_sd_network_emmc_write as harness
 from tests.sv08_emmc_job import canonical_json
 
 KEYS = REPO / 'tests/fixtures/sd-network-root/synthetic-keys'
@@ -225,6 +229,62 @@ class CandidateTests(unittest.TestCase):
             (other.parent.parent / 'cid').write_text('0' * 32 + '\n')
             (other / 'size').write_text(str(SECTORS) + '\n')
             self.assertEqual(check(), 'refused')
+
+    def test_commissioning_fixture_size_and_each_identity_fault(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            root = Path(temporary)
+            binary = root / 'identity-test'
+            flags = ['-DSV08_H616_COMMISSIONING=1', '-DSV08_H616_SYNTHETIC_TEST=1',
+                     '-DSV08_H616_IDENTITY_SELFTEST=1',
+                     '-DSV08_H616_EXPECTED_CID="00000000000000000000000000000001"',
+                     '-DSV08_H616_EXPECTED_DEV_T="8:0"',
+                     '-DSV08_H616_BOARD_COMPATIBLE="test,synthetic-h616"',
+                     '-DSV08_H616_CLAIM_SERVER="10.0.2.2"']
+            subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                            *flags, '-o', str(binary), str(WRITER)], check=True, capture_output=True)
+            for fault in (None, 'wrong-cid', 'wrong-dev', 'ambiguous'):
+                with self.subTest(fault=fault):
+                    case = root / (fault or 'valid')
+                    case.mkdir()
+                    synthetic_mmc_fixture(case, fault, commissioning=True)
+                    base = case / 'synthetic-mmc'
+                    block = base / 'mmc0/mmc0:0001/block/mmcblk0'
+                    self.assertEqual((block / 'size').read_text(), f'{SECTORS}\n')
+                    result = subprocess.check_output([
+                        str(binary), str(base), str(block / 'dev')], text=True).strip()
+                    self.assertEqual(result, 'admitted 8:0' if fault is None else 'refused')
+                    if fault == 'wrong-cid':
+                        self.assertNotEqual((block.parent.parent / 'cid').read_text().strip(),
+                                            synthetic_policy()['cid'])
+                    elif fault == 'wrong-dev':
+                        self.assertEqual((block / 'dev').read_text(), '8:1\n')
+                    elif fault == 'ambiguous':
+                        self.assertEqual((base / 'mmc1/mmc1:0001/block/mmcblk1/size').read_text(),
+                                         f'{SECTORS}\n')
+
+    def test_commissioning_success_rechecks_and_reports_its_target_size(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary) / 'run'
+            with (mock.patch.object(harness, 'verify_inputs', return_value='root=/dev/nfs ro sv08.qemu_reimage=1'),
+                  mock.patch.object(harness, 'create_synthetic_source',
+                                    side_effect=lambda path: (path.write_bytes(b'synthetic'), IMAGE_SHA256)[1]),
+                  mock.patch.object(harness, 'validate_source'),
+                  mock.patch.object(harness, 'TARGET_BYTES', 1024),
+                  mock.patch.object(harness, 'H616_TARGET_BYTES', 1536),
+                  mock.patch.object(harness, 'execute', return_value={'claim': {'status': 'consumed-before-write'}}),
+                  mock.patch.object(harness, 'digest', return_value=IMAGE_SHA256),
+                  mock.patch.object(harness, 'inspect_gpt', return_value={
+                      'partition_records': expected_records(), 'disk_guid': DISK_GUID}),
+                  mock.patch('sys.argv', ['writer', '--work', str(work), '--sd-work',
+                                          str(Path(temporary) / 'sd'), '--package-root',
+                                          str(Path(temporary) / 'packages'),
+                                          '--commissioning', '--execute']),
+                  redirect_stdout(io.StringIO())):
+                harness.main()
+            receipt = json.loads((work / 'result.json').read_text())
+            self.assertEqual(receipt['target_bytes'], 1536)
+            self.assertEqual((work / 'target.img').stat().st_size, 1536)
+            self.assertFalse((work / 'FAILED').exists())
 
     def test_default_diagnostic_is_separate_and_claim_precedes_target_open(self):
         default = (REPO / 'scripts/build_sd_network_image.py').read_text()
