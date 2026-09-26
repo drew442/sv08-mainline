@@ -1,0 +1,58 @@
+{
+  "status": "qemu-only-pass",
+  "source_bytes": 7818182656,
+  "readback_bytes": 7818182656,
+  "sha256": "7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec",
+  "target_bytes": 32000000000,
+  "target_serial": "SV08_QEMU_REIMAGE_TEST_ONLY",
+  "gpt": {
+    "disk_guid": "8aae17d2-09b3-47ab-8e35-8e91e63cf2b0",
+    "primary_gpt_crc": true,
+    "backup_gpt_crc": true,
+    "partition_records": [
+      {
+        "number": 1,
+        "name": "boot-a",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e01",
+        "offset_bytes": 16777216,
+        "size_bytes": 201326592
+      },
+      {
+        "number": 2,
+        "name": "root-a",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e02",
+        "offset_bytes": 218103808,
+        "size_bytes": 2147483648
+      },
+      {
+        "number": 3,
+        "name": "boot-b",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e03",
+        "offset_bytes": 2365587456,
+        "size_bytes": 201326592
+      },
+      {
+        "number": 4,
+        "name": "root-b",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e04",
+        "offset_bytes": 2566914048,
+        "size_bytes": 2147483648
+      },
+      {
+        "number": 5,
+        "name": "recovery",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e05",
+        "offset_bytes": 4714397696,
+        "size_bytes": 536870912
+      },
+      {
+        "number": 6,
+        "name": "data",
+        "partuuid": "ed49c82b-2455-4709-8f41-66fd41664e06",
+        "offset_bytes": 5251268608,
+        "size_bytes": 2565865472
+      }
+    ]
+  },
+  "guest_serial_sha256": "be2e353f190263976d80dd0f67487c631769bab19b903b247a6c7a7bf5b5bc3b"
+}
