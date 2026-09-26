@@ -45,8 +45,8 @@ Both sources were accessed 2026-09-26. Review session:
 
 The newly implemented handler is fail-closed when an install target is still
 bootable and uses transaction operation markers for explicit environment
-mutations. Its focused unit tests pass, but no QEMU rerun has verified those
-properties yet.
+mutations. The joined QEMU rerun later verified those properties during the
+signed A-to-B and B-to-A staging sequence; see the evidence record below.
 
 ## Owner-authorized repeated-update policy
 
