@@ -50,7 +50,7 @@ capture is active and must be confirmed ready before serial reconnection.
 The first physical attempt reached SD U-Boot but failed before Linux because
 the `hash -v` command was missing from the compiled configuration. The
 corrected, cleanly rebuilt v2 image is 201,326,592 bytes with SHA-256
-`53cc0b2696add39dae2446c76e1b075f324174713fbc9025aaf20a9aa63d08a`. Its
+`53cc0b2696add39dae24480167d79807e72a15f824fbc9025aaf20a9aa63d08a`. Its
 matching ignored receipt is
 `local/sd-network-physical-20260925/composition-v2.json`. An independent
 high-consequence review returned **GO WITH CONDITIONS** for that exact hash.

@@ -60,7 +60,7 @@ receipt contained a stale fragment hash. It was replaced by a fresh run of
 `scripts/build_sd_network_image.py` against the corrected tracked fragment.
 The new regular-file image is in ignored
 `local/sd-network-physical-20260925/sv08-sd-network-v2.img`; its SHA-256 is
-`53cc0b2696add39dae2446c76e1b075f324174713fbc9025aaf20a9aa63d08a`. The
+`53cc0b2696add39dae24480167d79807e72a15f824fbc9025aaf20a9aa63d08a`. The
 matching private receipt is `composition-v2.json`. It records the corrected
 fragment hash and effective U-Boot configuration, including
 `CONFIG_HASH_VERIFY=y` and `CONFIG_SHA256=y`. Independent review returned
