@@ -225,7 +225,22 @@
         "host-unattended-ab-updates:implement-offline"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "check": "qemu-ab-journey",
+          "document": "docs/hardware/host-unattended-update-qemu-health-support-20260926.json",
+          "document_sha256": "68bb079520a07814a443209947d9aef1a03601f65265714dbad229c7997d0a6e",
+          "environment": "offline",
+          "profile": "Disposable ARM64 QEMU fixture; no connected hardware profile",
+          "method": "Supporting-only QEMU health/fallback run: A boot, B trial health confirmation, failed B requests reboot, and A fallback confirms and cancels the failed trial.",
+          "limitations": "Does not satisfy qemu-ab-journey. No signed feed installation, no actual RAUC inactive-pair write in this run, no U-Boot automatic selection, no GPT/shared-region checks, and no physical hardware. Full joined QEMU acceptance remains active.",
+          "source_commit": "3564337b0fbbd0c6def66f7f537a8b9b7323c0c0",
+          "source_sha256": {
+            "tests/host_qemu_boot_health.py": "bb1808d2f4bd4dbfb8664f979d7c8afa8e2f6b12387d5df7012ebaab8904f733",
+            "build/host-unattended-qemu-health-v6/result.json": "5cbbe14fc15a5baf8235a8bd2ea4b761995166c3b3f010c19e93dac6536898c4"
+          }
+        }
+      ],
       "human_task": null,
       "id": "qemu-ab-journey",
       "implementation": {
