@@ -79,6 +79,22 @@ verify the staged artifact before arming, and the embedded writer must still
 verify its signed job and exact source/target before a whole-device open.
 This sandbox probe does not prove the ARM64 U-Boot binary's FIT handoff.
 
+An isolated selector probe then loaded an 18-byte one-shot marker and the
+same FIT through U-Boot sandbox. U-Boot reports `filesize` in hexadecimal, so
+the exact size check is `12`, not decimal `18`; CRC32 of the marker was
+`82b0ad97`. With the expected size and CRC and an intact FIT, the script
+selected the writer marker. With the marker missing, a 13-byte malformed
+marker, or a one-byte-corrupted FIT, it selected the ordinary recovery marker.
+The retained local logs are `local/reimage-fit-research/selector-{good,missing,bad,corrupt}.log`;
+their SHA-256 values in that order are `9b331fb7a60c72746d3903d6ab068e5fe8384099462dc56d2ca6772d1627fcf7`,
+`13aaa1fc5d50072ecc8196e461998cbba1c5fd8b2549966ffb7a3f887d56dec6`,
+`801827a92f78fb37558d233bc65d28131273c30aba2b423009dd8686faff2167`,
+and `91feda42824c0497ed1b5471433a788d4179dea5b4940385ddc67ccca2fa7ea3`.
+This proves only selector command semantics on disposable host files. The
+production script still needs ext4/MMC loading, original-recovery fallback,
+durable one-shot consumption and full boot testing. CRC32 and FIT hashes are
+integrity checks, not authentication.
+
 ## Remaining exit evidence
 
 The proposal should specify a temporary recovery script that checks a
