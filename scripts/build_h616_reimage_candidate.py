@@ -229,7 +229,8 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
         raise ValueError('Fresh empty output required; physical candidates stay under local/')
     if (fault or claim_only) and not synthetic_test:
         raise ValueError('Fault injection and claim-only builds are synthetic QEMU only')
-    if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write', 'flush', 'readback'):
+    if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write',
+                     'flush', 'readback', 'after-bulk', 'after-first-env'):
         raise ValueError('Unknown injected fault')
     if recovery_handoff and not trusted_initramfs:
         raise ValueError('Recovery handoff requires the trusted initramfs')

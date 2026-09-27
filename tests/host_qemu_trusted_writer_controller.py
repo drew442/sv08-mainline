@@ -139,9 +139,11 @@ def recovery_marker_present(work):
 
 def execute(work, sd_work, sd_dtb, packages, tamper_job,
             *, recovery_handoff=False, installed_image=None,
-            use_installed_source=False):
+            use_installed_source=False, fault=None):
     if os.geteuid() != 0:
         raise PermissionError('Isolated QEMU harness must run as root')
+    if fault not in (None, 'after-bulk', 'after-first-env') or (fault and (tamper_job or not recovery_handoff)):
+        raise ValueError('Environment-last fault requires an untampered recovery handoff')
     work = fresh_work(work)
     if use_installed_source:
         if not recovery_handoff or installed_image is None:
@@ -198,7 +200,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                          synthetic_test=True, trusted_initramfs=True,
                          receipt_verification_key_path=receipt_verify,
                          source_server='10.0.2.2', source_export='/srv/sv08-sd-nfs',
-                         recovery_handoff=recovery_handoff)
+                         recovery_handoff=recovery_handoff, fault=fault)
         synthetic_mmc_fixture(bundle, commissioning=True)
         boot = work / 'boot'
         boot.mkdir()
@@ -275,7 +277,10 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                     raise TimeoutError('Guest did not reach terminal marker')
             serial = (work / 'serial.log').read_text(errors='replace')
             prefix = 'SV08_H616_COMMISSIONING_'
-            marker = prefix + ('REFUSED_BUNDLE' if tamper_job else 'PASS')
+            expected_status = ({'after-bulk': 'INJECTED_AFTER_BULK',
+                                'after-first-env': 'INJECTED_AFTER_FIRST_ENV'}[fault]
+                               if fault else 'REFUSED_BUNDLE' if tamper_job else 'PASS')
+            marker = prefix + expected_status
             if marker not in serial or guest.returncode != 0:
                 raise RuntimeError(f'Expected {marker}, guest rc {guest.returncode}; inspect {work / "serial.log"}')
             if tamper_job:
@@ -287,6 +292,37 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                     raise RuntimeError('Tampered job changed target')
                 if recovery_handoff and recovery_marker_present(work):
                     raise RuntimeError('Early refusal left a bootable writer marker')
+            elif fault:
+                if not (state / 'claim/claim.json').exists() or not recovery_handoff:
+                    raise RuntimeError('Fault did not consume the one-shot claim')
+                if recovery_marker_present(work):
+                    raise RuntimeError('Postopen fault left a writer marker')
+                banks = [parse_env_record(os.pread(target_fd, 65536, offset))
+                         for offset in (0x400000, 0x800000)]
+                if fault == 'after-bulk':
+                    for bank in banks:
+                        if (bank.get(b'BOOT_A_LEFT') != b'0' or
+                                bank.get(b'BOOT_B_LEFT') != b'0' or
+                                bank.get(b'sv08_reimage_arm') != staged['arm_job_id'].encode()):
+                            raise RuntimeError('Bulk interruption changed armed boot policy')
+                else:
+                    if (banks[1].get(b'BOOT_A_LEFT') != b'0' or
+                            banks[1].get(b'BOOT_B_LEFT') != b'0' or
+                            banks[1].get(b'sv08_reimage_arm') != staged['arm_job_id'].encode()):
+                        raise RuntimeError('First-env interruption changed second record')
+                prefix_before_retry = os.pread(target_fd, 1024 * 1024, 0)
+                retry_cmd = cmd.copy()
+                retry_cmd[-3] = f'file,id=serial,path={work / "serial-retry.log"}'
+                with (work / 'qemu-retry.log').open('w') as log:
+                    retry = subprocess.run([str(x) for x in retry_cmd],
+                                           pass_fds=(target_fd,), stdout=log,
+                                           stderr=subprocess.STDOUT, timeout=300)
+                retry_serial = (work / 'serial-retry.log').read_text(errors='replace')
+                if (retry.returncode != 0 or
+                        prefix + 'REFUSED_RECOVERY_MARKER' not in retry_serial or
+                        prefix + 'TARGET_OPEN_START' in retry_serial or
+                        os.pread(target_fd, 1024 * 1024, 0) != prefix_before_retry):
+                    raise RuntimeError('Postopen interruption retried or changed target')
             else:
                 if prefix + 'READBACK ' not in serial or not (state / 'claim/claim.json').exists():
                     raise RuntimeError('Success lacks readback or durable claim')
@@ -310,7 +346,8 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                                  'b_attempts': 0, 'both_copies_valid': True,
                                  'arm_token_absent': True,
                                  'normal_os_boot_tested': False}
-            result = {'case': 'tampered-signed-job' if tamper_job else 'full-success',
+            result = {'case': 'tampered-signed-job' if tamper_job else
+                              'postopen-' + fault if fault else 'full-success',
                       'marker': marker, 'source_sha256': source_hash,
                       'kernel_sha256': hashes['Image'], 'initramfs_sha256': hashes['initrd.img'],
                       'bundle_manifest_sha256': composition['bundle_manifest_sha256'],
@@ -323,6 +360,9 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                       'guest_memory_mb': guest_memory_mb,
                       'normal_policy': normal_policy,
                       'staged': staged}
+            if fault:
+                result['retry_marker'] = prefix + 'REFUSED_RECOVERY_MARKER'
+                result['retry_serial_sha256'] = digest(work / 'serial-retry.log')
             (work / 'result.json').write_text(json.dumps(result, sort_keys=True, indent=2) + '\n')
             print(json.dumps(result, sort_keys=True), flush=True)
         finally:
@@ -347,6 +387,7 @@ def main():
     parser.add_argument('--recovery-handoff', action='store_true')
     parser.add_argument('--installed-image', type=Path)
     parser.add_argument('--use-installed-source', action='store_true')
+    parser.add_argument('--fault', choices=('after-bulk', 'after-first-env'))
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     if not args.execute:
@@ -354,7 +395,7 @@ def main():
         return
     execute(args.work, args.sd_work, args.sd_dtb, args.package_root, args.tamper_job,
             recovery_handoff=args.recovery_handoff, installed_image=args.installed_image,
-            use_installed_source=args.use_installed_source)
+            use_installed_source=args.use_installed_source, fault=args.fault)
 
 
 if __name__ == '__main__':

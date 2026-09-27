@@ -394,6 +394,28 @@ class CandidateTests(unittest.TestCase):
                       fault='abrupt-after-write')
             self.assertFalse((work / 'physical-fault').exists())
 
+    def test_recovery_env_last_faults_are_synthetic_only(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary)
+            files, _, _ = signed_inputs(work)
+            for fault in ('after-bulk', 'after-first-env'):
+                with self.subTest(fault=fault):
+                    manifest = build(work / fault, *files.values(), now=1500,
+                                     synthetic_test=True, fault=fault,
+                                     trusted_initramfs=True,
+                                     source_server='10.0.2.2',
+                                     source_export='/srv/sv08-sd-nfs',
+                                     recovery_handoff=True)
+                    self.assertTrue(manifest['synthetic_test'])
+                    self.assertFalse(manifest['bootable_sd_image'])
+                    with self.assertRaises(ValueError):
+                        build(work / (fault + '-physical'), *files.values(),
+                              now=1500, fault=fault,
+                              trusted_initramfs=True,
+                              source_server='10.0.2.2',
+                              source_export='/srv/sv08-sd-nfs',
+                              recovery_handoff=True)
+
     def test_guest_case_markers_distinguish_interruption_from_refusal(self):
         prefix = 'SV08_H616_COMMISSIONING_'
         self.assertEqual(harness.guest_case_marker(prefix, fault='abrupt-after-write'),
