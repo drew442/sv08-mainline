@@ -29,6 +29,28 @@ hash, and `bootable_sd_image: false`,
 `status: nondeployable-commissioning-candidate`. The signing key is a synthetic
 test fixture only; no production signer was provisioned.
 
+For a same-input size comparison, the previous writer from approved task base
+`0e672bf` was rebuilt with the same current signed synthetic job and target
+policy using the original static `-Os`/Fortify/warnings-as-errors flags and GCC
+13.3.0. It measured 774,976 bytes. The current writer is 777,864 bytes, a
+2,888-byte increase (0.37%). Its extra section-GC flags retain only the linked
+Ed25519 verifier. Replacing only the writer and manifest in the measured
+Beelink tree gives a pre-change regular-file NFS root total of 7,818,961,264
+bytes and current total of 7,818,965,070 bytes, a 3,806-byte increase. This
+includes the 7,818,182,656-byte source image; the non-image NFS-root files are
+778,608 bytes before and 782,414 bytes after. The current full tree remains
+770,969,522 bytes below 8 GiB. This network-served tree is not installed in
+either eMMC OS slot, and the signed source image's partition geometry and bytes
+are unchanged. The size comparison is based on the same job, policy, image,
+environment fixture, and compiler; the baseline writer SHA-256 is
+`0c1db589080e77f8c30ba54a350b21adf10c29036ae3351573b6732608f22b84`.
+
+The guest writer's measured peak RSS was 596 KiB in the valid claim-only case,
+452 KiB during full transfer, and 580 KiB at abrupt interruption. These are
+process-level QEMU guest measurements, not a baseline-vs-current RAM delta or a
+physical H616 memory guarantee. Beelink's QEMU process peak for the full
+integration was about 2.3 GiB; the VM scratch remained on Beelink.
+
 The focused local checks passed:
 
 ```text
