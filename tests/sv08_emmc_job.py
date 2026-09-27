@@ -8,6 +8,8 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import subprocess
+import tempfile
 import threading
 import time
 
@@ -18,6 +20,29 @@ def canonical_json(value):
 
 def sha256_bytes(value):
     return hashlib.sha256(value).hexdigest()
+
+
+def receipt_message(job_id, descriptor_sha256, challenge):
+    if (not isinstance(job_id, str) or not job_id or '\n' in job_id or
+            len(descriptor_sha256) != 64 or any(ch not in '0123456789abcdef' for ch in descriptor_sha256) or
+            len(challenge) != 64 or any(ch not in '0123456789abcdef' for ch in challenge)):
+        raise ValueError('malformed claim receipt fields')
+    return (f'SV08-EMMC-CLAIM-RECEIPT-v1\njob_id={job_id}\n'
+            f'descriptor_sha256={descriptor_sha256}\nchallenge={challenge}\n').encode()
+
+
+def sign_receipt(message, private_key):
+    with tempfile.TemporaryDirectory(prefix='sv08-claim-sign-') as temporary:
+        root = Path(temporary)
+        payload, signature = root / 'message', root / 'signature'
+        payload.write_bytes(message)
+        subprocess.run(['openssl', 'pkeyutl', '-sign', '-rawin', '-inkey',
+                        str(private_key), '-in', str(payload), '-out', str(signature)],
+                       check=True, capture_output=True, timeout=10)
+        value = signature.read_bytes()
+    if len(value) != 64:
+        raise ValueError('unexpected Ed25519 signature length')
+    return value
 
 
 def write_all(fd, payload):
@@ -87,9 +112,19 @@ class ClaimState:
 
     def consume(self, request):
         started = time.monotonic()
-        if not isinstance(request, dict) or set(request) != {'job_id', 'descriptor_sha256'}:
+        if not isinstance(request, dict) or set(request) != {
+                'job_id', 'descriptor_sha256', 'challenge'}:
             return 400, b'REFUSED malformed request\n'
-        if request['job_id'] != self.job_id or request['descriptor_sha256'] != self.descriptor_sha256:
+        try:
+            challenge = request['challenge']
+            if (not isinstance(challenge, str) or len(challenge) != 64 or
+                    any(ch not in '0123456789abcdef' for ch in challenge)):
+                raise ValueError('invalid challenge')
+            message = receipt_message(self.job_id, self.descriptor_sha256, challenge)
+        except (TypeError, ValueError):
+            return 400, b'REFUSED malformed request\n'
+        if (request['job_id'] != self.job_id or
+                request['descriptor_sha256'] != self.descriptor_sha256):
             return 409, b'REFUSED stale descriptor\n'
         with self.lock:
             lock_fd = os.open(self.lock_path, os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC)
@@ -106,6 +141,7 @@ class ClaimState:
                 payload = canonical_json({
                     'job_id': self.job_id,
                     'descriptor_sha256': self.descriptor_sha256,
+                    'challenge': challenge,
                     'state': 'consumed-before-write',
                 })
                 fd = os.open(self.claimed, os.O_WRONLY | os.O_CREAT | os.O_EXCL |
@@ -121,7 +157,7 @@ class ClaimState:
                 self.armed.unlink()
                 fsync_directory(self.state_dir)
                 self.last_claim_ms = (time.monotonic() - started) * 1000
-                return 200, f'CLAIMED {self.job_id} {self.descriptor_sha256}\n'.encode()
+                return 200, message
             except FileExistsError:
                 return 409, b'CONSUMED\n'
             except (OSError, ValueError):
@@ -138,9 +174,13 @@ class ClaimHTTPServer(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = False
 
-    def __init__(self, address, claim_state, *, drop_first_ack=False):
+    def __init__(self, address, claim_state, *, drop_first_ack=False,
+                 receipt_signing_key=None, receipt_fault=None):
         self.claim_state = claim_state
         self.drop_first_ack = drop_first_ack
+        self.receipt_signing_key = Path(receipt_signing_key) if receipt_signing_key else (
+            Path(__file__).parent / 'fixtures/sd-network-root/receipt-test-keys/test-signing-key.pem')
+        self.receipt_fault = receipt_fault
         self._dropped = False
         owner = self
 
@@ -163,13 +203,41 @@ class ClaimHTTPServer(ThreadingHTTPServer):
                 except (ValueError, json.JSONDecodeError):
                     status, payload = 400, b'REFUSED malformed request\n'
                 else:
-                    status, payload = owner.claim_state.consume(request)
+                    if owner.receipt_fault == 'forged-200':
+                        status, payload = 200, bytes(64)
+                    else:
+                        status, receipt = owner.claim_state.consume(request)
+                        if status == 200:
+                            try:
+                                signing_key = owner.receipt_signing_key
+                                if owner.receipt_fault == 'wrong-key':
+                                    signing_key = (Path(__file__).parent /
+                                                   'fixtures/sd-network-root/receipt-test-keys/other-signing-key.pem')
+                                if owner.receipt_fault in ('stale-challenge', 'replayed-receipt'):
+                                    request = dict(request, challenge='0' * 64)
+                                    receipt = receipt_message(request['job_id'],
+                                                              request['descriptor_sha256'],
+                                                              request['challenge'])
+                                elif owner.receipt_fault == 'wrong-job':
+                                    receipt = receipt_message(request['job_id'] + '-wrong',
+                                                              request['descriptor_sha256'],
+                                                              request['challenge'])
+                                signature = sign_receipt(receipt, signing_key)
+                                if owner.receipt_fault == 'altered-signature':
+                                    signature = bytes([signature[0] ^ 1]) + signature[1:]
+                                payload = signature.hex().encode() + b'\n'
+                                if owner.receipt_fault == 'truncated-signature':
+                                    payload = payload[:-20]
+                            except (OSError, ValueError, subprocess.SubprocessError):
+                                status, payload = 503, b'UNCERTAIN signature generation\n'
+                        else:
+                            payload = receipt
                 if owner.drop_first_ack and not owner._dropped and status == 200:
                     owner._dropped = True
                     self.close_connection = True
                     return
                 reason = {200: 'OK', 400: 'Bad Request', 409: 'Conflict', 503: 'Service Unavailable'}.get(status, 'Error')
-                self.send_response(status, reason)
+                self.send_response_only(status, reason)
                 self.send_header('Content-Type', 'text/plain')
                 self.send_header('Content-Length', str(len(payload)))
                 self.send_header('Connection', 'close')

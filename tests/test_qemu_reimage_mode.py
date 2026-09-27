@@ -13,6 +13,9 @@ from tests.sv08_emmc_job import canonical_json
 from tests.sv08_reimage_signature import (
     FORMAT, policy, policy_hash, sign_test_job, verify_job)
 from scripts.build_qemu_reimage_mode import build
+from scripts.ed25519_build import ED25519_SOURCES
+
+REPO = Path(__file__).resolve().parents[1]
 
 
 def descriptor():
@@ -89,7 +92,10 @@ class QemuReimageModeTests(unittest.TestCase):
                 f'-DSV08_JOB_DESCRIPTOR_SHA256="{manifests[0]["job_sha256"]}"',
                 f'-DSV08_JOB_SIGNATURE_SHA256="{manifests[0]["signature_sha256"]}"',
                 f'-DSV08_TARGET_POLICY_SHA256="{manifests[0]["trusted_policy_sha256"]}"',
-                '-o', str(native), str(c_source)], check=True, capture_output=True)
+                '-o', str(native), f'-I{REPO / "upstream/monocypher/src"}',
+                f'-I{REPO / "upstream/monocypher/src/optional"}',
+                str(c_source), *(str(path) for path in ED25519_SOURCES)],
+                check=True, capture_output=True)
             def admission():
                 return subprocess.check_output([str(native), str(roots[0])], text=True).strip()
             self.assertEqual(admission(), 'admitted')

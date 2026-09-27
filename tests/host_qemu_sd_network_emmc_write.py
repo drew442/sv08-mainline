@@ -275,7 +275,9 @@ FAULT_MARKERS = {
 
 
 def guest_case_marker(prefix, *, fault=None, identity_fault=None, source_fault=None,
-                      lost_claim_ack=False, claim_only=False):
+                      lost_claim_ack=False, claim_fault=None, claim_only=False):
+    if claim_fault:
+        return prefix + 'REFUSED_OR_UNCERTAIN_CLAIM', 'terminal'
     if identity_fault:
         return prefix + 'REFUSED_TARGET_ID', 'terminal'
     if lost_claim_ack:
@@ -365,7 +367,7 @@ def h616_synthetic_root(root, descriptor, signature, *, fault=None, claim_only=F
 
 def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signature, *,
             claim_only=False, fault=None, identity_fault=None, commissioning=False,
-            source_fault=None, lost_claim_ack=False):
+            source_fault=None, lost_claim_ack=False, claim_fault=None):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
     if free < 9_000_000_000:
@@ -415,7 +417,8 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
     tracemalloc.start()
     memory_before = tracemalloc.get_traced_memory()[0]
     rss_before = process_rss_bytes()
-    claim_server = ClaimHTTPServer(('0.0.0.0', 0), state, drop_first_ack=lost_claim_ack)
+    claim_server = ClaimHTTPServer(('0.0.0.0', 0), state, drop_first_ack=lost_claim_ack,
+                                   receipt_fault=claim_fault)
     claim_thread = threading.Thread(target=claim_server.serve_forever, daemon=True)
     try:
         processes.append(subprocess.Popen([str(packages / 'sbin/rpcbind'), '-f', '-s'], env=env,
@@ -476,67 +479,81 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
         prefix = 'SV08_H616_COMMISSIONING_' if commissioning else 'SV08_QEMU_REIMAGE_'
         expected_marker, marker_phase = guest_case_marker(
             prefix, fault=fault, identity_fault=identity_fault,
-            source_fault=source_fault, lost_claim_ack=lost_claim_ack, claim_only=claim_only)
+            source_fault=source_fault, lost_claim_ack=lost_claim_ack,
+            claim_fault=claim_fault, claim_only=claim_only)
         if expected_marker not in serial or (not fault and not identity_fault and
-                not source_fault and not lost_claim_ack and not claim_only and
+                not source_fault and not lost_claim_ack and not claim_fault and not claim_only and
                 prefix + 'READBACK ' not in serial):
             raise RuntimeError('Guest did not produce the expected case marker or readback')
         if marker_phase == 'terminal' and guest.returncode != 0:
             raise RuntimeError('Guest did not exit cleanly after terminal marker')
-        if (fault or identity_fault or source_fault or lost_claim_ack) and (prefix + 'PASS' in serial or
+        if (fault or identity_fault or source_fault or lost_claim_ack or claim_fault) and (prefix + 'PASS' in serial or
                       prefix + 'READBACK ' in serial):
             raise RuntimeError('Faulted writer emitted success evidence')
-        if commissioning and (identity_fault or source_fault or lost_claim_ack):
+        if commissioning and (identity_fault or source_fault or lost_claim_ack or claim_fault):
             if prefix + 'TARGET_OPEN_START' in serial:
                 raise RuntimeError('Pre-write refusal attempted target open')
-            if (identity_fault or source_fault in ('missing', 'wrong-size') or lost_claim_ack) and \
+            if (identity_fault or source_fault in ('missing', 'wrong-size') or lost_claim_ack or claim_fault) and \
                     prefix + 'SOURCE_HASH_START' in serial:
                 raise RuntimeError('Early refusal hashed the source')
             if source_fault == 'wrong-hash' and prefix + 'SOURCE_HASH_START' not in serial:
                 raise RuntimeError('Wrong-hash refusal did not hash the source')
-        if state.armed.exists() or not state.claimed.exists():
-            raise RuntimeError('Claim state is not durably consumed')
-        claim_record = json.loads(state.claimed.read_text())
-        if (claim_record.get('job_id') != descriptor['job_id'] or
-                claim_record.get('descriptor_sha256') != descriptor_hash or
-                claim_record.get('state') != 'consumed-before-write'):
-            raise RuntimeError('Persisted claim does not match immutable descriptor')
-        if fault or identity_fault or source_fault or lost_claim_ack:
+        if claim_fault == 'forged-200':
+            if not state.armed.exists() or state.claimed.exists():
+                raise RuntimeError('Forged acknowledgement consumed or changed durable claim state')
+            claim_record = None
+        else:
+            if state.armed.exists() or not state.claimed.exists():
+                raise RuntimeError('Claim state is not durably consumed')
+            claim_record = json.loads(state.claimed.read_text())
+            if (claim_record.get('job_id') != descriptor['job_id'] or
+                    claim_record.get('descriptor_sha256') != descriptor_hash or
+                    claim_record.get('state') != 'consumed-before-write'):
+                raise RuntimeError('Persisted claim does not match immutable descriptor')
+        if fault or identity_fault or source_fault or lost_claim_ack or claim_fault:
             target_prefix = os.pread(target_fd, 1024 * 1024, 0)
             source_fd = os.open(work / 'source.img', os.O_RDONLY | os.O_CLOEXEC)
             try:
                 source_prefix = os.pread(source_fd, 1024 * 1024, 0)
             finally:
                 os.close(source_fd)
-            if (fault == 'before-write' or identity_fault or source_fault or lost_claim_ack) and target_prefix != bytes(1024 * 1024):
+            if (fault == 'before-write' or identity_fault or source_fault or lost_claim_ack or claim_fault) and target_prefix != bytes(1024 * 1024):
                 raise RuntimeError('Before-write fault changed the target')
             if fault and fault != 'before-write' and target_prefix != source_prefix:
                 raise RuntimeError('Fault marker did not follow a real target write')
-            connection = http.client.HTTPConnection('127.0.0.1', claim_server.server_port, timeout=5)
-            try:
-                connection.request('POST', '/claim',
-                                   body=json.dumps({'job_id': descriptor['job_id'],
-                                                    'descriptor_sha256': descriptor_hash}),
-                                   headers={'Content-Type': 'application/json'})
-                response = connection.getresponse()
-                retry = (response.status, response.read())
-            finally:
-                connection.close()
-            if retry != (409, b'CONSUMED\n'):
-                raise RuntimeError('Interrupted job was rearmed or accepted a retry')
+            retry = None
+            if not claim_fault:
+                connection = http.client.HTTPConnection('127.0.0.1', claim_server.server_port, timeout=5)
+                try:
+                    connection.request('POST', '/claim',
+                                       body=json.dumps({'job_id': descriptor['job_id'],
+                                                        'descriptor_sha256': descriptor_hash,
+                                                        'challenge': claim_record['challenge']}),
+                                       headers={'Content-Type': 'application/json'})
+                    response = connection.getresponse()
+                    retry = (response.status, response.read())
+                finally:
+                    connection.close()
+                if retry != (409, b'CONSUMED\n'):
+                    raise RuntimeError('Interrupted job was rearmed or accepted a retry')
             return {
                 'fault': fault, 'identity_fault': identity_fault,
                 'source_fault': source_fault, 'lost_claim_ack': lost_claim_ack,
+                'claim_fault': claim_fault,
                 'qemu_exit_code': guest.returncode,
                 'abrupt_interruption': fault == 'abrupt-after-write',
                 'terminal_marker': expected_marker if marker_phase == 'terminal' else None,
                 'progress_marker': expected_marker if marker_phase == 'progress' else None,
                 'source_hash_started': prefix + 'SOURCE_HASH_START' in serial,
                 'target_open_attempted': prefix + 'TARGET_OPEN_START' in serial if commissioning else None,
-                'success_receipt': False, 'claim_retry_status': retry[0],
+                'success_receipt': False,
+                'claim_retry_status': retry[0] if retry else None,
+                'durable_claim_consumed': state.claimed.exists(),
                 'target_prefix_matches_source': bool(fault and fault != 'before-write'),
-                'target_unchanged': bool(identity_fault or source_fault or lost_claim_ack or fault == 'before-write'),
-                'claim': {'status': 'consumed-before-write',
+                'target_unchanged': bool(identity_fault or source_fault or lost_claim_ack or
+                                         claim_fault or fault == 'before-write'),
+                'claim': {'status': ('not-consumed-forged-ack' if claim_fault else
+                                     'consumed-before-write'),
                           'job_id': descriptor['job_id'],
                           'descriptor_sha256': descriptor_hash,
                           'persisted_bytes': sum(path.stat().st_size for path in state.state_dir.iterdir()),
@@ -551,7 +568,11 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                       'latency_ms': state.last_claim_ms,
                       'python_tracemalloc_delta_bytes': max(0, memory_after - memory_before),
                       'python_tracemalloc_peak_bytes': memory_peak,
-                      'host_rss_delta_bytes': max(0, process_rss_bytes() - rss_before)},
+                      'host_rss_delta_bytes': max(0, process_rss_bytes() - rss_before),
+                      'guest_claim_maxrss_kib': (
+                          int(match.group(1)) if (match := re.search(
+                              re.escape(prefix) + r'CLAIM_VERIFIED_MAXRSS_KIB (\d+)', serial))
+                          else None)},
         }
     finally:
         # BaseServer.shutdown() waits for serve_forever() to set its internal
@@ -586,6 +607,8 @@ def main():
                         help='Synthetic H616 only: invalidate NFS source after build')
     parser.add_argument('--lost-claim-ack', action='store_true',
                         help='Synthetic H616 only: consume claim and drop HTTP acknowledgement')
+    parser.add_argument('--claim-fault', choices=('forged-200',),
+                        help='Synthetic H616 only: forge HTTP success without consuming the real claim')
     parser.add_argument('--identity-fault', choices=('wrong-cid', 'wrong-dev', 'ambiguous',
                                                      'wrong-controller', 'missing-controller',
                                                      'wrong-type', 'wrong-capacity'),
@@ -594,11 +617,12 @@ def main():
     parser.add_argument('--commissioning', action='store_true',
                         help='Synthetic H616 adapter on disposable QEMU storage only')
     args = parser.parse_args()
-    if (args.abrupt_after_write or args.source_fault or args.lost_claim_ack or
+    if (args.abrupt_after_write or args.source_fault or args.lost_claim_ack or args.claim_fault or
             args.identity_fault in ('wrong-controller', 'missing-controller', 'wrong-type', 'wrong-capacity')) and not args.commissioning:
         parser.error('These cases require --commissioning synthetic H616 mode')
     if sum(bool(item) for item in (args.fault, args.abrupt_after_write, args.source_fault,
-                                  args.lost_claim_ack, args.identity_fault, args.claim_only)) > 1:
+                                  args.lost_claim_ack, args.claim_fault,
+                                  args.identity_fault, args.claim_only)) > 1:
         parser.error('Select one fault or claim-only case')
     selected_fault = 'abrupt-after-write' if args.abrupt_after_write else args.fault
     work = fresh_work(args.work)
@@ -645,8 +669,10 @@ def main():
                                      identity_fault=args.identity_fault,
                                      commissioning=args.commissioning,
                                      source_fault=args.source_fault,
-                                     lost_claim_ack=args.lost_claim_ack)
-            if selected_fault or args.identity_fault or args.source_fault or args.lost_claim_ack:
+                                     lost_claim_ack=args.lost_claim_ack,
+                                     claim_fault=args.claim_fault)
+            if (selected_fault or args.identity_fault or args.source_fault or
+                    args.lost_claim_ack or args.claim_fault):
                 result = {'status': ('qemu-abrupt-interruption-pass' if args.abrupt_after_write else
                                      'qemu-injected-fault-pass'), 'target_serial': SERIAL,
                           'fault_evidence': claim_evidence,
