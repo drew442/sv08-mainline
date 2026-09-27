@@ -8,6 +8,7 @@ least 9 GiB free on the selected scratch filesystem. H616 boot is not emulated.
 """
 import argparse
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -19,6 +20,7 @@ import subprocess
 import sys
 import threading
 import time
+import tempfile
 import uuid
 import zlib
 import tracemalloc
@@ -33,6 +35,7 @@ from sv08_reimage_signature import (FORMAT, policy, policy_hash,
                                     sign_test_job)  # noqa: E402
 sys.path.insert(0, str(REPO / 'scripts'))
 from build_qemu_reimage_mode import build as build_reimage_root  # noqa: E402
+from build_h616_reimage_candidate import build as build_h616_root, TARGET_BYTES as H616_TARGET_BYTES  # noqa: E402
 
 IMAGE_BYTES = 7_818_182_656
 TARGET_BYTES = 32_000_000_000
@@ -197,18 +200,20 @@ def inspect_gpt(path):
         os.close(fd)
 
 
-def create_target(path):
+def create_target(path, target_bytes=None):
+    target_bytes = TARGET_BYTES if target_bytes is None else target_bytes
     path = secure_path(path, parent=path.parent, exists=False)
     fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600)
-    os.ftruncate(fd, TARGET_BYTES)
+    os.ftruncate(fd, target_bytes)
     os.fsync(fd)
-    if not stat.S_ISREG(os.fstat(fd).st_mode) or os.fstat(fd).st_size != TARGET_BYTES:
+    if not stat.S_ISREG(os.fstat(fd).st_mode) or os.fstat(fd).st_size != target_bytes:
         os.close(fd)
         raise ValueError('Wrong target')
     return fd
 
 
-def admit_target(work, target_fd, source):
+def admit_target(work, target_fd, source, target_bytes=None):
+    target_bytes = TARGET_BYTES if target_bytes is None else target_bytes
     target = secure_path(work / 'target.img', parent=work)
     choices = list(work.glob('target*.img'))
     if choices != [target]:
@@ -216,7 +221,7 @@ def admit_target(work, target_fd, source):
     disk = os.fstat(target_fd)
     named = target.stat()
     src = secure_path(source, parent=work).stat()
-    if (not stat.S_ISREG(disk.st_mode) or disk.st_size != TARGET_BYTES or
+    if (not stat.S_ISREG(disk.st_mode) or disk.st_size != target_bytes or
             (disk.st_dev, disk.st_ino) != (named.st_dev, named.st_ino) or
             (disk.st_dev, disk.st_ino) == (src.st_dev, src.st_ino)):
         raise ValueError('Wrong, substituted, undersized or overlapping target')
@@ -269,8 +274,26 @@ FAULT_MARKERS = {
 }
 
 
-def synthetic_mmc_fixture(root, identity_fault=None):
+def guest_case_marker(prefix, *, fault=None, identity_fault=None, source_fault=None,
+                      lost_claim_ack=False, claim_only=False):
+    if identity_fault:
+        return prefix + 'REFUSED_TARGET_ID', 'terminal'
+    if lost_claim_ack:
+        return prefix + 'REFUSED_OR_UNCERTAIN_CLAIM', 'terminal'
+    if source_fault:
+        return prefix + ('REFUSED_SOURCE_HASH' if source_fault == 'wrong-hash' else 'REFUSED_SOURCE'), 'terminal'
+    if fault == 'abrupt-after-write':
+        return prefix + 'PROGRESS_FIRST_MIB_WRITTEN', 'progress'
+    if fault:
+        return prefix + FAULT_MARKERS[fault].removeprefix('SV08_QEMU_REIMAGE_'), 'terminal'
+    if claim_only:
+        return prefix + 'CLAIM_ONLY_PASS', 'terminal'
+    return prefix + 'PASS', 'terminal'
+
+
+def synthetic_mmc_fixture(root, identity_fault=None, *, commissioning=False):
     """Explicit test adapter: synthetic MMC dev=8:0 maps to QEMU USB /dev/sda."""
+    sectors = h616_synthetic_policy()['sectors'] if commissioning else policy()['sectors']
     base = root / 'synthetic-mmc'
     card = base / 'mmc0/mmc0:0001'
     block = card / 'block/mmcblk0'
@@ -278,19 +301,71 @@ def synthetic_mmc_fixture(root, identity_fault=None):
     (card / 'type').write_text('MMC\n')
     (card / 'cid').write_text(('00000000000000000000000000000002' if
                              identity_fault == 'wrong-cid' else SYNTHETIC_CID) + '\n')
-    (block / 'size').write_text(f'{policy()["sectors"]}\n')
+    (block / 'size').write_text(f'{sectors}\n')
     (block / 'dev').write_text('8:1\n' if identity_fault == 'wrong-dev' else '8:0\n')
+    if commissioning:
+        # The guest uses the same realpath prefix/boundary check as physical
+        # sysfs, but these paths are synthetic and make no H616 kernel claim.
+        (base / 'controller').symlink_to('mmc0')
+        (base / 'card-device').symlink_to(
+            'mmc0-other/mmc0:0001' if identity_fault == 'wrong-controller' else
+            'mmc0/mmc0:0001')
+        if identity_fault == 'wrong-controller':
+            (base / 'mmc0-other/mmc0:0001').mkdir(parents=True)
+        if identity_fault == 'missing-controller':
+            (base / 'controller').unlink()
+        if identity_fault == 'wrong-type':
+            (card / 'type').write_text('SD\n')
+        if identity_fault == 'wrong-capacity':
+            (block / 'size').write_text(f'{sectors - 1}\n')
     if identity_fault == 'ambiguous':
         other = base / 'mmc1/mmc1:0001/block/mmcblk1'
         other.mkdir(parents=True)
         (other.parent.parent / 'type').write_text('MMC\n')
         (other.parent.parent / 'cid').write_text(SYNTHETIC_CID + '\n')
-        (other / 'size').write_text(f'{policy()["sectors"]}\n')
+        (other / 'size').write_text(f'{sectors}\n')
         (other / 'dev').write_text('8:1\n')
 
 
+def h616_synthetic_policy():
+    return {
+        'format': 'sv08-h616-commissioning-policy-v1',
+        'cid': SYNTHETIC_CID, 'controller': '4022000.mmc', 'card_type': 'MMC',
+        'sectors': 61_079_552, 'dev_t': '8:0', 'target_device': '/dev/mmcblk0',
+        'board_compatible': 'test,synthetic-h616', 'claim_server': '10.0.2.2',
+        'image_bytes': IMAGE_BYTES, 'image_sha256': IMAGE_SHA256,
+        'image_layout': {'disk_guid': DISK_GUID, 'image_bytes': IMAGE_BYTES,
+                         'backup_gpt_at_image_end': True,
+                         'partitions': expected_records()},
+    }
+
+
+def h616_synthetic_root(root, descriptor, signature, *, fault=None, claim_only=False):
+    """Exercise the actual H616 candidate builder using only public test keys."""
+    local_root = REPO / 'local'
+    local_root.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=local_root) as temporary:
+        private = Path(temporary)
+        keys = REPO / 'tests/fixtures/sd-network-root/synthetic-keys'
+        values = {
+            'policy': canonical_json(h616_synthetic_policy()),
+            'key': (keys / 'test-verification-key.pem').read_bytes(),
+            'job': canonical_json(descriptor),
+            'sig': signature,
+        }
+        files = {}
+        for name, data in values.items():
+            files[name] = private / name
+            files[name].write_bytes(data)
+            files[name].chmod(0o600)
+        return build_h616_root(root, files['policy'], files['key'], files['job'],
+                               files['sig'], synthetic_test=True, fault=fault,
+                               claim_only=claim_only)
+
+
 def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signature, *,
-            claim_only=False, fault=None, identity_fault=None):
+            claim_only=False, fault=None, identity_fault=None, commissioning=False,
+            source_fault=None, lost_claim_ack=False):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
     if free < 9_000_000_000:
@@ -301,16 +376,27 @@ def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signatu
         raise ValueError('QEMU host needs at least 3 GiB available memory')
     root = work / 'nfs-root'
     root.mkdir(mode=0o755)
-    mode_manifest = build_reimage_root(root, canonical_json(descriptor), signature,
-                                       fault=fault, claim_only=claim_only)
-    if mode_manifest['status'] != 'nondeployable-qemu-only':
+    mode_manifest = (h616_synthetic_root(root, descriptor, signature,
+                                         fault=fault, claim_only=claim_only) if commissioning else
+                     build_reimage_root(root, canonical_json(descriptor), signature,
+                                        fault=fault, claim_only=claim_only))
+    if mode_manifest['status'] != ('nondeployable-commissioning-candidate' if commissioning else 'nondeployable-qemu-only'):
         raise ValueError('Untrusted QEMU mode artifact')
-    synthetic_mmc_fixture(root, identity_fault)
+    synthetic_mmc_fixture(root, identity_fault, commissioning=commissioning)
     descriptor_bytes = canonical_json(descriptor)
     descriptor_hash = sha256_bytes(descriptor_bytes)
     (root / 'job.json').chmod(0o444)
     (root / 'expected.sha256').write_text(IMAGE_SHA256 + '\n')
     os.link(work / 'source.img', root / 'image.bin')
+    if source_fault == 'missing':
+        (root / 'image.bin').unlink()
+    elif source_fault == 'wrong-size':
+        (root / 'image.bin').unlink()
+        (root / 'image.bin').write_bytes(b'invalid source')
+    elif source_fault == 'wrong-hash':
+        with (root / 'image.bin').open('r+b') as stream:
+            stream.seek(1024 * 1024)
+            stream.write(b'changed')
     run(['mount', '--make-rprivate', '/'])
     run(['mount', '-t', 'tmpfs', 'tmpfs', '/run'])
     run(['ip', 'link', 'set', 'lo', 'up'])
@@ -329,7 +415,7 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
     tracemalloc.start()
     memory_before = tracemalloc.get_traced_memory()[0]
     rss_before = process_rss_bytes()
-    claim_server = ClaimHTTPServer(('0.0.0.0', 0), state)
+    claim_server = ClaimHTTPServer(('0.0.0.0', 0), state, drop_first_ack=lost_claim_ack)
     claim_thread = threading.Thread(target=claim_server.serve_forever, daemon=True)
     try:
         processes.append(subprocess.Popen([str(packages / 'sbin/rpcbind'), '-f', '-s'], env=env,
@@ -365,21 +451,49 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
             guest = subprocess.Popen([str(x) for x in command], pass_fds=(target_fd,),
                                      stdout=log, stderr=subprocess.STDOUT)
             try:
-                guest.wait(timeout=4500)
+                if fault == 'abrupt-after-write':
+                    marker = 'SV08_H616_COMMISSIONING_PROGRESS_FIRST_MIB_WRITTEN'
+                    deadline = time.monotonic() + 4500
+                    while time.monotonic() < deadline:
+                        serial_path = work / 'serial.log'
+                        if serial_path.exists() and marker in serial_path.read_text(errors='replace'):
+                            guest.kill()  # Actual abrupt VM loss, after fsynced guest write.
+                            guest.wait(timeout=30)
+                            break
+                        if guest.poll() is not None:
+                            raise RuntimeError('Guest exited before abrupt-write marker')
+                        time.sleep(.1)
+                    else:
+                        raise TimeoutError('Guest did not reach first target write')
+                else:
+                    guest.wait(timeout=4500)
             except subprocess.TimeoutExpired:
                 guest.kill(); guest.wait()
                 raise TimeoutError('QEMU image write timed out; result uncertain')
         serial = (work / 'serial.log').read_text(errors='replace')
-        expected_marker = ('SV08_QEMU_REIMAGE_REFUSED_SYNTHETIC_MMC' if identity_fault else
-                           FAULT_MARKERS[fault] if fault else
-                           'SV08_QEMU_REIMAGE_CLAIM_ONLY_PASS' if claim_only else
-                           'SV08_QEMU_REIMAGE_PASS')
-        if expected_marker not in serial or (not fault and not identity_fault and not claim_only and
-                'SV08_QEMU_REIMAGE_READBACK ' not in serial):
-            raise RuntimeError('Guest did not produce the expected terminal receipt')
-        if (fault or identity_fault) and ('SV08_QEMU_REIMAGE_PASS' in serial or
-                      'SV08_QEMU_REIMAGE_READBACK ' in serial):
+        if fault == 'abrupt-after-write' and guest.returncode != -signal.SIGKILL:
+            raise RuntimeError('QEMU was not killed after partial target write')
+        prefix = 'SV08_H616_COMMISSIONING_' if commissioning else 'SV08_QEMU_REIMAGE_'
+        expected_marker, marker_phase = guest_case_marker(
+            prefix, fault=fault, identity_fault=identity_fault,
+            source_fault=source_fault, lost_claim_ack=lost_claim_ack, claim_only=claim_only)
+        if expected_marker not in serial or (not fault and not identity_fault and
+                not source_fault and not lost_claim_ack and not claim_only and
+                prefix + 'READBACK ' not in serial):
+            raise RuntimeError('Guest did not produce the expected case marker or readback')
+        if marker_phase == 'terminal' and guest.returncode != 0:
+            raise RuntimeError('Guest did not exit cleanly after terminal marker')
+        if (fault or identity_fault or source_fault or lost_claim_ack) and (prefix + 'PASS' in serial or
+                      prefix + 'READBACK ' in serial):
             raise RuntimeError('Faulted writer emitted success evidence')
+        if commissioning and (identity_fault or source_fault or lost_claim_ack):
+            if prefix + 'TARGET_OPEN_START' in serial:
+                raise RuntimeError('Pre-write refusal attempted target open')
+            if (identity_fault or source_fault in ('missing', 'wrong-size') or lost_claim_ack) and \
+                    prefix + 'SOURCE_HASH_START' in serial:
+                raise RuntimeError('Early refusal hashed the source')
+            if source_fault == 'wrong-hash' and prefix + 'SOURCE_HASH_START' not in serial:
+                raise RuntimeError('Wrong-hash refusal did not hash the source')
         if state.armed.exists() or not state.claimed.exists():
             raise RuntimeError('Claim state is not durably consumed')
         claim_record = json.loads(state.claimed.read_text())
@@ -387,27 +501,41 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
                 claim_record.get('descriptor_sha256') != descriptor_hash or
                 claim_record.get('state') != 'consumed-before-write'):
             raise RuntimeError('Persisted claim does not match immutable descriptor')
-        if fault or identity_fault:
+        if fault or identity_fault or source_fault or lost_claim_ack:
             target_prefix = os.pread(target_fd, 1024 * 1024, 0)
             source_fd = os.open(work / 'source.img', os.O_RDONLY | os.O_CLOEXEC)
             try:
                 source_prefix = os.pread(source_fd, 1024 * 1024, 0)
             finally:
                 os.close(source_fd)
-            if (fault == 'before-write' or identity_fault) and target_prefix != bytes(1024 * 1024):
+            if (fault == 'before-write' or identity_fault or source_fault or lost_claim_ack) and target_prefix != bytes(1024 * 1024):
                 raise RuntimeError('Before-write fault changed the target')
             if fault and fault != 'before-write' and target_prefix != source_prefix:
                 raise RuntimeError('Fault marker did not follow a real target write')
-            retry = state.consume({'job_id': descriptor['job_id'],
-                                   'descriptor_sha256': descriptor_hash})
-            if retry[0] != 409 or retry[1] != b'CONSUMED\n':
+            connection = http.client.HTTPConnection('127.0.0.1', claim_server.server_port, timeout=5)
+            try:
+                connection.request('POST', '/claim',
+                                   body=json.dumps({'job_id': descriptor['job_id'],
+                                                    'descriptor_sha256': descriptor_hash}),
+                                   headers={'Content-Type': 'application/json'})
+                response = connection.getresponse()
+                retry = (response.status, response.read())
+            finally:
+                connection.close()
+            if retry != (409, b'CONSUMED\n'):
                 raise RuntimeError('Interrupted job was rearmed or accepted a retry')
             return {
                 'fault': fault, 'identity_fault': identity_fault,
-                'terminal_marker': expected_marker,
+                'source_fault': source_fault, 'lost_claim_ack': lost_claim_ack,
+                'qemu_exit_code': guest.returncode,
+                'abrupt_interruption': fault == 'abrupt-after-write',
+                'terminal_marker': expected_marker if marker_phase == 'terminal' else None,
+                'progress_marker': expected_marker if marker_phase == 'progress' else None,
+                'source_hash_started': prefix + 'SOURCE_HASH_START' in serial,
+                'target_open_attempted': prefix + 'TARGET_OPEN_START' in serial if commissioning else None,
                 'success_receipt': False, 'claim_retry_status': retry[0],
                 'target_prefix_matches_source': bool(fault and fault != 'before-write'),
-                'target_unchanged': bool(identity_fault or fault == 'before-write'),
+                'target_unchanged': bool(identity_fault or source_fault or lost_claim_ack or fault == 'before-write'),
                 'claim': {'status': 'consumed-before-write',
                           'job_id': descriptor['job_id'],
                           'descriptor_sha256': descriptor_hash,
@@ -451,11 +579,28 @@ def main():
     parser.add_argument('--claim-only', action='store_true',
                         help='Test QEMU claim transport without opening or writing the target')
     parser.add_argument('--fault', choices=tuple(FAULT_MARKERS),
-                        help='Inject a QEMU guest interruption in the actual writer phase')
-    parser.add_argument('--identity-fault', choices=('wrong-cid', 'wrong-dev', 'ambiguous'),
+                        help='Inject an orderly synthetic writer fault')
+    parser.add_argument('--abrupt-after-write', action='store_true',
+                        help='Synthetic H616 only: SIGKILL QEMU after first fsynced target MiB')
+    parser.add_argument('--source-fault', choices=('missing', 'wrong-size', 'wrong-hash'),
+                        help='Synthetic H616 only: invalidate NFS source after build')
+    parser.add_argument('--lost-claim-ack', action='store_true',
+                        help='Synthetic H616 only: consume claim and drop HTTP acknowledgement')
+    parser.add_argument('--identity-fault', choices=('wrong-cid', 'wrong-dev', 'ambiguous',
+                                                     'wrong-controller', 'missing-controller',
+                                                     'wrong-type', 'wrong-capacity'),
                         help='Inject a synthetic MMC identity refusal in the QEMU guest')
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--commissioning', action='store_true',
+                        help='Synthetic H616 adapter on disposable QEMU storage only')
     args = parser.parse_args()
+    if (args.abrupt_after_write or args.source_fault or args.lost_claim_ack or
+            args.identity_fault in ('wrong-controller', 'missing-controller', 'wrong-type', 'wrong-capacity')) and not args.commissioning:
+        parser.error('These cases require --commissioning synthetic H616 mode')
+    if sum(bool(item) for item in (args.fault, args.abrupt_after_write, args.source_fault,
+                                  args.lost_claim_ack, args.identity_fault, args.claim_only)) > 1:
+        parser.error('Select one fault or claim-only case')
+    selected_fault = 'abrupt-after-write' if args.abrupt_after_write else args.fault
     work = fresh_work(args.work)
     try:
         kernel_args = verify_inputs(work, args.sd_work)
@@ -465,11 +610,12 @@ def main():
             raise ValueError(f'Synthetic source hash differs from pin: {actual}')
         validate_source(source)
         target = work / 'target.img'
-        fd = create_target(target)
+        target_bytes = H616_TARGET_BYTES if args.commissioning else TARGET_BYTES
+        fd = create_target(target, target_bytes)
         try:
-            admit_target(work, fd, source)
+            admit_target(work, fd, source, target_bytes)
             print(json.dumps({'execute': args.execute, 'source_bytes': IMAGE_BYTES,
-                              'source_sha256': actual, 'target_bytes': TARGET_BYTES,
+                              'source_sha256': actual, 'target_bytes': target_bytes,
                               'target_regular_file': str(target)}), flush=True)
             if not args.execute:
                 return
@@ -481,21 +627,28 @@ def main():
                        'partitions': expected_records()}
             issued = int(time.time())
             descriptor = {
-                'format': FORMAT, 'job_id': 'qemu-reimage-test-001',
+                'format': 'sv08-h616-signed-reimage-v1' if args.commissioning else FORMAT,
+                'job_id': 'h616-synthetic-test-001' if args.commissioning else 'qemu-reimage-test-001',
                 'issued_unix': issued, 'expires_unix': issued + 7200,
                 'source': {'bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
                            'mode': 'read-only-nfs'},
-                'target_policy_sha256': policy_hash(policy()),
+                'target_policy_sha256': sha256_bytes(canonical_json(h616_synthetic_policy())) if args.commissioning else policy_hash(policy()),
                 'image': {'bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
                           'layout': gpt_map},
             }
             signature = sign_test_job(descriptor)
+            if args.commissioning:
+                kernel_args = kernel_args.replace('sv08.qemu_reimage=1', 'sv08.h616_commissioning=1')
             claim_evidence = execute(work, Path(os.path.abspath(args.sd_work)),
                                      args.package_root, fd, kernel_args, descriptor, signature,
-                                     claim_only=args.claim_only, fault=args.fault,
-                                     identity_fault=args.identity_fault)
-            if args.fault or args.identity_fault:
-                result = {'status': 'qemu-injected-fault-pass', 'target_serial': SERIAL,
+                                     claim_only=args.claim_only, fault=selected_fault,
+                                     identity_fault=args.identity_fault,
+                                     commissioning=args.commissioning,
+                                     source_fault=args.source_fault,
+                                     lost_claim_ack=args.lost_claim_ack)
+            if selected_fault or args.identity_fault or args.source_fault or args.lost_claim_ack:
+                result = {'status': ('qemu-abrupt-interruption-pass' if args.abrupt_after_write else
+                                     'qemu-injected-fault-pass'), 'target_serial': SERIAL,
                           'fault_evidence': claim_evidence,
                           'guest_serial_sha256': digest(work / 'serial.log')}
                 (work / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
@@ -510,7 +663,7 @@ def main():
                 print(json.dumps(result), flush=True)
                 return
             os.fsync(fd)
-            admit_target(work, fd, source)
+            admit_target(work, fd, source, target_bytes)
             validate_source(source)
             if digest(target, IMAGE_BYTES) != IMAGE_SHA256:
                 raise ValueError('Independent host full readback differs')
@@ -519,7 +672,7 @@ def main():
                 raise ValueError('GPT partition map differs')
             result = {'status': 'qemu-only-pass', 'source_bytes': IMAGE_BYTES,
                       'readback_bytes': IMAGE_BYTES, 'sha256': IMAGE_SHA256,
-                      'target_bytes': TARGET_BYTES, 'target_serial': SERIAL,
+                      'target_bytes': target_bytes, 'target_serial': SERIAL,
                       'gpt': gpt, 'claim': claim_evidence['claim'],
                       'guest_serial_sha256': digest(work / 'serial.log')}
             (work / 'result.json').write_text(json.dumps(result, indent=2) + '\n')

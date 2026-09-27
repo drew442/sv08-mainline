@@ -1,0 +1,149 @@
+{
+  "evidence_level": "offline synthetic QEMU only",
+  "source_commit": "ebbd4c30f132a3393ebea50ef5678259a7be6705",
+  "source_tree": "472c1f1b3525dec967c48ccf776260268334fb83",
+  "source_dirty": false,
+  "environment": "Beelink x86_64 Linux 7.0.0-31-generic; QEMU 8.2.2; Python 3.12.3; sgdisk 1.0.10; aarch64-linux-gnu-gcc 13.3.0",
+  "preflight": {
+    "scratch_available_bytes": 10749870080,
+    "mem_available_kb": 7205616,
+    "existing_qemu_processes": 0
+  },
+  "postflight": {
+    "scratch_available_bytes": 10722344960,
+    "mem_available_kb": 7228424
+  },
+  "fixtures": {
+    "sd_composition_sha256": "25de9efc832ddf2b10edd170fcc124fda73173052b8b4f937ce2317d23b2cc31",
+    "sd_kernel_sha256": "5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34",
+    "sd_initrd_sha256": "8be88ee081ad61c64de216425b031b8988447d6fb009022edeffaf53f115d09e"
+  },
+  "method": "sudo unshare -n -m -- timeout -k 10 4700 /usr/bin/time -v python3 tests/host_qemu_sd_network_emmc_write.py --work <fresh> --sd-work <verified composition> --package-root <extracted packages> --commissioning --execute [fault option]; sequential cases and fresh regular-file target for every case",
+  "image": {
+    "bytes": 7818182656,
+    "sha256": "7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec",
+    "target_bytes": 31272730624,
+    "gpt": "both header/table CRCs valid by harness and independent sgdisk; GUID and six partition records match"
+  },
+  "independent_full_check_sha256": "62b625d0cc36bc2706c6c1e09d0083b4e4bd14babc7395929c141a6cc05dc21a",
+  "manifest_sha256": "8759b9786c88704413599bab67a7ed59e7b0a8639873535385f04ddec5df0050",
+  "cases": [
+    {
+      "case": "full",
+      "status": "qemu-only-pass",
+      "elapsed": "43:07.79",
+      "max_rss_kib": 2311932,
+      "exit_status": 0,
+      "result_sha256": "ba3aa566c2fb356ab86ae2a66f7886bacc3832b3f88aadec44885f648c05131b",
+      "serial_sha256": "1d8e69c60f096d7479094654b3f0dfc15e9bbed247bc9472fc11005094d0c5ad",
+      "claim_status": "consumed-before-write",
+      "replay_status": null,
+      "target_unchanged": null,
+      "target_prefix_matches_source": null,
+      "success_receipt": true
+    },
+    {
+      "case": "identity-wrong-cid",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "1:26.09",
+      "max_rss_kib": 390276,
+      "exit_status": 0,
+      "result_sha256": "febec054497fe378adccbad0fcfafdecfe95b52811a46894138b301d880f428b",
+      "serial_sha256": "f45800869b10128a5791e65ccb942fd288ae738a0d2218c83d47d2b66c04d586",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": true,
+      "target_prefix_matches_source": false,
+      "success_receipt": false
+    },
+    {
+      "case": "identity-wrong-dev",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "1:26.29",
+      "max_rss_kib": 394748,
+      "exit_status": 0,
+      "result_sha256": "3fac9fd8281a48429ea2f537797cbc806f29ff1367404195a62d80e8780ee6d7",
+      "serial_sha256": "0283b7cd8b24ed744dde26a17387879848d24c74541bd8e9775af9ed20a36fa8",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": true,
+      "target_prefix_matches_source": false,
+      "success_receipt": false
+    },
+    {
+      "case": "identity-ambiguous",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "1:25.99",
+      "max_rss_kib": 390592,
+      "exit_status": 0,
+      "result_sha256": "ef0b626c9d8c9bee3a61df33c3fb6d9e2fc7a38036cf22a4b773a2b128926257",
+      "serial_sha256": "17f5e40960551a27b83cf7a800e4d417761104d1f012083a57f5cab0deef85e2",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": true,
+      "target_prefix_matches_source": false,
+      "success_receipt": false
+    },
+    {
+      "case": "fault-before-write",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "17:24.18",
+      "max_rss_kib": 2306628,
+      "exit_status": 0,
+      "result_sha256": "752d95e2c45f6b4ea89212f6dada38841568801fdf41e065f70debc15670aa3d",
+      "serial_sha256": "b4f81aa296f66044d546873e98978584ffc758ad42c33bc8a52a0c304a7d6417",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": true,
+      "target_prefix_matches_source": false,
+      "success_receipt": false
+    },
+    {
+      "case": "fault-partial-write",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "17:07.64",
+      "max_rss_kib": 2305744,
+      "exit_status": 0,
+      "result_sha256": "98a18000664b44e9813ebc7cbe2cc4bffd44370f368c3201bdbbbaeb9cc09804",
+      "serial_sha256": "970daf9c78743ddebadc5b3a3c090df72d1b3ca150c2ff22f6c95109c2f58711",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": false,
+      "target_prefix_matches_source": true,
+      "success_receipt": false
+    },
+    {
+      "case": "fault-flush",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "17:36.30",
+      "max_rss_kib": 2307920,
+      "exit_status": 0,
+      "result_sha256": "76a59505504ba081b043e89aa399d89dc3f220bfe0e6ae1f4be3d8b78371f378",
+      "serial_sha256": "2615ce7fabbc4f4e9446571c0d462897228f2d8b376afff7dd6cce10d7c6e661",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": false,
+      "target_prefix_matches_source": true,
+      "success_receipt": false
+    },
+    {
+      "case": "fault-readback",
+      "status": "qemu-injected-fault-pass",
+      "elapsed": "17:04.60",
+      "max_rss_kib": 2308692,
+      "exit_status": 0,
+      "result_sha256": "0072a7fe2ea4a18d801c236abfe2f04d20f4c40061fb180760ea548d7cdbf06c",
+      "serial_sha256": "a1fd83f6e0608b908703fc478552a8cdf134f00b169f83ef0a966c3837803b66",
+      "claim_status": "consumed-before-write",
+      "replay_status": 409,
+      "target_unchanged": false,
+      "target_prefix_matches_source": true,
+      "success_receipt": false
+    }
+  ],
+  "limits": [
+    "No physical H616 CID-to-open-descriptor mapping, printer boot, power-loss recovery, release, or hardware write claim.",
+    "Flush/readback faults are injected at early fault points and do not demonstrate failure after a complete transfer.",
+    "One GFP_ATOMIC guest warning in full run; no OOM/NFS failure and the full digest/GPT checks passed."
+  ]
+}
