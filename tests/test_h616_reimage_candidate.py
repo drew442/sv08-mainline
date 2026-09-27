@@ -92,6 +92,23 @@ class CandidateTests(unittest.TestCase):
     def setUpClass(cls):
         (REPO / 'local').mkdir(exist_ok=True)
 
+    def test_recovery_handoff_requires_trusted_initramfs_and_pins_transfer(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary)
+            files, _, _ = signed_inputs(work)
+            with self.assertRaisesRegex(ValueError, 'trusted initramfs'):
+                build(work / 'rejected', *files.values(), now=1500,
+                      synthetic_test=True, recovery_handoff=True)
+            manifest = build(work / 'handoff', *files.values(), now=1500,
+                             synthetic_test=True, trusted_initramfs=True,
+                             source_server='10.0.2.2',
+                             source_export='/srv/sv08-sd-nfs',
+                             recovery_handoff=True)
+            helper = WRITER.parent / 'env_last_transfer.h'
+            self.assertTrue(manifest['recovery_handoff'])
+            self.assertEqual(manifest['env_last_transfer_sha256'], digest(helper.read_bytes()))
+            self.assertGreater((work / 'handoff/sd-network-init').stat().st_size, 0)
+
     def test_signed_claim_receipt_and_strict_http_framing(self):
         job_id = 'h616-synthetic-test-001'
         descriptor_hash = '12' * 32

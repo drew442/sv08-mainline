@@ -45,8 +45,10 @@ in disposable storage before physical use.
 
 The RAM writer must identify the target and mount only its partition 5 long
 enough to validate and durably remove the marker (`unlink`, directory `fsync`,
-filesystem `syncfs`, clean unmount). It must verify both raw redundant
-environment copies have exhausted A/B attempts before the first whole-device
+filesystem `syncfs`, clean unmount). This happens before time, bundle or claim
+checks so an early refusal cannot leave a marker that relaunches the writer.
+It must verify both raw redundant environment copies have exhausted A/B
+attempts and carry the same job-bound arm token before the first whole-device
 write. It then obtains the one-shot Beelink claim, verifies the entire NFS
 image and rechecks the target identity at the write boundary. A refusal
 before target open may reboot into the original recovery UI; an uncertain
@@ -64,8 +66,13 @@ extents are flushed and verified may it write the source image's two
 environment records, flush/read them back, and finally verify the full image
 hash and GPT. A partial transfer must never install a bootable new policy.
 
-This requires a transfer/readback implementation that excludes exactly the
-two reviewed environment ranges until finalization. Its fault tests must
+The guarded prototype in `env_last_transfer.h` writes and compares all bulk
+chunks except those exact ranges. The C writer checks the old redundant
+records, flushes and reads back the bulk, verifies the old records have not
+changed, then writes and reads back each source record and finally hashes
+the complete target. `tests/env_last_transfer.c` exercises the actual chunk
+helpers on disposable regular files; it does not exercise the guest's block
+device, marker mount or claim path. Fault tests must
 interrupt before and after each final environment record, as well as during
 the bulk transfer. It must show the last fully valid old record never enables
 an incomplete image, and that a complete image ends with the source's normal

@@ -17,6 +17,7 @@ import sys
 import tempfile
 import threading
 import time
+import zlib
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
@@ -27,7 +28,8 @@ from tests.host_qemu_sd_network_emmc_write import (
 from tests.sv08_emmc_job import canonical_json
 from scripts.prepare_h616_reimage_job import prepare
 from scripts.serve_h616_reimage_job import serve
-from scripts.build_h616_reimage_candidate import build, TARGET_BYTES
+from scripts.build_h616_reimage_candidate import (build, TARGET_BYTES,
+                                                  V5_IMAGE_SHA256, V5_IMAGE_PARTITIONS)
 from scripts.build_sd_network_image import commissioning_bundle, append_commissioning_initramfs, boot_script
 
 
@@ -57,7 +59,71 @@ def wait_controller(thread, errors, port):
     raise TimeoutError('Actual controller did not become ready')
 
 
-def execute(work, sd_work, sd_dtb, packages, tamper_job):
+def seed_recovery_handoff_target(work, target_fd, installed_image, job_id):
+    """Seed only the disposable QEMU target with reviewed v5 recovery media."""
+    installed_image = installed_image.resolve(strict=True)
+    if (not installed_image.is_file() or installed_image.stat().st_size != IMAGE_BYTES or
+            digest(installed_image) != V5_IMAGE_SHA256):
+        raise ValueError('Recovery handoff requires exact v5 regular-file source')
+    target = work / 'target.img'
+    subprocess.run(['dd', f'if={installed_image}', f'of={target}', 'bs=8M',
+                    'conv=notrunc,sparse', 'status=none'], check=True, timeout=900)
+    if os.fstat(target_fd).st_size != TARGET_BYTES:
+        raise ValueError('Target capacity changed during initial-image seed')
+    config = work / 'fw_env.config'
+    config.write_text(f'{target} 0x400000 0x10000\n{target} 0x800000 0x10000\n')
+    changes = work / 'arm.env'
+    changes.write_text('BOOT_ORDER=A B\nBOOT_A_LEFT=0\nBOOT_B_LEFT=0\n'
+                       f'sv08_reimage_arm={job_id}\n')
+    for _ in range(2):
+        run(['fw_setenv', '-c', config, '-s', changes])
+    for offset in (0x400000, 0x800000):
+        bank = os.pread(target_fd, 65536, offset)
+        if (len(bank) != 65536 or int.from_bytes(bank[:4], 'little') != zlib.crc32(bank[5:])):
+            raise ValueError('Unverified redundant environment seed')
+        entries = dict(item.split(b'=', 1) for item in bank[5:].split(b'\0')
+                       if b'=' in item)
+        for key, value in ((b'BOOT_ORDER', b'A B'), (b'BOOT_A_LEFT', b'0'),
+                           (b'BOOT_B_LEFT', b'0'),
+                           (b'sv08_reimage_arm', job_id.encode())):
+            if entries.get(key) != value:
+                raise ValueError('Unverified recovery arm in both environment copies')
+    _, recovery_guid, offset, length = V5_IMAGE_PARTITIONS[4]
+    mountpoint = work / 'recovery-mounted'
+    mountpoint.mkdir()
+    run(['mount', '-t', 'ext4', '-o', f'loop,offset={offset},sizelimit={length}',
+         target, mountpoint])
+    try:
+        original = mountpoint / 'recovery.scr'
+        if not original.is_file():
+            raise ValueError('Initial recovery script missing')
+        stage = mountpoint / 'sv08-reimage'
+        stage.mkdir()
+        shutil.copyfile(original, stage / 'recovery-original.scr')
+        (stage / 'armed').write_bytes(b'SV08-REIMAGE-ONCE\n')
+        os.sync()
+    finally:
+        run(['umount', mountpoint])
+    if not recovery_guid:
+        raise ValueError('Recovery partition identity missing')
+    return {'initial_image_sha256': V5_IMAGE_SHA256,
+            'recovery_partuuid': recovery_guid, 'arm_job_id': job_id}
+
+
+def recovery_marker_present(work):
+    _, _, offset, length = V5_IMAGE_PARTITIONS[4]
+    mountpoint = work / 'recovery-check'
+    mountpoint.mkdir()
+    run(['mount', '-t', 'ext4', '-o', f'loop,ro,noload,offset={offset},sizelimit={length}',
+         work / 'target.img', mountpoint])
+    try:
+        return (mountpoint / 'sv08-reimage/armed').exists()
+    finally:
+        run(['umount', mountpoint])
+
+
+def execute(work, sd_work, sd_dtb, packages, tamper_job,
+            *, recovery_handoff=False, installed_image=None):
     if os.geteuid() != 0:
         raise PermissionError('Isolated QEMU harness must run as root')
     work = fresh_work(work)
@@ -70,6 +136,8 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job):
     run(['mount', '--make-rprivate', '/'])
     run(['mount', '-t', 'tmpfs', 'tmpfs', '/run'])
     run(['ip', 'link', 'set', 'lo', 'up'])
+    if recovery_handoff and installed_image is None:
+        raise ValueError('Recovery handoff requires an exact initial image')
     Path('/run/ganesha').mkdir()
     keys = REPO / 'tests/fixtures/sd-network-root/synthetic-keys'
     receipt_keys = REPO / 'tests/fixtures/sd-network-root/receipt-test-keys'
@@ -91,11 +159,16 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job):
                            source_server='10.0.2.2', source_export='/srv/sv08-sd-nfs',
                            claim_port=port, valid_seconds=3600, execute=True,
                            synthetic_test=True)
+        staged = (seed_recovery_handoff_target(work, target_fd, installed_image,
+                                               prepared['job_id'])
+                  if recovery_handoff else None)
+        initial_prefix = os.pread(target_fd, 1024 * 1024, 0)
         bundle = private / 'bundle'
         manifest = build(bundle, policy, job_verify, state / 'job.json', state / 'job.sig',
                          synthetic_test=True, trusted_initramfs=True,
                          receipt_verification_key_path=receipt_verify,
-                         source_server='10.0.2.2', source_export='/srv/sv08-sd-nfs')
+                         source_server='10.0.2.2', source_export='/srv/sv08-sd-nfs',
+                         recovery_handoff=recovery_handoff)
         synthetic_mmc_fixture(bundle, commissioning=True)
         if tamper_job:
             raw = (bundle / 'job.json').read_bytes().replace(
@@ -115,6 +188,8 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job):
         bootcmd = boot_script('10.0.2.2', '/srv/sv08-sd-nfs', hashes, claim_port=port)
         (work / 'boot.cmd').write_text(bootcmd)
         kernel_args = re.search(r'^setenv bootargs "([^"]+)"$', bootcmd, re.M).group(1)
+        if recovery_handoff:
+            kernel_args += ' sv08.h616_recovery_handoff=1'
         stop = threading.Event()
         errors = []
         def run_controller():
@@ -162,8 +237,10 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job):
                     raise RuntimeError('Tampered signed job reached source hash or target open')
                 if (state / 'claim/claim.json').exists():
                     raise RuntimeError('Tampered job consumed claim')
-                if (work / 'target.img').open('rb').read(1024 * 1024).strip(b'\0'):
+                if os.pread(target_fd, 1024 * 1024, 0) != initial_prefix:
                     raise RuntimeError('Tampered job changed target')
+                if recovery_handoff and recovery_marker_present(work):
+                    raise RuntimeError('Early refusal left a bootable writer marker')
             else:
                 if prefix + 'READBACK ' not in serial or not (state / 'claim/claim.json').exists():
                     raise RuntimeError('Success lacks readback or durable claim')
@@ -178,7 +255,9 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job):
                       'controller_state_sha256': digest(state / 'state.json'),
                       'claim_consumed': (state / 'claim/claim.json').exists(),
                       'target_sha256': digest(work / 'target.img', IMAGE_BYTES) if not tamper_job else None,
-                      'synthetic_target_only': True, 'h616_boot_tested': False}
+                      'synthetic_target_only': True, 'h616_boot_tested': False,
+                      'recovery_handoff': recovery_handoff,
+                      'staged': staged}
             (work / 'result.json').write_text(json.dumps(result, sort_keys=True, indent=2) + '\n')
             print(json.dumps(result, sort_keys=True), flush=True)
         finally:
@@ -200,12 +279,15 @@ def main():
     parser.add_argument('--sd-dtb', type=Path, required=True)
     parser.add_argument('--package-root', type=Path, required=True)
     parser.add_argument('--tamper-job', action='store_true')
+    parser.add_argument('--recovery-handoff', action='store_true')
+    parser.add_argument('--installed-image', type=Path)
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     if not args.execute:
         print('Inspection only: pass --execute inside a fresh isolated mount/network namespace')
         return
-    execute(args.work, args.sd_work, args.sd_dtb, args.package_root, args.tamper_job)
+    execute(args.work, args.sd_work, args.sd_dtb, args.package_root, args.tamper_job,
+            recovery_handoff=args.recovery_handoff, installed_image=args.installed_image)
 
 
 if __name__ == '__main__':
