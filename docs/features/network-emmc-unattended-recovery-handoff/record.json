@@ -100,13 +100,33 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "urh-01",
+          "document": "docs/hardware/host-unattended-reimage-route-research-20260927.md",
+          "document_sha256": "037ccff42f1aec49300ed7d349564fe2631f76c05bb6a0462c47a127491a0a47",
+          "environment": "offline",
+          "limitations": "Only sandbox selection of a test marker is proven. The FIT is nonbootable; no RAM writer, marker consumption, QEMU write, live board or physical recovery UI was tested.",
+          "method": "Run tests/uboot_recovery_handoff.py against U-Boot 2026.07 sandbox with a disposable 256 MiB GPT regular file, FAT A/B boot slots, ext4 recovery, redundant raw MMC environment and real RAUC bootmeth. Retained build/urh-selector-v5/result.json SHA-256 efdf6ceb63f8c997b3357637156fe463a059c235bd1ff5d62832adf443f16245; nine case logs cover armed, absent, malformed, mismatched payload, valid slot, invalid order, one and both corrupt environment copies. Review delivered diff 48edc50..b1c92aa; workflow claim was recorded after the already-committed test.",
+          "profile": null,
+          "source_commit": "b1c92aabab964b09efd7675c829029d40de00a40",
+          "source_sha256": {
+            "configs/host-os/boot-dispatch.cmd": "cbd2601af2843e50665b70bb96f420ea6a4ec9d046666b6beadc3a74d223ec79",
+            "tests/uboot_recovery_handoff.py": "deb192a2071a45561eb60ac4a9426c203af765211948046ed5d0073bded0096c"
+          }
+        }
+      ],
       "human_task": null,
       "id": "offline-dispatch",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "b3705f2fe76c4ac78438e4f8fe11aa57",
+        "session": "urh-offline-dispatch-20260927"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "review",
       "title": "Prove fail-closed recovery selector and one-shot trigger",
       "verification": null
     },
