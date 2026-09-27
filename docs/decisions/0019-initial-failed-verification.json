@@ -1,0 +1,8 @@
+{
+  "outcome": "failed",
+  "reviewer": "independent SV08 feature verifier",
+  "session": "urh-02-03-independent-verification-20260927",
+  "rationale": "Reviewed clean HEAD 69b147349e4db23939af3c777324fb3ce2be198c against the approved decision, run base c111d4f, full changed-file list, implementation, tests and submitted evidence. The recorded source and evidence-document hashes match; the worktree is clean. urh-03 remains unmet: the QEMU harness starts the writer with external -kernel and -initrd arguments. It does not execute the staged recovery selector's FIT boot, so the required writer boot through the proposed handoff is unproven. The later normal-slot run also starts a separate QEMU snapshot. The reported postopen interruption was inspected but not rebooted, and the implemented after-bulk and after-first-env retry tests have no submitted execution results. urh-02's fault cases check staged files and journal states, but do not establish boot fallback at every interruption point. Physical H616 U-Boot-to-FIT execution remains absent and cannot be inferred from these offline results; urh-04 and urh-05 remain separate hardware gates. The named Beelink result JSON and serial logs could not be inspected because the Beelink hostname did not resolve, so their reported hashes and contents were not independently confirmed. Supply integrated handoff and fault-path execution evidence, then resubmit.",
+  "decision_sha256": "8d882cc52fed522d7dd0ff974f6a2d10a97779b4ddf49d10bd63a243dbd3e18a",
+  "evidence_sha256": "4955911f0bb5175ff53ffb0536b99d7a2512d86f79d61428c3029f8cce238d58"
+}

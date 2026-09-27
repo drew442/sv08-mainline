@@ -2,7 +2,8 @@
 
 Date: 2026-09-27. Status: prospective delegated amendment for `urh-03` only.
 
-The first `urh-02/03` submission at `69b1473` failed independent verification.
+The first `urh-02/03` submission at `69b1473` [failed independent verification](0019-initial-failed-verification.json)
+(result SHA-256 `3018b54a4cfd363ae4404d93b0d3dafabffe040348532601f31c4f5547a62d22`).
 The QEMU guest was started with external kernel and initramfs arguments, so it
 did not execute the staged FIT handoff. Interruption retries had not completed,
 and the verifier could not resolve Beelink to inspect the named logs. This
