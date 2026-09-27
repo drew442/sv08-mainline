@@ -66,8 +66,20 @@ def seed_recovery_handoff_target(work, target_fd, installed_image, job_id):
             digest(installed_image) != V5_IMAGE_SHA256):
         raise ValueError('Recovery handoff requires exact v5 regular-file source')
     target = work / 'target.img'
-    subprocess.run(['dd', f'if={installed_image}', f'of={target}', 'bs=8M',
-                    'conv=notrunc,sparse', 'status=none'], check=True, timeout=900)
+    _, recovery_guid, offset, length = V5_IMAGE_PARTITIONS[4]
+    # The guest needs the exact boot metadata and recovery filesystem, not
+    # another 8 GB allocation of unused installed-OS contents. Keep the target
+    # sparse while still hashing the entire identified v5 input above.
+    ranges = ((0, 16 * 1024 * 1024), (offset, length),
+              (IMAGE_BYTES - 1024 * 1024, 1024 * 1024))
+    with installed_image.open('rb') as source:
+        for start, size in ranges:
+            for position in range(start, start + size, 8 * 1024 * 1024):
+                block = os.pread(source.fileno(), min(8 * 1024 * 1024,
+                                                     start + size - position), position)
+                if not block or os.pwrite(target_fd, block, position) != len(block):
+                    raise ValueError('Short recovery seed copy')
+    os.fsync(target_fd)
     if os.fstat(target_fd).st_size != TARGET_BYTES:
         raise ValueError('Target capacity changed during initial-image seed')
     config = work / 'fw_env.config'
@@ -88,7 +100,6 @@ def seed_recovery_handoff_target(work, target_fd, installed_image, job_id):
                            (b'sv08_reimage_arm', job_id.encode())):
             if entries.get(key) != value:
                 raise ValueError('Unverified recovery arm in both environment copies')
-    _, recovery_guid, offset, length = V5_IMAGE_PARTITIONS[4]
     mountpoint = work / 'recovery-mounted'
     mountpoint.mkdir()
     run(['mount', '-t', 'ext4', '-o', f'loop,offset={offset},sizelimit={length}',
@@ -107,7 +118,8 @@ def seed_recovery_handoff_target(work, target_fd, installed_image, job_id):
     if not recovery_guid:
         raise ValueError('Recovery partition identity missing')
     return {'initial_image_sha256': V5_IMAGE_SHA256,
-            'recovery_partuuid': recovery_guid, 'arm_job_id': job_id}
+            'recovery_partuuid': recovery_guid, 'arm_job_id': job_id,
+            'copied_ranges': ranges}
 
 
 def recovery_marker_present(work):
