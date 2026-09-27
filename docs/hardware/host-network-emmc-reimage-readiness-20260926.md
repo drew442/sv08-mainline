@@ -67,6 +67,28 @@ and Beelink returned `No route to host` on 2026-09-27. No current live CID,
 device number, power state or boot state was obtained. Retry that observation
 from Beelink during H12 preparation; do not infer the physical target from H10.
 
+## 2026-09-27 handoff update
+
+The pending-proposal and missing-offline-composition statements above describe
+the original audit, not the current feature state. The [recovery handoff
+contract](../design/unattended-emmc-reimage-handoff.md) and
+[feature record](../features/network-emmc-unattended-recovery-handoff/record.json)
+now record independent passing offline reviews for `urh-01/02/03`. A staged
+FIT-extracted RAM writer in disposable QEMU completed a full exact-v5 write,
+readback and normal-A snapshot boot; stage faults, a first-final-environment
+interruption with refused retry, and a fresh tampered-job refusal were checked.
+The separately approved offline method still does not execute H616 U-Boot's
+physical FIT handoff or prove installed-media durability.
+
+The next H12 step is a live, read-only identity and recovery-space observation,
+then a separately reviewed physical fallback/FIT handoff without whole-device
+target open (`urh-04`). The current stager only arms disposable regular files;
+live mounted-recovery/CID admission and a stage/claim launcher still need to be
+implemented and reviewed before any boot-policy action. A full installed-spare
+write (`urh-05`) needs its own exact target/artifact/recovery review. On this
+update, Beelink still reported printer `192.168.1.141` as an incomplete
+Ethernet neighbor. Restore the printer's wired access before the live checks.
+
 H12 remains the one deduplicated physical commissioning task. Once the reviewed
 writer and artifact are ready, the single supervised session must capture the
 live CID before the write, then record the exact hash, target, progress, flush,
