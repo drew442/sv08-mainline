@@ -100,9 +100,11 @@ def execute(target, kernel, initrd, work):
             child.sendline('sha256sum /usr/lib/sv08/release.json')
             child.expect_exact(RELEASE_SHA256 + '  /usr/lib/sv08/release.json',
                                timeout=30)
-            child.sendline('cat /proc/mounts | grep "^/dev/sda2 / ext4 ro"')
-            child.expect_exact('/dev/sda2 / ext4 ro', timeout=30)
-            child.sendline('echo SV08_QEMU_V5_ROOT_A_READONLY_PASS')
+            child.expect_exact('# ', timeout=30)
+            child.sendline("awk '$2==\"/\" {print \"SV08_ROOT=\" $1 \" \" $3 \" \" $4}' /proc/mounts")
+            child.expect_exact('SV08_ROOT=/dev/sda2 ext4 ro', timeout=30)
+            child.expect_exact('# ', timeout=30)
+            child.sendline("printf 'SV08_%s\\n' QEMU_V5_ROOT_A_READONLY_PASS")
             child.expect_exact('SV08_QEMU_V5_ROOT_A_READONLY_PASS', timeout=30)
     finally:
         child.terminate(force=True)
