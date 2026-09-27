@@ -22,6 +22,13 @@ class ServeJobTests(unittest.TestCase):
             self.assertIn('Access_Type = NONE;', config)
             self.assertIn('Bind_Addr = 192.168.1.20;', config)
             self.assertIn(f'IdmapConf = "{root / "idmap.conf"}";', config)
+            package_config = ganesha_config(export_dir=root / 'export',
+                                            pseudo='/srv/sv08-sd-nfs', bind='0.0.0.0',
+                                            printer_ip='127.0.0.1', recovery_dir=root / 'recovery',
+                                            plugin_dir=root / 'plugins')
+            self.assertIn(f'Plugins_Dir = "{root / "plugins"}";', package_config)
+            self.assertNotIn('Bind_Addr', package_config)
+            self.assertIn('Clients = 127.0.0.1; Access_Type = RO;', package_config)
             self.assertIn('Clients = 192.168.1.141; Access_Type = RO;', config)
             self.assertIn('Squash = Root_Squash;', config)
             self.assertNotIn('Access_Type = RW;', config)
@@ -56,6 +63,12 @@ class ServeJobTests(unittest.TestCase):
             self.assertEqual(report['status'], 'inspection-only')
             self.assertEqual(len(report['ganesha_sha256']), 64)
             self.assertEqual(report['ganesha_sha256'], report['rpcbind_sha256'])
+            with self.assertRaisesRegex(ValueError, 'Synthetic service options'):
+                serve(state_dir=state, image=image,
+                      job_verification_key=root / 'job.pub',
+                      receipt_signing_key=root / 'receipt.key', export_dir=export,
+                      printer_ip='192.168.1.141', rpcbind=executable,
+                      ganesha=executable, synthetic_package_root=root)
             self.assertFalse(export.exists())
             self.assertFalse((state / 'serve-start.json').exists())
             root.chmod(0o755)

@@ -105,3 +105,52 @@ The final focused/regression offline Python run passed 47 tests covering the
 H616 builder, signed job controller, real loopback claim, NFS export syntax,
 trusted initramfs composition and existing SD writer behavior. No printer was
 contacted during these checks.
+
+## Controller-integrated correction
+
+The first independent feature verification rejected this evidence as a final
+end-to-end result: its full-image QEMU case used the harness's older claim and
+NFS server instead of the new one-shot host controller. A separate correction
+harness, `tests/host_qemu_trusted_writer_controller.py`, now calls the actual
+`prepare()` and `serve()` entry points. Its only service adaptation is an
+isolated network/mount namespace with the extracted Ganesha package: QEMU
+Slirp presents the guest's NFS traffic to Ganesha from loopback, so that test
+export admits loopback, while the physical service still requires the exact
+non-loopback printer address. The test composes the exact SD-resident writer,
+policy, job and signatures, then boots the checked-in guest on a regular-file
+target. No device node is accepted as the test target.
+
+The corrected refusal case changed `job.json` after the valid build and
+updated only the bundle's file hash, leaving the signature and compiled
+descriptor binding unchanged. The guest emitted
+`SV08_H616_COMMISSIONING_REFUSED_BUNDLE` before source hashing or target open;
+the actual host controller retained an unconsumed claim, stopped without
+rearming, and the synthetic target prefix remained zero. This checks the
+composed path's signed-job binding rather than a helper's direct verification.
+The controller-integrated full-image case emitted `PASS` and matching guest
+`SOURCE`/`READBACK` hashes. After QEMU powered down, the harness independently
+hashed all 7,818,182,656 bytes of the regular-file target and checked both GPT
+CRC copies and all six partition records. The controller persisted a consumed
+claim before target open, then stopped with no automatic rearm. The guest log
+contains ten `GFP_ATOMIC` page-allocation warnings during the copy; no
+transfer or hash error followed. This pass establishes the synthetic path's
+data result but does not establish physical stability or throughput.
+
+| Corrected case | Result JSON SHA-256 | Guest serial SHA-256 | Composed initramfs SHA-256 |
+| --- | --- | --- | --- |
+| Actual-controller full transfer and host readback/GPT | `2e637a2b2319318fc5ae29d58822ef7b70984ee26098278addb4281c9f919921` | `ec883a05a95cb503efaab2994a11b6629e5731289d5dd02ad0afe34f9b2fe0cd` | `51f1cf2866a5e1aec2d27edb27aca5f59e3c9bbeac85661646bf92e782cf037a` |
+| Tampered signed job, no claim or target open | `2d5f8e6780a6515d471c49fd4986c3c6ee7af09ad71cab6b239d32c14f19e3d8` | `10a9e6665666acd0c88a1e83825fc510a457c2a23013e1d32fe4725ec4efa590` | `2a9f8c3c1ebd0a70bbc7db80e0bfba53730c7ec10e018f8e28c06c7bb6ccbb11` |
+
+The 2026-09-27 correction ran inside `sudo unshare -n -m --` on Beelink's
+dedicated scratch LV. A corrected local run passed 62 focused Python tests,
+including the SD image and writer regressions.
+To reproduce either case, run the harness from a checkout with the pinned
+Monocypher submodule initialized, inside a fresh isolated root namespace:
+`sudo unshare -n -m -- python3 tests/host_qemu_trusted_writer_controller.py
+--work /mnt/sv08-qemu-trusted/fresh-case --sd-work
+/home/drew/sv08-qemu-reimage-pilot/sd-work --sd-dtb
+/mnt/sv08-qemu-trusted/sv08.dtb --package-root
+/home/drew/sv08-qemu-reimage-pilot/packages --execute`.
+Add `--tamper-job` for the refusal case and choose a different fresh work
+directory. Those paths are Beelink-local test artifacts; the harness admits
+only a newly created regular-file target and constructs synthetic source data.

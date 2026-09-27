@@ -30,7 +30,8 @@ def safe_path(path: Path) -> Path:
 
 
 def ganesha_config(*, export_dir: Path, pseudo: str, bind: str,
-                   printer_ip: str, recovery_dir: Path) -> str:
+                   printer_ip: str, recovery_dir: Path,
+                   plugin_dir: Path | None = None) -> str:
     """One read-only VFS export; all unmatched clients are denied."""
     export_dir = safe_path(export_dir)
     recovery_dir = safe_path(recovery_dir)
@@ -39,9 +40,14 @@ def ganesha_config(*, export_dir: Path, pseudo: str, bind: str,
     if (not re.fullmatch(r'/[A-Za-z0-9_./-]+', pseudo) or
             '..' in pseudo.split('/') or bind == printer_ip or
             ipaddress.IPv4Address(bind).is_loopback or
-            ipaddress.IPv4Address(printer_ip).is_loopback):
+            (ipaddress.IPv4Address(printer_ip).is_loopback and not plugin_dir)):
         raise ValueError('Unsafe NFS listener, client or export')
-    return f'''NFS_CORE_PARAM {{ Protocols = 3; Bind_Addr = {bind}; mount_path_pseudo = true; }}
+    plugin = f' Plugins_Dir = "{safe_path(plugin_dir)}";' if plugin_dir else ''
+    # Ganesha interprets Bind_Addr as a concrete interface address. Its
+    # default listens on all interfaces, which is needed only by isolated
+    # synthetic QEMU/Slirp. Physical jobs always specify the reviewed IP.
+    bind_setting = '' if plugin_dir and bind == '0.0.0.0' else f' Bind_Addr = {bind};'
+    return f'''NFS_CORE_PARAM {{ Protocols = 3;{bind_setting} mount_path_pseudo = true;{plugin} }}
 NFSV4 {{ IdmapConf = "{recovery_dir.parent / 'idmap.conf'}"; UseGetpwnam = true; Graceless = true; RecoveryRoot = "{recovery_dir}"; }}
 EXPORT {{
   Export_Id = 1;
@@ -68,16 +74,32 @@ def port_open(host: str, port: int) -> bool:
 
 def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
           receipt_signing_key: Path, export_dir: Path, printer_ip: str,
-          rpcbind: Path, ganesha: Path, execute: bool = False) -> dict:
+          rpcbind: Path, ganesha: Path, execute: bool = False,
+          synthetic_package_root: Path | None = None, stop_event=None) -> dict:
     state_dir = safe_path(state_dir)
     export_dir = safe_path(export_dir)
     image = safe_path(image)
     rpcbind, ganesha = safe_path(rpcbind), safe_path(ganesha)
     receipt = json.loads((state_dir / 'state.json').read_bytes())
     bind, pseudo = receipt['source_server'], receipt['source_export']
+    synthetic = synthetic_package_root is not None
+    if synthetic != (receipt.get('synthetic_test') is True) or (stop_event is not None and not synthetic):
+        raise ValueError('Synthetic service options require synthetic persisted job state')
+    if synthetic:
+        package_root = safe_path(synthetic_package_root)
+        if (rpcbind != package_root / 'sbin/rpcbind' or
+                ganesha != package_root / 'usr/bin/ganesha.nfsd'):
+            raise ValueError('Synthetic executables must come from one package root')
+        listener, probe = '0.0.0.0', '127.0.0.1'
+        plugin_dir = package_root / 'usr/lib/x86_64-linux-gnu/ganesha'
+        prefix = package_root / 'usr/lib/x86_64-linux-gnu'
+        child_env = dict(os.environ, LD_LIBRARY_PATH=':'.join((
+            str(package_root / 'usr/lib/ganesha'), str(prefix), str(plugin_dir))))
+    else:
+        listener, probe, plugin_dir, child_env = bind, bind, None, None
     if not state_dir.is_relative_to(LOCAL) or not export_dir.parent.is_dir():
         raise ValueError('State or export directory is not in its assigned place')
-    if export_dir.exists() or port_open(bind, 111) or port_open(bind, 2049):
+    if export_dir.exists() or port_open(probe, 111) or port_open(probe, 2049):
         raise ValueError('Export destination or NFS service already exists')
     if (not stat.S_ISREG(image.lstat().st_mode) or
             stat.S_IMODE(image.stat().st_mode) & 0o004 == 0):
@@ -87,11 +109,13 @@ def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
     for executable in (rpcbind, ganesha):
         if not executable.is_file() or not os.access(executable, os.X_OK):
             raise ValueError('Pinned NFS executable unavailable')
-    config = ganesha_config(export_dir=export_dir, pseudo=pseudo, bind=bind,
-                            printer_ip=printer_ip, recovery_dir=state_dir / 'ganesha-recovery')
+    config = ganesha_config(export_dir=export_dir, pseudo=pseudo, bind=listener,
+                            printer_ip=printer_ip, recovery_dir=state_dir / 'ganesha-recovery',
+                            plugin_dir=plugin_dir)
     report = {'status': 'inspection-only' if not execute else 'serving-once',
               'state_dir': str(state_dir), 'export_dir': str(export_dir),
               'image_sha256': receipt['image_sha256'], 'bind': bind,
+              'listener_bind': listener, 'synthetic_test': synthetic,
               'printer_ip': printer_ip, 'claim_port': receipt['claim_port'],
               'automatic_rearm': False,
               'source_and_claim_verified': bool(execute),
@@ -107,7 +131,8 @@ def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
     claim_server = build_claim_server(state_dir=state_dir, image_path=image,
                                       job_verification_key=job_verification_key,
                                       receipt_signing_key=receipt_signing_key,
-                                      bind=bind)
+                                      bind=bind, synthetic_test=synthetic,
+                                      listen_bind=listener if synthetic else None)
     durable_file(state_dir / 'serve-start.json',
                  (json.dumps(report, sort_keys=True) + '\n').encode())
     fsync_dir(state_dir)
@@ -121,17 +146,19 @@ def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
         durable_file(config_path, config.encode())
         fsync_dir(state_dir)
         children.append(subprocess.Popen([str(rpcbind), '-f', '-s'],
+                                         env=child_env,
                                          stdout=subprocess.DEVNULL,
                                          stderr=subprocess.DEVNULL))
         children.append(subprocess.Popen([str(ganesha), '-F', '-f', str(config_path),
                                           '-L', str(state_dir / 'ganesha.log'),
                                           '-p', str(state_dir / 'ganesha.pid')],
+                                         env=child_env,
                                          stdout=subprocess.DEVNULL,
                                          stderr=subprocess.DEVNULL))
         for _ in range(100):
             if any(child.poll() is not None for child in children):
                 raise RuntimeError('NFS service exited before readiness')
-            if port_open(bind, 2049):
+            if port_open(probe, 2049):
                 break
             time.sleep(.1)
         else:
@@ -139,6 +166,8 @@ def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
         claim_server.timeout = .2
         try:
             while True:
+                if stop_event is not None and stop_event.is_set():
+                    break
                 if any(child.poll() is not None for child in children):
                     raise RuntimeError('NFS service exited during job')
                 # A consumed claim is only permission to start the transfer;
