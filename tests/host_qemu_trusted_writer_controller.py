@@ -186,11 +186,13 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
         receipt_verify = copy_private(private, 'receipt-verify.pem', receipt_keys / 'test-verification-key.pem')
         state = private / 'state'
         port = free_port()
+        # Full-device hashing and readback under software-emulated ARM can take
+        # much longer than a physical transfer; this window is synthetic only.
         prepared = prepare(policy_path=policy, image_path=source, job_signing_key=job_sign,
                            job_verification_key=job_verify, receipt_signing_key=receipt_sign,
                            receipt_verification_key=receipt_verify, state_dir=state,
                            source_server='10.0.2.2', source_export='/srv/sv08-sd-nfs',
-                           claim_port=port, valid_seconds=3600, execute=True,
+                           claim_port=port, valid_seconds=7200, execute=True,
                            synthetic_test=True)
         seed = (seed_recovery_handoff_target(work, target_fd, installed_image)
                   if recovery_handoff else None)
