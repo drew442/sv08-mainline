@@ -56,7 +56,7 @@ def execute(target, kernel, initrd, work):
                '-m', '1024', '-kernel', str(kernel), '-initrd', str(initrd),
                '-append', ('console=ttyAMA0,115200 root=/dev/sda2 '
                            'rootfstype=ext4 ro rootwait init=/bin/sh panic=0'),
-               '-display', 'none', '-serial', 'stdio', '-no-reboot',
+               '-display', 'none', '-serial', 'stdio', '-no-reboot', '-nic', 'none',
                '-device', 'qemu-xhci,id=xhci',
                '-drive', f'file={target},if=none,id=target,format=raw,readonly=on',
                '-device', 'usb-storage,drive=target']
