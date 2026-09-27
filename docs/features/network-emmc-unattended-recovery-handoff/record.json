@@ -150,10 +150,14 @@
       "evidence": [],
       "human_task": null,
       "id": "offline-stage-and-qemu",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "8363facec6974863becb8344574d1c72",
+        "session": "urh-stage-qemu-20260927"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Stage exact artifacts and exercise actual controller through QEMU",
       "verification": null
     },
