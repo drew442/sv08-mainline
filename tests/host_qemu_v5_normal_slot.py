@@ -11,6 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 import stat
+import subprocess
 import sys
 
 import pexpect
@@ -39,6 +40,32 @@ def digest(path, limit):
     return h.hexdigest()
 
 
+def compose_readonly_probe_initrd(source, work):
+    """Keep the reviewed drivers, bypass only the writable /data init hook."""
+    tree = work / 'initrd-tree'
+    subprocess.run(['unmkinitramfs', str(source), str(tree)], check=True,
+                   capture_output=True, timeout=60)
+    hook = tree / 'scripts/local-bottom/sv08-data'
+    order = tree / 'scripts/local-bottom/ORDER'
+    if (not hook.is_file() or
+            '/scripts/local-bottom/sv08-data' not in order.read_text()):
+        raise ValueError('Reviewed persistent hook not found in base initrd')
+    hook.unlink()
+    order.write_text('# Read-only root-A probe: never initialize or mount /data.\n')
+    archive = work / 'probe.cpio'
+    names = ['.', *(str(path.relative_to(tree)) for path in sorted(tree.rglob('*')))]
+    with archive.open('wb') as out:
+        subprocess.run(['cpio', '--null', '--quiet', '--reproducible',
+                        '--owner=0:0', '-o', '-H', 'newc'], cwd=tree,
+                       input=('\0'.join(names) + '\0').encode(), stdout=out,
+                       check=True, timeout=60)
+    result = work / 'probe-initrd.img'
+    with result.open('wb') as out:
+        subprocess.run(['gzip', '-n', '-9', '-c', archive], stdout=out,
+                       check=True, timeout=120)
+    return result
+
+
 def execute(target, kernel, initrd, work):
     target = target.resolve(strict=True)
     kernel = kernel.resolve(strict=True)
@@ -52,8 +79,9 @@ def execute(target, kernel, initrd, work):
             digest(initrd, initrd.stat().st_size) != INITRD_SHA256):
         raise ValueError('Fresh local work and exact reviewed v5 target required')
     work.mkdir(mode=0o700)
+    probe_initrd = compose_readonly_probe_initrd(initrd, work)
     command = ['-machine', 'virt', '-cpu', 'cortex-a53', '-smp', '2',
-               '-m', '1024', '-kernel', str(kernel), '-initrd', str(initrd),
+               '-m', '1024', '-kernel', str(kernel), '-initrd', str(probe_initrd),
                '-append', ('console=ttyS0,115200 root=/dev/sda2 '
                            'rootfstype=ext4 ro rootwait init=/bin/sh panic=0'),
                '-display', 'none', '-serial', 'null', '-no-reboot', '-nic', 'none',
@@ -81,6 +109,8 @@ def execute(target, kernel, initrd, work):
         child.close(force=True)
     result = {'status': 'PASS', 'target_sha256': V5_IMAGE_SHA256,
               'kernel_sha256': KERNEL_SHA256, 'initrd_sha256': INITRD_SHA256,
+              'readonly_probe_initrd_sha256': digest(probe_initrd, probe_initrd.stat().st_size),
+              'persistent_hook_skipped_for_readonly_probe': True,
               'root_a_release_sha256': RELEASE_SHA256,
               'root_a_mounted_read_only': True,
               'guest_memory_mb': 1024, 'physical_h616_boot_tested': False,
