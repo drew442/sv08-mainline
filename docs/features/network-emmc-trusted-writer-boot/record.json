@@ -115,15 +115,63 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "twb-01",
+          "document": "docs/hardware/host-sd-network-trusted-writer-compose.md",
+          "document_sha256": "8957f8e1ac3f262068189f477038802d4f8cba39151f02f3a815a000d360a68d",
+          "environment": "offline",
+          "limitations": "Offline composition only. No physical H616 boot, live target identity, eMMC write or boot-policy change; SD custody is not SoC secure boot.",
+          "method": "Inspected default and explicit boot scripts; built synthetic H616 bundle and repacked pinned diagnostic initramfs, then extracted writer and PID 1 ORDER. Repeated same inputs and matched SHA-256. Ran 47 focused and regression tests in a clean offline worktree.",
+          "profile": "test-sv08-01",
+          "source_commit": "0ff91b687c2cace6c18340d1d14d41b4733062e8",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-trusted-writer-compose.md": "8957f8e1ac3f262068189f477038802d4f8cba39151f02f3a815a000d360a68d",
+            "scripts/build_h616_reimage_candidate.py": "8b41829655cd8595eb343ccb5ccc6a25588152b550b894fa01896c48539ae1e5",
+            "scripts/build_sd_network_image.py": "f94ebf7082b651193721b02581a2a940caca39d291ae7179fa400a95032d2c7b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "19cfef845a49352e5c300dc95e6f4b37cc104788110a6d449852699f12c54ecd",
+            "tests/test_trusted_writer_compose.py": "64c5a9997193ce84ec2ac2dc291aef2ad40328c31ab667283cfdf3aba9ea5c70"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "twb-02",
+          "document": "docs/hardware/host-sd-network-trusted-writer-compose.md",
+          "document_sha256": "8957f8e1ac3f262068189f477038802d4f8cba39151f02f3a815a000d360a68d",
+          "environment": "offline",
+          "limitations": "Mount admission and fallback are synthetic/static checks. No live NFS or physical boot; end-to-end QEMU and power-loss behavior remain later tasks.",
+          "method": "Verified commissioning bootargs force root=/dev/ram0 and boot=nfs, so kernel fallback cannot execute NFS init. Checked pinned initramfs PID 1 sources ORDER; compiled mount parser self-test for exact read-only NFS export and tested wrong/missing/writable/duplicate mounts. Ran 47 focused and regression tests.",
+          "profile": "test-sv08-01",
+          "source_commit": "0ff91b687c2cace6c18340d1d14d41b4733062e8",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-trusted-writer-compose.md": "8957f8e1ac3f262068189f477038802d4f8cba39151f02f3a815a000d360a68d",
+            "scripts/build_h616_reimage_candidate.py": "8b41829655cd8595eb343ccb5ccc6a25588152b550b894fa01896c48539ae1e5",
+            "scripts/build_sd_network_image.py": "f94ebf7082b651193721b02581a2a940caca39d291ae7179fa400a95032d2c7b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "19cfef845a49352e5c300dc95e6f4b37cc104788110a6d449852699f12c54ecd",
+            "tests/test_trusted_writer_compose.py": "64c5a9997193ce84ec2ac2dc291aef2ad40328c31ab667283cfdf3aba9ea5c70"
+          }
+        }
+      ],
       "human_task": null,
       "id": "compose-trusted-initramfs",
-      "implementation": null,
+      "implementation": {
+        "actor": "codex",
+        "run": "67b741d78b734c2780b427e049c5a895",
+        "session": "root-trusted-writer-compose-v2-20260927"
+      },
       "repeats": 0,
       "resumption": "Use root=/dev/ram0 plus boot=nfs for the trusted initramfs mount path; prohibit NFS kernel fallback, retest, and re-review the replacement commit.",
-      "status": "pending",
+      "status": "review",
       "title": "Run the writer from authenticated initramfs content",
-      "verification": null
+      "verification": {
+        "decision_sha256": "4b3534b94ba04bde0d857299c42909ae2bd375e27e2c158bd4cc2fccddcf73e1",
+        "evidence_sha256": "794359b6512c912777832610d22af1b0bc6d335b47835eaf08326523e2e15a18",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete five-file diff from 5dc8ce9 to clean HEAD 0ff91b6. The default diagnostic remains writer-free. Explicit commissioning places the writer and policy inputs in the SD-hash-verified initramfs. Its boot arguments use root=/dev/ram0 with boot=nfs: initramfs-tools still mounts the specified NFS source read-only at /root, while failure of /init cannot make the kernel execute an NFS-supplied init. The sourced init-bottom ORDER execs the embedded writer before run-init; writer admission checks the exact mount, read-only flags, bundle and claim before target open. Verified all submitted document and source hashes, proposal and requirement hashes, and the reported twb-01/twb-02 offline scope. The 47 reported tests were not rerun in this read-only session. No physical boot, eMMC write or release behavior is certified.",
+        "reviewer": "independent-feature-verifier/network-emmc-trusted-writer-boot",
+        "session": "read-only-verification-20260927-0ff91b6"
+      }
     },
     {
       "blocker": null,
