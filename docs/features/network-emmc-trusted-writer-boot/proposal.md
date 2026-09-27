@@ -48,6 +48,14 @@ image hash before opening the eMMC.
 
 ## Scope and alternatives
 
+The route is still pending independent feature approval. The
+[2026-09-27 boot-route assessment](../../hardware/host-network-emmc-kexec-assessment-20260927.md)
+adds a possible RAM-resident kexec handoff from the running host. That route
+could better meet the no-physical-interaction-per-write goal, but the physically
+booted v5 kernel has kexec disabled and no H616 handoff has been tested. The
+feature approver should choose one primary route before implementation; do not
+implement both complete boot paths by default.
+
 1. Extend the explicit SD commissioning composition path to place the H616
    writer, exact target policy, job and signatures in the SD-resident
    hash-verified initramfs. Keep the NFS export read-only and use it only for the

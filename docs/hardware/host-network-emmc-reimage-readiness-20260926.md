@@ -40,7 +40,13 @@ and actual NFS/claim service preparation also remain outstanding.
 The bounded [trusted-writer boot proposal](../features/network-emmc-trusted-writer-boot/proposal.md)
 records the offline design and acceptance checks. It is pending independent
 feature approval; no implementation or bootable writer artifact has been
-authorized by that proposal record yet.
+authorized by that proposal record yet. The accompanying
+[kexec route assessment](host-network-emmc-kexec-assessment-20260927.md) records
+why an authenticated handoff from the running host may better support
+hands-off writes, alongside the important limitation that the v5 kernel lacks
+kexec and the H616 handoff is untested. The independent approver must select a
+single primary route before implementation; do not treat this assessment as
+approval to change kernel configuration or boot behavior.
 
 The development VM has 3.5 GiB free and must not receive a raw image or QEMU
 target. Beelink currently has about 10.7 GB free. The compressed v5 source's
