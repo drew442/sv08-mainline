@@ -238,8 +238,9 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
         controller.start()
         try:
             wait_controller(controller, errors, port)
+            guest_memory_mb = 1024 if use_installed_source else 2048
             cmd = ['qemu-system-aarch64', '-machine', 'virt', '-cpu', 'cortex-a53',
-                   '-smp', '2', '-m', '2048', '-kernel', boot / 'Image',
+                   '-smp', '2', '-m', str(guest_memory_mb), '-kernel', boot / 'Image',
                    '-initrd', boot / 'initrd.img', '-append', kernel_args,
                    '-display', 'none', '-serial', 'null', '-no-reboot',
                    '-device', 'qemu-xhci,id=xhci', '-device', 'usb-net,netdev=n0',
@@ -303,6 +304,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                       'synthetic_target_only': True, 'h616_boot_tested': False,
                       'recovery_handoff': recovery_handoff,
                       'installed_source_as_replacement': use_installed_source,
+                      'guest_memory_mb': guest_memory_mb,
                       'normal_policy': normal_policy,
                       'staged': staged}
             (work / 'result.json').write_text(json.dumps(result, sort_keys=True, indent=2) + '\n')
