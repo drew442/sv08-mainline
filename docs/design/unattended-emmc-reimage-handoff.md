@@ -109,8 +109,9 @@ its own terminal result and host readback.
 
 The offline stager currently operates on a caller-supplied recovery directory
 and arms **regular-file disks only**. It has no live block-device CLI. It
-rechecks the exact signed job and image map at stage time, and requires the
-reviewed original recovery-script hash. An expired job is refused before a
+rechecks the exact signed job and image map at stage time, and requires
+independently reviewed SHA-256 pins for its build manifest and the original
+recovery script. An expired job or changed artifact is refused before a
 journal or recovery file is made. It preserves the original recovery script,
 installs the FIT and wrapper before
 the marker, then journals a separate two-copy environment update. It extracts
@@ -119,6 +120,6 @@ selector. It also extracts all three FIT members and compares them with the
 reviewed kernel, initramfs and DTB. Tests refuse a changed compiled script or
 FIT kernel even when the surrounding manifest and wrapper are recomputed.
 The related regression run passed 24 tests after this check; its log SHA-256
-is `d9d319e6d0d7fc8ef5e54657b206b751beb8c5f3427fde0fcd066f95ce832463`.
+is `7c7cb91b28622d0b7db4bced9a7092a46bc8c6e7432fa0a9239bd99f03e4db2f`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.

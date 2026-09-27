@@ -158,7 +158,8 @@ def journal_state(journal, state):
 
 
 def stage_mounted_recovery(recovery, artifact, journal, *,
-                           bundle, verification_key, expected_original_sha256,
+                           bundle, verification_key, expected_build_sha256,
+                           expected_original_sha256,
                            now=None, fault=None):
     """Stage files on a disposable mounted recovery filesystem, marker last."""
     artifact = Path(artifact)
@@ -170,6 +171,11 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     if journal.is_symlink():
         raise ValueError('Journal path is a symlink')
     journal = journal.resolve()
+    artifact = Path(artifact)
+    if (not isinstance(expected_build_sha256, str) or
+            len(expected_build_sha256) != 64 or
+            digest(regular(artifact / 'build.json')) != expected_build_sha256):
+        raise ValueError('Handoff artifact differs from reviewed build')
     manifest = verify_artifact(artifact)
     verify_signed_stage_bundle(manifest, bundle, verification_key, now=now)
     if not recovery.is_dir() or journal.exists():
@@ -190,6 +196,7 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     if space.f_bavail * space.f_frsize < fit.stat().st_size + original.stat().st_size + RESERVE_BYTES:
         raise ValueError('Recovery filesystem lacks stage reserve')
     state = {'phase': 'planned', 'job_id': manifest['job_id'],
+             'build_sha256': expected_build_sha256,
              'fit_sha256': manifest['files_sha256']['writer.itb'],
              'original_recovery_sha256': digest(original)}
     journal_state(journal, state)

@@ -37,6 +37,7 @@ class RecoveryStageTests(unittest.TestCase):
             artifact = root / 'handoff'
             build_handoff(artifact, kernel, base_initrd(root), dtb, bundle,
                           '10.0.2.2', '/srv/sv08-sd-nfs', 12345)
+            build_hash = hashlib.sha256((artifact / 'build.json').read_bytes()).hexdigest()
             original_hash = hashlib.sha256(b'ORIGINAL-UI').hexdigest()
             for fault, marker_expected, wrapper_expected in (
                     ('after-original', False, False),
@@ -50,6 +51,7 @@ class RecoveryStageTests(unittest.TestCase):
                 state = stage_mounted_recovery(recovery, artifact, journal,
                                                bundle=bundle,
                                                verification_key=files['key'], now=1500,
+                                               expected_build_sha256=build_hash,
                                                expected_original_sha256=original_hash,
                                                fault=fault)
                 self.assertEqual(state['job_id'], job['job_id'])
@@ -64,20 +66,29 @@ class RecoveryStageTests(unittest.TestCase):
             recovery.mkdir()
             (recovery / 'recovery.scr').write_bytes(b'ORIGINAL-UI')
             journal = root / 'arm-journal'
+            with self.assertRaisesRegex(ValueError, 'reviewed build'):
+                stage_mounted_recovery(recovery, artifact, journal,
+                                       bundle=bundle,
+                                       verification_key=files['key'], now=1500,
+                                       expected_build_sha256='0' * 64,
+                                       expected_original_sha256=original_hash)
             with self.assertRaisesRegex(ValueError, 'Stale job'):
                 stage_mounted_recovery(recovery, artifact, journal,
                                        bundle=bundle,
                                        verification_key=files['key'], now=3000,
+                                       expected_build_sha256=build_hash,
                                        expected_original_sha256=original_hash)
             self.assertFalse(journal.exists())
             with self.assertRaisesRegex(ValueError, 'Original recovery script'):
                 stage_mounted_recovery(recovery, artifact, journal,
                                        bundle=bundle,
                                        verification_key=files['key'], now=1500,
+                                       expected_build_sha256=build_hash,
                                        expected_original_sha256='0' * 64)
             stage_mounted_recovery(recovery, artifact, journal,
                                    bundle=bundle,
                                    verification_key=files['key'], now=1500,
+                                   expected_build_sha256=build_hash,
                                    expected_original_sha256=original_hash)
             disk = root / 'target.img'
             with disk.open('xb') as stream:
