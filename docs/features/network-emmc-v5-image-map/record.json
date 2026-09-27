@@ -1,0 +1,68 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "The exact v5 raw image hash resolves to the audited image disk GUID and all six partition records.",
+      "environment": "offline",
+      "id": "vmap-01"
+    },
+    {
+      "description": "Changed image hash, disk GUID, partition GUID, offset, size or order is refused by policy/job validation.",
+      "environment": "offline",
+      "id": "vmap-02"
+    },
+    {
+      "description": "Synthetic behavior remains unchanged; default diagnostic is writer/trigger-free and any physical policy output remains nonbootable and nondeployable.",
+      "environment": "offline",
+      "id": "vmap-03"
+    },
+    {
+      "description": "Focused regressions and provenance checks pass with exact source/manifest hashes and no physical claim.",
+      "environment": "offline",
+      "id": "vmap-04"
+    }
+  ],
+  "created": "2026-09-27",
+  "decision": null,
+  "format_version": 1,
+  "id": "network-emmc-v5-image-map",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-v5-image-map/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-h616-writerless-adapter/proposal.md",
+    "docs/features/network-emmc-h616-writerless-adapter/record.json",
+    "docs/hardware/host-board-image-20260925-v5-gpt-audit-20260927.json",
+    "docs/hardware/host-board-image-20260925-v5.json",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "configs/host-os/recovery-test-sv08-01.json"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "vmap-01",
+        "vmap-02",
+        "vmap-03",
+        "vmap-04"
+      ],
+      "depends_on": [
+        "network-emmc-h616-writerless-adapter:commissioning-adapter"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "pin-v5-image-map",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Pin the audited v5 image GPT map in commissioning policy",
+      "verification": null
+    }
+  ],
+  "title": "Pin the audited v5 image GPT map"
+}

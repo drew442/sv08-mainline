@@ -1,0 +1,77 @@
+{
+  "date": "2026-09-27",
+  "evidence_level": "offline, read-only artifact audit; compressed source on Beelink decompressed only to a temporary regular file that was removed",
+  "profile": "test-sv08-01 image artifact only; no new physical measurement",
+  "artifact": {
+    "filename": "sv08-board-diagnostic.img.xz",
+    "compressed_bytes": 1050437428,
+    "compressed_sha256": "09fb7efb7637e3b360bbb6c76e5b2b3cf7e0164a69082122b18a05ac567d34a1",
+    "raw_bytes": 7818182656,
+    "raw_sha256": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+    "private_write_receipt_sha256": "00257e6ad490591ecf1dd1a3380bb699d6ebaf41d619b40f2ee082e7c15a3293",
+    "receipt_direct_readback_sha256": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+    "write_script_sha256": "9744efd6f122a99b23cc38df899d6fce9e78d7106c4c4ea35cdb4b7bb71fd94c"
+  },
+  "gpt": {
+    "disk_guid": "b643a41a-d63f-40aa-9940-74a8f4e19a8d",
+    "sgdisk_verify_exit_status": 0,
+    "sgdisk_verify": "No GPT problems found; it reports an unusual 4096-sector gap between primary GPT metadata (LBA 1) and the primary partition entry array (LBA 4096).",
+    "partitions": [
+      {
+        "number": 1,
+        "name": "boot-a",
+        "offset_bytes": 16777216,
+        "size_bytes": 201326592,
+        "partuuid": "ba55a9b4-7969-423b-a739-db62e231b7a1"
+      },
+      {
+        "number": 2,
+        "name": "root-a",
+        "offset_bytes": 218103808,
+        "size_bytes": 2147483648,
+        "partuuid": "26c68198-9248-47af-bbd3-643f1b604ef5"
+      },
+      {
+        "number": 3,
+        "name": "boot-b",
+        "offset_bytes": 2365587456,
+        "size_bytes": 201326592,
+        "partuuid": "7b6e5211-6c5f-432f-9afc-2ac7e4f80b04"
+      },
+      {
+        "number": 4,
+        "name": "root-b",
+        "offset_bytes": 2566914048,
+        "size_bytes": 2147483648,
+        "partuuid": "d8d04a9a-f51f-41b3-a474-e079efe97186"
+      },
+      {
+        "number": 5,
+        "name": "recovery",
+        "offset_bytes": 4714397696,
+        "size_bytes": 536870912,
+        "partuuid": "b28438ed-f895-4b93-9bad-d27d3890ccd3"
+      },
+      {
+        "number": 6,
+        "name": "data",
+        "offset_bytes": 5251268608,
+        "size_bytes": 2565865472,
+        "partuuid": "4773f966-0678-4cf5-bb83-8ee6fb11d8eb"
+      }
+    ],
+    "partition_guids_and_sizes_match_private_write_receipt": true
+  },
+  "receipt_guid_distinction": {
+    "meaning": "The private one-shot writer uses this value in verify_target() as a pre-write identity check for the destination device. It is not the disk GUID inside the raw image.",
+    "artifact_guid": "b643a41a-d63f-40aa-9940-74a8f4e19a8d",
+    "conclusion": "The different GUIDs have distinct roles and are expected to differ after the whole-device image write; the raw image GPT GUID is bound to raw_image_sha256 above.",
+    "receipt_disk_guid_value": "Omitted because it identifies the prior physical target."
+  },
+  "method": "Verified the private receipt and write-script SHA-256; checked compressed size/hash and xz decoding; streamed the 7,818,182,656-byte decompressed image to a temporary file while hashing; compared that hash with both write and direct-readback hashes; ran sgdisk -v, -p and -i 1..6; compared all six GPT PARTUUIDs and partition sizes with the receipt; calculated byte offsets from first LBA \u00d7 512.",
+  "limitations": [
+    "This verifies the image file and historical receipt only. It does not establish current printer eMMC identity, a current physical readback, boot behavior, or permission to write.",
+    "The image remains marked deployable:false. The H616 builder still has an empty physical-image allowlist pending independent approval and boot/claim trust-path review.",
+    "The one-shot receipt was kept private; its SHA-256 and the minimum fields needed to bind the image are published."
+  ]
+}
