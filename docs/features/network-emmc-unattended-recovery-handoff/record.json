@@ -138,7 +138,7 @@
       }
     },
     {
-      "blocker": null,
+      "blocker": "Reviewed clean HEAD 69b147349e4db23939af3c777324fb3ce2be198c against the approved decision, run base c111d4f, full changed-file list, implementation, tests and submitted evidence. The recorded source and evidence-document hashes match; the worktree is clean. urh-03 remains unmet: the QEMU harness starts the writer with external -kernel and -initrd arguments. It does not execute the staged recovery selector's FIT boot, so the required writer boot through the proposed handoff is unproven. The later normal-slot run also starts a separate QEMU snapshot. The reported postopen interruption was inspected but not rebooted, and the implemented after-bulk and after-first-env retry tests have no submitted execution results. urh-02's fault cases check staged files and journal states, but do not establish boot fallback at every interruption point. Physical H616 U-Boot-to-FIT execution remains absent and cannot be inferred from these offline results; urh-04 and urh-05 remain separate hardware gates. The named Beelink result JSON and serial logs could not be inspected because the Beelink hostname did not resolve, so their reported hashes and contents were not independently confirmed. Supply integrated handoff and fault-path execution evidence, then resubmit.",
       "checks": [
         "urh-02",
         "urh-03"
@@ -147,7 +147,58 @@
         "network-emmc-unattended-recovery-handoff:offline-dispatch"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "urh-02",
+          "document": "docs/design/unattended-emmc-reimage-handoff.md",
+          "document_sha256": "258f58de5964e82623be92219e3d0d1922a0e52a005a9ab192b7a9c1001c2cec",
+          "environment": "offline",
+          "limitations": "Disposable regular-file and loop ext4 only; no installed eMMC target admission, live boot-policy change, physical fsync/power-cut or H616 U-Boot-to-FIT handoff tested.",
+          "method": "Reviewed signed staging and loop-backed partition-five admission; ran 20 focused unit tests and root-owned mounted-stage-v3, checked journal fault states, compiled selector/FIT payloads, exact GPT, target device/inode binding and both redundant environment copies. Mounted-stage result SHA-256 b26c472cfec4b642d2b7f3c03522cec089f2d7d080d351985f1a0520c17cefe3. The integrated split-controller QEMU success used the same stager and produced result SHA-256 eea94030b619b9b7b58121cd89185483f4ac1beea9d2b17c9e254fb64c0842fa.",
+          "profile": null,
+          "source_commit": "69b147349e4db23939af3c777324fb3ce2be198c",
+          "source_sha256": {
+            "docs/design/unattended-emmc-reimage-handoff.md": "258f58de5964e82623be92219e3d0d1922a0e52a005a9ab192b7a9c1001c2cec",
+            "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+            "scripts/build_h616_recovery_handoff.py": "ec0f3283c56c4d09b2493cbe04dea58d11d202990e07d190a2c96d55065af873",
+            "scripts/build_h616_reimage_candidate.py": "8222999d9f3e78007a3f134c50699f793925a13dc62e126deba05d9b1a4a6095",
+            "scripts/stage_h616_recovery_handoff.py": "ee5471789b37ab0f2be6edc40ce5f465a40c63771132e68b23c206901120a11e",
+            "tests/env_last_transfer.c": "f538eef5dd494bce013cfaa37cd104cda1c8e0d85c977eed5f805963294d5bed",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "ab0921dd52a0480bb2a298d06ed980726da9a48475941dd4aabef515e72abec2",
+            "tests/fixtures/sd-network-root/env_last_transfer.h": "ee201e2c319b47bb4152c27b6c4bf8267f0b90dfa0b4bef1f072134fe8d79766",
+            "tests/host_qemu_trusted_writer_controller.py": "22525c5091331d66793fc3de2b2a9a1747f83604814f119e0eba4171b8d7293e",
+            "tests/host_qemu_v5_full_os_boot.py": "80766d5c8b264b16405fb763b4e9058fc9fa6cd7db633c80b0d0507bee306d10",
+            "tests/offline_h616_stage_mounted.py": "c74fdd8d98e76b86b5c050453d0c2ace2846e407da83c8af04f185e5d72bb6dd",
+            "tests/test_recovery_handoff_stage.py": "8e560457bc6453c60b80792bc06c79d1e409893474c6be86746456e8a73af25f"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "urh-03",
+          "document": "docs/design/unattended-emmc-reimage-handoff.md",
+          "document_sha256": "258f58de5964e82623be92219e3d0d1922a0e52a005a9ab192b7a9c1001c2cec",
+          "environment": "offline",
+          "limitations": "QEMU virt loads the verified FIT kernel/initramfs externally after separate U-Boot sandbox selector checks; it does not emulate physical H616 U-Boot handing control to FIT. Normal boot is a separate snapshot launch on the same target. One atomic page-allocation warning occurred in the passing 1 GiB run. The partial target was inspected read-only but not rebooted; physical eMMC, printer services and release remain untested.",
+          "method": "Ran exact-v5-source 1 GiB QEMU virt with staged writer payload, one-shot NFS controller, separate emulated network/target controllers and 32 GB sparse target. Guest and independent host full-image SHA-256, six GPT records, claim and final redundant environments passed; result SHA-256 eea94030b619b9b7b58121cd89185483f4ac1beea9d2b17c9e254fb64c0842fa. Tampered signed-job refusal result SHA-256 8e8b1226836474fdcfb24a9325002a115852a70d3635fe96cd38d8a10e9b440b. An interrupted shared-controller postopen run left both old exhausted environments CRC-valid and the marker absent; serial SHA-256 9a2f701c199ae0e13eee0a3f1a6f36c9680680045ded35c066f08ba9b84881c0. A subsequent production-initramfs snapshot boot of the successful target reached sv08-prepare, multi-user.target and login; result SHA-256 9b14aec0da6571fb5db6d3fe891bfe63d1d8190ed9c377f4bde7f367f35d5068.",
+          "profile": null,
+          "source_commit": "69b147349e4db23939af3c777324fb3ce2be198c",
+          "source_sha256": {
+            "docs/design/unattended-emmc-reimage-handoff.md": "258f58de5964e82623be92219e3d0d1922a0e52a005a9ab192b7a9c1001c2cec",
+            "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+            "scripts/build_h616_recovery_handoff.py": "ec0f3283c56c4d09b2493cbe04dea58d11d202990e07d190a2c96d55065af873",
+            "scripts/build_h616_reimage_candidate.py": "8222999d9f3e78007a3f134c50699f793925a13dc62e126deba05d9b1a4a6095",
+            "scripts/stage_h616_recovery_handoff.py": "ee5471789b37ab0f2be6edc40ce5f465a40c63771132e68b23c206901120a11e",
+            "tests/env_last_transfer.c": "f538eef5dd494bce013cfaa37cd104cda1c8e0d85c977eed5f805963294d5bed",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "ab0921dd52a0480bb2a298d06ed980726da9a48475941dd4aabef515e72abec2",
+            "tests/fixtures/sd-network-root/env_last_transfer.h": "ee201e2c319b47bb4152c27b6c4bf8267f0b90dfa0b4bef1f072134fe8d79766",
+            "tests/host_qemu_trusted_writer_controller.py": "22525c5091331d66793fc3de2b2a9a1747f83604814f119e0eba4171b8d7293e",
+            "tests/host_qemu_v5_full_os_boot.py": "80766d5c8b264b16405fb763b4e9058fc9fa6cd7db633c80b0d0507bee306d10",
+            "tests/offline_h616_stage_mounted.py": "c74fdd8d98e76b86b5c050453d0c2ace2846e407da83c8af04f185e5d72bb6dd",
+            "tests/test_recovery_handoff_stage.py": "8e560457bc6453c60b80792bc06c79d1e409893474c6be86746456e8a73af25f"
+          }
+        }
+      ],
       "human_task": null,
       "id": "offline-stage-and-qemu",
       "implementation": {
@@ -155,11 +206,18 @@
         "run": "8363facec6974863becb8344574d1c72",
         "session": "urh-stage-qemu-20260927"
       },
-      "repeats": 0,
+      "repeats": 1,
       "resumption": null,
-      "status": "running",
+      "status": "blocked",
       "title": "Stage exact artifacts and exercise actual controller through QEMU",
-      "verification": null
+      "verification": {
+        "decision_sha256": "8d882cc52fed522d7dd0ff974f6a2d10a97779b4ddf49d10bd63a243dbd3e18a",
+        "evidence_sha256": "4955911f0bb5175ff53ffb0536b99d7a2512d86f79d61428c3029f8cce238d58",
+        "outcome": "failed",
+        "rationale": "Reviewed clean HEAD 69b147349e4db23939af3c777324fb3ce2be198c against the approved decision, run base c111d4f, full changed-file list, implementation, tests and submitted evidence. The recorded source and evidence-document hashes match; the worktree is clean. urh-03 remains unmet: the QEMU harness starts the writer with external -kernel and -initrd arguments. It does not execute the staged recovery selector's FIT boot, so the required writer boot through the proposed handoff is unproven. The later normal-slot run also starts a separate QEMU snapshot. The reported postopen interruption was inspected but not rebooted, and the implemented after-bulk and after-first-env retry tests have no submitted execution results. urh-02's fault cases check staged files and journal states, but do not establish boot fallback at every interruption point. Physical H616 U-Boot-to-FIT execution remains absent and cannot be inferred from these offline results; urh-04 and urh-05 remain separate hardware gates. The named Beelink result JSON and serial logs could not be inspected because the Beelink hostname did not resolve, so their reported hashes and contents were not independently confirmed. Supply integrated handoff and fault-path execution evidence, then resubmit.",
+        "reviewer": "independent SV08 feature verifier",
+        "session": "urh-02-03-independent-verification-20260927"
+      }
     },
     {
       "blocker": null,
