@@ -126,9 +126,16 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Prove fail-closed recovery selector and one-shot trigger",
-      "verification": null
+      "verification": {
+        "decision_sha256": "8d882cc52fed522d7dd0ff974f6a2d10a97779b4ddf49d10bd63a243dbd3e18a",
+        "evidence_sha256": "e7e46041949fce84ff0892a7e094cf309a38263b0a134b4807bbe162879aaa73",
+        "outcome": "passed",
+        "rationale": "At clean HEAD 4dec9ad, I reviewed the full delivery and submission diffs, source, evidence document, result and nine sandbox logs. The recorded document, source and result hashes match. The test compiles the exact boot-dispatch.cmd and exercises RAUC with redundant MMC environment copies on a disposable 256 MiB image. An exhausted A/B state with the expected marker and FIT reaches SV08_TEST_WRITER_SELECTED; a valid A slot boots the slot. Absent, short and same-length wrong markers, a changed FIT, invalid boot order and both corrupt environment copies reach the original-recovery test marker instead. The wrong-marker and wrong-FIT logs show explicit crc32 -v mismatch errors before recovery is sourced. One corrupt environment copy still selects the writer when armed. This passes the bounded offline urh-01 dispatch check. The original recovery UI is represented by an echo script, and the FIT is nonbootable; actual UI execution, marker consumption, RAM-writer handoff and hardware behavior remain for urh-02/03 and later gates.",
+        "reviewer": "independent GPT-6 Sol/medium feature-verifier",
+        "session": "urh-01-independent-verification-20260927"
+      }
     },
     {
       "blocker": null,
