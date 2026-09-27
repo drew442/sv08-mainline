@@ -119,7 +119,8 @@ the compiled U-Boot script and compares its actual payload with the reviewed
 selector. It also extracts all three FIT members and compares them with the
 reviewed kernel, initramfs and DTB. Tests refuse a changed compiled script or
 FIT kernel even when the surrounding manifest and wrapper are recomputed.
-The related regression run passed 24 tests after this check; its log SHA-256
-is `7c7cb91b28622d0b7db4bced9a7092a46bc8c6e7432fa0a9239bd99f03e4db2f`.
+The related regression run passed 25 tests after this check and addition of
+the exact-v5-source synthetic-target policy; its log SHA-256 is
+`7d71a0b52197c1f0e02083d56b12b53054489d66f8bd565bd399b986e3bf98f3`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.
