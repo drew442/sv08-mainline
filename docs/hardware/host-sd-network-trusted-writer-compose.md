@@ -79,3 +79,9 @@ The SD boot artifact must contain the same signed job, verifier and exact NFS
 endpoint. No automatic trigger or automatic return to eMMC boot is provisioned.
 The QEMU harness exercises the synthetic path; the host-service NFS-Ganesha
 configuration has not yet been tested against a physical printer.
+The export defaults, per-client override and listener address follow the
+[NFS-Ganesha export configuration](https://github.com/nfs-ganesha/nfs-ganesha/blob/next/src/doc/man/ganesha-export-config.rst)
+and [core configuration](https://github.com/nfs-ganesha/nfs-ganesha/blob/next/src/doc/man/ganesha-core-config.rst)
+(upstream `next`, accessed 2026-09-27). The executable version used in a
+physical session must be recorded separately; this source citation is design
+provenance, not compatibility evidence.
