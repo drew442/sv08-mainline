@@ -162,7 +162,7 @@
       },
       "repeats": 0,
       "resumption": "Use root=/dev/ram0 plus boot=nfs for the trusted initramfs mount path; prohibit NFS kernel fallback, retest, and re-review the replacement commit.",
-      "status": "review",
+      "status": "done",
       "title": "Run the writer from authenticated initramfs content",
       "verification": {
         "decision_sha256": "4b3534b94ba04bde0d857299c42909ae2bd375e27e2c158bd4cc2fccddcf73e1",
