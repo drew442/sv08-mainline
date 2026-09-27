@@ -23,7 +23,48 @@
     }
   ],
   "created": "2026-09-27",
-  "decision": null,
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "vmap-01",
+          "vmap-02"
+        ],
+        "text": "Pin the exact audited raw hash and image disk GUID. Compare the complete ordered GPT record set against the audit so drift in the layout or profile fails closed; never substitute the private destination's prior GUID."
+      },
+      {
+        "checks": [
+          "vmap-03",
+          "vmap-04"
+        ],
+        "text": "Keep the change offline: preserve the read-only default diagnostic, synthetic tests and explicit nonbootable, nondeployable status. This approval grants no physical build or write, boot-policy change, claim-trust approval, H12 commissioning or release authority."
+      },
+      {
+        "checks": [
+          "vmap-01",
+          "vmap-04"
+        ],
+        "text": "Report the audit as historical artifact evidence, not current eMMC identity or physical safety evidence. Bind test results to exact source and generated manifest hashes."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "6f998b67cbfaa0b122cd99b1567bdc49070567138b811ff51a342e9d25b8d813",
+    "rationale": "This bounded offline improvement advances the accepted writerless reimage work. The current builder refuses every physical image because its allowlist is empty. The public read-only v5 audit binds raw SHA-256 ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f to image disk GUID b643a41a-d63f-40aa-9940-74a8f4e19a8d and six GPT records. I independently compared all six published names, offsets, sizes and PARTUUIDs against the current layout and board profile; they agree. The audit distinguishes the image GUID from the private destination's prior GUID. The resulting commissioning directory remains nonbootable and nondeployable. This approval covers exact offline policy binding only; H12, boot and claim trust, live target identity, hardware operation and release remain separate.",
+    "requirements_sha256": {
+      "configs/host-os/recovery-test-sv08-01.json": "1047d7cd5c2d823aae4b6f5bd590d289d9fc0465a0b056533fdc49bfd3926751",
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-h616-writerless-adapter/proposal.md": "7acb5d46d549494db3d8ec69a57e7f610c9d0581fbc74363152155788e81d541",
+      "docs/features/network-emmc-h616-writerless-adapter/record.json": "8eaa6ab6e8416b4d237d2113b043f577bb8b2d90cafa28e60baad449afc2ee1d",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-board-image-20260925-v5-gpt-audit-20260927.json": "eb1b5fbe55a31b75dbc874fd7425428050951400c928567034e40a79be6b949c",
+      "docs/hardware/host-board-image-20260925-v5.json": "8a3a549b1cb11d08ae638848f419eccc8ca0f9c381210e09ea267dec4a44d678",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf"
+    },
+    "reviewer": "feature-approver/gpt-6-sol",
+    "scope_sha256": "cfd0c6d875a6c443dac31686dc3298ec7ae09199ad080abb543cd9c98acb17f7",
+    "session": "/root/approve_v5_image_map"
+  },
   "format_version": 1,
   "id": "network-emmc-v5-image-map",
   "kind": "improvement",
@@ -56,10 +97,14 @@
       "evidence": [],
       "human_task": null,
       "id": "pin-v5-image-map",
-      "implementation": null,
+      "implementation": {
+        "actor": "codex",
+        "run": "726b933f83314fe9a49bb775f8a68391",
+        "session": "/root"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Pin the audited v5 image GPT map in commissioning policy",
       "verification": null
     }
