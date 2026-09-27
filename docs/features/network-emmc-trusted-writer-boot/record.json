@@ -118,14 +118,10 @@
       "evidence": [],
       "human_task": null,
       "id": "compose-trusted-initramfs",
-      "implementation": {
-        "actor": "codex",
-        "run": "d1136b87ace24f71ae22ff0da0adc4b4",
-        "session": "root-trusted-writer-compose-20260927"
-      },
+      "implementation": null,
       "repeats": 0,
-      "resumption": null,
-      "status": "running",
+      "resumption": "Use root=/dev/ram0 plus boot=nfs for the trusted initramfs mount path; prohibit NFS kernel fallback, retest, and re-review the replacement commit.",
+      "status": "pending",
       "title": "Run the writer from authenticated initramfs content",
       "verification": null
     },
