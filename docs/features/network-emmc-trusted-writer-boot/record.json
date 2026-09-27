@@ -174,7 +174,7 @@
       }
     },
     {
-      "blocker": "Reviewed the complete c62a558..32ef711 diff and committed evidence document. HEAD is 32ef711 and the worktree is clean. The submitted decision, evidence document and listed source hashes match; the evidence-list digest matches the submitted value. twb-04 remains unmet: the only full-transfer success predates the final boot-command hash change, and the QEMU harness uses its own claim server and NFS configuration rather than the submitted host controller. No final-path success demonstrates those components together. The submitted cases also do not show a malformed or forged signed job through the composed QEMU path. Run and retain a disposable full-transfer case using the final composed inputs and controller, add the missing refusal case, and provide the result and serial artifacts so their reported hashes can be checked. The second-boot and fault results are useful synthetic evidence, but establish no physical or release validation.",
+      "blocker": null,
       "checks": [
         "twb-03",
         "twb-04",
@@ -184,81 +184,15 @@
         "network-emmc-trusted-writer-boot:compose-trusted-initramfs"
       ],
       "environment": "offline",
-      "evidence": [
-        {
-          "board_revision": null,
-          "check": "twb-03",
-          "document": "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md",
-          "document_sha256": "66c955e9042fb34552fa2d82f4b938ec7a8930c8c12063d42cd05890cb7e83fc",
-          "environment": "offline",
-          "limitations": "Synthetic keys and images only. Controller NFS ACL and source serving were not exercised against the physical printer; no automatic restart/rearm, no physical authority.",
-          "method": "Prepared one synthetic exact-image signed job with private 0600 inputs; verified durable one-shot claim, expiry, key mismatch and real loopback Ed25519 receipt/replay. Started generated Ganesha 4.3 configuration in a private Beelink network/mount namespace.",
-          "profile": null,
-          "source_commit": "32ef711671981c4ccefecd951f02acb771794b4a",
-          "source_sha256": {
-            "scripts/prepare_h616_reimage_job.py": "e61389269ba427896d5e2b351e193df05c3ca3ceac52ce35a448fed9999bf626",
-            "scripts/serve_h616_reimage_job.py": "e5c1e77c6cb342daf451c00c01e7ccd4075c58bee29c0734b91f7244bfccba56",
-            "tests/test_prepare_h616_reimage_job.py": "d29139ad8b9681756adb4a17ce87ac2c3491d2263eddc0a8abb8809aa6854dc5",
-            "tests/test_serve_h616_reimage_job.py": "62fb1df1299603860fbe19edb8d9c692cca64072a6da196887e466b037c24102"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "twb-04",
-          "document": "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md",
-          "document_sha256": "66c955e9042fb34552fa2d82f4b938ec7a8930c8c12063d42cd05890cb7e83fc",
-          "environment": "offline",
-          "limitations": "QEMU virt uses a synthetic MMC fixture and emulated USB regular file, not H616 ROM, live CID/dev_t or physical eMMC. Initial full success used the earlier same-writer composed harness before final boot.cmd hash tightening; final-harness refusal and second-boot cases cover the changed command path. Unconsumed preclaim refusal can remain eligible while the explicit service stays running.",
-          "method": "Ran composed SD-resident initramfs under disposable ARM64 QEMU: full 7.8 GB transfer and independent host hash/GPT readback; wrong CID, lost acknowledgement, wrong source size/hash, forged HTTP 200, abrupt first-MiB loss, flush and readback faults. Rebooted saved success/refusal/interruption cases with consumed claims; inspected exact boot command hashes, initramfs contents and NFS image-only export.",
-          "profile": null,
-          "source_commit": "32ef711671981c4ccefecd951f02acb771794b4a",
-          "source_sha256": {
-            "scripts/build_sd_network_image.py": "e95a0b5ef5a589792833cf3b7d6b50ec6195e6ab7c2c61a3823126952fa0631c",
-            "tests/host_ganesha_config_smoke.py": "496fd5afee9b9c8803d6c9080c9a223c3885f8518b14a991f75e573febe787e9",
-            "tests/host_qemu_sd_network_emmc_write.py": "cff432f78350b447450a98e780afc8b4b36d5e0d9ba3b2e88a6d7f6cc8db8594",
-            "tests/host_qemu_sd_network_second_boot.py": "496595ceb40eaded8df9ab91204a90def9a40017b035dbc78a05ec394b4c776b",
-            "tests/test_trusted_writer_compose.py": "f5148ccd300d46922d246b0af546ebe4a055ad5f120d4dc941a8dd57d681cfd3"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "twb-05",
-          "document": "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md",
-          "document_sha256": "66c955e9042fb34552fa2d82f4b938ec7a8930c8c12063d42cd05890cb7e83fc",
-          "environment": "offline",
-          "limitations": "No SoC-rooted SD authentication, live target identity, physical write/power-loss evidence, automatic SD entry/return, printer commissioning or release qualification. H12 requires separate artifact/identity/recovery review and immediate high-consequence review.",
-          "method": "Passed 47 focused/regression Python tests, strict ARM64 writer builds, QEMU full/fault cases, generated Ganesha startup, syntax/diff/feature-workflow checks. Retained result and serial SHA-256 values, kernel/initramfs/DTB pins and scratch resource observations in the evidence document.",
-          "profile": null,
-          "source_commit": "32ef711671981c4ccefecd951f02acb771794b4a",
-          "source_sha256": {
-            "docs/hardware/host-sd-network-trusted-writer-compose.md": "133d51199348822950c64f94f82b968fed2ff76d28277d7c3bbc401d33e418a2",
-            "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md": "66c955e9042fb34552fa2d82f4b938ec7a8930c8c12063d42cd05890cb7e83fc",
-            "scripts/prepare_h616_reimage_job.py": "e61389269ba427896d5e2b351e193df05c3ca3ceac52ce35a448fed9999bf626",
-            "scripts/serve_h616_reimage_job.py": "e5c1e77c6cb342daf451c00c01e7ccd4075c58bee29c0734b91f7244bfccba56",
-            "tests/host_qemu_sd_network_emmc_write.py": "cff432f78350b447450a98e780afc8b4b36d5e0d9ba3b2e88a6d7f6cc8db8594",
-            "tests/host_qemu_sd_network_second_boot.py": "496595ceb40eaded8df9ab91204a90def9a40017b035dbc78a05ec394b4c776b"
-          }
-        }
-      ],
+      "evidence": [],
       "human_task": null,
       "id": "end-to-end-qemu",
-      "implementation": {
-        "actor": "codex",
-        "run": "c61eeb1c97084b7c98f8f1731a2cc69d",
-        "session": "root-trusted-writer-end-to-end-20260927"
-      },
-      "repeats": 1,
-      "resumption": null,
-      "status": "blocked",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": "Independent Sol review found the full success used an earlier harness and controller was not in QEMU; integrate actual one-shot controller and NFS service into final composed QEMU success and add a malformed signed-job refusal.",
+      "status": "pending",
       "title": "Add one-shot host control and validate the composed write path",
-      "verification": {
-        "decision_sha256": "4b3534b94ba04bde0d857299c42909ae2bd375e27e2c158bd4cc2fccddcf73e1",
-        "evidence_sha256": "f84b2a697cf7e4f20beef5134e5caeac3f1a7099af41b1e0d74638a8760c605f",
-        "outcome": "failed",
-        "rationale": "Reviewed the complete c62a558..32ef711 diff and committed evidence document. HEAD is 32ef711 and the worktree is clean. The submitted decision, evidence document and listed source hashes match; the evidence-list digest matches the submitted value. twb-04 remains unmet: the only full-transfer success predates the final boot-command hash change, and the QEMU harness uses its own claim server and NFS configuration rather than the submitted host controller. No final-path success demonstrates those components together. The submitted cases also do not show a malformed or forged signed job through the composed QEMU path. Run and retain a disposable full-transfer case using the final composed inputs and controller, add the missing refusal case, and provide the result and serial artifacts so their reported hashes can be checked. The second-boot and fault results are useful synthetic evidence, but establish no physical or release validation.",
-        "reviewer": "independent-feature-verifier/network-emmc-trusted-writer-boot",
-        "session": "read-only-verification-20260927-32ef711"
-      }
+      "verification": null
     }
   ],
   "title": "Authenticate the writerless SD/NFS commissioning boot path"
