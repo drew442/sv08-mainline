@@ -70,10 +70,22 @@ def extract_one(archive, destination):
     return destination.parent / destination.name.replace('-extract', '')
 
 
-def boot_script(server, export, hashes):
+def boot_script(server, export, hashes, *, claim_port=None):
     # Explicit addresses are below 0x60000000 in the observed 1 GiB DRAM map.
+    if claim_port is None:
+        args = (f'console=ttyS0,115200 root=/dev/nfs ro ip=dhcp '
+                f'nfsroot={server}:{export},nfsvers=3,timeo=10,retrans=1,soft '
+                'rootdelay=8 panic=0 init=/sd-network-init')
+    else:
+        # initramfs-tools still uses its trusted NFS mount path via boot=nfs.
+        # If /init cannot run, the kernel must not fall back to executing an
+        # init supplied by the untrusted NFS image source.
+        args = (f'console=ttyS0,115200 root=/dev/ram0 boot=nfs ro ip=dhcp '
+                f'nfsroot={server}:{export},nfsvers=3,timeo=10,retrans=1,soft '
+                f'rootdelay=8 panic=0 rdinit=/init sv08.h616_commissioning=1 '
+                f'sv08.claim_port={claim_port}')
     return f'''# Read only the SD FAT partition. Any failure returns to U-Boot console.
-setenv bootargs "console=ttyS0,115200 root=/dev/nfs ro ip=dhcp nfsroot={server}:{export},nfsvers=3,timeo=10,retrans=1,soft rootdelay=8 panic=0 init=/sd-network-init"
+setenv bootargs "{args}"
 if fatload mmc 0:1 ${{kernel_addr_r}} Image; then
   if hash -v sha256 ${{kernel_addr_r}} ${{filesize}} {hashes['Image']}; then
     if fatload mmc 0:1 ${{ramdisk_addr_r}} initrd.img; then
@@ -133,6 +145,91 @@ def inspect_config(config):
     return {key: values.get(key, 'n') for key in expected}
 
 
+def commissioning_bundle(root, server, export):
+    """Accept only the exact output of the separate, reviewed H616 builder."""
+    root = root.resolve(strict=True)
+    if not root.is_relative_to(REPO / 'local'):
+        raise ValueError('Commissioning bundle must be under ignored local/')
+    def member(name):
+        path = root / name
+        if path.is_symlink() or path.resolve(strict=True).parent != root:
+            raise ValueError('Commissioning bundle may not contain links')
+        return regular_input(path)
+
+    manifest = json.loads(member('reimage-manifest.json').read_text())
+    if (manifest.get('mode') != 'h616-commissioning' or
+            manifest.get('status') != 'nondeployable-commissioning-candidate' or
+            manifest.get('bootable_sd_image') is not False or
+            manifest.get('claim_trigger_provisioned') is not False or
+            manifest.get('trusted_initramfs') is not True or
+            manifest.get('image_nfs_source') != f'{server}:{export}'):
+        raise ValueError('Not an inert H616 commissioning bundle')
+    files = {'trusted-writer': ('sd-network-init', 'binary_sha256'),
+             'job.json': ('job.json', 'job_sha256'),
+             'job.sig': ('job.sig', 'signature_sha256'),
+             'commissioning-target-policy.json':
+                 ('commissioning-target-policy.json', 'policy_sha256')}
+    for _, (name, key) in files.items():
+        if digest(member(name)) != manifest.get(key):
+            raise ValueError(f'Commissioning bundle mismatch: {name}')
+    expected = member('expected.sha256').read_text()
+    policy = json.loads(member('commissioning-target-policy.json').read_text())
+    if (not re.fullmatch(r'[0-9a-f]{64}\n', expected) or
+            policy.get('image_sha256') != expected.strip()):
+        raise ValueError('Invalid image hash in commissioning bundle')
+    return root, manifest, files
+
+
+def append_commissioning_initramfs(initrd, bundle, server, export, work):
+    """Repack the pinned initramfs with a trusted PID 1 writer handoff."""
+    listing = set(run('lsinitramfs', initrd).splitlines())
+    if not {'init', 'scripts/functions', 'scripts/nfs',
+            'scripts/init-bottom/ORDER'}.issubset(listing):
+        raise ValueError('Source initramfs lacks reviewed NFS/init-bottom path')
+    root, manifest, files = bundle
+    stage = work / 'commissioning-initramfs'
+    run('unmkinitramfs', initrd, stage)
+    if ('run_scripts /scripts/init-bottom' not in (stage / 'init').read_text() or
+            '. "${initdir}/ORDER"' not in (stage / 'scripts/functions').read_text()):
+        raise ValueError('Source initramfs does not source trusted ORDER from PID 1')
+    order = stage / 'scripts/init-bottom/ORDER'
+    order.parent.mkdir(parents=True, exist_ok=True)
+    # initramfs-tools sources ORDER from PID 1. Replacing it with exec means
+    # even an unexpected writer exit cannot fall through to NFS run-init.
+    order.write_text('# Trusted commissioning path; /root is data only.\n'
+                     'exec /trusted-writer\n'
+                     'echo "SV08 writer exec failed; stopping" > /dev/kmsg\n'
+                     'while :; do sleep 3600; done\n')
+    for destination, (name, _) in files.items():
+        shutil.copyfile(root / name, stage / destination)
+        (stage / destination).chmod(0o755 if destination == 'trusted-writer' else 0o644)
+    shutil.copyfile(root / 'expected.sha256', stage / 'expected.sha256')
+    # Extraction and overlay creation otherwise give directories fresh mtimes.
+    # Normalize the whole pinned tree before archiving so the output hash is
+    # reproducible from the same inputs.
+    for path in (stage, *stage.rglob('*')):
+        os.utime(path, (0, 0), follow_symlinks=False)
+    paths = ['.', *(str(path.relative_to(stage)) for path in sorted(stage.rglob('*')))]
+    with (work / 'commissioning.cpio').open('wb') as out:
+        subprocess.run(['cpio', '--null', '--quiet', '--reproducible',
+                        '--owner=0:0', '-o', '-H', 'newc'],
+                       cwd=stage, input=('\0'.join(paths) + '\0').encode(),
+                       stdout=out, check=True, timeout=30)
+    with initrd.open('wb') as out:
+        subprocess.run(['gzip', '-n', '-9', '-c', work / 'commissioning.cpio'],
+                       stdout=out, check=True, timeout=120)
+    final_listing = set(run('lsinitramfs', initrd).splitlines())
+    if not {'init', 'scripts/init-bottom/ORDER', 'trusted-writer',
+            'job.json', 'job.sig', 'commissioning-target-policy.json',
+            'expected.sha256'}.issubset(final_listing):
+        raise ValueError('Composed initramfs lost required trusted content')
+    return {'bundle_manifest_sha256': digest(root / 'reimage-manifest.json'),
+            'writer_sha256': manifest['binary_sha256'],
+            'source': f'{server}:{export}', 'source_mount': '/root',
+            'initramfs_cpio_sha256': digest(work / 'commissioning.cpio'),
+            'initramfs_sha256': digest(initrd)}
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in ('work', 'uboot-archive', 'tfa-archive', 'armbian-patch-dir',
@@ -140,6 +237,9 @@ def main():
         p.add_argument('--' + name, type=Path, required=True)
     p.add_argument('--server', required=True, help='Reserved NFS server IPv4 address')
     p.add_argument('--export', required=True, help='Absolute read-only NFS export path')
+    p.add_argument('--commissioning-root', type=Path,
+                   help='Explicit H616 bundle; embeds writer in SD-verified initramfs')
+    p.add_argument('--claim-port', type=int, help='Commissioning claim TCP port')
     p.add_argument('--execute', action='store_true')
     a = p.parse_args()
     spec = json.loads(SPEC.read_text())
@@ -148,7 +248,18 @@ def main():
     server = str(ipaddress.IPv4Address(a.server))
     if not re.fullmatch(r'/[A-Za-z0-9_./-]+', a.export) or '..' in a.export.split('/'):
         raise ValueError('Export must be a simple absolute path')
+    if (a.commissioning_root is None) != (a.claim_port is None):
+        raise ValueError('Commissioning bundle and claim port must be supplied together')
+    if a.claim_port is not None and not 1024 <= a.claim_port <= 65535:
+        raise ValueError('Claim port must be between 1024 and 65535')
+    bundle = (commissioning_bundle(a.commissioning_root, server, a.export)
+              if a.commissioning_root else None)
     work = fresh_directory(a.work)
+    if bundle and not work.is_relative_to(REPO / 'local'):
+        raise ValueError('Commissioning output must stay under ignored local/')
+    if bundle and (not work.is_relative_to(REPO / 'local') or
+                   any(parent.is_symlink() for parent in (work, *work.parents))):
+        raise ValueError('Commissioning output must be an ignored local/ directory')
     sources = {name: regular_input(getattr(a, name)) for name in
                ('uboot_archive', 'tfa_archive', 'kernel_gzip', 'initrd', 'dtb')}
     patch_dir = a.armbian_patch_dir.resolve(strict=True)
@@ -169,24 +280,24 @@ def main():
                       'image_bytes': spec['image_bytes'], 'work': str(work)}), flush=True)
     if not a.execute:
         return
-    # The generated root is deliberately public diagnostic content, exported
-    # with root_squash; anonymous NFS reads must traverse this directory.
-    work.mkdir(mode=0o755, parents=True)
+    work.mkdir(mode=0o700 if bundle else 0o755, parents=True)
     log = work / 'build.log'
-    nfs_root = work / 'nfs-root'
-    for name in ('dev', 'proc', 'sys', 'data', 'run', 'tmp'):
-        (nfs_root / name).mkdir(parents=True)
-        (nfs_root / name).chmod(0o755)
-    nfs_root.chmod(0o755)
-    run('aarch64-linux-gnu-gcc', '-static', '-Os', '-Wall', '-Wextra',
-        '-o', nfs_root / 'sd-network-init', PROBE, output=log)
-    (nfs_root / 'sd-network-init').chmod(0o755)
-    root_manifest = {'files': {'sd-network-init': {
-        'bytes': (nfs_root / 'sd-network-init').stat().st_size,
-        'sha256': digest(nfs_root / 'sd-network-init'), 'mode': '0755'}},
-        'directories': ['data', 'dev', 'proc', 'run', 'sys', 'tmp']}
-    (work / 'nfs-root-manifest.json').write_text(
-        json.dumps(root_manifest, sort_keys=True, indent=2) + '\n')
+    if not bundle:
+        # Public diagnostic content; anonymous NFS reads traverse the tree.
+        nfs_root = work / 'nfs-root'
+        for name in ('dev', 'proc', 'sys', 'data', 'run', 'tmp'):
+            (nfs_root / name).mkdir(parents=True)
+            (nfs_root / name).chmod(0o755)
+        nfs_root.chmod(0o755)
+        run('aarch64-linux-gnu-gcc', '-static', '-Os', '-Wall', '-Wextra',
+            '-o', nfs_root / 'sd-network-init', PROBE, output=log)
+        (nfs_root / 'sd-network-init').chmod(0o755)
+        root_manifest = {'files': {'sd-network-init': {
+            'bytes': (nfs_root / 'sd-network-init').stat().st_size,
+            'sha256': digest(nfs_root / 'sd-network-init'), 'mode': '0755'}},
+            'directories': ['data', 'dev', 'proc', 'run', 'sys', 'tmp']}
+        (work / 'nfs-root-manifest.json').write_text(
+            json.dumps(root_manifest, sort_keys=True, indent=2) + '\n')
     boot = work / 'boot'
     boot.mkdir()
     with gzip.open(sources['kernel_gzip'], 'rb') as src, (boot / 'Image').open('wb') as dest:
@@ -194,13 +305,17 @@ def main():
     if digest(boot / 'Image') != spec['kernel_raw_sha256']:
         raise ValueError('Candidate raw Image differs from reviewed source')
     shutil.copyfile(sources['initrd'], boot / 'initrd.img')
+    commissioning = (append_commissioning_initramfs(boot / 'initrd.img', bundle,
+                     server, a.export, work) if bundle else None)
     shutil.copyfile(sources['dtb'], boot / 'sv08.dtb')
     if (boot / 'Image').stat().st_size > 48 * 1024**2 or (boot / 'initrd.img').stat().st_size > 32 * 1024**2:
         raise ValueError('Payload exceeds fixed memory/address budget')
     hashes = {path.name: digest(path) for path in boot.iterdir()}
-    (work / 'boot.cmd').write_text(boot_script(server, a.export, hashes))
+    (work / 'boot.cmd').write_text(boot_script(server, a.export, hashes,
+                                               claim_port=a.claim_port))
     run('mkimage', '-A', 'arm64', '-T', 'script', '-C', 'none', '-n',
-        'SV08 SD NFS diagnostic', '-d', work / 'boot.cmd', boot / 'boot.scr', output=log)
+        'SV08 SD commissioning' if bundle else 'SV08 SD NFS diagnostic',
+        '-d', work / 'boot.cmd', boot / 'boot.scr', output=log)
     script_sha = digest(boot / 'boot.scr')
     env_text = default_environment(script_sha)
     if any(token in env_text + (work / 'boot.cmd').read_text() for token in
@@ -283,14 +398,17 @@ def main():
         'default_environment': env_text, 'effective_config': effective,
         'payloads': {path.name: {'bytes': path.stat().st_size, 'sha256': digest(path)}
                      for path in boot.iterdir()}, 'inputs': inputs,
-        'nfs_root_init_sha256': digest(nfs_root / 'sd-network-init'),
-        'nfs_root_contents': ['sd-network-init', 'dev/', 'proc/', 'sys/',
-                              'data/', 'run/', 'tmp/'],
-        'nfs_root_manifest_sha256': digest(work / 'nfs-root-manifest.json'),
         'compiler': run('aarch64-linux-gnu-gcc', '--version').splitlines()[0],
         'tfa_bl31_sha256': digest(bl31), 'u_boot_config_sha256': digest(uboot / '.config'),
         'export_path': a.export, 'server_address': server,
     }
+    if commissioning:
+        receipt['commissioning'] = commissioning
+    else:
+        receipt.update({'nfs_root_init_sha256': digest(nfs_root / 'sd-network-init'),
+                        'nfs_root_contents': ['sd-network-init', 'dev/', 'proc/', 'sys/',
+                                              'data/', 'run/', 'tmp/'],
+                        'nfs_root_manifest_sha256': digest(work / 'nfs-root-manifest.json')})
     (work / 'composition.json').write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps({key: receipt[key] for key in ('status', 'image_bytes', 'image_sha256')}))
 

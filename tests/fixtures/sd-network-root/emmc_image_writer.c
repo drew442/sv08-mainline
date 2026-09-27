@@ -17,6 +17,8 @@
 #include <sys/resource.h>
 #include <sys/reboot.h>
 #include <sys/stat.h>
+#include <sys/statfs.h>
+#include <sys/statvfs.h>
 #include <sys/time.h>
 #include <sys/sysmacros.h>
 #include <time.h>
@@ -168,6 +170,32 @@ static int mounted(const char *where,const char *fs,const char *flag) {
   }
   fclose(f);return found;
 }
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+#ifndef SV08_IMAGE_NFS_SOURCE
+#error "Trusted initramfs requires exact NFS image source"
+#endif
+static int trusted_mount_records(FILE *f) {
+  char src[256],path[256],type[64],opts[512];
+  int count=0,valid=0;
+  while(fscanf(f,"%255s %255s %63s %511s %*d %*d",src,path,type,opts)==4) {
+    if(strcmp(path,"/root"))continue;
+    count++;
+    valid=!strcmp(src,SV08_IMAGE_NFS_SOURCE)&&
+          (!strcmp(type,"nfs")||!strcmp(type,"nfs4"))&&
+          option_contains(opts,"ro")&&!option_contains(opts,"rw");
+  }
+  return count==1&&valid;
+}
+static int trusted_image_mount(void) {
+  struct statfs root;
+  FILE *f=fopen("/proc/mounts","r");int valid;
+  if(statfs("/",&root)||!(root.f_type==0x858458f6L||root.f_type==0x01021994L)||!f) {
+    if(f)fclose(f);
+    return 0;
+  }
+  valid=trusted_mount_records(f);fclose(f);return valid;
+}
+#endif
 #if !defined(SV08_H616_COMMISSIONING)
 static int exact_usb_serial(void) {
   char serial[128];
@@ -595,6 +623,13 @@ int main(int argc,char **argv) {
   puts(verify_claim_receipt(response,used,argv[2],argv[3])?"admitted":"refused");
   return 0;
 }
+#elif defined(SV08_TRUSTED_MOUNT_SELFTEST)
+int main(int argc,char **argv) {
+  FILE *f;
+  if(argc!=2||(f=fopen(argv[1],"r"))==NULL)return 2;
+  int valid=trusted_mount_records(f);
+  fclose(f);puts(valid?"admitted":"refused");return 0;
+}
 #elif defined(SV08_CHALLENGE_SELFTEST)
 int main(void) {
   char challenge[65];
@@ -603,7 +638,11 @@ int main(void) {
 }
 #else
 int main(void) {
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+  const char *source="/root/image.bin",*target=SV08_TARGET;
+#else
   const char *source="/image.bin",*target=SV08_TARGET;
+#endif
   char cmd[1024],expected[65],actual[65],readback[65],descriptor_hash[65];
   struct stat ss,ts;uint64_t capacity=0;struct sha256 hash;dev_t admitted_dev,confirmed_dev;
   int in=-1,out=-1;FILE *f;time_t started=time(NULL);
@@ -611,8 +650,12 @@ int main(void) {
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");
   if(mount("devtmpfs","/dev","devtmpfs",0,"mode=0755")&&!mounted("/dev","devtmpfs","rw"))finish("REFUSED_DEV");
   f=fopen("/proc/cmdline","r");if(!f||!fgets(cmd,sizeof(cmd),f))finish("REFUSED_CMDLINE");fclose(f);
-  if(!cmdline_has_token(cmd,SV08_MODE_PARAMETER)||!board_compatible()||
-     !(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
+  if(!cmdline_has_token(cmd,SV08_MODE_PARAMETER)||!board_compatible())finish("REFUSED_ROOT");
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+  if(!trusted_image_mount())finish("REFUSED_SOURCE_MOUNT");
+#else
+  if(!(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
+#endif
   if((long long)started<SV08_JOB_NOT_BEFORE||(long long)started>=SV08_JOB_EXPIRES)
     finish("REFUSED_STALE_JOB");
 #if !defined(SV08_H616_COMMISSIONING)
@@ -639,6 +682,11 @@ int main(void) {
   in=open(source,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
   if(in<0||fstat(in,&ss)||!S_ISREG(ss.st_mode)||(uint64_t)ss.st_size!=IMAGE_BYTES)
     finish("REFUSED_SOURCE");
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+  struct statvfs source_fs;
+  if(fstatvfs(in,&source_fs)||!(source_fs.f_flag&ST_RDONLY)||!trusted_image_mount())
+    finish("REFUSED_SOURCE_MOUNT");
+#endif
 #if defined(SV08_H616_SYNTHETIC_TEST)
   printf("%sSOURCE_HASH_START\n",SV08_RESULT_PREFIX);fflush(stdout);
 #endif
@@ -652,6 +700,10 @@ int main(void) {
   if(!admitted_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
      !read_sysfs_dev(SV08_TARGET_DEV_SYSFS,&confirmed_dev)||confirmed_dev!=admitted_dev)
     finish("REFUSED_TARGET_ID_CHANGED");
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+  if(!trusted_image_mount()||fstatvfs(in,&source_fs)||!(source_fs.f_flag&ST_RDONLY))
+    finish("REFUSED_SOURCE_MOUNT");
+#endif
   /* This is the first target open. The single-use claim is already durable. */
 #if defined(SV08_H616_SYNTHETIC_TEST)
   printf("%sTARGET_OPEN_START\n",SV08_RESULT_PREFIX);fflush(stdout);
@@ -696,7 +748,11 @@ int main(void) {
     sha_update(&hash,buffer,n);done+=n;}
   sha_final(&hash,readback);close(out);close(in);
   if(strcmp(readback,expected))finish("FAILED_READBACK_HASH");
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+  printf("%sSOURCE bytes=%llu sha256=%s image_nfs_ro=1\n",SV08_RESULT_PREFIX,IMAGE_BYTES,actual);
+#else
   printf("%sSOURCE bytes=%llu sha256=%s root_nfs_ro=1\n",SV08_RESULT_PREFIX,IMAGE_BYTES,actual);
+#endif
   printf("%sREADBACK bytes=%llu sha256=%s target=%s target_bytes=%llu\n",SV08_RESULT_PREFIX,IMAGE_BYTES,readback,target,(unsigned long long)capacity);
   finish("PASS");
 }

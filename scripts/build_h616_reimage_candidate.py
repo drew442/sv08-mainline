@@ -215,7 +215,8 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
 
 def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
           synthetic_test=False, fault=None, claim_only=False,
-          receipt_verification_key_path=None):
+          receipt_verification_key_path=None, trusted_initramfs=False,
+          source_server=None, source_export=None):
     root = Path(root).absolute()
     if (not safe_output_root(root, synthetic_test=synthetic_test) or
             (root.exists() and (not root.is_dir() or any(root.iterdir())))):
@@ -224,6 +225,14 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
         raise ValueError('Fault injection and claim-only builds are synthetic QEMU only')
     if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write', 'flush', 'readback'):
         raise ValueError('Unknown injected fault')
+    if trusted_initramfs:
+        if (source_server is None or source_export is None or
+                str(ipaddress.IPv4Address(source_server)) != source_server or
+                not re.fullmatch(r'/[A-Za-z0-9_./-]+', source_export) or
+                '..' in source_export.split('/')):
+            raise ValueError('Trusted initramfs requires exact NFS server/export')
+    elif source_server is not None or source_export is not None:
+        raise ValueError('NFS source requires trusted-initramfs mode')
     policy_raw = private_file(policy_path)
     target_policy = policy_fields(json.loads(policy_raw))
     if canonical_json(target_policy) != policy_raw:
@@ -267,6 +276,9 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
         flags.append('-DSV08_CLAIM_ONLY=1')
     if fault:
         flags.append(f'-DSV08_TEST_FAULT="{fault}"')
+    if trusted_initramfs:
+        flags.extend(['-DSV08_H616_TRUSTED_INITRAMFS=1',
+                      f'-DSV08_IMAGE_NFS_SOURCE="{source_server}:{source_export}"'])
     root.mkdir(mode=0o755, exist_ok=True)
     root.chmod(0o755)
     for directory in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
@@ -283,6 +295,8 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     output.chmod(0o755)
     manifest = {'status': 'nondeployable-commissioning-candidate', 'mode': 'h616-commissioning',
                 'bootable_sd_image': False, 'physical_target_validated': False,
+                'trusted_initramfs': trusted_initramfs,
+                'image_nfs_source': f'{source_server}:{source_export}' if trusted_initramfs else None,
                 'synthetic_test': synthetic_test, 'claim_trigger_provisioned': False,
                 'policy_sha256': digest(policy_raw), 'job_sha256': digest(raw_job),
                 'signature_sha256': digest(signature), 'verifier_sha256': digest(verification_key),
@@ -304,10 +318,15 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--receipt-verification-key', type=Path,
                         help='Separate 0600 local Ed25519 public key for claim receipts; required outside synthetic tests')
+    parser.add_argument('--trusted-initramfs', action='store_true')
+    parser.add_argument('--source-server')
+    parser.add_argument('--source-export')
     args = parser.parse_args()
     print(json.dumps(build(args.root, args.policy, args.verification_key, args.job,
                            args.signature,
-                           receipt_verification_key_path=args.receipt_verification_key),
+                           receipt_verification_key_path=args.receipt_verification_key,
+                           trusted_initramfs=args.trusted_initramfs,
+                           source_server=args.source_server, source_export=args.source_export),
                       sort_keys=True))
 
 
