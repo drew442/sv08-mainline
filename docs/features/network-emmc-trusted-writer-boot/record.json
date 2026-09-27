@@ -187,10 +187,14 @@
       "evidence": [],
       "human_task": null,
       "id": "end-to-end-qemu",
-      "implementation": null,
+      "implementation": {
+        "actor": "codex",
+        "run": "c61eeb1c97084b7c98f8f1731a2cc69d",
+        "session": "root-trusted-writer-end-to-end-20260927"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Add one-shot host control and validate the composed write path",
       "verification": null
     }
