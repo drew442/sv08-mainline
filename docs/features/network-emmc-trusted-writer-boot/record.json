@@ -250,7 +250,7 @@
       },
       "repeats": 0,
       "resumption": "Independent Sol review found the full success used an earlier harness and controller was not in QEMU; integrate actual one-shot controller and NFS service into final composed QEMU success and add a malformed signed-job refusal.",
-      "status": "review",
+      "status": "done",
       "title": "Add one-shot host control and validate the composed write path",
       "verification": {
         "decision_sha256": "4b3534b94ba04bde0d857299c42909ae2bd375e27e2c158bd4cc2fccddcf73e1",
