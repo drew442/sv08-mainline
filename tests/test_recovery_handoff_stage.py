@@ -7,9 +7,10 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+import zlib
 
 from scripts.build_h616_reimage_candidate import build as build_writer
-from scripts.build_h616_recovery_handoff import build as build_handoff
+from scripts.build_h616_recovery_handoff import build as build_handoff, script_text
 from scripts.stage_h616_recovery_handoff import (arm_regular_image,
                                                  parse_env_record,
                                                  stage_mounted_recovery,
@@ -109,6 +110,28 @@ class RecoveryStageTests(unittest.TestCase):
             (changed / 'build.json').write_text(json.dumps(manifest))
             with self.assertRaisesRegex(ValueError, 'Compiled recovery selector'):
                 verify_artifact(changed)
+
+            changed_fit = root / 'changed-fit-kernel'
+            shutil.copytree(artifact, changed_fit)
+            fit_path = changed_fit / 'writer.itb'
+            fit = bytearray(fit_path.read_bytes())
+            kernel_offset = fit.find(b'K' * 64)
+            self.assertGreater(kernel_offset, 0)
+            fit[kernel_offset] = ord('X')
+            fit_path.write_bytes(fit)
+            manifest = json.loads((changed_fit / 'build.json').read_text())
+            manifest['fit_crc32'] = f'{zlib.crc32(fit):08x}'
+            (changed_fit / 'recovery.cmd').write_text(script_text(
+                manifest['job_id'], manifest['bootargs'], len(fit), zlib.crc32(fit)))
+            subprocess.run(['mkimage', '-A', 'arm64', '-T', 'script', '-C', 'none',
+                            '-n', 'SV08 one-shot recovery selector', '-d', 'recovery.cmd',
+                            'recovery.scr'], cwd=changed_fit, check=True, capture_output=True)
+            for name in ('writer.itb', 'recovery.scr'):
+                manifest['files_sha256'][name] = hashlib.sha256(
+                    (changed_fit / name).read_bytes()).hexdigest()
+            (changed_fit / 'build.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'FIT component differs'):
+                verify_artifact(changed_fit)
 
 
 if __name__ == '__main__':

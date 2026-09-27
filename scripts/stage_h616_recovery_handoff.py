@@ -81,6 +81,13 @@ def verify_artifact(root):
                 payload[:4] != len(command).to_bytes(4, 'big') or
                 payload[4:8] != b'\0' * 4 or payload[8:] != command):
             raise ValueError('Compiled recovery selector differs from reviewed source')
+        for index, name in enumerate(('Image', 'writer-initrd.img', 'sv08.dtb')):
+            member = Path(temporary) / f'fit-{index}'
+            subprocess.run(['dumpimage', '-T', 'flat_dt', '-p', str(index),
+                            '-o', str(member), str(root / 'writer.itb')],
+                           check=True, capture_output=True, timeout=30)
+            if digest(member) != expected[name]:
+                raise ValueError(f'FIT component differs from reviewed {name}')
     return manifest
 
 

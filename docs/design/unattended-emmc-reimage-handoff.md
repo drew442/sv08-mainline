@@ -112,8 +112,10 @@ and arms **regular-file disks only**. It has no live block-device CLI. It
 preserves the original recovery script, installs the FIT and wrapper before
 the marker, then journals a separate two-copy environment update. It extracts
 the compiled U-Boot script and compares its actual payload with the reviewed
-selector; changing only the compiled script and its manifest hash is refused.
+selector. It also extracts all three FIT members and compares them with the
+reviewed kernel, initramfs and DTB. Tests refuse a changed compiled script or
+FIT kernel even when the surrounding manifest and wrapper are recomputed.
 The related regression run passed 24 tests after this check; its log SHA-256
-is `fd23dda49483c4d45aa69c3fd011ab6312f7838e5def56d0f71d472a17d13418`.
+is `ade840253086fcde0772407361bec30ea7b8ab98e548b3e78949036f0789cf03`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.
