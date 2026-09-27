@@ -9,7 +9,8 @@ and the verifier could not resolve Beelink to inspect the named logs. This
 failed review remains in the feature record; it is not superseded as evidence.
 
 An independent GPT-6 Sol/medium feature approver approved a bounded *offline
-method* clarification on 2026-09-27. Approval output SHA-256:
+method* clarification on 2026-09-27. The [approval record](0019-offline-reimage-handoff-verification-review.json)
+has SHA-256:
 `4e00e94588b3e59506fe8b3aec42c2adcefcce5003136cda6db5606a54d3f9f5`.
 The original approved decision SHA-256 is
 `8d882cc52fed522d7dd0ff974f6a2d10a97779b4ddf49d10bd63a243dbd3e18a`.
