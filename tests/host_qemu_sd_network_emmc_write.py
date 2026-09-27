@@ -36,7 +36,9 @@ from sv08_reimage_signature import (FORMAT, policy, policy_hash,
                                     sign_test_job)  # noqa: E402
 sys.path.insert(0, str(REPO / 'scripts'))
 from build_qemu_reimage_mode import build as build_reimage_root  # noqa: E402
-from build_h616_reimage_candidate import build as build_h616_root, TARGET_BYTES as H616_TARGET_BYTES  # noqa: E402
+from build_h616_reimage_candidate import (build as build_h616_root,
+    TARGET_BYTES as H616_TARGET_BYTES, V5_IMAGE_SHA256, V5_IMAGE_DISK_GUID,
+    V5_IMAGE_PARTITIONS)  # noqa: E402
 from build_sd_network_image import append_commissioning_initramfs, commissioning_bundle, boot_script  # noqa: E402
 
 IMAGE_BYTES = 7_818_182_656
@@ -148,7 +150,7 @@ def expected_records():
             for i, (part, guid) in enumerate(zip(expected_layout(), PART_GUIDS), 1)]
 
 
-def inspect_gpt(path):
+def inspect_gpt(path, disk_guid=DISK_GUID):
     """Read both GPT copies at the 8 GB image boundary of a 32 GB model."""
     path = secure_path(path)
     if path.stat().st_size < IMAGE_BYTES:
@@ -183,7 +185,7 @@ def inspect_gpt(path):
             arrays.append(entries)
         if geometries[0] != geometries[1] or arrays[0] != arrays[1]:
             raise ValueError('Primary and backup GPT disagree')
-        if str(uuid.UUID(bytes_le=geometries[0][2])) != DISK_GUID:
+        if str(uuid.UUID(bytes_le=geometries[0][2])) != disk_guid:
             raise ValueError('Wrong disk GUID')
         records = []
         for index in range(128):
@@ -196,7 +198,7 @@ def inspect_gpt(path):
                                 partuuid=str(uuid.UUID(bytes_le=entry[16:32])),
                                 offset_bytes=start * SECTOR,
                                 size_bytes=(end - start + 1) * SECTOR))
-        return {'disk_guid': DISK_GUID, 'primary_gpt_crc': True,
+        return {'disk_guid': disk_guid, 'primary_gpt_crc': True,
                 'backup_gpt_crc': True, 'partition_records': records}
     finally:
         os.close(fd)
@@ -214,7 +216,7 @@ def create_target(path, target_bytes=None):
     return fd
 
 
-def admit_target(work, target_fd, source, target_bytes=None):
+def admit_target(work, target_fd, source, target_bytes=None, *, allow_external_source=False):
     target_bytes = TARGET_BYTES if target_bytes is None else target_bytes
     target = secure_path(work / 'target.img', parent=work)
     choices = list(work.glob('target*.img'))
@@ -222,7 +224,7 @@ def admit_target(work, target_fd, source, target_bytes=None):
         raise ValueError('Ambiguous target files')
     disk = os.fstat(target_fd)
     named = target.stat()
-    src = secure_path(source, parent=work).stat()
+    src = secure_path(source, parent=None if allow_external_source else work).stat()
     if (not stat.S_ISREG(disk.st_mode) or disk.st_size != target_bytes or
             (disk.st_dev, disk.st_ino) != (named.st_dev, named.st_ino) or
             (disk.st_dev, disk.st_ino) == (src.st_dev, src.st_ino)):
@@ -331,16 +333,25 @@ def synthetic_mmc_fixture(root, identity_fault=None, *, commissioning=False):
         (other / 'dev').write_text('8:1\n')
 
 
-def h616_synthetic_policy():
+def h616_synthetic_policy(image_sha256=IMAGE_SHA256):
+    if image_sha256 == IMAGE_SHA256:
+        disk_guid, records = DISK_GUID, expected_records()
+    elif image_sha256 == V5_IMAGE_SHA256:
+        disk_guid = V5_IMAGE_DISK_GUID
+        records = [dict(number=index, name=name, partuuid=guid,
+                        offset_bytes=offset, size_bytes=size)
+                   for index, (name, guid, offset, size) in enumerate(V5_IMAGE_PARTITIONS, 1)]
+    else:
+        raise ValueError('Unreviewed synthetic QEMU source')
     return {
         'format': 'sv08-h616-commissioning-policy-v1',
         'cid': SYNTHETIC_CID, 'controller': '4022000.mmc', 'card_type': 'MMC',
         'sectors': 61_079_552, 'dev_t': '8:0', 'target_device': '/dev/mmcblk0',
         'board_compatible': 'test,synthetic-h616', 'claim_server': '10.0.2.2',
-        'image_bytes': IMAGE_BYTES, 'image_sha256': IMAGE_SHA256,
-        'image_layout': {'disk_guid': DISK_GUID, 'image_bytes': IMAGE_BYTES,
+        'image_bytes': IMAGE_BYTES, 'image_sha256': image_sha256,
+        'image_layout': {'disk_guid': disk_guid, 'image_bytes': IMAGE_BYTES,
                          'backup_gpt_at_image_end': True,
-                         'partitions': expected_records()},
+                         'partitions': records},
     }
 
 

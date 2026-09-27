@@ -90,10 +90,16 @@ def expected_image_layout(synthetic_test, image_sha256):
     if config['image_bytes'] != IMAGE_BYTES or len(parts) != 6:
         raise ValueError('Reviewed host image layout changed')
     if synthetic_test:
-        if image_sha256 != TEST_IMAGE_SHA256:
+        if image_sha256 == TEST_IMAGE_SHA256:
+            identities = TEST_PART_GUIDS
+            disk_guid = TEST_DISK_GUID
+        elif image_sha256 == V5_IMAGE_SHA256:
+            # QEMU may exercise the exact reviewed v5 bytes while retaining
+            # its synthetic *target* identity. This never admits a printer.
+            identities = tuple(item[1] for item in V5_IMAGE_PARTITIONS)
+            disk_guid = V5_IMAGE_DISK_GUID
+        else:
             return None
-        identities = TEST_PART_GUIDS
-        disk_guid = TEST_DISK_GUID
     else:
         disk_guid = REVIEWED_PHYSICAL_IMAGES.get(image_sha256)
         if disk_guid is None:
@@ -216,15 +222,18 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
 def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
           synthetic_test=False, fault=None, claim_only=False,
           receipt_verification_key_path=None, trusted_initramfs=False,
-          source_server=None, source_export=None):
+          source_server=None, source_export=None, recovery_handoff=False):
     root = Path(root).absolute()
     if (not safe_output_root(root, synthetic_test=synthetic_test) or
             (root.exists() and (not root.is_dir() or any(root.iterdir())))):
         raise ValueError('Fresh empty output required; physical candidates stay under local/')
     if (fault or claim_only) and not synthetic_test:
         raise ValueError('Fault injection and claim-only builds are synthetic QEMU only')
-    if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write', 'flush', 'readback'):
+    if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write',
+                     'flush', 'readback', 'after-bulk', 'after-first-env'):
         raise ValueError('Unknown injected fault')
+    if recovery_handoff and not trusted_initramfs:
+        raise ValueError('Recovery handoff requires the trusted initramfs')
     if trusted_initramfs:
         if (source_server is None or source_export is None or
                 str(ipaddress.IPv4Address(source_server)) != source_server or
@@ -279,6 +288,8 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     if trusted_initramfs:
         flags.extend(['-DSV08_H616_TRUSTED_INITRAMFS=1',
                       f'-DSV08_IMAGE_NFS_SOURCE="{source_server}:{source_export}"'])
+    if recovery_handoff:
+        flags.append('-DSV08_H616_RECOVERY_HANDOFF=1')
     root.mkdir(mode=0o755, exist_ok=True)
     root.chmod(0o755)
     for directory in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
@@ -307,6 +318,9 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
                 'binary_bytes': output.stat().st_size,
                 'writer_sha256': digest(WRITER.read_bytes()), 'binary_sha256': digest(output.read_bytes()),
                 'compiler': subprocess.check_output(['aarch64-linux-gnu-gcc', '--version'], text=True).splitlines()[0]}
+    if recovery_handoff:
+        manifest.update(recovery_handoff=True,
+                        env_last_transfer_sha256=digest((WRITER.parent / 'env_last_transfer.h').read_bytes()))
     (root / 'reimage-manifest.json').write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n')
     return manifest
 
@@ -319,6 +333,7 @@ def main():
     parser.add_argument('--receipt-verification-key', type=Path,
                         help='Separate 0600 local Ed25519 public key for claim receipts; required outside synthetic tests')
     parser.add_argument('--trusted-initramfs', action='store_true')
+    parser.add_argument('--recovery-handoff', action='store_true')
     parser.add_argument('--source-server')
     parser.add_argument('--source-export')
     args = parser.parse_args()
@@ -326,7 +341,8 @@ def main():
                            args.signature,
                            receipt_verification_key_path=args.receipt_verification_key,
                            trusted_initramfs=args.trusted_initramfs,
-                           source_server=args.source_server, source_export=args.source_export),
+                           source_server=args.source_server, source_export=args.source_export,
+                           recovery_handoff=args.recovery_handoff),
                       sort_keys=True))
 
 
