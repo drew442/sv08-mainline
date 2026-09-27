@@ -17,6 +17,10 @@ def sha(path):
 
 
 class TrustedWriterCompositionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        (sd.REPO / 'local').mkdir(mode=0o700, exist_ok=True)
+
     def bundle(self, root, source='192.0.2.10:/exports/exact'):
         root.mkdir()
         content = {
@@ -49,6 +53,10 @@ class TrustedWriterCompositionTests(unittest.TestCase):
         commissioning = sd.boot_script('192.0.2.10', '/exports/exact', hashes,
                                        claim_port=12345)
         self.assertIn('sv08.h616_commissioning=1 sv08.claim_port=12345', commissioning)
+        self.assertIn('root=/dev/ram0 boot=nfs ro ip=dhcp', commissioning)
+        self.assertIn('rdinit=/init', commissioning)
+        self.assertNotIn('root=/dev/nfs', commissioning)
+        self.assertNotIn('init=/sd-network-init', commissioning)
         self.assertIn('hash -v sha256', commissioning)
 
     def test_exact_bundle_and_initramfs_overlay(self):

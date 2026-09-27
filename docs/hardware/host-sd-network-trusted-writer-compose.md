@@ -21,6 +21,9 @@ source and read-only mount flags. It rechecks the mount and source descriptor
 before its sole target open. The NFS export is an image source containing
 `image.bin`; no executable from it is invoked. A writer result is terminal
 while the SD card remains installed. There is no automatic return to eMMC boot.
+Commissioning boot arguments select `boot=nfs` for the trusted initramfs-tools
+mount logic but set the kernel fallback root to `/dev/ram0`. If `/init` is absent
+or fails, the kernel cannot fall back to running an NFS-supplied init.
 
 The composed image remains an offline prototype. Hashes stored on the same SD
 card detect changed payloads only while that card stays in owner custody; no

@@ -72,10 +72,20 @@ def extract_one(archive, destination):
 
 def boot_script(server, export, hashes, *, claim_port=None):
     # Explicit addresses are below 0x60000000 in the observed 1 GiB DRAM map.
-    mode = (f' sv08.h616_commissioning=1 sv08.claim_port={claim_port}'
-            if claim_port is not None else '')
+    if claim_port is None:
+        args = (f'console=ttyS0,115200 root=/dev/nfs ro ip=dhcp '
+                f'nfsroot={server}:{export},nfsvers=3,timeo=10,retrans=1,soft '
+                'rootdelay=8 panic=0 init=/sd-network-init')
+    else:
+        # initramfs-tools still uses its trusted NFS mount path via boot=nfs.
+        # If /init cannot run, the kernel must not fall back to executing an
+        # init supplied by the untrusted NFS image source.
+        args = (f'console=ttyS0,115200 root=/dev/ram0 boot=nfs ro ip=dhcp '
+                f'nfsroot={server}:{export},nfsvers=3,timeo=10,retrans=1,soft '
+                f'rootdelay=8 panic=0 rdinit=/init sv08.h616_commissioning=1 '
+                f'sv08.claim_port={claim_port}')
     return f'''# Read only the SD FAT partition. Any failure returns to U-Boot console.
-setenv bootargs "console=ttyS0,115200 root=/dev/nfs ro ip=dhcp nfsroot={server}:{export},nfsvers=3,timeo=10,retrans=1,soft rootdelay=8 panic=0 init=/sd-network-init{mode}"
+setenv bootargs "{args}"
 if fatload mmc 0:1 ${{kernel_addr_r}} Image; then
   if hash -v sha256 ${{kernel_addr_r}} ${{filesize}} {hashes['Image']}; then
     if fatload mmc 0:1 ${{ramdisk_addr_r}} initrd.img; then
