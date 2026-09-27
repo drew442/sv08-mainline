@@ -252,7 +252,14 @@
       "resumption": "Independent Sol review found the full success used an earlier harness and controller was not in QEMU; integrate actual one-shot controller and NFS service into final composed QEMU success and add a malformed signed-job refusal.",
       "status": "review",
       "title": "Add one-shot host control and validate the composed write path",
-      "verification": null
+      "verification": {
+        "decision_sha256": "4b3534b94ba04bde0d857299c42909ae2bd375e27e2c158bd4cc2fccddcf73e1",
+        "evidence_sha256": "fbaa6be1630100f5d0251fa49b8bc315b61da74564845f5acd5f92430aeb83fe",
+        "outcome": "passed",
+        "rationale": "Reviewed the clean 8ece674 commit and complete 12-file diff from 9a5d4c3 against twb-03 through twb-05 and every approved constraint. The corrected QEMU harness calls the actual prepare() and serve() entry points, composes the signed job into the SD initramfs, and uses the actual controller for both final full-success and tampered-job cases. The tampered job is refused before claim consumption, source hashing, or target open. The full-success case reports a consumed claim, guest readback, and independent host hash and GPT checks. Submitted document and source hashes match HEAD; the approved decision matches main commit 027796b. Workflow validation and diff checks passed. Earlier fault cases used the older harness, as the report states. Beelink result and serial hashes are documented, but their raw artifacts were unavailable in this read-only worktree for independent rehashing. Evidence remains offline and synthetic; H12 physical identity, recovery, authorization, and immediate high-consequence review gates remain open.",
+        "reviewer": "independent-feature-verifier/network-emmc-trusted-writer-boot",
+        "session": "read-only-verification-20260927-8ece674"
+      }
     }
   ],
   "title": "Authenticate the writerless SD/NFS commissioning boot path"
