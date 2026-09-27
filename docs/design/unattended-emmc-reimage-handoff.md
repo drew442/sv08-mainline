@@ -26,18 +26,18 @@ The running host must first verify the current eMMC controller/card identity,
 capacity, six-partition GPT and recovery PARTUUID, the signed one-shot job,
 source image/map, final FIT and free recovery space. It then stages all
 content on partition 5 and syncs it, preserving the original recovery script.
-The marker is placed only after the payload and wrapper are durable. Finally,
-a separately journaled boot-policy action exhausts both slot counters and
-sets an explicit job-bound arm token in the redundant environment. If either
-environment copy cannot be read back as intended, the host does not reboot
-into the writer. The exact write sequence and crash points must be exercised
-in disposable storage before physical use.
+A separately journaled boot-policy action then exhausts both slot counters and
+sets an explicit job-bound arm token in the redundant environment. **Only after
+both copies read back as intended** does it publish and sync the one-shot
+marker. A crash during either environment write therefore selects an existing
+slot or the original recovery UI, never the writer. The exact write sequence
+and crash points must be exercised in disposable storage before physical use.
 
 | State | Durable condition | Restart behavior |
 | --- | --- | --- |
 | Normal | No marker; A/B policy unchanged | Existing slot or recovery UI |
 | Staged | Payload and wrapper durable; marker absent | Existing slot or recovery UI |
-| Prepared | Marker durable; no verified armed policy | Existing slot, or recovery UI if policy damaged |
+| Prepared | Policy partly or fully armed; marker absent | Existing slot or original recovery UI |
 | Armed | Exact marker/FIT, job-bound arm token and exhausted slots | RAM writer or recovery UI on any mismatch |
 | Consumed | Marker durably removed; recovery unmounted; both environment copies exhausted | Recovery UI on an early failure; no automatic writer retry |
 | Writing | One-shot claim consumed; whole-device target opened | Stop on uncertainty; manual independent SD/USB recovery after power loss |
@@ -167,8 +167,8 @@ rechecks the exact signed job and image map at stage time, and requires
 independently reviewed SHA-256 pins for its build manifest and the original
 recovery script. An expired job or changed artifact is refused before a
 journal or recovery file is made. It preserves the original recovery script,
-installs the FIT and wrapper before
-the marker, then journals a separate two-copy environment update. It extracts
+installs the FIT and wrapper, journals a separate two-copy environment update,
+then publishes the marker as the final boot trigger. It extracts
 the compiled U-Boot script and compares its actual payload with the reviewed
 selector. It also extracts all three FIT members and compares them with the
 reviewed kernel, initramfs and DTB. Tests refuse a changed compiled script or
@@ -182,8 +182,8 @@ read-only; this is not live eMMC admission.
 A separate root-owned offline exercise mounted partition five from a fresh
 31,272,730,624-byte sparse regular-file target through a loop device. The
 stager checked the loop backing file, exact partition offset/size, ext4 mount,
-signed GPT map, job, original script and FIT before placing the marker; the
-separate arm then verified both environment copies. An unmounted directory
+signed GPT map, job, original script and FIT before arming; the separate arm
+verified both environment copies before marker activation. An unmounted directory
 and a different backing path were refused. Its result is in ignored
 `local/urh-mounted-stage-v2/result.json`, SHA-256
 `4381d23cea50c055f00c5391de5967bc904f778254afa6623c7dd1178ef666e2`.
@@ -193,6 +193,16 @@ earlier loop-mounted recovery admission, refusing a different file even if it
 has the same signed GPT map. A fresh mounted-stage run under
 `local/urh-mounted-stage-v3` passed after that guard; result JSON SHA-256 is
 `b26c472cfec4b642d2b7f3c03522cec089f2d7d080d351985f1a0520c17cefe3`.
+That run predates the marker-last correction. The corrected mounted-stage
+exercise in ignored `local/urh-mounted-stage-v7` verified the original A-slot
+policy after file staging, both armed environment copies before activation,
+and all FIT members extracted from the staged filesystem. Its result is
+`activation_phase=marker-durable` with
+`prearm_normal_slot_policy_retained=true` and
+`staged_fit_components_verified=true`; result JSON SHA-256 is
+`e857a809fa65043bf4b3bec00b7b930ce1fa89afb807899f239d88749d7b5811`.
+The same source revision must pass a
+new full QEMU write and refusal before this change is submitted again.
 The controller-integrated QEMU harness now stages its disposable v5 recovery
 partition with that same checked and journaled stager, then arms the two
 regular-file environment copies before booting the exact staged kernel and

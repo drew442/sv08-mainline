@@ -12,6 +12,7 @@ import zlib
 from scripts.build_h616_reimage_candidate import build as build_writer
 from scripts.build_h616_recovery_handoff import build as build_handoff, script_text
 from scripts.stage_h616_recovery_handoff import (arm_regular_image,
+                                                 activate_mounted_recovery,
                                                  parse_env_record,
                                                  stage_mounted_recovery,
                                                  verify_artifact)
@@ -61,8 +62,7 @@ class RecoveryStageTests(unittest.TestCase):
             for fault, marker_expected, wrapper_expected in (
                     ('after-original', False, False),
                     ('after-fit', False, False),
-                    ('after-wrapper', False, True),
-                    ('after-marker', True, True)):
+                    ('after-wrapper', False, True)):
                 recovery = root / fault
                 recovery.mkdir()
                 (recovery / 'recovery.scr').write_bytes(b'ORIGINAL-UI')
@@ -132,7 +132,7 @@ class RecoveryStageTests(unittest.TestCase):
                     os.pwrite(stream.fileno(), record.read_bytes(), offset)
             bound = root / 'bound-target-journal'
             bound.mkdir()
-            bound_state = json.loads((root / 'after-marker-journal/state.json').read_text())
+            bound_state = json.loads((root / 'after-wrapper-journal/state.json').read_text())
             bound_state['recovery_admission'] = {
                 'target_regular_dev': disk.stat().st_dev,
                 'target_regular_ino': disk.stat().st_ino,
@@ -140,10 +140,16 @@ class RecoveryStageTests(unittest.TestCase):
             (bound / 'state.json').write_text(json.dumps(bound_state))
             with self.assertRaisesRegex(ValueError, 'Arming target differs'):
                 arm_regular_image(partial, bound, target_policy=policy)
-            partial_state = arm_regular_image(partial, root / 'after-marker-journal',
+            partial_state = arm_regular_image(partial, root / 'after-wrapper-journal',
                                               target_policy=policy,
                                               fault='after-arm-copy-1')
             self.assertEqual(partial_state['phase'], 'arm-copy-1-written')
+            self.assertFalse((root / 'after-wrapper/sv08-reimage/armed').exists())
+            with self.assertRaisesRegex(ValueError, 'Both environment copies'):
+                activate_mounted_recovery(root / 'after-wrapper', artifact,
+                                          root / 'after-wrapper-journal', image=partial,
+                                          target_policy=policy,
+                                          disposable_directory_fixture=True)
             with partial.open('rb') as stream:
                 banks = [parse_env_record(os.pread(stream.fileno(), 65536, offset))
                          for offset in (0x400000, 0x800000)]
@@ -161,13 +167,27 @@ class RecoveryStageTests(unittest.TestCase):
                 os.pwrite(stream.fileno(), original_guid_byte, 512 + 56)
             result = arm_regular_image(disk, journal, target_policy=policy)
             self.assertEqual(result['phase'], 'armed-both-verified')
+            self.assertFalse((recovery / 'sv08-reimage/armed').exists())
+            preserved = recovery / 'sv08-reimage/recovery-original.scr'
+            preserved.write_bytes(b'CHANGED-UI')
+            with self.assertRaisesRegex(ValueError, 'Staged handoff changed'):
+                activate_mounted_recovery(
+                    recovery, artifact, journal, image=disk,
+                    target_policy=policy, disposable_directory_fixture=True)
+            preserved.write_bytes(b'ORIGINAL-UI')
+            activated = activate_mounted_recovery(
+                recovery, artifact, journal, image=disk, target_policy=policy,
+                disposable_directory_fixture=True)
+            self.assertEqual(activated['phase'], 'marker-durable')
+            self.assertEqual((recovery / 'sv08-reimage/armed').read_bytes(),
+                             b'SV08-REIMAGE-ONCE\n')
             with disk.open('rb') as stream:
                 for offset in (0x400000, 0x800000):
                     fields = parse_env_record(os.pread(stream.fileno(), 65536, offset))
                     self.assertEqual(fields[b'BOOT_A_LEFT'], b'0')
                     self.assertEqual(fields[b'BOOT_B_LEFT'], b'0')
                     self.assertEqual(fields[b'sv08_reimage_arm'], job['job_id'].encode())
-            with self.assertRaisesRegex(ValueError, 'Marker not durably staged'):
+            with self.assertRaisesRegex(ValueError, 'Recovery wrapper not durably staged'):
                 arm_regular_image(disk, root / 'after-fit-journal', target_policy=policy)
 
             changed = root / 'changed-compiled-script'

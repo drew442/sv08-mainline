@@ -206,7 +206,9 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
                            expected_original_sha256, mounted_target_image=None,
                            disposable_directory_fixture=False,
                            now=None, fault=None):
-    """Stage files on a disposable mounted recovery filesystem, marker last."""
+    """Stage writer files while the original boot policy remains selected."""
+    if fault not in (None, 'after-original', 'after-fit', 'after-wrapper'):
+        raise ValueError('Unknown file-staging interruption point')
     artifact = Path(artifact)
     recovery = Path(recovery)
     if recovery.is_symlink():
@@ -272,11 +274,6 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     fsync_directory(recovery)
     state['phase'] = 'wrapper-durable';journal_state(journal, state)
     if fault == 'after-wrapper':return state
-    temporary = stage / 'armed.new'
-    exclusive_copy(regular(artifact / 'armed'), temporary)
-    os.replace(temporary, stage / 'armed')
-    fsync_directory(stage)
-    state['phase'] = 'marker-durable';journal_state(journal, state)
     return state
 
 
@@ -298,12 +295,14 @@ def parse_env_record(record):
 
 def arm_regular_image(image, journal, *, target_policy, fault=None):
     """Offline boot-policy exercise; regular file only, never a block device."""
+    if fault not in (None, 'after-arm-copy-1', 'after-arm-copy-2'):
+        raise ValueError('Unknown boot-policy interruption point')
     image = regular(image)
     if image.stat().st_size < 7_818_182_656:
         raise ValueError('Disposable target shorter than reviewed image')
     state = json.loads(regular(journal / 'state.json').read_text())
-    if state.get('phase') != 'marker-durable':
-        raise ValueError('Marker not durably staged')
+    if state.get('phase') != 'wrapper-durable':
+        raise ValueError('Recovery wrapper not durably staged')
     admission = state.get('recovery_admission')
     if not isinstance(admission, dict):
         raise ValueError('Recovery target admission missing')
@@ -359,4 +358,52 @@ def arm_regular_image(image, journal, *, target_policy, fault=None):
                 if fields.get(key) != expected:
                     raise ValueError('Redundant environment was not armed')
     state['phase'] = 'armed-both-verified';journal_state(journal, state)
+    return state
+
+
+def activate_mounted_recovery(recovery, artifact, journal, *, image,
+                              target_policy, disposable_directory_fixture=False):
+    """Publish the one-shot marker only after both environment copies verify."""
+    image = regular(image)
+    recovery = Path(recovery).resolve(strict=True)
+    journal = Path(journal).resolve(strict=True)
+    state = json.loads(regular(journal / 'state.json').read_text())
+    if state.get('phase') != 'armed-both-verified':
+        raise ValueError('Both environment copies must be verified before activation')
+    policy = policy_fields(target_policy)
+    if (hashlib.sha256(canonical_json(policy)).hexdigest() !=
+            state.get('target_policy_sha256')):
+        raise ValueError('Activation policy differs from staged job')
+    admission = state.get('recovery_admission')
+    if disposable_directory_fixture:
+        if admission != {'disposable_directory_fixture': True}:
+            raise ValueError('Wrong disposable recovery identity')
+    elif admit_disposable_loop_recovery(image, recovery, policy) != admission:
+        raise ValueError('Mounted recovery identity changed before activation')
+    manifest = verify_artifact(artifact)
+    if (digest(regular(Path(artifact) / 'build.json')) != state['build_sha256'] or
+            manifest['job_id'] != state['job_id'] or
+            digest(regular(recovery / 'recovery.scr')) != manifest['files_sha256']['recovery.scr'] or
+            digest(regular(recovery / 'sv08-reimage/recovery-original.scr')) !=
+            state['original_recovery_sha256'] or
+            digest(regular(recovery / 'sv08-reimage/writer.itb')) != state['fit_sha256']):
+        raise ValueError('Staged handoff changed before activation')
+    with image.open('rb') as stream:
+        for offset in ENV_OFFSETS:
+            fields = parse_env_record(os.pread(stream.fileno(), ENV_BYTES, offset))
+            if (fields.get(b'sv08_env_layout') != b'ab-8gb-v1' or
+                    fields.get(b'BOOT_ORDER') != b'A B' or
+                    fields.get(b'BOOT_A_LEFT') != b'0' or
+                    fields.get(b'BOOT_B_LEFT') != b'0' or
+                    fields.get(b'sv08_reimage_arm') != state['job_id'].encode()):
+                raise ValueError('Boot policy not fully armed before activation')
+    stage = recovery / 'sv08-reimage'
+    if (stage / 'armed').exists() or (stage / 'armed.new').exists():
+        raise ValueError('Recovery marker already exists')
+    temporary = stage / 'armed.new'
+    exclusive_copy(regular(Path(artifact) / 'armed'), temporary)
+    os.replace(temporary, stage / 'armed')
+    fsync_directory(stage)
+    state['phase'] = 'marker-durable'
+    journal_state(journal, state)
     return state

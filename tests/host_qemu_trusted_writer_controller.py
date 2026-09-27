@@ -31,7 +31,8 @@ from scripts.serve_h616_reimage_job import serve
 from scripts.build_h616_reimage_candidate import (build, TARGET_BYTES,
                                                   V5_IMAGE_SHA256, V5_IMAGE_PARTITIONS)
 from scripts.stage_h616_recovery_handoff import parse_env_record
-from scripts.stage_h616_recovery_handoff import stage_mounted_recovery, arm_regular_image
+from scripts.stage_h616_recovery_handoff import (stage_mounted_recovery,
+    arm_regular_image, activate_mounted_recovery)
 from scripts.build_h616_recovery_handoff import build as build_recovery_handoff
 from scripts.build_sd_network_image import commissioning_bundle, append_commissioning_initramfs, boot_script
 
@@ -112,6 +113,14 @@ def stage_recovery_handoff(work, target_fd, seed, artifact, bundle, job_verify,
     armed = arm_regular_image(target, journal, target_policy=policy_value)
     if armed['phase'] != 'armed-both-verified':
         raise ValueError('Disposable recovery policy was not fully armed')
+    run(['mount', '-t', 'ext4', '-o', f'loop,offset={offset},sizelimit={length}',
+         target, mountpoint])
+    try:
+        activated = activate_mounted_recovery(
+            mountpoint, artifact, journal, image=target,
+            target_policy=policy_value)
+    finally:
+        run(['umount', mountpoint])
     for env_offset in (0x400000, 0x800000):
         bank = parse_env_record(os.pread(target_fd, 65536, env_offset))
         for key, value in ((b'BOOT_ORDER', b'A B'), (b'BOOT_A_LEFT', b'0'),
@@ -121,6 +130,7 @@ def stage_recovery_handoff(work, target_fd, seed, artifact, bundle, job_verify,
                 raise ValueError('Disposable recovery arm differs from staged job')
     return {**seed, 'arm_job_id': staged['job_id'],
             'stage_phase': staged['phase'], 'arm_phase': armed['phase'],
+            'activation_phase': activated['phase'],
             'build_sha256': staged['build_sha256'],
             'original_recovery_sha256': original_hash}
 
@@ -133,6 +143,29 @@ def recovery_marker_present(work):
          work / 'target.img', mountpoint])
     try:
         return (mountpoint / 'sv08-reimage/armed').exists()
+    finally:
+        run(['umount', mountpoint])
+
+
+def extract_staged_fit(work, boot, build_manifest):
+    """Boot only components extracted from the FIT staged on the target."""
+    _, _, offset, length = V5_IMAGE_PARTITIONS[4]
+    mountpoint = work / 'recovery-fit-check'
+    mountpoint.mkdir()
+    run(['mount', '-t', 'ext4', '-o', f'loop,ro,noload,offset={offset},sizelimit={length}',
+         work / 'target.img', mountpoint])
+    try:
+        fit = mountpoint / 'sv08-reimage/writer.itb'
+        if digest(fit) != build_manifest['files_sha256']['writer.itb']:
+            raise ValueError('Staged FIT differs from reviewed build')
+        for position, name, expected in (
+                (0, 'Image', 'Image'),
+                (1, 'initrd.img', 'writer-initrd.img'),
+                (2, 'sv08.dtb', 'sv08.dtb')):
+            run(['dumpimage', '-T', 'flat_dt', '-p', str(position), '-o',
+                 boot / name, fit])
+            if digest(boot / name) != build_manifest['files_sha256'][expected]:
+                raise ValueError(f'Staged FIT {name} differs from reviewed build')
     finally:
         run(['umount', mountpoint])
 
@@ -222,10 +255,9 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
             manifest['job_sha256'] = hashlib.sha256(raw).hexdigest()
             (bundle / 'reimage-manifest.json').write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n')
         if recovery_handoff and not tamper_job:
-            shutil.copyfile(artifact / 'Image', boot / 'Image')
-            shutil.copyfile(artifact / 'writer-initrd.img', boot / 'initrd.img')
-            shutil.copyfile(artifact / 'sv08.dtb', boot / 'sv08.dtb')
-            composition = json.loads((artifact / 'build.json').read_text())['composition']
+            build_manifest = json.loads((artifact / 'build.json').read_text())
+            extract_staged_fit(work, boot, build_manifest)
+            composition = build_manifest['composition']
         else:
             shutil.copyfile(sd_work / 'boot/Image', boot / 'Image')
             shutil.copyfile(sd_work / 'boot/initrd.img', boot / 'initrd.img')
@@ -338,7 +370,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                         ['partition_records'] != policy_value['image_layout']['partitions']):
                     raise RuntimeError('Host GPT differs')
             normal_policy = None
-            if use_installed_source and not tamper_job:
+            if use_installed_source and not tamper_job and not fault:
                 banks = [parse_env_record(os.pread(target_fd, 65536, offset))
                          for offset in (0x400000, 0x800000)]
                 for bank in banks:
