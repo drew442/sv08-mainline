@@ -190,8 +190,12 @@ class ExpiringClaim:
 def build_claim_server(*, state_dir: Path, image_path: Path,
                        job_verification_key: Path, receipt_signing_key: Path,
                        bind: str, image_digest=sha256_file,
-                       synthetic_test: bool = False, now: int | None = None):
+                       synthetic_test: bool = False, now: int | None = None,
+                       listen_bind: str | None = None):
     """Validate durable state and source before opening the one-shot listener."""
+    if listen_bind is not None and (not synthetic_test or
+                                    listen_bind not in ('127.0.0.1', '0.0.0.0')):
+        raise ValueError('Listener override is synthetic-test-only')
     state_dir = Path(os.path.abspath(state_dir))
     if (not state_dir.is_relative_to(LOCAL) or state_dir.is_symlink() or
             stat.S_IMODE(state_dir.stat().st_mode) != 0o700 or
@@ -232,7 +236,7 @@ def build_claim_server(*, state_dir: Path, image_path: Path,
     state = ClaimState.reopen(state_dir / 'claim', job)
     if state.claimed.exists():
         raise ValueError('Claim already consumed; no retry or rearm')
-    return ClaimHTTPServer((bind, receipt['claim_port']),
+    return ClaimHTTPServer((listen_bind or bind, receipt['claim_port']),
                            ExpiringClaim(state, job['expires_unix']),
                            receipt_signing_key=receipt_signing_key)
 

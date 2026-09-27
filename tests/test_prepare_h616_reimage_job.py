@@ -1,14 +1,19 @@
 """Disposable preparation checks; no physical image or target is opened."""
 import json
+import http.client
 from pathlib import Path
+import socket
+import subprocess
 import tempfile
+import threading
+import time
 import unittest
 from unittest import mock
 
 from scripts.prepare_h616_reimage_job import LOCAL, build_claim_server, prepare
 from scripts.build_h616_reimage_candidate import IMAGE_BYTES
 from tests.test_h616_reimage_candidate import synthetic_policy
-from tests.sv08_emmc_job import ClaimState, canonical_json
+from tests.sv08_emmc_job import ClaimState, canonical_json, receipt_message
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -110,6 +115,65 @@ class PrepareJobTests(unittest.TestCase):
                                    receipt_signing_key=args['receipt_signing_key'],
                                    bind='10.0.2.2', image_digest=args['image_digest'],
                                    synthetic_test=True, now=1501)
+
+    def test_real_loopback_claim_signs_only_once(self):
+        with tempfile.TemporaryDirectory(dir=LOCAL) as temporary:
+            root = Path(temporary)
+            args = self.inputs(root)
+            with socket.socket() as probe:
+                probe.bind(('127.0.0.1', 0))
+                args['claim_port'] = probe.getsockname()[1]
+            args['now'] = int(time.time())
+            prepare(**args, execute=True)
+            job = json.loads((args['state_dir'] / 'job.json').read_bytes())
+            state = ClaimState.reopen(args['state_dir'] / 'claim', job)
+            request = {'job_id': job['job_id'], 'descriptor_sha256': state.descriptor_sha256,
+                       'challenge': '7' * 64}
+            with self.assertRaisesRegex(ValueError, 'synthetic-test-only'):
+                build_claim_server(state_dir=args['state_dir'], image_path=args['image_path'],
+                                   job_verification_key=args['job_verification_key'],
+                                   receipt_signing_key=args['receipt_signing_key'],
+                                   bind='10.0.2.2', listen_bind='127.0.0.1')
+            server = build_claim_server(state_dir=args['state_dir'],
+                                        image_path=args['image_path'],
+                                        job_verification_key=args['job_verification_key'],
+                                        receipt_signing_key=args['receipt_signing_key'],
+                                        bind='10.0.2.2', listen_bind='127.0.0.1',
+                                        image_digest=args['image_digest'], synthetic_test=True,
+                                        now=args['now'])
+            worker = threading.Thread(target=server.serve_forever, daemon=True)
+            worker.start()
+            try:
+                def post():
+                    connection = http.client.HTTPConnection('127.0.0.1', args['claim_port'],
+                                                            timeout=5)
+                    try:
+                        connection.request('POST', '/claim', body=json.dumps(request),
+                                           headers={'Content-Type': 'application/json'})
+                        response = connection.getresponse()
+                        return response.status, response.read()
+                    finally:
+                        connection.close()
+
+                status, signature_hex = post()
+                self.assertEqual(status, 200)
+                signature = bytes.fromhex(signature_hex.strip().decode())
+                message = receipt_message(job['job_id'], state.descriptor_sha256,
+                                          request['challenge'])
+                message_file, signature_file = root / 'message', root / 'signature'
+                message_file.write_bytes(message)
+                signature_file.write_bytes(signature)
+                verified = subprocess.run(['openssl', 'pkeyutl', '-verify', '-rawin',
+                                           '-pubin', '-inkey', str(args['receipt_verification_key']),
+                                           '-in', str(message_file), '-sigfile', str(signature_file)],
+                                          capture_output=True, timeout=10)
+                self.assertEqual(verified.returncode, 0, verified.stderr)
+                self.assertEqual(post(), (409, b'CONSUMED\n'))
+                self.assertTrue(state.claimed.exists())
+            finally:
+                server.shutdown()
+                worker.join(timeout=5)
+                server.server_close()
 
 
 if __name__ == '__main__':
