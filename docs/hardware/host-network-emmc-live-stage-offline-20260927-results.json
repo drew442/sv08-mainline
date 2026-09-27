@@ -1,0 +1,149 @@
+{
+  "environment": "disposable-loop-and-synthetic-sysfs",
+  "runs": [
+    {
+      "activation_phase": null,
+      "arm_phase": "arm-copy-1-written",
+      "fault": "after-arm-copy-1",
+      "marker_present": false,
+      "physical_eMMC_tested": false,
+      "read_only_probe_passed": true,
+      "refusals": [
+        "source-overlaps-target-host",
+        "wrong-cid",
+        "wrong-type",
+        "wrong-capacity",
+        "wrong-dev-t",
+        "wrong-mount-source",
+        "wrong-partuuid",
+        "ambiguous-card",
+        "wrong-gpt-crc",
+        "unmounted-recovery",
+        "read-only-mount-for-write"
+      ],
+      "stage_phase": "wrapper-durable",
+      "status": "PASS",
+      "synthetic_loop_only": true
+    },
+    {
+      "activation_phase": null,
+      "arm_phase": "arm-copy-2-written",
+      "fault": "after-arm-copy-2",
+      "marker_present": false,
+      "physical_eMMC_tested": false,
+      "read_only_probe_passed": true,
+      "refusals": [
+        "source-overlaps-target-host",
+        "wrong-cid",
+        "wrong-type",
+        "wrong-capacity",
+        "wrong-dev-t",
+        "wrong-mount-source",
+        "wrong-partuuid",
+        "ambiguous-card",
+        "wrong-gpt-crc",
+        "unmounted-recovery",
+        "read-only-mount-for-write"
+      ],
+      "stage_phase": "wrapper-durable",
+      "status": "PASS",
+      "synthetic_loop_only": true
+    },
+    {
+      "activation_phase": null,
+      "arm_phase": null,
+      "fault": "after-fit",
+      "marker_present": false,
+      "physical_eMMC_tested": false,
+      "read_only_probe_passed": true,
+      "refusals": [
+        "source-overlaps-target-host",
+        "wrong-cid",
+        "wrong-type",
+        "wrong-capacity",
+        "wrong-dev-t",
+        "wrong-mount-source",
+        "wrong-partuuid",
+        "ambiguous-card",
+        "wrong-gpt-crc",
+        "unmounted-recovery",
+        "read-only-mount-for-write"
+      ],
+      "stage_phase": "fit-durable",
+      "status": "PASS",
+      "synthetic_loop_only": true
+    },
+    {
+      "activation_phase": null,
+      "arm_phase": null,
+      "fault": "after-original",
+      "marker_present": false,
+      "physical_eMMC_tested": false,
+      "read_only_probe_passed": true,
+      "refusals": [
+        "source-overlaps-target-host",
+        "wrong-cid",
+        "wrong-type",
+        "wrong-capacity",
+        "wrong-dev-t",
+        "wrong-mount-source",
+        "wrong-partuuid",
+        "ambiguous-card",
+        "wrong-gpt-crc",
+        "unmounted-recovery",
+        "read-only-mount-for-write"
+      ],
+      "stage_phase": "original-preserved",
+      "status": "PASS",
+      "synthetic_loop_only": true
+    },
+    {
+      "activation_phase": null,
+      "arm_phase": null,
+      "fault": "after-wrapper",
+      "marker_present": false,
+      "physical_eMMC_tested": false,
+      "read_only_probe_passed": true,
+      "refusals": [
+        "source-overlaps-target-host",
+        "wrong-cid",
+        "wrong-type",
+        "wrong-capacity",
+        "wrong-dev-t",
+        "wrong-mount-source",
+        "wrong-partuuid",
+        "ambiguous-card",
+        "wrong-gpt-crc",
+        "unmounted-recovery",
+        "read-only-mount-for-write"
+      ],
+      "stage_phase": "wrapper-durable",
+      "status": "PASS",
+      "synthetic_loop_only": true
+    },
+    {
+      "activation_phase": "marker-durable",
+      "arm_phase": "armed-both-verified",
+      "fault": null,
+      "marker_present": true,
+      "physical_eMMC_tested": false,
+      "read_only_probe_passed": true,
+      "refusals": [
+        "source-overlaps-target-host",
+        "wrong-cid",
+        "wrong-type",
+        "wrong-capacity",
+        "wrong-dev-t",
+        "wrong-mount-source",
+        "wrong-partuuid",
+        "ambiguous-card",
+        "wrong-gpt-crc",
+        "unmounted-recovery",
+        "read-only-mount-for-write"
+      ],
+      "stage_phase": "wrapper-durable",
+      "status": "PASS",
+      "synthetic_loop_only": true
+    }
+  ]
+}

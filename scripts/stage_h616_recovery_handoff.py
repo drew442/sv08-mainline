@@ -51,7 +51,9 @@ def verify_artifact(root):
     if not root.is_dir():
         raise ValueError('Artifact directory required')
     manifest = json.loads(regular(root / 'build.json').read_text())
-    if manifest.get('status') != 'nondeployable-offline-candidate':
+    if (manifest.get('status'), manifest.get('synthetic_test')) not in (
+            ('nondeployable-offline-candidate', True),
+            ('h12-attended-candidate', False)):
         raise ValueError('Wrong artifact status')
     expected = manifest.get('files_sha256')
     if not isinstance(expected, dict) or set(expected) != {
@@ -109,6 +111,10 @@ def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
         raise ValueError('Staged artifact and signed bundle differ')
     policy_raw = regular(bundle / 'commissioning-target-policy.json').read_bytes()
     policy = policy_fields(json.loads(policy_raw))
+    if server != policy['claim_server']:
+        raise ValueError('NFS source must be the independently admitted claim host')
+    if manifest.get('synthetic_test') != (policy['board_compatible'] == 'test,synthetic-h616'):
+        raise ValueError('Artifact and signed target class differ')
     if policy_raw != canonical_json(policy):
         raise ValueError('Noncanonical target policy')
     job = verify_signed_job(regular(bundle / 'job.json').read_bytes(),
@@ -204,6 +210,8 @@ def journal_state(journal, state):
 def stage_mounted_recovery(recovery, artifact, journal, *,
                            bundle, verification_key, expected_build_sha256,
                            expected_original_sha256, mounted_target_image=None,
+                           mounted_live_target=None, live_sysfs_root=None,
+                           synthetic_live_fixture=False,
                            disposable_directory_fixture=False,
                            now=None, fault=None):
     """Stage writer files while the original boot policy remains selected."""
@@ -218,6 +226,8 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     if journal.is_symlink():
         raise ValueError('Journal path is a symlink')
     journal = journal.resolve()
+    if mounted_live_target is not None and journal.is_relative_to(recovery):
+        raise ValueError('Live journal must be separate from recovery filesystem')
     artifact = Path(artifact)
     if (not isinstance(expected_build_sha256, str) or
             len(expected_build_sha256) != 64 or
@@ -226,14 +236,33 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     manifest = verify_artifact(artifact)
     policy = verify_signed_stage_bundle(manifest, bundle, verification_key, now=now)
     if mounted_target_image is not None:
-        if disposable_directory_fixture:
+        if disposable_directory_fixture or mounted_live_target is not None:
             raise ValueError('Choose one recovery identity mode')
         admission = admit_disposable_loop_recovery(mounted_target_image,
                                                    recovery, policy)
+    elif mounted_live_target is not None:
+        if disposable_directory_fixture:
+            raise ValueError('Choose one recovery identity mode')
+        from scripts.live_h616_recovery_stage import (
+            admitted_target, HOST_SYSFS, isolate_mounts_for_write)
+        if not synthetic_live_fixture:
+            isolate_mounts_for_write()
+        admission = admitted_target(Path(mounted_live_target), recovery, policy,
+                                    host_sysfs=live_sysfs_root or HOST_SYSFS,
+                                    synthetic_fixture=synthetic_live_fixture,
+                                    require_writable=True)
     elif disposable_directory_fixture:
         admission = {'disposable_directory_fixture': True}
     else:
         raise ValueError('Recovery partition identity not established')
+    def check_live():
+        if mounted_live_target is not None:
+            current = admitted_target(Path(mounted_live_target), recovery, policy,
+                                      host_sysfs=live_sysfs_root or HOST_SYSFS,
+                                      synthetic_fixture=synthetic_live_fixture,
+                                      require_writable=True)
+            if current != admission:
+                raise ValueError('Live recovery identity changed during staging')
     if not recovery.is_dir() or journal.exists():
         raise ValueError('Fresh recovery directory and journal required')
     original = recovery / 'recovery.scr'
@@ -258,22 +287,27 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
              'fit_sha256': manifest['files_sha256']['writer.itb'],
              'original_recovery_sha256': digest(original)}
     journal_state(journal, state)
+    check_live()
     stage.mkdir(mode=0o700)
     fsync_directory(recovery)
+    check_live()
     exclusive_copy(original, stage / 'recovery-original.scr')
     fsync_directory(stage)
     state['phase'] = 'original-preserved';journal_state(journal, state)
     if fault == 'after-original':return state
+    check_live()
     exclusive_copy(fit, stage / 'writer.itb')
     fsync_directory(stage)
     state['phase'] = 'fit-durable';journal_state(journal, state)
     if fault == 'after-fit':return state
+    check_live()
     temporary = recovery / 'recovery.scr.new'
     exclusive_copy(regular(artifact / 'recovery.scr'), temporary)
     os.replace(temporary, recovery / 'recovery.scr')
     fsync_directory(recovery)
     state['phase'] = 'wrapper-durable';journal_state(journal, state)
     if fault == 'after-wrapper':return state
+    check_live()
     return state
 
 
@@ -362,9 +396,14 @@ def arm_regular_image(image, journal, *, target_policy, fault=None):
 
 
 def activate_mounted_recovery(recovery, artifact, journal, *, image,
-                              target_policy, disposable_directory_fixture=False):
+                              target_policy, disposable_directory_fixture=False,
+                              live_target=False, live_sysfs_root=None,
+                              synthetic_live_fixture=False):
     """Publish the one-shot marker only after both environment copies verify."""
-    image = regular(image)
+    if live_target and not synthetic_live_fixture:
+        from scripts.live_h616_recovery_stage import isolate_mounts_for_write
+        isolate_mounts_for_write()
+    image = Path(image) if live_target else regular(image)
     recovery = Path(recovery).resolve(strict=True)
     journal = Path(journal).resolve(strict=True)
     state = json.loads(regular(journal / 'state.json').read_text())
@@ -378,6 +417,14 @@ def activate_mounted_recovery(recovery, artifact, journal, *, image,
     if disposable_directory_fixture:
         if admission != {'disposable_directory_fixture': True}:
             raise ValueError('Wrong disposable recovery identity')
+    elif live_target:
+        from scripts.live_h616_recovery_stage import admitted_target, HOST_SYSFS
+        current = admitted_target(image, recovery, policy,
+                                  host_sysfs=live_sysfs_root or HOST_SYSFS,
+                                  synthetic_fixture=synthetic_live_fixture,
+                                  require_writable=True)
+        if current != admission:
+            raise ValueError('Mounted live recovery identity changed before activation')
     elif admit_disposable_loop_recovery(image, recovery, policy) != admission:
         raise ValueError('Mounted recovery identity changed before activation')
     manifest = verify_artifact(artifact)
@@ -388,15 +435,26 @@ def activate_mounted_recovery(recovery, artifact, journal, *, image,
             state['original_recovery_sha256'] or
             digest(regular(recovery / 'sv08-reimage/writer.itb')) != state['fit_sha256']):
         raise ValueError('Staged handoff changed before activation')
-    with image.open('rb') as stream:
+    fd = os.open(image, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW)
+    try:
+        if live_target and (not stat.S_ISBLK(os.fstat(fd).st_mode) or
+                f'{os.major(os.fstat(fd).st_rdev)}:{os.minor(os.fstat(fd).st_rdev)}' != admission['dev_t']):
+            raise ValueError('Opened activation target differs from admitted eMMC')
         for offset in ENV_OFFSETS:
-            fields = parse_env_record(os.pread(stream.fileno(), ENV_BYTES, offset))
+            fields = parse_env_record(os.pread(fd, ENV_BYTES, offset))
             if (fields.get(b'sv08_env_layout') != b'ab-8gb-v1' or
                     fields.get(b'BOOT_ORDER') != b'A B' or
                     fields.get(b'BOOT_A_LEFT') != b'0' or
                     fields.get(b'BOOT_B_LEFT') != b'0' or
                     fields.get(b'sv08_reimage_arm') != state['job_id'].encode()):
                 raise ValueError('Boot policy not fully armed before activation')
+    finally:
+        os.close(fd)
+    if live_target and admitted_target(image, recovery, policy,
+                                      host_sysfs=live_sysfs_root or HOST_SYSFS,
+                                      synthetic_fixture=synthetic_live_fixture,
+                                      require_writable=True) != admission:
+        raise ValueError('Live recovery identity changed before marker')
     stage = recovery / 'sv08-reimage'
     if (stage / 'armed').exists() or (stage / 'armed.new').exists():
         raise ValueError('Recovery marker already exists')

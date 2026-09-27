@@ -133,7 +133,10 @@ def build(work, kernel, initrd, dtb, bundle_root, server, export, claim_port):
                     '-n', 'SV08 one-shot recovery selector', '-d', 'recovery.cmd',
                     'recovery.scr'], cwd=work, check=True, capture_output=True, timeout=120)
     (work / 'armed').write_bytes(MARKER)
-    result = {'status': 'nondeployable-offline-candidate', 'job_id': job_id,
+    synthetic = bundle[1]['synthetic_test'] is True
+    result = {'status': ('nondeployable-offline-candidate' if synthetic else
+                         'h12-attended-candidate'),
+              'synthetic_test': synthetic, 'job_id': job_id,
               'fit_bytes': len(fit), 'fit_crc32': f'{zlib.crc32(fit):08x}',
               'marker_bytes': len(MARKER), 'marker_crc32': f'{zlib.crc32(MARKER):08x}',
               'bootargs': bootargs, 'composition': composition,

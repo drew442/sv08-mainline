@@ -255,6 +255,13 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     else:
         receipt_key_bytes = private_file(receipt_verification_key_path)
         receipt_key_sha256 = digest(receipt_key_bytes)
+    if not synthetic_test:
+        test_job_verifier = (REPO / 'tests/fixtures/sd-network-root/synthetic-keys/'
+                             'test-verification-key.pem').read_bytes()
+        if (raw_public_key(verification_key) == raw_public_key(test_job_verifier) or
+                raw_public_key(receipt_key_bytes) ==
+                raw_public_key(TEST_RECEIPT_VERIFIER.read_bytes())):
+            raise ValueError('Fixture verification keys cannot authorize a physical candidate')
     receipt_key_hex = raw_public_key(receipt_key_bytes).hex()
     raw_job, signature = private_file(job_path), private_file(signature_path)
     job = verify_signed_job(raw_job, signature, verification_key, target_policy, now=now)

@@ -1,13 +1,16 @@
 """Offline artifact composition check for the recovery RAM-writer handoff."""
 import hashlib
+import json
 from pathlib import Path
 import subprocess
 import tempfile
 import unittest
 
 from scripts.build_h616_reimage_candidate import build as build_writer
+from scripts.build_h616_reimage_candidate import V5_IMAGE_SHA256, expected_image_layout
 from scripts.build_h616_recovery_handoff import build as build_handoff
-from tests.test_h616_reimage_candidate import signed_inputs
+from tests.sv08_emmc_job import canonical_json
+from tests.test_h616_reimage_candidate import signed_inputs, synthetic_job, RECEIPT_KEYS
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -34,6 +37,34 @@ def base_initrd(work):
 
 
 class RecoveryHandoffBuilderTests(unittest.TestCase):
+    def test_fixture_keys_cannot_be_relabelled_as_physical_candidate(self):
+        (REPO / 'local').mkdir(mode=0o700, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary)
+            files, policy, _ = signed_inputs(work)
+            policy = dict(policy, board_compatible='sovol,sv08-h616',
+                          image_sha256=V5_IMAGE_SHA256,
+                          image_layout=expected_image_layout(False, V5_IMAGE_SHA256))
+            files['policy'].write_bytes(canonical_json(policy))
+            job = synthetic_job(policy)
+            job['source']['sha256'] = V5_IMAGE_SHA256
+            job['image']['sha256'] = V5_IMAGE_SHA256
+            files['job'].write_bytes(canonical_json(job))
+            subprocess.run(['openssl', 'pkeyutl', '-sign', '-rawin',
+                            '-inkey', work / 'signer.pem', '-in', files['job'],
+                            '-out', files['signature']], check=True,
+                           capture_output=True)
+            receipt = work / 'receipt.pem'
+            receipt.write_bytes((RECEIPT_KEYS / 'test-verification-key.pem').read_bytes())
+            receipt.chmod(0o600)
+            bundle = work / 'bundle'
+            with self.assertRaisesRegex(ValueError, 'Fixture verification keys'):
+                build_writer(bundle, *files.values(), now=1500, synthetic_test=False,
+                             trusted_initramfs=True, recovery_handoff=True,
+                             source_server='10.0.2.2',
+                             source_export='/srv/sv08-sd-nfs',
+                             receipt_verification_key_path=receipt)
+
     def test_signed_bundle_becomes_bounded_fit_and_recovery_fallback(self):
         (REPO / 'local').mkdir(mode=0o700, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
@@ -68,6 +99,13 @@ class RecoveryHandoffBuilderTests(unittest.TestCase):
                 ['mkimage', '-l', root / 'writer.itb'], text=True))
             with self.assertRaisesRegex(ValueError, 'Fresh non-symlink'):
                 build_handoff(work / 'handoff', kernel, initrd, dtb,
+                              bundle, '10.0.2.2', '/srv/sv08-sd-nfs', 12345)
+            manifest_path = bundle / 'reimage-manifest.json'
+            manifest = json.loads(manifest_path.read_text())
+            del manifest['synthetic_test']
+            manifest_path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'target class must be explicit'):
+                build_handoff(work / 'missing-class', kernel, initrd, dtb,
                               bundle, '10.0.2.2', '/srv/sv08-sd-nfs', 12345)
 
 
