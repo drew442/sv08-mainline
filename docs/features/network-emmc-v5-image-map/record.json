@@ -94,7 +94,71 @@
         "network-emmc-h616-writerless-adapter:commissioning-adapter"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "vmap-01",
+          "document": "docs/hardware/host-network-emmc-v5-image-map-20260927.md",
+          "document_sha256": "e13c8df892a7d725824e6853d121c0c00f1fb2596ebb995978c7eb646c7ef293",
+          "environment": "offline",
+          "limitations": "Offline historical image artifact audit and policy validation only; no current eMMC identity, physical board verification, write, boot or release evidence.",
+          "method": "The focused test compares all six ordered audited GPT records to the builder pins and confirms the raw image hash and image disk GUID. `python3 -m unittest tests.test_h616_reimage_candidate tests.test_build_host_image tests.test_prepare_host_os -v` passed 25 tests.",
+          "profile": "test-sv08-01 image artifact only",
+          "source_commit": "b7e128f31dbc525b82788145af4aff5b7f41e4df",
+          "source_sha256": {
+            "configs/host-os/recovery-test-sv08-01.json": "1047d7cd5c2d823aae4b6f5bd590d289d9fc0465a0b056533fdc49bfd3926751",
+            "docs/hardware/host-board-image-20260925-v5-gpt-audit-20260927.json": "eb1b5fbe55a31b75dbc874fd7425428050951400c928567034e40a79be6b949c",
+            "scripts/build_h616_reimage_candidate.py": "2203a052bcc987825703c4513a369b8e6bc70133cb6a42c9b3ff38af691aa420",
+            "tests/test_h616_reimage_candidate.py": "4f92eee8bab994471378f82e891b89dbbaf01f5278f8e3c4cabda7890c6d7400"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "vmap-02",
+          "document": "docs/hardware/host-network-emmc-v5-image-map-20260927.md",
+          "document_sha256": "e13c8df892a7d725824e6853d121c0c00f1fb2596ebb995978c7eb646c7ef293",
+          "environment": "offline",
+          "limitations": "Mutations and signing use offline fixtures; no physical job was emitted or applied.",
+          "method": "Policy regression cases reject changed image hash, disk GUID, PARTUUID, offset, size and partition order. Existing signed-job validation binds the image layout to the exact target policy.",
+          "profile": "test-sv08-01 image artifact only",
+          "source_commit": "b7e128f31dbc525b82788145af4aff5b7f41e4df",
+          "source_sha256": {
+            "scripts/build_h616_reimage_candidate.py": "2203a052bcc987825703c4513a369b8e6bc70133cb6a42c9b3ff38af691aa420",
+            "tests/test_h616_reimage_candidate.py": "4f92eee8bab994471378f82e891b89dbbaf01f5278f8e3c4cabda7890c6d7400"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "vmap-03",
+          "document": "docs/hardware/host-network-emmc-v5-image-map-20260927.md",
+          "document_sha256": "e13c8df892a7d725824e6853d121c0c00f1fb2596ebb995978c7eb646c7ef293",
+          "environment": "offline",
+          "limitations": "The generated private fixture used repository test signing keys and placeholder target identity, and is not a physical candidate or usable image. No printer/eMMC was accessed.",
+          "method": "The prior synthetic builder test passed. An offline compile fixture using the exact v5 policy generated a manifest whose status is `nondeployable-commissioning-candidate`, with `bootable_sd_image=false`, `physical_target_validated=false`, `claim_trigger_provisioned=false`, and `synthetic_test=false`; the manifest SHA-256 is recorded in the report. The default diagnostic separation regression passed.",
+          "profile": "test-sv08-01 image artifact only",
+          "source_commit": "b7e128f31dbc525b82788145af4aff5b7f41e4df",
+          "source_sha256": {
+            "scripts/build_h616_reimage_candidate.py": "2203a052bcc987825703c4513a369b8e6bc70133cb6a42c9b3ff38af691aa420",
+            "tests/test_h616_reimage_candidate.py": "4f92eee8bab994471378f82e891b89dbbaf01f5278f8e3c4cabda7890c6d7400"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "vmap-04",
+          "document": "docs/hardware/host-network-emmc-v5-image-map-20260927.md",
+          "document_sha256": "e13c8df892a7d725824e6853d121c0c00f1fb2596ebb995978c7eb646c7ef293",
+          "environment": "offline",
+          "limitations": "All evidence is offline and scoped to the audited image artifact; physical commissioning, target identity and release remain unvalidated.",
+          "method": "`py_compile`, feature-workflow validation, whitespace checks, submodule-status inspection and local Markdown-link checks passed. The focused suite passed 25 tests.",
+          "profile": "test-sv08-01 image artifact only",
+          "source_commit": "b7e128f31dbc525b82788145af4aff5b7f41e4df",
+          "source_sha256": {
+            "docs/hardware/host-board-image-20260925-v5-gpt-audit-20260927.json": "eb1b5fbe55a31b75dbc874fd7425428050951400c928567034e40a79be6b949c",
+            "scripts/build_h616_reimage_candidate.py": "2203a052bcc987825703c4513a369b8e6bc70133cb6a42c9b3ff38af691aa420",
+            "tests/test_h616_reimage_candidate.py": "4f92eee8bab994471378f82e891b89dbbaf01f5278f8e3c4cabda7890c6d7400"
+          }
+        }
+      ],
       "human_task": null,
       "id": "pin-v5-image-map",
       "implementation": {
@@ -104,9 +168,16 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "done",
       "title": "Pin the audited v5 image GPT map in commissioning policy",
-      "verification": null
+      "verification": {
+        "decision_sha256": "7fbfc77c8606b6654d26815a579ef7f8f1a62b69de3bbb0b71b39c1559c9e7c9",
+        "evidence_sha256": "2fd3f1794b9426966800b605dac6acf83b5eadd61afb448125feeac95f537e49",
+        "outcome": "passed",
+        "rationale": "Reviewed the complete three-file diff from 054683dc0d4ad88c423ad20c7676b11983a63baf to b7e128f31dbc525b82788145af4aff5b7f41e4df in a clean worktree. The audited raw hash resolves to the audited image GPT GUID and six ordered records; changed hash, GUID, PARTUUID, offset, size and order are refused. The base revision refused the v5 hash. Reproduced all 25 focused tests and verified submitted source, document, manifest, binary and writer hashes, plus JSON, links, workflow validation and diff checks. The generated fixture is explicitly nonbootable and nondeployable. All evidence is offline; current eMMC identity, physical write, boot and release remain unverified.",
+        "reviewer": "feature-verifier/gpt-6-sol",
+        "session": "/root/verify_v5_image_map"
+      }
     }
   ],
   "title": "Pin the audited v5 image GPT map"
