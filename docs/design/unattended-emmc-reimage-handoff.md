@@ -87,7 +87,7 @@ Only `urh-04/05` can validate board-specific boot and a physical write.
 
 ## Current offline evidence and remaining gap
 
-The production selector renderer is now used by the ten-case sandbox dispatch
+The production selector renderer is now used by the sandbox dispatch
 test, so the arm-token predicate, marker, FIT CRC/component hashes and fallback
 are not separate handwritten scripts. A 48,900,464-byte FIT made with the
 reviewed 33 MiB kernel and 15 MiB base initramfs had SHA-256
@@ -203,6 +203,14 @@ and all FIT members extracted from the staged filesystem. Its result is
 `e857a809fa65043bf4b3bec00b7b930ce1fa89afb807899f239d88749d7b5811`.
 The same source revision must pass a
 new full QEMU write and refusal before this change is submitted again.
+The expanded U-Boot sandbox test in `build/urh-stage-fault-v2` exercised the
+compiled A/B dispatcher with an original recovery entry before wrapper
+replacement, no marker after wrapper replacement, one changed redundant
+environment copy, and both armed copies before marker activation. None
+selected the writer; the one-copy fixture reached original recovery. The
+result JSON SHA-256 is
+`dbb37a2746333a5f40e096318b2cdb7e2b07c4678565bec9e2f79ddb853a9701`.
+This is a synthetic stage-state boot test, not execution of H616 `bootm`.
 The controller-integrated QEMU harness now stages its disposable v5 recovery
 partition with that same checked and journaled stager, then arms the two
 regular-file environment copies before booting the exact staged kernel and
