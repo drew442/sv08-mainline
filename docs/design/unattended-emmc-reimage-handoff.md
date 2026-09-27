@@ -84,3 +84,36 @@ The `urh-01` sandbox result proves only selection and fallback to a marker
 representing the original UI. `urh-02/03` must demonstrate staging, marker
 consumption, ordered transfer and actual QEMU boot/readback/normal return.
 Only `urh-04/05` can validate board-specific boot and a physical write.
+
+## Current offline evidence and remaining gap
+
+The production selector renderer is now used by the ten-case sandbox dispatch
+test, so the arm-token predicate, marker, FIT CRC/component hashes and fallback
+are not separate handwritten scripts. A 48,900,464-byte FIT made with the
+reviewed 33 MiB kernel and 15 MiB base initramfs had SHA-256
+`9c7440c672c980b13da2b32299e0eb503fc05bc6b41023ae4d68db543fc89dd4`.
+U-Boot sandbox `iminfo` accepted all three SHA-256 FIT components; its log
+SHA-256 was `1c23e503b2df6a28ec938e0550e08b6807c8e465b88d2e9c99d1967d42c61179`.
+That FIT used an expired synthetic job solely to measure composition and
+integrity; it is not a deployable printer artifact.
+
+The disposable Beelink QEMU refusal at
+`/mnt/sv08-qemu-trusted/urh-qemu-refusal-v1` used the exact v5 image only as
+initial recovery/boot metadata and a synthetic signed-job policy. Its result
+SHA-256 `3e74d97b7b1ee8ecd77532bbde91e7a589da97b3b4274c8c6de0e89c92e510a1`
+and serial SHA-256 `680acf9ba39910f32089c29d8e46739a4854c43a21ddb1604623141b78ca9e6a`
+record `REFUSED_BUNDLE`, no server claim, no target change and marker removal.
+The disposable target bytes were removed after the logs were hashed to save
+scratch space. The full-transfer QEMU run is separate and must be judged on
+its own terminal result and host readback.
+
+The offline stager currently operates on a caller-supplied recovery directory
+and arms **regular-file disks only**. It has no live block-device CLI. It
+preserves the original recovery script, installs the FIT and wrapper before
+the marker, then journals a separate two-copy environment update. Four
+focused composition/staging/environment tests passed; their log SHA-256 is
+`59d8a0dad4b5e32e0c519b417090c79d3f46c51051285cdba51321dadbd0d668`.
+The broader related regression run passed 24 tests; its log SHA-256 is
+`a954fe9597369205470a522e9732142525634c0571cbfbf96d7dd6a00fd6a455`.
+This does not yet prove installed-host target admission, physical durability,
+normal boot of a replacement image, or unattended scheduling/activation.

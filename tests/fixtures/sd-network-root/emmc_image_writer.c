@@ -112,8 +112,10 @@
 #endif
 static unsigned char buffer[CHUNK];
 #if defined(SV08_H616_RECOVERY_HANDOFF)
+#if !defined(SV08_RECOVERY_ENV_SELFTEST)
 static unsigned char readback_buffer[CHUNK];
 static unsigned char old_env[SV08_ENV_COUNT][SV08_ENV_BYTES];
+#endif
 static uint32_t sv08_env_crc32(const unsigned char *data,size_t length) {
   uint32_t crc=0xffffffffU;
   for(size_t i=0;i<length;i++) {
@@ -729,6 +731,17 @@ int main(void) {
   char challenge[65];
   if(!random_challenge(challenge)){puts("refused");return 0;}
   puts(challenge);return 0;
+}
+#elif defined(SV08_RECOVERY_ENV_SELFTEST) && defined(SV08_H616_RECOVERY_HANDOFF)
+int main(int argc,char **argv) {
+  unsigned char env[SV08_ENV_BYTES];
+  if(argc!=2)return 2;
+  int fd=open(argv[1],O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+  if(fd<0)return 3;
+  int ok=sv08_pread_all(fd,env,sizeof(env),0);
+  close(fd);
+  puts(ok&&sv08_env_exhausted_for_job(env)?"admitted":"refused");
+  return 0;
 }
 #else
 int main(void) {

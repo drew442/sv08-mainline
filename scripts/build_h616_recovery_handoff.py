@@ -42,22 +42,26 @@ def regular(path):
     return path
 
 
-def script_text(job_id, bootargs, fit_size, fit_crc):
+def script_text(job_id, bootargs, fit_size, fit_crc, *,
+                fit_addr=FIT_ADDR, marker_addr=MARKER_ADDR,
+                original_addr=ORIGINAL_ADDR, boot_command=None):
     if not re.fullmatch(r'[a-z0-9-]{1,64}', job_id):
         raise ValueError('Invalid job ID for recovery selector')
     if '"' in bootargs or '\n' in bootargs:
         raise ValueError('Invalid boot arguments')
+    if boot_command is None:
+        boot_command = f'bootm {fit_addr:#x}'
     return f'''# One-shot recovery writer; every failed check loads the original UI.
 if test "${{sv08_reimage_arm}}" = "{job_id}" && test "${{sv08_env_layout}}" = "ab-8gb-v1" && test "${{BOOT_ORDER}}" = "A B" && test "${{BOOT_A_LEFT}}" = "0" && test "${{BOOT_B_LEFT}}" = "0"; then
- if load mmc ${{sv08_mmcdev}}:5 {MARKER_ADDR:#x} sv08-reimage/armed; then
+ if load mmc ${{sv08_mmcdev}}:5 {marker_addr:#x} sv08-reimage/armed; then
   if test ${{filesize}} = {len(MARKER):x}; then
-   if crc32 -v {MARKER_ADDR:#x} ${{filesize}} {zlib.crc32(MARKER):08x}; then
-    if load mmc ${{sv08_mmcdev}}:5 {FIT_ADDR:#x} sv08-reimage/writer.itb; then
+   if crc32 -v {marker_addr:#x} ${{filesize}} {zlib.crc32(MARKER):08x}; then
+    if load mmc ${{sv08_mmcdev}}:5 {fit_addr:#x} sv08-reimage/writer.itb; then
      if test ${{filesize}} = {fit_size:x}; then
-      if crc32 -v {FIT_ADDR:#x} ${{filesize}} {fit_crc:08x}; then
-       if iminfo {FIT_ADDR:#x}; then
+      if crc32 -v {fit_addr:#x} ${{filesize}} {fit_crc:08x}; then
+       if iminfo {fit_addr:#x}; then
         setenv bootargs "{bootargs}"
-        bootm {FIT_ADDR:#x}
+        {boot_command}
        fi
       fi
      fi
@@ -66,8 +70,8 @@ if test "${{sv08_reimage_arm}}" = "{job_id}" && test "${{sv08_env_layout}}" = "a
   fi
  fi
 fi
-if load mmc ${{sv08_mmcdev}}:5 {ORIGINAL_ADDR:#x} sv08-reimage/recovery-original.scr; then
- source {ORIGINAL_ADDR:#x}
+if load mmc ${{sv08_mmcdev}}:5 {original_addr:#x} sv08-reimage/recovery-original.scr; then
+ source {original_addr:#x}
 fi
 echo "SV08 recovery unavailable; use the independent SD rescue path"
 exit

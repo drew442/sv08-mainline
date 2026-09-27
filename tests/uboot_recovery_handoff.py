@@ -10,11 +10,13 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import zlib
 
 
 REPO = Path(__file__).resolve().parents[1]
-MARKER = b'SV08-REIMAGE-ONCE\n'
+sys.path.insert(0, str(REPO))
+from scripts.build_h616_recovery_handoff import MARKER, script_text
 PARTITIONS = ((1, 16, 32, 'boot-a'), (2, 48, 16, 'root-a'),
               (3, 64, 32, 'boot-b'), (4, 96, 16, 'root-b'),
               (5, 112, 64, 'recovery'), (6, 176, 32, 'data'))
@@ -71,29 +73,10 @@ def fit(work):
 def selector(payload):
     # The sandbox addresses are independent of the physical ARM64 load map.
     # U-Boot's filesize variable is hexadecimal, including for load mmc.
-    return f'''# Disposable selector: original recovery remains the default.
-if test "${{sv08_reimage_arm}}" = "offline-test-job" && test "${{sv08_env_layout}}" = "ab-8gb-v1" && test "${{BOOT_ORDER}}" = "A B" && test "${{BOOT_A_LEFT}}" = "0" && test "${{BOOT_B_LEFT}}" = "0"; then
-if load mmc ${{sv08_mmcdev}}:5 0x6200000 sv08-reimage/armed; then
- if test ${{filesize}} = {len(MARKER):x}; then
-  if crc32 -v 0x6200000 ${{filesize}} {zlib.crc32(MARKER):08x}; then
-   if load mmc ${{sv08_mmcdev}}:5 0x6300000 sv08-reimage/writer.itb; then
-    if test ${{filesize}} = {len(payload):x}; then
-     if crc32 -v 0x6300000 ${{filesize}} {zlib.crc32(payload):08x}; then
-      if iminfo 0x6300000; then
-       echo SV08_TEST_WRITER_SELECTED
-       exit
-      fi
-     fi
-    fi
-   fi
-  fi
- fi
-fi
-fi
-if load mmc ${{sv08_mmcdev}}:5 0x7000000 sv08-reimage/recovery-original.scr; then
- source 0x7000000
-fi
-'''
+    return script_text('offline-test-job', 'console=ttyS0,115200 rdinit=/init',
+                       len(payload), zlib.crc32(payload), fit_addr=0x6300000,
+                       marker_addr=0x6200000, original_addr=0x7000000,
+                       boot_command='echo SV08_TEST_WRITER_SELECTED\n        exit')
 
 
 def main():
