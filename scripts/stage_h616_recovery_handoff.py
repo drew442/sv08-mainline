@@ -119,6 +119,49 @@ def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
     return policy
 
 
+def admit_disposable_loop_recovery(image, recovery, policy):
+    """Bind a mounted ext4 recovery fixture to the signed 32 GB target map."""
+    image = regular(image)
+    if image.stat().st_size != policy['sectors'] * 512:
+        raise ValueError('Disposable target capacity differs from signed policy')
+    gpt = inspect_gpt(image, allow_regular_prefix=True,
+                      image_bytes=policy['image_bytes'],
+                      environment_regions=tuple((offset, ENV_BYTES)
+                                                for offset in ENV_OFFSETS))
+    expected = policy['image_layout']
+    if (gpt['disk_guid'] != expected['disk_guid'] or
+            gpt['partition_records'] != expected['partitions']):
+        raise ValueError('Disposable target GPT differs from signed map')
+    result = subprocess.run(['findmnt', '--json', '--target', str(recovery),
+                             '--output', 'TARGET,SOURCE,FSTYPE,OPTIONS'],
+                            check=True, capture_output=True, text=True, timeout=10)
+    filesystems = json.loads(result.stdout).get('filesystems', [])
+    if len(filesystems) != 1:
+        raise ValueError('Recovery mount is ambiguous')
+    mounted = filesystems[0]
+    source = Path(mounted.get('source', ''))
+    if (Path(mounted.get('target', '')).resolve() != recovery or
+            mounted.get('fstype') != 'ext4' or
+            'rw' not in mounted.get('options', '').split(',') or
+            not source.name.startswith('loop') or
+            not stat.S_ISBLK(source.stat().st_mode) or
+            recovery.stat().st_dev != source.stat().st_rdev):
+        raise ValueError('Recovery is not the expected writable loop filesystem')
+    loop = Path('/sys/class/block') / source.name / 'loop'
+    backing = Path((loop / 'backing_file').read_text().strip()).resolve()
+    offset = int((loop / 'offset').read_text().strip())
+    limit = int((loop / 'sizelimit').read_text().strip())
+    partition = expected['partitions'][4]
+    if (backing != image or offset != partition['offset_bytes'] or
+            limit != partition['size_bytes']):
+        raise ValueError('Recovery loop does not map signed partition five')
+    image_stat = image.stat()
+    return {'target_regular_dev': image_stat.st_dev,
+            'target_regular_ino': image_stat.st_ino,
+            'recovery_partuuid': partition['partuuid'],
+            'recovery_offset_bytes': offset, 'recovery_size_bytes': limit}
+
+
 def fsync_directory(path):
     fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
     try:
@@ -160,7 +203,8 @@ def journal_state(journal, state):
 
 def stage_mounted_recovery(recovery, artifact, journal, *,
                            bundle, verification_key, expected_build_sha256,
-                           expected_original_sha256,
+                           expected_original_sha256, mounted_target_image=None,
+                           disposable_directory_fixture=False,
                            now=None, fault=None):
     """Stage files on a disposable mounted recovery filesystem, marker last."""
     artifact = Path(artifact)
@@ -179,6 +223,15 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
         raise ValueError('Handoff artifact differs from reviewed build')
     manifest = verify_artifact(artifact)
     policy = verify_signed_stage_bundle(manifest, bundle, verification_key, now=now)
+    if mounted_target_image is not None:
+        if disposable_directory_fixture:
+            raise ValueError('Choose one recovery identity mode')
+        admission = admit_disposable_loop_recovery(mounted_target_image,
+                                                   recovery, policy)
+    elif disposable_directory_fixture:
+        admission = {'disposable_directory_fixture': True}
+    else:
+        raise ValueError('Recovery partition identity not established')
     if not recovery.is_dir() or journal.exists():
         raise ValueError('Fresh recovery directory and journal required')
     original = recovery / 'recovery.scr'
@@ -197,6 +250,7 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     if space.f_bavail * space.f_frsize < fit.stat().st_size + original.stat().st_size + RESERVE_BYTES:
         raise ValueError('Recovery filesystem lacks stage reserve')
     state = {'phase': 'planned', 'job_id': manifest['job_id'],
+             'recovery_admission': admission,
              'build_sha256': expected_build_sha256,
              'target_policy_sha256': hashlib.sha256(canonical_json(policy)).hexdigest(),
              'fit_sha256': manifest['files_sha256']['writer.itb'],

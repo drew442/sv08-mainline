@@ -136,6 +136,15 @@ six partition records match the signed image map at the 7.8 GB image
 boundary. A changed policy or GPT CRC is refused before either environment
 record is written. The regular-file prefix inspection is explicit and
 read-only; this is not live eMMC admission.
+A separate root-owned offline exercise mounted partition five from a fresh
+31,272,730,624-byte sparse regular-file target through a loop device. The
+stager checked the loop backing file, exact partition offset/size, ext4 mount,
+signed GPT map, job, original script and FIT before placing the marker; the
+separate arm then verified both environment copies. An unmounted directory
+and a different backing path were refused. Its result is in ignored
+`local/urh-mounted-stage-v2/result.json`, SHA-256
+`4381d23cea50c055f00c5391de5967bc904f778254afa6623c7dd1178ef666e2`.
+This exercise does not identify a live `/dev/mmcblk0` or prove eMMC durability.
 The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
 `c7674f377719f4fc8e61f2d1ff6480a63c242199db0672fbe34ff9c6c645e677`.

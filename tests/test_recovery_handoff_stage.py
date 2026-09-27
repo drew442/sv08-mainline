@@ -72,6 +72,7 @@ class RecoveryStageTests(unittest.TestCase):
                                                verification_key=files['key'], now=1500,
                                                expected_build_sha256=build_hash,
                                                expected_original_sha256=original_hash,
+                                               disposable_directory_fixture=True,
                                                fault=fault)
                 self.assertEqual(state['job_id'], job['job_id'])
                 self.assertEqual((recovery / 'sv08-reimage/armed').exists(), marker_expected)
@@ -90,25 +91,29 @@ class RecoveryStageTests(unittest.TestCase):
                                        bundle=bundle,
                                        verification_key=files['key'], now=1500,
                                        expected_build_sha256='0' * 64,
-                                       expected_original_sha256=original_hash)
+                                       expected_original_sha256=original_hash,
+                                       disposable_directory_fixture=True)
             with self.assertRaisesRegex(ValueError, 'Stale job'):
                 stage_mounted_recovery(recovery, artifact, journal,
                                        bundle=bundle,
                                        verification_key=files['key'], now=3000,
                                        expected_build_sha256=build_hash,
-                                       expected_original_sha256=original_hash)
+                                       expected_original_sha256=original_hash,
+                                       disposable_directory_fixture=True)
             self.assertFalse(journal.exists())
             with self.assertRaisesRegex(ValueError, 'Original recovery script'):
                 stage_mounted_recovery(recovery, artifact, journal,
                                        bundle=bundle,
                                        verification_key=files['key'], now=1500,
                                        expected_build_sha256=build_hash,
-                                       expected_original_sha256='0' * 64)
+                                       expected_original_sha256='0' * 64,
+                                       disposable_directory_fixture=True)
             stage_mounted_recovery(recovery, artifact, journal,
                                    bundle=bundle,
                                    verification_key=files['key'], now=1500,
                                    expected_build_sha256=build_hash,
-                                   expected_original_sha256=original_hash)
+                                   expected_original_sha256=original_hash,
+                                   disposable_directory_fixture=True)
             disk = root / 'target.img'
             create_reviewed_target(disk, policy)
             source = root / 'initial.env'
