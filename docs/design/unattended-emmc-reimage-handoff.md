@@ -116,7 +116,35 @@ serial SHA-256 is
 The source was deliberately nonbootable, the guest had 2 GiB RAM, and Linux
 logged five atomic page-allocation warnings. This proves the disposable
 transfer/readback path, not normal slot boot or the 1 GiB board memory limit.
-An exact-v5-source trial with 1 GiB guest RAM is a separate check.
+The separate 1 GiB Beelink QEMU trial at
+`/mnt/sv08-qemu-trusted/urh-qemu-v5-source-v1` used the exact reviewed v5
+source SHA-256
+`ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`
+against a disposable synthetic-identity target. It reached
+`SV08_H616_COMMISSIONING_PASS`; guest and host full-image hashes, six GPT
+records and the one-shot claim passed. A read-only host check during the bulk
+comparison found both old environment copies CRC-valid, armed and exhausted.
+After success both copies were CRC-valid with order A, A=3/B=0 and no arm
+token. The result JSON SHA-256 is
+`2ff8acc909b01cb6f294e2908a23bf050144c2f73c4c68cec8a111504d1de6d2`;
+serial SHA-256 is
+`0b009286322ee3544352b1b83ba71788295e65c6203e6af7853e981d71998c72`.
+Linux logged two atomic page-allocation warnings without stopping the trial.
+
+A subsequent read-only QEMU boot probe used that post-write target and the
+pinned test kernel/initramfs. It started a shell from root-A, verified the
+v5 `release.json` SHA-256
+`aa3724f0aaea3f9a59e4fa4ea15014a2f3f4860b2cae5bf1c70f0ffc4b5af519`,
+and observed `/dev/sda2` mounted read-only. Its result JSON SHA-256 is
+`948979934f29814d8941609d6a540b51ff02bc177837fcc1a80499462f1f60ea`;
+serial SHA-256 is
+`2cb53c1356597cd298f0dd13f3bd85a9cad0fd8947a7c7721c6306af5159ccf4`.
+The probe initramfs omits the normal persistent `/data` initialization hook
+because the entire target is exposed read-only. This tests root-A readability
+and shell startup, not the production initramfs, systemd, printer services or
+physical H616 boot. The QEMU harness starts the same trusted RAM writer with
+an external kernel/initramfs after separate U-Boot sandbox selector testing;
+it does not emulate H616 U-Boot handing control directly to the FIT.
 
 The offline stager currently operates on a caller-supplied recovery directory
 and arms **regular-file disks only**. It has no live block-device CLI. It
@@ -149,7 +177,7 @@ The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
 `c7674f377719f4fc8e61f2d1ff6480a63c242199db0672fbe34ff9c6c645e677`.
 This does not yet prove installed-host target admission, physical durability,
-normal boot of a replacement image, or unattended scheduling/activation.
+full normal OS boot, or unattended scheduling/activation.
 The exact v5 source image on Beelink was mounted read-only with ext4 journal
 replay disabled for a staging-capacity check: its original `recovery.scr` is
 720 bytes, SHA-256
