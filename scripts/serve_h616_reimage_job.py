@@ -18,7 +18,7 @@ import subprocess
 import time
 
 from scripts.prepare_h616_reimage_job import (LOCAL, build_claim_server,
-                                               durable_file, fsync_dir, source_image)
+                                               durable_file, fsync_dir, sha256_file)
 
 
 def safe_path(path: Path) -> Path:
@@ -94,7 +94,9 @@ def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
               'image_sha256': receipt['image_sha256'], 'bind': bind,
               'printer_ip': printer_ip, 'claim_port': receipt['claim_port'],
               'automatic_rearm': False,
-              'source_and_claim_verified': bool(execute)}
+              'source_and_claim_verified': bool(execute),
+              'rpcbind_sha256': sha256_file(rpcbind),
+              'ganesha_sha256': sha256_file(ganesha)}
     if not execute:
         return report
     if os.geteuid() != 0:

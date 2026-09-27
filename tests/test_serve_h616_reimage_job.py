@@ -52,6 +52,8 @@ class ServeJobTests(unittest.TestCase):
                            printer_ip='192.168.1.141', rpcbind=executable,
                            ganesha=executable)
             self.assertEqual(report['status'], 'inspection-only')
+            self.assertEqual(len(report['ganesha_sha256']), 64)
+            self.assertEqual(report['ganesha_sha256'], report['rpcbind_sha256'])
             self.assertFalse(export.exists())
             self.assertFalse((state / 'serve-start.json').exists())
             root.chmod(0o755)

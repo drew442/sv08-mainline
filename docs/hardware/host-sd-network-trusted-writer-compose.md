@@ -60,6 +60,7 @@ root `--execute` requires the same image, job verification key and receipt
 signing key, an unused prepared claim, an empty export destination, the one
 printer client IP, and installed `rpcbind` and NFS-Ganesha executables. It
 rechecks the full source hash and claim before writing a durable start marker.
+That marker records the exact NFS-Ganesha and `rpcbind` executable hashes.
 The NFS export contains only a hard link named `image.bin`, defaults to no
 access for other clients, and grants the one printer IP read-only access. The
 raw image must be readable by the NFS anonymous user (the current controller
