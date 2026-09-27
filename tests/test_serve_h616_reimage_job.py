@@ -20,6 +20,8 @@ class ServeJobTests(unittest.TestCase):
                                     bind='192.168.1.20', printer_ip='192.168.1.141',
                                     recovery_dir=root / 'recovery')
             self.assertIn('Access_Type = NONE;', config)
+            self.assertIn('Bind_Addr = 192.168.1.20;', config)
+            self.assertIn(f'IdmapConf = "{root / "idmap.conf"}";', config)
             self.assertIn('Clients = 192.168.1.141; Access_Type = RO;', config)
             self.assertIn('Squash = Root_Squash;', config)
             self.assertNotIn('Access_Type = RW;', config)

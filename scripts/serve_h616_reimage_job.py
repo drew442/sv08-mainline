@@ -41,8 +41,8 @@ def ganesha_config(*, export_dir: Path, pseudo: str, bind: str,
             ipaddress.IPv4Address(bind).is_loopback or
             ipaddress.IPv4Address(printer_ip).is_loopback):
         raise ValueError('Unsafe NFS listener, client or export')
-    return f'''NFS_CORE_PARAM {{ Protocols = 3; Bind_Addr = "{bind}"; mount_path_pseudo = true; }}
-NFSV4 {{ Graceless = true; RecoveryRoot = "{recovery_dir}"; }}
+    return f'''NFS_CORE_PARAM {{ Protocols = 3; Bind_Addr = {bind}; mount_path_pseudo = true; }}
+NFSV4 {{ IdmapConf = "{recovery_dir.parent / 'idmap.conf'}"; UseGetpwnam = true; Graceless = true; RecoveryRoot = "{recovery_dir}"; }}
 EXPORT {{
   Export_Id = 1;
   Path = "{export_dir}";
@@ -116,6 +116,7 @@ def serve(*, state_dir: Path, image: Path, job_verification_key: Path,
         export_dir.mkdir(mode=0o755)
         os.link(image, export_dir / 'image.bin', follow_symlinks=False)
         (state_dir / 'ganesha-recovery').mkdir(mode=0o700)
+        durable_file(state_dir / 'idmap.conf', b'[General]\nDomain = localdomain\n')
         config_path = state_dir / 'ganesha.conf'
         durable_file(config_path, config.encode())
         fsync_dir(state_dir)

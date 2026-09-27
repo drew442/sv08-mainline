@@ -82,6 +82,10 @@ The QEMU harness exercises the synthetic path; the host-service NFS-Ganesha
 configuration has not yet been tested against a physical printer.
 Offline unit tests use synthetic keys to send a real HTTP claim over loopback,
 verify its Ed25519 receipt, and confirm that replay returns `409 CONSUMED`.
+An isolated Beelink Ganesha 4.3 startup test parsed the generated config and
+opened the configured NFS listener; it did not exercise printer access or the
+read-only client ACL. The config uses an unquoted bind IP and an explicit idmap
+file, as required by that tested package.
 The export defaults, per-client override and listener address follow the
 [NFS-Ganesha export configuration](https://github.com/nfs-ganesha/nfs-ganesha/blob/next/src/doc/man/ganesha-export-config.rst)
 and [core configuration](https://github.com/nfs-ganesha/nfs-ganesha/blob/next/src/doc/man/ganesha-core-config.rst)
