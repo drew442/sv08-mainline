@@ -30,6 +30,7 @@ from scripts.prepare_h616_reimage_job import prepare
 from scripts.serve_h616_reimage_job import serve
 from scripts.build_h616_reimage_candidate import (build, TARGET_BYTES,
                                                   V5_IMAGE_SHA256, V5_IMAGE_PARTITIONS)
+from scripts.stage_h616_recovery_handoff import parse_env_record
 from scripts.build_sd_network_image import commissioning_bundle, append_commissioning_initramfs, boot_script
 
 
@@ -277,6 +278,21 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                 if (inspect_gpt(work / 'target.img', policy_value['image_layout']['disk_guid'])
                         ['partition_records'] != policy_value['image_layout']['partitions']):
                     raise RuntimeError('Host GPT differs')
+            normal_policy = None
+            if use_installed_source and not tamper_job:
+                banks = [parse_env_record(os.pread(target_fd, 65536, offset))
+                         for offset in (0x400000, 0x800000)]
+                for bank in banks:
+                    if (bank.get(b'sv08_env_layout') != b'ab-8gb-v1' or
+                            bank.get(b'BOOT_ORDER') != b'A' or
+                            bank.get(b'BOOT_A_LEFT') != b'3' or
+                            bank.get(b'BOOT_B_LEFT') != b'0' or
+                            b'sv08_reimage_arm' in bank):
+                        raise RuntimeError('Replacement did not restore normal A boot policy')
+                normal_policy = {'order': 'A', 'a_attempts': 3,
+                                 'b_attempts': 0, 'both_copies_valid': True,
+                                 'arm_token_absent': True,
+                                 'normal_os_boot_tested': False}
             result = {'case': 'tampered-signed-job' if tamper_job else 'full-success',
                       'marker': marker, 'source_sha256': source_hash,
                       'kernel_sha256': hashes['Image'], 'initramfs_sha256': hashes['initrd.img'],
@@ -287,6 +303,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                       'synthetic_target_only': True, 'h616_boot_tested': False,
                       'recovery_handoff': recovery_handoff,
                       'installed_source_as_replacement': use_installed_source,
+                      'normal_policy': normal_policy,
                       'staged': staged}
             (work / 'result.json').write_text(json.dumps(result, sort_keys=True, indent=2) + '\n')
             print(json.dumps(result, sort_keys=True), flush=True)
