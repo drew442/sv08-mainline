@@ -5,7 +5,8 @@ Gap: the H616 SPL placement and normal primary GPT array overlap. Check actual
 headers/CRCs and both arrays, not just partition offsets. This supplements sgdisk;
 retire when the image builder's selected boot backend enforces these invariants.
 File inspection is the default. A caller must explicitly authorize read-only
-block inspection and supply the reviewed image footprint. This does not establish
+block or larger regular-file prefix inspection and supply the reviewed image
+footprint. This does not establish
 Boot ROM/U-Boot compatibility or a flashable image.
 """
 from pathlib import Path
@@ -18,11 +19,19 @@ SECTOR = 512
 
 
 def inspect(path, spl_start=8192, spl_limit=1048576, environment_regions=(),
-            allow_block=False, image_bytes=None):
+            allow_block=False, image_bytes=None, allow_regular_prefix=False):
     mode = path.stat().st_mode
+    if allow_block and allow_regular_prefix:
+        raise ValueError('Choose one explicit inspection mode')
     if allow_block:
         if not stat.S_ISBLK(mode) or type(image_bytes) is not int or image_bytes <= 0:
             raise ValueError('Block inspection requires an explicit positive image footprint')
+        size = image_bytes
+    elif allow_regular_prefix:
+        if (not stat.S_ISREG(mode) or path.is_symlink() or
+                type(image_bytes) is not int or image_bytes <= 0 or
+                image_bytes > path.stat().st_size):
+            raise ValueError('Regular prefix inspection requires an exact footprint')
         size = image_bytes
     else:
         if not stat.S_ISREG(mode) or path.is_symlink() or image_bytes is not None:
@@ -103,7 +112,9 @@ def inspect(path, spl_start=8192, spl_limit=1048576, environment_regions=(),
                 if max(begin, region[0]) < min(end, region[1]):
                     raise ValueError('Environment overlaps GPT, SPL, a partition or another copy')
             environments.append(region)
-    return dict(image_bytes=size, partitions=len(partitions), gpt_crc_valid=True,
+    return dict(image_bytes=size,
+                disk_guid=str(uuid.UUID(bytes_le=geometry[0][2])),
+                partitions=len(partitions), gpt_crc_valid=True,
                 partition_records=partition_records,
                 spl_reserved_bytes=[spl_start, spl_limit], collision_free=True,
                 environment_reserved_bytes=environments,

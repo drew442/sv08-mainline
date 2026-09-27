@@ -10,11 +10,13 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import zlib
 
 
 REPO = Path(__file__).resolve().parents[1]
-MARKER = b'SV08-REIMAGE-ONCE\n'
+sys.path.insert(0, str(REPO))
+from scripts.build_h616_recovery_handoff import MARKER, script_text
 PARTITIONS = ((1, 16, 32, 'boot-a'), (2, 48, 16, 'root-a'),
               (3, 64, 32, 'boot-b'), (4, 96, 16, 'root-b'),
               (5, 112, 64, 'recovery'), (6, 176, 32, 'data'))
@@ -71,27 +73,10 @@ def fit(work):
 def selector(payload):
     # The sandbox addresses are independent of the physical ARM64 load map.
     # U-Boot's filesize variable is hexadecimal, including for load mmc.
-    return f'''# Disposable selector: original recovery remains the default.
-if load mmc ${{sv08_mmcdev}}:5 0x6200000 sv08-reimage/armed; then
- if test ${{filesize}} = {len(MARKER):x}; then
-  if crc32 -v 0x6200000 ${{filesize}} {zlib.crc32(MARKER):08x}; then
-   if load mmc ${{sv08_mmcdev}}:5 0x6300000 sv08-reimage/writer.itb; then
-    if test ${{filesize}} = {len(payload):x}; then
-     if crc32 -v 0x6300000 ${{filesize}} {zlib.crc32(payload):08x}; then
-      if iminfo 0x6300000; then
-       echo SV08_TEST_WRITER_SELECTED
-       exit
-      fi
-     fi
-    fi
-   fi
-  fi
- fi
-fi
-if load mmc ${{sv08_mmcdev}}:5 0x7000000 sv08-reimage/recovery-original.scr; then
- source 0x7000000
-fi
-'''
+    return script_text('offline-test-job', 'console=ttyS0,115200 rdinit=/init',
+                       len(payload), zlib.crc32(payload), fit_addr=0x6300000,
+                       marker_addr=0x6200000, original_addr=0x7000000,
+                       boot_command='echo SV08_TEST_WRITER_SELECTED\n        exit')
 
 
 def main():
@@ -146,12 +131,14 @@ def main():
     with recovery.open('xb') as stream:
         stream.truncate(64*1024*1024)
 
-    def install_recovery(marker, image=payload):
+    def install_recovery(marker, image=payload, *, original_entry=False):
         marker_path = recovery_root / 'sv08-reimage/armed'
         if marker is None:
             marker_path.unlink(missing_ok=True)
         else:
             marker_path.write_bytes(marker)
+        put(recovery_root, 'recovery.scr',
+            original.read_bytes() if original_entry else wrapper.read_bytes())
         put(recovery_root, 'sv08-reimage/writer.itb', image)
         run('mkfs.ext4', '-q', '-F', '-d', recovery_root, recovery)
         with disk.open('r+b') as target, recovery.open('rb') as source:
@@ -171,6 +158,7 @@ def main():
     run(args.uboot.resolve(), '-d', 'test.dtb', '-c',
         'env select MMC; setenv BOOT_ORDER A B; setenv BOOT_A_LEFT 0; '
         'setenv BOOT_B_LEFT 0; setenv sv08_env_layout ab-8gb-v1; '
+        'setenv sv08_reimage_arm offline-test-job; '
         'env save; env save', cwd=work)
     cases = {}
     for name, marker, image, expected in (
@@ -188,11 +176,39 @@ def main():
         assert forbidden not in output, (name, output)
         cases[name] = expected
     install_recovery(MARKER)
+    unarmed = sandbox('wrong-arm-token', 'setenv sv08_reimage_arm wrong; ')
+    assert 'SV08_TEST_RECOVERY_UI' in unarmed and 'SV08_TEST_WRITER_SELECTED' not in unarmed
     valid = sandbox('valid-slot', 'setenv BOOT_A_LEFT 3; ')
     assert 'SV08_TEST_SLOT_BOOT' in valid and 'SV08_TEST_WRITER_SELECTED' not in valid
-    install_recovery(None)
+    install_recovery(MARKER)
     invalid = sandbox('invalid-order', 'setenv BOOT_ORDER "A A"; ')
     assert 'SV08_TEST_RECOVERY_UI' in invalid and 'SV08_TEST_WRITER_SELECTED' not in invalid
+    # File-stage interruption before wrapper replacement preserves the
+    # original entry; after wrapper replacement the absent marker fails closed.
+    install_recovery(None, original_entry=True)
+    before_wrapper = sandbox('stage-before-wrapper', 'setenv BOOT_A_LEFT 0; ')
+    assert 'SV08_TEST_RECOVERY_UI' in before_wrapper and 'SV08_TEST_WRITER_SELECTED' not in before_wrapper
+    install_recovery(None)
+    after_wrapper = sandbox('stage-after-wrapper', 'setenv BOOT_A_LEFT 3; ')
+    assert 'SV08_TEST_SLOT_BOOT' in after_wrapper and 'SV08_TEST_WRITER_SELECTED' not in after_wrapper
+    # A crash after one redundant environment update can select either old
+    # normal policy or new exhausted policy. Without the final marker, neither
+    # state can enter the writer.
+    run(args.uboot.resolve(), '-d', 'test.dtb', '-c',
+        'env select MMC; env load; setenv BOOT_A_LEFT 3; '
+        'setenv sv08_reimage_arm; env save; env save; '
+        'setenv BOOT_A_LEFT 0; setenv sv08_reimage_arm offline-test-job; '
+        'env save', cwd=work)
+    partial_arm = sandbox('stage-one-env-copy')
+    assert ('SV08_TEST_WRITER_SELECTED' not in partial_arm and
+            ('SV08_TEST_SLOT_BOOT' in partial_arm or
+             'SV08_TEST_RECOVERY_UI' in partial_arm))
+    run(args.uboot.resolve(), '-d', 'test.dtb', '-c',
+        'env select MMC; env load; setenv BOOT_A_LEFT 0; '
+        'setenv sv08_reimage_arm offline-test-job; env save; env save', cwd=work)
+    both_armed_no_marker = sandbox('stage-both-env-copies-no-marker')
+    assert ('SV08_TEST_RECOVERY_UI' in both_armed_no_marker and
+            'SV08_TEST_WRITER_SELECTED' not in both_armed_no_marker)
     install_recovery(MARKER)
     for offset in (4*1024*1024, 8*1024*1024):
         with disk.open('r+b') as stream:
@@ -204,10 +220,17 @@ def main():
             one_corrupt = sandbox('one-env-copy-corrupt')
             assert ('SV08_TEST_WRITER_SELECTED' in one_corrupt and
                     'SV08_TEST_RECOVERY_UI' not in one_corrupt)
-            install_recovery(None)
+            install_recovery(MARKER)
     corrupt = sandbox('both-env-copies-corrupt')
     assert 'SV08_TEST_RECOVERY_UI' in corrupt and 'SV08_TEST_WRITER_SELECTED' not in corrupt
     cases.update(valid_slot='SV08_TEST_SLOT_BOOT',
+                 stage_before_wrapper='SV08_TEST_RECOVERY_UI',
+                 stage_after_wrapper='SV08_TEST_SLOT_BOOT',
+                 stage_one_env_copy=('SV08_TEST_RECOVERY_UI'
+                                     if 'SV08_TEST_RECOVERY_UI' in partial_arm
+                                     else 'SV08_TEST_SLOT_BOOT'),
+                 stage_both_env_copies_no_marker='SV08_TEST_RECOVERY_UI',
+                 wrong_arm_token='SV08_TEST_RECOVERY_UI',
                  invalid_order='SV08_TEST_RECOVERY_UI',
                  one_env_copy_corrupt='SV08_TEST_WRITER_SELECTED',
                  both_env_copies_corrupt='SV08_TEST_RECOVERY_UI')

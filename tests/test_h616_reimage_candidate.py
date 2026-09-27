@@ -92,6 +92,33 @@ class CandidateTests(unittest.TestCase):
     def setUpClass(cls):
         (REPO / 'local').mkdir(exist_ok=True)
 
+    def test_reviewed_v5_source_may_use_only_a_synthetic_qemu_target(self):
+        from scripts.build_h616_reimage_candidate import V5_IMAGE_SHA256, policy_fields
+        from tests.host_qemu_sd_network_emmc_write import h616_synthetic_policy
+        candidate = h616_synthetic_policy(V5_IMAGE_SHA256)
+        self.assertEqual(policy_fields(candidate), candidate)
+        self.assertEqual(candidate['image_layout']['partitions'][4]['name'], 'recovery')
+        candidate['image_sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'Untrusted or incomplete'):
+            policy_fields(candidate)
+
+    def test_recovery_handoff_requires_trusted_initramfs_and_pins_transfer(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary)
+            files, _, _ = signed_inputs(work)
+            with self.assertRaisesRegex(ValueError, 'trusted initramfs'):
+                build(work / 'rejected', *files.values(), now=1500,
+                      synthetic_test=True, recovery_handoff=True)
+            manifest = build(work / 'handoff', *files.values(), now=1500,
+                             synthetic_test=True, trusted_initramfs=True,
+                             source_server='10.0.2.2',
+                             source_export='/srv/sv08-sd-nfs',
+                             recovery_handoff=True)
+            helper = WRITER.parent / 'env_last_transfer.h'
+            self.assertTrue(manifest['recovery_handoff'])
+            self.assertEqual(manifest['env_last_transfer_sha256'], digest(helper.read_bytes()))
+            self.assertGreater((work / 'handoff/sd-network-init').stat().st_size, 0)
+
     def test_signed_claim_receipt_and_strict_http_framing(self):
         job_id = 'h616-synthetic-test-001'
         descriptor_hash = '12' * 32
@@ -366,6 +393,28 @@ class CandidateTests(unittest.TestCase):
                 build(work / 'physical-fault', *files.values(), now=1500,
                       fault='abrupt-after-write')
             self.assertFalse((work / 'physical-fault').exists())
+
+    def test_recovery_env_last_faults_are_synthetic_only(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary)
+            files, _, _ = signed_inputs(work)
+            for fault in ('after-bulk', 'after-first-env'):
+                with self.subTest(fault=fault):
+                    manifest = build(work / fault, *files.values(), now=1500,
+                                     synthetic_test=True, fault=fault,
+                                     trusted_initramfs=True,
+                                     source_server='10.0.2.2',
+                                     source_export='/srv/sv08-sd-nfs',
+                                     recovery_handoff=True)
+                    self.assertTrue(manifest['synthetic_test'])
+                    self.assertFalse(manifest['bootable_sd_image'])
+                    with self.assertRaises(ValueError):
+                        build(work / (fault + '-physical'), *files.values(),
+                              now=1500, fault=fault,
+                              trusted_initramfs=True,
+                              source_server='10.0.2.2',
+                              source_export='/srv/sv08-sd-nfs',
+                              recovery_handoff=True)
 
     def test_guest_case_markers_distinguish_interruption_from_refusal(self):
         prefix = 'SV08_H616_COMMISSIONING_'

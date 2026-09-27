@@ -1,0 +1,12 @@
+{
+  "outcome": "approve",
+  "authority": "delegated",
+  "rationale": "Approve a prospective amendment to the bounded offline urh-03 method. Exact compiled dispatcher and selector execution in U-Boot sandbox, followed by QEMU virt boot of the hash-matched FIT-extracted kernel and initrd through the actual one-shot controller, can establish the offline handoff behavior. QEMU must write and read back the full synthetic image, then boot normal A from that resulting target with artifact continuity demonstrated. This does not establish physical H616 U-Boot-to-FIT execution; that remains mandatory for urh-04. The submitted evidence does not yet pass: the verifier found an external QEMU boot, a separate normal-slot snapshot, unexecuted retry tests, incomplete fault-path boot evidence, and Beelink logs it could not inspect.",
+  "evidence_required": [
+    "Reproducible sandbox traces for the exact dispatcher and selector on staged media, including marker and FIT integrity, armed selection, and unarmed or corrupted fallback.",
+    "Hashes binding the staged FIT members to those booted in QEMU; actual controller execution, full write, flush, independent readback, GPT checks, and a normal A boot tied to the written target.",
+    "Executed refusal and interruption cases, including after-bulk and after-first-env retries, showing marker consumption and no automatic target reopen; urh-02 stage faults must demonstrate boot fallback.",
+    "Independently inspectable result files and serial logs, plus staging-space and boot-memory measurements."
+  ],
+  "recording": "Add a dated, prospective urh-03 acceptance amendment and obtain a new scope-bound approval before resubmission and independent verification. Preserve the original decision, failed verification, and completed urh-01 evidence at their original commits; do not rewrite urh-01 or reuse its passing verification for revised criteria. Keep urh-04 and urh-05 as separate hardware gates."
+}

@@ -24,6 +24,12 @@
 #include <time.h>
 #include <unistd.h>
 #include "monocypher-ed25519.h"
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+#if !defined(SV08_H616_COMMISSIONING)
+#error "Recovery handoff requires H616 commissioning identity policy"
+#endif
+#include "env_last_transfer.h"
+#endif
 
 #define IMAGE_BYTES 7818182656ULL
 #ifndef SV08_TARGET_BYTES
@@ -52,10 +58,14 @@
 #define SV08_MMC_BASE SYNTHETIC_MMC_BASE
 #define SV08_TARGET "/dev/sda"
 #define SV08_TARGET_DEV_SYSFS "/sys/block/sda/dev"
+#define SV08_RECOVERY_PARTITION "/dev/sda5"
+#define SV08_RECOVERY_PARTITION_SYSFS "/sys/block/sda/sda5/dev"
 #else
 #define SV08_MMC_BASE SV08_EMMC_HOST_SYSFS
 #define SV08_TARGET "/dev/mmcblk0"
 #define SV08_TARGET_DEV_SYSFS "/sys/block/mmcblk0/dev"
+#define SV08_RECOVERY_PARTITION "/dev/mmcblk0p5"
+#define SV08_RECOVERY_PARTITION_SYSFS "/sys/block/mmcblk0/mmcblk0p5/dev"
 #endif
 #define SV08_TARGET_POLICY_FILE "commissioning-target-policy.json"
 #define SV08_MODE_PARAMETER "sv08.h616_commissioning=1"
@@ -101,6 +111,46 @@
 #define SV08_TEST_FAULT ""
 #endif
 static unsigned char buffer[CHUNK];
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+#if !defined(SV08_RECOVERY_ENV_SELFTEST)
+static unsigned char readback_buffer[CHUNK];
+static unsigned char old_env[SV08_ENV_COUNT][SV08_ENV_BYTES];
+#endif
+static uint32_t sv08_env_crc32(const unsigned char *data,size_t length) {
+  uint32_t crc=0xffffffffU;
+  for(size_t i=0;i<length;i++) {
+    crc^=data[i];
+    for(int bit=0;bit<8;bit++)crc=(crc>>1)^(0xedb88320U&(0U-(crc&1U)));
+  }
+  return crc^0xffffffffU;
+}
+static int sv08_env_field_is(const unsigned char *env,const char *key,
+                             const char *expected) {
+  size_t key_length=strlen(key),value_length=strlen(expected),found=0;
+  const unsigned char *p=env+5,*end=env+SV08_ENV_BYTES;
+  while(p<end&&*p) {
+    size_t length=strnlen((const char *)p,(size_t)(end-p));
+    if(length==(size_t)(end-p))return 0;
+    if(length>key_length&&p[key_length]=='='&&
+       !memcmp(p,key,key_length)) {
+      if(++found!=1||length!=key_length+1+value_length||
+         memcmp(p+key_length+1,expected,value_length))return 0;
+    }
+    p+=length+1;
+  }
+  return found==1;
+}
+static int sv08_env_exhausted_for_job(const unsigned char *env) {
+  uint32_t stored=(uint32_t)env[0]|((uint32_t)env[1]<<8)|
+                  ((uint32_t)env[2]<<16)|((uint32_t)env[3]<<24);
+  return stored==sv08_env_crc32(env+5,SV08_ENV_BYTES-5)&&
+         sv08_env_field_is(env,"sv08_env_layout","ab-8gb-v1")&&
+         sv08_env_field_is(env,"BOOT_ORDER","A B")&&
+         sv08_env_field_is(env,"BOOT_A_LEFT","0")&&
+         sv08_env_field_is(env,"BOOT_B_LEFT","0")&&
+         sv08_env_field_is(env,"sv08_reimage_arm",SV08_JOB_ID);
+}
+#endif
 
 /* SHA-256 as specified by FIPS 180-4, used independently for source/readback. */
 struct sha256 { uint32_t h[8]; uint64_t count; unsigned char block[64]; size_t used; };
@@ -359,6 +409,52 @@ static int admitted_mmc_identity(dev_t *number) {
   return synthetic_mmc_identity(number);
 #endif
 }
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+static int consume_recovery_marker(void) {
+  static const char marker[]="SV08-REIMAGE-ONCE\n";
+  const char *where="/sv08-reimage-recovery";
+  struct stat partition_stat,marker_stat;
+  unsigned char content[sizeof(marker)];
+  dev_t partition_dev;
+  int part=-1,root=-1,dir=-1,armed=-1,ok=0,mounted_here=0,created_here=0;
+  part=open(SV08_RECOVERY_PARTITION,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+  if(part<0||fstat(part,&partition_stat)||!S_ISBLK(partition_stat.st_mode)||
+     !read_sysfs_dev(SV08_RECOVERY_PARTITION_SYSFS,&partition_dev)||
+     partition_stat.st_rdev!=partition_dev)goto done;
+  close(part);part=-1;
+  if(mkdir(where,0700))goto done;
+  created_here=1;
+  if(mount(SV08_RECOVERY_PARTITION,where,"ext4",MS_NOEXEC|MS_NOSUID|MS_NODEV,NULL))
+    goto done;
+  mounted_here=1;
+  root=open(where,O_RDONLY|O_DIRECTORY|O_CLOEXEC|O_NOFOLLOW);
+  if(root<0)goto done;
+  dir=openat(root,"sv08-reimage",O_RDONLY|O_DIRECTORY|O_CLOEXEC|O_NOFOLLOW);
+  if(dir<0)goto done;
+  armed=openat(dir,"armed",O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+  if(armed<0||fstat(armed,&marker_stat)||!S_ISREG(marker_stat.st_mode)||
+     marker_stat.st_nlink!=1||marker_stat.st_size!=(off_t)(sizeof(marker)-1))goto done;
+  size_t used=0;
+  while(used<sizeof(marker)-1) {
+    ssize_t n=read(armed,content+used,sizeof(marker)-1-used);
+    if(n<0&&errno==EINTR)continue;
+    if(n<=0)goto done;
+    used+=(size_t)n;
+  }
+  if(memcmp(content,marker,sizeof(marker)-1)||read(armed,content,1)!=0)goto done;
+  close(armed);armed=-1;
+  if(unlinkat(dir,"armed",0)||fsync(dir)||syncfs(dir))goto done;
+  ok=1;
+done:
+  if(armed>=0)close(armed);
+  if(dir>=0)close(dir);
+  if(root>=0)close(root);
+  if(part>=0)close(part);
+  if(mounted_here&&umount2(where,0))ok=0;
+  if(created_here&&rmdir(where))ok=0;
+  return ok;
+}
+#endif
 static int hash_file(const char *path,char hex[65]) {
   int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);struct sha256 hash;
   if(fd<0)return 0;
@@ -636,6 +732,17 @@ int main(void) {
   if(!random_challenge(challenge)){puts("refused");return 0;}
   puts(challenge);return 0;
 }
+#elif defined(SV08_RECOVERY_ENV_SELFTEST) && defined(SV08_H616_RECOVERY_HANDOFF)
+int main(int argc,char **argv) {
+  unsigned char env[SV08_ENV_BYTES];
+  if(argc!=2)return 2;
+  int fd=open(argv[1],O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
+  if(fd<0)return 3;
+  int ok=sv08_pread_all(fd,env,sizeof(env),0);
+  close(fd);
+  puts(ok&&sv08_env_exhausted_for_job(env)?"admitted":"refused");
+  return 0;
+}
 #else
 int main(void) {
 #if defined(SV08_H616_TRUSTED_INITRAMFS)
@@ -651,10 +758,17 @@ int main(void) {
   if(mount("devtmpfs","/dev","devtmpfs",0,"mode=0755")&&!mounted("/dev","devtmpfs","rw"))finish("REFUSED_DEV");
   f=fopen("/proc/cmdline","r");if(!f||!fgets(cmd,sizeof(cmd),f))finish("REFUSED_CMDLINE");fclose(f);
   if(!cmdline_has_token(cmd,SV08_MODE_PARAMETER)||!board_compatible())finish("REFUSED_ROOT");
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+  if(!cmdline_has_token(cmd,"sv08.h616_recovery_handoff=1"))finish("REFUSED_HANDOFF_MODE");
+#endif
 #if defined(SV08_H616_TRUSTED_INITRAMFS)
   if(!trusted_image_mount())finish("REFUSED_SOURCE_MOUNT");
 #else
   if(!(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
+#endif
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+  if(!admitted_mmc_identity(&admitted_dev))finish("REFUSED_TARGET_ID");
+  if(!consume_recovery_marker())finish("REFUSED_RECOVERY_MARKER");
 #endif
   if((long long)started<SV08_JOB_NOT_BEFORE||(long long)started>=SV08_JOB_EXPIRES)
     finish("REFUSED_STALE_JOB");
@@ -674,7 +788,9 @@ int main(void) {
 #if defined(SV08_CLAIM_ONLY)
   finish("CLAIM_ONLY_PASS");
 #endif
+#if !defined(SV08_H616_RECOVERY_HANDOFF)
   if(!admitted_mmc_identity(&admitted_dev))finish("REFUSED_TARGET_ID");
+#endif
   f=fopen("/expected.sha256","r");if(!f||!fgets(expected,sizeof(expected),f))finish("REFUSED_MANIFEST");fclose(f);
   expected[strcspn(expected,"\n")]=0;
   if(strlen(expected)!=64||strspn(expected,"0123456789abcdef")!=64||
@@ -717,6 +833,12 @@ int main(void) {
      !sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS)||ts.st_rdev!=admitted_dev||
      (ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
     finish("REFUSED_INPUT");
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+  for(size_t i=0;i<SV08_ENV_COUNT;i++)
+    if(!sv08_pread_all(out,old_env[i],SV08_ENV_BYTES,sv08_env_offsets[i])||
+       !sv08_env_exhausted_for_job(old_env[i]))
+      finish("REFUSED_UNSAFE_BOOT_ENV");
+#endif
 #if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
   if(!strcmp(SV08_TEST_FAULT,"before-write"))finish("INJECTED_BEFORE_WRITE");
   if(!strcmp(SV08_TEST_FAULT,"abrupt-after-write")) {
@@ -734,6 +856,42 @@ int main(void) {
     finish("INJECTED_DURING_READBACK");
   }
 #endif
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+  sha_init(&hash);
+  for(uint64_t done=0;done<IMAGE_BYTES;) {
+    size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
+    if(expired(started)||!exact_read(in,n)||
+       !sv08_write_without_env(out,buffer,done,n))finish("FAILED_WRITE");
+    sha_update(&hash,buffer,n);done+=n;
+  }
+  sha_final(&hash,actual);
+  if(strcmp(actual,expected)||fsync(out)||ioctl(out,BLKFLSBUF,0)||
+     lseek(in,0,SEEK_SET)!=0)finish("FAILED_BULK_FLUSH");
+  for(uint64_t done=0;done<IMAGE_BYTES;) {
+    size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
+    if(expired(started)||!exact_read(in,n)||
+       !sv08_pread_all(out,readback_buffer,n,done)||
+       !sv08_equal_without_env(buffer,readback_buffer,done,n))
+      finish("FAILED_BULK_READBACK");
+    done+=n;
+  }
+  for(size_t i=0;i<SV08_ENV_COUNT;i++) {
+    if(!sv08_pread_all(out,buffer,SV08_ENV_BYTES,sv08_env_offsets[i])||
+       memcmp(buffer,old_env[i],SV08_ENV_BYTES))finish("FAILED_OLD_ENV_CHANGED");
+  }
+  if(!strcmp(SV08_TEST_FAULT,"after-bulk"))finish("INJECTED_AFTER_BULK");
+  for(size_t i=0;i<SV08_ENV_COUNT;i++) {
+    if(!sv08_pread_all(in,buffer,SV08_ENV_BYTES,sv08_env_offsets[i])||
+       !sv08_pwrite_all(out,buffer,SV08_ENV_BYTES,sv08_env_offsets[i])||
+       fsync(out)||ioctl(out,BLKFLSBUF,0)||
+       !sv08_pread_all(out,readback_buffer,SV08_ENV_BYTES,sv08_env_offsets[i])||
+       memcmp(buffer,readback_buffer,SV08_ENV_BYTES))
+      finish("FAILED_FINAL_ENV");
+    if(i==0&&!strcmp(SV08_TEST_FAULT,"after-first-env"))
+      finish("INJECTED_AFTER_FIRST_ENV");
+  }
+  if(lseek(out,0,SEEK_SET)!=0)finish("FAILED_FINAL_ENV_SEEK");
+#else
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(in,n)||!exact_write(out,n))finish("FAILED_WRITE");
@@ -742,6 +900,7 @@ int main(void) {
   sha_final(&hash,actual);
   if(strcmp(actual,expected))finish("FAILED_SOURCE_CHANGED");
   if(fsync(out)||ioctl(out,BLKFLSBUF,0)||lseek(out,0,SEEK_SET)!=0)finish("FAILED_FLUSH");
+#endif
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(out,n))finish("FAILED_READBACK");
