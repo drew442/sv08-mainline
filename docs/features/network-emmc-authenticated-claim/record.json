@@ -31,46 +31,42 @@
           "claim-01",
           "claim-04"
         ],
-        "text": "Use a reviewed Ed25519 implementation with recorded version, source, license and ARM64 static build method. First establish that dependency and measure binary/root size and memory impact. If it cannot fit the existing NFS guest and reviewed 8 GB image geometry, stop with measurements and a concrete alternative for review. Do not implement handwritten cryptography or silently change license terms."
+        "text": "Retain recorded Ed25519 source, version, license, ARM64 static build method and measured binary/root and memory impact. If integration cannot fit the reviewed guest and 8 GB geometry, stop with measurements and an alternative for review. Do not add handwritten cryptography or silently change license terms."
       },
       {
         "checks": [
           "claim-01",
           "claim-02"
         ],
-        "text": "Pin a dedicated receipt verification key in the inert candidate and keep its signing key only in ignored host-side provisioning. Public synthetic test keys cannot authenticate a physical claim. Define canonical versioned signed bytes and strict response framing; verify signature, exact job ID, descriptor hash and current invocation challenge before any target open. Test a forged HTTP 200 that did not consume the real claim, as well as altered and replayed receipts."
+        "text": "Keep a dedicated receipt verification key pinned in the inert candidate and signing material in ignored host-side provisioning. Public synthetic keys cannot authenticate a physical claim. Verify canonical versioned bytes, strict response framing, signature and exact current job, descriptor and challenge before target open; retain forged and replay tests."
       },
       {
         "checks": [
           "claim-03"
         ],
-        "text": "Sign only after the consumed state and containing directory have been durably synced. Any signing, transport or persistence uncertainty leaves the claim consumed, yields no accepted receipt, and never retries or rearms automatically. Exercise interruption on both sides of durable publication and a lost response."
+        "text": "Sign only after consumed state and its containing directory are durably synced. Signing, transport or persistence uncertainty leaves the claim consumed without automatic retry or rearm; retain interruption and lost-response checks."
       },
       {
         "checks": [
           "claim-04"
         ],
-        "text": "Keep evidence explicitly offline and synthetic. Record exact source, dependency, binary, manifest and test-result hashes; preserve the default read-only diagnostic and nonbootable, nondeployable candidate. H12 still requires live identity, reviewed physical artifact and operation, recovery and separate high-consequence review before a write."
+        "text": "Keep source hashes for changed implementation files in delivery evidence despite their removal from immutable requirements. Preserve the read-only default diagnostic and nonbootable, nondeployable candidate. H12 still requires live identity, reviewed physical artifact and operation, recovery and a separate high-consequence review before any write."
       }
     ],
     "outcome": "approved-with-constraints",
     "proposal_sha256": "4d3ba2147c5b9c10237d1d0789af22726de211a4958dda7f7fe57ad2236bac0f",
-    "rationale": "The current C writer accepts an unauthenticated HTTP 200 and literal body as proof of claim consumption (emmc_image_writer.c, claim_once), while ClaimHTTPServer returns that body without a signature. A forged endpoint could therefore let the guest proceed without consuming the real one-shot state. The proposed fresh-challenge Ed25519 receipt closes that specific gap. Decision 0018 and the H616 proposal authorize this bounded offline continuation, and the v5 map delivery does not address claim authenticity. The protocol remains susceptible to denial of service if an attacker consumes the real claim first, but that cannot authorize a write; it must fail closed. The cross compiler currently has no identified static ARM64 Ed25519 library, so dependency provenance, integration and resource fit must be established before treating the implementation as delivered. This approval grants no physical construction, provisioning, boot-policy change, write or release authority.",
+    "rationale": "This is a bounded workflow-record correction. The proposal and four acceptance checks are unchanged. The removed requirements are implementation files that the approved task had to modify; pinning their pre-implementation hashes as immutable requirements incorrectly invalidated completion. The six remaining documents are stable governing requirements, and their current hashes match the review context. Integrated commit a1c89b6 records the Monocypher 4.0.3 provenance, measured 2,888-byte writer increase and 3,806-byte NFS-root increase, and synthetic QEMU evidence; that evidence remains subject to separate delivery verification. Removing implementation files from the requirements snapshot must not remove their source hashes from delivery evidence. This approval concerns only the offline authenticated-claim task and grants no physical construction, provisioning, write, boot-policy or release authority.",
     "requirements_sha256": {
       "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
       "docs/features/network-emmc-h616-writerless-adapter/proposal.md": "7acb5d46d549494db3d8ec69a57e7f610c9d0581fbc74363152155788e81d541",
       "docs/features/network-emmc-h616-writerless-adapter/record.json": "8eaa6ab6e8416b4d237d2113b043f577bb8b2d90cafa28e60baad449afc2ee1d",
       "docs/features/network-emmc-v5-image-map/record.json": "de444d59ef923750c0c872ec5b41c13c6d8861ad5d63f6936a9c3cf7fe9e1a26",
       "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
-      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf",
-      "scripts/build_h616_reimage_candidate.py": "2203a052bcc987825703c4513a369b8e6bc70133cb6a42c9b3ff38af691aa420",
-      "tests/fixtures/sd-network-root/emmc_image_writer.c": "47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015",
-      "tests/host_qemu_sd_network_emmc_write.py": "6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab",
-      "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89"
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf"
     },
     "reviewer": "feature-approver/gpt-6-sol",
-    "scope_sha256": "0db9a36ea6fe70e5ca65ee16067c097586adf81d13d88a1f155f9c1b6f64b85a",
-    "session": "/root/approve_authenticated_claim"
+    "scope_sha256": "2440be9de9e3d59a536d7a8d9a69f1b8d0aaeb088944f6aefe3ae208cbffa06c",
+    "session": "/root/approve_authenticated_claim/metadata-review"
   },
   "format_version": 1,
   "id": "network-emmc-authenticated-claim",
@@ -84,11 +80,7 @@
     "docs/features/network-emmc-h616-writerless-adapter/record.json",
     "docs/features/network-emmc-v5-image-map/record.json",
     "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
-    "docs/hardware/coordinated-human-tasks.md",
-    "scripts/build_h616_reimage_candidate.py",
-    "tests/fixtures/sd-network-root/emmc_image_writer.c",
-    "tests/sv08_emmc_job.py",
-    "tests/host_qemu_sd_network_emmc_write.py"
+    "docs/hardware/coordinated-human-tasks.md"
   ],
   "tasks": [
     {
@@ -104,15 +96,135 @@
         "network-emmc-v5-image-map:pin-v5-image-map"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "claim-01",
+          "document": "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md",
+          "document_sha256": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+          "environment": "offline",
+          "limitations": "All evidence is offline and synthetic. No printer, physical eMMC, H616 boot chain, production signer provisioning, bootable SD, live CID/dev_t mapping, physical power-loss recovery, or release behavior was tested. Test signing key is synthetic public test material. Network claim preemption can still deny service but cannot forge an accepted receipt.",
+          "method": "Native C/server tests accepted a valid receipt over a fresh random challenge and refused when getrandom was unavailable. Beelink private-namespace QEMU valid claim-only case verified the signed receipt, durably consumed the claim, and did not open the target.",
+          "profile": "Synthetic H616/QEMU commissioning fixture on Beelink; no connected printer profile",
+          "source_commit": "e00e92a284a05acd80cc89343bd0ff8f79bd6dde",
+          "source_sha256": {
+            ".gitmodules": "d3c9575c8a6f03a49596f50938054a5a05dd0168765bb11c86a15e676670a4cc",
+            "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "33a00e8f6d6ba88adba94325cdf05da3a364a7359b5599c831c24cf9eb691a73",
+            "scripts/build_h616_reimage_candidate.py": "6f47660c6becf2d3040eaad283d22608e3cd48f6420545a65ede1e2199820d37",
+            "scripts/build_qemu_reimage_mode.py": "dcb858c5d1480ccb4ffe3f90b43955a3de6657e509484265dca7be2f6d3cf784",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "0e8c917b9bc6eacf4fc865b41d3a1889a554c383e8f85d63f111e9c54110cf8b",
+            "tests/host_qemu_sd_network_emmc_write.py": "d6e6023eaaf5913f9e7917c68c7ae040c575f18508eb561fbd7943e86f472e31",
+            "tests/sv08_emmc_job.py": "74d3df3777c567bf17b1ccc4b54578f6f08b1f7fa04f32b6695ec53abcd41bc4",
+            "tests/test_emmc_job.py": "0279f89e27367e59b7f7af20704351c4a389dd3d826ae6157c1c2914a6eceb6c",
+            "tests/test_h616_reimage_candidate.py": "e20e661c69b2469c0d155202922bef89292278b7b62db378e1b5129ceb03b145",
+            "tests/test_qemu_reimage_mode.py": "a76bfbc0dfba77c5b4240c1927a39cff784ab4141dca7828dea281810df69e3e",
+            "tests/test_sd_network_emmc_write.py": "6dcc02d6c0cd54c3e5f017f1355bc88c1f9c8e93517fba3b5b47388c32c93cfb",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "claim-02",
+          "document": "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md",
+          "document_sha256": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+          "environment": "offline",
+          "limitations": "All evidence is offline and synthetic. No printer, physical eMMC, H616 boot chain, production signer provisioning, bootable SD, live CID/dev_t mapping, physical power-loss recovery, or release behavior was tested. Test signing key is synthetic public test material. Network claim preemption can still deny service but cannot forge an accepted receipt.",
+          "method": "Native tests covered wrong key/job/descriptor, altered, stale/replayed, truncated, uppercase, extra body, wrong status/length, duplicate or unexpected headers, and malformed framing. Corrected forged-200 QEMU case refused before source hash or target open; target remained unchanged and actual claim remained armed.",
+          "profile": "Synthetic H616/QEMU commissioning fixture on Beelink; no connected printer profile",
+          "source_commit": "e00e92a284a05acd80cc89343bd0ff8f79bd6dde",
+          "source_sha256": {
+            ".gitmodules": "d3c9575c8a6f03a49596f50938054a5a05dd0168765bb11c86a15e676670a4cc",
+            "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "33a00e8f6d6ba88adba94325cdf05da3a364a7359b5599c831c24cf9eb691a73",
+            "scripts/build_h616_reimage_candidate.py": "6f47660c6becf2d3040eaad283d22608e3cd48f6420545a65ede1e2199820d37",
+            "scripts/build_qemu_reimage_mode.py": "dcb858c5d1480ccb4ffe3f90b43955a3de6657e509484265dca7be2f6d3cf784",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "0e8c917b9bc6eacf4fc865b41d3a1889a554c383e8f85d63f111e9c54110cf8b",
+            "tests/host_qemu_sd_network_emmc_write.py": "d6e6023eaaf5913f9e7917c68c7ae040c575f18508eb561fbd7943e86f472e31",
+            "tests/sv08_emmc_job.py": "74d3df3777c567bf17b1ccc4b54578f6f08b1f7fa04f32b6695ec53abcd41bc4",
+            "tests/test_emmc_job.py": "0279f89e27367e59b7f7af20704351c4a389dd3d826ae6157c1c2914a6eceb6c",
+            "tests/test_h616_reimage_candidate.py": "e20e661c69b2469c0d155202922bef89292278b7b62db378e1b5129ceb03b145",
+            "tests/test_qemu_reimage_mode.py": "a76bfbc0dfba77c5b4240c1927a39cff784ab4141dca7828dea281810df69e3e",
+            "tests/test_sd_network_emmc_write.py": "6dcc02d6c0cd54c3e5f017f1355bc88c1f9c8e93517fba3b5b47388c32c93cfb",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "claim-03",
+          "document": "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md",
+          "document_sha256": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+          "environment": "offline",
+          "limitations": "All evidence is offline and synthetic. No printer, physical eMMC, H616 boot chain, production signer provisioning, bootable SD, live CID/dev_t mapping, physical power-loss recovery, or release behavior was tested. Test signing key is synthetic public test material. Network claim preemption can still deny service but cannot forge an accepted receipt.",
+          "method": "Native tests faulted before file fsync, around durable publication, on signer failure, and after lost acknowledgement. Beelink lost-ack QEMU case returned replay 409 with unchanged target; abrupt-after-first-MiB case consumed claim, wrote a matching first-MiB prefix, was SIGKILLed, and produced no success receipt.",
+          "profile": "Synthetic H616/QEMU commissioning fixture on Beelink; no connected printer profile",
+          "source_commit": "e00e92a284a05acd80cc89343bd0ff8f79bd6dde",
+          "source_sha256": {
+            ".gitmodules": "d3c9575c8a6f03a49596f50938054a5a05dd0168765bb11c86a15e676670a4cc",
+            "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "33a00e8f6d6ba88adba94325cdf05da3a364a7359b5599c831c24cf9eb691a73",
+            "scripts/build_h616_reimage_candidate.py": "6f47660c6becf2d3040eaad283d22608e3cd48f6420545a65ede1e2199820d37",
+            "scripts/build_qemu_reimage_mode.py": "dcb858c5d1480ccb4ffe3f90b43955a3de6657e509484265dca7be2f6d3cf784",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "0e8c917b9bc6eacf4fc865b41d3a1889a554c383e8f85d63f111e9c54110cf8b",
+            "tests/host_qemu_sd_network_emmc_write.py": "d6e6023eaaf5913f9e7917c68c7ae040c575f18508eb561fbd7943e86f472e31",
+            "tests/sv08_emmc_job.py": "74d3df3777c567bf17b1ccc4b54578f6f08b1f7fa04f32b6695ec53abcd41bc4",
+            "tests/test_emmc_job.py": "0279f89e27367e59b7f7af20704351c4a389dd3d826ae6157c1c2914a6eceb6c",
+            "tests/test_h616_reimage_candidate.py": "e20e661c69b2469c0d155202922bef89292278b7b62db378e1b5129ceb03b145",
+            "tests/test_qemu_reimage_mode.py": "a76bfbc0dfba77c5b4240c1927a39cff784ab4141dca7828dea281810df69e3e",
+            "tests/test_sd_network_emmc_write.py": "6dcc02d6c0cd54c3e5f017f1355bc88c1f9c8e93517fba3b5b47388c32c93cfb",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "claim-04",
+          "document": "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md",
+          "document_sha256": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+          "environment": "offline",
+          "limitations": "All evidence is offline and synthetic. No printer, physical eMMC, H616 boot chain, production signer provisioning, bootable SD, live CID/dev_t mapping, physical power-loss recovery, or release behavior was tested. Test signing key is synthetic public test material. Network claim preemption can still deny service but cannot forge an accepted receipt.",
+          "method": "56 focused tests and Python compilation passed. Beelink full synthetic transfer wrote/read back 7,818,182,656 bytes with matching SHA-256, both GPT CRCs and all six records. Rebuilt baseline comparison measured a +2,888-byte (0.37%) writer and +3,806-byte complete NFS-root tree delta; current total is 7,818,965,070 bytes, 770,969,522 bytes below 8 GiB. Guest process peak RSS was 452-596 KiB. Manifest records pinned Monocypher provenance; output remains nonbootable, nondeployable, and without a provisioned trigger.",
+          "profile": "Synthetic H616/QEMU commissioning fixture on Beelink; no connected printer profile",
+          "source_commit": "e00e92a284a05acd80cc89343bd0ff8f79bd6dde",
+          "source_sha256": {
+            ".gitmodules": "d3c9575c8a6f03a49596f50938054a5a05dd0168765bb11c86a15e676670a4cc",
+            "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md": "5d02421e88e777d1bf215f49e7299dfd90a4d0d30c2621283f5cb65879abde85",
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "33a00e8f6d6ba88adba94325cdf05da3a364a7359b5599c831c24cf9eb691a73",
+            "scripts/build_h616_reimage_candidate.py": "6f47660c6becf2d3040eaad283d22608e3cd48f6420545a65ede1e2199820d37",
+            "scripts/build_qemu_reimage_mode.py": "dcb858c5d1480ccb4ffe3f90b43955a3de6657e509484265dca7be2f6d3cf784",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "0e8c917b9bc6eacf4fc865b41d3a1889a554c383e8f85d63f111e9c54110cf8b",
+            "tests/host_qemu_sd_network_emmc_write.py": "d6e6023eaaf5913f9e7917c68c7ae040c575f18508eb561fbd7943e86f472e31",
+            "tests/sv08_emmc_job.py": "74d3df3777c567bf17b1ccc4b54578f6f08b1f7fa04f32b6695ec53abcd41bc4",
+            "tests/test_emmc_job.py": "0279f89e27367e59b7f7af20704351c4a389dd3d826ae6157c1c2914a6eceb6c",
+            "tests/test_h616_reimage_candidate.py": "e20e661c69b2469c0d155202922bef89292278b7b62db378e1b5129ceb03b145",
+            "tests/test_qemu_reimage_mode.py": "a76bfbc0dfba77c5b4240c1927a39cff784ab4141dca7828dea281810df69e3e",
+            "tests/test_sd_network_emmc_write.py": "6dcc02d6c0cd54c3e5f017f1355bc88c1f9c8e93517fba3b5b47388c32c93cfb",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement-authenticated-receipt",
-      "implementation": null,
+      "implementation": {
+        "actor": "codex",
+        "run": "a4c6e0214d834e558b4203d5658d6107",
+        "session": "/root"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Updated delegated approval narrows immutable requirement references to governing documents; implementation source hashes and independently verified evidence remain unchanged.",
+      "status": "done",
       "title": "Add challenge-bound signed claim receipts to the inert H616 writer",
-      "verification": null
+      "verification": {
+        "decision_sha256": "58c6318d5c5e384960a0133bceeb97133c5ec3395c7a53db5cdf62d769941ea7",
+        "evidence_sha256": "c3d7a8f3b351036c065beccfe595742bfd1c4d9eb439122bfe2a8b436604ca4c",
+        "outcome": "passed",
+        "rationale": "At clean source worktree HEAD e00e92a, all four acceptance checks and delegated constraints are met for the offline synthetic candidate. I inspected the complete diff, verified source and evidence hashes, confirmed pinned Monocypher provenance and durable consume-before-sign ordering, and reran the focused suite: 56 tests passed. The candidate remains nonbootable and nondeployable; physical eMMC behavior and production signing are unverified.",
+        "reviewer": "feature-verifier/gpt-6-sol",
+        "session": "/root/verify_authenticated_claim_final"
+      }
     }
   ],
   "title": "Authenticate the one-shot network write claim"
