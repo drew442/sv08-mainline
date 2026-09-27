@@ -38,9 +38,11 @@ provided to this work and are not included in the source or this report.
 The shared [writer](../../tests/fixtures/sd-network-root/emmc_image_writer.c)
 selects H616 only when built with the explicit commissioning define. The
 physical branch requires both the locally pinned board-compatible string and
-`allwinner,sun50i-h616`, read-only NFS root, and the explicit command-line
-mode. Before opening `/dev/mmcblk0`, it checks the pinned bundle hashes and
-signed-job time window, then requires a successful one-shot claim response.
+`allwinner,sun50i-h616`, read-only NFS root, and the exact commissioning
+command-line token. Before opening `/dev/mmcblk0`, it checks the pinned bundle
+hashes and signed-job time window, requires a successful one-shot claim
+response, opens and validates the source, and hashes the complete source image.
+Only after that hash matches does it recheck target identity and open the target.
 The H616 adapter scans the `4022000.mmc` sysfs inventory for one MMC of the
 expected CID/type/sector count, checks the controller path and expected
 `dev_t`, and compares the card inventory's device number with block sysfs.
@@ -100,11 +102,12 @@ The synthetic policy/job/signature/verifier hashes are respectively
 and `ee3b19c1538b4ce509616e4dc44f697161095ab1d2c0b3f1b0c26589f44cf434`.
 These are public test identities and **cannot authenticate a physical job**.
 
-The full synthetic H616 QEMU transfer, identity refusal, injected failure and
-replay matrix has now run on Beelink. The durable summary is
-[the QEMU evidence record](host-network-emmc-h616-adapter-qemu-evidence-20260926.json);
-raw receipts remain in ignored `local/integration-evidence/` and the summary
-SHA-256 is recorded there. The integration used the SD composition and extracted
+The initial synthetic H616 QEMU transfer and fault matrix ran on Beelink; its
+historical record is
+[the original QEMU evidence record](host-network-emmc-h616-adapter-qemu-evidence-20260926.json).
+After independent delivery review identified missing guest coverage, the
+updated writer and harness were retested against the same SD composition and
+extracted
 NFS packages from the prior
 [QEMU-mode run](host-network-emmc-reimage-mode-qemu-20260926.md), in a bounded
 network/mount namespace, with a fresh disposable regular-file target per case.
@@ -123,6 +126,28 @@ that 1 MiB prefix only, not after a complete image transfer. Full-run time was
 43:07.79 (maximum RSS 2,311,932 KiB); fault-case times and receipt hashes are
 in the evidence JSON. One guest `GFP_ATOMIC` warning appeared in the full run;
 there was no OOM or NFS failure.
+
+The updated ten-case retest (full transfer, four identity refusals, three
+source refusals, lost claim acknowledgement, and abrupt interruption) is
+recorded in
+[the review retest record](host-network-emmc-h616-adapter-review-retest-20260927.json).
+Its ignored raw-result directory is
+`local/integration-evidence/network-emmc-h616-writerless-adapter-review-retest/`;
+the raw summary SHA-256 is
+`6f650a7847b29b66500846089caa8a23d0129961c8066e7e0ae5e65fffdca20a`.
+The four tested source hashes are recorded in that public record. The abrupt
+case verified the full source before target open, wrote and fsynced the first
+MiB, and then the host sent SIGKILL to QEMU. The first MiB matched the source;
+the durable one-shot claim rejected replay with HTTP 409 and no success receipt
+was produced. This is an abrupt synthetic VM termination, not physical power
+loss. The four identity and three source refusal cases plus lost acknowledgement
+left the target prefix unchanged, consumed the claim, rejected replay, and
+produced no success receipt. The full transfer took 42:46.41 (maximum RSS
+2,310,848 KiB); the wrong-hash refusal took 17:15.04 and abrupt case 16:51.44.
+Each of the full and abrupt runs emitted one guest `GFP_ATOMIC` warning, with no
+OOM or NFS error. Beelink had 10,715,668,480 bytes free before and
+10,706,477,056 bytes after the run; no raw image was staged on the development
+VM.
 
 These results establish only synthetic QEMU integration. The exact command
 shape for reproduction is:

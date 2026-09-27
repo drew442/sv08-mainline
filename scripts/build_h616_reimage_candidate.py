@@ -199,7 +199,7 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
         raise ValueError('Fresh empty output required; physical candidates stay under local/')
     if (fault or claim_only) and not synthetic_test:
         raise ValueError('Fault injection and claim-only builds are synthetic QEMU only')
-    if fault not in (None, 'before-write', 'partial-write', 'flush', 'readback'):
+    if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write', 'flush', 'readback'):
         raise ValueError('Unknown injected fault')
     policy_raw = private_file(policy_path)
     target_policy = policy_fields(json.loads(policy_raw))

@@ -141,6 +141,18 @@ static int option_contains(char *opts,const char *flag) {
     if(!strcmp(item,flag))return 1;
   return 0;
 }
+static int cmdline_has_token(const char *cmd,const char *token) {
+  size_t length=strlen(token);
+  for(const char *at=cmd;*at;) {
+    while(*at==' '||*at=='\t'||*at=='\n')at++;
+    if(!*at)break;
+    const char *end=at;
+    while(*end&&*end!=' '&&*end!='\t'&&*end!='\n')end++;
+    if((size_t)(end-at)==length&&!memcmp(at,token,length))return 1;
+    at=end;
+  }
+  return 0;
+}
 static int mounted(const char *where,const char *fs,const char *flag) {
   FILE *f=fopen("/proc/mounts","r");char src[256],path[256],type[64],opts[512];int found=0;
   if(!f)return 0;
@@ -266,12 +278,23 @@ static int h616_inventory_dev_at(const char *base,dev_t *number) {
   if(next<0||closedir(hosts))ok=0;
   return ok&&found==1;
 }
-static int h616_controller_matches(void) {
+static int h616_controller_matches(const char *base) {
+  const char *controller_path;
+  const char *card_path;
 #if defined(SV08_H616_SYNTHETIC_TEST)
-  return 1; /* QEMU cannot model the physical kernel controller path. */
+  char controller_fixture[1024],card_fixture[1024];
+  /* Fixture symlinks model ancestry only, not H616 kernel sysfs. */
+  if(snprintf(controller_fixture,sizeof(controller_fixture),"%s/controller",base)>=(int)sizeof(controller_fixture)||
+     snprintf(card_fixture,sizeof(card_fixture),"%s/card-device",base)>=(int)sizeof(card_fixture))return 0;
+  controller_path=controller_fixture;
+  card_path=card_fixture;
 #else
-  char *controller=realpath(SV08_EMMC_HOST_SYSFS,NULL);
-  char *card=realpath("/sys/block/mmcblk0/device",NULL);
+  (void)base;
+  controller_path=SV08_EMMC_HOST_SYSFS;
+  card_path="/sys/block/mmcblk0/device";
+#endif
+  char *controller=realpath(controller_path,NULL);
+  char *card=realpath(card_path,NULL);
   int ok=0;
   if(controller&&card) {
     size_t length=strlen(controller);
@@ -279,14 +302,13 @@ static int h616_controller_matches(void) {
   }
   free(controller);free(card);
   return ok;
-#endif
 }
 static int h616_mmc_identity_at(const char *base,const char *dev_sysfs,dev_t *number) {
   char device[64],dev_text[64];unsigned long long sectors=0;dev_t inventory_dev;
   if(!sv08_emmc_cid_device_at(base,SV08_H616_EXPECTED_CID,
                               device,sizeof(device),&sectors)||
      strcmp(device,"/dev/mmcblk0")||sectors!=SV08_EMMC_SECTORS||
-     !h616_controller_matches()||
+     !h616_controller_matches(base)||
      !h616_inventory_dev_at(base,&inventory_dev)||
      !read_sysfs_dev(dev_sysfs,number)||inventory_dev!=*number)return 0;
   snprintf(dev_text,sizeof(dev_text),"%u:%u",major(*number),minor(*number));
@@ -500,6 +522,11 @@ int main(int argc,char **argv) {
   if(argc!=2||!bundle_files_match(argv[1])) {puts("refused");return 0;}
   puts("admitted");return 0;
 }
+#elif defined(SV08_CMDLINE_SELFTEST)
+int main(int argc,char **argv) {
+  puts(argc==2&&cmdline_has_token(argv[1],SV08_MODE_PARAMETER)?"admitted":"refused");
+  return 0;
+}
 #else
 int main(void) {
   const char *source="/image.bin",*target=SV08_TARGET;
@@ -510,7 +537,7 @@ int main(void) {
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");
   if(mount("devtmpfs","/dev","devtmpfs",0,"mode=0755")&&!mounted("/dev","devtmpfs","rw"))finish("REFUSED_DEV");
   f=fopen("/proc/cmdline","r");if(!f||!fgets(cmd,sizeof(cmd),f))finish("REFUSED_CMDLINE");fclose(f);
-  if(!strstr(cmd,SV08_MODE_PARAMETER)||!board_compatible()||
+  if(!cmdline_has_token(cmd,SV08_MODE_PARAMETER)||!board_compatible()||
      !(mounted("/","nfs","ro")||mounted("/","nfs4","ro")))finish("REFUSED_ROOT");
   if((long long)started<SV08_JOB_NOT_BEFORE||(long long)started>=SV08_JOB_EXPIRES)
     finish("REFUSED_STALE_JOB");
@@ -533,27 +560,39 @@ int main(void) {
   in=open(source,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
   if(in<0||fstat(in,&ss)||!S_ISREG(ss.st_mode)||(uint64_t)ss.st_size!=IMAGE_BYTES)
     finish("REFUSED_SOURCE");
-  /* This is the first target open. The single-use claim is already durable. */
-  out=open(target,O_RDWR|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
-  if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||
-     (uint64_t)ss.st_size!=IMAGE_BYTES||ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
-#if !defined(SV08_H616_COMMISSIONING)
-     !exact_usb_serial()||!exact_usb_capacity()||
+#if defined(SV08_H616_SYNTHETIC_TEST)
+  printf("%sSOURCE_HASH_START\n",SV08_RESULT_PREFIX);fflush(stdout);
 #endif
-     !sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS)||ts.st_rdev!=admitted_dev||
-     (ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
-    finish("REFUSED_INPUT");
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
     if(expired(started)||!exact_read(in,n))finish("FAILED_SOURCE_READ");
     sha_update(&hash,buffer,n);done+=n;}
   sha_final(&hash,actual);
   if(strcmp(actual,expected)||lseek(in,0,SEEK_SET)!=0)finish("REFUSED_SOURCE_HASH");
-  /* Recheck CID, inventory and dev_t after hashing, at the write boundary. */
+  /* Source failure cannot open the target. Recheck identity at the boundary. */
   if(!admitted_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
-     !sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS))finish("REFUSED_TARGET_ID_CHANGED");
+     !read_sysfs_dev(SV08_TARGET_DEV_SYSFS,&confirmed_dev)||confirmed_dev!=admitted_dev)
+    finish("REFUSED_TARGET_ID_CHANGED");
+  /* This is the first target open. The single-use claim is already durable. */
+#if defined(SV08_H616_SYNTHETIC_TEST)
+  printf("%sTARGET_OPEN_START\n",SV08_RESULT_PREFIX);fflush(stdout);
+#endif
+  out=open(target,O_RDWR|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
+  if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||
+     ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
+#if !defined(SV08_H616_COMMISSIONING)
+     !exact_usb_serial()||!exact_usb_capacity()||
+#endif
+     !sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS)||ts.st_rdev!=admitted_dev||
+     (ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
+    finish("REFUSED_INPUT");
 #if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
   if(!strcmp(SV08_TEST_FAULT,"before-write"))finish("INJECTED_BEFORE_WRITE");
+  if(!strcmp(SV08_TEST_FAULT,"abrupt-after-write")) {
+    if(!exact_read(in,CHUNK)||!exact_write(out,CHUNK)||fsync(out))finish("FAILED_TEST_PHASE_WRITE");
+    printf("%sPROGRESS_FIRST_MIB_WRITTEN\n",SV08_RESULT_PREFIX);fflush(stdout);
+    for(;;)pause(); /* Harness must SIGKILL QEMU; no orderly finish. */
+  }
   if(!strcmp(SV08_TEST_FAULT,"partial-write")||
      !strcmp(SV08_TEST_FAULT,"flush")||!strcmp(SV08_TEST_FAULT,"readback")) {
     if(!exact_read(in,CHUNK)||!exact_write(out,CHUNK))finish("FAILED_TEST_PHASE_WRITE");

@@ -196,10 +196,37 @@ class CandidateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             policy_fields(physical)
 
+    def test_abrupt_fault_build_is_synthetic_only(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            work = Path(temporary)
+            files, _, _ = signed_inputs(work)
+            manifest = build(work / 'abrupt', *files.values(), now=1500,
+                             synthetic_test=True, fault='abrupt-after-write')
+            self.assertTrue(manifest['synthetic_test'])
+            self.assertFalse(manifest['bootable_sd_image'])
+            with self.assertRaises(ValueError):
+                build(work / 'physical-fault', *files.values(), now=1500,
+                      fault='abrupt-after-write')
+            self.assertFalse((work / 'physical-fault').exists())
+
+    def test_guest_case_markers_distinguish_interruption_from_refusal(self):
+        prefix = 'SV08_H616_COMMISSIONING_'
+        self.assertEqual(harness.guest_case_marker(prefix, fault='abrupt-after-write'),
+                         (prefix + 'PROGRESS_FIRST_MIB_WRITTEN', 'progress'))
+        self.assertEqual(harness.guest_case_marker(prefix, fault='partial-write'),
+                         (prefix + 'INJECTED_PARTIAL_WRITE', 'terminal'))
+        for source_fault, status in [('missing', 'REFUSED_SOURCE'),
+                                     ('wrong-size', 'REFUSED_SOURCE'),
+                                     ('wrong-hash', 'REFUSED_SOURCE_HASH')]:
+            self.assertEqual(harness.guest_case_marker(prefix, source_fault=source_fault),
+                             (prefix + status, 'terminal'))
+        self.assertEqual(harness.guest_case_marker(prefix, lost_claim_ack=True),
+                         (prefix + 'REFUSED_OR_UNCERTAIN_CLAIM', 'terminal'))
+
     def test_h616_identity_follows_single_inventory_and_dev_number(self):
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
             root = Path(temporary)
-            synthetic_mmc_fixture(root)
+            synthetic_mmc_fixture(root, commissioning=True)
             base = root / 'synthetic-mmc'
             dev_file = base / 'mmc0/mmc0:0001/block/mmcblk0/dev'
             binary = root / 'identity-test'
@@ -223,6 +250,17 @@ class CandidateTests(unittest.TestCase):
                 path.write_text(content)
                 self.assertEqual(check(), 'refused')
                 path.write_bytes(original)
+            controller = base / 'controller'
+            controller.unlink()
+            self.assertEqual(check(), 'refused')
+            controller.symlink_to('mmc0')
+            card_device = base / 'card-device'
+            card_device.unlink()
+            (base / 'mmc0-other/mmc0:0001').mkdir(parents=True)
+            card_device.symlink_to('mmc0-other/mmc0:0001')
+            self.assertEqual(check(), 'refused')
+            card_device.unlink()
+            card_device.symlink_to('mmc0/mmc0:0001')
             other = base / 'mmc1/mmc1:0001/block/mmcblk1'
             other.mkdir(parents=True)
             (other.parent.parent / 'type').write_text('MMC\n')
@@ -242,14 +280,16 @@ class CandidateTests(unittest.TestCase):
                      '-DSV08_H616_CLAIM_SERVER="10.0.2.2"']
             subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
                             *flags, '-o', str(binary), str(WRITER)], check=True, capture_output=True)
-            for fault in (None, 'wrong-cid', 'wrong-dev', 'ambiguous'):
+            for fault in (None, 'wrong-cid', 'wrong-dev', 'ambiguous',
+                          'wrong-controller', 'missing-controller', 'wrong-type', 'wrong-capacity'):
                 with self.subTest(fault=fault):
                     case = root / (fault or 'valid')
                     case.mkdir()
                     synthetic_mmc_fixture(case, fault, commissioning=True)
                     base = case / 'synthetic-mmc'
                     block = base / 'mmc0/mmc0:0001/block/mmcblk0'
-                    self.assertEqual((block / 'size').read_text(), f'{SECTORS}\n')
+                    self.assertEqual((block / 'size').read_text(),
+                                     f'{SECTORS - (fault == "wrong-capacity")}\n')
                     result = subprocess.check_output([
                         str(binary), str(base), str(block / 'dev')], text=True).strip()
                     self.assertEqual(result, 'admitted 8:0' if fault is None else 'refused')
@@ -261,6 +301,23 @@ class CandidateTests(unittest.TestCase):
                     elif fault == 'ambiguous':
                         self.assertEqual((base / 'mmc1/mmc1:0001/block/mmcblk1/size').read_text(),
                                          f'{SECTORS}\n')
+
+    def test_commissioning_parameter_requires_exact_token(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            binary = Path(temporary) / 'token-test'
+            flags = ['-DSV08_H616_COMMISSIONING=1', '-DSV08_H616_SYNTHETIC_TEST=1',
+                     '-DSV08_CMDLINE_SELFTEST=1',
+                     '-DSV08_H616_EXPECTED_CID="00000000000000000000000000000001"',
+                     '-DSV08_H616_EXPECTED_DEV_T="8:0"',
+                     '-DSV08_H616_BOARD_COMPATIBLE="test,synthetic-h616"',
+                     '-DSV08_H616_CLAIM_SERVER="10.0.2.2"']
+            subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+                            *flags, '-o', str(binary), str(WRITER)], check=True, capture_output=True)
+            for cmd, expected in [('root=/dev/nfs sv08.h616_commissioning=1 ro', 'admitted'),
+                                  ('xsv08.h616_commissioning=1 ro', 'refused'),
+                                  ('sv08.h616_commissioning=10', 'refused'),
+                                  ('sv08.h616_commissioning=1suffix', 'refused')]:
+                self.assertEqual(subprocess.check_output([str(binary), cmd], text=True).strip(), expected)
 
     def test_commissioning_success_rechecks_and_reports_its_target_size(self):
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
@@ -298,6 +355,7 @@ class CandidateTests(unittest.TestCase):
                         body.index('out=open(target,O_RDWR'))
         self.assertLess(body.index('admitted_mmc_identity(&admitted_dev)'),
                         body.index('out=open(target,O_RDWR'))
+        self.assertLess(body.index('sha_final(&hash,actual)'), body.index('out=open(target,O_RDWR'))
         self.assertLess(body.index('admitted_mmc_identity(&confirmed_dev)'),
                         body.index('exact_write(out,n)'))
         self.assertEqual(body.count('out=open(target,'), 1)
