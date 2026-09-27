@@ -130,6 +130,16 @@ class RecoveryStageTests(unittest.TestCase):
             with partial.open('r+b') as stream:
                 for offset in (0x400000, 0x800000):
                     os.pwrite(stream.fileno(), record.read_bytes(), offset)
+            bound = root / 'bound-target-journal'
+            bound.mkdir()
+            bound_state = json.loads((root / 'after-marker-journal/state.json').read_text())
+            bound_state['recovery_admission'] = {
+                'target_regular_dev': disk.stat().st_dev,
+                'target_regular_ino': disk.stat().st_ino,
+            }
+            (bound / 'state.json').write_text(json.dumps(bound_state))
+            with self.assertRaisesRegex(ValueError, 'Arming target differs'):
+                arm_regular_image(partial, bound, target_policy=policy)
             partial_state = arm_regular_image(partial, root / 'after-marker-journal',
                                               target_policy=policy,
                                               fault='after-arm-copy-1')

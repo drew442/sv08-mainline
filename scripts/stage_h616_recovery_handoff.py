@@ -304,6 +304,17 @@ def arm_regular_image(image, journal, *, target_policy, fault=None):
     state = json.loads(regular(journal / 'state.json').read_text())
     if state.get('phase') != 'marker-durable':
         raise ValueError('Marker not durably staged')
+    admission = state.get('recovery_admission')
+    if not isinstance(admission, dict):
+        raise ValueError('Recovery target admission missing')
+    if 'target_regular_dev' in admission or 'target_regular_ino' in admission:
+        identity = image.stat()
+        if (set(('target_regular_dev', 'target_regular_ino')) - admission.keys() or
+                admission['target_regular_dev'] != identity.st_dev or
+                admission['target_regular_ino'] != identity.st_ino):
+            raise ValueError('Arming target differs from staged recovery target')
+    elif admission.get('disposable_directory_fixture') is not True:
+        raise ValueError('Recovery target admission missing')
     target_policy = policy_fields(target_policy)
     if (hashlib.sha256(canonical_json(target_policy)).hexdigest() !=
             state.get('target_policy_sha256')):

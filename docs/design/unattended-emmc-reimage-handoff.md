@@ -188,6 +188,11 @@ and a different backing path were refused. Its result is in ignored
 `local/urh-mounted-stage-v2/result.json`, SHA-256
 `4381d23cea50c055f00c5391de5967bc904f778254afa6623c7dd1178ef666e2`.
 This exercise does not identify a live `/dev/mmcblk0` or prove eMMC durability.
+The arm operation now also binds the regular-file target's device/inode to the
+earlier loop-mounted recovery admission, refusing a different file even if it
+has the same signed GPT map. A fresh mounted-stage run under
+`local/urh-mounted-stage-v3` passed after that guard; result JSON SHA-256 is
+`b26c472cfec4b642d2b7f3c03522cec089f2d7d080d351985f1a0520c17cefe3`.
 The controller-integrated QEMU harness now stages its disposable v5 recovery
 partition with that same checked and journaled stager, then arms the two
 regular-file environment copies before booting the exact staged kernel and
@@ -217,11 +222,51 @@ therefore has no marker with which to relaunch the writer, but a second
 QEMU/physical boot of this partial target was not performed. This result
 shows the uncertain-write stop and 1 GiB QEMU transport pressure; it cannot
 serve as full-transfer or board-memory acceptance evidence.
+
+The shared-controller 2 GiB QEMU trial also encountered an NFS stall during
+the bulk write (serial SHA-256
+`40915643fcaeb7508b9f9bd62177d30dfb2812fd0133c80d9d6019eeef98cfc59b1`),
+so the offline harness was corrected to put emulated USB networking and target
+storage on separate xHCI controllers. A fresh 1 GiB split-controller refusal
+passed at `/mnt/sv08-qemu-trusted/urh-qemu-split-refusal-v1`; result JSON
+SHA-256 is
+`8e8b1226836474fdcfb24a9325002a115852a70d3635fe96cd38d8a10e9b440b`.
+
+The full split-controller trial at
+`/mnt/sv08-qemu-trusted/urh-qemu-split-1g-success-v1` then staged and armed
+the loop-mounted v5 recovery partition, booted the exact staged writer
+kernel/initramfs with the staged selector's boot arguments, consumed the
+one-shot claim, and wrote the exact reviewed v5 source on a 32 GB sparse
+regular-file target. The guest and host full 7,818,182,656-byte SHA-256 both
+matched
+`ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`;
+the host checked all six GPT records and both CRC-valid final environment
+records: A=3, B=0, order A, arm token absent. A read-only observation during
+bulk transfer had found both old environment copies still CRC-valid, armed
+and exhausted. The result JSON SHA-256 is
+`eea94030b619b9b7b58121cd89185483f4ac1beea9d2b17c9e254fb64c0842fa`;
+serial SHA-256 is
+`34f7373d5ca2bfe9f064f89b483b9914f9f4949fa62797b692cf1eece7389f40`.
+The 1 GiB guest logged one atomic page-allocation warning without a failed
+transfer.
+
+The same post-write target then passed the production-initramfs QEMU snapshot
+probe at `/mnt/sv08-qemu-trusted/urh-repo/local/urh-split-normal-boot-v1`:
+`sv08-prepare.service` succeeded, systemd reached `multi-user.target`, the
+normal login prompt appeared, and the source target's v5 hash remained
+unchanged. Its result JSON SHA-256 is
+`9b14aec0da6571fb5db6d3fe891bfe63d1d8190ed9c377f4bde7f367f35d5068`;
+serial SHA-256 is
+`9019cba287e55a7ebe4e65f2eb08e1203eac4fc0ef57ec826d6584435f223163`.
+This supplies a sequential offline writer-to-normal-A result on one target.
+QEMU still does not execute the H616 U-Boot-to-FIT handoff or printer services;
+those remain hardware acceptance checks.
+
 The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
 `c7674f377719f4fc8e61f2d1ff6480a63c242199db0672fbe34ff9c6c645e677`.
 This does not yet prove installed-host target admission, physical durability,
-full normal OS boot, or unattended scheduling/activation.
+printer services, or unattended scheduling/activation.
 The exact v5 source image on Beelink was mounted read-only with ext4 journal
 replay disabled for a staging-capacity check: its original `recovery.scr` is
 720 bytes, SHA-256
