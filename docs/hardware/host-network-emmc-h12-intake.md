@@ -71,3 +71,16 @@ creation was refused. The mount was removed after the check. Beelink had
 This establishes source bytes and one local export path, not printer reachability
 or a physical RAM-writer boot. Recheck service, export, file hash and free space
 at H12; an earlier local pass cannot substitute for the live network path.
+
+The same v5 raw image's root-A partition was mounted from a read-only loop with
+ext4 journal replay disabled. It contains Python 3, `fw_setenv`, `dumpimage`,
+`findmnt`, `ip`, OpenSSL, `mount` and `unshare`. The image does not contain the
+new live adapter or an apparent recovery mount point; inspect the running host
+before choosing its persistent deployment path and recovery mount. A 32,909-byte
+source-only adapter archive was prepared from commit `2c806c5`, tested by
+importing it from an isolated extraction and checking the reviewed physical v5
+layout, and copied to Beelink at
+`/home/drew/sv08-h12/h12-stage-adapter-2c806c5.tar.gz`. Its SHA-256 is
+`739868bdbe4dc7eb445d2dc6872e38ccf3add1aee9f7b2928bbbf38e1af5e9d6`.
+It contains no private policy, keys, signed job, FIT or image. It has **not**
+been installed on the printer or executed against its eMMC.
