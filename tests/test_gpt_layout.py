@@ -65,3 +65,22 @@ class GPTTests(unittest.TestCase):
             with self.assertRaises(ValueError): inspect(self.image, allow_block=True)
             self.assertTrue(inspect(self.image, allow_block=True, image_bytes=len(before))['collision_free'])
         self.assertEqual(self.image.read_bytes(), before)
+
+    def test_regular_prefix_audit_requires_explicit_image_boundary(self):
+        self.table(True)
+        footprint = self.image.stat().st_size
+        with self.image.open('r+b') as stream:
+            stream.truncate(2 * footprint)
+        with self.assertRaises(ValueError):
+            inspect(self.image)
+        result = inspect(self.image, allow_regular_prefix=True,
+                         image_bytes=footprint)
+        self.assertTrue(result['gpt_crc_valid'])
+        self.assertEqual(result['image_bytes'], footprint)
+        self.assertIn('disk_guid', result)
+        with self.assertRaises(ValueError):
+            inspect(self.image, allow_regular_prefix=True,
+                    image_bytes=3 * footprint)
+        with self.assertRaises(ValueError):
+            inspect(self.image, allow_regular_prefix=True,
+                    allow_block=True, image_bytes=footprint)

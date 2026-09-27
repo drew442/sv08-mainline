@@ -22,12 +22,31 @@ from tests.test_h616_recovery_handoff_builder import base_initrd
 REPO = Path(__file__).resolve().parents[1]
 
 
+def create_reviewed_target(path, policy):
+    image_bytes = policy['image_bytes']
+    with path.open('xb') as stream:
+        stream.truncate(image_bytes)
+    layout = policy['image_layout']
+    command = ['sgdisk', '--clear', f"--disk-guid={layout['disk_guid']}",
+               '--move-main-table=4096']
+    for part in layout['partitions']:
+        start = part['offset_bytes'] // 512
+        last = (part['offset_bytes'] + part['size_bytes']) // 512 - 1
+        index = part['number']
+        command += [f'--new={index}:{start}:{last}',
+                    f"--change-name={index}:{part['name']}",
+                    f"--partition-guid={index}:{part['partuuid']}"]
+    subprocess.run(command + [str(path)], check=True, capture_output=True)
+    with path.open('r+b') as stream:
+        stream.truncate(8 * 1024 * 1024 * 1024)
+
+
 class RecoveryStageTests(unittest.TestCase):
     def test_faulted_staging_and_separate_two_copy_arm(self):
         (REPO / 'local').mkdir(mode=0o700, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
             root = Path(temporary)
-            files, _, job = signed_inputs(root)
+            files, policy, job = signed_inputs(root)
             bundle = root / 'bundle'
             build_writer(bundle, *files.values(), now=1500, synthetic_test=True,
                          trusted_initramfs=True, recovery_handoff=True,
@@ -91,8 +110,7 @@ class RecoveryStageTests(unittest.TestCase):
                                    expected_build_sha256=build_hash,
                                    expected_original_sha256=original_hash)
             disk = root / 'target.img'
-            with disk.open('xb') as stream:
-                stream.truncate(8 * 1024 * 1024 * 1024)
+            create_reviewed_target(disk, policy)
             source = root / 'initial.env'
             source.write_text('sv08_env_layout=ab-8gb-v1\nBOOT_ORDER=A B\n'
                               'BOOT_A_LEFT=3\nBOOT_B_LEFT=0\n')
@@ -103,12 +121,12 @@ class RecoveryStageTests(unittest.TestCase):
                 for offset in (0x400000, 0x800000):
                     os.pwrite(stream.fileno(), record.read_bytes(), offset)
             partial = root / 'partial-target.img'
-            with partial.open('xb') as stream:
-                stream.truncate(8 * 1024 * 1024 * 1024)
+            create_reviewed_target(partial, policy)
             with partial.open('r+b') as stream:
                 for offset in (0x400000, 0x800000):
                     os.pwrite(stream.fileno(), record.read_bytes(), offset)
             partial_state = arm_regular_image(partial, root / 'after-marker-journal',
+                                              target_policy=policy,
                                               fault='after-arm-copy-1')
             self.assertEqual(partial_state['phase'], 'arm-copy-1-written')
             with partial.open('rb') as stream:
@@ -116,7 +134,17 @@ class RecoveryStageTests(unittest.TestCase):
                          for offset in (0x400000, 0x800000)]
             self.assertEqual(sum(bank.get(b'sv08_reimage_arm') == job['job_id'].encode()
                                  for bank in banks), 1)
-            result = arm_regular_image(disk, journal)
+            wrong_policy = dict(policy, cid='f' * 32)
+            with self.assertRaisesRegex(ValueError, 'Arming policy differs'):
+                arm_regular_image(disk, journal, target_policy=wrong_policy)
+            with disk.open('r+b') as stream:
+                original_guid_byte = os.pread(stream.fileno(), 1, 512 + 56)
+                os.pwrite(stream.fileno(), bytes([original_guid_byte[0] ^ 1]), 512 + 56)
+            with self.assertRaisesRegex(ValueError, 'GPT header CRC'):
+                arm_regular_image(disk, journal, target_policy=policy)
+            with disk.open('r+b') as stream:
+                os.pwrite(stream.fileno(), original_guid_byte, 512 + 56)
+            result = arm_regular_image(disk, journal, target_policy=policy)
             self.assertEqual(result['phase'], 'armed-both-verified')
             with disk.open('rb') as stream:
                 for offset in (0x400000, 0x800000):
@@ -125,7 +153,7 @@ class RecoveryStageTests(unittest.TestCase):
                     self.assertEqual(fields[b'BOOT_B_LEFT'], b'0')
                     self.assertEqual(fields[b'sv08_reimage_arm'], job['job_id'].encode())
             with self.assertRaisesRegex(ValueError, 'Marker not durably staged'):
-                arm_regular_image(disk, root / 'after-fit-journal')
+                arm_regular_image(disk, root / 'after-fit-journal', target_policy=policy)
 
             changed = root / 'changed-compiled-script'
             shutil.copytree(artifact, changed)

@@ -20,6 +20,7 @@ from scripts.build_h616_recovery_handoff import MARKER, script_text
 from scripts.build_h616_reimage_candidate import policy_fields, verify_signed_job
 from scripts.build_sd_network_image import commissioning_bundle
 from tests.sv08_emmc_job import canonical_json
+from runtime.sv08_gpt import inspect as inspect_gpt
 
 
 ENV_OFFSETS = (0x400000, 0x800000)
@@ -177,7 +178,7 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
             digest(regular(artifact / 'build.json')) != expected_build_sha256):
         raise ValueError('Handoff artifact differs from reviewed build')
     manifest = verify_artifact(artifact)
-    verify_signed_stage_bundle(manifest, bundle, verification_key, now=now)
+    policy = verify_signed_stage_bundle(manifest, bundle, verification_key, now=now)
     if not recovery.is_dir() or journal.exists():
         raise ValueError('Fresh recovery directory and journal required')
     original = recovery / 'recovery.scr'
@@ -197,6 +198,7 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
         raise ValueError('Recovery filesystem lacks stage reserve')
     state = {'phase': 'planned', 'job_id': manifest['job_id'],
              'build_sha256': expected_build_sha256,
+             'target_policy_sha256': hashlib.sha256(canonical_json(policy)).hexdigest(),
              'fit_sha256': manifest['files_sha256']['writer.itb'],
              'original_recovery_sha256': digest(original)}
     journal_state(journal, state)
@@ -240,7 +242,7 @@ def parse_env_record(record):
     return fields
 
 
-def arm_regular_image(image, journal, *, fault=None):
+def arm_regular_image(image, journal, *, target_policy, fault=None):
     """Offline boot-policy exercise; regular file only, never a block device."""
     image = regular(image)
     if image.stat().st_size < 7_818_182_656:
@@ -248,6 +250,18 @@ def arm_regular_image(image, journal, *, fault=None):
     state = json.loads(regular(journal / 'state.json').read_text())
     if state.get('phase') != 'marker-durable':
         raise ValueError('Marker not durably staged')
+    target_policy = policy_fields(target_policy)
+    if (hashlib.sha256(canonical_json(target_policy)).hexdigest() !=
+            state.get('target_policy_sha256')):
+        raise ValueError('Arming policy differs from signed staged job')
+    gpt = inspect_gpt(image, allow_regular_prefix=True,
+                      image_bytes=target_policy['image_bytes'],
+                      environment_regions=tuple((offset, ENV_BYTES)
+                                                for offset in ENV_OFFSETS))
+    expected = target_policy['image_layout']
+    if (gpt['disk_guid'] != expected['disk_guid'] or
+            gpt['partition_records'] != expected['partitions']):
+        raise ValueError('Current target GPT differs from signed image map')
     job_id = state['job_id']
     with image.open('rb') as stream:
         for offset in ENV_OFFSETS:

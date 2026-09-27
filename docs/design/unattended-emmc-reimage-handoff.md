@@ -130,9 +130,15 @@ the compiled U-Boot script and compares its actual payload with the reviewed
 selector. It also extracts all three FIT members and compares them with the
 reviewed kernel, initramfs and DTB. Tests refuse a changed compiled script or
 FIT kernel even when the surrounding manifest and wrapper are recomputed.
-The related regression run passed 25 tests after this check and addition of
+The offline arm now rechecks that the signed target policy matches the staged
+journal and that the disposable disk's primary/backup GPT, disk GUID and all
+six partition records match the signed image map at the 7.8 GB image
+boundary. A changed policy or GPT CRC is refused before either environment
+record is written. The regular-file prefix inspection is explicit and
+read-only; this is not live eMMC admission.
+The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
-`7d71a0b52197c1f0e02083d56b12b53054489d66f8bd565bd399b986e3bf98f3`.
+`c7674f377719f4fc8e61f2d1ff6480a63c242199db0672fbe34ff9c6c645e677`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.
 The exact v5 source image on Beelink was mounted read-only with ext4 journal
