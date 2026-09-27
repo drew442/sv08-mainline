@@ -20,9 +20,13 @@ import uuid
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'tests'))
+sys.path.insert(0, str(REPO / 'scripts'))
 from sv08_emmc_job import canonical_json  # noqa: E402
+from ed25519_build import (ED25519_SOURCES, MONOCYPHER_COMMIT, raw_public_key,
+                           source_hashes)  # noqa: E402
 
 WRITER = REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'
+TEST_RECEIPT_VERIFIER = REPO / 'tests/fixtures/sd-network-root/receipt-test-keys/test-verification-key.pem'
 IMAGE_BYTES = 7_818_182_656
 SECTORS = 61_079_552
 TARGET_BYTES = SECTORS * 512
@@ -210,7 +214,8 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
 
 
 def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
-          synthetic_test=False, fault=None, claim_only=False):
+          synthetic_test=False, fault=None, claim_only=False,
+          receipt_verification_key_path=None):
     root = Path(root).absolute()
     if (not safe_output_root(root, synthetic_test=synthetic_test) or
             (root.exists() and (not root.is_dir() or any(root.iterdir())))):
@@ -224,6 +229,15 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     if canonical_json(target_policy) != policy_raw:
         raise ValueError('Local policy must use canonical JSON')
     verification_key = private_file(key_path)
+    if receipt_verification_key_path is None:
+        if not synthetic_test:
+            raise ValueError('Separate local Ed25519 receipt verifier required for physical candidate')
+        receipt_key_bytes = TEST_RECEIPT_VERIFIER.read_bytes()
+        receipt_key_sha256 = digest(receipt_key_bytes)
+    else:
+        receipt_key_bytes = private_file(receipt_verification_key_path)
+        receipt_key_sha256 = digest(receipt_key_bytes)
+    receipt_key_hex = raw_public_key(receipt_key_bytes).hex()
     raw_job, signature = private_file(job_path), private_file(signature_path)
     job = verify_signed_job(raw_job, signature, verification_key, target_policy, now=now)
     if synthetic_test and target_policy['board_compatible'] != 'test,synthetic-h616':
@@ -242,7 +256,11 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
              f'-DSV08_JOB_NOT_BEFORE={job["issued_unix"]}LL',
              f'-DSV08_JOB_EXPIRES={job["expires_unix"]}LL',
              f'-DSV08_SOURCE_SHA256="{target_policy["image_sha256"]}"',
-             f'-DSV08_JOB_SIGNATURE_SHA256="{digest(signature)}"']
+             f'-DSV08_JOB_SIGNATURE_SHA256="{digest(signature)}"',
+             f'-DSV08_RECEIPT_PUBLIC_KEY_HEX="{receipt_key_hex}"',
+             '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections',
+             f'-I{REPO / "upstream/monocypher/src"}',
+             f'-I{REPO / "upstream/monocypher/src/optional"}']
     if synthetic_test:
         flags.append('-DSV08_H616_SYNTHETIC_TEST=1')
     if claim_only:
@@ -259,7 +277,8 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     (root / 'expected.sha256').write_text(target_policy['image_sha256'] + '\n')
     output = root / 'sd-network-init'
     subprocess.run(['aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
-                    '-Wall', '-Wextra', '-Werror', *flags, '-o', str(output), str(WRITER)],
+                    '-Wall', '-Wextra', '-Werror', *flags, '-o', str(output), str(WRITER),
+                    *(str(path) for path in ED25519_SOURCES)],
                    check=True, capture_output=True, timeout=120)
     output.chmod(0o755)
     manifest = {'status': 'nondeployable-commissioning-candidate', 'mode': 'h616-commissioning',
@@ -267,6 +286,11 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
                 'synthetic_test': synthetic_test, 'claim_trigger_provisioned': False,
                 'policy_sha256': digest(policy_raw), 'job_sha256': digest(raw_job),
                 'signature_sha256': digest(signature), 'verifier_sha256': digest(verification_key),
+                'receipt_verifier_sha256': receipt_key_sha256,
+                'ed25519': {'implementation': 'Monocypher', 'version': '4.0.3',
+                            'commit': MONOCYPHER_COMMIT, 'license': 'BSD-2-Clause',
+                            'source_sha256': source_hashes()},
+                'binary_bytes': output.stat().st_size,
                 'writer_sha256': digest(WRITER.read_bytes()), 'binary_sha256': digest(output.read_bytes()),
                 'compiler': subprocess.check_output(['aarch64-linux-gnu-gcc', '--version'], text=True).splitlines()[0]}
     (root / 'reimage-manifest.json').write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n')
@@ -278,9 +302,13 @@ def main():
     parser.add_argument('--mode', choices=('h616-commissioning',), required=True)
     for name in ('root', 'policy', 'verification-key', 'job', 'signature'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--receipt-verification-key', type=Path,
+                        help='Separate 0600 local Ed25519 public key for claim receipts; required outside synthetic tests')
     args = parser.parse_args()
     print(json.dumps(build(args.root, args.policy, args.verification_key, args.job,
-                           args.signature), sort_keys=True))
+                           args.signature,
+                           receipt_verification_key_path=args.receipt_verification_key),
+                      sort_keys=True))
 
 
 if __name__ == '__main__':

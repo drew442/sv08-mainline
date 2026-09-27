@@ -10,6 +10,8 @@ from unittest import mock
 
 REPO = Path(__file__).resolve().parents[1]
 SOURCE = REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'
+from scripts.ed25519_build import ED25519_SOURCES
+
 SPEC = importlib.util.spec_from_file_location(
     'host_qemu_sd_network_emmc_write', REPO / 'tests/host_qemu_sd_network_emmc_write.py')
 writer = importlib.util.module_from_spec(SPEC)
@@ -207,7 +209,11 @@ class WriterNativeFailureTests(unittest.TestCase):
             executable = Path(temporary) / 'writer-test'
             subprocess.run(['cc', '-O2', '-D_FORTIFY_SOURCE=2', '-Wall', '-Wextra',
                             '-Wno-unused-function',
-                            f'-D{definition}', str(SOURCE), '-o', str(executable)], check=True)
+                            f'-I{REPO / "upstream/monocypher/src"}',
+                            f'-I{REPO / "upstream/monocypher/src/optional"}',
+                            f'-D{definition}', str(SOURCE),
+                            *(str(path) for path in ED25519_SOURCES),
+                            '-o', str(executable)], check=True)
             return subprocess.check_output([str(executable)], text=True).strip()
 
     def test_sha256_known_vector(self):
@@ -231,7 +237,10 @@ class WriterNativeFailureTests(unittest.TestCase):
             binary = root / 'identity-test'
             subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror',
                             '-Wno-unused-function', '-DSV08_IDENTITY_SELFTEST',
-                            str(SOURCE), '-o', str(binary)], check=True)
+                            f'-I{REPO / "upstream/monocypher/src"}',
+                            f'-I{REPO / "upstream/monocypher/src/optional"}',
+                            str(SOURCE), *(str(path) for path in ED25519_SOURCES),
+                            '-o', str(binary)], check=True)
             base = fixture / 'synthetic-mmc'
             def result():
                 return subprocess.check_output([str(binary), str(base)], text=True).strip()

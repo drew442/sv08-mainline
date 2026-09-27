@@ -14,13 +14,25 @@ from scripts.build_h616_reimage_candidate import (
     V5_IMAGE_DISK_GUID, V5_IMAGE_PARTITIONS, build, digest,
     expected_image_layout, policy_fields, verify_signed_job,
 )
+from scripts.ed25519_build import ED25519_SOURCES, raw_public_key
 from tests.host_qemu_sd_network_emmc_write import (
     DISK_GUID, IMAGE_SHA256, expected_records, synthetic_mmc_fixture,
 )
 from tests import host_qemu_sd_network_emmc_write as harness
-from tests.sv08_emmc_job import canonical_json
+from tests.sv08_emmc_job import canonical_json, receipt_message, sign_receipt
 
 KEYS = REPO / 'tests/fixtures/sd-network-root/synthetic-keys'
+RECEIPT_KEYS = REPO / 'tests/fixtures/sd-network-root/receipt-test-keys'
+
+
+def compile_writer(output, flags):
+    subprocess.run([
+        'cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+        f'-I{REPO / "upstream/monocypher/src"}',
+        f'-I{REPO / "upstream/monocypher/src/optional"}',
+        *flags, '-o', str(output), str(WRITER),
+        *(str(path) for path in ED25519_SOURCES)],
+        check=True, capture_output=True)
 
 
 def synthetic_policy():
@@ -80,6 +92,117 @@ class CandidateTests(unittest.TestCase):
     def setUpClass(cls):
         (REPO / 'local').mkdir(exist_ok=True)
 
+    def test_signed_claim_receipt_and_strict_http_framing(self):
+        job_id = 'h616-synthetic-test-001'
+        descriptor_hash = '12' * 32
+        challenge = '34' * 32
+        public_key = raw_public_key((RECEIPT_KEYS / 'test-verification-key.pem').read_bytes())
+        flags = [
+            '-DSV08_CLAIM_RECEIPT_SELFTEST=1',
+            f'-DSV08_JOB_ID="{job_id}"',
+            f'-DSV08_RECEIPT_PUBLIC_KEY_HEX="{public_key.hex()}"',
+        ]
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            root = Path(temporary)
+            binary = root / 'receipt-test'
+            compile_writer(binary, flags)
+
+            def check(response, expected='admitted'):
+                path = root / 'response.bin'
+                path.write_bytes(response)
+                result = subprocess.check_output([
+                    str(binary), str(path), descriptor_hash, challenge], text=True).strip()
+                self.assertEqual(result, expected, response[:100])
+
+            header = (b'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n'
+                      b'Content-Length: 129\r\nConnection: close\r\n\r\n')
+            message = receipt_message(job_id, descriptor_hash, challenge)
+            signature = sign_receipt(message, RECEIPT_KEYS / 'test-signing-key.pem')
+            response = header + signature.hex().encode() + b'\n'
+            check(response)
+
+            wrong_key = sign_receipt(message, RECEIPT_KEYS / 'other-signing-key.pem')
+            stale = sign_receipt(receipt_message(job_id, descriptor_hash, '56' * 32),
+                                 RECEIPT_KEYS / 'test-signing-key.pem')
+            replay = sign_receipt(receipt_message(job_id, descriptor_hash, '00' * 32),
+                                  RECEIPT_KEYS / 'test-signing-key.pem')
+            wrong_job = sign_receipt(receipt_message(job_id + '-other', descriptor_hash, challenge),
+                                     RECEIPT_KEYS / 'test-signing-key.pem')
+            wrong_descriptor = sign_receipt(receipt_message(job_id, '78' * 32, challenge),
+                                            RECEIPT_KEYS / 'test-signing-key.pem')
+            altered = bytes([signature[0] ^ 1]) + signature[1:]
+            refusals = {
+                'forged 200': header + bytes(64),
+                'wrong key': header + wrong_key.hex().encode() + b'\n',
+                'stale challenge': header + stale.hex().encode() + b'\n',
+                'replayed receipt': header + replay.hex().encode() + b'\n',
+                'wrong job': header + wrong_job.hex().encode() + b'\n',
+                'wrong descriptor': header + wrong_descriptor.hex().encode() + b'\n',
+                'altered signature': header + altered.hex().encode() + b'\n',
+                'truncated signature': header + signature.hex().encode()[:-2] + b'\n',
+                'extra body byte': response + b'X',
+                'extra newline': response + b'\n',
+                'uppercase signature': header + signature.hex().upper().encode() + b'\n',
+                'wrong status': response.replace(b'200 OK', b'201 OK', 1),
+                'wrong length': response.replace(b'Length: 129', b'Length: 128', 1),
+                'duplicate length': response.replace(b'Connection:', b'Content-Length: 129\r\nConnection:', 1),
+                'transfer encoding': response.replace(b'Connection:', b'Transfer-Encoding: chunked\r\nConnection:', 1),
+                'unexpected header': response.replace(b'Connection:', b'Server: forged\r\nConnection:', 1),
+                'changed content type': response.replace(b'text/plain', b'application/octet-stream', 1),
+            }
+            for name, invalid in refusals.items():
+                with self.subTest(case=name):
+                    check(invalid, 'refused')
+
+    def test_challenges_are_fresh_and_randomness_failure_refuses(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            root = Path(temporary)
+            random_binary = root / 'random-challenge'
+            compile_writer(random_binary, ['-DSV08_CHALLENGE_SELFTEST=1'])
+            values = [subprocess.check_output([str(random_binary)], text=True).strip()
+                      for _ in range(2)]
+            for value in values:
+                self.assertRegex(value, r'^[0-9a-f]{64}$')
+            self.assertNotEqual(values[0], values[1])
+
+            no_random_binary = root / 'no-random-challenge'
+            compile_writer(no_random_binary, [
+                '-DSV08_CHALLENGE_SELFTEST=1', '-DSV08_TEST_NO_RANDOM=1'])
+            self.assertEqual(subprocess.check_output(
+                [str(no_random_binary)], text=True).strip(), 'refused')
+
+    def test_physical_h616_branch_has_strict_static_compile_only(self):
+        receipt_public_key = raw_public_key(
+            (RECEIPT_KEYS / 'test-verification-key.pem').read_bytes()).hex()
+        flags = [
+            '-DSV08_H616_COMMISSIONING=1',
+            '-DSV08_H616_EXPECTED_CID="00000000000000000000000000000000"',
+            '-DSV08_H616_EXPECTED_DEV_T="179:0"',
+            '-DSV08_H616_BOARD_COMPATIBLE="test,compile-only"',
+            '-DSV08_H616_CLAIM_SERVER="192.0.2.1"',
+            f'-DSV08_TARGET_BYTES={TARGET_BYTES}ULL',
+            '-DSV08_JOB_ID="compile-only"',
+            f'-DSV08_JOB_DESCRIPTOR_SHA256="{"0" * 64}"',
+            f'-DSV08_TARGET_POLICY_SHA256="{"0" * 64}"',
+            '-DSV08_JOB_NOT_BEFORE=1LL', '-DSV08_JOB_EXPIRES=2LL',
+            f'-DSV08_SOURCE_SHA256="{"0" * 64}"',
+            f'-DSV08_JOB_SIGNATURE_SHA256="{"0" * 64}"',
+            f'-DSV08_RECEIPT_PUBLIC_KEY_HEX="{receipt_public_key}"',
+            '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections',
+        ]
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            output = Path(temporary) / 'compile-only-writer'
+            subprocess.run([
+                'aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
+                '-Wall', '-Wextra', '-Werror',
+                f'-I{REPO / "upstream/monocypher/src"}',
+                f'-I{REPO / "upstream/monocypher/src/optional"}',
+                *flags, '-o', str(output), str(WRITER),
+                *(str(path) for path in ED25519_SOURCES)],
+                check=True, capture_output=True, timeout=120)
+            self.assertGreater(output.stat().st_size, 0)
+            self.assertFalse(output.read_bytes().find(b'test,compile-only') < 0)
+
     def test_private_signed_candidate_is_explicit_nonbootable_and_reproducible(self):
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
             work = Path(temporary)
@@ -92,6 +215,11 @@ class CandidateTests(unittest.TestCase):
             self.assertFalse(first['bootable_sd_image'])
             self.assertFalse(first['physical_target_validated'])
             self.assertFalse(first['claim_trigger_provisioned'])
+            self.assertEqual(first['binary_bytes'], (work / 'first/sd-network-init').stat().st_size)
+            self.assertEqual(first['ed25519']['implementation'], 'Monocypher')
+            self.assertIn('upstream/monocypher/LICENCE.md', first['ed25519']['source_sha256'])
+            self.assertEqual(first['receipt_verifier_sha256'],
+                             digest((RECEIPT_KEYS / 'test-verification-key.pem').read_bytes()))
             self.assertNotIn('boot.scr', [item.name for item in (work / 'first').iterdir()])
             self.assertEqual(first['policy_sha256'], digest(canonical_json(policy)))
             self.assertEqual(verify_signed_job(canonical_json(job), files['signature'].read_bytes(),
@@ -252,6 +380,8 @@ class CandidateTests(unittest.TestCase):
                              (prefix + status, 'terminal'))
         self.assertEqual(harness.guest_case_marker(prefix, lost_claim_ack=True),
                          (prefix + 'REFUSED_OR_UNCERTAIN_CLAIM', 'terminal'))
+        self.assertEqual(harness.guest_case_marker(prefix, claim_fault='forged-200'),
+                         (prefix + 'REFUSED_OR_UNCERTAIN_CLAIM', 'terminal'))
 
     def test_h616_identity_follows_single_inventory_and_dev_number(self):
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
@@ -266,8 +396,7 @@ class CandidateTests(unittest.TestCase):
                      '-DSV08_H616_EXPECTED_DEV_T="8:0"',
                      '-DSV08_H616_BOARD_COMPATIBLE="test,synthetic-h616"',
                      '-DSV08_H616_CLAIM_SERVER="10.0.2.2"']
-            subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
-                            *flags, '-o', str(binary), str(WRITER)], check=True, capture_output=True)
+            compile_writer(binary, flags)
             def check():
                 return subprocess.check_output([str(binary), str(base), str(dev_file)], text=True).strip()
             self.assertEqual(check(), 'admitted 8:0')
@@ -308,8 +437,7 @@ class CandidateTests(unittest.TestCase):
                      '-DSV08_H616_EXPECTED_DEV_T="8:0"',
                      '-DSV08_H616_BOARD_COMPATIBLE="test,synthetic-h616"',
                      '-DSV08_H616_CLAIM_SERVER="10.0.2.2"']
-            subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
-                            *flags, '-o', str(binary), str(WRITER)], check=True, capture_output=True)
+            compile_writer(binary, flags)
             for fault in (None, 'wrong-cid', 'wrong-dev', 'ambiguous',
                           'wrong-controller', 'missing-controller', 'wrong-type', 'wrong-capacity'):
                 with self.subTest(fault=fault):
@@ -341,8 +469,7 @@ class CandidateTests(unittest.TestCase):
                      '-DSV08_H616_EXPECTED_DEV_T="8:0"',
                      '-DSV08_H616_BOARD_COMPATIBLE="test,synthetic-h616"',
                      '-DSV08_H616_CLAIM_SERVER="10.0.2.2"']
-            subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
-                            *flags, '-o', str(binary), str(WRITER)], check=True, capture_output=True)
+            compile_writer(binary, flags)
             for cmd, expected in [('root=/dev/nfs sv08.h616_commissioning=1 ro', 'admitted'),
                                   ('xsv08.h616_commissioning=1 ro', 'refused'),
                                   ('sv08.h616_commissioning=10', 'refused'),

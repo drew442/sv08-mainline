@@ -11,12 +11,15 @@ import sys
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'tests'))
+sys.path.insert(0, str(REPO / 'scripts'))
 from sv08_emmc_job import canonical_json  # noqa: E402
 from sv08_reimage_signature import policy, policy_hash, verify_job  # noqa: E402
+from ed25519_build import ED25519_SOURCES, MONOCYPHER_COMMIT, raw_public_key, source_hashes  # noqa: E402
 
 WRITER = REPO / 'tests/fixtures/sd-network-root/emmc_image_writer.c'
 HEADERS = (REPO / 'tests/fixtures/sd-network-root/emmc_cid_admission.h',
            REPO / 'tests/fixtures/sd-network-root/emmc_locator.h')
+RECEIPT_VERIFIER = REPO / 'tests/fixtures/sd-network-root/receipt-test-keys/test-verification-key.pem'
 
 
 def digest(path):
@@ -30,6 +33,8 @@ def build(root, raw_job, signature, *, fault=None, claim_only=False, now=None):
     target_policy = policy()
     descriptor = verify_job(raw_job, signature, target_policy, now=now)
     job_hash = hashlib.sha256(raw_job).hexdigest()
+    receipt_key_hash = hashlib.sha256(RECEIPT_VERIFIER.read_bytes()).hexdigest()
+    receipt_key_hex = raw_public_key(RECEIPT_VERIFIER.read_bytes()).hex()
     for directory in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
         (root / directory).mkdir()
     (root / 'job.json').write_bytes(raw_job)
@@ -37,20 +42,25 @@ def build(root, raw_job, signature, *, fault=None, claim_only=False, now=None):
     (root / 'synthetic-target-policy.json').write_bytes(canonical_json(target_policy))
     args = ['aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
             '-Wall', '-Wextra', '-Werror',
+            '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections',
+            f'-I{REPO / "upstream/monocypher/src"}',
+            f'-I{REPO / "upstream/monocypher/src/optional"}',
             f'-DSV08_JOB_ID="{descriptor["job_id"]}"',
             f'-DSV08_JOB_DESCRIPTOR_SHA256="{job_hash}"',
             f'-DSV08_TARGET_POLICY_SHA256="{policy_hash(target_policy)}"',
             f'-DSV08_JOB_NOT_BEFORE={descriptor["issued_unix"]}LL',
             f'-DSV08_JOB_EXPIRES={descriptor["expires_unix"]}LL',
             f'-DSV08_SOURCE_SHA256="{descriptor["source"]["sha256"]}"',
-            f'-DSV08_JOB_SIGNATURE_SHA256="{hashlib.sha256(signature).hexdigest()}"']
+            f'-DSV08_JOB_SIGNATURE_SHA256="{hashlib.sha256(signature).hexdigest()}"',
+            f'-DSV08_RECEIPT_PUBLIC_KEY_HEX="{receipt_key_hex}"']
     if claim_only:
         args.append('-DSV08_CLAIM_ONLY=1')
     if fault:
         if fault not in {'before-write', 'partial-write', 'flush', 'readback'}:
             raise ValueError('Invalid QEMU-only injected fault')
         args.append(f'-DSV08_TEST_FAULT="{fault}"')
-    args += ['-o', str(root / 'sd-network-init'), str(WRITER)]
+    args += ['-o', str(root / 'sd-network-init'), str(WRITER),
+             *(str(path) for path in ED25519_SOURCES)]
     subprocess.run(args, check=True, timeout=120, capture_output=True)
     (root / 'sd-network-init').chmod(0o755)
     manifest = {
@@ -60,6 +70,10 @@ def build(root, raw_job, signature, *, fault=None, claim_only=False, now=None):
         'trusted_policy_sha256': policy_hash(target_policy),
         'trusted_test_verifier_sha256': digest(
             REPO / 'tests/fixtures/sd-network-root/synthetic-keys/test-verification-key.pem'),
+        'receipt_verifier_sha256': receipt_key_hash,
+        'ed25519': {'implementation': 'Monocypher', 'version': '4.0.3',
+                    'commit': MONOCYPHER_COMMIT, 'license': 'BSD-2-Clause',
+                    'source_sha256': source_hashes()},
         'writer_sha256': digest(WRITER),
         'builder_sha256': digest(Path(__file__)),
         'signature_contract_sha256': digest(REPO / 'tests/sv08_reimage_signature.py'),

@@ -1,7 +1,9 @@
 # H616 writerless adapter: offline candidate
 
-Status: offline implementation and synthetic QEMU integration complete;
-independent delivery review pending. Date: 2026-09-26. Hardware profile:
+Status: offline adapter implementation and synthetic QEMU integration complete;
+independent delivery review pending. Date: 2026-09-26. The claim protocol was
+subsequently strengthened; see the authenticated-claim QEMU report
+(host-network-emmc-authenticated-claim-qemu-20260927.md). Hardware profile:
 test-sv08-01, reported PCB `H616_JC_6Z_V1.2`; this report contains **no new
 physical measurement or write**. The H10 read-only probe identified one
 61,079,552-sector `MMC` under `4022000.mmc`, but did not capture a fresh CID
@@ -40,8 +42,10 @@ selects H616 only when built with the explicit commissioning define. The
 physical branch requires both the locally pinned board-compatible string and
 `allwinner,sun50i-h616`, read-only NFS root, and the exact commissioning
 command-line token. Before opening `/dev/mmcblk0`, it checks the pinned bundle
-hashes and signed-job time window, requires a successful one-shot claim
-response, opens and validates the source, and hashes the complete source image.
+hashes and signed-job time window, requires a valid challenge-bound signed
+one-shot claim receipt, opens and validates the source, and hashes the complete
+source image. The authenticated-claim report records this protocol and its
+synthetic validation.
 Only after that hash matches does it recheck target identity and open the target.
 The H616 adapter scans the `4022000.mmc` sysfs inventory for one MMC of the
 expected CID/type/sector count, checks the controller path and expected
@@ -193,11 +197,13 @@ included. Beelink had more than 10 GB free before and after the runs and over
 7 GB available memory. No raw image was staged on the development VM.
 
 Physical candidate construction is blocked until the selected image's exact
-SHA-256 and disk GUID are independently recorded together. The plain HTTP claim transport, port supplied in boot arguments, independent
-SD boot image, and real NFS export/trigger have not been reviewed as a physical
-trust chain. In particular, a physical claim acknowledgement is not yet
-authenticated to the printer; QEMU's isolated network does not resolve that
-gap. The candidate remains inert and nondeployable. Before H12 can be run,
+SHA-256 and disk GUID are independently recorded together and the actual image
+is cryptographically mapped to that record. The newly tested challenge-bound
+signature prevents a spoofed acknowledgement from authorizing the writer, but
+the synthetic verifier key is not production-provisioned. The port supplied in
+boot arguments, independent SD boot image, and real NFS export/trigger have not
+been reviewed as a physical trust chain. The candidate remains inert and
+nondeployable. Before H12 can be run,
 the project needs a fresh live CID and `dev_t` map, exact image/policy inputs,
 a reviewed one-shot boot/claim transport, power-loss and USB-writer recovery
 procedure, independent high-consequence review, and explicit action

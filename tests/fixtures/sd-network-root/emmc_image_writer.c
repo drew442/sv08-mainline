@@ -13,12 +13,15 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <sys/random.h>
+#include <sys/resource.h>
 #include <sys/reboot.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/sysmacros.h>
 #include <time.h>
 #include <unistd.h>
+#include "monocypher-ed25519.h"
 
 #define IMAGE_BYTES 7818182656ULL
 #ifndef SV08_TARGET_BYTES
@@ -88,6 +91,9 @@
 #endif
 #ifndef SV08_JOB_SIGNATURE_SHA256
 #define SV08_JOB_SIGNATURE_SHA256 ""
+#endif
+#ifndef SV08_RECEIPT_PUBLIC_KEY_HEX
+#define SV08_RECEIPT_PUBLIC_KEY_HEX "0000000000000000000000000000000000000000000000000000000000000000"
 #endif
 #ifndef SV08_TEST_FAULT
 #define SV08_TEST_FAULT ""
@@ -385,17 +391,71 @@ static int board_compatible(void) {
   return 0;
 #endif
 }
+static int verify_claim_receipt(const char *response,size_t used,
+                                const char *descriptor_hash,const char *challenge) {
+  static const char success_headers[]=
+      "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n"
+      "Content-Length: 129\r\nConnection: close\r\n\r\n";
+  const char *body_start;
+  char message[512];unsigned char signature[64],public_key[32];int message_size;
+  if(used!=sizeof(success_headers)-1+129||
+     memcmp(response,success_headers,sizeof(success_headers)-1))return 0;
+  body_start=response+sizeof(success_headers)-1;
+  if(body_start[128]!='\n')return 0;
+  for(size_t i=0;i<64;i++) {
+    int high,low;char a=body_start[i*2],b=body_start[i*2+1];
+    high=(a>='0'&&a<='9')?a-'0':(a>='a'&&a<='f')?a-'a'+10:-1;
+    low=(b>='0'&&b<='9')?b-'0':(b>='a'&&b<='f')?b-'a'+10:-1;
+    if(high<0||low<0)return 0;
+    signature[i]=(unsigned char)((high<<4)|low);
+  }
+  for(size_t i=0;i<32;i++) {
+    int high,low;char a=SV08_RECEIPT_PUBLIC_KEY_HEX[i*2];
+    char b=SV08_RECEIPT_PUBLIC_KEY_HEX[i*2+1];
+    high=(a>='0'&&a<='9')?a-'0':(a>='a'&&a<='f')?a-'a'+10:-1;
+    low=(b>='0'&&b<='9')?b-'0':(b>='a'&&b<='f')?b-'a'+10:-1;
+    if(high<0||low<0)return 0;
+    public_key[i]=(unsigned char)((high<<4)|low);
+  }
+  message_size=snprintf(message,sizeof(message),
+      "SV08-EMMC-CLAIM-RECEIPT-v1\njob_id=%s\ndescriptor_sha256=%s\nchallenge=%s\n",
+      SV08_JOB_ID,descriptor_hash,challenge);
+  if(message_size<0||(size_t)message_size>=sizeof(message))return 0;
+  return crypto_ed25519_check(signature,public_key,(const unsigned char *)message,
+                               (size_t)message_size)==0;
+}
+static int random_challenge(char challenge[65]) {
+  unsigned char random_bytes[32];size_t random_used=0;ssize_t n;
+  static const char hex[]="0123456789abcdef";
+  while(random_used<sizeof(random_bytes)) {
+#if defined(SV08_TEST_NO_RANDOM)
+    errno=EIO;n=-1;
+#else
+    n=getrandom(random_bytes+random_used,sizeof(random_bytes)-random_used,GRND_NONBLOCK);
+#endif
+    if(n<0&&errno==EINTR)continue;
+    if(n<=0)return 0;
+    random_used+=(size_t)n;
+  }
+  for(size_t i=0;i<sizeof(random_bytes);i++) {
+    challenge[i*2]=hex[random_bytes[i]>>4];challenge[i*2+1]=hex[random_bytes[i]&15];
+  }
+  challenge[64]=0;
+  return 1;
+}
 static int claim_once(const char *cmd,const char *descriptor_hash) {
   char *port_arg=strstr(cmd,"sv08.claim_port=");char *end=NULL;
   long port;int fd;struct sockaddr_in address;struct timeval timeout={5,0};
-  char body[512],request[1024],response[4096];size_t used=0;ssize_t n;
-  const char *body_start,*expected_body;
+  char body[768],request[1280],response[4096],challenge[65];
+  size_t used=0;ssize_t n;
   if(!port_arg)return 0;
   port_arg+=strlen("sv08.claim_port=");errno=0;port=strtol(port_arg,&end,10);
   if(errno||end==port_arg||port<1||port>65535||
      (*end&&*end!=' '&&*end!='\n'&&*end!='\t'))return 0;
-  int body_size=snprintf(body,sizeof(body),"{\"descriptor_sha256\":\"%s\",\"job_id\":\"%s\"}",
-                         descriptor_hash,SV08_JOB_ID);
+  if(!random_challenge(challenge))return 0;
+  int body_size=snprintf(body,sizeof(body),
+                         "{\"challenge\":\"%s\",\"descriptor_sha256\":\"%s\",\"job_id\":\"%s\"}",
+                         challenge,descriptor_hash,SV08_JOB_ID);
   if(body_size<0||(size_t)body_size>=sizeof(body))return 0;
   int request_size=snprintf(request,sizeof(request),
       "POST /claim HTTP/1.1\r\nHost: "
@@ -428,15 +488,7 @@ static int claim_once(const char *cmd,const char *descriptor_hash) {
     used+=(size_t)n;
   }
   close(fd);response[used]=0;
-  body_start=strstr(response,"\r\n\r\n");
-  if(!body_start||strncmp(response,"HTTP/1.1 200 OK\r\n",17))return 0;
-  body_start+=4;
-  char success[512];
-  int success_size=snprintf(success,sizeof(success),"CLAIMED %s %s\n",SV08_JOB_ID,descriptor_hash);
-  if(success_size<0||(size_t)success_size>=sizeof(success))return 0;
-  expected_body=success;
-  return used-(size_t)(body_start-response)==(size_t)success_size&&
-         !memcmp(body_start,expected_body,(size_t)success_size);
+  return verify_claim_receipt(response,used,descriptor_hash,challenge);
 }
 static int exact_read(int fd,size_t n) {
   size_t done=0;while(done<n){ssize_t got=read(fd,buffer+done,n-done);
@@ -527,6 +579,28 @@ int main(int argc,char **argv) {
   puts(argc==2&&cmdline_has_token(argv[1],SV08_MODE_PARAMETER)?"admitted":"refused");
   return 0;
 }
+#elif defined(SV08_CLAIM_RECEIPT_SELFTEST)
+int main(int argc,char **argv) {
+  char response[4096];size_t used=0;ssize_t n;int fd;
+  if(argc!=4)return 2;
+  fd=open(argv[1],O_RDONLY|O_CLOEXEC|O_NOFOLLOW);if(fd<0)return 3;
+  while(used<sizeof(response)) {
+    n=read(fd,response+used,sizeof(response)-used);
+    if(n<0&&errno==EINTR)continue;
+    if(n<0){close(fd);return 4;}
+    if(n==0)break;
+    used+=(size_t)n;
+  }
+  close(fd);
+  puts(verify_claim_receipt(response,used,argv[2],argv[3])?"admitted":"refused");
+  return 0;
+}
+#elif defined(SV08_CHALLENGE_SELFTEST)
+int main(void) {
+  char challenge[65];
+  if(!random_challenge(challenge)){puts("refused");return 0;}
+  puts(challenge);return 0;
+}
 #else
 int main(void) {
   const char *source="/image.bin",*target=SV08_TARGET;
@@ -549,6 +623,11 @@ int main(void) {
   /* One request only. A timeout/lost response consumes the server-side job
    * but cannot reach target open; a later boot will be refused as consumed. */
   if(!claim_once(cmd,descriptor_hash))finish("REFUSED_OR_UNCERTAIN_CLAIM");
+#if defined(SV08_H616_SYNTHETIC_TEST)
+  struct rusage claim_usage;
+  if(!getrusage(RUSAGE_SELF,&claim_usage))
+    printf("%sCLAIM_VERIFIED_MAXRSS_KIB %ld\n",SV08_RESULT_PREFIX,claim_usage.ru_maxrss);
+#endif
 #if defined(SV08_CLAIM_ONLY)
   finish("CLAIM_ONLY_PASS");
 #endif

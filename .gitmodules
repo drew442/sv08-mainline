@@ -19,3 +19,6 @@
 [submodule "upstream/klipperscreen"]
 	path = upstream/klipperscreen
 	url = https://github.com/KlipperScreen/KlipperScreen.git
+[submodule "upstream/monocypher"]
+	path = upstream/monocypher
+	url = https://github.com/LoupVaillant/Monocypher.git

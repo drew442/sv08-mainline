@@ -72,6 +72,16 @@
       "role": "required-hdmi-touchscreen-ui",
       "status": "intake-only",
       "hardware_validated": false
+    },
+    {
+      "path": "upstream/monocypher",
+      "url": "https://github.com/LoupVaillant/Monocypher.git",
+      "commit": "ab2b16dd619ad5f6979a4fbe69cfa324a6fcc35f",
+      "selected_ref": "4.0.3",
+      "selected_on": "2026-09-27",
+      "role": "Ed25519 claim-receipt verification for the offline H616 commissioning writer",
+      "status": "candidate",
+      "hardware_validated": false
     }
   ]
 }
