@@ -84,11 +84,14 @@ retains the real regression. These review findings changed delivered behavior.
 
 Keep one implementation active, short task packets and the existing canonical
 checklists. Treat declared role permissions as instructions until the actual
-runner enforces them. A native CLI sandbox trial failed and an empty result was
-rejected; the separate-session collaboration fallback completed proposal and
-delivery review with inherited parent permissions. Restricted unattended runner
-deployment and scheduling were outside the approved offline pilot and remain
-unconfigured. The dispatcher itself launches no process.
+runner enforces them. The original native CLI sandbox trial failed and its empty
+result was rejected. Bubblewrap is now installed and a later native session
+starts successfully, but its shell sandbox still fails during loopback setup;
+the separate-session collaboration fallback completed proposal and delivery
+review with inherited parent permissions. See the [updated runtime validation](feature-workflow-validation.md#execution-limits).
+Restricted unattended runner deployment and scheduling were outside the
+approved offline pilot and remain unconfigured. The dispatcher itself launches
+no process.
 
 ## Remaining project work
 

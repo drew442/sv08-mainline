@@ -55,12 +55,20 @@ or physical-storage speed measurement.
 
 ## Execution limits
 
-The native `codex-cli 0.153.4` trial accepted strict configuration, read-only
-sandbox selection, JSONL output and a structured-result request. Its read sandbox
-failed to initialize and a child launch reported a missing thread. It exited zero
-with `{"results":[]}`; the workflow rejected that incomplete result. Native custom
-agent execution and sandbox isolation did **not** pass this trial. Raw diagnostics
-remain in ignored `local/feature-workflow/`.
+The original native `codex-cli 0.153.4` trial accepted strict configuration,
+read-only sandbox selection, JSONL output and a structured-result request. Its
+read sandbox failed to initialize and a child launch reported a missing thread.
+It exited zero with `{"results":[]}`; the workflow rejected that incomplete
+result. On 2026-09-27, after installing bubblewrap 0.9.0, `codex-cli 0.157.1`
+started an ephemeral read-only session and returned a simple response. A shell
+write probe did not reach the command: bubblewrap reported
+`loopback: Failed RTM_NEWADDR: Operation not permitted`, and the probe file was
+absent. A direct unprivileged bubblewrap probe also cannot create its user ID map
+in this VM. Therefore the missing bubblewrap package is resolved, and native
+session startup now works, but native shell sandboxing, filesystem write denial,
+and custom-agent execution are not yet validated. The successful privileged
+`sudo bwrap` smoke test does not establish the unprivileged Codex sandbox. Raw
+diagnostics remain in ignored `local/feature-workflow/`.
 
 The explicit separate-session collaboration fallback completed all five cases.
 That client inherits its parent permissions, so read-only reviewer instructions
@@ -68,7 +76,10 @@ are not an enforced sandbox. The dispatcher launches no processes and grants no
 additional isolation. No printer or private backup access was needed. Unattended
 scheduling remains disabled; deployment requires a restricted runner whose actual
 permissions are verified. The attended offline pilot completed using separate
-implementer and reviewer sessions under these documented limits.
+implementer and reviewer sessions under these documented limits. Re-test the
+native shell sandbox after the VM permits the required unprivileged namespace and
+loopback setup; do not treat package installation or a privileged smoke test as
+closure of that remaining isolation check.
 
 Repeat the deterministic checks with:
 
