@@ -203,8 +203,9 @@ and all FIT members extracted from the staged filesystem. Its result is
 `prearm_normal_slot_policy_retained=true` and
 `staged_fit_components_verified=true`; result JSON SHA-256 is
 `e857a809fa65043bf4b3bec00b7b930ce1fa89afb807899f239d88749d7b5811`.
-The same source revision must pass a
-new full QEMU write and refusal before this change is submitted again.
+The marker-last source revision subsequently passed a full QEMU write,
+normal-A boot, final-environment fault run and fresh refusal, as recorded
+below.
 The expanded U-Boot sandbox test in `build/urh-stage-fault-v2` exercised the
 compiled A/B dispatcher with an original recovery entry before wrapper
 replacement, no marker after wrapper replacement, one changed redundant
@@ -281,6 +282,82 @@ serial SHA-256 is
 This supplies a sequential offline writer-to-normal-A result on one target.
 QEMU still does not execute the H616 U-Boot-to-FIT handoff or printer services;
 those remain hardware acceptance checks.
+
+The corrected marker-last and FIT-extraction run at
+`/mnt/sv08-qemu-trusted/urh-qemu-final-fit-success-v1` passed with a 1 GiB
+guest and the exact reviewed v5 source. The QEMU kernel and initramfs were
+extracted from the FIT on the staged disposable recovery partition, and their
+hashes matched the reviewed build manifest. The final stage journal was
+`marker-durable` only after `armed-both-verified`; manifest and journal hashes
+are `6ca0c86729ed0370f825e8075f901eacb43cafa785087428f85be396875f8cf7`
+and `25e4e2109c53484b261303ae54db0627dc0c5927135235d014b646a02929a397`.
+The actual controller and guest completed full write, flush and readback;
+independent host SHA-256 and six GPT records matched the source, and both
+final environment copies selected normal A (A=3, B=0, no arm token). Result
+JSON SHA-256 is
+`7ad668012f1e663ca4d46617f4a2dbec2fd15f7b40bfdfda10eff859880a940d`;
+serial SHA-256 is
+`19fa1af664f2b9803b67465174a6aa722d05a5ed7e1d7bac50d13f96623f4cbf`.
+The guest logged one atomic page-allocation warning and three NFS timeout
+messages while still completing the verified transfer; these remain a QEMU
+transport limitation, not a physical reliability result.
+
+The same post-write target then passed a production-initramfs QEMU snapshot
+boot at `/mnt/sv08-qemu-trusted/urh-repo/local/urh-final-normal-boot-v1`:
+`sv08-prepare.service`, multi-user mode and a login prompt appeared, and the
+source image prefix retained its pinned hash. Result JSON SHA-256 is
+`58223de9548b00a935b20e023fee73676f18c7bc15c9a6b2f1734ba1a592fa67`;
+serial SHA-256 is
+`066f9fca0d43f049593bec6d6258c6e6961c87efa5c6122a2011baa2fc5e4b7e`.
+The snapshot boot tests the new image's normal A slot, not its physical H616
+U-Boot selection or printer services.
+
+An earlier 1 GiB after-bulk QEMU trial at
+`/mnt/sv08-qemu-trusted/urh-qemu-split-after-bulk-v1` reached
+`INJECTED_AFTER_BULK`; its deliberate retry reported
+`REFUSED_RECOVERY_MARKER` before any second target open. Read-only inspection
+found both old environment copies CRC-valid and exhausted, the marker absent,
+and the six GPT records matching the source map. First/retry serial SHA-256 are
+`8c4f675ce88116d6719269f3525c486266151b27fd7d1dd62f20ae80149809b8`
+and `ab96194b0abf5c1fae553d2e7373b41bc352a2bdae9be089bbf65e5e2e6002ac`.
+That run used the earlier marker-before-arm stager and its harness exited 1
+*after* the retry because it incorrectly applied the success-only normal-A
+assertion to a fault case. The assertion is fixed in the current source; this
+historical trace is fault-path evidence, not a passing final harness result.
+
+The corrected marker-last source then passed an exact-v5-source QEMU fault run
+at `/mnt/sv08-qemu-trusted/urh-qemu-final-first-env-v1`. After a full source
+hash and bulk write/readback, the guest stopped deliberately after replacing
+the first final environment record. That record was CRC-valid with normal
+order A, A=3/B=0 and no arm token; the second remained CRC-valid with
+exhausted A/B attempts and the job arm token. The recovery marker was absent,
+the one-shot claim had been consumed, and a second boot reported
+`REFUSED_RECOVERY_MARKER` without a second target open. The harness exited 0.
+Result JSON SHA-256 is
+`e754ebdaca6f8de0509c59acb6119097ee91f1b7f35af02e7671a050f92d2916`;
+first/retry serial SHA-256 are
+`49697e310e8f98526a2c21adb629232923662bbaeb897986b77ed753b1cf2df0`
+and `8659028b5488b18055e44232c6740d7ae2852c4741b4ddaf3b3d8b36b8199a0f`.
+The staged build/journal hashes are
+`9ec468961297fddbb2075fad90240e3aeeaa04525f1d4d30023a84b87bf8815c`
+and `9a14f9da030144ab4e746bd0a706ebfef77ad5444519bf12bdb2e917480ca1ca`.
+The 2 GiB guest logged one atomic page-allocation warning; this fault run
+does not establish the board's 1 GiB behavior, which the separate full-success
+run tested. A reboot through physical H616 U-Boot after a one-record update
+remains untested.
+
+The fresh marker-last 1 GiB refusal at
+`/mnt/sv08-qemu-trusted/urh-qemu-final-refusal-v1` used a deliberately
+tampered signed job. It reported `REFUSED_BUNDLE` before source hash, claim or
+target open, consumed the marker, and left the target prefix unchanged. The
+harness exited 0. Result JSON SHA-256 is
+`901cb3335386de9b87990f6064e327f6536d7fd8adf88f171aa6be79d93ef1be`;
+serial SHA-256 is
+`899a7998913ed88da2e81434004d5a5846d416f1ee71e3355c6f3bb4d77e1714`.
+The result reports `h616_boot_tested=false` and a synthetic target.
+Small result, build, journal and serial files for these final trials are
+mirrored in ignored `local/urh-review-logs/` for independent inspection;
+raw source and target images remain on Beelink's dedicated scratch volume.
 
 The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
