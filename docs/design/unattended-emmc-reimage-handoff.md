@@ -146,6 +146,21 @@ physical H616 boot. The QEMU harness starts the same trusted RAM writer with
 an external kernel/initramfs after separate U-Boot sandbox selector testing;
 it does not emulate H616 U-Boot handing control directly to the FIT.
 
+A further snapshot QEMU probe at
+`/mnt/sv08-qemu-trusted/urh-repo/local/urh-v5-full-os-boot-final` booted the
+unchanged reviewed v5 kernel and initramfs from the previously replaced
+regular-file target. With the normal `rauc.slot=A` boot identity, it mounted
+root-A read-only and `/data` read-write in QEMU's temporary overlay;
+`sv08-prepare.service` passed, systemd reached `multi-user.target`, and the
+`sv08 login:` prompt appeared. The source image prefix retained the exact v5
+SHA-256. The result JSON SHA-256 is
+`22be069b833632bcd64a807a3e1acaa5ce4294866e4f4845b8bd7d82ef74bd71`;
+serial SHA-256 is
+`7f5abbcadfa1129b0429102204e6dc8c87b2167f0a631e990552d07041b1c43e`.
+The snapshot uses restricted QEMU user networking and 1 GiB RAM. This is a
+normal Debian A-slot boot probe, not physical U-Boot handoff or a printer
+service/heat/motion test.
+
 The offline stager currently operates on a caller-supplied recovery directory
 and arms **regular-file disks only**. It has no live block-device CLI. It
 rechecks the exact signed job and image map at stage time, and requires
@@ -173,6 +188,18 @@ and a different backing path were refused. Its result is in ignored
 `local/urh-mounted-stage-v2/result.json`, SHA-256
 `4381d23cea50c055f00c5391de5967bc904f778254afa6623c7dd1178ef666e2`.
 This exercise does not identify a live `/dev/mmcblk0` or prove eMMC durability.
+The controller-integrated QEMU harness now stages its disposable v5 recovery
+partition with that same checked and journaled stager, then arms the two
+regular-file environment copies before booting the exact staged kernel and
+initramfs with the staged selector's boot arguments. Its first integrated
+refusal at `/mnt/sv08-qemu-trusted/urh-qemu-integrated-refusal-v1` passed:
+an intentionally corrupted signed job was rejected before claim or target
+open, and the writer marker was removed. Its result JSON SHA-256 is
+`73c160ceb9d720193c554f8d448e1cfa4998f33ab98c5637d1c74c38b9e6dc5b`;
+serial SHA-256 is
+`62c5d3a3d22ed773191423864dcf753fac72bc58d10dd60dca050d7b3e077f29`.
+The QEMU `virt` machine still starts that verified kernel/initramfs externally;
+it cannot establish the actual H616 U-Boot-to-FIT transition.
 The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
 `c7674f377719f4fc8e61f2d1ff6480a63c242199db0672fbe34ff9c6c645e677`.
