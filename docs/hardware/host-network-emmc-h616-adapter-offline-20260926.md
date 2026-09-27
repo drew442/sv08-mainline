@@ -65,11 +65,13 @@ independent host SHA-256 and both-GPT/partition checks after a full run. This
 synthetic model cannot establish the H616 kernel's actual CID/controller/dev_t
 mapping.
 
-Offline checks on the implementation tree:
+Initial offline checks on the original implementation revision (historical;
+the source and binary hashes in this subsection are superseded by the review
+retest below):
 
 ```text
 python3 -m unittest tests.test_h616_reimage_candidate tests.test_qemu_reimage_mode tests.test_sd_network_emmc_write tests.test_sd_network_image -q
-31 tests passed (15.59 s)
+31 tests passed (15.59 s; original implementation revision)
 aarch64-linux-gnu-gcc -static -Os -D_FORTIFY_SOURCE=2 -Wall -Wextra -Werror ... emmc_image_writer.c
 physical and synthetic H616 compile checks passed
 python3 -m py_compile scripts/build_h616_reimage_candidate.py tests/host_qemu_sd_network_emmc_write.py tests/test_h616_reimage_candidate.py
@@ -91,7 +93,7 @@ from the fixed public test inputs in `tests/test_h616_reimage_candidate.py`
 has writer SHA-256 `723ca2d058408471b01c2f626aba2cfac4d019b5e8e8c94fa446eb748cc50af4`
 and ARM64 binary SHA-256
 `49602427e3520438f08e3a0355ce6ae92594cfbf9e39fedb0332f1e1f0c5d28a`.
-The builder, QEMU harness and H616 test source hashes are respectively
+The original builder, QEMU harness and H616 test source hashes are respectively
 `03fd74de5bc43d6116eeb4822ac89f7f5ba69876f678b661edd0a1c1769b8b73`,
 `5d31e20940364e4e67ad8ae19e3e7b136ac09dd5ab17482b7a3712df3b42b64c`,
 and `060b0a6259c3df60db5d908e0d972338a419790e9a2371eb7dd1068db3260436`.
@@ -149,6 +151,28 @@ OOM or NFS error. Beelink had 10,715,668,480 bytes free before and
 10,706,477,056 bytes after the run; no raw image was staged on the development
 VM.
 
+The submitted source hashes are builder
+`67884c15601eb6b5238833359e3d4bcc5e248968f89603573d282114a94267e3`, writer
+`47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015`, QEMU
+harness `6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab`,
+and H616 tests
+`d366757c57a920af8d8ec721e2440f34fb123c972b82bfd51ad34ddfcde2c1af`. The
+full retest manifest binds the built ARM64 writer hash
+`539085d22757b3e1db8baab8c932c27940ad794d4af00dc459dc9df449453a9d`; these
+values supersede the historical implementation hashes above. The coordinator
+reran this current focused suite:
+
+```text
+python3 -m unittest tests.test_h616_reimage_candidate tests.test_qemu_reimage_mode \
+  tests.test_sd_network_emmc_write tests.test_sd_network_cid_admission \
+  tests.test_sd_network_image -q
+37 tests passed (15.78 s)
+```
+
+The independent verifier also reproduced focused tests and a strict static
+ARM64 build. Python compilation, JSON validation, workflow validation, and diff
+checks passed for the submitted source and evidence.
+
 These results establish only synthetic QEMU integration. The exact command
 shape for reproduction is:
 
@@ -160,9 +184,10 @@ sudo unshare -n -m -- python3 tests/host_qemu_sd_network_emmc_write.py \
   --commissioning --execute
 ```
 
-The full completed matrix used each of those identity/fault options, plus the
-no-fault `--commissioning --execute` transfer, each with a fresh claim and
-disposable target. The harness generates the sparse 7.8 GB nonbootable source
+The initial matrix recorded above used each of its original identity/fault
+options, plus the no-fault `--commissioning --execute` transfer, each with a
+fresh claim and disposable target. The updated ten-case matrix is separately
+bound by the review-retest JSON. The harness generates the sparse 7.8 GB nonbootable source
 and verifies its pinned hash, so no physical image or private backup is
 included. Beelink had more than 10 GB free before and after the runs and over
 7 GB available memory. No raw image was staged on the development VM.
