@@ -32,9 +32,19 @@ FIELDS = {'format', 'cid', 'controller', 'card_type', 'sectors', 'dev_t',
 TEST_DISK_GUID = '8aae17d2-09b3-47ab-8e35-8e91e63cf2b0'
 TEST_PART_GUIDS = tuple(f'ed49c82b-2455-4709-8f41-66fd41664e{i:02d}' for i in range(1, 7))
 TEST_IMAGE_SHA256 = '7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec'
-# No public reviewed image record currently binds a physical image hash to its
-# disk GUID. Add an independently reviewed pair here only as part of H12.
-REVIEWED_PHYSICAL_IMAGES = {}
+# Read-only artifact audit: docs/hardware/host-board-image-20260925-v5-gpt-audit-20260927.json.
+# This is the image GPT identity, never the prior destination's pre-write GUID.
+V5_IMAGE_SHA256 = 'ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f'
+V5_IMAGE_DISK_GUID = 'b643a41a-d63f-40aa-9940-74a8f4e19a8d'
+V5_IMAGE_PARTITIONS = (
+    ('boot-a', 'ba55a9b4-7969-423b-a739-db62e231b7a1', 16777216, 201326592),
+    ('root-a', '26c68198-9248-47af-bbd3-643f1b604ef5', 218103808, 2147483648),
+    ('boot-b', '7b6e5211-6c5f-432f-9afc-2ac7e4f80b04', 2365587456, 201326592),
+    ('root-b', 'd8d04a9a-f51f-41b3-a474-e079efe97186', 2566914048, 2147483648),
+    ('recovery', 'b28438ed-f895-4b93-9bad-d27d3890ccd3', 4714397696, 536870912),
+    ('data', '4773f966-0678-4cf5-bb83-8ee6fb11d8eb', 5251268608, 2565865472),
+)
+REVIEWED_PHYSICAL_IMAGES = {V5_IMAGE_SHA256: V5_IMAGE_DISK_GUID}
 
 
 def digest(data):
@@ -85,16 +95,24 @@ def expected_image_layout(synthetic_test, image_sha256):
         if disk_guid is None:
             return None
         profile = json.loads((REPO / 'configs/host-os/recovery-test-sv08-01.json').read_text())
+        audited = [dict(number=index, name=name, partuuid=partuuid,
+                        offset_bytes=offset, size_bytes=size)
+                   for index, (name, partuuid, offset, size) in enumerate(V5_IMAGE_PARTITIONS, 1)]
         identities = tuple(item['partuuid'] for item in profile['partitions'])
         if (len(identities) != 6 or
                 [(item['index'], item['role']) for item in profile['partitions']] !=
-                [(index, part['name']) for index, part in enumerate(parts, 1)]):
+                [(index, part['name']) for index, part in enumerate(parts, 1)] or
+                records_for_layout(parts, identities) != audited):
             raise ValueError('Reviewed board partition identity changed')
-    records = [dict(number=index, name=part['name'], partuuid=identities[index - 1],
-                    offset_bytes=part['offset_bytes'], size_bytes=part['size_bytes'])
-               for index, part in enumerate(parts, 1)]
+    records = records_for_layout(parts, identities)
     return {'disk_guid': disk_guid, 'image_bytes': IMAGE_BYTES,
             'backup_gpt_at_image_end': True, 'partitions': records}
+
+
+def records_for_layout(parts, identities):
+    return [dict(number=index, name=part['name'], partuuid=identities[index - 1],
+                 offset_bytes=part['offset_bytes'], size_bytes=part['size_bytes'])
+            for index, part in enumerate(parts, 1)]
 
 
 def exact_image_layout(value, *, synthetic_test, image_sha256):

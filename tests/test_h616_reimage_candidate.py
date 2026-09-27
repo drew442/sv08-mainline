@@ -10,8 +10,9 @@ import unittest
 from unittest import mock
 
 from scripts.build_h616_reimage_candidate import (
-    REPO, WRITER, IMAGE_BYTES, SECTORS, TARGET_BYTES, build, digest,
-    policy_fields, verify_signed_job,
+    REPO, WRITER, IMAGE_BYTES, SECTORS, TARGET_BYTES, V5_IMAGE_SHA256,
+    V5_IMAGE_DISK_GUID, V5_IMAGE_PARTITIONS, build, digest,
+    expected_image_layout, policy_fields, verify_signed_job,
 )
 from tests.host_qemu_sd_network_emmc_write import (
     DISK_GUID, IMAGE_SHA256, expected_records, synthetic_mmc_fixture,
@@ -195,6 +196,35 @@ class CandidateTests(unittest.TestCase):
         physical['board_compatible'] = 'sovol,sv08'
         with self.assertRaises(ValueError):
             policy_fields(physical)
+
+    def test_v5_physical_map_matches_public_audit_and_rejects_drift(self):
+        audit = json.loads((REPO / 'docs/hardware/host-board-image-20260925-v5-gpt-audit-20260927.json').read_text())
+        audited = audit['gpt']
+        self.assertEqual(audit['artifact']['raw_sha256'], V5_IMAGE_SHA256)
+        self.assertEqual(audited['disk_guid'], V5_IMAGE_DISK_GUID)
+        self.assertEqual(tuple((item['name'], item['partuuid'], item['offset_bytes'], item['size_bytes'])
+                               for item in audited['partitions']), V5_IMAGE_PARTITIONS)
+
+        policy = copy.deepcopy(synthetic_policy())
+        policy.update(board_compatible='sovol,sv08', image_sha256=V5_IMAGE_SHA256,
+                      image_layout=expected_image_layout(False, V5_IMAGE_SHA256))
+        self.assertEqual(policy_fields(policy), policy)
+        expected = policy['image_layout']
+        mutations = [
+            ('hash', lambda p: p.__setitem__('image_sha256', '0' * 64)),
+            ('disk-guid', lambda p: p['image_layout'].__setitem__('disk_guid', '4aae17d2-09b3-47ab-8e35-8e91e63cf2b0')),
+            ('partition-guid', lambda p: p['image_layout']['partitions'][0].__setitem__('partuuid', '00000000-0000-4000-8000-000000000001')),
+            ('offset', lambda p: p['image_layout']['partitions'][0].__setitem__('offset_bytes', 0)),
+            ('size', lambda p: p['image_layout']['partitions'][0].__setitem__('size_bytes', 512)),
+            ('order', lambda p: p['image_layout']['partitions'].reverse()),
+        ]
+        for name, mutate in mutations:
+            with self.subTest(name=name):
+                changed = copy.deepcopy(policy)
+                mutate(changed)
+                with self.assertRaises(ValueError):
+                    policy_fields(changed)
+        self.assertEqual(policy['image_layout'], expected)
 
     def test_abrupt_fault_build_is_synthetic_only(self):
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
