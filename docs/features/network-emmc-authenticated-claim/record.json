@@ -1,0 +1,119 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "A valid signature binds the current job ID, descriptor hash and fresh per-invocation challenge; unavailable randomness fails closed.",
+      "environment": "offline",
+      "id": "claim-01"
+    },
+    {
+      "description": "Forged, modified, wrong-key, wrong-job, stale, replayed, truncated and malformed receipts refuse before target open or modification.",
+      "environment": "offline",
+      "id": "claim-02"
+    },
+    {
+      "description": "Durable one-shot claim is published before receipt signing; duplicates and lost acknowledgements remain consumed without retry or rearm.",
+      "environment": "offline",
+      "id": "claim-03"
+    },
+    {
+      "description": "Synthetic QEMU full/fault/abrupt tests and default diagnostic regression pass; crypto provenance and size/layout are recorded; output stays nonbootable and nondeployable.",
+      "environment": "offline",
+      "id": "claim-04"
+    }
+  ],
+  "created": "2026-09-27",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "claim-01",
+          "claim-04"
+        ],
+        "text": "Use a reviewed Ed25519 implementation with recorded version, source, license and ARM64 static build method. First establish that dependency and measure binary/root size and memory impact. If it cannot fit the existing NFS guest and reviewed 8 GB image geometry, stop with measurements and a concrete alternative for review. Do not implement handwritten cryptography or silently change license terms."
+      },
+      {
+        "checks": [
+          "claim-01",
+          "claim-02"
+        ],
+        "text": "Pin a dedicated receipt verification key in the inert candidate and keep its signing key only in ignored host-side provisioning. Public synthetic test keys cannot authenticate a physical claim. Define canonical versioned signed bytes and strict response framing; verify signature, exact job ID, descriptor hash and current invocation challenge before any target open. Test a forged HTTP 200 that did not consume the real claim, as well as altered and replayed receipts."
+      },
+      {
+        "checks": [
+          "claim-03"
+        ],
+        "text": "Sign only after the consumed state and containing directory have been durably synced. Any signing, transport or persistence uncertainty leaves the claim consumed, yields no accepted receipt, and never retries or rearms automatically. Exercise interruption on both sides of durable publication and a lost response."
+      },
+      {
+        "checks": [
+          "claim-04"
+        ],
+        "text": "Keep evidence explicitly offline and synthetic. Record exact source, dependency, binary, manifest and test-result hashes; preserve the default read-only diagnostic and nonbootable, nondeployable candidate. H12 still requires live identity, reviewed physical artifact and operation, recovery and separate high-consequence review before a write."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "4d3ba2147c5b9c10237d1d0789af22726de211a4958dda7f7fe57ad2236bac0f",
+    "rationale": "The current C writer accepts an unauthenticated HTTP 200 and literal body as proof of claim consumption (emmc_image_writer.c, claim_once), while ClaimHTTPServer returns that body without a signature. A forged endpoint could therefore let the guest proceed without consuming the real one-shot state. The proposed fresh-challenge Ed25519 receipt closes that specific gap. Decision 0018 and the H616 proposal authorize this bounded offline continuation, and the v5 map delivery does not address claim authenticity. The protocol remains susceptible to denial of service if an attacker consumes the real claim first, but that cannot authorize a write; it must fail closed. The cross compiler currently has no identified static ARM64 Ed25519 library, so dependency provenance, integration and resource fit must be established before treating the implementation as delivered. This approval grants no physical construction, provisioning, boot-policy change, write or release authority.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/features/network-emmc-h616-writerless-adapter/proposal.md": "7acb5d46d549494db3d8ec69a57e7f610c9d0581fbc74363152155788e81d541",
+      "docs/features/network-emmc-h616-writerless-adapter/record.json": "8eaa6ab6e8416b4d237d2113b043f577bb8b2d90cafa28e60baad449afc2ee1d",
+      "docs/features/network-emmc-v5-image-map/record.json": "de444d59ef923750c0c872ec5b41c13c6d8861ad5d63f6936a9c3cf7fe9e1a26",
+      "docs/hardware/coordinated-human-tasks.md": "2f191d64840210b838de85803b7a12c100a59ac73df5c7eb2465597d53dfc62b",
+      "docs/hardware/host-network-emmc-reimage-readiness-20260926.md": "92becaa8bd0edf0404bc3fa3843ed5a9188aaec7a3c7b8fc8728643bdbda5ebf",
+      "scripts/build_h616_reimage_candidate.py": "2203a052bcc987825703c4513a369b8e6bc70133cb6a42c9b3ff38af691aa420",
+      "tests/fixtures/sd-network-root/emmc_image_writer.c": "47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015",
+      "tests/host_qemu_sd_network_emmc_write.py": "6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab",
+      "tests/sv08_emmc_job.py": "71e5dc5919e3c22f8f5c57634d2c3f7cf439a48ccae3010d57df6571d921da89"
+    },
+    "reviewer": "feature-approver/gpt-6-sol",
+    "scope_sha256": "0db9a36ea6fe70e5ca65ee16067c097586adf81d13d88a1f155f9c1b6f64b85a",
+    "session": "/root/approve_authenticated_claim"
+  },
+  "format_version": 1,
+  "id": "network-emmc-authenticated-claim",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-authenticated-claim/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-h616-writerless-adapter/proposal.md",
+    "docs/features/network-emmc-h616-writerless-adapter/record.json",
+    "docs/features/network-emmc-v5-image-map/record.json",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "scripts/build_h616_reimage_candidate.py",
+    "tests/fixtures/sd-network-root/emmc_image_writer.c",
+    "tests/sv08_emmc_job.py",
+    "tests/host_qemu_sd_network_emmc_write.py"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "claim-01",
+        "claim-02",
+        "claim-03",
+        "claim-04"
+      ],
+      "depends_on": [
+        "network-emmc-h616-writerless-adapter:commissioning-adapter",
+        "network-emmc-v5-image-map:pin-v5-image-map"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement-authenticated-receipt",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Add challenge-bound signed claim receipts to the inert H616 writer",
+      "verification": null
+    }
+  ],
+  "title": "Authenticate the one-shot network write claim"
+}
