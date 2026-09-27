@@ -160,20 +160,20 @@ class WriterAdmissionTests(unittest.TestCase):
         self.assertLess(source.index('if(!claim_once('), target_open)
         self.assertLess(source.index('if(!hash_file("/job.json"'), target_open)
         self.assertIn('access("/sys/block/sdb",F_OK)', source)
-        self.assertIn('target="/dev/sda"', source)
+        self.assertIn('#define SV08_TARGET "/dev/sda"', source)
         self.assertIn('capacity!=TARGET_BYTES', source)
         self.assertIn('S_ISBLK(ts.st_mode)', source)
         self.assertIn('SV08_QEMU_REIMAGE_TEST_ONLY', source)
         self.assertIn('finish("REFUSED_TARGET_ID")', source)
         self.assertIn('finish("REFUSED_INPUT")', source)
-        self.assertIn('sysfs_dev_matches(&ts,"/sys/block/sda/dev")', source)
+        self.assertIn('sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS)', source)
 
     def test_guest_readback_keeps_the_admitted_descriptor(self):
         source = SOURCE.read_text()
         writer = source.split('/* This is the first target open.', 1)[1]
         self.assertEqual(writer.count('out=open(target,'), 1)
         self.assertEqual(writer.count('close(out)'), 1)
-        self.assertLess(writer.index('sysfs_dev_matches(&ts,"/sys/block/sda/dev")'),
+        self.assertLess(writer.index('sysfs_dev_matches(&ts,SV08_TARGET_DEV_SYSFS)'),
                         writer.index('exact_write(out,CHUNK)'))
         self.assertIn('lseek(out,0,SEEK_SET)!=0||!exact_read(out,CHUNK)', writer)
         self.assertIn('lseek(out,0,SEEK_SET)!=0)finish("FAILED_FLUSH")', writer)
@@ -183,9 +183,9 @@ class WriterAdmissionTests(unittest.TestCase):
         self.assertIn('SYNTHETIC_MMC_CID "00000000000000000000000000000001"', source)
         self.assertIn('sv08_emmc_cid_device_at(base,SYNTHETIC_MMC_CID,', source)
         self.assertIn('ts.st_rdev!=admitted_dev', source)
-        self.assertLess(source.index('synthetic_mmc_identity(&admitted_dev)'),
+        self.assertLess(source.index('admitted_mmc_identity(&admitted_dev)'),
                         source.index('out=open(target,O_RDWR'))
-        self.assertLess(source.index('synthetic_mmc_identity(&confirmed_dev)'),
+        self.assertLess(source.index('admitted_mmc_identity(&confirmed_dev)'),
                         source.index('exact_write(out,n)'))
         self.assertIn('confirmed_dev!=admitted_dev', source)
         self.assertNotIn('cid', (REPO / 'tests/sv08_emmc_job.py').read_text().lower())

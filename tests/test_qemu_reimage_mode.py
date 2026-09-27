@@ -109,7 +109,7 @@ class QemuReimageModeTests(unittest.TestCase):
 
     def test_virtual_board_guard_precedes_target_open(self):
         source = (Path(__file__).parent / 'fixtures/sd-network-root/emmc_image_writer.c').read_text()
-        self.assertLess(source.index('!qemu_virt_only()'), source.index('out=open(target,O_RDWR'))
+        self.assertLess(source.index('!board_compatible()'), source.index('out=open(target,O_RDWR'))
         self.assertIn('linux,dummy-virt', source)
         self.assertIn('#define SV08_EMMC_SECTORS 61079552ULL', source)
         default = (Path(__file__).parent.parent / 'scripts/build_sd_network_image.py').read_text()
