@@ -79,12 +79,17 @@ verify the staged artifact before arming, and the embedded writer must still
 verify its signed job and exact source/target before a whole-device open.
 This sandbox probe does not prove the ARM64 U-Boot binary's FIT handoff.
 
-An isolated selector probe then loaded an 18-byte one-shot marker and the
+An initial isolated selector probe loaded an 18-byte one-shot marker and the
 same FIT through U-Boot sandbox. U-Boot reports `filesize` in hexadecimal, so
 the exact size check is `12`, not decimal `18`; CRC32 of the marker was
-`82b0ad97`. With the expected size and CRC and an intact FIT, the script
-selected the writer marker. With the marker missing, a 13-byte malformed
-marker, or a one-byte-corrupted FIT, it selected the ordinary recovery marker.
+`82b0ad97`. The initial probe selected the writer with the expected marker
+and FIT, and selected recovery with a missing or short marker or corrupted
+FIT. **It was not a sufficient marker-integrity test:** a same-length wrong
+marker passed because `crc32 address count variable` printed a checksum but
+did not set that environment variable in this U-Boot build. The following
+`test` then evaluated an unset expansion incorrectly. The selector must use
+the command's explicit `crc32 -v address count expected` form, which fails
+when the checksum differs.
 The retained local logs are `local/reimage-fit-research/selector-{good,missing,bad,corrupt}.log`;
 their SHA-256 values in that order are `9b331fb7a60c72746d3903d6ab068e5fe8384099462dc56d2ca6772d1627fcf7`,
 `13aaa1fc5d50072ecc8196e461998cbba1c5fd8b2549966ffb7a3f887d56dec6`,
@@ -94,6 +99,19 @@ This proves only selector command semantics on disposable host files. The
 production script still needs ext4/MMC loading, original-recovery fallback,
 durable one-shot consumption and full boot testing. CRC32 and FIT hashes are
 integrity checks, not authentication.
+
+`tests/uboot_recovery_handoff.py` now exercises the corrected `crc32 -v`
+selector through the **exact** `boot-dispatch.cmd`, RAUC bootmeth, redundant raw
+MMC environment and an ext4 recovery partition in a disposable 256 MiB regular
+file. Its result SHA-256 is
+`efdf6ceb63f8c997b3357637156fe463a059c235bd1ff5d62832adf443f16245`.
+An exhausted A/B policy plus valid marker/FIT selects the test writer. An
+unarmed boot, short or same-length wrong marker, or altered FIT selects the
+original recovery marker. A valid A slot selects the slot, a single corrupt
+environment copy still selects the writer when armed, and both corrupt copies
+with no marker select recovery. This checks the compiled dispatch and selector
+semantics, but the test writer is only an echo marker; it does not boot Linux,
+consume the marker or open a target. The full handoff remains `urh-02/03`.
 
 ## Remaining exit evidence
 
