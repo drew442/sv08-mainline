@@ -1,0 +1,126 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Prove exact U-Boot recovery dispatch and unarmed/default fallback with explicit one-shot marker and payload binding.",
+      "environment": "offline",
+      "id": "urh-01"
+    },
+    {
+      "description": "Prove ordered durable staging, exact target/source admission and fail-closed prewrite/postopen interruption semantics without automatic retry.",
+      "environment": "offline",
+      "id": "urh-02"
+    },
+    {
+      "description": "Exercise actual RAM writer/controller success, refusal and normal return in disposable QEMU; default SD/A-B paths stay unchanged.",
+      "environment": "offline",
+      "id": "urh-03"
+    },
+    {
+      "description": "Read-only physical recovery handoff captures live identity, marker/fallback and return without whole-device target open.",
+      "environment": "hardware",
+      "id": "urh-04"
+    },
+    {
+      "description": "Separately reviewed H12 full physical write/readback/next boot with exact target, artifact and recovery.",
+      "environment": "hardware",
+      "id": "urh-05"
+    }
+  ],
+  "created": "2026-09-27",
+  "decision": null,
+  "format_version": 1,
+  "id": "network-emmc-unattended-recovery-handoff",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-unattended-recovery-handoff/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-trusted-writer-boot/record.json",
+    "docs/features/network-emmc-trusted-writer-boot/proposal.md",
+    "docs/hardware/host-network-emmc-kexec-assessment-20260927.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "configs/host-os/boot-dispatch.cmd",
+    "configs/host-os/sv08-default.env"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "urh-01"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "offline-dispatch",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Prove fail-closed recovery selector and one-shot trigger",
+      "verification": null
+    },
+    {
+      "blocker": null,
+      "checks": [
+        "urh-02",
+        "urh-03"
+      ],
+      "depends_on": [
+        "network-emmc-unattended-recovery-handoff:offline-dispatch"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "offline-stage-and-qemu",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Stage exact artifacts and exercise actual controller through QEMU",
+      "verification": null
+    },
+    {
+      "blocker": null,
+      "checks": [
+        "urh-04"
+      ],
+      "depends_on": [
+        "network-emmc-unattended-recovery-handoff:offline-stage-and-qemu"
+      ],
+      "environment": "hardware",
+      "evidence": [],
+      "human_task": "docs/hardware/coordinated-human-tasks.md",
+      "id": "physical-read-only",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Validate recovery handoff and return without target write",
+      "verification": null
+    },
+    {
+      "blocker": null,
+      "checks": [
+        "urh-05"
+      ],
+      "depends_on": [
+        "network-emmc-unattended-recovery-handoff:physical-read-only"
+      ],
+      "environment": "hardware",
+      "evidence": [],
+      "human_task": "docs/hardware/coordinated-human-tasks.md",
+      "id": "physical-reimage",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Commission one full installed-spare reimage",
+      "verification": null
+    }
+  ],
+  "title": "Enter and leave the RAM writer through existing recovery boot"
+}
