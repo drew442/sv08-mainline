@@ -3,10 +3,11 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO/'runtime'))
-from sv08_rauc import SLOT_NAMES, validate_config, validate_environment, validate_geometry, validate_status
+from sv08_rauc import Backend, SLOT_NAMES, validate_config, validate_environment, validate_geometry, validate_status
 
 
 class BackendPolicyTests(unittest.TestCase):
@@ -75,3 +76,55 @@ class BackendPolicyTests(unittest.TestCase):
                           ('BOOT_B_LEFT', '-1'), ('sv08_env_layout', 'other')]:
             with self.subTest(name=name, bad=bad), self.assertRaises(ValueError):
                 validate_environment(dict(values, **{name: bad}), 'ab-8gb-v1')
+
+    def test_pre_disarm_restore_refuses_when_either_raw_environment_copy_is_invalid(self):
+        backend = object.__new__(Backend)
+        backend.env_config = Path('/reviewed/fw_env.config')
+        backend.environment = {'layout_id': 'ab-8gb-v1'}
+        # verify_environment_copies validates both raw copies, rather than
+        # accepting fw_printenv's preferred copy when its redundant peer fails.
+        with patch('sv08_rauc.verify_environment_copies', side_effect=ValueError('bad CRC in redundant copy')) as verify, \
+             patch.object(backend, 'boot_policy') as policy, \
+             patch('sv08_rauc.subprocess.run') as write:
+            with self.assertRaisesRegex(ValueError, 'bad CRC'):
+                backend.restore_pre_disarm(
+                    dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B',
+                         BOOT_A_LEFT='3', BOOT_B_LEFT='3'), 'B', 'A')
+        verify.assert_called_once_with(backend.env_config)
+        policy.assert_not_called()
+        write.assert_not_called()
+
+    def test_pre_disarm_restore_validates_both_copies_before_and_after_each_write(self):
+        backend = object.__new__(Backend)
+        backend.env_config = Path('/reviewed/fw_env.config')
+        backend.environment = {'layout_id': 'ab-8gb-v1'}
+        previous = dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B',
+                        BOOT_A_LEFT='3', BOOT_B_LEFT='3')
+        disarmed = dict(previous, BOOT_ORDER='A', BOOT_B_LEFT='0')
+        with patch('sv08_rauc.verify_environment_copies') as verify, \
+             patch.object(backend, 'primary', return_value='A'), \
+             patch.object(backend, 'good', return_value=True), \
+             patch.object(backend, 'boot_policy', side_effect=[disarmed, previous]), \
+             patch('sv08_rauc.subprocess.run') as write:
+            backend.restore_pre_disarm(previous, 'B', 'A')
+        self.assertEqual([call.args[0][-2:] for call in write.call_args_list],
+                         [['BOOT_B_LEFT', '3'], ['BOOT_ORDER', 'A B']])
+        self.assertEqual(verify.call_count, 4)  # before, after each write, and final
+        verify.assert_called_with(backend.env_config)
+
+    def test_pre_disarm_restore_refuses_if_redundancy_breaks_during_restore(self):
+        backend = object.__new__(Backend)
+        backend.env_config = Path('/reviewed/fw_env.config')
+        backend.environment = {'layout_id': 'ab-8gb-v1'}
+        previous = dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B',
+                        BOOT_A_LEFT='3', BOOT_B_LEFT='3')
+        disarmed = dict(previous, BOOT_ORDER='A', BOOT_B_LEFT='0')
+        with patch('sv08_rauc.verify_environment_copies', side_effect=[None, ValueError('second copy CRC failed')]) as verify, \
+             patch.object(backend, 'primary', return_value='A'), \
+             patch.object(backend, 'good', return_value=True), \
+             patch.object(backend, 'boot_policy', return_value=disarmed), \
+             patch('sv08_rauc.subprocess.run') as write:
+            with self.assertRaisesRegex(ValueError, 'second copy CRC'):
+                backend.restore_pre_disarm(previous, 'B', 'A')
+        self.assertEqual(write.call_count, 1)
+        self.assertEqual(verify.call_count, 2)

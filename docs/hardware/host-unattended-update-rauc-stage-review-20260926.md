@@ -110,6 +110,23 @@ constraints above. It does not authorize physical boot-policy writes. A
 separate high-consequence review and deployable-board evidence remain required
 before physical testing.
 
+## Redundant-copy restoration check
+
+On 2026-09-27 an independent high-consequence review found that the
+`preparing`-phase recovery path compared logical `fw_printenv` values but did
+not directly validate both raw redundant copies before restoring the recorded
+policy. `Backend.restore_pre_disarm` now checks the reviewed raw map, both CRCs,
+and recognized layout before any restoration write, after every `fw_setenv`
+write, and once more before accepting the restored policy. A failed post-write
+check stops before a later write can reintroduce the target into `BOOT_ORDER`.
+
+The follow-up review passed after this correction. The focused RAUC backend,
+bootloader-handler, and transaction suite passed all 45 tests, including a
+corrupt-copy refusal before writes, loss of redundancy during restoration, and
+the successful validation/write ordering. This closes the offline recovery
+condition only; it does not establish automatic H616 slot selection or physical
+eMMC behavior.
+
 An initial joined-QEMU attempt reached A-to-B install but failed the B health
 probe because the fixture's generated `/etc/fw_env.config` bind mount was
 writable, which the real RAUC service-identity check correctly rejects. The

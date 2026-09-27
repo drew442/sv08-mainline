@@ -19,6 +19,7 @@ from sv08_boot import verify_devices
 from sv08_gpt import inspect as inspect_gpt
 from sv08_bundle import inspect as inspect_bundle
 from sv08_rauc_service import Service
+from sv08_rauc_bootloader import verify_environment_copies
 
 MIB = 1024*1024
 CLEANUP_SECONDS = 10
@@ -324,6 +325,10 @@ class Backend:
 
     def restore_pre_disarm(self, previous, target, source):
         """Restore the journaled policy only in preparing, before RAUC is called."""
+        # fw_printenv can select a valid redundant copy even when its peer is
+        # corrupt. Restoring counters/order through that interface would then
+        # silently operate without the reviewed redundancy guarantee.
+        verify_environment_copies(self.env_config)
         validate_environment(previous, self.environment['layout_id'])
         if target == source or self.primary() != source or not self.good(source):
             raise ValueError('Safe pre-disarm restoration conditions are not satisfied')
@@ -344,9 +349,14 @@ class Backend:
             if current[name] != previous[name]:
                 subprocess.run(['/usr/bin/fw_setenv', '-c', str(self.env_config), name, previous[name]],
                                check=True, timeout=5)
+                verify_environment_copies(self.env_config)
         if current['BOOT_ORDER'] != previous['BOOT_ORDER']:
             subprocess.run(['/usr/bin/fw_setenv', '-c', str(self.env_config), 'BOOT_ORDER', previous['BOOT_ORDER']],
                            check=True, timeout=5)
+            verify_environment_copies(self.env_config)
+        # Verify redundancy again after all policy writes, before accepting the
+        # restored values as a completed recovery.
+        verify_environment_copies(self.env_config)
         after = self.boot_policy()
         if after != previous or self.primary() != source or not self.good(source):
             raise ValueError('Journaled boot policy could not be restored with the source still selected')
