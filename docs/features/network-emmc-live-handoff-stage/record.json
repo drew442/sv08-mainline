@@ -81,15 +81,81 @@
         "network-emmc-unattended-recovery-handoff:offline-stage-and-qemu"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "lhs-01",
+          "document": "docs/hardware/host-network-emmc-live-stage-offline-20260927.md",
+          "document_sha256": "84980f0d40b526455866153f3742107abdf22e338216ff6383638c2f06968a1b",
+          "environment": "offline",
+          "limitations": "Synthetic loop/sysfs and fixture keys only; current printer identity, physical durability, H616 handoff, NFS and full-image readback await H12.",
+          "method": "Synthetic sysfs and disposable loop refusals, including local NFS/claim-source overlap; private namespace mount replacement PASS.",
+          "profile": null,
+          "source_commit": "8bae19a3c049a5420e1e6d01032e20f3eb818e34",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-live-stage-offline-20260927-results.json": "500361647ede7f56de907f52433b0dd66bab83d84bad530eefdc322bfb17da82",
+            "scripts/live_h616_recovery_stage.py": "b1d81ce1418b1d7bf41251de2a43a8eaa9530620038082c87c9f9292b8e67003",
+            "tests/offline_h616_live_admission.py": "e5beb29196eb3a5e73f6b744a762291c8f098f4eb863b6cabb2f400a17696763",
+            "tests/offline_h616_live_mount_isolation.py": "696a130ee46eddcb32dba986848c56df0c1f1bf0d41cd37701b1f129f792824c"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "lhs-02",
+          "document": "docs/hardware/host-network-emmc-live-stage-offline-20260927.md",
+          "document_sha256": "84980f0d40b526455866153f3742107abdf22e338216ff6383638c2f06968a1b",
+          "environment": "offline",
+          "limitations": "Synthetic loop/sysfs and fixture keys only; current printer identity, physical durability, H616 handoff, NFS and full-image readback await H12.",
+          "method": "Six isolated disposable loop runs, normalized results attached; success and five stop points, marker only after both copies; 22 focused regressions passed.",
+          "profile": null,
+          "source_commit": "8bae19a3c049a5420e1e6d01032e20f3eb818e34",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-live-stage-offline-20260927-results.json": "500361647ede7f56de907f52433b0dd66bab83d84bad530eefdc322bfb17da82",
+            "scripts/live_h616_recovery_stage.py": "b1d81ce1418b1d7bf41251de2a43a8eaa9530620038082c87c9f9292b8e67003",
+            "scripts/stage_h616_recovery_handoff.py": "d5b6f8afbdb5703e4f2c66b078b0a15a759f9c6a80b32c85b07d063ca29b6c13",
+            "tests/offline_h616_live_admission.py": "e5beb29196eb3a5e73f6b744a762291c8f098f4eb863b6cabb2f400a17696763"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "lhs-03",
+          "document": "docs/hardware/host-network-emmc-live-stage-offline-20260927.md",
+          "document_sha256": "84980f0d40b526455866153f3742107abdf22e338216ff6383638c2f06968a1b",
+          "environment": "offline",
+          "limitations": "Synthetic loop/sysfs and fixture keys only; current printer identity, physical durability, H616 handoff, NFS and full-image readback await H12.",
+          "method": "Dry-run CLI, fixture-key rejection for physical-shaped candidate, artifact and source hashes, staging space and H12 handoff documentation; no physical block write.",
+          "profile": null,
+          "source_commit": "8bae19a3c049a5420e1e6d01032e20f3eb818e34",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-live-stage-offline-20260927-results.json": "500361647ede7f56de907f52433b0dd66bab83d84bad530eefdc322bfb17da82",
+            "scripts/build_h616_recovery_handoff.py": "0edec4a84fb4dd76c3cae34523aa51cddf7ec0323bf6d1b8516c8a6335a37c50",
+            "scripts/build_h616_reimage_candidate.py": "9e92acf108b7c50086cd23a583542cde4ed1ff5b190d032c872eca9427907250",
+            "scripts/build_sd_network_image.py": "db5cc1c44c3af1305274238481498160369f152230adf542800274a85a88f679",
+            "scripts/live_h616_recovery_stage.py": "b1d81ce1418b1d7bf41251de2a43a8eaa9530620038082c87c9f9292b8e67003",
+            "tests/test_h616_live_stage_cli.py": "455f44b4f4aeaaab11a1d4f5b521001adfd1222617601cfdf30dd42d519f08e9",
+            "tests/test_h616_recovery_handoff_builder.py": "40d80b2c7bb341e32cc00874ce51f718720d335e2ae778ed6146b01d6d4a86b3"
+          }
+        }
+      ],
       "human_task": null,
       "id": "offline-live-stage",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "1bcad37a2e8b4c47b0c13e31320bd11c",
+        "session": "lhs-implementation-20260927-v2"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Independent review identified mount binding, source overlap, fixture provenance and evidence gaps; corrective commits prepared",
+      "status": "done",
       "title": "Build and verify the guarded live staging backend on disposable media",
-      "verification": null
+      "verification": {
+        "decision_sha256": "81253969e91a781fb7e4f7b60461f264329fe36d9bbd701678d9d2c83d9fa4d3",
+        "evidence_sha256": "d2e7fb9f008e12f7ddb6f612deecf40661dda28ae129d118df5c865628adc1fe",
+        "outcome": "passed",
+        "rationale": "Reviewed the clean 8bae19a worktree and corrective diff. The four prior objections are addressed: admission refuses a local NFS/claim host; physical stage, arm, and activation isolate their mount namespace before filesystem writes; the physical builder rejects the repository fixture verification keys; and the six synthetic loop results are committed with reproduction commands. Evidence and requirement hashes match. Three focused unit tests passed on re-run. The privileged loop and mount tests were inspected but not re-run in this session. This verifies offline behavior only; H12 still requires current printer identity, artifact review, physical testing, and separate authorization.",
+        "reviewer": "independent feature-verifier",
+        "session": "lhs-independent-verification-20260927-02"
+      }
     }
   ],
   "title": "Admit and stage the recovery writer on the installed spare eMMC"
