@@ -109,19 +109,103 @@
         "network-emmc-cid-fd-binding:qemu-cid-fd-binding"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "h616-01",
+          "document": "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md",
+          "document_sha256": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+          "environment": "offline",
+          "limitations": "Offline and synthetic H616-shaped QEMU only. No physical H616 CID/controller/dev_t mapping, printer boot, target write, power-loss recovery or release is established. H12 remains the sole physical commissioning task and requires fresh independent review and authorization.",
+          "method": "Inspected default and commissioning paths, reran candidate regressions, and checked the built manifest semantics and updated report. Evidence is offline source/test evidence. The unchanged default SD/NFS diagnostic remains read-only and writer/trigger-free. Only the explicit commissioning builder and compile define include the adapter; its output is explicitly nondeployable and has no boot trigger or bootable SD image. Focused tests passed.",
+          "profile": null,
+          "source_commit": "dd2f2be2d5cd3be1e509765453f9bee24438a87e",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+            "docs/hardware/host-network-emmc-h616-adapter-review-retest-20260927.json": "def7e4a7b70d6975518fb5c244367bb44b8998bd7d38c22c8719feb86037b057",
+            "scripts/build_h616_reimage_candidate.py": "67884c15601eb6b5238833359e3d4bcc5e248968f89603573d282114a94267e3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015",
+            "tests/host_qemu_sd_network_emmc_write.py": "6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab",
+            "tests/test_h616_reimage_candidate.py": "d366757c57a920af8d8ec721e2440f34fb123c972b82bfd51ad34ddfcde2c1af"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "h616-02",
+          "document": "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md",
+          "document_sha256": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+          "environment": "offline",
+          "limitations": "Offline and synthetic H616-shaped QEMU only. No physical H616 CID/controller/dev_t mapping, printer boot, target write, power-loss recovery or release is established. H12 remains the sole physical commissioning task and requires fresh independent review and authorization.",
+          "method": "Ran 31 focused unit tests and the ten-case Beelink synthetic QEMU retest. Each identity result/serial/manifest hash is verified against raw ignored evidence. No physical sysfs mapping is claimed. The H616 inventory binds controller ancestry, MMC type, CID, capacity and dev_t; target is opened once and its opened descriptor is compared with admitted identity. Updated guest tests refused wrong/missing controller, wrong type and wrong capacity before source hashing and target open; prior matrix also covers wrong CID, dev_t and ambiguous inventory.",
+          "profile": null,
+          "source_commit": "dd2f2be2d5cd3be1e509765453f9bee24438a87e",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+            "docs/hardware/host-network-emmc-h616-adapter-review-retest-20260927.json": "def7e4a7b70d6975518fb5c244367bb44b8998bd7d38c22c8719feb86037b057",
+            "scripts/build_h616_reimage_candidate.py": "67884c15601eb6b5238833359e3d4bcc5e248968f89603573d282114a94267e3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015",
+            "tests/host_qemu_sd_network_emmc_write.py": "6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab",
+            "tests/test_h616_reimage_candidate.py": "d366757c57a920af8d8ec721e2440f34fb123c972b82bfd51ad34ddfcde2c1af"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "h616-03",
+          "document": "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md",
+          "document_sha256": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+          "environment": "offline",
+          "limitations": "Offline and synthetic H616-shaped QEMU only. No physical H616 CID/controller/dev_t mapping, printer boot, target write, power-loss recovery or release is established. H12 remains the sole physical commissioning task and requires fresh independent review and authorization.",
+          "method": "Ran the full transfer and all ten isolated cases with a fresh regular-file target and claim in private network/mount namespaces. Raw case hashes and full independent GPT/readback check are in the retest JSON. Abrupt test confirms only first MiB; this is not physical power-loss testing. The signed exact-image job and durable one-shot claim gate transfer. Full 7,818,182,656-byte source/write/readback passed independent SHA and GPT checks. Missing, wrong-size and wrong-hash source, lost claim acknowledgment, and actual QEMU SIGKILL after the first fsynced MiB all consumed the claim, rejected replay (409), emitted no success, and refused before target open except the deliberate post-open abrupt interruption.",
+          "profile": null,
+          "source_commit": "dd2f2be2d5cd3be1e509765453f9bee24438a87e",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+            "docs/hardware/host-network-emmc-h616-adapter-review-retest-20260927.json": "def7e4a7b70d6975518fb5c244367bb44b8998bd7d38c22c8719feb86037b057",
+            "scripts/build_h616_reimage_candidate.py": "67884c15601eb6b5238833359e3d4bcc5e248968f89603573d282114a94267e3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015",
+            "tests/host_qemu_sd_network_emmc_write.py": "6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab",
+            "tests/test_h616_reimage_candidate.py": "d366757c57a920af8d8ec721e2440f34fb123c972b82bfd51ad34ddfcde2c1af"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "h616-04",
+          "document": "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md",
+          "document_sha256": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+          "environment": "offline",
+          "limitations": "Offline and synthetic H616-shaped QEMU only. No physical H616 CID/controller/dev_t mapping, printer boot, target write, power-loss recovery or release is established. H12 remains the sole physical commissioning task and requires fresh independent review and authorization.",
+          "method": "Compiled with aarch64-linux-gnu-gcc 13.3.0 and -static -Os -D_FORTIFY_SOURCE=2 -Wall -Wextra -Werror using nonproduction dummy identity constants; this establishes compile only. No image was staged on the development VM. Beelink QEMU used bounded scratch and 2.3 GB peak process RSS on the long cases. Strict static ARM64 physical-mode writer compilation with warnings as errors passed. The 31 focused unit tests, Python compilation, record/link validation, code diff checks and source/raw evidence hash checks passed. Evidence explicitly limits results to offline synthetic QEMU; physical H12 remains pending.",
+          "profile": null,
+          "source_commit": "dd2f2be2d5cd3be1e509765453f9bee24438a87e",
+          "source_sha256": {
+            "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md": "ae5c5b2f0c7180dbe16e7e97effd7cd8b06a903329f583b4e36b8c2cbbde4c11",
+            "docs/hardware/host-network-emmc-h616-adapter-review-retest-20260927.json": "def7e4a7b70d6975518fb5c244367bb44b8998bd7d38c22c8719feb86037b057",
+            "scripts/build_h616_reimage_candidate.py": "67884c15601eb6b5238833359e3d4bcc5e248968f89603573d282114a94267e3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "47ab15717b2a1f11bc7716e7dab8bc70fd947849e23339b70d364870aeeb9015",
+            "tests/host_qemu_sd_network_emmc_write.py": "6a9ce6a2a2823071f2fc30cdd6114529d245e23bd9d691acd15a84a7e25d1dab",
+            "tests/test_h616_reimage_candidate.py": "d366757c57a920af8d8ec721e2440f34fb123c972b82bfd51ad34ddfcde2c1af"
+          }
+        }
+      ],
       "human_task": null,
       "id": "commissioning-adapter",
       "implementation": {
-        "actor": "h616_reimage_implementer",
-        "run": "f3f6d02acedc4827ab31abd6c58fbec7",
-        "session": "implement-network-emmc-h616-adapter-20260926"
+        "actor": "root_coordinator",
+        "run": "98601b8b95144941adff7ebcaf8b3918",
+        "session": "h616-final-review-20260927"
       },
       "repeats": 0,
-      "resumption": null,
-      "status": "running",
+      "resumption": "The reviewer confirmed behavior and retest hashes but found stale historical source hashes presented as current. Updated the public report to label original hashes historical, add current source/binary hashes and rerun results, and bind new evidence to the corrected implementation commit.",
+      "status": "done",
       "title": "Build and test the opt-in H616 commissioning adapter",
-      "verification": null
+      "verification": {
+        "decision_sha256": "81e5edddc0898ee7aa567a991a53c9b8fcc1e7adcdf56bcc9f615ec09ca720d0",
+        "evidence_sha256": "3f318d731c141f36bca74557a6966b42c04cc62edee2d88a7ed0349932fdbe10",
+        "outcome": "passed",
+        "rationale": "Reviewed clean commit dd2f2be2 and complete diff from 1602ed60 against h616-01 through h616-04 and all constraints. The default diagnostic remains separate; candidate is nondeployable and requires local identity and signed inputs. The writer binds identity to one descriptor, consumes the one-shot claim before target open, and has no automatic retry. All ten retest result, serial and manifest hashes match raw evidence. Full image readback and independent GPT checks match; refusal and abrupt interruption records show no success and replay rejection. Current source hashes match the submitted revision. Reproduced 37 focused tests, workflow validation, diff checks and report links. Evidence remains synthetic QEMU only; physical H616 identity, boot, power-loss recovery, H12 readiness and authorization remain pending.",
+        "reviewer": "/root/verify_h616_adapter_final",
+        "session": "feature-verifier-h616-adapter-final-20260927"
+      }
     }
   ],
   "title": "Prepare an opt-in H616 writerless reimage candidate"
