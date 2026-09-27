@@ -19,8 +19,10 @@ writer from PID 1, with a terminal loop if exec fails, so the normal `run-init`
 handoff cannot execute the NFS root. The writer requires an initramfs root, the exact NFS mount
 source and read-only mount flags. It rechecks the mount and source descriptor
 before its sole target open. The NFS export is an image source containing
-`image.bin`; no executable from it is invoked. A writer result is terminal
-while the SD card remains installed. There is no automatic return to eMMC boot.
+`image.bin`; no executable from it is invoked. A consumed claim makes later
+boots refuse, while an unconsumed preclaim refusal can remain eligible until
+expiry if the explicit service is left running. Stop that service after any
+terminal guest result. There is no automatic return to eMMC boot.
 Commissioning boot arguments select `boot=nfs` for the trusted initramfs-tools
 mount logic but set the kernel fallback root to `/dev/ram0`. If `/init` is absent
 or fails, the kernel cannot fall back to running an NFS-supplied init.
