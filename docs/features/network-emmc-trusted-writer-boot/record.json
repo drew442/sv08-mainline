@@ -15,6 +15,7 @@
     "docs/features/network-emmc-authenticated-claim/proposal.md",
     "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md",
     "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md",
+    "docs/hardware/host-network-emmc-kexec-assessment-20260927.md",
     "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
     "docs/hardware/coordinated-human-tasks.md",
     "docs/hardware/host-sd-network-first-boot-20260926.md"

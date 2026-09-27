@@ -79,6 +79,17 @@ The ordinary diagnostic remains unable to write. The host must not set
 `kernel.kexec_load_disabled=1` before a deliberate authorized handoff, since the
 kernel documents that setting as irreversible until reboot.
 
+The current writer interface needs composition work on either boot route. Its
+main path currently requires the whole root to be `nfs`/`nfs4` mounted
+read-only, reads `/image.bin`, `/job.json` and other inputs from `/`, then checks
+the H616 target. It does not yet support a tmpfs/initramfs root with the image
+mounted separately. A reviewed design should keep the writer and immutable
+policy/job/signatures in the verified initramfs, mount the exact NFS image
+export at one fixed path such as `/image-source` with `ro`, verify that mount
+and open the source from it, and never execute content from the network export.
+This also prevents a passing test of the current whole-NFS-root interface from
+being mistaken for authenticated writer execution.
+
 The pending feature approver should decide whether to replace the SD-boot
 composition with this single primary route, or retain SD boot as a separately
 bounded commissioning/recovery route. Implementing both full writer boot paths

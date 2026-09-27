@@ -58,10 +58,11 @@ implement both complete boot paths by default.
 
 1. Extend the explicit SD commissioning composition path to place the H616
    writer, exact target policy, job and signatures in the SD-resident
-   hash-verified initramfs. Keep the NFS export read-only and use it only for the
-   exact raw image source. Change the writer to require and verify the read-only
-   NFS source mount at the initramfs handoff path. The trusted initramfs must
-   execute the embedded writer before any `switch_root` to untrusted NFS content.
+   hash-verified initramfs. Keep the initramfs as the running root and mount the
+   exact NFS export read-only at a fixed path such as `/image-source`; NFS serves
+   only the raw image bytes. Change the writer to require that separate
+   read-only source mount. Execute the embedded writer before any `switch_root`
+   to network content.
 2. Add a local host-side commissioning controller around the existing durable
    claim implementation. It must require ignored local key/input files with
    strict ownership and modes, bind the job to the exact reviewed image/map and
@@ -90,7 +91,7 @@ because the network root would control the first privileged code that runs.
 | Check | Task | Acceptance |
 | --- | --- | --- |
 | `twb-01` | `compose-trusted-initramfs` | The default diagnostic remains writer-free. Only explicit commissioning mode embeds the writer and private-policy-derived public inputs in the SD-hash-verified initramfs; NFS never supplies executable writer code. No installed-eMMC boot policy is changed. |
-| `twb-02` | `compose-trusted-initramfs` | Initramfs mounts the exact source NFS export read-only, invokes the embedded writer before switching root, and passes bounded commissioning and claim-port arguments. The writer refuses wrong root mode, missing source, altered input bundle or invalid claim before target open. |
+| `twb-02` | `compose-trusted-initramfs` | Initramfs remains the running root, mounts the exact image-source NFS export read-only at a fixed path, invokes the embedded writer before switching root, and passes bounded commissioning and claim-port parameters. The writer refuses a wrong root/source mount, missing source, altered input bundle or invalid claim before target open. |
 | `twb-03` | `one-shot-host-controller` | Strict local provisioning, exact image/map/job binding, short expiry, durable claim-before-sign, terminal outcome and no retry/rearm are implemented and tested with disposable temporary state. The controller is explicit/manual and uses synthetic keys in tests only. |
 | `twb-04` | `end-to-end-qemu` | The exact composed command/initramfs inputs and controller pass success, forged/malformed job, target-identity refusal, source/hash failure, claim replay/lost acknowledgement, abrupt termination, flush/readback fault and unchanged default-diagnostic checks. Artifacts and results are hash-bound; evidence is synthetic only. |
 | `twb-05` | `end-to-end-qemu` | Strict ARM64 builds, focused tests, workflow/JSON/local-link/diff validation pass. Reports preserve the lack of H616 boot-ROM authentication, live CID/dev_t evidence, physical eMMC write, physical power-loss recovery and release validation. H12 remains the single physical commissioning gate. |
