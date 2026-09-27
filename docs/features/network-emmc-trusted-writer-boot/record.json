@@ -184,7 +184,63 @@
         "network-emmc-trusted-writer-boot:compose-trusted-initramfs"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "twb-03",
+          "document": "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md",
+          "document_sha256": "e2984c105367956af213ee4df4ac6f76de27fc6446f966ae9922baeea295210c",
+          "environment": "offline",
+          "limitations": "Synthetic keys, Slirp loopback ACL and regular-file media only. Physical NFS listener/client and live printer were not tested; no automatic restart or rearm.",
+          "method": "Actual prepare() signed an exact synthetic source job with private 0600 keys; actual serve() started one-shot claim and Ganesha NFS inside isolated Beelink namespace. Full QEMU run consumed claim before target open; tampered signed job refused before claim, hash or open. Controller terminal states matched both cases.",
+          "profile": null,
+          "source_commit": "8ece67434b92540b219bbf39207049ae35b04eca",
+          "source_sha256": {
+            "scripts/prepare_h616_reimage_job.py": "e61389269ba427896d5e2b351e193df05c3ca3ceac52ce35a448fed9999bf626",
+            "scripts/serve_h616_reimage_job.py": "74e887386b4375c15492ee9f90178cce23ac7255e19c2e39a80b165447fb6e58",
+            "tests/host_qemu_trusted_writer_controller.py": "2f802c6bd8eeccc11211ef0a299264d01106dba682fe517b2025090caa00f5f6",
+            "tests/test_prepare_h616_reimage_job.py": "d29139ad8b9681756adb4a17ce87ac2c3491d2263eddc0a8abb8809aa6854dc5",
+            "tests/test_serve_h616_reimage_job.py": "1a41a8028c600239d73a46f894e816efd963c520b3239a9f25add5a4aaebb99c"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "twb-04",
+          "document": "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md",
+          "document_sha256": "e2984c105367956af213ee4df4ac6f76de27fc6446f966ae9922baeea295210c",
+          "environment": "offline",
+          "limitations": "QEMU virt and synthetic MMC/USB regular file, not H616 ROM or physical eMMC. Earlier fault snapshots used previous harness claim server; controller-integrated cases are full success and malformed job. No automatic SD entry/return or physical power-loss proof.",
+          "method": "Controller-integrated composed SD initramfs full 7,818,182,656-byte QEMU transfer passed guest source/readback and independent host target hash/GPT validation; malformed signed job refused before claim or target open. Earlier same-writer composed QEMU fault suite covered CID, source, lost/forged claim, abrupt loss, flush/readback and second boot, with final path limitations identified in document.",
+          "profile": null,
+          "source_commit": "8ece67434b92540b219bbf39207049ae35b04eca",
+          "source_sha256": {
+            "scripts/build_sd_network_image.py": "e95a0b5ef5a589792833cf3b7d6b50ec6195e6ab7c2c61a3823126952fa0631c",
+            "scripts/serve_h616_reimage_job.py": "74e887386b4375c15492ee9f90178cce23ac7255e19c2e39a80b165447fb6e58",
+            "tests/host_qemu_sd_network_emmc_write.py": "cff432f78350b447450a98e780afc8b4b36d5e0d9ba3b2e88a6d7f6cc8db8594",
+            "tests/host_qemu_sd_network_second_boot.py": "496595ceb40eaded8df9ab91204a90def9a40017b035dbc78a05ec394b4c776b",
+            "tests/host_qemu_trusted_writer_controller.py": "2f802c6bd8eeccc11211ef0a299264d01106dba682fe517b2025090caa00f5f6",
+            "tests/test_trusted_writer_compose.py": "f5148ccd300d46922d246b0af546ebe4a055ad5f120d4dc941a8dd57d681cfd3"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "twb-05",
+          "document": "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md",
+          "document_sha256": "e2984c105367956af213ee4df4ac6f76de27fc6446f966ae9922baeea295210c",
+          "environment": "offline",
+          "limitations": "No SoC secure boot, live CID/dev_t, physical eMMC behavior, automatic recovery or release qualification. H12 retains separate exact artifact, live identity, recovery and immediate Sol review gates.",
+          "method": "Passed 62 focused/regression Python tests, actual-controller full and refusal QEMU cases, strict writer composition and git diff checks. Evidence document binds result/serial/initramfs hashes; observed ten GFP_ATOMIC guest warnings in full case.",
+          "profile": null,
+          "source_commit": "8ece67434b92540b219bbf39207049ae35b04eca",
+          "source_sha256": {
+            "docs/hardware/host-sd-network-trusted-writer-compose.md": "133d51199348822950c64f94f82b968fed2ff76d28277d7c3bbc401d33e418a2",
+            "docs/hardware/host-sd-network-trusted-writer-qemu-20260927.md": "e2984c105367956af213ee4df4ac6f76de27fc6446f966ae9922baeea295210c",
+            "scripts/prepare_h616_reimage_job.py": "e61389269ba427896d5e2b351e193df05c3ca3ceac52ce35a448fed9999bf626",
+            "scripts/serve_h616_reimage_job.py": "74e887386b4375c15492ee9f90178cce23ac7255e19c2e39a80b165447fb6e58",
+            "tests/host_qemu_trusted_writer_controller.py": "2f802c6bd8eeccc11211ef0a299264d01106dba682fe517b2025090caa00f5f6"
+          }
+        }
+      ],
       "human_task": null,
       "id": "end-to-end-qemu",
       "implementation": {
@@ -194,7 +250,7 @@
       },
       "repeats": 0,
       "resumption": "Independent Sol review found the full success used an earlier harness and controller was not in QEMU; integrate actual one-shot controller and NFS service into final composed QEMU success and add a malformed signed-job refusal.",
-      "status": "running",
+      "status": "review",
       "title": "Add one-shot host control and validate the composed write path",
       "verification": null
     }
