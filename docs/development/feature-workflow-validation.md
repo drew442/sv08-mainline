@@ -59,16 +59,24 @@ The original native `codex-cli 0.153.4` trial accepted strict configuration,
 read-only sandbox selection, JSONL output and a structured-result request. Its
 read sandbox failed to initialize and a child launch reported a missing thread.
 It exited zero with `{"results":[]}`; the workflow rejected that incomplete
-result. On 2026-09-27, after installing bubblewrap 0.9.0, `codex-cli 0.157.1`
-started an ephemeral read-only session and returned a simple response. A shell
-write probe did not reach the command: bubblewrap reported
+result. The bubblewrap installation prerequisite is now closed: on 2026-09-27,
+`bubblewrap 0.9.0-1ubuntu0.3` and `codex-cli 0.157.1` were present, and the CLI
+started an ephemeral read-only session and returned a simple response. The
+separate runtime-isolation warning remains open. A shell write probe did not
+reach the command: bubblewrap reported
 `loopback: Failed RTM_NEWADDR: Operation not permitted`, and the probe file was
-absent. A direct unprivileged bubblewrap probe also cannot create its user ID map
-in this VM. Therefore the missing bubblewrap package is resolved, and native
-session startup now works, but native shell sandboxing, filesystem write denial,
-and custom-agent execution are not yet validated. The successful privileged
-`sudo bwrap` smoke test does not establish the unprivileged Codex sandbox. Raw
-diagnostics remain in ignored `local/feature-workflow/`.
+absent. Rechecking on 2026-09-27 showed `kernel.unprivileged_userns_clone=1`
+and `user.max_user_namespaces=56568`, but
+`kernel.apparmor_restrict_unprivileged_userns=1`; an unprivileged probe still
+failed to set up the UID map, and the kernel audit log recorded AppArmor denials
+for `setpcap`, `net_admin`, and writes to `/proc/.../uid_map`. Thus installing
+bubblewrap fixed the missing-package condition but did not enable native shell
+sandboxing, enforced filesystem write denial, or custom-agent execution. Do not
+disable the system-wide AppArmor restriction merely to clear this result; a
+narrow, reviewed host policy or a runner that supports the required namespaces
+is still needed. A privileged `sudo bwrap` smoke test does not establish the
+unprivileged Codex sandbox. Raw diagnostics remain in ignored
+`local/feature-workflow/`.
 
 The explicit separate-session collaboration fallback completed all five cases.
 That client inherits its parent permissions, so read-only reviewer instructions
