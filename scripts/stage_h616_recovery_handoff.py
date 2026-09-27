@@ -17,6 +17,9 @@ import tempfile
 import zlib
 
 from scripts.build_h616_recovery_handoff import MARKER, script_text
+from scripts.build_h616_reimage_candidate import policy_fields, verify_signed_job
+from scripts.build_sd_network_image import commissioning_bundle
+from tests.sv08_emmc_job import canonical_json
 
 
 ENV_OFFSETS = (0x400000, 0x800000)
@@ -91,6 +94,30 @@ def verify_artifact(root):
     return manifest
 
 
+def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
+    """Recheck the exact signed job/map bound into the candidate at stage time."""
+    composition = manifest.get('composition')
+    if not isinstance(composition, dict):
+        raise ValueError('Missing writer composition')
+    source = composition.get('source', '')
+    if not isinstance(source, str) or ':' not in source:
+        raise ValueError('Missing reviewed NFS source')
+    server, export = source.split(':', 1)
+    bundle, _, _ = commissioning_bundle(Path(bundle), server, export)
+    if digest(regular(bundle / 'reimage-manifest.json')) != composition.get('bundle_manifest_sha256'):
+        raise ValueError('Staged artifact and signed bundle differ')
+    policy_raw = regular(bundle / 'commissioning-target-policy.json').read_bytes()
+    policy = policy_fields(json.loads(policy_raw))
+    if policy_raw != canonical_json(policy):
+        raise ValueError('Noncanonical target policy')
+    job = verify_signed_job(regular(bundle / 'job.json').read_bytes(),
+                            regular(bundle / 'job.sig').read_bytes(),
+                            regular(verification_key).read_bytes(), policy, now=now)
+    if job['job_id'] != manifest['job_id']:
+        raise ValueError('Staged artifact and signed job differ')
+    return policy
+
+
 def fsync_directory(path):
     fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
     try:
@@ -130,7 +157,9 @@ def journal_state(journal, state):
     fsync_directory(journal)
 
 
-def stage_mounted_recovery(recovery, artifact, journal, *, fault=None):
+def stage_mounted_recovery(recovery, artifact, journal, *,
+                           bundle, verification_key, expected_original_sha256,
+                           now=None, fault=None):
     """Stage files on a disposable mounted recovery filesystem, marker last."""
     artifact = Path(artifact)
     recovery = Path(recovery)
@@ -142,12 +171,17 @@ def stage_mounted_recovery(recovery, artifact, journal, *, fault=None):
         raise ValueError('Journal path is a symlink')
     journal = journal.resolve()
     manifest = verify_artifact(artifact)
+    verify_signed_stage_bundle(manifest, bundle, verification_key, now=now)
     if not recovery.is_dir() or journal.exists():
         raise ValueError('Fresh recovery directory and journal required')
     original = recovery / 'recovery.scr'
     if original.is_symlink():
         raise ValueError('Original recovery script is a symlink')
     original = regular(original)
+    if (not isinstance(expected_original_sha256, str) or
+            len(expected_original_sha256) != 64 or
+            digest(original) != expected_original_sha256):
+        raise ValueError('Original recovery script differs from reviewed input')
     stage = recovery / 'sv08-reimage'
     if stage.exists() or stage.is_symlink():
         raise ValueError('Recovery already staged')

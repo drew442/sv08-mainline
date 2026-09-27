@@ -109,13 +109,16 @@ its own terminal result and host readback.
 
 The offline stager currently operates on a caller-supplied recovery directory
 and arms **regular-file disks only**. It has no live block-device CLI. It
-preserves the original recovery script, installs the FIT and wrapper before
+rechecks the exact signed job and image map at stage time, and requires the
+reviewed original recovery-script hash. An expired job is refused before a
+journal or recovery file is made. It preserves the original recovery script,
+installs the FIT and wrapper before
 the marker, then journals a separate two-copy environment update. It extracts
 the compiled U-Boot script and compares its actual payload with the reviewed
 selector. It also extracts all three FIT members and compares them with the
 reviewed kernel, initramfs and DTB. Tests refuse a changed compiled script or
 FIT kernel even when the surrounding manifest and wrapper are recomputed.
 The related regression run passed 24 tests after this check; its log SHA-256
-is `ade840253086fcde0772407361bec30ea7b8ab98e548b3e78949036f0789cf03`.
+is `d9d319e6d0d7fc8ef5e54657b206b751beb8c5f3427fde0fcd066f95ce832463`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.
