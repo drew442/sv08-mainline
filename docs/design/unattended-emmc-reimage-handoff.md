@@ -135,3 +135,10 @@ the exact-v5-source synthetic-target policy; its log SHA-256 is
 `7d71a0b52197c1f0e02083d56b12b53054489d66f8bd565bd399b986e3bf98f3`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.
+
+The existing [H12 human task](../hardware/coordinated-human-tasks.md) remains
+the single physical session. Before its
+read-only trial, verify wired LAN is connected to the printer for NFS and the
+one-shot claim service: its Ethernet cable was last reported in use by the
+KVM. Arm receive-only Beelink serial capture before connecting USB serial,
+because that connection powers the host. The factory eMMC stays stored.
