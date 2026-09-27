@@ -235,7 +235,9 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
         bootcmd = boot_script('10.0.2.2', '/srv/sv08-sd-nfs', hashes, claim_port=port)
         (work / 'boot.cmd').write_text(bootcmd)
         kernel_args = re.search(r'^setenv bootargs "([^"]+)"$', bootcmd, re.M).group(1)
-        if recovery_handoff:
+        if recovery_handoff and not tamper_job:
+            kernel_args = json.loads((artifact / 'build.json').read_text())['bootargs']
+        elif recovery_handoff:
             kernel_args += ' sv08.h616_recovery_handoff=1'
         stop = threading.Event()
         errors = []
