@@ -4,6 +4,8 @@ Status: bounded offline design for `network-emmc-unattended-recovery-handoff`.
 Date: 2026-09-27. It is not a printer activation procedure or evidence of a
 physical boot. The stored factory eMMC and prepared SD path remain independent
 recovery options.
+The [prospective offline verification amendment](../decisions/0019-offline-reimage-handoff-verification.md)
+keeps H616 U-Boot-to-FIT execution in the separate physical handoff gate.
 
 ## Boot and staging states
 
