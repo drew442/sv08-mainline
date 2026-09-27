@@ -135,16 +135,32 @@ def recovery_marker_present(work):
 
 
 def execute(work, sd_work, sd_dtb, packages, tamper_job,
-            *, recovery_handoff=False, installed_image=None):
+            *, recovery_handoff=False, installed_image=None,
+            use_installed_source=False):
     if os.geteuid() != 0:
         raise PermissionError('Isolated QEMU harness must run as root')
     work = fresh_work(work)
-    source = work / 'source.img'
-    if create_synthetic_source(source) != IMAGE_SHA256:
-        raise ValueError('Synthetic source does not match pin')
-    validate_source(source)
+    if use_installed_source:
+        if not recovery_handoff or installed_image is None:
+            raise ValueError('Installed source requires recovery handoff')
+        source = installed_image.resolve(strict=True)
+        if (not source.is_file() or source.stat().st_size != IMAGE_BYTES or
+                digest(source) != V5_IMAGE_SHA256):
+            raise ValueError('Installed source is not exact reviewed v5 image')
+        source_hash = V5_IMAGE_SHA256
+    else:
+        source = work / 'source.img'
+        if create_synthetic_source(source) != IMAGE_SHA256:
+            raise ValueError('Synthetic source does not match pin')
+        validate_source(source)
+        source_hash = IMAGE_SHA256
+    policy_value = h616_synthetic_policy(source_hash)
+    if (inspect_gpt(source, policy_value['image_layout']['disk_guid'])['partition_records'] !=
+            policy_value['image_layout']['partitions']):
+        raise ValueError('QEMU source GPT differs from reviewed image map')
     target_fd = create_target(work / 'target.img', TARGET_BYTES)
-    admit_target(work, target_fd, source, TARGET_BYTES)
+    admit_target(work, target_fd, source, TARGET_BYTES,
+                 allow_external_source=use_installed_source)
     run(['mount', '--make-rprivate', '/'])
     run(['mount', '-t', 'tmpfs', 'tmpfs', '/run'])
     run(['ip', 'link', 'set', 'lo', 'up'])
@@ -157,7 +173,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
         private = Path(tmp)
         private.chmod(0o700)
         policy = private / 'policy.json'
-        policy.write_bytes(canonical_json(h616_synthetic_policy()))
+        policy.write_bytes(canonical_json(policy_value))
         policy.chmod(0o600)
         job_sign = copy_private(private, 'job-sign.pem', keys / 'test-signing-key.pem')
         job_verify = copy_private(private, 'job-verify.pem', keys / 'test-verification-key.pem')
@@ -256,12 +272,13 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
             else:
                 if prefix + 'READBACK ' not in serial or not (state / 'claim/claim.json').exists():
                     raise RuntimeError('Success lacks readback or durable claim')
-                if digest(work / 'target.img', IMAGE_BYTES) != IMAGE_SHA256:
+                if digest(work / 'target.img', IMAGE_BYTES) != source_hash:
                     raise RuntimeError('Host readback hash differs')
-                if inspect_gpt(work / 'target.img')['partition_records'] != expected_records():
+                if (inspect_gpt(work / 'target.img', policy_value['image_layout']['disk_guid'])
+                        ['partition_records'] != policy_value['image_layout']['partitions']):
                     raise RuntimeError('Host GPT differs')
             result = {'case': 'tampered-signed-job' if tamper_job else 'full-success',
-                      'marker': marker, 'source_sha256': IMAGE_SHA256,
+                      'marker': marker, 'source_sha256': source_hash,
                       'kernel_sha256': hashes['Image'], 'initramfs_sha256': hashes['initrd.img'],
                       'bundle_manifest_sha256': composition['bundle_manifest_sha256'],
                       'controller_state_sha256': digest(state / 'state.json'),
@@ -269,6 +286,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
                       'target_sha256': digest(work / 'target.img', IMAGE_BYTES) if not tamper_job else None,
                       'synthetic_target_only': True, 'h616_boot_tested': False,
                       'recovery_handoff': recovery_handoff,
+                      'installed_source_as_replacement': use_installed_source,
                       'staged': staged}
             (work / 'result.json').write_text(json.dumps(result, sort_keys=True, indent=2) + '\n')
             print(json.dumps(result, sort_keys=True), flush=True)
@@ -293,13 +311,15 @@ def main():
     parser.add_argument('--tamper-job', action='store_true')
     parser.add_argument('--recovery-handoff', action='store_true')
     parser.add_argument('--installed-image', type=Path)
+    parser.add_argument('--use-installed-source', action='store_true')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     if not args.execute:
         print('Inspection only: pass --execute inside a fresh isolated mount/network namespace')
         return
     execute(args.work, args.sd_work, args.sd_dtb, args.package_root, args.tamper_job,
-            recovery_handoff=args.recovery_handoff, installed_image=args.installed_image)
+            recovery_handoff=args.recovery_handoff, installed_image=args.installed_image,
+            use_installed_source=args.use_installed_source)
 
 
 if __name__ == '__main__':

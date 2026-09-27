@@ -92,6 +92,16 @@ class CandidateTests(unittest.TestCase):
     def setUpClass(cls):
         (REPO / 'local').mkdir(exist_ok=True)
 
+    def test_reviewed_v5_source_may_use_only_a_synthetic_qemu_target(self):
+        from scripts.build_h616_reimage_candidate import V5_IMAGE_SHA256, policy_fields
+        from tests.host_qemu_sd_network_emmc_write import h616_synthetic_policy
+        candidate = h616_synthetic_policy(V5_IMAGE_SHA256)
+        self.assertEqual(policy_fields(candidate), candidate)
+        self.assertEqual(candidate['image_layout']['partitions'][4]['name'], 'recovery')
+        candidate['image_sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'Untrusted or incomplete'):
+            policy_fields(candidate)
+
     def test_recovery_handoff_requires_trusted_initramfs_and_pins_transfer(self):
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
             work = Path(temporary)

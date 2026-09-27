@@ -90,10 +90,16 @@ def expected_image_layout(synthetic_test, image_sha256):
     if config['image_bytes'] != IMAGE_BYTES or len(parts) != 6:
         raise ValueError('Reviewed host image layout changed')
     if synthetic_test:
-        if image_sha256 != TEST_IMAGE_SHA256:
+        if image_sha256 == TEST_IMAGE_SHA256:
+            identities = TEST_PART_GUIDS
+            disk_guid = TEST_DISK_GUID
+        elif image_sha256 == V5_IMAGE_SHA256:
+            # QEMU may exercise the exact reviewed v5 bytes while retaining
+            # its synthetic *target* identity. This never admits a printer.
+            identities = tuple(item[1] for item in V5_IMAGE_PARTITIONS)
+            disk_guid = V5_IMAGE_DISK_GUID
+        else:
             return None
-        identities = TEST_PART_GUIDS
-        disk_guid = TEST_DISK_GUID
     else:
         disk_guid = REVIEWED_PHYSICAL_IMAGES.get(image_sha256)
         if disk_guid is None:
