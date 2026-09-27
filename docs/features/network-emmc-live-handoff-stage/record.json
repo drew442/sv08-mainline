@@ -1,0 +1,96 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Read-only live target and recovery-mount admission binds current CID/controller/type/capacity/dev_t, GPT and partition five to the exact signed policy and refuses ambiguous or changed inputs.",
+      "environment": "offline",
+      "id": "lhs-01"
+    },
+    {
+      "description": "Explicit journaled stage, arm and activation operations preserve original recovery and publish the one-shot marker only after both redundant environment copies verify; stage and arm faults remain fail-closed.",
+      "environment": "offline",
+      "id": "lhs-02"
+    },
+    {
+      "description": "Default dry-run, artifact provenance, regression and operator handoff are reviewed without writing any physical block device or claiming hardware acceptance.",
+      "environment": "offline",
+      "id": "lhs-03"
+    }
+  ],
+  "created": "2026-09-27",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "lhs-01",
+          "lhs-02"
+        ],
+        "text": "Bind the signed policy, current CID/controller/type/capacity, GPT partition five, mounted ext4 source and dev_t to the opened target throughout admission and every write boundary. Refuse changed, ambiguous or overlapping identity before writing; test those refusals with synthetic sysfs and disposable loop media."
+      },
+      {
+        "checks": [
+          "lhs-02",
+          "lhs-03"
+        ],
+        "text": "Keep inspection read-only by default. Require distinct explicit stage, arm and activation calls; verify signed job, FIT, source map, original recovery script and measured staging space. Journal and sync each transition, verify both redundant environment copies before publishing the marker, and test interruption at each durable boundary with no automatic retry."
+      },
+      {
+        "checks": [
+          "lhs-03"
+        ],
+        "text": "Report artifact and source hashes, staging space and memory requirements, focused regression results and a reproducible H12 handoff. Label all fixture results offline. Physical stage, boot-policy change and whole-eMMC write still require fresh live evidence, exact artifact/recovery review, applicable owner authorization and immediate independent high-consequence review under H12."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "b9ba8c0c74e9abebf1a0a9ce698c4c2e2f763c0a4497858d3bd597f05650c320",
+    "rationale": "Decision 0018, the completed urh-01/02/03 offline handoff, and H12 support a bounded offline implementation of the missing live staging backend. The existing stager rejects live block devices, while H10's dated inventory does not establish current eMMC identity. The proposed default read-only admission, explicit stage/arm/activation steps, and disposable fault tests address that gap. Earlier QEMU and loop results are synthetic evidence, not proof of installed-eMMC identity, physical durability, H616 boot handoff, or recovery. Approval covers offline implementation and review only; urh-04/05 and H12 retain separate physical review and action authority.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/design/unattended-emmc-reimage-handoff.md": "1deb28cf072178df5d418126a39e50e9d18679448fdcbd32b53a9b6827997e5d",
+      "docs/features/network-emmc-unattended-recovery-handoff/proposal.md": "3646582b5c95a21d0bb2858a4a9d7a7151d8f2fe09ed5b19daec568cf83678e4",
+      "docs/features/network-emmc-unattended-recovery-handoff/record.json": "02ddb479d00b776bc2bb221668ed0459ae563fe0fbd9284ad0aef20bb10aa35f",
+      "docs/hardware/coordinated-human-tasks.md": "3243b52fc547fe4c80f60086d74bbcf0f3da8e245e92d1d27aff520afab653d3"
+    },
+    "reviewer": "independent GPT-6 Sol/medium feature-approver",
+    "scope_sha256": "3d731d3c6827276456e2faf418fc9e109bc02924b9b7699a0a79bfb8a0e07f56",
+    "session": "lhs-independent-proposal-review-20260927-01"
+  },
+  "format_version": 1,
+  "id": "network-emmc-live-handoff-stage",
+  "kind": "improvement",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-live-handoff-stage/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-unattended-recovery-handoff/proposal.md",
+    "docs/features/network-emmc-unattended-recovery-handoff/record.json",
+    "docs/design/unattended-emmc-reimage-handoff.md",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "lhs-01",
+        "lhs-02",
+        "lhs-03"
+      ],
+      "depends_on": [
+        "network-emmc-unattended-recovery-handoff:offline-stage-and-qemu"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "offline-live-stage",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Build and verify the guarded live staging backend on disposable media",
+      "verification": null
+    }
+  ],
+  "title": "Admit and stage the recovery writer on the installed spare eMMC"
+}
