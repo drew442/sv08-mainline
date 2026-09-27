@@ -41,3 +41,41 @@ identical SHA-256. This tests archive construction and parser behavior, not an
 H616 boot or a physical write. The extracted initramfs occupied about 54 MiB of
 scratch space; the builder also retains an uncompressed newc archive and the SD
 image, so the release/commissioning build needs a separate scratch-budget check.
+
+## Manual one-shot host service
+
+`scripts/prepare_h616_reimage_job.py` prepares one short-lived signed job from
+an exact raw image and a canonical target policy. Its default action is an
+inspection that creates no state. `--execute` writes new owner-only state below
+ignored `local/`, including the signed job and durable armed claim. Physical
+preparation must run as root, with root-owned 0600 policy and key files. The
+policy's image hash and partition map must match the reviewed v5 image; the
+program streams the complete raw image to check its hash. It will not replace
+an existing state directory or silently renew a job. Synthetic policies are
+accepted only through the Python test interface, never through the physical
+command line.
+
+`scripts/serve_h616_reimage_job.py` also defaults to inspection. An explicit
+root `--execute` requires the same image, job verification key and receipt
+signing key, an unused prepared claim, an empty export destination, the one
+printer client IP, and installed `rpcbind` and NFS-Ganesha executables. It
+rechecks the full source hash and claim before writing a durable start marker.
+The NFS export contains only a hard link named `image.bin`, defaults to no
+access for other clients, and grants the one printer IP read-only access. The
+raw image must be readable by the NFS anonymous user (the current controller
+requires a world-readable source file inside a private 0700 parent directory);
+keep the export on a trusted network. The export directory and image must
+be on the same filesystem for the hard link.
+The
+claim server signs only after persisting consumption. Keep the foreground
+service running after a claim until the guest's terminal result is observed:
+the writer still needs NFS for the subsequent transfer and readback. Stop the
+service manually afterward. A started service cannot be restarted or rearmed
+from the same state, including after an interrupted or lost acknowledgement;
+inspect the target and create a separately reviewed new job if needed.
+
+These commands are commissioning components, not a one-command printer flash.
+The SD boot artifact must contain the same signed job, verifier and exact NFS
+endpoint. No automatic trigger or automatic return to eMMC boot is provisioned.
+The QEMU harness exercises the synthetic path; the host-service NFS-Ganesha
+configuration has not yet been tested against a physical printer.

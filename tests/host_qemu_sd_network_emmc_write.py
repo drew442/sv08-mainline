@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import signal
 import stat
 import struct
@@ -36,6 +37,7 @@ from sv08_reimage_signature import (FORMAT, policy, policy_hash,
 sys.path.insert(0, str(REPO / 'scripts'))
 from build_qemu_reimage_mode import build as build_reimage_root  # noqa: E402
 from build_h616_reimage_candidate import build as build_h616_root, TARGET_BYTES as H616_TARGET_BYTES  # noqa: E402
+from build_sd_network_image import append_commissioning_initramfs, commissioning_bundle, boot_script  # noqa: E402
 
 IMAGE_BYTES = 7_818_182_656
 TARGET_BYTES = 32_000_000_000
@@ -342,7 +344,8 @@ def h616_synthetic_policy():
     }
 
 
-def h616_synthetic_root(root, descriptor, signature, *, fault=None, claim_only=False):
+def h616_synthetic_root(root, descriptor, signature, *, fault=None, claim_only=False,
+                        trusted_initramfs=False):
     """Exercise the actual H616 candidate builder using only public test keys."""
     local_root = REPO / 'local'
     local_root.mkdir(exist_ok=True)
@@ -362,12 +365,15 @@ def h616_synthetic_root(root, descriptor, signature, *, fault=None, claim_only=F
             files[name].chmod(0o600)
         return build_h616_root(root, files['policy'], files['key'], files['job'],
                                files['sig'], synthetic_test=True, fault=fault,
-                               claim_only=claim_only)
+                               claim_only=claim_only, trusted_initramfs=trusted_initramfs,
+                               source_server='10.0.2.2' if trusted_initramfs else None,
+                               source_export='/srv/sv08-sd-nfs' if trusted_initramfs else None)
 
 
 def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signature, *,
             claim_only=False, fault=None, identity_fault=None, commissioning=False,
-            source_fault=None, lost_claim_ack=False, claim_fault=None):
+            source_fault=None, lost_claim_ack=False, claim_fault=None,
+            trusted_initramfs=False):
     isolated()
     free = os.statvfs(work).f_bavail * os.statvfs(work).f_frsize
     if free < 9_000_000_000:
@@ -378,17 +384,42 @@ def execute(work, sd_work, packages, target_fd, kernel_args, descriptor, signatu
         raise ValueError('QEMU host needs at least 3 GiB available memory')
     root = work / 'nfs-root'
     root.mkdir(mode=0o755)
-    mode_manifest = (h616_synthetic_root(root, descriptor, signature,
-                                         fault=fault, claim_only=claim_only) if commissioning else
-                     build_reimage_root(root, canonical_json(descriptor), signature,
-                                        fault=fault, claim_only=claim_only))
+    if trusted_initramfs:
+        if not commissioning:
+            raise ValueError('Trusted-initramfs QEMU case requires synthetic H616 mode')
+        (REPO / 'local').mkdir(mode=0o700, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            bundle_root = Path(temporary) / 'bundle'
+            mode_manifest = h616_synthetic_root(bundle_root, descriptor, signature,
+                                                fault=fault, claim_only=claim_only,
+                                                trusted_initramfs=True)
+            synthetic_mmc_fixture(bundle_root, identity_fault, commissioning=True)
+            composed = work / 'composed-sd'
+            (composed / 'boot').mkdir(parents=True)
+            shutil.copyfile(sd_work / 'boot/Image', composed / 'boot/Image')
+            shutil.copyfile(sd_work / 'boot/initrd.img', composed / 'boot/initrd.img')
+            bundle = commissioning_bundle(bundle_root, '10.0.2.2', '/srv/sv08-sd-nfs')
+            append_commissioning_initramfs(composed / 'boot/initrd.img', bundle,
+                                           '10.0.2.2', '/srv/sv08-sd-nfs', work)
+        sd_work = composed
+        command_line = boot_script('10.0.2.2', '/srv/sv08-sd-nfs',
+                                   {'Image': '0' * 64, 'initrd.img': '0' * 64,
+                                    'sv08.dtb': '0' * 64}, claim_port=12000)
+        kernel_args = re.search(r'^setenv bootargs "([^"]+)"$', command_line, re.M).group(1)
+    else:
+        mode_manifest = (h616_synthetic_root(root, descriptor, signature,
+                                             fault=fault, claim_only=claim_only) if commissioning else
+                         build_reimage_root(root, canonical_json(descriptor), signature,
+                                            fault=fault, claim_only=claim_only))
     if mode_manifest['status'] != ('nondeployable-commissioning-candidate' if commissioning else 'nondeployable-qemu-only'):
         raise ValueError('Untrusted QEMU mode artifact')
-    synthetic_mmc_fixture(root, identity_fault, commissioning=commissioning)
+    if not trusted_initramfs:
+        synthetic_mmc_fixture(root, identity_fault, commissioning=commissioning)
     descriptor_bytes = canonical_json(descriptor)
     descriptor_hash = sha256_bytes(descriptor_bytes)
-    (root / 'job.json').chmod(0o444)
-    (root / 'expected.sha256').write_text(IMAGE_SHA256 + '\n')
+    if not trusted_initramfs:
+        (root / 'job.json').chmod(0o444)
+        (root / 'expected.sha256').write_text(IMAGE_SHA256 + '\n')
     os.link(work / 'source.img', root / 'image.bin')
     if source_fault == 'missing':
         (root / 'image.bin').unlink()
@@ -442,7 +473,9 @@ EXPORT {{ Export_Id = 1; Path = "{root}"; Pseudo = "/srv/sv08-sd-nfs"; Access_Ty
         command = ['qemu-system-aarch64', '-machine', 'virt', '-cpu', 'cortex-a53', '-smp', '2',
                    '-m', '2048', '-kernel', sd_work / 'boot/Image',
                    '-initrd', sd_work / 'boot/initrd.img', '-append',
-                   f'{kernel_args} sv08.claim_port={claim_server.server_port}',
+                   (kernel_args.replace('sv08.claim_port=12000',
+                                        f'sv08.claim_port={claim_server.server_port}') if trusted_initramfs else
+                    f'{kernel_args} sv08.claim_port={claim_server.server_port}'),
                    '-display', 'none', '-serial', 'null', '-no-reboot',
                    '-device', 'qemu-xhci,id=xhci', '-device', 'usb-net,netdev=n0',
                    '-netdev', 'user,id=n0', '-drive',
@@ -616,7 +649,11 @@ def main():
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--commissioning', action='store_true',
                         help='Synthetic H616 adapter on disposable QEMU storage only')
+    parser.add_argument('--trusted-initramfs', action='store_true',
+                        help='Compose SD-resident writer and export only image data to QEMU')
     args = parser.parse_args()
+    if args.trusted_initramfs and not args.commissioning:
+        parser.error('--trusted-initramfs requires --commissioning')
     if (args.abrupt_after_write or args.source_fault or args.lost_claim_ack or args.claim_fault or
             args.identity_fault in ('wrong-controller', 'missing-controller', 'wrong-type', 'wrong-capacity')) and not args.commissioning:
         parser.error('These cases require --commissioning synthetic H616 mode')
@@ -670,7 +707,8 @@ def main():
                                      commissioning=args.commissioning,
                                      source_fault=args.source_fault,
                                      lost_claim_ack=args.lost_claim_ack,
-                                     claim_fault=args.claim_fault)
+                                     claim_fault=args.claim_fault,
+                                     trusted_initramfs=args.trusted_initramfs)
             if (selected_fault or args.identity_fault or args.source_fault or
                     args.lost_claim_ack or args.claim_fault):
                 result = {'status': ('qemu-abrupt-interruption-pass' if args.abrupt_after_write else
