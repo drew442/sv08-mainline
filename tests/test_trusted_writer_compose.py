@@ -94,6 +94,13 @@ class TrustedWriterCompositionTests(unittest.TestCase):
             sd.run('unmkinitramfs', initrd, unpack)
             self.assertEqual((unpack / 'scripts/init-bottom/ORDER').read_text(), order)
             self.assertEqual((unpack / 'trusted-writer').read_bytes(), b'synthetic-writer')
+            fixture = root / 'synthetic-mmc'
+            fixture.mkdir()
+            (fixture / 'cid').write_text('synthetic-only\n')
+            with self.assertRaisesRegex(ValueError, 'forbidden in a physical bundle'):
+                sd.commissioning_bundle(root, '192.0.2.10', '/exports/exact')
+            (fixture / 'cid').unlink()
+            fixture.rmdir()
             again = work / 'again'
             again.mkdir()
             second = again / 'initrd.img'
