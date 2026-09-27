@@ -104,8 +104,19 @@ SHA-256 `3e74d97b7b1ee8ecd77532bbde91e7a589da97b3b4274c8c6de0e89c92e510a1`
 and serial SHA-256 `680acf9ba39910f32089c29d8e46739a4854c43a21ddb1604623141b78ca9e6a`
 record `REFUSED_BUNDLE`, no server claim, no target change and marker removal.
 The disposable target bytes were removed after the logs were hashed to save
-scratch space. The full-transfer QEMU run is separate and must be judged on
-its own terminal result and host readback.
+scratch space. A separate full-transfer QEMU run at
+`/mnt/sv08-qemu-trusted/urh-qemu-full-v2` on Beelink reached
+`SV08_H616_COMMISSIONING_PASS`: the guest's full readback and the host's
+independent 7,818,182,656-byte hash matched the synthetic source SHA-256
+`7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec`,
+and the host checked all six GPT records. The result JSON SHA-256 is
+`77b24318c646540f155cdf0643e5c96804d14a0f9604cf7be05499f2c8420246`;
+serial SHA-256 is
+`337cf2481ae68768c2a95b811c44e2cf68ef9ece7dc5231406fda2548d353d09`.
+The source was deliberately nonbootable, the guest had 2 GiB RAM, and Linux
+logged five atomic page-allocation warnings. This proves the disposable
+transfer/readback path, not normal slot boot or the 1 GiB board memory limit.
+An exact-v5-source trial with 1 GiB guest RAM is a separate check.
 
 The offline stager currently operates on a caller-supplied recovery directory
 and arms **regular-file disks only**. It has no live block-device CLI. It
