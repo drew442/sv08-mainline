@@ -78,6 +78,14 @@ is still needed. A privileged `sudo bwrap` smoke test does not establish the
 unprivileged Codex sandbox. Raw diagnostics remain in ignored
 `local/feature-workflow/`.
 
+A separate GPT-6 Sol/medium `codex exec --sandbox read-only --worktree` attempt
+to review the pending writerless boot proposal on 2026-09-27 also failed before
+reading project files: bubblewrap reported `loopback: Failed RTM_NEWADDR:
+Operation not permitted`. The session deferred without hashes or a decision, so
+it is not independent feature approval. Use a runner whose enforced read-only
+sandbox passes its actual write-denial test before retrying; do not substitute a
+full-access reviewer or treat a prompt-only read-only instruction as isolation.
+
 The explicit separate-session collaboration fallback completed all five cases.
 That client inherits its parent permissions, so read-only reviewer instructions
 are not an enforced sandbox. The dispatcher launches no processes and grants no

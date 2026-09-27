@@ -34,7 +34,10 @@ The recovery record, inactive printer interface and boot-health composition
 have passed independent offline review. None certifies physical board behavior.
 
 `feature_workflow.py next` returns `null`; the writerless goal needs new bounded
-feature approval before its next behavioral implementation. H10's single
+feature approval before its next behavioral implementation. The attempted
+separate GPT-6 Sol review deferred before reading files because the VM's
+bubblewrap/AppArmor sandbox cannot create its network namespace; do not self
+approve or use an unrestricted reviewer to bypass this. H10's single
 reviewed retry passed on 2026-09-26. The spare eMMC appeared as
 `/dev/mmcblk0`; both U-Boot environment copies passed CRC/layout checks and the
 SD/NFS read-only checks passed. The probe shut down the host. See the H10 record;

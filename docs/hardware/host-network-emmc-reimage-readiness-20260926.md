@@ -48,6 +48,13 @@ kexec and the H616 handoff is untested. The independent approver must select a
 single primary route before implementation; do not treat this assessment as
 approval to change kernel configuration or boot behavior.
 
+The independent Sol feature-approver could not complete this decision in the
+current VM: its separate read-only Codex CLI session failed at bubblewrap
+network-namespace setup before reading repository files, and returned no hashes
+or review verdict. This is documented in the [agent runtime validation](../development/feature-workflow-validation.md).
+The proposal is still unapproved; use a runner with a verified restricted
+sandbox before implementation.
+
 The development VM has 3.5 GiB free and must not receive a raw image or QEMU
 target. Beelink currently has about 10.7 GB free. The compressed v5 source's
 compressed and streamed raw hashes were revalidated there, but NFS services are
