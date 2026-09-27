@@ -157,6 +157,8 @@ def commissioning_bundle(root, server, export):
         return regular_input(path)
 
     manifest = json.loads(member('reimage-manifest.json').read_text())
+    if (root / 'synthetic-mmc').exists() and manifest.get('synthetic_test') is not True:
+        raise ValueError('Synthetic MMC fixture is forbidden in a physical bundle')
     if (manifest.get('mode') != 'h616-commissioning' or
             manifest.get('status') != 'nondeployable-commissioning-candidate' or
             manifest.get('bootable_sd_image') is not False or
@@ -204,6 +206,11 @@ def append_commissioning_initramfs(initrd, bundle, server, export, work):
         shutil.copyfile(root / name, stage / destination)
         (stage / destination).chmod(0o755 if destination == 'trusted-writer' else 0o644)
     shutil.copyfile(root / 'expected.sha256', stage / 'expected.sha256')
+    fixture = root / 'synthetic-mmc'
+    if fixture.exists() or fixture.is_symlink():
+        if manifest.get('synthetic_test') is not True or fixture.is_symlink() or not fixture.is_dir():
+            raise ValueError('Synthetic MMC fixture is forbidden in a physical bundle')
+        shutil.copytree(fixture, stage / 'synthetic-mmc', symlinks=True)
     # Extraction and overlay creation otherwise give directories fresh mtimes.
     # Normalize the whole pinned tree before archiving so the output hash is
     # reproducible from the same inputs.
