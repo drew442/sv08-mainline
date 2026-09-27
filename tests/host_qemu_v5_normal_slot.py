@@ -54,12 +54,14 @@ def execute(target, kernel, initrd, work):
     work.mkdir(mode=0o700)
     command = ['-machine', 'virt', '-cpu', 'cortex-a53', '-smp', '2',
                '-m', '1024', '-kernel', str(kernel), '-initrd', str(initrd),
-               '-append', ('console=ttyAMA0,115200 root=/dev/sda2 '
+               '-append', ('console=ttyS0,115200 root=/dev/sda2 '
                            'rootfstype=ext4 ro rootwait init=/bin/sh panic=0'),
-               '-display', 'none', '-serial', 'stdio', '-no-reboot', '-nic', 'none',
+               '-display', 'none', '-serial', 'null', '-no-reboot', '-nic', 'none',
                '-device', 'qemu-xhci,id=xhci',
                '-drive', f'file={target},if=none,id=target,format=raw,readonly=on',
-               '-device', 'usb-storage,drive=target']
+               '-device', 'usb-storage,drive=target',
+               '-chardev', 'stdio,id=serial,signal=off',
+               '-device', 'pci-serial,chardev=serial']
     log = work / 'serial.log'
     child = pexpect.spawn('qemu-system-aarch64', command, encoding='utf-8',
                           timeout=180, echo=False)
