@@ -13,6 +13,7 @@ from pathlib import Path
 import shutil
 import stat
 import subprocess
+import tempfile
 import zlib
 
 from scripts.build_h616_recovery_handoff import MARKER, script_text
@@ -66,6 +67,20 @@ def verify_artifact(root):
                                   len(fit), zlib.crc32(fit))
     if (root / 'recovery.cmd').read_text() != expected_script:
         raise ValueError('Selector does not bind the verified FIT and job')
+    # The staged object is recovery.scr, not recovery.cmd. A self-consistent
+    # build.json hash cannot establish that the compiled U-Boot script carries
+    # the reviewed selector, so extract and compare its actual payload.
+    with tempfile.TemporaryDirectory() as temporary:
+        extracted = Path(temporary) / 'selector.bin'
+        subprocess.run(['dumpimage', '-T', 'script', '-p', '0', '-o',
+                        str(extracted), str(root / 'recovery.scr')],
+                       check=True, capture_output=True, timeout=30)
+        payload = extracted.read_bytes()
+        command = expected_script.encode()
+        if (len(payload) != len(command) + 8 or
+                payload[:4] != len(command).to_bytes(4, 'big') or
+                payload[4:8] != b'\0' * 4 or payload[8:] != command):
+            raise ValueError('Compiled recovery selector differs from reviewed source')
     return manifest
 
 

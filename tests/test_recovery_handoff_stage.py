@@ -1,7 +1,9 @@
 """Exercise ordered recovery staging and boot-policy arming on regular files."""
 import json
+import hashlib
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -10,7 +12,8 @@ from scripts.build_h616_reimage_candidate import build as build_writer
 from scripts.build_h616_recovery_handoff import build as build_handoff
 from scripts.stage_h616_recovery_handoff import (arm_regular_image,
                                                  parse_env_record,
-                                                 stage_mounted_recovery)
+                                                 stage_mounted_recovery,
+                                                 verify_artifact)
 from tests.test_h616_reimage_candidate import signed_inputs
 from tests.test_h616_recovery_handoff_builder import base_initrd
 
@@ -93,6 +96,19 @@ class RecoveryStageTests(unittest.TestCase):
                     self.assertEqual(fields[b'sv08_reimage_arm'], job['job_id'].encode())
             with self.assertRaisesRegex(ValueError, 'Marker not durably staged'):
                 arm_regular_image(disk, root / 'after-fit-journal')
+
+            changed = root / 'changed-compiled-script'
+            shutil.copytree(artifact, changed)
+            (changed / 'bad.cmd').write_text('echo BAD-SELECTOR\n')
+            subprocess.run(['mkimage', '-A', 'arm64', '-T', 'script', '-C', 'none',
+                            '-n', 'SV08 one-shot recovery selector', '-d', 'bad.cmd',
+                            'recovery.scr'], cwd=changed, check=True, capture_output=True)
+            manifest = json.loads((changed / 'build.json').read_text())
+            manifest['files_sha256']['recovery.scr'] = hashlib.sha256(
+                (changed / 'recovery.scr').read_bytes()).hexdigest()
+            (changed / 'build.json').write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, 'Compiled recovery selector'):
+                verify_artifact(changed)
 
 
 if __name__ == '__main__':
