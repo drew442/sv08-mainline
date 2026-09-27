@@ -89,8 +89,8 @@ def seed_recovery_handoff_target(work, target_fd, installed_image, job_id):
                        f'sv08_reimage_arm={job_id}\n')
     for _ in range(2):
         run(['fw_setenv', '-c', config, '-s', changes])
-    for offset in (0x400000, 0x800000):
-        bank = os.pread(target_fd, 65536, offset)
+    for env_offset in (0x400000, 0x800000):
+        bank = os.pread(target_fd, 65536, env_offset)
         if (len(bank) != 65536 or int.from_bytes(bank[:4], 'little') != zlib.crc32(bank[5:])):
             raise ValueError('Unverified redundant environment seed')
         entries = dict(item.split(b'=', 1) for item in bank[5:].split(b'\0')
