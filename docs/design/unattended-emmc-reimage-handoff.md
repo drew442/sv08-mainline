@@ -135,6 +135,13 @@ the exact-v5-source synthetic-target policy; its log SHA-256 is
 `7d71a0b52197c1f0e02083d56b12b53054489d66f8bd565bd399b986e3bf98f3`.
 This does not yet prove installed-host target admission, physical durability,
 normal boot of a replacement image, or unattended scheduling/activation.
+The exact v5 source image on Beelink was mounted read-only with ext4 journal
+replay disabled for a staging-capacity check: its original `recovery.scr` is
+720 bytes, SHA-256
+`57e414bec126a309085f3e2be211c6b8fe0e43f5833a5b5609f3e69457808dee`,
+and that recovery filesystem reported 154,374,144 bytes available. This is
+an image-file observation; the currently installed recovery partition still
+needs separate identity and free-space checks before any physical stage.
 
 The existing [H12 human task](../hardware/coordinated-human-tasks.md) remains
 the single physical session. Before its
