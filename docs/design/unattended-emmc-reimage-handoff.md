@@ -200,6 +200,23 @@ serial SHA-256 is
 `62c5d3a3d22ed773191423864dcf753fac72bc58d10dd60dca050d7b3e077f29`.
 The QEMU `virt` machine still starts that verified kernel/initramfs externally;
 it cannot establish the actual H616 U-Boot-to-FIT transition.
+
+An integrated 1 GiB guest run at
+`/mnt/sv08-qemu-trusted/urh-qemu-integrated-success-v1` did reach target open,
+but repeated atomic page-allocation failures in emulated USB/NFS were followed
+by an NFS timeout and no further write progress. The guest was killed as an
+uncertain postopen interruption; this is **not** a success result. Serial
+SHA-256 is
+`9a2f701c199ae0e13eee0a3f1a6f36c9680680045ded35c066f08ba9b84881c0`.
+Read-only host inspection afterward found both redundant environment copies
+CRC-valid, exhausted and still carrying the same arm token. The recovery
+marker was absent on a read-only, no-journal-replay mount. At 1 GiB offset a
+nonzero MiB matched the source, while at 6,325,010,432 bytes a source MiB
+remained zero on the target; the transfer was incomplete. The tested selector
+therefore has no marker with which to relaunch the writer, but a second
+QEMU/physical boot of this partial target was not performed. This result
+shows the uncertain-write stop and 1 GiB QEMU transport pressure; it cannot
+serve as full-transfer or board-memory acceptance evidence.
 The related regression run passed 31 tests after this check and addition of
 the exact-v5-source synthetic-target policy; its log SHA-256 is
 `c7674f377719f4fc8e61f2d1ff6480a63c242199db0672fbe34ff9c6c645e677`.
