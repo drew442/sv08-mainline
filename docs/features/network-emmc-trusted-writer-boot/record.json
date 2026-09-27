@@ -1,0 +1,83 @@
+{
+  "format_version": 1,
+  "id": "network-emmc-trusted-writer-boot",
+  "kind": "feature",
+  "title": "Authenticate the writerless SD/NFS commissioning boot path",
+  "author": "root/coordinator",
+  "created": "2026-09-27",
+  "priority": 1,
+  "proposal": "docs/features/network-emmc-trusted-writer-boot/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-h616-writerless-adapter/proposal.md",
+    "docs/features/network-emmc-h616-writerless-adapter/record.json",
+    "docs/features/network-emmc-v5-image-map/record.json",
+    "docs/features/network-emmc-authenticated-claim/proposal.md",
+    "docs/hardware/host-network-emmc-h616-adapter-offline-20260926.md",
+    "docs/hardware/host-network-emmc-authenticated-claim-qemu-20260927.md",
+    "docs/hardware/host-network-emmc-reimage-readiness-20260926.md",
+    "docs/hardware/coordinated-human-tasks.md",
+    "docs/hardware/host-sd-network-first-boot-20260926.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "twb-01",
+      "description": "The default diagnostic remains writer-free; only explicit commissioning composition embeds the target writer and policy in content protected by the SD-resident verified-initrd hash chain.",
+      "environment": "offline"
+    },
+    {
+      "id": "twb-02",
+      "description": "The trusted initramfs executes the embedded writer before switching to network-root code, mounts NFS read-only only as the exact image source, and passes bounded commissioning and claim-port parameters.",
+      "environment": "offline"
+    },
+    {
+      "id": "twb-03",
+      "description": "A local explicit host controller prepares a short-lived exact-image job and durable one-shot claim, signs only after durable consumption, and fails closed without automatic retry or rearm.",
+      "environment": "offline"
+    },
+    {
+      "id": "twb-04",
+      "description": "Synthetic QEMU passes end-to-end success, source/identity/job/claim refusal, replay/lost acknowledgement, interruption, flush/readback faults and unchanged diagnostic checks using disposable media only.",
+      "environment": "offline"
+    },
+    {
+      "id": "twb-05",
+      "description": "Strict builds, focused tests and hash-bound evidence pass; documentation explicitly excludes SoC secure boot, live CID/dev_t, physical write/power-loss behavior and release qualification. H12 remains the only physical gate.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "compose-trusted-initramfs",
+      "title": "Run the writer from authenticated initramfs content",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": ["twb-01", "twb-02"],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    },
+    {
+      "id": "end-to-end-qemu",
+      "title": "Add one-shot host control and validate the composed write path",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": ["network-emmc-trusted-writer-boot:compose-trusted-initramfs"],
+      "checks": ["twb-03", "twb-04", "twb-05"],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}

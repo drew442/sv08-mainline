@@ -1,14 +1,16 @@
 # Current subclient goals
 
-Updated 2026-09-26. These are bounded assignments under the existing
+Updated 2026-09-27. These are bounded assignments under the existing
 [remaining-work plan](../docs/remaining-work-plan.md) and
 [parallel delivery plan](../docs/development/parallel-work.md). The owner has
-paused optional new features; these goals finish approved work and correct
-existing records. A subclient goal is complete only when its stated evidence is
-delivered. It does not certify a printer or a release.
+paused optional new features, but explicitly authorized the active goal to
+finish a safe writerless eMMC reimage path. The work below advances that goal;
+other optional features remain paused. A goal is complete only when its stated
+evidence is delivered. It does not certify a printer or a release.
 
 | Goal | Role and model | Owned scope | Completion evidence | Physical dependency |
 | --- | --- | --- | --- | --- |
+| Writerless full-eMMC reimage — in progress | Coordinator, with separate feature approval and delivery verification for substantive implementation | Close the boot trust gap between the verified SD initramfs and unverified NFS-root init; then integrate the H616 writer, exact v5 source and one-shot claim path without changing the default read-only diagnostic | Current read-only audit reconfirmed the compressed v5 input and streamed raw hash on Beelink. H616 adapter/descriptor admission and signed one-shot receipt pass synthetic QEMU. [Current H12 readiness](../docs/hardware/host-network-emmc-reimage-readiness-20260926.md) records that the writer candidate is still nonbootable and NFS init is not authenticated before execution. | One H12 supervised physical write/verify/boot remains after the verified composition, live CID/dev_t comparison, exact artifact/recovery review and high-consequence review. Spare remains installed; factory eMMC stored; no USB writer or eMMC move planned. |
 | Reconcile recovery export record — done | `project_implementer`, GPT-6 Sol / medium, then separate `feature_verifier`, GPT-6 Sol / high | `docs/features/host-recovery-export-composition/record.json` and only the evidence bookkeeping needed to bind the merged implementation | Six schema-valid offline checks and independent verdict passed; `feature_workflow.py validate` and `next` succeeded at `db33359`. | H04/H07 remain open for physical UI, media and recovery tests. |
 | Finish approved inactive printer interface configuration — done | `project_implementer`, GPT-6 Sol / medium, then separate verifier | Approved `printer-interface-config` scope: inactive include and focused tests | Five pinned Klipper tests, coordinator private overlay file-output check, and independent pc-01–pc-08 verdict passed at `72000d3`; no physical claim. | H01/H02/H05/H06 for identification, boot, inputs and attended outputs. |
 | Compose approved boot health — done | `project_implementer`, GPT-6 Sol / medium, separate `project_integration`, and independent verifier | Approved `host-boot-health-composition` coordinator, transaction admission, unit ordering and image enablement | All 12 offline checks passed independent review at `316be5f`: 59 focused tests and clean-source disposable QEMU A→B/A fallback. The harness selected roots and seeded a staged transaction; signed install and U-Boot attempt decrement remain untested. | H02/H07 for later board boot and fallback tests. |
@@ -31,8 +33,9 @@ run. Retain only accepted evidence; never remove another worker's fixtures.
 The recovery record, inactive printer interface and boot-health composition
 have passed independent offline review. None certifies physical board behavior.
 
-`feature_workflow.py next` returns `null`; optional features remain paused. H10's
-single reviewed retry passed on 2026-09-26. The spare eMMC appeared as
+`feature_workflow.py next` returns `null`; the writerless goal needs new bounded
+feature approval before its next behavioral implementation. H10's single
+reviewed retry passed on 2026-09-26. The spare eMMC appeared as
 `/dev/mmcblk0`; both U-Boot environment copies passed CRC/layout checks and the
 SD/NFS read-only checks passed. The probe shut down the host. See the H10 record;
 no repeat boot is planned. H10 evidence does not validate A/B activation, normal
