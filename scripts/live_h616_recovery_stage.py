@@ -8,6 +8,7 @@ Retire this adapter when the supported host updater owns the transaction.
 from __future__ import annotations
 
 import argparse
+import ctypes
 import fcntl
 import hashlib
 import json
@@ -36,6 +37,25 @@ HOST_SYSFS = Path('/sys/bus/platform/devices/4022000.mmc/mmc_host')
 TARGET = Path('/dev/mmcblk0')
 BLKGETSIZE64 = 0x80081272
 SECTOR = 512
+CLONE_NEWNS = 0x00020000
+
+
+def isolate_mounts_for_write() -> None:
+    """Freeze this process's mount view before a physical staging operation."""
+    if os.geteuid() != 0:
+        raise ValueError('Mount isolation requires root')
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.unshare(CLONE_NEWNS) != 0:
+        raise OSError(ctypes.get_errno(), 'Cannot isolate recovery mount namespace')
+    subprocess.run(['mount', '--make-rprivate', '/'], check=True,
+                   capture_output=True, timeout=15)
+
+
+def local_ipv4_addresses() -> set[str]:
+    result = subprocess.run(['ip', '-j', '-4', 'address', 'show'], check=True,
+                            capture_output=True, text=True, timeout=10)
+    return {address['local'] for link in json.loads(result.stdout)
+            for address in link.get('addr_info', []) if 'local' in address}
 
 
 def one_line(path: Path) -> str:
@@ -86,13 +106,17 @@ def mount_record(recovery: Path) -> dict:
 def admitted_target(target: Path, recovery: Path, policy: dict, *,
                     host_sysfs: Path = HOST_SYSFS,
                     synthetic_fixture: bool = False,
-                    require_writable: bool = False) -> dict:
+                    require_writable: bool = False,
+                    local_addresses: set[str] | None = None) -> dict:
     """Read only; bind opened block descriptor, sysfs, GPT and exact ext4 mount."""
     policy = policy_fields(policy)
     if synthetic_fixture != (policy['board_compatible'] == 'test,synthetic-h616'):
         raise ValueError('Synthetic and physical target policies must stay separate')
     if not synthetic_fixture and (target != TARGET or host_sysfs != HOST_SYSFS):
         raise ValueError('Physical target/controller path is fixed')
+    addresses = local_ipv4_addresses() if local_addresses is None else local_addresses
+    if policy['claim_server'] in addresses:
+        raise ValueError('NFS/claim source overlaps the running target host')
     target = Path(target)
     recovery = Path(recovery)
     if target.is_symlink() or recovery.is_symlink():
@@ -204,6 +228,8 @@ def arm_live_target(target: Path, recovery: Path, journal: Path, *,
         raise ValueError('Fault injection is disposable-fixture-only')
     target, recovery, journal, artifact = map(Path, (target, recovery, journal, artifact))
     policy = policy_fields(target_policy)
+    if not synthetic_fixture:
+        isolate_mounts_for_write()
     if journal.resolve().is_relative_to(recovery.resolve(strict=True)):
         raise ValueError('Journal must be separate from recovery filesystem')
     admission = admitted_target(target, recovery, policy,

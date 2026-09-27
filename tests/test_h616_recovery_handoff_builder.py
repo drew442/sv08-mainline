@@ -37,7 +37,7 @@ def base_initrd(work):
 
 
 class RecoveryHandoffBuilderTests(unittest.TestCase):
-    def test_physical_policy_candidate_has_distinct_attended_status(self):
+    def test_fixture_keys_cannot_be_relabelled_as_physical_candidate(self):
         (REPO / 'local').mkdir(mode=0o700, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
             work = Path(temporary)
@@ -58,17 +58,12 @@ class RecoveryHandoffBuilderTests(unittest.TestCase):
             receipt.write_bytes((RECEIPT_KEYS / 'test-verification-key.pem').read_bytes())
             receipt.chmod(0o600)
             bundle = work / 'bundle'
-            build_writer(bundle, *files.values(), now=1500, synthetic_test=False,
-                         trusted_initramfs=True, recovery_handoff=True,
-                         source_server='10.0.2.2', source_export='/srv/sv08-sd-nfs',
-                         receipt_verification_key_path=receipt)
-            kernel = work / 'Image'; kernel.write_bytes(b'K' * 4096)
-            dtb = work / 'board.dtb'; dtb.write_bytes(b'D' * 512)
-            result = build_handoff(work / 'handoff', kernel, base_initrd(work),
-                                   dtb, bundle, '10.0.2.2',
-                                   '/srv/sv08-sd-nfs', 12345)
-            self.assertEqual(result['status'], 'h12-attended-candidate')
-            self.assertIs(result['synthetic_test'], False)
+            with self.assertRaisesRegex(ValueError, 'Fixture verification keys'):
+                build_writer(bundle, *files.values(), now=1500, synthetic_test=False,
+                             trusted_initramfs=True, recovery_handoff=True,
+                             source_server='10.0.2.2',
+                             source_export='/srv/sv08-sd-nfs',
+                             receipt_verification_key_path=receipt)
 
     def test_signed_bundle_becomes_bounded_fit_and_recovery_fallback(self):
         (REPO / 'local').mkdir(mode=0o700, exist_ok=True)

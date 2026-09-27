@@ -91,6 +91,11 @@ def execute(work, fault=None):
                                        synthetic_fixture=True)
         admitted = call()
         cases = []
+        cases.append(refuse('source-overlaps-target-host',
+                            lambda: admitted_target(
+                                whole, recovery, policy, host_sysfs=host_sysfs,
+                                synthetic_fixture=True,
+                                local_addresses={policy['claim_server']})))
         put(card / 'cid', 'f' * 32)
         cases.append(refuse('wrong-cid', call))
         put(card / 'cid', policy['cid'])

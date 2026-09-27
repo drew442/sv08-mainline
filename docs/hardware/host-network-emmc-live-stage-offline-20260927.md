@@ -13,7 +13,11 @@ They require a private canonical 0600 target policy, signed job and verification
 key, an artifact classified `h12-attended-candidate`, and a separate persistent
 journal. Stage checks the reviewed artifact and original recovery-script hashes,
 free space (FIT + original script + 16 MiB reserve) and live identity at file
-write boundaries. It preserves the original script before installing the FIT
+write boundaries. A physical mutation first enters a private mount namespace,
+so an external unmount/remount cannot redirect subsequent filesystem writes.
+The signed NFS/claim source must name an address absent from the running host;
+the running OS root may itself be on the target eMMC before the RAM handoff.
+It preserves the original script before installing the FIT
 and selector. Arm writes the redundant environment through a held block-device
 descriptor, journals and syncs each write, and reads both copies back. Activate
 rechecks the signed job, target, staged files and both environment copies before
@@ -32,6 +36,26 @@ mount source, GPT CRC, an ambiguous card and an unmounted recovery filesystem
 were refused. These tests do **not** establish current printer identity, eMMC
 durability, bootloader selector behavior or network availability.
 
+Reproduce with `sudo unshare -m python3 tests/offline_h616_live_admission.py
+--execute --work local/NEW-UNIQUE-NAME` (add `--fault` for each named fault below)
+and `sudo unshare -m python3 tests/offline_h616_live_mount_isolation.py`.
+The 2026-09-27 fixture results, each using a fresh loop target, were:
+[The normalized six-run JSON](host-network-emmc-live-stage-offline-20260927-results.json)
+has SHA-256 `500361647ede7f56de907f52433b0dd66bab83d84bad530eefdc322bfb17da82`.
+
+| Injected stop | Last stage | Last arm | Marker | Admission refusals |
+| --- | --- | --- | --- | ---: |
+| none | wrapper durable | both copies verified | yes | 11 |
+| after original | original preserved | none | no | 11 |
+| after FIT | FIT durable | none | no | 11 |
+| after wrapper | wrapper durable | none | no | 11 |
+| after first environment write | wrapper durable | first write journaled | no | 11 |
+| after second environment write | wrapper durable | second write journaled | no | 11 |
+
+The separate mount test replaced the path's external mount after isolation;
+the isolated process still read the original mount. These are offline fixture
+results, not a physical eMMC mount-switch test.
+
 The disposable success artifact used a 345,772-byte FIT (SHA-256
 `dc38b91c0a1f1f2bd53cdcb24275f4fa0109791f5aae302a61e65abecea4e27a`)
 and build manifest SHA-256
@@ -42,6 +66,9 @@ needs the actual FIT size plus the original script and a 16 MiB filesystem
 reserve. The writer streams the 7,818,182,656-byte source rather than keeping
 that image in RAM. H12 must measure the physical FIT and recovery free space;
 the disposable FIT size is not a prediction for the real kernel/initrd.
+The physical-candidate builder rejects the repository's synthetic job and
+receipt verification keys, even if given a physical-shaped policy. A real
+candidate still needs a fresh, privately recorded key and target review.
 
 For H12, first restore printer Ethernet and record current power/USB-serial
 state. Arm receive-only Beelink serial capture **before** connecting USB serial,

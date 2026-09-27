@@ -111,6 +111,8 @@ def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
         raise ValueError('Staged artifact and signed bundle differ')
     policy_raw = regular(bundle / 'commissioning-target-policy.json').read_bytes()
     policy = policy_fields(json.loads(policy_raw))
+    if server != policy['claim_server']:
+        raise ValueError('NFS source must be the independently admitted claim host')
     if manifest.get('synthetic_test') != (policy['board_compatible'] == 'test,synthetic-h616'):
         raise ValueError('Artifact and signed target class differ')
     if policy_raw != canonical_json(policy):
@@ -241,7 +243,10 @@ def stage_mounted_recovery(recovery, artifact, journal, *,
     elif mounted_live_target is not None:
         if disposable_directory_fixture:
             raise ValueError('Choose one recovery identity mode')
-        from scripts.live_h616_recovery_stage import admitted_target, HOST_SYSFS
+        from scripts.live_h616_recovery_stage import (
+            admitted_target, HOST_SYSFS, isolate_mounts_for_write)
+        if not synthetic_live_fixture:
+            isolate_mounts_for_write()
         admission = admitted_target(Path(mounted_live_target), recovery, policy,
                                     host_sysfs=live_sysfs_root or HOST_SYSFS,
                                     synthetic_fixture=synthetic_live_fixture,
@@ -395,6 +400,9 @@ def activate_mounted_recovery(recovery, artifact, journal, *, image,
                               live_target=False, live_sysfs_root=None,
                               synthetic_live_fixture=False):
     """Publish the one-shot marker only after both environment copies verify."""
+    if live_target and not synthetic_live_fixture:
+        from scripts.live_h616_recovery_stage import isolate_mounts_for_write
+        isolate_mounts_for_write()
     image = Path(image) if live_target else regular(image)
     recovery = Path(recovery).resolve(strict=True)
     journal = Path(journal).resolve(strict=True)
