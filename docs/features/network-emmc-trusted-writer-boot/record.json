@@ -118,10 +118,14 @@
       "evidence": [],
       "human_task": null,
       "id": "compose-trusted-initramfs",
-      "implementation": null,
+      "implementation": {
+        "actor": "codex",
+        "run": "d1136b87ace24f71ae22ff0da0adc4b4",
+        "session": "root-trusted-writer-compose-20260927"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Run the writer from authenticated initramfs content",
       "verification": null
     },

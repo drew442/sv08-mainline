@@ -110,7 +110,7 @@ python3 scripts/feature_workflow.py check-review-cases \
 
 The remaining native shell-sandbox startup failure was resolved on this VM with
 the distribution's `bwrap-userns-restrict` AppArmor profile, following the
-[Codex Linux sandbox instructions](https://developers.openai.com/pt-BR/docs/sandboxing)
+[Codex Linux sandbox instructions](https://developers.openai.com/codex/concepts/sandboxing#prerequisites)
 (accessed 2026-09-27). `apparmor-profiles` and `apparmor-utils` were installed;
 `/usr/share/apparmor/extra-profiles/bwrap-userns-restrict` was copied to
 `/etc/apparmor.d/bwrap-userns-restrict` and loaded with `apparmor_parser -r`.
