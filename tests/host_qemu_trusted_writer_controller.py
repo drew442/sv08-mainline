@@ -139,11 +139,13 @@ def recovery_marker_present(work):
 
 def execute(work, sd_work, sd_dtb, packages, tamper_job,
             *, recovery_handoff=False, installed_image=None,
-            use_installed_source=False, fault=None):
+            use_installed_source=False, fault=None, guest_memory_mb=None):
     if os.geteuid() != 0:
         raise PermissionError('Isolated QEMU harness must run as root')
     if fault not in (None, 'after-bulk', 'after-first-env') or (fault and (tamper_job or not recovery_handoff)):
         raise ValueError('Environment-last fault requires an untampered recovery handoff')
+    if guest_memory_mb not in (None, 1024, 2048):
+        raise ValueError('Only bounded synthetic QEMU guest memory sizes are allowed')
     work = fresh_work(work)
     if use_installed_source:
         if not recovery_handoff or installed_image is None:
@@ -260,7 +262,7 @@ def execute(work, sd_work, sd_dtb, packages, tamper_job,
         controller.start()
         try:
             wait_controller(controller, errors, port)
-            guest_memory_mb = 1024 if use_installed_source else 2048
+            guest_memory_mb = guest_memory_mb or (1024 if use_installed_source else 2048)
             cmd = ['qemu-system-aarch64', '-machine', 'virt', '-cpu', 'cortex-a53',
                    '-smp', '2', '-m', str(guest_memory_mb), '-kernel', boot / 'Image',
                    '-initrd', boot / 'initrd.img', '-append', kernel_args,
@@ -392,6 +394,7 @@ def main():
     parser.add_argument('--installed-image', type=Path)
     parser.add_argument('--use-installed-source', action='store_true')
     parser.add_argument('--fault', choices=('after-bulk', 'after-first-env'))
+    parser.add_argument('--guest-memory-mb', type=int, choices=(1024, 2048))
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     if not args.execute:
@@ -399,7 +402,8 @@ def main():
         return
     execute(args.work, args.sd_work, args.sd_dtb, args.package_root, args.tamper_job,
             recovery_handoff=args.recovery_handoff, installed_image=args.installed_image,
-            use_installed_source=args.use_installed_source, fault=args.fault)
+            use_installed_source=args.use_installed_source, fault=args.fault,
+            guest_memory_mb=args.guest_memory_mb)
 
 
 if __name__ == '__main__':
