@@ -157,6 +157,8 @@ def commissioning_bundle(root, server, export):
         return regular_input(path)
 
     manifest = json.loads(member('reimage-manifest.json').read_text())
+    if type(manifest.get('synthetic_test')) is not bool:
+        raise ValueError('Commissioning bundle target class must be explicit')
     if (root / 'synthetic-mmc').exists() and manifest.get('synthetic_test') is not True:
         raise ValueError('Synthetic MMC fixture is forbidden in a physical bundle')
     if (manifest.get('mode') != 'h616-commissioning' or
