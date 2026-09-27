@@ -72,6 +72,7 @@ def selector(payload):
     # The sandbox addresses are independent of the physical ARM64 load map.
     # U-Boot's filesize variable is hexadecimal, including for load mmc.
     return f'''# Disposable selector: original recovery remains the default.
+if test "${{sv08_reimage_arm}}" = "offline-test-job" && test "${{sv08_env_layout}}" = "ab-8gb-v1" && test "${{BOOT_ORDER}}" = "A B" && test "${{BOOT_A_LEFT}}" = "0" && test "${{BOOT_B_LEFT}}" = "0"; then
 if load mmc ${{sv08_mmcdev}}:5 0x6200000 sv08-reimage/armed; then
  if test ${{filesize}} = {len(MARKER):x}; then
   if crc32 -v 0x6200000 ${{filesize}} {zlib.crc32(MARKER):08x}; then
@@ -87,6 +88,7 @@ if load mmc ${{sv08_mmcdev}}:5 0x6200000 sv08-reimage/armed; then
    fi
   fi
  fi
+fi
 fi
 if load mmc ${{sv08_mmcdev}}:5 0x7000000 sv08-reimage/recovery-original.scr; then
  source 0x7000000
@@ -171,6 +173,7 @@ def main():
     run(args.uboot.resolve(), '-d', 'test.dtb', '-c',
         'env select MMC; setenv BOOT_ORDER A B; setenv BOOT_A_LEFT 0; '
         'setenv BOOT_B_LEFT 0; setenv sv08_env_layout ab-8gb-v1; '
+        'setenv sv08_reimage_arm offline-test-job; '
         'env save; env save', cwd=work)
     cases = {}
     for name, marker, image, expected in (
@@ -188,9 +191,11 @@ def main():
         assert forbidden not in output, (name, output)
         cases[name] = expected
     install_recovery(MARKER)
+    unarmed = sandbox('wrong-arm-token', 'setenv sv08_reimage_arm wrong; ')
+    assert 'SV08_TEST_RECOVERY_UI' in unarmed and 'SV08_TEST_WRITER_SELECTED' not in unarmed
     valid = sandbox('valid-slot', 'setenv BOOT_A_LEFT 3; ')
     assert 'SV08_TEST_SLOT_BOOT' in valid and 'SV08_TEST_WRITER_SELECTED' not in valid
-    install_recovery(None)
+    install_recovery(MARKER)
     invalid = sandbox('invalid-order', 'setenv BOOT_ORDER "A A"; ')
     assert 'SV08_TEST_RECOVERY_UI' in invalid and 'SV08_TEST_WRITER_SELECTED' not in invalid
     install_recovery(MARKER)
@@ -204,10 +209,11 @@ def main():
             one_corrupt = sandbox('one-env-copy-corrupt')
             assert ('SV08_TEST_WRITER_SELECTED' in one_corrupt and
                     'SV08_TEST_RECOVERY_UI' not in one_corrupt)
-            install_recovery(None)
+            install_recovery(MARKER)
     corrupt = sandbox('both-env-copies-corrupt')
     assert 'SV08_TEST_RECOVERY_UI' in corrupt and 'SV08_TEST_WRITER_SELECTED' not in corrupt
     cases.update(valid_slot='SV08_TEST_SLOT_BOOT',
+                 wrong_arm_token='SV08_TEST_RECOVERY_UI',
                  invalid_order='SV08_TEST_RECOVERY_UI',
                  one_env_copy_corrupt='SV08_TEST_WRITER_SELECTED',
                  both_env_copies_corrupt='SV08_TEST_RECOVERY_UI')
