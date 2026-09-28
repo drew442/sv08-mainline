@@ -101,6 +101,16 @@ the printer's current power state and cabling explicit at that handoff. The
 read-only live identity/space check and the later reviewed handoff/write use
 this single H12 session rather than repeated media swaps.
 
+Current dispatch on 2026-09-28 supersedes the no-more-H10-boot note and the
+2026-09-27 no-media-move dispatch for this replacement-card test only. The owner
+requested a fresh 16 GB SanDisk SD because the previous card may be faulty.
+The [replacement-card receipt](host-sd-replacement-20260928.md) records reviewed
+write/readback, restored persistent NFS services and armed receive-only capture.
+The single next physical action is to fully remove printer power including USB
+serial, move the new SD from Beelink to the printer while retaining the spare
+eMMC, and reconnect Ethernet/USB for one captured diagnostic boot. Keep the
+factory eMMC stored. H12 writes remain pending separate physical checks/review.
+
 ## Session dispatch and result record
 
 The printer lane now has a [shared commissioning session form](test-sv08-01-commissioning-session.md)
