@@ -38,10 +38,16 @@ have passed independent offline review. None certifies physical board behavior.
 `feature_workflow.py next` returns `null` while its single approved implementation
 lease is active; this is not a reason to stop authorized coordination. The earlier sandbox deferral is historical; the trusted writer and p5 handoff
 now have accepted offline evidence. The running-SD boot route has an [approved bounded proposal](../docs/features/sd-managed-boot-route/proposal.md).
-Main-loader assembly/component preservation, 36 focused checks and ARM64/QMP
-success-only reboot proof passed. Independent verification identified late
-serial capture creation; one implementer is repairing capture-before-TX and
-persistence-error refusals, with unchanged loader/writer evidence reused.
+Main-loader assembly/component preservation, focused capture refusal checks and
+ARM64/QMP success-only reboot proof passed independent verification; the bounded
+implementation is complete. A separately reviewed SD transfer passed exact
+readback and full FAT/root/GPT preservation. The subsequent warm return probe
+failed because the coordinator used a refused serial symlink and proceeded
+without controller readiness. The host reached original recovery; current SSH,
+environment and RTC retention are not established. See the
+[measured transfer and failed probe](../docs/hardware/host-managed-sd-transfer-20260929.md).
+Correct concrete UART admission, transient collector recreation and a separately
+reviewed recovery action are next; do not retry blindly or arm a writer.
 Exact full-loader inspection found missing CMD_HASH and CRC32_VERIFY, so the
 proposal now preserves the proven SPL and adds only required main-loader
 commands. The [hardware RTC correction and readback](../docs/hardware/host-rtc-preparation-20260929.md)

@@ -1,0 +1,54 @@
+{
+  "format_version": 1,
+  "id": "sd-recovery-reboot-guard",
+  "kind": "improvement",
+  "title": "Guard one remote recovery reboot",
+  "author": "root/coordinator",
+  "created": "2026-09-29",
+  "priority": 1,
+  "proposal": "docs/features/sd-recovery-reboot-guard/proposal.md",
+  "requirements": [
+    "docs/hardware/host-managed-sd-transfer-20260929.md",
+    "docs/hardware/host-managed-boot-route.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "rbg-01",
+      "environment": "offline",
+      "description": "Readiness after exclusive UART admission, exact live PID/device/capture binding and acknowledgment; any failure prevents HID."
+    },
+    {
+      "id": "rbg-02",
+      "environment": "offline",
+      "description": "Exactly one fixed reviewed HID sequence and orderly recovery mapping; abnormal exits restore recreated receive-only capture without retry."
+    },
+    {
+      "id": "rbg-03",
+      "environment": "offline",
+      "description": "Meaningful guard and readiness fault/order tests, source/document bindings, separate verification; current boot/environment uncertainty and physical gates explicit."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and verify bounded recovery readiness guard",
+      "environment": "offline",
+      "checks": [
+        "rbg-01",
+        "rbg-02",
+        "rbg-03"
+      ],
+      "depends_on": [],
+      "human_task": null,
+      "status": "pending",
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "blocker": null,
+      "resumption": null,
+      "repeats": 0
+    }
+  ]
+}
