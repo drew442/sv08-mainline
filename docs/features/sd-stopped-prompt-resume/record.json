@@ -1,48 +1,96 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Exact configured prompt and explicit stopped-resume gates; preserved Linux/hash/MMC/durability refusal tests.",
+      "environment": "offline",
+      "id": "spr-01"
+    },
+    {
+      "description": "Document measured prompt provenance, no new reset/HID, unknown counters and separate physical review/return inspection.",
+      "environment": "offline",
+      "id": "spr-02"
+    }
+  ],
+  "created": "2026-09-29",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "spr-01",
+          "spr-02"
+        ],
+        "text": "Recognize only the exact retained CONFIG_SYS_PROMPT bytes CB1@uboot:~$ plus its configured trailing space at a valid line boundary, including fragmented reads. Do not broadly permit dollar/hash prompts or configurable arbitrary prompt text. Preserve login/Password/Linux/unknown-shell refusal even when forbidden output and a valid prompt occur in one read; a recognized substring cannot mask other forbidden evidence. Bind documented prompt provenance to the retained effective-config hash and measured capture hash. Existing countdown and stopped-resume tests must exercise actual configured bytes."
+      },
+      {
+        "checks": [
+          "spr-01",
+          "spr-02"
+        ],
+        "text": "sd-resume is explicit, inert by default and limited to the named previously intercepted stopped-U-Boot return. Require exact stopped_uboot_reviewed policy and the accepted one-return exception/provenance with fresh_environment_reviewed=false; do not turn ordinary freshness true or make the exception a generic CLI bypass. Changed/missing policy bindings refuse before any serial TX. Fresh live exclusive UART/topology/termios/capture admission precedes the sole empty newline. Establish the retained stopped complete prompt and no intervening text sender, so newline cannot submit an unreviewed buffered command. No retry/space/countdown interception/reset/HID/power/environment write in resume. Missing/unknown prompt stops after at most that one newline."
+      },
+      {
+        "checks": [
+          "spr-01",
+          "spr-02"
+        ],
+        "text": "Only after a fresh exact prompt permit the existing fixed mmc dev 0, mmc info, fatload boot.scr, hash sha256 and source commands. Require SD identity, exact 1075-byte script count and SHA ce18bf74e3d8ae840bfb90129ba28515ba89cbd2759bc32ecd0418f6987d1ddd, existing verified payload/root/envelope binding, command echoes and durable capture before each TX. Preserve UART rechecks, private O_EXCL/O_NOFOLLOW capture, 1 MiB/15-second bounds, short-write/fsync/error stops and zero TX after source. Bad MMC0 environment CRC messages are not proof of eMMC environment corruption or preservation."
+      },
+      {
+        "checks": [
+          "spr-01",
+          "spr-02"
+        ],
+        "text": "Use actual run/session tests for fragmented exact prompt, ordinary countdown, stopped success, Linux/unknown/missing prompt, mixed forbidden/valid prompt, bad SD/hash/count, capture admission/storage failure, changed/missing stopped policy and no second pre-prompt TX. Reuse unchanged loader/writer evidence; no full-image tests or new dependencies. Independent delivery verification must assess actual diff and evidence before fresh separate Sol exact-operation review, raised to high for current environment/mapping uncertainty."
+      },
+      {
+        "checks": [
+          "spr-02"
+        ],
+        "text": "Keep one implementer and the three named files. Coordinator must explicitly release receive-only collector, retain existing independently surviving bounded capture restoration and preserve old/new captures and failure receipts on all exits. Resume creates no second HID attempt or reboot authorization and must not circumvent the consumed primary attempt receipt. After actual SD SSH return inspect both redundant eMMC environments and Linux/RTC time before staging/jobs/another reboot. Unknown counters, RTC, physical mapping/response and successful return remain unknown until measured; any uncertain outcome stops for separate recovery review. Keep existing 64 MiB/512 MiB resource bounds, authentication/pinning/persistence/idle/heater/8 GB/profile requirements, no media/build/writer/MCU changes and documented retirement."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "2b515b700db66b33e8ca280609fbc4db79639fac5675cf7b44fb6298415655c8",
+    "rationale": "Approve this correction within the accepted writerless recovery goal. Before: Session.wait assumed => and classified the actual CB1@uboot:~$ prompt as a Linux shell after successfully intercepting countdown, leaving the host stopped. After: exact configured prompt recognition and an explicitly admitted stopped-resume path obtain fresh prompt evidence then reuse the existing SD/script integrity gates, without another HID/reset. Reviewed source scripts/sv08_serial_boot_route.py concretely shows both mismatched prompt and dollar-sign refusal. Retained effective new.config SHA 6acb5de178be927a6c0cd71f906f5cf51f23a7ae2d2d87e880e33849536857bf contains CONFIG_SYS_PROMPT=\"CB1@uboot:~$ \"; measured guarded-return-first.raw SHA ed9074ded59d4aec42f11bbc95e4e2cd21b7283ba6a89336687fc7ff2c0102e9 records SIGINT/orderly shutdown, the identified U-Boot banner, controller enumeration, countdown and exact final prompt. This is named measured trace evidence and retained configuration evidence, not proof of current live state or successful SD boot. The trace reports bad environment CRC/default fallback on MMC0; it establishes neither redundant eMMC counters nor SD identity solely from Linux/controller numbering. A fresh exact prompt and existing mmc info SD check remain required. The empty newline is a narrowly justified diagnostic gap in the existing countdown-only controller; supported U-Boot prompt/configuration mechanisms are reused, without a new protocol or dependency. Ordinary environment freshness and existing script/SHA/UART/capture protections remain intact; the explicit exception continues only this interrupted return. No owner requirement, recovery authority, spending, licensing or optional product scope changes. Independent delivery verification and fresh exact-operation review precede any UART action; this decision does not authorize hardware.",
+    "requirements_sha256": {
+      "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+      "docs/hardware/host-recovery-reboot-guard.md": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115"
+    },
+    "reviewer": "feature-approver: independent /root/approve_sd_recovery_reboot_guard",
+    "scope_sha256": "9940052a5e0629ec458c4d5dad4909040b3807e87872215d7a458b3b4e94818e",
+    "session": "/root/approve_sd_recovery_reboot_guard: sd-stopped-prompt-resume 2026-09-29"
+  },
   "format_version": 1,
   "id": "sd-stopped-prompt-resume",
-  "title": "Resume the measured stopped bootloader prompt",
   "kind": "improvement",
-  "author": "root/coordinator",
-  "created": "2026-09-29",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/sd-stopped-prompt-resume/proposal.md",
   "requirements": [
     "docs/hardware/host-managed-boot-route.md",
     "docs/hardware/host-recovery-reboot-guard.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "spr-01",
-      "environment": "offline",
-      "description": "Exact configured prompt and explicit stopped-resume gates; preserved Linux/hash/MMC/durability refusal tests."
-    },
-    {
-      "id": "spr-02",
-      "environment": "offline",
-      "description": "Document measured prompt provenance, no new reset/HID, unknown counters and separate physical review/return inspection."
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Correct configured prompt and stopped resume",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "spr-01",
         "spr-02"
       ],
-      "human_task": null,
-      "status": "pending",
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "blocker": null,
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Correct configured prompt and stopped resume",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Resume the measured stopped bootloader prompt"
 }
