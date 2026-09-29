@@ -111,6 +111,18 @@ serial, move the new SD from Beelink to the printer while retaining the spare
 eMMC, and reconnect Ethernet/USB for one captured diagnostic boot. Keep the
 factory eMMC stored. H12 writes remain pending separate physical checks/review.
 
+Current dispatch on 2026-09-29 supersedes the replacement-diagnostic boot
+dispatch. Its captured read-only checks passed and it intentionally powered
+down. The owner requested an unchanged upstream CB1 minimal SD baseline;
+see its [artifact and boot-review record](host-cb1-baseline-sd-20260929.md).
+For this single comparison, fully disconnect printer PSU and USB back-power,
+remove and store the spare eMMC, and install the prepared SanDisk SD with neither
+eMMC module installed. Keep PSU off, connect Ethernet and reconnect USB serial
+after capture is confirmed ready. This prevents upstream first-boot resize
+from writing either eMMC. No installer, MCU, heater or motion operation is
+included. Observe console/HDMI/DHCP and stop on unexpected behavior. H12 remains
+pending; no repeated SD/NFS diagnostic is requested.
+
 ## Session dispatch and result record
 
 The printer lane now has a [shared commissioning session form](test-sv08-01-commissioning-session.md)

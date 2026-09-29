@@ -70,3 +70,21 @@ not an interactive host: HDMI output or SSH availability is not its acceptance
 criterion. Physical boot results on the replacement card remain pending.
 On unexpected boot, errors, hang or missing shutdown, stop and remove all power;
 do not retry automatically. H12 writerless reimage validation remains separate.
+
+## Capture inspected on 2026-09-29
+
+The retained 30,483-byte console capture has SHA-256
+`da7698cdbea369c50235af84b542f54f8c4102f32c5b1ae36c489ffcc17f7d1c`.
+It contains two successful diagnostic sequences, each ending in intentional
+`reboot: Power down`. The first identifies the spare as `/dev/mmcblk2`; the
+second as `/dev/mmcblk1`. Both report 61,079,552 sectors, `READ_ONLY_VALID_PAIR`,
+valid environment CRCs, copy flags 3/2, order A, A counters 3/2 and B counters
+zero. Both emit `SV08_SD_NFS_PASS` with all five checks equal to one.
+The capture includes the expected SD U-Boot and Linux 6.18.51 startup.
+
+Thus the replacement card did boot the bounded SD/NFS diagnostic; its shutdown
+is expected behavior, not evidence of boot failure. The retained log contains
+more than the single planned diagnostic execution; the coordinator did not
+transmit serial input or trigger a reboot, and does not infer who initiated
+the second execution. No additional diagnostic boot is requested. The owner
+has instead requested the upstream CB1 minimal image for a normal-OS comparison.
