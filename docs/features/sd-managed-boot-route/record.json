@@ -1,0 +1,54 @@
+{
+  "format_version": 1,
+  "id": "sd-managed-boot-route",
+  "kind": "improvement",
+  "title": "Remote SD recovery and eMMC boot routing",
+  "created": "2026-09-29",
+  "priority": 1,
+  "proposal": "docs/features/sd-managed-boot-route/proposal.md",
+  "requirements": [
+    "docs/hardware/host-sd-recovery-host-first-boot-20260929.md",
+    "docs/design/unattended-emmc-reimage-handoff.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "smbr-01",
+      "environment": "offline",
+      "description": "Exact known loader preparation and bounded SD-only transfer preserve metadata/FAT/root, default inspect, strict identity/preimage/read-only root and failure/refusal checks."
+    },
+    {
+      "id": "smbr-02",
+      "environment": "offline",
+      "description": "Identified serial port, explicit fixed-command routing, recognized U-Boot-only prompts, hash-bound SD fallback, bounded capture/timeouts and no blind retry or control-line changes."
+    },
+    {
+      "id": "smbr-03",
+      "environment": "offline",
+      "description": "Meaningful offline execution/refusal evidence, source/artifact receipts and independent verification; H12 physical routing/write/return remain pending."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Prepare bounded loader transfer and serial boot routing",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "smbr-01",
+        "smbr-02",
+        "smbr-03"
+      ],
+      "status": "pending",
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "human_task": null,
+      "blocker": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ],
+  "author": "root/coordinator"
+}
