@@ -41,9 +41,10 @@ def verify_script(script, command, composition):
 
 
 class Session:
-    def __init__(self, read, write, *, timeout=15, clock=time.monotonic):
+    def __init__(self, read, write, *, timeout=15, clock=time.monotonic, persist=None):
         self.read, self.write, self.timeout, self.clock = read, write, timeout, clock
         self.capture = bytearray()
+        self.persist = persist
         self.at_prompt = False
         self.verified_script = False
 
@@ -53,8 +54,11 @@ class Session:
         while self.clock()<deadline:
             chunk = self.read(min(0.2,max(0,deadline-self.clock())))
             if chunk:
-                response.extend(chunk); self.capture.extend(chunk)
-                if len(self.capture)>CAPTURE_LIMIT: raise ValueError('Capture limit')
+                retained = chunk[:CAPTURE_LIMIT-len(self.capture)]
+                if retained:
+                    if self.persist is not None: self.persist(retained)
+                    self.capture.extend(retained); response.extend(retained)
+                if len(retained)!=len(chunk): raise ValueError('Capture limit; stop')
                 if re.search(rb'(?:login:|Password:|(?:^|\n)[^\n]*[$#] )',response):
                     raise ValueError('Linux/unknown shell; stop')
                 if re.search(pattern,response): return bytes(response)
@@ -132,11 +136,20 @@ def run(policy, route, script, command, composition, capture, *, apply=False):
         raise ValueError('Capture arbitration/MMC/environment review required')
     if not apply: return {'transmit':False,'route':route,**binding}
     if route not in ('sd','emmc'): raise ValueError('Unknown route')
-    # Stable lock shared by cooperating capture/controller; kernel TIOCEXCL also
-    # prevents subsequent opens. Coordinator releases existing capture first.
-    lock = os.open(policy['ownership_lock'],os.O_CREAT|os.O_RDWR|os.O_NOFOLLOW,0o600)
-    fd = None
+    # Reserve and flush an owned regular capture before opening the controller
+    # lock or serial device. Failure leaves existing paths untouched and sends no TX.
+    out = os.open(capture,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
+    lock, fd = None, None
     try:
+        info = os.fstat(out)
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid!=os.geteuid() or
+                info.st_nlink!=1 or info.st_mode & 0o077 or not info.st_mode & 0o200):
+            raise ValueError('Capture must be a private owned writable regular file')
+        if os.write(out,b'')!=0: raise OSError('Capture preflight failed')
+        os.fsync(out)
+        # Stable lock shared by cooperating capture/controller; TIOCEXCL excludes
+        # later opens. Existing capture ownership must already have been released.
+        lock = os.open(policy['ownership_lock'],os.O_CREAT|os.O_RDWR|os.O_NOFOLLOW,0o600)
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         fd = os.open(policy['device'],os.O_RDWR|os.O_NONBLOCK|os.O_NOCTTY|os.O_NOFOLLOW)
         serial_identity(fd,policy)
@@ -152,23 +165,24 @@ def run(policy, route, script, command, composition, capture, *, apply=False):
                 if stat.S_ISCHR(other.st_mode) and other.st_rdev==os.fstat(fd).st_rdev:
                     raise ValueError('Existing serial capture/controller descriptor')
         fcntl.ioctl(fd,termios.TIOCEXCL)
+        def persist(data):
+            if os.write(out,data)!=len(data): raise OSError('Short capture append; stop')
+            os.fsync(out)
         def read(timeout):
             return os.read(fd,4096) if select.select([fd],[],[],timeout)[0] else b''
         def write(data):
+            # All received bytes must be durable before any subsequent TX,
+            # including countdown interception and sourcing the verified script.
+            os.fsync(out)
             serial_identity(fd,policy)
             if os.write(fd,data)!=len(data): raise OSError('Partial serial TX; stop')
-        session = Session(read,write)
-        try: session.route(route)
-        finally:
-            out = os.open(capture,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
-            try:
-                if os.write(out,session.capture)!=len(session.capture): raise OSError('Short capture')
-                os.fsync(out)
-            finally: os.close(out)
+        session = Session(read,write,persist=persist)
+        session.route(route)
         return {'route':route,'transmit':route=='sd',**binding,'capture_sha256':sha(session.capture)}
     finally:
         if fd is not None: os.close(fd)
-        os.close(lock)
+        if lock is not None: os.close(lock)
+        os.close(out)  # Keep even an empty/partial capture on any refusal/error.
 
 
 def main():

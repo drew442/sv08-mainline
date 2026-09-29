@@ -141,7 +141,15 @@ mmc dev 0, mmc info, fatload of mmc0:1 boot.scr, hash sha256 and source, checkin
 command echoes, SD type, exact loaded count and exact SHA result. Transmission
 stops after source; no Linux command, reset, arbitrary interpolation or retry is
 available. Timeout, unexpected prompt/output/hash/identity stops the sequence.
-Capture is bounded to 1 MiB with 15-second gates and retained even on refusal.
+Before any serial access, apply reserves the capture path with O_EXCL/O_NOFOLLOW,
+checks that its descriptor is a private owned writable regular file, and flushes
+it. Existing, symlink or unwritable capture paths refuse before serial open/TX.
+Received raw bytes stream to that descriptor and are flushed before further TX,
+including source. A short append, append error or fsync failure stops future TX
+without command/boot retry. Timeout, refusal and errors retain the already
+created capture, including a partial transcript if storage failed. Capture is
+bounded to 1 MiB with 15-second gates; an overlimit read retains only the exact
+remaining prefix and stops before interpreting it as another transmission gate.
 
 `--route emmc` sends zero bytes and releases standard autoboot. It does not
 implement new A/B policy. Immediately before the coordinator's separately
@@ -165,11 +173,18 @@ python3 -m unittest tests.test_sd_boot_route tests.test_sv08_serial_boot_route \
   tests.test_h616_reimage_candidate.ManagedFinalizerTests -v
 ```
 
-36 checks passed with supplied public artifacts: real bounded regular-file
+The initial 36 checks passed with supplied public artifacts: real bounded regular-file
 writes and partial/flush/readback/preservation faults, admission races and
 sysfs/mount fixtures, exact-loader assembly, fragmented serial/refusal transcripts,
 native captured production-finalizer syscalls and ARM64 finalizer compilation.
 Optional actual-input tests explicitly skip if that coordinator bundle is absent.
+The focused capture repair passes all 21 serial checks with
+`python3 -m unittest tests.test_sv08_serial_boot_route -v`, including actual run
+entrypoint checks with real capture files and fixture serial transport. They
+cover existing/symlink/unwritable paths before serial access, append/short-write/
+fsync failure after countdown and hash before source, retained timeout/refusal
+bytes, and the exact 1 MiB limit. Unchanged loader/writer/build/QMP evidence is
+reused; these serial changes do not rerun those checks.
 No test opens a production media or serial target. Compatible pinned sandbox
 hash/crc32 good/corrupt semantics are separate coordinator evidence; silent `-v`
 success must never be confused with lack of verification.
