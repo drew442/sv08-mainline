@@ -1,0 +1,14 @@
+[Unit]
+Description=Explicit SD recovery public-key shell
+After=network.target sd-host-keys.service
+Requires=sd-host-keys.service
+ConditionPathExists=/run/sv08/recovery-verified
+[Service]
+Type=simple
+RuntimeDirectory=sshd
+RuntimeDirectoryMode=0700
+ExecStart=/usr/sbin/sshd -D -e -f /etc/ssh/sshd_config
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=sv08-recovery.target

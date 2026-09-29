@@ -1,0 +1,19 @@
+Port 22
+ListenAddress 0.0.0.0
+HostKey /run/sd-host-keys/ssh_host_ed25519_key
+AuthorizedKeysFile /etc/sv08/sd-host-authorized_keys
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitEmptyPasswords no
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+UsePAM yes
+AllowUsers recovery
+AllowAgentForwarding no
+AllowTcpForwarding no
+X11Forwarding no
+PermitTunnel no
+PrintMotd no
+PidFile /run/sshd.pid
+Subsystem sftp internal-sftp

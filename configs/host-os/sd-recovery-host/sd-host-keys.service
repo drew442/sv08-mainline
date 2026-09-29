@@ -1,0 +1,12 @@
+[Unit]
+Description=Volatile SD recovery SSH identity (re-enroll each boot)
+ConditionPathExists=/run/sv08/recovery-verified
+Before=sd-host-ssh.service
+[Service]
+Type=oneshot
+RuntimeDirectory=sd-host-keys
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
+ExecStart=/usr/bin/ssh-keygen -q -t ed25519 -N "" -f /run/sd-host-keys/ssh_host_ed25519_key
+ExecStart=/usr/bin/ssh-keygen -lf /run/sd-host-keys/ssh_host_ed25519_key.pub
+RemainAfterExit=yes
