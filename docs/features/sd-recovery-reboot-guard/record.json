@@ -106,10 +106,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "ba5f5e97687b4f71b553b44e0ffe9b58",
+        "session": "sd-recovery-reboot-guard-20260929-v2"
+      },
       "repeats": 0,
       "resumption": "Explicit default CAD burst/stuck-release risk amendment approved; fixed one-emitted-sequence guard and post-return gates remain. Resume same implementation without duplicate tests/builds.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
     }
