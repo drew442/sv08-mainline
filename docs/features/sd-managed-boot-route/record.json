@@ -17,13 +17,65 @@
       "id": "smbr-03"
     },
     {
-      "id": "smbr-04",
+      "description": "Actual writer finalizer selects automatic reboot only for fully verified recovery-handoff PASS, preserves failure/nonhandoff poweroff, compiles ARM64 and demonstrates bounded guest-reset/shutdown events without repeating unchanged bulk-write evidence.",
       "environment": "offline",
-      "description": "Actual writer finalizer selects automatic reboot only for fully verified recovery-handoff PASS, preserves failure/nonhandoff poweroff, compiles ARM64 and demonstrates bounded guest-reset/shutdown events without repeating unchanged bulk-write evidence."
+      "id": "smbr-04"
     }
   ],
   "created": "2026-09-29",
-  "decision": null,
+  "decision": {
+    "authority": "owner-existing",
+    "constraints": [
+      {
+        "checks": [
+          "smbr-01",
+          "smbr-03"
+        ],
+        "text": "Pin the exact old loader/config/source/patch/toolchain inputs. Assemble only the exact 40960-byte SPL prefix SHA c4fe12c6f2d344ac48cf39d1711d30734110ee3a55bb0eda1df2fccf80610a8d plus newly built main-stage FIT. Independently extract and compare BL31/board DT and verify unchanged default environment, eGON/FIT structure, load addresses and boot integration. Effective config differences are only CMD_HASH/HASH_VERIFY/CRC32_VERIFY and individually justified required dependencies; reject unrelated drift. Verify actual linked commands and good/corrupt hash and crc32 -v semantics using compatible pinned sandbox. Give the new loader its own hash and pending physical status; old physical evidence covers only preserved components."
+      },
+      {
+        "checks": [
+          "smbr-01",
+          "smbr-03"
+        ],
+        "text": "Enforce the absolute loader reservation endpoint: 8192 + new loader length <= 1048576, independent of any assumed first-partition start. Derive actual SD partition/GPT exclusion ranges from the admitted map (H13 prepared card p1 starts at 16 MiB; the proposal's 2 MiB statement is conservative, not its actual layout). Bind one descriptor to current controller/CID/dev_t/capacity and complete overwrite-span preimage; require kernel-readonly ro,norecovery root, unmounted boot and no writable SD mount/competing users. Recheck admission at write boundary; streaming before/after FAT/root/GPT comparisons and exact loader readback must pass. Retain complete overwrite preimage and original image for separate reviewed recovery. Report advisory ownership accurately; uncertainty stops without retry or automatic rollback. Exercise aliases, mount/identity/preimage races and partial-write/flush/readback faults offline."
+      },
+      {
+        "checks": [
+          "smbr-02",
+          "smbr-03"
+        ],
+        "text": "Keep serial routing fixed and explicit: privately identified bridge path/topology, exclusive controller/capture arbitration, bounded countdown/prompt state and recognized U-Boot-only transmission. Require expected boot.scr byte count/SHA before source and retain every unchanged script payload check and fixed root/envelope binding. Reject unexpected identity, prompt, output, timeout or hash; no arbitrary input interpolation, Linux-shell commands, control-line/power changes or blind retry. Physical MMC mapping and fresh redundant environment/expected missed-interception attempt decrement require separate exact-operation review before any reboot; no inferred Linux-to-U-Boot numbering or claim of policy preservation after missed autoboot."
+      },
+      {
+        "checks": [
+          "smbr-04",
+          "smbr-03"
+        ],
+        "text": "Limit finalizer change to RB_AUTOBOOT for compile-time recovery-handoff mode and exact PASS reached after existing full verified transfer. Every other status, including CLAIM_ONLY_PASS and injected/uncertain failures, and every nonhandoff build keeps RB_POWER_OFF. If reboot returns/fails, pause/stop without retry. Test the actual production finalizer using captured syscalls for both modes and representative refusal/postopen/final-environment faults, exact-versus-lookalike statuses and reboot failure. Compile the actual ARM64 variant and execute that finalizer in bounded disposable QEMU with observed guest reset/shutdown events. Keep synthetic test hooks out of production and prove admission, marker consumption, claims, environment-last transfer and full readback paths unchanged before reusing their existing evidence."
+      },
+      {
+        "checks": [
+          "smbr-01",
+          "smbr-02",
+          "smbr-03",
+          "smbr-04"
+        ],
+        "text": "Measure isolated build scratch against 512 MiB and aggregate loader/preimage/receipt/capture against 64 MiB; preflight space and stop if bounds fail. Stream hashes without full-card copies and preserve accepted builds/evidence. Keep source/config, sandbox/native syscalls, ARM64 QEMU and measured hardware evidence separately named. Independent delivery verification is required. Physical SD write/probe/return, RTC/time preparation, p5 arming, writer full write and automatic H616 return remain coordinator-owned H12 gates with immediate separate high-consequence review and applicable authorization, binding the new loader and writer hashes. Preserve 8 GB image sizing, immutable/persistent-state policy, profiles, pins, idle/heater protections and independent recovery."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "5ffcd9226fb8af954206b4c1e5ed7d8297a77945691e8bde06027bbbc90d9e5b",
+    "rationale": "Approve bounded offline implementation toward the existing writerless goal under decision 0011 and .codex/current-goals.md. H13 establishes measured SD GTK/SSH, kernel-readonly root, installed spare identity and successful read-only live-stager admission. host-managed-boot-route-research-20260929.md resolves the earlier unknown: the exact old config lacks CMD_HASH/HASH_VERIFY/CRC32_VERIFY, and the old loader equals its pinned 40960-byte SPL plus FIT. Pinned cmd/Kconfig confirms these independent options. Enabling their supported upstream mechanisms in main U-Boot while preserving SPL/BL31/DT/default environment fixes the identified capability gap without a new boot policy or electrical settings. Before: current SD-only loader cannot select eMMC, the full loader cannot run required integrity commands, and emmc_image_writer.c finish always powers off. After: a newly reviewed loader can use the unchanged SD hash-verifying script and accepted p5 selector, while only fully verified recovery-handoff PASS requests automatic reboot. Actual C source places its sole exact PASS after full readback hash; all refusal/failure paths use other statuses. This finalizer correction completes the authorized unattended goal rather than optional scope. Accepted bulk-transfer/QEMU second-boot evidence may be reused only if those paths remain unchanged. Approve one implementer in the named files, isolated 512 MiB build scratch and bounded receipts; no spending, licensing or authority change. Source/sandbox/syscall/QEMU evidence cannot establish H616 boot, reset, MMC mapping or physical return. Conditions below are acceptance gates; no physical operation is authorized by this design decision.",
+    "requirements_sha256": {
+      "docs/design/unattended-emmc-reimage-handoff.md": "1deb28cf072178df5d418126a39e50e9d18679448fdcbd32b53a9b6827997e5d",
+      "docs/hardware/host-managed-boot-route-research-20260929.md": "29773a5defd153bca12a252d6ab39c0011cb4150124fce3b8b3c0f992fdf5aa6",
+      "docs/hardware/host-sd-recovery-host-first-boot-20260929.md": "3d4474fa276ae9c34122cd10a68021b6302ae45bb45421cebbf36e34579f12f7"
+    },
+    "reviewer": "independent feature approver /root/approve_sd_managed_boot_route",
+    "scope_sha256": "84d0ab9d1e1c41acd548983825b244d4d0edc3c20918a913386538f1fa595393",
+    "session": "approve_sd_managed_boot_route-20260929-revised-60c085964"
+  },
   "format_version": 1,
   "id": "sd-managed-boot-route",
   "kind": "improvement",
