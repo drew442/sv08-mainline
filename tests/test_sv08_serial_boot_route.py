@@ -26,13 +26,13 @@ class Transcript:
 
     def write(self,data):
         self.writes.append(data)
-        if data==b' ':self.queue.append(b'\r\n=> ');return
+        if data in (b' ',b'\n'):self.queue.append(b'\r\nCB1@uboot:~$ ');return
         command=data.rstrip(b'\n')
         result={b'mmc dev 0':b'mmc0 is current device',
                 b'mmc info':b'SD version 3.0' if self.sd else b'MMC version 5.1',
                 b'fatload mmc 0:1 ${scriptaddr} boot.scr':f'{self.count} bytes read in 1 ms'.encode(),
                 b'hash sha256 ${scriptaddr} ${filesize}':b'sha256 for 4fc00000 ... ==> '+self.digest.encode()}.get(command,b'')
-        if command!=b'source ${scriptaddr}':self.queue.append(command+b'\r\n'+result+b'\r\n=> ')
+        if command!=b'source ${scriptaddr}':self.queue.append(command+b'\r\n'+result+b'\r\nCB1@uboot:~$ ')
 
     def session(self):return route.Session(self.read,self.write,clock=self.clock,timeout=20)
 
@@ -91,7 +91,7 @@ class SerialTests(unittest.TestCase):
         original=transcript.write
         def write(data):
             original(data)
-            if data.startswith(b'hash '):transcript.queue=deque([data+b'=> '])
+            if data.startswith(b'hash '):transcript.queue=deque([data+b'\r\nCB1@uboot:~$ '])
         session=route.Session(transcript.read,write,clock=transcript.clock,timeout=20)
         with self.assertRaises(ValueError):session.route('sd')
         self.assertNotIn(b'source ${scriptaddr}\n',transcript.writes)
@@ -107,6 +107,33 @@ class SerialTests(unittest.TestCase):
         result=route.verify_script(p/'boot.scr',p/'boot.cmd',p/'composition.json')
         self.assertEqual(result['script_sha256'],route.SCRIPT_SHA)
 
+
+
+class StoppedPromptTests(unittest.TestCase):
+    def test_stopped_route_one_newline_then_existing_gates(self):
+        t=Transcript();t.queue.clear();t.session().route('sd-resume')
+        self.assertEqual(t.writes,[b'\n',b'mmc dev 0\n',b'mmc info\n',b'fatload mmc 0:1 ${scriptaddr} boot.scr\n',b'hash sha256 ${scriptaddr} ${filesize}\n',b'source ${scriptaddr}\n'])
+
+    def test_unknown_linux_or_mixed_prompt_stops_after_only_newline(self):
+        for reply in (b'=> ',b'recovery@sv08:~$ ',b'root login: \r\nCB1@uboot:~$ ',b'root@sv08:~# \r\nCB1@uboot:~$ ',b'Password: \r\nCB1@uboot:~$ ',b''):
+            t=Transcript();t.queue.clear()
+            def write(data):t.writes.append(data);t.queue.append(reply)
+            session=route.Session(t.read,write,clock=t.clock,timeout=1)
+            with self.assertRaises((ValueError,TimeoutError)):session.route('sd-resume')
+            self.assertEqual(t.writes,[b'\n'])
+
+    def test_valid_prompt_cannot_hide_forbidden_output_in_same_read(self):
+        for payload in (b'CB1@uboot:~$ \r\nroot login: ',b'root@sv08:~# \r\nCB1@uboot:~$ '):
+            writes=[];chunks=deque([payload])
+            session=route.Session(lambda timeout:chunks.popleft() if chunks else b'',writes.append)
+            with self.assertRaises(ValueError):session.route('sd-resume')
+            self.assertEqual(writes,[b'\n'])
+
+    def test_stopped_bad_count_hash_or_mmc_never_sources(self):
+        for values in ({'count':1074},{'digest':'0'*64},{'sd':False}):
+            t=Transcript(**values);t.queue.clear()
+            with self.assertRaises(ValueError):t.session().route('sd-resume')
+            self.assertNotIn(b'source ${scriptaddr}\n',t.writes)
 
 
 class RunCaptureTests(unittest.TestCase):
@@ -126,6 +153,7 @@ class RunCaptureTests(unittest.TestCase):
         self.before_tx=[]
         self.fault=None
         self.ready_hook=None
+        self.route_name='sd'
         self.admissions=[]
 
     def execute(self):
@@ -178,7 +206,7 @@ class RunCaptureTests(unittest.TestCase):
             stack.enter_context(mock.patch.object(route.fcntl,'ioctl',side_effect=lambda *args:self.admissions.append('exclusive')))
             stack.enter_context(mock.patch.object(route,'Session',side_effect=lambda read,write,**kw:
                 actual_session(read,write,clock=self.transcript.clock,timeout=20,**kw)))
-            return route.run(self.policy,'sd','fixture.scr','fixture.cmd','fixture.json',self.capture,apply=True,ready_hook=self.ready_hook)
+            return route.run(self.policy,self.route_name,'fixture.scr','fixture.cmd','fixture.json',self.capture,apply=True,ready_hook=self.ready_hook)
 
     def test_existing_capture_refuses_before_serial_open_and_tx(self):
         self.capture.write_bytes(b'retained evidence')
@@ -310,6 +338,36 @@ class RunCaptureTests(unittest.TestCase):
         self.policy['recovery_return_exception']={**exception(),'approval_sha256':'0'*64}
         with self.assertRaises(ValueError):self.execute()
         self.assertEqual(self.transcript.writes,[]);self.assertFalse(self.capture.exists())
+
+    def admit_resume(self):
+        from tests.test_sv08_recovery_boot_guard import exception
+        self.route_name='sd-resume';self.transcript.queue.clear()
+        self.policy.update(fresh_environment_reviewed=False,stopped_uboot_reviewed=True,
+                           no_intervening_text_sender_reviewed=True,no_residual_command_reviewed=True,
+                           stopped_capture_sha256='ed9074ded59d4aec42f11bbc95e4e2cd21b7283ba6a89336687fc7ff2c0102e9',
+                           recovery_return_exception=exception())
+
+    def test_actual_resume_admission_and_durable_capture(self):
+        self.admit_resume();self.execute()
+        self.assertEqual(self.transcript.writes[0],b'\n')
+        self.assertEqual(self.transcript.writes.count(b'\n'),1)
+        self.assertFalse(self.policy['fresh_environment_reviewed'])
+        self.assertIn(b'source ${scriptaddr}\n',self.transcript.writes)
+
+    def test_resume_missing_or_changed_review_refuses_before_serial_or_tx(self):
+        self.admit_resume()
+        for key in ('stopped_uboot_reviewed','no_intervening_text_sender_reviewed','no_residual_command_reviewed','stopped_capture_sha256','recovery_return_exception'):
+            previous=self.policy.pop(key)
+            with self.assertRaises(ValueError):self.execute()
+            self.assertIsNone(self.serial_fd);self.assertEqual(self.transcript.writes,[])
+            self.policy[key]=previous
+        self.policy['fresh_environment_reviewed']=True
+        with self.assertRaises(ValueError):self.execute()
+
+    def test_resume_existing_capture_refuses_before_newline(self):
+        self.admit_resume();self.capture.write_bytes(b'preserved')
+        with self.assertRaises(FileExistsError):self.execute()
+        self.assertEqual(self.transcript.writes,[])
 
 
 if __name__=='__main__':unittest.main()

@@ -24,7 +24,7 @@ SCRIPT_BYTES = 1075
 SCRIPT_SHA = 'ce18bf74e3d8ae840bfb90129ba28515ba89cbd2759bc32ecd0418f6987d1ddd'
 ROOT = 'deaf981d-7441-428c-bf43-ce40bca6ca65'
 ENVELOPE = 'e70601624c206ab0cea69e7ce142e7adeeb0faff13eee5e3fcf545bc08898fa1'
-PROMPT = rb'(?:^|\r?\n)=> '
+PROMPT = rb'(?:^|\r?\n)CB1@uboot:~\$ '
 COUNTDOWN = rb'Hit any key to stop autoboot:\s+[0-9]+(?:\s|$)'
 CAPTURE_LIMIT = 1024*1024
 
@@ -59,7 +59,8 @@ class Session:
                     if self.persist is not None: self.persist(retained)
                     self.capture.extend(retained); response.extend(retained)
                 if len(retained)!=len(chunk): raise ValueError('Capture limit; stop')
-                if re.search(rb'(?:login:|Password:|(?:^|\n)[^\n]*[$#] )',response):
+                shell_output = re.sub(PROMPT,b'',response)
+                if re.search(rb'(?:login:|Password:|(?:^|\n)[^\n]*[$#] )',shell_output):
                     raise ValueError('Linux/unknown shell; stop')
                 if re.search(pattern,response): return bytes(response)
         raise TimeoutError('Recognized U-Boot gate timed out; stop')
@@ -89,12 +90,16 @@ class Session:
         return response
 
     def route(self, route):
-        if route not in ('sd','emmc'): raise ValueError('Unknown fixed route')
+        if route not in ('sd','emmc','sd-resume'): raise ValueError('Unknown fixed route')
         if route=='emmc':
             # Standard autoboot, zero bytes sent. Coordinator owns environment review.
             self.wait(COUNTDOWN)
             return
-        self.interrupt()
+        if route=='sd-resume':
+            self.write(b'\n')  # Explicit stopped admission; obtain a fresh prompt without text.
+            self.wait(PROMPT); self.at_prompt = True
+        else:
+            self.interrupt()
         dev = self.command('mmc dev 0')
         if not re.search(rb'mmc0 is current device',dev): raise ValueError('Unexpected U-Boot MMC mapping')
         info = self.command('mmc info')
@@ -133,13 +138,23 @@ def serial_identity(fd, policy):
 def run(policy, route, script, command, composition, capture, *, apply=False, ready_hook=None):
     binding = verify_script(script,command,composition)
     environment_reviewed = policy.get('fresh_environment_reviewed') is True
+    if route=='sd-resume':
+        from scripts.sv08_recovery_boot_guard import exception_admitted
+        if (policy.get('stopped_uboot_reviewed') is not True or
+                policy.get('no_intervening_text_sender_reviewed') is not True or
+                policy.get('no_residual_command_reviewed') is not True or
+                policy.get('stopped_capture_sha256')!='ed9074ded59d4aec42f11bbc95e4e2cd21b7283ba6a89336687fc7ff2c0102e9' or
+                policy.get('fresh_environment_reviewed') is not False or
+                not exception_admitted(policy)):
+            raise ValueError('Exact stopped U-Boot recovery review required')
+        environment_reviewed = True  # Explicit resume exception; ordinary freshness stays false.
     if not environment_reviewed and ready_hook is not None:
         from scripts.sv08_recovery_boot_guard import exception_admitted
         environment_reviewed = exception_admitted(policy)
     if not policy.get('capture_released') or not environment_reviewed or not policy.get('mmc_mapping_reviewed'):
         raise ValueError('Capture arbitration/MMC/environment review required')
     if not apply: return {'transmit':False,'route':route,**binding}
-    if route not in ('sd','emmc'): raise ValueError('Unknown route')
+    if route not in ('sd','emmc','sd-resume'): raise ValueError('Unknown route')
     # Reserve and flush an owned regular capture before opening the controller
     # lock or serial device. Failure leaves existing paths untouched and sends no TX.
     out = os.open(capture,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
@@ -187,7 +202,7 @@ def run(policy, route, script, command, composition, capture, *, apply=False, re
             if os.write(fd,data)!=len(data): raise OSError('Partial serial TX; stop')
         session = Session(read,write,persist=persist)
         session.route(route)
-        return {'route':route,'transmit':route=='sd',**binding,'capture_sha256':sha(session.capture)}
+        return {'route':route,'transmit':route in ('sd','sd-resume'),**binding,'capture_sha256':sha(session.capture)}
     finally:
         if fd is not None: os.close(fd)
         if lock is not None: os.close(lock)
@@ -196,7 +211,7 @@ def run(policy, route, script, command, composition, capture, *, apply=False, re
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--route',choices=('sd','emmc'),required=True)
+    p.add_argument('--route',choices=('sd','emmc','sd-resume'),required=True)
     for name in ('policy','script','command','composition','capture'):
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--apply',action='store_true')
