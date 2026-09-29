@@ -1,8 +1,8 @@
 # Running SD recovery host: prepared card, 2026-09-29
 
 The SanDisk SC16G card in Beelink has the reviewed running recovery host image.
-Complete prefix readback and read-only filesystem checks passed. Physical printer
-boot, HDMI/touch and Ethernet/SSH integration remain pending under
+Complete prefix readback and read-only filesystem checks passed. The later [physical boot record](host-sd-recovery-host-first-boot-20260929.md)
+confirms GTK, native HDMI and SSH; touch remains pending under
 [H13](coordinated-human-tasks.md). This is a nondeployable host test, not a printing
 system or a release.
 

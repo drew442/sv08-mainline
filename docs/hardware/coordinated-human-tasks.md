@@ -123,17 +123,17 @@ from writing either eMMC. No installer, MCU, heater or motion operation is
 included. Observe console/HDMI/DHCP and stop on unexpected behavior. H12 remains
 pending; no repeated SD/NFS diagnostic is requested.
 
-Current dispatch on 2026-09-29: **H13 — Running SD recovery host, pending**
+Current dispatch on 2026-09-29: **H13 — Running SD recovery host, host-only boot passed**
 supersedes the completed CB1 comparison dispatch above. The owner observed that
 baseline boot; its serial capture was empty. The running replacement's
 [offline evidence](host-sd-recovery-host.md) covers normal GTK recovery and
 public-key SSH, with no automatic media, MCU, boot-policy or printer operation.
 Independent delivery verification, exact SD write review, complete prefix
 readback and read-only filesystem/layout checks have passed; see the
-[prepared-card receipt](host-sd-recovery-host-write-20260929.md). The card is ready
-for the one captured host-only boot below; physical success remains pending.
+[prepared-card receipt](host-sd-recovery-host-write-20260929.md). The [physical boot result](host-sd-recovery-host-first-boot-20260929.md) records
+normal GTK/SSH, native HDMI mode and read-only eMMC intake.
 
-The one pending owner action is to remove all printer power, including USB serial,
+The completed owner action was to remove all printer power, including USB serial,
 move only the prepared SanDisk SD from Beelink to the printer, reconnect Ethernet,
 and reconnect USB serial after the coordinator confirms receive-only capture is
 waiting. Keep PSU off for this host-only test and the factory eMMC stored. No
