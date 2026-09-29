@@ -35,17 +35,20 @@ run. Retain only accepted evidence; never remove another worker's fixtures.
 The recovery record, inactive printer interface and boot-health composition
 have passed independent offline review. None certifies physical board behavior.
 
-`feature_workflow.py next` returns `null`; the writerless goal needs new bounded
-feature approval before its next behavioral implementation. The earlier sandbox deferral is historical; the trusted writer and p5 handoff
-now have accepted offline evidence. The remaining running-SD boot route needs
-its own [bounded proposal and review](../docs/features/sd-managed-boot-route/proposal.md).
+`feature_workflow.py next` returns `null` while its single approved implementation
+lease is active; this is not a reason to stop authorized coordination. The earlier sandbox deferral is historical; the trusted writer and p5 handoff
+now have accepted offline evidence. The running-SD boot route has an [approved bounded proposal](../docs/features/sd-managed-boot-route/proposal.md).
+Main-loader assembly/component preservation, 36 focused checks and ARM64/QMP
+success-only reboot proof passed. Independent verification identified late
+serial capture creation; one implementer is repairing capture-before-TX and
+persistence-error refusals, with unchanged loader/writer evidence reused.
 Exact full-loader inspection found missing CMD_HASH and CRC32_VERIFY, so the
 proposal now preserves the proven SPL and adds only required main-loader
-commands. Two further H12 preparation checks remain: correct the hardware RTC
-before reboot (it currently reports 1970 despite corrected Linux time), and
-provide a reviewed automatic success return. The existing writer `finish`
-always calls RB_POWER_OFF, including PASS; its QEMU second-boot evidence was a
-coordinator-started second VM, not automatic physical reboot. Do not arm a
+commands. The [hardware RTC correction and readback](../docs/hardware/host-rtc-preparation-20260929.md)
+passed separate review/execution. Warm-reboot retention still needs checking
+before a signed job. The delivery changes `finish` only for verified handoff
+PASS to request reboot; QMP reset/shutdown proof passed. Existing bulk/QEMU
+second-boot evidence remains distinct from pending automatic H616 return. Do not arm a
 physical whole-device write while that unattended return gap remains. H10's single
 reviewed retry passed on 2026-09-26. The spare eMMC appeared as
 `/dev/mmcblk0`; both U-Boot environment copies passed CRC/layout checks and the
