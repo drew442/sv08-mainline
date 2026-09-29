@@ -249,12 +249,31 @@ class SupervisorTests(unittest.TestCase):
                 command=guard.collector_command(p,'a'*64)
                 self.assertEqual(command[-2:],['python3',str(source)])
                 self.assertIn('--collect',command)
+                self.assertIn('--property=LimitFSIZE=4194304',command)
+                self.assertIn('--property=Restart=no',command)
                 p['collector_args']=['/arbitrary']
                 with self.assertRaises(ValueError):guard.collector_command(p,'a'*64)
                 p['collector_args']=[]
                 with (work/'console.raw').open('wb') as raw:raw.truncate(9*1024*1024)
                 with self.assertRaises(ValueError):guard.collector_command(p,'a'*64)
             with self.assertRaises(ValueError):guard.collector_command(p,'a'*64)
+
+
+    def test_each_retained_collector_file_must_be_strictly_below_absolute_limit(self):
+        with tempfile.TemporaryDirectory() as work:
+            work=Path(work);source=work/'capture.py';source.write_text('# readonly fixture\n')
+            expected=guard.sha(source.read_bytes())
+            p={'collector_script':str(source),'collector_sha256':expected}
+            with mock.patch.object(guard,'COLLECTOR_SHA',expected):
+                for name in ('console.raw','events.jsonl'):
+                    with self.subTest(name=name):
+                        retained=work/name
+                        with retained.open('wb') as stream:stream.truncate(4194303)
+                        guard.collector_command(p,'a'*64)
+                        with retained.open('r+b') as stream:stream.truncate(4194304)
+                        with self.assertRaises(ValueError):guard.collector_command(p,'a'*64)
+                        self.assertEqual(retained.stat().st_size,4194304)
+                        retained.unlink()
 
 
 class HIDTests(unittest.TestCase):
@@ -319,6 +338,74 @@ class HIDBindingTests(unittest.TestCase):
                 info.st_rdev=os.makedev(237,1)
                 with self.assertRaises(ValueError):guard.hid_binding(10,{})
 
+
+
+
+class ActualCollectorLimitTests(unittest.TestCase):
+    def test_unchanged_collector_tiny_reads_exhaust_events_limit_and_release_uart(self):
+        source=Path('/home/drew/sv08-mainline/local/sd-recovery-host/collector-source.py')
+        if not source.exists():self.skipTest('Explicitly supplied public collector source absent')
+        data=source.read_bytes()
+        self.assertEqual(guard.sha(data),guard.COLLECTOR_SHA)
+        with tempfile.TemporaryDirectory() as work:
+            work=Path(work);collector=work/'capture.py';collector.write_bytes(data)
+            uart=work/'uart';uart.write_bytes(b'fixture')
+            device=work/'device';device.mkdir()
+            (device/'idVendor').write_text('1a86');(device/'idProduct').write_text('7523')
+            (work/'events.jsonl').write_bytes(b'retained-prefix\n')
+            wrapper=work/'fixture.py'
+            wrapper.write_text(r"""
+import errno, fcntl, json, os, pathlib, resource, runpy, select, sys, termios, types
+base=pathlib.Path(sys.argv[1]);real_path=pathlib.Path
+real_open,real_close,real_read,real_write=os.open,os.close,os.read,os.write
+uart_fd=None;opened_flags=[];reads=0;transmits=0
+# Only hardware interfaces are fixtures. Collector filesystem I/O, event logging,
+# control flow, exceptions and Linux's regular-file resource limit are real.
+def hardware_path(value):
+    if str(value)=='/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0':return base/'uart'
+    if str(value)=='/sys/class/tty':return base/'sys-class'
+    return real_path(value)
+(base/'sys-class'/'uart').mkdir(parents=True)
+(base/'sys-class'/'uart'/'device').symlink_to(base/'device')
+fake_pathlib=types.ModuleType('pathlib');fake_pathlib.Path=hardware_path
+sys.modules['pathlib']=fake_pathlib
+def opens(path,flags,*args):
+    global uart_fd
+    fd=real_open(path,flags,*args)
+    if real_path(path)==base/'uart':
+        if flags & os.O_ACCMODE!=os.O_RDONLY:raise AssertionError('Non-readonly UART open')
+        uart_fd=fd;opened_flags.append(flags)
+    return fd
+def reads_from_uart(fd,count):
+    global reads
+    if fd==uart_fd:reads+=1;return b'x'
+    return real_read(fd,count)
+def writes(fd,data):
+    global transmits
+    if fd==uart_fd:transmits+=1;raise AssertionError('UART TX forbidden')
+    return real_write(fd,data)
+os.open=opens;os.read=reads_from_uart;os.write=writes
+fcntl.ioctl=lambda *args:0
+select.select=lambda readers,*args:(readers,[],[])
+termios.tcgetattr=lambda fd:[0,0,0,0,0,0,[0]*32]
+termios.tcsetattr=lambda *args:None
+resource.setrlimit(resource.RLIMIT_FSIZE,(4096,4096))
+try:runpy.run_path(str(base/'capture.py'),run_name='__main__')
+finally:
+    try:os.fstat(uart_fd);released=False
+    except OSError as error:released=error.errno==errno.EBADF
+    print(json.dumps(dict(reads=reads,transmits=transmits,released=released,opens=len(opened_flags))),flush=True)
+""")
+            result=subprocess.run([sys.executable,str(wrapper),str(work)],capture_output=True,text=True,timeout=10)
+            self.assertNotEqual(result.returncode,0)
+            proof=json.loads(result.stdout.strip())
+            self.assertTrue(proof['released']);self.assertEqual(proof['transmits'],0);self.assertEqual(proof['opens'],1)
+            self.assertGreater(proof['reads'],0)
+            self.assertLess((work/'console.raw').stat().st_size,4096)
+            self.assertEqual((work/'events.jsonl').stat().st_size,4096)
+            self.assertTrue((work/'events.jsonl').read_bytes().startswith(b'retained-prefix\n'))
+            self.assertIn('File too large',result.stderr)
+            self.assertEqual(collector.read_bytes(),data)
 
 
 

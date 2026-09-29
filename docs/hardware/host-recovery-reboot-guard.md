@@ -130,17 +130,25 @@ The exact existing no-argument collector is pinned at SHA
 `5c4e6cd4f1e8039949c83654c1265ffad51c269230268ca445e4491d7bf2b0ed`,
 with the reviewed argv `python3 /home/drew/sv08-captures/sd-recovery-host-20260929/capture.py`.
 It uses O_RDONLY/TIOCEXCL and its existing 115200 raw/CLOCAL/no-HUPCL setup,
-with a 12-hour/50-MiB data bound, appending console.raw/events.jsonl. The original
+with its original 12-hour/50-MiB console counter, appending console.raw/events.jsonl.
+That source counter alone does not bound events.jsonl; tiny reads can grow the
+event log much faster than console data. The recreated unit now explicitly sets
+`LimitFSIZE=4194304` and `Restart=no`. Linux enforces an absolute 4 MiB size cap
+on each regular output file, including existing appended bytes; reaching a cap
+stops collection on write failure rather than automatically relaunching it. The original
 collector does not share the controller's advisory lock; restoration does not
 claim it does. An existing old collector must have been explicitly released by
 the coordinator before apply; the guard does not stop unrelated units. Recreated
 units have fresh nonce-specific names and `--collect`, rather than trying to
 start a removed transient unit. Existing evidence is retained, not overwritten.
 
-Restoration refuses if prior console.raw/events.jsonl exceed 8 MiB, retaining
-headroom for the fixed collector's new bounded capture, event log and 1 MiB
-controller capture within the 64 MiB aggregate budget. Check current sizes and
-space before the physical review. No full image copy or build scratch is needed.
+Before launch, each existing console.raw/events.jsonl must be strictly below
+4 MiB and their combined size strictly below 8 MiB. Files are neither rotated,
+truncated nor overwritten; reaching the budget is a stop requiring coordinator
+review. The two collector files can total at most 8 MiB, plus the controller's
+1 MiB UART capture, about 1 MiB of runtime source and finite small receipts,
+well below the 64 MiB aggregate budget. Check current sizes and space before the
+physical review. No full image copy or build scratch is needed.
 Permission errors, persistent descriptor owners or systemd launch failure remain
 explicit stop conditions; supervisor logs and the primary receipt must be retained.
 
@@ -186,13 +194,21 @@ amendment/source gate and immediate Sol/high exact-operation review. Internal
 --serve/--hid-serve/--supervise modes are launched through that fixed protocol;
 they are not instructions to invoke hardware from this offline handoff.
 
-45 focused offline checks pass: guard entrypoint ordering and failed/dead/stale/
+47 focused offline checks have passing evidence: the 21 guard checks passed
+after this resource correction, and 26 unchanged serial checks reuse their
+accepted evidence. These cover guard entrypoint ordering and failed/dead/stale/
 malformed/PID-reused readiness, exact ack/timeout/SSH loss, source gate and
 freshness refusal, real private capture hook checks, four-report/partial-write
 HID transport, fresh metadata drift, pinned collector recreation/budget, and
 actual disposable controller-process exit after its input channel closes before
 supervisor recreation. Fixture subprocess/HID transports replace physical
-interfaces; the actual guard/readiness/supervisor functions execute. Unchanged
+interfaces; the actual guard/readiness/supervisor functions execute. The resource check executes the exact pinned collector source in a disposable
+Linux subprocess with a real 4 KiB RLIMIT_FSIZE and hardware-only transport
+fixtures. One-byte UART reads exhausted events.jsonl while console data remained
+below the limit; the process exited with EFBIG, released its descriptor and sent
+zero UART bytes. Existing prefix bytes were retained. Launch-argv checks require
+the production 4 MiB limit and Restart=no; this offline check does not claim an
+actual Beelink systemd unit was exercised. Unchanged
 loader/writer/build/QMP evidence is reused. No hardware command ran for delivery.
 
 Current redundant counters, RTC retention, keyboard response, new-loader SD

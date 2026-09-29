@@ -245,10 +245,12 @@ def collector_command(policy,nonce):
         raise ValueError('Receive-only collector source changed')
     # The retained receive-only collector has no command-line arguments.
     if policy.get('collector_args',[])!=[]:raise ValueError('Collector arguments are forbidden')
-    retained=sum(path.stat().st_size for path in Path(collector).parent.iterdir() if path.name in ('console.raw','events.jsonl'))
-    if retained>8*1024*1024:raise ValueError('Retained capture would exceed aggregate64MiB budget')
+    sizes=[path.stat().st_size for path in Path(collector).parent.iterdir() if path.name in ('console.raw','events.jsonl')]
+    if any(size>=4194304 for size in sizes) or sum(sizes)>=8388608:
+        raise ValueError('Retained collector file reached absolute4MiB/combined8MiB limit; stop')
     return ['systemd-run','--unit=sv08-recovery-capture-'+nonce,'--collect',
-            '--property=RuntimeMaxSec=43200','python3',collector]
+            '--property=RuntimeMaxSec=43200','--property=LimitFSIZE=4194304',
+            '--property=Restart=no','python3',collector]
 
 
 def supervise(policy,pid,starttime,nonce, *, run=subprocess.run, clock=time.monotonic, pause=time.sleep):
