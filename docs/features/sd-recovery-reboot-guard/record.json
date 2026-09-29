@@ -106,10 +106,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "34f7c3df31964e8f90671752581f998f",
+        "session": "sd-recovery-reboot-guard-20260929-v3"
+      },
       "repeats": 0,
       "resumption": "Correct guard-owned file-size limits without changing pinned collector; no operation attempted",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
     }
