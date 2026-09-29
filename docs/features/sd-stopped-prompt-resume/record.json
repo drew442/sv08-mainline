@@ -124,7 +124,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Correct configured prompt and stopped resume",
       "verification": {
         "decision_sha256": "65f84277c4c42548f7e3c8457f68ba1b6cc354286412564c2b406e14b4a661fb",
