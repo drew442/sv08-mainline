@@ -33,14 +33,21 @@
           "rbg-01",
           "rbg-03"
         ],
-        "text": "The unknown-counter exception is limited to this named recovery return attempt, requiring approved amendment provenance bound in the guard policy and exact-operation review. Never manufacture fresh_environment_reviewed=True when no fresh environment was read. A narrowly scoped admission change within the owned serial file may recognize this explicit exception while preserving the ordinary freshness requirement. Counters, RTC retention and missed-interception attempt effects remain unknown; jobs, claims and writer markers remain disabled. Missed interception, inherited script reset, timeout or failed SD return forbids a second attempt. Immediately after SD SSH returns, read/validate both redundant environments and compare Linux/RTC time before any staging, job preparation or further reboot."
+        "text": "Limit the explicit unknown-counter and CAD-risk amendment to one named recovery attempt/one emitted sequence. Bind current amendment/decision provenance in the guard policy; never fabricate fresh_environment_reviewed=True. Preserve the ordinary fresh-environment gate and allow only the explicitly bound exception. Do not assume current boot counters, RTC, preserved environments, U-Boot MMC mapping or exactly one actual reset. Jobs/claims/markers stay disabled. Missed interception, inherited script reset, unexpected reset, timeout, release failure or failed SD return stops all further sender/serial sequence activity without reattempt. Successful return requires both redundant environment CRC/layout/value reads and Linux/RTC comparison before staging, fresh jobs or another reboot."
       },
       {
         "checks": [
           "rbg-02",
           "rbg-03"
         ],
-        "text": "rbg-02: Establish and cite the exact pinned recovery image/package/unit/kernel source chain implementing orderly Ctrl-Alt-Delete, including absence of a force-reboot path for this one sequence; generic upstream defaults are insufficient. If that source cannot establish the route, block operational delivery and return the specific unknown and required exit evidence. Bind fresh KVM Keyboard gadget metadata and descriptor identity before sending only four fixed eight-byte reports: Ctrl-Alt-F2, release, Ctrl-Alt-Delete, release. No arbitrary key text, reset/power/control-line action, force reboot, retry or additional report sequence. Partial/error writes stop; retain exact output and do not infer physical response from source/tests."
+        "text": "Accept only the explicitly disclosed retained default CAD burst/stuck-release risk for this one sequence. Bind and cite the actual retained image/package/unit/kernel chain: ordinary CAD requests orderly ctrl-alt-del/reboot targets, while more than seven CAD events within two seconds may select the early emergency force path. Final SuccessAction=reboot-force after shutdown/umount/final ordering is permitted. Do not claim four emitted reports prove one host event/reset, host autorepeat settings, guaranteed release timing or force-path absence. Verify fresh KVM Keyboard gadget metadata and descriptor identity; emit only the fixed eight-byte Ctrl-Alt-F2, release, Ctrl-Alt-Delete, release reports with prompt release and per-report syscall/elapsed receipts. No explicit force command, arbitrary keys, hold/repeated press, power/reset control, retry or second sequence. Failed/partial release is uncertain hardware state and requires stop plus separately reviewed recovery, not a success claim or improvised sender fallback."
+      },
+      {
+        "checks": [
+          "rbg-02",
+          "rbg-03"
+        ],
+        "text": "Before any operation, the coordinator and immediate independent Sol/high reviewer must bind the named installed spare, retained factory rollback baseline, independent SD/USB recovery/artifacts, PSU-off/printer-disabled state, no armed writer job/claim/marker and no incomplete whole-device transfer to applicable retained evidence. Factory rollback is the owner-selected recovery baseline, not proof that spare persistence cannot be corrupted. State explicitly that missed interception may enter a normal slot, consume attempts and make persistent writes that a burst reset could interrupt. Preserve owner artifacts using existing authorized preservation records; do not treat the factory module as a substitute for any newly introduced irreplaceable spare data. If those premises cannot be established, or unpreserved owner data/new target/expanded recovery authority is involved, stop and return the specific unmet requirement for further review and applicable owner decision. No operation follows from this feature decision alone."
       },
       {
         "checks": [
@@ -66,15 +73,15 @@
       }
     ],
     "outcome": "approved-with-constraints",
-    "proposal_sha256": "b90b1525d8aca15bd54dd328f66245a7ff5f4daf420b2a44a0cd25e2a4c67457",
-    "rationale": "The measured failure recorded in docs/hardware/host-managed-sd-transfer-20260929.md was ELOOP admission refusal followed by an erroneous coordinator reboot; restarting the removed transient collector also failed. Current scripts/sv08_serial_boot_route.py reserves and fsyncs private capture, validates UART identity, rejects competing descriptors and takes TIOCEXCL, but exposes no readiness/ack boundary to the reboot coordinator. Before: a failed controller could be followed by reboot and lost capture. After: verified live admission and exact acknowledgment precede the single fixed HID sequence, and an independent recovery path recreates receive-only capture. This is a useful bounded correction to the accepted writerless goal in .codex/current-goals.md and decision 0011, while optional features remain paused. The fresh-environment-before-every-reboot rule in host-managed-boot-route.md is an existing design constraint; approve only the explicitly recorded one-attempt recovery exception below, with unknown counters/RTC preserved as unknown and no writer armed. This does not amend owner heater, idle, persistence, 8 GB, pinning, profile or release requirements. Evidence levels are measured prior-transfer/failure records, reviewed source, and proposed offline fault tests; new-loader SD routing and recovery keyboard response remain physically unvalidated. Existing upstream serial exclusion and pinned recovery reboot mechanisms are preferable to a new reset/boot protocol; the exact pinned Ctrl-Alt-Delete mapping remains an implementation and operation gate, rather than an assumed generic systemd behavior. The locally permitted KVM metadata reports /dev/hidg0 character identity 237:0 and Keyboard hid.usb0, but is no guarantee of future identity. Existing serial capture tests and unchanged loader/writer evidence can be reused at their stated scope. No hardware access or command was performed for this review, and approval grants none.",
+    "proposal_sha256": "99cf9b586f1430128a83d358d6f424f2035ef351cd3a5f82be1c8666e368b425",
+    "rationale": "Approve the explicit CAD risk amendment as a bounded delegated diagnostic recovery design within the existing writerless-eMMC goal, not as hardware permission. The before/after improvement remains failed UART admission followed by erroneous reboot versus live exclusive UART/capture readiness and exact acknowledgment gating one emitted fixed HID sequence, with independently supervised receive-only capture restoration. The actual requirement host-managed-boot-route.md demands fresh environment review; this decision permits only the named one-sequence recovery exception and mandatory post-return inspection. The amendment now accurately admits what the pinned-source clarification established: systemd 257.13 starts the orderly target for ordinary CAD, but the unmodified >7 events/2 seconds burst path and delayed/failed-release autorepeat can cause early forced reset. Normal final SuccessAction=reboot-force after ordered shutdown is compatible with orderly reboot. Four sender reports establish neither one host event nor one reset. This is a procedural risk choice for the already authorized identified spare experiment: docs/hardware/test-sv08-01-recovery.md records the owner-selected factory-module rollback baseline and blank-spare workflow; .codex/current-goals.md retains the writerless recovery goal while optional features are paused. The risk does not intentionally erase artifacts or alter owner persistence/idle/heater/8 GB/pinning requirements; the constraints prevent applying it to unpreserved owner data or another target. Independent recovery availability and the absence of armed writer/incomplete-transfer/printer activity must be established in the exact-operation review, not inferred from the proposal. Boot counters/RTC, SD interception, normal-slot writes and physical release remain unknown. Existing independent source findings and measured failed probe are concrete evidence; implementation tests establish sender/admission behavior only and require independent verification. No replacement owner product decision is required for this confined design amendment, provided these limits hold; extending it to unpreserved data, production hardware, repeated attempts or unavailable recovery requires further review and applicable owner decision. This decision supersedes only the earlier impossible force-path-absence condition; it grants no operation authority, no validation of delivered code and no preservation or single-reset guarantee.",
     "requirements_sha256": {
       "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
       "docs/hardware/host-managed-sd-transfer-20260929.md": "af0668230a018cfc2ac79d913ecdc0e18eadedd2d618ab2f63dbe0e3566cf4fc"
     },
     "reviewer": "feature-approver: independent /root/approve_sd_recovery_reboot_guard",
-    "scope_sha256": "9f70d4cfa888e729319706cb55b2921a3cf985b649538c0cadb6d887245f6d0a",
-    "session": "/root/approve_sd_recovery_reboot_guard: 2026-09-29 independent bounded review"
+    "scope_sha256": "96fe5267d8207f8c61bda6a920218ee17e4d479fd8863d80cc0f1c469e9cb932",
+    "session": "/root/approve_sd_recovery_reboot_guard: 2026-09-29 explicit CAD risk amendment v2"
   },
   "format_version": 1,
   "id": "sd-recovery-reboot-guard",
@@ -88,7 +95,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Offline implementation remains accepted; exact source exposes default CAD burst/failed-release force risk. Explicit bounded procedural risk amendment needed before operational delivery.",
+      "blocker": null,
       "checks": [
         "rbg-01",
         "rbg-02",
@@ -99,14 +106,10 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "bc785fc0a1474a3aba6d83b1b9c60cdc",
-        "session": "sd-recovery-reboot-guard-20260929-v1"
-      },
+      "implementation": null,
       "repeats": 0,
-      "resumption": null,
-      "status": "blocked",
+      "resumption": "Explicit default CAD burst/stuck-release risk amendment approved; fixed one-emitted-sequence guard and post-return gates remain. Resume same implementation without duplicate tests/builds.",
+      "status": "pending",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
     }
