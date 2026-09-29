@@ -1,54 +1,111 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Readiness after exclusive UART admission, exact live PID/device/capture binding and acknowledgment; any failure prevents HID.",
+      "environment": "offline",
+      "id": "rbg-01"
+    },
+    {
+      "description": "Exactly one fixed reviewed HID sequence and orderly recovery mapping; abnormal exits restore recreated receive-only capture without retry.",
+      "environment": "offline",
+      "id": "rbg-02"
+    },
+    {
+      "description": "Meaningful guard and readiness fault/order tests, source/document bindings, separate verification; current boot/environment uncertainty and physical gates explicit.",
+      "environment": "offline",
+      "id": "rbg-03"
+    }
+  ],
+  "created": "2026-09-29",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "rbg-01",
+          "rbg-03"
+        ],
+        "text": "rbg-01: Signal readiness only after durable private capture admission, exact character device/topology checks, competing-descriptor refusal and TIOCEXCL. Bind the actual child PID plus process identity/liveness, UART identity and owned capture descriptor/inode through the live child channel; reject malformed, stale or replayed readiness. Require parent liveness and one exact attempt-bound acknowledgment; failed callback, timeout, dead child or lost parent stops and releases resources before any serial/HID transmission. Recheck live bindings at the HID boundary; inspection/default mode sends no HID."
+      },
+      {
+        "checks": [
+          "rbg-01",
+          "rbg-03"
+        ],
+        "text": "The unknown-counter exception is limited to this named recovery return attempt, requiring approved amendment provenance bound in the guard policy and exact-operation review. Never manufacture fresh_environment_reviewed=True when no fresh environment was read. A narrowly scoped admission change within the owned serial file may recognize this explicit exception while preserving the ordinary freshness requirement. Counters, RTC retention and missed-interception attempt effects remain unknown; jobs, claims and writer markers remain disabled. Missed interception, inherited script reset, timeout or failed SD return forbids a second attempt. Immediately after SD SSH returns, read/validate both redundant environments and compare Linux/RTC time before any staging, job preparation or further reboot."
+      },
+      {
+        "checks": [
+          "rbg-02",
+          "rbg-03"
+        ],
+        "text": "rbg-02: Establish and cite the exact pinned recovery image/package/unit/kernel source chain implementing orderly Ctrl-Alt-Delete, including absence of a force-reboot path for this one sequence; generic upstream defaults are insufficient. If that source cannot establish the route, block operational delivery and return the specific unknown and required exit evidence. Bind fresh KVM Keyboard gadget metadata and descriptor identity before sending only four fixed eight-byte reports: Ctrl-Alt-F2, release, Ctrl-Alt-Delete, release. No arbitrary key text, reset/power/control-line action, force reboot, retry or additional report sequence. Partial/error writes stop; retain exact output and do not infer physical response from source/tests."
+      },
+      {
+        "checks": [
+          "rbg-01",
+          "rbg-02",
+          "rbg-03"
+        ],
+        "text": "rbg-02: Recreate the bounded receive-only transient collector on success, refusal, timeout and abnormal controller exit; merely starting a removed unit is insufficient. An independently surviving bounded supervisor must restore it after coordinator/primary SSH connection loss as well as controller loss, with actual controller-exit/exclusive-UART arbitration. A finally block alone is insufficient. Supervisor must never send HID, reboot, retry boot or change serial control lines. Retain failed probe/captures/receipts; avoid overwrite or blind rollback, and leave uncertain boot outcome for separate reviewed recovery."
+      },
+      {
+        "checks": [
+          "rbg-01",
+          "rbg-02",
+          "rbg-03"
+        ],
+        "text": "rbg-03: Use actual guard entrypoints and optional serial callback/gate with fake subprocess/HID transports and real private capture fixtures to test admission/order, callback and exact-ack failures, stale/malformed identity, PID death/reuse, parent/SSH loss, partial HID writes, successful four-report ordering and collector recreation after abnormal exit. Prove failed readiness sends zero HID and zero serial TX; prove ordinary freshness refusal still holds. Independent delivery verification must assess changed source plus preserved capture behavior before an immediate separate Sol/high review of any exact physical operation. Source/offline, measured named hardware, and release evidence remain distinct."
+      },
+      {
+        "checks": [
+          "rbg-03"
+        ],
+        "text": "Keep one implementer and the five named owned files, with the serial change confined to readiness and explicit exception admission. Reuse unchanged loader/writer/build evidence. Keep scripts/receipts/captures under 64 MiB and isolated scratch under 512 MiB, measure resource use and stop on overrun; no new dependencies/downloads, upstream/build/MCU/writer changes, media/environment writes, policy rearming, credentials/SSH authentication modification or private-key transfer. Use existing coordinator-owned pinned-host-key SSH connections only. Retain existing rollback artifacts without inspecting private backups. Document retirement on supported authenticated recovery reboot/boot selection; this approval grants no hardware operation, commissioning or release authority."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "b90b1525d8aca15bd54dd328f66245a7ff5f4daf420b2a44a0cd25e2a4c67457",
+    "rationale": "The measured failure recorded in docs/hardware/host-managed-sd-transfer-20260929.md was ELOOP admission refusal followed by an erroneous coordinator reboot; restarting the removed transient collector also failed. Current scripts/sv08_serial_boot_route.py reserves and fsyncs private capture, validates UART identity, rejects competing descriptors and takes TIOCEXCL, but exposes no readiness/ack boundary to the reboot coordinator. Before: a failed controller could be followed by reboot and lost capture. After: verified live admission and exact acknowledgment precede the single fixed HID sequence, and an independent recovery path recreates receive-only capture. This is a useful bounded correction to the accepted writerless goal in .codex/current-goals.md and decision 0011, while optional features remain paused. The fresh-environment-before-every-reboot rule in host-managed-boot-route.md is an existing design constraint; approve only the explicitly recorded one-attempt recovery exception below, with unknown counters/RTC preserved as unknown and no writer armed. This does not amend owner heater, idle, persistence, 8 GB, pinning, profile or release requirements. Evidence levels are measured prior-transfer/failure records, reviewed source, and proposed offline fault tests; new-loader SD routing and recovery keyboard response remain physically unvalidated. Existing upstream serial exclusion and pinned recovery reboot mechanisms are preferable to a new reset/boot protocol; the exact pinned Ctrl-Alt-Delete mapping remains an implementation and operation gate, rather than an assumed generic systemd behavior. The locally permitted KVM metadata reports /dev/hidg0 character identity 237:0 and Keyboard hid.usb0, but is no guarantee of future identity. Existing serial capture tests and unchanged loader/writer evidence can be reused at their stated scope. No hardware access or command was performed for this review, and approval grants none.",
+    "requirements_sha256": {
+      "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+      "docs/hardware/host-managed-sd-transfer-20260929.md": "af0668230a018cfc2ac79d913ecdc0e18eadedd2d618ab2f63dbe0e3566cf4fc"
+    },
+    "reviewer": "feature-approver: independent /root/approve_sd_recovery_reboot_guard",
+    "scope_sha256": "9f70d4cfa888e729319706cb55b2921a3cf985b649538c0cadb6d887245f6d0a",
+    "session": "/root/approve_sd_recovery_reboot_guard: 2026-09-29 independent bounded review"
+  },
   "format_version": 1,
   "id": "sd-recovery-reboot-guard",
   "kind": "improvement",
-  "title": "Guard one remote recovery reboot",
-  "author": "root/coordinator",
-  "created": "2026-09-29",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/sd-recovery-reboot-guard/proposal.md",
   "requirements": [
     "docs/hardware/host-managed-sd-transfer-20260929.md",
     "docs/hardware/host-managed-boot-route.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "rbg-01",
-      "environment": "offline",
-      "description": "Readiness after exclusive UART admission, exact live PID/device/capture binding and acknowledgment; any failure prevents HID."
-    },
-    {
-      "id": "rbg-02",
-      "environment": "offline",
-      "description": "Exactly one fixed reviewed HID sequence and orderly recovery mapping; abnormal exits restore recreated receive-only capture without retry."
-    },
-    {
-      "id": "rbg-03",
-      "environment": "offline",
-      "description": "Meaningful guard and readiness fault/order tests, source/document bindings, separate verification; current boot/environment uncertainty and physical gates explicit."
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and verify bounded recovery readiness guard",
-      "environment": "offline",
+      "blocker": null,
       "checks": [
         "rbg-01",
         "rbg-02",
         "rbg-03"
       ],
       "depends_on": [],
-      "human_task": null,
-      "status": "pending",
-      "implementation": null,
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "blocker": null,
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
       "resumption": null,
-      "repeats": 0
+      "status": "pending",
+      "title": "Implement and verify bounded recovery readiness guard",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Guard one remote recovery reboot"
 }
