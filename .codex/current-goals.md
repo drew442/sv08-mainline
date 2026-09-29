@@ -38,7 +38,15 @@ have passed independent offline review. None certifies physical board behavior.
 `feature_workflow.py next` returns `null`; the writerless goal needs new bounded
 feature approval before its next behavioral implementation. The earlier sandbox deferral is historical; the trusted writer and p5 handoff
 now have accepted offline evidence. The remaining running-SD boot route needs
-its own bounded proposal and review. H10's single
+its own [bounded proposal and review](../docs/features/sd-managed-boot-route/proposal.md).
+Exact full-loader inspection found missing CMD_HASH and CRC32_VERIFY, so the
+proposal now preserves the proven SPL and adds only required main-loader
+commands. Two further H12 preparation checks remain: correct the hardware RTC
+before reboot (it currently reports 1970 despite corrected Linux time), and
+provide a reviewed automatic success return. The existing writer `finish`
+always calls RB_POWER_OFF, including PASS; its QEMU second-boot evidence was a
+coordinator-started second VM, not automatic physical reboot. Do not arm a
+physical whole-device write while that unattended return gap remains. H10's single
 reviewed retry passed on 2026-09-26. The spare eMMC appeared as
 `/dev/mmcblk0`; both U-Boot environment copies passed CRC/layout checks and the
 SD/NFS read-only checks passed. The probe shut down the host. See the H10 record;

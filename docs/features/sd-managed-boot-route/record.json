@@ -1,54 +1,104 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Prepare narrowly revised main U-Boot with required commands and exact known SPL/BL31/DT/environment; bounded SD-only loader transfer preserves FAT/root/GPT with strict identity/preimage/mount and refusal/failure checks.",
+      "environment": "offline",
+      "id": "smbr-01"
+    },
+    {
+      "description": "Identified explicit serial U-Boot-only routing with exact boot.scr size/SHA and unchanged payload checks, bounded captures/timeouts and no blind retry/control-line changes.",
+      "environment": "offline",
+      "id": "smbr-02"
+    },
+    {
+      "description": "Meaningful offline execution/refusal evidence, source/artifact receipts and independent verification; H12 physical routing/write/return remain pending.",
+      "environment": "offline",
+      "id": "smbr-03"
+    },
+    {
+      "id": "smbr-04",
+      "environment": "offline",
+      "description": "Actual writer finalizer selects automatic reboot only for fully verified recovery-handoff PASS, preserves failure/nonhandoff poweroff, compiles ARM64 and demonstrates bounded guest-reset/shutdown events without repeating unchanged bulk-write evidence."
+    }
+  ],
+  "created": "2026-09-29",
+  "decision": {
+    "authority": "owner-existing",
+    "constraints": [
+      {
+        "checks": [
+          "smbr-02",
+          "smbr-03"
+        ],
+        "text": "Research exit: provide hash-bound effective configuration and command evidence for exact loader SHA166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40 (receipt config SHA52959a1a8761b00927b04cc460182527c7add51e50019d3b397438f98f7b2fb8), reconcile the recorded disabled hash command, and demonstrate a compatible fixed SHA-validating SD fallback including every existing boot.scr payload check. Use pinned source/compatible sandbox or linked-binary analysis offline; a synthetic transcript alone cannot prove command availability. If the unchanged route is unavailable, return a bounded revised proposal for a reviewed alternative; do not silently substitute CRC32, skip checks, mutate FAT/root, rebuild electrical settings or change the loader pin."
+      },
+      {
+        "checks": [
+          "smbr-01",
+          "smbr-03"
+        ],
+        "text": "Any subsequently approved transfer must restrict writes to [8192,794297), bind one open descriptor to current SD controller/CID/dev_t/capacity and exact preimage, explicitly admit only the protected ro,norecovery root with unmounted boot and no writable SD filesystem, holders or competing users. Advisory exclusion must be reported as advisory, not kernel exclusive ownership. Recheck admission at write boundary, stream unaffected FAT/root/GPT hashes before and after, retain the original loader and a separately reviewed independent recovery path; uncertain write/flush/readback stops without retry or automatic rollback. Offline fault/refusal checks must cover changed mounts/identity/preimage, aliased source/target, partial write, flush failure and readback mismatch."
+      },
+      {
+        "checks": [
+          "smbr-02",
+          "smbr-03"
+        ],
+        "text": "Serial execution must require explicit invocation, private identified bridge path/topology beyond common USB VID/PID, capture/controller ownership arbitration and bounded U-Boot countdown/prompt state; no Linux-shell transmission, arbitrary commands, DTR/RTS/HUPCL/power change or blind retry. Validate every loaded-byte count/hash and stop after unknown response, prompt, timeout or identity. Before any physical reboot, separately review exact redundant environment state and expected A attempt consumption if interception fails; do not assert that replacing the SD loader preserves persistent eMMC policy during missed autoboot."
+      },
+      {
+        "checks": [
+          "smbr-01",
+          "smbr-02",
+          "smbr-03"
+        ],
+        "text": "Keep evidence levels explicit: source/config and synthetic offline behavior versus measured H13/v5 hardware results versus pending H12 SD-loaded full-loader/MMC/FIT/write/return. Report bounded streaming memory, hash/read volumes, scratch/receipt/capture limits and storage availability; preserve 8 GB image sizing, profiles, upstream pins, immutable/persistent-state policy, idle/heater protections and recovery requirements. Compare unavailable current route with the demonstrated offline route. Independent delivery verification is mandatory; exact physical SD transfer, reboot/probe, policy action and eMMC write each remain coordinator-owned and require immediate separate high-consequence review plus applicable owner authorization."
+      }
+    ],
+    "outcome": "needs-research",
+    "proposal_sha256": "c74ad583bf36954c61d4b67fa4bae3eb3b2bd76c832fbc963b5f09b7914af72e",
+    "rationale": "The existing writerless goal is authorized in .codex/current-goals.md and decision 0011; H13's measured physical result in host-sd-recovery-host-first-boot-20260929.md establishes a running immutable SD host and installed spare, but its loader cannot enumerate eMMC. The proposed before/after improvement is therefore useful: retain that host and the accepted p5 writer while enabling remotely selected SD return/eMMC handoff. Reusing the exact 786105-byte loader is supported by host-spl-diagnostics-20260915-v6.json and host-board-image-20260925-v5.json plus the September 25 physical Linux A boot; the older DRAM failure is not grounds for rejecting this reuse. However, a concrete unresolved command-capability conflict prevents approval of the proposed unchanged SD-return route. host-unattended-reimage-route-research-20260927.md records CONFIG_CMD_HASH disabled in the ARM64 v5 build, whereas scripts/build_sd_recovery_host.py boot_script invokes hash sha256 for Image, initrd.img and sv08.dtb and resets on failure. The serial proposal additionally requires SHA verification before sourcing boot.scr. The SD-only loader explicitly enables CONFIG_CMD_HASH and CONFIG_HASH_VERIFY in build_sd_network_image.py; that evidence cannot be transferred to loader 166b4251. No evidence reviewed resolves this conflict. Offline research must establish the exact loader's available commands and a SHA-validating SD return without weakening boot integrity, preserving unchanged FAT/root, or guessing MMC mapping. The accepted handoff contract already supplies marker-last staging, consumed one-shot entry and environment-last writes; do not duplicate its writer or change its admission. No new owner product decision is needed for that research. Physical U-Boot mapping and persistence/attempt-decrement behavior remain separate named-hardware gates; this decision grants no hardware action. Scope is limited to the assigned two scripts/tests and one usage/evidence document, one implementer and no new runtime framework, full userspace build, spending or licensing change.",
+    "requirements_sha256": {
+      "docs/design/unattended-emmc-reimage-handoff.md": "1deb28cf072178df5d418126a39e50e9d18679448fdcbd32b53a9b6827997e5d",
+      "docs/hardware/host-sd-recovery-host-first-boot-20260929.md": "59c653cf0b40823a29012873bae3ac973fa67eafb7d62f35ebde87ebbc93ed89"
+    },
+    "reviewer": "independent feature approver /root/approve_sd_managed_boot_route",
+    "scope_sha256": "74970a73a587cb78792c71ab7342b40af10490d14f98f0a5b06beea422021704",
+    "session": "approve_sd_managed_boot_route-20260929-review-967327ee"
+  },
   "format_version": 1,
   "id": "sd-managed-boot-route",
   "kind": "improvement",
-  "title": "Remote SD recovery and eMMC boot routing",
-  "created": "2026-09-29",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/sd-managed-boot-route/proposal.md",
   "requirements": [
     "docs/hardware/host-sd-recovery-host-first-boot-20260929.md",
-    "docs/design/unattended-emmc-reimage-handoff.md"
-  ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "smbr-01",
-      "environment": "offline",
-      "description": "Exact known loader preparation and bounded SD-only transfer preserve metadata/FAT/root, default inspect, strict identity/preimage/read-only root and failure/refusal checks."
-    },
-    {
-      "id": "smbr-02",
-      "environment": "offline",
-      "description": "Identified serial port, explicit fixed-command routing, recognized U-Boot-only prompts, hash-bound SD fallback, bounded capture/timeouts and no blind retry or control-line changes."
-    },
-    {
-      "id": "smbr-03",
-      "environment": "offline",
-      "description": "Meaningful offline execution/refusal evidence, source/artifact receipts and independent verification; H12 physical routing/write/return remain pending."
-    }
+    "docs/design/unattended-emmc-reimage-handoff.md",
+    "docs/hardware/host-managed-boot-route-research-20260929.md"
   ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Prepare bounded loader transfer and serial boot routing",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "smbr-01",
         "smbr-02",
-        "smbr-03"
+        "smbr-03",
+        "smbr-04"
       ],
-      "status": "pending",
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
       "human_task": null,
-      "blocker": null,
+      "id": "implement",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Prepare bounded loader transfer and serial boot routing",
+      "verification": null
     }
   ],
-  "author": "root/coordinator"
+  "title": "Remote SD recovery and eMMC boot routing"
 }
