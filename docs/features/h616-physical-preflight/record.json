@@ -1,54 +1,116 @@
 {
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Actual compiled preflight uses only readonly target admission; compile excludes write branch and preserves guards.",
+      "environment": "offline",
+      "id": "ppf-01"
+    },
+    {
+      "description": "Distinct signed purpose and mode enforced across preparation/build/arm/composition; write default unchanged.",
+      "environment": "offline",
+      "id": "ppf-02"
+    },
+    {
+      "description": "Confirmed-marker return and uncertain-marker stop tested; documentation preserves physical and full-write pending gates.",
+      "environment": "offline",
+      "id": "ppf-03"
+    }
+  ],
+  "created": "2026-09-29",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "ppf-01",
+          "ppf-03"
+        ],
+        "text": "Permit preflight_only only with commissioning+trusted-initramfs+recovery-handoff. Reject synthetic/claim_only/fault/selftest combinations that bypass real admission. In the actual compiled preflight exclude all reachable O_RDWR and whole-device/environment transfer write paths, rather than relying on a runtime dry-run boolean. Retain exact board/CID/controller/dev_t, trusted entry/root/source-mount, signed-job freshness, bundle checks and one authenticated claim. Recheck target identity at O_RDONLY open, exact block type/capacity/dev_t, validate both exhausted job-token-bound redundant environment records, and close descriptor on every pass/refusal before finalization. Read-only target admission does not imply marker/stager metadata operations are read-only."
+      },
+      {
+        "checks": [
+          "ppf-02"
+        ],
+        "text": "Enforce signed sv08-h616-signed-preflight-v1 for preflight and reject it in ordinary write builds; preflight rejects signed-reimage-v1. Keep otherwise unchanged strict descriptor fields, canonicalization, signature verification, source hashing during physical preparation, expiry/RTC prerequisites and signed descriptor/challenge-bound one-shot receipt validation. Bind purpose/mode and actual binary/initramfs/FIT hashes across builder manifests, preparation/service arming and composition; unsigned labels cannot select authority or override signed purpose. Default write builds/jobs retain their previous format and guards."
+      },
+      {
+        "checks": [
+          "ppf-02",
+          "ppf-03"
+        ],
+        "text": "Each eventual physical preflight has its own fresh job ID/expiry, isolated durable claim state and ephemeral job/receipt key pairs used only by the reviewed nonwriting artifact. Never reuse, consume or rearm an actual write job/claim. Keep private keys in coordinator-only ignored paths and out of boot artifacts, tests/commits/logs; only verification keys belong in the artifact. No real job/key preparation is part of this offline implementation; physical preparation requires fresh Linux/RTC evidence and existing authority. Claims remain consumed on uncertain response, with no retry or automatic rearming."
+      },
+      {
+        "checks": [
+          "ppf-01",
+          "ppf-03"
+        ],
+        "text": "Preflight return RB_AUTOBOOT is permitted only after the actual marker was durably consumed AND recovery successfully unmounted; uncertain unlink/fsync/syncfs/unmount/rmdir or any earlier refusal retains POWER_OFF stop. Use a distinct PREFLIGHT_PASS, never full-write PASS or CLAIM_ONLY_PASS. Postconsumption pass/refusal may return only after closing target descriptors and using retained absent-marker original recovery fallback. A returned reboot syscall pauses forever without retry. Do not weaken ordinary full-write finalizer statuses or error stop behavior. Test uncertain-marker/unmount paths, descriptor closure and no relaunch/claim reuse."
+      },
+      {
+        "checks": [
+          "ppf-01",
+          "ppf-02",
+          "ppf-03"
+        ],
+        "text": "Use native actual-C harnesses with captured target-open/close/transfer/finalizer syscalls, valid/corrupt/mismatched copies of both environment records, marker durability/unmount faults and pre/postconsumption refusal cases. Demonstrate compile-time mode rejection and signed cross-purpose rejection through preparation, service arming, build and FIT composition, including unchanged write defaults. Reuse unchanged bulk QEMU, one-shot claim and absent-marker U-Boot fallback evidence at its original scope. Independently verify delivery before any physical commissioning. Tests and artifact receipts do not establish actual H616 boot/reset or recovery response."
+      },
+      {
+        "checks": [
+          "ppf-03"
+        ],
+        "text": "Keep one implementer and the eight named files. Document the explicit urh-04 O_RDONLY wording reconciliation without modifying accepted hardware results or declaring their checks passed. urh-04 requires separately reviewed measured entry/identity/marker/raw-environment/recovery-return evidence; original recovery GUI return is not normal-slot health or SSH proof. urh-05 full write/readback remains separate and follows urh-04. Actual p5 metadata staging, boot-policy arming and preflight boot each require exact target/artifact/recovery/preservation evidence, applicable standing owner authorization and immediate independent Sol/high review where uncertainty persists. No hardware action, new dependency/source download, kernel/loader/MCU or production service change is authorized by this decision."
+      },
+      {
+        "checks": [
+          "ppf-01",
+          "ppf-03"
+        ],
+        "text": "Measure scratch under 512 MiB and aggregate retained artifacts under 64 MiB; no full source/image copies or repeat full-image transfer tests. Record FIT/initramfs size and boot-memory impact against existing load-address/resource constraints. Preserve existing recovery files and rollback artifacts, persistence/idle/heater/8 GB/profile/pinning requirements. Stop on resource or preservation violations; retain documented retirement when supported recovery/update testing replaces this helper."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "1d067ec399b31b1e2791d206c422c72e93ebf1f4bab5bf3125a6d363c06b7906",
+    "rationale": "Approve offline implementation of the smallest nonwriting physical-handoff preflight under the existing writerless goal. Before: current build_h616_reimage_candidate.py prohibits physical claim_only/fault modes, actual emmc_image_writer.c opens the full target O_RDWR before recovery environment validation, and finish reboots only exact full PASS; this cannot supply the read-only automatic-return evidence required by urh-04. After: a distinct signed-preflight purpose and compile-time nonwriting artifact retain actual authenticated entry/marker/claim/identity checks, admit O_RDONLY capacity/raw-environment reads and return to original recovery only after durable marker consumption and successful unmount. The source proposal explicitly prohibits whole-device WRITE while urh-04 record shorthand prohibits target open; this proposal explicitly reconciles that design wording to permit solely O_RDONLY admission. This bounded clarification preserves the stronger safety purpose and does not mark urh-04 passed. Existing decision 0018/accepted handoff scope authorize bounded offline development; optional features remain paused and no owner product requirement/authority changes. New signed preflight format is a useful purpose boundary rather than a broad job redesign: current job preparation and verifier use signed-reimage-v1, target-policy digest, fixed source/image identity, freshness and descriptor-bound one-shot claims, which must remain default and strict. Source marker consumption already unlinks/fsyncs/syncfs and returns failure if unmount fails, providing a concrete conservative basis for the return gate. Evidence level is reviewed source and accepted offline prior handoff evidence; proposed actual-C/mode/signature checks and physical entry/fallback remain pending. Retained factory/SD/USB recovery supports the existing goal but is no new hardware grant. Independent delivery verification and immediate exact-operation review remain required; no keys, hardware, job preparation or target writes were accessed/performed for this review.",
+    "requirements_sha256": {
+      "docs/features/network-emmc-unattended-recovery-handoff/proposal.md": "3646582b5c95a21d0bb2858a4a9d7a7151d8f2fe09ed5b19daec568cf83678e4",
+      "docs/features/network-emmc-unattended-recovery-handoff/record.json": "02ddb479d00b776bc2bb221668ed0459ae563fe0fbd9284ad0aef20bb10aa35f"
+    },
+    "reviewer": "feature-approver: independent /root/approve_sd_recovery_reboot_guard",
+    "scope_sha256": "268931d425f2ad280f586ff0b413f93fabfe462f579f4edf750c052706e014b0",
+    "session": "/root/approve_sd_recovery_reboot_guard: h616-physical-preflight 2026-09-29"
+  },
   "format_version": 1,
   "id": "h616-physical-preflight",
-  "title": "Add nonwriting physical handoff preflight",
   "kind": "improvement",
-  "author": "root/coordinator",
-  "created": "2026-09-29",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/h616-physical-preflight/proposal.md",
   "requirements": [
     "docs/features/network-emmc-unattended-recovery-handoff/proposal.md",
     "docs/features/network-emmc-unattended-recovery-handoff/record.json"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "ppf-01",
-      "environment": "offline",
-      "description": "Actual compiled preflight uses only readonly target admission; compile excludes write branch and preserves guards."
-    },
-    {
-      "id": "ppf-02",
-      "environment": "offline",
-      "description": "Distinct signed purpose and mode enforced across preparation/build/arm/composition; write default unchanged."
-    },
-    {
-      "id": "ppf-03",
-      "environment": "offline",
-      "description": "Confirmed-marker return and uncertain-marker stop tested; documentation preserves physical and full-write pending gates."
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement distinct physical nonwriting preflight",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "ppf-01",
         "ppf-02",
         "ppf-03"
       ],
-      "human_task": null,
-      "status": "pending",
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "blocker": null,
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement distinct physical nonwriting preflight",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Add nonwriting physical handoff preflight"
 }
