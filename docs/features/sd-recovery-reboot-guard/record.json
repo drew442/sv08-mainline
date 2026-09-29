@@ -108,7 +108,7 @@
       "id": "implement",
       "implementation": null,
       "repeats": 0,
-      "resumption": "Explicit default CAD burst/stuck-release risk amendment approved; fixed one-emitted-sequence guard and post-return gates remain. Resume same implementation without duplicate tests/builds.",
+      "resumption": "Correct guard-owned file-size limits without changing pinned collector; no operation attempted",
       "status": "pending",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
