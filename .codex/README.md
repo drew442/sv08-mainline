@@ -8,11 +8,20 @@ locally. Keep Sol for complex implementation and independent substantive review;
 the repository profiles cannot switch an existing chat's model.
 The coordinator routes eMMC/MCU writes, boot-policy changes, heater/motion
 commissioning, and release decisions through the independent
-[`high_consequence_reviewer`](agents/high-consequence-reviewer.toml) on GPT-6 Sol.
+[`high_consequence_reviewer`](agents/high-consequence-reviewer.toml) on GPT-6.1 Sol.
 This profile reviews the specific action; it cannot authorize or perform hardware
-operations.
+operations. Use the explicit
+[`high_consequence_reviewer_high`](agents/high-consequence-reviewer-high.toml)
+profile when material uncertainty requires high effort.
 The [current subclient goals](current-goals.md) assign the next bounded work and
 share physical dependencies through one human queue.
+
+For opted-in, low-risk trials, the guide adds `project_routine_implementer`
+(Sol/low) and `project_test_runner` (Luna/medium). These are optional alternatives,
+not extra mandatory stages. Complex implementation/integration and substantive
+review remain Sol/medium. See the [routing evaluation and rollout](../docs/development/codex-model-routing.md)
+for eligibility, cost measurement, runtime checks and rollback. No saving or
+model availability has been measured by changing these files.
 
 The owner approved [decision 0011](../docs/decisions/0011-feature-agent-workflow.md).
 Use the [design](../docs/design/feature-agent-framework.md) for the full contract

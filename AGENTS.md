@@ -40,13 +40,23 @@ electronics, starting with stock. No hardware combination is validated yet.
   Do not turn off protections to make a migration appear successful.
 - Immediately before an eMMC/MCU write, boot-policy change, heater/motion
   commissioning step, or release decision, spawn a separate reviewer using
-  `.codex/agents/high-consequence-reviewer.toml` and GPT-6 Sol. Give it the exact
+  `.codex/agents/high-consequence-reviewer.toml` and GPT-6.1 Sol. Give it the exact
   target, artifact/configuration, planned operation and acceptance checks. If the
-  runtime cannot load named project profiles, use a separate GPT-6 Sol agent and
+  runtime cannot load named project profiles, use a separate GPT-6.1 Sol agent and
   pass it that profile's instructions explicitly.
-  Use Sol/medium by default and Sol/high when material uncertainty remains.
+  Use medium by default. For material uncertainty, select
+  `.codex/agents/high-consequence-reviewer-high.toml` (high effort) directly.
+  Profile-file model/effort settings override spawn-time requests; verify the
+  effective model and effort before relying on the review. An unavailable reviewer
+  leaves the action blocked; use only an explicit, recorded fallback that preserves
+  the review tier. See `.codex/agent-guide.md` for launch and fallback rules.
   The review cannot grant hardware authority or replace owner authorization;
   the coordinator records the review result before acting.
+
+For new assignments, use the model/effort policy in `.codex/agent-guide.md`.
+Older task plans naming GPT-6 Sol retain their scope, dependencies and acceptance
+checks but use the current role mapping at launch. Never rewrite historical
+reviewer identities, evidence, decisions or hashes to claim a newer model ran.
 
 ## Validation and reporting
 
