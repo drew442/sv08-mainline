@@ -130,9 +130,13 @@ def serial_identity(fd, policy):
     # Never tcsetattr, TIOCMBIS/BIC, DTR/RTS, reset or power here.
 
 
-def run(policy, route, script, command, composition, capture, *, apply=False):
+def run(policy, route, script, command, composition, capture, *, apply=False, ready_hook=None):
     binding = verify_script(script,command,composition)
-    if not policy.get('capture_released') or not policy.get('fresh_environment_reviewed') or not policy.get('mmc_mapping_reviewed'):
+    environment_reviewed = policy.get('fresh_environment_reviewed') is True
+    if not environment_reviewed and ready_hook is not None:
+        from scripts.sv08_recovery_boot_guard import exception_admitted
+        environment_reviewed = exception_admitted(policy)
+    if not policy.get('capture_released') or not environment_reviewed or not policy.get('mmc_mapping_reviewed'):
         raise ValueError('Capture arbitration/MMC/environment review required')
     if not apply: return {'transmit':False,'route':route,**binding}
     if route not in ('sd','emmc'): raise ValueError('Unknown route')
@@ -165,15 +169,20 @@ def run(policy, route, script, command, composition, capture, *, apply=False):
                 if stat.S_ISCHR(other.st_mode) and other.st_rdev==os.fstat(fd).st_rdev:
                     raise ValueError('Existing serial capture/controller descriptor')
         fcntl.ioctl(fd,termios.TIOCEXCL)
+        live_check = ready_hook(fd,out) if ready_hook is not None else None
+        if live_check is not None and not callable(live_check):
+            raise ValueError('Readiness hook returned invalid liveness gate')
         def persist(data):
             if os.write(out,data)!=len(data): raise OSError('Short capture append; stop')
             os.fsync(out)
         def read(timeout):
+            if live_check is not None: live_check()
             return os.read(fd,4096) if select.select([fd],[],[],timeout)[0] else b''
         def write(data):
             # All received bytes must be durable before any subsequent TX,
             # including countdown interception and sourcing the verified script.
             os.fsync(out)
+            if live_check is not None: live_check()
             serial_identity(fd,policy)
             if os.write(fd,data)!=len(data): raise OSError('Partial serial TX; stop')
         session = Session(read,write,persist=persist)

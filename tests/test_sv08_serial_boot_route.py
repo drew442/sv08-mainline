@@ -125,6 +125,8 @@ class RunCaptureTests(unittest.TestCase):
         self.received=bytearray()
         self.before_tx=[]
         self.fault=None
+        self.ready_hook=None
+        self.admissions=[]
 
     def execute(self):
         real_open,real_write,real_fsync=os.open,os.write,os.fsync
@@ -173,10 +175,10 @@ class RunCaptureTests(unittest.TestCase):
             stack.enter_context(mock.patch.object(route.os,'fsync',side_effect=flushes))
             stack.enter_context(mock.patch.object(route.os,'read',side_effect=reads))
             stack.enter_context(mock.patch.object(route.select,'select',return_value=([1],[],[])))
-            stack.enter_context(mock.patch.object(route.fcntl,'ioctl'))
+            stack.enter_context(mock.patch.object(route.fcntl,'ioctl',side_effect=lambda *args:self.admissions.append('exclusive')))
             stack.enter_context(mock.patch.object(route,'Session',side_effect=lambda read,write,**kw:
                 actual_session(read,write,clock=self.transcript.clock,timeout=20,**kw)))
-            return route.run(self.policy,'sd','fixture.scr','fixture.cmd','fixture.json',self.capture,apply=True)
+            return route.run(self.policy,'sd','fixture.scr','fixture.cmd','fixture.json',self.capture,apply=True,ready_hook=self.ready_hook)
 
     def test_existing_capture_refuses_before_serial_open_and_tx(self):
         self.capture.write_bytes(b'retained evidence')
@@ -257,6 +259,57 @@ class RunCaptureTests(unittest.TestCase):
         self.assertEqual(self.transcript.writes,[])
         self.assertEqual(self.capture.stat().st_size,route.CAPTURE_LIMIT)
         self.assertEqual(self.capture.read_bytes(),b'X'*route.CAPTURE_LIMIT)
+
+
+    def test_readiness_hook_runs_after_exclusive_and_capture_before_any_tx(self):
+        calls=[]
+        def hook(fd,raw):
+            self.assertEqual(self.admissions,['exclusive'])
+            self.assertEqual(fd,self.serial_fd);self.assertEqual(raw,self.capture_fd)
+            self.assertEqual(self.transcript.writes,[])
+            self.assertEqual(self.capture.read_bytes(),b'')
+            calls.append('ready')
+            return lambda:calls.append('live')
+        self.ready_hook=hook
+        self.execute()
+        self.assertEqual(calls[0],'ready');self.assertIn('live',calls)
+
+    def test_readiness_callback_or_ack_failure_has_zero_tx_and_keeps_capture(self):
+        for error in (ValueError('callback failed'),TimeoutError('ack timed out'),EOFError('parent lost')):
+            if self.capture.exists():self.capture.unlink()
+            self.transcript=Transcript()
+            def hook(fd,raw):raise error
+            self.ready_hook=hook
+            with self.assertRaises(type(error)):self.execute()
+            self.assertEqual(self.transcript.writes,[])
+            self.assertTrue(self.capture.exists())
+
+    def test_parent_loss_liveness_gate_stops_before_tx(self):
+        def hook(fd,raw):
+            def lost():raise EOFError('primary connection lost')
+            return lost
+        self.ready_hook=hook
+        with self.assertRaises(EOFError):self.execute()
+        self.assertEqual(self.transcript.writes,[])
+
+    def test_explicit_exception_needs_readiness_hook_and_preserves_unknowns(self):
+        from tests.test_sv08_recovery_boot_guard import exception
+        self.policy['fresh_environment_reviewed']=False
+        self.policy['recovery_return_exception']=exception()
+        with self.assertRaises(ValueError):self.execute()
+        self.assertIsNone(self.serial_fd);self.assertEqual(self.transcript.writes,[])
+        self.ready_hook=lambda fd,raw:None
+        self.execute()
+        self.assertFalse(self.policy['fresh_environment_reviewed'])
+
+    def test_ordinary_freshness_and_unapproved_exception_refuse(self):
+        from tests.test_sv08_recovery_boot_guard import exception
+        self.policy['fresh_environment_reviewed']=False
+        self.ready_hook=lambda fd,raw:None
+        with self.assertRaises(ValueError):self.execute()
+        self.policy['recovery_return_exception']={**exception(),'approval_sha256':'0'*64}
+        with self.assertRaises(ValueError):self.execute()
+        self.assertEqual(self.transcript.writes,[]);self.assertFalse(self.capture.exists())
 
 
 if __name__=='__main__':unittest.main()
