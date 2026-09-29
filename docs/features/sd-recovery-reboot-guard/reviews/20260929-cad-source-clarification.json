@@ -1,0 +1,21 @@
+{
+  "reviewer": "/root/approve_sd_recovery_reboot_guard",
+  "outcome": "clarified-condition-hardware-gate-unmet",
+  "checks": [
+    "rbg-02",
+    "rbg-03"
+  ],
+  "clarification": "The condition prohibits the pre-shutdown immediate/emergency CAD route. It does not prohibit systemd-reboot.service SuccessAction=reboot-force after its ordered shutdown/umount/final targets. That distinction clarifies the existing orderly-reboot scope; it grants no hardware authority or risk waiver.",
+  "evidence_level": "Pinned package/source inventory and reviewed upstream/local source; no physical HID timing or running autorepeat measurement.",
+  "evidence": [
+    "configs/host-os/recovery-packages.json pins systemd 257.13-1~deb13u1, ARM64 package SHA256 dcc3ba37f0488ecd513820035b4efc300e198849f5b6437a9bac9c2f307149ab; recovery-sources.json names the matching Debian source.",
+    "https://raw.githubusercontent.com/systemd/systemd/v257.13/src/core/manager.c: manager_enable_special_signals requests RB_DISABLE_CAD; SIGINT calls manager_handle_ctrl_alt_del. The handler starts ctrl-alt-del.target below the 7-per-2-second limit and selects the configured emergency action above it.",
+    "https://raw.githubusercontent.com/systemd/systemd/v257.13/man/systemd-system.conf.xml: CtrlAltDelBurstAction defaults to reboot-force for more than seven presses in two seconds.",
+    "https://raw.githubusercontent.com/systemd/systemd/v257.13/units/systemd-reboot.service and units/reboot.target: ordered normal final reboot mechanism.",
+    "build/host-kernel-61851-v1/linux-6.18.51/kernel/reboot.c: ctrl_alt_del signals cad_pid with SIGINT when C_A_D is disabled; otherwise schedules reboot work.",
+    "build/host-kernel-61851-v1/linux-6.18.51/drivers/tty/vt/keyboard.c: k_spec ignores keyup but does not categorically suppress repeat before fn_boot_it; input/input.c schedules software repeat from mutable REP_DELAY/REP_PERIOD."
+  ],
+  "finding": "One transmitted keydown report followed by release is an intended single CAD press, not proof of one host event. Actual repeat settings, timely delivery/release under scheduling or USB failure, and absence of concurrent CAD input remain unestablished. A guessed fast interval or no explicit sender retry cannot discharge this gate. The installed default burst route must be disclosed; it is not absent.",
+  "exit_evidence": "To satisfy the current condition, bind the exact retained-image unit/config/source chain and establish the admitted keyboard repeat/processing behavior plus a delivery mechanism whose release bound precedes repeat initiation, including relevant stuck/partial-write/controller-loss behavior and input exclusivity. A quiet interval longer than two seconds removes prior burst-window contamination but does not prevent held-key repeats. Fake-descriptor ordering tests alone do not prove these physical properties.",
+  "if_unresolved": "Offline guard implementation remains approved. Do not operate CAD under a claim that the immediate-force path has been excluded. Proceeding while press/release event count remains unknown requires a narrowly stated design amendment explicitly accepting the retained default CAD burst risk, with preservation/stop consequences and new check-mapped acceptance, followed by independent delegated review and immediate Sol/high exact-operation review. This clarification does not approve that amendment. Otherwise use an independently reviewed recovery alternative under existing authority, including human intervention if no safe remote alternative exists."
+}

@@ -7,7 +7,7 @@
       "id": "rbg-01"
     },
     {
-      "description": "Exactly one fixed reviewed HID sequence and orderly recovery mapping; abnormal exits restore recreated receive-only capture without retry.",
+      "description": "Exactly one fixed reviewed emitted HID sequence, explicit CAD burst/release risk and pinned orderly mapping; abnormal exits restore recreated receive-only capture without retry.",
       "environment": "offline",
       "id": "rbg-02"
     },
@@ -88,7 +88,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Offline implementation remains accepted; exact source exposes default CAD burst/failed-release force risk. Explicit bounded procedural risk amendment needed before operational delivery.",
       "checks": [
         "rbg-01",
         "rbg-02",
@@ -106,7 +106,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
     }

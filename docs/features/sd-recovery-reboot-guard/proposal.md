@@ -5,7 +5,7 @@ optional new features remain paused. The prior coordinator passed a failed UART
 readiness check and original recovery now provides neither SSH nor a console.
 See the measured failed probe in the requirements below.
 
-Permit exactly one reviewed recovery reboot with current redundant environment
+Permit exactly one reviewed emitted keyboard sequence with current redundant environment
 counters unknown. This replaces the fresh pre-reboot environment read requirement
 only for this recovery attempt, because original recovery has no command access.
 Do not assume A=2, preserved environments, retained RTC, or new-loader SD routing.
@@ -30,7 +30,7 @@ Use the existing root SSH connections from the coordinator, with pinned host
 keys, to launch the identified Beelink controller and send exactly one fixed
 KVM keyboard sequence: Ctrl-Alt-F2, release, Ctrl-Alt-Delete, release. Validate
 /dev/hidg0 against the KVM Keyboard gadget metadata and measured char identity.
-No arbitrary commands, key text, power/control-line operations, force reboot,
+No arbitrary commands, key text, power/control-line operations, explicit force-reboot command,
 retry, shell interpolation or changes to authentication. Verify the exact pinned
 recovery Ctrl-Alt-Del mapping first; physical response remains an observation.
 
@@ -51,3 +51,34 @@ physical operation. Keep scripts/receipts/captures below 64 MiB and isolated
 scratch below 512 MiB. Independent delivery verification precedes physical review.
 Retire this diagnostic guard once supported recovery exposes authenticated reboot
 and boot selection. No release or printer commissioning claim.
+
+## Explicit CAD risk amendment
+
+The exact systemd 257.13 recovery image disables the kernel's direct CAD path
+and maps an ordinary SIGINT to the orderly reboot target. Its standard final
+SuccessAction=reboot-force follows shutdown/umount/final targets. However the
+unmodified CtrlAltDelBurstAction default can perform an early forced reset after
+more than seven CAD events within two seconds. Mutable host repeat settings and
+a delayed or failed release mean four HID reports do not prove one host event.
+Do not claim the absence of that force path, a guaranteed release deadline, or
+exactly one observed reboot. A new image override cannot be installed through the
+currently inaccessible host.
+
+The bounded proposal explicitly accepts that existing burst/stuck-release risk
+for this one recovery sequence, subject to independent approval and immediate
+Sol/high operation review. The identified installed medium is the spare; the
+factory module is stored, independent recovery is retained, PSU remains off,
+printer services are disabled, and no writer job/claim/marker or incomplete
+whole-device transfer exists. Original recovery is designed for read-only media;
+normal-slot persistent writes and boot-attempt effects after a missed interception
+must remain possible rather than claimed absent. A forced reset could interrupt
+those writes. Existing owner authorization accepts the spare/recovery path;
+feature approval still grants no hardware authority.
+
+The sender checks fresh gadget identity, uses four fixed reports with prompt
+release, records each syscall/elapsed result, and never sends a repeated press,
+force fallback or second sequence. Release failure stops and is an uncertain
+outcome requiring separately reviewed recovery. An unexpected reset or missed
+SD return also stops; current environment/RTC readings are mandatory after any
+successful return. Offline guard tests establish sender behavior only. They do
+not certify host key-repeat timing, hardware response or forced-reset absence.
