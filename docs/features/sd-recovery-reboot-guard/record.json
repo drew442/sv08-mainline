@@ -108,7 +108,7 @@
       "id": "implement",
       "implementation": null,
       "repeats": 0,
-      "resumption": "Correct guard-owned file-size limits without changing pinned collector; no operation attempted",
+      "resumption": "Bind unchanged passed code and corrected collector retry description",
       "status": "pending",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
