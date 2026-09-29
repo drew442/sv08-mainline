@@ -1,0 +1,54 @@
+{
+  "format_version": 1,
+  "id": "h616-physical-preflight",
+  "title": "Add nonwriting physical handoff preflight",
+  "kind": "improvement",
+  "author": "root/coordinator",
+  "created": "2026-09-29",
+  "priority": 1,
+  "proposal": "docs/features/h616-physical-preflight/proposal.md",
+  "requirements": [
+    "docs/features/network-emmc-unattended-recovery-handoff/proposal.md",
+    "docs/features/network-emmc-unattended-recovery-handoff/record.json"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "ppf-01",
+      "environment": "offline",
+      "description": "Actual compiled preflight uses only readonly target admission; compile excludes write branch and preserves guards."
+    },
+    {
+      "id": "ppf-02",
+      "environment": "offline",
+      "description": "Distinct signed purpose and mode enforced across preparation/build/arm/composition; write default unchanged."
+    },
+    {
+      "id": "ppf-03",
+      "environment": "offline",
+      "description": "Confirmed-marker return and uncertain-marker stop tested; documentation preserves physical and full-write pending gates."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement distinct physical nonwriting preflight",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "ppf-01",
+        "ppf-02",
+        "ppf-03"
+      ],
+      "human_task": null,
+      "status": "pending",
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "blocker": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
