@@ -633,7 +633,13 @@ static int expired(time_t started) {
   return now<started || now-started>DEADLINE_SECONDS;
 }
 static void finish(const char *status) {
-  printf("%s%s\n",SV08_RESULT_PREFIX,status);fflush(stdout);sync();reboot(RB_POWER_OFF);for(;;)pause();
+  int operation=RB_POWER_OFF;
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+  if(!strcmp(status,"PASS"))operation=RB_AUTOBOOT;
+#endif
+  printf("%s%s\n",SV08_RESULT_PREFIX,status);fflush(stdout);sync();
+  reboot(operation);
+  for(;;)pause(); /* A returned reboot is uncertain: stop without retry. */
 }
 #if defined(SV08_SHA_SELFTEST)
 int main(void) {
