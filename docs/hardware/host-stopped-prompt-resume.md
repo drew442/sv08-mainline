@@ -68,3 +68,31 @@ and existing guard/capture-limit checks are covered. Fixture transport replaces
 physical UART/HID; these results do not establish successful physical resume.
 No loader, kernel, writer, MCU, dependencies or full images changed. The diagnostic
 is retired when recovery exposes supported authenticated boot selection.
+
+## Physical continuation and capture limitation
+
+The separately reviewed one resume completed on 2026-09-29. A fresh exact
+prompt, MMC0 SC16G/SD identity, 1075-byte load and the pinned SHA were observed;
+the controller sent source and returned its successful routing receipt. The
+599-byte private transcript SHA is
+`f6881b549fdac00a903be68c3416d734e152e07281e39ffc70fcccaf797d218f`.
+A new network SSH service responds and KVM shows the recovery GUI at1024x600;
+these observations do not yet establish authenticated shell admission.
+
+The coordinator's temporary wrapper supplied a malformed 65-character supervisor
+nonce. systemd-run accepted the unit launch, but its process immediately refused
+the nonce. The wrapper continued routing without a surviving supervisor. That
+was another coordinator preflight error, not a successful restoration result.
+The capped receive-only collector was recreated manually after the controller
+released UART; its active state, 4MiB file limit and Restart=no were measured.
+Early Linux boot output, including this boot's regenerated SSH fingerprint,
+was missed. Preserve the failed wrapper and supervisor journal; validate nonce
+length and actual supervisor readiness before any future controller launch.
+Do not repeat either consumed HID or resumed-UART attempt.
+
+The offered new SSH fingerprint is intentionally not recorded as independently
+verified. The existing console-fingerprint enrollment requirement remains until
+trusted independent evidence or an explicit owner one-boot decision resolves it.
+No signed job, claim, writer marker, environment policy or eMMC write was armed.
+Both redundant environment values and RTC retention remain pending authenticated
+read-only access.
