@@ -81,15 +81,59 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "spr-01",
+          "document": "docs/hardware/host-stopped-prompt-resume.md",
+          "document_sha256": "0042c97cb7a2a6b3d55ce79120b4f13b2a558050e27a55db2f2d39eb36df418d",
+          "environment": "offline",
+          "limitations": "No physical resumed SD return, eMMC counter or RTC retention proof; fresh independent hardware review required.",
+          "method": "54 guard/serial focused offline tests without skips; exact configured fragmented prompt, stopped newline-only admission, mixed shell/prompt refusal, preserved identity/hash/capture gates and Linux filelimit tests.",
+          "profile": null,
+          "source_commit": "60ce40420432710aaaadf98862ddb116b87be184",
+          "source_sha256": {
+            "docs/hardware/host-stopped-prompt-resume.md": "0042c97cb7a2a6b3d55ce79120b4f13b2a558050e27a55db2f2d39eb36df418d",
+            "scripts/sv08_serial_boot_route.py": "c38854a8bc46cc1696abb3a576b83149e8f761260267898ce2e477b3e9b9de90",
+            "tests/test_sv08_serial_boot_route.py": "03ea2919e566c5254221ec994cacfb16b474a72d7eb5ef3db6a51f0eec63eb38"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "spr-02",
+          "document": "docs/hardware/host-stopped-prompt-resume.md",
+          "document_sha256": "0042c97cb7a2a6b3d55ce79120b4f13b2a558050e27a55db2f2d39eb36df418d",
+          "environment": "offline",
+          "limitations": "No physical resumed SD return, eMMC counter or RTC retention proof; fresh independent hardware review required.",
+          "method": "54 guard/serial focused offline tests without skips; exact configured fragmented prompt, stopped newline-only admission, mixed shell/prompt refusal, preserved identity/hash/capture gates and Linux filelimit tests.",
+          "profile": null,
+          "source_commit": "60ce40420432710aaaadf98862ddb116b87be184",
+          "source_sha256": {
+            "docs/hardware/host-stopped-prompt-resume.md": "0042c97cb7a2a6b3d55ce79120b4f13b2a558050e27a55db2f2d39eb36df418d",
+            "scripts/sv08_serial_boot_route.py": "c38854a8bc46cc1696abb3a576b83149e8f761260267898ce2e477b3e9b9de90",
+            "tests/test_sv08_serial_boot_route.py": "03ea2919e566c5254221ec994cacfb16b474a72d7eb5ef3db6a51f0eec63eb38"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "2d6b5787a0c4455bbb133436e0b0e98f",
+        "session": "sd-stopped-prompt-resume-20260929"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "review",
       "title": "Correct configured prompt and stopped resume",
-      "verification": null
+      "verification": {
+        "decision_sha256": "65f84277c4c42548f7e3c8457f68ba1b6cc354286412564c2b406e14b4a661fb",
+        "evidence_sha256": "1f1b759a877a2c8bfd036047a2a74ef6cd53b9b21ede2212a114f07b5c7c391b",
+        "outcome": "passed",
+        "rationale": "Verified clean HEAD60ce40420432710aaaadf98862ddb116b87be184 and complete diff from recorded run base2d76253553130ec5fd8f9a25dd91d4ec51eeb031: exactly three approved serial/test/doc files, no extra modes/deletions/gitlinks or loader/writer/build/dependency changes. Complete approved decision and proposal/requirements/scope hashes remain fresh; all submitted source/document hashes and evidence source_commit match actual HEAD. spr-01 passes: exact retained CONFIG_SYS_PROMPT at line738 and config SHA6acb5de178be927a6c0cd71f906f5cf51f23a7ae2d2d87e880e33849536857bf match the fixed line-boundary prompt bytes including trailing space. Explicit sd-resume requires literal stopped/no-intervening-text/no-residual-command flags, exact captured-trace SHA, existing named one-return exception/provenance and fresh_environment_reviewed=false. Missing/changed admission refuses before capture/UART/TX; ordinary freshness protection remains. After existing exclusive UART/identity/termios/private capture admission it emits only one empty newline before a fresh exact prompt, then reuses unchanged command echoes, MMC0/SD, exact1075-byte boot.scr/SHA, payload/root/envelope and durable-capture gates. Unknown/missing/Linux prompts, mixed forbidden/valid prompt output, bad hash/count/SD, capture errors and timeouts stop with no retry or post-source TX. Independently reproduced32 focused serial/session/actual-entrypoint tests without skips, including all new stopped-resume checks and changed prompt/capture/failure regression paths. Unchanged actual-script artifact binding and21 guard/file-limit tests reuse prior independently accepted evidence; omitted unchanged artifact test needs its absent worktree input bundle and was not silently claimed rerun. spr-02 passes: explicitly authorized measured trace SHAed9074ded59d4aec42f11bbc95e4e2cd21b7283ba6a89336687fc7ff2c0102e9 matches and ends with the exact complete configured prompt; retained trace establishes historical stopped state only. Documentation correctly keeps eMMC counters/RTC/current mapping/SD Linux return unknown and MMC0 bad-CRC output distinct from eMMC environment evidence. Independent bounded receive-only restoration and existing64MiB/512MiB limits remain required and unchanged; delivered three files total36698bytes with no build scratch. Markdown targets, diff/cached checks and workflow validation pass. No hardware, keys or unrelated private inputs were accessed. This offline acceptance grants no second HID/reset/reboot or UART operation authority: coordinator must preserve consumed attempt/captures, release collector, retain independent restoration, obtain fresh Sol/high exact-operation review and after measured SD SSH return read both redundant environments and compare Linux/RTC before staging/jobs/reboot. No named hardware profile, actual resumed return or release is certified.",
+        "reviewer": "independent feature verifier /root/verify_sd_managed_boot_route",
+        "session": "verify_sd_stopped_prompt_resume-20260929-60ce404"
+      }
     }
   ],
   "title": "Resume the measured stopped bootloader prompt"
