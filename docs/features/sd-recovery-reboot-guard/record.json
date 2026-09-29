@@ -168,7 +168,7 @@
       },
       "repeats": 0,
       "resumption": "Bind unchanged passed code and corrected collector retry description",
-      "status": "review",
+      "status": "done",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": {
         "decision_sha256": "d2a5dcd9cc8fc839a2c416305a8428e30bb2b194a8f98a975b982036c8bb613e",
