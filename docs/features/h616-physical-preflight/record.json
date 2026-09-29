@@ -104,10 +104,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "dc8b4e1801d944fb889ead03362de899",
+        "session": "h616-physical-preflight-20260929"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Implement distinct physical nonwriting preflight",
       "verification": null
     }
