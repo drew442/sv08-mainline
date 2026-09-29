@@ -187,3 +187,19 @@ resource usage remains pending. Sudo prints a nonfatal hostname-resolution warni
 in this isolated configuration while privileged commands succeed. No physical
 media, eMMC, MCU, printer or boot-policy operation was performed. Independent
 verification and any physical trial remain coordinator decisions.
+
+## Resource evidence and physical dependency
+
+The retained fresh v8 composition reports 1,032,187,904 bytes as the maximum
+sampled allocated work size and source preservation; its preflight log records
+5,712,080,896 bytes free. The v9 reused composition reports 713,228,288 bytes.
+The older fresh builder did not sample immediately after compression, so this
+sampled maximum is not a continuous peak measurement. The committed builder adds
+that checkpoint. Fresh/reuse logs and complete receipts are retained under
+`local/sd-recovery-host/resource-evidence/`; no extra build was run to recreate
+these measurements. Compression uses two workers and 256 MiB memory; the bounded
+build and VM resource evidence is distinct from physical runtime usage.
+
+[H13 in the coordinated human queue](coordinated-human-tasks.md) records the
+pending reviewed SD write/readback, one SD movement and captured host-only boot.
+Its physical result is not part of this offline delivery acceptance.
