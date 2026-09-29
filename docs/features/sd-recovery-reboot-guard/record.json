@@ -95,7 +95,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Reviewed clean source HEAD 4cc83afe6b9d82b57e5b7c7d8ca1ea18db37663c and entire diff from recorded run base 8ec4b2590ed3e6d417dc7a2fee5e9d14c7f771ed: exactly five owned files, with no extra paths, mode changes, deletions or gitlinks. Approved proposal/requirements/scope and complete decision hashes are fresh; every submitted source/document hash and evidence commit matches. Reproduced all 45 focused guard/serial checks without skips, inspected actual primary/serve/readiness/HID/supervise entrypoints and preserved capture failure paths. rbg-01 admission, actual child PID/starttime/descriptor/source challenge, parent/SSH liveness, exact acknowledgment and ordinary freshness refusal versus explicitly approved exception are supported. Fixed four-report HID behavior, no retry, partial-write/parent-loss stop and independent transient supervisor creation/controller-exit arbitration are supported at offline scope. Exact allowed source-receipt, unit-chain and collector hashes match production constants; current risk decision digest matches RISK_APPROVAL and accurately accepts default CAD burst/stuck-release uncertainty. Material unmet rbg-02/rbg-03 resource constraint: collector_command checks only existing console.raw/events.jsonl total<=8MiB and launches the pinned collector for 12h without an enforced file/aggregate byte limit. Actual pinned collector caps raw payload at50MiB but appends an unbounded JSON event on every read. Bounded disposable execution of its actual event function for1000 one-byte receives wrote89893 event-log bytes for1000 payload bytes; conservatively this exceeds4.7GB of event output before its50MiB payload limit, violating the approved64MiB aggregate capture budget. Existing test covers initial retained size only. Add guard-owned enforced limits without changing pinned collector, for example systemd LimitFSIZE=4M plus Restart=no and consistent per-file preflight/stop documentation. Demonstrate real disposable subprocess RLIMIT_FSIZE enforcement and fixed launch arguments, retained capped files, no retry and aggregate headroom; reject incompatible preexisting file sizes without deleting them. A file-size limit would provide a simple bounded correction without an aggregate-monitor dependency. Delivered five-file size82019bytes, no build scratch/new dependencies, diff/cached/Markdown and lock/index checks pass. No hardware/private backups/credentials were accessed. Named spare/rollback/preservation/no-writer/PSU-off premises, one emitted sequence risk, actual reset/SD return, post-return redundant environment/RTC checks and immediate Sol/high operation review remain explicit physical dependencies. This failure concerns offline resource acceptance, not lack of a physical reset; no hardware or release is certified.",
+      "blocker": null,
       "checks": [
         "rbg-01",
         "rbg-02",
@@ -103,81 +103,15 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [
-        {
-          "board_revision": null,
-          "check": "rbg-01",
-          "document": "docs/hardware/host-recovery-reboot-guard.md",
-          "document_sha256": "5355ad3e209aafa0bf9139c1fcc713bd2dece69098c3344c7d59d7fe30949ce6",
-          "environment": "offline",
-          "limitations": "Offline sender/admission evidence only; physical keyboard event/reset count, SD return and fresh environment/RTC require separate Sol/high exact operation review; no source-only force/reset/release guarantee.",
-          "method": "Live after-exclusive-admission PID/starttime/descriptors and nonce-bound challenge; ordinary freshness refusal and explicit one-attempt unknown-counter/risk provenance gates.",
-          "profile": null,
-          "source_commit": "4cc83afe6b9d82b57e5b7c7d8ca1ea18db37663c",
-          "source_sha256": {
-            "docs/hardware/host-recovery-reboot-guard.md": "5355ad3e209aafa0bf9139c1fcc713bd2dece69098c3344c7d59d7fe30949ce6",
-            "scripts/sv08_recovery_boot_guard.py": "98a59f1805a5b9fa1922641631d983031aeecb765ff1932170d00cf1c9c68a81",
-            "scripts/sv08_serial_boot_route.py": "d61d9ac39bcf5d9e076c25e826e01a9e35b2ef878e2f7f7119bfa89221513d74",
-            "tests/test_sv08_recovery_boot_guard.py": "351688151cc2cf4d9f6d11ea0060d41b1bee9d34c2acc8b606700b9794720873",
-            "tests/test_sv08_serial_boot_route.py": "1b41e0bfe2fae8353642232ec67ecaf7882e31dbab27a7c482cbc07b10d2e0b2"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "rbg-02",
-          "document": "docs/hardware/host-recovery-reboot-guard.md",
-          "document_sha256": "5355ad3e209aafa0bf9139c1fcc713bd2dece69098c3344c7d59d7fe30949ce6",
-          "environment": "offline",
-          "limitations": "Offline sender/admission evidence only; physical keyboard event/reset count, SD return and fresh environment/RTC require separate Sol/high exact operation review; no source-only force/reset/release guarantee.",
-          "method": "Four fixed HID reports with identity and syscall/time receipts, no repeat; actual independently surviving bounded supervisor recreates receive-only collector after real disposable child/channel exit. Exact retained CAD source and explicit default burst/release risk pins.",
-          "profile": null,
-          "source_commit": "4cc83afe6b9d82b57e5b7c7d8ca1ea18db37663c",
-          "source_sha256": {
-            "docs/hardware/host-recovery-reboot-guard.md": "5355ad3e209aafa0bf9139c1fcc713bd2dece69098c3344c7d59d7fe30949ce6",
-            "scripts/sv08_recovery_boot_guard.py": "98a59f1805a5b9fa1922641631d983031aeecb765ff1932170d00cf1c9c68a81",
-            "scripts/sv08_serial_boot_route.py": "d61d9ac39bcf5d9e076c25e826e01a9e35b2ef878e2f7f7119bfa89221513d74",
-            "tests/test_sv08_recovery_boot_guard.py": "351688151cc2cf4d9f6d11ea0060d41b1bee9d34c2acc8b606700b9794720873",
-            "tests/test_sv08_serial_boot_route.py": "1b41e0bfe2fae8353642232ec67ecaf7882e31dbab27a7c482cbc07b10d2e0b2"
-          }
-        },
-        {
-          "board_revision": null,
-          "check": "rbg-03",
-          "document": "docs/hardware/host-recovery-reboot-guard.md",
-          "document_sha256": "5355ad3e209aafa0bf9139c1fcc713bd2dece69098c3344c7d59d7fe30949ce6",
-          "environment": "offline",
-          "limitations": "Offline sender/admission evidence only; physical keyboard event/reset count, SD return and fresh environment/RTC require separate Sol/high exact operation review; no source-only force/reset/release guarantee.",
-          "method": "45 focused guard+serial checks pass without skips; meaningful failed readiness/ack/PID/parent/SSH/source/capture/partial-HID and collector restoration/order fixtures; documentation links/diff pass. Five owned paths82019bytes; no build scratch/new dependencies.",
-          "profile": null,
-          "source_commit": "4cc83afe6b9d82b57e5b7c7d8ca1ea18db37663c",
-          "source_sha256": {
-            "docs/hardware/host-recovery-reboot-guard.md": "5355ad3e209aafa0bf9139c1fcc713bd2dece69098c3344c7d59d7fe30949ce6",
-            "scripts/sv08_recovery_boot_guard.py": "98a59f1805a5b9fa1922641631d983031aeecb765ff1932170d00cf1c9c68a81",
-            "scripts/sv08_serial_boot_route.py": "d61d9ac39bcf5d9e076c25e826e01a9e35b2ef878e2f7f7119bfa89221513d74",
-            "tests/test_sv08_recovery_boot_guard.py": "351688151cc2cf4d9f6d11ea0060d41b1bee9d34c2acc8b606700b9794720873",
-            "tests/test_sv08_serial_boot_route.py": "1b41e0bfe2fae8353642232ec67ecaf7882e31dbab27a7c482cbc07b10d2e0b2"
-          }
-        }
-      ],
+      "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "ba5f5e97687b4f71b553b44e0ffe9b58",
-        "session": "sd-recovery-reboot-guard-20260929-v2"
-      },
-      "repeats": 1,
-      "resumption": "Explicit default CAD burst/stuck-release risk amendment approved; fixed one-emitted-sequence guard and post-return gates remain. Resume same implementation without duplicate tests/builds.",
-      "status": "blocked",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": "Correct guard-owned file-size limits without changing pinned collector; no operation attempted",
+      "status": "pending",
       "title": "Implement and verify bounded recovery readiness guard",
-      "verification": {
-        "decision_sha256": "d2a5dcd9cc8fc839a2c416305a8428e30bb2b194a8f98a975b982036c8bb613e",
-        "evidence_sha256": "4f3af1fabfe86c4ccb45471e03719d596ce0795eae6f4921b8eebe2a484e4844",
-        "outcome": "failed",
-        "rationale": "Reviewed clean source HEAD 4cc83afe6b9d82b57e5b7c7d8ca1ea18db37663c and entire diff from recorded run base 8ec4b2590ed3e6d417dc7a2fee5e9d14c7f771ed: exactly five owned files, with no extra paths, mode changes, deletions or gitlinks. Approved proposal/requirements/scope and complete decision hashes are fresh; every submitted source/document hash and evidence commit matches. Reproduced all 45 focused guard/serial checks without skips, inspected actual primary/serve/readiness/HID/supervise entrypoints and preserved capture failure paths. rbg-01 admission, actual child PID/starttime/descriptor/source challenge, parent/SSH liveness, exact acknowledgment and ordinary freshness refusal versus explicitly approved exception are supported. Fixed four-report HID behavior, no retry, partial-write/parent-loss stop and independent transient supervisor creation/controller-exit arbitration are supported at offline scope. Exact allowed source-receipt, unit-chain and collector hashes match production constants; current risk decision digest matches RISK_APPROVAL and accurately accepts default CAD burst/stuck-release uncertainty. Material unmet rbg-02/rbg-03 resource constraint: collector_command checks only existing console.raw/events.jsonl total<=8MiB and launches the pinned collector for 12h without an enforced file/aggregate byte limit. Actual pinned collector caps raw payload at50MiB but appends an unbounded JSON event on every read. Bounded disposable execution of its actual event function for1000 one-byte receives wrote89893 event-log bytes for1000 payload bytes; conservatively this exceeds4.7GB of event output before its50MiB payload limit, violating the approved64MiB aggregate capture budget. Existing test covers initial retained size only. Add guard-owned enforced limits without changing pinned collector, for example systemd LimitFSIZE=4M plus Restart=no and consistent per-file preflight/stop documentation. Demonstrate real disposable subprocess RLIMIT_FSIZE enforcement and fixed launch arguments, retained capped files, no retry and aggregate headroom; reject incompatible preexisting file sizes without deleting them. A file-size limit would provide a simple bounded correction without an aggregate-monitor dependency. Delivered five-file size82019bytes, no build scratch/new dependencies, diff/cached/Markdown and lock/index checks pass. No hardware/private backups/credentials were accessed. Named spare/rollback/preservation/no-writer/PSU-off premises, one emitted sequence risk, actual reset/SD return, post-return redundant environment/RTC checks and immediate Sol/high operation review remain explicit physical dependencies. This failure concerns offline resource acceptance, not lack of a physical reset; no hardware or release is certified.",
-        "reviewer": "independent feature verifier /root/verify_sd_managed_boot_route",
-        "session": "verify_sd_recovery_reboot_guard-20260929-4cc83af"
-      }
+      "verification": null
     }
   ],
   "title": "Guard one remote recovery reboot"
