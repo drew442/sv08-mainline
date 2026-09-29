@@ -61,3 +61,16 @@ reviewed retry passed on 2026-09-26. The spare eMMC appeared as
 SD/NFS read-only checks passed. The probe shut down the host. See the H10 record;
 no repeat boot is planned. H10 evidence does not validate A/B activation, normal
 OS operation or printer functions.
+
+
+Latest H12 observation, 2026-09-29: the [stopped-prompt correction](../docs/hardware/host-stopped-prompt-resume.md)
+passed independent offline verification and its reviewed continuation verified
+SD identity/script hash before sourcing. The SD SSH service responds and KVM
+shows recovery at1024x600. A temporary coordinator supervisor failed a malformed
+nonce, so early boot/fresh SSH-key fingerprint capture was missed; the capped
+receive-only collector was restored manually. Initial key enrollment awaits a
+single owner decision under H12; do not bypass console-fingerprint admission or
+prepare actual jobs before fresh environment/RTC inspection. The
+[nonwriting physical preflight proposal](../docs/features/h616-physical-preflight/proposal.md)
+addresses the remaining urh-04 gap. Neither SD GUI nor offline code completes
+urh-04/05 or the writerless goal. No additional media move is requested.
