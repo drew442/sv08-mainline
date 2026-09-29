@@ -98,15 +98,111 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "smbr-01",
+          "document": "docs/hardware/host-managed-boot-route.md",
+          "document_sha256": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+          "environment": "offline",
+          "limitations": "Offline only. New H616 loader/SD MMC mapping/reset/full-write/automatic return require separate immediate physical reviews. QEMU has no production targets/NIC/block; test syscalls never execute hardware.",
+          "method": "Exact real loader assembly; preserved pinned components/config whitelist and ELF\u2192FIT equality; SD range/identity/mount/preimage/preservation/partial-write/flush/readback fixtures. Newloader SHA350a941a7ec67b541308d235bffa4b937b8171f683f3e96b0c51dd32fab64544.",
+          "profile": null,
+          "source_commit": "c9d38c9065efca76562647d01e74a9caccc45291",
+          "source_sha256": {
+            "configs/host-os/sv08-managed-boot.fragment": "38d47ae70835e737c605be7f8d218af170c0c1b7f663b93afd5f001d2739482c",
+            "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+            "scripts/sd_boot_route.py": "21541c018215887b6329ba09a2acbc8280adb702a415d262e4b0a3f92613207d",
+            "scripts/sv08_serial_boot_route.py": "5b0b146718a609eddd3323529ef4287f5a8e580febd7cc1bac79b10919d46fee",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "1bfc248e8c0eb4e66c8e92a3dfbdc45387c6528005993dc604a0704550d03df0",
+            "tests/test_h616_reimage_candidate.py": "a24d9482767315e3d30f8b101b456f92d89e6ae3ce484b422c3224a1de64141d",
+            "tests/test_sd_boot_route.py": "a7a2c0afc65a229670aae67a74c9cf33856c37c7d5a108bd22ebd3981e8f9603",
+            "tests/test_sv08_serial_boot_route.py": "7f227790b7b6d95790051731cc5dc0ad7702c51c17f5d9aa73de87e21a958b9a"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "smbr-02",
+          "document": "docs/hardware/host-managed-boot-route.md",
+          "document_sha256": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+          "environment": "offline",
+          "limitations": "Offline only. New H616 loader/SD MMC mapping/reset/full-write/automatic return require separate immediate physical reviews. QEMU has no production targets/NIC/block; test syscalls never execute hardware.",
+          "method": "Fixed identified serial controller state gates, fragmented prompts, command/hash/count/refusal/timeouts; unchanged script bytes and root/envelope checked. Capture reserved and initial fsync before serial access; 21 serial checks include actual entrypoint write/fsync/refusal/limit failures, no further TX and retained captures.",
+          "profile": null,
+          "source_commit": "c9d38c9065efca76562647d01e74a9caccc45291",
+          "source_sha256": {
+            "configs/host-os/sv08-managed-boot.fragment": "38d47ae70835e737c605be7f8d218af170c0c1b7f663b93afd5f001d2739482c",
+            "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+            "scripts/sd_boot_route.py": "21541c018215887b6329ba09a2acbc8280adb702a415d262e4b0a3f92613207d",
+            "scripts/sv08_serial_boot_route.py": "5b0b146718a609eddd3323529ef4287f5a8e580febd7cc1bac79b10919d46fee",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "1bfc248e8c0eb4e66c8e92a3dfbdc45387c6528005993dc604a0704550d03df0",
+            "tests/test_h616_reimage_candidate.py": "a24d9482767315e3d30f8b101b456f92d89e6ae3ce484b422c3224a1de64141d",
+            "tests/test_sd_boot_route.py": "a7a2c0afc65a229670aae67a74c9cf33856c37c7d5a108bd22ebd3981e8f9603",
+            "tests/test_sv08_serial_boot_route.py": "7f227790b7b6d95790051731cc5dc0ad7702c51c17f5d9aa73de87e21a958b9a"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "smbr-03",
+          "document": "docs/hardware/host-managed-boot-route.md",
+          "document_sha256": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+          "environment": "offline",
+          "limitations": "Offline only. New H616 loader/SD MMC mapping/reset/full-write/automatic return require separate immediate physical reviews. QEMU has no production targets/NIC/block; test syscalls never execute hardware.",
+          "method": "46 focused checks plus three existing regression checks passed; pinned same-source sandbox good/bad SHA and CRC command cases; component/config/build scratch and input receipts. Independent delivery verification pending.",
+          "profile": null,
+          "source_commit": "c9d38c9065efca76562647d01e74a9caccc45291",
+          "source_sha256": {
+            "configs/host-os/sv08-managed-boot.fragment": "38d47ae70835e737c605be7f8d218af170c0c1b7f663b93afd5f001d2739482c",
+            "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+            "scripts/sd_boot_route.py": "21541c018215887b6329ba09a2acbc8280adb702a415d262e4b0a3f92613207d",
+            "scripts/sv08_serial_boot_route.py": "5b0b146718a609eddd3323529ef4287f5a8e580febd7cc1bac79b10919d46fee",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "1bfc248e8c0eb4e66c8e92a3dfbdc45387c6528005993dc604a0704550d03df0",
+            "tests/test_h616_reimage_candidate.py": "a24d9482767315e3d30f8b101b456f92d89e6ae3ce484b422c3224a1de64141d",
+            "tests/test_sd_boot_route.py": "a7a2c0afc65a229670aae67a74c9cf33856c37c7d5a108bd22ebd3981e8f9603",
+            "tests/test_sv08_serial_boot_route.py": "7f227790b7b6d95790051731cc5dc0ad7702c51c17f5d9aa73de87e21a958b9a"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "smbr-04",
+          "document": "docs/hardware/host-managed-boot-route.md",
+          "document_sha256": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+          "environment": "offline",
+          "limitations": "Offline only. New H616 loader/SD MMC mapping/reset/full-write/automatic return require separate immediate physical reviews. QEMU has no production targets/NIC/block; test syscalls never execute hardware.",
+          "method": "Actual included C finish captured native bothmodes/status/fail-return tests; ARM64 static compile and real PID1 QMP RESET for PASS, SHUTDOWN for FAILED_FINAL_ENV; source diff only finalizer, unchanged bulk-write evidence reused.",
+          "profile": null,
+          "source_commit": "c9d38c9065efca76562647d01e74a9caccc45291",
+          "source_sha256": {
+            "configs/host-os/sv08-managed-boot.fragment": "38d47ae70835e737c605be7f8d218af170c0c1b7f663b93afd5f001d2739482c",
+            "docs/hardware/host-managed-boot-route.md": "f03f30f6585b379e1ef1ebb7992c9f23bbf97cc724dc259a6c6c5ca0b30251bd",
+            "scripts/sd_boot_route.py": "21541c018215887b6329ba09a2acbc8280adb702a415d262e4b0a3f92613207d",
+            "scripts/sv08_serial_boot_route.py": "5b0b146718a609eddd3323529ef4287f5a8e580febd7cc1bac79b10919d46fee",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "1bfc248e8c0eb4e66c8e92a3dfbdc45387c6528005993dc604a0704550d03df0",
+            "tests/test_h616_reimage_candidate.py": "a24d9482767315e3d30f8b101b456f92d89e6ae3ce484b422c3224a1de64141d",
+            "tests/test_sd_boot_route.py": "a7a2c0afc65a229670aae67a74c9cf33856c37c7d5a108bd22ebd3981e8f9603",
+            "tests/test_sv08_serial_boot_route.py": "7f227790b7b6d95790051731cc5dc0ad7702c51c17f5d9aa73de87e21a958b9a"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "3289f71b6b394b318defaf154dafe9d9",
+        "session": "sd-managed-boot-route-20260929-integrated"
+      },
       "repeats": 0,
       "resumption": "Use merged source unchanged and independently check only coordinator documentation integration delta; no new implementation or repeated build.",
-      "status": "pending",
+      "status": "done",
       "title": "Prepare bounded loader transfer and serial boot routing",
-      "verification": null
+      "verification": {
+        "decision_sha256": "bee94bc246ea4e3544248a65bb624c063d7a5ae0e25c6a73d77205bbe0757335",
+        "evidence_sha256": "5b57b4b5f46b62fbc054b3cc644d890670267878d3687008efbf41accc3ce16f",
+        "outcome": "passed",
+        "rationale": "Verified clean HEAD c9d38c9065efca76562647d01e74a9caccc45291 and refreshed evidence bound to that actual HEAD. Recorded integrated run base is the same commit, so its entire run-base-to-source diff is empty. Independently inspected complete integration delta from previously verified 301c0bf13acd9e275c298eb595c12462f3ec998a: only .codex/current-goals.md, record resumption metadata and the two retained initial-failure/serial-repair review JSON files changed; no implementation, acceptance scope, permissions/modes, deletions or gitlinks changed. Retained v2 passed review exactly matches my original schema-valid decision. Current-goals carries an intermediate repairing status superseded by the durable passed review; this is historical coordinator status and does not invalidate unchanged implementation/evidence. Approved proposal, requirement and scope hashes and complete decision remain fresh. Every evidence document/source hash matches; all eight delivered source/document hashes are unchanged from the accepted revision. Reuse smbr-01 exact loader/component/config/linked-command assembly and admission/fault proof, smbr-02 repaired production-entrypoint capture/prompt/hash/timeout/refusal checks, smbr-03 receipts/resource/documentation/independent before-after review and smbr-04 exact-PASS-only finalizer/native/ARM64/QMP proof previously independently verified. The prior 21 serial checks passed without skips; no unrelated or unchanged tests/builds were rerun. Complete integrated diff/cached checks, local Markdown targets and workflow validation pass. No hardware/private data access or implementation/record edits occurred. This acceptance remains exclusively the approved offline delivery; the separately reviewed physical SD transfer is outside this evidence claim, and H12 new-loader boot/MMC mapping, RTC retention, p5 staging/arming, newly hashed writer full write and automatic H616 return remain separately reviewed physical gates. No named hardware profile or release is certified.",
+        "reviewer": "independent feature verifier /root/verify_sd_managed_boot_route",
+        "session": "verify_sd_managed_boot_route-20260929-integrated-c9d38c9"
+      }
     }
   ],
   "title": "Remote SD recovery and eMMC boot routing"
