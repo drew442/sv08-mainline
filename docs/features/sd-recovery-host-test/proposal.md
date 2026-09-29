@@ -1,0 +1,11 @@
+# Running SD recovery host test
+
+Owner confirmed on 2026-09-29 that the replacement SD must stay running with the recovery interface and SSH so development can continue remotely. This corrects delivery of a finite PID1 diagnostic where normal recovery userspace was expected. Existing accepted recovery/remote-administration requirements apply.
+
+Build a separately named nondeployable SD recovery host-test using pinned project SD loader/kernel and existing complete recovery userspace. Prefer SD-local recovery envelope with exact root admission to avoid expanding NFS trust. Reuse existing recovery GUI and normal systemd init; add only bounded wired networking and public-key-only SSH as needed. Host key/configuration must be explicit and private owner keys remain ignored. Show diagnostic status honestly if persistent state is absent; do not fabricate printer state.
+
+Default short diagnostic and release/A/B policies remain unchanged. Do not run printer services, automatic installers, eMMC/MCU writes, boot-health reconciliation or update activation. Automatic startup must not write eMMC. Use dedicated SD PARTUUID/index and read-only root/volatile runtime; keep controller mapping and electrical unknowns unknown. Hardware shell writes still require separate target/artifact/recovery review. This image enables inspection and preparation only.
+
+Checks sd-host-01/02/03 are defined in record.json. Offline boot must prove a lasting init, UI service and key authentication or a clearly scoped integration limit; do not equate a tiny C probe with this acceptance. Validate root/hash refusals, runtime writes and preservation of sources. Keep exact provenance and output hashes. Prefer reuse of pinned existing packages/kernel and upstream systemd/sshd. Retirement: replace this explicit test composer with the supported release recovery image once SD deployment is supported.
+
+Build space: VM root has only2.3GiB free; Beelink has5.6GiB. Avoid copying complete raw7.8GB image or duplicate root trees. Builds produce regular files only, default inspect/dry-run. Owner already placed16GB SC16G SD in Beelink for eventual overwrite. One reviewed write/readback after delivery verification, then one owner move and supervised boot; keep physical evidence in coordinated-human-tasks.md. No physical media writes under feature approval alone.

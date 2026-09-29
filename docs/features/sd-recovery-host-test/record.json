@@ -1,0 +1,111 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Explicit nondeployable SD recovery composition reuses pinned loader/kernel and complete recovery userspace; normal init stays running with GTK recovery UI and Ethernet/public-key SSH. Default finite diagnostic remains unchanged.",
+      "environment": "offline",
+      "id": "sd-host-01"
+    },
+    {
+      "description": "Root admission is bound to unique SD identity/index/hash; read-only root and volatile runtime; no automatic eMMC, MCU, boot-policy, printer-service or installer activity. Invalid identity/hash refuses before normal init.",
+      "environment": "offline",
+      "id": "sd-host-02"
+    },
+    {
+      "description": "Reproducible source/artifact manifests, bounded build space, meaningful boot/UI/SSH/negative tests and independent verifier; physical claims remain pending.",
+      "environment": "offline",
+      "id": "sd-host-03"
+    }
+  ],
+  "created": "2026-09-29",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "sd-host-01",
+          "sd-host-03"
+        ],
+        "text": "Use an explicit separately named nondeployable SD composition. Preserve default finite diagnostic, release/A/B configuration and authoritative recovery inputs, with before/after hashes or inventories. Reuse existing recovery UI, verified envelope and upstream normal init; add only pinned wired-networking and SSH dependencies with their complete closure, provenance and license notices. Do not enable production restore/export/selection merely because the UI runs."
+      },
+      {
+        "checks": [
+          "sd-host-01",
+          "sd-host-03"
+        ],
+        "text": "Configure a named account and public-key-only SSH explicitly, disabling password and keyboard-interactive authentication and excluding owner private keys and shared credentials. Record host-key provisioning and verified public fingerprint behavior without exposing private material; preserve the trust behavior across intended restarts or document explicit re-enrollment. Test successful authorized authentication and refusal of unauthorized keys/password login. Wired DHCP failure must leave local recovery usable."
+      },
+      {
+        "checks": [
+          "sd-host-02",
+          "sd-host-03"
+        ],
+        "text": "Bind SD-local root admission to its dedicated PARTUUID, partition index, capacity, filesystem identity and manifest/content digests; ambiguous, missing or incorrect identities and corrupted content must refuse before normal init. Preserve read-only root without journal replay and bounded volatile runtime. Audit and exercise enabled startup services so no automatic eMMC/MCU write, boot-health/environment reconciliation, update activation, printer service, installer or writable persistent registry initialization occurs. Do not reuse eMMC recovery-media mappings as SD identity."
+      },
+      {
+        "checks": [
+          "sd-host-01",
+          "sd-host-02",
+          "sd-host-03"
+        ],
+        "text": "Provide complete-userspace offline boot evidence that normal init, the installed GTK process and authenticated SSH remain running over a stated observation interval and a fresh restart. Exercise actual UI readiness and interaction, runtime mount/write behavior and negative root/hash admission. If the H616 kernel cannot run under QEMU, separately identify the tested VM kernel and exact shared userspace/gate hashes, with H616 boot/display/network integration explicitly pending. A tiny PID1 fixture, service-file inspection or old GTK evidence alone cannot establish the after state. Independent delivery verification is required before physical-use handoff."
+      },
+      {
+        "checks": [
+          "sd-host-02",
+          "sd-host-03"
+        ],
+        "text": "Preflight current free build space and bound peak additional allocated disk use, tmpfs limits, guest RAM and runtime usage; avoid a full raw 7.8 GB image or duplicate complete root trees on the constrained builders. Preserve the accepted factory 8 GB and 512 MiB release-recovery requirements; any test-only size difference must remain explicit. Capture toolchain/source/configuration/artifact hashes and source-preservation evidence. Outputs must be fresh regular files with inspect/dry-run defaults, safely removable without modifying baseline artifacts or physical media."
+      },
+      {
+        "checks": [
+          "sd-host-02",
+          "sd-host-03"
+        ],
+        "text": "Label evidence as documented source, offline fixture, offline complete-userspace VM, or named-hardware measurement as applicable; retain unresolved controller/electrical facts. Keep physical write/readback, SD movement and supervised boot pending in the coordinated human queue. Later hardware use requires its own exact-target/artifact/recovery review and applicable owner authorization, with preserved eMMC and a documented return to the prior diagnostic/baseline artifact. This approval does not change heater, idle, persistence, profile, pinning or recovery requirements."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "4671e479b469b373d44290a7f14405d2d3935477a707fbf029780a285eb6795e",
+    "rationale": "Approved as a bounded correction completing accepted recovery requirements, using the owner's already-confirmed expectation of a running recovery UI and SSH. docs/hardware/host-sd-image-review-20260929.md establishes the before state: the exact delivered SD artifact successfully executes finite diagnostic PID1 and powers down, with no GTK or SSH. The after state must demonstrate lasting normal init, the existing GTK recovery interface and authenticated SSH. Decision 0010 requires independent recovery userspace, honest unavailable operations and safe authentication. docs/hardware/host-recovery-image.md supplies existing complete ARM64 GTK/systemd boot evidence and measured 512 MiB recovery capacity; docs/hardware/host-recovery-board.md supplies partition-identity/hash admission evidence but explicitly limits its partitioned VM to minimal userspace. scripts/build_sd_network_image.py separates its default diagnostic from the trusted writer; scripts/recovery_image.py currently disables networking and supplies no login identity. Therefore reuse of the existing recovery composition plus narrowly pinned upstream networking/OpenSSH is justified, while shared defaults must be preserved. This review is independent of author root/coordinator. Workflow validation passed, and review-context plus direct sha256sum bound this decision to the actual reviewed proposal, requirements and task/check definitions. No hardware operation or release is authorized.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/hardware/host-sd-image-review-20260929.md": "d72a7309e70e05aede3e945fa6830e47ef6eda7dfb117daaba0b1744096014ed"
+    },
+    "reviewer": "feature-approver/approve_sd_recovery_host",
+    "scope_sha256": "6be24b694734bcf25999c17e1771a9db960565d0cc1d5f56fadef31ceb219606",
+    "session": "/root/approve_sd_recovery_host/2026-09-29"
+  },
+  "format_version": 1,
+  "id": "sd-recovery-host-test",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/sd-recovery-host-test/proposal.md",
+  "requirements": [
+    "docs/decisions/0010-host-administration-and-recovery-ui.md",
+    "docs/hardware/host-sd-image-review-20260929.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "sd-host-01",
+        "sd-host-02",
+        "sd-host-03"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Compose and test SD recovery host",
+      "verification": null
+    }
+  ],
+  "title": "Running SD recovery host test with authenticated remote access"
+}
