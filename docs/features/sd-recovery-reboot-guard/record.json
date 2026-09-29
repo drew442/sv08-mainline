@@ -103,15 +103,81 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "rbg-01",
+          "document": "docs/hardware/host-recovery-reboot-guard.md",
+          "document_sha256": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115",
+          "environment": "offline",
+          "limitations": "Offline sender/admission evidence only; physical keyboard event/reset count, SD return and fresh environment/RTC require separate Sol/high exact operation review; no source-only force/reset/release guarantee.",
+          "method": "Live after-exclusive-admission PID/starttime/descriptors and nonce-bound challenge; ordinary freshness refusal and explicit one-attempt unknown-counter/risk provenance gates.",
+          "profile": null,
+          "source_commit": "b74db5a25ad105d3b78d1066ebd5d4660a346aae",
+          "source_sha256": {
+            "docs/hardware/host-recovery-reboot-guard.md": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115",
+            "scripts/sv08_recovery_boot_guard.py": "6ad655a7009ceb1b24482e3d01095e90c88006f81409d55965f5f4ae4a448e0f",
+            "scripts/sv08_serial_boot_route.py": "d61d9ac39bcf5d9e076c25e826e01a9e35b2ef878e2f7f7119bfa89221513d74",
+            "tests/test_sv08_recovery_boot_guard.py": "b037cd8ff5fe72a4f74b7f683e765e00926d2003b23ce63b6c471e720767dd19",
+            "tests/test_sv08_serial_boot_route.py": "1b41e0bfe2fae8353642232ec67ecaf7882e31dbab27a7c482cbc07b10d2e0b2"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "rbg-02",
+          "document": "docs/hardware/host-recovery-reboot-guard.md",
+          "document_sha256": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115",
+          "environment": "offline",
+          "limitations": "Offline sender/admission evidence only; physical keyboard event/reset count, SD return and fresh environment/RTC require separate Sol/high exact operation review; no source-only force/reset/release guarantee.",
+          "method": "Four fixed HID reports with identity and syscall/time receipts, no repeat; actual independently surviving bounded supervisor recreates receive-only collector after real disposable child/channel exit. Exact retained CAD source and explicit default burst/release risk pins.",
+          "profile": null,
+          "source_commit": "b74db5a25ad105d3b78d1066ebd5d4660a346aae",
+          "source_sha256": {
+            "docs/hardware/host-recovery-reboot-guard.md": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115",
+            "scripts/sv08_recovery_boot_guard.py": "6ad655a7009ceb1b24482e3d01095e90c88006f81409d55965f5f4ae4a448e0f",
+            "scripts/sv08_serial_boot_route.py": "d61d9ac39bcf5d9e076c25e826e01a9e35b2ef878e2f7f7119bfa89221513d74",
+            "tests/test_sv08_recovery_boot_guard.py": "b037cd8ff5fe72a4f74b7f683e765e00926d2003b23ce63b6c471e720767dd19",
+            "tests/test_sv08_serial_boot_route.py": "1b41e0bfe2fae8353642232ec67ecaf7882e31dbab27a7c482cbc07b10d2e0b2"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "rbg-03",
+          "document": "docs/hardware/host-recovery-reboot-guard.md",
+          "document_sha256": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115",
+          "environment": "offline",
+          "limitations": "Offline sender/admission evidence only; physical keyboard event/reset count, SD return and fresh environment/RTC require separate Sol/high exact operation review; no source-only force/reset/release guarantee.",
+          "method": "47 focused guard+serial offline checks supported (21 corrected guard pass;26 unchanged serial reused); actual unchanged collector Linux RLIMIT_FSIZE 4KiB append exhaustion terminates, releases UART descriptor, sends zero TX; per-file4MiB launch cap and Restart=no. No hardware/build/dependency changes.",
+          "profile": null,
+          "source_commit": "b74db5a25ad105d3b78d1066ebd5d4660a346aae",
+          "source_sha256": {
+            "docs/hardware/host-recovery-reboot-guard.md": "0835d5f4b84841f77bcbe401a9d8ceb79e32b4882e2e6e54e5ee7ee17ba04115",
+            "scripts/sv08_recovery_boot_guard.py": "6ad655a7009ceb1b24482e3d01095e90c88006f81409d55965f5f4ae4a448e0f",
+            "scripts/sv08_serial_boot_route.py": "d61d9ac39bcf5d9e076c25e826e01a9e35b2ef878e2f7f7119bfa89221513d74",
+            "tests/test_sv08_recovery_boot_guard.py": "b037cd8ff5fe72a4f74b7f683e765e00926d2003b23ce63b6c471e720767dd19",
+            "tests/test_sv08_serial_boot_route.py": "1b41e0bfe2fae8353642232ec67ecaf7882e31dbab27a7c482cbc07b10d2e0b2"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "e8915fea9d1442528daf88897369b062",
+        "session": "sd-recovery-reboot-guard-20260929-v4"
+      },
       "repeats": 0,
       "resumption": "Bind unchanged passed code and corrected collector retry description",
-      "status": "pending",
+      "status": "review",
       "title": "Implement and verify bounded recovery readiness guard",
-      "verification": null
+      "verification": {
+        "decision_sha256": "d2a5dcd9cc8fc839a2c416305a8428e30bb2b194a8f98a975b982036c8bb613e",
+        "evidence_sha256": "50d7b31a9431487401f8a9d18acf88a06be34e1f4e844fcdb1f91f5cb1c6c9b9",
+        "outcome": "passed",
+        "rationale": "Verified clean source HEAD b74db5a25ad105d3b78d1066ebd5d4660a346aae and evidence bound to actual HEAD. Complete current recorded-run-base diff is empty; independently inspected complete original five-file delivery from8ec4b2590ed3e6d417dc7a2fee5e9d14c7f771ed to4cc83af, correction from recorded v3 base6de3a69 to d7c97595 (three owned guard/test/doc files), and integration from d7c97595 to current HEAD (only accurate collector-limit documentation and record resumption). No unlisted behavior, modes, deletions, gitlinks, upstream/build/MCU/writer changes. Approved proposal/requirements/scope and complete decision remain fresh; every submitted document/source hash matches. rbg-01 passes using independently inspected live exclusive UART/private capture admission, PID/starttime/descriptor/source and exact nonce/challenge proof, parent/SSH liveness gates, zero-HID readiness failures and preserved ordinary freshness refusal versus bound unknown-counter/risk exception. rbg-02 passes at offline scope: four fixed HID reports with fresh metadata checks and finite per-report receipts, no sender boot/HID retries; independently surviving transient supervisor waits for actual controller identity exit and UART descriptor release before recreating receive-only collection. CAD/package/unit receipt and collector source hashes match; current explicit risk-amendment digest matches production constant. Physical event/reset count, stuck release, normal-slot persistence/attempt effects remain uncertain as approved. rbg-03 resource defect is corrected: fixed recreated-unit argv requires LimitFSIZE=4194304 and Restart=no, with each existing output strictly below4MiB and combined below8MiB. Two collector files cap at8MiB combined; controller capture caps at1MiB, with finite small source/receipts safely below64MiB, no build scratch/new dependencies. Reproduced all21 corrected guard tests without skips, including unchanged full pinned collector source executing in a real Linux subprocess under4KiB RLIMIT_FSIZE, one-byte reads exhausting events.jsonl with EFBIG/nonzero exit, retained existing prefix, UART descriptor closed and zero TX. Production launch-limit and strict per-file boundary checks pass. This supplies reproducible before/after against the earlier actual unbounded event-function result; old failure preserved separately. Reuse unchanged26 serial checks and prior capture/readiness regression evidence; no unnecessary loader/writer/image/QMP reruns. Documentation now accurately distinguishes systemd no-relaunch from existing receive-only console-EFBIG retries, which cannot bypass per-file caps; no immediate-exit guarantee is inferred for every cap order. Diff/cached checks, local Markdown targets and workflow validation pass. No hardware/private backup/credentials were accessed. Installed unit behavior and physical recovery remain untested here. Exact spare/preservation/rollback/no-writer/PSU-off premises, one named sequence, immediate separate Sol/high operation review, observed SD return and both redundant environment plus Linux/RTC post-return checks remain explicit physical gates. No hardware profile, release or operation authority is certified.",
+        "reviewer": "independent feature verifier /root/verify_sd_managed_boot_route",
+        "session": "verify_sd_recovery_reboot_guard-20260929-v4-b74db5a"
+      }
     }
   ],
   "title": "Guard one remote recovery reboot"
