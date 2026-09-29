@@ -134,8 +134,11 @@ with its original 12-hour/50-MiB console counter, appending console.raw/events.j
 That source counter alone does not bound events.jsonl; tiny reads can grow the
 event log much faster than console data. The recreated unit now explicitly sets
 `LimitFSIZE=4194304` and `Restart=no`. Linux enforces an absolute 4 MiB size cap
-on each regular output file, including existing appended bytes; reaching a cap
-stops collection on write failure rather than automatically relaunching it. The original
+on each regular output file, including existing appended bytes. Systemd does
+not relaunch the unit. The existing collector can catch a console-file EFBIG
+and retry receive-only collection until its event-log cap or deadline; this
+cannot grow either file beyond its cap or send UART/HID bytes. Event-log
+exhaustion terminates the collector in the tested fixture. The original
 collector does not share the controller's advisory lock; restoration does not
 claim it does. An existing old collector must have been explicitly released by
 the coordinator before apply; the guard does not stop unrelated units. Recreated
