@@ -101,14 +101,10 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "7db3f6f6d57f479a9ad7ed214e23a750",
-        "session": "sd-managed-boot-route-20260929"
-      },
+      "implementation": null,
       "repeats": 0,
-      "resumption": null,
-      "status": "running",
+      "resumption": "Independent entrypoint reproduction identified late capture creation; reserve and stream bounded durable capture before UART access/TX, with entrypoint persistence-failure refusals.",
+      "status": "pending",
       "title": "Prepare bounded loader transfer and serial boot routing",
       "verification": null
     }
