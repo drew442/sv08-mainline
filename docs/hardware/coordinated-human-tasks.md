@@ -128,8 +128,10 @@ supersedes the completed CB1 comparison dispatch above. The owner observed that
 baseline boot; its serial capture was empty. The running replacement's
 [offline evidence](host-sd-recovery-host.md) covers normal GTK recovery and
 public-key SSH, with no automatic media, MCU, boot-policy or printer operation.
-Independent delivery verification, exact SD write review, prefix readback and
-read-only filesystem/layout checks must pass before asking for a media move.
+Independent delivery verification, exact SD write review, complete prefix
+readback and read-only filesystem/layout checks have passed; see the
+[prepared-card receipt](host-sd-recovery-host-write-20260929.md). The card is ready
+for the one captured host-only boot below; physical success remains pending.
 
 The one pending owner action is to remove all printer power, including USB serial,
 move only the prepared SanDisk SD from Beelink to the printer, reconnect Ethernet,

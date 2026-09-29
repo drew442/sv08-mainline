@@ -96,15 +96,105 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "sd-host-01",
+          "document": "docs/hardware/host-sd-recovery-host.md",
+          "document_sha256": "dd8aa330eedcf7cd07edd4aca6fa9be0b9dbdeee0bd8a2df9245412762f2bbff",
+          "environment": "offline",
+          "limitations": "Complete userspace under pinned Debian VM kernel; physical SD loader, H616 peripherals and actual boot remain pending. Owner-only configuration differences and partial sustained run are explicitly recorded. No eMMC/MCU/boot-policy or printer operation.",
+          "method": "Two fresh complete-userspace GUI/SSH/sudo boots, actual UI review/cancel, unauthorized/password refusals, sustained runtime and no-NIC local UI; private archive c43486670546781ae54e2e6b847f4928aa1c6eb692442b7a87c77810dfeb9fdc.",
+          "profile": null,
+          "source_commit": "d49351ee743d4f579d4a1401a8eece240b34df42",
+          "source_sha256": {
+            "configs/host-os/recovery-board-root": "6658fcbc1ca22602c8116e9626bf2775cdb959174aa276a5e2ab3548f0ac08d7",
+            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+            "configs/host-os/sd-recovery-host/20-wired.network": "79e7aae1f2f96b4da0c3f63e2cc420158872d403fdef70ef4d2388254e90aee7",
+            "configs/host-os/sd-recovery-host/sd-host-keys.service": "ad5191aefb89e565857ee47f92fe37e2c9db1494a6a8c9ef2b359e12508cbca5",
+            "configs/host-os/sd-recovery-host/sd-host-ssh.service": "615ebc4ae04d7687dac9f8df3cc2602982b68d61749dca0f5f5fb982780460d4",
+            "configs/host-os/sd-recovery-host/sshd_config": "488800c80f2a9f59349a1dbc06d4855c3dfc095c6227a673e588cad9a51b95ba",
+            "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+            "docs/hardware/coordinated-human-tasks.md": "f8919375cadba74ffd94a287f862506a6c201e66ad906b127be948b1723ab8dc",
+            "docs/hardware/host-sd-recovery-host.md": "dd8aa330eedcf7cd07edd4aca6fa9be0b9dbdeee0bd8a2df9245412762f2bbff",
+            "scripts/build_sd_network_image.py": "db5cc1c44c3af1305274238481498160369f152230adf542800274a85a88f679",
+            "scripts/build_sd_recovery_host.py": "442f690198d8209c577037a82bec14ca5ffa482f64984fd8635678deca4d1f43",
+            "tests/sd_recovery_host_vm.py": "d39d9f40378a1d71c533ed13387db6d1b95287e1ebebbf9e0716b363efe97f32",
+            "tests/test_sd_recovery_host.py": "45394685aee1d638cabf8f8ca5119195bc25837fb9f629bdf5e6c79ccf8f31ca"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "sd-host-02",
+          "document": "docs/hardware/host-sd-recovery-host.md",
+          "document_sha256": "dd8aa330eedcf7cd07edd4aca6fa9be0b9dbdeee0bd8a2df9245412762f2bbff",
+          "environment": "offline",
+          "limitations": "Complete userspace under pinned Debian VM kernel; physical SD loader, H616 peripherals and actual boot remain pending. Owner-only configuration differences and partial sustained run are explicitly recorded. No eMMC/MCU/boot-policy or printer operation.",
+          "method": "Exact SD root identity/hash/config admission, three negative boots, privileged root-write/ioctl/mount protection, volatile writes and audited startup services.",
+          "profile": null,
+          "source_commit": "d49351ee743d4f579d4a1401a8eece240b34df42",
+          "source_sha256": {
+            "configs/host-os/recovery-board-root": "6658fcbc1ca22602c8116e9626bf2775cdb959174aa276a5e2ab3548f0ac08d7",
+            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+            "configs/host-os/sd-recovery-host/20-wired.network": "79e7aae1f2f96b4da0c3f63e2cc420158872d403fdef70ef4d2388254e90aee7",
+            "configs/host-os/sd-recovery-host/sd-host-keys.service": "ad5191aefb89e565857ee47f92fe37e2c9db1494a6a8c9ef2b359e12508cbca5",
+            "configs/host-os/sd-recovery-host/sd-host-ssh.service": "615ebc4ae04d7687dac9f8df3cc2602982b68d61749dca0f5f5fb982780460d4",
+            "configs/host-os/sd-recovery-host/sshd_config": "488800c80f2a9f59349a1dbc06d4855c3dfc095c6227a673e588cad9a51b95ba",
+            "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+            "docs/hardware/coordinated-human-tasks.md": "f8919375cadba74ffd94a287f862506a6c201e66ad906b127be948b1723ab8dc",
+            "docs/hardware/host-sd-recovery-host.md": "dd8aa330eedcf7cd07edd4aca6fa9be0b9dbdeee0bd8a2df9245412762f2bbff",
+            "scripts/build_sd_network_image.py": "db5cc1c44c3af1305274238481498160369f152230adf542800274a85a88f679",
+            "scripts/build_sd_recovery_host.py": "442f690198d8209c577037a82bec14ca5ffa482f64984fd8635678deca4d1f43",
+            "tests/sd_recovery_host_vm.py": "d39d9f40378a1d71c533ed13387db6d1b95287e1ebebbf9e0716b363efe97f32",
+            "tests/test_sd_recovery_host.py": "45394685aee1d638cabf8f8ca5119195bc25837fb9f629bdf5e6c79ccf8f31ca"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "sd-host-03",
+          "document": "docs/hardware/host-sd-recovery-host.md",
+          "document_sha256": "dd8aa330eedcf7cd07edd4aca6fa9be0b9dbdeee0bd8a2df9245412762f2bbff",
+          "environment": "offline",
+          "limitations": "Complete userspace under pinned Debian VM kernel; physical SD loader, H616 peripherals and actual boot remain pending. Owner-only configuration differences and partial sustained run are explicitly recorded. No eMMC/MCU/boot-policy or printer operation.",
+          "method": "Seven focused source tests, inspect/fresh output refusals, source preservation, exact imports/provenance/notices, bounded space/RAM receipts and owner-only artifact hashes.",
+          "profile": null,
+          "source_commit": "d49351ee743d4f579d4a1401a8eece240b34df42",
+          "source_sha256": {
+            "configs/host-os/recovery-board-root": "6658fcbc1ca22602c8116e9626bf2775cdb959174aa276a5e2ab3548f0ac08d7",
+            "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+            "configs/host-os/sd-recovery-host/20-wired.network": "79e7aae1f2f96b4da0c3f63e2cc420158872d403fdef70ef4d2388254e90aee7",
+            "configs/host-os/sd-recovery-host/sd-host-keys.service": "ad5191aefb89e565857ee47f92fe37e2c9db1494a6a8c9ef2b359e12508cbca5",
+            "configs/host-os/sd-recovery-host/sd-host-ssh.service": "615ebc4ae04d7687dac9f8df3cc2602982b68d61749dca0f5f5fb982780460d4",
+            "configs/host-os/sd-recovery-host/sshd_config": "488800c80f2a9f59349a1dbc06d4855c3dfc095c6227a673e588cad9a51b95ba",
+            "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+            "docs/hardware/coordinated-human-tasks.md": "f8919375cadba74ffd94a287f862506a6c201e66ad906b127be948b1723ab8dc",
+            "docs/hardware/host-sd-recovery-host.md": "dd8aa330eedcf7cd07edd4aca6fa9be0b9dbdeee0bd8a2df9245412762f2bbff",
+            "scripts/build_sd_network_image.py": "db5cc1c44c3af1305274238481498160369f152230adf542800274a85a88f679",
+            "scripts/build_sd_recovery_host.py": "442f690198d8209c577037a82bec14ca5ffa482f64984fd8635678deca4d1f43",
+            "tests/sd_recovery_host_vm.py": "d39d9f40378a1d71c533ed13387db6d1b95287e1ebebbf9e0716b363efe97f32",
+            "tests/test_sd_recovery_host.py": "45394685aee1d638cabf8f8ca5119195bc25837fb9f629bdf5e6c79ccf8f31ca"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "41a1d594c4664f889808bc20fef776f0",
+        "session": "/root/implement_sd_recovery_host"
+      },
       "repeats": 0,
-      "resumption": null,
-      "status": "pending",
+      "resumption": "Added retained v8/v9 resource receipts and committed H13 pending shared physical handoff without changing runtime source",
+      "status": "done",
       "title": "Compose and test SD recovery host",
-      "verification": null
+      "verification": {
+        "decision_sha256": "7b59ca4012a9fb9cd3b9dd8c052d3faf35d4dde1f843215de6c9bca91e1428cf",
+        "evidence_sha256": "bb718c950cdef3201981de7cfa4f7b611e9cdb74739cb766bcda18f6752a681e",
+        "outcome": "passed",
+        "rationale": "Passed sd-host-01/02/03 for bounded offline delivery at clean HEAD d49351ee743d4f579d4a1401a8eece240b34df42. Independently inspected the entire recorded-base diff, including modes and added queue documentation; no deletions, gitlink changes or changes to finite diagnostic/release inputs. Approved proposal/requirements/scope, submitted document/source hashes, archive digest and actual HEAD agree. Seven focused tests passed; whitespace, Markdown paths and lock/gitlink checks passed. Actual complete-userspace logs and rendered screenshots demonstrate normal systemd, GTK keyboard review, authorized named-account SSH/sudo, unauthorized/password refusals, fresh host fingerprints and two fresh boots observed for 33.68/33.25 seconds beyond kernel uptime 180 seconds. A separate no-NIC boot retains the local interface. The earlier 210-second run is used only as explicitly partial sustained-runtime evidence. Startup service/socket audit, absent registry/provider policy, privileged root-write refusal, ioctl readback and ro,norecovery/tmpfs mounts support isolation; three negative boots refuse manifest hash, partition index and compressed content before normal init. Inspected exact PARTUUID/index/capacity/UUID/content/config gate, cache integrity and fresh-output enforcement. Package manifests identify 69 packages plus sudo with ownership namespace, dependency resolution and retained/shared license notices. Current source reproduces both owner and fixture gate hashes; identical compressed userspace and documented authorization/inventory differences bind fixture results to the owner candidate without claiming identical roots. Owner builder snapshot differs only in resource preflight/checkpoint/source archival. Fresh preflight free space and sampled allocation, bounded compressed output, tmpfs limits and 768 MiB guest RAM support the resource budget; the old sampled allocation is not a continuous peak measurement. H13 explicitly retains physical write/readback, SD movement and supervised boot as pending. VM kernel 6.12.107 differs from physical H616 kernel 6.18.51; no physical loader, peripheral, printer, hardware-profile or release certification is granted. Nonfatal sudo hostname warning remains documented.",
+        "reviewer": "feature-verifier/verify_sd_recovery_host",
+        "session": "/root/verify_sd_recovery_host"
+      }
     }
   ],
   "title": "Running SD recovery host test with authenticated remote access"

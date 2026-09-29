@@ -62,6 +62,7 @@ not a supported host or printing system.
 - [Host administration and recovery UI](docs/hardware/host-admin-ui.md): browser/native interfaces and integration status.
 - [Independent recovery image](docs/hardware/host-recovery-image.md): complete 512 MiB ARM64 offline GTK boot, input and refusal evidence.
 - [Host completion checklist](docs/hardware/host-os-tasks.md): remaining offline and human tasks.
+- [Running SD recovery host test](docs/hardware/host-sd-recovery-host.md): offline GTK/SSH validation and [prepared card](docs/hardware/host-sd-recovery-host-write-20260929.md), physical boot pending.
 - [Installed-eMMC H12 intake](docs/hardware/host-network-emmc-h12-intake.md): current identity, source and reviewed writer handoff.
 - [Host kernel trial](docs/hardware/host-kernel-trial.md): bounded hardware testing with the existing bootloader.
 - [Host application packaging](docs/hardware/host-apps-build.md): Klipper `.deb` and offline checks.
