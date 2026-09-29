@@ -99,10 +99,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "bc785fc0a1474a3aba6d83b1b9c60cdc",
+        "session": "sd-recovery-reboot-guard-20260929-v1"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify bounded recovery readiness guard",
       "verification": null
     }
