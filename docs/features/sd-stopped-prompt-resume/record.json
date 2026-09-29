@@ -1,0 +1,48 @@
+{
+  "format_version": 1,
+  "id": "sd-stopped-prompt-resume",
+  "title": "Resume the measured stopped bootloader prompt",
+  "kind": "improvement",
+  "author": "root/coordinator",
+  "created": "2026-09-29",
+  "priority": 1,
+  "proposal": "docs/features/sd-stopped-prompt-resume/proposal.md",
+  "requirements": [
+    "docs/hardware/host-managed-boot-route.md",
+    "docs/hardware/host-recovery-reboot-guard.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "spr-01",
+      "environment": "offline",
+      "description": "Exact configured prompt and explicit stopped-resume gates; preserved Linux/hash/MMC/durability refusal tests."
+    },
+    {
+      "id": "spr-02",
+      "environment": "offline",
+      "description": "Document measured prompt provenance, no new reset/HID, unknown counters and separate physical review/return inspection."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Correct configured prompt and stopped resume",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "spr-01",
+        "spr-02"
+      ],
+      "human_task": null,
+      "status": "pending",
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "blocker": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
