@@ -1,0 +1,4 @@
+# Main U-Boot command capability only; preserve the retained SPL independently.
+CONFIG_CMD_HASH=y
+CONFIG_HASH_VERIFY=y
+CONFIG_CRC32_VERIFY=y

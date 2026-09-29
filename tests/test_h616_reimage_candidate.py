@@ -565,7 +565,80 @@ class CandidateTests(unittest.TestCase):
         self.assertLess(body.index('admitted_mmc_identity(&confirmed_dev)'),
                         body.index('exact_write(out,n)'))
         self.assertEqual(body.count('out=open(target,'), 1)
-        self.assertIn('reboot(RB_POWER_OFF);for(;;)pause()', source)
+        # Finalizer behavior is executed in ManagedFinalizerTests for both modes.
+
+
+
+def compile_finalizer_harness(output, *, handoff, capture=True,
+                              compiler='cc', status=None, static=False):
+    """Compile the actual production finish, without production test hooks.
+
+    capture=False/status='PASS' builds a tiny ARM64 PID1 finalizer for QMP
+    reset/shutdown testing; coordinator supplies disposable VM resources.
+    """
+    wrapper = output.with_suffix('.c')
+    prefix = ''
+    if capture:
+        prefix = '#define sync captured_sync\n#define reboot captured_reboot\n#define pause captured_pause\n'
+    suffix = '''
+#undef main
+'''
+    if capture:
+        suffix += '''
+void captured_sync(void) { puts("SYSCALL sync"); }
+int captured_reboot(int operation) {
+  printf("SYSCALL reboot %s\\n",operation==RB_AUTOBOOT?"AUTOBOOT":
+         operation==RB_POWER_OFF?"POWER_OFF":"OTHER");
+  errno=EIO;return -1;
+}
+int captured_pause(void) { puts("SYSCALL pause");fflush(stdout);_exit(0); }
+'''
+    if status is None:
+        suffix += 'int main(int argc,char **argv) { if(argc!=2)return 2;finish(argv[1]);return 3; }\n'
+    else:
+        if status not in ('PASS','FAILED_FINAL_ENV','CLAIM_ONLY_PASS'):
+            raise ValueError('Unsupported fixed VM finalizer status')
+        suffix += f'int main(void) {{ finish("{status}");return 3; }}\n'
+    wrapper.write_text(prefix+'#define main retained_writer_main\n#include "'+str(WRITER)+'"\n'+suffix)
+    flags = ['-DSV08_H616_COMMISSIONING=1','-DSV08_SHA_SELFTEST=1',
+             '-DSV08_H616_EXPECTED_CID="00000000000000000000000000000001"',
+             '-DSV08_H616_EXPECTED_DEV_T="8:0"',
+             '-DSV08_H616_BOARD_COMPATIBLE="test,synthetic-h616"',
+             '-DSV08_H616_CLAIM_SERVER="127.0.0.1"']
+    if handoff: flags.append('-DSV08_H616_RECOVERY_HANDOFF=1')
+    if static: flags.append('-static')
+    subprocess.run([compiler,'-O2','-Wall','-Wextra','-Werror','-Wno-unused-function','-Wno-unused-variable',
+                    f'-I{REPO / "upstream/monocypher/src"}',
+                    f'-I{REPO / "upstream/monocypher/src/optional"}',
+                    *flags,'-o',str(output),str(wrapper),
+                    *(str(p) for p in ED25519_SOURCES)],check=True,capture_output=True)
+
+
+class ManagedFinalizerTests(unittest.TestCase):
+    def test_actual_finalizer_exact_pass_only_and_returned_reboot_stops(self):
+        statuses = ('PASS','CLAIM_ONLY_PASS','PASS ','PASSx','REFUSED_TARGET_ID',
+                    'REFUSED_OR_UNCERTAIN_CLAIM','INJECTED_PARTIAL_WRITE',
+                    'FAILED_READBACK_HASH','FAILED_FINAL_ENV','INJECTED_AFTER_FIRST_ENV')
+        with tempfile.TemporaryDirectory() as work:
+            for handoff in (False,True):
+                exe = Path(work)/('handoff' if handoff else 'normal')
+                compile_finalizer_harness(exe,handoff=handoff)
+                for status in statuses:
+                    with self.subTest(handoff=handoff,status=status):
+                        result=subprocess.run([str(exe),status],capture_output=True,text=True,check=True,timeout=5)
+                        expected='AUTOBOOT' if handoff and status=='PASS' else 'POWER_OFF'
+                        calls=[line for line in result.stdout.splitlines() if line.startswith('SYSCALL ')]
+                        self.assertEqual(calls,['SYSCALL sync','SYSCALL reboot '+expected,'SYSCALL pause'])
+
+    def test_actual_arm64_finalizer_compiles_both_operations(self):
+        import shutil
+        compiler=shutil.which('aarch64-linux-gnu-gcc')
+        if not compiler:self.skipTest('ARM64 cross compiler unavailable')
+        with tempfile.TemporaryDirectory() as work:
+            for status in ('PASS','FAILED_FINAL_ENV'):
+                exe=Path(work)/status
+                compile_finalizer_harness(exe,handoff=True,capture=False,compiler=compiler,status=status,static=True)
+                self.assertIn(b'\x7fELF',exe.read_bytes()[:4])
 
 
 if __name__ == '__main__':
