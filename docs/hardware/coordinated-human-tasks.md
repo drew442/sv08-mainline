@@ -229,3 +229,14 @@ staging. Reviewed environment exhaustion and physical urh-04/05 remain.
 The [approved preflight clarification](host-h616-physical-preflight.md) permits
 whole-target O_RDONLY identity/capacity/environment reads, with no O_RDWR or
 image/environment transfer writes. Marker consumption still changes p5 metadata.
+
+
+H12 preparation update,2026-09-30: the signed phase-aware node-binding repair
+passed fresh independent high offline delivery review and is integrated locally.
+The separately reviewed [volatile workspace limit](host-h12-workspace-20260930.md)
+now accommodates bounded future artifact verification; no artifact is staged.
+No additional key-enrollment decision or media move is needed. Fresh physical
+preflight jobs/artifacts, receive-only capture and exact staging/arming/boot
+reviews remain pending. Physical urh04 permits the accepted compiled preflight's
+whole-target O_RDONLY capacity/environment admission; urh05 whole-write/readback
+is separate and follows urh04. Existing printer-output gates remain open.

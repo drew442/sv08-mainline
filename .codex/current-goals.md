@@ -193,3 +193,12 @@ regressions and six independent final-source critical tests support offline
 delivery; no physical RAM entry, p5 kernel mount, preflight return or whole-write
 acceptance is claimed. Reviewed volatile workspace preparation can proceed under
 its exact conditions; actual jobs/artifacts and physical operation gates remain.
+
+
+The revised capacity-only operation passed its exact high-consequence review
+and execution after delivery acceptance. Fresh independent postchecks confirm
+`/tmp`256MiB limit with4096bytes used, same boot/root/mount flags and retained
+`ro,norecovery` root. See [workspace record](../docs/hardware/host-h12-workspace-20260930.md).
+No artifact was allocated/staged and no media, environment or boot action
+occurred. Next: prepare fresh signed physical preflight inputs/artifacts and
+capture, then obtain exact operation reviews under existing authorization.
