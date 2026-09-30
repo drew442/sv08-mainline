@@ -1,40 +1,40 @@
 # Agent routing observation
 
-Copy to ignored `local/feature-workflow/model-routing/<task-id>.md`.
-This is measurement metadata, not an approval, verification or hardware record.
-Use `unknown` for unavailable observations, never zero or an invented estimate.
-Retain private runtime excerpts locally; publish only sanitized aggregates.
+Use this detailed form for escalations, failures and representative samples.
+Keep it under ignored `local/feature-workflow/model-routing/<task-id>.md`.
+Routine tasks need only the role/effort, result and evidence in their handoff/result;
+do not add a measurement agent or duplicate acceptance records. Unknown is not zero.
 
-## Task and baseline
+## Assignment
 
-- Task/feature and acceptance check IDs:
+- Task/feature and acceptance IDs; authorization reference:
 - Source/base revision and relevant input hashes:
-- Task class and scope; default or pilot route; eligibility rationale:
-- Existing approval/reference and comparison cohort:
-- Execution allowance, escalation trigger and stop conditions:
+- Role, requested model/effort and reason for non-default effort:
+- Task complexity/uncertainty, consequence of error and permitted execution:
+- Owned files/resources, execution allowance and escalation/stop conditions:
 
-## Attempts (repeat this section for every linked attempt)
+## Attempts (include every linked attempt)
 
-- Attempt ID; parent/task ID; role; client/version:
-- Requested model/effort; runtime-confirmed model/effort (or unknown):
-- Evidence for effective settings; effective permissions and assigned resources:
-- Billing mode: included subscription / Codex credits / API key / unknown:
-- Speed/context tier; usage source and interval; observed versus estimated:
-- Input total; cached input; output total; whether reasoning is included:
-- Observed credits or API cost and currency (or unknown); rate date/source:
-- Start/end; elapsed time; model work versus external build/wait time:
-- Actual commands, status, evidence paths/hashes and limitations:
-- Outcome; retry/escalation reason; next role; related attempt IDs:
+- Attempt ID, parent/task ID, role, client/version:
+- Requested versus runtime-confirmed model/effort; supporting runtime evidence:
+- Effective permissions and assigned resources:
+- Billing: included subscription / Codex credits / API key / unknown:
+- Usage source/interval; input total, cached input, output; is reasoning included?:
+- Observed credits/API cost and currency, or unknown; rate date/source:
+- Start/end; elapsed time; model work versus build/wait time:
+- Commands, result, source/dirty state, evidence paths/hashes and limitations:
+- Retry/escalation reason, changed diagnosis/method and next attempt ID:
 
-## Outcome through independent acceptance
+## Accepted outcome
 
 - Separate verifier/session and authoritative verification/evidence reference:
-- First-pass acceptance; rework cycles; escalations; escaped defects:
-- Final accepted / failed / blocked / abandoned status and source revision:
-- Total observed cost including coordinator, all children, retries and reviews:
-- Cost coverage gaps; avoid double-counting parent totals that include children:
-- Acceptance regressions or safety concerns; suspend-pilot decision if needed:
-- Comparison with similar default-route tasks; sample size and limitations:
+- First-pass acceptance, rework/escalations and escaped defects:
+- Accepted / failed / blocked / abandoned; final source revision:
+- Total observed cost including coordinator, all children, rework and reviews:
+- Coverage gaps and parent totals that already include children (avoid double-counting):
+- Quality/authority violations and immediate corrective action:
+- Comparison task class, sample size and limits; change to routing justified?:
 
-Do not add these fields to hashed decision/verification records. See
-`docs/development/codex-model-routing.md` in the repository for interpretation.
+Raw runtime transcripts remain private. Publish only sanitized summaries. Never
+insert telemetry into hashed approval/evidence/verification JSON. Benchmark cost
+per successful outcome is an aggregate ratio, not a per-task retry guarantee.

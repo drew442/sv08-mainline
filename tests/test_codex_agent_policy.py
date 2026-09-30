@@ -1,4 +1,6 @@
-"""Offline configuration invariants, not a Codex runtime or safety certification."""
+"""Offline repository contracts; not a Codex launcher, benchmark or sandbox test."""
+import csv
+from decimal import Decimal
 from pathlib import Path
 import re
 import tomllib
@@ -6,119 +8,196 @@ import unittest
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENTS = ROOT / ".codex" / "agents"
-SOL = "gpt-6.1-sol"
-LUNA = "gpt-6-luna"
-# Explicit expectations make routing changes reviewable; this is not a launcher.
+AGENTS = ROOT / '.codex/agents'
+SOL = 'gpt-6.1-sol'
+LUNA = 'gpt-6-luna'
+# None is deliberate: these profiles allow supported spawn-time effort selection.
 ROUTES = {
-    "feature_approver": (SOL, "medium", "read-only"),
-    "feature_suggester": (LUNA, "medium", "read-only"),
-    "feature_verifier": (SOL, "medium", "read-only"),
-    "high_consequence_reviewer": (SOL, "medium", "read-only"),
-    "high_consequence_reviewer_high": (SOL, "high", "read-only"),
-    "project_implementer": (SOL, "medium", "workspace-write"),
-    "project_integration": (SOL, "medium", "workspace-write"),
-    "project_narrow_implementer": (LUNA, "medium", "workspace-write"),
-    "project_researcher": (LUNA, "medium", "read-only"),
-    "project_routine_implementer": (SOL, "low", "workspace-write"),
-    "project_test_runner": (LUNA, "medium", "workspace-write"),
+    'project_lookup': (LUNA, 'medium', 'read-only'),
+    'project_narrow_implementer': (LUNA, 'medium', 'workspace-write'),
+    'project_researcher': (SOL, None, 'read-only'),
+    'project_planner': (SOL, 'medium', 'read-only'),
+    'project_implementer': (SOL, None, 'workspace-write'),
+    'project_integration': (SOL, None, 'workspace-write'),
+    'feature_approver': (SOL, 'medium', 'read-only'),
+    'feature_verifier': (SOL, 'medium', 'read-only'),
+    'feature_verifier_high': (SOL, 'high', 'read-only'),
+    'high_consequence_reviewer': (SOL, 'medium', 'read-only'),
+    'high_consequence_reviewer_high': (SOL, 'high', 'read-only'),
 }
+RETIRED = ('feature-suggester', 'project-routine-implementer', 'project-test-runner')
 
 
-def load_profiles():
-    """Read repository profiles without executing their instructions or commands."""
-    return [(path, tomllib.loads(path.read_text(encoding="utf-8")))
-            for path in sorted(AGENTS.glob("*.toml"))]
+def profiles():
+    return [(p, tomllib.loads(p.read_text(encoding='utf-8')))
+            for p in sorted(AGENTS.glob('*.toml'))]
+
+
+def chart_rows():
+    path = ROOT / 'docs/development/terminalbench-20260929.csv'
+    with path.open(encoding='utf-8', newline='') as handle:
+        return list(csv.DictReader(handle))
 
 
 class CodexAgentPolicyTests(unittest.TestCase):
-    def test_profiles_have_explicit_reviewed_settings(self):
-        profiles = load_profiles()
-        names = [data["name"] for _, data in profiles]
-        self.assertEqual(len(names), len(set(names)), "duplicate role names")
+    def test_role_inventory_and_fields(self):
+        loaded = profiles()
+        names = [data['name'] for _, data in loaded]
+        self.assertEqual(len(names), len(set(names)), 'duplicate role name')
         self.assertEqual(set(names), set(ROUTES))
-        for path, data in profiles:
-            with self.subTest(path=path.name):
-                self.assertEqual(set(data), {
-                    "name", "description", "model", "model_reasoning_effort",
-                    "sandbox_mode", "developer_instructions",
-                })
-                self.assertEqual(path.stem.replace("-", "_"), data["name"])
-                self.assertEqual(
-                    (data["model"], data["model_reasoning_effort"],
-                     data["sandbox_mode"]), ROUTES[data["name"]])
-                self.assertTrue(data["description"].strip())
-                self.assertIn("AGENTS.md", data["developer_instructions"])
-                self.assertIn(".codex/agent-guide.md", data["developer_instructions"])
+        for path, data in loaded:
+            with self.subTest(profile=path.name):
+                expected = {'name', 'description', 'model', 'sandbox_mode',
+                            'developer_instructions'}
+                if ROUTES[data['name']][1] is not None:
+                    expected.add('model_reasoning_effort')
+                self.assertEqual(set(data), expected)
+                self.assertEqual(path.stem.replace('-', '_'), data['name'])
+                self.assertTrue(data['description'].strip())
+                self.assertIn('AGENTS.md', data['developer_instructions'])
+                self.assertIn('.codex/agent-guide.md', data['developer_instructions'])
+                self.assertEqual((data['model'], data.get('model_reasoning_effort'),
+                                  data['sandbox_mode']), ROUTES[data['name']])
 
-    def test_coordinator_defaults_and_concurrency_are_unchanged(self):
-        config = tomllib.loads((ROOT / ".codex/config.toml").read_text())
-        self.assertEqual(config, {"agents": {"max_concurrent_threads_per_session": 2}})
+    def test_child_defaults_without_main_model_or_billing_override(self):
+        config = tomllib.loads((ROOT / '.codex/config.toml').read_text())
+        self.assertEqual(config, {'agents': {
+            'max_concurrent_threads_per_session': 2,
+            'default_subagent_model': SOL,
+            'default_subagent_reasoning_effort': 'low',
+        }})
 
-    def test_high_review_keeps_the_same_review_contract(self):
-        profiles = {data["name"]: data for _, data in load_profiles()}
-        normal = profiles["high_consequence_reviewer"]
-        high = profiles["high_consequence_reviewer_high"]
-        # Prevent a copied high-effort profile silently losing safety instructions.
-        self.assertEqual(normal["developer_instructions"], high["developer_instructions"])
-        self.assertEqual(normal["model"], high["model"])
-        self.assertEqual(normal["sandbox_mode"], high["sandbox_mode"])
-        self.assertEqual(normal["model_reasoning_effort"], "medium")
-        self.assertEqual(high["model_reasoning_effort"], "high")
+    def test_only_intended_workers_have_adjustable_effort(self):
+        flexible = {d['name'] for _, d in profiles() if 'model_reasoning_effort' not in d}
+        self.assertEqual(flexible, {'project_researcher', 'project_implementer',
+                                    'project_integration'})
+        for _, data in profiles():
+            if data['name'] in flexible:
+                self.assertEqual(data['model'], SOL)
+                self.assertIn('explicit spawn effort', data['developer_instructions'])
 
-    def test_guide_table_matches_actual_profiles(self):
-        text = (ROOT / ".codex/agent-guide.md").read_text()
-        rows = re.findall(
-            r"^\| `([a-z_]+)` \| (GPT-[^|]+?) / (low|medium|high) \|",
-            text, re.MULTILINE)
+    def test_independent_reviews_are_pinned_and_read_only(self):
+        for _, data in profiles():
+            if data['name'].startswith(('feature_approver', 'feature_verifier',
+                                         'high_consequence_reviewer')):
+                with self.subTest(role=data['name']):
+                    self.assertEqual(data['model'], SOL)
+                    self.assertIn(data['model_reasoning_effort'], ('medium', 'high'))
+                    self.assertEqual(data['sandbox_mode'], 'read-only')
+
+    def test_high_variants_preserve_the_full_review_contract(self):
+        by_name = {d['name']: d for _, d in profiles()}
+        for name in ('feature_verifier', 'high_consequence_reviewer'):
+            with self.subTest(role=name):
+                normal, high = by_name[name], by_name[name + '_high']
+                self.assertEqual(normal['developer_instructions'], high['developer_instructions'])
+                self.assertEqual(normal['model_reasoning_effort'], 'medium')
+                self.assertEqual(high['model_reasoning_effort'], 'high')
+
+    def test_guide_table_matches_defaults_and_adjustability(self):
+        text = (ROOT / '.codex/agent-guide.md').read_text()
+        rows = re.findall(r'^\| `([a-z_]+)` \| (GPT-[^|]+?) \| '
+                          r'(low|medium|high)( \(adjustable\))? \|', text, re.MULTILINE)
         self.assertEqual(len(rows), len(ROUTES))
-        documented = {name: (model.lower().replace(" ", "-"), effort)
-                      for name, model, effort in rows}
-        self.assertEqual(documented, {name: values[:2] for name, values in ROUTES.items()})
+        actual = {name: (model.lower().replace(' ', '-'),
+                         None if adjustable else effort)
+                  for name, model, effort, adjustable in rows}
+        self.assertEqual(actual, {name: values[:2] for name, values in ROUTES.items()})
+        self.assertTrue(all(effort == 'low' for _, _, effort, a in rows if a))
 
-    def test_root_and_readme_reference_real_high_profile(self):
-        for relative in ("AGENTS.md", ".codex/README.md"):
-            with self.subTest(path=relative):
-                text = (ROOT / relative).read_text()
-                self.assertIn("high-consequence-reviewer-high.toml", text)
-                self.assertIn("GPT-6.1 Sol", text)
-        self.assertTrue((AGENTS / "high-consequence-reviewer-high.toml").is_file())
+    def test_retired_definitions_are_absent_but_migration_is_documented(self):
+        guide = (ROOT / '.codex/agent-guide.md').read_text()
+        for name in RETIRED:
+            with self.subTest(role=name):
+                self.assertFalse((AGENTS / (name + '.toml')).exists())
+                self.assertIn(name.replace('-', '_'), guide)
 
-    def test_low_effort_pilot_excludes_high_consequence_work(self):
-        text = tomllib.loads((AGENTS / "project-routine-implementer.toml").read_text())[
-            "developer_instructions"]
-        for boundary in ("opt-in pilot", "Exclude boot/recovery policy",
-                         "storage writers", "data migration", "credentials",
-                         "heater/motion safety", "release decisions",
-                         "before editing", "one bounded correction",
-                         "separate verifier"):
-            with self.subTest(boundary=boundary):
-                self.assertIn(boundary, text)
+    def test_lookup_and_mechanical_editing_do_not_replace_engineering(self):
+        by_name = {d['name']: d['developer_instructions'] for _, d in profiles()}
+        for phrase in ('Do not infer root causes', 'Do not edit files',
+                       'project_researcher or project_planner'):
+            self.assertIn(phrase, by_name['project_lookup'])
+        for phrase in ('A small diff alone', 'mechanical', 'project_implementer',
+                       'independent review'):
+            self.assertIn(phrase, by_name['project_narrow_implementer'])
 
-    def test_test_runner_only_produces_prescribed_evidence(self):
-        text = tomllib.loads((AGENTS / "project-test-runner.toml").read_text())[
-            "developer_instructions"]
-        for boundary in ("exact reviewed commands", "deterministic script directly",
-                         "physical block devices", "hardware passthrough",
-                         "Do not change production code", "timeout is not permission",
-                         "do not repair", "Never invent token"):
-            with self.subTest(boundary=boundary):
-                self.assertIn(boundary, text)
+    def test_substantive_low_work_is_allowed_without_hardware_authority(self):
+        text = dict((d['name'], d['developer_instructions']) for _, d in profiles())[
+            'project_implementer']
+        for phrase in ('Low is normal', 'Offline work in recovery/storage modules',
+                       'one bounded repair cycle', 'contact hardware',
+                       'independent verification'):
+            self.assertIn(phrase, text)
 
-    def test_new_rollout_and_template_local_links_resolve(self):
-        for relative in ("docs/development/codex-model-routing.md",
-                         ".codex/templates/agent-task-observation.md"):
-            source = ROOT / relative
-            text = source.read_text(encoding="utf-8")
-            for link in re.findall(r"\]\(([^)]+)\)", text):
-                parsed = urlsplit(link)
-                if parsed.scheme or parsed.netloc or not parsed.path:
-                    continue
-                target = (source.parent / unquote(parsed.path)).resolve()
-                with self.subTest(source=relative, link=link):
-                    self.assertTrue(target.is_relative_to(ROOT))
-                    self.assertTrue(target.exists(), f"missing link target: {link}")
+    def test_planner_has_no_self_approval_or_execution(self):
+        text = dict((d['name'], d['developer_instructions']) for _, d in profiles())[
+            'project_planner']
+        for phrase in ('plan existing approved work', 'Do not reapprove existing work',
+                       'Do not edit files/records', 'feature_approver independently',
+                       'grants no execution authority'):
+            self.assertIn(phrase, text)
+
+    def test_scripts_and_shared_resource_protections(self):
+        text = dict((d['name'], d['developer_instructions']) for _, d in profiles())[
+            'project_integration']
+        for phrase in ('direct script', 'Do not modify production code',
+                       'physical block', 'timeout is not permission to relaunch',
+                       'An evidence producer cannot independently verify'):
+            self.assertIn(phrase, text)
+
+    def test_root_and_guide_keep_independence_and_hardware_gates(self):
+        root = (ROOT / 'AGENTS.md').read_text()
+        guide = (ROOT / '.codex/agent-guide.md').read_text()
+        for text in (root, guide):
+            self.assertIn('owner authorization', text)
+            self.assertIn('project_planner', text)
+        for phrase in ('high-consequence-reviewer-high.toml', 'feature_verifier_high',
+                       'cannot grant hardware authority'):
+            self.assertIn(phrase, root)
+        for phrase in ('approver may not be reused as the delivery verifier',
+                       'not formal reviewers', 'generic workers'):
+            # Case-insensitive policy wording check, not enforcement.
+            self.assertIn(phrase.lower(), guide.lower())
+
+    def test_benchmark_transcription_shape_and_unknown_times(self):
+        rows = chart_rows()
+        self.assertEqual(len(rows), 17)
+        self.assertEqual(len({(r['model'], r['effort']) for r in rows}), 17)
+        for row in rows:
+            self.assertEqual(row['model'], row['model'].strip())
+            self.assertTrue(0 <= Decimal(row['score_percent']) <= 100)
+            self.assertGreater(Decimal(row['cost_per_task_usd']), 0)
+            self.assertGreater(int(row['output_tokens_per_task_rounded']), 0)
+        unknown = {(r['model'], r['effort']) for r in rows if not r['decode_minutes_per_task']}
+        self.assertEqual(unknown, {('gpt-6-sol', 'medium'), ('gpt-6-luna', 'medium')})
+
+    def test_load_bearing_benchmark_values_and_comparison(self):
+        rows = {(r['model'], r['effort']): r for r in chart_rows()}
+        low = rows[(SOL, 'low')]
+        old = rows[('gpt-6-sol', 'medium')]
+        self.assertEqual((low['score_percent'], low['cost_per_task_usd']), ('30.8', '0.38'))
+        self.assertEqual((old['score_percent'], old['cost_per_task_usd']), ('18.7', '1.12'))
+        self.assertEqual(Decimal(low['score_percent']) - Decimal(old['score_percent']), Decimal('12.1'))
+        savings = 100 * (1 - Decimal(low['cost_per_task_usd']) / Decimal(old['cost_per_task_usd']))
+        self.assertEqual(savings.quantize(Decimal('0.1')), Decimal('66.1'))
+        self.assertEqual(rows[(LUNA, 'medium')]['score_percent'], '2.5')
+        self.assertEqual(rows[(LUNA, 'high')]['score_percent'], '4.5')
+
+    def test_assessment_local_links_and_provenance_are_explicit(self):
+        source = ROOT / 'docs/development/codex-model-routing.md'
+        text = source.read_text()
+        for link in re.findall(r'\]\(([^)]+)\)', text):
+            parsed = urlsplit(link)
+            if parsed.scheme or parsed.netloc or not parsed.path:
+                continue
+            target = (source.parent / unquote(parsed.path)).resolve()
+            self.assertTrue(target.is_relative_to(ROOT))
+            self.assertTrue(target.exists(), link)
+        for phrase in ('owner-supplied', 'Values are rounded', 'not zero',
+                       'not the expected cost', 'not the user', 'runtime check'):
+            self.assertIn(phrase, text)
+        self.assertEqual(len(re.findall(r'`[a-f0-9]{64}`', text)), 4)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

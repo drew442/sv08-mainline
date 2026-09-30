@@ -1,75 +1,63 @@
 # Feature delivery
 
-Use the [project subagent guide](agent-guide.md) for role selection, model defaults,
-bounded task handoffs and shared test-resource ownership.
-For a small, already-scoped correction, use the Luna
-[`project_narrow_implementer`](agents/project-narrow-implementer.toml) or work
-locally. Keep Sol for complex implementation and independent substantive review;
-the repository profiles cannot switch an existing chat's model.
-The coordinator routes eMMC/MCU writes, boot-policy changes, heater/motion
-commissioning, and release decisions through the independent
-[`high_consequence_reviewer`](agents/high-consequence-reviewer.toml) on GPT-6.1 Sol.
-This profile reviews the specific action; it cannot authorize or perform hardware
-operations. Use the explicit
-[`high_consequence_reviewer_high`](agents/high-consequence-reviewer-high.toml)
-profile when material uncertainty requires high effort.
-The [current subclient goals](current-goals.md) assign the next bounded work and
-share physical dependencies through one human queue.
+Use the [agent guide](agent-guide.md) for task routing, model/effort selection,
+independence and resources. Sol low is the normal research, implementation and
+integration setting, adjustable to medium/high for harder assignments. Luna is
+limited to exact lookup and mechanical edits. Planning and substantive review use
+medium; explicit high review variants cover difficult review reasoning. Read the
+[benchmark basis](../docs/development/codex-model-routing.md) when assessing the
+policy, not in every child. Benchmark evidence justifies the defaults; observations
+refine them after deployment, without a separate easy-task-only pilot.
 
-For opted-in, low-risk trials, the guide adds `project_routine_implementer`
-(Sol/low) and `project_test_runner` (Luna/medium). These are optional alternatives,
-not extra mandatory stages. Complex implementation/integration and substantive
-review remain Sol/medium. See the [routing evaluation and rollout](../docs/development/codex-model-routing.md)
-for eligibility, cost measurement, runtime checks and rollback. No saving or
-model availability has been measured by changing these files.
+Profiles do not change the main chat's model. Project [agent defaults](config.toml)
+prevent unspecified children inheriting an expensive coordinator. Three worker
+profiles deliberately leave effort unpinned so supported spawn overrides work.
+Review profiles pin model and effort; use the explicit high variant when needed.
+Confirm effective settings/permissions in the runtime, not from the model's claim.
 
 The owner approved [decision 0011](../docs/decisions/0011-feature-agent-workflow.md).
-Use the [design](../docs/design/feature-agent-framework.md) for the full contract
-and [operating guide](../docs/development/feature-workflow.md) for commands,
-review formats and interruption handling. Workstation dependencies are Python
-3.11+ and Debian's `python3-jsonschema`; no agent-framework packages enter the host image.
+Use the [design](../docs/design/feature-agent-framework.md),
+[operating guide](../docs/development/feature-workflow.md),
+[validation](../docs/development/feature-workflow-validation.md) and
+[completed offline pilot](../docs/development/feature-workflow-pilot.md) for the
+record and acceptance contracts. Python 3.11+ and Debian's `python3-jsonschema`
+are workstation dependencies, not additions to the printer host image.
 
-[Offline validation](../docs/development/feature-workflow-validation.md) records
-the deterministic checks, independent review and current runner limitations.
-The completed [offline pilot](../docs/development/feature-workflow-pilot.md)
-records both deliveries, a rejected candidate and independently verified correction,
-and the measured readback improvement.
+Read AGENTS.md, applicable project requirements/decisions and only relevant feature
+records. Existing release checklists and [current goals](current-goals.md) retain
+their authority. The coordinator selects work, updates records, commits candidate
+changes in the owned worktree and integrates after independent verification.
+Children do not commit or publish. Import existing approval rather than ask again.
 
-Read `AGENTS.md`, the project definition, roadmap, applicable profile and relevant
-accepted decisions. Load only the feature records needed for the current work.
-The existing host completion checklist and hardware task lists remain release
-authority. Do not duplicate their requirements or infer consent to change them.
+Use optional `project_planner` for useful triage/design, separate `feature_approver`
+for new substantive scope and separate `feature_verifier` (or its high variant) for
+delivery. The planner replaces the old feature-suggester profile, not its independent
+approval requirement. Small mechanical corrections use the short record and normal
+review; substantive work still needs verification regardless of worker effort.
+Use scripts rather than agents for predetermined test recipes. Integration supplies
+execution evidence, not independent acceptance of its own work.
 
-Use separate suggestion, approval and verification roles for substantive work.
-The project TOML definitions are in `agents/`; use their instructions explicitly
-in separate sessions when the current client does not support named custom agents.
-Do not silently substitute self-approval. Runtime permissions may override role
-defaults; the interactive collaboration client inherits its parent permissions.
-The current dispatcher starts no worker process and supplies no isolation itself.
-The coordinator maintains records and integrates reviewed changes. Small fixes to
-documented behavior use a short record and normal review. Import already-approved
-work with its authorization reference rather than requesting approval again.
+Before a consequential hardware, boot-policy, commissioning or release action,
+obtain a fresh exact-operation review using
+[`high_consequence_reviewer`](agents/high-consequence-reviewer.toml) on GPT-6.1 Sol,
+or [`high_consequence_reviewer_high`](agents/high-consequence-reviewer-high.toml)
+when material uncertainty needs high effort. Neither profile can grant hardware
+authority, execute the operation or replace actual observations. Preserve recovery,
+heater/motion and owner-authorization gates independently of implementation effort.
 
-The suggester may recommend no new proposal. Prioritize regressions and finishing
-accepted workflows; allow one active implementation and at most three ready
-proposals. The approver may approve bounded work within existing requirements;
-scope changes or expanded authority go to the owner. The verifier checks actual
-behavior and evidence and cannot certify its own implementation.
+Keep one implementation active, no more than two concurrent children and at most
+three ready proposals. The planner can recommend no new proposal. Continue eligible
+offline work while another task awaits hardware/human input. Use the existing
+coordinated human queue and reuse valid evidence without concealing its limitations.
 
-Continue ready offline tasks when another task requires hardware or a human.
-Record the exact physical action and evidence in the existing human task list.
-Keep decisions, execution and acceptance evidence distinct. Printer access and
-hardware writes require their own applicable authorization and recovery path.
+The dispatcher starts no agents, runs no task commands and enforces no execution
+sandbox. No unattended schedule is introduced. Provision source/disposable-build
+environments that exclude printer credentials, private backups and physical devices;
+parent runtime permissions can override TOML defaults. Worktrees alone are not isolation.
 
-This repository configures no unattended schedule. Use the workflow in the active
-session; persistent records let subsequent sessions resume. Worker permissions and
-private evidence access must be enforced by the execution environment as well as
-these instructions. Do not expose printer credentials or backup mounts to automatic
-offline workers.
-
-At each session start, run `python3 scripts/feature_workflow.py validate` and
-`python3 scripts/feature_workflow.py next`. Import relevant approved backlog work
-when there is queue capacity. After a task finishes or becomes blocked, select
-again. A null selection means inspect pending decisions and blockers; it does not
-mean that all project work is complete. Stop only for the user's instruction, no
-authorized ready work, or the configured execution allowance, and record why.
+At session start run `python3 scripts/feature_workflow.py validate` and
+`python3 scripts/feature_workflow.py next`. Select again after completion or blocking.
+Null selection means inspect blockers/decisions, not that the project is complete.
+Stop for the user's instruction, no authorized ready work or the execution allowance,
+and record why. Unavailable required independent review stays pending; other ready
+work may proceed. Runtime smoke checks and independent review precede deployment.

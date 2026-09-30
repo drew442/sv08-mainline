@@ -1,155 +1,155 @@
-# Codex model routing: evaluation and rollout
+# Benchmark-grounded agent routing
 
-Evaluation date: 2026-09-30 (Australia/Sydney).
-Baseline: `98808f125e1036e800794526d5f139ed1365d65f`.
-Scope: project agent configuration, guidance and offline policy tests only.
-This is a proposed rollout, not a record of completed model trials or independent
-acceptance. No hardware, feature approvals, historical evidence, dispatcher logic,
-user-global settings, billing account or unattended schedule is changed.
+Date: 2026-09-30. Base project revision: `98808f125e1036e800794526d5f139ed1365d65f`.
+This supersedes the narrow low-effort pilot in PR #1's first draft. The owner has
+accepted the supplied benchmark results as a sound basis for changing routing and
+asked for role definitions to be reconsidered. Deployment still needs independent
+review and a source-only runtime check; no live model results are claimed here.
 
-## Evaluation of the initial recommendation
+## Evidence and interpretation
 
-Retain the existing Luna roles, independent review and measurement of accepted
-outcomes. Test the proposed Sol upgrade without treating benchmark claims or
-per-token prices as proof of project-specific quality or savings.
+Source: owner-supplied Artificial Analysis Terminal-Bench 4.0 chart exports dated
+29 Sep 2026, visually transcribed into [this CSV](terminalbench-20260929.csv).
+The [original evaluation](https://artificialanalysis.ai/evaluations/terminalbench-4-0)
+is the source site, not a claim that this revision downloaded a raw dataset.
+Values are rounded chart labels. Empty times were not displayed, not zero.
+`none` transcribes the chart's Non-reasoning label; it is not a supported Sol 6.1
+setting. No compute-proxy inference or cost reconstruction from token rates is used.
 
-| Initial suggestion | Refined decision |
+| Configuration | Score | USD/task | Output tokens/task |
+| --- | ---: | ---: | ---: |
+| GPT-6.1 Sol low | 30.8% | $0.38 | 17k |
+| GPT-6.1 Sol medium | 48.0% | $0.61 | 32k |
+| GPT-6.1 Sol high | 51.5% | $0.83 | 44k |
+| GPT-6.1 Sol xhigh | 54.0% | $1.03 | 57k |
+| GPT-6.1 Sol max | 56.1% | $1.82 | 108k |
+| GPT-6 Sol medium | 18.7% | $1.12 | 28k |
+| GPT-6 Sol xhigh | 30.3% | $1.91 | 51k |
+| GPT-6 Luna medium | 2.5% | $0.07 | 45k |
+| GPT-6 Luna high | 4.5% | $0.12 | 74k |
+
+From those displayed values, Sol 6.1 low gains 12.1 percentage points over old Sol
+medium at 66.1% lower cost/task. Its observed score is close to old Sol xhigh, at
+80.1% lower cost/task. Sol 6.1 medium buys another 17.2 points for $0.23/task.
+That supports low for bounded engineering and medium for harder work, not equal
+effort labels across generations. Luna high is not a default intermediate rung.
+
+Cost/task divided by score-as-a-fraction gives aggregate spend per successful
+benchmark outcome: about $1.23 for Sol 6.1 low, $1.27 for medium, $2.80 for Luna
+medium and $2.67 for Luna high. This includes failed attempts in the workload; it
+is not the expected cost of repeatedly retrying one task. It does not identify
+which tasks different models solve or establish a cheap-first fallback strategy.
+Scores do not give role-specific reviewer accuracy or statistical significance.
+The similar 30.8%/30.3% values are not proof of one model's superiority.
+
+Time is weighted average decode time, excluding time-to-first-token and overhead,
+not end-to-end build/VM latency. Output counts include reasoning and answer tokens.
+Benchmark USD is not the user's included Codex allowance or observed project cost.
+Actual totals include coordinator work, children, rework, tools and review. Never
+turn missing usage into zero or double-count reasoning already in output totals.
+These charts justify defaults now; ordinary accepted-outcome measurements refine
+them rather than an easy-task-only pilot blocking the improvement.
+
+### Screenshot provenance
+
+SHA-256 values identify the supplied exports, not files included in this repository.
+Hashes alone do not make the images retrievable. The CSV and this attribution are
+the public evidence snapshot; keep the original exports with the review evidence.
+
+| Export filename | SHA-256 |
 | --- | --- |
-| Replace GPT-6 Sol with GPT-6.1 Sol | Propose `gpt-6.1-sol` for the five existing Sol profiles, retaining medium effort. Confirm the exact identifier and access in the target client before merge. |
-| Make low effort the normal implementation/integration setting | Keep complex recovery, image and integration work at medium. Add an opt-in `project_routine_implementer` for settled, low-risk implementation. |
-| Add a cheap test agent | Prefer an existing deterministic script with no child agent. Use optional `project_test_runner` only when a supplied recipe needs delegated observation; leave diagnosis with `project_integration`. |
-| Escalate by requesting higher effort | A custom profile's model/effort overrides spawn-time values. Provide an explicit `high_consequence_reviewer_high`; verify effective settings for every escalation. |
-| Treat API token ratios as savings | Distinguish API billing, purchased Codex credits and included subscription limits. Compare total cost through independent acceptance, not worker price alone. |
-| Exploit cached project context | Keep necessary context compact and stable, but measure actual cached usage. Referencing a path does not itself prove a cache hit; never enlarge prompts just to seek a discount. |
-| Remove redundant stages | Keep triage optional and reuse valid approval. Do not skip required independent verification, execution evidence or immediate high-consequence review. |
+| Terminal-Bench 4-0 - Score (29 Sep '26).png | `2bd44bc404eab9240738318d500c49cf4402a672bbde6da305a6daaf23a90af2` |
+| Terminal-Bench 4-0 - Cost per Task (29 Sep '26).png | `3dace4fb9f9bcb0dd22214e2a8d29967225bf84bcc9e14f227fc5986d8002638` |
+| Terminal-Bench 4-0 - Output Tokens per Task (29 Sep '26).png | `aba7ce6197ebd4eda3201c87b590c04940be65dd98cae5c69cea936f5c65e559` |
+| Terminal-Bench 4-0 - Time per Task (29 Sep '26).png | `bbfbc32b3927ac99955df44076bf848d49ac6ac95944c07cabe5f6c65176fd9a` |
 
-OpenAI's [Work and Codex help article](https://help-lb.openai.com/en/articles/20001275-chatgpt-work-and-codex)
-confirms GPT-6.1 Sol is rolling out, with access depending on the account, plan and
-workspace. The [model launch resources](https://academy.openai.com/en/pages/chatgpt-5-6-champion-launch-resources-tzoyyc)
-recommend checking access and comparing familiar work. These support evaluating
-this migration, not claiming every client/account can already run these profiles.
-The configured identifier is a proposed setting pending the pre-merge runtime check.
+## Definitions: responsibility is not effort
 
-The initial conversation's exact benchmark deltas, token prices, cached-input
-reductions and price ratios were not substantiated by the official pages retrieved
-for this review. They are not used as acceptance evidence or reproduced as verified
-rates here. No measured SV08 outcome establishes that low effort can replace medium
-for complex work. Availability and quality remain separate questions.
+The [agent guide](../../.codex/agent-guide.md) is the authoritative role table.
+Use native configuration, not a custom router, scheduler, model classifier or a
+Cartesian product of every responsibility and every effort. Eleven selectable
+profiles cover cheap utility work, analysis/planning, execution and independent
+review. Different role names do not imply more simultaneous agents.
 
-The [subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents)
-describes standalone project TOML files, model/effort precedence and parent runtime
-permission overrides. The profile files select behavior; they do not prove enforced
-isolation. The high-effort variant deliberately shares the medium review's full
-instructions, with an offline test guarding against policy divergence.
+Replace cheap broad research with two contracts: Luna exact lookup and Sol causal
+investigation. Replace feature suggestion with an optional medium planner that
+can plan existing approved delivery as well as triage new work. The planner does
+not approve its output. Remove the duplicate routine implementer: ordinary Sol
+implementation starts at low and can request more effort for harder assignments.
+Remove the test-runner role: a predetermined script needs no agent; bounded
+integration judgment uses Sol low, complex diagnosis medium. Keep Luna mechanical
+editing only where a supplied transformation makes verification straightforward.
 
-## Routing without a mandatory agent chain
+For research, implementation and integration, pin the Sol model but deliberately
+leave profile effort unset. [Project agent defaults](../../.codex/config.toml)
+provide low, while a supported explicit spawn effort can select medium/high. This
+uses the official [subagent precedence](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+and [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference),
+checked 2026-09-30. Planner, Luna and reviewers remain effort-pinned. Their explicit
+high variants are necessary because spawn values cannot override pinned effort.
+The [model reference](https://developers.openai.com/api/docs/models/gpt-6.1-sol)
+lists low/medium/high/xhigh/max; availability in the target account still needs a
+runtime check. No model's self-reported identity is evidence of effective settings.
 
-The authoritative role table and handoff rules are in the
-[agent guide](../../.codex/agent-guide.md). Choose one suitable execution route,
-not every cheaper tier in sequence. Keep one implementation active and at most
-two children; the existing [.codex/config.toml](../../.codex/config.toml) is unchanged.
+A low-effort fixture patch in a storage module may be appropriate; deciding a new
+write policy requires planning/approval, and physically writing storage requires
+its own authorization and immediate action review. More effort grants no extra
+permission. Review difficulty and cost of a missed defect justify medium/high
+review independently of the worker's setting. A planner, author, approver or evidence
+producer is not reused as the independent delivery verifier. No independent review
+or hardware gate is removed. Medium/high review variants are alternatives, not
+an automatic two-review sequence. Xhigh/max have no standing definitions: request
+exceptional bounded work explicitly, and add a variant only if recurring need is shown.
 
-| Task class | Execution and review |
-| --- | --- |
-| Tiny correction to documented behavior | Existing Luna narrow implementer or local edit; short record and normal coordinator review. |
-| Settled, low-risk implementation | Opt-in Sol/low routine pilot, otherwise existing Sol/medium implementer; required separate verification remains. |
-| Boot/recovery, A/B, writers, data migration, credentials, hardware constants, heater/motion or release-related work | Existing Sol/medium complex role directly; excluded from the low-effort pilot even for small/offline changes. |
-| Fully prescribed offline test | Run the script directly, or use the optional Luna test runner with exact commands, fixtures, expected observations and stop conditions. |
-| Unexpected QEMU/package/UI behavior or incomplete test recipe | Sol/medium integration role; do not ask the test runner to invent diagnosis or repairs. |
-| New substantive proposal | Separate approver before implementation; reuse valid existing approvals without repeating product approval. |
-| Substantive delivery | Separate verifier checks the complete stable diff and acceptance evidence; implementers and evidence producers cannot verify themselves. |
-| High-consequence action | Immediate independent medium review, or the explicit high profile for material uncertainty; owner authorization and observed execution evidence remain separate. |
+Examples: exact symbol extraction goes to lookup or grep; a scoped boot-log code
+trace to research/low; a tested recovery-parser bug fix with settled behavior to
+implementer/low; unresolved A/B transition design to planner/medium and research at
+an appropriate effort; fixed QEMU commands run directly, but an unexpected installed
+user-journey failure goes to integration/low or medium according to complexity.
+A physical write still needs the separate operation review and actual permission.
 
-If material uncertainty is already known, choose the high review directly rather
-than paying for medium first. If discovered in a medium review, transfer that
-evidence to the high reviewer before action. Unresolved physical facts remain
-blockers at any effort. This does not bypass the constraints in [AGENTS.md](../../AGENTS.md).
+## Deployment and rollback
 
-## Cost accounting, not savings promises
+Keep the PR in draft for independent review and runtime loading checks, not for
+proof of a large cost-saving pilot. In a fresh authorized source-only client check:
+all active names; removed names no longer selected; generic child defaults Sol/low;
+adjustable workers default low and actually accept medium/high spawn effort;
+pinned reviewers resist lower-effort overrides; named high variants run at high;
+permissions are enforced by the environment, not merely requested in TOML.
+Do not run printer operations, open credentials or switch billing to make this pass.
 
-Use the applicable [Codex pricing](https://learn.chatgpt.com/docs/pricing),
-[API pricing](https://developers.openai.com/api/docs/pricing) and account usage
-surface at the time of a trial. Record the billing route, rate source/date and
-speed/context tier. This document deliberately does not pin unverified model rates.
-A dollar price, a purchased-credit rate and included subscription usage are not
-interchangeable measurements. Do not infer weekly allowance from an API price ratio.
+If a client cannot apply the defaults/override, use a separate explicitly configured
+session with the same contract and record the actual fallback. No silent model or
+review downgrade is allowed. Unavailable independent review remains pending.
+User-global/main-session model, billing account, speed mode, concurrency cap,
+dispatcher, historical decisions/hashes, upstream pins and schedules are unchanged.
+Only default spawned-agent model/effort is newly set at project level.
 
-For a metered estimate, separate uncached input, cached input and output using the
-actual billing definitions. If reported total input includes cached input, subtract
-cached input before pricing the uncached part. Do not count reasoning twice if it
-is included in total output. Distinguish estimated cost from observed billing and
-record any other applicable charges. Missing usage or rates remain unknown, not zero.
-Do not mix API and Codex credit rates or attribute a parent total to each child.
-No API-key migration, credit purchase or Fast/Ultrafast setting is introduced.
+After those checks, use the normal routing immediately on representative authorized
+work. Keep lightweight observations and detailed [samples](../../.codex/templates/agent-task-observation.md)
+for escalations/failures. Compare total cost through acceptance, first-pass results,
+rework, elapsed time and escaped defects by task class. Safety/authority violations
+or unreliable evidence stop the affected workflow immediately. Do not optimize
+review cost by hiding failures. A narrow task's results may justify Luna locally;
+the broad benchmark does not establish its success rate for mechanical work.
 
-Count coordinator work, all children, retries, escalation, rework, integration and
-independent verification through acceptance. Track tool/build waiting separately
-from model work; waiting on the same build is not a reason for another agent run.
-A failed or abandoned trial still contributes cost and failure data. Never exclude
-expensive escalations from the pilot cohort. A cheaper invocation that causes more
-rework may have a higher total cost per accepted result.
+Rollback coordinates active sessions/worktrees, reverts the routing change, reloads
+clients and confirms effective settings. Preserve all observations and historical
+acceptance. Do not rewrite old records to claim that a newer model ran.
 
-## Pre-merge checks and reversible pilot
-
-Keep this change in draft until an independent reviewer inspects it and a fresh
-target Codex client loads the proposed branch in an authorized source-only fixture.
-Confirm the exact model identifier, available effort levels and intended role names,
-and record client version plus runtime-confirmed model, effort and permissions.
-Check that the high variant actually runs at high effort. Neither parsed TOML nor
-a model's assertion about itself proves these settings. Do not use hardware commands
-or grant extra permissions to make this check pass. If unavailable, leave the PR
-pending or revise the candidate setting explicitly; do not merge broken defaults.
-
-After those checks and independent review:
-
-1. Start a baseline cohort on the upgraded medium defaults; keep existing Luna
-   work as-is. For later low-risk trials, the coordinator explicitly records why
-   the routine implementer or test runner is eligible. Keep reviewers and
-   acceptance checks fixed. Alternate comparable eligible tasks between default
-   and pilot routes where practical; do not buy duplicate production work just
-   to produce a benchmark.
-2. Keep one [observation](../../.codex/templates/agent-task-observation.md) per task
-   under ignored `local/feature-workflow/model-routing/`. Include all linked
-   attempts through acceptance, runtime evidence and unknowns. Publish only
-   sanitized aggregate findings. Do not extend or rewrite the existing hashed
-   approval and verification JSON contracts with telemetry fields.
-3. Inspect the first 10 eligible tasks as an early checkpoint, not statistical
-   proof. Compare task classes, first-pass acceptance, rework/escalation, escaped
-   defects, elapsed time and total observed cost per accepted result. Report
-   sample size, missing measurements and failures. Promote a pilot only after
-   independent review finds no material quality regression and credible net
-   benefit across comparable work; retain medium where evidence is weak.
-
-A repeated failure after the one bounded routine repair, architectural ambiguity,
-resource conflict or scope growth ends the cheap attempt. Hand off exact evidence
-instead of starting a broad retry loop. Any unsafe action, weakened acceptance,
-fabricated observation or missed critical condition suspends the affected pilot
-immediately. A higher model cannot authorize bypassing an existing gate.
-
-For a model/access failure, stop that assignment and record an explicit supported
-fallback at the same review/effort tier, such as the previous Sol medium/high
-configuration. A fallback is not a 6.1 trial. If no suitable independent reviewer
-is available, leave the review/action pending. Do not change a pinned role's
-model/effort by a spawn argument that the file will override.
-
-Rollback first stops new pilot assignments and routes eligible work back to the
-unchanged medium or existing Luna defaults. Preserve observations and any active
-worktree ownership. To undo the upgrade itself, revert the configuration PR after
-coordinating active sessions; do not rewrite historical evidence or acceptance.
-
-## Validation boundaries
-
-Run the focused, standard-library-only policy checks from the repository root:
+## Offline checks
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_codex_agent_policy.py' -v
+python3 -m unittest discover -s tests -p 'test_feature_workflow.py'
+python3 scripts/feature_workflow.py validate
+python3 scripts/feature_workflow.py next
 git diff --check
 git diff --cached --check
 ```
 
-These check TOML structure, explicit routing, read-only review defaults, shared
-high-review instructions, guide/table consistency and local links in this new
-rollout document. They do not launch Codex, establish isolation, measure savings,
-prove review quality or run firmware, QEMU or hardware acceptance tests. Run the
-normal feature-workflow checks in a full checkout before rollout as required by
-the [workflow entry point](../../.codex/README.md).
+The focused policy tests check configuration contracts, default-versus-pinned
+settings, matched review variants, role-table consistency, boundaries and benchmark
+transcription invariants. They do not launch Codex or validate model capability,
+permission enforcement, hardware or independent acceptance. Full workflow checks
+need a complete checkout; report the actual environment and any checks not run.

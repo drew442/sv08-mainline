@@ -13,11 +13,15 @@ The implementation uses the packaged JSON Schema validator rather than adding
 another schema engine. The host OS image has no dependency on this tooling.
 
 Use [the entry point](../../.codex/README.md) and the project TOML definitions:
-`feature_suggester`, `feature_approver`, `feature_verifier`. If the client exposes
+`project_planner`, `feature_approver`, `feature_verifier`. If the client exposes
 named custom agents, invoke the named role with a concrete bounded task. Otherwise
 load the same TOML `developer_instructions` into a separate agent/session. Keep
 reviewers separate from the author and implementer; an unavailable reviewer leaves
 that review pending while other eligible work continues.
+Use the [current agent guide](../../.codex/agent-guide.md) for routing and effort.
+The planner replaces feature_suggester; use it only when planning/triage is useful.
+Research, implementation and integration normally use Sol/low with supported effort
+overrides. Reviews remain pinned. Preserve historical role/session evidence.
 
 TOML permission defaults can be overridden by the parent runtime. In particular,
 interactive collaboration inherits its parent's permissions. Do not describe
@@ -29,7 +33,9 @@ isolate changes, not credentials. That deployment is outside the offline pilot.
 Keep private session transcripts, run output and reports awaiting sanitization
 under `local/feature-workflow/`. Version only reviewed role files, templates,
 schemas, proposals and sanitized evidence. Personal `.codex` configuration remains
-ignored. No API credentials or model override are introduced by this workflow.
+ignored. No API credentials, billing change or main-session model override are
+introduced. The project configuration sets spawned-agent defaults; selected roles
+can pin model/effort. Verify effective settings as described in the agent guide.
 
 ## Record and approval
 
@@ -109,9 +115,11 @@ Keep the recorded session ID stable for submit/complete/block operations. The
 helper never evaluates shell text from a proposal, task or model output.
 
 The implementer receives the task packet and relevant source. It performs the
-bounded implementation, checks and documentation in its worktree, then commits
-the complete change. Commit only intended files and retain private artifacts in
-ignored paths. Normal code, build and foundation checks in AGENTS.md still apply.
+bounded implementation, checks and documentation in its worktree. The coordinator
+then commits the complete candidate in that owned worktree; child profiles do not
+commit or publish. Independent verification precedes integration/publication.
+Commit only intended files and retain private artifacts in ignored paths. Normal
+code, build and foundation checks in AGENTS.md still apply.
 
 ## Evidence, verification and integration
 
