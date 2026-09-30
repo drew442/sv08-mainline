@@ -122,6 +122,39 @@
 #ifndef SV08_TEST_FAULT
 #define SV08_TEST_FAULT ""
 #endif
+#if defined(SV08_H616_COMMISSIONING)
+/* Compile evidence for offline composition/staging, bound by the independently
+ * reviewed artifact hash. This ELF section is not a signature/trust anchor. */
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+#define SV08_COMPILED_PURPOSE "sv08-h616-signed-preflight-v1"
+#else
+#define SV08_COMPILED_PURPOSE "sv08-h616-signed-reimage-v1"
+#endif
+#if defined(SV08_H616_TRUSTED_INITRAMFS)
+#define SV08_COMPILED_TRUSTED "1"
+#else
+#define SV08_COMPILED_TRUSTED "0"
+#endif
+#if defined(SV08_H616_RECOVERY_HANDOFF)
+#define SV08_COMPILED_HANDOFF "1"
+#else
+#define SV08_COMPILED_HANDOFF "0"
+#endif
+#if defined(SV08_H616_SYNTHETIC_TEST)
+#define SV08_COMPILED_SYNTHETIC "1"
+#else
+#define SV08_COMPILED_SYNTHETIC "0"
+#endif
+static const volatile char compiled_purpose[]
+  __attribute__((used,section(".sv08.h616-purpose"))) =
+  "sv08-h616-compiled-purpose-v1\n"
+  "format=" SV08_COMPILED_PURPOSE "\n"
+  "job_sha256=" SV08_JOB_DESCRIPTOR_SHA256 "\n"
+  "policy_sha256=" SV08_TARGET_POLICY_SHA256 "\n"
+  "trusted_initramfs=" SV08_COMPILED_TRUSTED "\n"
+  "recovery_handoff=" SV08_COMPILED_HANDOFF "\n"
+  "synthetic_test=" SV08_COMPILED_SYNTHETIC "\n";
+#endif
 static unsigned char buffer[CHUNK];
 #if defined(SV08_H616_PREFLIGHT_ONLY)
 static int preflight_return_ready;
@@ -816,6 +849,10 @@ int main(void) {
 #else
   dev_t admitted_dev;
   FILE *f;time_t started=time(NULL);
+#endif
+#if defined(SV08_H616_COMMISSIONING)
+  /* Keep compile evidence reachable despite --gc-sections/constant folding. */
+  if(compiled_purpose[0]!='s')finish("REFUSED_BUILD_PURPOSE");
 #endif
   if(mount("proc","/proc","proc",0,NULL)&&!mounted("/proc","proc","rw"))finish("REFUSED_PROC");
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");

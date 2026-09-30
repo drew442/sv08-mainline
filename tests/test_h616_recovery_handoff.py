@@ -31,6 +31,7 @@ class PreflightCompositionTests(unittest.TestCase):
             # compose the tiny FIT. This is not a signed or bootable physical job.
             with (mock.patch.object(handoff, 'commissioning_bundle',
                                     return_value=(bundle, manifest, {})),
+                  mock.patch.object(handoff, 'verify_compiled_writer', return_value='b' * 64),
                   mock.patch.object(handoff, 'append_commissioning_initramfs',
                                     return_value={'offline_fixture': True})):
                 result = handoff.build(root / 'out', kernel, initrd, dtb, bundle,
@@ -82,6 +83,7 @@ class PreflightCompositionTests(unittest.TestCase):
 
             with (mock.patch.object(handoff, 'commissioning_bundle',
                                     return_value=(bundle, manifest, {})),
+                  mock.patch.object(handoff, 'verify_compiled_writer', return_value='b' * 64),
                   mock.patch.object(handoff, 'append_commissioning_initramfs',
                                     return_value={'offline': True}),
                   mock.patch.object(handoff.subprocess, 'run', side_effect=fake_mkimage)):

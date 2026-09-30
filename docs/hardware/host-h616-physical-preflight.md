@@ -85,3 +85,84 @@ boundaries; unlink, fsync, syncfs, unmount and directory-removal faults all
 request power-off, while a stale-job refusal after confirmed consumption
 requests reboot. These are implementation checks awaiting independent delivery
 verification; physical admission and production artifact memory remain pending.
+
+The separately approved 2026-09-30 repair fixes the shared staging verifier's
+default write-purpose selection. It checks the signed job against strict bundle
+and composition modes before staging. The actual executable now contains a
+compile-time ELF section with purpose, trusted-entry/handoff/fixture modes and
+the signed descriptor and policy hashes. A bounded Python ELF64 little-endian
+reader inspects that section at build, composition and staging. Replacing a preflight executable
+with the actual write executable is refused even when its unsigned manifest
+hashes are recomputed. This section is compile evidence, not a signature or
+proof that arbitrary newly authored ELF code is safe: the independently reviewed
+`expected_build_sha256` remains the artifact trust boundary.
+Newly built write candidates carry the same evidence section; historical
+executables without it require rebuilding and a new reviewed artifact hash.
+
+The shared verifier also checks the decompressed archive hash and streams the
+actual gzip/newc initramfs already checked against its FIT member. Its trusted executable,
+job, detached signature, policy, expected image hash and PID 1 ORDER entry must
+match the compiled bundle. The unchanged live stage, arm and activation consumers
+call that verifier; existing journal build/FIT hashes retain the reviewed purpose
+across later operations. Tests capture target opens after positive revalidation
+and refuse changed bundle/journal pins before those boundaries. The production
+live adapter is unchanged, and these fixtures perform no live media operation.
+The streaming reader supports only the actual composer's single gzip/newc
+format, with a 64 MiB compressed-input ceiling, 128 MiB uncompressed archive
+ceiling, 64 MiB ordinary-member ceiling, 4096-byte names and 100000 entries.
+Required members must have their exact reviewed lengths and regular-file type;
+duplicates, unsafe paths, truncation, unsupported types and nonzero archive
+tails are refused. The ELF reader limits executables to 4 MiB, 1024 sections
+and one 1024-byte purpose record. Job/policy inputs are limited to 64 KiB.
+This avoids adding `readelf` or `unmkinitramfs` to the recorded SD userspace
+tool contract; those tools remain available only for existing workbench builds.
+
+Representative composition uses the retained pinned inputs in
+[the SD input record](../../configs/host-os/sv08-sd-network-inputs.json), with
+provenance in [the root prototype](host-sd-network-root-prototype.md) and
+[the eMMC probe](host-sd-network-emmc-probe-20260926.md). The actual C compiler,
+initramfs append and `mkimage` machinery run against an expired lab descriptor
+signed with existing test fixtures. The production builder still prohibits
+fixture keys for physical candidates; the offline compiler harness does not
+relax that guard or prepare a real physical job or claim.
+
+| Representative component | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Compiled preflight writer | 779072 | `4db3284d9f1e428f12cb13980cc8b63a3a1d197284affa5597ac5dcd52bc7bb1` |
+| Appended initramfs | 15444207 | `675d7076fca0813c05fcd8106d43f432b6a17132add8e9e8dc3afd681403d4ba` |
+| Uncompressed initramfs archive | 54857728 | `fd3cadc9379169a4a070733982c42ffd184236c94476fdc42115897a100ef15a` |
+| FIT | 48899052 | `4c20dc95b234ad11b1e9b2108fd5158ac8c87391f18fad89a4384a0b78c773e2` |
+
+The kernel interval is `[0x40080000, 0x4205ba00)` and the FIT interval is
+`[0x48000000, 0x4aea23ec)`, below the marker at `0x4f800000` and original
+script address `0x4fd00000`. These fixed intervals do not overlap.
+Conservative static accounting totals 565388663 bytes against 1 GiB, leaving
+508353161 bytes: it includes a full 64 MiB FIT reserve, the raw kernel,
+compressed initramfs, uncompressed archive and expanded files simultaneously,
+two DTB copies, a 4 MiB writer allowance, a 64 MiB bootloader reserve and a
+256 MiB kernel/runtime reserve. Those reserves are accounting assumptions,
+not observed physical allocations or a guarantee of memory reliability.
+`bootm` ramdisk/FDT relocation remains a physical observation requirement.
+
+Final composition and actual streaming staging verification took 11.22 seconds
+including compilation and used a measured 145092 KiB maximum RSS. Sampled peak
+allocated scratch was 307949568 bytes, including the previous experimental FIT;
+retained output was 48963584 bytes after removing only assigned disposable
+intermediates. The retained final FIT and compact ignored receipt preserve the
+exact sizes, source hashes, toolchain and inputs for independent review. This
+supplies representative artifact-size/static-resource evidence, while actual
+H616 entry, marker admission, raw environments, relocation and recovery return
+remain urh-04. Full transfer/readback remains urh-05.
+
+The final repaired offline regression command adds
+`tests.test_h616_recovery_handoff_builder tests.test_recovery_handoff_stage tests.test_h616_live_stage_cli`
+to the three modules above. All 47 tests passed in 37.608 seconds, with 66488 KiB
+maximum RSS. Cases include signed preflight/default-write admission, signed
+cross-purpose and invalid-signature refusal, a write executable with recomputed
+unsigned labels, a write executable substituted inside a rebuilt initramfs/FIT,
+nonboolean modes, expiry, and changed bundle/journal pins before media mutation.
+Malformed/duplicate/oversized/truncated ELF and newc fixtures also pass refusal
+checks; positive staging uses neither added target-side executable. The earlier
+45-test run before the tool-contract adjustment remains preserved at its scope.
+Earlier failed independent verification remains preserved; repaired delivery
+requires a fresh independent verifier.

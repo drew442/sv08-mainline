@@ -4,6 +4,7 @@ from contextlib import redirect_stdout
 import io
 import json
 import os
+import struct
 from pathlib import Path
 import subprocess
 import tempfile
@@ -14,6 +15,7 @@ from scripts.build_h616_reimage_candidate import (
     REPO, WRITER, IMAGE_BYTES, SECTORS, TARGET_BYTES, V5_IMAGE_SHA256,
     V5_IMAGE_DISK_GUID, V5_IMAGE_PARTITIONS, build, digest,
     expected_image_layout, policy_fields, verify_signed_job,
+    elf_compiled_purpose, compiled_purpose_bytes,
 )
 from scripts.ed25519_build import ED25519_SOURCES, raw_public_key
 from tests.host_qemu_sd_network_emmc_write import (
@@ -690,6 +692,45 @@ class PhysicalPreflightTests(unittest.TestCase):
         for symbol in ('pwrite', 'write', 'fdatasync'):
             self.assertNotRegex(imports, rf'\b{symbol}(?:@|\s|$)')
         self.assertNotIn(b'READBACK bytes=', binary.read_bytes())
+
+    def test_native_elf_record_and_malformed_section_refusals(self):
+        result, binary = self.compile_case(f'#include "{WRITER}"\n')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(elf_compiled_purpose(binary), compiled_purpose_bytes(
+            'sv08-h616-signed-preflight-v1', '', '', trusted_initramfs=True,
+            recovery_handoff=True, synthetic_test=False))
+        raw = binary.read_bytes()
+        table = struct.unpack_from('<Q', raw, 40)[0]
+        count, names_index = struct.unpack_from('<HH', raw, 60)
+        names_start, names_size = struct.unpack_from('<QQ', raw, table + names_index * 64 + 24)
+        strings = raw[names_start:names_start + names_size]
+        purpose_name = strings.index(b'.sv08.h616-purpose\0')
+        section = next(index for index in range(count)
+                       if struct.unpack_from('<I', raw, table + index * 64)[0] == purpose_name)
+        bad_cases = {'truncated': bytearray(raw[:63]), 'missing': bytearray(raw)}
+        bad_cases['missing'][names_start + purpose_name] = ord('_')
+        for name, offset, fmt, value in (
+                ('wrong-class', 4, 'B', 1), ('wrong-endian', 5, 'B', 2),
+                ('relocatable', 16, 'H', 1), ('table-overflow', 40, 'Q', 2**63),
+                ('extended-name-index', 62, 'H', 65535),
+                ('wrong-section-type', table + section * 64 + 4, 'I', 8),
+                ('oversized-section', table + section * 64 + 32, 'Q', 2**63)):
+            changed = bytearray(raw)
+            struct.pack_into('<' + fmt, changed, offset, value)
+            bad_cases[name] = changed
+        duplicate = bytearray(raw)
+        other = 1 if section != 1 else 2
+        duplicate[table + other * 64:table + (other + 1) * 64] = raw[table + section * 64:table + (section + 1) * 64]
+        bad_cases['duplicate'] = duplicate
+        for name, changed in bad_cases.items():
+            with self.subTest(name=name):
+                binary.write_bytes(changed)
+                with self.assertRaisesRegex(ValueError, 'ELF'):
+                    elf_compiled_purpose(binary)
+        with binary.open('wb') as stream:
+            stream.truncate(4 * 1024 * 1024 + 1)
+        with self.assertRaisesRegex(ValueError, 'ELF exceeds'):
+            elf_compiled_purpose(binary)
 
     def test_signed_job_format_is_a_purpose_boundary(self):
         (REPO / 'local').mkdir(exist_ok=True)

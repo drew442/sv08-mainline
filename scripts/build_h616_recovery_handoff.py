@@ -22,6 +22,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 from scripts.build_sd_network_image import (append_commissioning_initramfs,
                                             boot_script, commissioning_bundle)
+from scripts.build_h616_reimage_candidate import verify_compiled_writer
 
 MARKER = b'SV08-REIMAGE-ONCE\n'
 FIT_ADDR = 0x48000000
@@ -102,6 +103,7 @@ def build(work, kernel, initrd, dtb, bundle_root, server, export, claim_port):
                                  manifest.get('trusted_initramfs') is not True or
                                  manifest.get('recovery_handoff') is not True))):
         raise ValueError('Signed job purpose and compiled handoff mode mismatch')
+    compiled_purpose_sha256 = verify_compiled_writer(bundle[0], manifest)
     job_id = job['job_id']
     work.mkdir(mode=0o700, parents=True)
     shutil.copyfile(kernel, work / 'Image')
@@ -151,6 +153,7 @@ def build(work, kernel, initrd, dtb, bundle_root, server, export, claim_port):
                          'h12-attended-candidate'),
               'synthetic_test': synthetic, 'job_id': job_id,
               'preflight_only': preflight_only, 'job_format': expected_format,
+              'compiled_purpose_sha256': compiled_purpose_sha256,
               'writer_sha256': manifest['binary_sha256'],
               'initramfs_sha256': hashes['initrd.img'],
               'fit_sha256': hashlib.sha256(fit).hexdigest(),
