@@ -122,15 +122,99 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ppf-01",
+          "document": "docs/hardware/host-h616-physical-preflight.md",
+          "document_sha256": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610",
+          "environment": "offline",
+          "limitations": "Offline fixture signatures and expired lab job only; no services/media/real keys/jobs. Live-adapter fixtures capture mutation boundaries and do not prove physical stage/arm/activation. Compiled ELF evidence depends on independently reviewed external artifact hash; not arbitrary-code authentication. Legacy binaries need rebuilt reviewed artifacts. Static memory reserves are assumptions; H616 relocation/DRAM reliability and physical urh-04/05 pending. Fresh independent delivery verification required.",
+          "method": "47 affected unittest checks passed37.608s, with actual shared staging and unchanged live stage/arm/activation consumers through captured media boundaries; native readonly/marker/finalizer and strict ELF64/gzip-newc negatives. Real pinned-input ARM64 preflight compile/append/FIT plus streaming verifier: FIT48,899,052B; initramfs15,444,207B; uncompressed54,857,728B; peak scratch307,949,568B, retained49,041,408B; static memory565,388,663B vs1GiB. Exact logs/handoff/receipts retained in local/feature-workflow/probes/h616-physical-preflight/repair-20260930/.",
+          "profile": null,
+          "source_commit": "035b36ffbc29f511e413efda6d2f6d370a5193a4",
+          "source_sha256": {
+            "docs/hardware/host-h616-physical-preflight.md": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610",
+            "scripts/build_h616_recovery_handoff.py": "9e838ad07590ae3772a15b3e496610d3a55b0d331ffbd48190838420d3f3a4f4",
+            "scripts/build_h616_reimage_candidate.py": "8b9c48a39139ff15a61fc950f2225fe15825c46e71a1fb339dea950ddb5b440b",
+            "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+            "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "71a6d95b27f265ff158e8ac5c499d7fd2623bc9f11c0fd8ea884491a921915d7",
+            "tests/test_h616_live_stage_cli.py": "4c0f70f16480d32ad75e77396893a7b2bb9a98f4f22a8de24780820854047a6a",
+            "tests/test_h616_recovery_handoff.py": "f6496265ee3891760ce7280a64ec83b7cc9b29c111a14eefaaa1508e8d8d1dd3",
+            "tests/test_h616_reimage_candidate.py": "8776bc24111db04e74a96af94d78741d9341e41cbe6d1b4ea3c502bf3927c223",
+            "tests/test_prepare_h616_reimage_job.py": "469387667f9196ee4874f8e3d4e68e2fd7d3159b19ddac5379d2a81933eb05f9",
+            "tests/test_recovery_handoff_stage.py": "5974b6ef8b162565de496db611eb7902ccca716e14d456212facb76987ace607"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ppf-02",
+          "document": "docs/hardware/host-h616-physical-preflight.md",
+          "document_sha256": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610",
+          "environment": "offline",
+          "limitations": "Offline fixture signatures and expired lab job only; no services/media/real keys/jobs. Live-adapter fixtures capture mutation boundaries and do not prove physical stage/arm/activation. Compiled ELF evidence depends on independently reviewed external artifact hash; not arbitrary-code authentication. Legacy binaries need rebuilt reviewed artifacts. Static memory reserves are assumptions; H616 relocation/DRAM reliability and physical urh-04/05 pending. Fresh independent delivery verification required.",
+          "method": "47 affected unittest checks passed37.608s, with actual shared staging and unchanged live stage/arm/activation consumers through captured media boundaries; native readonly/marker/finalizer and strict ELF64/gzip-newc negatives. Real pinned-input ARM64 preflight compile/append/FIT plus streaming verifier: FIT48,899,052B; initramfs15,444,207B; uncompressed54,857,728B; peak scratch307,949,568B, retained49,041,408B; static memory565,388,663B vs1GiB. Exact logs/handoff/receipts retained in local/feature-workflow/probes/h616-physical-preflight/repair-20260930/.",
+          "profile": null,
+          "source_commit": "035b36ffbc29f511e413efda6d2f6d370a5193a4",
+          "source_sha256": {
+            "docs/hardware/host-h616-physical-preflight.md": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610",
+            "scripts/build_h616_recovery_handoff.py": "9e838ad07590ae3772a15b3e496610d3a55b0d331ffbd48190838420d3f3a4f4",
+            "scripts/build_h616_reimage_candidate.py": "8b9c48a39139ff15a61fc950f2225fe15825c46e71a1fb339dea950ddb5b440b",
+            "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+            "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "71a6d95b27f265ff158e8ac5c499d7fd2623bc9f11c0fd8ea884491a921915d7",
+            "tests/test_h616_live_stage_cli.py": "4c0f70f16480d32ad75e77396893a7b2bb9a98f4f22a8de24780820854047a6a",
+            "tests/test_h616_recovery_handoff.py": "f6496265ee3891760ce7280a64ec83b7cc9b29c111a14eefaaa1508e8d8d1dd3",
+            "tests/test_h616_reimage_candidate.py": "8776bc24111db04e74a96af94d78741d9341e41cbe6d1b4ea3c502bf3927c223",
+            "tests/test_prepare_h616_reimage_job.py": "469387667f9196ee4874f8e3d4e68e2fd7d3159b19ddac5379d2a81933eb05f9",
+            "tests/test_recovery_handoff_stage.py": "5974b6ef8b162565de496db611eb7902ccca716e14d456212facb76987ace607"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ppf-03",
+          "document": "docs/hardware/host-h616-physical-preflight.md",
+          "document_sha256": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610",
+          "environment": "offline",
+          "limitations": "Offline fixture signatures and expired lab job only; no services/media/real keys/jobs. Live-adapter fixtures capture mutation boundaries and do not prove physical stage/arm/activation. Compiled ELF evidence depends on independently reviewed external artifact hash; not arbitrary-code authentication. Legacy binaries need rebuilt reviewed artifacts. Static memory reserves are assumptions; H616 relocation/DRAM reliability and physical urh-04/05 pending. Fresh independent delivery verification required.",
+          "method": "47 affected unittest checks passed37.608s, with actual shared staging and unchanged live stage/arm/activation consumers through captured media boundaries; native readonly/marker/finalizer and strict ELF64/gzip-newc negatives. Real pinned-input ARM64 preflight compile/append/FIT plus streaming verifier: FIT48,899,052B; initramfs15,444,207B; uncompressed54,857,728B; peak scratch307,949,568B, retained49,041,408B; static memory565,388,663B vs1GiB. Exact logs/handoff/receipts retained in local/feature-workflow/probes/h616-physical-preflight/repair-20260930/.",
+          "profile": null,
+          "source_commit": "035b36ffbc29f511e413efda6d2f6d370a5193a4",
+          "source_sha256": {
+            "docs/hardware/host-h616-physical-preflight.md": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610",
+            "scripts/build_h616_recovery_handoff.py": "9e838ad07590ae3772a15b3e496610d3a55b0d331ffbd48190838420d3f3a4f4",
+            "scripts/build_h616_reimage_candidate.py": "8b9c48a39139ff15a61fc950f2225fe15825c46e71a1fb339dea950ddb5b440b",
+            "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+            "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "71a6d95b27f265ff158e8ac5c499d7fd2623bc9f11c0fd8ea884491a921915d7",
+            "tests/test_h616_live_stage_cli.py": "4c0f70f16480d32ad75e77396893a7b2bb9a98f4f22a8de24780820854047a6a",
+            "tests/test_h616_recovery_handoff.py": "f6496265ee3891760ce7280a64ec83b7cc9b29c111a14eefaaa1508e8d8d1dd3",
+            "tests/test_h616_reimage_candidate.py": "8776bc24111db04e74a96af94d78741d9341e41cbe6d1b4ea3c502bf3927c223",
+            "tests/test_prepare_h616_reimage_job.py": "469387667f9196ee4874f8e3d4e68e2fd7d3159b19ddac5379d2a81933eb05f9",
+            "tests/test_recovery_handoff_stage.py": "5974b6ef8b162565de496db611eb7902ccca716e14d456212facb76987ace607"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "6f13b3f15513463bb024eb5fa0e29bc4",
+        "session": "h616-physical-preflight-repair-20260930"
+      },
       "repeats": 0,
       "resumption": "Independent review confirmed staging purpose mismatch; separately approved eleven-file repair and representative composition resource evidence preserve the failed candidate and verdict.",
-      "status": "pending",
+      "status": "review",
       "title": "Implement distinct physical nonwriting preflight",
-      "verification": null
+      "verification": {
+        "decision_sha256": "2f9ffc2c95e9a15f6bb9edd519713b3ca618f77d84bf1140ed96362f20b8c580",
+        "evidence_sha256": "ad77289c543700afa67468ee90e1bc63a324239d2080a9430dd40663aa46323d",
+        "outcome": "passed",
+        "rationale": "Passed all three offline acceptance checks and all ten approved constraints at clean unchanged 035b36ffbc29f511e413efda6d2f6d370a5193a4. Inspected complete recorded run base 8c2e3a073d4cb79f0d0203c093234a4db6f51605..HEAD diff, including preserved failed candidate and repair: exactly eleven owned files, ordinary modes, no deletions/unlisted changes/gitlink updates. Eight indexed gitlinks match lock; only Monocypher initialized in candidate; other submodules not claimed exercised. Proposal, requirements, scope, complete decision, every submitted document/source hash, authoritative evidence equality, receipt/log hashes and retained FIT hash match. Resource receipt preserves precommit source_revision77bc61a; its actual compile/composition source hashes equal submitted HEAD, so reuse is source-bound rather than an assertion that old HEAD was the final commit. ppf-01: actual compiled preflight excludes reachable whole-device O_RDWR/image/environment transfer paths and bypass combinations, retains board/CID/controller/dev_t/trusted mount/job/bundle/one-shot guards, checks readonly exclusive block descriptor capacity/dev_t and both exhausted job-token environments, and closes on pass/refusal. ppf-03: actual durable marker unlink/fsync/syncfs/unmount/rmdir controls return readiness; early/uncertain refusal powers off, confirmed postconsumption refusal can return through retained absent-marker original recovery fallback; distinct PREFLIGHT_PASS and full-write exact PASS remain separate, reboot return pauses without retry. ppf-02: preparation/build/service/composition/shared staging bind canonical signed purpose, actual ELF compile evidence and embedded executable/job/signature/policy/expected hash/ORDER plus FIT/build pins. Verified unchanged live stage/arm/activation revalidate signed bundle, stage files and journal build pin before captured mutation boundaries; cross-purpose, invalid signature, nonboolean mode, recomputed unsigned binary labels, replaced embedded writer, expiry and changed pins are refused. Independent bounded probe reproduces before fafb87a valid signed preflight staging refusal and after035b36f same fixture admission;13 critical tests pass15.808s. Supplied47 affected tests pass37.608s; no unrelated broad/bulk/QEMU repeat. ELF purpose section is compile evidence under externally reviewed expected_build_sha256, not authentication of arbitrary ELF; legacy binaries require rebuild/review. Representative actual ARM64 compile/append/mkimage and streaming verifier evidence uses retained pinned inputs and expired fixture signatures: writer779072B, initramfs15444207B, uncompressed54857728B, FIT48899052B; scratch307949568B<512MiB, aggregate retained49041408B<64MiB. Input/retained-output hashes and arithmetic checked; fixed kernel/FIT/marker/script intervals do not overlap, conservative static565388663B leaves508353161B against1GiB. Runtime reserves are explicit assumptions; physical relocation/DRAM reliability are unmeasured. Source/documentation preserve recovery/rollback, physical RTC/fresh isolated job/ephemeral-key prerequisites, heater/idle/persistence/8GB/profile/pinning requirements and retirement. Original failed candidate/review/identities/hashes remain intact. urh-04 measured hardware entry, identity, marker/raw environment/recovery GUI return and urh-05 full-write/readback stay pending; GUI return does not establish normal-slot/SSH health. This certifies offline software delivery only, no hardware profile or release. Coordinator exact state+turn_context observation confirms separate feature_verifier_high/gpt-6.1-sol/high, approval never/danger-full-access; reviewer is neither author/planner/approver/evidence producer. Candidate clean before/after; diff/cached checks and affected local Markdown paths pass. Assigned scratch only: first probe stopped on disposable output path boundary1.05s, corrected invocation passes17.04s, two auxiliary runs total18.09s, generated filesystem-output upper accounting58687488B<256MiB; no repairs, shared records, hardware, private credential/dump access, downloads, agents or publication. Constraint coverage and bounded probe evidence retained in assigned repair-verification-20260930 scratch.",
+        "reviewer": "independent feature_verifier_high; requested and coordinator-observed GPT-6.1 Sol/high",
+        "session": "/root/verify_preflight_repair: fresh independent delivery review 2026-09-30; runtime id01a0f1e0-a830-7e03-aa44-6aae8b322b9e"
+      }
     }
   ],
   "title": "Add nonwriting physical handoff preflight"
