@@ -114,3 +114,15 @@ Resolve the shared signed path/dev_t across SD staging and RAM boot before
 production edits. Existing scope approval permits bounded offline investigation;
 physical H12 remains pending. This is an implementation/design dependency, not
 a request for another media move or SSH enrollment decision.
+
+
+The node-binding research hold is resolved by independent delegated approval of
+an explicit signed v2 phase contract at `a44d6c8`. V1 exact numeric binding stays
+unchanged. V2 keeps signed current staging numbers and requires the RAM writer
+to pin/revalidate one boot-local mapping of the same signed physical eMMC.
+One isolated implementation is active on `feature/h616-emmc-node-binding` with
+`project_implementer`, GPT-6.1 Sol / medium, actual runtime confirmed. A native
+thread-limit failure affected the optional planner launch; coordinator completed
+the bounded source/design work, and a slot subsequently freed for the native
+implementer. No CLI fallback ran. Fresh independent high delivery verification
+and exact physical high-consequence reviews remain required before H12 staging.

@@ -98,10 +98,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "602282af77fc4f198377bf85aa039063",
+        "session": "h616-emmc-node-binding-native-20260930"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Repair and independently verify eMMC node binding",
       "verification": null
     }
