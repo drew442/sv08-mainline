@@ -217,3 +217,15 @@ review refused enrollment without console fingerprint evidence and permits only
 a trusted match or explicit owner decision for this boot. Fresh authenticated
 Linux/RTC/environment intake and actual job preparation remain pending. No
 additional media move or power cycle is requested.
+
+
+H12 update, 2026-09-30: [authenticated fresh intake](host-h12-authenticated-intake-20260930.md)
+resolves the key-enrollment decision under the owner's address-based trust
+authorization. Current spare CID/GPT/environment CRCs agree with earlier intake;
+eMMC now enumerates as `/dev/mmcblk2`. Linux and RTC agree. Reviewed read-only p5
+inspection now confirms the original recovery script and 154,374,144 bytes free.
+Fixed mmcblk0 admission requires a reviewed repair for current mmcblk2 before
+staging. Reviewed environment exhaustion and physical urh-04/05 remain.
+The [approved preflight clarification](host-h616-physical-preflight.md) permits
+whole-target O_RDONLY identity/capacity/environment reads, with no O_RDWR or
+image/environment transfer writes. Marker consumption still changes p5 metadata.
