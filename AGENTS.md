@@ -19,6 +19,17 @@ electronics, starting with stock. No hardware combination is validated yet.
 - Cite primary documents with path/page or URL, revision where available, and
   access date. If sources disagree, document the discrepancy and required check.
 
+## Agent execution and ownership
+
+Use the [execution decision](docs/decisions/20260930-agent-execution-and-diagnostics.md)
+and `.codex/agent-guide.md` for full-access execution and bounded scratch diagnostics.
+They supersede historical read-only-runner requirements, not accepted product or
+hardware requirements. Workers keep their assigned deliverables and file ownership.
+The coordinator alone updates shared records, commits, publishes and operates the
+printer. Supporting experiments do not authorize role changes, self-verification,
+new agents, model/billing changes or hardware access. Preserve original candidates
+and historical evidence; never waive a check to make a full-access run pass.
+
 ## Implementation
 
 - Prefer upstream configuration and supported extension mechanisms. Add custom

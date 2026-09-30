@@ -13,17 +13,17 @@ SOL = 'gpt-6.1-sol'
 LUNA = 'gpt-6-luna'
 # None is deliberate: these profiles allow supported spawn-time effort selection.
 ROUTES = {
-    'project_lookup': (LUNA, 'medium', 'read-only'),
-    'project_narrow_implementer': (LUNA, 'medium', 'workspace-write'),
-    'project_researcher': (SOL, None, 'read-only'),
-    'project_planner': (SOL, 'medium', 'read-only'),
-    'project_implementer': (SOL, None, 'workspace-write'),
-    'project_integration': (SOL, None, 'workspace-write'),
-    'feature_approver': (SOL, 'medium', 'read-only'),
-    'feature_verifier': (SOL, 'medium', 'read-only'),
-    'feature_verifier_high': (SOL, 'high', 'read-only'),
-    'high_consequence_reviewer': (SOL, 'medium', 'read-only'),
-    'high_consequence_reviewer_high': (SOL, 'high', 'read-only'),
+    'project_lookup': (LUNA, 'medium'),
+    'project_narrow_implementer': (LUNA, 'medium'),
+    'project_researcher': (SOL, None),
+    'project_planner': (SOL, 'medium'),
+    'project_implementer': (SOL, None),
+    'project_integration': (SOL, None),
+    'feature_approver': (SOL, 'medium'),
+    'feature_verifier': (SOL, 'medium'),
+    'feature_verifier_high': (SOL, 'high'),
+    'high_consequence_reviewer': (SOL, 'medium'),
+    'high_consequence_reviewer_high': (SOL, 'high'),
 }
 RETIRED = ('feature-suggester', 'project-routine-implementer', 'project-test-runner')
 
@@ -47,7 +47,7 @@ class CodexAgentPolicyTests(unittest.TestCase):
         self.assertEqual(set(names), set(ROUTES))
         for path, data in loaded:
             with self.subTest(profile=path.name):
-                expected = {'name', 'description', 'model', 'sandbox_mode',
+                expected = {'name', 'description', 'model', 'agents',
                             'developer_instructions'}
                 if ROUTES[data['name']][1] is not None:
                     expected.add('model_reasoning_effort')
@@ -56,16 +56,19 @@ class CodexAgentPolicyTests(unittest.TestCase):
                 self.assertTrue(data['description'].strip())
                 self.assertIn('AGENTS.md', data['developer_instructions'])
                 self.assertIn('.codex/agent-guide.md', data['developer_instructions'])
-                self.assertEqual((data['model'], data.get('model_reasoning_effort'),
-                                  data['sandbox_mode']), ROUTES[data['name']])
+                self.assertEqual((data['model'], data.get('model_reasoning_effort')),
+                                 ROUTES[data['name']])
+                self.assertEqual(data['agents'], {'enabled': False})
 
     def test_child_defaults_without_main_model_or_billing_override(self):
         config = tomllib.loads((ROOT / '.codex/config.toml').read_text())
-        self.assertEqual(config, {'agents': {
-            'max_concurrent_threads_per_session': 2,
-            'default_subagent_model': SOL,
-            'default_subagent_reasoning_effort': 'low',
-        }})
+        self.assertEqual(config, {
+            'approval_policy': 'never', 'sandbox_mode': 'danger-full-access',
+            'agents': {
+                'max_concurrent_threads_per_session': 2,
+                'default_subagent_model': SOL,
+                'default_subagent_reasoning_effort': 'low',
+            }})
 
     def test_only_intended_workers_have_adjustable_effort(self):
         flexible = {d['name'] for _, d in profiles() if 'model_reasoning_effort' not in d}
@@ -76,14 +79,15 @@ class CodexAgentPolicyTests(unittest.TestCase):
                 self.assertEqual(data['model'], SOL)
                 self.assertIn('explicit spawn effort', data['developer_instructions'])
 
-    def test_independent_reviews_are_pinned_and_read_only(self):
+    def test_independent_reviews_keep_routing_and_inherit_execution(self):
         for _, data in profiles():
             if data['name'].startswith(('feature_approver', 'feature_verifier',
                                          'high_consequence_reviewer')):
                 with self.subTest(role=data['name']):
                     self.assertEqual(data['model'], SOL)
                     self.assertIn(data['model_reasoning_effort'], ('medium', 'high'))
-                    self.assertEqual(data['sandbox_mode'], 'read-only')
+                    self.assertNotIn('sandbox_mode', data)
+                    self.assertNotIn('approval_policy', data)
 
     def test_high_variants_preserve_the_full_review_contract(self):
         by_name = {d['name']: d for _, d in profiles()}
@@ -114,7 +118,7 @@ class CodexAgentPolicyTests(unittest.TestCase):
 
     def test_lookup_and_mechanical_editing_do_not_replace_engineering(self):
         by_name = {d['name']: d['developer_instructions'] for _, d in profiles()}
-        for phrase in ('Do not infer root causes', 'Do not edit files',
+        for phrase in ('Do not infer root causes', 'Do not modify tracked files',
                        'project_researcher or project_planner'):
             self.assertIn(phrase, by_name['project_lookup'])
         for phrase in ('A small diff alone', 'mechanical', 'project_implementer',
@@ -125,15 +129,15 @@ class CodexAgentPolicyTests(unittest.TestCase):
         text = dict((d['name'], d['developer_instructions']) for _, d in profiles())[
             'project_implementer']
         for phrase in ('Low is normal', 'Offline work in recovery/storage modules',
-                       'one bounded repair cycle', 'contact hardware',
+                       'one bounded repair cycle', 'contact printer hardware',
                        'independent verification'):
             self.assertIn(phrase, text)
 
-    def test_planner_has_no_self_approval_or_execution(self):
+    def test_planner_has_no_self_approval_or_production_implementation(self):
         text = dict((d['name'], d['developer_instructions']) for _, d in profiles())[
             'project_planner']
         for phrase in ('plan existing approved work', 'Do not reapprove existing work',
-                       'Do not edit files/records', 'feature_approver independently',
+                       'Do not modify tracked files or records', 'feature_approver independently',
                        'grants no execution authority'):
             self.assertIn(phrase, text)
 
@@ -158,6 +162,42 @@ class CodexAgentPolicyTests(unittest.TestCase):
                        'not formal reviewers', 'generic workers'):
             # Case-insensitive policy wording check, not enforcement.
             self.assertIn(phrase.lower(), guide.lower())
+
+    def test_shared_diagnostic_allowance_and_no_self_escalation(self):
+        guide = ' '.join((ROOT / '.codex/agent-guide.md').read_text().split())
+        for phrase in ('300 seconds cumulative', '256 MiB cumulative',
+                       '2 total:', 'remaining allowance', 'not native Codex config keys',
+                       'same unresolved failure', 'candidate unchanged'):
+            self.assertIn(phrase, guide)
+        for _, data in profiles():
+            text = data['developer_instructions']
+            for phrase in ('bounded self-service diagnostics',
+                           'Do not change your own model, effort, billing',
+                           'launch agents through tools, CLI or API',
+                           'do not read or expose credential material'):
+                self.assertIn(phrase, text)
+
+    def test_supporting_diagnostics_do_not_expand_role_deliverables(self):
+        text = {d['name']: d['developer_instructions'] for _, d in profiles()}
+        for name in ('project_lookup', 'project_researcher', 'project_planner'):
+            self.assertIn('Do not modify tracked files', text[name])
+        self.assertIn('minimal scratch', text['project_researcher'])
+        self.assertNotIn('do not run builds or write fixtures', text['project_researcher'])
+        self.assertIn('Do not modify production code, tracked tests or requirements',
+                      text['project_integration'])
+        for name in ('feature_verifier', 'feature_verifier_high'):
+            self.assertIn('Do not repair', text[name])
+            self.assertIn('separate session from the implementer', text[name])
+
+    def test_execution_decision_and_deployment_guide_are_linked(self):
+        decision = ROOT / 'docs/decisions/20260930-agent-execution-and-diagnostics.md'
+        runbook = ROOT / 'docs/development/agent-execution.md'
+        self.assertTrue(decision.is_file())
+        self.assertTrue(runbook.is_file())
+        self.assertIn('live role adherence', decision.read_text())
+        self.assertIn('not a claim that these live checks have run', runbook.read_text())
+        self.assertIn('300 seconds', runbook.read_text())
+        self.assertIn('scratch data', decision.read_text().lower())
 
     def test_benchmark_transcription_shape_and_unknown_times(self):
         rows = chart_rows()

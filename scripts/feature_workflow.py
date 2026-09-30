@@ -29,6 +29,11 @@ REPO = Path(__file__).resolve().parents[1]
 APPROVED = {'approved', 'approved-with-constraints'}
 ACTIVE = {'running', 'review'}
 PRIVATE = {'local', 'backups', 'artifacts', 'build', 'dist', '.git', '.venv'}
+# These tracked project policies are public evidence, unlike personal Codex state.
+PUBLIC_CODEX_FILES = frozenset({
+    '.codex/README.md', '.codex/config.toml',
+    '.codex/agent-guide.md', '.codex/current-goals.md',
+})
 
 
 class WorkflowError(ValueError):
@@ -80,7 +85,7 @@ def public_path(root, name, *, exists=True):
             relative.parts and relative.parts[0] not in PRIVATE, 'Use a public repository path')
     require(not any(part.startswith('.env') for part in relative.parts), 'Private environment path')
     if relative.parts[0] == '.codex':
-        require(str(relative) == '.codex/README.md' or len(relative.parts) == 3 and
+        require(str(relative) in PUBLIC_CODEX_FILES or len(relative.parts) == 3 and
                 relative.parts[1] in {'agents', 'schemas', 'templates'}, 'Private Codex configuration path')
     path = root / relative
     require(not any(p.is_symlink() for p in (path, *path.parents) if p != root.parent),
@@ -334,9 +339,12 @@ class Workflow:
         return {'feature': record['id'], 'kind': record['kind'], 'task': task,
                 'proposal': record['proposal'], 'requirements': record['requirements'],
                 'decision': record['decision'], 'checks': [c for c in record['checks'] if c['id'] in task['checks']],
-                'instruction': 'Read .codex/README.md. Implement only this approved offline task; '
-                'return evidence for independent review. Do not contact hardware or publish. '
-                'After completion/blocking, the coordinator selects the next ready task.'}
+                'instruction': 'Read .codex/README.md and .codex/agent-guide.md. Work only on this '
+                'approved offline task within the assigned role and file ownership. '
+                'Use bounded self-service diagnostics only in coordinator-assigned scratch '
+                'space with the remaining allowance; return evidence for independent review. '
+                'Do not contact printer hardware, change shared records, commit, publish '
+                'or spawn agents. After completion/blocking, the coordinator selects the next ready task.'}
 
     def worktree(self, path):
         path = Path(path).resolve()
