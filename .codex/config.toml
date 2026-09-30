@@ -1,2 +1,9 @@
+# Full access is execution capability, not permission to change roles.
+# Apply only in the owner-authorized development environment; see agent-guide.md.
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
 [agents]
 max_concurrent_threads_per_session = 2
+default_subagent_model = "gpt-6.1-sol"
+default_subagent_reasoning_effort = "low"
