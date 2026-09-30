@@ -3,6 +3,7 @@ import copy
 from contextlib import redirect_stdout
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -639,6 +640,286 @@ class ManagedFinalizerTests(unittest.TestCase):
                 exe=Path(work)/status
                 compile_finalizer_harness(exe,handoff=True,capture=False,compiler=compiler,status=status,static=True)
                 self.assertIn(b'\x7fELF',exe.read_bytes()[:4])
+
+
+class PhysicalPreflightTests(unittest.TestCase):
+    FLAGS = ['-DSV08_H616_COMMISSIONING=1', '-DSV08_H616_TRUSTED_INITRAMFS=1',
+             '-DSV08_H616_RECOVERY_HANDOFF=1', '-DSV08_H616_PREFLIGHT_ONLY=1',
+             '-DSV08_H616_EXPECTED_CID="0123456789abcdef0123456789abcdef"',
+             '-DSV08_H616_EXPECTED_DEV_T="179:0"',
+             '-DSV08_H616_BOARD_COMPATIBLE="sovol,sv08-h616"',
+             '-DSV08_H616_CLAIM_SERVER="192.0.2.1"',
+             '-DSV08_IMAGE_NFS_SOURCE="192.0.2.1:/source"',
+             '-DSV08_JOB_ID="preflight-job"']
+
+    def compile_case(self, source, extra=()):
+        (REPO / 'local').mkdir(exist_ok=True)
+        work = tempfile.TemporaryDirectory(dir=REPO / 'local')
+        self.addCleanup(work.cleanup)
+        wrapper = Path(work.name) / 'case.c'
+        binary = Path(work.name) / 'case'
+        wrapper.write_text(source)
+        result = subprocess.run([
+            'cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-function',
+            '-Wno-unused-variable', '-Wno-unused-parameter',
+            '-Wno-misleading-indentation', *self.FLAGS, *extra,
+            f'-I{REPO / "upstream/monocypher/src"}',
+            f'-I{REPO / "upstream/monocypher/src/optional"}',
+            f'-I{WRITER.parent}',
+            '-o', str(binary), str(wrapper), *(str(path) for path in ED25519_SOURCES)],
+            capture_output=True, text=True)
+        return result, binary
+
+    def test_preflight_compile_rejects_test_bypasses(self):
+        source = f'#include "{WRITER}"\n'
+        for flag in ('-DSV08_H616_SYNTHETIC_TEST=1', '-DSV08_CLAIM_ONLY=1',
+                     '-DSV08_TEST_FAULT="before-write"', '-DSV08_SHA_SELFTEST=1',
+                     '-USV08_H616_COMMISSIONING', '-USV08_H616_TRUSTED_INITRAMFS',
+                     '-USV08_H616_RECOVERY_HANDOFF'):
+            with self.subTest(flag=flag):
+                result, _ = self.compile_case(source, [flag])
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Physical preflight requires', result.stderr)
+
+    def test_actual_preflight_main_has_no_target_transfer_imports(self):
+        result, binary = self.compile_case(f'#include "{WRITER}"\n',
+                                          ['-ffunction-sections', '-fdata-sections',
+                                           '-Wl,--gc-sections'])
+        self.assertEqual(result.returncode, 0, result.stderr)
+        imports = subprocess.check_output(['nm', '-u', str(binary)], text=True)
+        for symbol in ('pwrite', 'write', 'fdatasync'):
+            self.assertNotRegex(imports, rf'\b{symbol}(?:@|\s|$)')
+        self.assertNotIn(b'READBACK bytes=', binary.read_bytes())
+
+    def test_signed_job_format_is_a_purpose_boundary(self):
+        (REPO / 'local').mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            root = Path(temporary)
+            files, policy, job = signed_inputs(root)
+            signature = files['signature'].read_bytes()
+            verifier = files['key'].read_bytes()
+            raw_write = canonical_json(job)
+            self.assertEqual(verify_signed_job(raw_write, signature, verifier,
+                                               policy, now=1500)['format'],
+                             'sv08-h616-signed-reimage-v1')
+            with self.assertRaisesRegex(ValueError, 'Stale job or policy mismatch'):
+                verify_signed_job(raw_write, signature, verifier, policy, now=1500,
+                                  preflight_only=True)
+            job['format'] = 'sv08-h616-signed-preflight-v1'
+            raw_preflight = canonical_json(job)
+            files['job'].write_bytes(raw_preflight)
+            subprocess.run(['openssl', 'pkeyutl', '-sign', '-rawin', '-inkey',
+                            str(root / 'signer.pem'), '-in', str(files['job']), '-out',
+                            str(files['signature'])], check=True, capture_output=True)
+            preflight_sig = files['signature'].read_bytes()
+            self.assertEqual(verify_signed_job(raw_preflight, preflight_sig, verifier,
+                                               policy, now=1500,
+                                               preflight_only=True)['format'], job['format'])
+            with self.assertRaisesRegex(ValueError, 'Stale job or policy mismatch'):
+                verify_signed_job(raw_preflight, preflight_sig, verifier, policy, now=1500)
+            with self.assertRaisesRegex(ValueError, 'Preflight requires physical'):
+                build(root / 'reject', *files.values(), now=1500,
+                      synthetic_test=True, trusted_initramfs=True,
+                      recovery_handoff=True, preflight_only=True,
+                      source_server='10.0.2.2', source_export='/source')
+            with self.assertRaisesRegex(ValueError, 'Stale job or policy mismatch'):
+                build(root / 'reject-write', *files.values(), now=1500,
+                      synthetic_test=True)
+
+    def test_preflight_finalizer_requires_confirmed_marker(self):
+        source = (f'#define reboot captured_reboot\n#define sync captured_sync\n'
+                  f'#define pause captured_pause\n#define main writer_main\n'
+                  f'#include "{WRITER}"\n#undef main\n'
+                  'void captured_sync(void) {}\n'
+                  'int captured_reboot(int op) { printf("%s\\n", op==RB_AUTOBOOT?"AUTOBOOT":"POWER_OFF");return -1; }\n'
+                  'int captured_pause(void) { fflush(stdout);_exit(0); }\n'
+                  'int main(int argc,char **argv) { if(argc!=3)return 2;'
+                  'preflight_return_ready=atoi(argv[1]);finish(argv[2]);return 3; }\n')
+        result, binary = self.compile_case(source)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for confirmed, status, expected in [('0', 'PREFLIGHT_PASS', 'POWER_OFF'),
+                                            ('0', 'REFUSED_RECOVERY_MARKER', 'POWER_OFF'),
+                                            ('1', 'PREFLIGHT_PASS', 'AUTOBOOT'),
+                                            ('1', 'REFUSED_UNSAFE_BOOT_ENV', 'AUTOBOOT')]:
+            actual = subprocess.check_output([str(binary), confirmed, status], text=True)
+            self.assertEqual(actual.splitlines()[-1], expected)
+
+    def test_marker_consumption_requires_durable_unmount(self):
+        # Model only the already independently tested mount/identity boundaries.
+        # Keep actual main marker consumption, readiness assignment and finish.
+        writer_source = WRITER.read_text()
+        before, main_source = writer_source.rsplit('int main(void) {', 1)
+        main_source = main_source.replace('trusted_image_mount()', 'captured_trusted_mount()')
+        main_source = main_source.replace('board_compatible()', 'captured_board_compatible()')
+        main_source = main_source.replace('admitted_mmc_identity(&admitted_dev)',
+                                          'captured_identity(&admitted_dev)')
+        writer_source = (before + 'static int captured_trusted_mount(void);\n'
+                         'static int captured_board_compatible(void);\n'
+                         'static int captured_identity(dev_t *number);\n'
+                         'int main(void) {' + main_source)
+        source = f'''#define open captured_open
+#define openat captured_openat
+#define read captured_read
+#define fstat captured_fstat
+#define close captured_close
+#define mkdir captured_mkdir
+#define mount captured_mount
+#define unlinkat captured_unlinkat
+#define fsync captured_fsync
+#define syncfs captured_syncfs
+#define umount2 captured_umount2
+#define rmdir captured_rmdir
+#define fopen captured_fopen
+#define reboot captured_reboot
+#define sync captured_sync
+#define pause captured_pause
+#define main writer_main
+{writer_source}
+#undef main
+#undef fopen
+static int fault,marker_sent,sysfs_sent,closed;
+static int captured_trusted_mount(void) {{return fault!=6;}}
+static int captured_board_compatible(void) {{return 1;}}
+static int captured_identity(dev_t *number) {{*number=makedev(179,0);return fault!=7;}}
+FILE *captured_fopen(const char *path,const char *mode) {{
+ if(strcmp(path,"/proc/cmdline"))return NULL;
+ FILE *stream=tmpfile();if(!stream)return NULL;
+ fputs("sv08.h616_commissioning=1 sv08.h616_recovery_handoff=1 sv08.h616_preflight=1",stream);
+ rewind(stream);return stream;
+}}
+void captured_sync(void) {{}}
+int captured_reboot(int operation) {{
+ printf("%s\\n",operation==RB_AUTOBOOT?"AUTOBOOT":"POWER_OFF");return -1;
+}}
+int captured_pause(void) {{fflush(stdout);_exit(0);}}
+int captured_open(const char *path,int flags,...) {{
+ if(!strcmp(path,SV08_RECOVERY_PARTITION))return 100;
+ if(!strcmp(path,SV08_RECOVERY_PARTITION_SYSFS))return 101;
+ if(!strcmp(path,"/sv08-reimage-recovery"))return 102;
+ return -1;
+}}
+int captured_openat(int fd,const char *name,int flags,...) {{
+ if(fd==102&&!strcmp(name,"sv08-reimage"))return 103;
+ if(fd==103&&!strcmp(name,"armed"))return 104;
+ return -1;
+}}
+ssize_t captured_read(int fd,void *out,size_t length) {{
+ if(fd==101){{if(sysfs_sent++)return 0;memcpy(out,"179:5\\n",6);return 6;}}
+ if(fd==104){{if(marker_sent++)return 0;
+  const char marker[]="SV08-REIMAGE-ONCE\\n";
+  if(length<sizeof(marker)-1)return -1;
+  memcpy(out,marker,sizeof(marker)-1);return sizeof(marker)-1;}}
+ return -1;
+}}
+int captured_fstat(int fd,struct stat *st) {{
+ memset(st,0,sizeof(*st));
+ if(fd==100){{st->st_mode=S_IFBLK;st->st_rdev=makedev(179,5);return 0;}}
+ if(fd==104){{st->st_mode=S_IFREG;st->st_nlink=1;
+             st->st_size=sizeof("SV08-REIMAGE-ONCE\\n")-1;return 0;}}
+ return -1;
+}}
+int captured_close(int fd) {{closed++;return 0;}}
+int captured_mkdir(const char *path,mode_t mode) {{return 0;}}
+int captured_mount(const char *source,const char *target,const char *type,unsigned long flags,const void *data) {{return 0;}}
+int captured_unlinkat(int fd,const char *name,int flags) {{return fault==1?-1:0;}}
+int captured_fsync(int fd) {{return fault==2?-1:0;}}
+int captured_syncfs(int fd) {{return fault==3?-1:0;}}
+int captured_umount2(const char *path,int flags) {{return fault==4?-1:0;}}
+int captured_rmdir(const char *path) {{return fault==5?-1:0;}}
+int main(int argc,char **argv) {{if(argc!=2)return 2;fault=atoi(argv[1]);
+ return writer_main();}}
+'''
+        result, binary = self.compile_case(source)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for fault in range(8):
+            with self.subTest(fault=fault):
+                output = subprocess.check_output([str(binary), str(fault)], text=True).strip()
+                self.assertEqual(output.splitlines()[-1], 'AUTOBOOT' if fault == 0 else 'POWER_OFF')
+                self.assertIn('REFUSED_STALE_JOB' if fault == 0 else
+                              'REFUSED_SOURCE_MOUNT' if fault == 6 else
+                              'REFUSED_TARGET_ID' if fault == 7 else
+                              'REFUSED_RECOVERY_MARKER', output)
+
+    def test_preflight_target_readonly_opens_closes_and_checks_both_environments(self):
+        source = f'''#define open captured_open
+#define fstat captured_fstat
+#define ioctl captured_ioctl
+#define read captured_read
+#define pread captured_pread
+#define close captured_close
+#define pwrite captured_pwrite
+#define write captured_write
+#define main writer_main
+#include "{WRITER}"
+#undef main
+static unsigned char envs[2][SV08_ENV_BYTES];
+static int target_opens,target_closes,target_flags,case_number,transfers;
+int captured_open(const char *path,int flags,...) {{
+ if(!strcmp(path,SV08_TARGET)){{target_opens++;target_flags=flags;return case_number==7?-1:100;}}
+ if(!strcmp(path,SV08_TARGET_DEV_SYSFS))return 101;
+ return -1;
+}}
+int captured_fstat(int fd,struct stat *st) {{
+ if(fd!=100)return -1;memset(st,0,sizeof(*st));
+ st->st_mode=S_IFBLK;st->st_rdev=makedev(case_number==5?179:179,case_number==5?1:0);
+ return 0;
+}}
+int captured_ioctl(int fd,unsigned long request,...) {{
+ if(fd!=100||request!=BLKGETSIZE64)return -1;
+ va_list args;va_start(args,request);uint64_t *size=va_arg(args,uint64_t *);va_end(args);
+ *size=case_number==4?TARGET_BYTES-1:TARGET_BYTES;return 0;
+}}
+ssize_t captured_read(int fd,void *out,size_t n) {{
+ if(fd!=101)return -1;static int sent;
+ if(sent){{sent=0;return 0;}}sent=1;
+ const char *value="179:0\\n";if(n<6)return -1;memcpy(out,value,6);return 6;
+}}
+ssize_t captured_pread(int fd,void *out,size_t n,off_t off) {{
+ if(fd!=100||n!=SV08_ENV_BYTES)return -1;
+ int which=(uint64_t)off==sv08_env_offsets[0]?0:(uint64_t)off==sv08_env_offsets[1]?1:-1;
+ if(which<0)return -1;
+ if(case_number==6&&which==1)return SV08_ENV_BYTES-1;
+ memcpy(out,envs[which],n);return n;
+}}
+int captured_close(int fd) {{if(fd==100){{target_closes++;return case_number==8?-1:0;}}return 0;}}
+ssize_t captured_pwrite(int fd,const void *buf,size_t n,off_t off) {{transfers++;return -1;}}
+ssize_t captured_write(int fd,const void *buf,size_t n) {{transfers++;return -1;}}
+static void make_env(unsigned char *env,const char *token) {{
+ const char fields[]="sv08_env_layout=ab-8gb-v1\\0BOOT_ORDER=A B\\0BOOT_A_LEFT=0\\0BOOT_B_LEFT=0\\0";
+ memcpy(env+5,fields,sizeof(fields));
+ size_t at=5+sizeof(fields)-1;
+ snprintf((char *)env+at,SV08_ENV_BYTES-at,"sv08_reimage_arm=%s",token);
+ uint32_t crc=sv08_env_crc32(env+5,SV08_ENV_BYTES-5);
+ for(int i=0;i<4;i++)env[i]=(unsigned char)(crc>>(i*8));
+}}
+int main(int argc,char **argv) {{
+ if(argc!=2)return 2;case_number=atoi(argv[1]);
+ make_env(envs[0],"preflight-job");make_env(envs[1],"preflight-job");
+ if(case_number==1)envs[0][10]^=1;
+ if(case_number==2)envs[1][10]^=1;
+ if(case_number==3)make_env(envs[1],"other-job");
+ if(case_number==9)make_env(envs[0],"other-job");
+ const char *status=preflight_open_target(makedev(179,0));
+ printf("%s %d %d %d %d\\n",status,target_opens,target_closes,target_flags,transfers);
+ return 0;
+}}
+'''
+        source = '#include <stdarg.h>\n' + source
+        result, binary = self.compile_case(source)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for case, status in [(0, 'PREFLIGHT_PASS'), (1, 'REFUSED_UNSAFE_BOOT_ENV'),
+                             (2, 'REFUSED_UNSAFE_BOOT_ENV'), (3, 'REFUSED_UNSAFE_BOOT_ENV'),
+                             (4, 'REFUSED_INPUT'), (5, 'REFUSED_INPUT'),
+                             (6, 'REFUSED_UNSAFE_BOOT_ENV'), (7, 'REFUSED_INPUT'),
+                             (8, 'REFUSED_TARGET_CLOSE'), (9, 'REFUSED_UNSAFE_BOOT_ENV')]:
+            with self.subTest(case=case):
+                output = subprocess.check_output([str(binary), str(case)], text=True).strip()
+                observed, opens, closes, flags, transfers = output.split()
+                self.assertEqual((observed, opens, closes),
+                                 (status, '1', '0' if case == 7 else '1'))
+                self.assertEqual(transfers, '0')
+                self.assertEqual(int(flags) & 3, 0)  # O_RDONLY, never O_RDWR.
+                self.assertTrue(int(flags) & os.O_EXCL)
 
 
 if __name__ == '__main__':
