@@ -101,7 +101,7 @@
       "implementation": {
         "actor": "root/coordinator",
         "run": "602282af77fc4f198377bf85aa039063",
-        "session": "h616-emmc-node-binding-native-20260930"
+        "session": "h616-emmc-node-binding-cli-20260930"
       },
       "repeats": 0,
       "resumption": null,
