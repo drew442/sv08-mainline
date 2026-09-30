@@ -247,3 +247,14 @@ preceded signed map admission; candidate/verdict preserved and never executed.
 The corrected prospective stage performs full read-only admission first and
 requires actual owner p5-write authority/setup provenance. Separate review and
 current physical confirmation are pending. Physical urh04/05 and full goal remain open.
+
+
+The revised prospective p5 file stage passed independent high review with
+conditions; the earlier FAIL is preserved. [The complete urh-04 action plan](../docs/hardware/host-h12-urh04-operation-plan-20260930.md)
+binds the current spare and actual preflight artifact, separates file stage,
+environment preparation, marker activation, claim readiness and one boot/return,
+and excludes urh05/fullimage writing. Owner approval for this single urh04 scope
+and current setup confirmation have been requested under AGENTS hardware authority.
+No authorization receipt exists yet and no p5/boot-policy operation occurred.
+Bounded claim-service source preparation also completed without launching it.
+Expired inputs require fresh preparation and review; no automatic rearm/retry.

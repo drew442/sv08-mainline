@@ -130,3 +130,17 @@ mount. It has a separate review pending. Its sender requires an actual owner
 response authorizing this p5 file/metadata write and confirming current physical
 setup; neither the active goal nor address-based key trust supplies that authority.
 Staging, environment arming, activation and boot remain separate operations.
+
+
+The corrected prospective p5-stage script subsequently received independent
+high PASS WITH CONDITIONS. Exact script SHA-256:
+`d8ddb74c5068642af794367f3e0f5226b2da0242a5f062bb62c3500e3a6c36b3`;
+sender SHA-256:
+`1adaa5b12bbe39dac42fb5c87e702b5f45771b0606be72d4eaba5248e0c78289`.
+The original FAIL remains preserved. No owner action authorization or stage
+execution record exists at this boundary. The sender requires actual owner
+permission/setup provenance, and fresh coordinator admission must satisfy every
+review condition before execution. See the [complete prospective urh-04 plan](host-h12-urh04-operation-plan-20260930.md).
+Subsequent environment, marker, claim-service and boot operations still require
+their own exact reviews. A bounded claim-service source packet is prepared
+privately; no service has been launched or claim consumed.
