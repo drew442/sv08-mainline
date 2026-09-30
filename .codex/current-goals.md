@@ -156,3 +156,40 @@ The bounded repair remains within the approved nine-file scope: retain exact
 snapshot/GPT/descriptor and durability checks, accommodate legitimate p5
 ownership, and add an actual-main regression with kernel claim semantics.
 Physical H12 remains pending; the complete project goal remains active.
+
+
+The failed verdict is preserved in main `1cbdcbd` before resumption. A single
+`project_implementer`, Sol6.1/medium with observed runtime, now owns the same
+approved nine-file deliverable in isolated
+`feature/h616-emmc-node-binding-marker-repair`, based on integration `cef44b0`
+with the preserved candidate cherry-picked at `a582946`. No failed source was
+integrated into main. New final-source evidence and a fresh independent high
+verifier are required. Fresh read-only capacity also shows no single existing
+volatile filesystem can hold the full artifact; exact workspace planning and
+separate operation review remain prerequisites for physical staging.
+
+
+The mounted-p5 repair is frozen at `9d98550` on its isolated branch and submitted
+for fresh independent `feature_verifier_high` review, Sol6.1/high confirmed.
+Sixty relevant tests pass; eight modeled actual-main before/after cases show the
+original marker refusal and repaired passage to the existing expiry gate with
+no claim/transfer. Current ARM64 builds and all handoff hashes pass coordinator
+audit. Passing delivery and physical urh04/05 remain pending.
+A separate high-consequence review rejected the first volatile workspace script
+because its rollback could act after mount identity uncertainty; the original
+script/verdict are preserved. Revised source removes automatic rollback and
+stops for read-only reconciliation on any failure. A fresh separate high-tier
+review is active with confirmed Sol6.1/high runtime and exact role contract.
+No remount or other printer mutation has occurred under that preparation.
+
+
+Fresh independent Sol6.1/high delivery verification passed every approved
+node-binding check/constraint at `9d98550`; the accepted source was merged
+locally at `3223541` and its task is done. The strict completion gate checked
+the complete accepted source tree; coordinator goal-log updates were preserved
+separately during that check and restored after completion. No source gate was
+waived. The original failed candidate/verdict remain preserved. Sixty submitted
+regressions and six independent final-source critical tests support offline
+delivery; no physical RAM entry, p5 kernel mount, preflight return or whole-write
+acceptance is claimed. Reviewed volatile workspace preparation can proceed under
+its exact conditions; actual jobs/artifacts and physical operation gates remain.
