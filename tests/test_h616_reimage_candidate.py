@@ -15,7 +15,8 @@ from scripts.build_h616_reimage_candidate import (
     REPO, WRITER, IMAGE_BYTES, SECTORS, TARGET_BYTES, V5_IMAGE_SHA256,
     V5_IMAGE_DISK_GUID, V5_IMAGE_PARTITIONS, build, digest,
     expected_image_layout, policy_fields, verify_signed_job,
-    elf_compiled_purpose, compiled_purpose_bytes,
+    elf_compiled_purpose, compiled_purpose_bytes, runtime_compile_flags, V2_FORMAT,
+    RUNTIME_ADMISSION, verify_compiled_writer,
 )
 from scripts.ed25519_build import ED25519_SOURCES, raw_public_key
 from tests.host_qemu_sd_network_emmc_write import (
@@ -961,6 +962,360 @@ int main(int argc,char **argv) {{
                 self.assertEqual(transfers, '0')
                 self.assertEqual(int(flags) & 3, 0)  # O_RDONLY, never O_RDWR.
                 self.assertTrue(int(flags) & os.O_EXCL)
+
+
+def physical_v2_policy(node=2):
+    policy = synthetic_policy()
+    policy.update(format=V2_FORMAT, runtime_admission=RUNTIME_ADMISSION,
+                  target_device=f'/dev/mmcblk{node}', dev_t='179:8',
+                  board_compatible='fixture,offline-h616', image_sha256=V5_IMAGE_SHA256,
+                  image_layout=expected_image_layout(False, V5_IMAGE_SHA256))
+    return policy
+
+
+class NodeBindingPolicyTests(unittest.TestCase):
+    def test_strict_v2_and_legacy_schema(self):
+        for node in (0, 2):
+            policy = physical_v2_policy(node)
+            self.assertEqual(policy_fields(policy), policy)
+        for key, value in [('format', 'sv08-h616-commissioning-policy-v3'),
+                           ('runtime_admission', 'unsigned-override'),
+                           ('target_device', '/dev/mmcblk02'),
+                           ('target_device', '/dev/mmcblk-1'),
+                           ('target_device', '/dev/mmcblk10000000'),
+                           ('target_device', '/dev/mmcblk2p5'),
+                           ('target_device', '/dev/mmcblk2boot0'),
+                           ('target_device', '/dev/mmcblk2rpmb'),
+                           ('target_device', '/dev/disk/by-id/emmc'),
+                           ('board_compatible', 'test,synthetic-h616')]:
+            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                policy_fields(dict(physical_v2_policy(), **{key: value}))
+        with self.assertRaises(ValueError):
+            policy_fields(dict(physical_v2_policy(), extra=True))
+        missing = physical_v2_policy(); del missing['runtime_admission']
+        with self.assertRaises(ValueError): policy_fields(missing)
+        v1 = synthetic_policy()
+        with self.assertRaises(ValueError):
+            policy_fields(dict(v1, target_device='/dev/mmcblk2'))
+        with self.assertRaises(ValueError):
+            policy_fields(dict(v1, runtime_admission=RUNTIME_ADMISSION))
+
+    def test_v2_synthetic_builder_refuses_before_key_or_output(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            policy = root / 'policy'; policy.write_bytes(canonical_json(physical_v2_policy()))
+            with mock.patch('scripts.build_h616_reimage_candidate.private_file',
+                            return_value=policy.read_bytes()), self.assertRaisesRegex(ValueError, 'V2 requires'):
+                build(root / 'out', policy, root / 'missing', root / 'missing',
+                      root / 'missing', synthetic_test=True,
+                      trusted_initramfs=True, recovery_handoff=True,
+                      source_server='10.0.2.2', source_export='/fixture')
+            self.assertFalse((root / 'out').exists())
+
+
+BOOT_SNAPSHOT_HARNESS = r'''#define _GNU_SOURCE
+#include <stdarg.h>
+#define fopen captured_fopen
+#define open captured_open
+#define fstat captured_fstat
+#define ioctl captured_ioctl
+#define pread captured_pread
+#define read captured_read
+#define close captured_close
+#define opendir captured_opendir
+#define realpath captured_realpath
+#define openat captured_openat
+#define mkdir captured_mkdir
+#define mount captured_mount
+#define unlinkat captured_unlinkat
+#define fsync captured_fsync
+#define syncfs captured_syncfs
+#define umount2 captured_umount2
+#define rmdir captured_rmdir
+#define main writer_main
+#include "@WRITER@"
+#undef main
+#undef fopen
+#undef open
+#undef fstat
+#undef ioctl
+#undef pread
+#undef read
+#undef close
+#undef opendir
+#undef realpath
+#undef openat
+#undef mkdir
+#undef mount
+#undef unlinkat
+#undef fsync
+#undef syncfs
+#undef umount2
+#undef rmdir
+extern DIR *opendir(const char *);
+extern char *realpath(const char *,char *);
+extern FILE *fopen(const char *,const char *);
+extern int open(const char *,int,...);
+extern int fstat(int,struct stat *);
+extern ssize_t pread(int,void *,size_t,off_t);
+extern ssize_t read(int,void *,size_t);
+extern int close(int);
+static const char *fixture;
+static int markers,target_opens,target_closes,transfers,mutations,fault,target_flags;
+static unsigned char envs[2][SV08_ENV_BYTES];
+static const char *mapped(const char *path,char *out) {
+ if(!strncmp(path,"/sys/",5)){snprintf(out,4096,"%s%s",fixture,path);return out;}
+ return path;
+}
+FILE *captured_fopen(const char *path,const char *mode){char out[4096];return fopen(mapped(path,out),mode);}
+DIR *captured_opendir(const char *path){char out[4096];return opendir(mapped(path,out));}
+char *captured_realpath(const char *path,char *out){char tmp[4096];return realpath(mapped(path,tmp),out);}
+int captured_open(const char *path,int flags,...) {
+ if(!strcmp(path,SV08_TARGET)){target_opens++;target_flags=flags;return fault==7?-1:1000;}
+ if(!strcmp(path,SV08_RECOVERY_PARTITION))return 1001;
+ if(!strcmp(path,"/sv08-reimage-recovery"))return 1002;
+ char out[4096];return open(mapped(path,out),flags);
+}
+int captured_fstat(int fd,struct stat *st) {
+ if(fd<1000)return fstat(fd,st);
+ memset(st,0,sizeof(*st));
+ if(fd==1000||fd==1001){st->st_mode=S_IFBLK;st->st_rdev=fd==1000?boot_snapshot.dev:boot_snapshot.part_dev;
+ if((fault==5&&fd==1000)||(fault==14&&fd==1001))st->st_rdev++;return 0;}
+ if(fd==1002){st->st_mode=S_IFDIR;st->st_dev=boot_snapshot.part_dev+(fault==16);return 0;}
+ if(fd==1004){st->st_mode=S_IFREG;st->st_nlink=1;st->st_size=18;return 0;}
+ return -1;
+}
+int captured_ioctl(int fd,unsigned long request,...) {
+ if((fd!=1000&&fd!=1001)||request!=BLKGETSIZE64)return -1;
+ va_list args;va_start(args,request);uint64_t *size=va_arg(args,uint64_t *);va_end(args);
+ *size=fd==1001?536870912ULL-(fault==15):(fault==4?TARGET_BYTES-1:TARGET_BYTES);return 0;
+}
+ssize_t captured_pread(int fd,void *out,size_t n,off_t off) {
+ if(fd!=1000)return pread(fd,out,n,off);
+ for(size_t i=0;i<2;i++)if((uint64_t)off==sv08_env_offsets[i]&&n<=SV08_ENV_BYTES){
+ memcpy(out,envs[i],n);return n;}
+ const char *name=off==512?"primary":off==4096ULL*512?"entries":
+ (uint64_t)off==IMAGE_BYTES-512?"backup":(uint64_t)off==IMAGE_BYTES-33*512?"entries":NULL;
+ if(!name)return -1;
+ char path[4096];snprintf(path,sizeof(path),"%s/%s",fixture,name);
+ int source=open(path,O_RDONLY);if(source<0)return -1;
+ ssize_t result=pread(source,out,n,0);close(source);return result;
+}
+ssize_t captured_read(int fd,void *out,size_t n){
+ if(fd!=1004)return read(fd,out,n);
+ static int sent;if(sent++)return 0;
+ if(n<18)return -1;memcpy(out,"SV08-REIMAGE-ONCE\n",18);return 18;
+}
+int captured_close(int fd){if(fd==1000){target_closes++;return fault==8?-1:0;}
+ return fd>=1000?0:close(fd);}
+int captured_openat(int fd,const char *name,int flags,...){return fd==1002?1003:fd==1003?1004:-1;}
+int captured_mkdir(const char *path,mode_t mode){return 0;}
+int captured_mount(const char *source,const char *target,const char *type,unsigned long flags,const void *data){return 0;}
+int captured_unlinkat(int fd,const char *name,int flags){markers++;return 0;}
+int captured_fsync(int fd){return fault==10?-1:0;}
+int captured_syncfs(int fd){return fault==11?-1:0;}
+int captured_umount2(const char *path,int flags){return fault==12?-1:0;}
+int captured_rmdir(const char *path){return fault==13?-1:0;}
+static void make_env(unsigned char *env,const char *token){
+ const char fields[]="sv08_env_layout=ab-8gb-v1\0BOOT_ORDER=A B\0BOOT_A_LEFT=0\0BOOT_B_LEFT=0\0";
+ memcpy(env+5,fields,sizeof(fields));size_t at=5+sizeof(fields)-1;
+ snprintf((char *)env+at,SV08_ENV_BYTES-at,"sv08_reimage_arm=%s",token);
+ uint32_t crc=sv08_env_crc32(env+5,SV08_ENV_BYTES-5);
+ for(int i=0;i<4;i++)env[i]=(unsigned char)(crc>>(i*8));
+}
+int main(int argc,char **argv){
+ if(argc!=5)return 2;fixture=argv[1];fault=atoi(argv[2]);
+ dev_t number;int first=admitted_mmc_identity(&number);
+ if(first&&fault==20){
+  char replacement[1200],old_p5[1200],new_p5[1200],old_class[4096],new_class[4096];
+  snprintf(replacement,sizeof(replacement),"%s",boot_snapshot.block);
+  char *slash=strrchr(replacement,'/');strcpy(slash+1,"mmcblk3");
+  if(rename(boot_snapshot.block,replacement))return 4;
+  if(snprintf(old_p5,sizeof(old_p5),"%s/%.66s",replacement,boot_snapshot.partition+5)>=(int)sizeof(old_p5))return 4;
+  if(snprintf(new_p5,sizeof(new_p5),"%s/mmcblk3p5",replacement)>=(int)sizeof(new_p5))return 4;
+  if(rename(old_p5,new_p5))return 4;
+  if(snprintf(old_class,sizeof(old_class),"%s/sys/class/block/%.58s",fixture,boot_snapshot.target+5)>=(int)sizeof(old_class))return 4;
+  snprintf(new_class,sizeof(new_class),"%s/sys/class/block/mmcblk3",fixture);
+  if(unlink(old_class)||symlink(replacement,new_class))return 4;
+  if(snprintf(old_class,sizeof(old_class),"%s/sys/class/block/%.66s",fixture,boot_snapshot.partition+5)>=(int)sizeof(old_class))return 4;
+  snprintf(new_class,sizeof(new_class),"%s/sys/class/block/mmcblk3p5",fixture);
+  if(unlink(old_class)||symlink(new_p5,new_class))return 4;
+ }
+ if(first&&fault==21){
+  char moved[1200],link[1200],card[1200];
+  snprintf(moved,sizeof(moved),"%s-moved",boot_snapshot.controller);
+  if(rename(boot_snapshot.controller,moved)||symlink(moved,boot_snapshot.controller))return 4;
+  snprintf(card,sizeof(card),"%s%s",moved,boot_snapshot.card+strlen(boot_snapshot.controller));
+  snprintf(link,sizeof(link),"%s/device",boot_snapshot.block);
+  if(unlink(link)||symlink(card,link))return 4;
+ }
+ if(strcmp(argv[3],"-")){FILE *f=fopen(argv[3],"w");if(!f)return 3;fputs(argv[4],f);fclose(f);mutations++;}
+ int marker=first?consume_recovery_marker():0;
+ make_env(envs[0],"preflight-job");make_env(envs[1],"preflight-job");
+ if(fault==1)envs[0][10]^=1;if(fault==2)envs[1][10]^=1;
+ if(fault==3)make_env(envs[1],"other-job");
+ const char *status=first?preflight_target(number):"INITIAL_REFUSAL";
+ printf("%d %d %d %s %d %d %d %s %u:%u %zu\n",first,marker,markers,status,
+ target_opens,target_closes,target_flags,boot_snapshot.target,
+ major(boot_snapshot.dev),minor(boot_snapshot.dev),sizeof(boot_snapshot));
+ return transfers;
+}
+'''
+
+
+class BootSnapshotTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.root = Path(cls.temporary.name)
+        cls.binary = cls.root / 'snapshot'
+        cls.binaries = {}
+        src = cls.root / 'snapshot.c'
+        src.write_text(BOOT_SNAPSHOT_HARNESS.replace('@WRITER@', str(WRITER)))
+        flags = [flag for flag in PhysicalPreflightTests.FLAGS
+                 if not flag.startswith(('-DSV08_H616_EXPECTED_CID=', '-DSV08_H616_EXPECTED_DEV_T='))]
+        flags += ['-DSV08_H616_EXPECTED_CID="00000000000000000000000000000001"',
+                  '-DSV08_H616_EXPECTED_DEV_T="179:8"']
+        flags += runtime_compile_flags(physical_v2_policy())
+        # Isolated native syscall harness; production v2 never accepts synthetic mode.
+        result = subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
+                                 '-Wno-misleading-indentation', '-Wno-unused-function', '-Wno-unused-variable',
+                                 *flags, f'-I{WRITER.parent}',
+                                 f'-I{REPO / "upstream/monocypher/src"}',
+                                 f'-I{REPO / "upstream/monocypher/src/optional"}',
+                                 str(src), *(str(p) for p in ED25519_SOURCES),
+                                 '-o', str(cls.binary)], capture_output=True, text=True)
+        if result.returncode: raise AssertionError(result.stderr)
+        cls.binaries[(True, 2)] = cls.binary
+        for preflight, staged in [(True, 0), (False, 0), (False, 2)]:
+            mode_flags = [flag for flag in flags if not flag.startswith('-DSV08_H616_EXPECTED_DEV_T=')]
+            mode_flags += [f'-DSV08_H616_EXPECTED_DEV_T="179:{8 if staged == 2 else 0}"']
+            text = BOOT_SNAPSHOT_HARNESS.replace('@WRITER@', str(WRITER))
+            if not preflight:
+                mode_flags.remove('-DSV08_H616_PREFLIGHT_ONLY=1')
+                text = text.replace('const char *status=first?preflight_target(number):"INITIAL_REFUSAL";',
+                  'int write_fd=first?h616_open_write_target():-1;'
+                  'const char *status=write_fd>=0?"WRITE_ENTRY_PASS":"WRITE_ENTRY_REFUSAL";'
+                  'if(write_fd>=0)captured_close(write_fd);')
+            src.write_text(text)
+            exe = cls.root / f'snapshot-{preflight}-{staged}'
+            result = subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
+                                 '-Wno-misleading-indentation', '-Wno-unused-function', '-Wno-unused-variable',
+                    *mode_flags, f'-I{WRITER.parent}', f'-I{REPO / "upstream/monocypher/src"}',
+                    f'-I{REPO / "upstream/monocypher/src/optional"}', str(src),
+                    *(str(p) for p in ED25519_SOURCES), '-o', str(exe)], capture_output=True, text=True)
+            if result.returncode: raise AssertionError(result.stderr)
+            cls.binaries[(preflight, staged)] = exe
+
+    def fixture(self, node, minor):
+        import uuid
+        import zlib
+        root = Path(tempfile.mkdtemp(dir=self.root))
+        host = root / 'sys/bus/platform/devices/4022000.mmc/mmc_host'
+        card = host / f'mmc{node}/mmc{node}:0001'
+        block = card / f'block/mmcblk{node}'
+        p5 = block / f'mmcblk{node}p5'
+        p5.mkdir(parents=True)
+        (block / 'device').symlink_to(card)
+        for path, text in [(card / 'cid', '0' * 31 + '1'), (card / 'type', 'MMC'),
+                           (block / 'size', str(SECTORS)), (block / 'dev', f'179:{minor}'),
+                           (p5 / 'partition', '5'), (p5 / 'dev', f'179:{minor + 5}'),
+                           (p5 / 'start', str(4714397696 // 512)),
+                           (p5 / 'size', str(536870912 // 512)),
+                           (p5 / 'uevent', 'PARTUUID=' + V5_IMAGE_PARTITIONS[4][1])]:
+            path.write_text(text + '\n')
+        classes = root / 'sys/class/block'; classes.mkdir(parents=True)
+        (classes / block.name).symlink_to(block)
+        (classes / p5.name).symlink_to(p5)
+        entries = bytearray(16384)
+        for index, (name, guid, start, size) in enumerate(V5_IMAGE_PARTITIONS):
+            at = index * 128
+            entries[at:at + 16] = uuid.UUID('0fc63daf-8483-4772-8e79-3d69d8477de4').bytes_le
+            entries[at + 16:at + 32] = uuid.UUID(guid).bytes_le
+            struct.pack_into('<QQ', entries, at + 32, start // 512, (start + size) // 512 - 1)
+            encoded = name.encode('utf-16le'); entries[at + 56:at + 56 + len(encoded)] = encoded
+        (root / 'entries').write_bytes(entries)
+        for name, current, alternate, table in [('primary', 1, IMAGE_BYTES // 512 - 1, 4096),
+                                               ('backup', IMAGE_BYTES // 512 - 1, 1, IMAGE_BYTES // 512 - 33)]:
+            header = bytearray(512); header[:8] = b'EFI PART'
+            struct.pack_into('<IIIIQQQQ', header, 8, 0x10000, 92, 0, 0,
+                             current, alternate, 4128, IMAGE_BYTES // 512 - 34)
+            header[56:72] = uuid.UUID(V5_IMAGE_DISK_GUID).bytes_le
+            struct.pack_into('<QIII', header, 72, table, 128, 128, zlib.crc32(entries))
+            struct.pack_into('<I', header, 16, zlib.crc32(header[:92]))
+            (root / name).write_bytes(header)
+        return root, card, block, p5
+
+    def run_case(self, root, fault=0, change=None, *, preflight=True, staged=2):
+        return subprocess.check_output([str(self.binaries[(preflight, staged)]), str(root), str(fault),
+                 str(change[0]) if change else '-', change[1] if change else '-'], text=True).split()
+
+    def test_actual_snapshot_cross_phase_numbers_marker_and_environments(self):
+        for node, minor in [(0, 0), (2, 16)]:
+            root, card, block, p5 = self.fixture(node, minor)
+            staged = 2 if node == 0 else 0
+            observed = self.run_case(root, staged=staged)
+            self.assertEqual(observed[:4], ['1', '1', '1', 'PREFLIGHT_PASS'])
+            self.assertEqual(observed[7:9], [f'/dev/mmcblk{node}', f'179:{minor}'])
+            self.assertEqual(int(observed[6]) & os.O_ACCMODE, os.O_RDONLY)
+            write_entry = self.run_case(root, preflight=False, staged=staged)
+            self.assertEqual(write_entry[:4], ['1', '1', '1', 'WRITE_ENTRY_PASS'])
+            self.assertEqual(int(write_entry[6]) & os.O_ACCMODE, os.O_RDWR)
+            for unsafe in (1, 2, 3, 4, 5, 7):
+                self.assertEqual(self.run_case(root, unsafe, preflight=False, staged=staged)[3],
+                                 'WRITE_ENTRY_REFUSAL')
+            for fault, status in [(1, 'REFUSED_UNSAFE_BOOT_ENV'), (2, 'REFUSED_UNSAFE_BOOT_ENV'),
+                                  (3, 'REFUSED_UNSAFE_BOOT_ENV'), (4, 'REFUSED_INPUT'),
+                                  (5, 'REFUSED_INPUT'), (7, 'REFUSED_INPUT'),
+                                  (8, 'REFUSED_TARGET_CLOSE')]:
+                result = self.run_case(root, fault)
+                self.assertEqual(result[3], status)
+                self.assertEqual(int(result[6]) & os.O_ACCMODE, os.O_RDONLY)
+            for fault in (14, 15, 16):
+                refused = self.run_case(root, fault)
+                self.assertEqual(refused[1:3], ['0', '0'])
+            for fault in (10, 11, 12, 13):
+                result = self.run_case(root, fault)
+                self.assertEqual(result[1:3], ['0', '1'])
+
+    def test_actual_snapshot_never_replaces_changed_mapping_before_marker(self):
+        for relative, value in [('cid', 'f' * 32 + '\n'), ('type', 'SD\n')]:
+            root, card, block, p5 = self.fixture(2, 16)
+            observed = self.run_case(root, change=(card / relative, value))
+            self.assertEqual(observed[:4], ['1', '0', '0', 'REFUSED_TARGET_ID_CHANGED'])
+            self.assertEqual(observed[7:9], ['/dev/mmcblk2', '179:16'])
+        for where, relative, value in [('block', 'dev', '179:24\n'),
+                ('block', 'size', str(SECTORS - 1) + '\n'),
+                ('p5', 'dev', '179:31\n'), ('p5', 'partition', '4\n'),
+                ('p5', 'start', '1\n'), ('p5', 'size', '1\n'),
+                ('p5', 'uevent', 'PARTUUID=wrong\n')]:
+            root, card, block, p5 = self.fixture(0, 0)
+            changed = (block if where == 'block' else p5) / relative
+            observed = self.run_case(root, change=(changed, value))
+            self.assertEqual(observed[:4], ['1', '0', '0', 'REFUSED_TARGET_ID_CHANGED'])
+
+    def test_valid_within_boot_remapping_and_controller_move_cannot_replace_snapshot(self):
+        for fault in (20, 21):
+            root, card, block, p5 = self.fixture(2, 16)
+            observed = self.run_case(root, fault)
+            self.assertEqual(observed[:4], ['1', '0', '0', 'REFUSED_TARGET_ID_CHANGED'])
+            self.assertEqual(observed[7:9], ['/dev/mmcblk2', '179:16'])
+
+    def test_initial_identity_parent_duplicate_and_gpt_refusals_keep_marker(self):
+        for defect in ('cid', 'duplicate', 'parent', 'uuid', 'gpt'):
+            root, card, block, p5 = self.fixture(2, 16)
+            if defect == 'cid': (card / 'cid').write_text('f' * 32 + '\n')
+            elif defect == 'duplicate':
+                other = card / 'block/mmcblk3'; other.mkdir(); (other / 'size').write_text(str(SECTORS) + '\n')
+            elif defect == 'parent':
+                link = root / 'sys/class/block/mmcblk2p5'; link.unlink(); link.symlink_to(card)
+            elif defect == 'uuid': (p5 / 'uevent').write_text('PARTUUID=wrong\n')
+            else:
+                raw = bytearray((root / 'entries').read_bytes()); raw[16] ^= 1; (root / 'entries').write_bytes(raw)
+            result = self.run_case(root)
+            self.assertEqual(result[1:3], ['0', '0'])
+            if defect != 'gpt': self.assertEqual(result[0], '0')
 
 
 if __name__ == '__main__':

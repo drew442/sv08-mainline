@@ -96,5 +96,52 @@ class PreflightCompositionTests(unittest.TestCase):
                              hashlib.sha256(inputs[1].read_bytes()).hexdigest())
 
 
+class V2CompiledAlgorithmTests(unittest.TestCase):
+    def test_actual_algorithm_guard_and_no_transfer_preflight(self):
+        from scripts.build_h616_reimage_candidate import (compiled_purpose_bytes,
+            elf_compiled_purpose, verify_compiled_writer, runtime_compile_flags, WRITER, digest)
+        from tests.test_h616_reimage_candidate import (PhysicalPreflightTests,
+                                                       physical_v2_policy)
+        from tests.sv08_emmc_job import canonical_json
+        import subprocess
+        case = PhysicalPreflightTests()
+        self.addCleanup(case.doCleanups)
+        policy = physical_v2_policy()
+        raw_policy = canonical_json(policy)
+        job = {'format': 'sv08-h616-signed-preflight-v1',
+               'target_policy_sha256': digest(raw_policy)}
+        raw_job = canonical_json(job)
+        extra = [f'-DSV08_TARGET_POLICY_SHA256="{digest(raw_policy)}"',
+                 f'-DSV08_JOB_DESCRIPTOR_SHA256="{digest(raw_job)}"']
+        manifest = {'preflight_only': True, 'trusted_initramfs': True,
+                    'recovery_handoff': True, 'synthetic_test': False}
+        # Same signed digest/job, different actual algorithm. The v1 ELF cannot
+        # authorize v2 even when its unsigned metadata is relabeled.
+        for v2 in (False, True):
+            result, binary = case.compile_case(f'#include "{WRITER}"\n',
+                extra + (runtime_compile_flags(policy) if v2 else []))
+            self.assertEqual(result.returncode, 0, result.stderr)
+            root = binary.parent
+            (root / 'sd-network-init').write_bytes(binary.read_bytes())
+            (root / 'job.json').write_bytes(raw_job)
+            (root / 'commissioning-target-policy.json').write_bytes(raw_policy)
+            if not v2:
+                with self.assertRaisesRegex(ValueError, 'Actual ELF compiled purpose'):
+                    verify_compiled_writer(root, manifest)
+                continue
+            self.assertEqual(elf_compiled_purpose(binary), compiled_purpose_bytes(
+                job['format'], digest(raw_job), digest(raw_policy),
+                trusted_initramfs=True, recovery_handoff=True, synthetic_test=False,
+                policy=policy))
+            verify_compiled_writer(root, manifest)
+            imports = subprocess.check_output(['nm', '-u', str(binary)], text=True)
+            for forbidden in ('pwrite', ' write@', 'sendfile', 'splice'):
+                self.assertNotIn(forbidden, imports)
+            # Production compile itself refuses synthetic v2, independently of Python.
+            result, _ = case.compile_case(f'#include "{WRITER}"\n',
+                extra + runtime_compile_flags(policy) + ['-DSV08_H616_SYNTHETIC_TEST=1'])
+            self.assertNotEqual(result.returncode, 0)
+
+
 if __name__ == '__main__':
     unittest.main()

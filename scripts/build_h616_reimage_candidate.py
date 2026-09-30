@@ -34,6 +34,14 @@ TARGET_BYTES = SECTORS * 512
 FIELDS = {'format', 'cid', 'controller', 'card_type', 'sectors', 'dev_t',
           'target_device', 'board_compatible', 'claim_server', 'image_bytes',
           'image_sha256', 'image_layout'}
+V2_FORMAT = 'sv08-h616-commissioning-policy-v2'
+RUNTIME_ADMISSION = 'controller-cid-boot-snapshot-v1'
+
+
+def canonical_mmc_path(value):
+    return isinstance(value, str) and re.fullmatch(r'/dev/mmcblk(?:0|[1-9][0-9]{0,6})', value) is not None
+
+
 TEST_DISK_GUID = '8aae17d2-09b3-47ab-8e35-8e91e63cf2b0'
 TEST_PART_GUIDS = tuple(f'ed49c82b-2455-4709-8f41-66fd41664e{i:02d}' for i in range(1, 7))
 TEST_IMAGE_SHA256 = '7d17249b24f47f8d6fc501d0a5c07128b32ae7a9602f6c35ba6498fe913c70ec'
@@ -57,12 +65,17 @@ def digest(data):
 
 
 def compiled_purpose_bytes(job_format, job_sha256, policy_sha256, *,
-                           trusted_initramfs, recovery_handoff, synthetic_test):
-    return (f'sv08-h616-compiled-purpose-v1\nformat={job_format}\n'
+                           trusted_initramfs, recovery_handoff, synthetic_test, policy=None):
+    v2 = policy is not None and policy['format'] == V2_FORMAT
+    prefix = ('sv08-h616-compiled-purpose-v2\n' if v2 else
+              'sv08-h616-compiled-purpose-v1\n')
+    suffix = (f'policy_format={V2_FORMAT}\nruntime_admission={RUNTIME_ADMISSION}\n'
+              if v2 else '')
+    return (f'{prefix}format={job_format}\n'
             f'job_sha256={job_sha256}\npolicy_sha256={policy_sha256}\n'
             f'trusted_initramfs={int(trusted_initramfs)}\n'
             f'recovery_handoff={int(recovery_handoff)}\n'
-            f'synthetic_test={int(synthetic_test)}\n').encode() + b'\0'
+            f'synthetic_test={int(synthetic_test)}\n{suffix}').encode() + b'\0'
 
 
 def elf_compiled_purpose(path):
@@ -127,11 +140,18 @@ def verify_compiled_writer(root, manifest):
         raise ValueError('Compiled writer descriptor/policy exceeds 64 KiB')
     raw_job = (root / 'job.json').read_bytes()
     policy_raw = (root / 'commissioning-target-policy.json').read_bytes()
-    if json.loads(raw_job).get('format') != expected_format:
+    policy = policy_fields(json.loads(policy_raw))
+    job = json.loads(raw_job)
+    if canonical_json(policy) != policy_raw:
+        raise ValueError('Noncanonical compiled policy')
+    if policy['format'] == V2_FORMAT and (flags != [True, True, False] or
+            job.get('target_policy_sha256') != digest(policy_raw)):
+        raise ValueError('Signed v2 policy/compiled mode mismatch')
+    if job.get('format') != expected_format:
         raise ValueError('Signed job purpose and compiled writer mode mismatch')
     expected = compiled_purpose_bytes(expected_format, digest(raw_job), digest(policy_raw),
                                       trusted_initramfs=flags[0], recovery_handoff=flags[1],
-                                      synthetic_test=flags[2])
+                                      synthetic_test=flags[2], policy=policy)
     if elf_compiled_purpose(root / 'sd-network-init') != expected:
         raise ValueError('Actual ELF compiled purpose differs from signed bundle/mode')
     return digest(expected)
@@ -234,14 +254,19 @@ def exact_image_layout(value, *, synthetic_test, image_sha256):
 
 
 def policy_fields(value):
-    if not isinstance(value, dict) or set(value) != FIELDS or value['format'] != 'sv08-h616-commissioning-policy-v1':
+    v2 = isinstance(value, dict) and value.get('format') == V2_FORMAT
+    if (not isinstance(value, dict) or set(value) != FIELDS | ({'runtime_admission'} if v2 else set()) or
+            value['format'] not in ('sv08-h616-commissioning-policy-v1', V2_FORMAT) or
+            (v2 and (value['runtime_admission'] != RUNTIME_ADMISSION or
+                     value['board_compatible'] == 'test,synthetic-h616'))):
         raise ValueError('Malformed local target policy')
     if (not isinstance(value['cid'], str) or not re.fullmatch(r'[0-9a-f]{32}', value['cid']) or
             value['controller'] != '4022000.mmc' or value['card_type'] != 'MMC' or
             type(value['sectors']) is not int or value['sectors'] != SECTORS or
-            value['target_device'] != '/dev/mmcblk0' or
+            (not canonical_mmc_path(value['target_device']) if v2 else
+             value['target_device'] != '/dev/mmcblk0') or
             not isinstance(value['dev_t'], str) or
-            not re.fullmatch(r'[1-9][0-9]{0,4}:[0-9]{1,7}', value['dev_t']) or
+            not re.fullmatch(r'[1-9][0-9]{0,4}:' + (r'(?:0|[1-9][0-9]{0,6})' if v2 else r'[0-9]{1,7}'), value['dev_t']) or
             not isinstance(value['board_compatible'], str) or
             not re.fullmatch(r'[a-z0-9][a-z0-9,._-]{3,79}', value['board_compatible']) or
             value['board_compatible'] in ('linux,dummy-virt', 'allwinner,sun50i-h616') or
@@ -263,6 +288,7 @@ def policy_fields(value):
 
 def verify_signed_job(raw, signature, verification_key, target_policy, *, now=None,
                       preflight_only=False):
+    target_policy = policy_fields(target_policy)
     try:
         job = json.loads(raw)
     except (ValueError, UnicodeDecodeError) as error:
@@ -304,6 +330,23 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
     return job
 
 
+def runtime_compile_flags(policy):
+    """The same compile guard selects the algorithm and its purpose record."""
+    if policy['format'] != V2_FORMAT:
+        return []
+    layout = policy['image_layout']
+    records = []
+    for part in layout['partitions']:
+        guid = ','.join(str(byte) for byte in uuid.UUID(part['partuuid']).bytes_le)
+        records.append('{' + f'{{{guid}}},{part["offset_bytes"] // 512}ULL,' +
+                       f'{part["size_bytes"] // 512}ULL,"{part["name"]}"' + '}')
+    disk = ','.join(str(byte) for byte in uuid.UUID(layout['disk_guid']).bytes_le)
+    return ['-DSV08_H616_BOOT_SNAPSHOT_V2=1',
+            '-DSV08_H616_GPT_PARTITIONS={' + ','.join(records) + '}',
+            '-DSV08_H616_GPT_DISK_GUID={' + disk + '}',
+            f'-DSV08_H616_RECOVERY_PARTUUID="{layout["partitions"][4]["partuuid"]}"']
+
+
 def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
           synthetic_test=False, fault=None, claim_only=False,
           receipt_verification_key_path=None, trusted_initramfs=False,
@@ -335,6 +378,9 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     target_policy = policy_fields(json.loads(policy_raw))
     if canonical_json(target_policy) != policy_raw:
         raise ValueError('Local policy must use canonical JSON')
+    if target_policy['format'] == V2_FORMAT and (synthetic_test or fault or claim_only or
+            not trusted_initramfs or not recovery_handoff):
+        raise ValueError('V2 requires physical trusted recovery handoff')
     verification_key = private_file(key_path)
     if receipt_verification_key_path is None:
         if not synthetic_test:
@@ -376,6 +422,7 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
              '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections',
              f'-I{REPO / "upstream/monocypher/src"}',
              f'-I{REPO / "upstream/monocypher/src/optional"}']
+    flags.extend(runtime_compile_flags(target_policy))
     if synthetic_test:
         flags.append('-DSV08_H616_SYNTHETIC_TEST=1')
     if claim_only:

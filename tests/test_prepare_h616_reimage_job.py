@@ -239,5 +239,34 @@ class PrepareJobTests(unittest.TestCase):
                 server.server_close()
 
 
+class V2PreparationTests(unittest.TestCase):
+    inputs = PrepareJobTests.inputs
+    setUpClass = PrepareJobTests.setUpClass
+    def test_shared_preparation_signs_entire_v2_without_unsigned_switch(self):
+        from scripts import prepare_h616_reimage_job as module
+        from scripts.build_h616_reimage_candidate import digest, verify_signed_job
+        from tests.test_h616_reimage_candidate import physical_v2_policy
+        with tempfile.TemporaryDirectory(dir=LOCAL) as temporary:
+            root = Path(temporary)
+            args = self.inputs(root)
+            policy = physical_v2_policy()
+            args['policy_path'].write_bytes(canonical_json(policy))
+            args.update(synthetic_test=False, image_digest=module.sha256_file)
+            with (mock.patch.object(module, 'source_image', return_value=args['image_path']),
+                  mock.patch.object(module.os, 'geteuid', return_value=0)):
+                receipt = prepare(**args, execute=True, preflight_only=True)
+            raw = (args['state_dir'] / 'job.json').read_bytes()
+            self.assertEqual(receipt['policy_sha256'], digest(canonical_json(policy)))
+            self.assertEqual((args['state_dir'] / 'target-policy.json').read_bytes(), canonical_json(policy))
+            verify_signed_job(raw, (args['state_dir'] / 'job.sig').read_bytes(),
+                              args['job_verification_key'].read_bytes(), policy,
+                              now=1500, preflight_only=True)
+            changed = dict(policy, dev_t='179:16')
+            with self.assertRaisesRegex(ValueError, 'policy mismatch'):
+                verify_signed_job(raw, (args['state_dir'] / 'job.sig').read_bytes(),
+                                  args['job_verification_key'].read_bytes(), changed,
+                                  now=1500, preflight_only=True)
+
+
 if __name__ == '__main__':
     unittest.main()
