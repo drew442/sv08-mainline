@@ -145,3 +145,14 @@ GPT-6.1 Sol / high, is independently checking the unchanged candidate and
 approved constraints. Its actual runtime was observed. Integration waits for
 that verdict; H12 physical preflight/reimage and all printer gates remain open.
 No new job, key, boot-policy change or target write was performed.
+
+
+Independent high delivery review failed candidate `a1854e2`: marker-time
+whole-eMMC `O_RDONLY|O_EXCL` conflicts with the mounted p5 filesystem claim
+in pinned Linux6.18.51. One source-grounded actual-C syscall reproduction
+confirmed refusal before marker unlink for both v2 purposes and numbering
+directions. The candidate, source/log hashes and original verdict are preserved.
+The bounded repair remains within the approved nine-file scope: retain exact
+snapshot/GPT/descriptor and durability checks, accommodate legitimate p5
+ownership, and add an actual-main regression with kernel claim semantics.
+Physical H12 remains pending; the complete project goal remains active.
