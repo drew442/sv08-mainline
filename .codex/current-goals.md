@@ -258,3 +258,10 @@ and current setup confirmation have been requested under AGENTS hardware authori
 No authorization receipt exists yet and no p5/boot-policy operation occurred.
 Bounded claim-service source preparation also completed without launching it.
 Expired inputs require fresh preparation and review; no automatic rearm/retry.
+
+
+Owner setup confirmation received2026-09-30 23:42UTC: PSU off, USB serial powers
+the host, Ethernet connected, spare eMMC installed, factory module stored and no
+new irreplaceable spare data. Exact reply/provenance is privately recorded.
+This answers the physical-facts question only; the separately requested urh04
+metadata/boot-policy/action authorization remains pending. No write/boot action.

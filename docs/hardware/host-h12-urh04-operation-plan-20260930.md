@@ -74,3 +74,12 @@ Sources accessed2026-09-30: accepted
 [writer](../../tests/fixtures/sd-network-root/emmc_image_writer.c),
 [managed route](host-managed-boot-route.md), actual candidate/intake receipts and
 [agent execution policy](../../.codex/agent-guide.md).
+
+
+## Owner setup confirmation
+
+At2026-09-30 23:42UTC the owner confirmed the requested physical setup is unchanged
+and there is no new irreplaceable spare data. PSU-off, USB host power, Ethernet,
+installed spare and stored factory module are therefore owner-confirmed current
+facts. This reply answers only the setup question. Separate action approval for
+urh04 remains pending; no p5/environment/marker/boot operation has occurred.
