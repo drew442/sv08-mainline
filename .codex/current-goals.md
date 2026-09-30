@@ -126,3 +126,10 @@ thread-limit failure affected the optional planner launch; coordinator completed
 the bounded source/design work, and a slot subsequently freed for the native
 implementer. No CLI fallback ran. Fresh independent high delivery verification
 and exact physical high-consequence reviews remain required before H12 staging.
+
+
+H12 preparation also restored the [volatile staging tool closure](../docs/hardware/host-h12-runtime-tools-20260930.md)
+after an exact independent high-consequence review with a recorded separate-session
+fallback and verified Sol6.1/medium runtime. Version-only calls and all 29 installed
+hashes/modes pass; no environment/media write or reboot. The node-binding worker
+is still active; fresh independent delivery verification remains pending.
