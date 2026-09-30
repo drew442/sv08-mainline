@@ -1,0 +1,40 @@
+# Agent routing observation
+
+Use this detailed form for escalations, failures and representative samples.
+Keep it under ignored `local/feature-workflow/model-routing/<task-id>.md`.
+Routine tasks need only the role/effort, result and evidence in their handoff/result;
+do not add a measurement agent or duplicate acceptance records. Unknown is not zero.
+
+## Assignment
+
+- Task/feature and acceptance IDs; authorization reference:
+- Source/base revision and relevant input hashes:
+- Role, requested model/effort and reason for non-default effort:
+- Task complexity/uncertainty, consequence of error and permitted execution:
+- Owned files/resources, execution allowance and escalation/stop conditions:
+
+## Attempts (include every linked attempt)
+
+- Attempt ID, parent/task ID, role, client/version:
+- Requested versus runtime-confirmed model/effort; supporting runtime evidence:
+- Effective permissions and assigned resources:
+- Billing: included subscription / Codex credits / API key / unknown:
+- Usage source/interval; input total, cached input, output; is reasoning included?:
+- Observed credits/API cost and currency, or unknown; rate date/source:
+- Start/end; elapsed time; model work versus build/wait time:
+- Commands, result, source/dirty state, evidence paths/hashes and limitations:
+- Retry/escalation reason, changed diagnosis/method and next attempt ID:
+
+## Accepted outcome
+
+- Separate verifier/session and authoritative verification/evidence reference:
+- First-pass acceptance, rework/escalations and escaped defects:
+- Accepted / failed / blocked / abandoned; final source revision:
+- Total observed cost including coordinator, all children, rework and reviews:
+- Coverage gaps and parent totals that already include children (avoid double-counting):
+- Quality/authority violations and immediate corrective action:
+- Comparison task class, sample size and limits; change to routing justified?:
+
+Raw runtime transcripts remain private. Publish only sanitized summaries. Never
+insert telemetry into hashed approval/evidence/verification JSON. Benchmark cost
+per successful outcome is an aggregate ratio, not a per-task retry guarantee.

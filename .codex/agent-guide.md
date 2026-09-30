@@ -1,120 +1,157 @@
 # Project subagent guide
 
-These profiles support the [remaining work plan](../docs/remaining-work-plan.md)
-and the existing [feature workflow](README.md). They do not expand delegated
-approval or hardware authority. The coordinator owns task selection, integration,
-durable records, authorized hardware operations and commits/publication.
+Choose responsibility, reasoning effort and permissions separately. The coordinator
+owns selection, records, resource allocation, authorized hardware operations and
+publication. Roles are invoked for useful work, not a mandatory assembly line.
+The [benchmark assessment](../docs/development/codex-model-routing.md) justifies
+Sol low as the normal engineering default; it is not evidence of a deployed client
+or of hardware safety. Do not load that assessment in every child context.
 
-| Agent | Model / effort | Useful assignment |
-| --- | --- | --- |
-| `project_researcher` | GPT-6 Luna / medium | Trace one bounded code path or source question |
-| `feature_suggester` | GPT-6 Luna / medium | Select one useful task only when triage is needed |
-| `project_narrow_implementer` | GPT-6 Luna / medium | Make a small, already-scoped documentation, test or tooling correction |
-| `project_implementer` | GPT-6 Sol / medium | Implement an approved recovery, host administration, image assembly or printer configuration slice |
-| `project_integration` | GPT-6 Sol / medium | Exercise installed packages, GTK/web flows and ARM64 VM/image acceptance checks |
-| `feature_approver` | GPT-6 Sol / medium | Independently challenge scope, requirements and acceptance checks before substantive work |
-| `feature_verifier` | GPT-6 Sol / medium | Independently assess the complete delivery diff and evidence against approved checks |
-| `high_consequence_reviewer` | GPT-6 Sol / medium | Review the exact hardware, boot-policy, commissioning or release action before execution |
+## Role selection
 
-Luna handles narrow research and corrections; Sol handles complex implementation,
-integration and independent review. Medium is the default effort across profiles.
-Use Sol/high for a bounded review involving firmware writes, boot/recovery policy,
-heater or motion safety, data-loss risk, or an unresolved conflicting source;
-record why the higher effort is needed in the handoff. No Astra worker is launched
-by default. If a task exceeds its assigned model, return the specific gap and
-evidence to the coordinator for reassignment instead of retrying broadly. These
-are routing defaults, not measured cost or quality guarantees.
+| Agent | Model | Default effort | Assignment / escalation |
+| --- | --- | --- | --- |
+| `project_lookup` | GPT-6 Luna | medium | Exact lookup/extraction; no causal analysis or planning. |
+| `project_narrow_implementer` | GPT-6 Luna | medium | Mechanical edits with a supplied transformation/check; semantic fixes go to Sol. |
+| `project_researcher` | GPT-6.1 Sol | low (adjustable) | Source tracing and bounded diagnosis; medium for cross-system evidence, high for a specific hard unknown. |
+| `project_planner` | GPT-6.1 Sol | medium | Optional scope/design/acceptance planning; triage only when useful, never self-approval. |
+| `project_implementer` | GPT-6.1 Sol | low (adjustable) | Normal substantive implementation; medium for difficult implementation reasoning. |
+| `project_integration` | GPT-6.1 Sol | low (adjustable) | Bounded installed checks and reproduction; medium for cross-system diagnosis. |
+| `feature_approver` | GPT-6.1 Sol | medium | Separate approval of new substantive scope; reuse valid existing approval. |
+| `feature_verifier` | GPT-6.1 Sol | medium | Separate delivery review of full diff and evidence. |
+| `feature_verifier_high` | GPT-6.1 Sol | high | Same delivery review with difficult recovery/concurrency/security reasoning. |
+| `high_consequence_reviewer` | GPT-6.1 Sol | medium | Separate exact-operation review immediately before consequential action. |
+| `high_consequence_reviewer_high` | GPT-6.1 Sol | high | Same operation review when material uncertainty needs deeper reasoning. |
 
-## Assignments and cost controls
+Low is not a tiny-fix exemption. Use it for bounded substantive coding with settled
+requirements and meaningful tests, including offline recovery/storage modules.
+Select effort for reasoning difficulty, not file size or subsystem name. Select
+review strength for consequences and uncertainty. Select execution permissions
+from actual authorization: no worker profile may operate the printer. An approved
+fixture patch is not an approved physical write or change to owner requirements.
 
-Use an agent only for a concrete task that benefits from delegation. Small local
-edits do not need an entire team. Keep one implementation active. Research or
-review may run alongside independent work; normally use one child and at most
-two active children for distinct assignments. Run required independent approval
-and verification sequentially when parallel work would only duplicate context.
-Profiles do not start agents or schedules automatically.
+Prefer direct scripts for predetermined searches, hashes and test recipes. Luna
+is for easily checked transformations, not an obligatory first attempt at hard
+coding. Do not add a Luna-high rung. Choose medium directly for known difficult
+work; choose high for an identified unresolved reasoning problem, not unavailable
+physical evidence. Xhigh/max or another model need an explicit bounded assignment
+and usage allowance; no standing role or routine escalation is justified by these
+charts. No Astra worker, speed mode or billing-account change is introduced.
 
-Give each child a concise handoff rather than the full conversation:
+## Native model/effort configuration
+
+[Project settings](config.toml) set default spawned agents to Sol/low, including
+built-in workers that would otherwise inherit an expensive coordinator. They do
+not select the main session's model. Generic workers are not formal reviewers.
+
+The three adjustable profiles pin `model = "gpt-6.1-sol"` and intentionally OMIT
+`model_reasoning_effort`. The supported precedence for effort is the profile's
+value (when present), explicit spawn effort, project agent default, then parent.
+Thus an explicit medium/high spawn effort works for these three profiles; omitted
+effort resolves to the project low default. Always record the requested and actual
+setting. A prompt saying "think harder" is not proof of an effort override.
+
+Planner, Luna and review profiles explicitly pin effort. Spawn arguments cannot
+change their pinned values. Use the named high verifier/action-review variant,
+not a high request on its medium profile. For any exceptional pinned-role change,
+use a separate supported session with the full role contract and verified settings;
+never silently substitute a different model or review tier.
+
+This follows the official [subagent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+and [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference),
+checked 2026-09-30. Check actual role loading, model/effort and effective permissions
+in a fresh source-only client before deployment. Named profiles, adjustable effort
+and agent defaults need runtime evidence; local TOML tests cannot establish them.
+If unsupported, use an explicitly configured separate session with the same
+contract, or leave that assignment pending. Record any fallback; it is not a Sol
+6.1 result. Unavailable independent review blocks acceptance/action, not unrelated
+authorized offline work. Never edit user-global config to conceal a launch failure.
+
+## Handoffs, evidence and bounded retries
+
+Give one task packet, not the full conversation or all project documents:
 
 ```text
-Task and desired result:
-Approved feature/requirement and acceptance check IDs (when applicable):
-Source revision and relevant paths/evidence:
-Owned files, or read-only scope:
-Allowed commands/environment and fixture directory/ports (for execution):
-Existing results to reuse; unresolved question:
-Completion condition and result format:
-Shared human dependency IDs and offline work that can proceed while waiting:
+Task/outcome and existing authorization/acceptance IDs:
+Role; requested model/effort; reason for non-default effort:
+Revision, relevant paths/evidence and existing results to reuse:
+Owned files/worktree OR read-only scope; permitted commands/fixtures/ports:
+Known facts, uncertainty, consequence of error and exact next question:
+Completion checks, execution allowance, escalation/stop conditions:
+Expected result; shared human dependency IDs and offline alternatives:
 ```
 
-Supply paths and acceptance IDs, not pasted whole documents or long raw logs.
-First inspect existing evidence and current file hashes; rerun a check only when
-its inputs changed, it failed, or the existing result cannot answer the question.
-Use bounded searches/output and one shared physical task queue. A slow build or
-VM run is a reason to wait on its existing handle, not to launch duplicate work.
-Reserve Sol review for substantive acceptance; use direct coordinator checks for
-small documented corrections that the workflow classifies as normal review.
-Before an eMMC/MCU write, a boot-policy change, heater/motion commissioning, or
-a release decision, the coordinator must spawn a separate `high_consequence_reviewer`
-on Sol/medium with the exact proposed operation. Raise that review to Sol/high if board
-identity, artifact provenance, recovery, safety limits, or acceptance evidence
-remain materially uncertain. This is one independent review, not a second
-implementation lane. If named profiles are unavailable, use a separate Sol agent
-and pass it the profile instructions explicitly. Wait for its review before action.
+Read AGENTS.md and the applicable accepted requirements before behavioral changes.
+Keep stable policy references compact and task-specific results bounded. Reuse
+valid unchanged evidence, not stale conclusions. Parent and child must confirm
+role/model/effort and permissions at launch; record unavailable observations as
+unknown, never invent them. Workers return status (done/blocked/needs-escalation),
+source revision, changed paths, commands/results, evidence limitations and the
+smallest next action. Formal decisions/verifications keep their existing schemas.
 
-For existing approved work, pass its record; do not request product approval again.
-For new substantive work, use the existing proposal/approval/verification contracts.
-The suggester is optional, not a mandatory stage. Respect an owner pause on new
-features. Reviewers receive source and evidence, not the author's conclusions as
-justification. An implementer or integration evidence producer cannot verify its
-own delivery. Do not reuse their session for independent verification.
+A clear focused failure permits one bounded repair cycle within the assignment.
+Persistent failure, design ambiguity or scope growth returns to the coordinator
+with the actual patch/evidence; do not pay for a full restart or repeated unchanged
+attempts. Escalation changes effort or assignment, not authorization. Review-driven
+rework is a new bounded assignment. Missing hardware facts require observation,
+not extra reasoning. A slow build requires waiting on its existing handle.
 
-Workers report concise findings, affected paths, commands/results, evidence level
-and actionable blockers. Use the existing JSON formats for formal decisions and
-verification. Children return to the coordinator rather than delegating further.
-Reuse an existing research session for related questions; avoid duplicate scans.
-Review a stable revision or explicit diff, not files another worker is changing.
-Stop testing once the relevant checks pass unless new evidence warrants more.
+## Review independence and workflow
 
-Use the [current subclient goals](current-goals.md),
-[parallel assignments](../docs/development/parallel-work.md) and
-[coordinated human queue](../docs/hardware/coordinated-human-tasks.md). Children
-send physical dependencies to the coordinator under existing H IDs; they do not
-independently ask the owner for actions. The coordinator combines ready consumers,
-arms capture before power/media reconnection, and records one result with links
-for every applicable consumer. Reuse evidence only while its target and test
-conditions remain valid; retain separate thermal/motion safety gates.
+Use the existing [feature workflow](README.md). Existing approved work needs no new
+product approval. For new substantive scope, use a planner only when needed, then
+a separate approver, implementation, necessary execution evidence and independent
+verification. Small mechanical fixes to documented behavior use the short record
+and normal review; low effort alone never qualifies for that exception.
 
-Integration workers require assigned disposable resources. Only one worker owns
-a shared QEMU image, port or build directory at a time. A failed command is not
-permission to change production media or restart another worker's process.
-Hardware commissioning remains with the coordinator and the existing human task
-lists; offline workers can prepare configurations and procedures but cannot
-certify a printer through simulation.
+The planner/proposal author cannot approve their own proposal. The implementer,
+planner of that delivery and integration evidence producer cannot verify their own
+delivery. A researcher whose design/fix was adopted counts as an author. Use fresh
+review sessions with source and evidence, not inherited author conclusions. An
+approver may not be reused as the delivery verifier: avoid reviewing its own earlier
+acceptance judgment. The verifier may reproduce checks in an authorized disposable
+environment, but cannot repair the submitted code. Separate sessions reduce shared
+assumptions; they do not prove statistical independence.
 
-## Loading and limitations
+Choose medium OR high verification, not both as routine stages. High verification
+is warranted by subtle irreversible-state, concurrency or security reasoning or an
+unresolved material review issue. If a medium review needs escalation, transfer its
+findings to the high reviewer and preserve the failed/pending result. Never count
+a same-author rerun as independent acceptance. Approval and verification contracts
+remain unchanged, including full-diff, source/decision/evidence hash checks.
 
-Definitions live in [agents/](agents/). Their `name` fields identify the roles.
-The model and effort are explicit in each file to avoid inheriting an unnecessarily
-expensive coordinator setting. No project-wide model default is changed. These
-TOML defaults apply when a client loads these custom profiles; they do not change
-an already running chat or pre-registered agent role whose model/effort is fixed
-by its runtime. The coordinator must verify the effective role settings at launch.
-If the current session does not expose a new role, start a new session. If a
-client cannot load custom agents, pass the profile instructions, model and effort
-explicitly to a supported separate agent session. Report unavailable models and
-choose a supported fallback explicitly; do not claim the configured model ran
-without runtime evidence.
+Immediately before eMMC/MCU writes, boot-policy changes, heater/motion commissioning
+or release decisions, obtain a separate high-consequence review of the exact target,
+artifact, action and checks. Use the high variant directly when material uncertainty
+is known. Code verification does not replace this action review, owner authorization
+or execution evidence. Unresolved physical facts still stop the operation at high.
 
-Sandbox settings are defaults, not proof of isolation. Runtime permissions can
-override them; writable profiles also rely on assigned ownership. Enforce private
-backup/credential exclusion in the execution environment. A read-only verifier
-needing reproduction writes should use an authorized disposable environment;
-otherwise request execution evidence from the coordinator and state the limit.
+## Resources, measurement and migration
 
-Configuration format follows the official [Codex subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents),
-checked 2026-09-23. Profiles use standalone project TOML files with explicit model,
-reasoning effort, sandbox defaults and developer instructions. TOML/schema checks
-validate configuration structure, not actual model availability or future task
-quality. Tune these choices from observed retries and successful delivery, rather
-than adding specialist roles before there is a demonstrated need.
+Keep one implementation active and at most two open children. A research/review
+child may accompany independent useful work; do not launch idle roles. Only one
+owner uses a QEMU image, port, build tree or physical task at a time. Worktrees do
+not isolate credentials. Enforce sandbox/private-backup/credential/device exclusion
+in the execution environment; parent permissions may override profile defaults.
+Send physical dependencies to the coordinator's existing human queue, not directly
+to the owner. Continue eligible offline work while a physical dependency waits.
+
+Keep lightweight routing observations in task handoffs/results. Use the detailed
+[observation template](templates/agent-task-observation.md) for escalations, failures
+and representative samples, not as an extra agent stage. Count coordinator, children,
+rework and reviews through acceptance; unknown usage stays unknown. Monitor accepted
+outcomes and latency after rollout rather than requiring an easy-task-only pilot.
+
+Migration from the first draft:
+- `feature_suggester` becomes `project_planner` for planning as well as optional triage.
+- `project_routine_implementer` is absorbed into the normal adjustable `project_implementer`.
+- `project_test_runner` is removed: direct script first, `project_integration` when judgment is needed.
+- `project_lookup` separates Luna extraction from Sol investigation; `feature_verifier_high` adds explicit deeper delivery review.
+
+Update live assignments to the current names/settings; these are mappings, not
+runtime aliases. Stop/close old workers and restart clients that cache removed
+roles before dispatching new work. Preserve active worktrees and all historical
+review identities, decisions, source hashes and acceptance records. Older plans
+naming Sol or removed roles retain scope/dependencies but use this routing on the
+next assignment. The coordinator remains the only queue/Git writer. Role changes
+do not start a scheduler, an agent server, an automatic router or hardware work.

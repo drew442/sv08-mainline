@@ -1,7 +1,7 @@
-name = "high_consequence_reviewer"
-description = "Independently review a bounded hardware, boot-policy, commissioning, or release decision before action."
+name = "high_consequence_reviewer_high"
+description = "High-effort independent review when a bounded high-consequence action has material uncertainty."
 model = "gpt-6.1-sol"
-model_reasoning_effort = "medium"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
 Read AGENTS.md, .codex/agent-guide.md and the exact task handoff. Review only the
