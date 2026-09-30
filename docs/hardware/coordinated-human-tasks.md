@@ -187,3 +187,33 @@ No entry is marked done merely because its instructions exist. The coordinator
 records actual session results here or links a canonical existing evidence record
 before closing its consumers. Preparing an offline package remains useful while
 any human entry is pending.
+
+
+## H12 continuation — 2026-09-30
+
+The [nonwriting preflight](host-h616-physical-preflight.md) now has independent
+offline delivery acceptance at `035b36f`, merged locally with its completed
+[feature record](../features/h616-physical-preflight/record.json). The original
+failed candidate and review are retained. Forty-seven affected tests and thirteen
+independent critical checks passed; the representative FIT is 48,899,052 bytes.
+Static resource evidence does not prove H616 relocation, DRAM reliability or
+physical urh-04/05 acceptance. Legacy commissioning binaries lacking the new
+compiled-purpose evidence need rebuilding and a newly reviewed artifact hash.
+
+The approved urh-04 wording reconciliation permits an exclusive whole-device
+O_RDONLY descriptor for capacity/device identity and both raw environments.
+Image/environment transfer writes are excluded from the preflight executable;
+marker consumption still changes p5 metadata. This supersedes this queue's older
+"without whole-device target open" shorthand without marking any hardware check
+passed. Exact p5 stage, boot-policy arm and preflight boot each retain their
+separate target/artifact/recovery review and owner-authority gates.
+
+A fresh network-only observation through pinned Beelink access found SSH at
+`192.168.1.141` and the previously measured wired MAC. The offered volatile SSH
+fingerprint matches the one already awaiting the H12 identity decision. The
+coordinator requested that same pending owner decision with the exact fingerprint;
+no key enrollment or printer SSH login occurred. An earlier independent operation
+review refused enrollment without console fingerprint evidence and permits only
+a trusted match or explicit owner decision for this boot. Fresh authenticated
+Linux/RTC/environment intake and actual job preparation remain pending. No
+additional media move or power cycle is requested.

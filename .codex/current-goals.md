@@ -1,6 +1,6 @@
 # Current subclient goals
 
-Updated 2026-09-29. These are bounded assignments under the existing
+Updated 2026-09-30. These are bounded assignments under the existing
 [remaining-work plan](../docs/remaining-work-plan.md) and
 [parallel delivery plan](../docs/development/parallel-work.md). The owner has
 paused optional new features, but explicitly authorized the active goal to
@@ -11,6 +11,7 @@ evidence is delivered. It does not certify a printer or a release.
 
 | Goal | Role and model | Owned scope | Completion evidence | Physical dependency |
 | --- | --- | --- | --- | --- |
+| H616 nonwriting physical preflight — offline delivery done | `project_implementer`, GPT-6.1 Sol / medium; separate approver and fresh `feature_verifier_high`, GPT-6.1 Sol / high; actual runtime settings observed | Distinct signed preflight purpose, compiled writer/embedded-input staging binding, bounded readers and representative artifact resources | [Delivery evidence](../docs/hardware/host-h616-physical-preflight.md) and [completed record](../docs/features/h616-physical-preflight/record.json): 47 affected tests, 13 independent critical tests and representative 48,899,052-byte FIT; accepted source `035b36f` merged locally. Failed candidate `fafb87a` and verdict preserved. | H12 key-enrollment decision and fresh authenticated inventory/RTC; separately reviewed physical urh-04, then urh-05. No physical result inferred from offline acceptance. |
 | Running SD recovery host-test — host-only physical boot passed | One project implementer on GPT-6 Sol/medium, separate feature approver and verifier, coordinator for artifacts/media | Explicit separately named SD composition of existing recovery userspace, pinned kernel/loader, wired DHCP and public-key SSH; readonly root/volatile runtime, no automatic eMMC/MCU/boot-policy or printer activity | [Approved scope](../docs/features/sd-recovery-host-test/proposal.md); complete userspace VM must keep normal init, GTK and authenticated SSH running, test restart/unauthorized access and root/hash refusal; exact artifact and source inventories | SanDisk is installed and host is running from SD; [H13 physical result](../docs/hardware/host-sd-recovery-host-first-boot-20260929.md) confirms GTK/native HDMI/SSH and read-only spare intake. Keep USB/Ethernet connected and PSU off; no further media move requested. Touch and printer outputs remain pending. |
 | Writerless full-eMMC reimage — in progress | Coordinator, with separate feature approval and delivery verification for substantive implementation | Select and compose one authenticated writer boot route (SD-resident initramfs or kexec from the running host), then integrate the H616 writer, exact v5 source and one-shot claim path without changing the default read-only diagnostic | Current read-only audit reconfirmed the compressed v5 input and streamed raw hash on Beelink. H616 adapter/descriptor admission and signed one-shot receipt pass synthetic QEMU. The pending boot proposal is paired with a [kexec route assessment](../docs/hardware/host-network-emmc-kexec-assessment-20260927.md): the v5 6.18 kernel has kexec disabled; no H616 kexec handoff is tested. Independent feature approval is required before behavioral implementation. | The installed spare has current CID/controller/GPT/environment and read-only p5 measurements. Existing trusted initramfs writer and p5 handoff passed offline review, but current SD-only U-Boot cannot select eMMC. Prepare a bounded remotely managed boot route and required stager tools, then independently review exact SD/eMMC artifacts and operations. No repeat SD move or USB writer request. Factory eMMC stored; all physical eMMC/boot-policy gates remain open. |
 | Reconcile recovery export record — done | `project_implementer`, GPT-6 Sol / medium, then separate `feature_verifier`, GPT-6 Sol / high | `docs/features/host-recovery-export-composition/record.json` and only the evidence bookkeeping needed to bind the merged implementation | Six schema-valid offline checks and independent verdict passed; `feature_workflow.py validate` and `next` succeeded at `db33359`. | H04/H07 remain open for physical UI, media and recovery tests. |
@@ -74,3 +75,21 @@ prepare actual jobs before fresh environment/RTC inspection. The
 [nonwriting physical preflight proposal](../docs/features/h616-physical-preflight/proposal.md)
 addresses the remaining urh-04 gap. Neither SD GUI nor offline code completes
 urh-04/05 or the writerless goal. No additional media move is requested.
+
+
+Continuation on 2026-09-30 completed the approved preflight repair and independent
+offline verification. Its task is done; the dispatcher has no ready offline task.
+The active thread goal remains the full project delivery: finish H12 under its
+physical gates, establish reliable host operation and safe attended printing,
+complete the host OS, then qualify actual stock hardware for release. The pause
+on new feature development and hardware/publication authorization boundaries
+remain in force.
+
+A fresh Beelink network scan found an SSH responder at the reserved printer
+address and the previously recorded wired MAC. It offered the same volatile
+ED25519 fingerprint as the earlier refused enrollment. This is target correlation,
+not independently authenticated printer access. The one H12 owner decision was
+requested with that exact fingerprint; no key has been enrolled or printer SSH
+login attempted. The earlier failed operation review and console-fingerprint
+requirement remain preserved. Fresh Linux/RTC/raw-environment inventory, real
+preflight jobs, staging, arming and commissioning wait for that identity gate.
