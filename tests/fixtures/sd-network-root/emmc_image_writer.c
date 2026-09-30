@@ -24,6 +24,18 @@
 #include <time.h>
 #include <unistd.h>
 #include "monocypher-ed25519.h"
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+#if !defined(SV08_H616_COMMISSIONING) || !defined(SV08_H616_TRUSTED_INITRAMFS) || \
+    !defined(SV08_H616_RECOVERY_HANDOFF) || defined(SV08_H616_SYNTHETIC_TEST) || \
+    defined(SV08_CLAIM_ONLY) || defined(SV08_TEST_FAULT) || \
+    defined(SV08_SHA_SELFTEST) || defined(SV08_IO_SELFTEST) || \
+    defined(SV08_CMDLINE_SELFTEST) || defined(SV08_BUNDLE_SELFTEST) || \
+    defined(SV08_CHALLENGE_SELFTEST) || defined(SV08_CLAIM_RECEIPT_SELFTEST) || \
+    defined(SV08_BINDING_SELFTEST) || defined(SV08_IDENTITY_SELFTEST) || \
+    defined(SV08_TRUSTED_MOUNT_SELFTEST) || defined(SV08_RECOVERY_ENV_SELFTEST)
+#error "Physical preflight requires trusted commissioning handoff without test bypasses"
+#endif
+#endif
 #if defined(SV08_H616_RECOVERY_HANDOFF)
 #if !defined(SV08_H616_COMMISSIONING)
 #error "Recovery handoff requires H616 commissioning identity policy"
@@ -111,6 +123,9 @@
 #define SV08_TEST_FAULT ""
 #endif
 static unsigned char buffer[CHUNK];
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+static int preflight_return_ready;
+#endif
 #if defined(SV08_H616_RECOVERY_HANDOFF)
 #if !defined(SV08_RECOVERY_ENV_SELFTEST)
 static unsigned char readback_buffer[CHUNK];
@@ -455,6 +470,37 @@ done:
   return ok;
 }
 #endif
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+/* This entire mode has no source-image or target-write path. Always close the
+ * read-only whole-device descriptor before reporting an outcome. */
+static const char *preflight_open_target(dev_t admitted_dev) {
+  struct stat target_stat;
+  uint64_t capacity=0;
+  int fd=-1;
+  const char *status="REFUSED_TARGET_ID_CHANGED";
+  fd=open(SV08_TARGET,O_RDONLY|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
+  status="REFUSED_INPUT";
+  if(fd<0||fstat(fd,&target_stat)||!S_ISBLK(target_stat.st_mode)||
+     target_stat.st_rdev!=admitted_dev||
+     !sysfs_dev_matches(&target_stat,SV08_TARGET_DEV_SYSFS)||
+     ioctl(fd,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES)goto done;
+  status="REFUSED_UNSAFE_BOOT_ENV";
+  for(size_t i=0;i<SV08_ENV_COUNT;i++)
+    if(!sv08_pread_all(fd,old_env[i],SV08_ENV_BYTES,sv08_env_offsets[i])||
+       !sv08_env_exhausted_for_job(old_env[i]))goto done;
+  status="PREFLIGHT_PASS";
+done:
+  if(fd>=0&&close(fd))status="REFUSED_TARGET_CLOSE";
+  return status;
+}
+static const char *preflight_target(dev_t admitted_dev) {
+  dev_t confirmed_dev;
+  if(!admitted_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
+     !read_sysfs_dev(SV08_TARGET_DEV_SYSFS,&confirmed_dev)||confirmed_dev!=admitted_dev)
+    return "REFUSED_TARGET_ID_CHANGED";
+  return preflight_open_target(admitted_dev);
+}
+#endif
 static int hash_file(const char *path,char hex[65]) {
   int fd=open(path,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);struct sha256 hash;
   if(fd<0)return 0;
@@ -632,10 +678,14 @@ static int expired(time_t started) {
   time_t now=time(NULL);
   return now<started || now-started>DEADLINE_SECONDS;
 }
-static void finish(const char *status) {
+static __attribute__((noreturn)) void finish(const char *status) {
   int operation=RB_POWER_OFF;
 #if defined(SV08_H616_RECOVERY_HANDOFF)
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+  if(preflight_return_ready)operation=RB_AUTOBOOT;
+#else
   if(!strcmp(status,"PASS"))operation=RB_AUTOBOOT;
+#endif
 #endif
   printf("%s%s\n",SV08_RESULT_PREFIX,status);fflush(stdout);sync();
   reboot(operation);
@@ -751,14 +801,22 @@ int main(int argc,char **argv) {
 }
 #else
 int main(void) {
+#if !defined(SV08_H616_PREFLIGHT_ONLY)
 #if defined(SV08_H616_TRUSTED_INITRAMFS)
   const char *source="/root/image.bin",*target=SV08_TARGET;
 #else
   const char *source="/image.bin",*target=SV08_TARGET;
 #endif
-  char cmd[1024],expected[65],actual[65],readback[65],descriptor_hash[65];
+#endif
+  char cmd[1024],descriptor_hash[65];
+#if !defined(SV08_H616_PREFLIGHT_ONLY)
+  char expected[65],actual[65],readback[65];
   struct stat ss,ts;uint64_t capacity=0;struct sha256 hash;dev_t admitted_dev,confirmed_dev;
   int in=-1,out=-1;FILE *f;time_t started=time(NULL);
+#else
+  dev_t admitted_dev;
+  FILE *f;time_t started=time(NULL);
+#endif
   if(mount("proc","/proc","proc",0,NULL)&&!mounted("/proc","proc","rw"))finish("REFUSED_PROC");
   if(mount("sysfs","/sys","sysfs",0,NULL)&&!mounted("/sys","sysfs","rw"))finish("REFUSED_SYS");
   if(mount("devtmpfs","/dev","devtmpfs",0,"mode=0755")&&!mounted("/dev","devtmpfs","rw"))finish("REFUSED_DEV");
@@ -766,6 +824,9 @@ int main(void) {
   if(!cmdline_has_token(cmd,SV08_MODE_PARAMETER)||!board_compatible())finish("REFUSED_ROOT");
 #if defined(SV08_H616_RECOVERY_HANDOFF)
   if(!cmdline_has_token(cmd,"sv08.h616_recovery_handoff=1"))finish("REFUSED_HANDOFF_MODE");
+#endif
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+  if(!cmdline_has_token(cmd,"sv08.h616_preflight=1"))finish("REFUSED_PREFLIGHT_MODE");
 #endif
 #if defined(SV08_H616_TRUSTED_INITRAMFS)
   if(!trusted_image_mount())finish("REFUSED_SOURCE_MOUNT");
@@ -775,6 +836,9 @@ int main(void) {
 #if defined(SV08_H616_RECOVERY_HANDOFF)
   if(!admitted_mmc_identity(&admitted_dev))finish("REFUSED_TARGET_ID");
   if(!consume_recovery_marker())finish("REFUSED_RECOVERY_MARKER");
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+  preflight_return_ready=1;
+#endif
 #endif
   if((long long)started<SV08_JOB_NOT_BEFORE||(long long)started>=SV08_JOB_EXPIRES)
     finish("REFUSED_STALE_JOB");
@@ -794,6 +858,9 @@ int main(void) {
 #if defined(SV08_CLAIM_ONLY)
   finish("CLAIM_ONLY_PASS");
 #endif
+#if defined(SV08_H616_PREFLIGHT_ONLY)
+  finish(preflight_target(admitted_dev));
+#else
 #if !defined(SV08_H616_RECOVERY_HANDOFF)
   if(!admitted_mmc_identity(&admitted_dev))finish("REFUSED_TARGET_ID");
 #endif
@@ -920,5 +987,6 @@ int main(void) {
 #endif
   printf("%sREADBACK bytes=%llu sha256=%s target=%s target_bytes=%llu\n",SV08_RESULT_PREFIX,IMAGE_BYTES,readback,target,(unsigned long long)capacity);
   finish("PASS");
+#endif
 }
 #endif

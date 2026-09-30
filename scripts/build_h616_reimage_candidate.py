@@ -179,7 +179,8 @@ def policy_fields(value):
     return value
 
 
-def verify_signed_job(raw, signature, verification_key, target_policy, *, now=None):
+def verify_signed_job(raw, signature, verification_key, target_policy, *, now=None,
+                      preflight_only=False):
     try:
         job = json.loads(raw)
     except (ValueError, UnicodeDecodeError) as error:
@@ -191,7 +192,9 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
     import time
     now = int(time.time()) if now is None else now
     issued, expires = job['issued_unix'], job['expires_unix']
-    if (job['format'] != 'sv08-h616-signed-reimage-v1' or
+    job_format = ('sv08-h616-signed-preflight-v1' if preflight_only else
+                  'sv08-h616-signed-reimage-v1')
+    if (job['format'] != job_format or
             not isinstance(job['job_id'], str) or not re.fullmatch(r'[a-z0-9-]{1,64}', job['job_id']) or
             type(issued) is not int or type(expires) is not int or
             not issued <= now < expires or expires - issued > 86400 or
@@ -222,13 +225,17 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
 def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
           synthetic_test=False, fault=None, claim_only=False,
           receipt_verification_key_path=None, trusted_initramfs=False,
-          source_server=None, source_export=None, recovery_handoff=False):
+          source_server=None, source_export=None, recovery_handoff=False,
+          preflight_only=False):
     root = Path(root).absolute()
     if (not safe_output_root(root, synthetic_test=synthetic_test) or
             (root.exists() and (not root.is_dir() or any(root.iterdir())))):
         raise ValueError('Fresh empty output required; physical candidates stay under local/')
     if (fault or claim_only) and not synthetic_test:
         raise ValueError('Fault injection and claim-only builds are synthetic QEMU only')
+    if preflight_only and (synthetic_test or fault or claim_only or not trusted_initramfs
+                           or not recovery_handoff):
+        raise ValueError('Preflight requires physical trusted recovery handoff without test bypasses')
     if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write',
                      'flush', 'readback', 'after-bulk', 'after-first-env'):
         raise ValueError('Unknown injected fault')
@@ -264,7 +271,8 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
             raise ValueError('Fixture verification keys cannot authorize a physical candidate')
     receipt_key_hex = raw_public_key(receipt_key_bytes).hex()
     raw_job, signature = private_file(job_path), private_file(signature_path)
-    job = verify_signed_job(raw_job, signature, verification_key, target_policy, now=now)
+    job = verify_signed_job(raw_job, signature, verification_key, target_policy, now=now,
+                            preflight_only=preflight_only)
     if synthetic_test and target_policy['board_compatible'] != 'test,synthetic-h616':
         raise ValueError('Synthetic QEMU build requires synthetic board policy')
     if not synthetic_test and target_policy['board_compatible'] == 'test,synthetic-h616':
@@ -297,6 +305,9 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
                       f'-DSV08_IMAGE_NFS_SOURCE="{source_server}:{source_export}"'])
     if recovery_handoff:
         flags.append('-DSV08_H616_RECOVERY_HANDOFF=1')
+    if preflight_only:
+        flags.extend(['-DSV08_H616_PREFLIGHT_ONLY=1', '-Wno-unused-function',
+                      '-Wno-unused-variable'])
     root.mkdir(mode=0o755, exist_ok=True)
     root.chmod(0o755)
     for directory in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
@@ -314,6 +325,7 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     manifest = {'status': 'nondeployable-commissioning-candidate', 'mode': 'h616-commissioning',
                 'bootable_sd_image': False, 'physical_target_validated': False,
                 'trusted_initramfs': trusted_initramfs,
+                'preflight_only': preflight_only, 'job_format': job['format'],
                 'image_nfs_source': f'{source_server}:{source_export}' if trusted_initramfs else None,
                 'synthetic_test': synthetic_test, 'claim_trigger_provisioned': False,
                 'policy_sha256': digest(policy_raw), 'job_sha256': digest(raw_job),
@@ -341,6 +353,7 @@ def main():
                         help='Separate 0600 local Ed25519 public key for claim receipts; required outside synthetic tests')
     parser.add_argument('--trusted-initramfs', action='store_true')
     parser.add_argument('--recovery-handoff', action='store_true')
+    parser.add_argument('--preflight-only', action='store_true')
     parser.add_argument('--source-server')
     parser.add_argument('--source-export')
     args = parser.parse_args()
@@ -349,7 +362,8 @@ def main():
                            receipt_verification_key_path=args.receipt_verification_key,
                            trusted_initramfs=args.trusted_initramfs,
                            source_server=args.source_server, source_export=args.source_export,
-                           recovery_handoff=args.recovery_handoff),
+                           recovery_handoff=args.recovery_handoff,
+                           preflight_only=args.preflight_only),
                       sort_keys=True))
 
 
