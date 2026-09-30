@@ -2,12 +2,12 @@
   "author": "root/coordinator",
   "checks": [
     {
-      "description": "Strict signed-policy and live Python admission binds the exact canonical current node and rejects path/identity/partition mismatch before write.",
+      "description": "Legacy v1 remains strict; explicit signed v2 phase contract binds exact staging mapping and rejects wrong or changed physical/numeric identities before mutation.",
       "environment": "offline",
       "id": "enb-01"
     },
     {
-      "description": "Actual C preflight and write admission retains target descriptor/controller/CID/capacity/p5/environment binding and compile-time nonwriting preflight.",
+      "description": "Actual C v2 boot snapshot keeps signed stable eMMC identity, exact within-boot descriptors/p5/environment and compile-time nonwriting preflight across differing phase numbering.",
       "environment": "offline",
       "id": "enb-02"
     },
@@ -23,9 +23,10 @@
     "constraints": [
       {
         "checks": [
+          "enb-01",
           "enb-03"
         ],
-        "text": "Research unknown: can the exact selected SD-host and RAM-FIT kernel/DTB/initramfs inputs enumerate the same 4022000.mmc user area with different mmcblkN or dev_t? Exit evidence: input hashes/provenance for both phases, complete relevant DT include/effective alias and boot fixup trace, and pinned kernel host/block allocation analysis showing supported enumerations and whether shared exact-path/dev_t policy can hold. Existing sanitized observations may support but cannot establish unobserved RAM boot identity. Offline source tracing or bounded disposable fixtures suffice; no hardware access is demanded. Report a remaining uncertainty explicitly; do not mark this implementation acceptance passed merely because it is documented."
+        "text": "Keep v1 byte/schema/behavior compatibility and exact numeric admission. V2 must require exactly the declared field set and signed runtime_admission=controller-cid-boot-snapshot-v1, canonical bytes, bounded canonical mmcblkN without leading zeros, and physical commissioning with trusted-initramfs/recovery-handoff entry. Reject unknown modes/versions, extra fields, synthetic builder use and incompatible flags before mutation. Positive v2 fixtures belong only to isolated actual-C harnesses and disposable tests, never a physical builder fixture bypass. Existing shared preparation/staging consumers must prove signed policy digest and canonicalization preserve v2 without an unsigned switch."
       },
       {
         "checks": [
@@ -33,27 +34,33 @@
           "enb-02",
           "enb-03"
         ],
-        "text": "If supported inputs do not establish one shared exact path/dev_t, return a bounded split-phase policy/admission proposal with testable before/after behavior and its schema/boot-contract/file ownership impact before production edits. Do not silently drop path/dev_t agreement, fabricate policy identity, rename/create device nodes, change kernel/DT/loader or extend ownership. Any actual changed owner requirement or expanded authority goes to the owner; existing authorization otherwise remains valid."
+        "text": "Prove actual compiled behavior is bound to the signed v2 policy and reviewed executable/FIT, not only an unsigned manifest label or a policy digest string embedded in the wrong algorithm. Exercise relabeled v1/v2, changed runtime_admission, mismatched compiled policy/mode and actual embedded-member substitutions; prove refusals through preparation/build/composition/shared staging. Keep signed job/receipt formats and preflight/write purpose separation. Return any needed file/schema/compiled-record contract beyond the nine assigned files before editing."
       },
       {
         "checks": [
           "enb-01",
-          "enb-02",
-          "enb-03"
+          "enb-02"
         ],
-        "text": "Any subsequently approved repair must test both mmcblk0 and mmcblk2 positives and strict malformed/alias/boot/RPMB/duplicate/card/controller/CID/capacity/dev_t/p5-parent and changed-descriptor negatives through actual Python and compiled C entry paths. Preserve canonical bounded names, signed-purpose and source/bundle verification, descriptor checks immediately at read/write boundaries, original recovery and interruption/rollback behavior, one-shot consumption, both environment copies, compile-time nonwriting preflight, 8 GB layout, persistence and profile/pinning requirements. Independent high delivery verification remains required; urh-04/05 remain physical pending gates with fresh exact-operation reviews and existing owner authorization."
+        "text": "Initialize the RAM snapshot once from the unique canonical user area of the signed controller/CID/type/capacity; subsequent checks compare that same snapshot and never replace it. Before any p5 mount or marker consumption, prove current p5 parent, dev_t, PARTUUID, start/size and signed map agreement. Revalidate snapshot/stable physical identity at marker and target/environment/transfer boundaries and bind all raw accesses to the admitted descriptor. Actual-C fixtures must cover both SD mmcblk2/RAM mmcblk0 and reverse mappings with different dev_t, wrong stable identity, duplicates and changed within-boot node/dev_t/controller/card/p5. Initial refusal cannot consume the marker; later refusal must retain the existing confirmed-consumption/unmount finalizer rules."
       },
       {
         "checks": [
           "enb-02",
           "enb-03"
         ],
-        "text": "Keep research within existing source/fixtures and assigned scratch diagnostics: at most two experiments, 300 seconds cumulative runtime and 256 MiB generated data under the agent-guide allowance; no new dependency, full image allocation/transfer or QEMU bulk repeat. Retain originals and report measured resource costs and provenance; the larger proposal implementation limits do not expand this review session's allowance. Distinguish source-derived, offline-fixture and measured hardware evidence; no offline PASS is physical boot or recovery acceptance."
+        "text": "Preserve readonly preflight target opens, both exhausted job-bound environment checks, descriptor close/error paths and compile-time exclusion of target O_RDWR/image/environment transfer writes. Preserve full-writer source hashing, overlap/root/mount checks, GPT/8 GB layout, ordered two-copy environment handling, one-shot claim, expiry, original recovery and SD rescue, journal/marker-last staging and no automatic retry/rearm. Passing v2 offline checks cannot satisfy urh-04/05 or authorize real jobs, boot-policy changes or writes. Obtain high independent delivery verification and fresh exact-operation reviews/owner authority before physical use."
+      },
+      {
+        "checks": [
+          "enb-02",
+          "enb-03"
+        ],
+        "text": "Report offline source/fixture evidence separately from sanitized measured hardware evidence. Record source/compiled-artifact provenance, bounded snapshot/path storage and incremental memory/binary impact; preserve existing FIT/load-memory and resource gates. Implementation scratch stays under512MiB and retained output under64MiB with no full-image copies, bulk/QEMU repeats or new dependencies. This reviewer lineage retains the separate two-run/300-second/256MiB diagnostic allowance, with no experimental runs used. Preserve the earlier research decision and historical evidence unchanged."
       }
     ],
-    "outcome": "needs-research",
-    "proposal_sha256": "5a6329ef5e239def0ffd1325761db06ef09fe2d029a93af972d74102dff68092",
-    "rationale": "The repair is useful and belongs to existing authorized H12 work despite the pause on optional features. Before: policy_fields in scripts/build_h616_reimage_candidate.py:242, scripts/live_h616_recovery_stage.py:115/138/150 and commissioning writer constants/admission fix mmcblk0 and refuse the measured current eMMC. Intended after: canonical current user-area selection retains exact signed policy, controller, CID, capacity, descriptor, dev_t and p5 binding. Measured evidence is limited to sanitized inventory at 2026-09-30T11:19:32Z: mmcblk2, controller 4022000.mmc, dev_t 179:8, capacity 31272730624, CID SHA-256 08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a. The updated authenticated-intake requirement records reviewed read-only p5 inspection and preservation evidence; it does not establish RAM-kernel identity. Source evidence identifies an unresolved shared-policy design assumption: retained patched Linux 6.18.51 drivers/mmc/core/host.c:532-540 selects a DT alias or dynamically allocates host index; drivers/mmc/core/block.c:2637 names mmcblkN using that host index, while lines 2560/2617 allocate device minors separately. The retained sun50i-h616-bigtreetech-cb1.dtsi aliases only Ethernet/serial; the stock SV08 and configs/host-os/test-sv08-01-diagnostic.dts add no MMC aliases. scripts/build_h616_recovery_handoff.py:82-110 accepts separately supplied kernel/DTB, and one signed target policy is consumed by both live staging and compiled RAM admission. No reviewed evidence establishes the exact policy path and dev_t for both boots. Existing source already offers controller/CID user-area discovery in emmc_cid_admission.h; no new library, device alias, kernel change, full-image run or download is justified. This is a concrete research hold on the proposed production repair, not an owner requirement change or request for hardware access. Exit evidence must settle exact cross-phase binding, or return a bounded amended contract for separate review. No physical authority is granted. Board revision remains owner-reported; RAM enumeration, physical boot/recovery, cold RTC retention remain unknown. Reviewed source HEAD is 567a884ef9a7f38d1e34b2ae9498e2e70e70a3f8 with coordinator proposal/requirement changes. Only source and sanitized evidence were read; no experiments, hardware connections, tracked edits or credential/private-backup reads occurred. Retained source bytes reviewed (SHA-256): build/host-kernel-61851-v1/linux-6.18.51/drivers/mmc/core/host.c=822afe61a72e267e8da974990548859272038d464cf8423f075836d160f60b8d; build/host-kernel-61851-v1/linux-6.18.51/drivers/mmc/core/block.c=a671a8347246591a2589e10f6f25ca5d638b30d27430bb3528d484831b44bd42; build/host-kernel-61851-v1/linux-6.18.51/arch/arm64/boot/dts/allwinner/sun50i-h616-bigtreetech-cb1.dtsi=5758e18bea857422d8b7279a6995aa167baf8f903643954d47a98a8cd17faded; build/host-kernel-61851-v1/linux-6.18.51/arch/arm64/boot/dts/allwinner/sun50i-h616-sovol-sv08.dts=b6dd738949b7cbb5e54f285b275d22b1fd930f40be7959a8723e0394e2f695a6; configs/host-os/test-sv08-01-diagnostic.dts=9ae4c97e3738dd61efeee7710f769a2a041f3c491ec944828ab0e883ecc646e9. These hashes identify locally retained bytes; source provenance is the documented kernel compile baseline, not a new clean-tree verification. Coordinator-supplied sanitized runtime-observation.json was read: this independent session is feature_approver, gpt-6.1-sol, medium, danger-full-access, approval never. This reviewer did not inspect the underlying session log or configuration.",
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "f003ef5e3e35e46cdb78a0284e78ad4dc93984d04394d0bed9a62bfc3e9195b0",
+    "rationale": "Approved bounded offline v2 repair within the existing H12 goal; optional features remain paused. Before: scripts/build_h616_reimage_candidate.py:policy_fields, live_h616_recovery_stage.py:admitted_target and emmc_image_writer.c fix mmcblk0, refusing the sanitized 2026-09-30 SD measurement of mmcblk2/179:8 under 4022000.mmc with the recorded CID and capacity. After: explicit signed commissioning-policy-v2 preserves exact signed staging mapping and stable physical identity, while the RAM writer pins and revalidates one boot-local mapping. This resolves the first proposal's unsupported cross-boot numeric assumption without guessed hardware facts. Independently reviewed retained Linux host.c:532-540 dynamically allocates unaliased host indices; block.c:2637 derives the name from host index and 2560/2617 allocates minors separately. Their actual SHA-256 values remain 822afe61a72e267e8da974990548859272038d464cf8423f075836d160f60b8d and a671a8347246591a2589e10f6f25ca5d638b30d27430bb3528d484831b44bd42. All nine source-hashes.json entries were recomputed and matched. The coordinator's research.md identifies unmeasured RAM enumeration and alternatives: a separate numeric probe would add a physical boot without proving next-boot allocation, and DT aliases would not fix separately allocated minors. Reusing existing discovery and signing avoids those expansions. Actual accepted requirements were read: decision 0018 requires exact target identity and fail-closed overlap/capacity checks; live-handoff requires exact signed policy plus opened descriptor/current controller/CID/type/capacity/device number; preflight retains readonly descriptor, two raw exhausted environment records and compile-time exclusion of transfer writes; recovery-handoff requires current CID/dev_t, preservation, one-shot behavior and physical urh-04/05. They require exact identity within the running admission transaction, not a persistent Linux ordinal across independent boots. The explicitly signed v2 architecture changes the implementation contract while retaining those requirements; no owner scope/authority/spending/license change is introduced. Existing prepare-job and staging code import the shared policy parser, verify canonical bytes and signed policy digest; compiled-purpose evidence binds that digest, and actual FIT embedded-member checks already exist. Mode/compiled behavior and snapshot-to-p5-before-marker checks must nevertheless be proven under the constraints below. No implementation or physical acceptance is claimed. Board revision remains owner-reported; RAM enumeration/entry, physical recovery and cold RTC retention remain unknown. Source baseline is 5b740dd343081c0379b5ea283b0b62540ad43bfa plus amended coordinator proposal/record. Earlier needs-research decision and original proposal remain preserved. This session performed source/sanitized evidence reads and schema validation only: no experimental runs, production edits, hardware/development connections, credential or private-backup reads. Approval grants no physical authority.",
     "requirements_sha256": {
       "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
       "docs/features/h616-physical-preflight/proposal.md": "898f5d780446c593428b5671f639ba2232a2a765971caf29a45f5c7f7a5cd2cd",
@@ -61,8 +68,8 @@
       "docs/hardware/host-h12-authenticated-intake-20260930.md": "150a74ebef774614484de0b9c32954c552fbcf4eb83ac0919f4319916713518a"
     },
     "reviewer": "independent feature-approver /root/approve_h616_node_binding",
-    "scope_sha256": "f825a1d0a469647cc5277bf20ec34dea4a1a40f9ff965cdff9476213d1d9bbf6",
-    "session": "01a0f218-c089-7763-b7d4-22da10d76be6 /root/approve_h616_node_binding; independent feature_approver GPT-6.1 Sol medium; coordinator runtime-observation.json confirms danger-full-access, approval never"
+    "scope_sha256": "6a64a344ad1a787cb575776dde040f4e9c1cf6d2181b800fabcec5d33abd5a34",
+    "session": "01a0f218-c089-7763-b7d4-22da10d76be6; independent from root/coordinator author; feature_approver GPT-6.1 Sol medium, danger-full-access, approval never confirmed by coordinator sanitized runtime observation"
   },
   "format_version": 1,
   "id": "h616-emmc-node-binding",
