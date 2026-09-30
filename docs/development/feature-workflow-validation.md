@@ -53,6 +53,16 @@ archive requires 18,242,915 logical read bytes across the existing two passes.
 This is a small regression evaluation, not a statistical model-quality benchmark
 or physical-storage speed measurement.
 
+## Historical execution policy notice (2026-09-30)
+
+The execution/isolation requirements below describe the earlier pilot and sandbox
+repair. The owner-authorized [execution decision](../decisions/20260930-agent-execution-and-diagnostics.md)
+supersedes the requirement for restricted reviewers, including the instruction not
+to substitute a full-access reviewer. Use the [current deployment checks](agent-execution.md)
+for new sessions. Historical measurements, reviewer identities and evidence below
+are unchanged; they do not validate the new full-access role policy or expand
+hardware authority. Independent review and actual target-client checks remain required.
+
 ## Execution limits
 
 The original native `codex-cli 0.153.4` trial accepted strict configuration,
