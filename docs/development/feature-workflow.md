@@ -13,23 +13,36 @@ The implementation uses the packaged JSON Schema validator rather than adding
 another schema engine. The host OS image has no dependency on this tooling.
 
 Use [the entry point](../../.codex/README.md) and the project TOML definitions:
-`feature_suggester`, `feature_approver`, `feature_verifier`. If the client exposes
+`project_planner`, `feature_approver`, `feature_verifier`. If the client exposes
 named custom agents, invoke the named role with a concrete bounded task. Otherwise
 load the same TOML `developer_instructions` into a separate agent/session. Keep
 reviewers separate from the author and implementer; an unavailable reviewer leaves
 that review pending while other eligible work continues.
+Use the [current agent guide](../../.codex/agent-guide.md) for routing and effort.
+The planner replaces feature_suggester; use it only when planning/triage is useful.
+Research, implementation and integration normally use Sol/low with supported effort
+overrides. Reviews remain pinned. Preserve historical role/session evidence.
 
-TOML permission defaults can be overridden by the parent runtime. In particular,
-interactive collaboration inherits its parent's permissions. Do not describe
-prompt-only restrictions as an enforced sandbox. Before unattended execution,
-provision a restricted source/build environment without printer keys, backup
-mounts or physical devices, and verify its effective permissions. Worktrees
-isolate changes, not credentials. That deployment is outside the offline pilot.
+The [execution decision](../decisions/20260930-agent-execution-and-diagnostics.md)
+supersedes the offline pilot's restricted-runner requirement. Project configuration
+now requests full access without approval prompts; child roles inherit that mode
+and disable their own native multi-agent tools. Verify actual permissions and role
+loading with the [deployment checks](agent-execution.md). Worktrees and instructions
+are not secret/device isolation. No unattended schedule is introduced.
+
+Before delegation, the coordinator supplies file ownership, an unchanged review
+candidate where applicable, assigned resources, a unique scratch directory and
+remaining diagnostic allowance from the agent guide. Small scratch experiments do
+not authorize production repairs by research/integration/review roles, publication,
+printer access or new agent launches. Use existing authentication only for named
+assigned development connections, without inspecting or exposing secret material.
 
 Keep private session transcripts, run output and reports awaiting sanitization
 under `local/feature-workflow/`. Version only reviewed role files, templates,
 schemas, proposals and sanitized evidence. Personal `.codex` configuration remains
-ignored. No API credentials or model override are introduced by this workflow.
+ignored. No API credentials, billing change or main-session model override are
+introduced. The project configuration sets spawned-agent defaults; selected roles
+can pin model/effort. Verify effective settings as described in the agent guide.
 
 ## Record and approval
 
@@ -91,6 +104,10 @@ exceptions in the proposal. A ready task needs current approval, completed
 dependencies, an offline environment and available implementation capacity.
 The dispatcher rejects more than three ready features and allows one active task.
 It does not manufacture another proposal when existing work should be finished.
+Both `running` and `review` occupy the single active slot. `next` can therefore be
+null during review; this is not a sandbox failure. Auxiliary research/review can
+accompany the current task, but this change does not enable a second dispatched
+implementation or make hardware tasks dispatchable.
 
 Commit the approved proposal/record before starting its branch. Create a clean
 worktree at the current integration HEAD using Git's supported command:
@@ -109,9 +126,11 @@ Keep the recorded session ID stable for submit/complete/block operations. The
 helper never evaluates shell text from a proposal, task or model output.
 
 The implementer receives the task packet and relevant source. It performs the
-bounded implementation, checks and documentation in its worktree, then commits
-the complete change. Commit only intended files and retain private artifacts in
-ignored paths. Normal code, build and foundation checks in AGENTS.md still apply.
+bounded implementation, checks and documentation in its worktree. The coordinator
+then commits the complete candidate in that owned worktree; child profiles do not
+commit or publish. Independent verification precedes integration/publication.
+Commit only intended files and retain private artifacts in ignored paths. Normal
+code, build and foundation checks in AGENTS.md still apply.
 
 ## Evidence, verification and integration
 
@@ -121,6 +140,11 @@ limitations. Record the document SHA-256, relevant source hashes and the complet
 implementation commit. The commit must be the clean worktree's HEAD; it binds
 the whole delivered tree even when the explicit input hash map is narrower.
 Hash public inputs with `feature_workflow.py --repo <worktree> hash <paths...>`.
+The explicit public `.codex` allowlist includes README, config, agent guide and
+current goals, plus the existing agent/schema/template files. Scratch and private
+configuration remain excluded. Promote sanitized results through the coordinator.
+A change to any hashed requirement still invalidates active approval as before;
+review the actual changed basis instead of copying new hashes into old decisions.
 
 ```sh
 python3 scripts/feature_workflow.py --execute submit <feature>:<task> \
@@ -202,7 +226,7 @@ ownership/evidence is an inspection problem, never permission to claim completio
 ## Validation and retirement
 
 ```sh
-python3 -m unittest discover -s tests -p 'test_feature_workflow.py'
+python3 -m unittest discover -s tests -p 'test_feature_workflow*.py'
 python3 scripts/feature_workflow.py validate
 ```
 
