@@ -93,7 +93,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "FAILED ppf-02 integration at fafb87a02fbc9a25c3e910842af3628e9b00e0fe: scripts/stage_h616_recovery_handoff.py:120-123 calls verify_signed_job with its default write purpose. The actual stage() entry reaches this function before staging or arming. Probe stage-purpose-1 used unchanged commissioning_bundle and signed-stage verification with inert local inputs, no media/services, and expired fixture signatures at controlled time 1500. The default signed-reimage-v1 fixture passed both builder and staging verification; the same policy and correctly signed-preflight-v1 fixture passed builder verification with preflight_only=True but staging refused Stale job or policy mismatch. Thus the intended physical preflight artifact cannot complete the existing supported stage/arm journey. Supplied composition tests model bundle intake and never exercise this staging integration. Obtain a bounded scope amendment for scripts/stage_h616_recovery_handoff.py and relevant staging tests, enforce signed purpose against actual artifact/bundle mode at staging and subsequent journal/arm boundaries, test valid preflight staging plus cross-purpose and unsigned-relabel refusal, preserve all default write checks, then submit new clean revision/evidence for independent verification. Do not bypass staging verification. ppf-01 source/native evidence supports compile-time admission restrictions, absence of reachable whole-device O_RDWR/image/environment transfer paths in preflight, exact board/CID/controller/dev_t and trusted-mount entry checks, postclaim identity recheck, readonly exclusive block open, capacity/dev_t verification, both CRC-checked exhausted job-token environments, and target closure on pass/refusal including close failure. ppf-03 source/native evidence supports distinct PREFLIGHT_PASS; return readiness is assigned only after actual marker consumption succeeds, including unlink/fsync/syncfs/unmount/rmdir; preconsumption/uncertain refusal powers off, postconsumption refusal may reboot through absent-marker recovery fallback, and a returned reboot pauses forever. Existing full-write exact PASS behavior and transfer guard logic remain unchanged. Reviewed supplied 35-test execution log and harness limitations; no broad tests or full-image/QEMU transfer repeated. All seven approved constraints were checked. Fresh isolated physical job IDs/state/ephemeral keys and RTC evidence remain explicit coordinator-only physical prerequisites; no actual job, hardware or service was prepared. Existing claim/bulk-QEMU/absent-marker evidence is reusable only at its original unchanged offline scope. urh-04 measured admission/marker/raw environment/recovery UI return and urh-05 full-write/readback remain pending, with exact-operation independent review and owner authority required. Constraint 7 resource evidence is limited: continuation log reports 66680 KiB RSS, 24 KiB retained logs and 6353 bytes of miniature FIT fixture content; composition models bundle intake/append and uses an inert 22-byte kernel and 25-byte initramfs. Its 1360-byte FIT proves size-accounting machinery only, not actual production FIT/initramfs size or boot-memory impact. Actual artifact/resource comparison against load addresses and preservation limits must remain outstanding; physical boot/relocation observation is a separate later gate. Helper provenance, pinned Monocypher and retirement documentation are retained; no upstream or hardware profile changes. Inspected full historical-base fdacead189de58943aabff7a2483677a23b31fdb..HEAD diff: 35 paths including previously merged policy/workflow files, intentional retired profile deletion, modes and indexed gitlinks. No changed gitlinks or unexpected executable modes; eight indexed gitlinks match upstream-lock.json. Only Monocypher is initialized in this candidate and is clean, so other uninitialized submodules are not claimed exercised. Diff/check and cached/check are clean; changed JSON/TOML parses and local Markdown targets resolve. Proposal/scope/requirement hashes and every submitted source/document hash match candidate; full approved decision matches primary record; submitted evidence equals authoritative task evidence and binds actual clean HEAD. Execution handoff names older precommit HEAD b538f4c; its exact delivered file hashes match the final source and do not establish testing of later policy merges. Candidate is unchanged and clean before/after review. Reviewer is a fresh independent session, with requested feature_verifier_high/GPT-6.1 Sol/high. Effective model/effort/role loading telemetry was unavailable and remains unobserved; prompt/profile configuration is not confirmation. Environment reports danger-full-access and approval never; assigned role boundaries were honored. Coordinator must resolve runtime observation/fallback requirements before treating this as confirmed Sol/high certification. One auxiliary probe used 0.075 seconds reported elapsed and 3657 input bytes; all scratch stays in assigned verification directory, well below 256 MiB; no candidate repairs, record writes, downloads, hardware/credential access, agents or publication.",
       "checks": [
         "ppf-01",
         "ppf-02",
@@ -101,7 +101,71 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ppf-01",
+          "document": "docs/hardware/host-h616-physical-preflight.md",
+          "document_sha256": "bd906fbbb4061f642d9bcf9b7a5bd4a8dbd09f828be3d3e3418fab2520a45ae3",
+          "environment": "offline",
+          "limitations": "Offline native harnesses model board/source-mount/identity boundaries. Tiny FIT composition models bundle intake and initramfs append; production FIT/initramfs size and boot memory, H616 return, urh-04 and urh-05 remain pending. No real job/key, printer/media or service operation. Independent review pending.",
+          "method": "35 focused unittest checks passed in 26.435s; native actual-C target/marker/finalizer harnesses and compile exclusions, signed cross-purpose builder/service/composition checks, installed dtc/mkimage tiny FIT size accounting. Execution log and handoff retained in local/feature-workflow/probes/h616-physical-preflight/continuation-20260930/.",
+          "profile": null,
+          "source_commit": "fafb87a02fbc9a25c3e910842af3628e9b00e0fe",
+          "source_sha256": {
+            "docs/hardware/host-h616-physical-preflight.md": "bd906fbbb4061f642d9bcf9b7a5bd4a8dbd09f828be3d3e3418fab2520a45ae3",
+            "scripts/build_h616_recovery_handoff.py": "1a0dfe1b1b4e5c3cd788879bb564479b820926e5898ecd93b2878ad18aec85f9",
+            "scripts/build_h616_reimage_candidate.py": "646b2da92ec42f79e61b34970382297d8d8222509d186fa41f6d7cb4c66c1df6",
+            "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "d16228e5dc5cd954d1b9571aca85d84611e890db32b593804ea6b56f1f4816b7",
+            "tests/test_h616_recovery_handoff.py": "61585215756a4f9671f3ee86e80cd03224d2db0e101f26566c5f9d6be244c5df",
+            "tests/test_h616_reimage_candidate.py": "7d5d035015a9a9200a3ee5c227fb0475ba74286ca7e6c0bd24c1bf1c1bbc1427",
+            "tests/test_prepare_h616_reimage_job.py": "469387667f9196ee4874f8e3d4e68e2fd7d3159b19ddac5379d2a81933eb05f9"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ppf-02",
+          "document": "docs/hardware/host-h616-physical-preflight.md",
+          "document_sha256": "bd906fbbb4061f642d9bcf9b7a5bd4a8dbd09f828be3d3e3418fab2520a45ae3",
+          "environment": "offline",
+          "limitations": "Offline native harnesses model board/source-mount/identity boundaries. Tiny FIT composition models bundle intake and initramfs append; production FIT/initramfs size and boot memory, H616 return, urh-04 and urh-05 remain pending. No real job/key, printer/media or service operation. Independent review pending.",
+          "method": "35 focused unittest checks passed in 26.435s; native actual-C target/marker/finalizer harnesses and compile exclusions, signed cross-purpose builder/service/composition checks, installed dtc/mkimage tiny FIT size accounting. Execution log and handoff retained in local/feature-workflow/probes/h616-physical-preflight/continuation-20260930/.",
+          "profile": null,
+          "source_commit": "fafb87a02fbc9a25c3e910842af3628e9b00e0fe",
+          "source_sha256": {
+            "docs/hardware/host-h616-physical-preflight.md": "bd906fbbb4061f642d9bcf9b7a5bd4a8dbd09f828be3d3e3418fab2520a45ae3",
+            "scripts/build_h616_recovery_handoff.py": "1a0dfe1b1b4e5c3cd788879bb564479b820926e5898ecd93b2878ad18aec85f9",
+            "scripts/build_h616_reimage_candidate.py": "646b2da92ec42f79e61b34970382297d8d8222509d186fa41f6d7cb4c66c1df6",
+            "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "d16228e5dc5cd954d1b9571aca85d84611e890db32b593804ea6b56f1f4816b7",
+            "tests/test_h616_recovery_handoff.py": "61585215756a4f9671f3ee86e80cd03224d2db0e101f26566c5f9d6be244c5df",
+            "tests/test_h616_reimage_candidate.py": "7d5d035015a9a9200a3ee5c227fb0475ba74286ca7e6c0bd24c1bf1c1bbc1427",
+            "tests/test_prepare_h616_reimage_job.py": "469387667f9196ee4874f8e3d4e68e2fd7d3159b19ddac5379d2a81933eb05f9"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "ppf-03",
+          "document": "docs/hardware/host-h616-physical-preflight.md",
+          "document_sha256": "bd906fbbb4061f642d9bcf9b7a5bd4a8dbd09f828be3d3e3418fab2520a45ae3",
+          "environment": "offline",
+          "limitations": "Offline native harnesses model board/source-mount/identity boundaries. Tiny FIT composition models bundle intake and initramfs append; production FIT/initramfs size and boot memory, H616 return, urh-04 and urh-05 remain pending. No real job/key, printer/media or service operation. Independent review pending.",
+          "method": "35 focused unittest checks passed in 26.435s; native actual-C target/marker/finalizer harnesses and compile exclusions, signed cross-purpose builder/service/composition checks, installed dtc/mkimage tiny FIT size accounting. Execution log and handoff retained in local/feature-workflow/probes/h616-physical-preflight/continuation-20260930/.",
+          "profile": null,
+          "source_commit": "fafb87a02fbc9a25c3e910842af3628e9b00e0fe",
+          "source_sha256": {
+            "docs/hardware/host-h616-physical-preflight.md": "bd906fbbb4061f642d9bcf9b7a5bd4a8dbd09f828be3d3e3418fab2520a45ae3",
+            "scripts/build_h616_recovery_handoff.py": "1a0dfe1b1b4e5c3cd788879bb564479b820926e5898ecd93b2878ad18aec85f9",
+            "scripts/build_h616_reimage_candidate.py": "646b2da92ec42f79e61b34970382297d8d8222509d186fa41f6d7cb4c66c1df6",
+            "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "d16228e5dc5cd954d1b9571aca85d84611e890db32b593804ea6b56f1f4816b7",
+            "tests/test_h616_recovery_handoff.py": "61585215756a4f9671f3ee86e80cd03224d2db0e101f26566c5f9d6be244c5df",
+            "tests/test_h616_reimage_candidate.py": "7d5d035015a9a9200a3ee5c227fb0475ba74286ca7e6c0bd24c1bf1c1bbc1427",
+            "tests/test_prepare_h616_reimage_job.py": "469387667f9196ee4874f8e3d4e68e2fd7d3159b19ddac5379d2a81933eb05f9"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
       "implementation": {
@@ -109,11 +173,18 @@
         "run": "dc8b4e1801d944fb889ead03362de899",
         "session": "h616-physical-preflight-20260929"
       },
-      "repeats": 0,
+      "repeats": 1,
       "resumption": null,
-      "status": "running",
+      "status": "blocked",
       "title": "Implement distinct physical nonwriting preflight",
-      "verification": null
+      "verification": {
+        "decision_sha256": "6b20dcf4c545b99e0c6291f794cf5bc9c11d0f61eca17acbcab7aab851989209",
+        "evidence_sha256": "97cd8e9cb1b9a6cc5ab8081f50d0f00294751a79a474ffb78569485d54f37820",
+        "outcome": "failed",
+        "rationale": "FAILED ppf-02 integration at fafb87a02fbc9a25c3e910842af3628e9b00e0fe: scripts/stage_h616_recovery_handoff.py:120-123 calls verify_signed_job with its default write purpose. The actual stage() entry reaches this function before staging or arming. Probe stage-purpose-1 used unchanged commissioning_bundle and signed-stage verification with inert local inputs, no media/services, and expired fixture signatures at controlled time 1500. The default signed-reimage-v1 fixture passed both builder and staging verification; the same policy and correctly signed-preflight-v1 fixture passed builder verification with preflight_only=True but staging refused Stale job or policy mismatch. Thus the intended physical preflight artifact cannot complete the existing supported stage/arm journey. Supplied composition tests model bundle intake and never exercise this staging integration. Obtain a bounded scope amendment for scripts/stage_h616_recovery_handoff.py and relevant staging tests, enforce signed purpose against actual artifact/bundle mode at staging and subsequent journal/arm boundaries, test valid preflight staging plus cross-purpose and unsigned-relabel refusal, preserve all default write checks, then submit new clean revision/evidence for independent verification. Do not bypass staging verification. ppf-01 source/native evidence supports compile-time admission restrictions, absence of reachable whole-device O_RDWR/image/environment transfer paths in preflight, exact board/CID/controller/dev_t and trusted-mount entry checks, postclaim identity recheck, readonly exclusive block open, capacity/dev_t verification, both CRC-checked exhausted job-token environments, and target closure on pass/refusal including close failure. ppf-03 source/native evidence supports distinct PREFLIGHT_PASS; return readiness is assigned only after actual marker consumption succeeds, including unlink/fsync/syncfs/unmount/rmdir; preconsumption/uncertain refusal powers off, postconsumption refusal may reboot through absent-marker recovery fallback, and a returned reboot pauses forever. Existing full-write exact PASS behavior and transfer guard logic remain unchanged. Reviewed supplied 35-test execution log and harness limitations; no broad tests or full-image/QEMU transfer repeated. All seven approved constraints were checked. Fresh isolated physical job IDs/state/ephemeral keys and RTC evidence remain explicit coordinator-only physical prerequisites; no actual job, hardware or service was prepared. Existing claim/bulk-QEMU/absent-marker evidence is reusable only at its original unchanged offline scope. urh-04 measured admission/marker/raw environment/recovery UI return and urh-05 full-write/readback remain pending, with exact-operation independent review and owner authority required. Constraint 7 resource evidence is limited: continuation log reports 66680 KiB RSS, 24 KiB retained logs and 6353 bytes of miniature FIT fixture content; composition models bundle intake/append and uses an inert 22-byte kernel and 25-byte initramfs. Its 1360-byte FIT proves size-accounting machinery only, not actual production FIT/initramfs size or boot-memory impact. Actual artifact/resource comparison against load addresses and preservation limits must remain outstanding; physical boot/relocation observation is a separate later gate. Helper provenance, pinned Monocypher and retirement documentation are retained; no upstream or hardware profile changes. Inspected full historical-base fdacead189de58943aabff7a2483677a23b31fdb..HEAD diff: 35 paths including previously merged policy/workflow files, intentional retired profile deletion, modes and indexed gitlinks. No changed gitlinks or unexpected executable modes; eight indexed gitlinks match upstream-lock.json. Only Monocypher is initialized in this candidate and is clean, so other uninitialized submodules are not claimed exercised. Diff/check and cached/check are clean; changed JSON/TOML parses and local Markdown targets resolve. Proposal/scope/requirement hashes and every submitted source/document hash match candidate; full approved decision matches primary record; submitted evidence equals authoritative task evidence and binds actual clean HEAD. Execution handoff names older precommit HEAD b538f4c; its exact delivered file hashes match the final source and do not establish testing of later policy merges. Candidate is unchanged and clean before/after review. Reviewer is a fresh independent session, with requested feature_verifier_high/GPT-6.1 Sol/high. Effective model/effort/role loading telemetry was unavailable and remains unobserved; prompt/profile configuration is not confirmation. Environment reports danger-full-access and approval never; assigned role boundaries were honored. Coordinator must resolve runtime observation/fallback requirements before treating this as confirmed Sol/high certification. One auxiliary probe used 0.075 seconds reported elapsed and 3657 input bytes; all scratch stays in assigned verification directory, well below 256 MiB; no candidate repairs, record writes, downloads, hardware/credential access, agents or publication.",
+        "reviewer": "independent feature_verifier_high requested; GPT-6.1 Sol/high requested, effective settings unobserved",
+        "session": "/root/verify_h616_preflight: independent delivery verification 2026-09-30"
+      }
     }
   ],
   "title": "Add nonwriting physical handoff preflight"
