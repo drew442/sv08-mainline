@@ -25,7 +25,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from runtime.sv08_gpt import inspect as inspect_gpt
-from scripts.build_h616_reimage_candidate import policy_fields
+from scripts.build_h616_reimage_candidate import policy_fields, V2_FORMAT
 from scripts.stage_h616_recovery_handoff import (
     ENV_BYTES, ENV_OFFSETS, activate_mounted_recovery, digest,
     journal_state, parse_env_record, regular,
@@ -103,6 +103,28 @@ def mount_record(recovery: Path) -> dict:
     return entries[0]
 
 
+def v2_staging_snapshot(host_sysfs: Path, policy: dict) -> tuple:
+    """Read one exact phase mapping; callers compare, never replace, it."""
+    card = sole_mmc_card(host_sysfs)
+    blocks = list((card / 'block').iterdir())
+    if len(blocks) != 1 or blocks[0].name != Path(policy['target_device']).name:
+        raise ValueError('Ambiguous eMMC user area')
+    block = blocks[0]
+    p5 = Path('/sys/class/block') / (block.name + 'p5')
+    controller = host_sysfs.resolve(strict=True)
+    resolved_card = card.resolve(strict=True)
+    resolved_block = block.resolve(strict=True)
+    resolved_p5 = p5.resolve(strict=True)
+    if (not resolved_card.is_relative_to(controller) or
+            resolved_block.parent != resolved_card / 'block' or
+            resolved_p5.parent != resolved_block):
+        raise ValueError('Controller/card/recovery ancestry differs')
+    return (str(controller), str(resolved_card), str(resolved_block), str(resolved_p5),
+            one_line(card / 'cid'), one_line(card / 'type'), decimal(block / 'size'),
+            dev_number(block / 'dev'), dev_number(p5 / 'dev'), decimal(p5 / 'partition'),
+            decimal(p5 / 'start'), decimal(p5 / 'size'), (p5 / 'uevent').read_bytes())
+
+
 def admitted_target(target: Path, recovery: Path, policy: dict, *,
                     host_sysfs: Path = HOST_SYSFS,
                     synthetic_fixture: bool = False,
@@ -112,7 +134,8 @@ def admitted_target(target: Path, recovery: Path, policy: dict, *,
     policy = policy_fields(policy)
     if synthetic_fixture != (policy['board_compatible'] == 'test,synthetic-h616'):
         raise ValueError('Synthetic and physical target policies must stay separate')
-    if not synthetic_fixture and (target != TARGET or host_sysfs != HOST_SYSFS):
+    v2 = policy['format'] == V2_FORMAT
+    if not synthetic_fixture and (target != Path(policy['target_device']) or host_sysfs != HOST_SYSFS):
         raise ValueError('Physical target/controller path is fixed')
     addresses = local_ipv4_addresses() if local_addresses is None else local_addresses
     if policy['claim_server'] in addresses:
@@ -124,6 +147,7 @@ def admitted_target(target: Path, recovery: Path, policy: dict, *,
     recovery = recovery.resolve(strict=True)
     if not recovery.is_dir():
         raise ValueError('Recovery mount directory required')
+    snapshot = v2_staging_snapshot(host_sysfs, policy) if v2 else None
     fd = os.open(target, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW)
     try:
         opened = os.fstat(fd)
@@ -135,7 +159,7 @@ def admitted_target(target: Path, recovery: Path, policy: dict, *,
         card = sole_mmc_card(host_sysfs)
         cid = one_line(card / 'cid')
         blocks = list((card / 'block').iterdir())
-        if len(blocks) != 1 or blocks[0].name != 'mmcblk0':
+        if len(blocks) != 1 or blocks[0].name != Path(policy['target_device']).name:
             raise ValueError('Ambiguous eMMC user area')
         block = blocks[0]
         current_dev = dev_number(block / 'dev')
@@ -147,7 +171,13 @@ def admitted_target(target: Path, recovery: Path, policy: dict, *,
         if not synthetic_fixture and target != Path(policy['target_device']):
             raise ValueError('Target path differs from signed policy')
         part = policy['image_layout']['partitions'][4]
-        p5 = Path('/sys/class/block/mmcblk0p5') if not synthetic_fixture else block / 'mmcblk0p5'
+        p5 = (Path('/sys/class/block') / (block.name + 'p5') if not synthetic_fixture
+              else block / (block.name + 'p5'))
+        if v2 and (p5.resolve(strict=True).parent != block.resolve(strict=True) or
+                   decimal(p5 / 'partition') != 5 or
+                   decimal(p5 / 'start') * SECTOR != part['offset_bytes'] or
+                   decimal(p5 / 'size') * SECTOR != part['size_bytes']):
+            raise ValueError('Recovery parent/map differs from signed partition five')
         part_dev = dev_number(p5 / 'dev')
         uevent = (p5 / 'uevent').read_text().splitlines()
         if uevent.count('PARTUUID=' + part['partuuid']) != 1:
@@ -172,6 +202,8 @@ def admitted_target(target: Path, recovery: Path, policy: dict, *,
         if (gpt['disk_guid'] != expected['disk_guid'] or
                 gpt['partition_records'] != expected['partitions']):
             raise ValueError('Current GPT differs from signed image map')
+        if v2 and v2_staging_snapshot(host_sysfs, policy) != snapshot:
+            raise ValueError('Current staging snapshot changed during admission')
         if os.fstat(fd).st_rdev != opened.st_rdev:
             raise ValueError('Opened target changed during admission')
         return {'cid': cid, 'controller': '4022000.mmc', 'card_type': 'MMC',
@@ -182,7 +214,11 @@ def admitted_target(target: Path, recovery: Path, policy: dict, *,
                 'recovery_mount': str(recovery),
                 'recovery_mount_mode': 'rw' if 'rw' in options else 'ro',
                 'disk_guid': gpt['disk_guid'],
-                'image_bytes': policy['image_bytes']}
+                'image_bytes': policy['image_bytes'],
+                **({'policy_format': policy['format'], 'phase': 'staging-host',
+                    'runtime_admission': policy['runtime_admission'],
+                    'controller_sysfs': snapshot[0], 'card_sysfs': snapshot[1],
+                    'block_sysfs': snapshot[2], 'p5_sysfs': snapshot[3]} if v2 else {})}
     finally:
         os.close(fd)
 
@@ -343,7 +379,8 @@ def main() -> None:
             any(value is None for value in (args.artifact, args.bundle,
                                             args.verification_key, args.journal))):
         raise ValueError('Root, private 0600 policy, artifact, bundle, key and journal required')
-    result = admitted_target(TARGET, args.recovery, policy,
+    target = Path(policy['target_device'])
+    result = admitted_target(target, args.recovery, policy,
                              require_writable=args.operation != 'inspect' and args.execute)
     public = {name: value for name, value in result.items() if name != 'cid'}
     public['cid_sha256'] = hashlib.sha256(result['cid'].encode()).hexdigest()
@@ -361,13 +398,13 @@ def main() -> None:
             bundle=args.bundle, verification_key=args.verification_key,
             expected_build_sha256=args.expected_build_sha256,
             expected_original_sha256=args.expected_original_sha256,
-            mounted_live_target=TARGET)
+            mounted_live_target=target)
     else:
         if (not args.expected_build_sha256 or
                 digest(regular(args.artifact / 'build.json')) != args.expected_build_sha256):
             raise ValueError('Artifact differs from reviewed build')
         operation = arm_live_target if args.operation == 'arm' else activate_live_target
-        state = operation(TARGET, args.recovery, args.journal,
+        state = operation(target, args.recovery, args.journal,
                           target_policy=policy, artifact=args.artifact,
                           bundle=args.bundle, verification_key=args.verification_key)
     print(json.dumps({'operation': args.operation, 'execute': True,

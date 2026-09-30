@@ -13,7 +13,7 @@ import zlib
 from unittest import mock
 
 from scripts.build_h616_reimage_candidate import (build as build_writer, digest,
-    WRITER, V5_IMAGE_SHA256, expected_image_layout, verify_compiled_writer)
+    WRITER, V5_IMAGE_SHA256, expected_image_layout, verify_compiled_writer, runtime_compile_flags, V2_FORMAT, RUNTIME_ADMISSION)
 from scripts.ed25519_build import ED25519_SOURCES, raw_public_key
 from scripts.build_h616_recovery_handoff import build as build_handoff, script_text
 from scripts.stage_h616_recovery_handoff import (arm_regular_image,
@@ -30,7 +30,7 @@ from tests.test_h616_recovery_handoff_builder import base_initrd
 REPO = Path(__file__).resolve().parents[1]
 
 
-def inert_purpose_bundle(root, *, preflight_only):
+def inert_purpose_bundle(root, *, preflight_only, policy_v2=False):
     """Compile actual C with an expired fixture job; never a physical candidate.
 
     The production builder still refuses fixture verification keys for physical
@@ -40,6 +40,9 @@ def inert_purpose_bundle(root, *, preflight_only):
     files, policy, job = signed_inputs(root)
     policy.update(board_compatible='fixture,offline-h616', image_sha256=V5_IMAGE_SHA256,
                   image_layout=expected_image_layout(False, V5_IMAGE_SHA256))
+    if policy_v2:
+        policy.update(format=V2_FORMAT, runtime_admission=RUNTIME_ADMISSION,
+                      target_device='/dev/mmcblk2', dev_t='179:8')
     files['policy'].write_bytes(canonical_json(policy))
     job['format'] = ('sv08-h616-signed-preflight-v1' if preflight_only else
                      'sv08-h616-signed-reimage-v1')
@@ -72,6 +75,7 @@ def inert_purpose_bundle(root, *, preflight_only):
              '-DSV08_JOB_NOT_BEFORE=1000LL', '-DSV08_JOB_EXPIRES=2000LL',
              f'-DSV08_RECEIPT_PUBLIC_KEY_HEX="{raw_public_key(receipt_key).hex()}"',
              '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections']
+    flags += runtime_compile_flags(policy)
     if preflight_only:
         flags += ['-DSV08_H616_PREFLIGHT_ONLY=1', '-Wno-unused-variable', '-Wno-unused-function']
     subprocess.run(['aarch64-linux-gnu-gcc', '-static', '-Os', '-D_FORTIFY_SOURCE=2',
@@ -96,8 +100,8 @@ def inert_purpose_bundle(root, *, preflight_only):
     return bundle, files['key'], policy, job
 
 
-def purpose_artifact(root, *, preflight_only):
-    bundle, key, policy, job = inert_purpose_bundle(root, preflight_only=preflight_only)
+def purpose_artifact(root, *, preflight_only, policy_v2=False):
+    bundle, key, policy, job = inert_purpose_bundle(root, preflight_only=preflight_only, policy_v2=policy_v2)
     kernel, dtb = root / 'Image', root / 'board.dtb'
     kernel.write_bytes(b'K' * 4096)
     dtb.write_bytes(b'D' * 512)
@@ -493,6 +497,34 @@ class InitramfsParserTests(unittest.TestCase):
             archive.write_bytes(bad_crc)
             with self.assertRaises(gzip.BadGzipFile):
                 stager.verify_initramfs_members(archive, {'job.json': b'signed'})
+
+
+class V2SharedStageBindingTests(unittest.TestCase):
+    def test_v2_actual_embedded_compiled_mode_and_signed_policy_binding(self):
+        with tempfile.TemporaryDirectory(dir=REPO / 'local') as temporary:
+            for mode in (True, False):
+                artifact, bundle, key, policy, job = purpose_artifact(
+                    Path(temporary) / str(mode), preflight_only=mode, policy_v2=True)
+                manifest_path = bundle / 'reimage-manifest.json'
+                manifest = json.loads(manifest_path.read_bytes())
+                self.assertEqual(verify_signed_stage_bundle(verify_artifact(artifact), bundle, key, now=1500), policy)
+                policy_path = bundle / 'commissioning-target-policy.json'
+                original = policy_path.read_bytes()
+                changed = dict(policy, runtime_admission='unsigned-override')
+                policy_path.write_bytes(canonical_json(changed))
+                with self.assertRaises(ValueError): verify_compiled_writer(bundle, manifest)
+                policy_path.write_bytes(original)
+                # Relabel a v2 policy as v1 without changing the executable.
+                legacy = dict(policy, format='sv08-h616-commissioning-policy-v1', target_device='/dev/mmcblk0')
+                del legacy['runtime_admission']
+                policy_path.write_bytes(canonical_json(legacy))
+                with self.assertRaisesRegex(ValueError, 'Actual ELF compiled purpose'):
+                    verify_compiled_writer(bundle, manifest)
+                policy_path.write_bytes(original)
+                # Reviewed FIT member binding is enforced independently of labels.
+                member = artifact / 'writer.itb'
+                member.write_bytes(member.read_bytes() + b'SUBSTITUTED')
+                with self.assertRaises(ValueError): verify_artifact(artifact)
 
 
 if __name__ == '__main__':
