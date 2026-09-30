@@ -174,7 +174,14 @@
       "resumption": "Repair confirmed mounted-p5 whole-disk exclusive-open conflict at a1854e2 without changing approved nine-file scope; add actual-main kernel-claim regression, retain exact admission and fresh independent verification.",
       "status": "review",
       "title": "Repair and independently verify eMMC node binding",
-      "verification": null
+      "verification": {
+        "decision_sha256": "dcd0bad7fe6a80f1b157c11beba1bb8c0e12e46eea8f29b54798a7f9c066b649",
+        "evidence_sha256": "19ebff67f205b04c194687228eb57832b640842087aa0666fe280a7a0b9aaed9",
+        "outcome": "passed",
+        "rationale": "Passed approved offline enb-01/02/03 and all five decision constraints at clean actual HEAD 9d98550d91eb3396f6debd0ee5e03196530c0723, full recorded cef44b0-to-HEAD nine-file diff reviewed. Strict signed v2 staging/RAM phase contract, v1 compatibility, immutable snapshot/p5/descriptors/GPT, compiled-purpose and actual ELF/FIT/member binding, stage/journal/arm/activation consumers, preflight transfer exclusion, both exhausted job-bound environments and later full-writer/recovery guards remain intact. Mounted-p5 whole-disk revalidation now uses a descriptor-bound nonclaiming read with snapshot/capacity/GPT/p5 checks around it; pre-mount and later target admission remain exclusive. Independent bounded actual-C probe reproduced all four historical marker failures and passed six final-source snapshot/main tests, including both numbering directions/purposes, mounted mutations, cleanup/durability and exclusive refusal. Actual main stops at the existing expiry gate before claims/transfers; helper checks establish admission/write entry only. Submitted final-C 60-test regression and two ARM64 builds inspected; reported test hash was independently reconstructed by restoring exactly one trailing space, with production C unchanged. All 167 primary hash/provenance comparisons and 13 resource artifact/source comparisons matched; source/evidence bound to actual clean HEAD. Snapshot 6424 bytes, executable increments1040/984 and BSS6416/6432; existing resource/FIT gates retained. Earlier failed candidate/verdict and source trace preserved. Scratch and evidence details in review.md, audit.json, critical-probe.json/log and resource-audit.json. Offline modeled syscalls/static builds do not prove installed kernel/physical behavior, peak RAM, physical FIT load, a named hardware profile or release. RAM entry/enumeration, physical urh-04/05, fresh exact target/artifact recovery evidence and immediate independent operation review/owner authority remain pending. No tracked changes, records, hardware, private/credential reads, connections, agents or publication.",
+        "reviewer": "independent feature_verifier_high /root/verify_h616_marker_repair",
+        "session": "01a0f273-8060-7342-b822-fd47b857f8e9; fresh independent session; coordinator runtime observation confirms GPT-6.1 Sol high, danger-full-access, approval never"
+      }
     }
   ],
   "title": "Bind H616 commissioning to the current eMMC node"
