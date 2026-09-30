@@ -24,6 +24,11 @@
 #include <time.h>
 #include <unistd.h>
 #include "monocypher-ed25519.h"
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+#if !defined(SV08_H616_COMMISSIONING) || !defined(SV08_H616_TRUSTED_INITRAMFS) || !defined(SV08_H616_RECOVERY_HANDOFF) || defined(SV08_H616_SYNTHETIC_TEST) || defined(SV08_CLAIM_ONLY) || defined(SV08_TEST_FAULT)
+#error "V2 requires physical trusted recovery handoff"
+#endif
+#endif
 #if defined(SV08_H616_PREFLIGHT_ONLY)
 #if !defined(SV08_H616_COMMISSIONING) || !defined(SV08_H616_TRUSTED_INITRAMFS) || \
     !defined(SV08_H616_RECOVERY_HANDOFF) || defined(SV08_H616_SYNTHETIC_TEST) || \
@@ -74,10 +79,25 @@
 #define SV08_RECOVERY_PARTITION_SYSFS "/sys/block/sda/sda5/dev"
 #else
 #define SV08_MMC_BASE SV08_EMMC_HOST_SYSFS
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+/* Written once before marker admission; never updated on revalidation. */
+struct h616_boot_snapshot {
+  char target[64],block[1024],controller[1024],card[1024],p5[1024];
+  char target_dev_sysfs[1088],partition[72],partition_dev_sysfs[1088];
+  dev_t dev,part_dev;
+};
+static struct h616_boot_snapshot boot_snapshot;
+static int boot_snapshot_ready;
+#define SV08_TARGET boot_snapshot.target
+#define SV08_TARGET_DEV_SYSFS boot_snapshot.target_dev_sysfs
+#define SV08_RECOVERY_PARTITION boot_snapshot.partition
+#define SV08_RECOVERY_PARTITION_SYSFS boot_snapshot.partition_dev_sysfs
+#else
 #define SV08_TARGET "/dev/mmcblk0"
 #define SV08_TARGET_DEV_SYSFS "/sys/block/mmcblk0/dev"
 #define SV08_RECOVERY_PARTITION "/dev/mmcblk0p5"
 #define SV08_RECOVERY_PARTITION_SYSFS "/sys/block/mmcblk0/mmcblk0p5/dev"
+#endif
 #endif
 #define SV08_TARGET_POLICY_FILE "commissioning-target-policy.json"
 #define SV08_MODE_PARAMETER "sv08.h616_commissioning=1"
@@ -145,15 +165,23 @@
 #else
 #define SV08_COMPILED_SYNTHETIC "0"
 #endif
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+#define SV08_COMPILED_RECORD "sv08-h616-compiled-purpose-v2\n"
+#define SV08_COMPILED_ADMISSION "policy_format=sv08-h616-commissioning-policy-v2\nruntime_admission=controller-cid-boot-snapshot-v1\n"
+#else
+#define SV08_COMPILED_RECORD "sv08-h616-compiled-purpose-v1\n"
+#define SV08_COMPILED_ADMISSION ""
+#endif
 static const volatile char compiled_purpose[]
   __attribute__((used,section(".sv08.h616-purpose"))) =
-  "sv08-h616-compiled-purpose-v1\n"
+  SV08_COMPILED_RECORD
   "format=" SV08_COMPILED_PURPOSE "\n"
   "job_sha256=" SV08_JOB_DESCRIPTOR_SHA256 "\n"
   "policy_sha256=" SV08_TARGET_POLICY_SHA256 "\n"
   "trusted_initramfs=" SV08_COMPILED_TRUSTED "\n"
   "recovery_handoff=" SV08_COMPILED_HANDOFF "\n"
-  "synthetic_test=" SV08_COMPILED_SYNTHETIC "\n";
+  "synthetic_test=" SV08_COMPILED_SYNTHETIC "\n"
+  SV08_COMPILED_ADMISSION;
 #endif
 static unsigned char buffer[CHUNK];
 #if defined(SV08_H616_PREFLIGHT_ONLY)
@@ -385,6 +413,158 @@ static int synthetic_mmc_identity(dev_t *number) {
 }
 #endif
 #if defined(SV08_H616_COMMISSIONING)
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+static int h616_canonical_device(const char *device) {
+  const char *n=device+11;
+  if(strncmp(device,"/dev/mmcblk",11)||!*n||strlen(n)>7||
+     (n[0]=='0'&&n[1]))return 0;
+  for(;*n;n++)if(*n<'0'||*n>'9')return 0;
+  return 1;
+}
+static int h616_realpath(const char *path,char *out,size_t cap) {
+  char *p=realpath(path,NULL);
+  if(!p)return 0;
+  int ok=strlen(p)<cap;
+  if(ok)strcpy(out,p);
+  free(p);return ok;
+}
+static int h616_under(const char *child,const char *parent) {
+  size_t n=strlen(parent);
+  return !strncmp(child,parent,n)&&child[n]=='/';
+}
+static int h616_value(const char *base,const char *name,const char *expected) {
+  char path[1200],value[128];
+  return snprintf(path,sizeof(path),"%s/%s",base,name)<(int)sizeof(path)&&
+         sv08_read_line(path,value,sizeof(value))&&!strcmp(value,expected);
+}
+static int h616_snapshot_at(const char *base,const char *class_block,
+                             struct h616_boot_snapshot *candidate) {
+  char path[1200],value[64];unsigned long long sectors;
+  memset(candidate,0,sizeof(*candidate));
+  if(!sv08_emmc_cid_device_at(base,SV08_H616_EXPECTED_CID,
+         candidate->target,sizeof(candidate->target),&sectors)||
+     !h616_canonical_device(candidate->target)||sectors!=SV08_EMMC_SECTORS||
+     !h616_realpath(base,candidate->controller,sizeof(candidate->controller))||
+     snprintf(path,sizeof(path),"%s/%s",class_block,candidate->target+5)>=(int)sizeof(path)||
+     !h616_realpath(path,candidate->block,sizeof(candidate->block))||
+     snprintf(path,sizeof(path),"%s/device",candidate->block)>=(int)sizeof(path)||
+     !h616_realpath(path,candidate->card,sizeof(candidate->card))||
+     !h616_under(candidate->card,candidate->controller)||
+     !h616_under(candidate->block,candidate->card)||
+     !h616_value(candidate->card,"cid",SV08_H616_EXPECTED_CID)||
+     !h616_value(candidate->card,"type","MMC")||
+     !h616_value(candidate->block,"size","61079552")||
+     snprintf(candidate->target_dev_sysfs,sizeof(candidate->target_dev_sysfs),
+         "%s/dev",candidate->block)>=(int)sizeof(candidate->target_dev_sysfs)||
+     !read_sysfs_dev(candidate->target_dev_sysfs,&candidate->dev)||
+     snprintf(candidate->partition,sizeof(candidate->partition),"%sp5",candidate->target)>=(int)sizeof(candidate->partition)||
+     snprintf(path,sizeof(path),"%s/%sp5",class_block,candidate->target+5)>=(int)sizeof(path)||
+     !h616_realpath(path,candidate->p5,sizeof(candidate->p5)))return 0;
+  if(snprintf(path,sizeof(path),"%s/%sp5",candidate->block,candidate->target+5)>=(int)sizeof(path)||
+     strcmp(path,candidate->p5)||!h616_value(candidate->p5,"partition","5"))return 0;
+  snprintf(value,sizeof(value),"%llu",4714397696ULL/512);
+  if(!h616_value(candidate->p5,"start",value))return 0;
+  snprintf(value,sizeof(value),"%llu",536870912ULL/512);
+  if(!h616_value(candidate->p5,"size",value)||
+     snprintf(candidate->partition_dev_sysfs,sizeof(candidate->partition_dev_sysfs),
+       "%s/dev",candidate->p5)>=(int)sizeof(candidate->partition_dev_sysfs)||
+     !read_sysfs_dev(candidate->partition_dev_sysfs,&candidate->part_dev))return 0;
+  /* Exact signed PARTUUID is required once, not a substring match. */
+  if(snprintf(path,sizeof(path),"%s/uevent",candidate->p5)>=(int)sizeof(path))return 0;
+  FILE *f=fopen(path,"r");int found=0,ok=1;
+  if(!f)return 0;
+  while(fgets(value,sizeof(value),f)) {
+    if(!strchr(value,'\n')) {ok=0;break;}
+    if(!strncmp(value,"PARTUUID=",9)) {
+      value[strcspn(value,"\n")]=0;
+      if(++found!=1||strcmp(value+9,SV08_H616_RECOVERY_PARTUUID)) {ok=0;break;}
+    }
+  }
+  if(ferror(f)||fclose(f))ok=0;
+  return ok&&found==1&&candidate->dev!=candidate->part_dev;
+}
+static int h616_snapshot_identity(dev_t *number) {
+  struct h616_boot_snapshot candidate;
+  if(!h616_snapshot_at(SV08_MMC_BASE,"/sys/class/block",&candidate))return 0;
+  if(!boot_snapshot_ready) {
+    boot_snapshot=candidate;boot_snapshot_ready=1;
+  } else if(memcmp(&boot_snapshot,&candidate,sizeof(candidate)))return 0;
+  *number=boot_snapshot.dev;return 1;
+}
+struct h616_gpt_part {unsigned char guid[16];uint64_t start,sectors;const char *name;};
+static const struct h616_gpt_part h616_gpt_parts[6]=SV08_H616_GPT_PARTITIONS;
+static const unsigned char h616_gpt_disk[16]=SV08_H616_GPT_DISK_GUID;
+static uint64_t h616_le64(const unsigned char *p) {
+  uint64_t n=0;for(int i=7;i>=0;i--)n=(n<<8)|p[i];return n;
+}
+static uint32_t h616_le32(const unsigned char *p) {
+  return (uint32_t)h616_le64((const unsigned char[8]){p[0],p[1],p[2],p[3],0,0,0,0});
+}
+static int h616_gpt_map(int fd) {
+  unsigned char header[512],entries[16384],backup[512],copy[16384];
+  if(!sv08_pread_all(fd,header,sizeof(header),512)||memcmp(header,"EFI PART",8)||
+     h616_le32(header+8)!=0x10000||h616_le32(header+12)!=92||
+     h616_le64(header+24)!=1||h616_le64(header+32)!=IMAGE_BYTES/512-1||
+     memcmp(header+56,h616_gpt_disk,16)||h616_le32(header+80)!=128||
+     h616_le32(header+84)!=128||h616_le64(header+72)!=4096)return 0;
+  uint32_t crc=h616_le32(header+16);memset(header+16,0,4);
+  if(sv08_env_crc32(header,92)!=crc||
+     !sv08_pread_all(fd,entries,sizeof(entries),4096ULL*512)||
+     sv08_env_crc32(entries,sizeof(entries))!=h616_le32(header+88))return 0;
+  for(size_t i=0;i<128;i++) {
+    const unsigned char *e=entries+i*128;
+    if(i>=6) {for(size_t j=0;j<128;j++)if(e[j])return 0;continue;}
+    const struct h616_gpt_part *p=&h616_gpt_parts[i];
+    if(memcmp(e+16,p->guid,16)||h616_le64(e+32)!=p->start||
+       h616_le64(e+40)!=p->start+p->sectors-1)return 0;
+    for(size_t j=0;j<36;j++)
+      if(e[56+2*j]!=(j<strlen(p->name)?(unsigned char)p->name[j]:0)||e[57+2*j])return 0;
+  }
+  if(!sv08_pread_all(fd,backup,sizeof(backup),IMAGE_BYTES-512)||
+     memcmp(backup,"EFI PART",8)||h616_le32(backup+12)!=92||
+     h616_le64(backup+24)!=IMAGE_BYTES/512-1||h616_le64(backup+32)!=1||
+     memcmp(backup+56,h616_gpt_disk,16)||h616_le32(backup+80)!=128||
+     h616_le32(backup+84)!=128||h616_le64(backup+72)!=IMAGE_BYTES/512-33||
+     h616_le32(backup+88)!=h616_le32(header+88)||
+     !sv08_pread_all(fd,copy,sizeof(copy),IMAGE_BYTES-33*512)||memcmp(copy,entries,sizeof(copy)))return 0;
+  crc=h616_le32(backup+16);memset(backup+16,0,4);
+  return sv08_env_crc32(backup,92)==crc;
+}
+/* All raw admission reads bind the opened descriptor to the immutable snapshot. */
+static int h616_snapshot_fd(int fd,int check_gpt) {
+  struct stat st;uint64_t capacity;dev_t number;
+  return boot_snapshot_ready&&h616_snapshot_identity(&number)&&
+    !fstat(fd,&st)&&S_ISBLK(st.st_mode)&&st.st_rdev==boot_snapshot.dev&&
+    !ioctl(fd,BLKGETSIZE64,&capacity)&&capacity==TARGET_BYTES&&
+    (!check_gpt||h616_gpt_map(fd));
+}
+#if !defined(SV08_H616_PREFLIGHT_ONLY)
+static int h616_open_write_target(void) {
+  dev_t number;
+  if(!h616_snapshot_identity(&number))return -1;
+  int fd=open(SV08_TARGET,O_RDWR|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
+  int ok=fd>=0&&h616_snapshot_fd(fd,1);
+  for(size_t i=0;ok&&i<SV08_ENV_COUNT;i++)
+    ok=sv08_pread_all(fd,old_env[i],SV08_ENV_BYTES,sv08_env_offsets[i])&&
+       sv08_env_exhausted_for_job(old_env[i]);
+  if(ok)ok=h616_snapshot_fd(fd,1);
+  if(!ok) {if(fd>=0)close(fd);return -1;}
+  return fd;
+}
+#endif
+static int h616_partition_fd(int fd) {
+  struct stat st;uint64_t capacity;dev_t number;
+  return boot_snapshot_ready&&h616_snapshot_identity(&number)&&
+    !fstat(fd,&st)&&S_ISBLK(st.st_mode)&&st.st_rdev==boot_snapshot.part_dev&&
+    !ioctl(fd,BLKGETSIZE64,&capacity)&&capacity==536870912ULL;
+}
+static int h616_before_marker(void) {
+  int fd=open(SV08_TARGET,O_RDONLY|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
+  int ok=fd>=0&&h616_snapshot_fd(fd,1);
+  if(fd>=0&&close(fd))ok=0;
+  return ok;
+}
+#else
 static int h616_inventory_dev_at(const char *base,dev_t *number) {
   DIR *hosts=opendir(base);struct dirent *host,*card;int found=0,ok=1,next=0;
   if(!hosts)return 0;
@@ -446,8 +626,13 @@ static int h616_mmc_identity_at(const char *base,const char *dev_sysfs,dev_t *nu
   snprintf(dev_text,sizeof(dev_text),"%u:%u",major(*number),minor(*number));
   return !strcmp(dev_text,SV08_H616_EXPECTED_DEV_T);
 }
+#endif
 static int h616_mmc_identity(dev_t *number) {
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  return h616_snapshot_identity(number);
+#else
   return h616_mmc_identity_at(SV08_MMC_BASE,SV08_TARGET_DEV_SYSFS,number);
+#endif
 }
 #endif
 static int admitted_mmc_identity(dev_t *number) {
@@ -465,18 +650,37 @@ static int consume_recovery_marker(void) {
   unsigned char content[sizeof(marker)];
   dev_t partition_dev;
   int part=-1,root=-1,dir=-1,armed=-1,ok=0,mounted_here=0,created_here=0;
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(!h616_before_marker())goto done;
+#endif
   part=open(SV08_RECOVERY_PARTITION,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
   if(part<0||fstat(part,&partition_stat)||!S_ISBLK(partition_stat.st_mode)||
      !read_sysfs_dev(SV08_RECOVERY_PARTITION_SYSFS,&partition_dev)||
      partition_stat.st_rdev!=partition_dev)goto done;
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(partition_dev!=boot_snapshot.part_dev||!h616_partition_fd(part)||!h616_before_marker())goto done;
+#else
   close(part);part=-1;
+#endif
   if(mkdir(where,0700))goto done;
   created_here=1;
-  if(mount(SV08_RECOVERY_PARTITION,where,"ext4",MS_NOEXEC|MS_NOSUID|MS_NODEV,NULL))
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  char partition_fd_path[64];
+  snprintf(partition_fd_path,sizeof(partition_fd_path),"/proc/self/fd/%d",part);
+  const char *mount_source=partition_fd_path;
+#else
+  const char *mount_source=SV08_RECOVERY_PARTITION;
+#endif
+  if(mount(mount_source,where,"ext4",MS_NOEXEC|MS_NOSUID|MS_NODEV,NULL))
     goto done;
   mounted_here=1;
   root=open(where,O_RDONLY|O_DIRECTORY|O_CLOEXEC|O_NOFOLLOW);
   if(root<0)goto done;
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  struct stat root_stat;
+  if(fstat(root,&root_stat)||!S_ISDIR(root_stat.st_mode)||
+     root_stat.st_dev!=boot_snapshot.part_dev||!h616_partition_fd(part))goto done;
+#endif
   dir=openat(root,"sv08-reimage",O_RDONLY|O_DIRECTORY|O_CLOEXEC|O_NOFOLLOW);
   if(dir<0)goto done;
   armed=openat(dir,"armed",O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
@@ -491,13 +695,20 @@ static int consume_recovery_marker(void) {
   }
   if(memcmp(content,marker,sizeof(marker)-1)||read(armed,content,1)!=0)goto done;
   close(armed);armed=-1;
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(!h616_before_marker()||!h616_partition_fd(part))goto done;
+#endif
   if(unlinkat(dir,"armed",0)||fsync(dir)||syncfs(dir))goto done;
   ok=1;
 done:
   if(armed>=0)close(armed);
   if(dir>=0)close(dir);
   if(root>=0)close(root);
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(part>=0&&close(part))ok=0;
+#else
   if(part>=0)close(part);
+#endif
   if(mounted_here&&umount2(where,0))ok=0;
   if(created_here&&rmdir(where))ok=0;
   return ok;
@@ -517,10 +728,16 @@ static const char *preflight_open_target(dev_t admitted_dev) {
      target_stat.st_rdev!=admitted_dev||
      !sysfs_dev_matches(&target_stat,SV08_TARGET_DEV_SYSFS)||
      ioctl(fd,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES)goto done;
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(!h616_snapshot_fd(fd,1))goto done;
+#endif
   status="REFUSED_UNSAFE_BOOT_ENV";
   for(size_t i=0;i<SV08_ENV_COUNT;i++)
     if(!sv08_pread_all(fd,old_env[i],SV08_ENV_BYTES,sv08_env_offsets[i])||
        !sv08_env_exhausted_for_job(old_env[i]))goto done;
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(!h616_snapshot_fd(fd,1)) {status="REFUSED_TARGET_ID_CHANGED";goto done;}
+#endif
   status="PREFLIGHT_PASS";
 done:
   if(fd>=0&&close(fd))status="REFUSED_TARGET_CLOSE";
@@ -922,7 +1139,7 @@ int main(void) {
     sha_update(&hash,buffer,n);done+=n;}
   sha_final(&hash,actual);
   if(strcmp(actual,expected)||lseek(in,0,SEEK_SET)!=0)finish("REFUSED_SOURCE_HASH");
-  /* Source failure cannot open the target. Recheck identity at the boundary. */
+  /* Source failure cannot open the target for writing. Recheck identity. */
   if(!admitted_mmc_identity(&confirmed_dev)||confirmed_dev!=admitted_dev||
      !read_sysfs_dev(SV08_TARGET_DEV_SYSFS,&confirmed_dev)||confirmed_dev!=admitted_dev)
     finish("REFUSED_TARGET_ID_CHANGED");
@@ -930,11 +1147,15 @@ int main(void) {
   if(!trusted_image_mount()||fstatvfs(in,&source_fs)||!(source_fs.f_flag&ST_RDONLY))
     finish("REFUSED_SOURCE_MOUNT");
 #endif
-  /* This is the first target open. The single-use claim is already durable. */
+  /* This is the first writable target open. The single-use claim is durable. */
 #if defined(SV08_H616_SYNTHETIC_TEST)
   printf("%sTARGET_OPEN_START\n",SV08_RESULT_PREFIX);fflush(stdout);
 #endif
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  out=h616_open_write_target();
+#else
   out=open(target,O_RDWR|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
+#endif
   if(out<0||fstat(out,&ts)||!S_ISBLK(ts.st_mode)||
      ioctl(out,BLKGETSIZE64,&capacity)||capacity!=TARGET_BYTES||
 #if !defined(SV08_H616_COMMISSIONING)
@@ -944,10 +1165,15 @@ int main(void) {
      (ss.st_dev==ts.st_dev&&ss.st_ino==ts.st_ino))
     finish("REFUSED_INPUT");
 #if defined(SV08_H616_RECOVERY_HANDOFF)
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+  if(!h616_snapshot_fd(out,1))finish("REFUSED_TARGET_ID_CHANGED");
+#endif
+ #if !defined(SV08_H616_BOOT_SNAPSHOT_V2)
   for(size_t i=0;i<SV08_ENV_COUNT;i++)
     if(!sv08_pread_all(out,old_env[i],SV08_ENV_BYTES,sv08_env_offsets[i])||
        !sv08_env_exhausted_for_job(old_env[i]))
       finish("REFUSED_UNSAFE_BOOT_ENV");
+ #endif
 #endif
 #if defined(SV08_TEST_FAULT) && (defined(__GNUC__) || defined(__clang__))
   if(!strcmp(SV08_TEST_FAULT,"before-write"))finish("INJECTED_BEFORE_WRITE");
@@ -970,6 +1196,9 @@ int main(void) {
   sha_init(&hash);
   for(uint64_t done=0;done<IMAGE_BYTES;) {
     size_t n=(IMAGE_BYTES-done)>CHUNK?CHUNK:(size_t)(IMAGE_BYTES-done);
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+    if(!h616_snapshot_fd(out,0))finish("REFUSED_TARGET_ID_CHANGED");
+#endif
     if(expired(started)||!exact_read(in,n)||
        !sv08_write_without_env(out,buffer,done,n))finish("FAILED_WRITE");
     sha_update(&hash,buffer,n);done+=n;
@@ -991,6 +1220,9 @@ int main(void) {
   }
   if(!strcmp(SV08_TEST_FAULT,"after-bulk"))finish("INJECTED_AFTER_BULK");
   for(size_t i=0;i<SV08_ENV_COUNT;i++) {
+#if defined(SV08_H616_BOOT_SNAPSHOT_V2)
+    if(!h616_snapshot_fd(out,1))finish("REFUSED_TARGET_ID_CHANGED");
+#endif
     if(!sv08_pread_all(in,buffer,SV08_ENV_BYTES,sv08_env_offsets[i])||
        !sv08_pwrite_all(out,buffer,SV08_ENV_BYTES,sv08_env_offsets[i])||
        fsync(out)||ioctl(out,BLKFLSBUF,0)||
