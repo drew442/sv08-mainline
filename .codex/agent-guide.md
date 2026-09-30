@@ -67,6 +67,87 @@ contract, or leave that assignment pending. Record any fallback; it is not a Sol
 6.1 result. Unavailable independent review blocks acceptance/action, not unrelated
 authorized offline work. Never edit user-global config to conceal a launch failure.
 
+## Execution policy and bounded self-service diagnostics
+
+The owner requested full-access execution with strict role and cost boundaries;
+see the [execution decision](../docs/decisions/20260930-agent-execution-and-diagnostics.md)
+and [deployment checks](../docs/development/agent-execution.md). This supersedes
+historical read-only-runner requirements, not project, hardware or acceptance rules.
+Project settings select `approval_policy = "never"` and
+`sandbox_mode = "danger-full-access"`; role files inherit that execution policy.
+Full access is capability, not permission to take over another role. User-global
+configuration, managed policy and live parent overrides still require inspection.
+
+Each worker may perform supporting diagnostics necessary for its assigned question.
+Lookup may create small extraction/comparison scripts, but not causal analysis.
+Research may run minimal reproductions or targeted compilation, but not implement
+production changes. Planning may test feasibility, but not implement or self-approve.
+Integration may adjust its own disposable inputs/invocation, but not production
+code, tracked tests or acceptance criteria. Reviewers may reproduce checks against
+the unchanged submitted candidate, but not repair it or perform the reviewed action.
+Implementers retain only their explicitly assigned tracked-file ownership.
+
+The coordinator allocates a unique scratch directory before launch, normally
+`local/feature-workflow/probes/<task-id>/<attempt-id>/` outside the candidate
+worktree. No additional permission request is needed for qualifying diagnostics.
+A missing scratch assignment is a coordinator handoff, not permission to use shared
+build directories. Scratch scripts, inputs, output, temporary files and caches stay
+inside the assigned directory; do not change host setup, install packages, use
+physical devices, restart services or mutate remote hosts under this allowance.
+Use installed tools and approved existing fixtures. Effects, not command length,
+determine eligibility. Do not execute untrusted downloaded installers as a probe.
+
+| Auxiliary diagnostic limit | Default per assigned question/task lineage |
+| --- | --- |
+| Experimental runs | 2 total: initial probe plus one corrected/discriminating follow-up |
+| Execution time | 300 seconds cumulative elapsed process runtime across all probe runs |
+| Generated data | 256 MiB cumulative, including scratch inputs, logs, outputs and caches |
+| Additional agents, model/effort/billing changes | None initiated by the worker |
+
+These are initial operating allowances, not native Codex config keys or hard
+spending caps. Multiple commands can be one named experiment, but hiding repeated
+experiments in a script is not a way around the limit. Use command timeouts no
+larger than remaining time, bound output and stop before a known overrun. Unknown
+resource needs require a larger assigned fixture/budget, not an unbounded probe.
+Do not split or rename a question, delete outputs, spawn a CLI session or change
+workers to reset cumulative accounting. Record probe ID, commands, results and
+usage in the existing handoff/observation; a handoff carries remaining allowance.
+
+These limits cover incidental questions, not the explicitly budgeted primary task.
+A long assigned build/test or substantive review needs its own execution allowance.
+For a known expensive reproduction, select integration directly. Ordinary reading
+and source tracing remain within the primary-task budget. Exhaustion returns
+`needs-escalation` with evidence and the smallest next action; do not claim an
+incomplete check passed. Keep formal approval/verification JSON schemas unchanged.
+The coordinator grants bounded continuations within standing owner authorization,
+records the reason and cumulative usage, and does not ask the owner repeatedly
+when that authorization is already sufficient.
+
+Keep model/effort changes, additional agents, shared-record updates, commits,
+publication and printer operations with the coordinator. Child profiles disable
+native multi-agent tools with `[agents] enabled = false`; workers also must not
+start other agents via shell, CLI or API. This is not a hard shell restriction.
+A permission/startup failure is a runner issue, not a reason to spend more tokens
+retrying with higher effort. One diagnosed repair cycle applies to the same
+unresolved failure, not to every distinct defect in an implementation. A new
+assignment or review-driven repair keeps the earlier attempt history.
+
+Existing authentication may be used only for explicitly assigned development-host
+connections and resources. Using an approved connection is not permission to read,
+copy or disclose private keys, tokens, passwords, raw dumps or private backups.
+Printer/board/media access is not a generic development connection; even read-only
+printer commands remain coordinator-owned under existing hardware authorization.
+These are conduct and acceptance rules, not enforced secret/device isolation.
+Hard prevention or spending guarantees require controls outside the full-access
+worker. Do not claim that worktrees, prompts, tests or token tracking provide them.
+
+Before accepting results, the coordinator checks complete candidate/source diffs,
+tracked-file ownership, untracked files, deletions, modes and gitlinks against the
+recorded baseline. Researchers/reviewers must leave the candidate unchanged.
+Never repair or automatically revert another worker's changes to make this check
+pass. Preserve offending changes/evidence and reconcile ownership. Scratch evidence
+must be sanitized and promoted by the coordinator before it becomes public evidence.
+
 ## Handoffs, evidence and bounded retries
 
 Give one task packet, not the full conversation or all project documents:
@@ -75,9 +156,12 @@ Give one task packet, not the full conversation or all project documents:
 Task/outcome and existing authorization/acceptance IDs:
 Role; requested model/effort; reason for non-default effort:
 Revision, relevant paths/evidence and existing results to reuse:
-Owned files/worktree OR read-only scope; permitted commands/fixtures/ports:
+Owned tracked files/worktree OR unchanged candidate; assigned resources/ports:
+Scratch directory; question/attempt lineage; remaining diagnostic allowance:
+Assigned development connections/authentication use, or none:
 Known facts, uncertainty, consequence of error and exact next question:
-Completion checks, execution allowance, escalation/stop conditions:
+Completion checks; primary-task execution allowance; escalation/stop conditions:
+Prior probes/attempts and cumulative usage; baseline candidate state:
 Expected result; shared human dependency IDs and offline alternatives:
 ```
 
@@ -89,12 +173,10 @@ unknown, never invent them. Workers return status (done/blocked/needs-escalation
 source revision, changed paths, commands/results, evidence limitations and the
 smallest next action. Formal decisions/verifications keep their existing schemas.
 
-A clear focused failure permits one bounded repair cycle within the assignment.
-Persistent failure, design ambiguity or scope growth returns to the coordinator
-with the actual patch/evidence; do not pay for a full restart or repeated unchanged
-attempts. Escalation changes effort or assignment, not authorization. Review-driven
-rework is a new bounded assignment. Missing hardware facts require observation,
-not extra reasoning. A slow build requires waiting on its existing handle.
+Use the diagnostic and same-failure repair limits above. Persistent failure,
+design ambiguity or scope growth returns to the coordinator with the actual
+patch/evidence; preserve useful work instead of restarting. Missing hardware facts
+require observation, not extra reasoning. A slow build uses its existing handle.
 
 ## Review independence and workflow
 
@@ -110,8 +192,10 @@ delivery. A researcher whose design/fix was adopted counts as an author. Use fre
 review sessions with source and evidence, not inherited author conclusions. An
 approver may not be reused as the delivery verifier: avoid reviewing its own earlier
 acceptance judgment. The verifier may reproduce checks in an authorized disposable
-environment, but cannot repair the submitted code. Separate sessions reduce shared
-assumptions; they do not prove statistical independence.
+environment under its assigned allowance, but cannot repair the submitted code.
+Reproducing a check as verifier does not make that session an implementation author;
+adopting its proposed production repair does, and requires a fresh verifier.
+Separate sessions reduce shared assumptions; they do not prove statistical independence.
 
 Choose medium OR high verification, not both as routine stages. High verification
 is warranted by subtle irreversible-state, concurrency or security reasoning or an
@@ -131,8 +215,8 @@ or execution evidence. Unresolved physical facts still stop the operation at hig
 Keep one implementation active and at most two open children. A research/review
 child may accompany independent useful work; do not launch idle roles. Only one
 owner uses a QEMU image, port, build tree or physical task at a time. Worktrees do
-not isolate credentials. Enforce sandbox/private-backup/credential/device exclusion
-in the execution environment; parent permissions may override profile defaults.
+not isolate credentials; full-access roles follow the execution contract above.
+Parent runtime settings can override project defaults; verify the effective mode.
 Send physical dependencies to the coordinator's existing human queue, not directly
 to the owner. Continue eligible offline work while a physical dependency waits.
 

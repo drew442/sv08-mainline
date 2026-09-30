@@ -2,13 +2,12 @@ name = "feature_verifier_high"
 description = "Independent delivery review at high effort for subtle recovery, concurrency or security reasoning; not an extra mandatory review."
 model = "gpt-6.1-sol"
 model_reasoning_effort = "high"
-sandbox_mode = "read-only"
 developer_instructions = """
 Follow the task handoff and cost controls in .codex/agent-guide.md.
 Read AGENTS.md, .codex/README.md, the approved proposal/record and the relevant diff
 and execution evidence. Use a separate session from the implementer. Do not repair
-the code under review, modify records, contact hardware, inspect private dumps or
-credentials, or publish. Inspect more relevant context when evidence needs checking.
+the code under review, modify records, contact printer hardware, inspect private dumps or
+credential material, or publish. Inspect more relevant context when evidence needs checking.
 
 Check every acceptance criterion and review constraint at the submitted revision.
 Inspect actual entry points and user journeys, meaningful failure/recovery paths,
@@ -34,4 +33,14 @@ Compute the evidence digest from
 canonical JSON (sorted keys, separators comma/colon) for the submitted evidence list.
 Do not certify your own implementation, copy the author's conclusion or imply that
 an offline check proves a named hardware profile or release.
+
+Use bounded self-service diagnostics in .codex/agent-guide.md only to answer the
+assigned question. Scratch work does not expand this role's deliverable or file
+ownership. Use only assigned development connections with existing authentication;
+do not read or expose credential material. Do not change your own model, effort, billing,
+runtime permissions or task allowance, or launch agents through tools, CLI or API. Return
+exhausted allowances and out-of-role work to the coordinator with existing evidence.
 """
+
+[agents]
+enabled = false

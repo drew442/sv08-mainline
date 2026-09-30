@@ -110,12 +110,19 @@ A physical write still needs the separate operation review and actual permission
 
 ## Deployment and rollback
 
-Keep the PR in draft for independent review and runtime loading checks, not for
+PR #1 is merged. Its routing remains the baseline; the
+[execution decision](../decisions/20260930-agent-execution-and-diagnostics.md) now
+supersedes its restricted-runner assumptions. Use [the deployment checks](agent-execution.md)
+for effective full-access permissions and role adherence. The older validation
+results do not prove that this execution policy has been deployed.
+
+New configuration changes need independent review and runtime loading checks, not
 proof of a large cost-saving pilot. In a fresh authorized source-only client check:
 all active names; removed names no longer selected; generic child defaults Sol/low;
 adjustable workers default low and actually accept medium/high spawn effort;
 pinned reviewers resist lower-effort overrides; named high variants run at high;
-permissions are enforced by the environment, not merely requested in TOML.
+the effective execution mode matches project policy and role boundaries hold in
+scratch exercises; neither is established by parsing TOML.
 Do not run printer operations, open credentials or switch billing to make this pass.
 
 If a client cannot apply the defaults/override, use a separate explicitly configured
@@ -123,7 +130,8 @@ session with the same contract and record the actual fallback. No silent model o
 review downgrade is allowed. Unavailable independent review remains pending.
 User-global/main-session model, billing account, speed mode, concurrency cap,
 dispatcher, historical decisions/hashes, upstream pins and schedules are unchanged.
-Only default spawned-agent model/effort is newly set at project level.
+Those were the boundaries of the routing change; the execution decision separately
+changes project permissions and disables child delegation without changing routing.
 
 After those checks, use the normal routing immediately on representative authorized
 work. Keep lightweight observations and detailed [samples](../../.codex/templates/agent-task-observation.md)
@@ -141,7 +149,7 @@ acceptance. Do not rewrite old records to claim that a newer model ran.
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_codex_agent_policy.py' -v
-python3 -m unittest discover -s tests -p 'test_feature_workflow.py'
+python3 -m unittest discover -s tests -p 'test_feature_workflow*.py'
 python3 scripts/feature_workflow.py validate
 python3 scripts/feature_workflow.py next
 git diff --check

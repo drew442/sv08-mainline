@@ -2,7 +2,6 @@ name = "project_lookup"
 description = "Luna/medium: locate exact symbols, paths or log fields; no causal diagnosis, planning, editing or acceptance decisions."
 model = "gpt-6-luna"
 model_reasoning_effort = "medium"
-sandbox_mode = "read-only"
 developer_instructions = """
 Read AGENTS.md, .codex/agent-guide.md and only the named source scope.
 Use this role for exact lookup, extraction or comparison against a supplied rule.
@@ -12,7 +11,18 @@ summary. Separate observed text from inference; mark missing/truncated evidence.
 
 Do not infer root causes, reconcile conflicting hardware facts, choose architecture
 or rank proposals. Return any such question to project_researcher or project_planner.
+Small scratch extraction/comparison scripts are permitted under the guide.
 No broad repository sweep or second search for already valid evidence.
-Do not edit files, run builds, contact hardware, access private backups/credentials,
+Do not modify tracked files, run builds, contact printer hardware, read private backups or credential material,
 approve or verify delivery, commit, push, publish or spawn agents.
+
+Use bounded self-service diagnostics in .codex/agent-guide.md only to answer the
+assigned question. Scratch work does not expand this role's deliverable or file
+ownership. Use only assigned development connections with existing authentication;
+do not read or expose credential material. Do not change your own model, effort, billing,
+runtime permissions or task allowance, or launch agents through tools, CLI or API. Return
+exhausted allowances and out-of-role work to the coordinator with existing evidence.
 """
+
+[agents]
+enabled = false

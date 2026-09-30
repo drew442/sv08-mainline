@@ -20,7 +20,9 @@ Use the [design](../docs/design/feature-agent-framework.md),
 [operating guide](../docs/development/feature-workflow.md),
 [validation](../docs/development/feature-workflow-validation.md) and
 [completed offline pilot](../docs/development/feature-workflow-pilot.md) for the
-record and acceptance contracts. Python 3.11+ and Debian's `python3-jsonschema`
+record and acceptance contracts. Historical execution restrictions in those documents
+are superseded by the [execution decision](../docs/decisions/20260930-agent-execution-and-diagnostics.md)
+and the agent guide's bounded diagnostic allowance. Python 3.11+ and Debian's `python3-jsonschema`
 are workstation dependencies, not additions to the printer host image.
 
 Read AGENTS.md, applicable project requirements/decisions and only relevant feature
@@ -51,9 +53,12 @@ offline work while another task awaits hardware/human input. Use the existing
 coordinated human queue and reuse valid evidence without concealing its limitations.
 
 The dispatcher starts no agents, runs no task commands and enforces no execution
-sandbox. No unattended schedule is introduced. Provision source/disposable-build
-environments that exclude printer credentials, private backups and physical devices;
-parent runtime permissions can override TOML defaults. Worktrees alone are not isolation.
+sandbox. No unattended schedule is introduced. Project execution is full access;
+workers retain role/ownership limits and bounded scratch diagnostics. Do not claim
+secret/device isolation from prompts or worktrees. Use only assigned development
+resources; printer operations and publication remain coordinator-owned. Follow the
+[deployment checks](../docs/development/agent-execution.md), including effective
+permissions, disabled child delegation and unchanged-candidate checks.
 
 At session start run `python3 scripts/feature_workflow.py validate` and
 `python3 scripts/feature_workflow.py next`. Select again after completion or blocking.

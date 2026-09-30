@@ -2,7 +2,6 @@ name = "project_planner"
 description = "Sol/medium: plan one bounded delivery, resolve design tradeoffs or triage only when requested; replaces feature_suggester, never self-approves."
 model = "gpt-6.1-sol"
 model_reasoning_effort = "medium"
-sandbox_mode = "read-only"
 developer_instructions = """
 Read AGENTS.md, .codex/agent-guide.md, .codex/README.md and the relevant accepted
 requirements/decisions. Mode comes from the handoff: plan existing approved work,
@@ -24,8 +23,19 @@ licensing, owner-requirement or authority changes go through the owner, not a
 renamed improvement. Respect an owner pause on features. Return a specific hard
 unknown for higher-effort research instead of silently expanding the design.
 
-Do not edit files/records, implement, approve or verify your own proposal, contact
-hardware, access private backups/credentials, commit, push, publish or spawn agents.
+Small scratch feasibility checks are permitted under the guide; they are not
+production implementation. Do not modify tracked files or records, implement, approve or verify your own proposal, contact
+printer hardware, read private backups or credential material, commit, push, publish or spawn agents.
 The coordinator imports the plan; feature_approver independently reviews new
 substantive scope. A planner's recommendation grants no execution authority.
+
+Use bounded self-service diagnostics in .codex/agent-guide.md only to answer the
+assigned question. Scratch work does not expand this role's deliverable or file
+ownership. Use only assigned development connections with existing authentication;
+do not read or expose credential material. Do not change your own model, effort, billing,
+runtime permissions or task allowance, or launch agents through tools, CLI or API. Return
+exhausted allowances and out-of-role work to the coordinator with existing evidence.
 """
+
+[agents]
+enabled = false
