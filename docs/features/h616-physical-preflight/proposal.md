@@ -69,3 +69,45 @@ immediate separate Sol review. urh-04 stays pending until measured hardware entr
 marker behavior, readonly admission and recovery return; urh-05 stays separate.
 Retire this commissioning helper when supported recovery/update testing supplies
 the same admission evidence.
+
+## Delivery repair amendment — 2026-09-30
+
+Independent delivery review of candidate `fafb87a` failed ppf-02: the shared
+`verify_signed_stage_bundle` in `scripts/stage_h616_recovery_handoff.py` invokes
+job verification with the default write purpose, rejecting a correctly signed
+preflight job before staging. Preserve that failed candidate and verdict; do not
+bypass staging verification. The eight original files remain assigned. Extend
+the same bounded offline delivery to `scripts/stage_h616_recovery_handoff.py`,
+`tests/test_recovery_handoff_stage.py`, and `tests/test_h616_live_stage_cli.py`
+solely for purpose binding and its stage/journal/arm/activation regression tests.
+The live adapter is an unchanged consumer of the shared verification function.
+If repairing it requires production changes outside this ownership, return the
+concrete gap for review before editing.
+
+Validate the signed purpose against both the actual bundle's compiled mode and
+artifact composition mode before staging and at the existing later revalidation
+boundaries. An unsigned preflight label alone must never admit a write executable
+or a write job as preflight. Keep default signed-reimage behavior and all existing
+signature, source, target, journal, freshness, preservation and one-shot guards.
+Tests must demonstrate positive preflight admission through the actual shared
+staging verifier and consumers, cross-purpose and unsigned relabel refusal,
+and unchanged write admission before any simulated media mutation. Use only
+disposable offline fixtures; no live media, service launch or real jobs.
+
+The same review found the tiny FIT insufficient for constraint 7 artifact size
+and boot-memory evidence. Complete a representative offline composition using
+retained pinned kernel/DTB/base initramfs and an inert, explicitly nondeployable
+lab bundle with fixture signatures, never a physical job or claim. Record actual
+compiled writer, appended initramfs and FIT sizes/hashes, load intervals and
+bounded working memory against the existing H616 handoff constraints. Keep
+scratch below 512 MiB and aggregate retained output below 64 MiB; avoid full
+images, bulk transfer and repeated QEMU. If actual composition cannot fit these
+limits, report the measured minimum and request a separate bounded allocation
+before proceeding. Static interval/resource accounting does not prove physical
+relocation, memory reliability or boot; those remain urh-04. This amendment does
+not waive the resource check or change a hardware/release requirement.
+
+A new separate approval must bind this amendment before repair. After repair,
+submit fresh clean-commit evidence and obtain a fresh independent delivery
+verifier; preserve the failed review and all earlier identities and hashes.
+Physical urh-04/05 and immediate exact-operation review remain pending.
