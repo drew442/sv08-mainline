@@ -167,3 +167,17 @@ integrated into main. New final-source evidence and a fresh independent high
 verifier are required. Fresh read-only capacity also shows no single existing
 volatile filesystem can hold the full artifact; exact workspace planning and
 separate operation review remain prerequisites for physical staging.
+
+
+The mounted-p5 repair is frozen at `9d98550` on its isolated branch and submitted
+for fresh independent `feature_verifier_high` review, Sol6.1/high confirmed.
+Sixty relevant tests pass; eight modeled actual-main before/after cases show the
+original marker refusal and repaired passage to the existing expiry gate with
+no claim/transfer. Current ARM64 builds and all handoff hashes pass coordinator
+audit. Passing delivery and physical urh04/05 remain pending.
+A separate high-consequence review rejected the first volatile workspace script
+because its rollback could act after mount identity uncertainty; the original
+script/verdict are preserved. Revised source removes automatic rollback and
+stops for read-only reconciliation on any failure. A fresh separate high-tier
+review is active with confirmed Sol6.1/high runtime and exact role contract.
+No remount or other printer mutation has occurred under that preparation.

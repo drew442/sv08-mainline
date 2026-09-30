@@ -95,7 +95,74 @@
         "h616-physical-preflight:implement"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "enb-01",
+          "document": "docs/hardware/host-h616-emmc-node-binding.md",
+          "document_sha256": "c971f7e45f707269452f49e5f66c8fac0e8f302a6a48df63c3ca2c15b46876da",
+          "environment": "offline",
+          "limitations": "Offline modeled syscalls, not installed kernel or physical support. Final production C matches suite/builds; test hash differs only by recorded trailing-space cleanup and doc update after test. Preserved original failure and evidence remain historical. urh04/05/RAM entry/mount/return/whole-write pending. Static ARM64 frames/binary sizes not physical FIT or peakRAM evidence. Approx7.7MiB retained scratch; cumulative temporary allocations not individually metered.",
+          "method": "60 relevant final-C regression tests passed54.067s; eight actual-main source-grounded kernel-claim before/after cases preserve failed marker journey and repaired passage to existing stale-job gate for both purposes/numbering directions, with no claim/transfer. Fresh two ARM64 builds and resources/hash provenance. Coordinator audited all nine final source hashes and every retained handoff evidence hash; fresh independent high review required.",
+          "profile": null,
+          "source_commit": "9d98550d91eb3396f6debd0ee5e03196530c0723",
+          "source_sha256": {
+            "docs/hardware/host-h616-emmc-node-binding.md": "c971f7e45f707269452f49e5f66c8fac0e8f302a6a48df63c3ca2c15b46876da",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/live_h616_recovery_stage.py": "9516bd1c54b24baa955065f34cc0c0feffae3b628dd04370f0b505748e3d3c4b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "5bcbde4c95e8de4043758c8b932b940b75e736adfd295993de99f8fffd98d894",
+            "tests/test_h616_live_stage_cli.py": "07030ae0a1804da580602e4bca8443d6ca8cdcf86f55d74bcfa68a76e17584db",
+            "tests/test_h616_recovery_handoff.py": "053aa2d1d0308060fab49dc0bed21b102f4c94d7919109908f4a370402fe6a02",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "tests/test_prepare_h616_reimage_job.py": "038df1be467b5d077d19f948d469962275241824ce221f438cf33e407c9541ee",
+            "tests/test_recovery_handoff_stage.py": "9a26c96d1b118bd7ee085693aacc13e1f65017db276c63d85e78a471b853029a"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "enb-02",
+          "document": "docs/hardware/host-h616-emmc-node-binding.md",
+          "document_sha256": "c971f7e45f707269452f49e5f66c8fac0e8f302a6a48df63c3ca2c15b46876da",
+          "environment": "offline",
+          "limitations": "Offline modeled syscalls, not installed kernel or physical support. Final production C matches suite/builds; test hash differs only by recorded trailing-space cleanup and doc update after test. Preserved original failure and evidence remain historical. urh04/05/RAM entry/mount/return/whole-write pending. Static ARM64 frames/binary sizes not physical FIT or peakRAM evidence. Approx7.7MiB retained scratch; cumulative temporary allocations not individually metered.",
+          "method": "60 relevant final-C regression tests passed54.067s; eight actual-main source-grounded kernel-claim before/after cases preserve failed marker journey and repaired passage to existing stale-job gate for both purposes/numbering directions, with no claim/transfer. Fresh two ARM64 builds and resources/hash provenance. Coordinator audited all nine final source hashes and every retained handoff evidence hash; fresh independent high review required.",
+          "profile": null,
+          "source_commit": "9d98550d91eb3396f6debd0ee5e03196530c0723",
+          "source_sha256": {
+            "docs/hardware/host-h616-emmc-node-binding.md": "c971f7e45f707269452f49e5f66c8fac0e8f302a6a48df63c3ca2c15b46876da",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/live_h616_recovery_stage.py": "9516bd1c54b24baa955065f34cc0c0feffae3b628dd04370f0b505748e3d3c4b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "5bcbde4c95e8de4043758c8b932b940b75e736adfd295993de99f8fffd98d894",
+            "tests/test_h616_live_stage_cli.py": "07030ae0a1804da580602e4bca8443d6ca8cdcf86f55d74bcfa68a76e17584db",
+            "tests/test_h616_recovery_handoff.py": "053aa2d1d0308060fab49dc0bed21b102f4c94d7919109908f4a370402fe6a02",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "tests/test_prepare_h616_reimage_job.py": "038df1be467b5d077d19f948d469962275241824ce221f438cf33e407c9541ee",
+            "tests/test_recovery_handoff_stage.py": "9a26c96d1b118bd7ee085693aacc13e1f65017db276c63d85e78a471b853029a"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "enb-03",
+          "document": "docs/hardware/host-h616-emmc-node-binding.md",
+          "document_sha256": "c971f7e45f707269452f49e5f66c8fac0e8f302a6a48df63c3ca2c15b46876da",
+          "environment": "offline",
+          "limitations": "Offline modeled syscalls, not installed kernel or physical support. Final production C matches suite/builds; test hash differs only by recorded trailing-space cleanup and doc update after test. Preserved original failure and evidence remain historical. urh04/05/RAM entry/mount/return/whole-write pending. Static ARM64 frames/binary sizes not physical FIT or peakRAM evidence. Approx7.7MiB retained scratch; cumulative temporary allocations not individually metered.",
+          "method": "60 relevant final-C regression tests passed54.067s; eight actual-main source-grounded kernel-claim before/after cases preserve failed marker journey and repaired passage to existing stale-job gate for both purposes/numbering directions, with no claim/transfer. Fresh two ARM64 builds and resources/hash provenance. Coordinator audited all nine final source hashes and every retained handoff evidence hash; fresh independent high review required.",
+          "profile": null,
+          "source_commit": "9d98550d91eb3396f6debd0ee5e03196530c0723",
+          "source_sha256": {
+            "docs/hardware/host-h616-emmc-node-binding.md": "c971f7e45f707269452f49e5f66c8fac0e8f302a6a48df63c3ca2c15b46876da",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/live_h616_recovery_stage.py": "9516bd1c54b24baa955065f34cc0c0feffae3b628dd04370f0b505748e3d3c4b",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "5bcbde4c95e8de4043758c8b932b940b75e736adfd295993de99f8fffd98d894",
+            "tests/test_h616_live_stage_cli.py": "07030ae0a1804da580602e4bca8443d6ca8cdcf86f55d74bcfa68a76e17584db",
+            "tests/test_h616_recovery_handoff.py": "053aa2d1d0308060fab49dc0bed21b102f4c94d7919109908f4a370402fe6a02",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "tests/test_prepare_h616_reimage_job.py": "038df1be467b5d077d19f948d469962275241824ce221f438cf33e407c9541ee",
+            "tests/test_recovery_handoff_stage.py": "9a26c96d1b118bd7ee085693aacc13e1f65017db276c63d85e78a471b853029a"
+          }
+        }
+      ],
       "human_task": null,
       "id": "implement",
       "implementation": {
@@ -105,7 +172,7 @@
       },
       "repeats": 0,
       "resumption": "Repair confirmed mounted-p5 whole-disk exclusive-open conflict at a1854e2 without changing approved nine-file scope; add actual-main kernel-claim regression, retain exact admission and fresh independent verification.",
-      "status": "running",
+      "status": "review",
       "title": "Repair and independently verify eMMC node binding",
       "verification": null
     }
