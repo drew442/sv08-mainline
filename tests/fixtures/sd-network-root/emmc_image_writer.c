@@ -558,9 +558,16 @@ static int h616_partition_fd(int fd) {
     !fstat(fd,&st)&&S_ISBLK(st.st_mode)&&st.st_rdev==boot_snapshot.part_dev&&
     !ioctl(fd,BLKGETSIZE64,&capacity)&&capacity==536870912ULL;
 }
-static int h616_before_marker(void) {
-  int fd=open(SV08_TARGET,O_RDONLY|O_CLOEXEC|O_NOFOLLOW|O_EXCL);
-  int ok=fd>=0&&h616_snapshot_fd(fd,1);
+static int h616_before_marker(int mounted_part) {
+  /* ext4 holds p5 while mounted: Linux refuses an O_EXCL whole-disk claim.
+   * Only that boundary uses a nonclaiming read. Bind both descriptors and
+   * recheck the immutable identity/map around GPT reads; pre-mount admission
+   * and later unmounted target admission remain exclusive. */
+  if(mounted_part>=0&&!h616_partition_fd(mounted_part))return 0;
+  int fd=open(SV08_TARGET,O_RDONLY|O_CLOEXEC|O_NOFOLLOW|
+              (mounted_part<0?O_EXCL:0));
+  int ok=fd>=0&&h616_snapshot_fd(fd,1)&&h616_snapshot_fd(fd,0)&&
+         (mounted_part<0||h616_partition_fd(mounted_part));
   if(fd>=0&&close(fd))ok=0;
   return ok;
 }
@@ -651,14 +658,14 @@ static int consume_recovery_marker(void) {
   dev_t partition_dev;
   int part=-1,root=-1,dir=-1,armed=-1,ok=0,mounted_here=0,created_here=0;
 #if defined(SV08_H616_BOOT_SNAPSHOT_V2)
-  if(!h616_before_marker())goto done;
+  if(!h616_before_marker(-1))goto done;
 #endif
   part=open(SV08_RECOVERY_PARTITION,O_RDONLY|O_CLOEXEC|O_NOFOLLOW);
   if(part<0||fstat(part,&partition_stat)||!S_ISBLK(partition_stat.st_mode)||
      !read_sysfs_dev(SV08_RECOVERY_PARTITION_SYSFS,&partition_dev)||
      partition_stat.st_rdev!=partition_dev)goto done;
 #if defined(SV08_H616_BOOT_SNAPSHOT_V2)
-  if(partition_dev!=boot_snapshot.part_dev||!h616_partition_fd(part)||!h616_before_marker())goto done;
+  if(partition_dev!=boot_snapshot.part_dev||!h616_partition_fd(part)||!h616_before_marker(-1))goto done;
 #else
   close(part);part=-1;
 #endif
@@ -696,7 +703,7 @@ static int consume_recovery_marker(void) {
   if(memcmp(content,marker,sizeof(marker)-1)||read(armed,content,1)!=0)goto done;
   close(armed);armed=-1;
 #if defined(SV08_H616_BOOT_SNAPSHOT_V2)
-  if(!h616_before_marker()||!h616_partition_fd(part))goto done;
+  if(!h616_before_marker(part)||!h616_partition_fd(part))goto done;
 #endif
   if(unlinkat(dir,"armed",0)||fsync(dir)||syncfs(dir))goto done;
   ok=1;

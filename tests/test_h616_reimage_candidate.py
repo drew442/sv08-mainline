@@ -1061,17 +1061,23 @@ extern ssize_t pread(int,void *,size_t,off_t);
 extern ssize_t read(int,void *,size_t);
 extern int close(int);
 static const char *fixture;
+static int recovery_mounted,rejected_exclusive_opens,target_write_opens;
 static int markers,target_opens,target_closes,transfers,mutations,fault,target_flags;
 static unsigned char envs[2][SV08_ENV_BYTES];
 static const char *mapped(const char *path,char *out) {
- if(!strncmp(path,"/sys/",5)){snprintf(out,4096,"%s%s",fixture,path);return out;}
+ if(!strncmp(path,"/sys/",5)||!strncmp(path,"/proc/",6)){snprintf(out,4096,"%s%s",fixture,path);return out;}
  return path;
 }
 FILE *captured_fopen(const char *path,const char *mode){char out[4096];return fopen(mapped(path,out),mode);}
 DIR *captured_opendir(const char *path){char out[4096];return opendir(mapped(path,out));}
 char *captured_realpath(const char *path,char *out){char tmp[4096];return realpath(mapped(path,tmp),out);}
 int captured_open(const char *path,int flags,...) {
- if(!strcmp(path,SV08_TARGET)){target_opens++;target_flags=flags;return fault==7?-1:1000;}
+ if(!strcmp(path,SV08_TARGET)){target_opens++;target_flags=flags;
+ if((flags&O_ACCMODE)==O_RDWR)target_write_opens++;
+ /* Linux 6.18.51: a mounted partition holder conflicts with O_EXCL on its disk. */
+ if((recovery_mounted||fault==22)&&(flags&O_EXCL)){
+  rejected_exclusive_opens++;errno=EBUSY;return -1;}
+ return fault==7?-1:1000;}
  if(!strcmp(path,SV08_RECOVERY_PARTITION))return 1001;
  if(!strcmp(path,"/sv08-reimage-recovery"))return 1002;
  char out[4096];return open(mapped(path,out),flags);
@@ -1080,7 +1086,8 @@ int captured_fstat(int fd,struct stat *st) {
  if(fd<1000)return fstat(fd,st);
  memset(st,0,sizeof(*st));
  if(fd==1000||fd==1001){st->st_mode=S_IFBLK;st->st_rdev=fd==1000?boot_snapshot.dev:boot_snapshot.part_dev;
- if((fault==5&&fd==1000)||(fault==14&&fd==1001))st->st_rdev++;return 0;}
+ if((fault==5&&fd==1000)||(fault==14&&fd==1001)||
+    (recovery_mounted&&((fault==24&&fd==1000)||(fault==26&&fd==1001))))st->st_rdev++;return 0;}
  if(fd==1002){st->st_mode=S_IFDIR;st->st_dev=boot_snapshot.part_dev+(fault==16);return 0;}
  if(fd==1004){st->st_mode=S_IFREG;st->st_nlink=1;st->st_size=18;return 0;}
  return -1;
@@ -1088,7 +1095,8 @@ int captured_fstat(int fd,struct stat *st) {
 int captured_ioctl(int fd,unsigned long request,...) {
  if((fd!=1000&&fd!=1001)||request!=BLKGETSIZE64)return -1;
  va_list args;va_start(args,request);uint64_t *size=va_arg(args,uint64_t *);va_end(args);
- *size=fd==1001?536870912ULL-(fault==15):(fault==4?TARGET_BYTES-1:TARGET_BYTES);return 0;
+ *size=fd==1001?536870912ULL-(fault==15):
+ (fault==4||(recovery_mounted&&fault==25)?TARGET_BYTES-1:TARGET_BYTES);return 0;
 }
 ssize_t captured_pread(int fd,void *out,size_t n,off_t off) {
  if(fd!=1000)return pread(fd,out,n,off);
@@ -1099,7 +1107,9 @@ ssize_t captured_pread(int fd,void *out,size_t n,off_t off) {
  if(!name)return -1;
  char path[4096];snprintf(path,sizeof(path),"%s/%s",fixture,name);
  int source=open(path,O_RDONLY);if(source<0)return -1;
- ssize_t result=pread(source,out,n,0);close(source);return result;
+ ssize_t result=pread(source,out,n,0);close(source);
+ if(recovery_mounted&&fault==23&&off==4096ULL*512&&result>16)((unsigned char *)out)[16]^=1;
+ return result;
 }
 ssize_t captured_read(int fd,void *out,size_t n){
  if(fd!=1004)return read(fd,out,n);
@@ -1110,11 +1120,16 @@ int captured_close(int fd){if(fd==1000){target_closes++;return fault==8?-1:0;}
  return fd>=1000?0:close(fd);}
 int captured_openat(int fd,const char *name,int flags,...){return fd==1002?1003:fd==1003?1004:-1;}
 int captured_mkdir(const char *path,mode_t mode){return 0;}
-int captured_mount(const char *source,const char *target,const char *type,unsigned long flags,const void *data){return 0;}
+int captured_mount(const char *source,const char *target,const char *type,unsigned long flags,const void *data){
+ if(!strcmp(target,"/sv08-reimage-recovery")){
+  recovery_mounted=1;
+  if(fault==27){char path[1200];snprintf(path,sizeof(path),"%s/cid",boot_snapshot.card);
+   FILE *f=fopen(path,"w");if(!f)return -1;fputs("ffffffffffffffffffffffffffffffff\n",f);fclose(f);}
+ }return 0;}
 int captured_unlinkat(int fd,const char *name,int flags){markers++;return 0;}
 int captured_fsync(int fd){return fault==10?-1:0;}
 int captured_syncfs(int fd){return fault==11?-1:0;}
-int captured_umount2(const char *path,int flags){return fault==12?-1:0;}
+int captured_umount2(const char *path,int flags){if(fault==12)return -1;recovery_mounted=0;return 0;}
 int captured_rmdir(const char *path){return fault==13?-1:0;}
 static void make_env(unsigned char *env,const char *token){
  const char fields[]="sv08_env_layout=ab-8gb-v1\0BOOT_ORDER=A B\0BOOT_A_LEFT=0\0BOOT_B_LEFT=0\0";
@@ -1163,6 +1178,33 @@ int main(int argc,char **argv){
 '''
 
 
+# Exercise unmodified production main through its marker decision, stopping at
+# the existing expired-job gate before bundle/claim/source/target transfer.
+MARKER_MAIN_HARNESS = BOOT_SNAPSHOT_HARNESS[:BOOT_SNAPSHOT_HARNESS.rindex('int main(int argc,char **argv){')]
+MARKER_MAIN_HARNESS = MARKER_MAIN_HARNESS.replace('#include <stdarg.h>',
+    '#include <stdarg.h>\n#include <setjmp.h>\n#define reboot captured_reboot\n'
+    '#define sync captured_sync\n#define statfs captured_statfs\n#define time captured_time')
+MARKER_MAIN_HARNESS += r'''
+#undef reboot
+#undef sync
+#undef statfs
+#undef time
+static jmp_buf finished;
+static int reboot_operation;
+int captured_reboot(int operation){reboot_operation=operation;longjmp(finished,1);}
+void captured_sync(void){}
+int captured_statfs(const char *path,struct captured_statfs *st){memset(st,0,sizeof(*st));st->f_type=0x01021994L;return 0;}
+time_t captured_time(time_t *out){if(out)*out=2000;return 2000;}
+int main(int argc,char **argv){
+ if(argc!=3)return 2;fixture=argv[1];fault=atoi(argv[2]);
+ if(!setjmp(finished))writer_main();
+ printf("MARKER_MAIN %d %d %d %d %d %d\n",markers,rejected_exclusive_opens,
+ target_write_opens,recovery_mounted,reboot_operation,boot_snapshot_ready);
+ return 0;
+}
+'''
+
+
 class BootSnapshotTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -1207,6 +1249,21 @@ class BootSnapshotTests(unittest.TestCase):
                     *(str(p) for p in ED25519_SOURCES), '-o', str(exe)], capture_output=True, text=True)
             if result.returncode: raise AssertionError(result.stderr)
             cls.binaries[(preflight, staged)] = exe
+        cls.main_binaries = {}
+        for preflight, staged in [(True, 0), (True, 2), (False, 0), (False, 2)]:
+            mode_flags = [flag for flag in flags if not flag.startswith('-DSV08_H616_EXPECTED_DEV_T=')]
+            mode_flags += [f'-DSV08_H616_EXPECTED_DEV_T="179:{8 if staged == 2 else 0}"']
+            if not preflight: mode_flags.remove('-DSV08_H616_PREFLIGHT_ONLY=1')
+            src.write_text(MARKER_MAIN_HARNESS.replace('@WRITER@', str(WRITER)))
+            exe = cls.root / f'marker-main-{preflight}-{staged}'
+            command = ['cc', '-O2', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter',
+                       '-Wno-misleading-indentation', '-Wno-unused-function', '-Wno-unused-variable',
+                       *mode_flags, f'-I{WRITER.parent}', f'-I{REPO / "upstream/monocypher/src"}',
+                       f'-I{REPO / "upstream/monocypher/src/optional"}', str(src),
+                       *(str(p) for p in ED25519_SOURCES), '-o', str(exe)]
+            result = subprocess.run(command, capture_output=True, text=True)
+            if result.returncode: raise AssertionError(result.stderr)
+            cls.main_binaries[(preflight, staged)] = exe
 
     def fixture(self, node, minor):
         import uuid
@@ -1251,6 +1308,39 @@ class BootSnapshotTests(unittest.TestCase):
         return subprocess.check_output([str(self.binaries[(preflight, staged)]), str(root), str(fault),
                  str(change[0]) if change else '-', change[1] if change else '-'], text=True).split()
 
+    def run_main_case(self, node, minor, preflight, fault=0):
+        root, card, block, p5 = self.fixture(node, minor)
+        proc = root / 'proc'; (proc / 'device-tree').mkdir(parents=True)
+        (proc / 'device-tree/compatible').write_bytes(b'sovol,sv08-h616\0allwinner,sun50i-h616\0')
+        (proc / 'cmdline').write_text('sv08.h616_commissioning=1 sv08.h616_recovery_handoff=1 sv08.h616_preflight=1\n')
+        (proc / 'mounts').write_text('192.0.2.1:/source /root nfs ro 0 0\n')
+        staged = 2 if node == 0 else 0
+        return subprocess.check_output([str(self.main_binaries[(preflight, staged)]),
+                                       str(root), str(fault)], text=True).splitlines()
+
+    def test_actual_main_marker_partition_holder_both_purposes_and_numbering_directions(self):
+        for preflight in (True, False):
+            for node, minor in [(0, 0), (2, 16)]:
+                with self.subTest(preflight=preflight, node=node):
+                    result = self.run_main_case(node, minor, preflight)
+                    self.assertEqual(result[0], 'SV08_H616_COMMISSIONING_REFUSED_STALE_JOB')
+                    # Confirmed unlink/unmount; no conflicting exclusive open or target write.
+                    self.assertEqual(result[1].split()[1:5], ['1', '0', '0', '0'])
+                    self.assertEqual(int(result[1].split()[5]), 0x1234567 if preflight else 0x4321fedc)
+
+    def test_actual_main_marker_durability_and_exclusive_admission_refuse(self):
+        for preflight in (True, False):
+            for fault in (4, 5, 7, 8, 10, 11, 12, 13, 14, 15, 16, 22, 23, 24, 25, 26, 27):
+                with self.subTest(preflight=preflight, fault=fault):
+                    result = self.run_main_case(2, 16, preflight, fault)
+                    self.assertEqual(result[0], 'SV08_H616_COMMISSIONING_REFUSED_RECOVERY_MARKER')
+                    self.assertEqual(result[1].split()[3], '0')
+                    self.assertEqual(int(result[1].split()[5]), 0x4321fedc)
+                    if fault in (23, 24, 25, 26, 27):
+                        self.assertEqual(result[1].split()[1], '0')
+                    if fault == 22:
+                        self.assertEqual(result[1].split()[1:3], ['0', '1'])
+
     def test_actual_snapshot_cross_phase_numbers_marker_and_environments(self):
         for node, minor in [(0, 0), (2, 16)]:
             root, card, block, p5 = self.fixture(node, minor)
@@ -1262,6 +1352,12 @@ class BootSnapshotTests(unittest.TestCase):
             write_entry = self.run_case(root, preflight=False, staged=staged)
             self.assertEqual(write_entry[:4], ['1', '1', '1', 'WRITE_ENTRY_PASS'])
             self.assertEqual(int(write_entry[6]) & os.O_ACCMODE, os.O_RDWR)
+            self.assertTrue(int(write_entry[6]) & os.O_EXCL)
+            self.assertTrue(int(observed[6]) & os.O_EXCL)
+            for preflight in (True, False):
+                held = self.run_case(root, 12, preflight=preflight, staged=staged)
+                self.assertEqual(held[1:3], ['0', '1'])
+                self.assertEqual(held[3], 'REFUSED_INPUT' if preflight else 'WRITE_ENTRY_REFUSAL')
             for unsafe in (1, 2, 3, 4, 5, 7):
                 self.assertEqual(self.run_case(root, unsafe, preflight=False, staged=staged)[3],
                                  'WRITE_ENTRY_REFUSAL')

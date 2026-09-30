@@ -44,7 +44,14 @@ and current p5 parent/number/PARTUUID/start/size. Whole-device reads bind the
 opened read-only descriptor to the snapshot and exact capacity. The p5
 read-only descriptor stays open through marker consumption; mounting uses its
 `/proc/self/fd/` path, and the mounted directory's device must match the admitted
-partition. Snapshot, p5 descriptor and map checks precede unlink. Existing
+partition. Before mounting, whole-disk admission remains `O_RDONLY|O_EXCL`. While the
+writer's ext4 mount holds p5, the final marker check opens the whole disk
+read-only without claiming it: Linux's partition holder conflicts with an
+exclusive whole-disk open. This read still checks descriptor dev_t/capacity,
+both signed GPT copies and the immutable snapshot, with snapshot and pinned p5
+descriptor checks around the GPT read. Subsequent unmounted preflight/full-writer
+target admission remains exclusive. Snapshot, p5 descriptor and map checks
+precede unlink. Existing
 unlink/fsync/syncfs/unmount confirmation and return-readiness rules remain.
 
 Preflight compiles out the writable target and image/environment transfer paths.
@@ -93,7 +100,9 @@ only disposable tests, never production physical builder inputs.
 
 ## Offline checks and resource limits
 
-The assigned regression command passed 58 tests in 49.545 seconds:
+The original implementation regression passed 58 tests in 49.545 seconds.
+After the mounted-p5 repair, fresh final-source regression passed 60 tests in
+54.067 seconds with the same command:
 
 ```sh
 python3 -m unittest tests.test_h616_reimage_candidate \
@@ -114,12 +123,27 @@ checks keep canonical v2 bytes and signature verification while mocking the
 large source-image boundary. Actual ELF algorithm/mode mismatches and actual
 FIT/member substitution refusals are covered by the small composition fixtures.
 
-Measured ARM64 fixture builds with identical nonempty job/hash constants:
+The independent earlier review found that the original syscall fixture omitted
+Linux's mounted-partition claim conflict. The retained preserved source now
+refuses at actual main's marker gate in all four purpose/numbering combinations
+when that conflict is modeled. The repaired source reaches the existing expired
+job gate after confirmed marker consumption/unmount in all four. The fixture
+stops there before a claim or transfer and checks preflight reboot readiness
+against full-writer poweroff. Mounted-boundary GPT, CID, target/p5 descriptor and
+capacity changes refuse before unlink; durability/cleanup failures retain the
+finalizer rules. A failed p5 unmount also keeps later target `O_EXCL` admission
+from succeeding. These tests model Linux 6.18.51 holder semantics from
+`fs/super.c:1623`, `block/bdev.c:542-552,587-589,640-645,924-932` and
+`block/fops.c:661-686` (source access 2026-09-30, retained independent review
+hashes); they do not mount a real block partition or establish physical behavior.
+
+Fresh repaired ARM64 fixture builds with identical nonempty job/hash constants
+compared with the retained original v1 baseline:
 
 | Mode | Baseline v1 bytes | V2 bytes | Increment | Static BSS increment |
 | --- | ---: | ---: | ---: | ---: |
-| Preflight | 779064 | 779928 | 864 | 6416 |
-| Full writer | 780328 | 781152 | 824 | 6432 |
+| Preflight | 779064 | 780104 | 1040 | 6416 |
+| Full writer | 780328 | 781312 | 984 | 6432 |
 
 The snapshot symbol is 6424 bytes; paths/cardinality are bounded. GCC's ARM64
 stack report gives 33904 bytes for GPT comparison and 11152 bytes for snapshot
