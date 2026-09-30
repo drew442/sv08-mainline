@@ -133,3 +133,15 @@ after an exact independent high-consequence review with a recorded separate-sess
 fallback and verified Sol6.1/medium runtime. Version-only calls and all 29 installed
 hashes/modes pass; no environment/media write or reboot. The node-binding worker
 is still active; fresh independent delivery verification remains pending.
+
+
+The node-binding worker is finished and the coordinator froze all nine assigned
+files at `a1854e25e5164cb6a462c541b8d1bbe7043994ba` on its feature branch.
+All final source and retained log hashes match the handoff. The submitted
+offline evidence records 58 regressions plus six final live/policy checks, four
+strict C checks and actual ARM64 v1/v2 resource comparisons; the broad suite
+preceded final localized changes. A fresh native `feature_verifier_high`,
+GPT-6.1 Sol / high, is independently checking the unchanged candidate and
+approved constraints. Its actual runtime was observed. Integration waits for
+that verdict; H12 physical preflight/reimage and all printer gates remain open.
+No new job, key, boot-policy change or target write was performed.
