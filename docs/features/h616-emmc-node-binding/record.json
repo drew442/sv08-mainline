@@ -98,10 +98,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "014f7454822d477f82630bbb2b8dc714",
+        "session": "h616-node-binding-marker-repair-20260930"
+      },
       "repeats": 0,
       "resumption": "Repair confirmed mounted-p5 whole-disk exclusive-open conflict at a1854e2 without changing approved nine-file scope; add actual-main kernel-claim regression, retain exact admission and fresh independent verification.",
-      "status": "pending",
+      "status": "running",
       "title": "Repair and independently verify eMMC node binding",
       "verification": null
     }

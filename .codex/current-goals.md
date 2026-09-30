@@ -156,3 +156,14 @@ The bounded repair remains within the approved nine-file scope: retain exact
 snapshot/GPT/descriptor and durability checks, accommodate legitimate p5
 ownership, and add an actual-main regression with kernel claim semantics.
 Physical H12 remains pending; the complete project goal remains active.
+
+
+The failed verdict is preserved in main `1cbdcbd` before resumption. A single
+`project_implementer`, Sol6.1/medium with observed runtime, now owns the same
+approved nine-file deliverable in isolated
+`feature/h616-emmc-node-binding-marker-repair`, based on integration `cef44b0`
+with the preserved candidate cherry-picked at `a582946`. No failed source was
+integrated into main. New final-source evidence and a fresh independent high
+verifier are required. Fresh read-only capacity also shows no single existing
+volatile filesystem can hold the full artifact; exact workspace planning and
+separate operation review remain prerequisites for physical staging.
