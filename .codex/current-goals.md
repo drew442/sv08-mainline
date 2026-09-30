@@ -202,3 +202,48 @@ and execution after delivery acceptance. Fresh independent postchecks confirm
 No artifact was allocated/staged and no media, environment or boot action
 occurred. Next: prepare fresh signed physical preflight inputs/artifacts and
 capture, then obtain exact operation reviews under existing authorization.
+
+
+Owner review instruction, 2026-09-30: use the separate
+`high_consequence_reviewer` role for independent action reviews. Apply the named
+high variant where material uncertainty warrants it, with actual model/effort
+confirmed. Feature approval and independent delivery verification retain their
+separate contracts under AGENTS.md.
+
+Physical preflight preparation now has an actual signed v2 candidate built from
+accepted source `9d98550`, using fresh distinct preflight-only signing keys and
+job `a46735b7ce7ee9ab7e25a00e0312ae18` (expires 2026-09-30 23:47:37 UTC).
+The persistent FIT is 48,901,632 bytes, SHA-256
+`15ef085c90896e0fea3f146290611fefe5e43adf59d05dd43c0c54bc8d087235`;
+actual shared artifact and signed-stage verification passed. Conservative static
+working memory is 565,513,633 bytes against an assumed 1 GiB; this does not prove
+physical RAM availability or relocation. Initial missing source-closure and disk
+space failures remain preserved; the successful composition used a bounded local
+tmpfs, now unmounted. Unique retained preparation allocation is 98,746,368 bytes.
+Private receipts remain under ignored `local/feature-workflow/probes/`.
+
+The existing bounded serial collector was restored after a separate
+`high_consequence_reviewer_high` PASS WITH CONDITIONS and complete process/FD
+visibility check. A fresh independent postcheck confirmed its exact source,
+UART identity, exclusive receive-only descriptor and active capped unit.
+The collector's inherited disconnect reopen behavior and termios changes remain
+explicit; receive-only application access does not prove electrical inactivity.
+Capture readiness must be checked again immediately before any boot.
+No claim listener, target artifact staging, environment arming, activation,
+printer boot or whole-device write occurred in this preparation. Exact physical
+action authorization and immediate independent reviews remain prerequisites;
+expired jobs must not be rearmed or reused. The full project goal remains active.
+
+Detailed actual candidate, preserved preparation failures, resources and capture evidence are now recorded in [the H12 candidate record](../docs/hardware/host-h12-preflight-candidate-20260930.md). A separate exact volatile-transfer review found a bundle-path/library-wrapper preparation error before execution; corrected layout passes full shared verification with unmodified accepted source. Physical staging/arming/boot remain gated.
+
+
+The corrected exact volatile transfer passed separate high-consequence review,
+execution and independent read-only postchecks:27root-owned exact files,
+98,738,504bytes, real on-printer signature/purpose/FIT verification, same read-only
+SD root and169,627,648bytes free/tmp. No claim/p5/environment/marker/boot operation.
+Fresh GPT/environment/clean-ext4 metadata checks are recorded. Independent high
+review refused the initial prospective p5-stage script because writable mounting
+preceded signed map admission; candidate/verdict preserved and never executed.
+The corrected prospective stage performs full read-only admission first and
+requires actual owner p5-write authority/setup provenance. Separate review and
+current physical confirmation are pending. Physical urh04/05 and full goal remain open.
