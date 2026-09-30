@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import stat
+import struct
 import subprocess
 import sys
 import uuid
@@ -53,6 +54,87 @@ REVIEWED_PHYSICAL_IMAGES = {V5_IMAGE_SHA256: V5_IMAGE_DISK_GUID}
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def compiled_purpose_bytes(job_format, job_sha256, policy_sha256, *,
+                           trusted_initramfs, recovery_handoff, synthetic_test):
+    return (f'sv08-h616-compiled-purpose-v1\nformat={job_format}\n'
+            f'job_sha256={job_sha256}\npolicy_sha256={policy_sha256}\n'
+            f'trusted_initramfs={int(trusted_initramfs)}\n'
+            f'recovery_handoff={int(recovery_handoff)}\n'
+            f'synthetic_test={int(synthetic_test)}\n').encode() + b'\0'
+
+
+def elf_compiled_purpose(path):
+    """Read the single compile record without target-side binutils.
+
+    Only the ELF64 little-endian executable format emitted by our installed
+    native/ARM64 compilers is supported. Retire with the commissioning helper.
+    """
+    if path.stat().st_size > 4 * 1024 * 1024:
+        raise ValueError('ELF exceeds 4 MiB writer budget')
+    raw = path.read_bytes()
+    if (len(raw) < 64 or raw[:7] != b'\x7fELF\x02\x01\x01' or
+            struct.unpack_from('<HH', raw, 16)[0] not in (2, 3) or
+            struct.unpack_from('<HH', raw, 16)[1] not in (62, 183)):
+        raise ValueError('Unsupported ELF writer type/encoding')
+    offset = struct.unpack_from('<Q', raw, 40)[0]
+    header_bytes = struct.unpack_from('<H', raw, 52)[0]
+    entry_bytes, count, names_index = struct.unpack_from('<HHH', raw, 58)
+    if (header_bytes != 64 or entry_bytes != 64 or not 1 <= count <= 1024 or
+            not 0 < names_index < count or offset < 64 or
+            offset + count * entry_bytes > len(raw)):
+        raise ValueError('Invalid ELF section table bounds')
+    sections = [struct.unpack_from('<IIQQQQIIQQ', raw, offset + index * 64)
+                for index in range(count)]
+    names = sections[names_index]
+    if names[1] != 3 or names[5] > 1024 * 1024 or names[4] + names[5] > len(raw):
+        raise ValueError('Invalid ELF section name table')
+    table = raw[names[4]:names[4] + names[5]]
+    records = []
+    for section in sections:
+        name_at, kind, _, _, start, size, *_ = section
+        end = table.find(b'\0', name_at)
+        if name_at >= len(table) or end < 0 or (kind != 8 and start + size > len(raw)):
+            raise ValueError('Invalid ELF section/name bounds')
+        if table[name_at:end] == b'.sv08.h616-purpose':
+            if kind != 1 or size > 1024:
+                raise ValueError('Invalid ELF compile-record type/size')
+            records.append(raw[start:start + size])
+    if len(records) != 1:
+        raise ValueError('Missing or duplicate ELF compiled purpose section')
+    return records[0]
+
+
+def verify_compiled_writer(root, manifest):
+    """Inspect compile evidence; the reviewed external build pin grants trust.
+
+    This refuses an unchanged write executable relabeled in unsigned metadata.
+    It is not verification of arbitrary newly authored ELF code.
+    """
+    mode = manifest.get('preflight_only', False)
+    flags = [manifest.get(name, False) for name in
+             ('trusted_initramfs', 'recovery_handoff', 'synthetic_test')]
+    if type(mode) is not bool or any(type(flag) is not bool for flag in flags):
+        raise ValueError('Nonboolean compiled writer mode')
+    expected_format = ('sv08-h616-signed-preflight-v1' if mode else
+                       'sv08-h616-signed-reimage-v1')
+    if (manifest.get('job_format', expected_format) != expected_format or
+            (mode and flags != [True, True, False])):
+        raise ValueError('Invalid compiled writer purpose/mode')
+    if any((root / name).stat().st_size > 65536 for name in
+           ('job.json', 'commissioning-target-policy.json')):
+        raise ValueError('Compiled writer descriptor/policy exceeds 64 KiB')
+    raw_job = (root / 'job.json').read_bytes()
+    policy_raw = (root / 'commissioning-target-policy.json').read_bytes()
+    if json.loads(raw_job).get('format') != expected_format:
+        raise ValueError('Signed job purpose and compiled writer mode mismatch')
+    expected = compiled_purpose_bytes(expected_format, digest(raw_job), digest(policy_raw),
+                                      trusted_initramfs=flags[0], recovery_handoff=flags[1],
+                                      synthetic_test=flags[2])
+    if elf_compiled_purpose(root / 'sd-network-init') != expected:
+        raise ValueError('Actual ELF compiled purpose differs from signed bundle/mode')
+    return digest(expected)
 
 
 def private_file(path):
@@ -179,7 +261,8 @@ def policy_fields(value):
     return value
 
 
-def verify_signed_job(raw, signature, verification_key, target_policy, *, now=None):
+def verify_signed_job(raw, signature, verification_key, target_policy, *, now=None,
+                      preflight_only=False):
     try:
         job = json.loads(raw)
     except (ValueError, UnicodeDecodeError) as error:
@@ -191,7 +274,9 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
     import time
     now = int(time.time()) if now is None else now
     issued, expires = job['issued_unix'], job['expires_unix']
-    if (job['format'] != 'sv08-h616-signed-reimage-v1' or
+    job_format = ('sv08-h616-signed-preflight-v1' if preflight_only else
+                  'sv08-h616-signed-reimage-v1')
+    if (job['format'] != job_format or
             not isinstance(job['job_id'], str) or not re.fullmatch(r'[a-z0-9-]{1,64}', job['job_id']) or
             type(issued) is not int or type(expires) is not int or
             not issued <= now < expires or expires - issued > 86400 or
@@ -222,13 +307,17 @@ def verify_signed_job(raw, signature, verification_key, target_policy, *, now=No
 def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
           synthetic_test=False, fault=None, claim_only=False,
           receipt_verification_key_path=None, trusted_initramfs=False,
-          source_server=None, source_export=None, recovery_handoff=False):
+          source_server=None, source_export=None, recovery_handoff=False,
+          preflight_only=False):
     root = Path(root).absolute()
     if (not safe_output_root(root, synthetic_test=synthetic_test) or
             (root.exists() and (not root.is_dir() or any(root.iterdir())))):
         raise ValueError('Fresh empty output required; physical candidates stay under local/')
     if (fault or claim_only) and not synthetic_test:
         raise ValueError('Fault injection and claim-only builds are synthetic QEMU only')
+    if preflight_only and (synthetic_test or fault or claim_only or not trusted_initramfs
+                           or not recovery_handoff):
+        raise ValueError('Preflight requires physical trusted recovery handoff without test bypasses')
     if fault not in (None, 'before-write', 'partial-write', 'abrupt-after-write',
                      'flush', 'readback', 'after-bulk', 'after-first-env'):
         raise ValueError('Unknown injected fault')
@@ -264,7 +353,8 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
             raise ValueError('Fixture verification keys cannot authorize a physical candidate')
     receipt_key_hex = raw_public_key(receipt_key_bytes).hex()
     raw_job, signature = private_file(job_path), private_file(signature_path)
-    job = verify_signed_job(raw_job, signature, verification_key, target_policy, now=now)
+    job = verify_signed_job(raw_job, signature, verification_key, target_policy, now=now,
+                            preflight_only=preflight_only)
     if synthetic_test and target_policy['board_compatible'] != 'test,synthetic-h616':
         raise ValueError('Synthetic QEMU build requires synthetic board policy')
     if not synthetic_test and target_policy['board_compatible'] == 'test,synthetic-h616':
@@ -297,6 +387,9 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
                       f'-DSV08_IMAGE_NFS_SOURCE="{source_server}:{source_export}"'])
     if recovery_handoff:
         flags.append('-DSV08_H616_RECOVERY_HANDOFF=1')
+    if preflight_only:
+        flags.extend(['-DSV08_H616_PREFLIGHT_ONLY=1', '-Wno-unused-function',
+                      '-Wno-unused-variable'])
     root.mkdir(mode=0o755, exist_ok=True)
     root.chmod(0o755)
     for directory in ('dev', 'proc', 'sys', 'run', 'data', 'tmp'):
@@ -314,6 +407,7 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     manifest = {'status': 'nondeployable-commissioning-candidate', 'mode': 'h616-commissioning',
                 'bootable_sd_image': False, 'physical_target_validated': False,
                 'trusted_initramfs': trusted_initramfs,
+                'preflight_only': preflight_only, 'job_format': job['format'],
                 'image_nfs_source': f'{source_server}:{source_export}' if trusted_initramfs else None,
                 'synthetic_test': synthetic_test, 'claim_trigger_provisioned': False,
                 'policy_sha256': digest(policy_raw), 'job_sha256': digest(raw_job),
@@ -328,6 +422,7 @@ def build(root, policy_path, key_path, job_path, signature_path, *, now=None,
     if recovery_handoff:
         manifest.update(recovery_handoff=True,
                         env_last_transfer_sha256=digest((WRITER.parent / 'env_last_transfer.h').read_bytes()))
+    manifest['compiled_purpose_sha256'] = verify_compiled_writer(root, manifest)
     (root / 'reimage-manifest.json').write_text(json.dumps(manifest, sort_keys=True, indent=2) + '\n')
     return manifest
 
@@ -341,6 +436,7 @@ def main():
                         help='Separate 0600 local Ed25519 public key for claim receipts; required outside synthetic tests')
     parser.add_argument('--trusted-initramfs', action='store_true')
     parser.add_argument('--recovery-handoff', action='store_true')
+    parser.add_argument('--preflight-only', action='store_true')
     parser.add_argument('--source-server')
     parser.add_argument('--source-export')
     args = parser.parse_args()
@@ -349,7 +445,8 @@ def main():
                            receipt_verification_key_path=args.receipt_verification_key,
                            trusted_initramfs=args.trusted_initramfs,
                            source_server=args.source_server, source_export=args.source_export,
-                           recovery_handoff=args.recovery_handoff),
+                           recovery_handoff=args.recovery_handoff,
+                           preflight_only=args.preflight_only),
                       sort_keys=True))
 
 

@@ -7,9 +7,11 @@ directory and a regular-file disk for arming. It has no live block-device CLI.
 Retire it when the host updater owns this transaction with physical evidence.
 """
 import hashlib
+import gzip
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import subprocess
@@ -17,7 +19,8 @@ import tempfile
 import zlib
 
 from scripts.build_h616_recovery_handoff import MARKER, script_text
-from scripts.build_h616_reimage_candidate import policy_fields, verify_signed_job
+from scripts.build_h616_reimage_candidate import (policy_fields, verify_signed_job,
+                                                  verify_compiled_writer)
 from scripts.build_sd_network_image import commissioning_bundle
 from tests.sv08_emmc_job import canonical_json
 from runtime.sv08_gpt import inspect as inspect_gpt
@@ -26,6 +29,100 @@ from runtime.sv08_gpt import inspect as inspect_gpt
 ENV_OFFSETS = (0x400000, 0x800000)
 ENV_BYTES = 65536
 RESERVE_BYTES = 16 * 1024 * 1024
+ARCHIVE_MAX_BYTES = 128 * 1024 * 1024
+MEMBER_MAX_BYTES = 64 * 1024 * 1024
+
+
+def verify_initramfs_members(path, expected):
+    """Stream the actual composer's single gzip/newc archive; never extract it.
+
+    Bound the measured 55 MiB archive to 128 MiB, 64 MiB per ordinary member,
+    4096-byte names and 100000 entries. Required regular members are bounded by
+    their exact reviewed bytes. No new target-side executable is required.
+    """
+    if path.stat().st_size > 64 * 1024 * 1024:
+        raise ValueError('Initramfs compressed input exceeds FIT budget')
+    total, entries, found, seen = 0, 0, set(), set()
+    archive_hash = hashlib.sha256()
+    with gzip.open(path, 'rb') as stream:
+        def read(amount):
+            nonlocal total
+            if total + amount > ARCHIVE_MAX_BYTES:
+                raise ValueError('Initramfs archive exceeds 128 MiB budget')
+            data = stream.read(amount)
+            total += len(data)
+            archive_hash.update(data)
+            if len(data) != amount:
+                raise ValueError('Truncated initramfs newc archive')
+            return data
+        while True:
+            header = read(110)
+            if header[:6] != b'070701' or not re.fullmatch(b'[0-9a-fA-F]{104}', header[6:]):
+                raise ValueError('Unsupported initramfs newc header')
+            fields = [int(header[6 + index * 8:14 + index * 8], 16) for index in range(13)]
+            mode, nlink, size, namesize, checksum = fields[1], fields[4], fields[6], fields[11], fields[12]
+            if not 2 <= namesize <= 4097 or size > MEMBER_MAX_BYTES or checksum != 0:
+                raise ValueError('Invalid initramfs member/name bounds')
+            raw_name = read(namesize)
+            if raw_name[-1:] != b'\0' or b'\0' in raw_name[:-1]:
+                raise ValueError('Malformed initramfs member name')
+            try:
+                name = raw_name[:-1].decode('utf-8')
+            except UnicodeDecodeError as error:
+                raise ValueError('Invalid initramfs member encoding') from error
+            if read(-(110 + namesize) % 4).strip(b'\0'):
+                raise ValueError('Invalid initramfs name padding')
+            if name == 'TRAILER!!!':
+                if size:
+                    raise ValueError('Invalid initramfs trailer')
+                # cpio pads its final block with zeros. Read through gzip EOF to
+                # validate CRC and include all padding in the composition hash.
+                while True:
+                    padding = stream.read(65536)
+                    if not padding:
+                        break
+                    total += len(padding)
+                    if total > ARCHIVE_MAX_BYTES or padding.strip(b'\0'):
+                        raise ValueError('Invalid initramfs archive tail/budget')
+                    archive_hash.update(padding)
+                break
+            if (not name or name.startswith('/') or name in seen or
+                    (name != '.' and any(part in ('', '.', '..') for part in name.split('/')))):
+                raise ValueError('Duplicate or unsafe initramfs member path')
+            seen.add(name)
+            entries += 1
+            if entries > 100000:
+                raise ValueError('Too many initramfs members')
+            kind = stat.S_IFMT(mode)
+            if (kind not in (stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK,
+                             stat.S_IFCHR, stat.S_IFBLK, stat.S_IFIFO) or
+                    (kind in (stat.S_IFDIR, stat.S_IFCHR, stat.S_IFBLK, stat.S_IFIFO) and size) or
+                    (kind == stat.S_IFLNK and size > 4096)):
+                raise ValueError('Unsupported initramfs member type/size')
+            if name in expected:
+                if kind != stat.S_IFREG or nlink != 1 or size != len(expected[name]):
+                    raise ValueError(f'Actual initramfs differs from signed bundle: {name}')
+                if read(size) != expected[name]:
+                    raise ValueError(f'Actual initramfs differs from signed bundle: {name}')
+                found.add(name)
+            else:
+                remaining = size
+                while remaining:
+                    chunk = min(remaining, 65536)
+                    read(chunk)
+                    remaining -= chunk
+            if read(-size % 4).strip(b'\0'):
+                raise ValueError('Invalid initramfs data padding')
+    if found != set(expected):
+        raise ValueError('Actual initramfs lacks required trusted members')
+    return archive_hash.hexdigest()
+
+
+class VerifiedArtifact(dict):
+    """Carry the actual hash-checked initramfs path to signed revalidation."""
+    def __init__(self, manifest, root):
+        super().__init__(manifest)
+        self.root = root
 
 
 def digest(path):
@@ -94,7 +191,7 @@ def verify_artifact(root):
                            check=True, capture_output=True, timeout=30)
             if digest(member) != expected[name]:
                 raise ValueError(f'FIT component differs from reviewed {name}')
-    return manifest
+    return VerifiedArtifact(manifest, root)
 
 
 def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
@@ -106,7 +203,14 @@ def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
     if not isinstance(source, str) or ':' not in source:
         raise ValueError('Missing reviewed NFS source')
     server, export = source.split(':', 1)
-    bundle, _, _ = commissioning_bundle(Path(bundle), server, export)
+    if not isinstance(manifest, VerifiedArtifact):
+        raise ValueError('Actual verified artifact required for signed staging')
+    for name, limit in (('sd-network-init', 4 * 1024 * 1024), ('job.json', 65536),
+                        ('commissioning-target-policy.json', 65536),
+                        ('job.sig', 64), ('expected.sha256', 65)):
+        if regular(Path(bundle) / name).stat().st_size > limit:
+            raise ValueError(f'Staging bundle input exceeds budget: {name}')
+    bundle, writer_manifest, files = commissioning_bundle(Path(bundle), server, export)
     if digest(regular(bundle / 'reimage-manifest.json')) != composition.get('bundle_manifest_sha256'):
         raise ValueError('Staged artifact and signed bundle differ')
     policy_raw = regular(bundle / 'commissioning-target-policy.json').read_bytes()
@@ -119,9 +223,35 @@ def verify_signed_stage_bundle(manifest, bundle, verification_key, *, now=None):
         raise ValueError('Noncanonical target policy')
     job = verify_signed_job(regular(bundle / 'job.json').read_bytes(),
                             regular(bundle / 'job.sig').read_bytes(),
-                            regular(verification_key).read_bytes(), policy, now=now)
+                            regular(verification_key).read_bytes(), policy, now=now,
+                            preflight_only=writer_manifest.get('preflight_only', False))
     if job['job_id'] != manifest['job_id']:
         raise ValueError('Staged artifact and signed job differ')
+    mode = writer_manifest.get('preflight_only', False)
+    if (type(mode) is not bool or type(manifest.get('preflight_only', False)) is not bool or
+            manifest.get('preflight_only', False) is not mode or
+            manifest.get('job_format', 'sv08-h616-signed-reimage-v1') != job['format'] or
+            writer_manifest.get('job_format', 'sv08-h616-signed-reimage-v1') != job['format'] or
+            bool('sv08.h616_preflight=1' in manifest['bootargs'].split()) is not mode):
+        raise ValueError('Signed staging purpose and artifact/bundle mode mismatch')
+    compiled = verify_compiled_writer(bundle, writer_manifest)
+    if (manifest.get('compiled_purpose_sha256') != compiled or
+            manifest.get('writer_sha256') != writer_manifest['binary_sha256'] or
+            composition.get('writer_sha256') != writer_manifest['binary_sha256'] or
+            composition.get('initramfs_sha256') != manifest['files_sha256']['writer-initrd.img']):
+        raise ValueError('Staged artifact and actual compiled writer binding differ')
+    # FIT extraction already proved that this is the actual embedded initramfs.
+    # Compare its trusted executable and signed inputs, not unsigned labels.
+    expected_members = {destination: regular(bundle / name).read_bytes()
+                        for destination, (name, _) in files.items()}
+    expected_members['expected.sha256'] = regular(bundle / 'expected.sha256').read_bytes()
+    expected_members['scripts/init-bottom/ORDER'] = (
+        '# Trusted commissioning path; /root is data only.\nexec /trusted-writer\n'
+        'echo "SV08 writer exec failed; stopping" > /dev/kmsg\n'
+        'while :; do sleep 3600; done\n').encode()
+    archive_digest = verify_initramfs_members(manifest.root / 'writer-initrd.img', expected_members)
+    if archive_digest != composition.get('initramfs_cpio_sha256'):
+        raise ValueError('Actual initramfs archive differs from composition')
     return policy
 
 

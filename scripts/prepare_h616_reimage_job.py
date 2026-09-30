@@ -108,7 +108,8 @@ def prepare(*, policy_path: Path, image_path: Path, job_signing_key: Path,
             receipt_verification_key: Path, state_dir: Path, source_server: str,
             source_export: str, claim_port: int, valid_seconds: int = 1800,
             execute: bool = False, now: int | None = None,
-            synthetic_test: bool = False, image_digest=sha256_file) -> dict:
+            synthetic_test: bool = False, image_digest=sha256_file,
+            preflight_only: bool = False) -> dict:
     LOCAL.mkdir(mode=0o700, exist_ok=True)
     paths = (policy_path, job_signing_key, job_verification_key,
              receipt_signing_key, receipt_verification_key)
@@ -120,6 +121,8 @@ def prepare(*, policy_path: Path, image_path: Path, job_signing_key: Path,
         raise ValueError('Target policy must be canonical JSON')
     if synthetic_test != (policy['board_compatible'] == 'test,synthetic-h616'):
         raise ValueError('Synthetic and physical target policy must stay separate')
+    if preflight_only and synthetic_test:
+        raise ValueError('Preflight requires a physical target policy')
     if execute and not synthetic_test and os.geteuid() != 0:
         raise PermissionError('Physical service state must be prepared by root')
     if not synthetic_test and image_digest is not sha256_file:
@@ -138,7 +141,8 @@ def prepare(*, policy_path: Path, image_path: Path, job_signing_key: Path,
             any(path.is_symlink() for path in (state_dir, *state_dir.parents))):
         raise ValueError('Fresh non-symlink state directory under local/ required')
     issued = int(time.time()) if now is None else now
-    job = {'format': 'sv08-h616-signed-reimage-v1',
+    job = {'format': ('sv08-h616-signed-preflight-v1' if preflight_only else
+                      'sv08-h616-signed-reimage-v1'),
            'job_id': secrets.token_hex(16), 'issued_unix': issued,
            'expires_unix': issued + valid_seconds,
            'source': {'bytes': IMAGE_BYTES, 'sha256': policy['image_sha256'],
@@ -148,7 +152,8 @@ def prepare(*, policy_path: Path, image_path: Path, job_signing_key: Path,
                      'layout': policy['image_layout']}}
     raw = canonical_json(job)
     signature = sign_job(raw, job_signing_key)
-    verify_signed_job(raw, signature, private_input(job_verification_key), policy, now=issued)
+    verify_signed_job(raw, signature, private_input(job_verification_key), policy,
+                      now=issued, preflight_only=preflight_only)
     verify_receipt_pair(receipt_signing_key, receipt_verification_key)
     receipt = {'status': 'prepared-not-served', 'job_id': job['job_id'],
                'issued_unix': issued, 'expires_unix': job['expires_unix'],
@@ -159,7 +164,8 @@ def prepare(*, policy_path: Path, image_path: Path, job_signing_key: Path,
                'job_sha256': hashlib.sha256(raw).hexdigest(),
                'signature_sha256': hashlib.sha256(signature).hexdigest(),
                'receipt_verifier_sha256': sha256_file(receipt_verification_key),
-               'synthetic_test': synthetic_test, 'automatic_rearm': False}
+               'synthetic_test': synthetic_test, 'preflight_only': preflight_only,
+               'job_format': job['format'], 'automatic_rearm': False}
     if not execute:
         return receipt
     state_dir.mkdir(mode=0o700, parents=False)
@@ -191,7 +197,8 @@ def build_claim_server(*, state_dir: Path, image_path: Path,
                        job_verification_key: Path, receipt_signing_key: Path,
                        bind: str, image_digest=sha256_file,
                        synthetic_test: bool = False, now: int | None = None,
-                       listen_bind: str | None = None):
+                       listen_bind: str | None = None,
+                       preflight_only: bool | None = None):
     """Validate durable state and source before opening the one-shot listener."""
     if listen_bind is not None and (not synthetic_test or
                                     listen_bind not in ('127.0.0.1', '0.0.0.0')):
@@ -207,6 +214,16 @@ def build_claim_server(*, state_dir: Path, image_path: Path,
     receipt = json.loads(receipt_raw)
     if canonical_json(receipt) != receipt_raw or receipt.get('automatic_rearm') is not False:
         raise ValueError('Malformed persisted job state')
+    stored_mode = receipt.get('preflight_only', False)
+    if type(stored_mode) is not bool:
+        raise ValueError('Malformed persisted job purpose')
+    if preflight_only is None:
+        preflight_only = stored_mode
+    if (stored_mode is not preflight_only or
+            receipt.get('job_format', 'sv08-h616-signed-reimage-v1') !=
+            ('sv08-h616-signed-preflight-v1' if preflight_only else
+             'sv08-h616-signed-reimage-v1')):
+        raise ValueError('Persisted job purpose mismatch')
     policy_raw = stored('target-policy.json')
     policy = policy_fields(json.loads(policy_raw))
     if (canonical_json(policy) != policy_raw or
@@ -217,7 +234,7 @@ def build_claim_server(*, state_dir: Path, image_path: Path,
     signature = stored('job.sig')
     current = int(time.time()) if now is None else now
     job = verify_signed_job(raw, signature, private_input(job_verification_key),
-                            policy, now=current)
+                            policy, now=current, preflight_only=preflight_only)
     if (receipt.get('job_sha256') != hashlib.sha256(raw).hexdigest() or
             receipt.get('signature_sha256') != hashlib.sha256(signature).hexdigest() or
             receipt.get('policy_sha256') != hashlib.sha256(policy_raw).hexdigest() or
@@ -251,6 +268,7 @@ def main() -> None:
     parser.add_argument('--claim-port', required=True, type=int)
     parser.add_argument('--valid-seconds', type=int, default=1800)
     parser.add_argument('--execute', action='store_true')
+    parser.add_argument('--preflight-only', action='store_true')
     args = parser.parse_args()
     result = prepare(policy_path=args.policy, image_path=args.image,
                      job_signing_key=args.job_signing_key,
@@ -259,7 +277,8 @@ def main() -> None:
                      receipt_verification_key=args.receipt_verification_key,
                      state_dir=args.state_dir, source_server=args.source_server,
                      source_export=args.source_export, claim_port=args.claim_port,
-                     valid_seconds=args.valid_seconds, execute=args.execute)
+                     valid_seconds=args.valid_seconds, execute=args.execute,
+                     preflight_only=args.preflight_only)
     print(json.dumps(result, sort_keys=True))
 
 
