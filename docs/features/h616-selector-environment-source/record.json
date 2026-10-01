@@ -98,10 +98,14 @@
       "evidence": [],
       "human_task": null,
       "id": "repair-selector",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "2f2564e57cec43cb8927b58d85762b11",
+        "session": "/root/implement_selector_environment_source"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Implement and independently verify explicit environment-source repair",
       "verification": null
     }
