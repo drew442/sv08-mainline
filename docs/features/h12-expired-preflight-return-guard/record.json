@@ -1,0 +1,55 @@
+{
+  "format_version": 1,
+  "id": "h12-expired-preflight-return-guard",
+  "kind": "fix",
+  "title": "Guard one H12 SD return with possible retained preflight marker",
+  "author": "/root coordinator; separate planner /root/plan_h12_sd_return",
+  "created": "2026-10-01",
+  "priority": 1,
+  "proposal": "docs/features/h12-expired-preflight-return-guard/proposal.md",
+  "requirements": [
+    "docs/hardware/host-h616-physical-preflight.md",
+    "docs/decisions/20260930-h12-urh04-standing-authorization.md",
+    "docs/features/network-emmc-unattended-recovery-handoff/proposal.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "hret-01",
+      "description": "Bind exact preflight stage/purpose provenance and honest unknown H12 state; reject unsafe or mismatched admission.",
+      "environment": "offline"
+    },
+    {
+      "id": "hret-02",
+      "description": "Preserve live guarded protocol and historical route restrictions; prove designated receipt and all failure stops.",
+      "environment": "offline"
+    },
+    {
+      "id": "hret-03",
+      "description": "Run focused regressions and fresh source-bound independent high verification; document physical gates and limitations.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement-return-guard",
+      "title": "Implement and independently verify the bounded H12 return exception",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "hret-01",
+        "hret-02",
+        "hret-03"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}

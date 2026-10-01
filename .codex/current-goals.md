@@ -335,3 +335,23 @@ delegated scope review, source-bound independent delivery verification and
 immediate high-tier action review; standing same-scope owner authority persists.
 No old exception/receipt, fabricated fresh environment or claimed marker absence
 may substitute for those gates. Continue only the required H12 correction.
+
+### 2026-10-01 H12 return source diagnosis and pending approval
+
+The required [H12 return guard proposal](../docs/features/h12-expired-preflight-return-guard/proposal.md)
+is recorded with one offline task, three checks and five owned implementation
+paths. Separate Sol/medium research traced the exact historical staged chain;
+[source analysis](../docs/features/h12-expired-preflight-return-guard/source-analysis.md)
+conditionally excludes its whole-image writer while explicitly retaining possible
+marker metadata writes, normal-slot counter/persistence writes, poweroff and
+additional reboot paths. Current raw environment, marker and RTC are unmeasured;
+no successful physical return follows from this source evidence.
+
+The unchanged guard's inert local admission rejects honest unknown H12 state.
+Workflow validates 34 features/41 tasks with no ready task because this proposal
+has no decision. A fresh native feature-approver launch and an established
+same-role follow-up both failed with agent thread limit; private launch receipts
+are retained. No role substitution, invented approval, guard implementation or
+physical retry occurred. Obtain genuine independent scope approval, then one
+implementation and separate high delivery/action reviews. Full goal remains
+active; this turn produced source evidence and a reviewable pending correction.
