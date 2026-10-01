@@ -13,6 +13,19 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
+## Fresh H12 receiver window — 2026-10-01 13:38 UTC
+
+Attempt D is independently ready, controller PID 77432, zero UART owners while
+waiting for actual unplug/re-enumeration. One USB serial unplug >=5 seconds and
+same-port reconnect was requested after readiness, with PSU off and SD/eMMC
+untouched. Window ends 14:07 UTC; do not act after it without current coordinator
+readiness. No disconnect had been observed at 13:38:22 UTC. The controller has
+one bounded SD-return attempt and separately checked passive restoration; readiness
+is not a physical SD return or H12 pass. Exact reviewer session
+`01a0f7a6-91df-7bb3-a7fe-7bc8a0d250b6` actually ran Astra/high under the temporary
+owner exception; original intake-manifest mismatch and corrected review remain
+preserved in the ignored D probe records. Required G4 implementation is not running.
+
 ## Current dispatch — 2026-10-01 reset
 
 Immediate priority is G1/H12: use the demonstrated warm-reset/capture path for a

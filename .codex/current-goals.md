@@ -22,6 +22,22 @@ for every G4 administration or G5 release feature. G4/G5 authorized preparation
 may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
 
+## Live H12 window — 2026-10-01 13:38 UTC
+
+Following the owner's concern about stalled execution, current work is focused on
+H12. Required G4 rollover has design approval but no implementation is running.
+The fresh D receiver passed exact independent high-consequence review and live
+admissions, then started at 13:37:33 UTC. Independent readiness at 13:38:22 passed:
+PID 77432/starttime 28608617, exact supervised unit/commands, passive C stopped,
+zero UART owners, bridge still present and no disconnect observed. It waits until
+14:07:33 UTC for one physical USB unplug of at least five seconds and same-port
+reconnect, PSU still off and SD/eMMC untouched. The owner has been asked for the
+step after readiness; elapsed time is not a completed physical action. This dated
+window supersedes the expired C request. Do not act after expiry without new
+readiness. H12/preflight remain incomplete. Private source, review, corrected
+manifest binding and live receipts are in
+`local/feature-workflow/probes/h12-cold-sd-return-20261001d/`.
+
 ## Immediate G1 execution
 
 Checkpoint 2026-10-01: one reviewed keyboard reboot intercepted U-Boot and
