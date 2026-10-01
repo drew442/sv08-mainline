@@ -257,7 +257,9 @@ def inventory(root, *, empty_xattr_reference=None):
 
 def intake(a):
     work=clean_path(a.work,output=True);lock=clean_path(a.lock);separate(work,lock)
-    packages=json.loads(lock.read_text())['packages']
+    lock_bytes=lock.read_bytes()
+    lock_hash=hashlib.sha256(lock_bytes).hexdigest()
+    packages=json.loads(lock_bytes)['packages']
     if work.exists():raise ValueError('Intake requires a fresh output')
     if not a.execute:return dict(execute=False,stage='intake',packages=len(packages),bytes=sum(p['bytes'] for p in packages))
     if os.geteuid()==0:raise ValueError('Network intake runs unprivileged')
@@ -279,7 +281,11 @@ def intake(a):
             except Exception:
                 target.unlink(missing_ok=True)
                 if attempt==2:raise
-    return dict(stage='intake',packages=len(packages),lock_sha256=sha(lock))
+    # Content identity is checked here; later pathname changes are not excluded.
+    try:current_lock_hash=sha(lock)
+    except OSError as error:raise ValueError('Lock unreadable at intake completion') from error
+    if current_lock_hash!=lock_hash:raise ValueError('Lock content changed during intake')
+    return dict(stage='intake',packages=len(packages),lock_sha256=lock_hash)
 
 
 def assemble(a):
