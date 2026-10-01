@@ -10,6 +10,39 @@ from unittest import mock
 from scripts import build_h616_recovery_handoff as handoff
 
 
+class SelectorEnvironmentTests(unittest.TestCase):
+    def test_both_records_reset_whitelisted_gates_before_integrity_and_payload(self):
+        text = handoff.script_text('offline-job', 'rdinit=/init', 1234, 0x12345678)
+        whitelist = ' '.join(handoff.GATE_NAMES)
+        for address, block in zip(handoff.ENV_ADDRS, ('2000', '4000')):
+            read = f'if mmc read {address:#x} {block} 80; then'
+            start = text.index(read)
+            imported = text.index(f'env import -c {address:#x} 10000 {whitelist}', start)
+            for gate in handoff.GATE_NAMES:
+                self.assertIn(f'setenv {gate}\n', text[start:imported])
+        self.assertLess(text.index('env import -c 0x4f910000'), text.index('sv08-reimage/armed'))
+        self.assertIn('if test "${sv08_mmcdev}" = "1"; then', text)
+        self.assertIn('if mmc dev 1 0; then', text)
+        self.assertEqual(text.count('test "${sv08_reimage_arm}" = "offline-job"'), 2)
+        for forbidden in ('saveenv', 'env save', 'mmc write', 'mmc erase', 'env import -r'):
+            self.assertNotIn(forbidden, text)
+        self.assertIn('source 0x4fd00000', text)
+
+    def test_static_load_map_accounts_for_two_buffers_and_rejects_overlap(self):
+        ranges = handoff.selector_intervals(33552896, 48899052, 4096)
+        self.assertEqual(sum(ranges[f'environment_{i}']['end'] -
+                             ranges[f'environment_{i}']['start'] for i in range(2)), 131072)
+        with self.assertRaisesRegex(ValueError, 'Overlapping'):
+            handoff.selector_intervals(handoff.FIT_ADDR - 0x40080000 + 1, 1, 1)
+        with self.assertRaisesRegex(ValueError, 'load budget'):
+            handoff.selector_intervals(1, handoff.FIT_MAX_BYTES + 1, 1)
+        with self.assertRaisesRegex(ValueError, 'environment buffers'):
+            handoff.script_text('offline-job', '', 1, 0, env_addrs=(1, 2))
+        with self.assertRaisesRegex(ValueError, 'overlaps'):
+            handoff.script_text('offline-job', '', 1, 0,
+                                env_addrs=(handoff.FIT_ADDR, handoff.FIT_ADDR + 65536))
+
+
 class PreflightCompositionTests(unittest.TestCase):
     def test_native_fit_records_small_fixture_memory_footprint(self):
         with tempfile.TemporaryDirectory(dir=handoff.REPO / 'local') as temporary:
@@ -42,6 +75,9 @@ class PreflightCompositionTests(unittest.TestCase):
             self.assertLess(result['fit_load_end'], handoff.MARKER_ADDR)
             self.assertLessEqual(result['fit_bytes'], result['fit_max_bytes'])
             self.assertIn('sv08.h616_preflight=1', result['bootargs'])
+            self.assertEqual(result['environment_buffer_bytes'], 131072)
+            self.assertEqual(result['environment_source']['hardware_partition'], 0)
+            self.assertFalse(result['component_relocation_verified'])
             self.assertIn('RAM preflight', (root / 'out/writer.its').read_text())
             result['fixture_total_bytes'] = sum(p.stat().st_size for p in root.rglob('*') if p.is_file())
             print('Native tiny FIT resource evidence: ' + json.dumps(result, sort_keys=True))
