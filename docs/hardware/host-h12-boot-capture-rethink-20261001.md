@@ -258,3 +258,69 @@ is observation of the collector and retained log, not proof of current H616
 liveness. No port reopen, serial transmission or reset was performed by that
 inspection. Private research, runtime, probe/review and operation evidence remain
 under ignored `local/feature-workflow/probes/h12-boot-capture-rethink-20261001/`.
+
+## Corrected preflight entered RAM but did not pass
+
+Measured 2026-10-01, same unchanged host-only setup and named spare on
+`4022000.mmc`, CID SHA-256
+`08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a`.
+No new board-revision claim follows from the diagnostic model strings.
+
+Fresh job B (`db4be670b7973f394d4d7b7309e3adc1`) was staged and independently
+read back. Separately reviewed deletion removed only the expired job key from
+both CRC-valid environment dictionaries; every other field survived. The exact
+pinned ARM tool was first reproduced on a disposable regular file: its script
+requires `sv08_reimage_arm=` followed by a newline, with two planned stores for
+both copies. A key-only line is ignored. The original candidates and failed
+probes are preserved. This agrees with upstream
+[libubootenv v0.3.5 load-file semantics](https://raw.githubusercontent.com/sbabic/libubootenv/v0.3.5/src/uboot_env.c),
+lines 1555–1602 and 1765–1796, accessed 2026-10-01; the exact local executable
+experiment, rather than a version assumption, established the tool behavior.
+
+B remained unarmed when its usable signed window ended during review. Its
+complete artifact remains durably on Beelink; it was not extended or rearmed.
+A distinct fresh job C (`2aadb588e986f7abff61542b06e80dbd`, expiry 12:12:54 UTC)
+was built, signed and independently verified, with the accepted selector repair.
+Its FIT is 48,902,464 bytes, SHA-256
+`b5f527cbb3ee302e106316b5a41790b13db6311a8b106482f4b72fb8fdb1edb2`;
+its 2,085-byte selector SHA-256 is
+`f1eac4024dc3b24f56af17744f42669b73aebd857b264e4e49447cd6e43caf2f`.
+
+Separate-session Astra/high review under the owner's temporary exception
+conditionally accepted the exact stage, arm, activation, claim and boot
+operations. A prior listener adaptation was rejected for a wrong source prefix;
+its original and rejection remain, and C corrected the prefix before review.
+The coordinator recorded actual runtime and all conditions before acting.
+Staging restored the known original durably before removing only B's two staged
+files; B's off-host artifact and the older four-file failed-attempt archive were
+preserved. Independent readbacks accepted C's unarmed chain, then both armed
+CRC-valid full dictionaries, then the exact marker and unchanged environment
+bytes. An initial RAM receiver refused before creating files; explicit buffer
+release fixed its memory retention while keeping the memory gate.
+
+One normal SSH reboot was accepted at 11:32:06 UTC after actual listener
+PID/starttime/socket, unused claim, exact read-only NFS client exports, passive
+UART ownership and current target/loader/source checks. Serial capture shows
+the new preflight FIT and trusted RAM kernel, then
+`SV08_H616_COMMISSIONING_REFUSED_OR_UNCERTAIN_CLAIM`. The server still contained
+only `.lock` and `armed.json`. The runtime path passed marker consumption and
+unmount before attempting automatic return; raw p5 state awaits SD reconciliation.
+Its next SPL boot failed DRAM size-row training with
+`### ERROR ### Please RESET the board ###`. No repeated reboot was issued.
+The listener was stopped with the unused state preserved.
+
+Snapshot: 61,089 captured bytes after the admitted offset, SHA-256
+`e385ded12a85ab68e1320c384ba9884bffe5cd98f3d63bdf8a5101701bdd3a67`.
+Private source/artifact/review/runtime/action/readback/capture records remain
+under ignored `local/feature-workflow/probes/h12-sd-return-20261001b/`, chiefly
+`fresh-preflight/fresh-job-c/`. This demonstrates corrected selector delivery
+and preflight entry, not `PREFLIGHT_PASS`, an authenticated claim, successful
+automatic recovery return or a full-image write.
+
+Source investigation is checking early nonblocking randomness failure before
+any connection; the current capture lacks a CRNG-initialized message, which is
+a clue rather than proof of `getrandom()` errno. Physical reset is now a real
+dependency: the measured Beelink USB2 root hub reports no power switching,
+and Linux keyboard/SysRq cannot reset a host halted in SPL. A concrete bounded
+USB-replug/SD-return receiver is being prepared for independent review; no
+unidentified reset net or forced USB power operation is proposed.

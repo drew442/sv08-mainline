@@ -1,0 +1,120 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Actual compiled helper handles immediate/temporary readiness, EINTR/partial bytes; no socket before complete secure challenge; one request only.",
+      "environment": "offline",
+      "id": "rng-ready"
+    },
+    {
+      "description": "Monotonic bounded EAGAIN timeout, permanent/zero-read failure, no weak fallback, no request/target open, stage/errno diagnostics contain no challenge or credential material.",
+      "environment": "offline",
+      "id": "rng-refusal"
+    },
+    {
+      "description": "Relevant existing authenticated receipt/no-random/default diagnostic cases and ARM64 mode builds pass; purpose/pins/resources retained with no hardware claim.",
+      "environment": "offline",
+      "id": "claim-regression"
+    }
+  ],
+  "created": "2026-10-01",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "rng-ready",
+          "rng-refusal"
+        ],
+        "text": "Use GRND_NONBLOCK and exactly 32 securely obtained bytes. Start one monotonic deadline no greater than 60 seconds; never reset it after EAGAIN, EINTR or partial success. Check it on every acquisition/retry iteration, including interrupted sleep, and before admitting completion. Pace EAGAIN retries with sleeps bounded by remaining time; no busy spin or unbounded EINTR loop. Clock or sleep failures, zero read, permanent RNG errors and timeout fail closed. No weak source, seeding workaround or claim that this initializes entropy."
+      },
+      {
+        "checks": [
+          "rng-ready",
+          "rng-refusal"
+        ],
+        "text": "Deterministically inject clock and syscalls into the actual compiled production helper, not copied or mirrored logic. Cover immediate success, EAGAIN then readiness, repeated EAGAIN to deadline, EINTR including repeated interruptions through deadline, partial reads including partial-then-EAGAIN, permanent error, zero read, and clock/sleep failure. Assert no socket/connect/send before complete timely randomness and no downstream claim-dependent target open on failure. Verify deadline boundary and bounded pacing without a real 60-second wait."
+      },
+      {
+        "checks": [
+          "rng-ready",
+          "claim-regression"
+        ],
+        "text": "Keep at most one HTTP claim request per invocation; partial sends may complete that one request but transport uncertainty cannot retry/rearm. Preserve strict signed receipt framing, pinned key, current challenge/job/descriptor equality, durable consume-before-sign and existing freshness/expiry refusal. Waiting must not extend job validity. Keep pinned crypto source/version and all signature checks unchanged."
+      },
+      {
+        "checks": [
+          "rng-refusal",
+          "claim-regression"
+        ],
+        "text": "Diagnostics identify RNG, socket/connect/send/receive and receipt-refusal stages with meaningful captured errno where applicable; do not report stale errno as a protocol failure cause. Never log random bytes, challenge, request/response bodies, keys or credential material. Test stage distinctions and absence of sensitive values, and retain the existing final refusal marker."
+      },
+      {
+        "checks": [
+          "claim-regression"
+        ],
+        "text": "Run relevant existing valid/forged/altered/wrong-key/wrong-job/replayed receipt, unavailable-randomness, default diagnostic and preflight/write-purpose regressions. Compile the affected ARM64 modes using retained pinned inputs and record source/configuration/toolchain and artifact hashes, before/after binary sizes and conservative FIT/initramfs/load-memory headroom against existing 8 GB and H616 bounds. No new runtime dependency. Reuse unchanged full-write/fault QEMU evidence; rerun only for a specific documented unresolved risk."
+      },
+      {
+        "checks": [
+          "claim-regression"
+        ],
+        "text": "Preserve original candidates, failed physical observation and research evidence. Limit changes to startup acquisition, stage diagnostics and their tests/documentation; keep marker consumption/unmount, target/CID binding, preflight read-only versus write purpose, finalizer and boot-policy behavior unchanged. Rollback is withdrawal of the new offline candidate and retention of the prior artifact; never rearm a consumed marker/claim as rollback. Heater, idle, persistence, profile and recovery requirements remain intact."
+      },
+      {
+        "checks": [
+          "claim-regression"
+        ],
+        "text": "Bind delivery evidence to the actual source and candidate; label deterministic compiled-helper evidence, ARM64 build/static-size evidence and physical observation separately. Do not claim physical RNG readiness, successful H12 preflight or recovery return. Obtain a fresh independent delivery verifier before any physical candidate build; do not reuse the coordinator, adopted-fix researcher, implementer, evidence producer or this approver as verifier. This approval grants no hardware access, service/job provisioning, reset/reboot, media/boot-policy write or release authority; existing H12 physical gates and exact-operation review remain required."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "8c6a43b1d5935738dda0ffc0c24b5db211526b985a50631361677630644eb471",
+    "rationale": "Approve this bounded repair of accepted H12 claim startup under decision 0011 and existing completion authorization. Before: emmc_image_writer.c:853-883 returns immediately on getrandom(GRND_NONBLOCK) EAGAIN before socket creation, losing an otherwise valid invocation to temporary RNG unavailability. After: allow at most 60 seconds of monotonic, paced secure-RNG acquisition and identify refusal stage without changing authentication or target policy. Source inspection and claim-failure-research/probe.c/probe.stdout support the failure mechanism; that probe copies functions and is not delivery evidence for the actual compiled helper. fresh-job-c/observation-02.json reports no claim.json; its public console records trusted RAM entry, REFUSED_OR_UNCERTAIN_CLAIM and subsequent SPL DRAM failure. These observations do not establish physical errno or root cause; TCP failure remains possible and absent CRNG-ready logging is not proof of unavailable entropy. The RNG may remain unready through the new timeout. The actual contents of all five requirement files preserve one-shot signed receipt, purpose binding, durable marker handling, recovery and separate physical acceptance; no owner requirement change or optional feature expansion is needed. Existing Linux secure-RNG interfaces suffice; blocking acquisition without a deadline, weak fallback, cryptographic replacement and transport retries are inappropriate alternatives. Existing authenticated-claim delivery already provides receipt and full/fault QEMU evidence; reuse unchanged evidence with explicit limits. This is design approval only, conditional on actual-source tests, resource accounting and fresh independent delivery verification. Runtime provenance must be confirmed by the coordinator before relying on this exceptional session.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/design/unattended-emmc-reimage-handoff.md": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+      "docs/features/h616-physical-preflight/proposal.md": "898f5d780446c593428b5671f639ba2232a2a765971caf29a45f5c7f7a5cd2cd",
+      "docs/features/network-emmc-authenticated-claim/proposal.md": "4d3ba2147c5b9c10237d1d0789af22726de211a4958dda7f7fe57ad2236bac0f",
+      "docs/features/network-emmc-authenticated-claim/record.json": "62970ed39e5fd1d13f892d0bdd4468f980cd210fddfee27c12d4f15045b775ef"
+    },
+    "reviewer": "feature_approver / independent claim-startup-approval; requested temporary GPT-6 Astra/high exception, not a Sol result; effective runtime requires coordinator confirmation",
+    "scope_sha256": "0e7359379c99e285eaec1f422faca88aa50970993ea850cf40b84baa004aaf5a",
+    "session": "/home/drew/sv08-mainline/local/feature-workflow/probes/h12-sd-return-20261001b/fresh-preflight/claim-startup-approval"
+  },
+  "format_version": 1,
+  "id": "h616-claim-startup-readiness",
+  "kind": "fix",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/h616-claim-startup-readiness/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-authenticated-claim/proposal.md",
+    "docs/features/network-emmc-authenticated-claim/record.json",
+    "docs/features/h616-physical-preflight/proposal.md",
+    "docs/design/unattended-emmc-reimage-handoff.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "rng-ready",
+        "rng-refusal",
+        "claim-regression"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "startup-readiness",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Correct and independently verify secure claim startup",
+      "verification": null
+    }
+  ],
+  "title": "Bound early-boot secure randomness wait and explain claim refusal"
+}

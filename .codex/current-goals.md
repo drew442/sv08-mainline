@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; capture, authenticated SD return and read-only reconciliation passed; urh-04 still failed/unpassed | Review and stage the freshly built preflight/selector repair, then arm and test through separate reviewed operations | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight reached RAM but refused claim, automatic return stopped in SPL DRAM training | Await the prepared one-time USB reset/SD return; implement independently approved bounded claim-startup repair offline; keep failed jobs retired | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -34,7 +34,12 @@ Read-only p5 reconciliation subsequently passed: the old wrapper, original
 script, FIT and retained marker match recorded hashes; private mount cleanup
 and unchanged global mounts passed. Fresh signed preflight preparation and
 artifact verification passed on Beelink with the accepted selector repair.
-Exact staging, arm, activation, boot and physical return remain open.
+Fresh job B staging and expired-token retirement subsequently passed. B stayed unarmed and expired during review; its complete artifact remains on Beelink. Distinct fresh job C then passed staging, arming, marker publication and independent readbacks. Its corrected selector reached RAM preflight at 11:32 UTC, but the runtime refused the claim before target preflight acceptance. The server claim remained unused; automatic return stopped in SPL DRAM training. G1 is incomplete. The reviewed cold-return receiver is actually ready, PID 75332,
+with no open UART while awaiting one physical unplug/reconnect until 12:22 UTC.
+The coordinator requested that step after independent readiness; no software
+reset was issued at the SPL halt. The bounded offline claim-startup repair has
+separate delegated approval and remains subject to delivery verification.
+See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#corrected-preflight-entered-ram-but-did-not-pass).
 
 1. Reuse [the measured warm-capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
    USB stays connected; prepare the sole serial controller before one keyboard
@@ -82,7 +87,9 @@ after H12. No global/project model configuration was changed. Independent roles
 stay separate; supported separate-session fallback is available when native
 threads cannot launch, with actual runtime and role contract recorded.
 
-No physical owner action is requested by this reset. Combine later sensor,
+The reset initially added no physical owner action. The subsequent measured SPL
+halt now needs a prepared, independently reviewed physical USB reset to regain
+SD control; software keyboard/SysRq requires a running host. Combine later sensor,
 peripheral and attended commissioning needs in [the existing H queue](../docs/hardware/coordinated-human-tasks.md).
 No new backup, board photograph, external adapter, soldering or stock-machine
 requirement is added to G1 solely for boot capture. True cold-boot reliability

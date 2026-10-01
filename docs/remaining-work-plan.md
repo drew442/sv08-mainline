@@ -41,10 +41,14 @@ without a change, failure or unresolved integration question that justifies it.
   A/B counters and the expired job token, and the Linux/RTC time. Read-only p5
   and marker reconciliation subsequently passed: the retained old chain and
   marker match the recorded hashes. Fresh preflight preparation/build passed;
-  exact reviewed staging and the corrected physical preflight remain open.
+  staging and redundant expired-token retirement passed. A distinct new job
+  subsequently passed staging/arm/marker readbacks and entered RAM preflight,
+  then refused its claim. Its automatic return halted in SPL DRAM training.
+  Diagnose that refusal and prepare a reviewed physical reset/SD return; G1 is open.
 - First physical urh-04 failed before preflight entry. The selector environment
   correction, preflight executable and runtime MMC binding are independently
-  accepted offline; the corrected selector remains unstaged. Physical urh-04
+  accepted offline; the corrected selector is now physically delivered and reached
+  the trusted RAM preflight. Claim refusal and the failed automatic return keep urh-04
   and urh-05 remain open. See [H12 evidence](hardware/host-h12-boot-capture-rethink-20261001.md).
 - Recovery export composition, inactive printer-interface configuration and
   boot-health composition are done offline. Do not redispatch their implementations;
