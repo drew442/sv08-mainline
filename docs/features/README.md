@@ -84,6 +84,8 @@ host and hardware acceptance work remains in the
   and tested offline.
 - [x] Trusted independent boot-to-export composition is independently accepted
   offline; see the [record](host-recovery-export-composition/record.json).
+- [x] Recovery intake completion receipt binds parsed lock content and refuses
+  changed/unreadable input; [independent offline verification](recovery-intake-receipt-binding/record.json) passed.
 - [ ] Complete signed restore, first-boot state initialization and preserved-slot
   recovery operations, with physical export/media acceptance still required.
 - [ ] Test recovery UI visually with HDMI touch, keyboard, and keyboard plus mouse.

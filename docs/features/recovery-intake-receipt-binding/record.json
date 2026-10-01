@@ -68,15 +68,57 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "receipt-continuity",
+          "document": "docs/development/recovery-intake-receipt-binding-20261001.md",
+          "document_sha256": "58e7a64ac24fd7e3d084f21e3e8c914da17d5d1d9a1bd71fa81d6596a79a2ce0",
+          "environment": "offline",
+          "limitations": "Offline native fixture evidence only; no real network, recovery image rebuild, guest boot or physical hardware acceptance. Content identity at final comparison does not exclude future path changes.",
+          "method": "Actual intake deterministic mocked-response byte-continuity cases, baseline false-success reproduction, 23 native regressions and exact unchanged assembly source comparison; see evidence document.",
+          "profile": null,
+          "source_commit": "ebaacddf94e5e063e06efb9a03ef3eefbc3c4465",
+          "source_sha256": {
+            "scripts/recovery_image.py": "c89591d8661a05bd4cdb6ce28aee5dfcd4c983b7f66b5e7efb505b67dc731279",
+            "tests/test_recovery_image.py": "5132a9d48038ea8736bbe331b0eb335015db69d8621935f5706b5a988507571c"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "preserved-gates",
+          "document": "docs/development/recovery-intake-receipt-binding-20261001.md",
+          "document_sha256": "58e7a64ac24fd7e3d084f21e3e8c914da17d5d1d9a1bd71fa81d6596a79a2ce0",
+          "environment": "offline",
+          "limitations": "Offline native fixture evidence only; no real network, recovery image rebuild, guest boot or physical hardware acceptance. Content identity at final comparison does not exclude future path changes.",
+          "method": "Actual intake deterministic mocked-response byte-continuity cases, baseline false-success reproduction, 23 native regressions and exact unchanged assembly source comparison; see evidence document.",
+          "profile": null,
+          "source_commit": "ebaacddf94e5e063e06efb9a03ef3eefbc3c4465",
+          "source_sha256": {
+            "scripts/recovery_image.py": "c89591d8661a05bd4cdb6ce28aee5dfcd4c983b7f66b5e7efb505b67dc731279",
+            "tests/test_recovery_image.py": "5132a9d48038ea8736bbe331b0eb335015db69d8621935f5706b5a988507571c"
+          }
+        }
+      ],
       "human_task": null,
       "id": "intake-binding",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "6b7616f299c6431cbbb7f0adb73db8c5",
+        "session": "recovery-intake-implementation-20261001"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Correct and independently verify intake receipt content binding",
-      "verification": null
+      "verification": {
+        "decision_sha256": "def96c7320fc6d7827146a10ca70b405a16d5bddc98d5ff253354b590aee44d3",
+        "evidence_sha256": "7790929cecd88f16d1aeb4152ed714b3bd359cf8d2bee3ba8375de01c85192d2",
+        "outcome": "passed",
+        "rationale": "Verified clean unchanged HEAD ebaacddf94e5e063e06efb9a03ef3eefbc3c4465 and complete bba38ebf8b94ff8765065bc59d50d1ee0905b7c7..HEAD diff: exactly the intake repair, focused tests, and dated evidence document; no deletions, mode changes, gitlink changes, or other production changes. Independently verified approved proposal, every requirement and scope hash, all submitted document/source hashes, actual evidence source_commit, complete decision and evidence canonical digests. Receipt-continuity passed: 23 focused native offline tests in 0.596 seconds, including actual intake unchanged bytes, immediate/during-download replacement refusal, deleted/PermissionError completion refusal, same-byte replacement success, and post-comparison replacement returning captured A with exactly one completion path hash. Independent pinned-baseline reproduction produced false success naming B while A selected its archive; candidate refused changed lock with no returned receipt. Source parsing and SHA-256 consume the same captured bytes; main prints only after successful stage return, with no later receipt pathname read. Preserved-gates passed: inspection has no output/network, root and existing-output refusals, path/symlink/raw-device/overlap checks, invalid identity and three-attempt archive size/hash/network exhaustion with cleanup, independent assembly archive/control refusals and stale integration-input refusal. Exact baseline comparison proves all production outside intake byte-identical, including assembly completion lock/integration continuity and build freshness gates; all eight indexed gitlinks match upstream-lock.json, Markdown targets resolve, diff/cached checks and workflow validation pass. Test fixture redirects retain production path guards; runtime network is mocked and root identity is simulated, not installed unprivileged/network proof. Changes add one captured lock buffer and a final content read/hash, no new dependency or guest resource policy. Historical image evidence and accepted factory geometry, rollback, persistence, heater/idle policy, profiles, pins and recovery admission are untouched. Partial refused intake remains diagnostic output and fresh-output guards prevent reuse. Same-byte replacement is allowed; the final comparison proves content identity at that point, not perpetual path stability, A-to-B-to-A detection, archive immutability or authenticated provenance. This verifies offline receipt closure only. No full assembly/rebuild, QEMU/guest, named hardware profile, release or physical operation is certified; G4/H04/H07/H12 physical dependencies remain open. Candidate unchanged; no repair, record edit, commit, network, credentials, hardware or agent launch. Logs: tests.log and reproduce.log in the assigned private verification directory.",
+        "reviewer": "feature_verifier / fresh independent delivery review; Sol6.1 medium per coordinator runtime observation",
+        "session": "recovery-intake-verifier-20261001-86fa46a9e4d443cab43b0f935b6fffaf"
+      }
     }
   ],
   "title": "Bind recovery intake completion receipt to verified lock content"

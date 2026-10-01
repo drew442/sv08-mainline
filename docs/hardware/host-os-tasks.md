@@ -132,9 +132,11 @@ enumeration were re-established on 2026-09-12; see the
   and pass the browser/API file test. See [wheel evidence](host-compiled-wheels.md).
 - [ ] Finish independent rebuilds of the remaining packages/compiled wheels; retain complete source,
   toolchain and license manifests. A successful single build is insufficient.
-- [ ] Harden the recovery intake completion receipt against concurrent lock replacement;
-  retain the independently revalidated assembly gates. See the
-  [recorded reporting limitation](host-recovery-image.md#resources-and-preservation).
+- [x] Harden the recovery intake completion receipt against concurrent lock replacement;
+  independent offline verification reproduced baseline false success and candidate
+  refusal, with 23 passing regressions. Assembly gates remain intact; see the
+  [delivery record](../features/recovery-intake-receipt-binding/record.json).
+  Fresh downstream assembly remains required for the changed builder.
 - [ ] Assemble finalized boot/root/recovery/data filesystems and signed release
   artifacts only after boot/persistence integration; capacity fixtures are not
   deployable images. Test complete 8 GB occupancy including update staging/state.

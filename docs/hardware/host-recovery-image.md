@@ -192,3 +192,17 @@ that reporting edge is follow-up work. The authoritative assembly independently
 validates the full captured lock, every archive/control field and completion
 continuity, so this intake reporting limitation does not substitute for candidate
 provenance.
+
+## Intake reporting correction — 2026-10-01
+
+The earlier late-hash reporting limitation above is historical. The
+[bounded receipt repair](../features/recovery-intake-receipt-binding/record.json)
+is independently accepted offline at `ebaacddf94e5e063e06efb9a03ef3eefbc3c4465`
+and integrated. Intake now parses and hashes one captured byte buffer, compares
+current lock content after verified downloads and returns the captured digest.
+Changed or unreadable completion input refuses. Independent tests reproduced the
+old false-success interleaving and corrected refusal; all 23 regressions passed.
+Content identity is established at that comparison, without promising perpetual
+pathname stability. Existing assembly freshness checks remain intact; the changed
+builder needs fresh downstream assembly, and earlier image/VM evidence retains
+its original source revision. No new guest boot or physical recovery is claimed.

@@ -168,8 +168,8 @@ streaming in UI and during printing. Camera/timelapse may be deferred only with 
 recorded path that keeps the existing camera usable.
 
 Finish exact boot-chain/kernel/driver provenance, pinned build inputs, remaining
-independent package rebuilds and source/license inventories. Resolve the known
-recovery-intake completion-receipt race. Assemble signed boot/root/recovery/data
+independent package rebuilds and source/license inventories. The recovery-intake completion-receipt race is now independently corrected
+offline; retain fresh downstream assembly for the changed builder. Assemble signed boot/root/recovery/data
 artifacts, measuring the complete 7,818,182,656-byte layout, updates, state-copy
 workspace, inodes and reserve; preserve the accepted 512 MiB recovery allocation.
 
@@ -230,3 +230,12 @@ serial capture restoration passed independently. G1 now requires a fresh ready
 receiver window and physical reset to regain SD control, current read-only intake,
 and a distinct fresh signed preflight job incorporating the accepted repair.
 No G1 physical pass or G2–G5 completion is claimed.
+
+### Required G4 receipt correction — 2026-10-01
+
+The [intake receipt delivery](features/recovery-intake-receipt-binding/record.json)
+is independently accepted and integrated. Baseline intake verified A but named B
+after replacement; the corrected path refuses changed/unreadable lock content and
+reports captured bytes after completion comparison. All 23 offline regressions
+passed independently. This closes the reporting defect, without certifying a fresh
+assembled image, network intake on the installed host or physical recovery.

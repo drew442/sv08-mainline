@@ -104,6 +104,14 @@ Optional features remain paused; no scheduling or publication is enabled.
 Branch/worktree presence is evidence retention, not an active assignment. All
 original candidates, failures, reviews and artifacts remain preserved.
 
+## Latest required G4 delivery
+
+While H12 waits for the physical reset, the required recovery-intake receipt race
+was corrected, independently verified by a fresh Sol/medium session and integrated.
+The offline task is done, with a reproduced baseline false success and 23 passing
+tests. See [the record](../docs/features/recovery-intake-receipt-binding/record.json).
+Fresh downstream image assembly and physical recovery gates remain open.
+
 ## Tracker status
 
 At 12:07 UTC the application returned no current goal. A fresh G1–G5 goal was
