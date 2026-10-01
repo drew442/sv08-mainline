@@ -851,19 +851,55 @@ static int verify_claim_receipt(const char *response,size_t used,
   return crypto_ed25519_check(signature,public_key,(const unsigned char *)message,
                                (size_t)message_size)==0;
 }
+/* Numeric errno only: never expose claim material in startup diagnostics. */
+static int claim_refused(const char *stage,int error) {
+  fprintf(stderr,"%sCLAIM_%s errno=%d\n",SV08_RESULT_PREFIX,stage,error);
+  return 0;
+}
+/* Return the remaining budget, refusing completion at the exact deadline. */
+static int random_remaining(const struct timespec *deadline,struct timespec *left) {
+  struct timespec now;
+  if(clock_gettime(CLOCK_MONOTONIC,&now))return claim_refused("RANDOM_CLOCK",errno);
+  if(now.tv_sec>deadline->tv_sec||
+     (now.tv_sec==deadline->tv_sec&&now.tv_nsec>=deadline->tv_nsec))
+    return claim_refused("RANDOM_TIMEOUT",ETIMEDOUT);
+  left->tv_sec=deadline->tv_sec-now.tv_sec;
+  left->tv_nsec=deadline->tv_nsec-now.tv_nsec;
+  if(left->tv_nsec<0){left->tv_sec--;left->tv_nsec+=1000000000L;}
+  return 1;
+}
 static int random_challenge(char challenge[65]) {
   unsigned char random_bytes[32];size_t random_used=0;ssize_t n;
+  struct timespec deadline,left;
   static const char hex[]="0123456789abcdef";
+  if(clock_gettime(CLOCK_MONOTONIC,&deadline))return claim_refused("RANDOM_CLOCK",errno);
+  deadline.tv_sec+=60;
   while(random_used<sizeof(random_bytes)) {
+    if(!random_remaining(&deadline,&left))return 0;
 #if defined(SV08_TEST_NO_RANDOM)
     errno=EIO;n=-1;
 #else
     n=getrandom(random_bytes+random_used,sizeof(random_bytes)-random_used,GRND_NONBLOCK);
 #endif
-    if(n<0&&errno==EINTR)continue;
-    if(n<=0)return 0;
+    if(n<0&&(errno==EAGAIN||errno==EINTR)) {
+      /* Pace both temporary failures; interrupted sleeps retain their remaining
+       * pause, capped again against the original acquisition deadline. */
+      struct timespec pause={0,100000000L},rest;
+      for(;;) {
+        if(!random_remaining(&deadline,&left))return 0;
+        if(pause.tv_sec==0&&pause.tv_nsec==0)break;
+        if(pause.tv_sec>0||pause.tv_nsec>100000000L)pause=(struct timespec){0,100000000L};
+        if(left.tv_sec==0&&left.tv_nsec<pause.tv_nsec)pause=left;
+        if(!nanosleep(&pause,&rest))break;
+        if(errno!=EINTR)return claim_refused("RANDOM_SLEEP",errno);
+        pause=rest;
+      }
+      continue;
+    }
+    if(n<=0)return claim_refused("RANDOM",n<0?errno:0);
     random_used+=(size_t)n;
   }
+  if(!random_remaining(&deadline,&left))return 0;
   for(size_t i=0;i<sizeof(random_bytes);i++) {
     challenge[i*2]=hex[random_bytes[i]>>4];challenge[i*2+1]=hex[random_bytes[i]&15];
   }
@@ -875,15 +911,15 @@ static int claim_once(const char *cmd,const char *descriptor_hash) {
   long port;int fd;struct sockaddr_in address;struct timeval timeout={5,0};
   char body[768],request[1280],response[4096],challenge[65];
   size_t used=0;ssize_t n;
-  if(!port_arg)return 0;
+  if(!port_arg)return claim_refused("REQUEST",0);
   port_arg+=strlen("sv08.claim_port=");errno=0;port=strtol(port_arg,&end,10);
   if(errno||end==port_arg||port<1||port>65535||
-     (*end&&*end!=' '&&*end!='\n'&&*end!='\t'))return 0;
+     (*end&&*end!=' '&&*end!='\n'&&*end!='\t'))return claim_refused("REQUEST",0);
   if(!random_challenge(challenge))return 0;
   int body_size=snprintf(body,sizeof(body),
                          "{\"challenge\":\"%s\",\"descriptor_sha256\":\"%s\",\"job_id\":\"%s\"}",
                          challenge,descriptor_hash,SV08_JOB_ID);
-  if(body_size<0||(size_t)body_size>=sizeof(body))return 0;
+  if(body_size<0||(size_t)body_size>=sizeof(body))return claim_refused("REQUEST",0);
   int request_size=snprintf(request,sizeof(request),
       "POST /claim HTTP/1.1\r\nHost: "
 #if defined(SV08_H616_COMMISSIONING)
@@ -893,29 +929,35 @@ static int claim_once(const char *cmd,const char *descriptor_hash) {
 #endif
       ":%ld\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s",
       port,body_size,body);
-  if(request_size<0||(size_t)request_size>=sizeof(request))return 0;
-  fd=socket(AF_INET,SOCK_STREAM|SOCK_CLOEXEC,0);if(fd<0)return 0;
-  setsockopt(fd,SOL_SOCKET,SO_RCVTIMEO,&timeout,sizeof(timeout));
-  setsockopt(fd,SOL_SOCKET,SO_SNDTIMEO,&timeout,sizeof(timeout));
+  if(request_size<0||(size_t)request_size>=sizeof(request))return claim_refused("REQUEST",0);
+  fd=socket(AF_INET,SOCK_STREAM|SOCK_CLOEXEC,0);if(fd<0)return claim_refused("SOCKET",errno);
+  if(setsockopt(fd,SOL_SOCKET,SO_RCVTIMEO,&timeout,sizeof(timeout))||
+     setsockopt(fd,SOL_SOCKET,SO_SNDTIMEO,&timeout,sizeof(timeout))) {
+    int error=errno;close(fd);return claim_refused("SOCKET",error);
+  }
   memset(&address,0,sizeof(address));address.sin_family=AF_INET;address.sin_port=htons((uint16_t)port);
 #if defined(SV08_H616_COMMISSIONING)
-  if(inet_pton(AF_INET,SV08_H616_CLAIM_SERVER,&address.sin_addr)!=1||
+  if(inet_pton(AF_INET,SV08_H616_CLAIM_SERVER,&address.sin_addr)!=1)
 #else
-  if(inet_pton(AF_INET,"10.0.2.2",&address.sin_addr)!=1||
+  if(inet_pton(AF_INET,"10.0.2.2",&address.sin_addr)!=1)
 #endif
-     connect(fd,(struct sockaddr *)&address,sizeof(address))) {close(fd);return 0;}
+    {close(fd);return claim_refused("CONNECT",0);}
+  if(connect(fd,(struct sockaddr *)&address,sizeof(address))) {
+    int error=errno;close(fd);return claim_refused("CONNECT",error);
+  }
   size_t sent=0;
   while(sent<(size_t)request_size) { n=send(fd,request+sent,(size_t)request_size-sent,0);
     if(n<0&&errno==EINTR)continue;
-    if(n<=0){close(fd);return 0;}sent+=(size_t)n; }
+    if(n<=0){int error=n<0?errno:0;close(fd);return claim_refused("SEND",error);}sent+=(size_t)n; }
   while(used<sizeof(response)-1) { n=recv(fd,response+used,sizeof(response)-1-used,0);
     if(n<0&&errno==EINTR)continue;
-    if(n<0){close(fd);return 0;}
+    if(n<0){int error=errno;close(fd);return claim_refused("RECV",error);}
     if(n==0)break;
     used+=(size_t)n;
   }
   close(fd);response[used]=0;
-  return verify_claim_receipt(response,used,descriptor_hash,challenge);
+  if(!verify_claim_receipt(response,used,descriptor_hash,challenge))return claim_refused("RECEIPT",0);
+  return 1;
 }
 static int exact_read(int fd,size_t n) {
   size_t done=0;while(done<n){ssize_t got=read(fd,buffer+done,n-done);
