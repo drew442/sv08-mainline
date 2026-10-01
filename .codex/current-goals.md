@@ -101,9 +101,7 @@ original candidates, failures, reviews and artifacts remain preserved.
 
 ## Tracker status
 
-The repository goals above are reset. The application still holds the previous
-unfinished goal with status `blocked`. A replacement request on 2026-10-01 was
-rejected because an unfinished goal exists; available tools cannot edit its
-objective or resume/cancel it. Its objective is not complete and must not be
-marked complete to bypass that restriction. This UI limitation does not prevent
-manually continuing authorized work from G1.
+At 12:07 UTC the application returned no current goal. A fresh G1–G5 goal was
+created at 12:11 UTC and is active. Earlier replacement refusals remain historical
+evidence in the reset assessment; they no longer describe current tracker state.
+The project remains incomplete and physical dependencies remain explicit.
