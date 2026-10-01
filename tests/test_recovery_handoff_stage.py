@@ -145,6 +145,11 @@ class RecoveryStageTests(unittest.TestCase):
             artifact = root / 'handoff'
             build_handoff(artifact, kernel, base_initrd(root), dtb, bundle,
                           '10.0.2.2', '/srv/sv08-sd-nfs', 12345)
+            selector = (artifact / 'recovery.cmd').read_text()
+            self.assertEqual(selector.count('env import -c'), 2)
+            self.assertIn('mmc dev 1 0', selector)
+            self.assertLess(selector.index('env import -c 0x4f910000'),
+                            selector.index('sv08-reimage/armed'))
             build_hash = hashlib.sha256((artifact / 'build.json').read_bytes()).hexdigest()
             original_hash = hashlib.sha256(b'ORIGINAL-UI').hexdigest()
             for fault, marker_expected, wrapper_expected in (

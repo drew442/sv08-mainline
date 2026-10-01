@@ -16,7 +16,8 @@ import zlib
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from scripts.build_h616_recovery_handoff import MARKER, script_text
+from scripts.build_h616_recovery_handoff import (MARKER, script_text, ENV_BYTES,
+                                                   ENV_OFFSETS, GATE_NAMES)
 PARTITIONS = ((1, 16, 32, 'boot-a'), (2, 48, 16, 'root-a'),
               (3, 64, 32, 'boot-b'), (4, 96, 16, 'root-b'),
               (5, 112, 64, 'recovery'), (6, 176, 32, 'data'))
@@ -75,7 +76,8 @@ def selector(payload):
     # U-Boot's filesize variable is hexadecimal, including for load mmc.
     return script_text('offline-test-job', 'console=ttyS0,115200 rdinit=/init',
                        len(payload), zlib.crc32(payload), fit_addr=0x6300000,
-                       marker_addr=0x6200000, original_addr=0x7000000,
+                       marker_addr=0x6200000, original_addr=0x7000000, env_addrs=(0x5000000, 0x5010000),
+                       mmcdev="a",
                        boot_command='echo SV08_TEST_WRITER_SELECTED\n        exit')
 
 
@@ -160,84 +162,154 @@ def main():
         'setenv BOOT_B_LEFT 0; setenv sv08_env_layout ab-8gb-v1; '
         'setenv sv08_reimage_arm offline-test-job; '
         'env save; env save', cwd=work)
-    cases = {}
-    for name, marker, image, expected in (
-        ('armed', MARKER, payload, 'SV08_TEST_WRITER_SELECTED'),
-        ('absent', None, payload, 'SV08_TEST_RECOVERY_UI'),
-        ('short-marker', b'bad marker\n', payload, 'SV08_TEST_RECOVERY_UI'),
-        ('wrong-marker', b'X'+MARKER[1:], payload, 'SV08_TEST_RECOVERY_UI'),
-        ('wrong-fit', MARKER, payload[:-1]+bytes([payload[-1] ^ 1]),
-         'SV08_TEST_RECOVERY_UI')):
-        install_recovery(marker, image)
-        output = sandbox(name)
-        assert expected in output, (name, output)
-        forbidden = ('SV08_TEST_RECOVERY_UI' if expected == 'SV08_TEST_WRITER_SELECTED'
-                     else 'SV08_TEST_WRITER_SELECTED')
-        assert forbidden not in output, (name, output)
-        cases[name] = expected
-    install_recovery(MARKER)
-    unarmed = sandbox('wrong-arm-token', 'setenv sv08_reimage_arm wrong; ')
-    assert 'SV08_TEST_RECOVERY_UI' in unarmed and 'SV08_TEST_WRITER_SELECTED' not in unarmed
-    valid = sandbox('valid-slot', 'setenv BOOT_A_LEFT 3; ')
-    assert 'SV08_TEST_SLOT_BOOT' in valid and 'SV08_TEST_WRITER_SELECTED' not in valid
-    install_recovery(MARKER)
-    invalid = sandbox('invalid-order', 'setenv BOOT_ORDER "A A"; ')
-    assert 'SV08_TEST_RECOVERY_UI' in invalid and 'SV08_TEST_WRITER_SELECTED' not in invalid
-    # File-stage interruption before wrapper replacement preserves the
-    # original entry; after wrapper replacement the absent marker fails closed.
-    install_recovery(None, original_entry=True)
-    before_wrapper = sandbox('stage-before-wrapper', 'setenv BOOT_A_LEFT 0; ')
-    assert 'SV08_TEST_RECOVERY_UI' in before_wrapper and 'SV08_TEST_WRITER_SELECTED' not in before_wrapper
-    install_recovery(None)
-    after_wrapper = sandbox('stage-after-wrapper', 'setenv BOOT_A_LEFT 3; ')
-    assert 'SV08_TEST_SLOT_BOOT' in after_wrapper and 'SV08_TEST_WRITER_SELECTED' not in after_wrapper
-    # A crash after one redundant environment update can select either old
-    # normal policy or new exhausted policy. Without the final marker, neither
-    # state can enter the writer.
-    run(args.uboot.resolve(), '-d', 'test.dtb', '-c',
-        'env select MMC; env load; setenv BOOT_A_LEFT 3; '
-        'setenv sv08_reimage_arm; env save; env save; '
-        'setenv BOOT_A_LEFT 0; setenv sv08_reimage_arm offline-test-job; '
-        'env save', cwd=work)
-    partial_arm = sandbox('stage-one-env-copy')
-    assert ('SV08_TEST_WRITER_SELECTED' not in partial_arm and
-            ('SV08_TEST_SLOT_BOOT' in partial_arm or
-             'SV08_TEST_RECOVERY_UI' in partial_arm))
-    run(args.uboot.resolve(), '-d', 'test.dtb', '-c',
-        'env select MMC; env load; setenv BOOT_A_LEFT 0; '
-        'setenv sv08_reimage_arm offline-test-job; env save; env save', cwd=work)
-    both_armed_no_marker = sandbox('stage-both-env-copies-no-marker')
-    assert ('SV08_TEST_RECOVERY_UI' in both_armed_no_marker and
-            'SV08_TEST_WRITER_SELECTED' not in both_armed_no_marker)
-    install_recovery(MARKER)
-    for offset in (4*1024*1024, 8*1024*1024):
+    # Raw reads use the sandbox's regular-file MMC transport. The exact
+    # production read/import/predicate/marker/FIT logic runs in actual U-Boot;
+    # only the admitted device number, RAM map and boot action are fixtures.
+    values = {'sv08_reimage_arm': 'offline-test-job', 'sv08_env_layout': 'ab-8gb-v1',
+              'BOOT_ORDER': 'A B', 'BOOT_A_LEFT': '0', 'BOOT_B_LEFT': '0',
+              'sv08_mmcdev': 'hostile', 'bootcmd': 'echo HOSTILE_EXECUTED',
+              'scriptaddr': 'hostile', 'unrelated': 'hostile'}
+
+    def record(fields, redundant=True):
+        data = b'\0'.join(f'{k}={v}'.encode() for k, v in fields.items()) + b'\0\0'
+        data = data.ljust(ENV_BYTES - (5 if redundant else 4), b'\0')
+        return zlib.crc32(data).to_bytes(4, 'little') + (b'\1' if redundant else b'') + data
+
+    good = record(values)
+
+    def environments(first=good, second=good):
         with disk.open('r+b') as stream:
-            stream.seek(offset+100)
-            value = stream.read(1)
-            stream.seek(offset+100)
-            stream.write(bytes([value[0] ^ 1]))
-        if offset == 4*1024*1024:
-            one_corrupt = sandbox('one-env-copy-corrupt')
-            assert ('SV08_TEST_WRITER_SELECTED' in one_corrupt and
-                    'SV08_TEST_RECOVERY_UI' not in one_corrupt)
-            install_recovery(MARKER)
-    corrupt = sandbox('both-env-copies-corrupt')
-    assert 'SV08_TEST_RECOVERY_UI' in corrupt and 'SV08_TEST_WRITER_SELECTED' not in corrupt
-    cases.update(valid_slot='SV08_TEST_SLOT_BOOT',
-                 stage_before_wrapper='SV08_TEST_RECOVERY_UI',
-                 stage_after_wrapper='SV08_TEST_SLOT_BOOT',
-                 stage_one_env_copy=('SV08_TEST_RECOVERY_UI'
-                                     if 'SV08_TEST_RECOVERY_UI' in partial_arm
-                                     else 'SV08_TEST_SLOT_BOOT'),
-                 stage_both_env_copies_no_marker='SV08_TEST_RECOVERY_UI',
-                 wrong_arm_token='SV08_TEST_RECOVERY_UI',
-                 invalid_order='SV08_TEST_RECOVERY_UI',
-                 one_env_copy_corrupt='SV08_TEST_WRITER_SELECTED',
-                 both_env_copies_corrupt='SV08_TEST_RECOVERY_UI')
+            for offset, content in zip(ENV_OFFSETS, (first, second)):
+                stream.seek(offset)
+                stream.write(content)
+
+    def select_case(name, expected, *, first=good, second=good,
+                    marker=MARKER, image=payload, route='a', direct=True,
+                    selector_override=None, original_available=True):
+        environments(first, second)
+        if selector_override is not None:
+            replacement = script(work, 'fault-selector', selector_override)
+            put(recovery_root, 'recovery.scr', replacement.read_bytes())
+            saved_wrapper = wrapper.read_bytes()
+            wrapper.write_bytes(replacement.read_bytes())
+        original_path = recovery_root / 'sv08-reimage/recovery-original.scr'
+        if not original_available:
+            original_path.unlink()
+        install_recovery(marker, image)
+        if selector_override is not None:
+            wrapper.write_bytes(saved_wrapper)
+        if not original_available:
+            original_path.write_bytes(original.read_bytes())
+        # Begin with SD/default gates, including valid inherited gates in
+        # negative cases: resets before each import must remove them.
+        setup = ('setenv sv08_mmcdev "' + route + '"; '
+                 'setenv scriptaddr 0x6000000; setenv unrelated retained; '
+                 'setenv bootcmd "echo RETAINED_BOOTCMD"; '
+                 'setenv sv08_reimage_arm offline-test-job; '
+                 'setenv sv08_env_layout ab-8gb-v1; setenv BOOT_ORDER "A B"; '
+                 'setenv BOOT_A_LEFT 0; setenv BOOT_B_LEFT 0; ')
+        if name == 'sd-default-ram':
+            setup += ('setenv sv08_reimage_arm; setenv sv08_env_layout default; '
+                      'setenv BOOT_A_LEFT 3; setenv BOOT_B_LEFT 3; ')
+        command = setup + ('load mmc a:5 ${scriptaddr} recovery.scr; source ${scriptaddr}; '
+                           if direct else
+                           'load mmc a:1 ${scriptaddr} dispatch.scr; source ${scriptaddr}; ')
+        command += ('echo ROUTE=${sv08_mmcdev}; echo SCRIPT=${scriptaddr}; '
+                    'echo UNRELATED=${unrelated}; echo BOOTCMD=${bootcmd}')
+        output = run(args.uboot.resolve(), '-d', 'test.dtb', '-c', command, cwd=work)
+        (work / (name+'.log')).write_text(output)
+        assert expected in output, (name, output)
+        assert ('SV08_TEST_RECOVERY_UI' if expected == 'SV08_TEST_WRITER_SELECTED'
+                else 'SV08_TEST_WRITER_SELECTED') not in output, (name, output)
+        for preserved in (f'ROUTE={route}', 'SCRIPT=0x6000000', 'UNRELATED=retained',
+                          'BOOTCMD=echo RETAINED_BOOTCMD'):
+            assert preserved in output, (name, preserved, output)
+        assert 'HOSTILE_EXECUTED' not in output, (name, output)
+        return expected
+
+    cases = {}
+    for name in ('armed', 'sd-default-ram'):
+        cases[name] = select_case(name, 'SV08_TEST_WRITER_SELECTED')
+    for copy in range(2):
+        for gate in GATE_NAMES:
+            missing = dict(values)
+            del missing[gate]
+            records = [good, good]; records[copy] = record(missing)
+            name = f'copy-{copy}-missing-{gate}'
+            cases[name] = select_case(name, 'SV08_TEST_RECOVERY_UI',
+                                      first=records[0], second=records[1])
+        for gate, wrong in (('sv08_reimage_arm', 'wrong'), ('sv08_env_layout', 'wrong'),
+                            ('BOOT_ORDER', 'B A'), ('BOOT_A_LEFT', '1'),
+                            ('BOOT_B_LEFT', '1')):
+            fields = dict(values, **{gate: wrong})
+            records = [good, good]; records[copy] = record(fields)
+            name = f'copy-{copy}-wrong-{gate}'
+            cases[name] = select_case(name, 'SV08_TEST_RECOVERY_UI',
+                                      first=records[0], second=records[1])
+        for problem, content in (('crc', bytes([good[0] ^ 1]) + good[1:]),
+                                 ('ordinary-header', record(values, redundant=False))):
+            records = [good, good]; records[copy] = content
+            name = f'copy-{copy}-{problem}'
+            cases[name] = select_case(name, 'SV08_TEST_RECOVERY_UI',
+                                      first=records[0], second=records[1])
+    for name, marker, image in (('absent', None, payload),
+                                ('short-marker', b'bad marker\n', payload),
+                                ('wrong-marker', b'X'+MARKER[1:], payload),
+                                ('wrong-fit', MARKER, payload[:-1] + bytes([payload[-1] ^ 1])),
+                                ('short-fit', MARKER, payload[:-1])):
+        cases[name] = select_case(name, 'SV08_TEST_RECOVERY_UI', marker=marker, image=image)
+    # Changed/unknown routing cannot admit the writer; an unavailable original
+    # route retains the independent-rescue stop.
+    cases['changed-route'] = select_case('changed-route', 'SV08 recovery unavailable', route='0')
+    cases['missing-route'] = select_case('missing-route', 'SV08 recovery unavailable', route='')
+    # Transport failure injection changes only the read operand/device hwpart;
+    # all subsequent actual U-Boot import and fallback logic stays intact.
+    for copy, block in enumerate(('2000', '4000')):
+        name = f'copy-{copy}-read-failure'
+        command = selector(payload).replace(f'{block} 80; then', '1000000 80; then')
+        cases[name] = select_case(name, 'SV08_TEST_RECOVERY_UI', selector_override=command)
+    cases['wrong-hardware-partition'] = select_case('wrong-hardware-partition',
+        'SV08_TEST_RECOVERY_UI', selector_override=selector(payload).replace('mmc dev 10 0',
+                                                                            'mmc dev 10 7'))
+    # Recompute the outer CRC only in this fixture to reach iminfo's component
+    # hashes, then prove a corrupt member still reaches original recovery.
+    corrupted = bytearray(payload)
+    offset = payload.index(bytes(range(256)))
+    corrupted[offset] ^= 1
+    corrupted = bytes(corrupted)
+    cases['fit-component-hash'] = select_case('fit-component-hash', 'SV08_TEST_RECOVERY_UI',
+        image=corrupted, selector_override=selector(corrupted))
+    cases['original-unavailable'] = select_case('original-unavailable',
+        'SV08 recovery unavailable', marker=None, original_available=False)
+    environments()
+    install_recovery(None, original_entry=True)
+    output = sandbox('stage-before-wrapper')
+    assert 'SV08_TEST_RECOVERY_UI' in output and 'SV08_TEST_WRITER_SELECTED' not in output
+    cases['stage-before-wrapper'] = 'SV08_TEST_RECOVERY_UI'
+    # Partial arming must fail even with a valid marker, regardless of which
+    # copy the ordinary environment loader would select.
+    old = record(dict(values, BOOT_A_LEFT='3', sv08_reimage_arm=''))
+    for first, second, name in ((old, good, 'mixed-old-new'), (good, old, 'mixed-new-old')):
+        cases[name] = select_case(name, 'SV08_TEST_RECOVERY_UI', first=first, second=second)
+    # Keep actual dispatcher regressions distinct from direct SD-default entry.
+    install_recovery(None)
+    environments()
+    output = sandbox('stage-both-env-copies-no-marker')
+    assert 'SV08_TEST_RECOVERY_UI' in output and 'SV08_TEST_WRITER_SELECTED' not in output
+    cases['stage-both-env-copies-no-marker'] = 'SV08_TEST_RECOVERY_UI'
+    output = sandbox('valid-slot', 'setenv BOOT_A_LEFT 3; ')
+    assert 'SV08_TEST_SLOT_BOOT' in output and 'SV08_TEST_WRITER_SELECTED' not in output
+    cases['valid-slot'] = 'SV08_TEST_SLOT_BOOT'
     result = {'physical_hardware': False, 'exact_dispatcher': True,
               'actual_rauc_bootmeth': True, 'recovery_filesystem': 'ext4',
               'cases': cases, 'uboot_sha256': hashlib.sha256(args.uboot.read_bytes()).hexdigest(),
-              'target_is_regular_file': disk.is_file(), 'writer_booted': False}
+              'target_is_regular_file': disk.is_file(), 'writer_booted': False,
+              'environment_import': 'actual CRC-checked redundant env_t whitelist',
+              'transport': 'sandbox regular-file MMC reads; no physical MMC',
+              'fixture_substitutions': ['device a/user area 0', 'sandbox RAM addresses',
+                                        'echo/exit instead of Linux boot',
+                                        'invalid block/hwpart operands for read failures',
+                                        'recomputed outer CRC for component-hash failure']}
     (work / 'result.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result, indent=2))
 

@@ -29,6 +29,34 @@ FIT_ADDR = 0x48000000
 MARKER_ADDR = 0x4f800000
 ORIGINAL_ADDR = 0x4fd00000
 FIT_MAX_BYTES = 64 * 1024 * 1024
+ENV_BYTES = 64 * 1024
+ENV_ADDRS = (0x4f900000, 0x4f910000)
+ENV_OFFSETS = (4 * 1024 * 1024, 8 * 1024 * 1024)
+GATE_NAMES = ('sv08_reimage_arm', 'sv08_env_layout', 'BOOT_ORDER',
+              'BOOT_A_LEFT', 'BOOT_B_LEFT')
+SCRIPT_ADDR = 0x4fc00000
+SCRIPT_MAX_BYTES = 1024 * 1024
+
+
+def selector_intervals(kernel_bytes, fit_bytes, selector_bytes):
+    """Static load map only; bootm relocation still needs physical observation."""
+    if not 0 < fit_bytes <= FIT_MAX_BYTES or not 0 < selector_bytes <= SCRIPT_MAX_BYTES:
+        raise ValueError('Selector/FIT exceeds reviewed load budget')
+    intervals = {'kernel': (0x40080000, 0x40080000 + kernel_bytes),
+                 'fit': (FIT_ADDR, FIT_ADDR + FIT_MAX_BYTES),
+                 'marker': (MARKER_ADDR, MARKER_ADDR + len(MARKER)),
+                 'selector': (SCRIPT_ADDR, SCRIPT_ADDR + SCRIPT_MAX_BYTES),
+                 'original_script': (ORIGINAL_ADDR, ORIGINAL_ADDR + SCRIPT_MAX_BYTES)}
+    intervals.update({f'environment_{i}': (addr, addr + ENV_BYTES)
+                      for i, addr in enumerate(ENV_ADDRS)})
+    for name, (start, end) in intervals.items():
+        if not 0x40000000 <= start < end <= 0x80000000:
+            raise ValueError(f'Invalid load interval: {name}')
+        for other, (lo, hi) in intervals.items():
+            if other != name and start < hi and lo < end:
+                raise ValueError(f'Overlapping load intervals: {name}, {other}')
+    return {name: {'start': start, 'end': end} for name, (start, end) in intervals.items()}
+
 
 
 def sha(path):
@@ -45,15 +73,38 @@ def regular(path):
 
 def script_text(job_id, bootargs, fit_size, fit_crc, *,
                 fit_addr=FIT_ADDR, marker_addr=MARKER_ADDR,
-                original_addr=ORIGINAL_ADDR, boot_command=None):
+                original_addr=ORIGINAL_ADDR, env_addrs=ENV_ADDRS, mmcdev="1",
+                boot_command=None):
     if not re.fullmatch(r'[a-z0-9-]{1,64}', job_id):
         raise ValueError('Invalid job ID for recovery selector')
     if '"' in bootargs or '\n' in bootargs:
         raise ValueError('Invalid boot arguments')
     if boot_command is None:
         boot_command = f'bootm {fit_addr:#x}'
+    if not re.fullmatch(r'[0-9a-f]+', mmcdev):
+        raise ValueError('Invalid explicit MMC route')
+    if (len(env_addrs) != 2 or any(addr % 512 for addr in env_addrs) or
+            abs(env_addrs[1] - env_addrs[0]) < ENV_BYTES):
+        raise ValueError('Invalid environment buffers')
+    for addr in env_addrs:
+        if any(addr < end and start < addr + ENV_BYTES for start, end in (
+                (fit_addr, fit_addr + FIT_MAX_BYTES),
+                (marker_addr, marker_addr + len(MARKER)),
+                (original_addr, original_addr + SCRIPT_MAX_BYTES))):
+            raise ValueError('Environment buffer overlaps payload')
+    predicate = (f'test "${{sv08_reimage_arm}}" = "{job_id}" && '
+                 'test "${sv08_env_layout}" = "ab-8gb-v1" && '
+                 'test "${BOOT_ORDER}" = "A B" && '
+                 'test "${BOOT_A_LEFT}" = "0" && test "${BOOT_B_LEFT}" = "0"')
+    admission = (f'if test "${{sv08_mmcdev}}" = "{mmcdev}"; then\n'
+                 f' if mmc dev {int(mmcdev, 16)} 0; then\n')
+    for address, offset in zip(env_addrs, ENV_OFFSETS):
+        admission += f'  if mmc read {address:#x} {offset // 512:x} {ENV_BYTES // 512:x}; then\n'
+        admission += ''.join(f'   setenv {name}\n' for name in GATE_NAMES)
+        admission += f'   if env import -c {address:#x} {ENV_BYTES:x} {" ".join(GATE_NAMES)}; then\n'
+        admission += f'    if {predicate}; then\n'
     return f'''# One-shot recovery writer; every failed check loads the original UI.
-if test "${{sv08_reimage_arm}}" = "{job_id}" && test "${{sv08_env_layout}}" = "ab-8gb-v1" && test "${{BOOT_ORDER}}" = "A B" && test "${{BOOT_A_LEFT}}" = "0" && test "${{BOOT_B_LEFT}}" = "0"; then
+{admission}
  if load mmc ${{sv08_mmcdev}}:5 {marker_addr:#x} sv08-reimage/armed; then
   if test ${{filesize}} = {len(MARKER):x}; then
    if crc32 -v {marker_addr:#x} ${{filesize}} {zlib.crc32(MARKER):08x}; then
@@ -70,6 +121,13 @@ if test "${{sv08_reimage_arm}}" = "{job_id}" && test "${{sv08_env_layout}}" = "a
    fi
   fi
  fi
+fi
+fi
+fi
+fi
+fi
+fi
+fi
 fi
 if load mmc ${{sv08_mmcdev}}:5 {original_addr:#x} sv08-reimage/recovery-original.scr; then
  source {original_addr:#x}
@@ -147,6 +205,8 @@ def build(work, kernel, initrd, dtb, bundle_root, server, export, claim_port):
     subprocess.run(['mkimage', '-A', 'arm64', '-T', 'script', '-C', 'none',
                     '-n', 'SV08 one-shot recovery selector', '-d', 'recovery.cmd',
                     'recovery.scr'], cwd=work, check=True, capture_output=True, timeout=120)
+    load_intervals = selector_intervals(kernel.stat().st_size, len(fit),
+                                        (work / 'recovery.scr').stat().st_size)
     (work / 'armed').write_bytes(MARKER)
     synthetic = bundle[1]['synthetic_test'] is True
     result = {'status': ('nondeployable-offline-candidate' if synthetic else
@@ -163,6 +223,13 @@ def build(work, kernel, initrd, dtb, bundle_root, server, export, claim_port):
               'dtb_bytes': (work / 'sv08.dtb').stat().st_size,
               'fit_load_address': FIT_ADDR, 'fit_max_bytes': FIT_MAX_BYTES,
               'fit_load_end': FIT_ADDR + len(fit),
+              'selector_load_intervals': load_intervals,
+              'environment_buffer_bytes': 2 * ENV_BYTES,
+              'environment_source': {'mmc_device': '1', 'hardware_partition': 0,
+                                     'record_bytes': ENV_BYTES,
+                                     'offsets': list(ENV_OFFSETS),
+                                     'import_variables': list(GATE_NAMES)},
+              'component_relocation_verified': False,
               'marker_bytes': len(MARKER), 'marker_crc32': f'{zlib.crc32(MARKER):08x}',
               'bootargs': bootargs, 'composition': composition,
               'files_sha256': {name: sha(work / name) for name in

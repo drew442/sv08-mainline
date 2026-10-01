@@ -24,6 +24,94 @@ boot-policy predicate on one line in the U-Boot script. The corrected ten-case
 sandbox result is `build/urh-selector-v7/result.json`, SHA-256
 `1f21a15f92aeb316fb70b06263d46353ab252f3956ed0e8894fed3d6bf3e0932`.
 
+### Explicit environment source admission (2026-10-01 repair)
+
+The selector reads the intended eMMC user area explicitly instead of trusting
+RAM gates loaded during SD boot. The retained profile admits only
+`sv08_mmcdev=1`; a missing or changed route skips writer admission. `mmc dev 1 0`
+selects hardware partition zero, and each `mmc read` reads 128 512-byte blocks
+from block `0x2000` or `0x4000` (4 MiB/8 MiB). Each 64 KiB record must pass
+`env import -c ADDRESS 10000` with the five-name whitelist
+`sv08_reimage_arm sv08_env_layout BOOT_ORDER BOOT_A_LEFT BOOT_B_LEFT`.
+The selector clears all five names before **each** import. Both copies must
+independently match the exact job token, `ab-8gb-v1`, `A B` and zero counters.
+A failed first read/import/predicate cannot be rescued by the second copy or
+inherited RAM values. Other RAM values, including source/fallback routing, are
+preserved. Imported strings are never sourced or executed. The selector issues
+no persistent environment save, MMC write or erase. Original-script fallback
+and the independent SD rescue stop remain reachable after failed admission.
+Marker length/CRC and FIT length/CRC/component-hash checks follow both imports;
+signed compiled-purpose and reviewed-artifact checks remain in composition,
+staging and the writer. Ordinary write and preflight use the same admission.
+
+This uses the pinned upstream mechanisms, with no loader patch. U-Boot
+`ece349ade2973e220f524ce59e59711cc919263f`, `board/sunxi/board.c:537`, chooses
+MMC device zero for SD boot; `env/mmc.c:465` uses that choice when loading the
+redundant environment. `cmd/nvedit.c:767` implements CRC-checked whitelisted
+imports using the compiled `env_t` data offset; `include/env_internal.h:78`
+adds the redundant flag byte. `-r` handles CRLF and does not select a redundant
+header. Primary source excerpts and hashes were retained by the coordinator;
+the local sandbox import, whitelist, CRC, MMC-environment and header source
+hashes agree with the read-only retained source on the development host.
+The retained board source matches its excerpt; the sandbox has a separate
+board/transport fixture. Accessed 2026-10-01.
+The retained loader configuration enables `CMD_MMC`, `CMD_IMPORTENV` and
+`ENV_REDUNDANT`, with 64 KiB records at those offsets. Its configuration
+SHA-256 is `6acb5de178be927a6c0cd71f906f5cf51f23a7ae2d2d87e880e33849536857bf`;
+the retained final loader SHA-256 is
+`350a941a7ec67b541308d235bffa4b937b8171f683f3e96b0c51dd32fab64544`.
+These establish the inspected source/configuration inputs, not physical
+identity, successful repaired boot or relocation reliability.
+
+Two aligned RAM buffers occupy `[0x4f900000, 0x4f910000)` and
+`[0x4f910000, 0x4f920000)`, adding 131072 bytes. Composition checks the kernel,
+full 64 MiB FIT reserve, marker, both buffers, selector script and retained
+original-script intervals for bounds and overlap within the conservative
+1 GiB address range. Script intervals each reserve 1 MiB; the actual compiled
+selector must fit that budget. The initramfs and DTB are contained in the FIT
+before boot; their eventual `bootm` relocation addresses remain unknown.
+Composition records component byte counts, intervals and the increment,
+explicitly leaving component relocation unverified. Physical checks still
+belong to urh-04, with full transfer/readback separate under urh-05.
+
+The expanded actual pinned U-Boot sandbox run passed 43 cases. It proves
+selection from SD-default RAM with two correct records; either-copy read/CRC,
+missing-field, wrong token/layout/order/counter and ordinary-header mismatch
+refusal; mixed-copy refusal; unrelated hostile-name exclusion and routing
+preservation; changed/missing-route and wrong-hardware-partition refusal;
+marker/FIT corruption, FIT component-hash failure and original-unavailable
+rescue behavior. It also retains original-entry, marker-last and normal-slot
+dispatch cases. The sandbox uses regular-file MMC transport, device `a`/user
+area zero and independent RAM addresses, and prints/exits instead of booting
+Linux. Read-failure/hardware-partition cases inject invalid operands; the
+component-hash case recomputes only its outer fixture CRC to reach `iminfo`.
+These substitutions are explicit offline fixtures, with no physical MMC claim.
+The first invocation used a stale DTB without the fixture device and stopped
+before selector execution; the corrected retained DTB run passed. This new
+evidence awaits independent delivery verification and does not supersede the
+preserved failed physical attempt or establish urh-04/05 acceptance.
+
+The repaired regression command
+`python3 -B -m unittest tests.test_h616_recovery_handoff tests.test_h616_recovery_handoff_builder tests.test_recovery_handoff_stage tests.test_h616_live_stage_cli tests.test_prepare_h616_reimage_job tests.test_h616_reimage_candidate`
+passed 62 tests in 55.084 seconds (66564 KiB measured maximum RSS). The initial
+run could not execute compiled fixtures on a `noexec` scratch allocation;
+its failures remain preserved. The coordinator supplied executable scratch,
+and the bounded corrected run passed without changing acceptance checks.
+
+Representative composition reused the retained input hashes from
+[the SD input record](../../configs/host-os/sv08-sd-network-inputs.json) and an
+expired, nondeployable fixture descriptor. Actual compilation, initramfs append,
+FIT/script compilation and streaming staging verification passed. The writer
+was 780104 bytes, kernel 33405440 bytes, compressed initramfs 15446352 bytes,
+DTB 48208 bytes and FIT 48901196 bytes. The uncompressed archive was 54858752
+bytes. Conservative accounting with the full FIT reserve, two archive/expanded
+file allowances, two DTBs, 4 MiB writer, 64 MiB loader and 256 MiB runtime
+reserves plus the two new buffers totals 565644272 bytes, leaving 508097552
+bytes against 1 GiB. These are static reserves rather than physical allocation
+measurements. A scratch invocation initially used the wrong verifier argument
+after successful composition; its corrected check reused the same output.
+No full-image/QEMU run, real job, claim or physical operation was performed.
+
 The running host must first verify the current eMMC controller/card identity,
 capacity, six-partition GPT and recovery PARTUUID, the signed one-shot job,
 source image/map, final FIT and free recovery space. It then stages all
