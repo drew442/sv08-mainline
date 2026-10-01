@@ -1,0 +1,83 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Actual intake binds receipt to parsed bytes and refuses changed/unreadable lock; deterministic baseline comparison and final-boundary tests.",
+      "environment": "offline",
+      "id": "receipt-continuity"
+    },
+    {
+      "description": "Relevant intake/path/download and assembly regressions pass without production gate relaxation or network/hardware claims.",
+      "environment": "offline",
+      "id": "preserved-gates"
+    }
+  ],
+  "created": "2026-10-01",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "receipt-continuity"
+        ],
+        "text": "Bind parsing and SHA-256 to the same captured bytes; after archive verification refuse changed, deleted or unreadable lock content without emitting a successful completion receipt, and return the captured digest without a later pathname rehash. Deterministic actual-intake tests must show baseline false success versus candidate refusal, unchanged success, same-byte replacement, and replacement after comparison reporting captured A. State the boundary explicitly: no perpetual pathname stability, A-to-B-to-A detection or authenticated provenance claim."
+      },
+      {
+        "checks": [
+          "receipt-continuity",
+          "preserved-gates"
+        ],
+        "text": "Keep tests entirely offline with tiny mocked responses and isolated scratch fixtures; retain receipt shape, inspection with zero output/network activity, unprivileged execution, fresh-output and path/symlink/raw-target/overlap refusals, retry exhaustion and archive size/hash failures. Refused intake may retain partial output for diagnosis, but it is not a completed intake and cannot be silently reused. Preserve the baseline and before/after evidence; no full recovery rebuild or VM/physical boot is needed for this receipt claim."
+      },
+      {
+        "checks": [
+          "preserved-gates"
+        ],
+        "text": "Preserve independent assembly archive/control checks and completion continuity plus integration-input freshness enforcement. A changed builder must never be accepted with stale assembly by altering historical receipts or waiving a gate. Retain historical accepted image evidence at its original revisions, keep physical G4/H04/H07/H12 dependencies open, and obtain a fresh independent delivery verifier over the actual complete candidate diff and evidence before claiming offline receipt closure. Limit production changes to the proposed intake repair, tests and dated evidence; factory geometry, rollback, persistence, heater/idle policy, profiles, upstream pins and recovery admission remain accepted requirements."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "d78ada37d3b2c799c54dc024a11fc0e7afb2c7b3859a457a14dae69a4fb3a0a2",
+    "rationale": "Reviewed actual source at dfc3c5461e8ae57e5dd373fe8504c28269fb4775, locally accessed 2026-10-01. scripts/recovery_image.py:258-282 parses lock.read_text(), verifies archives against those entries, then returns sha(lock); replacement A-to-B can therefore yield a successful receipt naming B although A selected the archives. This is source-derived evidence, not executed reproduction; the supplied planner plan is likewise source-derived. tests/test_recovery_image.py has no executed-intake continuity regression and its inspection test exercises assemble. docs/hardware/host-os-tasks.md:135 and docs/remaining-work-plan.md:157-174 explicitly require this repair. ADR 0014 requires separate unprivileged pinned intake, offline assembly, fresh ignored paths and supported-builder retirement; the accepted independent-image proposal preserves factory 8 GB geometry, recovery capacity, provenance and refusal gates; ADR 0010 preserves independent recovery, data and idle admission. A single parsed-and-hashed byte snapshot plus final content comparison provides a concrete before/after improvement: misleading baseline success becomes explicit refusal for changed/unreadable completion input, while unchanged content yields the captured digest. Standard-library hashing fits the existing custom integration gap; advisory locking adds coordination without excluding uncooperative writers. No duplicate accepted workflow, new dependency, spending, licensing change, hardware claim or owner scope expansion is introduced. Resource impact is one lock-sized captured buffer and one completion read/hash on the workstation, with tiny isolated mocked fixtures; no image geometry or guest runtime budget change. Source review is sufficient for design approval, but runtime regression and fresh independent delivery verification remain required. Approval grants no hardware, network, boot-policy or release authority.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/decisions/0014-independent-compressed-recovery.md": "f5cd22cbcc1996d027033bfc1ad462903a1c5b241d135c3a1c695641d2301f4c",
+      "docs/features/host-recovery-independent-image/proposal.md": "d384460b459c8bb6e6d804108984cc4981808fd879fd09cd20d6cadca476b317"
+    },
+    "reviewer": "feature_approver / independent recovery intake proposal reviewer",
+    "scope_sha256": "d935b1677e75543f39c366eaf92e1249ba62a65ed597fb0e088c43bd1c6590f0",
+    "session": "recovery-intake-approval-20261001-273d2c2811a24145b30e182eb668e52f"
+  },
+  "format_version": 1,
+  "id": "recovery-intake-receipt-binding",
+  "kind": "fix",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/recovery-intake-receipt-binding/proposal.md",
+  "requirements": [
+    "docs/decisions/0014-independent-compressed-recovery.md",
+    "docs/features/host-recovery-independent-image/proposal.md",
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "receipt-continuity",
+        "preserved-gates"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "intake-binding",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Correct and independently verify intake receipt content binding",
+      "verification": null
+    }
+  ],
+  "title": "Bind recovery intake completion receipt to verified lock content"
+}
