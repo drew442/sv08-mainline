@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; warm capture passed, urh-04 still failed/unpassed | Prepare one exact reviewed warm reboot with serial interception, verify U-Boot prompt and known SD script, then regain authenticated SD SSH | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; capture, authenticated SD return and read-only reconciliation passed; urh-04 still failed/unpassed | Review and stage the freshly built preflight/selector repair, then arm and test through separate reviewed operations | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -23,6 +23,18 @@ may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
 
 ## Immediate G1 execution
+
+Checkpoint 2026-10-01: one reviewed keyboard reboot intercepted U-Boot and
+loaded the hash-verified SD script. Authenticated SD SSH and independent passive
+serial collector restoration passed. Fresh read-only intake identifies the same
+spare on `4022000.mmc`, now `/dev/mmcblk0`; both environment CRCs pass, with
+flags 5/4, zero A/B counters and the expired job token still present. See the
+[measured return](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#sd-return-physically-demonstrated).
+Read-only p5 reconciliation subsequently passed: the old wrapper, original
+script, FIT and retained marker match recorded hashes; private mount cleanup
+and unchanged global mounts passed. Fresh signed preflight preparation and
+artifact verification passed on Beelink with the accepted selector repair.
+Exact staging, arm, activation, boot and physical return remain open.
 
 1. Reuse [the measured warm-capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
    USB stays connected; prepare the sole serial controller before one keyboard

@@ -87,7 +87,7 @@ USB cable stayed connected, the receiver stayed open, and no extra hardware,
 power cycle, soldering or printer operation was needed. The next H12 operation
 can use this observed warm-reset path with a prepared serial controller to stop
 at U-Boot and return to the known SD system. That interception/return was not part
-of this capture-only trial and has not yet been performed.
+of this capture-only trial; its later measured result follows below.
 
 This does not establish cold-start-only fault capture, reliable reset from a
 hung kernel, DRAM reliability or urh-04 preflight acceptance. No preflight FIT
@@ -116,6 +116,60 @@ comparison omitted baud bits in `c_cflag`. That comparison was corrected against
 the independently observed attributes; the refused admission and original
 script were preserved. This was not a second keyboard attempt. The actual
 keyboard attempt has one canonical exclusive receipt.
+
+## SD return physically demonstrated
+
+A later independently reviewed operation kept USB connected, prepared the sole
+serial controller, and sent one fixed keyboard reboot sequence. The controller
+intercepted the positive U-Boot countdown, verified the stopped prompt, selected
+SD MMC device 0, loaded the 1075-byte `boot.scr`, checked SHA-256
+`ce18bf74e3d8ae840bfb90129ba28515ba89cbd2759bc32ecd0418f6987d1ddd`,
+and sourced that script. The recording contains one SPL banner and SD Linux
+startup. Its 80,694 bytes have SHA-256
+`2bbcf2a8842cc967fd9ac88e1a9fdcc4110e4729a9e96a7a7cc8d03a388676eb`.
+
+Authenticated SSH subsequently identifies `sv08-sd-recovery-test`, Linux
+`6.18.51-sv08-candidate1`, boot ID
+`5ec209ff-5f02-4596-b393-519a43154893`, and SD root PARTUUID
+`deaf981d-7441-428c-bf43-ce40bca6ca65`, mounted `ro,norecovery`.
+No failed systemd units were reported. An independent Beelink postcheck found
+the operation controller inactive with success and the restored passive
+collector active, PID 66942, with the sole O_RDONLY serial descriptor and
+unchanged pinned source. Submission of a restoration service alone was not
+counted as restoration evidence.
+
+Fresh read-only intake identifies the same 31,272,730,624-byte spare on controller
+`4022000.mmc`, now `/dev/mmcblk0` rather than its earlier Linux node. Both raw
+environment records have valid CRCs and flags 5/4; both contain `BOOT_ORDER=A B`,
+zero A/B counters and expired job `8bd9a5860bc40abf37f14e5011544d18`.
+Linux and the RTC were inventoried; raw environment beforeimages are retained
+outside target tmpfs. This is SD recovery success, not physical urh-04 acceptance.
+
+A separately reviewed read-only p5 inspection subsequently matched the recorded
+1250-byte wrapper, 720-byte original recovery script and 48,902,416-byte FIT.
+The 18-byte `SV08-REIMAGE-ONCE` marker remains present. The staged directory
+contains exactly the marker, original script and FIT. Available p5 space is
+105,455,616 bytes. The private mount was unmounted, its scratch directory removed,
+and PID1's global mount table was unchanged. Receipt SHA-256:
+`3893fa185e205c42e93efb7b3f10a59b29c3af876c9de453b3240b753738914a`.
+Linux and the RTC differed by less than two seconds at intake. Fresh signed
+preflight preparation and artifact verification subsequently passed on Beelink
+with the accepted selector repair; no listener, target staging or boot was
+performed by that build. Physical preflight remains unpassed.
+
+An earlier controller attempt refused before arm, HID or serial transmission
+because `systemctl show` omitted empty command arrays. Its capture was empty;
+the controller was stopped and passive capture restoration independently
+verified. The corrected, separately reviewed attempt used typed D-Bus properties
+to verify the exact service commands and empty auxiliary arrays. Both attempts
+and reviews remain preserved; no receipt or failed candidate was reused.
+
+Private evidence is under
+`local/feature-workflow/probes/h12-sd-return-20261001b/`: the complete capture and
+event receipts, strict SSH enrollment under the owner's address-based trust,
+`sd-state.json` and `postcheck-collector.json`. Their respective SHA-256 values
+are `0c9fde1f1bb818063961f57976d7f5d1d9bf368fd5d79f03e7b746df3eb4a8b3`
+and `08bd51302ce3cbeafec265882fab2e0901f64085cb0f6fd589e68cb3d3e944df`.
 
 ## Cold-boot receiver experiment
 

@@ -35,9 +35,13 @@ without a change, failure or unresolved integration question that justifies it.
 - **Warm boot capture passed physically on October 1:** continuous USB power and
   logging plus one KVM keyboard reboot captured SPL, DRAM, U-Boot and Linux
   recovery. No external adapter/soldering is needed for that measured route.
-- The latest observed host reached original recovery. Authenticated SD SSH worked
-  earlier but must be regained. Current raw environments, marker and RTC remain
-  unmeasured; historical A counters must not drive a new operation.
+- Reviewed warm reboot and U-Boot interception reached the hash-verified SD
+  system; authenticated SSH and passive collector restoration passed. Fresh
+  intake identifies the same spare, both valid environment records with zero
+  A/B counters and the expired job token, and the Linux/RTC time. Read-only p5
+  and marker reconciliation subsequently passed: the retained old chain and
+  marker match the recorded hashes. Fresh preflight preparation/build passed;
+  exact reviewed staging and the corrected physical preflight remain open.
 - First physical urh-04 failed before preflight entry. The selector environment
   correction, preflight executable and runtime MMC binding are independently
   accepted offline; the corrected selector remains unstaged. Physical urh-04

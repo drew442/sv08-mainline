@@ -279,3 +279,14 @@ The next bootloader interception/SD return is a distinct reviewed operation unde
 existing owner authority. Original recovery reached its target; H12 preflight,
 current raw environment/marker/RTC reconciliation and printer commissioning remain
 open. The prior failed attempt and unapproved return-guard proposal are preserved.
+
+H12 SD-return update, 2026-10-01: the separately reviewed warm reboot intercepted
+U-Boot and booted the hash-verified SD script. Authenticated SD SSH and passive
+serial collector restoration passed. Fresh intake and a reviewed read-only p5
+inspection identify the same spare, valid environment records with zero A/B
+counters and the expired token, and the unchanged staged preflight chain with
+its marker still present. Linux/RTC agree within one second. Fresh signed
+preflight preparation/build passed on Beelink with the accepted selector repair.
+Exact retirement/staging, arm, activation, boot and physical automatic return
+remain open; this is not urh-04 or urh-05 acceptance. No new owner hardware action
+is required for the next G1 operation under unchanged setup and standing authority.
