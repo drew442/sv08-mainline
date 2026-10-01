@@ -93,3 +93,22 @@ Private evidence: ignored
 including `urh04-physical-result.json`, action/readback receipts and capped UART
 snapshots. No private signing inputs, raw device identity or generated images are
 published.
+
+## Subsequent offline repair acceptance
+
+The required repair passed fresh independent `feature_verifier_high` review at
+`9995239278b7470d1bf64ee76901dc9ae91d959a`, with actual GPT-6.1 Sol/high
+runtime recorded, and was merged locally. [The source-bound delivery](../design/unattended-emmc-reimage-handoff.md)
+includes 43 actual U-Boot cases, 62 focused regressions, independent compiled-selector
+before/after reproduction and representative artifact/member verification.
+This later offline acceptance does not change this failed physical result.
+
+Read-only follow-up confirmed the expiring claim unit inactive/dead, PID 0 and
+exit 0; it was not restarted. Printer SSH banner timed out, and the passive KVM
+snapshot endpoint remained unavailable. Original recovery GUI observation and
+current raw media reconciliation remain pending.
+
+The failed FIT's exact bytes/hash are retained in a private persistent Beelink
+archive after independent readback and fsync, with a verified volatile local
+cache at its original logical path. Archive and restoration receipts record
+that the cache is temporary; no historical candidate was discarded.

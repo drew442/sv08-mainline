@@ -246,8 +246,8 @@ staged/armed/activated and passed their separate readbacks, then one reviewed
 ordered boot selected the preserved original recovery script without entering the
 preflight FIT. U-Boot loaded bad-CRC/default environment from SD; the spare's valid
 armed environment did not reach the selector RAM guard. Claim remains unused;
-urh-04/05 remain unpassed. The required selector environment repair is queued for
-approved offline implementation and fresh independent verification. Keep setup/media unchanged; no retry/rearm/second
+urh-04/05 remain unpassed. The required selector environment repair has passed independent offline delivery
+verification and is merged locally; see [accepted repair evidence](../design/unattended-emmc-reimage-handoff.md). Keep setup/media unchanged; no retry/rearm/second
 boot/marker removal/full-image action. Original GUI visual confirmation is pending.
 Standing urh-04 authority is recorded; later exact reviews/current gates remain
 required without repeated same-scope permission.

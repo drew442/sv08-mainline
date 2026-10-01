@@ -95,7 +95,65 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "efs-01",
+          "document": "docs/design/unattended-emmc-reimage-handoff.md",
+          "document_sha256": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+          "environment": "offline",
+          "limitations": "Actual pinned sandbox uses regular-file MMC and test echo/exit instead of Linux bootm; physical target, RAM relocation, marker consumption, original-return and urh04/05 unproven. Nondeployable expired fixture composition only; no real claim/job or hardware access. Initial runner/source invocation failures preserved.",
+          "method": "43 actual pinned redundant-config U-Boot sandbox cases including SD-default RAM positive, both-copy read/CRC/missing/predicate/header failures and unrelated routing preservation.",
+          "profile": null,
+          "source_commit": "9995239278b7470d1bf64ee76901dc9ae91d959a",
+          "source_sha256": {
+            "docs/design/unattended-emmc-reimage-handoff.md": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+            "tests/test_h616_recovery_handoff.py": "d64f7cb73958b4badf2ab0a7004291662a100c4d44fd26c4f0a488125d83fc16",
+            "tests/test_recovery_handoff_stage.py": "b39dcb3a4c39bfe60f1405474d97fa44c491cf903a4b53680876676315b9c3fd",
+            "tests/uboot_recovery_handoff.py": "82d61ce0cf8748b95b15c60d4ff7f2da8b2c1576abdaa93f53496fdbf41d2bd4"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "efs-02",
+          "document": "docs/design/unattended-emmc-reimage-handoff.md",
+          "document_sha256": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+          "environment": "offline",
+          "limitations": "Actual pinned sandbox uses regular-file MMC and test echo/exit instead of Linux bootm; physical target, RAM relocation, marker consumption, original-return and urh04/05 unproven. Nondeployable expired fixture composition only; no real claim/job or hardware access. Initial runner/source invocation failures preserved.",
+          "method": "Complete generated and compiled selector exercised marker size/CRC and FIT size/CRC/component integrity, fallback/rescue and stage state paths; 62 focused regressions.",
+          "profile": null,
+          "source_commit": "9995239278b7470d1bf64ee76901dc9ae91d959a",
+          "source_sha256": {
+            "docs/design/unattended-emmc-reimage-handoff.md": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+            "tests/test_h616_recovery_handoff.py": "d64f7cb73958b4badf2ab0a7004291662a100c4d44fd26c4f0a488125d83fc16",
+            "tests/test_recovery_handoff_stage.py": "b39dcb3a4c39bfe60f1405474d97fa44c491cf903a4b53680876676315b9c3fd",
+            "tests/uboot_recovery_handoff.py": "82d61ce0cf8748b95b15c60d4ff7f2da8b2c1576abdaa93f53496fdbf41d2bd4"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "efs-03",
+          "document": "docs/design/unattended-emmc-reimage-handoff.md",
+          "document_sha256": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+          "environment": "offline",
+          "limitations": "Actual pinned sandbox uses regular-file MMC and test echo/exit instead of Linux bootm; physical target, RAM relocation, marker consumption, original-return and urh04/05 unproven. Nondeployable expired fixture composition only; no real claim/job or hardware access. Initial runner/source invocation failures preserved.",
+          "method": "Retained pinned source/configuration capability and hash provenance; representative composition and actual streaming stage verification, aligned128KiB buffers/static565644272B reserve against1GiB; actual relocation unknown.",
+          "profile": null,
+          "source_commit": "9995239278b7470d1bf64ee76901dc9ae91d959a",
+          "source_sha256": {
+            "docs/design/unattended-emmc-reimage-handoff.md": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+            "tests/test_h616_recovery_handoff.py": "d64f7cb73958b4badf2ab0a7004291662a100c4d44fd26c4f0a488125d83fc16",
+            "tests/test_recovery_handoff_stage.py": "b39dcb3a4c39bfe60f1405474d97fa44c491cf903a4b53680876676315b9c3fd",
+            "tests/uboot_recovery_handoff.py": "82d61ce0cf8748b95b15c60d4ff7f2da8b2c1576abdaa93f53496fdbf41d2bd4"
+          }
+        }
+      ],
       "human_task": null,
       "id": "repair-selector",
       "implementation": {
@@ -105,9 +163,16 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "done",
       "title": "Implement and independently verify explicit environment-source repair",
-      "verification": null
+      "verification": {
+        "decision_sha256": "e8ba76dbd999cf3c6fb0f0cdc8d479a88659e15ca3d589f73996c9c341bb8121",
+        "evidence_sha256": "3527dd5ec131c4985b2210aa51cd6e476005807910648a650c012f3a494fd744",
+        "outcome": "passed",
+        "rationale": "Passed only the bounded offline repair at clean HEAD 9995239278b7470d1bf64ee76901dc9ae91d959a. Verified the complete run-base 731c0895d7fcac24489b257ab190e8cba2bf2b17 to HEAD diff: five owned regular files, no unlisted changes, modes, deletions or gitlinks; worktree clean, diff/cached checks and indexed gitlink/lock agreement pass. Approved proposal, both requirement files, scope, all submitted evidence/document/source hashes and actual HEAD agree; canonical digests cover the complete decision with all six constraints and the submitted evidence list. efs-01: exact device-1/user-0 route admission, aligned 64 KiB records at 4/8 MiB, both read/import/predicate guards, separate gate resets, five-name whitelist and unrelated routing preservation verified. Retained loader/config hashes match 350a941a.../6acb5de1...; actual CMD_MMC/CMD_IMPORTENV/ENV_REDUNDANT, 64 KiB offsets and redundant env_t header inspected. All six relevant development-source hashes match retained primary excerpts; source is an extracted tarball bound by retained ece349a intake/provenance, not the enclosing repository HEAD. Inspected 43 actual sandbox case logs including CRC/header/missing/predicate/read/route/hwpart/mixed-copy failures and hostile unrelated names. Independently reproduced complete compiled old/new selectors: identical SD-default RAM and two correct records select original recovery before and test writer after. Actual sandbox MMC read/import logic used; disposable 9 MiB sparse raw-record fixture, device a, sandbox addresses, hostfs payload transport and echo/exit are explicit substitutions. efs-02: complete selector preserves marker size/CRC, FIT size/CRC/iminfo/component hashes and original-script/rescue fallback; no persistent writes or imported execution. Inspected unchanged build/stage/live stage/arm/activation journeys, actual compiled-script extraction and signed-purpose/artifact/journal revalidation; offline write/preflight purpose remains separate. efs-03: inspected passing 62 focused composition/staging/purpose regressions; independently verified representative compiled selector and extracted FIT members and retained input pins. Two aligned buffers add 131072 bytes; fixed intervals do not overlap, representative FIT is 48901196 bytes below 64 MiB, static accounting 565644272 bytes leaves 508097552 bytes of 1 GiB. Initramfs/DTB are contained in FIT; bootm relocation remains unverified. Review scratch allocated under 1 MiB, logical under 10 MiB, two incidental attempts under one second plus read-only inspection/extraction; shared tmpfs observed 218329088/536870912 bytes. Initial missing retained fixture, implementer noexec/stale-DTB/invocation failures and historical physical failure remain explicit. No code repair, shared-record edit, artifact copy/download or production rebuild, service, hardware, credential/private-dump access, job/claim creation or publication. Independent native feature_verifier_high runtime was corroborated as GPT-6.1 Sol/high/full-access/never. All six approval constraints remain intact. This verifies offline selector behavior only: named hardware support, release, physical identity/capacity/raw environment admission, FIT entry/relocation, marker consumption and original-recovery return remain H12/urh-04 dependencies; urh-05 still follows separately reviewed urh-04.",
+        "reviewer": "independent feature_verifier_high; coordinator-corroborated GPT-6.1 Sol/high",
+        "session": "/root/verify_selector_environment_source; runtime thread 01a0f511-e969-7ad2-9a33-4ed503119a65; 2026-10-01"
+      }
     }
   ],
   "title": "Read both intended eMMC environments before recovery FIT selection"

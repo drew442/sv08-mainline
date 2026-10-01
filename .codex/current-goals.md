@@ -292,3 +292,27 @@ Required [selector repair](../docs/features/h616-selector-environment-source/pro
 has delegated offline approval with constraints; implementation and fresh independent delivery verification remain pending. Optional feature development remains
 paused. No repeated owner permission within standing urh-04 scope is needed;
 exact reviews, current setup/admission/expiry and independent verification remain.
+
+### 2026-10-01 selector repair accepted offline
+
+The required selector environment-source repair passed fresh independent
+`feature_verifier_high` delivery review at `9995239` (GPT-6.1 Sol/high runtime
+observed), and was merged locally. Its selector explicitly reads and checks
+both intended eMMC user-area environments before marker/FIT admission; no loader
+or persistent-write command was added. All 43 actual U-Boot cases and 62 focused
+regressions passed, with independent complete-selector before/after reproduction
+and representative artifact verification. See [accepted evidence](../docs/design/unattended-emmc-reimage-handoff.md)
+and [completed record](../docs/features/h616-selector-environment-source/record.json).
+H12 needs original-recovery observation/control, a separately reviewed SD return,
+fresh target/RTC/raw-environment/p5 reconciliation, replacement expired inputs and
+one newly reviewed physical attempt. GUI confirmation is pending; printer SSH
+banner timed out and passive KVM snapshot is unavailable. Current media state
+remains unmeasured after the failed attempt. Preserve all historical failures.
+
+The failed physical FIT is preserved in a private, verified persistent Beelink
+archive and a private volatile cache; its logical local path points to that
+cache. Exact hash/readback/metadata receipts record restoration from the archive
+if the cache is lost. This recovered 47 MiB on the coordinator root without deleting
+the failed candidate bytes. No retired/expired job is reusable. Later physical
+boot preparation must retain raw environment preimages/journals durably outside
+target tmpfs before reboot. The complete project goal remains active.
