@@ -38,6 +38,15 @@ readiness. H12/preflight remain incomplete. Private source, review, corrected
 manifest binding and live receipts are in
 `local/feature-workflow/probes/h12-cold-sd-return-20261001d/`.
 
+While D waits, offline source preparation passed at 13:53 UTC: a separate
+Beelink source directory contains the preserved C build inputs and the exact
+accepted startup-repair writer and test from `0708a18a2528929ad9a59c22e32d865003e95ed2`.
+A separate readback checked all 36 copied entries and the preparation receipt.
+No job, keys, target policy, listener or candidate artifact was created. Historical
+C inputs remain provenance; fresh SD intake must supply current target policy
+before a newly signed candidate is prepared. The original C directory is retained.
+Private preparation/readback evidence is beside D's receiver evidence above.
+
 ## Immediate G1 execution
 
 Checkpoint 2026-10-01: one reviewed keyboard reboot intercepted U-Boot and
