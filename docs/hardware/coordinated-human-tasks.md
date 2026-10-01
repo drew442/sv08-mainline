@@ -240,3 +240,14 @@ preflight jobs/artifacts, receive-only capture and exact staging/arming/boot
 reviews remain pending. Physical urh04 permits the accepted compiled preflight's
 whole-target O_RDONLY capacity/environment admission; urh05 whole-write/readback
 is separate and follows urh04. Existing printer-output gates remain open.
+
+H12 update,2026-10-01: [first physical urh-04 attempt](host-h12-urh04-first-boot-20261001.md)
+staged/armed/activated and passed their separate readbacks, then one reviewed
+ordered boot selected the preserved original recovery script without entering the
+preflight FIT. U-Boot loaded bad-CRC/default environment from SD; the spare's valid
+armed environment did not reach the selector RAM guard. Claim remains unused;
+urh-04/05 remain unpassed. The required selector environment repair is queued for
+approved offline implementation and fresh independent verification. Keep setup/media unchanged; no retry/rearm/second
+boot/marker removal/full-image action. Original GUI visual confirmation is pending.
+Standing urh-04 authority is recorded; later exact reviews/current gates remain
+required without repeated same-scope permission.

@@ -279,3 +279,16 @@ inputs/evidence remain preserved. The refreshed p5 packet was rejected before
 execution for stale artifact constants; a corrected distinct packet is under
 independent review. Physical urh-04 acceptance remains pending; the full delivery
 goal and pause on optional new features remain unchanged.
+
+### 2026-10-01 physical urh-04 failure and required repair
+
+[Actual attempt](../docs/hardware/host-h12-urh04-first-boot-20261001.md): stage,
+redundant arm and marker activation plus independent readbacks passed. One ordered
+boot loaded the wrapper then original recovery; preflight FIT never entered and
+claim remains unused. Pinned Sunxi source selects SD0 environment when SD booted,
+so the valid armed spare environment does not supply the RAM selector guard.
+No urh-04/05 acceptance; preserve failed inputs/evidence and stop boot actions.
+Required [selector repair](../docs/features/h616-selector-environment-source/proposal.md)
+has delegated offline approval with constraints; implementation and fresh independent delivery verification remain pending. Optional feature development remains
+paused. No repeated owner permission within standing urh-04 scope is needed;
+exact reviews, current setup/admission/expiry and independent verification remain.

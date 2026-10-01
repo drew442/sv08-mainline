@@ -1,0 +1,110 @@
+{
+  "author": "root-coordinator-required-H12-repair",
+  "checks": [
+    {
+      "description": "Actual pinned U-Boot CRC-checked whitelisted redundant environment import: both-copy admission, missing/corrupt/read/route failure fallback, no inherited gates or unrelated routing changes.",
+      "environment": "offline",
+      "id": "efs-01"
+    },
+    {
+      "description": "Generated complete selector preserves all marker/FIT/purpose/integrity/original fallback checks and has no persistent writes; positive SD-default fixture and failure cases use actual U-Boot logic with transport limitations explicit.",
+      "environment": "offline",
+      "id": "efs-02"
+    },
+    {
+      "description": "Relevant composition/staging/purpose regressions and actual retained-loader capability/resource bounds pass; preserve failed physical candidate and separate physical qualification.",
+      "environment": "offline",
+      "id": "efs-03"
+    }
+  ],
+  "created": "2026-10-01",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "efs-01",
+          "efs-02"
+        ],
+        "text": "Read both exact 64 KiB records from the explicitly admitted intended eMMC user area at the existing 4 MiB/8 MiB offsets using correct block units and bounded addresses. Reject missing/changed/unknown route and wrong hardware partition; do not infer identity from SD boot, configured environment defaults or similar hardware. Preserve source and fallback routing variables. Reset all five gate names before EACH import, whitelist only sv08_reimage_arm, sv08_env_layout, BOOT_ORDER, BOOT_A_LEFT and BOOT_B_LEFT, and require successful read, CRC-checked import and exact predicates for BOTH copies before marker/FIT admission. A failed first copy cannot be rescued by a valid second copy or inherited RAM gates. Do not execute imported strings, source raw environment data, replenish attempts or relax required token/layout/order/counters. CRC is integrity evidence, not replacement for signed-job or reviewed-artifact authority."
+      },
+      {
+        "checks": [
+          "efs-01",
+          "efs-03"
+        ],
+        "text": "Bind source/config provenance to the actual retained pinned U-Boot revision and loader hash. Verify the actual CMD_MMC/CMD_IMPORTENV, env_t redundancy/header configuration, 64 KiB size and raw offsets; unsupported configuration leaves acceptance pending. Exercise actual pinned U-Boot import logic with redundancy matching the retained loader. Distinguish ordinary-header versus redundant-header fixtures; do not strip headers or use -r as redundancy selection. Positive SD-default RAM state with two correct copies must select the test writer. Either-copy read/CRC failure, missing each gate, wrong token/layout/order/either counter, mixed copies, ordinary-header mismatch under redundant configuration, changed route and unrelated hostile environment names must fall back. Assert unrelated routing values survive and no inherited gates permit entry. Identify any fixture transport substitution separately from actual MMC-read evidence."
+      },
+      {
+        "checks": [
+          "efs-02",
+          "efs-03"
+        ],
+        "text": "Review and test the COMPLETE generated and compiled selector, retaining exact marker size/CRC, FIT size/CRC/iminfo/component integrity, signed compiled-purpose/artifact binding and original-script fallback. Test marker absent/malformed/mismatched and FIT corruption after valid environment admission. Every read/import/predicate failure must leave original fallback reachable; unavailable recovery must retain the existing independent-rescue stop. Permit only volatile imports and MMC reads: no saveenv/env save, mmc write/erase, raw target writes, loader/kernel changes or claim/service operation. Keep ordinary write and preflight purpose independent and retain stage/journal/arm/activation admission checks."
+      },
+      {
+        "checks": [
+          "efs-03"
+        ],
+        "text": "Check two aligned 64 KiB buffers and all selector/script/marker/FIT/kernel/initramfs/DTB intervals for bounds and nonoverlap using actual representative sizes and existing load-address constraints. Account for the 128 KiB increment in the existing conservative 1 GiB budget; physical relocation and RAM reliability remain pending. Run relevant composition/staging/purpose regressions and representative nondeployable composition with retained pinned inputs only. Keep assigned tmpfs scratch <=512 MiB; retained additional artifacts <=64 MiB only after persistent-storage admission. No old/new artifact copies for review, full image copies, downloads, installers or repeated full-image/QEMU transfer. Preserve original recovery/rollback, persistence, idle/heater, 8 GB, profile and pinning requirements; report a concrete bounded allocation gap rather than exceeding limits."
+      },
+      {
+        "checks": [
+          "efs-01",
+          "efs-02",
+          "efs-03"
+        ],
+        "text": "One implementer owns only scripts/build_h616_recovery_handoff.py, tests/test_h616_recovery_handoff.py, tests/test_recovery_handoff_stage.py, tests/uboot_recovery_handoff.py, docs/design/unattended-emmc-reimage-handoff.md and docs/hardware/host-h616-physical-preflight.md. Return any additional production ownership before editing. Preserve failed physical and historical candidates, evidence, identities and hashes; document new evidence without retroactive acceptance. Fresh clean-commit/source-bound evidence requires a separate delivery verifier who is not author, planner, approver or evidence producer. Coordinator alone imports decisions and updates shared records."
+      },
+      {
+        "checks": [
+          "efs-02",
+          "efs-03"
+        ],
+        "text": "Approval authorizes offline implementation only. Do not reuse this failed attempt job/claim, remove its physical marker, retry boot, prepare real jobs/keys or contact hardware. H12 remains the canonical queue; urh-04 is pending until separately reviewed measured FIT entry, marker consumption, exact identity/capacity/raw environments, relocation and original-recovery return. urh-05 remains separate and follows urh-04. Applicable standing owner authority persists, while every later staging/boot-policy/boot/write operation still needs its exact current target/artifact/recovery checks and immediate independent high-consequence review. Offline success grants no physical or release acceptance."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "2cbd55dac153088595de9b55d5ba0038d0290aa43321b390e348e7f5c5b07dc8",
+    "rationale": "Approve this bounded offline H12 repair under decision 0011 and accepted recovery-handoff/preflight requirements. Actual requirement contents preserve signed purpose, target/source admission, exhausted redundant environments, marker/FIT integrity, original recovery fallback, one-shot claims and distinct pending urh-04/05; no owner requirement, external spending, licensing or authority expansion is requested. Reviewed current proposal and record, both actual requirement files, generated script_text and actual sandbox harness, retained physical-boot operation/console/claim-reconciliation receipts, and source-hashed boot-environment/env-import extraction JSON. Before: script_text gates directly on the current RAM environment; the retained boot console shows bad-CRC/default loads from MMC(0), followed by the 1250-byte wrapper and 720-byte original fallback, with no preflight entry, while postboot reconciliation reports the claim unused. The board.c:537 extraction shows mmc_get_env_dev selects index 0 for SD boot regardless of configured default index; env/mmc.c:465 uses that selection. This explains the unsupported RAM-source assumption, although individual failed predicates were not logged. After: explicit read-only admission of both intended eMMC user-area records, CRC checking and a five-name import whitelist can supply the existing job/layout/exhausted-counter predicate without changing persistent boot policy or the loader. The cmd/nvedit.c:767 extraction shows -c uses compiled env_t data offset and whitelist import; -r is CRLF handling. Existing upstream MMC and env-import mechanisms avoid an unnecessary loader rebuild, custom CRC parser or new dependency. Direct source paths named in the retained extraction are unavailable in this workspace, and the actual loader configuration has not been independently read here; source/config hash and capability agreement therefore remain explicit delivery constraints, not inferred proof. Existing tests exercise generated U-Boot logic but currently preload armed RAM values, so new actual import cases are a necessary before/after comparison. Resource increment is bounded at two 64 KiB buffers, subject to interval and working-memory checks. Evidence levels are inspected local source, retained source-hashed excerpts and retained measured failed hardware observations; repaired offline execution and successful physical behavior remain pending. Review produced no experiments, artifact copies, hardware/network/key/private-backup access or tracked edits. Current coordinator runtime observation identifies this native session as feature_approver/gpt-6.1-sol/medium with full-access/never; this does not rewrite earlier unobserved runtime claims.",
+    "requirements_sha256": {
+      "docs/features/network-emmc-unattended-recovery-handoff/proposal.md": "3646582b5c95a21d0bb2858a4a9d7a7151d8f2fe09ed5b19daec568cf83678e4",
+      "docs/hardware/host-h616-physical-preflight.md": "171f8eed73e12664e081d06c4ea08aa87252c7819224e187f368d1dcb4ff5610"
+    },
+    "reviewer": "independent feature_approver GPT-6.1 Sol/medium; current runtime corroborated by coordinator runtime-observation.json",
+    "scope_sha256": "e44561d9a5ccddf112f5e0fefad13363e183d39f7bcf03648b01602b2cd899e9",
+    "session": "/root/approve_preflight_repair: independent h616-selector-environment-source proposal review 2026-10-01; prior approval identities unchanged"
+  },
+  "format_version": 1,
+  "id": "h616-selector-environment-source",
+  "kind": "fix",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/h616-selector-environment-source/proposal.md",
+  "requirements": [
+    "docs/features/network-emmc-unattended-recovery-handoff/proposal.md",
+    "docs/hardware/host-h616-physical-preflight.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "efs-01",
+        "efs-02",
+        "efs-03"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "repair-selector",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and independently verify explicit environment-source repair",
+      "verification": null
+    }
+  ],
+  "title": "Read both intended eMMC environments before recovery FIT selection"
+}
