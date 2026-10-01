@@ -220,3 +220,13 @@ human tasks wait. Reassess effort after the G1 SD-return/preflight checkpoint an
 commissioning session; unresolved physical behavior prevents a reliable delivery
 date. Recovery export composition is already accepted offline. Publishing and hardware actions follow their
 applicable authorization; this planning update initiates neither.
+
+### G1 checkpoint — 2026-10-01 12:22 UTC
+
+The claim-startup repair passed independent offline verification and is integrated;
+see [the delivery record](features/h616-claim-startup-readiness/record.json).
+The prepared physical USB reset window expired without a disconnect. Passive
+serial capture restoration passed independently. G1 now requires a fresh ready
+receiver window and physical reset to regain SD control, current read-only intake,
+and a distinct fresh signed preflight job incorporating the accepted repair.
+No G1 physical pass or G2–G5 completion is claimed.

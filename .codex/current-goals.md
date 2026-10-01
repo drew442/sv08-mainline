@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight reached RAM but refused claim, automatic return stopped in SPL DRAM training | Await the prepared one-time USB reset/SD return; implement independently approved bounded claim-startup repair offline; keep failed jobs retired | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight reached RAM but refused claim, automatic return stopped in SPL DRAM training | Arrange a fresh reviewed USB reset/SD return window; deliver the independently accepted startup repair using a fresh job; keep failed jobs retired | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -34,11 +34,16 @@ Read-only p5 reconciliation subsequently passed: the old wrapper, original
 script, FIT and retained marker match recorded hashes; private mount cleanup
 and unchanged global mounts passed. Fresh signed preflight preparation and
 artifact verification passed on Beelink with the accepted selector repair.
-Fresh job B staging and expired-token retirement subsequently passed. B stayed unarmed and expired during review; its complete artifact remains on Beelink. Distinct fresh job C then passed staging, arming, marker publication and independent readbacks. Its corrected selector reached RAM preflight at 11:32 UTC, but the runtime refused the claim before target preflight acceptance. The server claim remained unused; automatic return stopped in SPL DRAM training. G1 is incomplete. The reviewed cold-return receiver is actually ready, PID 75332,
-with no open UART while awaiting one physical unplug/reconnect until 12:22 UTC.
-The coordinator requested that step after independent readiness; no software
-reset was issued at the SPL halt. The bounded offline claim-startup repair has
-separate delegated approval and remains subject to delivery verification.
+Fresh job B staging and expired-token retirement subsequently passed. B stayed unarmed and expired during review; its complete artifact remains on Beelink. Distinct fresh job C then passed staging, arming, marker publication and independent readbacks. Its corrected selector reached RAM preflight at 11:32 UTC, but the runtime refused the claim before target preflight acceptance. The server claim remained unused; automatic return stopped in SPL DRAM training. G1 is incomplete. The reviewed cold-return receiver waited until 12:22 UTC without observing a
+physical disconnect, then stopped with zero captured bytes. Independent passive
+capture restoration passed: PID 75865 is the sole UART reader, with the original
+log inodes preserved. The dated reset request has expired; a new operation needs
+current receiver readiness. No software reset was issued at the SPL halt.
+The bounded claim-startup repair passed fresh independent Astra/high delivery
+verification at `0708a18a2528929ad9a59c22e32d865003e95ed2` and is integrated;
+its offline feature task is done. The verifier reproduced 42 startup scenarios,
+the purpose regression, focused receipt regressions and four before/after ARM64
+builds. This does not establish the physical claim failure's errno or pass H12.
 See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#corrected-preflight-entered-ram-but-did-not-pass).
 
 1. Reuse [the measured warm-capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
@@ -101,9 +106,7 @@ original candidates, failures, reviews and artifacts remain preserved.
 
 ## Tracker status
 
-The repository goals above are reset. The application still holds the previous
-unfinished goal with status `blocked`. A replacement request on 2026-10-01 was
-rejected because an unfinished goal exists; available tools cannot edit its
-objective or resume/cancel it. Its objective is not complete and must not be
-marked complete to bypass that restriction. This UI limitation does not prevent
-manually continuing authorized work from G1.
+At 12:07 UTC the application returned no current goal. A fresh G1–G5 goal was
+created at 12:11 UTC and is active. Earlier replacement refusals remain historical
+evidence in the reset assessment; they no longer describe current tracker state.
+The project remains incomplete and physical dependencies remain explicit.

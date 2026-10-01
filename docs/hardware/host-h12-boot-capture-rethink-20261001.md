@@ -324,3 +324,27 @@ dependency: the measured Beelink USB2 root hub reports no power switching,
 and Linux keyboard/SysRq cannot reset a host halted in SPL. A concrete bounded
 USB-replug/SD-return receiver is being prepared for independent review; no
 unidentified reset net or forced USB power operation is proposed.
+
+## Startup repair accepted; physical reset still pending
+
+At 12:22 UTC, the reviewed cold-return receiver timed out without observing a
+USB disconnect and captured zero bytes. No SD return occurred. Independent
+read-only postcheck passed for the restored passive collector: unit
+`sv08-recovery-capture-h12coldsd20261001c`, PID 75865/starttime 28158057,
+sole UART fd 3 opened read-only, pinned source and original log inodes preserved.
+Private receipts and postcheck are in `cold-sd-return-preparation/` beneath
+the existing ignored probe directory. The 11:53 request is expired; a physical
+reset needs a fresh independently ready receiver window.
+
+The [claim-startup repair](../development/h616-claim-startup-readiness-20261001.md)
+passed fresh independent delivery verification on clean commit
+`0708a18a2528929ad9a59c22e32d865003e95ed2` and is integrated locally. Actual
+reviewer session `01a0f764-e807-7f13-afe8-eea7d9b24487` ran GPT-6 Astra/high
+under the owner's temporary H12 exception; this is not a Sol review. The
+coordinator observed actual runtime settings. Verification independently
+reproduced all 42 startup scenarios, the signed purpose check, focused receipt
+checks, unchanged service expiry and four before/after ARM64 binary hashes.
+The [feature record](../features/h616-claim-startup-readiness/record.json) is done
+for offline delivery. Earlier failed fixtures and physical job C remain retained.
+No new physical candidate was built, no old job was rearmed, and H12 preflight,
+automatic return, full-image write and hardware qualification remain unpassed.

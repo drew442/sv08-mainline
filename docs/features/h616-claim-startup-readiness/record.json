@@ -105,15 +105,93 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "rng-ready",
+          "document": "docs/development/h616-claim-startup-readiness-20261001.md",
+          "document_sha256": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+          "environment": "offline",
+          "limitations": "Offline only; no physical RNG errno, H12 preflight success, recovery return, hardware qualification or new FIT/initramfs measured. Prior failed fixture runs retained.",
+          "method": "Actual production C helper deterministic syscall/clock tests; relevant existing regressions including separately preserved purpose fixture continuation; pinned ARM64 builds and conservative resource accounting. See document and private original logs.",
+          "profile": null,
+          "source_commit": "0708a18a2528929ad9a59c22e32d865003e95ed2",
+          "source_sha256": {
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/development/h616-claim-startup-readiness-20261001.md": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "ea0167ee06ae8b5f6e38bd8416bdd926c2a183f560da2a4b5291f7022a6fc5ea",
+            "tests/test_emmc_claim_startup.py": "4dcf245e391cdda54b096464ce1d63f29e564cc8a8ce5947e93fc70dcc9e7fa9",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "rng-refusal",
+          "document": "docs/development/h616-claim-startup-readiness-20261001.md",
+          "document_sha256": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+          "environment": "offline",
+          "limitations": "Offline only; no physical RNG errno, H12 preflight success, recovery return, hardware qualification or new FIT/initramfs measured. Prior failed fixture runs retained.",
+          "method": "Actual production C helper deterministic syscall/clock tests; relevant existing regressions including separately preserved purpose fixture continuation; pinned ARM64 builds and conservative resource accounting. See document and private original logs.",
+          "profile": null,
+          "source_commit": "0708a18a2528929ad9a59c22e32d865003e95ed2",
+          "source_sha256": {
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/development/h616-claim-startup-readiness-20261001.md": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "ea0167ee06ae8b5f6e38bd8416bdd926c2a183f560da2a4b5291f7022a6fc5ea",
+            "tests/test_emmc_claim_startup.py": "4dcf245e391cdda54b096464ce1d63f29e564cc8a8ce5947e93fc70dcc9e7fa9",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "claim-regression",
+          "document": "docs/development/h616-claim-startup-readiness-20261001.md",
+          "document_sha256": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+          "environment": "offline",
+          "limitations": "Offline only; no physical RNG errno, H12 preflight success, recovery return, hardware qualification or new FIT/initramfs measured. Prior failed fixture runs retained.",
+          "method": "Actual production C helper deterministic syscall/clock tests; relevant existing regressions including separately preserved purpose fixture continuation; pinned ARM64 builds and conservative resource accounting. See document and private original logs.",
+          "profile": null,
+          "source_commit": "0708a18a2528929ad9a59c22e32d865003e95ed2",
+          "source_sha256": {
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/development/h616-claim-startup-readiness-20261001.md": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "ea0167ee06ae8b5f6e38bd8416bdd926c2a183f560da2a4b5291f7022a6fc5ea",
+            "tests/test_emmc_claim_startup.py": "4dcf245e391cdda54b096464ce1d63f29e564cc8a8ce5947e93fc70dcc9e7fa9",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        }
+      ],
       "human_task": null,
       "id": "startup-readiness",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "4aaab7b8d60e414c84d1bb64a3c50e4f",
+        "session": "h616-claim-startup-implementation-20261001"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Correct and independently verify secure claim startup",
-      "verification": null
+      "verification": {
+        "decision_sha256": "348feeacdae06ab310a42ad250ac113100af84ae15d2f6ce03925031ea28c5c4",
+        "evidence_sha256": "523eba099985a3b4bf44c8af8c1508d575a8309ff9b14db868ba638b75219ca1",
+        "outcome": "passed",
+        "rationale": "Passed bounded offline delivery at clean HEAD 0708a18a2528929ad9a59c22e32d865003e95ed2. Inspected the complete three-file diff from be043559bccf8bfa5449c078475240c721293c72, every approved constraint, actual entry/claim/server-expiry paths, and retained failed/continuation evidence. Proposal, requirement, scope, submitted document/source and pinned crypto hashes match. Reproduced all 42 actual-source startup scenarios; original source immediately refuses EAGAIN while the candidate waits and admits timely complete randomness. Deadline, interrupted/partial acquisition, errno/secrecy, one-request and refusal-before-downstream-open checks pass. Reproduced signed purpose regression with production guards intact and three focused native receipt/random/default regressions; actual ExpiringClaim refuses at expiry. All four before/after ARM64 binaries reproduce recorded hashes and sizes (+400/+408 bytes); conservative load/FIT/memory arithmetic matches. No material acceptance objection found. Preserve earlier failed implementation fixtures, its separately authorized purpose continuation and reviewer baseline missing-header failure/corrected scratch follow-up; none is reclassified as an original passing run. Historical full/fault QEMU and durable-state evidence is reused, not rerun. Static projected headroom is not a new FIT/initramfs measurement. No physical RNG errno/readiness, H12 preflight or recovery return, named hardware support, release or operation authorization is established. See review.md for constraint mapping and limitations.",
+        "reviewer": "feature_verifier_high / fresh independent session / owner-authorized temporary GPT-6 Astra/high exception; not a Sol result; effective runtime settings require coordinator observation",
+        "session": "/home/drew/sv08-mainline/local/feature-workflow/probes/h12-sd-return-20261001b/fresh-preflight/claim-startup-verification"
+      }
     }
   ],
   "title": "Bound early-boot secure randomness wait and explain claim refusal"

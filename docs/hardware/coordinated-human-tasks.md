@@ -20,12 +20,14 @@ reviewed U-Boot interception and return to the known SD recovery system, then
 reconcile current media/environment/RTC/p5 and pass corrected physical preflight.
 The planning reset itself requested no physical action. The subsequent corrected
 preflight entered RAM, refused its claim and halted in SPL DRAM training during
-automatic return. A separately reviewed receiver is now prepared for one USB
+automatic return. A separately reviewed receiver was prepared for one USB
 serial unplug of at least five seconds and reconnection to the same Beelink port,
 PSU still off and SD/eMMC untouched. The coordinator independently verified
 readiness and requested that physical step at 11:53 UTC; the receiver's wait
-ends at 12:22 UTC. Do not act on this dated request after its window without
-current coordinator readiness. This is an H12 control dependency, not new
+ended at 12:22 UTC without an observed disconnect. Independent passive capture
+restoration passed (PID 75865, sole read-only UART owner, original log inodes).
+The request has expired; do not unplug for this dated request. Arrange a fresh
+receiver-ready window with the coordinator. This is an H12 control dependency, not new
 backup/photography/soldering work. The old H03 media
 move instructions below are historical, not a fresh request. H09/H10 and the H13
 SD host boot retain their completed evidence; present authenticated SD access
