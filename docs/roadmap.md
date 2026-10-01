@@ -1,5 +1,11 @@
 # Roadmap
 
+Current execution order was reset on 2026-10-01; see the
+[recalibrated plan](remaining-work-plan.md). Warm boot capture passed; SD return and corrected
+physical H12 preflight are next. Recovery export composition, printer-interface
+and boot-health implementations are accepted offline. Older dated observations
+below do not establish current boot counters, access or active assignments.
+
 For the current execution order, dependencies and first-print versus release gates,
 see the [remaining-work plan](remaining-work-plan.md) (2026-09-18). Historical
 phase notes below retain their original evidence boundaries.

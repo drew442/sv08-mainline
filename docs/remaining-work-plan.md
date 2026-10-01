@@ -1,11 +1,13 @@
 # Remaining project work
 
-Planning baseline: 2026-09-18. This is an execution order for existing requirements,
+Recalibrated: 2026-10-01 at the owner’s request. This is an execution order for existing requirements,
 not new hardware authorization or a supported-release claim. Detailed acceptance
 requirements remain in the [host checklist](hardware/host-os-tasks.md),
 [project definition](project.md), and approved feature records.
 
-Execution assignments and shared resource ownership are in the
+The authoritative live order is [G1–G5](../.codex/current-goals.md), with an
+[evidence-based assessment](development/goals-reset-20261001.md). Historical
+assignments and shared resource ownership are in the
 [parallel delivery plan](development/parallel-work.md). Use its
 [single human dispatch queue](hardware/coordinated-human-tasks.md) to combine
 physical actions across workstreams without duplicating the detailed checklists.
@@ -30,69 +32,63 @@ without a change, failure or unresolved integration question that justifies it.
 
 ## Current baseline
 
-- Host and both MCU firmware candidates are built; Katapult USB updates and paired
-  MCU communication have physical evidence. A new bootloader installation is not
-  a prerequisite for ordinary updates.
-- The diagnostic host has booted physically into Linux, SSH and Cockpit. Repeatable
-  cold boot/DRAM behavior and complete physical A/B behavior remain unproven.
-- The disposable SD diagnostic has booted its local loader/kernel/initramfs and
-  mounted Beelink's read-only NFS root on the printer. It proves this limited
-  development path without an eMMC write, not a complete host OS or recovery
-  product. H10's separately reviewed SD/NFS read-only probe has now measured
-  both current redundant environment copies on the spare eMMC; see the
-  [hardware result](hardware/host-sd-network-emmc-probe-20260926.md). The two
-  copies report different A counters (3 and 2), both with order A and B=0. This
-  is evidence only of readable stored records, not boot-policy execution or
-  which copy U-Boot will select. Do not repeat the diagnostic boot just to
-  reread them.
-- Klipper, Moonraker, Mainsail and KlipperScreen packages have offline evidence.
-  Full printer services and printing remain uncommissioned.
-- A/B transactions, persistent state and operating modes have component/VM
-  evidence. They still need final board/service/release composition.
-- Interrupted image-job resolution is independently verified offline in its
-  [delivery record](features/host-image-job-resolution/record.json). History
-  rollover remains separate work.
-- Independent recovery diagnostics fit 512 MiB; approved boot-to-export
-  composition and offline implementation are complete. Physical UI/media
-  validation remains open; restore and production first-boot provisioning are
-  separate unfinished requirements.
-- Existing factory media, images and MCU backups are accepted by the owner.
-  Additional preservation recommendations must not become a new prerequisite for
-  proceeding. Recovery demonstrations remain acceptance tests, not demands for
-  redundant backups before development.
+- **Warm boot capture passed physically on October 1:** continuous USB power and
+  logging plus one KVM keyboard reboot captured SPL, DRAM, U-Boot and Linux
+  recovery. No external adapter/soldering is needed for that measured route.
+- The latest observed host reached original recovery. Authenticated SD SSH worked
+  earlier but must be regained. Current raw environments, marker and RTC remain
+  unmeasured; historical A counters must not drive a new operation.
+- First physical urh-04 failed before preflight entry. The selector environment
+  correction, preflight executable and runtime MMC binding are independently
+  accepted offline; the corrected selector remains unstaged. Physical urh-04
+  and urh-05 remain open. See [H12 evidence](hardware/host-h12-boot-capture-rethink-20261001.md).
+- Recovery export composition, inactive printer-interface configuration and
+  boot-health composition are done offline. Do not redispatch their implementations;
+  carry their distinct physical and assembled-system acceptance forward.
+- Both MCUs have matching firmware and physical USB/no-output communication
+  evidence. Printer services, essential sensor verification, outputs and printing
+  remain uncommissioned. Test-sv08-01 has modified bed/hotend hardware.
+- Signed A/B, persistent state and administration have substantial component/VM
+  evidence. Physical A/B/update/fallback, complete administration/recovery/restore,
+  required peripherals and final factory-capacity composition remain open.
+- No profile is release-qualified. Actual stock evidence and license/release work
+  remain separate from getting the modified test printer working.
+- Existing factory media, images and MCU recovery material remain accepted by
+  the owner. Beelink storage growth is done; additional backups are not a new gate.
 
 ## Ordered work packages
 
-| Order | Work | Execution | Completion evidence |
+| Priority | Goal/work | Immediate execution | Completion evidence |
 | --- | --- | --- | --- |
-| 1 | Finish approved independent recovery export composition | Offline ARM64 VM | Installed GTK workflow exports readable data, including damaged-registry cases, using trusted media preparation; source preservation, input methods, failure paths and 512 MiB bounds verified independently |
-| 2 | Complete the minimal printing configuration and commissioning package | Offline | Reviewed upstream configuration/includes, pin provenance, conservative limits, explicit homing sequence, manual Z-offset procedure, required print/pause/cancel macros, and matching host/MCU version checks pass configuration validation |
-| 3 | Integrate a bounded board commissioning image | Offline, then hardware | Selected loader/kernel/driver packages, persistent state, explicit first-boot setup, access and disabled-by-default printer outputs compose into an identified artifact; normal boot/recovery selection and source-slot state are reviewed |
-| 4 | Establish reliable host operation on the printer | Hardware and human | Real cold/warm boots, consistent memory/storage, MCU identities, network, HDMI/touch and basic service readiness pass on the named profile |
-| 5 | Commission and print | Attended hardware | Temperature reference, inputs, fans, motor directions, homing, probing, heaters, leveling, mesh, Z offset and representative printing pass in controlled stages |
-| 6 | Finish host update and administration integration | Offline plus hardware | A/B health/fallback, idle staging/next-boot activation, opt-out, customization, software/network/access administration and bounded history are usable together |
-| 7 | Finish recovery and complete release assembly | Offline plus hardware | Signed restore, preserved-slot boot, missing/corrupt state handling and user-data restore work; full factory-sized artifact and source/license manifests pass |
-| 8 | Qualify and document the supported stock release | Hardware, offline and owner | Clean installation, recovery drills, sustained workload/print/update regressions, actual stock profile evidence and release/license decisions complete |
+| 1 / G1 | Regain SD control and pass corrected H12 preflight | Exact reviewed warm reboot, prepared serial interception, verified SD script; authenticated read-only reconciliation, fresh signed preparation and corrected selector delivery | Actual urh-04 admission/claim/preflight and required automatic return; current target/environment/RTC/p5 evidence |
+| 2 / G2 | Finish writerless delivery and reliable commissioning host | Distinct reviewed/authorized urh-05 write/readback/return; compose accepted host fixes and establish normal host operation | Physical full-image verification/return, persistent access/state, usable administration and reliable enough boot/DRAM behavior for commissioning |
+| 3 / G3 | Commission and print on test-sv08-01 | Finish actual configuration substitutions; H01/H05 facts; staged attended H06 | Matching host/MCUs, sensor/reference/input checks, outputs/homing/heat/calibration, first print and print controls |
+| 4 / G4 | Complete host product and independent recovery | Integrate accepted work, then bounded required administration/update/restore/peripheral gaps | Factory-capacity complete artifact; physical A/B health/fallback, export/restore, persistent state/identity and required UI/peripherals |
+| 5 / G5 | Qualify and document supported stock release | Source/license/rebuild closure plus stock install/recovery/printing/failure tests | Actual stock qualification, representative regressions, documented conversion/recovery and release decision |
 
-The numbering is priority, not an instruction to wait for unavailable hardware.
-After packages 1–3, begin hardware commissioning when available; meanwhile continue
-ready offline portions of 6–8. Production convenience features are not a dependency
-of first-print testing. Conversely, a successful first print does not complete the
-host OS or establish a supported release.
+G3 starts once its real host/sensor prerequisites pass; G4 administration completion
+and G5 stock access are not universal first-print prerequisites. Continue authorized
+offline requirements while physical work waits, with one implementation active.
+Optional features remain paused. Each new substantive implementation still needs
+its bounded approval and independent verification; this plan is not that approval.
 
-### 1. Independent recovery export
+### 1. Immediate H12 checkpoint
 
-Execute the already approved [export composition proposal](features/host-recovery-export-composition/proposal.md).
-Reinspect the independent recovery artifact and its package/module inventory;
-prepare trusted media context; establish partition and whole-medium read-only
-state before mounting sources with journal replay suppressed; validate the exact
-compressed `/usr` chain. Exercise installed GTK touch, keyboard and mouse workflows
-with emulated removable media. Cover dirty sources, damaged state, removal/change,
-lock contention, corruption, insufficient space and failure cleanup. Record image,
-source-preservation and resource measurements, then obtain independent verification.
-Do not expand this delivery to restoration or networking.
+Use the demonstrated warm reboot with a prepared sole serial controller; capture
+readiness must precede the keyboard request. Confirm the actual stopped U-Boot
+prompt before the known SD boot sequence. Once SD SSH returns, reconcile spare
+identity, both redundant environments, Linux/RTC and read-only p5, preserving
+beforeimages outside target tmpfs. Then use the accepted selector correction and
+fresh preflight inputs through the existing distinct stage/arm/boot reviews.
 
-### 2–5. Critical path to printing
+One capture success does not complete urh-04 or authorize urh-05. Never reuse an
+expired job or assume an absent marker. The unapproved return-guard proposal is a
+contingency outside the active implementation path. A specific interception failure
+may justify a bounded correction or simpler physical recovery; it does not by
+itself justify another general automation framework. Reuse unchanged offline
+checks and decide the next experiment from the last actual result.
+
+### G2–G3. Critical path to printing
 
 Finish the vendor compatibility inventory with explicit outcomes: upstream
 configuration, required adaptation, or deliberately deferred behavior. Use upstream
@@ -131,7 +127,7 @@ Use the staged sequence in [sensor bring-up](hardware/test-sv08-01-sensor-bringu
 Retain output tests as separate controlled actions. Never infer safety from
 configuration parsing, plausible ambient readings or successful MCU communication.
 
-### 6. Complete administration and transactional updates
+### G4. Complete administration and transactional updates
 
 - Connect boot reconciliation, bounded health confirmation, watchdog/fallback and
   board environment handling. Demonstrate A → B → A and exhausted/broken trials
@@ -150,7 +146,7 @@ configuration parsing, plausible ambient readings or successful MCU communicatio
 - Run assembled-system races and failure cases: late state writes, job start vs
   update, disk/inode exhaustion, migration failures and customized-slot refusal.
 
-### 7–8. Recovery, peripherals and release qualification
+### G4–G5. Recovery, peripherals and release qualification
 
 Complete trusted signed restore, preserved-slot selection and explicit first-boot
 state initialization through recovery UI. Missing state must not trigger automatic
@@ -184,7 +180,9 @@ and [printer recovery tasks](hardware/test-sv08-01-recovery-tasks.md); this plan
 not replace those lists.
 
 - Establish true power isolation: the serial adapter can back-power the host.
-  Start capture before reconnecting it or restoring power.
+  For warm capture keep USB connected and reset in software. For true cold capture,
+  establish an independently ready receiver or verified reset/power arrangement;
+  waiting for the power-supplying onboard bridge to enumerate can miss early bytes.
 - Provide accessible board markings and hotend/bed sensor details, an independent
   temperature reference, and physical observations/input operations for commissioning.
 - Attend motion, heating, first prints and power-interruption tests. Move only the
@@ -210,7 +208,7 @@ reclassifying required Wi-Fi, HDMI, preservation or recovery as optional.
 For each package, keep a bounded proposal where required, implementation, targeted
 validation, evidence and independent delivery review. Distinguish offline,
 physical-test and release status. Continue independent authorized work while
-human tasks wait. Revisit estimates after recovery composition and the first
-cold-boot/commissioning session; elapsed time for unknown DRAM and sensor behavior
-cannot yet be estimated responsibly. Publishing and hardware actions follow their
+human tasks wait. Reassess effort after the G1 SD-return/preflight checkpoint and the first
+commissioning session; unresolved physical behavior prevents a reliable delivery
+date. Recovery export composition is already accepted offline. Publishing and hardware actions follow their
 applicable authorization; this planning update initiates neither.

@@ -1,5 +1,11 @@
 # Host OS completion checklist
 
+Current execution order was reset on 2026-10-01; see the
+[recalibrated plan](../remaining-work-plan.md). Warm boot capture passed; SD return and corrected
+physical H12 preflight are next. Recovery export composition, printer-interface
+and boot-health implementations are accepted offline. Older dated observations
+below do not establish current boot counters, access or active assignments.
+
 Updated 2026-09-13. This is the completion gate for the new host, not a claim
 that all project work is complete. Printer availability and read-only host
 enumeration were re-established on 2026-09-12; see the
@@ -179,8 +185,9 @@ enumeration were re-established on 2026-09-12; see the
   USB/LAN signed restore and export of readable user data without formatting it.
   Integrate/review the trusted premounter with the independent image, including the
   complete system-media inventory and participation by every media mutator. The
-  [approved export composition](../features/host-recovery-export-composition/proposal.md)
-  covers the next independent boot-to-export journey; restoration remains separate.
+  [export composition](../features/host-recovery-export-composition/record.json)
+  is now independently accepted offline, completing the boot-to-export integration
+  portion. Physical export/media acceptance and restoration remain separate.
 - [ ] Integrate the reviewed recovery-media policy and an explicit first-boot state
   initialization flow. Physical v3 boot confirmed that the current diagnostic image
   intentionally lacks both policy and `/data/sv08/state.json`, leaving recovery in

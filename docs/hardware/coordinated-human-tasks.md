@@ -13,6 +13,22 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
+## Current dispatch — 2026-10-01 reset
+
+Immediate priority is G1/H12: use the demonstrated warm-reset/capture path for a
+reviewed U-Boot interception and return to the known SD recovery system, then
+reconcile current media/environment/RTC/p5 and pass corrected physical preflight.
+No physical owner action is requested by this planning reset. The old H03 media
+move instructions below are historical, not a fresh request. H09/H10 and the H13
+SD host boot retain their completed evidence; present authenticated SD access
+still must be regained. H11 physical A/B acceptance remains future work.
+
+H01/H05 essential sensor facts and reference measurements, H04 peripheral checks,
+H06 attended printing, H07 failure/recovery and H08 stock/license work remain
+open only to their actual unresolved extent. See [current goals](../../.codex/current-goals.md)
+and [assessment](../development/goals-reset-20261001.md). Preserve the dated
+history below without treating old counters or reachability as current facts.
+
 | ID / shared action | Prepare before asking | Consumers and execution order | Evidence reuse / invalidation |
 | --- | --- | --- | --- |
 | H01 — One accessible, fully unpowered inspection | Consolidated list of unresolved board/sensor facts, existing marking evidence and a safe isolation procedure; no unnecessary heatsink removal | Host PCB/DRAM/radio/PMIC identity; installed bed/hotend sensor and circuit identity; outstanding board revisions | One private evidence set with public nonsecret conclusions; repeat only for changed hardware/wiring or an unresolved essential detail |

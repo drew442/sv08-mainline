@@ -8,6 +8,14 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
+**Current priority (2026-10-01):** the [goal reset](.codex/current-goals.md)
+puts SD recovery control and corrected H12 preflight first, then reliable host
+operation, first print, complete host OS and stock qualification. Initial boot
+capture now works through a warm reboot with USB continuously connected; see
+[measured results](docs/hardware/host-h12-boot-capture-rethink-20261001.md).
+The following image summaries retain historical evidence; use the current plan
+for live assignments and inspect device state before another operation.
+
 **Status: diagnostic host image physically boots; printer commissioning and
 release work remain open.** The v5 image was written to the spare eMMC with
 verified readback and reached Debian, SSH, Wi-Fi, and persistent `/data`. Cockpit

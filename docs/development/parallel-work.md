@@ -4,6 +4,24 @@ Assigned 2026-09-18 under the owner's request for parallel goals and deduplicate
 human work. This coordinates the [remaining work plan](../remaining-work-plan.md);
 it does not change its acceptance requirements or authorize new product scope.
 
+
+## Current dispatch — reset 2026-10-01
+
+Use [the current G1–G5 goals](../../.codex/current-goals.md) and
+[assessment](goals-reset-20261001.md). The assignments/checkpoints below are
+historical, not active leases. Recovery export composition, printer-interface and
+boot-health implementations have since passed independent offline verification.
+No production implementer is currently dispatched by the feature workflow.
+
+The coordinator's immediate task is the reviewed H12 warm-reset/interception/SD
+return, followed by current-state reconciliation and corrected physical preflight.
+The unapproved return-guard proposal is a contingency, not the next mandatory
+implementation. Ready authorized preparation for printer and host acceptance may
+continue with bounded ownership; no old worker is implicitly resumed by this reset.
+One implementation/heavy-build owner and the existing single human queue persist.
+
+## Historical assignments and checkpoints
+
 ## Goals and ownership
 
 | Lane / agent | Delivery goal | First bounded assignment | Completion gate |

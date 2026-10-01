@@ -1,5 +1,11 @@
 # Feature checklist
 
+Current execution order was reset on 2026-10-01; see the
+[recalibrated plan](../remaining-work-plan.md). Warm boot capture passed; SD return and corrected
+physical H12 preflight are next. Recovery export composition, printer-interface
+and boot-health implementations are accepted offline. Older dated observations
+below do not establish current boot counters, access or active assignments.
+
 This is the short project overview. A checked item has the evidence described in
 its linked record; it is not automatically a supported-release claim. Detailed
 host and hardware acceptance work remains in the
@@ -32,13 +38,16 @@ host and hardware acceptance work remains in the
   [first-boot findings](../hardware/host-board-image-20260925-v5-first-boot.md).
 - [x] Disposable SD launcher and read-only NFS-root diagnostic boot passed on
   `test-sv08-01`; see the [physical result](../hardware/host-sd-network-first-boot-20260926.md).
-- [ ] Complete-host network root and an authenticated SD/network recovery path
-  remain unvalidated; see the [development assessment](../hardware/host-network-boot-investigation.md).
+- [x] The named SD host test reached Linux, authenticated SSH and GUI; see its
+  [physical result](../hardware/host-sd-recovery-host-first-boot-20260929.md).
+  Current SD access needs regaining after the later H12 fallback.
+- [ ] Complete-host NFS and production signed network recovery remain unvalidated;
+  see the [development assessment](../hardware/host-network-boot-investigation.md).
 - [x] DRAM diagnostic loader with bounded failures and a captured successful
   final-validation path.
-- [ ] Reconcile the unconfirmed v5 A-slot trial before a routine reboot. The
-  current boot-health and RAUC units are masked; one A attempt has been consumed
-  and the read-back environment showed two remaining after boot.
+- [ ] After the reviewed H12 SD return, reconcile current raw environments,
+  marker and RTC before preparing the corrected preflight. Historical v5
+  counters are not current-state evidence.
 - [ ] Complete reproducible production boot-chain pins, physical power-loss tests,
   health confirmation and release-image assembly.
 
@@ -73,8 +82,10 @@ host and hardware acceptance work remains in the
 - [x] Physical recovery selection was captured with the earlier diagnostic loader.
 - [x] Read-only recovery diagnostics and verified archive export are implemented
   and tested offline.
-- [ ] Integrate trusted recovery-media identification, signed restore, first-boot
-  state initialization and preserved-slot recovery operations.
+- [x] Trusted independent boot-to-export composition is independently accepted
+  offline; see the [record](host-recovery-export-composition/record.json).
+- [ ] Complete signed restore, first-boot state initialization and preserved-slot
+  recovery operations, with physical export/media acceptance still required.
 - [ ] Test recovery UI visually with HDMI touch, keyboard, and keyboard plus mouse.
 
 ## Hardware integration and peripherals
