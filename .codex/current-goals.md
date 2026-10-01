@@ -112,6 +112,13 @@ The offline task is done, with a reproduced baseline false success and 23 passin
 tests. See [the record](../docs/features/recovery-intake-receipt-binding/record.json).
 Fresh downstream image assembly and physical recovery gates remain open.
 
+## Coordinator resources
+
+Disk pressure was relieved by moving one closed historical QEMU disk to a durably
+verified private Beelink archive before retiring its local duplicate. About 1.3 GiB
+was recovered; original bytes and restore metadata remain preserved. See
+[the storage record](../docs/development/artifact-preservation-20261001.md).
+
 ## Tracker status
 
 At 12:07 UTC the application returned no current goal. A fresh G1–G5 goal was
