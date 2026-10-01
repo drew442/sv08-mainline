@@ -316,3 +316,22 @@ if the cache is lost. This recovered 47 MiB on the coordinator root without dele
 the failed candidate bytes. No retired/expired job is reusable. Later physical
 boot preparation must retain raw environment preimages/journals durably outside
 target tmpfs before reboot. The complete project goal remains active.
+
+### 2026-10-01 development storage and SD return
+
+The owner authorized Beelink VG expansion when needed. A separately reviewed
+32 GiB root LV/online ext4 growth completed with exact geometry, identity,
+other-volume and error checks; see [actual storage evidence](../docs/development/beelink-storage-20261001.md).
+Beelink now has about 31.7 GiB available; subsequent artifacts still require
+bounded allocations. The coordinator root is a different host and was not
+expanded.
+
+Bounded planning found no unmodified recovery guard admission for the current
+failed H12 state. Its used September 29 exception requires disabled markers;
+the expired preflight marker may still exist, and current raw environments/RTC
+remain unknown. The Recovery GUI Boot A/B controls change policy and do not
+provide generic SD restart. A new attempt-specific guard amendment needs genuine
+delegated scope review, source-bound independent delivery verification and
+immediate high-tier action review; standing same-scope owner authority persists.
+No old exception/receipt, fabricated fresh environment or claimed marker absence
+may substitute for those gates. Continue only the required H12 correction.
