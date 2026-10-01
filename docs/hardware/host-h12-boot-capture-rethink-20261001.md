@@ -1,0 +1,206 @@
+# H12 boot capture: separate monitoring from host startup
+
+2026-10-01. Original SV08, test-sv08-01, owner-reported H616_JC_6Z_V1.2.
+This research responds to the owner's request to rethink H12, use practical
+bounded experiments and temporarily use GPT-6 Astra/high until H12 is resolved.
+Printer function is unnecessary during host-image development. Temporary use of
+headers/ports and additional USB-TTL hardware is permitted; soldering is a last
+resort. This is not physical qualification of a new wiring or reset procedure.
+
+## Problem and direction
+
+The owner reports that connecting the onboard USB-serial port supplies host power.
+The H616 can start emitting before USB enumeration and terminal opening finish.
+A faster terminal or reconnect loop cannot recover bytes already lost. The
+solution is to have a receiver active before the event being observed.
+
+Two approaches directly address that ordering:
+
+1. Keep the onboard USB bridge connected and recording, then reset the H616 in
+   software. The [first urh-04 attempt](host-h12-urh04-first-boot-20261001.md)
+   already captured SPL, main U-Boot and Linux after an ordered SSH reboot, so
+   this works in at least that measured software state. Current recovery lacks
+   SSH; identify another existing software control before building more guard
+   infrastructure.
+2. Power an external USB-TTL receiver independently from Beelink and attach it
+   to the existing H616 console TX and common ground. Start capture before
+   applying host power. This can cover cold boot without depending on the
+   onboard bridge's enumeration. Exact accessible signal point and voltage need
+   identification on the installed board.
+
+## Practical first diagnostic
+
+Retained `build/host-kernel-61851-v1/output/.config` enables
+CONFIG_SERIAL_8250_CONSOLE, CONFIG_MAGIC_SYSRQ, CONFIG_MAGIC_SYSRQ_SERIAL and
+CONFIG_SUNXI_WATCHDOG. MAGIC_SYSRQ_DEFAULT_ENABLE is 0x1, but that does not
+establish the live sysctl policy. Linux documents serial BREAK followed within
+five seconds by a command; `h` prints help. Therefore one BREAK plus `h`, with
+capture active, is a useful non-rebooting trial for current kernel control.
+A positive help response establishes live serial SysRq handling, not permission
+for every SysRq operation or proof of successful reset. A later reset is a
+separate reviewed experiment; SysRq `b` resets immediately without syncing, so
+it must not be sent casually as the discovery probe.
+
+A separate Sol/high reviewer admitted one help-only diagnostic with conditions.
+The coordinator verified the current collector identity/source/sole descriptor,
+limits, private script hash and recovery path, then ran one bounded probe.
+BREAK returned after approximately 258 ms; `h` was sent about 2.7 ms later.
+The five-second receive window produced **zero bytes**. This is inconclusive:
+it does not establish whether the live policy, target liveness, BREAK delivery
+or serial receive path prevented a response. No reset command or repeated probe
+followed. Raw response and operation receipts are retained.
+
+Receive-only collection was independently verified restored with a new PID,
+matching pinned source/cmdline, a new ready event, sole O_RDONLY UART descriptor,
+12-hour runtime, 4 MiB per-file cap, Restart=no and private umask. Original log
+inodes/content were preserved. Opening the port and driver BREAK handling can
+change modem lines/configuration; no claim of zero electrical side effects is
+made. No explicit DTR/RTS or target-power operation was issued.
+
+## Warm capture physically demonstrated
+
+A separate Astra/high action review admitted a revised, fixed keyboard trial
+under the latest direct owner instruction and standing same-spare recovery
+scope. The September 29 disabled-marker condition applied to its named guard
+exception; this experiment does not reuse that guard or assert marker absence.
+The earlier Sol/high FAIL and its candidate remain preserved. Its concrete
+nonblocking HID release defect was corrected with blocking writes; possible
+held-key/forced reset and incidental boot writes remain acknowledged.
+
+The coordinator kept the existing receive-only serial collector open, switched
+to VT2 with Ctrl-Alt-F2/release, waited one second, and sent Ctrl-Alt-Delete/release
+once through the existing KVM keyboard. The remote sender had a 13-second TERM
+plus 2-second KILL bound. All four eight-byte reports were accepted and the
+sender exited zero in about 1.65 seconds. More importantly, the target recording
+shows `Received SIGINT`, activation of `reboot.target`, orderly shutdown and
+`reboot: Restarting system`, followed by:
+
+- `U-Boot SPL 2026.07 (Sep 13 2026 - 00:00:00 +0000)`;
+- initial DRAM diagnostics and main U-Boot reporting 1 GiB;
+- main `U-Boot 2026.07`, H616 identity and the full three-second autoboot countdown;
+- two bad-CRC/default SD environment messages, the 1250-byte wrapper and preserved
+  720-byte original recovery script;
+- Linux `6.18.51-sv08-candidate1` and original recovery startup.
+
+**The early warm-boot capture problem is solved for this measured state.** The
+USB cable stayed connected, the receiver stayed open, and no extra hardware,
+power cycle, soldering or printer operation was needed. The next H12 operation
+can use this observed warm-reset path with a prepared serial controller to stop
+at U-Boot and return to the known SD system. That interception/return was not part
+of this capture-only trial and has not yet been performed.
+
+This does not establish cold-start-only fault capture, reliable reset from a
+hung kernel, DRAM reliability or urh-04 preflight acceptance. No preflight FIT
+entry or `PREFLIGHT_PASS` occurred. Current raw environments/marker/RTC still
+need reconciliation after an authenticated SD return. The old guard proposal
+remains unapproved; capture success does not approve or require its implementation.
+
+The 115-second observation retained **72,158 new console bytes**, with received
+events from 04:50:10 through 04:51:25 UTC. Exactly one SPL banner was observed;
+original recovery reached its target and reported startup complete. No collector
+port error appeared. A separate postcheck found the same PID64017/starttime and
+sole O_RDONLY descriptor, intact log inodes and active original caps.
+
+Raw capture SHA-256:
+`5a2c53575437e311ae95487a59d9f7c1e82cbdf39fd7a8e687235b5d87e728d3`.
+Event slice SHA-256:
+`3e43179cf2918ea7dfdc702ea5fee26a4731837d521655d35a7588e6f70d77c0`.
+Keyboard receipt SHA-256:
+`b26b4ab3148ac2758ddc487f5ccf9c168fbe811ace838d75470acbca26688b16`.
+Revised action review SHA-256:
+`08e35cc528c204b8e40434f24bbde072f1f51cff0cbceae40fc8b2e581c6d554`.
+These are private evidence under the scratch directory below, not committed logs.
+
+The first coordinator admission stopped before any HID because its termios
+comparison omitted baud bits in `c_cflag`. That comparison was corrected against
+the independently observed attributes; the refused admission and original
+script were preserved. This was not a second keyboard attempt. The actual
+keyboard attempt has one canonical exclusive receipt.
+
+## Cold-boot receiver experiment
+
+After signal identity and electrical levels are established, the first wiring
+trial uses only adapter RX to host TX and adapter ground to board ground. Leave
+adapter TX, VCC, RTS and DTR disconnected. The onboard bridge can remain the
+host power source; the external receiver must already be enumerated and recording
+before that host-power connection. Use the known console rate, 115200 8N1.
+Check that the chosen adapter does not feed the unpowered board through its RX
+input; a voltage-selector label alone does not establish the adapter's signal
+levels or leakage. If a receive-only connection back-powers the board, use an
+appropriate buffered/isolated receiver rather than accepting ambiguous startup.
+
+Observe from the first emitted SPL bytes through U-Boot and kernel. Absence of
+Boot ROM text is not a capture failure; this is a test of available console output.
+Retain a continuous timestamped raw recording. Capture alone can succeed without
+printer services, motors, heaters or a functional printing configuration.
+
+Only after capture works should bidirectional control be considered. An external
+TX output must not be tied to an onboard bridge TX output driving the same H616
+RX net. Use one transmitter, or positively isolate the other. Clips or an existing
+verified connector are preferred before soldering.
+
+## What the documents actually establish
+
+Sovol's `MCU_PIN_definition.pdf`, page 1 (printed manual page 23), labels UART0,
+UART3 and the USB-to-UART Type-C connection. Closer visual inspection associates
+the UART0 arrow with the Type-C port; it does not provide a verified separate
+TTL-header pin order. The pictured board is marked V1.1; the published MCU
+schematic filename says V1.2, and the installed V1.2 remains owner-reported.
+Do not transfer a header pinout from SV08 Max, Zero or a BTT CB1.
+
+The EXP2 RESET label is the STM32 NRST net in
+`H616_JC_6Z_V1_2_MCU.pdf`, page 1, U14 pin 14. It is not evidence of an H616
+reset connection. No confirmed accessible H616 reset pad/button or complete
+host/USB-bridge power schematic was found in these two published documents.
+
+H616 UART0 uses PH0/PH1 in the selected software/pin mux; an SoC pin assignment
+does not locate a connector or accessible PCB pad. Other UARTs need bootloader
+and kernel console routing changes; simply enabling a Linux overlay will not
+recover the current SPL output. USB gadget console starts too late for SPL.
+FEL is a boot/recovery transport, not a transparent stream of normal boot logs.
+A VBUS blocker alone does not solve the problem if bridge and host both lose
+power. Do not short an unidentified reset/PMIC or power net.
+
+## Sources and execution record
+
+Primary documents accessed 2026-10-01:
+
+- [Sovol connector drawing](https://github.com/Sovol3d/SV08/blob/a60644875f8c756d20b3828c9416518b414b5491/Motherboard/MCU_PIN_definition.pdf), page 1,
+  SHA-256 `8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa`.
+- [Sovol MCU schematic](https://github.com/Sovol3d/SV08/blob/a60644875f8c756d20b3828c9416518b414b5491/Motherboard/H616_JC_6Z_V1_2_MCU.pdf), page 1,
+  SHA-256 `5d6afc6560feca7bef237e468778e1ff00d6d7c5ee9f22ce5a4c712f76f0a023`.
+- [Linux serial SysRq documentation](https://docs.kernel.org/admin-guide/sysrq.html),
+  serial BREAK protocol and help/sync/remount/reboot semantics; retained selected
+  kernel source/configuration supplies the build-specific checks.
+- [linux-sunxi UART development guide](https://linux-sunxi.org/UART),
+  voltage, separate power, leakage and console limitations.
+- [Allwinner H616 datasheet revision 1.0](https://linux-sunxi.org/images/b/b9/H616_Datasheet_V1.0_cleaned.pdf),
+  GPIO multiplex functions, PH0/PH1 UART0; not an SV08 wiring diagram.
+- [Allwinner H616 full datasheet](https://mangopi.org/_media/h616_datasheet_v1.0.pdf),
+  revision 1.0, pages 23–24, 27 and 29: UART0 supply domain/mux and active-low
+  RESET ball A16. No accessible SV08 reset point follows from the BGA pinout.
+- [TF-A H616 native reset implementation](https://github.com/ARM-software/arm-trusted-firmware/blob/c2a0e7080d64d69940be4ad0ff6578501f3cbf9e/plat/allwinner/common/sunxi_native_pm.c#L54),
+  watchdog-based system reset consistent with the observed warm boot, without
+  claiming this capture identifies the handler used.
+- [U-Boot Allwinner documentation](https://docs.u-boot-project.org/en/latest/board/allwinner/sunxi.html),
+  FEL transport and boot behavior.
+
+A native Astra launch hit the existing thread limit. Under the owner's explicit
+temporary model authorization, the coordinator launched a separate supported
+CLI session with per-run GPT-6 Astra/high and disabled child delegation. Its completed recommendation is an independent
+receiver on the same UART0 TX net for lasting cold capture, with one ordinary
+keyboard warm-reboot trial as the cheapest immediate route. Actual
+runtime model/effort/full-access/never were observed. Project and user-global model
+configuration were not edited. The help diagnostic used a separate Sol/high action reviewer. The revised
+keyboard trial used a fresh independent Astra/high session under the explicit
+temporary-model authority, carrying the same high-consequence review contract.
+Both actual runtime settings were observed; the researcher did not approve its
+own experiment.
+
+Read-only Beelink inspection found the existing bounded collector active with
+PID 55270; its source hash matched, console was 230456 bytes and event log
+733928 bytes. The retained tail ends in original recovery/systemd output. This
+is observation of the collector and retained log, not proof of current H616
+liveness. No port reopen, serial transmission or reset was performed by that
+inspection. Private research, runtime, probe/review and operation evidence remain
+under ignored `local/feature-workflow/probes/h12-boot-capture-rethink-20261001/`.

@@ -1,6 +1,6 @@
 # Current subclient goals
 
-Updated 2026-09-30. These are bounded assignments under the existing
+Updated 2026-10-01. These are bounded assignments under the existing
 [remaining-work plan](../docs/remaining-work-plan.md) and
 [parallel delivery plan](../docs/development/parallel-work.md). The owner has
 paused optional new features, but explicitly authorized the active goal to
@@ -355,3 +355,35 @@ are retained. No role substitution, invented approval, guard implementation or
 physical retry occurred. Obtain genuine independent scope approval, then one
 implementation and separate high delivery/action reviews. Full goal remains
 active; this turn produced source evidence and a reviewable pending correction.
+
+
+### 2026-10-01 H12 capture rethink: warm boot captured
+
+The owner's explicit practical-trial instruction and temporary Astra/high authority
+produced [a demonstrated capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
+With USB power and the serial receiver continuously connected, one independently
+reviewed KVM VT2/Ctrl-Alt-Delete sequence produced orderly shutdown and captured
+initial SPL, DRAM diagnostics, main U-Boot and Linux original recovery. No new
+hardware or soldering is required for this measured warm-boot path. A preceding
+BREAK plus help-only SysRq trial produced no response; no blind SysRq reset followed.
+
+A distinct Astra/high review found the old disabled-marker guard restriction
+specific to its earlier named attempt. It admitted this one-off capture packet
+under the latest owner authority while retaining possible persistence/marker
+writes and forced/extra-reset risks. The original Sol/high FAIL and nonblocking
+candidate remain preserved; blocking HID writes corrected the concrete release
+race. This does not approve the pending production return-guard proposal. No
+implementation of that proposal is needed merely to establish boot capture.
+
+Next H12 work is an exact reviewed interception using the demonstrated warm-reset
+path and a prepared sole serial controller, then the known SD recovery script,
+authenticated target/RTC/environment/p5 reconciliation and fresh preflight inputs.
+The accepted selector repair remains unstaged; urh-04/05 remain open. The current
+receive-only collector is `sv08-recovery-capture-h12sysrqhelp20261001.service`,
+PID64017 at the recorded check, with its original 12-hour lifetime/4 MiB file caps.
+Recheck it before any next boot; do not copy this PID as permanent identity.
+
+Separate supported CLI sessions bypassed the native agent thread limit under the
+recorded fallback; actual Astra/high and Sol/high settings were observed. No
+project/global model configuration changed. Temporary Astra authority continues
+only for H12; normal project role mapping remains the default thereafter.

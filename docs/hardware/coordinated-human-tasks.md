@@ -251,3 +251,15 @@ verification and is merged locally; see [accepted repair evidence](../design/una
 boot/marker removal/full-image action. Original GUI visual confirmation is pending.
 Standing urh-04 authority is recorded; later exact reviews/current gates remain
 required without repeated same-scope permission.
+
+
+H12 capture update, 2026-10-01: [one reviewed warm-reset experiment](host-h12-boot-capture-rethink-20261001.md)
+kept USB power/serial connected and captured SPL, DRAM initialization, main U-Boot
+and Linux recovery using the existing KVM keyboard. The capture obstacle has a
+measured solution; no media move, new adapter or soldering is currently required
+for warm-boot capture. A future need for true cold-start capture can use a separate
+RX-only receiver after identifying the actual console TX point and signal level.
+The next bootloader interception/SD return is a distinct reviewed operation under
+existing owner authority. Original recovery reached its target; H12 preflight,
+current raw environment/marker/RTC reconciliation and printer commissioning remain
+open. The prior failed attempt and unapproved return-guard proposal are preserved.
