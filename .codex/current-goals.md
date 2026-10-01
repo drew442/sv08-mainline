@@ -265,3 +265,17 @@ the host, Ethernet connected, spare eMMC installed, factory module stored and no
 new irreplaceable spare data. Exact reply/provenance is privately recorded.
 This answers the physical-facts question only; the separately requested urh04
 metadata/boot-policy/action authorization remains pending. No write/boot action.
+
+### 2026-10-01 urh-04 authority and preparation checkpoint
+
+Owner authorized the complete identified urh-04 sequence with setup unchanged
+and standing authority for these changes; repeated permission is no longer
+required within that scope. Immediate independent operation review persists.
+See [authority decision](../docs/decisions/20260930-h12-urh04-standing-authorization.md)
+and [fresh candidate evidence](../docs/hardware/host-h12-preflight-candidate-20260930.md).
+A distinct replacement job expires at 00:47:49 UTC on 2026-10-01. Its actual
+artifact and 27-file volatile host transfer/postcheck passed. Original expired
+inputs/evidence remain preserved. The refreshed p5 packet was rejected before
+execution for stale artifact constants; a corrected distinct packet is under
+independent review. Physical urh-04 acceptance remains pending; the full delivery
+goal and pause on optional new features remain unchanged.

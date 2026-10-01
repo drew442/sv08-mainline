@@ -144,3 +144,35 @@ review condition before execution. See the [complete prospective urh-04 plan](ho
 Subsequent environment, marker, claim-service and boot operations still require
 their own exact reviews. A bounded claim-service source packet is prepared
 privately; no service has been launched or claim consumed.
+
+## Owner standing authorization and fresh candidate, 2026-10-01
+
+The [standing authorization decision](../decisions/20260930-h12-urh04-standing-authorization.md)
+records the owner's approval of the complete urh-04 sequence and unchanged setup.
+The previous job was below its reviewed entry margin and remained unserved;
+it was preserved without extending or rearming it. A distinct replacement job
+`8bd9a5860bc40abf37f14e5011544d18` uses distinct signing inputs and claim state,
+expires at 2026-10-01 00:47:49 UTC, and remains subject to expiry admission.
+
+The actual replacement build digest is
+`ed55f4f1fe73810017407a928d1157715ebc6610a4f030b0a439bd959fa2d4b6`.
+Its 48,902,416-byte FIT digest is
+`71dff7451462e7739779e8770196444c48c6bcd61650fe197040a4479dd216e9`.
+Compilation and actual artifact/signature/purpose verification passed using the
+accepted source. These are preparation results, not physical FIT boot evidence.
+
+An independent GPT-6.1 Sol high review approved the exact volatile swap with
+conditions. The coordinator recorded a 300-second outer process-group watchdog,
+reran the exact runtime-tool postcheck, and verified retained originals. The
+one transfer returned zero and actual host artifact verification passed. The
+independent read-only target postcheck verified all 27 files (98,740,075 bytes),
+root ownership, modes, link counts, exact object set and absence of the expired
+volatile tree. The original coordinator/Beelink artifacts and evidence remain.
+The SD boot, read-only root and 256 MiB `/tmp` were unchanged.
+
+The first refreshed p5-stage packet retained an old final FIT hash and free-space
+size. Independent review rejected it before execution. A distinct corrected
+packet replaces both values and requires its own review. No p5 staging,
+environment arming, marker activation, claim consumption or boot has occurred
+at this checkpoint. Exact private receipts remain under
+`local/feature-workflow/probes/h616-physical-preflight/h12-access-20260930/physical-candidate-refresh-f6927b8b/`.

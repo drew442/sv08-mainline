@@ -83,3 +83,17 @@ and there is no new irreplaceable spare data. PSU-off, USB host power, Ethernet,
 installed spare and stored factory module are therefore owner-confirmed current
 facts. This reply answers only the setup question. Separate action approval for
 urh04 remains pending; no p5/environment/marker/boot operation has occurred.
+
+## Standing authority and replacement inputs
+
+The owner subsequently authorized urh-04 with unchanged setup and removed the
+need for repeated explicit authorization within this scope; see the
+[recorded decision](../decisions/20260930-h12-urh04-standing-authorization.md).
+Earlier pending-authority statements describe their historical checkpoint.
+Independent immediate operation reviews and observed acceptance remain required.
+
+The expired original job is preserved and must not be used. The
+[fresh candidate record](host-h12-preflight-candidate-20260930.md) identifies the
+replacement job, expiry, build/FIT hashes and completed volatile verification.
+Each subsequent exact operation uses those replacement pins and its own reviewed
+packet. Full-image urh-05 and printer commissioning remain separate scopes.
