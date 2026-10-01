@@ -111,9 +111,9 @@ Normal Sol role defaults continue elsewhere and after H12; no model configuratio
 was changed by the capture experiment or this reset. One implementation and bounded
 independent review remain the normal resource policy; scheduling stays disabled.
 
-## Goal-tracker history and resolution
+## Goal-tracker limitation
 
-At the initial reset, the old application goal described the full project and had status `blocked`.
+The old application goal still describes the full project and has status `blocked`.
 The coordinator attempted to replace it with G1–G5 through `create_goal`; the tool
 returned: `cannot create a new goal because this thread has an unfinished goal; complete the existing goal first`.
 Available controls expose create/get and complete/blocked/paused status updates,
@@ -121,7 +121,3 @@ but no objective edit, cancel, reset or resume. The project is unfinished, so
 marking it complete to unlock replacement would be false. Repository goals and
 plans have been reset; application-goal replacement requires a user-side control
 if available. Manual authorized work can continue independently of that flag.
-
-At 12:07 UTC on 2026-10-01, `get_goal` returned null. At 12:11 UTC the
-coordinator created a fresh active G1–G5 goal using the existing owner request.
-The earlier limitation is resolved; project completion has not been claimed.
