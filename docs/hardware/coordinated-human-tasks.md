@@ -13,6 +13,22 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
+## Ready SD-reader preparation — 2026-10-02
+
+The owner confirmed a USB SD reader. Independent Sol/high preparation review
+passed with conditions for powering the host down by disconnecting USB while
+PSU remains OFF, waiting ten seconds, moving only the rescue SD into the reader,
+and connecting it to Beelink. Spare and factory eMMC remain untouched. No printer
+reconnect/boot, filesystem mount, repair or media write is included.
+
+Beelink's baseline contains only its SATA system disk and existing LVs. The
+coordinator temporarily stopped and runtime-masked `udisks2.service` to prevent
+that service from automatically mounting the inserted card; no relevant active
+volume-manager or media automount consumer was observed. Identify the new reader
+and stop on unexpected mounts/identity. Restore udisks2's previous enabled/active
+state after the card is safely removed. Private baseline and preparation receipt:
+`local/feature-workflow/probes/h12-picocom-sd-return-20261002a/reader-preparation.json`.
+
 ## Practical recovery outcome — 2026-10-02
 
 The owner's confirmed cable cycle completed. The receiver observed disappearance
@@ -49,8 +65,8 @@ opening/closing the UART remain unknown.
 
 Next: prepare a separately reviewed physical SD/media rescue. The coordinator
 has confirmed that the owner has a USB SD card reader;
-**no media movement or additional power cycle is instructed yet**. Keep PSU OFF
-and the present setup connected. Actual SD root/authentication, fresh media,
+the distinct SD-reader preparation above is now ready; no printer boot is
+instructed. Keep PSU OFF. Actual SD root/authentication, fresh media,
 environment/RTC/p5 reconciliation, repaired RAM preflight and automatic return
 remain open. Recovery preparation is distinct from permission for a full-image
 write, heaters or motion.
