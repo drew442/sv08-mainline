@@ -13,27 +13,47 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
-## Live practical recovery window — 2026-10-02
+## Practical recovery outcome — 2026-10-02
 
-The owner requested a ready recovery attempt and confirmed the physical setup
-unchanged for this restart. Fresh independent high-consequence review passed with
-conditions; native session `01a0fa22-6734-7a32-b72f-6263c117b3e8` was verified as
-GPT-6.1 Sol/high. Complete fresh admissions, source/runtime staging readback,
-effective unit commands/limits and supplemental live process/boot/mode checks
-passed. At 01:07 UTC the controller was active, PID 82021/starttime 32742953;
-old passive monitoring was stopped, the bridge was present and zero UART owners
-were independently observed. Original log append prefixes were preserved.
+The owner's confirmed cable cycle completed. The receiver observed disappearance
+and re-enumeration and captured main U-Boot; the host is no longer at the earlier
+SPL halt. It has **not** reached authenticated SD Linux. Cold-start byte capture
+remains a documented limitation and receives no further work.
 
-The receiver became ready at 01:06:36 UTC and waits until
-01:36:36 UTC. The owner was instructed at 01:07 UTC to leave PSU
-OFF and SD/eMMC untouched, unplug USB serial from Beelink for at least five
-seconds and reconnect to the same port once, then leave it connected. The user
-instruction conservatively expires at 01:36 UTC. No second reset is automatic.
-This is practical SD recovery using the unchanged reviewed route; complete first
-cold-boot bytes are not required. Actual disconnect/re-enumeration, gated SD boot,
-authenticated current intake and independent passive restoration remain to be
-observed. Private review/admission/source/live evidence is retained under
-`local/feature-workflow/probes/h12-manual-sd-return-20261002a/`.
+The initial scripted SD continuation stopped without a completed command result.
+An Enter-only continuation exposed a stale-prompt framing error; a separately
+reviewed CR/framing correction then timed out. Each attempt stopped and passive
+monitoring was independently restored. A proposed byte-paced script received an
+independent **FAIL** and was never staged or run. Those failures remain preserved.
+
+A distinct standard interactive picocom rescue received independent GPT-6.1
+Sol/high acceptance with conditions in session
+`01a0fa22-6734-7a32-b72f-6263c117b3e8`. Existing manual-recovery authority and fresh
+setup confirmation applied; operator text/echo/Enter/result decisions reconciled
+the earlier stop boundary without another scripted progression. Complete staging
+and live process, UART and PTY admissions passed before input. One CR completed
+the known residual and produced `mmc0 is current device` and a fresh U-Boot
+prompt. The next text-only `mmc dev 0` echoed incompletely. **No subsequent Enter,
+script load/source, reset or target write command was sent.** The coordinator
+stopped the terminal through separate SSH. This ends UART recovery attempts;
+no further terminal variants or automated retries are planned.
+
+Independent restoration verified passive unit
+`sv08-recovery-capture-h12picocomsd20261002a.service`, PID 85082/starttime
+33060992, root with the pinned Python source, sole O_RDONLY UART descriptor,
+12-hour/no-restart bounds, original log inodes and append-prefix hashes. Private
+admission, intent, PTY, raw capture, review and restoration evidence is preserved
+under `local/feature-workflow/probes/h12-picocom-sd-return-20261002a/`; preceding
+attempts retain separate directories. Board revision and electrical effects of
+opening/closing the UART remain unknown.
+
+Next: prepare a separately reviewed physical SD/media rescue. The coordinator
+has confirmed that the owner has a USB SD card reader;
+**no media movement or additional power cycle is instructed yet**. Keep PSU OFF
+and the present setup connected. Actual SD root/authentication, fresh media,
+environment/RTC/p5 reconciliation, repaired RAM preflight and automatic return
+remain open. Recovery preparation is distinct from permission for a full-image
+write, heaters or motion.
 
 ## Current dispatch — 2026-10-02
 

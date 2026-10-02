@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight reached RAM but refused claim, automatic return stopped in SPL DRAM training | Regain SD access through a coordinated manual restart or existing rescue route; use warm reboot when running; deliver the accepted startup repair using a fresh job | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight refused claim; subsequent manual restart reached U-Boot but serial rescue failed | Prepare physical SD/media rescue after the completed restart and failed serial routes; use warm reboot when running; deliver the accepted startup repair using a fresh job | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -22,27 +22,47 @@ for every G4 administration or G5 release feature. G4/G5 authorized preparation
 may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
 
-## Live practical recovery window — 2026-10-02
+## Practical recovery outcome — 2026-10-02
 
-The owner requested a ready recovery attempt and confirmed the physical setup
-unchanged for this restart. Fresh independent high-consequence review passed with
-conditions; native session `01a0fa22-6734-7a32-b72f-6263c117b3e8` was verified as
-GPT-6.1 Sol/high. Complete fresh admissions, source/runtime staging readback,
-effective unit commands/limits and supplemental live process/boot/mode checks
-passed. At 01:07 UTC the controller was active, PID 82021/starttime 32742953;
-old passive monitoring was stopped, the bridge was present and zero UART owners
-were independently observed. Original log append prefixes were preserved.
+The owner's confirmed cable cycle completed. The receiver observed disappearance
+and re-enumeration and captured main U-Boot; the host is no longer at the earlier
+SPL halt. It has **not** reached authenticated SD Linux. Cold-start byte capture
+remains a documented limitation and receives no further work.
 
-The receiver became ready at 01:06:36 UTC and waits until
-01:36:36 UTC. The owner was instructed at 01:07 UTC to leave PSU
-OFF and SD/eMMC untouched, unplug USB serial from Beelink for at least five
-seconds and reconnect to the same port once, then leave it connected. The user
-instruction conservatively expires at 01:36 UTC. No second reset is automatic.
-This is practical SD recovery using the unchanged reviewed route; complete first
-cold-boot bytes are not required. Actual disconnect/re-enumeration, gated SD boot,
-authenticated current intake and independent passive restoration remain to be
-observed. Private review/admission/source/live evidence is retained under
-`local/feature-workflow/probes/h12-manual-sd-return-20261002a/`.
+The initial scripted SD continuation stopped without a completed command result.
+An Enter-only continuation exposed a stale-prompt framing error; a separately
+reviewed CR/framing correction then timed out. Each attempt stopped and passive
+monitoring was independently restored. A proposed byte-paced script received an
+independent **FAIL** and was never staged or run. Those failures remain preserved.
+
+A distinct standard interactive picocom rescue received independent GPT-6.1
+Sol/high acceptance with conditions in session
+`01a0fa22-6734-7a32-b72f-6263c117b3e8`. Existing manual-recovery authority and fresh
+setup confirmation applied; operator text/echo/Enter/result decisions reconciled
+the earlier stop boundary without another scripted progression. Complete staging
+and live process, UART and PTY admissions passed before input. One CR completed
+the known residual and produced `mmc0 is current device` and a fresh U-Boot
+prompt. The next text-only `mmc dev 0` echoed incompletely. **No subsequent Enter,
+script load/source, reset or target write command was sent.** The coordinator
+stopped the terminal through separate SSH. This ends UART recovery attempts;
+no further terminal variants or automated retries are planned.
+
+Independent restoration verified passive unit
+`sv08-recovery-capture-h12picocomsd20261002a.service`, PID 85082/starttime
+33060992, root with the pinned Python source, sole O_RDONLY UART descriptor,
+12-hour/no-restart bounds, original log inodes and append-prefix hashes. Private
+admission, intent, PTY, raw capture, review and restoration evidence is preserved
+under `local/feature-workflow/probes/h12-picocom-sd-return-20261002a/`; preceding
+attempts retain separate directories. Board revision and electrical effects of
+opening/closing the UART remain unknown.
+
+Next: prepare a separately reviewed physical SD/media rescue. The coordinator
+has confirmed that the owner has a USB SD card reader;
+**no media movement or additional power cycle is instructed yet**. Keep PSU OFF
+and the present setup connected. Actual SD root/authentication, fresh media,
+environment/RTC/p5 reconciliation, repaired RAM preflight and automatic return
+remain open. Recovery preparation is distinct from permission for a full-image
+write, heaters or motion.
 
 ## Cold-boot capture limitation — owner decision 2026-10-02
 
@@ -55,11 +75,10 @@ framework development is assigned. This records a limitation, not a claim of
 complete cold-start diagnostics or reliable boot. Later cold-start reliability
 still needs actual boot outcomes; it does not require every early serial byte.
 
-The host's last observed SPL halt is a control/recovery dependency, separate from
-capture. At 00:19 UTC on October 2, Beelink could not reach SSH at the printer
-address. A coordinated manual restart or existing SD/media recovery is the next
-hardware step; no dated cable instruction below is still active. Authorized
-required offline work may proceed while physical access waits.
+The earlier SPL halt was a recovery dependency distinct from capture. The
+October 2 cable cycle reached U-Boot, but serial rescue did not reach SD Linux.
+Prepare physical SD/media recovery as recorded above. Authorized required offline
+work may proceed while physical access waits.
 
 ## Closed H12 receiver window — 2026-10-01
 
@@ -105,15 +124,12 @@ the purpose regression, focused receipt regressions and four before/after ARM64
 builds. This does not establish the physical claim failure's errno or pass H12.
 See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#corrected-preflight-entered-ram-but-did-not-pass).
 
-1. Regain SD access through a coordinated manual restart or existing rescue route
-   if the host remains halted; complete first cold-boot bytes are not a gate.
-   Once Linux is running, reuse [the measured warm-capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
-   USB stays connected; prepare the sole serial controller before one keyboard
-   reboot. Confirm source, current capture readiness and exact operation review.
-2. Intercept the observed three-second U-Boot window and validate the stopped
-   prompt before the existing verified SD boot sequence. Capture-only success
-   did not demonstrate interception or SD return. Do not stream commands after
-   missing the window.
+1. Prepare physical SD/media recovery after the completed October 2 restart and
+   failed scripted and standard-terminal routes. Confirm reader/removal
+   availability, identify the existing rescue boot behavior and independently
+   review the exact physical operation before giving instructions.
+2. Stop UART recovery attempts. Complete first cold-boot bytes are not a gate;
+   reuse the measured warm-capture path later when Linux is running if needed.
 3. Once SD SSH is authenticated, record current media identity, environments,
    Linux/RTC and p5/staged marker state. Preserve beforeimages outside target tmpfs.
 4. Use the independently accepted selector correction and freshly prepared
@@ -122,12 +138,9 @@ See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-202610
 5. Record real urh-04 admission and return evidence. Only then admit G2's distinct
    physical write; do not equate ordinary recovery boot with preflight success.
 
-Use one bounded initial attempt and, only with a concrete diagnosis and exact
-review, a corrected follow-up for the same interception failure. If still unable
-to regain control, compare a physical keyboard, identified external RX tap or
-existing USB-reader/SD rescue against more automation. Select the smallest useful
-recovery step under applicable authority. Do not create another general guard
-framework merely because the historical guard rejects today's state.
+The October 2 serial attempts are concluded. Preserve their failure evidence;
+use physical SD/media recovery rather than another UART variant. No further
+capture framework or external RX investigation is assigned.
 
 ## Removed from the active path
 
