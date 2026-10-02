@@ -13,21 +13,25 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
-## Ready SD-reader preparation — 2026-10-02
+## Independent SD-loader restoration — 2026-10-02
 
-The owner confirmed a USB SD reader. Independent Sol/high preparation review
-passed with conditions for powering the host down by disconnecting USB while
-PSU remains OFF, waiting ten seconds, moving only the rescue SD into the reader,
-and connecting it to Beelink. Spare and factory eMMC remain untouched. No printer
-reconnect/boot, filesystem mount, repair or media write is included.
+The owner completed the power-off SD-only move to Beelink. Read-only inspection
+matched the rescue card identity and found the managed loader still installed.
+The original independent SD-only loader has now been restored after separate
+GPT-6.1 Sol/high exact review. Only the previously overwritten 786,225-byte span
+at byte 8192 changed; full direct 738,197,504-byte prefix readback matches the
+original recovery image. FAT/root/GPT are preserved; eMMC/MCUs were not accessed.
+The original partial-write helper is excluded and preserved; v2 stops without
+retry. Durable beforeimage and independent post-write/process/card reconciliation
+passed. See [the restoration record](host-h12-sd-loader-restoration-20261002.md).
 
-Beelink's baseline contains only its SATA system disk and existing LVs. The
-coordinator temporarily stopped and runtime-masked `udisks2.service` to prevent
-that service from automatically mounting the inserted card; no relevant active
-volume-manager or media automount consumer was observed. Identify the new reader
-and stop on unexpected mounts/identity. Restore udisks2's previous enabled/active
-state after the card is safely removed. Private baseline and preparation receipt:
-`local/feature-workflow/probes/h12-picocom-sd-return-20261002a/reader-preparation.json`.
+Next: independently review and admit safe SD reinstall and one host-only USB
+power connection. The passive collector is active/waiting, bridge absent and
+zero UART owners. No boot has occurred and no further UART command variants are
+planned. Keep PSU OFF and the card in Beelink until the ready instruction.
+Beelink udisks2 remains temporarily runtime-masked; restore its prior active state
+once the card's removal is observed. SD boot/root/SSH and fresh installed-spare
+reconciliation remain separate from restored-loader write acceptance.
 
 ## Practical recovery outcome — 2026-10-02
 
@@ -63,13 +67,11 @@ under `local/feature-workflow/probes/h12-picocom-sd-return-20261002a/`; precedin
 attempts retain separate directories. Board revision and electrical effects of
 opening/closing the UART remain unknown.
 
-Next: prepare a separately reviewed physical SD/media rescue. The coordinator
-has confirmed that the owner has a USB SD card reader;
-the distinct SD-reader preparation above is now ready; no printer boot is
-instructed. Keep PSU OFF. Actual SD root/authentication, fresh media,
-environment/RTC/p5 reconciliation, repaired RAM preflight and automatic return
-remain open. Recovery preparation is distinct from permission for a full-image
-write, heaters or motion.
+After these UART failures, the owner confirmed a USB SD reader and completed the
+reviewed power-off SD move. The restoration update above supersedes that initial
+preparation. Actual SD root/authentication, installed-spare environment/RTC/p5
+reconciliation, repaired RAM preflight and automatic return remain open.
+Restored-loader acceptance grants no full-image-write, heater or motion authority.
 
 ## Current dispatch — 2026-10-02
 

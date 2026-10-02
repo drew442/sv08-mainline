@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight refused claim; subsequent manual restart reached U-Boot but serial rescue failed | Prepare physical SD/media rescue after the completed restart and failed serial routes; use warm reboot when running; deliver the accepted startup repair using a fresh job | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight refused claim; subsequent manual restart reached U-Boot but serial rescue failed | Reinstall and boot the restored independent SD recovery card after exact review; reconcile the spare, then deliver the accepted startup repair using a fresh job | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -22,21 +22,25 @@ for every G4 administration or G5 release feature. G4/G5 authorized preparation
 may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
 
-## Ready SD-reader preparation — 2026-10-02
+## Independent SD-loader restoration — 2026-10-02
 
-The owner confirmed a USB SD reader. Independent Sol/high preparation review
-passed with conditions for powering the host down by disconnecting USB while
-PSU remains OFF, waiting ten seconds, moving only the rescue SD into the reader,
-and connecting it to Beelink. Spare and factory eMMC remain untouched. No printer
-reconnect/boot, filesystem mount, repair or media write is included.
+The owner completed the power-off SD-only move to Beelink. Read-only inspection
+matched the rescue card identity and found the managed loader still installed.
+The original independent SD-only loader has now been restored after separate
+GPT-6.1 Sol/high exact review. Only the previously overwritten 786,225-byte span
+at byte 8192 changed; full direct 738,197,504-byte prefix readback matches the
+original recovery image. FAT/root/GPT are preserved; eMMC/MCUs were not accessed.
+The original partial-write helper is excluded and preserved; v2 stops without
+retry. Durable beforeimage and independent post-write/process/card reconciliation
+passed. See [the restoration record](../docs/hardware/host-h12-sd-loader-restoration-20261002.md).
 
-Beelink's baseline contains only its SATA system disk and existing LVs. The
-coordinator temporarily stopped and runtime-masked `udisks2.service` to prevent
-that service from automatically mounting the inserted card; no relevant active
-volume-manager or media automount consumer was observed. Identify the new reader
-and stop on unexpected mounts/identity. Restore udisks2's previous enabled/active
-state after the card is safely removed. Private baseline and preparation receipt:
-`local/feature-workflow/probes/h12-picocom-sd-return-20261002a/reader-preparation.json`.
+Next: independently review and admit safe SD reinstall and one host-only USB
+power connection. The passive collector is active/waiting, bridge absent and
+zero UART owners. No boot has occurred and no further UART command variants are
+planned. Keep PSU OFF and the card in Beelink until the ready instruction.
+Beelink udisks2 remains temporarily runtime-masked; restore its prior active state
+once the card's removal is observed. SD boot/root/SSH and fresh installed-spare
+reconciliation remain separate from restored-loader write acceptance.
 
 ## Practical recovery outcome — 2026-10-02
 
@@ -72,13 +76,11 @@ under `local/feature-workflow/probes/h12-picocom-sd-return-20261002a/`; precedin
 attempts retain separate directories. Board revision and electrical effects of
 opening/closing the UART remain unknown.
 
-Next: prepare a separately reviewed physical SD/media rescue. The coordinator
-has confirmed that the owner has a USB SD card reader;
-the distinct SD-reader preparation above is now ready; no printer boot is
-instructed. Keep PSU OFF. Actual SD root/authentication, fresh media,
-environment/RTC/p5 reconciliation, repaired RAM preflight and automatic return
-remain open. Recovery preparation is distinct from permission for a full-image
-write, heaters or motion.
+After these UART failures, the owner confirmed a USB SD reader and completed the
+reviewed power-off SD move. The restoration update above supersedes that initial
+preparation. Actual SD root/authentication, installed-spare environment/RTC/p5
+reconciliation, repaired RAM preflight and automatic return remain open.
+Restored-loader acceptance grants no full-image-write, heater or motion authority.
 
 ## Cold-boot capture limitation — owner decision 2026-10-02
 
@@ -140,10 +142,9 @@ the purpose regression, focused receipt regressions and four before/after ARM64
 builds. This does not establish the physical claim failure's errno or pass H12.
 See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#corrected-preflight-entered-ram-but-did-not-pass).
 
-1. Prepare physical SD/media recovery after the completed October 2 restart and
-   failed scripted and standard-terminal routes. Confirm reader/removal
-   availability, identify the existing rescue boot behavior and independently
-   review the exact physical operation before giving instructions.
+1. Reinstall and boot the now-restored independent SD recovery card after fresh
+   receive-only readiness and exact boot review. Its original full-image prefix
+   direct readback passed; no further write or UART input is part of that boot.
 2. Stop UART recovery attempts. Complete first cold-boot bytes are not a gate;
    reuse the measured warm-capture path later when Linux is running if needed.
 3. Once SD SSH is authenticated, record current media identity, environments,
