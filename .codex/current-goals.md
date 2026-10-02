@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; October 2 repaired physical preflight reached RAM but timed out obtaining secure randomness; original return kernel started | Owner power removal/SD move and second loader restoration passed; offline entropy repair complete; perform reviewed independent SD boot, fresh spare/clock intake, then fresh physical preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; October 2 repaired physical preflight reached RAM but timed out obtaining secure randomness; original return kernel started | Owner power removal/SD move and second loader restoration passed; offline entropy repair complete; second SD boot and fresh spare intake passed (instruction expiry limitation recorded); clock corrected and independently read back; reconcile expired attempt, then fresh physical preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -324,3 +324,25 @@ fresh receiver/card admissions passed. One-connect instruction expires 06:24:31
 UTC; owner physical completion and SD/spare/clock readback are pending.
 Twenty-seven accepted source inputs are prepared without a new signed job or
 policy. See the latest [restoration checkpoint](../docs/hardware/host-h12-sd-loader-restoration-20261002.md#entropy-repair-and-second-sd-restoration--0554-utc).
+
+
+## Latest G1 checkpoint — 2026-10-02 07:42 UTC
+
+The second restored SD boot reached authenticated SSH with the expected kernel,
+read-only SD root/immutable usr, wired DHCP and active recovery services; no failed
+systemd units were measured. The physical connection happened after the
+instruction expiry; the unmet fresh pre-connect admission is retained in the
+[restoration record](../docs/hardware/host-h12-sd-loader-restoration-20261002.md).
+No repeat boot was performed. Leave USB connected, PSU OFF. Beelink card absence
+and restoration of udisks2 active/enabled passed. Fresh spare environment CRCs
+passed, flags 17/16 and expired 5bdd arm token still present. Clock retention
+failed across power removal; reconcile current Linux/RTC and expired attempt
+under exact reviews before preparing fresh signed preflight. H12 remains open.
+
+The running-boot Linux/RTC correction subsequently passed exact independent
+Sol/high review, fresh admission and separate readback within three seconds of
+synchronized Beelink time. The new p5 beforeimage and off-target wrapper/FIT
+reconciliation passed; active marker is absent, expired environment arm remains.
+All 27 accepted entropy source entries independently read back on Beelink.
+Next retire that expired arm under exact review and prepare fresh signed
+preflight. No fresh job or preflight was issued/executed at this checkpoint.

@@ -411,3 +411,16 @@ nearby for two minutes. Stop by USB power removal on error or no online host in
 two minutes. No extra UART/reset/reconnect is admitted. Physical completion and
 fresh SD/spare/clock observations remain pending; earlier no-reconnect requests
 are superseded only by this admitted one-connect instruction.
+
+
+### H12 recovery checkpoint — 2026-10-02 07:56 UTC
+
+The owner completed the second rescue-SD return/USB connection. Authenticated
+SD recovery, read-only root, wired network and services passed; immediate
+physical attendance is released. Leave printer USB connected and PSU OFF,
+spare installed and factory eMMC stored. The connection occurred after the
+instruction expiry; its unmet pre-connect freshness condition is preserved in
+the [restoration record](host-h12-sd-loader-restoration-20261002.md). No repeat
+boot is requested. Clock correction/readback and fresh read-only spare/p5
+reconciliation passed. A later preflight needs its own prepared exact review
+and current attendance; the expired SD-boot instruction grants no retry.

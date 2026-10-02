@@ -332,3 +332,65 @@ listener was created. G1/H12 remain incomplete until actual preflight and requir
 return evidence pass; GUI's last human observation remains blank. All new private
 reviews, source hashes, failed admissions, operation/readback and closure receipts
 are retained in the renewal probe, with the new prefix beforeimage on Beelink.
+
+
+## Second restored SD boot — 07:42 UTC
+
+The owner confirmed the rescue SD was reinstalled and USB connected once, with
+PSU OFF and both eMMC positions unchanged. Actual authenticated SD SSH passed:
+kernel 6.18.51-sv08-candidate1, root PARTUUID
+`deaf981d-7441-428c-bf43-ce40bca6ca65` on `/dev/mmcblk1p2`, ext4
+`ro,norecovery`, and squashfs `/usr` read-only. Systemd reported running, no
+failed units, and active recovery shell/display services. Wired DHCP acquired
+192.168.1.141. These observations establish recovery control; they do not establish
+human HDMI pixels/input or repaired RAM preflight acceptance.
+
+The connection occurred after the 06:24:31 UTC instruction expiry. Fresh
+pre-connect admission was not obtained; that review condition was unmet and
+is preserved as a procedural limitation. The coordinator checked the actual
+boot promptly after the owner reply, obtained SSH during the first minute,
+and independently measured the expected sole O_RDONLY serial reader, pinned
+source/process, original log inodes and preserved append prefixes. No console
+input, extra restart, or repeated boot was performed. The owner was released
+from immediate attendance and told to leave USB connected and PSU OFF.
+
+Beelink card absence was measured and udisks2 restored active/enabled. Fresh
+read-only spare intake passed the same controller/CID/capacity/GPT and both
+environment CRCs. Flags remain 17/16, A/B counters zero and the expired
+`5bddc64b5be79b44151d7cc1d97dfb51` arm token is still present. Retirement
+must be reviewed against this actual state. Linux time reverted to April
+2026 and RTC0 reports January 2, 1970, so the earlier clock correction did
+not survive the observed power removal. A fresh bounded correction and
+independent readback are required before a newly signed preflight; this is
+not evidence of RTC retention or an electrical diagnosis. Private measurements
+and subsequent preparation are preserved under
+`local/feature-workflow/probes/h12-preflight-renew-20261002c/`.
+
+
+At 07:56 UTC, exact independent GPT-6.1 Sol/high review in separate session
+`01a0fb93-ac99-7210-a919-3aea65aeec9c` and fresh target/clock admission preceded
+one Linux/RTC correction. Actual role/model/effort, full-access/never settings
+were corroborated from runtime metadata; native launch failed at thread limit
+and the documented separate-session fallback retained the full role contract.
+The reviewed helper differed from its earlier source only in expected boot ID.
+
+Two coordinator launch problems stopped before clock writes: a relative/absolute
+review-hash key mismatch, then buffered readiness output causing the trusted-time
+handoff to encounter a closed pipe before delivery. Both are preserved.
+Unbuffered coordination refreshed admission before the single actual execution;
+the reviewed helper was unchanged. It verified Linux time before one RTC write,
+then returned verified=true. A separate O_RDONLY RTC read and Linux observation
+were bracketed by fresh synchronized Beelink clock samples; maximum deviation
+was 1.563 seconds for Linux and 2.116 seconds for RTC, both within three seconds.
+The same read-only SD root and boot remained available. Power-loss retention
+remains unverified and previously failed; no persistent repair is claimed.
+
+The new 536,870,912-byte p5 beforeimage is durably preserved on Beelink, SHA-256
+`421e2f60d0a4c986a7d658328fa8e0cb45d1c97430a84096d7e3a7e55fa487a4`.
+Off-target read-only extraction matched the prior 5bdd recovery wrapper, original
+script and RAM FIT hashes; its active armed marker is absent. No printer p5
+mount or write occurred. Separate readback also verified all 27 fresh source
+entries for the accepted entropy repair on Beelink. No fresh signed job or
+preflight execution is claimed. Next retire the expired environment token under
+exact review, then prepare fresh signed preflight inputs and the separately
+admitted stage/arm/activate/loader/reboot sequence.
