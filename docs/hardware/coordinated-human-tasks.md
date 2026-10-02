@@ -99,13 +99,19 @@ HDMI/SSH and bounded practical trials. No new external receiver, alternate UART,
 soldering or cold-capture framework is requested. Actual later cold-start
 reliability remains to be tested through boot outcomes.
 
-The last physical preflight reached RAM, refused its claim, and its automatic
-return halted during SPL DRAM initialization. Host/SD access is now restored
-through the independent SD loader. The next attended RAM test uses
-fresh artifacts from accepted sources and an SSH reboot after reviewed staging
-and loader transfer.
-Owner attendance is confirmed; leave USB connected and PSU OFF. No new media
-move or restart is requested. Continue required offline preparation meanwhile.
+The latest October 2 04:53 UTC physical preflight reached trusted RAM but timed
+out acquiring secure randomness before creating a claim socket. The claim stayed
+unused; the listener is now stopped. Automatic return passed U-Boot and started
+the original p5 kernel; the recovery screen and final environment/marker readback
+remain unverified. G1/H12 are incomplete.
+
+Current owner request: unplug USB power, keep PSU OFF and do not reconnect.
+Confirmation of completed power removal and whether the recovery screen appeared
+is pending. Earlier leave-connected instructions are historical and superseded.
+The managed SD loader is the last measured installed loader. Prepare a separately
+reviewed independent-SD recovery operation before requesting another media move
+or boot. Offline bounded entropy repair may proceed meanwhile; no more UART input
+or cold-capture investigation is assigned.
 
 D's October 1 USB-return window expired at 14:07:33 UTC without observing a
 disconnect, capturing zero bytes. Its controller is inactive. A separate October
@@ -387,3 +393,11 @@ preflight preparation/build passed on Beelink with the accepted selector repair.
 Exact retirement/staging, arm, activation, boot and physical automatic return
 remain open; this is not urh-04 or urh-05 acceptance. No new owner hardware action
 is required for the next G1 operation under unchanged setup and standing authority.
+
+
+Later inspection of the same preserved boot trace establishes that the automatic
+return reached `sv08-recovery.target`; systemd reported startup complete in
+59.976 seconds. Its read-only recovery report records the recovery UI processes
+and root on p5 with `ro,norecovery`. This extends the return evidence beyond kernel
+entry, but is not a human screen/input observation or raw environment/marker
+readback. The previously requested power-removal confirmation remains pending.

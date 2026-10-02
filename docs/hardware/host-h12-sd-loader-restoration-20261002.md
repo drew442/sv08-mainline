@@ -207,3 +207,80 @@ is already enabled by default; `UseHostname=no` controls accepting a hostname
 from the server. Thus the earlier configuration alone does not establish why
 this running image omitted its hostname. This correction makes the transmitted
 name explicit without claiming that cause has been measured.
+
+## Expired activated-job retirement attempt — 04:22 UTC
+
+A complete current p5 beforeimage and both current environment records were
+preserved durably before the separately reviewed retirement attempt. One
+`fw_setenv` call completed. The second planned call was not sent: its repeated
+identity gate found `/sys/class/block/mmcblk2p5` temporarily absent. The helper
+stopped, and no p5 writable mount, script restoration, file deletion or reboot
+occurred. Later read-only inspection found the partitions present and no surviving
+target descriptor or mount.
+
+Independent full-field comparison established valid CRCs in both records: the
+4 MiB record is unchanged (flag 13); the 8 MiB record has flag 14 and only the
+old arm token removed. Every other field matches its beforeimage. Failed-operation
+source, output, raw records and journal are preserved in the renewal probe.
+A preliminary diagnosis of literal newline escaping was incorrect: AST evaluation
+confirms real LF bytes in both generated input files, and the measured field
+change supports correct deletion. That mistaken interpretation grants no action.
+A separate repair review addresses one remaining deletion and a bounded read-only
+wait for exact partition identity following the environment call. No write retry
+or deadline waiver is part of that candidate.
+
+
+## Repaired physical preflight — 04:53 UTC
+
+The separately reviewed v2 retirement completed the one remaining environment
+update and restored the original p5 script before removing the expired marker.
+Independent readback found valid CRCs, flags 15/14, no arm token and preserved
+other fields. The temporary missing-partition observation remains in the failed
+v1 record; v2 used a bounded read-only identity wait, with no write retry.
+
+Fresh job `5bddc64b5be79b44151d7cc1d97dfb51`, issued 04:34:39 UTC and expiring
+05:34:39 UTC, passed volatile transfer, p5 staging, arming and activation under
+separate exact GPT-6.1 Sol/high reviews. Independent physical readbacks and
+off-target journals passed each phase. The exact managed SD loader was installed
+last; loader readback and separate SD admission passed. Final admissions checked
+source image, SD, p5, raw environments, listener and passive receiver before one
+SSH reboot at 04:53:16 UTC. No full-image transfer or MCU operation occurred.
+
+The selector verified its FIT and reached trusted RAM Linux. Runtime reported
+`SV08_H616_COMMISSIONING_CLAIM_RANDOM_TIMEOUT errno=110`, followed by
+`SV08_H616_COMMISSIONING_REFUSED_OR_UNCERTAIN_CLAIM`. No preflight PASS occurred.
+Independent server-state observation found only the unused armed descriptor and
+lock, with no consumed claim. The listener was subsequently stopped and checked
+inactive with MainPID 0.
+
+The planned return reboot passed SPL/main U-Boot and started Linux using the
+original p5 PARTUUID and immutable-envelope command line. This is measured kernel
+entry, not confirmed recovery-screen success. Post-return raw environment and
+marker readback remain unverified. The owner was instructed to remove USB power,
+keep PSU OFF and not reconnect; physical completion is pending confirmation.
+The managed SD loader remains the last measured installed loader. Recovering
+independent SD SSH requires a separately reviewed operation; elapsed time does
+not authorize another boot or reuse of this attempted job.
+
+Source diagnosis distinguishes the local ETIMEDOUT from an observed kernel RNG
+errno. The helper polls getrandom(GRND_NONBLOCK) before creating any socket.
+Linux's blocking path can invoke its upstream timing entropy collector; current
+polling bypasses it. Unready randomness is the leading explanation, but repeated
+EAGAIN, effective RNG providers and physical entropy availability are unmeasured.
+The bounded [entropy acquisition proposal](../features/h616-claim-entropy-acquisition/proposal.md)
+retains the existing 60-second limit and unpredictable authenticated challenge.
+Its approval and delivery are separate from physical acceptance.
+
+Private artifacts, failed operation history, independent reviews, complete boot
+trace, claim-state observation and source/intent receipts remain under
+`local/feature-workflow/probes/h12-preflight-renew-20261002b/` and durable Beelink
+storage. Board revision H616_JC_6Z_V1.2 remains owner-reported; this test does not
+validate a stock hardware profile. G1 and H12 remain incomplete.
+
+
+Later inspection of the same preserved boot trace establishes that the automatic
+return reached `sv08-recovery.target`; systemd reported startup complete in
+59.976 seconds. Its read-only recovery report records the recovery UI processes
+and root on p5 with `ro,norecovery`. This extends the return evidence beyond kernel
+entry, but is not a human screen/input observation or raw environment/marker
+readback. The previously requested power-removal confirmation remains pending.

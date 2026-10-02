@@ -1,0 +1,121 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Actual compiled secure blocking acquisition and fail-closed deadline/error/partial handling; no early transport or secret diagnostics.",
+      "environment": "offline",
+      "id": "rng-acquisition"
+    },
+    {
+      "description": "Real bounded interruption, explicit PID 1 evidence or physical acceptance remains blocked.",
+      "environment": "offline",
+      "id": "rng-interruption"
+    },
+    {
+      "description": "Relevant receipt/purpose regression and ARM64 modes; unchanged evidence reused explicitly.",
+      "environment": "offline",
+      "id": "claim-regression"
+    }
+  ],
+  "created": "2026-10-02",
+  "decision": {
+    "authority": "delegated",
+    "constraints": [
+      {
+        "checks": [
+          "rng-acquisition",
+          "rng-interruption"
+        ],
+        "text": "Retain exactly 32 secure bytes from getrandom flags zero, with one CLOCK_MONOTONIC deadline at most 60 seconds from acquisition entry including setup. Never reset the deadline after interruption or partial progress; check before each retry and before admitting completion, refusing at the exact deadline. No weak fallback, seed crediting, busy spin, deadline increase or unbounded blocking path. Demonstrate how deadline notification remains effective when delivered after the last clock check but before blocking syscall entry; a one-shot timer and pre-call check alone are insufficient. If this cannot be established, stop with the precise race and a bounded alternative for separate review."
+      },
+      {
+        "checks": [
+          "rng-acquisition",
+          "rng-interruption"
+        ],
+        "text": "Test the actual compiled production helper with injected clock/timer/signal/random failures: ready, partial then interruption, repeated unrelated EINTR, unavailable source, zero/permanent errors, inherited blocked/ignored signal, setup/clock failures, exact-deadline return, pre-syscall expiry delivery, pending expiry at completion and cleanup failures. Install a caught handler without SA_RESTART using only async-signal-safe handler actions. Verify timer/mask/disposition setup before entering the wait. Disable/delete the timer and handle pending owned notifications safely before transport or restoring prior signal state; cleanup uncertainty refuses the claim. No acquisition signal may later alter socket operations or finalizer behavior."
+      },
+      {
+        "checks": [
+          "rng-interruption"
+        ],
+        "text": "Provide real monotonic timer interruption of a genuinely blocked syscall with measured elapsed time and an explicit cancellation-latency limit; distinguish syscall substitution from an actual unready getrandom test. State scheduler-latency limits honestly and never admit completion at or after the original 60-second deadline. Use an offline Linux PID 1 fixture when available and identify kernel, architecture, static libc and whether namespace PID 1 or global init was exercised. Ordinary process interruption and source analysis are separate evidence levels, not PID 1 proof. If PID 1 boundary evidence is unavailable, offline implementation/review may proceed with that limitation recorded, but physical candidate acceptance/preparation remains blocked; do not demand printer access as a substitute."
+      },
+      {
+        "checks": [
+          "rng-acquisition",
+          "claim-regression"
+        ],
+        "text": "Assert no claim socket/connect/send or claim-dependent whole-target access before timely secure completion and successful cleanup; existing earlier read-only identity/marker handling remains governed by the accepted preflight contract. At most one subsequent HTTP claim request is allowed. Preserve pinned receipt crypto/key verification, strict framing, current job/descriptor/challenge equality, expiry and durable consumption before signing; waiting never extends job validity. Refusal diagnostics retain meaningful captured errno and the final refusal marker without random bytes, challenge, request/response or key material."
+      },
+      {
+        "checks": [
+          "claim-regression"
+        ],
+        "text": "Run relevant actual-source receipt valid/forged/wrong-key/wrong-job/stale/replay/unavailable-random tests, default diagnostic and signed preflight/write purpose regressions. Compile affected ordinary write and preflight ARM64 modes with retained pinned inputs. Record source/configuration/toolchain/artifact hashes and matched before/after binary sizes plus conservative initramfs/FIT/load-memory impact under existing H616 1 GiB bounds and factory 8 GB layout. No new installed dependency, floating source, kernel/provider change or license change. Reuse unchanged full/fault/durable-server evidence explicitly rather than rerunning unrelated whole-image workloads."
+      },
+      {
+        "checks": [
+          "rng-acquisition",
+          "rng-interruption",
+          "claim-regression"
+        ],
+        "text": "Document before/after behavior and label deterministic compiled-helper, real ordinary-process interruption, offline PID 1, ARM64 build/static resource and sanitized physical-observation evidence separately. Do not infer repeated kernel EAGAIN, hardware RNG/provider identity, board entropy readiness or physical PASS from a local ETIMEDOUT. Bind delivered evidence to the actual candidate and obtain a fresh independent verifier of the full diff and all constraints before physical artifact preparation; this approver, author, implementer or evidence producer cannot serve as that verifier."
+      },
+      {
+        "checks": [
+          "claim-regression"
+        ],
+        "text": "Keep changes within the three proposed owned implementation paths and acquisition/tests/evidence scope. Preserve failed candidates and historical observations. Rollback withdraws the new offline candidate and retains prior artifacts; never rearm a consumed marker/claim as rollback. Preserve marker/unmount, CID/controller/dev_t admission, read-only preflight versus transfer-write purpose, original recovery finalizer, heater, idle, persistence, profiles, pins and recovery requirements. This approval grants no hardware access, service/job provisioning, boot-policy/media operation, preflight boot or release authority. Physical H12 still requires fresh signed challenge/receipt/single consumption, preflight PASS, original recovery return, identified artifacts/target and separate exact-operation review under existing authorization."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "25350f77165d9ffd704dd2f74ca4d049b29df8b33aad6f6d1cd2e1f116583097",
+    "rationale": "Approve bounded offline repair under decision 0011 at baseline 0d4dd37ea4df260eed82b3898894432c6c49a399. Actual governing requirements preserve unpredictable signed one-shot claims, compiled purpose, expiry, target admission, durable marker consumption and recovery; no owner requirement or authority expansion is needed. Before: emmc_image_writer.c:871-907 polls secure GRND_NONBLOCK with one 60-second monotonic deadline. boot-observation.json in h12-preflight-renew-20261002b records CLAIM_RANDOM_TIMEOUT, refusal and original p5-kernel return; claim-after-boot.json records armed state with no claimed file. These sanitized observations support a local timeout, not measured individual EAGAIN or successful preflight. After: flags-zero secure getrandom can enter upstream readiness acquisition under the same budget. Linux 6.18.51 random.c:127-136,1197-1263,1293-1318 independently confirms the nonblocking early EAGAIN path, blocking readiness wait, entropy attempt and pending-signal exit; it does not establish board entropy availability (https://raw.githubusercontent.com/gregkh/linux/v6.18.51/drivers/char/random.c, accessed 2026-10-02). Linux signal.c:79-91,2754-2787 distinguishes caught handlers from PID 1 default actions (https://raw.githubusercontent.com/gregkh/linux/v6.18.51/kernel/signal.c, accessed 2026-10-02). A caught timer alone does not close signal delivery just before syscall entry. Existing startup tests inject syscalls into actual C but do not prove real blocking interruption. This decision supersedes only the GRND_NONBLOCK implementation choice in the earlier h616-claim-startup-readiness delegated decision; its remaining safety, deadline, resource, preservation and physical gates remain. Supported kernel/libc APIs address an identified gap without a loader/kernel patch, entropy seed, crypto replacement or new dependency. No duplicate entropy-acquisition implementation was found in relevant feature records; unchanged receipt/full-write evidence is reusable with limits. Approval authorizes implementation and feasibility testing, conditional on the checks below, not entropy success on hardware. No probes, hardware/development-host connections, credential inspection or tracked edits were performed. Runtime identity was confirmed by the coordinator; independent delivery verification remains required.",
+    "requirements_sha256": {
+      "docs/decisions/0018-network-emmc-reimage.md": "1bc5c4852587ccae339a99edb09d7a4857b1c6b5efec800e2ca65546f8995ba6",
+      "docs/design/unattended-emmc-reimage-handoff.md": "361cf5a2f15e46fd414ba3e3328ae5865279cbf535c5d6404813003fc33e3b87",
+      "docs/features/h616-physical-preflight/proposal.md": "898f5d780446c593428b5671f639ba2232a2a765971caf29a45f5c7f7a5cd2cd",
+      "docs/features/network-emmc-authenticated-claim/proposal.md": "4d3ba2147c5b9c10237d1d0789af22726de211a4958dda7f7fe57ad2236bac0f",
+      "docs/features/network-emmc-authenticated-claim/record.json": "62970ed39e5fd1d13f892d0bdd4468f980cd210fddfee27c12d4f15045b775ef"
+    },
+    "reviewer": "feature_approver / independent entropy-acquisition review; coordinator-confirmed GPT-6.1 Sol medium",
+    "scope_sha256": "e7875d83d0d3b7036723d380f493be270eda09288594bec48f3bf4118366edc4",
+    "session": "/root/approve_h616_entropy_acquisition; runtime 01a0faff-f7a3-7693-955a-713f64af83e5"
+  },
+  "format_version": 1,
+  "id": "h616-claim-entropy-acquisition",
+  "kind": "fix",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/h616-claim-entropy-acquisition/proposal.md",
+  "requirements": [
+    "docs/decisions/0018-network-emmc-reimage.md",
+    "docs/features/network-emmc-authenticated-claim/proposal.md",
+    "docs/features/network-emmc-authenticated-claim/record.json",
+    "docs/features/h616-physical-preflight/proposal.md",
+    "docs/design/unattended-emmc-reimage-handoff.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "rng-acquisition",
+        "rng-interruption",
+        "claim-regression"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "entropy-acquisition",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and independently verify bounded secure entropy acquisition",
+      "verification": null
+    }
+  ],
+  "title": "Acquire secure early-boot randomness under a bounded blocking deadline"
+}

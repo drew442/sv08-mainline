@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; independent SD boot/SSH restored, spare/p5 reconciled and clocks corrected; previous physical preflight failed | Retire the expired activated job using preserved beforeimages; finish preparation before signing replacement, then stage/arm/activate, install managed loader last and run attended preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; October 2 repaired physical preflight reached RAM but timed out obtaining secure randomness; original return kernel started | Confirm requested power removal; prepare reviewed SD recovery and independently deliver bounded entropy acquisition repair before a fresh physical attempt | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -270,3 +270,35 @@ retirement is undergoing independent review. The replacement will retain the
 supported maximum 3,600-second validity; preparation is moved before signing.
 The offline DHCP hostname/local-hosts correction passed separate source review;
 installed SD media and live network configuration remain unchanged.
+
+
+## Latest physical outcome — 2026-10-02 04:53 UTC
+
+The expired activated job was retired after independent review and readback.
+Fresh job `5bddc64b5be79b44151d7cc1d97dfb51` passed preparation, staging, arming,
+activation and managed-loader transfer. One reviewed SSH reboot reached trusted
+RAM Linux but failed secure-randomness acquisition with local ETIMEDOUT (110).
+No preflight PASS or claim consumption occurred. The listener is stopped.
+
+Automatic return started the original p5 kernel; recovery screen and post-return
+environment/marker state remain unverified. The owner was asked to remove USB
+power with PSU OFF and not reconnect. Physical confirmation is pending.
+Independent SD SSH is no longer the current measured running state; the managed
+loader is the last measured installed SD loader. Prepare a separately reviewed
+recovery operation while the bounded secure entropy repair receives offline
+approval/implementation/verification. See the [execution record](../docs/hardware/host-h12-sd-loader-restoration-20261002.md#repaired-physical-preflight--0453-utc).
+
+G1 remains incomplete, G2 remains queued behind physical preflight, G3 physical
+commissioning remains open, and G4/G5 offline work remains authorized. The source
+research session ran GPT-6.1 Sol/medium with runtime confirmation; it identified
+that nonblocking polling bypasses Linux's active entropy collection. That finding
+is a repair hypothesis, not physical RNG/provider proof. Cold-byte capture stays
+a limitation with no further work assigned.
+
+
+Later inspection of the same preserved boot trace establishes that the automatic
+return reached `sv08-recovery.target`; systemd reported startup complete in
+59.976 seconds. Its read-only recovery report records the recovery UI processes
+and root on p5 with `ro,norecovery`. This extends the return evidence beyond kernel
+entry, but is not a human screen/input observation or raw environment/marker
+readback. The previously requested power-removal confirmation remains pending.
