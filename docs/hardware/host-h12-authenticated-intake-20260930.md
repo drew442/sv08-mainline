@@ -1,5 +1,10 @@
 # H12 authenticated intake, 2026-09-30
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 The owner authorized trusting any SSH host key at the reserved printer address
 `192.168.1.141`. This resolves the initial enrollment decision in
 [the SD recovery host](host-sd-recovery-host.md); the missed console fingerprint

@@ -5,8 +5,9 @@ maintenance, simple target/image checks, full write verification and an attended
 yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and
 secure-randomness work, and complete cold-boot capture. Automatic maintenance
 launch and automatic recovery return are deferred until further notice. SD
-recovery is sufficient. Point 4 (a separate nonwriting rehearsal) awaits the
-owner’s decision after explanation; the old RAM preflight is not a gate.
+recovery is sufficient. The separate rehearsal is dropped; incorporate minimum
+target/image checks before the flashing yes/no prompt. The old RAM preflight
+is not a gate.
 The [owner-selected scope](decisions/20261002-h12-scope-reduction.md)
 supersedes conflicting historical requirements below. Existing source/artifacts
 and installed boot settings have not yet been adapted to this simpler route.
@@ -41,7 +42,10 @@ Keep one implementation active. Independently review substantive deliveries unde
 [the feature workflow](../.codex/README.md). Do not rerun passed component tests
 without a change, failure or unresolved integration question that justifies it.
 
-## Current baseline
+## Historical baseline before the H12 scope reduction
+
+The observations below remain evidence; their old next actions and completion
+gates are superseded by the current ordered packages and owner decision.
 
 - **Warm boot capture passed physically on October 1:** continuous USB power and
   logging plus one KVM keyboard reboot captured SPL, DRAM, U-Boot and Linux
@@ -80,8 +84,8 @@ without a change, failure or unresolved integration question that justifies it.
 
 | Priority | Goal/work | Immediate execution | Completion evidence |
 | --- | --- | --- | --- |
-| 1 / G1 | Regain SD control and pass corrected H12 preflight | Exact reviewed warm reboot, prepared serial interception, verified SD script; authenticated read-only reconciliation, fresh signed preparation and corrected selector delivery | Actual urh-04 admission/claim/preflight and required automatic return; current target/environment/RTC/p5 evidence |
-| 2 / G2 | Finish writerless delivery and reliable commissioning host | Distinct reviewed/authorized urh-05 write/readback/return; compose accepted host fixes and establish normal host operation | Physical full-image verification/return, persistent access/state, usable administration and reliable enough boot/DRAM behavior for commissioning |
+| 1 / G1 | Deliver minimal attended SD maintenance | Integrate target/image checks before yes/no confirmation; remove abandoned RAM/permission dependencies | Accepted SD implementation with basic checks and explicit start; no separate rehearsal |
+| 2 / G2 | Verify installed-eMMC reimage and reliable commissioning host | Review the concrete target/image and attended SD write, flush/readback and manual restart | Physical complete-image verification and normal host boot; persistent access/state and usable administration |
 | 3 / G3 | Commission and print on test-sv08-01 | Finish actual configuration substitutions; H01/H05 facts; staged attended H06 | Matching host/MCUs, sensor/reference/input checks, outputs/homing/heat/calibration, first print and print controls |
 | 4 / G4 | Complete host product and independent recovery | Integrate accepted work, then bounded required administration/update/restore/peripheral gaps | Factory-capacity complete artifact; physical A/B health/fallback, export/restore, persistent state/identity and required UI/peripherals |
 | 5 / G5 | Qualify and document supported stock release | Source/license/rebuild closure plus stock install/recovery/printing/failure tests | Actual stock qualification, representative regressions, documented conversion/recovery and release decision |
@@ -92,31 +96,23 @@ offline requirements while physical work waits, with one implementation active.
 Optional features remain paused. Each new substantive implementation still needs
 its bounded approval and independent verification; this plan is not that approval.
 
-### 1. Immediate H12 checkpoint
+### 1. Immediate H12 work
 
-Owner decision, 2026-10-02: complete initial cold-boot serial capture is a
-recorded limitation, not a dependency. Stop capture-specific research and
-hardware development. Warm reboot already records early messages; when the host
-is halted, use coordinated manual restart or existing SD/media rescue. HDMI,
-SSH, later serial output and bounded diagnosis-driven trials can establish the
-next action. Cold-start reliability remains a later outcome test without requiring
-a complete early trace.
+SD recovery and authenticated SSH were restored. Implement the owner-selected
+minimum procedure: boot SD, select image/target, run basic checks, ask yes/no,
+write and verify, then let the operator restart. Use the
+[ten-point decision](decisions/20261002-h12-scope-reduction.md) as the current
+scope. The separate rehearsal is dropped and its checks are integrated before
+confirmation. No further secure-randomness, signed permission, RAM maintenance,
+automatic launch/return or complete cold-capture work is assigned.
 
-Regain SD access first. Once Linux runs, use the demonstrated warm reboot with a
-prepared sole serial controller where U-Boot interception is needed; confirm the
-actual stopped prompt before the known SD boot sequence. After authenticated SD
-SSH, reconcile spare identity, both redundant environments, Linux/RTC and
-read-only p5, preserving beforeimages outside target tmpfs. Then use the accepted
-selector and startup repairs and fresh preflight inputs through the existing
-distinct stage/arm/boot reviews. Required offline work can proceed while practical
-physical recovery waits.
-
-One capture success does not complete urh-04 or authorize urh-05. Never reuse an
-expired job or assume an absent marker. The unapproved return-guard proposal is a
-contingency outside the active implementation path. A specific interception failure
-may justify a bounded correction or simpler physical recovery; it does not by
-itself justify another general automation framework. Reuse unchanged offline
-checks and decide the next experiment from the last actual result.
+Existing source and installed artifacts still implement parts of the superseded
+route; adapt the selected SD path and verify the retained checks before physical
+use. Existing offline evidence may support unchanged components, but does not
+establish the revised physical procedure. Review the concrete image/target/write
+operation under the existing hardware policy; do not resurrect withdrawn gates.
+SD recovery is the sufficient recovery path. An actual full write, flush/readback
+and normal boot remain the physical outcome to establish.
 
 ### G2–G3. Critical path to printing
 

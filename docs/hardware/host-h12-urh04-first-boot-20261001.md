@@ -1,5 +1,10 @@
 # H12 urh-04 first physical attempt
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 2026-10-01, test-sv08-01. **Failed before preflight FIT entry.** No urh-04,
 urh-05, printer commissioning or release acceptance is claimed.
 

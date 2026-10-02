@@ -1,5 +1,10 @@
 # H12 actual preflight candidate, 2026-09-30
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 An actual preflight-only candidate is prepared from accepted
 [node-binding delivery](host-h616-emmc-node-binding.md). This advances
 [H12](host-network-emmc-h12-intake.md); physical urh-04/05 remain open.

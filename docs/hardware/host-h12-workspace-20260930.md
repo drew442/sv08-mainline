@@ -1,5 +1,10 @@
 # H12 volatile workspace capacity, 2026-09-30
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 The coordinator enlarged the running SD recovery host's existing `/tmp` tmpfs
 limit from 64 MiB to 256 MiB after a separate exact-operation high-consequence
 review. This completes one reversible H12 preparation step. It stages no artifact

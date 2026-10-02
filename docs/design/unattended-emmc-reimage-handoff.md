@@ -5,11 +5,26 @@ maintenance, simple target/image checks, full write verification and an attended
 yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and
 secure-randomness work, and complete cold-boot capture. Automatic maintenance
 launch and automatic recovery return are deferred until further notice. SD
-recovery is sufficient. Point 4 (a separate nonwriting rehearsal) awaits the
-owner’s decision after explanation; the old RAM preflight is not a gate.
+recovery is sufficient. The separate rehearsal is dropped; incorporate minimum
+target/image checks before the flashing yes/no prompt. The old RAM preflight
+is not a gate.
 The [owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
 supersedes conflicting historical requirements below. Existing source/artifacts
 and installed boot settings have not yet been adapted to this simpler route.
+
+## Current attended SD contract
+
+Use the [accepted procedure and completion criteria](../decisions/20261002-h12-scope-reduction.md#accepted-minimum-procedure-and-completion).
+The maintenance system runs from SD. Minimum target/image checks precede the
+explicit yes/no prompt; the accepted write is flushed and fully read back, and
+the operator restarts manually. Permission cryptography/replay prevention and
+RAM maintenance are abandoned. Automatic boot/return are deferred. SD recovery
+is sufficient. This is the current design scope; implementation remains pending.
+
+## Historical RAM handoff design and evidence — superseded
+
+The following preserves the earlier design and evidence. Its RAM, claim,
+separate-preflight and automatic-return requirements are withdrawn from H12.
 
 Status: bounded offline design for `network-emmc-unattended-recovery-handoff`.
 Date: 2026-09-27. It is not a printer activation procedure or evidence of a

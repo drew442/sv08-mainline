@@ -40,7 +40,7 @@ both the earlier recommendations and conflicting historical H12 gates.
 | 1. Reimage installed eMMC | Keep | Preserve complete-image replacement without removing eMMC. |
 | 2. Maintenance environment | Abandon RAM maintenance; SD is sufficient | Run the maintenance OS from independent SD. No RAM handoff, RAM-writer boot or associated FIT relocation work is required. Ordinary RAM use by the SD OS is unaffected. |
 | 3. Automatic launch | Defer until further notice | Do not develop the running-system-to-maintenance automatic reboot/staging route or make it a completion prerequisite. |
-| 4. Separate rehearsal | Explanation requested; no decision yet | Present an optional nonwriting check of the selected SD route. Do not retain the old RAM preflight as an implicit gate. |
+| 4. Separate rehearsal | Drop; incorporate checks into flashing | Perform minimum target/image checks immediately before the normal yes/no confirmation. No separate rehearsal feature, milestone or old RAM preflight gate. |
 | 5. Automatic recovery return | Defer until further notice | Manual restart/SD recovery is acceptable; no automatic return requirement for H12 completion. |
 | 6. Target/image checks | Keep, minimum viable and simple | Identify intended eMMC, sufficient capacity, source independence and image checksum with the smallest practical implementation. |
 | 7. Write/readback verification | Keep, minimum viable and simple | Flush and compare the written image bytes with the source, with a clear result. |
@@ -48,19 +48,31 @@ both the earlier recommendations and conflicting historical H12 gates.
 | 9. Recovery | SD recovery is sufficient | Do not require factory-eMMC fallback as an additional H12 acceptance gate. Its stored physical position remains unchanged. |
 | 10. Complete initial boot capture | Abandon | No further cold-capture research, implementation, trial or completeness gate. Existing ordinary logs can be used without new capture development. |
 
-## Point 4 explanation for the owner
+## Accepted minimum procedure and completion
 
-For the selected SD route, a rehearsal would start the maintenance tool in a
-nonwriting mode, locate the proposed image and target, and show the target,
-image size/checksum and whether eMMC is unused by the running system. It would
-then stop. Its purpose is to catch a wrong path, unavailable image or mounted
-target before a destructive transfer. It would not test a RAM boot, permission
-server, secure randomness or automatic return.
+The owner accepted dropping point 4 and incorporating the checks into flashing.
+The attended procedure is:
 
-An alternative is to perform those same minimum checks immediately before the
-normal yes/no prompt, without a separate rehearsal feature or milestone. The
-coordinator recommends this integrated approach for the owner’s minimum viable
-scope. The owner has requested an explanation, not yet selected point 4.
+1. Boot the maintenance system from independent SD and access its interface.
+2. Select the image and intended installed eMMC. Check target identity, capacity,
+   source independence, that the target is unused by the running system, and
+   image size/checksum. Present the image and target clearly.
+3. Ask yes/no immediately before writing. Only an explicit Yes starts the write;
+   No or no answer performs no write. A later invocation asks again. No automatic
+   loop detection or malicious-replay protection is required.
+4. Write the image, flush storage and verify the complete written image range
+   against the source. Report success or the concrete failure.
+5. Let the operator restart into the installed system. SD remains the recovery
+   route if the installed system does not boot.
+
+H12 completion requires the simplified SD maintenance implementation and an
+actual attended installed-eMMC write with successful complete readback and
+observed normal boot. No separate rehearsal, RAM boot, permission service,
+secure entropy, permission expiry/RTC work, automatic launch/return or complete
+cold-boot trace is a completion dependency. Adapt existing proven code where it
+makes the retained checks simpler; prefer a small procedure to new frameworks.
+Implementation and physical acceptance are still pending. The selected interface
+and image source mechanism are implementation choices, not added feature goals.
 
 ## Execution consequences
 

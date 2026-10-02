@@ -1,5 +1,10 @@
 # H12 urh-04 physical preflight operation plan
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 Prepared2026-09-30, **not authorized or executed**. This is one host-only physical
 preflight on the installed spare in test-sv08-01. It advances the existing
 [H12 gate](coordinated-human-tasks.md), using the

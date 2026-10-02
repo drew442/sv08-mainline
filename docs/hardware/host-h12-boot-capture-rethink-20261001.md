@@ -1,5 +1,10 @@
 # H12 boot capture: separate monitoring from host startup
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 2026-10-01. Original SV08, test-sv08-01, owner-reported H616_JC_6Z_V1.2.
 This research responds to the owner's request to rethink H12, use practical
 bounded experiments and temporarily use GPT-6 Astra/high until H12 is resolved.

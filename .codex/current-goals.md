@@ -5,8 +5,9 @@ maintenance, simple target/image checks, full write verification and an attended
 yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and
 secure-randomness work, and complete cold-boot capture. Automatic maintenance
 launch and automatic recovery return are deferred until further notice. SD
-recovery is sufficient. Point 4 (a separate nonwriting rehearsal) awaits the
-owner’s decision after explanation; the old RAM preflight is not a gate.
+recovery is sufficient. The separate rehearsal is dropped; incorporate minimum
+target/image checks before the flashing yes/no prompt. The old RAM preflight
+is not a gate.
 The [owner-selected scope](../docs/decisions/20261002-h12-scope-reduction.md)
 supersedes conflicting historical requirements below. Existing source/artifacts
 and installed boot settings have not yet been adapted to this simpler route.
@@ -22,7 +23,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and simplify H12 | SD recovery works; owner selected attended SD maintenance; RAM/security/cold-capture work abandoned | Define minimal SD reimage path; explain separate rehearsal option; remove obsolete dependencies from the selected path | Working SD maintenance with the retained checks and confirmation; separate rehearsal only if the owner chooses it |
+| G1 — Restore SD control and simplify H12 | SD recovery works; owner selected attended SD maintenance; RAM/security/cold-capture work abandoned | Implement the minimal SD reimage path with integrated checks and yes/no confirmation; remove obsolete dependencies from that path | Working SD maintenance with integrated target/image checks and explicit confirmation; no separate rehearsal |
 | G2 — Complete installed-eMMC reimage and reliable commissioning host | Follows the simplified SD path; physical full-image transfer remains open | Identify exact image/target and review the attended SD write, flush/readback and manual next boot | Physical full-image verification and normal host boot pass; persistent access/state and administration work sufficiently for commissioning; automatic return is deferred |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -32,6 +33,12 @@ G3 may begin when its actual host and sensor prerequisites pass; it need not wai
 for every G4 administration or G5 release feature. G4/G5 authorized preparation
 may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
+
+## Historical checkpoints
+
+The dated sections below preserve prior outcomes and plans. Use the goal table
+and owner-selected scope above for current work; withdrawn RAM/claim/preflight
+steps below are not live assignments.
 
 ## Independent SD-loader restoration — 2026-10-02
 

@@ -8,13 +8,14 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
-**Current priority (2026-10-01):** the [goal reset](.codex/current-goals.md)
-puts SD recovery control and corrected H12 preflight first, then reliable host
-operation, first print, complete host OS and stock qualification. Initial boot
-capture now works through a warm reboot with USB continuously connected; see
-[measured results](docs/hardware/host-h12-boot-capture-rethink-20261001.md).
-The following image summaries retain historical evidence; use the current plan
-for live assignments and inspect device state before another operation.
+**Current priority (2026-10-02):** deliver attended installed-eMMC reimaging
+from SD using basic image/target checks, explicit yes/no confirmation, complete
+write verification and manual restart. The
+[owner’s ten-point H12 decision](docs/decisions/20261002-h12-scope-reduction.md)
+abandons RAM maintenance, permission anti-forgery/replay and cold-capture work,
+drops the separate rehearsal, and defers automatic launch/return. See the
+[current goals](.codex/current-goals.md) for delivery order. Historical image
+summaries below are evidence, not instructions to resume withdrawn work.
 
 **Status: diagnostic host image physically boots; printer commissioning and
 release work remain open.** The v5 image was written to the spare eMMC with

@@ -1,5 +1,10 @@
 # H12 independent SD-loader restoration — 2026-10-02
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 The owner moved only the rescue SD into Beelink after disconnecting printer USB
 power with PSU OFF. The installed spare and stored factory eMMC were untouched.
 The preparatory move received independent GPT-6.1 Sol/high review. Beelink's

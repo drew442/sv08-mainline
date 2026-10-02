@@ -1,5 +1,10 @@
 # H12 installed-eMMC intake and writer handoff
 
+**Historical H12 record:** The [2026-10-02 owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes this document’s earlier RAM, signed-permission, separate-preflight,
+automatic-return and cold-capture plans. Preserve the measurements below; use
+the current attended SD procedure for future work.
+
 This is the coordinator's order of work for the single [H12 session](coordinated-human-tasks.md).
 The [offline live-staging result](host-network-emmc-live-stage-offline-20260927.md)
 does not establish the identity or writable state of the installed eMMC. The
