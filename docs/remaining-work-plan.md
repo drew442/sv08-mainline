@@ -1,5 +1,12 @@
 # Remaining project work
 
+**Owner scope change, 2026-10-02:** H12 anti-forgery/anti-replay permission
+protection and its secure-randomness work are abandoned. The planned entropy
+trial and further signed-permission job preparation are withdrawn. Historical
+requirements below are superseded where they conflict with the
+[owner decision and remaining choices](decisions/20261002-h12-scope-reduction.md). Existing code/artifacts
+still contain that mechanism; no removal or deployment is claimed.
+
 Recalibrated: 2026-10-01 at the owner’s request. This is an execution order for existing requirements,
 not new hardware authorization or a supported-release claim. Detailed acceptance
 requirements remain in the [host checklist](hardware/host-os-tasks.md),

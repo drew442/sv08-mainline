@@ -1,5 +1,12 @@
 # Installed-eMMC reimage handoff contract
 
+**Owner scope change, 2026-10-02:** H12 anti-forgery/anti-replay permission
+protection and its secure-randomness work are abandoned. The planned entropy
+trial and further signed-permission job preparation are withdrawn. Historical
+requirements below are superseded where they conflict with the
+[owner decision and remaining choices](../decisions/20261002-h12-scope-reduction.md). Existing code/artifacts
+still contain that mechanism; no removal or deployment is claimed.
+
 Status: bounded offline design for `network-emmc-unattended-recovery-handoff`.
 Date: 2026-09-27. It is not a printer activation procedure or evidence of a
 physical boot. The stored factory eMMC and prepared SD path remain independent

@@ -1,5 +1,12 @@
 # Coordinated human tasks
 
+**Owner scope change, 2026-10-02:** H12 anti-forgery/anti-replay permission
+protection and its secure-randomness work are abandoned. The planned entropy
+trial and further signed-permission job preparation are withdrawn. Historical
+requirements below are superseded where they conflict with the
+[owner decision and remaining choices](../decisions/20261002-h12-scope-reduction.md). Existing code/artifacts
+still contain that mechanism; no removal or deployment is claimed.
+
 Dispatch queue created 2026-09-18 for the [parallel assignments](../development/parallel-work.md).
 Pending entries below are coordination items, not requests to act immediately;
 completed entries retain their result for reuse.

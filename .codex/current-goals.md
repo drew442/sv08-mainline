@@ -1,5 +1,12 @@
 # Current delivery goals
 
+**Owner scope change, 2026-10-02:** H12 anti-forgery/anti-replay permission
+protection and its secure-randomness work are abandoned. The planned entropy
+trial and further signed-permission job preparation are withdrawn. Historical
+requirements below are superseded where they conflict with the
+[owner decision and remaining choices](../docs/decisions/20261002-h12-scope-reduction.md). Existing code/artifacts
+still contain that mechanism; no removal or deployment is claimed.
+
 Reset: 2026-10-01 at the owner's request. This replaces the previous live
 assignment list; its full contents remain in [the historical record](goals-history-through-20261001.md).
 The [recalibrated execution plan](../docs/remaining-work-plan.md) gives order and
@@ -11,7 +18,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; October 2 repaired physical preflight reached RAM but timed out obtaining secure randomness; original return kernel started | Owner power removal/SD move and second loader restoration passed; offline entropy repair complete; second SD boot and fresh spare intake passed (instruction expiry limitation recorded); clock corrected and independently read back; reconcile expired attempt, then fresh physical preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and simplify H12 | SD recovery and clock reconciliation passed; permission-security work abandoned by owner | Owner selects remaining H12 components; adapt the chosen route without the abandoned mechanism | Apply the revised scope and obtain actual acceptance for the retained recovery/reimage path |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
