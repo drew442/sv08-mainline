@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight refused claim; subsequent manual restart reached U-Boot but serial rescue failed | Reinstall and boot the restored independent SD recovery card after exact review; reconcile the spare, then deliver the accepted startup repair using a fresh job | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; independent SD boot/SSH restored, spare/p5 reconciled and clocks corrected; previous physical preflight failed | Prepare fresh repaired job while SD SSH works; stage/arm/activate, then restore accepted managed loader last and run one reviewed attended preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -34,23 +34,34 @@ The original partial-write helper is excluded and preserved; v2 stops without
 retry. Durable beforeimage and independent post-write/process/card reconciliation
 passed. See [the restoration record](../docs/hardware/host-h12-sd-loader-restoration-20261002.md).
 
-Separate boot review passed. Fresh card-closure and receive-only readiness
-admissions passed at 02:29:39 UTC; the ready one-connect instruction expires at
-02:59 UTC on October 2. Keep PSU OFF, move only the SD to the printer, retain
-Ethernet and eMMC state, reconnect USB once and reply immediately. Stay nearby
-for two minutes; remove USB on error/reset loops/coordinator STOP or no startup
-confirmation within two minutes. Receiver is active/waiting, bridge absent,
-zero UART owners. No boot result is observed; no further UART input is planned.
-Beelink udisks2 remains temporarily runtime-masked; restore its prior active state
-once the card's removal is observed. SD boot/root/SSH and fresh installed-spare
-reconciliation remain separate from restored-loader write acceptance.
+The separately reviewed one-connect boot succeeded at approximately 02:31 UTC.
+Authenticated SSH, wired DHCP, kernel 6.18.51-sv08-candidate1, read-only SD root,
+recovery-display service and no failed systemd units were measured. The owner
+was released from immediate physical attendance; leave USB connected and PSU OFF.
+Beelink card absence was verified and udisks2 restored active/enabled.
 
-## Practical recovery outcome — 2026-10-02
+Fresh read-only spare intake and off-target p5 reconciliation passed. Both raw
+environment records have valid CRCs, flags 9/8, zero A/B counters and no arm token;
+the old C marker is absent. Linux/RTC were corrected after independent Sol/high
+review and independently checked against synchronized Beelink time. The complete
+p5 beforeimage is durably preserved off target. Source preparation for the fresh
+accepted startup repair passed: 27 entries verified, current staging node/dev_t
+bound to `/dev/mmcblk2` / `179:8`; no job, keys, artifact or listener created.
+
+Next, prepare and stage/arm/activate a fresh repaired preflight while independent
+SD SSH works, then restore the exact accepted managed loader last and use one
+reviewed SSH reboot. Its automatic dispatch preserves the required original-p5
+return route. No new loader implementation or UART commands are needed. Exact
+operation reviews and actual preflight/automatic-return evidence remain required.
+Owner availability for that attended test has been requested and is pending;
+no reboot or new physical action is requested yet.
+
+## Earlier UART recovery outcome — 2026-10-02 (superseded by SD boot)
 
 The owner's confirmed cable cycle completed. The receiver observed disappearance
 and re-enumeration and captured main U-Boot; the host is no longer at the earlier
-SPL halt. It has **not** reached authenticated SD Linux. Cold-start byte capture
-remains a documented limitation and receives no further work.
+SPL halt. That earlier attempt did **not** reach authenticated SD Linux.
+Cold-start byte capture remains a documented limitation and receives no further work.
 
 The initial scripted SD continuation stopped without a completed command result.
 An Enter-only continuation exposed a stale-prompt framing error; a separately
@@ -81,8 +92,9 @@ opening/closing the UART remain unknown.
 
 After these UART failures, the owner confirmed a USB SD reader and completed the
 reviewed power-off SD move. The restoration update above supersedes that initial
-preparation. Actual SD root/authentication, installed-spare environment/RTC/p5
-reconciliation, repaired RAM preflight and automatic return remain open.
+preparation. SD root/authentication and installed-spare environment/RTC/p5
+reconciliation subsequently passed as recorded above; repaired RAM preflight and automatic
+return remain open.
 Restored-loader acceptance grants no full-image-write, heater or motion authority.
 
 ## Cold-boot capture limitation — owner decision 2026-10-02
@@ -98,8 +110,8 @@ still needs actual boot outcomes; it does not require every early serial byte.
 
 The earlier SPL halt was a recovery dependency distinct from capture. The
 October 2 cable cycle reached U-Boot, but serial rescue did not reach SD Linux.
-Prepare physical SD/media recovery as recorded above. Authorized required offline
-work may proceed while physical access waits.
+That recovery subsequently succeeded through the restored SD loader as recorded
+above. Authorized offline work may proceed while next-test attendance waits.
 
 ## Closed H12 receiver window — 2026-10-01
 
@@ -145,13 +157,14 @@ the purpose regression, focused receipt regressions and four before/after ARM64
 builds. This does not establish the physical claim failure's errno or pass H12.
 See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#corrected-preflight-entered-ram-but-did-not-pass).
 
-1. Reinstall and boot the now-restored independent SD recovery card after fresh
-   receive-only readiness and exact boot review. Its original full-image prefix
-   direct readback passed; no further write or UART input is part of that boot.
+1. Independent SD boot and authenticated SSH passed on October 2. Preserve this
+   control path through fresh-job staging, arming and activation; install the
+   exact accepted managed loader last after separate review.
 2. Stop UART recovery attempts. Complete first cold-boot bytes are not a gate;
    reuse the measured warm-capture path later when Linux is running if needed.
-3. Once SD SSH is authenticated, record current media identity, environments,
-   Linux/RTC and p5/staged marker state. Preserve beforeimages outside target tmpfs.
+3. Fresh media/environment/p5 intake and separately reviewed clock correction
+   passed. Recheck necessary live admissions immediately before consequential
+   actions; retain durable off-target beforeimages.
 4. Use the independently accepted selector correction and freshly prepared
    preflight inputs. Reuse unchanged artifact/test evidence; independently review
    exact staging, arm and boot operations. Expired inputs are never rearmed.
@@ -187,9 +200,9 @@ after H12. No global/project model configuration was changed. Independent roles
 stay separate; supported separate-session fallback is available when native
 threads cannot launch, with actual runtime and role contract recorded.
 
-The reset initially added no physical owner action. The subsequent measured SPL
-halt requires practical physical recovery to regain SD control; software
-keyboard/SysRq requires a running host. This does not require solving cold capture.
+The subsequent measured SPL halt was recovered through the independent SD
+loader. The next RAM test requires owner attendance for prompt USB power removal
+if boot fails. This does not require solving cold capture.
 Combine later sensor,
 peripheral and attended commissioning needs in [the existing H queue](../docs/hardware/coordinated-human-tasks.md).
 No new backup, board photograph, external adapter, soldering or stock-machine
@@ -217,7 +230,8 @@ was recovered; original bytes and restore metadata remain preserved. See
 
 ## Tracker status
 
-At 12:07 UTC the application returned no current goal. A fresh G1–G5 goal was
-created at 12:11 UTC and is active. Earlier replacement refusals remain historical
-evidence in the reset assessment; they no longer describe current tracker state.
-The project remains incomplete and physical dependencies remain explicit.
+The October 2 application readback reports the existing G1–G5 goal as `blocked`.
+The available goal tools cannot resume or replace an unfinished blocked goal.
+The durable goal order above remains the execution record: recovery and offline
+preparation have progressed despite that stale application status. The project
+remains incomplete; the next attended preflight is pending owner availability.

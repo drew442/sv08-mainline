@@ -25,23 +25,34 @@ The original partial-write helper is excluded and preserved; v2 stops without
 retry. Durable beforeimage and independent post-write/process/card reconciliation
 passed. See [the restoration record](host-h12-sd-loader-restoration-20261002.md).
 
-Separate boot review passed. Fresh card-closure and receive-only readiness
-admissions passed at 02:29:39 UTC; the ready one-connect instruction expires at
-02:59 UTC on October 2. Keep PSU OFF, move only the SD to the printer, retain
-Ethernet and eMMC state, reconnect USB once and reply immediately. Stay nearby
-for two minutes; remove USB on error/reset loops/coordinator STOP or no startup
-confirmation within two minutes. Receiver is active/waiting, bridge absent,
-zero UART owners. No boot result is observed; no further UART input is planned.
-Beelink udisks2 remains temporarily runtime-masked; restore its prior active state
-once the card's removal is observed. SD boot/root/SSH and fresh installed-spare
-reconciliation remain separate from restored-loader write acceptance.
+The separately reviewed one-connect boot succeeded at approximately 02:31 UTC.
+Authenticated SSH, wired DHCP, kernel 6.18.51-sv08-candidate1, read-only SD root,
+recovery-display service and no failed systemd units were measured. The owner
+was released from immediate physical attendance; leave USB connected and PSU OFF.
+Beelink card absence was verified and udisks2 restored active/enabled.
 
-## Practical recovery outcome — 2026-10-02
+Fresh read-only spare intake and off-target p5 reconciliation passed. Both raw
+environment records have valid CRCs, flags 9/8, zero A/B counters and no arm token;
+the old C marker is absent. Linux/RTC were corrected after independent Sol/high
+review and independently checked against synchronized Beelink time. The complete
+p5 beforeimage is durably preserved off target. Source preparation for the fresh
+accepted startup repair passed: 27 entries verified, current staging node/dev_t
+bound to `/dev/mmcblk2` / `179:8`; no job, keys, artifact or listener created.
+
+Next, prepare and stage/arm/activate a fresh repaired preflight while independent
+SD SSH works, then restore the exact accepted managed loader last and use one
+reviewed SSH reboot. Its automatic dispatch preserves the required original-p5
+return route. No new loader implementation or UART commands are needed. Exact
+operation reviews and actual preflight/automatic-return evidence remain required.
+Owner availability for that attended test has been requested and is pending;
+no reboot or new physical action is requested yet.
+
+## Earlier UART recovery outcome — 2026-10-02 (superseded by SD boot)
 
 The owner's confirmed cable cycle completed. The receiver observed disappearance
 and re-enumeration and captured main U-Boot; the host is no longer at the earlier
-SPL halt. It has **not** reached authenticated SD Linux. Cold-start byte capture
-remains a documented limitation and receives no further work.
+SPL halt. That earlier attempt did **not** reach authenticated SD Linux.
+Cold-start byte capture remains a documented limitation and receives no further work.
 
 The initial scripted SD continuation stopped without a completed command result.
 An Enter-only continuation exposed a stale-prompt framing error; a separately
@@ -72,8 +83,9 @@ opening/closing the UART remain unknown.
 
 After these UART failures, the owner confirmed a USB SD reader and completed the
 reviewed power-off SD move. The restoration update above supersedes that initial
-preparation. Actual SD root/authentication, installed-spare environment/RTC/p5
-reconciliation, repaired RAM preflight and automatic return remain open.
+preparation. SD root/authentication and installed-spare environment/RTC/p5
+reconciliation subsequently passed as recorded above; repaired RAM preflight and automatic
+return remain open.
 Restored-loader acceptance grants no full-image-write, heater or motion authority.
 
 ## Current dispatch — 2026-10-02
@@ -85,19 +97,20 @@ soldering or cold-capture framework is requested. Actual later cold-start
 reliability remains to be tested through boot outcomes.
 
 The last physical preflight reached RAM, refused its claim, and its automatic
-return halted during SPL DRAM initialization. Recover host/SD access through a
-coordinated manual restart or existing SD/media rescue; once Linux runs, reuse
-the demonstrated warm-reboot route. This is host recovery, not a prerequisite to
-solve first-byte capture. No current physical step is requested by this record.
-Continue required offline work while that physical dependency waits.
+return halted during SPL DRAM initialization. Host/SD access is now restored
+through the independent SD loader. The next attended RAM test uses
+fresh artifacts from accepted sources and an SSH reboot after reviewed staging
+and loader transfer.
+Owner availability is pending; leave USB connected and PSU OFF. No new media
+move or restart is requested. Continue required offline preparation meanwhile.
 
 D's October 1 USB-return window expired at 14:07:33 UTC without observing a
 disconnect, capturing zero bytes. Its controller is inactive. A separate October
 2 00:19 UTC postcheck verified passive serial monitoring restored, PID 79976,
 sole read-only UART owner, pinned source and original log inodes. All dated cable
 instructions are expired; do not act on them. Original review and failed-attempt
-evidence remain preserved. Beelink's October 2 SSH reachability probe returned
-no route to the printer address; historical SD access is not current access.
+evidence remain preserved. An earlier October 2 SSH reachability probe returned
+no route; later authenticated SD access supersedes that observation above.
 
 H03's media-move instructions below are historical. H09/H10 and H13 retain their
 completed evidence. Physical preflight and full-image installation remain open;

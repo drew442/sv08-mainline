@@ -3,8 +3,8 @@
 The owner moved only the rescue SD into Beelink after disconnecting printer USB
 power with PSU OFF. The installed spare and stored factory eMMC were untouched.
 The preparatory move received independent GPT-6.1 Sol/high review. Beelink's
-udisks2 service is temporarily stopped and runtime-masked; restore its prior
-active state after the card is safely removed.
+udisks2 service was temporarily stopped and runtime-masked during reader work;
+its prior active/enabled state was restored after card absence was verified.
 
 ## Measured reader intake and candidate
 
@@ -70,17 +70,89 @@ owner's one-connect instruction expires at **02:59 UTC on October 2**; later
 connection needs fresh readiness. A standard read-only tail of the existing raw
 log is running for coordinator observation; it opens no UART.
 
-Ready action: with printer PSU OFF and USB power disconnected, unplug the reader,
-move only the restored SD into the printer, retain spare/factory eMMC state and
-Ethernet, then reconnect printer USB serial/power once to the same Beelink port.
-Reply immediately and remain nearby for the first two minutes. Remove USB power
-on errors, reset loops, coordinator STOP or no startup confirmation within two
-minutes; no extra reconnect/keys/UI action. The original script's reset branches
-make attended power removal necessary. No boot result is yet observed. Restore
-Beelink udisks2 after actual card removal is verified, not before.
+The owner completed that exact SD reinstall and USB connection inside the ready
+window. **Independent SD recovery boot passed at approximately 02:31 UTC.** No
+UART command was sent. The initial boot trace begins at BL31; missed earlier
+cold-start bytes remain the accepted limitation. Main U-Boot verified the SD
+payloads and Linux reached authenticated wired SSH at `192.168.1.141`.
 
-Physical recovery/preflight and automatic return remain open. No further UART
-recovery variants or complete cold-byte capture work are assigned.
+Measured boot ID is `92765d15-b74c-4864-8b39-2d8ce96b756a`, kernel
+`6.18.51-sv08-candidate1`, root `/dev/mmcblk0p2` with
+`ro,relatime,norecovery`, and read-only squashfs `/usr`. Ethernet `end0` reported
+100 Mbps full duplex. SD SSH and recovery-display services were active, with no
+failed systemd units. Service state is not a fresh human display/touch observation.
+The new SSH key was enrolled under the owner's address-based trust decision.
+The owner was told startup succeeded and no further physical action was needed.
+Leave USB connected and PSU OFF. Beelink's reader/card absence was independently
+observed before restoring udisks2 active/enabled.
+
+## Fresh spare and clock reconciliation
+
+The same spare is currently `/dev/mmcblk2`, device `179:8`, controller
+`4022000.mmc`, capacity 31,272,730,624 bytes. CID string SHA-256 is
+`08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a`.
+An initial intake assertion incorrectly expected device 179:16 and stopped
+before opening media; that failure is preserved. The corrected read-only intake
+used measured 179:8 and a complete process-descriptor scan because `fuser` is
+unavailable. GPT CRC/layout checks passed at the reviewed 7,818,182,656-byte image
+footprint; the backup GPT remains at image end and was not relocated. No spare
+partition was mounted or in use. Both 64 KiB raw environment records passed CRC,
+with flags 9/8, zero A/B counters, order `A B`, and no `SV08_REIMAGE_ARM` token.
+Full dictionaries and beforeimages remain private off target.
+
+Linux initially reported April 13, 2026, and RTC January 2, 1970. A separately
+reviewed exact helper bound this boot, spare and `sun6i-rtc 7000000.rtc` device
+251:0 to a fresh monotonic window. Independent GPT-6.1 Sol/high review accepted
+one Linux clock correction followed by one RTC write, each with readback and no
+retry. At 02:45:53 UTC the operation succeeded using Beelink's synchronized UTC.
+Independent later readback found Linux/RTC approximately 2.24/2.29 seconds behind
+Beelink's subsequent observation, including transfer and integer quantization.
+This establishes current agreement; clock retention across a future reset or
+power loss remains unproven. No job or target media/environment write accompanied
+this clock operation.
+
+## Durable p5 reconciliation and next preflight route
+
+The entire 536,870,912-byte p5 region was read through an exclusive read-only
+whole-device descriptor and streamed to a durable private Beelink beforeimage.
+Snapshot SHA-256 is
+`305860274617a15d6958f76e3238c816c38b4f3c36392a76cb1c850ecd0c2ea3`.
+Only the bound p5 span was read; the target filesystem was not mounted. Default
+read-only `debugfs` inspection on the off-target snapshot found a clean filesystem
+and 16,424 free 4096-byte blocks (67,272,704 bytes). The following exact files
+match the previous C attempt:
+
+| File | Bytes | SHA-256 |
+| --- | --- | --- |
+| `recovery.scr` | 2085 | `f1eac4024dc3b24f56af17744f42669b73aebd857b264e4e49447cd6e43caf2f` |
+| `sv08-reimage/recovery-original.scr` | 720 | `57e414bec126a309085f3e2be211c6b8fe0e43f5833a5b5609f3e69457808dee` |
+| `sv08-reimage/writer.itb` | 48902464 | `b5f527cbb3ee302e106316b5a41790b13db6311a8b106482f4b72fb8fdb1edb2` |
+
+The active stage's armed marker is absent. The existing expired-job archive and
+its files remain intact; no historical artifact was deleted or rearmed.
+
+A separate source-only planner verified the accepted operation order: prepare a
+fresh repaired job while this independent SD host supplies SSH, stage/arm/activate
+it on p5 and the spare environment, then restore the exact accepted managed
+loader `350a941…` **last**. One reviewed SSH reboot lets its default dispatch
+source the p5 selector automatically. Marker consumption then selects the
+preserved original p5 recovery script on return, as urh-04 requires. This needs
+no new loader implementation, UART commands or repeated product approval. The
+planner's initial proposed SD-first variant is superseded by its ordering
+addendum and is not assigned.
+
+Fresh source preparation passed at approximately 02:56 UTC in
+`/srv/sv08-h12-preflight-20261002-sdrestore`: 27 source/input entries were verified
+against accepted startup-repair commit `0708a18a2528929ad9a59c22e32d865003e95ed2`.
+The new policy binds staging to measured `/dev/mmcblk2`, device 179:8, with the
+accepted controller/CID runtime admission. No new job, keys, candidate artifact,
+listener or target write was created. Before creating expiring inputs or launching
+the next boot, owner availability for prompt USB power removal on a failed boot
+is pending. Exact independent artifact/staging/arm/activation/loader/boot reviews
+and current admissions remain required. Actual RAM preflight and automatic return
+are still open; successful SD recovery does not pass them or grant full-image,
+MCU, heater or motion authority. No further UART recovery variants or complete
+cold-byte capture work are assigned.
 
 Private source, frozen revisions, intake, provenance, beforeimage and review
 records are under `local/feature-workflow/probes/h12-sd-loader-restore-20261002a/`
