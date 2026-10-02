@@ -91,3 +91,17 @@ against changes to the observed GitHub tips.
 | `feature/urh-stage-and-qemu` | deferred | `e69c0ecb41d303b11e0c72e4566a6b9b9346863c` | `archive/20261002/deferred/feature/urh-stage-and-qemu-local` |
 | `h616-evidence-hash-fix` | superseded | `f790af00ff8eb0b92cb3b72f64916fb945015a0d` | `archive/20261002/superseded/h616-evidence-hash-fix` |
 | `reconcile/host-recovery-export-record` | merged | `daed4a187cc6c1c70d89ee9e6ab1177617bbd133` | `archive/20261002/merged/reconcile/host-recovery-export-record` |
+
+## Verified result
+
+- 61 annotated archive tags pushed and checked against their original commits:
+  33 merged, 17 superseded, 7 abandoned and 4 deferred tips.
+- 55 obsolete GitHub branch names removed after tag verification, using expected
+  remote-tip checks. This includes the renamed WIP branch’s old remote name.
+- 49 local branch names removed; one additional local branch renamed to WIP.
+- Only `main` and `wip/host-image-job-resolution` remain locally and on GitHub.
+- Retained WIP tracked/untracked file hashes match before cleanup. Archived
+  worktrees were detached at the same commits; their directories were retained.
+- No open pull requests existed at cleanup.
+
+Private operation receipts are in `local/branch-cleanup-20261002/`.
