@@ -222,8 +222,8 @@ sys.exit(u.main())
         with patch('sv08_boot.device_number',side_effect=['1:1','1:2','1:3']):
             verify_devices({'devices':{'root-a':'root','data':'data','boot-a':'boot'}},'A',read_command=reader)
         backend=RealBackend({}, {}, {}, {})
-        self.assertEqual(backend.status(reader),{'observed':True})
-        self.assertEqual([call[0] for call in calls],['findmnt','findmnt','/usr/bin/rauc'])
+        self.assertFalse(hasattr(backend, 'status'))  # No mutating GetSlotStatus path.
+        self.assertEqual([call[0] for call in calls],['findmnt','findmnt'])
 
     def test_cleanup_backend_probe_is_bounded_without_install_timeout(self):
         from sv08_rauc import Backend as RealBackend
@@ -231,6 +231,8 @@ sys.exit(u.main())
         def context(boot,read_command=None):
             read_command([sys.executable,'-c','import time;time.sleep(5)'])
         backend.validate_context=context
+        from contextlib import nullcontext
+        backend.writer = nullcontext
         with patch('sv08_rauc.CLEANUP_SECONDS',.1):
             with self.assertRaisesRegex(ValueError,'timed out'):backend.cleanup_observation({},None)
 

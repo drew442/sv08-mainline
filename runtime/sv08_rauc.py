@@ -15,6 +15,7 @@ import subprocess
 from sv08_boot import verify_devices
 from sv08_gpt import inspect as inspect_gpt
 from sv08_bundle import inspect as inspect_bundle
+from sv08_rauc_service import Service
 
 MIB = 1024*1024
 CLEANUP_SECONDS = 10
@@ -126,14 +127,29 @@ class Backend:
         self.manifest, self.policy, self.layout, self.environment = manifest, policy, layout, environment
         self.config, self.keyring, self.env_config, self.fixture = config, keyring, env_config, fixture
         self.boot = None
+        self.service = Service()
+
+    def writer(self): return self.service.writer()
 
     def command(self, *args):
         return subprocess.check_output(['/usr/bin/rauc', '--conf='+str(self.config), *args], text=True)
 
-    def status(self, read_command=None):
-        if read_command:
-            return json.loads(read_command(['/usr/bin/rauc', '--conf='+str(self.config), 'status', '--output-format=json'], text=True))
-        return json.loads(self.command('status', '--output-format=json'))
+    def environment_values(self, read_command=None):
+        output = (read_command or subprocess.check_output)(['/usr/bin/fw_printenv', '-c', str(self.env_config),
+            'sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT'], text=True, timeout=10)
+        lines = output.splitlines()
+        if len(lines) != 4: raise ValueError('Unexpected environment response')
+        values = dict(line.split('=', 1) for line in lines)
+        validate_environment(values, self.environment['layout_id'])
+        return values
+
+    def observation(self, boot):
+        validate_config(self.config.read_text(), self.manifest, self.policy, self.keyring)
+        evidence = self.service.observe()
+        props = evidence['properties']
+        if props['Compatible'] != self.policy['compatible'] or props['Variant'] or props['BootSlot'] != boot['slot']:
+            raise ValueError('RAUC service is managing a different running target')
+        return evidence
 
     def validate_context(self, boot, read_command=None):
         if os.geteuid() != 0:
@@ -189,14 +205,14 @@ class Backend:
             for part in self.layout['partitions']]
         if gpt['partition_records'] != expected_records:
             raise ValueError('On-disk GPT identities disagree with the running partition map')
-        output = (read_command or subprocess.check_output)(['/usr/bin/fw_printenv', '-c', str(self.env_config),
-            'sv08_env_layout', 'BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT'], text=True)
-        lines = output.splitlines()
-        if len(lines) != 4:
-            raise ValueError('Unexpected environment response')
-        validate_environment(dict(line.split('=', 1) for line in lines), environment['layout_id'])
-        validate_status(self.status(read_command), self.manifest, self.policy, boot)
+        self.environment_values(read_command)
+        # Service-loaded slot grouping comes from the validated immutable config,
+        # with actual geometry/boot/mount checks above and below. This is not a
+        # GetSlotStatus report: that method can delete RAUC cache directories.
+        with self.writer(): service = self.observation(boot)
+        service_mounts = Path('/proc') / str(service['identity']['pid']) / 'mountinfo'
         mounted = {line.split()[2] for line in Path('/proc/self/mountinfo').read_text().splitlines()}
+        mounted.update(line.split()[2] for line in service_mounts.read_text().splitlines())
         other = 'b' if boot['slot'] == 'A' else 'a'
         if any(info[kind+'-'+other]['number'] in mounted for kind in ('boot', 'root')):
             raise ValueError('Inactive target filesystem is mounted')
@@ -214,44 +230,49 @@ class Backend:
             remaining = deadline-time.monotonic()
             if remaining <= 0: raise ValueError('Cleanup backend observation timed out')
             return manifest_output(command, lease_fd=lease_fd, seconds=remaining).decode()
-        self.validate_context(boot, read_command=read)
-        status = self.status(read)
-        slots = {name: value for item in status['slots'] for name, value in item.items()}
-        return dict(primary={'rootfs.0':'A', 'rootfs.1':'B', None:None}[status['boot_primary']],
-                    good={slot:slots['rootfs.'+str(index)]['boot_status']=='good' for index,slot in enumerate(('A','B'))})
+        with self.writer():
+            self.validate_context(boot, read_command=read)
+            evidence = self.observation(boot)
+            values = self.environment_values(read)
+            return dict(primary={'rootfs.0':'A', 'rootfs.1':'B'}[evidence['primary']],
+                        good={slot:values['BOOT_'+slot+'_LEFT'] != '0' for slot in ('A','B')})
 
     def primary(self):
-        return {'rootfs.0': 'A', 'rootfs.1': 'B', None: None}[self.status()['boot_primary']]
+        with self.writer():
+            return {'rootfs.0': 'A', 'rootfs.1': 'B'}[self.service.observe()['primary']]
 
     def good(self, slot):
-        slots = {name: value for item in self.status()['slots'] for name, value in item.items()}
-        return slots['rootfs.'+str(('A', 'B').index(slot))]['boot_status'] == 'good'
+        with self.writer():
+            self.service.observe()
+            return self.environment_values()['BOOT_'+slot+'_LEFT'] != '0'
 
     def mark(self, action, slot):
-        if self.boot is None:
-            raise ValueError('Validate the running context before bootloader writes')
-        self.validate_context(self.boot)
-        self.command('status', action, 'rootfs.'+str(('A', 'B').index(slot)))
+        with self.writer():
+            if self.boot is None:
+                raise ValueError('Validate the running context before bootloader writes')
+            self.validate_context(self.boot)
+            self.service.mark(action.removeprefix('mark-'), 'rootfs.'+str(('A', 'B').index(slot)))
 
     def mark_active(self, slot): self.mark('mark-active', slot)
     def mark_bad(self, slot): self.mark('mark-bad', slot)
     def mark_good(self, slot): self.mark('mark-good', slot)
 
     def install(self, bundle, proof, target):
-        if self.boot is None or target == self.boot['slot']:
-            raise ValueError('Validate the source and choose the inactive target')
-        self.validate_context(self.boot)
-        actual = inspect_bundle(bundle, self.policy, self.keyring)
-        if actual != proof:
-            raise ValueError('Staged file or signed admission proof changed')
-        source = self.boot['slot'].lower()
-        sizes = {'boot': self.policy['image_bytes']['boot'], 'root': self.policy['image_bytes']['rootfs']}
-        devices = self.manifest['devices']
-        before = {kind: digest_device(devices[kind+'-'+source], size) for kind, size in sizes.items()}
-        self.command('install', str(bundle))
-        for kind, size in sizes.items():
-            if digest_device(devices[kind+'-'+source], size) != before[kind]:
-                raise ValueError('Active slot changed during installation')
-            expected = proof['image_hashes']['rootfs' if kind == 'root' else 'boot']
-            if digest_device(devices[kind+'-'+target.lower()], size) != expected:
-                raise ValueError('Inactive image does not match the authenticated digest')
+        with self.writer():
+            if self.boot is None or target == self.boot['slot']:
+                raise ValueError('Validate the source and choose the inactive target')
+            self.validate_context(self.boot)
+            actual = inspect_bundle(bundle, self.policy, self.keyring)
+            if actual != proof:
+                raise ValueError('Staged file or signed admission proof changed')
+            source = self.boot['slot'].lower()
+            sizes = {'boot': self.policy['image_bytes']['boot'], 'root': self.policy['image_bytes']['rootfs']}
+            devices = self.manifest['devices']
+            before = {kind: digest_device(devices[kind+'-'+source], size) for kind, size in sizes.items()}
+            self.service.install(str(bundle))
+            for kind, size in sizes.items():
+                if digest_device(devices[kind+'-'+source], size) != before[kind]:
+                    raise ValueError('Active slot changed during installation')
+                expected = proof['image_hashes']['rootfs' if kind == 'root' else 'boot']
+                if digest_device(devices[kind+'-'+target.lower()], size) != expected:
+                    raise ValueError('Inactive image does not match the authenticated digest')

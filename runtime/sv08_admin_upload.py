@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fixed authenticated bundle intake; ADR 0010. No installer or recovery authority.
 
-Lock order: jobs ledger → state → upload for brief admission/cleanup. Receipt
+Lock order: worker → state → upload; ledger snapshots are brief. Receipt
 retains upload only, never calls Controller/Jobs/Transaction while streaming.
 """
 from contextlib import contextmanager, ExitStack
@@ -15,7 +15,7 @@ import stat
 import sys
 import time
 from sv08_admin import revision, snapshot
-from sv08_admin_jobs import TERMINAL
+
 from sv08_bundle import inspect as inspect_bundle
 from sv08_staging import Staging
 
@@ -41,8 +41,9 @@ class Uploads:
         tx = view['transaction']
         if view['state']['pending'] or tx and tx['phase'] not in ('complete', 'cancelled', 'failed'):
             raise ValueError('Preserve uploads until transaction reconciliation is complete')
-        view['upload_jobs'] = c.jobs.load()
-        if any(row['phase'] not in TERMINAL for row in view['upload_jobs']):
+        with c.jobs.lock('ledger.lock'):
+            view['upload_jobs'] = c.jobs.load()
+        if any(c.jobs.blocking(row) for row in view['upload_jobs']):
             raise ValueError('Preserve uploads while an image job is pending or ambiguous')
         return view
 
@@ -54,7 +55,7 @@ class Uploads:
         c.store.load()  # Refuse damaged registry before creating lock bookkeeping.
         with ExitStack() as lease:
             with ExitStack() as higher:
-                higher.enter_context(c.jobs.lock('ledger.lock'))
+                higher.enter_context(c.jobs.lock('worker.lock', True))
                 higher.enter_context(c.store.locked(nonblocking=True))
                 view = self.view()
                 lease.enter_context(self.staging.locked())

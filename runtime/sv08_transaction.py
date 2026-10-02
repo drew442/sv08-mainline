@@ -15,6 +15,7 @@ from sv08_state import atomic_json, identifier
 class Transaction:
     def __init__(self, store, backend, admission):
         self.store, self.backend, self.admission = store, backend, admission
+        self.writer = getattr(backend, 'writer', nullcontext)
         self.path = store.root / 'update.json'
 
     def load(self):
@@ -60,7 +61,7 @@ class Transaction:
                 raise ValueError('Automatic updates are disabled')
             # Fixed ordering: state -> optional upload lease -> service barrier.
             # Authenticate the upload before asking Klipper to quiesce.
-            with lease() as leased, self.admission():
+            with lease() as leased, self.admission(), self.writer():
                 self.require_source(state, boot)
                 yield state, leased
 
@@ -136,7 +137,7 @@ class Transaction:
 
     def cancel(self, boot):
         """Disarm before clearing pending state; interrupted calls are retryable."""
-        with self.store.locked(), self.admission():
+        with self.store.locked(), self.admission(), self.writer():
             state, tx = self.store.load(), self.load()
             if not tx or tx['phase'] in ('complete', 'cancelled', 'failed'):
                 return tx
@@ -163,7 +164,7 @@ class Transaction:
         The coordinator must execute the returned next step under its normal
         checks. It must not release the trial gate merely because this returns.
         """
-        with self.store.locked(), self.admission():
+        with self.store.locked(), self.admission(), self.writer():
             state, tx = self.store.load(), self.load()
             pending = state['pending']
             if not tx or tx['phase'] in ('complete', 'cancelled', 'failed'):
@@ -207,7 +208,7 @@ class Transaction:
 
     def confirm(self, boot, health):
         """Health callback must check this boot; success is never inferred here."""
-        with self.store.locked(), self.admission():
+        with self.store.locked(), self.admission(), self.writer():
             state, tx = self.store.load(), self.load()
             if (not tx or tx['phase'] not in ('armed', 'confirming') or
                     boot['slot'] != tx['slot'] or boot['release'] != tx['release']):

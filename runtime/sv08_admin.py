@@ -202,6 +202,11 @@ class Controller:
             if method == 'upload.plan': return upload.plan(request['name'], request['size'])
             if method == 'upload.cleanup-plan': return upload.cleanup_plan(request['name'])
             return upload.cleanup(request['plan'])
+        if method in ('image.inspect', 'image.dispose'):
+            from sv08_admin_resolution import inspect, apply
+            expected = {'method', 'id'} if method == 'image.inspect' else {'method', 'plan'}
+            if set(request) != expected or self.jobs is None: raise ValueError('Invalid image evidence request')
+            return inspect(self.jobs, request['id'], self) if method == 'image.inspect' else apply(self.jobs, request['plan'], self)
         expected = {'status': {'method'}, 'plan': {'method', 'action', 'arguments'},
                     'apply': {'method', 'plan'}, 'jobs': {'method'},
                     'image.submit': {'method', 'id', 'plan'}}.get(method)
