@@ -22,6 +22,28 @@ for every G4 administration or G5 release feature. G4/G5 authorized preparation
 may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
 
+## Live practical recovery window — 2026-10-02
+
+The owner requested a ready recovery attempt and confirmed the physical setup
+unchanged for this restart. Fresh independent high-consequence review passed with
+conditions; native session `01a0fa22-6734-7a32-b72f-6263c117b3e8` was verified as
+GPT-6.1 Sol/high. Complete fresh admissions, source/runtime staging readback,
+effective unit commands/limits and supplemental live process/boot/mode checks
+passed. At 01:07 UTC the controller was active, PID 82021/starttime 32742953;
+old passive monitoring was stopped, the bridge was present and zero UART owners
+were independently observed. Original log append prefixes were preserved.
+
+The receiver became ready at 01:06:36 UTC and waits until
+01:36:36 UTC. The owner was instructed at 01:07 UTC to leave PSU
+OFF and SD/eMMC untouched, unplug USB serial from Beelink for at least five
+seconds and reconnect to the same port once, then leave it connected. The user
+instruction conservatively expires at 01:36 UTC. No second reset is automatic.
+This is practical SD recovery using the unchanged reviewed route; complete first
+cold-boot bytes are not required. Actual disconnect/re-enumeration, gated SD boot,
+authenticated current intake and independent passive restoration remain to be
+observed. Private review/admission/source/live evidence is retained under
+`local/feature-workflow/probes/h12-manual-sd-return-20261002a/`.
+
 ## Cold-boot capture limitation — owner decision 2026-10-02
 
 Complete initial cold-boot serial capture is not an active prerequisite for G1–G5.
