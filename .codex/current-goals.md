@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; independent SD boot/SSH restored, spare/p5 reconciled and clocks corrected; previous physical preflight failed | Prepare fresh repaired job while SD SSH works; stage/arm/activate, then restore accepted managed loader last and run one reviewed attended preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; independent SD boot/SSH restored, spare/p5 reconciled and clocks corrected; previous physical preflight failed | Retire the expired activated job using preserved beforeimages; finish preparation before signing replacement, then stage/arm/activate, install managed loader last and run attended preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -41,8 +41,10 @@ was released from immediate physical attendance; leave USB connected and PSU OFF
 Beelink card absence was verified and udisks2 restored active/enabled.
 
 Fresh read-only spare intake and off-target p5 reconciliation passed. Both raw
-environment records have valid CRCs, flags 9/8, zero A/B counters and no arm token;
-the old C marker is absent. Linux/RTC were corrected after independent Sol/high
+environment records have valid CRCs, flags 9/8 and zero A/B counters; the expired
+C arm token remains and its p5 marker is absent. The initial intake checked the
+wrong capitalization and falsely reported token absence; actual staging stopped
+before any write, exposing that error. Exact reviewed token retirement subsequently passed; see the execution checkpoint below. Linux/RTC were corrected after independent Sol/high
 review and independently checked against synchronized Beelink time. The complete
 p5 beforeimage is durably preserved off target. Source preparation for the fresh
 accepted startup repair passed: 27 entries verified, current staging node/dev_t
@@ -53,8 +55,9 @@ SD SSH works, then restore the exact accepted managed loader last and use one
 reviewed SSH reboot. Its automatic dispatch preserves the required original-p5
 return route. No new loader implementation or UART commands are needed. Exact
 operation reviews and actual preflight/automatic-return evidence remain required.
-Owner availability for that attended test has been requested and is pending;
-no reboot or new physical action is requested yet.
+The owner confirmed availability for the attended test. Fresh signed repaired
+artifacts and volatile transfer passed; exact expired-token retirement is now
+being reviewed before staging. No reboot or new physical action is requested yet.
 
 ## Earlier UART recovery outcome — 2026-10-02 (superseded by SD boot)
 
@@ -234,4 +237,36 @@ The October 2 application readback reports the existing G1–G5 goal as `blocked
 The available goal tools cannot resume or replace an unfinished blocked goal.
 The durable goal order above remains the execution record: recovery and offline
 preparation have progressed despite that stale application status. The project
-remains incomplete; the next attended preflight is pending owner availability.
+remains incomplete; owner attendance is confirmed and preflight preparation is
+progressing under the separate exact operation reviews.
+
+## Fresh preflight checkpoint — 2026-10-02 03:58 UTC
+
+Expired C token retirement passed with independent full-field comparison and
+preserved off-target beforeimages. Fresh repaired job
+`78087665ab979fb31c56b12a8c06150a` passed p5 staging, redundant-environment arming
+and marker activation; separate physical readbacks passed each phase. The original
+p5 script and historical archive were preserved. Independent SD Linux remains
+running; the managed loader was not installed and no reboot was sent.
+
+The managed-loader start deadline (03:52:10 UTC) and boot deadline
+(03:57:10 UTC) elapsed before those operations. Job expiry is 04:07:10 UTC.
+Do not reboot into this prepared job or rearm its expired inputs. G1 remains
+incomplete; continue with fresh signed inputs and reviewed retirement/replacement
+of the current arm and marker while retaining independent SD SSH. The claim
+listener was launched, but readiness and actual claim were not established.
+
+DNS check: explicit query to `192.168.1.1` resolves `beelink.drewnet.online` to
+`192.168.1.136`; the temporary printer hostname `sv08-sd-recovery-test` returns
+NXDOMAIN. Its sudo warning has not prevented commands. Use the split-DNS resolver
+for `drewnet.online`. No sandbox or bubblewrap execution is used.
+
+The owner instructed continuation after the DNS discussion. Current activated p5
+has a newly preserved full beforeimage (536,870,912 bytes; SHA-256
+`8840adb62fa23bffbce04d9b5a528bdbe02401519e9055f414fca8ee648694ce`),
+durable raw environment beforeimages and copied old journals. A distinct fresh
+source workspace is prepared without issuing a job. Exact expired activated-job
+retirement is undergoing independent review. The replacement will retain the
+supported maximum 3,600-second validity; preparation is moved before signing.
+The offline DHCP hostname/local-hosts correction passed separate source review;
+installed SD media and live network configuration remain unchanged.

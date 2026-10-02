@@ -336,6 +336,7 @@ def compose(a):
         put(envelope/'etc/pam.d'/name,path.read_text())
     put(envelope/'etc/sudoers','Defaults env_reset\nDefaults secure_path="/usr/sbin:/usr/bin:/sbin:/bin"\nroot ALL=(ALL:ALL) ALL\nrecovery ALL=(ALL:ALL) NOPASSWD: ALL\n',0o440)
     put(envelope / 'etc/hostname', 'sv08-sd-recovery-test\n')
+    put(envelope / 'etc/hosts', '127.0.0.1 localhost\n127.0.1.1 sv08-sd-recovery-test\n::1 localhost ip6-localhost ip6-loopback\n')
     # SSH private identity is generated into tmpfs each boot: explicit re-enrollment.
     (envelope / 'etc/ssh').mkdir(exist_ok=True)
     for candidate in (envelope / 'etc/ssh').glob('ssh_host_*'):

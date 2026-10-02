@@ -5,6 +5,8 @@ DHCP=ipv4
 IPv6AcceptRA=no
 LinkLocalAddressing=no
 [DHCPv4]
+SendHostname=yes
+Hostname=sv08-sd-recovery-test
 UseDNS=no
 UseNTP=no
 UseHostname=no

@@ -97,7 +97,11 @@ used measured 179:8 and a complete process-descriptor scan because `fuser` is
 unavailable. GPT CRC/layout checks passed at the reviewed 7,818,182,656-byte image
 footprint; the backup GPT remains at image end and was not relocated. No spare
 partition was mounted or in use. Both 64 KiB raw environment records passed CRC,
-with flags 9/8, zero A/B counters, order `A B`, and no `SV08_REIMAGE_ARM` token.
+with flags 9/8, zero A/B counters and order `A B`. Both retain lowercase
+`sv08_reimage_arm` set to expired job C. The initial helper checked uppercase
+`SV08_REIMAGE_ARM` and incorrectly reported token absence; the actual staging
+helper stopped on its correct lowercase-key gate before mounting or writing.
+Exact reviewed token retirement subsequently passed, with original beforeimages preserved.
 Full dictionaries and beforeimages remain private off target.
 
 Linux initially reported April 13, 2026, and RTC January 2, 1970. A separately
@@ -148,7 +152,8 @@ The new policy binds staging to measured `/dev/mmcblk2`, device 179:8, with the
 accepted controller/CID runtime admission. No new job, keys, candidate artifact,
 listener or target write was created. Before creating expiring inputs or launching
 the next boot, owner availability for prompt USB power removal on a failed boot
-is pending. Exact independent artifact/staging/arm/activation/loader/boot reviews
+was confirmed. Fresh signed repaired artifacts and volatile transfer subsequently
+passed; expired-token retirement is being separately reviewed before staging. Exact independent artifact/staging/arm/activation/loader/boot reviews
 and current admissions remain required. Actual RAM preflight and automatic return
 are still open; successful SD recovery does not pass them or grant full-image,
 MCU, heater or motion authority. No further UART recovery variants or complete
@@ -160,3 +165,45 @@ and the corresponding root-owned Beelink capture directory. Source records and
 retained original build/composition evidence accessed 2026-10-02. Board revision
 is owner-reported H616_JC_6Z_V1.2 in the managed-transfer record; this reader
 inspection does not measure the printer PCB revision.
+
+## Fresh job staging and missed boot window — 03:58 UTC
+
+Job `78087665ab979fb31c56b12a8c06150a` was issued at 03:07:10 UTC and
+expires at 04:07:10 UTC. Separate exact Sol/high reviews admitted expired-C token
+retirement, staging, arming and activation. Each completed operation passed its
+independent readback. After retirement the valid environment flags were 11/10;
+after fresh arming they were 13/12, with only the fresh token added and all other
+fields preserved. Activation readback found the exact marker, fresh wrapper/FIT,
+preserved original script/archive, unchanged environments and unchanged global
+mounts. This is preparation evidence; it is not physical RAM preflight acceptance.
+
+The managed-loader start deadline, 03:52:10 UTC, elapsed before loader execution.
+The reboot deadline, 03:57:10 UTC, also elapsed. Neither managed-loader transfer
+nor reboot was executed. Independent SD recovery Linux remains available. The
+fresh listener launch returned success, but listener readiness, claim consumption,
+preflight acceptance and automatic return were not established. Continue using a
+new signed job and independently reviewed retirement/replacement of the current
+arm/marker; do not waive deadlines or reuse expired inputs.
+
+Explicit DNS checks against `192.168.1.1` returned `192.168.1.136` for
+`beelink.drewnet.online` and NXDOMAIN for temporary hostname
+`sv08-sd-recovery-test`. The latter produces a sudo warning but has not blocked
+commands. These checks do not establish a general network or filesystem failure.
+
+## Recovery hostname correction — offline candidate
+
+The owner observed DHCP requests without a hostname. The recovery network
+configuration now explicitly sets `SendHostname=yes` and
+`Hostname=sv08-sd-recovery-test`. The image composer also creates local loopback
+hostname entries in `/etc/hosts`, allowing sudo to resolve the host locally.
+Both generated files remain covered by the immutable envelope inventory.
+These changes affect future image builds; the installed SD image is unchanged.
+Seven existing focused SD recovery tests and separate source review passed.
+Packet-level sending and DHCP/DNS registration remain unverified on hardware.
+
+The upstream [systemd v257 DHCP documentation](https://github.com/systemd/systemd/blob/v257/man/systemd.network.xml)
+(accessed 2026-10-02) documents explicit `Hostname=` and `SendHostname=`. Sending
+is already enabled by default; `UseHostname=no` controls accepting a hostname
+from the server. Thus the earlier configuration alone does not establish why
+this running image omitted its hostname. This correction makes the transmitted
+name explicit without claiming that cause has been measured.

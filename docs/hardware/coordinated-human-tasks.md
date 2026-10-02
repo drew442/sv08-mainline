@@ -32,8 +32,10 @@ was released from immediate physical attendance; leave USB connected and PSU OFF
 Beelink card absence was verified and udisks2 restored active/enabled.
 
 Fresh read-only spare intake and off-target p5 reconciliation passed. Both raw
-environment records have valid CRCs, flags 9/8, zero A/B counters and no arm token;
-the old C marker is absent. Linux/RTC were corrected after independent Sol/high
+environment records have valid CRCs, flags 9/8 and zero A/B counters; the expired
+C arm token remains and its p5 marker is absent. The initial intake checked the
+wrong capitalization and falsely reported token absence; actual staging stopped
+before any write, exposing that error. Exact reviewed token retirement is pending. Linux/RTC were corrected after independent Sol/high
 review and independently checked against synchronized Beelink time. The complete
 p5 beforeimage is durably preserved off target. Source preparation for the fresh
 accepted startup repair passed: 27 entries verified, current staging node/dev_t
@@ -44,8 +46,9 @@ SD SSH works, then restore the exact accepted managed loader last and use one
 reviewed SSH reboot. Its automatic dispatch preserves the required original-p5
 return route. No new loader implementation or UART commands are needed. Exact
 operation reviews and actual preflight/automatic-return evidence remain required.
-Owner availability for that attended test has been requested and is pending;
-no reboot or new physical action is requested yet.
+The owner confirmed availability for the attended test. Fresh signed repaired
+artifacts and volatile transfer passed; exact expired-token retirement is now
+being reviewed before staging. No reboot or new physical action is requested yet.
 
 ## Earlier UART recovery outcome — 2026-10-02 (superseded by SD boot)
 
@@ -101,7 +104,7 @@ return halted during SPL DRAM initialization. Host/SD access is now restored
 through the independent SD loader. The next attended RAM test uses
 fresh artifacts from accepted sources and an SSH reboot after reviewed staging
 and loader transfer.
-Owner availability is pending; leave USB connected and PSU OFF. No new media
+Owner attendance is confirmed; leave USB connected and PSU OFF. No new media
 move or restart is requested. Continue required offline preparation meanwhile.
 
 D's October 1 USB-return window expired at 14:07:33 UTC without observing a
