@@ -105,3 +105,17 @@ against changes to the observed GitHub tips.
 - No open pull requests existed at cleanup.
 
 Private operation receipts are in `local/branch-cleanup-20261002/`.
+
+## WIP update from main
+
+At the owner’s subsequent request, `wip/host-image-job-resolution` was updated
+from main, including all ten H12 decisions and permission-security abandonment.
+Its twelve previously uncommitted tracked/untracked drafts overlap files revised
+in the accepted main implementation. Their exact contents were verified and
+preserved on GitHub before updating the worktree, under the annotated tag
+`archive/20261002/wip/host-image-job-resolution-before-main-update`.
+The tag preserves a stash-format commit with original base, index and untracked
+parents. Recover the old drafts in a separate worktree at the original base with
+`git stash apply --index <archive-tag>`; applying them over current main can conflict.
+The updated WIP worktree uses main’s accepted files and is clean. The earlier
+cleanup description of an unchanged dirty worktree is a historical checkpoint.
