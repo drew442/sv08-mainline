@@ -106,7 +106,74 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "rng-acquisition",
+          "document": "docs/development/h616-claim-entropy-acquisition-20261002.md",
+          "document_sha256": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+          "environment": "offline",
+          "limitations": "No actual unready-getrandom experiment, globalinit or ARM64 runtime, fresh FIT composition, hardware RNG/provider identity, physicalpreflight PASS or release qualification. PID1 fixture substitutes blockedpipe; cancellation has scheduling limits. Original unprivilegednamespace failure retained.",
+          "method": "Actual compiled helper:80 deterministic scenarios; three real ordinary-process and three coordinator Linux namespacePID1 interruption cases; two fresh randomness/receipt regressions; matched ARM64 builds. Original failures retained and unchanged purpose/durable-server evidence reused with limits.",
+          "profile": null,
+          "source_commit": "0735f150587fb96347ffa7d3bac512c6388a5125",
+          "source_sha256": {
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/development/h616-claim-entropy-acquisition-20261002.md": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "83a7c1d4d385109afa79521f2bab059443cc4c7e1e1b7168856aadf3147540cb",
+            "tests/test_emmc_claim_startup.py": "b9f6e1697cc66d59d13253a4ca8e6aa17e7977f9a2de17a73bab39a79bb599e2",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "rng-interruption",
+          "document": "docs/development/h616-claim-entropy-acquisition-20261002.md",
+          "document_sha256": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+          "environment": "offline",
+          "limitations": "No actual unready-getrandom experiment, globalinit or ARM64 runtime, fresh FIT composition, hardware RNG/provider identity, physicalpreflight PASS or release qualification. PID1 fixture substitutes blockedpipe; cancellation has scheduling limits. Original unprivilegednamespace failure retained.",
+          "method": "Actual compiled helper:80 deterministic scenarios; three real ordinary-process and three coordinator Linux namespacePID1 interruption cases; two fresh randomness/receipt regressions; matched ARM64 builds. Original failures retained and unchanged purpose/durable-server evidence reused with limits.",
+          "profile": null,
+          "source_commit": "0735f150587fb96347ffa7d3bac512c6388a5125",
+          "source_sha256": {
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/development/h616-claim-entropy-acquisition-20261002.md": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "83a7c1d4d385109afa79521f2bab059443cc4c7e1e1b7168856aadf3147540cb",
+            "tests/test_emmc_claim_startup.py": "b9f6e1697cc66d59d13253a4ca8e6aa17e7977f9a2de17a73bab39a79bb599e2",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "claim-regression",
+          "document": "docs/development/h616-claim-entropy-acquisition-20261002.md",
+          "document_sha256": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+          "environment": "offline",
+          "limitations": "No actual unready-getrandom experiment, globalinit or ARM64 runtime, fresh FIT composition, hardware RNG/provider identity, physicalpreflight PASS or release qualification. PID1 fixture substitutes blockedpipe; cancellation has scheduling limits. Original unprivilegednamespace failure retained.",
+          "method": "Actual compiled helper:80 deterministic scenarios; three real ordinary-process and three coordinator Linux namespacePID1 interruption cases; two fresh randomness/receipt regressions; matched ARM64 builds. Original failures retained and unchanged purpose/durable-server evidence reused with limits.",
+          "profile": null,
+          "source_commit": "0735f150587fb96347ffa7d3bac512c6388a5125",
+          "source_sha256": {
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/development/h616-claim-entropy-acquisition-20261002.md": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+            "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+            "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+            "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+            "tests/fixtures/sd-network-root/emmc_image_writer.c": "83a7c1d4d385109afa79521f2bab059443cc4c7e1e1b7168856aadf3147540cb",
+            "tests/test_emmc_claim_startup.py": "b9f6e1697cc66d59d13253a4ca8e6aa17e7977f9a2de17a73bab39a79bb599e2",
+            "tests/test_h616_reimage_candidate.py": "8561c580e620d010575917e19615cddd361e34a5c0be10cabe0bda7284367d74",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        }
+      ],
       "human_task": null,
       "id": "entropy-acquisition",
       "implementation": {
@@ -116,9 +183,16 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "review",
       "title": "Implement and independently verify bounded secure entropy acquisition",
-      "verification": null
+      "verification": {
+        "decision_sha256": "84f92867b0bed553225e46d3957e6bd621721cbaac9eaabb02d8c2f4d594d8af",
+        "evidence_sha256": "a317578e14cf81196c2177fecfdf89bfd598857211566198244ba31fd7def2ef",
+        "outcome": "passed",
+        "rationale": "Passed offline delivery at clean HEAD 0735f150587fb96347ffa7d3bac512c6388a5125. Reviewed the entire diff from 108c148c20b32f02ef4c148846a9a424df0f9e63: exactly three approved paths, no mode/deletion/gitlink or unrelated changes. Main-record complete decision, proposal/scope/requirements, submitted document/source, pinned Monocypher/license, configuration, toolchain/libc and retained ARM64 artifact hashes match. All rng-acquisition, rng-interruption and claim-regression checks and seven constraints are satisfied at their offline scope. Source review and independent reproduction establish 32 flags-zero secure bytes, the unchanged entry-based 60-second monotonic deadline, exact/late refusal, periodic lost-wake cancellation, bounded cleanup, fail-closed setup/cleanup errors, nonsecret errno diagnostics, and no transport/downstream target access before timely completion and cleanup. Reproduced all 80 deterministic production-helper scenarios, receipt/randomness regressions, three ordinary-process and three actual namespace-PID-1 interruption cases. PID-1 acquisition elapsed 1.000068541/1.000073542/1.100052697 seconds, below the fixture two-second limit, with restored signal state and no late notification observed. These static x86_64 glibc 2.39 tests on Linux 7.0.0-31-generic substitute a blocked pipe for getrandom; they are not unready-getrandom, ARM64 runtime or global-init proof and provide no hard real-time scheduler guarantee. Fresh default, signed write/preflight purpose, preflight no-transfer/bypass/finalizer and server-expiry checks passed. Preserved my initial scratch-header-path failures; one corrected allocation-only follow-up passed without production changes or weakened guards. Matched before/after ARM64 sizes grow 84280/84264 bytes; artifact hashes, conservative FIT/initramfs/load/1-GiB arithmetic and unchanged factory geometry check out. Unchanged receipt/downstream source and historical durable/full/fault evidence were explicitly verified and reused, not represented as fresh whole-image execution; old polling results do not certify the new acquisition. Original implementation namespace/build failures remain retained. Reproduction runtime about 28 seconds, conservatively under 32 MiB generated within the 64 MiB allocation; no incidental probes or candidate edits. No fresh FIT composition, physical entropy/provider readiness, preflight PASS, recovery return, named hardware support or release is established. Physical H12 still requires identified artifacts/target, fresh signed single consumption, preflight PASS, original recovery return, owner authorization and separate exact-operation review. No material offline acceptance objection found.",
+        "reviewer": "feature_verifier_high / fresh independent separate-session fallback; requested GPT-6.1 Sol/high; effective runtime confirmation remains coordinator-owned",
+        "session": "/home/drew/sv08-mainline/local/feature-workflow/probes/h12-preflight-renew-20261002b/verify-entropy"
+      }
     }
   ],
   "title": "Acquire secure early-boot randomness under a bounded blocking deadline"
