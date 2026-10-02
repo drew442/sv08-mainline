@@ -244,10 +244,13 @@ preparation; the full checklist is a release gate, not a first-boot prerequisite
   output. The [2026-09-13 warm reboot](test-sv08-01-host-console.md) reached SSH
   with a new boot ID and no failed units. For the 2026-09-25 v5 boot the initial
   listener path was stale; a corrected listener was ready only after boot.
-- [ ] Establish complete host power isolation for a true cold-boot capture:
-  host uptime continued across the reported printer switch-off/on with the USB
-  console attached. Determine the remaining power source before claiming a
-  cold boot; do not assume the printer switch alone makes board work safe.
+- [x] Record the cold-capture limitation (owner decision 2026-10-02): USB serial
+  back-powers the host and initial cold-boot bytes may precede enumeration.
+  Complete first-byte capture is not a prerequisite; use demonstrated warm reboot,
+  manual recovery and HDMI/SSH/later serial observations. No further capture-specific
+  work is assigned. Actual cold-start reliability remains a later test; distinguish
+  true power removal from switch-off with USB attached. Do not infer safe power
+  isolation for board work from this limitation.
 - [ ] Optionally attach HDMI capture and a controllable USB HID emulator to
   Beelink for graphical tests, preserving the physical touchscreen input path.
 

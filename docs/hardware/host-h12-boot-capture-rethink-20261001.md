@@ -348,3 +348,24 @@ The [feature record](../features/h616-claim-startup-readiness/record.json) is do
 for offline delivery. Earlier failed fixtures and physical job C remain retained.
 No new physical candidate was built, no old job was rearmed, and H12 preflight,
 automatic return, full-image write and hardware qualification remain unpassed.
+
+## Cold-capture work closed as a limitation — 2026-10-02
+
+The owner instructed us to use reasonable workarounds and stop cold-capture work.
+Complete initial cold-boot serial output is not a prerequisite for preflight,
+installation, commissioning or later boot-outcome testing. Onboard USB enumeration
+can miss the first bytes; warm reboot capture is physically demonstrated. Use
+warm reboot when Linux runs, coordinated human restart or existing SD/media rescue
+when it does not, and HDMI/SSH/later serial observations for diagnosis. No further
+external-UART, alternate-interface, soldering or capture-framework work is assigned.
+This does not establish cold-start reliability or pass any physical preflight.
+
+D's fresh receiver stopped on October 1 at 14:07:33 UTC after 30 minutes without
+an observed USB disconnect, with zero captured bytes. At October 2 00:19 UTC,
+the controller was inactive and a separate read-only check verified restored
+passive capture: PID 79976/starttime 28788664, sole O_RDONLY UART fd 3, pinned
+source, original log inodes and the existing runtime/file limits. Beelink could
+not reach printer SSH (no route to host); current SD control remains unproven.
+The expired physical request is closed. Regaining control is a practical recovery
+dependency, separate from solving cold capture. Private terminal and postcheck
+receipts remain beside D's original source/review evidence.

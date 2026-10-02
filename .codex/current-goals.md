@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight reached RAM but refused claim, automatic return stopped in SPL DRAM training | Arrange a fresh reviewed USB reset/SD return window; deliver the independently accepted startup repair using a fresh job; keep failed jobs retired | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; capture, SD return, reconciliation and corrected selector delivery passed; physical preflight reached RAM but refused claim, automatic return stopped in SPL DRAM training | Regain SD access through a coordinated manual restart or existing rescue route; use warm reboot when running; deliver the accepted startup repair using a fresh job | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -22,23 +22,35 @@ for every G4 administration or G5 release feature. G4/G5 authorized preparation
 may proceed while physical work waits. This ordering does not waive the accepted
 writerless milestone or make a physical full-image write implicitly authorized.
 
-## Live H12 window — 2026-10-01 13:38 UTC
+## Cold-boot capture limitation — owner decision 2026-10-02
 
-Following the owner's concern about stalled execution, current work is focused on
-H12. Required G4 rollover has design approval but no implementation is running.
-The fresh D receiver passed exact independent high-consequence review and live
-admissions, then started at 13:37:33 UTC. Independent readiness at 13:38:22 passed:
-PID 77432/starttime 28608617, exact supervised unit/commands, passive C stopped,
-zero UART owners, bridge still present and no disconnect observed. It waits until
-14:07:33 UTC for one physical USB unplug of at least five seconds and same-port
-reconnect, PSU still off and SD/eMMC untouched. The owner has been asked for the
-step after readiness; elapsed time is not a completed physical action. This dated
-window supersedes the expired C request. Do not act after expiry without new
-readiness. H12/preflight remain incomplete. Private source, review, corrected
-manifest binding and live receipts are in
-`local/feature-workflow/probes/h12-cold-sd-return-20261001d/`.
+Complete initial cold-boot serial capture is not an active prerequisite for G1–G5.
+USB serial powers the host before enumeration, so initial bytes may be missed.
+Warm reboot capture and SD return were physically demonstrated. Use those paths,
+manual recovery, HDMI/SSH observations and bounded diagnosis-driven trials as
+applicable. No more cold-capture research, external-UART work, soldering or capture
+framework development is assigned. This records a limitation, not a claim of
+complete cold-start diagnostics or reliable boot. Later cold-start reliability
+still needs actual boot outcomes; it does not require every early serial byte.
 
-While D waits, offline source preparation passed at 13:53 UTC: a separate
+The host's last observed SPL halt is a control/recovery dependency, separate from
+capture. At 00:19 UTC on October 2, Beelink could not reach SSH at the printer
+address. A coordinated manual restart or existing SD/media recovery is the next
+hardware step; no dated cable instruction below is still active. Authorized
+required offline work may proceed while physical access waits.
+
+## Closed H12 receiver window — 2026-10-01
+
+D stopped at 14:07:33 UTC with a 30-minute timeout, no observed disconnect and
+zero captured bytes. It is inactive, MainPID 0. At 00:19 UTC on October 2 a
+separate read-only postcheck verified restored passive monitoring: PID 79976,
+starttime 28788664, sole UART fd 3 opened read-only, pinned source, original log
+inodes and supervised limits. Restoration submission alone was not counted as
+success. The old unplug request is expired. This attempt did not pass preflight
+or regain SD access. Private review, source and terminal/postcheck evidence remain
+in `local/feature-workflow/probes/h12-cold-sd-return-20261001d/`.
+
+Offline source preparation passed on October 1 at 13:53 UTC: a separate
 Beelink source directory contains the preserved C build inputs and the exact
 accepted startup-repair writer and test from `0708a18a2528929ad9a59c22e32d865003e95ed2`.
 A separate readback checked all 36 copied entries and the preparation receipt.
@@ -71,7 +83,9 @@ the purpose regression, focused receipt regressions and four before/after ARM64
 builds. This does not establish the physical claim failure's errno or pass H12.
 See the [physical attempt](../docs/hardware/host-h12-boot-capture-rethink-20261001.md#corrected-preflight-entered-ram-but-did-not-pass).
 
-1. Reuse [the measured warm-capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
+1. Regain SD access through a coordinated manual restart or existing rescue route
+   if the host remains halted; complete first cold-boot bytes are not a gate.
+   Once Linux is running, reuse [the measured warm-capture path](../docs/hardware/host-h12-boot-capture-rethink-20261001.md).
    USB stays connected; prepare the sole serial controller before one keyboard
    reboot. Confirm source, current capture readiness and exact operation review.
 2. Intercept the observed three-second U-Boot window and validate the stopped
@@ -95,7 +109,8 @@ framework merely because the historical guard rejects today's state.
 
 ## Removed from the active path
 
-- Early warm-boot capture: physically passed; no new capture framework needed.
+- Early warm-boot capture: physically passed; cold-boot capture is a documented
+  limitation, with no further capture-specific work assigned.
 - SSH-key enrollment: owner address-based trust resolved it; authenticate current
   access without asking the same decision again.
 - Preflight implementation, runtime MMC binding and selector source repair:
@@ -118,8 +133,9 @@ stay separate; supported separate-session fallback is available when native
 threads cannot launch, with actual runtime and role contract recorded.
 
 The reset initially added no physical owner action. The subsequent measured SPL
-halt now needs a prepared, independently reviewed physical USB reset to regain
-SD control; software keyboard/SysRq requires a running host. Combine later sensor,
+halt requires practical physical recovery to regain SD control; software
+keyboard/SysRq requires a running host. This does not require solving cold capture.
+Combine later sensor,
 peripheral and attended commissioning needs in [the existing H queue](../docs/hardware/coordinated-human-tasks.md).
 No new backup, board photograph, external adapter, soldering or stock-machine
 requirement is added to G1 solely for boot capture. True cold-boot reliability

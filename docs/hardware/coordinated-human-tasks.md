@@ -13,38 +13,33 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
-## Fresh H12 receiver window — 2026-10-01 13:38 UTC
+## Current dispatch — 2026-10-02
 
-Attempt D is independently ready, controller PID 77432, zero UART owners while
-waiting for actual unplug/re-enumeration. One USB serial unplug >=5 seconds and
-same-port reconnect was requested after readiness, with PSU off and SD/eMMC
-untouched. Window ends 14:07 UTC; do not act after it without current coordinator
-readiness. No disconnect had been observed at 13:38:22 UTC. The controller has
-one bounded SD-return attempt and separately checked passive restoration; readiness
-is not a physical SD return or H12 pass. Exact reviewer session
-`01a0f7a6-91df-7bb3-a7fe-7bc8a0d250b6` actually ran Astra/high under the temporary
-owner exception; original intake-manifest mismatch and corrected review remain
-preserved in the ignored D probe records. Required G4 implementation is not running.
+The owner has removed complete initial cold-boot capture as an active dependency.
+Record missed early bytes as a limitation and use warm reboot, human recovery,
+HDMI/SSH and bounded practical trials. No new external receiver, alternate UART,
+soldering or cold-capture framework is requested. Actual later cold-start
+reliability remains to be tested through boot outcomes.
 
-## Current dispatch — 2026-10-01 reset
+The last physical preflight reached RAM, refused its claim, and its automatic
+return halted during SPL DRAM initialization. Recover host/SD access through a
+coordinated manual restart or existing SD/media rescue; once Linux runs, reuse
+the demonstrated warm-reboot route. This is host recovery, not a prerequisite to
+solve first-byte capture. No current physical step is requested by this record.
+Continue required offline work while that physical dependency waits.
 
-Immediate priority is G1/H12: use the demonstrated warm-reset/capture path for a
-reviewed U-Boot interception and return to the known SD recovery system, then
-reconcile current media/environment/RTC/p5 and pass corrected physical preflight.
-The planning reset itself requested no physical action. The subsequent corrected
-preflight entered RAM, refused its claim and halted in SPL DRAM training during
-automatic return. A separately reviewed receiver was prepared for one USB
-serial unplug of at least five seconds and reconnection to the same Beelink port,
-PSU still off and SD/eMMC untouched. The coordinator independently verified
-readiness and requested that physical step at 11:53 UTC; the receiver's wait
-ended at 12:22 UTC without an observed disconnect. Independent passive capture
-restoration passed (PID 75865, sole read-only UART owner, original log inodes).
-The request has expired; do not unplug for this dated request. Arrange a fresh
-receiver-ready window with the coordinator. This is an H12 control dependency, not new
-backup/photography/soldering work. The old H03 media
-move instructions below are historical, not a fresh request. H09/H10 and the H13
-SD host boot retain their completed evidence; present authenticated SD access
-still must be regained. H11 physical A/B acceptance remains future work.
+D's October 1 USB-return window expired at 14:07:33 UTC without observing a
+disconnect, capturing zero bytes. Its controller is inactive. A separate October
+2 00:19 UTC postcheck verified passive serial monitoring restored, PID 79976,
+sole read-only UART owner, pinned source and original log inodes. All dated cable
+instructions are expired; do not act on them. Original review and failed-attempt
+evidence remain preserved. Beelink's October 2 SSH reachability probe returned
+no route to the printer address; historical SD access is not current access.
+
+H03's media-move instructions below are historical. H09/H10 and H13 retain their
+completed evidence. Physical preflight and full-image installation remain open;
+warm capture alone does not pass them. H11 physical A/B acceptance remains future
+work. See the [current goals](../../.codex/current-goals.md) for the active order.
 
 H01/H05 essential sensor facts and reference measurements, H04 peripheral checks,
 H06 attended printing, H07 failure/recovery and H08 stock/license work remain
@@ -55,7 +50,7 @@ history below without treating old counters or reachability as current facts.
 | ID / shared action | Prepare before asking | Consumers and execution order | Evidence reuse / invalidation |
 | --- | --- | --- | --- |
 | H01 — One accessible, fully unpowered inspection | Consolidated list of unresolved board/sensor facts, existing marking evidence and a safe isolation procedure; no unnecessary heatsink removal | Host PCB/DRAM/radio/PMIC identity; installed bed/hotend sensor and circuit identity; outstanding board revisions | One private evidence set with public nonsecret conclusions; repeat only for changed hardware/wiring or an unresolved essential detail |
-| H02 — Capture-ready power isolation and boot session | Start serial logging before any reconnection; account for serial/USB back-power; review intended image/slot/boot environment and safe printer state | True cold-boot/DRAM evidence, warm boot, ordinary MCU start, host health and A/B transitions, baseline HDMI observation | Distinct captures/boot IDs per required trial; repeatability needs multiple boots, not one reused success. Loader/kernel/firmware changes invalidate affected checks |
+| H02 — Power state and boot session | Account for USB back-power; review intended image/slot/boot environment and safe printer state; keep serial recording open for warm reboot where useful | Actual cold-start/DRAM boot outcomes, warm boot, ordinary MCU start, host health and A/B transitions, HDMI/SSH observations | Complete initial cold-boot serial capture is a recorded limitation, not a gate. Record distinct boot results/IDs and available observations; repeatability needs multiple boots. Loader/kernel/firmware changes invalidate affected checks |
 | H03 — Write spare eMMC and reinstall | V5 is independently byte-reviewed, written once to the identified spare, and full direct-I/O readback matches the raw SHA-256. Beelink's receive-only serial capture is armed and waiting. The writer has been safely powered off through Beelink. With the printer unpowered, unplug the writer, reinstall only the spare eMMC, and stand the printer upright; keep the factory eMMC stored. Then connect the USB serial cable to Beelink (this powers the host). | V4's A boot failed during preparation and the next U-Boot pass selected recovery. V5 contains the corrected persistent-identity initramfs hook. Capture the first v5 boot, assess A/recovery behavior and record HDMI mode. Do not power-cycle again until logs are checked and the next boot is planned. | The exact v5 image hash and direct readback receipt are recorded; any media alteration or write/readback mismatch requires revalidation. Continue reusing the same capture for boot consumers |
 | H04 — One physical console and peripheral session | Installed reviewed UI and input tests ready; keep Ethernet recovery; prepare private Wi-Fi configuration and camera test; optional capture/HID setup only if useful | Normal HDMI/touch, recovery touch-only/keyboard-only/mouse paths, Wi-Fi association/reconnect, retained camera presentation/streaming, USB/peripheral observations | Record image, input device, network conditions and path separately. A normal desktop observation does not prove recovery; changed UI/driver/device invalidates affected results |
 | H05 — Sensor reference and input session, outputs disabled | Reviewed input-only config, matching host/MCUs, exact queries, independent temperature instrument and known physical associations | Current bed/hotend ambient comparison; probe and filament operation/polarity; resolve sensor identity from H01 before accepting conversion | Record simultaneous references/configuration and input transitions once for printer and host consumers. Old room temperature cannot satisfy a new reference check |
@@ -66,8 +61,8 @@ history below without treating old counters or reachability as current facts.
 
 | H10 — Read current spare-eMMC boot state — **passed 2026-09-26** | Exact SD image passed reviewed direct-I/O write/readback; corrected NFS init, `.141` read-only/root-squash export and default NFSv3/TCP mount were hash-checked. Independent Sol review authorized one supervised read-only boot. | The owner installed the spare eMMC and same SD with host power off, kept the factory eMMC stored, and reconnected serial only after receive-only capture was armed. Wired DHCP and NFS boot completed; Linux exposed `/dev/mmcblk0` (61,079,552 sectors). Both 64 KiB U-Boot environment copies passed CRC and recognized-layout checks. Copy at 4 MiB reported flag 3, order A, A=3/B=0; copy at 8 MiB reported flag 2, order A, A=2/B=0. Probe used O_RDONLY/fixed-offset reads and powered the host down after success. | The [H10 record](host-sd-network-emmc-probe-20260926.md) contains the exact sanitized console markers, distinction between measured copies, and private Beelink trace hash. This proves only the bounded environment read and SD/NFS diagnostic checks; it does not validate boot policy, normal OS operation or printing. No more H10 boot is planned. No eMMC, boot-policy or MCU writes. |
 
-| H11 — Commission unattended signed A/B update — queued after offline implementation | A deployable board image and release backend are complete; signed test bundle/feed, update keyring, recovery path and exact active/inactive partition map have passed independent offline and high-consequence review. The current diagnostic image is non-deployable. | Keep the spare eMMC installed and factory module stored. On an idle printer, arm receive-only serial capture before connecting USB serial (which powers the host). Leave the writer and SD diagnostic disconnected. Allow one reviewed signed test release to stage into the inactive OS pair and arm for next normal boot; observe boot health and fallback readiness without printer-output tests. | Stop on profile/slot mismatch, policy opt-out, customization, busy printer, unexpected write target, an unreviewed environment change, changes to shared GPT/recovery/data/MCU regions, or uncertain outcome. Environment records must remain byte-identical during stage; arm may make only the reviewed order/counter/flag change while preserving all other fields. Preserve the running source pair as fallback and overwrite only the reviewed inactive OS pair. Record this one validation session separately from routine updates; no physical write until the exact release and target have independent review and explicit action authorization. |
-| H12 — Commission writerless full-eMMC reimage — physical handoff pending | The trusted RAM writer and recovery-handoff offline tasks urh-01/02/03 passed independent review; see the [handoff evidence](../design/unattended-emmc-reimage-handoff.md) and [readiness audit](host-network-emmc-reimage-readiness-20260926.md). The chosen route stages a one-shot writer in the installed eMMC recovery partition and boots it into RAM; the SD card remains independent rescue media. Before any boot-policy action, finish and review the live mounted-recovery/CID admission and stage/claim launcher, restore wired printer access, measure current recovery space and CID/dev_t, and run urh-04 as a separately reviewed physical fallback/FIT handoff without whole-device target open. Recheck Beelink NFS/claim service readiness and arm receive-only serial capture before connecting USB serial, which powers the host. | Keep the spare installed and factory eMMC stored; do not move media. Only after urh-04, bind the exact spare, artifact and recovery path, obtain immediate independent GPT-6 Sol high-consequence review, and run one attended urh-05 full-image write/readback and next boot. Capture target identity, progress, flush, full readback hash and GPT/partition checks. No heater, motion or MCU operation. | Stop before writing on source/target overlap, ambiguous or changed target identity, capacity/hash/layout mismatch, unavailable or changed source, boot/initrd hash mismatch, claim/job uncertainty, power/network loss, write/readback error, unexpected boot-policy state, or failed read-only kexec handoff. An uncertain result remains stopped for recovery; never retry automatically. This is one supervised physical validation, not proof that all failure modes are safe. Keep the factory eMMC stored. |
+| H11 — Commission unattended signed A/B update — queued after offline implementation | A deployable board image and release backend are complete; signed test bundle/feed, update keyring, recovery path and exact active/inactive partition map have passed independent offline and high-consequence review. The current diagnostic image is non-deployable. | Keep the spare eMMC installed and factory module stored. On an idle printer, use available serial/HDMI/SSH observations; complete first cold-boot bytes are not required. Keep USB serial connected for warm reboot capture where applicable. Leave the writer and SD diagnostic disconnected. Allow one reviewed signed test release to stage into the inactive OS pair and arm for next normal boot; observe boot health and fallback readiness without printer-output tests. | Stop on profile/slot mismatch, policy opt-out, customization, busy printer, unexpected write target, an unreviewed environment change, changes to shared GPT/recovery/data/MCU regions, or uncertain outcome. Environment records must remain byte-identical during stage; arm may make only the reviewed order/counter/flag change while preserving all other fields. Preserve the running source pair as fallback and overwrite only the reviewed inactive OS pair. Record this one validation session separately from routine updates; no physical write until the exact release and target have independent review and explicit action authorization. |
+| H12 — Commission writerless full-eMMC reimage — physical handoff pending | The trusted RAM writer and recovery-handoff offline tasks urh-01/02/03 passed independent review; see the [handoff evidence](../design/unattended-emmc-reimage-handoff.md) and [readiness audit](host-network-emmc-reimage-readiness-20260926.md). The chosen route stages a one-shot writer in the installed eMMC recovery partition and boots it into RAM; the SD card remains independent rescue media. Before any boot-policy action, finish and review the live mounted-recovery/CID admission and stage/claim launcher, restore wired printer access, measure current recovery space and CID/dev_t, and run urh-04 as a separately reviewed physical fallback/FIT handoff without whole-device target open. Recheck Beelink NFS/claim service readiness and use available serial/HDMI/SSH observations; complete first cold-boot bytes are not required. Keep USB serial connected for warm reboot capture where applicable. | Keep the spare installed and factory eMMC stored; do not move media. Only after urh-04, bind the exact spare, artifact and recovery path, obtain immediate independent GPT-6 Sol high-consequence review, and run one attended urh-05 full-image write/readback and next boot. Capture target identity, progress, flush, full readback hash and GPT/partition checks. No heater, motion or MCU operation. | Stop before writing on source/target overlap, ambiguous or changed target identity, capacity/hash/layout mismatch, unavailable or changed source, boot/initrd hash mismatch, claim/job uncertainty, power/network loss, write/readback error, unexpected boot-policy state, or failed read-only kexec handoff. An uncertain result remains stopped for recovery; never retry automatically. This is one supervised physical validation, not proof that all failure modes are safe. Keep the factory eMMC stored. |
 
 H12 coordination update, 2026-09-29: the installed SD loader was reached through
 one reviewed keyboard reboot, then its measured stopped prompt was continued

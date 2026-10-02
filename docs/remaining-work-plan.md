@@ -44,7 +44,8 @@ without a change, failure or unresolved integration question that justifies it.
   staging and redundant expired-token retirement passed. A distinct new job
   subsequently passed staging/arm/marker readbacks and entered RAM preflight,
   then refused its claim. Its automatic return halted in SPL DRAM training.
-  Diagnose that refusal and prepare a reviewed physical reset/SD return; G1 is open.
+  The startup repair is accepted offline; regain SD control through practical
+  recovery and test it physically. Complete cold-boot capture is not a gate; G1 is open.
 - First physical urh-04 failed before preflight entry. The selector environment
   correction, preflight executable and runtime MMC binding are independently
   accepted offline; the corrected selector is now physically delivered and reached
@@ -82,12 +83,22 @@ its bounded approval and independent verification; this plan is not that approva
 
 ### 1. Immediate H12 checkpoint
 
-Use the demonstrated warm reboot with a prepared sole serial controller; capture
-readiness must precede the keyboard request. Confirm the actual stopped U-Boot
-prompt before the known SD boot sequence. Once SD SSH returns, reconcile spare
-identity, both redundant environments, Linux/RTC and read-only p5, preserving
-beforeimages outside target tmpfs. Then use the accepted selector correction and
-fresh preflight inputs through the existing distinct stage/arm/boot reviews.
+Owner decision, 2026-10-02: complete initial cold-boot serial capture is a
+recorded limitation, not a dependency. Stop capture-specific research and
+hardware development. Warm reboot already records early messages; when the host
+is halted, use coordinated manual restart or existing SD/media rescue. HDMI,
+SSH, later serial output and bounded diagnosis-driven trials can establish the
+next action. Cold-start reliability remains a later outcome test without requiring
+a complete early trace.
+
+Regain SD access first. Once Linux runs, use the demonstrated warm reboot with a
+prepared sole serial controller where U-Boot interception is needed; confirm the
+actual stopped prompt before the known SD boot sequence. After authenticated SD
+SSH, reconcile spare identity, both redundant environments, Linux/RTC and
+read-only p5, preserving beforeimages outside target tmpfs. Then use the accepted
+selector and startup repairs and fresh preflight inputs through the existing
+distinct stage/arm/boot reviews. Required offline work can proceed while practical
+physical recovery waits.
 
 One capture success does not complete urh-04 or authorize urh-05. Never reuse an
 expired job or assume an absent marker. The unapproved return-guard proposal is a
