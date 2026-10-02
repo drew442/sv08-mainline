@@ -62,11 +62,23 @@ identity, no surviving writer/readback process and no mounts/users/holders.
 This measures preservation throughout that prefix; the remainder of the 16 GB
 card was not fully read back and was excluded by the helper's write boundary.
 
-**Physical reinstall/boot is being reviewed separately and has not occurred.**
-The existing receive-only collector is active and waiting with no UART owners,
-the bridge absent, preserved original logs and more than eleven hours left.
-The owner will receive the exact safe SD move/one-connect instruction after
-fresh readiness and boot review. No serial command sequence is part of this boot.
+**Separate boot review passed with conditions at 02:27:26 UTC**, using the same
+independent Sol/high session. Fresh card-closure and passive-readiness admissions
+passed at 02:29:39 UTC. The receiver is active/waiting, bridge absent, no UART
+owners, original log prefixes preserved and more than eleven hours left. The
+owner's one-connect instruction expires at **02:59 UTC on October 2**; later
+connection needs fresh readiness. A standard read-only tail of the existing raw
+log is running for coordinator observation; it opens no UART.
+
+Ready action: with printer PSU OFF and USB power disconnected, unplug the reader,
+move only the restored SD into the printer, retain spare/factory eMMC state and
+Ethernet, then reconnect printer USB serial/power once to the same Beelink port.
+Reply immediately and remain nearby for the first two minutes. Remove USB power
+on errors, reset loops, coordinator STOP or no startup confirmation within two
+minutes; no extra reconnect/keys/UI action. The original script's reset branches
+make attended power removal necessary. No boot result is yet observed. Restore
+Beelink udisks2 after actual card removal is verified, not before.
+
 Physical recovery/preflight and automatic return remain open. No further UART
 recovery variants or complete cold-byte capture work are assigned.
 

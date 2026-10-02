@@ -34,10 +34,13 @@ The original partial-write helper is excluded and preserved; v2 stops without
 retry. Durable beforeimage and independent post-write/process/card reconciliation
 passed. See [the restoration record](../docs/hardware/host-h12-sd-loader-restoration-20261002.md).
 
-Next: independently review and admit safe SD reinstall and one host-only USB
-power connection. The passive collector is active/waiting, bridge absent and
-zero UART owners. No boot has occurred and no further UART command variants are
-planned. Keep PSU OFF and the card in Beelink until the ready instruction.
+Separate boot review passed. Fresh card-closure and receive-only readiness
+admissions passed at 02:29:39 UTC; the ready one-connect instruction expires at
+02:59 UTC on October 2. Keep PSU OFF, move only the SD to the printer, retain
+Ethernet and eMMC state, reconnect USB once and reply immediately. Stay nearby
+for two minutes; remove USB on error/reset loops/coordinator STOP or no startup
+confirmation within two minutes. Receiver is active/waiting, bridge absent,
+zero UART owners. No boot result is observed; no further UART input is planned.
 Beelink udisks2 remains temporarily runtime-masked; restore its prior active state
 once the card's removal is observed. SD boot/root/SSH and fresh installed-spare
 reconciliation remain separate from restored-loader write acceptance.
