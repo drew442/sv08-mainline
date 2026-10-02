@@ -25,26 +25,54 @@ new development or validation of the abandoned mechanism itself.
 
 Accidental repeated flashing after reboot is a separate engineering concern
 from malicious permission replay; the remaining minimal trigger/stop behavior
-is presented for the owner’s decision below. Source checksums, exact target
+uses the owner-selected attended yes/no confirmation described below. Source checksums, exact target
 identity and readback also have independent corruption/wrong-device purposes.
 This decision does not alter ordinary SSH access or unrelated OS-update signing.
 No printer operation or image write is authorized by this document itself.
 
-## Remaining choices presented to the owner
+## Owner-selected scope
 
-| Component | Purpose and current position | Coordinator recommendation, not owner decision |
+The owner subsequently chose the following scope explicitly. This supersedes
+both the earlier recommendations and conflicting historical H12 gates.
+
+| Point | Owner decision | Active interpretation |
 | --- | --- | --- |
-| Remote whole-eMMC replacement | Replace the complete system without removing eMMC; alternative is an external reader or a simpler SD-based maintenance session. Offline transfer passed; physical full transfer pending. | Decide whether this capability is needed before first print; defer if manual installation is acceptable. |
-| RAM maintenance environment | Keep the running system independent of storage being overwritten. Entered RAM physically. | Keep if retaining remote whole-device replacement; a proven independent SD system is another route. |
-| Automatic launch through installed eMMC recovery | Stage a payload on recovery, change redundant boot settings and boot it automatically. Physical entry demonstrated; repeated staging/recovery complexity remains. | Defer automation and consider an attended SD launch. |
-| Separate preflight without full-image transfer | Exercise the selected RAM/target path before destructive transfer; current rehearsal has not passed end to end. | Keep a short practical rehearsal of the chosen simpler route. |
-| Automatic return to original recovery | Recover without a person intervening. Previous return reached recovery services; display usability and reliability remain incomplete. | Defer if attended restart/SD recovery is acceptable. |
-| Wrong-device and image checks | Confirm intended spare, capacity, source separation and complete image checksum. Many checks already implemented. | Keep. |
-| Full write flush and readback | Establish that storage contains the intended complete image and layout. Offline passed; physical pending. | Keep. |
-| Prevention of accidental repeated writes | Stop a reboot or interrupted run from automatically flashing again. Existing local marker/environment machinery overlaps the more complex launch route. | Keep simple explicit-start/stop behavior; review whether the current machinery is needed. |
-| SD rescue and stored factory eMMC | Recover from failed boot or interrupted write. SD SSH currently works; factory module remains stored. | Keep. |
-| Complete earliest cold-boot serial capture | Diagnose bytes lost before USB enumeration. | Already abandoned as a prerequisite; use available logs/SSH/warm boot/human observations. |
+| 1. Reimage installed eMMC | Keep | Preserve complete-image replacement without removing eMMC. |
+| 2. Maintenance environment | Abandon RAM maintenance; SD is sufficient | Run the maintenance OS from independent SD. No RAM handoff, RAM-writer boot or associated FIT relocation work is required. Ordinary RAM use by the SD OS is unaffected. |
+| 3. Automatic launch | Defer until further notice | Do not develop the running-system-to-maintenance automatic reboot/staging route or make it a completion prerequisite. |
+| 4. Separate rehearsal | Explanation requested; no decision yet | Present an optional nonwriting check of the selected SD route. Do not retain the old RAM preflight as an implicit gate. |
+| 5. Automatic recovery return | Defer until further notice | Manual restart/SD recovery is acceptable; no automatic return requirement for H12 completion. |
+| 6. Target/image checks | Keep, minimum viable and simple | Identify intended eMMC, sufficient capacity, source independence and image checksum with the smallest practical implementation. |
+| 7. Write/readback verification | Keep, minimum viable and simple | Flush and compare the written image bytes with the source, with a clear result. |
+| 8. Repeat-flashing behavior | An attended yes/no prompt is sufficient | Require an affirmative answer before each write. No answer/No performs no write. If reboot returns to the prompt repeatedly, the operator handles it; automatic loop detection or server-side single-use permission is not required. Automatic reboot initiation remains deferred under point 3. |
+| 9. Recovery | SD recovery is sufficient | Do not require factory-eMMC fallback as an additional H12 acceptance gate. Its stored physical position remains unchanged. |
+| 10. Complete initial boot capture | Abandon | No further cold-capture research, implementation, trial or completeness gate. Existing ordinary logs can be used without new capture development. |
 
-Until the owner selects the remaining route, do not continue the old H12 physical
-sequence just to satisfy superseded permission checks. No live child agent was
-working on the abandoned mechanism when this decision was recorded.
+## Point 4 explanation for the owner
+
+For the selected SD route, a rehearsal would start the maintenance tool in a
+nonwriting mode, locate the proposed image and target, and show the target,
+image size/checksum and whether eMMC is unused by the running system. It would
+then stop. Its purpose is to catch a wrong path, unavailable image or mounted
+target before a destructive transfer. It would not test a RAM boot, permission
+server, secure randomness or automatic return.
+
+An alternative is to perform those same minimum checks immediately before the
+normal yes/no prompt, without a separate rehearsal feature or milestone. The
+coordinator recommends this integrated approach for the owner’s minimum viable
+scope. The owner has requested an explanation, not yet selected point 4.
+
+## Execution consequences
+
+The old stage/arm/activate/RAM-preflight/automatic-return sequence is withdrawn
+from the live plan. Existing code, images, installed old boot settings and
+historical results are retained as evidence, not represented as removed or
+adapted already. Define the smallest SD-based implementation from this scope;
+remove obsolete permission/RAM dependencies from that path rather than repairing
+or physically trialing them. No active child agent is assigned the abandoned work.
+
+The selected scope is not itself a request to perform an immediate full-image
+write or another physical restart. Continue authorized offline preparation under
+this scope; any actual write still identifies its target/image/recovery path and
+uses the existing independent hardware review. Do not ask the owner to approve
+these scope decisions again.

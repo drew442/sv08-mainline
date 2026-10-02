@@ -1,11 +1,15 @@
 # Coordinated human tasks
 
-**Owner scope change, 2026-10-02:** H12 anti-forgery/anti-replay permission
-protection and its secure-randomness work are abandoned. The planned entropy
-trial and further signed-permission job preparation are withdrawn. Historical
-requirements below are superseded where they conflict with the
-[owner decision and remaining choices](../decisions/20261002-h12-scope-reduction.md). Existing code/artifacts
-still contain that mechanism; no removal or deployment is claimed.
+**Owner scope change, 2026-10-02:** Keep installed-eMMC reimaging using SD
+maintenance, simple target/image checks, full write verification and an attended
+yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and
+secure-randomness work, and complete cold-boot capture. Automatic maintenance
+launch and automatic recovery return are deferred until further notice. SD
+recovery is sufficient. Point 4 (a separate nonwriting rehearsal) awaits the
+owner’s decision after explanation; the old RAM preflight is not a gate.
+The [owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
+supersedes conflicting historical requirements below. Existing source/artifacts
+and installed boot settings have not yet been adapted to this simpler route.
 
 Dispatch queue created 2026-09-18 for the [parallel assignments](../development/parallel-work.md).
 Pending entries below are coordination items, not requests to act immediately;

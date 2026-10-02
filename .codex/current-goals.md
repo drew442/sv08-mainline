@@ -1,11 +1,15 @@
 # Current delivery goals
 
-**Owner scope change, 2026-10-02:** H12 anti-forgery/anti-replay permission
-protection and its secure-randomness work are abandoned. The planned entropy
-trial and further signed-permission job preparation are withdrawn. Historical
-requirements below are superseded where they conflict with the
-[owner decision and remaining choices](../docs/decisions/20261002-h12-scope-reduction.md). Existing code/artifacts
-still contain that mechanism; no removal or deployment is claimed.
+**Owner scope change, 2026-10-02:** Keep installed-eMMC reimaging using SD
+maintenance, simple target/image checks, full write verification and an attended
+yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and
+secure-randomness work, and complete cold-boot capture. Automatic maintenance
+launch and automatic recovery return are deferred until further notice. SD
+recovery is sufficient. Point 4 (a separate nonwriting rehearsal) awaits the
+owner’s decision after explanation; the old RAM preflight is not a gate.
+The [owner-selected scope](../docs/decisions/20261002-h12-scope-reduction.md)
+supersedes conflicting historical requirements below. Existing source/artifacts
+and installed boot settings have not yet been adapted to this simpler route.
 
 Reset: 2026-10-01 at the owner's request. This replaces the previous live
 assignment list; its full contents remain in [the historical record](goals-history-through-20261001.md).
@@ -18,8 +22,8 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and simplify H12 | SD recovery and clock reconciliation passed; permission-security work abandoned by owner | Owner selects remaining H12 components; adapt the chosen route without the abandoned mechanism | Apply the revised scope and obtain actual acceptance for the retained recovery/reimage path |
-| G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
+| G1 — Restore SD control and simplify H12 | SD recovery works; owner selected attended SD maintenance; RAM/security/cold-capture work abandoned | Define minimal SD reimage path; explain separate rehearsal option; remove obsolete dependencies from the selected path | Working SD maintenance with the retained checks and confirmation; separate rehearsal only if the owner chooses it |
+| G2 — Complete installed-eMMC reimage and reliable commissioning host | Follows the simplified SD path; physical full-image transfer remains open | Identify exact image/target and review the attended SD write, flush/readback and manual next boot | Physical full-image verification and normal host boot pass; persistent access/state and administration work sufficiently for commissioning; automatic return is deferred |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
 | G5 — Supported stock release | Future qualification; no profile release-qualified | Prepare source/license and reproducibility closure while actual stock access and owner license decision wait | Actual stock commissioning, representative prints, clean install, recovery/failure/update regressions, documentation and release decision pass |
