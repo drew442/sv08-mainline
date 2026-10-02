@@ -302,3 +302,14 @@ return reached `sv08-recovery.target`; systemd reported startup complete in
 and root on p5 with `ro,norecovery`. This extends the return evidence beyond kernel
 entry, but is not a human screen/input observation or raw environment/marker
 readback. The previously requested power-removal confirmation remains pending.
+
+
+Offline entropy acquisition received separate delegated approval with constraints.
+Implementation is active in a separate candidate worktree. Native launches and a
+reviewer follow-up failed with `agent thread limit reached`; the documented
+separate-session fallback uses the complete role instructions, GPT-6.1 Sol/medium
+for implementation and Sol/high for the recovery-move reviewer. Actual session
+model, effort and full-access/never settings were read from runtime metadata.
+No global configuration or billing setting changed. The recovery move has a
+conditional preparation review only; current physical isolation and reader
+readiness still have to be established before requesting movement.

@@ -109,10 +109,14 @@
       "evidence": [],
       "human_task": null,
       "id": "entropy-acquisition",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "0f59324e040440abbc70bd6ac10c5c70",
+        "session": "h616-entropy-fallback-20261002"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Implement and independently verify bounded secure entropy acquisition",
       "verification": null
     }
