@@ -1,6 +1,14 @@
-"""Deterministic syscall injection into the compiled production claim boundary."""
+"""Compiled claim acquisition: injected failures and real timer interruption.
+
+PID namespace creation tests process semantics, not sandboxing. An unavailable
+namespace is explicitly skipped and continues to block physical preparation.
+"""
 import errno
 import hashlib
+import json
+import os
+import shutil
+import time
 from pathlib import Path
 import subprocess
 import tempfile
@@ -20,7 +28,13 @@ HARNESS = r'''
 #include <setjmp.h>
 #define main writer_main
 #define clock_gettime fake_clock
-#define nanosleep fake_sleep
+#define sigprocmask fake_sigprocmask
+#define sigpending fake_sigpending
+#define sigaction(...) fake_sigaction(__VA_ARGS__)
+#define timer_create fake_timer_create
+#define timer_settime fake_timer_settime
+#define timer_delete fake_timer_delete
+#define sigtimedwait fake_sigtimedwait
 #define getrandom fake_random
 #define socket fake_socket
 #define setsockopt fake_setsockopt
@@ -38,7 +52,13 @@ HARNESS = r'''
 #include "@WRITER@"
 #undef main
 #undef clock_gettime
-#undef nanosleep
+#undef sigprocmask
+#undef sigpending
+#undef sigaction
+#undef timer_create
+#undef timer_settime
+#undef timer_delete
+#undef sigtimedwait
 #undef getrandom
 #undef socket
 #undef setsockopt
@@ -55,6 +75,7 @@ HARNESS = r'''
 #undef reboot
 static const char *scenario;
 static long long elapsed;
+static int active,blocked=1,installed,pending_notice,cleaned,mask_calls,action_calls;
 static int clocks,randoms,sleeps,bytes,sockets,connects,sends,recvs,target_opens;
 static size_t sent_bytes,response_at;
 static char sent_request[1280];
@@ -64,43 +85,95 @@ static const char response[] = "@RESPONSE@";
 int fake_clock(clockid_t id,struct timespec *out) {
  assert(id==CLOCK_MONOTONIC);clocks++;
  if(IS("clock-start")||(IS("clock-retry")&&clocks==3)||
-    (IS("clock-complete")&&bytes==32)){errno=EIO;return -1;}
+    (IS("clock-complete")&&bytes==32)||(IS("clock-admit")&&cleaned)){errno=EIO;return -1;}
  out->tv_sec=123+elapsed/1000000000LL;
  out->tv_nsec=500000000L+elapsed%1000000000LL;
  if(out->tv_nsec>=1000000000L){out->tv_sec++;out->tv_nsec-=1000000000L;}
  return 0;
 }
-int fake_sleep(const struct timespec *req,struct timespec *rem) {
- long long ns=req->tv_sec*1000000000LL+req->tv_nsec;
- assert(ns>0&&ns<=100000000LL&&ns<=60000000000LL-elapsed);sleeps++;
- if(IS("sleep-error")){errno=EINVAL;return -1;}
- if(IS("sleep-zero")){elapsed+=ns;rem->tv_sec=0;rem->tv_nsec=0;errno=EINTR;return -1;}
- if(IS("sleep-eintr")||(IS("sleep-once")&&sleeps==1)){
-   long long spent=ns<25000000LL?ns:25000000LL;
-   elapsed+=spent;rem->tv_sec=0;rem->tv_nsec=ns-spent;
-   /* A delivered signal may also delay rescheduling beyond the pause. */
-   if(IS("sleep-eintr")){elapsed+=25000000LL;rem->tv_nsec=75000000L;}
-   errno=EINTR;return -1;
+static struct sigaction saved_action;
+int fake_sigprocmask(int how,const sigset_t *set,sigset_t *old) {
+ mask_calls++;
+ if((IS("mask-start")&&mask_calls==1)||(IS("mask-wait")&&mask_calls==2)||
+    (IS("mask-cleanup")&&mask_calls==3)||(IS("mask-restore")&&mask_calls==4)){
+   errno=EPERM;return -1;
  }
- elapsed+=ns;return 0;
+ if(old){sigemptyset(old);sigaddset(old,SIGUSR1);
+   if(IS("inherited-blocked"))sigaddset(old,SIGRTMIN);}
+ if(how==SIG_BLOCK)blocked=1;
+ else {assert(how==SIG_SETMASK&&sigismember(set,SIGUSR1));blocked=sigismember(set,SIGRTMIN);}
+ if(mask_calls>=3&&!active&&!installed&&!pending_notice)cleaned=1;
+ return 0;
+}
+int fake_sigpending(sigset_t *out) {
+ if(IS("pending-query")){errno=EIO;return -1;}
+ sigemptyset(out);if(IS("inherited-pending"))sigaddset(out,SIGRTMIN);return 0;
+}
+int fake_sigaction(int sig,const struct sigaction *action,struct sigaction *old) {
+ assert(sig==SIGRTMIN&&blocked);action_calls++;
+ if((IS("action-start")&&action_calls==1)||(IS("action-restore")&&action_calls==2)){
+   errno=EINVAL;return -1;
+ }
+ if(old){memset(&saved_action,0,sizeof(saved_action));
+   saved_action.sa_handler=IS("inherited-ignored")?SIG_IGN:SIG_DFL;*old=saved_action;}
+ if(action_calls==1){assert(action->sa_handler==random_timer_notice&&!(action->sa_flags&SA_RESTART));installed=1;}
+ else {assert(action->sa_handler==saved_action.sa_handler);installed=0;}
+ return 0;
+}
+int fake_timer_create(clockid_t clock,struct sigevent *event,timer_t *timer) {
+ assert(clock==CLOCK_MONOTONIC&&event->sigev_notify==SIGEV_SIGNAL&&event->sigev_signo==SIGRTMIN);
+ if(IS("timer-create")){errno=EAGAIN;return -1;}*timer=(timer_t)1;return 0;
+}
+int fake_timer_settime(timer_t timer,int flags,const struct itimerspec *value,struct itimerspec *old) {
+ assert(timer==(timer_t)1&&old==NULL);
+ if(flags==TIMER_ABSTIME){
+   assert(value->it_value.tv_sec==183&&value->it_value.tv_nsec==500000000L);
+   assert(value->it_interval.tv_sec==0&&value->it_interval.tv_nsec==100000000L);
+   if(IS("timer-arm")){errno=EINVAL;return -1;}active=1;
+   if(IS("setup-deadline"))elapsed=60000000000LL;
+ }else{assert(flags==0&&value->it_value.tv_sec==0&&value->it_value.tv_nsec==0);
+   if(IS("timer-disarm")){errno=EIO;return -1;}active=0;
+   if(IS("cleanup-deadline"))elapsed=60000000000LL;
+ }
+ return 0;
+}
+int fake_timer_delete(timer_t timer) {
+ assert(timer==(timer_t)1);if(IS("timer-delete")){errno=EIO;return -1;}active=0;return 0;
+}
+int fake_sigtimedwait(const sigset_t *set,siginfo_t *info,const struct timespec *wait) {
+ assert(blocked&&!active&&sigismember(set,SIGRTMIN)&&info==NULL&&wait->tv_sec==0&&wait->tv_nsec==0);
+ if(IS("drain-error")){errno=EIO;return -1;}
+ if(IS("drain-flood"))return SIGRTMIN;
+ if(IS("drain-eintr")){errno=EINTR;return -1;}
+ if(pending_notice){pending_notice=0;return SIGRTMIN;}errno=EAGAIN;return -1;
 }
 ssize_t fake_random(void *out,size_t size,unsigned flags) {
- assert(flags==GRND_NONBLOCK&&size==32-(size_t)bytes);randoms++;
+ assert(flags==0&&size==32-(size_t)bytes&&active&&installed&&!blocked);randoms++;
  assert(elapsed<60000000000LL);
  if(IS("permanent")){errno=EIO;return -1;}
+ if(IS("unavailable")){errno=ENOSYS;return -1;}
+ if(IS("again")){errno=EAGAIN;return -1;}
  if(IS("zero")){errno=EACCES;return 0;}
- if(IS("eintr")||(IS("eintr-ready")&&randoms==1)){errno=EINTR;return -1;}
+ if(IS("timeout")||IS("eintr")){
+   elapsed+=10000000000LL;errno=EINTR;return -1;
+ }
+ if((IS("eintr-ready")&&randoms==1)||(IS("partial-eintr")&&randoms==2)){
+   errno=EINTR;return -1;
+ }
+ if(IS("pre-syscall")){
+   /* First expiry delivered between the last check and syscall entry. The
+    * repeated notification interrupts the call 100 ms later. */
+   elapsed=60000000000LL;random_timer_notice(SIGRTMIN);
+   elapsed+=100000000LL;random_timer_notice(SIGRTMIN);errno=EINTR;return -1;
+ }
  if(IS("partial-deadline")&&randoms==1){elapsed=60000000000LL;size=8;}
- else if(IS("boundary")){elapsed=60000000000LL;}
+ else if(IS("boundary")||IS("pending-expiry")){elapsed=60000000000LL;pending_notice=1;}
  else if(IS("just-before")){elapsed=59999999999LL;}
- else if(IS("bounded-sleep")&&randoms==1){elapsed=59950000000LL;errno=EAGAIN;return -1;}
- else if(IS("timeout")||IS("sleep-eintr")||
-         ((IS("again")||IS("sleep-error")||IS("sleep-once")||IS("sleep-zero")||IS("clock-retry"))&&randoms==1)||
-         (IS("partial-again")&&randoms==2)){errno=EAGAIN;return -1;}
- else if((IS("partial")||IS("partial-again"))&&randoms==1)size=8;
+ else if((IS("partial")||IS("partial-eintr")||IS("clock-retry"))&&randoms==1)size=8;
+ if(IS("pending-complete"))pending_notice=1;
  memset(out,0xab,size);bytes+=(int)size;return (ssize_t)size;
 }
-static void timely(void){assert(bytes==32&&elapsed<60000000000LL);}
+static void timely(void){assert(bytes==32&&elapsed<60000000000LL&&cleaned&&!active&&!installed&&!pending_notice);}
 int fake_socket(int domain,int type,int protocol){
  timely();assert(domain==AF_INET&&type==(SOCK_STREAM|SOCK_CLOEXEC)&&protocol==0);
  assert(++sockets==1);if(IS("socket")){errno=EMFILE;return -1;}return 99;
@@ -169,6 +242,146 @@ int main(int argc,char **argv){
 '''
 
 
+# Real kernel timer/mask/disposition operations; only the entropy syscall is
+# replaced with a pipe read that cannot complete (the writer end remains open).
+# The entry clock alone is shifted 59 s to exercise the same production 60 s
+# arithmetic/absolute timer with a one-second test wait, not a new runtime knob.
+INTERRUPTION_HARNESS = r'''
+#define _GNU_SOURCE
+#include <assert.h>
+#include <signal.h>
+#include <time.h>
+#include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+static int clocks,reads,pipe_fds[2],lost_wake;
+static int fixture_clock(clockid_t id,struct timespec *out) {
+  int result=clock_gettime(id,out);if(!result&&++clocks==1)out->tv_sec-=59;return result;
+}
+static ssize_t blocked_random(void *out,size_t size,unsigned flags) {
+  assert(flags==0);reads++;
+  if(lost_wake) {
+    struct timespec pause={2,0};
+    /* First timer notice is caught before the blocked syscall starts. */
+    assert(nanosleep(&pause,NULL)==-1&&errno==EINTR);
+  }
+  ssize_t result=read(pipe_fds[0],out,size);
+  assert(result==-1&&errno==EINTR);return result;
+}
+#define main writer_main
+#define clock_gettime fixture_clock
+#define getrandom blocked_random
+#include "@WRITER@"
+#undef main
+#undef clock_gettime
+#undef getrandom
+static void inherited_handler(int sig){(void)sig;assert(0&&"late acquisition notification");}
+int main(int argc,char **argv) {
+  assert(argc==2);lost_wake=!strcmp(argv[1],"lost-wake");
+  assert(pipe(pipe_fds)==0);
+  sigset_t initial,current;sigemptyset(&initial);
+  sigaddset(&initial,SIGRTMIN);sigaddset(&initial,SIGUSR1);
+  assert(sigprocmask(SIG_SETMASK,&initial,NULL)==0);
+  struct sigaction inherited={0},restored;sigemptyset(&inherited.sa_mask);
+  inherited.sa_handler=!strcmp(argv[1],"ignored")?SIG_IGN:inherited_handler;
+  inherited.sa_flags=SA_RESTART;
+  assert(sigaction(SIGRTMIN,&inherited,NULL)==0);
+  char challenge[65];struct timespec start,end;
+  assert(clock_gettime(CLOCK_MONOTONIC,&start)==0);
+  assert(random_challenge(challenge)==0);
+  assert(clock_gettime(CLOCK_MONOTONIC,&end)==0);
+  long long ns=(end.tv_sec-start.tv_sec)*1000000000LL+end.tv_nsec-start.tv_nsec;
+  assert(reads==1&&ns>=1000000000LL&&ns<2000000000LL);
+  assert(sigaction(SIGRTMIN,NULL,&restored)==0&&restored.sa_handler==inherited.sa_handler);
+  assert((restored.sa_flags&SA_RESTART)==SA_RESTART);
+  assert(sigprocmask(SIG_SETMASK,NULL,&current)==0);
+  assert(sigismember(&current,SIGRTMIN)&&sigismember(&current,SIGUSR1));
+  /* Unmask the restored caught handler and wait two timer periods: a leaked
+   * notification would hit inherited_handler and fail instead of a socket. */
+  sigdelset(&current,SIGRTMIN);assert(sigprocmask(SIG_SETMASK,&current,NULL)==0);
+  struct timespec grace={0,250000000L};assert(nanosleep(&grace,NULL)==0);
+  printf("pid=%ld elapsed_ns=%lld blocked_read_eintr=%d lost_wake=%d\n",(long)getpid(),ns,reads,lost_wake);
+  close(pipe_fds[0]);close(pipe_fds[1]);return 0;
+}
+'''
+
+
+def record_evidence(name, data):
+    """Optional assigned scratch output; never a workflow approval record."""
+    destination = os.environ.get('SV08_ENTROPY_EVIDENCE_DIR')
+    if destination:
+        path = Path(destination) / name
+        if path.exists():
+            for attempt in range(2, 100):
+                alternative = path.with_name(f'{path.stem}-{attempt}{path.suffix}')
+                if not alternative.exists():
+                    path = alternative
+                    break
+            else:
+                raise RuntimeError('bounded evidence output names exhausted')
+        path.write_text(json.dumps(data, indent=2) + '\n')
+
+
+def interruption_binary():
+    with tempfile.TemporaryDirectory(prefix='claim-interruption-') as tmp:
+        root = Path(tmp)
+        source = root / 'case.c'
+        source.write_text(INTERRUPTION_HARNESS.replace('@WRITER@', str(WRITER)))
+        binary = root / 'case'
+        command = ['cc', '-static', '-O2', '-Wall', '-Wextra', '-Werror',
+                   '-Wno-unused-function', '-ffunction-sections', '-fdata-sections',
+                   '-Wl,--gc-sections', f'-I{REPO / "upstream/monocypher/src"}',
+                   f'-I{REPO / "upstream/monocypher/src/optional"}', str(source),
+                   *(str(p) for p in ED25519_SOURCES), '-o', str(binary)]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=30)
+        assert result.returncode == 0, result.stderr
+        record_evidence('interruption-build.json', {
+            'argv': command, 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+            'writer_sha256': hashlib.sha256(WRITER.read_bytes()).hexdigest(),
+            'binary_sha256': hashlib.sha256(binary.read_bytes()).hexdigest(),
+            'binary_bytes': binary.stat().st_size, 'stderr': result.stderr})
+        yield binary
+
+
+class RealInterruptionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.fixture = interruption_binary()
+        cls.binary = next(cls.fixture)
+        cls.addClassCleanup(cls.fixture.close)
+
+    def exercise(self, command, evidence_name, expected_pid_one=False):
+        start = time.monotonic()
+        result = subprocess.run(command, capture_output=True, text=True, timeout=4)
+        record_evidence(evidence_name, {'argv': command, 'exit': result.returncode,
+                                      'stdout': result.stdout, 'stderr': result.stderr,
+                                      'seconds': time.monotonic() - start,
+                                      'kernel': os.uname().release, 'arch': os.uname().machine})
+        if (expected_pid_one and result.returncode != 0 and
+                ('unshare failed' in result.stderr or
+                 'write failed /proc/self/uid_map: Operation not permitted' in result.stderr)):
+            self.skipTest('PID 1 namespace unavailable: ' + result.stderr.strip())
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stderr, 'SV08_QEMU_REIMAGE_CLAIM_RANDOM_TIMEOUT errno=110\n')
+        self.assertIn('blocked_read_eintr=1', result.stdout)
+        if expected_pid_one:
+            self.assertTrue(result.stdout.startswith('pid=1 '), result.stdout)
+
+    def test_real_ordinary_process_interruption(self):
+        for mode in ('caught', 'ignored', 'lost-wake'):
+            with self.subTest(mode=mode):
+                self.exercise([str(self.binary), mode], f'ordinary-{mode}.json')
+
+    def test_real_namespace_pid_one_interruption(self):
+        unshare = shutil.which('unshare')
+        if not unshare:
+            self.skipTest('installed unshare unavailable; physical preparation blocked')
+        for mode in ('caught', 'ignored', 'lost-wake'):
+            self.exercise([unshare, '--user', '--map-root-user', '--pid', '--fork',
+                           str(self.binary), mode], f'pid-one-{mode}.json', True)
+
+
 def startup_binary():
     with tempfile.TemporaryDirectory(prefix='claim-startup-') as tmp:
         root = Path(tmp)
@@ -177,7 +390,6 @@ def startup_binary():
                                  KEYS / 'test-signing-key.pem')
         response = ('HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n'
                     'Content-Length: 129\r\nConnection: close\r\n\r\n' + signature.hex() + '\n')
-        import json
         source = HARNESS.replace('@WRITER@', str(WRITER)).replace('@RESPONSE@', json.dumps(response)[1:-1])
         (root / 'case.c').write_text(source)
         empty_hash = hashlib.sha256(b'').hexdigest()
@@ -190,13 +402,19 @@ def startup_binary():
         flags += [f'-D{name}="{empty_hash}"' for name in
                   ('SV08_JOB_DESCRIPTOR_SHA256', 'SV08_JOB_SIGNATURE_SHA256', 'SV08_TARGET_POLICY_SHA256')]
         binary = root / 'case'
-        result = subprocess.run(['cc', '-O2', '-Wall', '-Wextra', '-Werror',
+        command = ['cc', '-O2', '-Wall', '-Wextra', '-Werror',
                                  '-Wno-unused-function', '-Wno-misleading-indentation',
                                  *flags, f'-I{REPO / "upstream/monocypher/src"}',
                                  f'-I{REPO / "upstream/monocypher/src/optional"}',
                                  str(root / 'case.c'), *(str(p) for p in ED25519_SOURCES),
-                                 '-o', str(binary)], capture_output=True, text=True, timeout=30)
+                                 '-o', str(binary)]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=30)
         assert result.returncode == 0, result.stderr
+        record_evidence('deterministic-build.json', {
+            'argv': command, 'source_sha256': hashlib.sha256((root / 'case.c').read_bytes()).hexdigest(),
+            'writer_sha256': hashlib.sha256(WRITER.read_bytes()).hexdigest(),
+            'binary_sha256': hashlib.sha256(binary.read_bytes()).hexdigest(),
+            'binary_bytes': binary.stat().st_size, 'stderr': result.stderr})
         yield binary
 
 
@@ -212,12 +430,21 @@ def run(binary, scenario, main=False):
 
 
 REFUSALS = [
-    ('timeout', 'RANDOM_TIMEOUT', errno.ETIMEDOUT), ('eintr', 'RANDOM_TIMEOUT', errno.ETIMEDOUT),
-    ('sleep-eintr', 'RANDOM_TIMEOUT', errno.ETIMEDOUT), ('bounded-sleep', 'RANDOM_TIMEOUT', errno.ETIMEDOUT),
-    ('boundary', 'RANDOM_TIMEOUT', errno.ETIMEDOUT), ('partial-deadline', 'RANDOM_TIMEOUT', errno.ETIMEDOUT),
-    ('permanent', 'RANDOM', errno.EIO), ('zero', 'RANDOM', 0),
-    ('clock-start', 'RANDOM_CLOCK', errno.EIO), ('clock-retry', 'RANDOM_CLOCK', errno.EIO),
-    ('clock-complete', 'RANDOM_CLOCK', errno.EIO), ('sleep-error', 'RANDOM_SLEEP', errno.EINVAL),
+    *[(s, 'RANDOM_TIMEOUT', errno.ETIMEDOUT) for s in
+      ('timeout', 'eintr', 'boundary', 'partial-deadline', 'pre-syscall',
+       'pending-expiry', 'cleanup-deadline', 'setup-deadline')],
+    ('permanent', 'RANDOM', errno.EIO), ('unavailable', 'RANDOM', errno.ENOSYS),
+    ('again', 'RANDOM', errno.EAGAIN), ('zero', 'RANDOM', 0),
+    *[(s, 'RANDOM_CLOCK', errno.EIO) for s in ('clock-start', 'clock-retry', 'clock-complete', 'clock-admit')],
+    *[(s, 'RANDOM_SETUP', e) for s, e in (
+      ('mask-start', errno.EPERM), ('mask-wait', errno.EPERM),
+      ('pending-query', errno.EIO), ('inherited-pending', errno.EBUSY),
+      ('action-start', errno.EINVAL), ('timer-create', errno.EAGAIN), ('timer-arm', errno.EINVAL))],
+    *[(s, 'RANDOM_CLEANUP', e) for s, e in (
+      ('mask-cleanup', errno.EPERM), ('mask-restore', errno.EPERM),
+      ('action-restore', errno.EINVAL), ('timer-disarm', errno.EIO),
+      ('timer-delete', errno.EIO), ('drain-error', errno.EIO),
+      ('drain-flood', errno.EBUSY), ('drain-eintr', errno.EBUSY))],
 ]
 
 
@@ -229,8 +456,9 @@ class ClaimStartupTests(unittest.TestCase):
         cls.addClassCleanup(cls.fixture.close)
 
     def test_complete_secure_challenge_before_one_request(self):
-        for scenario in ('ready', 'again', 'eintr-ready', 'partial', 'partial-again',
-                         'sleep-once', 'sleep-zero', 'just-before', 'send-partial', 'transport-eintr'):
+        for scenario in ('ready', 'eintr-ready', 'partial', 'partial-eintr', 'just-before',
+                         'inherited-blocked', 'inherited-ignored', 'pending-complete',
+                         'send-partial', 'transport-eintr'):
             with self.subTest(scenario=scenario):
                 values, result = run(self.binary, scenario)
                 self.assertEqual(values[0:2], [1, 32])
@@ -239,8 +467,7 @@ class ClaimStartupTests(unittest.TestCase):
                 self.assertLess(values[7], 60_000_000_000)
                 self.assertEqual(values[8], 0)
                 self.assertEqual(result.stderr, '')
-                if scenario in ('again', 'eintr-ready', 'partial-again', 'sleep-once'):
-                    self.assertGreater(values[3], 0)
+                self.assertEqual(values[3], 0)  # no readiness polling/sleeps
 
     def test_random_refusal_never_reaches_transport_or_downstream_open(self):
         for scenario, stage, error in REFUSALS:
@@ -255,7 +482,7 @@ class ClaimStartupTests(unittest.TestCase):
                         self.assertIn('SV08_H616_COMMISSIONING_REFUSED_OR_UNCERTAIN_CLAIM\n', result.stdout)
                     if stage == 'RANDOM_TIMEOUT':
                         self.assertGreaterEqual(values[7], 60_000_000_000)
-                        self.assertLessEqual(values[7], 60_050_000_000)
+                        self.assertLessEqual(values[7], 60_100_000_000)
                         self.assertLessEqual(values[2], 600)
                         self.assertLessEqual(values[3], 1200)
 

@@ -6,6 +6,7 @@
 #include <linux/fs.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -868,38 +869,83 @@ static int random_remaining(const struct timespec *deadline,struct timespec *lef
   if(left->tv_nsec<0){left->tv_sec--;left->tv_nsec+=1000000000L;}
   return 1;
 }
+/* Caught even by Linux PID 1; deliberately no SA_RESTART and no handler I/O. */
+static void random_timer_notice(int signal_number) {(void)signal_number;}
 static int random_challenge(char challenge[65]) {
   unsigned char random_bytes[32];size_t random_used=0;ssize_t n;
-  struct timespec deadline,left;
+  struct timespec deadline,left,zero={0,0};
+  struct itimerspec timer_spec={0},disabled={0};
+  struct sigaction caught={0},previous;
+  sigset_t owned,previous_mask,waiting_mask,pending;
+  struct sigevent event={0};timer_t timer;
+  int signal_number=SIGRTMIN,masked=0,installed=0,created=0,ok=0;
+  int cleanup_error=0;
   static const char hex[]="0123456789abcdef";
+  /* Setup consumes the same budget as acquisition, never a fresh deadline. */
   if(clock_gettime(CLOCK_MONOTONIC,&deadline))return claim_refused("RANDOM_CLOCK",errno);
   deadline.tv_sec+=60;
+  sigemptyset(&owned);sigaddset(&owned,signal_number);
+  if(sigprocmask(SIG_BLOCK,&owned,&previous_mask))return claim_refused("RANDOM_SETUP",errno);
+  masked=1;
+  if(sigpending(&pending)){claim_refused("RANDOM_SETUP",errno);goto cleanup;}
+  /* Do not consume a notification belonging to the inherited signal state. */
+  if(sigismember(&pending,signal_number)){claim_refused("RANDOM_SETUP",EBUSY);goto cleanup;}
+  caught.sa_handler=random_timer_notice;sigemptyset(&caught.sa_mask);
+  if(sigaction(signal_number,&caught,&previous)){claim_refused("RANDOM_SETUP",errno);goto cleanup;}
+  installed=1;
+  event.sigev_notify=SIGEV_SIGNAL;event.sigev_signo=signal_number;
+  if(timer_create(CLOCK_MONOTONIC,&event,&timer)){claim_refused("RANDOM_SETUP",errno);goto cleanup;}
+  created=1;
+  timer_spec.it_value=deadline;timer_spec.it_interval.tv_nsec=100000000L;
+  /* Repetition closes the pre-syscall lost wake: a notice already delivered
+   * cannot strand the next blocking call. The deadline itself never moves. */
+  if(timer_settime(timer,TIMER_ABSTIME,&timer_spec,NULL)){
+    claim_refused("RANDOM_SETUP",errno);goto cleanup;
+  }
+  waiting_mask=previous_mask;sigdelset(&waiting_mask,signal_number);
+  if(sigprocmask(SIG_SETMASK,&waiting_mask,NULL)){
+    claim_refused("RANDOM_SETUP",errno);goto cleanup;
+  }
   while(random_used<sizeof(random_bytes)) {
-    if(!random_remaining(&deadline,&left))return 0;
+    if(!random_remaining(&deadline,&left))goto cleanup;
 #if defined(SV08_TEST_NO_RANDOM)
     errno=EIO;n=-1;
 #else
-    n=getrandom(random_bytes+random_used,sizeof(random_bytes)-random_used,GRND_NONBLOCK);
+    n=getrandom(random_bytes+random_used,sizeof(random_bytes)-random_used,0);
 #endif
-    if(n<0&&(errno==EAGAIN||errno==EINTR)) {
-      /* Pace both temporary failures; interrupted sleeps retain their remaining
-       * pause, capped again against the original acquisition deadline. */
-      struct timespec pause={0,100000000L},rest;
-      for(;;) {
-        if(!random_remaining(&deadline,&left))return 0;
-        if(pause.tv_sec==0&&pause.tv_nsec==0)break;
-        if(pause.tv_sec>0||pause.tv_nsec>100000000L)pause=(struct timespec){0,100000000L};
-        if(left.tv_sec==0&&left.tv_nsec<pause.tv_nsec)pause=left;
-        if(!nanosleep(&pause,&rest))break;
-        if(errno!=EINTR)return claim_refused("RANDOM_SLEEP",errno);
-        pause=rest;
-      }
-      continue;
-    }
-    if(n<=0)return claim_refused("RANDOM",n<0?errno:0);
+    if(n<0&&errno==EINTR)continue;
+    /* EAGAIN with flags zero is not a readiness-polling contract. Refuse it. */
+    if(n<=0){claim_refused("RANDOM",n<0?errno:0);goto cleanup;}
     random_used+=(size_t)n;
   }
-  if(!random_remaining(&deadline,&left))return 0;
+  ok=random_remaining(&deadline,&left);
+cleanup:
+  /* A failed cleanup leaves the caught disposition/blocked owned signal where
+   * possible. Never expose an uncertain timer/pending notice to transport or
+   * restore a default/ignored disposition while our notification may remain. */
+  if(installed&&sigprocmask(SIG_BLOCK,&owned,NULL))cleanup_error=errno;
+  if(created) {
+    if(timer_settime(timer,0,&disabled,NULL)&&!cleanup_error)cleanup_error=errno;
+    if(timer_delete(timer)&&!cleanup_error)cleanup_error=errno;
+  }
+  if(installed&&!cleanup_error) {
+    int drained=0;
+    /* Linux queues at most one notice per POSIX timer. Bound even hostile
+     * unrelated sends of this reserved signal rather than spin forever. */
+    for(int attempt=0;attempt<8;attempt++) {
+      int got=sigtimedwait(&owned,NULL,&zero);
+      if(got==signal_number)continue;
+      if(got<0&&errno==EAGAIN){drained=1;break;}
+      if(got<0&&errno==EINTR)continue;
+      cleanup_error=got<0?errno:EIO;break;
+    }
+    if(!drained&&!cleanup_error)cleanup_error=EBUSY;
+  }
+  if(installed&&!cleanup_error&&sigaction(signal_number,&previous,NULL))cleanup_error=errno;
+  if(masked&&!cleanup_error&&sigprocmask(SIG_SETMASK,&previous_mask,NULL))cleanup_error=errno;
+  if(cleanup_error)return claim_refused("RANDOM_CLEANUP",cleanup_error);
+  /* Include cleanup in completion admission; a late ready result still fails. */
+  if(!ok||!random_remaining(&deadline,&left))return 0;
   for(size_t i=0;i<sizeof(random_bytes);i++) {
     challenge[i*2]=hex[random_bytes[i]>>4];challenge[i*2+1]=hex[random_bytes[i]&15];
   }
