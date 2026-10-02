@@ -11,7 +11,7 @@ requirements, decisions and failed attempts remain intact.
 
 | Goal | Current state | Next action | Done when |
 | --- | --- | --- | --- |
-| G1 — Restore SD control and pass H12 preflight | Active priority; October 2 repaired physical preflight reached RAM but timed out obtaining secure randomness; original return kernel started | Confirm requested power removal; prepare reviewed SD recovery and independently deliver bounded entropy acquisition repair before a fresh physical attempt | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
+| G1 — Restore SD control and pass H12 preflight | Active priority; October 2 repaired physical preflight reached RAM but timed out obtaining secure randomness; original return kernel started | Owner power removal/SD move and second loader restoration passed; offline entropy repair complete; perform reviewed independent SD boot, fresh spare/clock intake, then fresh physical preflight | Reconcile named spare/controller/CID, both environment records, RTC and read-only p5; stage the accepted selector repair with fresh signed inputs; actual preflight and required automatic return pass |
 | G2 — Complete writerless reimage and reliable commissioning host | Queued behind G1; offline writer/handoff accepted, physical urh-05 open | After urh-04, establish exact urh-05 authority, reviewed source image and recovery path; perform write/readback/return as separate admitted operations | Physical full-image verification and automatic return pass; selected commissioning host has captured normal boots, persistent access/state, working administration and sufficient boot/DRAM reliability for commissioning |
 | G3 — First working printer on test-sv08-01 | Offline interface and paired MCU work accepted; physical commissioning open | Complete remaining candidate substitutions and essential sensor/heater facts; activate only on the ready matching host/MCUs | Attended inputs, fans, motor direction, homing, controlled heat, calibration and first print pass, including pause/resume/cancel/shutdown |
 | G4 — Complete factory-capacity host OS and recovery | Many components/VM journeys accepted; assembled product incomplete | Integrate accepted components and address remaining required administration, update, restore and peripheral gaps in bounded slices | Complete factory-capacity artifact, signed physical A/B health/fallback, persistent identities/state, required interfaces/peripherals and independent export/restore/recovery meet the host checklist |
@@ -313,3 +313,14 @@ model, effort and full-access/never settings were read from runtime metadata.
 No global configuration or billing setting changed. The recovery move has a
 conditional preparation review only; current physical isolation and reader
 readiness still have to be established before requesting movement.
+
+
+Checkpoint 2026-10-02 05:54 UTC: the owner confirmed blank HDMI while USB powered
+the host, then isolated power and moved the SD into Beelink. A second exact
+original-loader restoration passed direct prefix readback and separate closure.
+The bounded entropy repair completed independent offline delivery/integration
+review; actual entropy/preflight remains open. The separate SD boot review and
+fresh receiver/card admissions passed. One-connect instruction expires 06:24:31
+UTC; owner physical completion and SD/spare/clock readback are pending.
+Twenty-seven accepted source inputs are prepared without a new signed job or
+policy. See the latest [restoration checkpoint](../docs/hardware/host-h12-sd-loader-restoration-20261002.md#entropy-repair-and-second-sd-restoration--0554-utc).

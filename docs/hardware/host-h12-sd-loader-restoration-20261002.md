@@ -284,3 +284,51 @@ return reached `sv08-recovery.target`; systemd reported startup complete in
 and root on p5 with `ro,norecovery`. This extends the return evidence beyond kernel
 entry, but is not a human screen/input observation or raw environment/marker
 readback. The previously requested power-removal confirmation remains pending.
+
+
+## Entropy repair and second SD restoration — 05:54 UTC
+
+The owner confirmed USB remained connected with PSU OFF and HDMI blank, then
+completed USB disconnection and the separately reviewed SD-only move to Beelink.
+Both eMMC positions remained unchanged. Udisks2 was stopped/runtime-masked before
+insertion; restore its prior active/enabled state only after card absence.
+
+Fresh reader intake matched its prior CID/controller/capacity and preserved a
+new off-target 738,197,504-byte prefix beforeimage. Every recorded range and the
+complete managed-prefix hash matched the earlier intake. Exact Sol/high review
+accepted the original v2 restoration with only its private working-directory
+rebind. An independent pre-write admission first stopped before any write on a
+group-writable capture parent; removing only that parent's group-write permission
+(0775 to 0755) satisfied the unchanged guard. This failure remains preserved.
+
+The reviewed single 786,225-byte write at byte 8192 passed flush and full direct
+prefix readback matching original `2b0a6fa177515652722b53c0a7f306c3fb452c84b1af1ffa4dc01ab5c8ed0040`.
+Separate reconciliation passed unchanged input inodes/security, receipts, target
+identity, no mounts/users/holders/swap and process closure. A final read-only
+closure corrected an obsolete helper-name search; the earlier receipt and its
+limitation are retained. No eMMC, MCU, GPT/FAT/root or tail write occurred.
+
+The bounded blocking secure-randomness repair passed independent Sol/high delivery
+and integrated-tree review and is complete offline. It keeps the original
+60-second admission deadline and uses supported kernel/libc mechanisms. Evidence
+includes 80 deterministic scenarios, real ordinary-process interruption, three
+actual local namespace-PID-1 cases, receipt/randomness regressions and matched
+ARM64 builds. The original unprivileged namespace failure is preserved; local
+sudo permitted the coordinator's PID-namespace test. That test substitutes a
+blocked pipe for getrandom and establishes neither unready-getrandom success nor
+physical entropy availability. See [the delivery evidence](../development/h616-claim-entropy-acquisition-20261002.md).
+
+A separate Sol/high review accepted one independent SD reinstall/USB-powered boot
+with conditions. Fresh final card closure and unchanged passive receiver admission
+passed at 05:54:31 UTC. The existing collector is waiting, bridge absent, original
+log inodes and append prefixes preserved. The owner's one-connect instruction
+expires at **06:24:31 UTC**; attendance and the no-online timeout last two minutes
+from actual connection. No UART input is admitted. Physical completion and fresh
+SD kernel/root/SSH/spare/clock evidence remain pending at this checkpoint.
+
+Accepted sources alone were prepared in a distinct Beelink workspace: 27 entries,
+with new writer/test hashes. No replacement policy, signed job, keys, artifact or
+listener was created. G1/H12 remain incomplete until actual preflight and required
+return evidence pass; GUI's last human observation remains blank. All new private
+reviews, source hashes, failed admissions, operation/readback and closure receipts
+are retained in the renewal probe, with the new prefix beforeimage on Beelink.

@@ -401,3 +401,13 @@ return reached `sv08-recovery.target`; systemd reported startup complete in
 and root on p5 with `ro,norecovery`. This extends the return evidence beyond kernel
 entry, but is not a human screen/input observation or raw environment/marker
 readback. The previously requested power-removal confirmation remains pending.
+
+
+Current checkpoint 2026-10-02 05:54 UTC: owner power-off/SD-reader move confirmed;
+second original-loader restoration and independent closure passed. Offline secure
+entropy repair is complete. One independently reviewed SD reinstall/USB connection
+is ready until 06:24:31 UTC, with PSU OFF/spare installed/factory stored and owner
+nearby for two minutes. Stop by USB power removal on error or no online host in
+two minutes. No extra UART/reset/reconnect is admitted. Physical completion and
+fresh SD/spare/clock observations remain pending; earlier no-reconnect requests
+are superseded only by this admitted one-connect instruction.
