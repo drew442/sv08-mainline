@@ -92,7 +92,9 @@ The owner gives standing authorization to push every project commit to GitHub
 committing or accepting a worker commit, before reporting the work complete,
 and verifies the remote contains the commit. Do not leave commits local-only
 without reporting the concrete push failure and continuing to resolve it.
-Preserve remote history: reconcile divergence without force pushes or deletion.
+Preserve remote history: reconcile divergence without force pushes. Owner-requested
+branch cleanup may remove obsolete branches after their tips are preserved in
+pushed, verified archive tags.
 This is source publication authority, not release/deployment or hardware authority.
 Private ignored artifacts and secrets remain excluded.
 
