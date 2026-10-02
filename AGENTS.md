@@ -85,7 +85,16 @@ Check JSON syntax and local Markdown targets when changing those files.
 
 Update affected documentation with behavior changes. Report the result, evidence,
 and remaining limitations. Do not commit secrets, device dumps, generated images,
-or unrelated upstream changes. Do not publish or push unless requested.
+or unrelated upstream changes.
+
+The owner gives standing authorization to push every project commit to GitHub
+(origin), on main and feature branches. The coordinator pushes promptly after
+committing or accepting a worker commit, before reporting the work complete,
+and verifies the remote contains the commit. Do not leave commits local-only
+without reporting the concrete push failure and continuing to resolve it.
+Preserve remote history: reconcile divergence without force pushes or deletion.
+This is source publication authority, not release/deployment or hardware authority.
+Private ignored artifacts and secrets remain excluded.
 
 ## Feature delivery and delegated review
 
