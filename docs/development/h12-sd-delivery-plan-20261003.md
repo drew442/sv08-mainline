@@ -126,3 +126,32 @@ performed. Current physical setup/attendance remains unconfirmed. Source transpo
 closure will be resolved before the concrete physical session; this is not an
 extra rehearsal milestone. Local detailed evidence is kept under
 `local/feature-workflow/probes/h12-sd-delivery-20261003/integration/`.
+
+### Fresh composition and first installed run
+
+Fresh fixture composition of `dd080df` passed in 59.4 seconds. Root SHA-256 is
+`024389440bc3ac7176bc121cac0bbbe9d6d529da07285842e9f5e55f1ecba848`;
+peak additional allocated build bytes were 1,326,407,680. This is explicitly a
+fixture-key image, not the owner-only physical medium.
+
+The first VM run reached the verified envelope, SSH, installed production
+service/hash checks and independent read-only ext4 source mount. It then failed
+when the shared SSH helper's 20-second timeout expired during systemd reload.
+The driver terminated its own QEMU process; this is a terminal failed run, not a
+live process to restart. Coordinator also found that the fixture drop-in sorted
+before the production reimage drop-in. The same implementer session received a
+bounded eight-minute test-driver repair assignment; production behavior and
+acceptance checks are unchanged. The corrected installed run is still required.
+
+The source transport limitation is resolved on the existing physical SD host.
+Coordinator used existing `mount -i` and kernel NFS support. An initial NFSv4
+attempt refused; server inspection showed NFSv3 enabled and v4 disabled. Explicit
+numeric NFSv3/TCP options mounted `/srv/sv08-sd-nfs` read-only at
+`/run/h12-source`; the image file is visible with 7,818,182,656 bytes. No packages
+or server configuration changed. This created a volatile mountpoint and loaded
+NFS modules; no SD/eMMC media write or restart occurred. The server-side image
+was freshly hashed as
+`ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`.
+Full client-side checking remains part of integrated Review before confirmation.
+The pre-existing hostname-resolution warning did not prevent these numeric-address
+operations; DNS repair is not an H12 prerequisite.
