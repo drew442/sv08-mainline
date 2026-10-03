@@ -287,7 +287,14 @@
       "resumption": "Independent F1 reproduction proves historical GPT inspector omits disk_guid. Repair caller within owned helper, preserve exact historical dependency and GUID/CRC checks, and exercise positive/wrong-GUID paths against actual historical closure.",
       "status": "review",
       "title": "Deliver software commissioning host readiness",
-      "verification": null
+      "verification": {
+        "decision_sha256": "f2891916b20c412c32e8031bcd09c032e1471368b4fb7de0be9d8c3886154eef",
+        "evidence_sha256": "b64e05c035a99ab5bfa3a79d6b742fa1fa512f4290a9c4b23c7f23ea1777126b",
+        "outcome": "passed",
+        "rationale": "Passed commissioning-host-readiness:software only at clean candidate 8504c463920377c1fb4a0d4058dc5701744218e4. Reviewed the entire 15-file diff from recorded run base 40a9ba0670446be5e8dcec5f5539a46f89333185 and the original-candidate/repair comparisons. Independently reproduced 17 focused passes and one explicit selected-tool skip, including the real historical inspect/devices/probe/run/Store/Diagnostics path: A1/A2 single confirmation, A3 no-op, wrong GUID, both header/array CRCs, disk and mount refusals. A discriminating before/after probe reproduces the original KeyError and retained failure on the same fixture. Historical GPT dependency remains unchanged; the helper-local GUID reader preserves the reviewed binding and CRC checks. All 264 hash/artifact/scope/provenance/source-comparison checks passed, with the original six approval constraints and owner access amendment intact. Reused unchanged 18-case actual ARM64 selected-tool, browser/theme, 112 regression and unit evidence after source comparison; no broad rerun. Refreshed artifact/preflight receipts establish source agreement, not installed health. Installed boots/access/sensors, physical acceptance and fresh exact-operation review remain pending. No hardware support, authenticated installed access or release is certified. Reviewer runtime tier must be confirmed by the coordinator before reliance.",
+        "reviewer": "feature_verifier_high / fresh independent full-role CLI reviewer (requested GPT-6.1 Sol/high; effective runtime confirmation remains coordinator-owned)",
+        "session": "01a101cf-58a9-77e3-b131-82e023a6d65b"
+      }
     },
     {
       "blocker": null,
