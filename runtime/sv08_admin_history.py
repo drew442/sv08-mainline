@@ -217,8 +217,8 @@ class History:
     def sync(self, fd, point):
         self.fault(point); os.fsync(fd)
 
-    def settle(self, fd, view):
-        for name in [*view['referenced'], *(['jobs.json'] if 'jobs.json' in os.listdir(fd) else [])]:
+    def sync_view(self, fd, view):
+        for name in [*view['referenced'], *([name for name in ('jobs.json', 'ledger.lock') if name in os.listdir(fd)])]:
             file = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fd)
             try: self.sync(file, 'recovery-file-fsync')
             finally: os.close(file)
@@ -226,6 +226,18 @@ class History:
         with directory(self.root) as check:
             if (os.fstat(check).st_dev, os.fstat(check).st_ino) != (os.fstat(fd).st_dev, os.fstat(fd).st_ino): raise ValueError('History directory changed')
         self.parent_sync('recovery-parent-fsync')
+
+    def acknowledged(self, view):
+        """Caller holds ledger exclusion; establish durability without cleanup."""
+        if self.jobs.ledger_fd is None: raise ValueError('Receipt acknowledgement requires ledger exclusion')
+        with directory(self.root) as fd:
+            current = self.view()
+            if current['revision'] != view['revision']: raise ValueError('Image history changed during acknowledgement')
+            self.sync_view(fd, current)
+        return current
+
+    def settle(self, fd, view):
+        self.sync_view(fd, view)
         for name in os.listdir(fd):
             if (re.fullmatch(OBJECT, name) and name not in view['referenced']) or re.fullmatch(TEMP, name):
                 safe(os.stat(name, dir_fd=fd, follow_symlinks=False))

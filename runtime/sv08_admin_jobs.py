@@ -84,6 +84,10 @@ class Jobs:
         from sv08_admin_history import History
         return History(self).view()
 
+    def acknowledged(self, view=None):
+        from sv08_admin_history import History
+        return History(self).acknowledged(view or self.view())
+
     def load(self):
         """Validated all-history observation; never save this concatenation."""
         return self.view()['rows']
@@ -206,7 +210,7 @@ class Jobs:
     def history(self):
         # Never acquire the state/transaction lock, including on initial page load.
         with self.lock('ledger.lock'):
-            view = self.view(); rows = view['rows']
+            view = self.acknowledged(); rows = view['rows']
             active = len(view['active']); archives = len(view['manifest']['archives']) if view['format'] == 2 else 0
             from sv08_admin_history import History, TOTAL
             try: maintenance = History(self).review(view); reason = ''
@@ -226,6 +230,7 @@ class Jobs:
             for row in rows:
                 if row['id'] == identity:
                     if row['plan'] != plan: raise ValueError('Retry identity was used for a different review')
+                    self.acknowledged(view)
                     return self.public(row)
             if view['format'] == 1 and view['fenced']:
                 raise ValueError('Interrupted history migration requires explicit reviewed resume before new identities')
@@ -242,6 +247,7 @@ class Jobs:
             for row in rows:
                 if row['id'] == identity:
                     if row['plan'] != plan: raise ValueError('Retry identity was used for a different review')
+                    self.acknowledged(view)
                     return self.public(row)
             if view['format'] == 1 and view['fenced']:
                 raise ValueError('Interrupted history migration requires explicit reviewed resume before new identities')
@@ -260,7 +266,7 @@ class Jobs:
                     row.update(phase='interrupted', message='Worker launch was not acknowledged. Reconciliation is required; no automatic retry.')
                     self.save(rows, view['revision'], result=True)
         with self.lock('ledger.lock'):
-            return self.public(next(r for r in self.load() if r['id'] == identity))
+            return self.public(next(r for r in self.acknowledged()['rows'] if r['id'] == identity))
 
     def work(self, controller_factory, identity=None):
         with self.lock('worker.lock'):

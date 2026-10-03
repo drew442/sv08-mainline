@@ -9,14 +9,23 @@ from test_data_budget import fixture_budget
 from test_admin_history import receipt, disposed
 from admin_jobs_fixture import initialize_resolution, make_controller
 from sv08_state import Store, atomic_json
+from sv08_boot import prepare_permissions
+from unittest.mock import patch
 
 
 def serve(work):
     work.mkdir(mode=0o700)
-    store=Store(work/'state',reserve_bytes=0,budget=fixture_budget());store.initialize()
+    store=Store(work/'state',reserve_bytes=0,budget=fixture_budget(work/'state'));store.initialize()
     boot=store.prepare_boot('A','0.1.0-ui-fixture');boot['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
-    (work/'ui-fixture.json').write_text(json.dumps(boot));initialize_resolution(work,boot)
-    controller=make_controller(work,resolution=True)
+    (work/'ui-fixture.json').write_text(json.dumps(boot));initialize_resolution(work,boot,budget_root=work/'state')
+    with patch('sv08_boot.os.chown'):
+        prepare_permissions(store.root,boot['generation'])
+    assert store.root.stat().st_mode & 0o777 == 0o711
+    controller=make_controller(work,resolution=True,budget_root=work/'state')
+    def history_fault(point):
+        if (work/'history-recovery-failure').exists() and point == 'recovery-directory-fsync':
+            raise OSError('Injected persistent history recovery failure')
+    controller.jobs.history_fault=history_fault
     rows=[receipt(i) for i in range(128)];rows[0]=disposed(0)
     atomic_json(controller.jobs.root/'jobs.json',rows)
     (work/'originals.json').write_text(json.dumps(rows))
@@ -54,5 +63,5 @@ def serve(work):
 if __name__=='__main__':
     work=Path(sys.argv[1])
     if len(sys.argv)>2:
-        c=make_controller(work,resolution=True);c.jobs.work(lambda:make_controller(work,resolution=True),sys.argv[2])
+        c=make_controller(work,resolution=True,budget_root=work/'state');c.jobs.work(lambda:make_controller(work,resolution=True,budget_root=work/'state'),sys.argv[2])
     else:serve(work)

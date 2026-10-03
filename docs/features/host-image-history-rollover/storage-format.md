@@ -133,3 +133,50 @@ a post-publication durability failure is uncertainty, never live-lock replacemen
 Flattened locks, missing manifest/alias or corrupt refs refuse. There is no general
 OS restoration service integration claim; existing update/rollback paths keep
 shared history in place.
+
+
+## Independent-review repair, 2026-10-03
+
+The shared allocation **root**, `/data/sv08`, retains the existing boot contract:
+owned by the administrator and mode 0711, permitting application traversal while
+preventing listing or writes. A private 0700 root is also valid. No boot chmod or
+application permission policy changes. Both allocation preflight and exclusion
+validate that exact pair of allowed modes and safe ancestry. `allocation.lock`
+remains owned, regular, exactly 0600, single-link and bound to its held descriptor.
+The history directory itself remains exactly 0700; the two ledger aliases retain
+their sole exact hardlink exception.
+
+Public identical submission/disposition acknowledgements and receipt-history
+observation establish durability of the authoritative complete view under ledger
+exclusion before returning it. This includes the second submit acquisition,
+retained-disposition inspection before current-service/state gates, and the final
+post-launch submission response. Revalidate the complete view/revision; fsync all
+referenced snapshot files, jobs.json and the persistent ledger inode, then its
+directory and parent. Failure refuses/remains uncertain, so the browser retains
+its pending identity. This path creates no new identities, executes/launches no
+backend action, restores no stale manifest and performs no debris cleanup. It
+acquires no state/service/allocation lock. Publication's separately excluded
+settlement/cleanup path retains its existing ordering and bounds. Read-only export
+continues to use validated view reads without acknowledgement fsyncs or lock repair.
+
+An existing exported history directory requires jobs.json; export never invents
+a committed empty view from a missing manifest. Isolated restore requires
+jobs.json even for legacy history. Its recorded history
+namespace must equal the complete extracted regular files plus the exact alias;
+missing recorded payloads, duplicate records, extra payloads, multiple history
+inventories, bad checksums and missing/damaged versioned pairs refuse before final
+destination publication. Valid legacy restores retain every receipt; valid fenced
+restores retain the pair and refuse unchanged-old public admission. A missing
+restore destination is never presented as an enabled restored history.
+
+Restore tar decoding now uses the existing forward-only bounded ReadbackReader
+and TarInfo metadata hook. A logical header chain has a fixed 65536-byte metadata
+allowance plus the 10240-byte stream buffer; nested/global PAX, GNU long names/links
+and GNU sparse-map metadata are bounded **before** decoding allocates their
+claimed sizes. Underlying reads remain at most 1 MiB. Archive input must be a
+regular file, 10240..4294967295 bytes, matching the existing default export ceiling;
+held source identity and exact bytes-read size are rechecked. Member counts,
+paths, ownership/modes, negative/excessive sizes, sparse expansion, payload and
+namespace ceilings remain checked before extraction/publication. Export's ordinary
+semantic readback retains its writer-derived header bound. No general restore
+service, live-lock replacement, new retention policy or hardware authority is added.

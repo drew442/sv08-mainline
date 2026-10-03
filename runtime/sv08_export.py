@@ -74,8 +74,10 @@ def inventory(root, limit=100000):
                     finally: os.close(child)
         visit(root_fd, ())
     # Read-only validation does not create or repair source lock bookkeeping.
+    paths = {relative for relative, _ in result}
     for relative, stamp in result:
         if relative[-1] == 'admin-image-jobs' and stat.S_ISDIR(stamp[2]):
+            if (*relative, 'jobs.json') not in paths: raise ValueError('Missing committed history export manifest')
             from sv08_admin_jobs import Jobs
             Jobs(Path(root).joinpath(*relative), '').view()
     for relative, stamp in result:
@@ -148,6 +150,28 @@ class ReadbackReader:
         if self.count > self.size: raise ValueError('Archive readback size changed')
         return block
 
+
+
+@contextmanager
+def restore_archive(path):
+    """Bound metadata before tarfile decodes PAX/GNU/sparse declarations."""
+    with open(path, 'rb', buffering=0) as source:
+        info = os.fstat(source.fileno())
+        if not stat.S_ISREG(info.st_mode) or not TAR_BUFFER <= info.st_size <= 2**32-1:
+            raise ValueError('Invalid restore archive size or type')
+        reader = ReadbackReader(source, info.st_size, 65536)
+        class BudgetInfo(tarfile.TarInfo):
+            @classmethod
+            def fromtarfile(cls, archive):
+                if not reader.header_depth: reader.header_start = reader.count
+                reader.header_depth += 1
+                try: return super().fromtarfile(archive)
+                finally: reader.header_depth -= 1
+        with tarfile.open(fileobj=reader, mode='r|', bufsize=TAR_BUFFER, tarinfo=BudgetInfo) as archive:
+            yield archive, info.st_size
+        while reader.read(CHUNK): pass
+        if reader.count != info.st_size or identity(os.fstat(source.fileno())) != identity(info):
+            raise ValueError('Restore archive changed during read')
 
 def verify_stream(stream, expected, size, checksum, header_bytes):
     """One bounded semantic and whole-byte pass over this writer's own archive.
@@ -382,18 +406,21 @@ def restore_history(archive_path, destination, exclusive):
         temporary.mkdir(mode=0o700)
         try:
             count, total, aliases, prefixes, export = 0, 0, [], set(), None
-            with tarfile.open(archive_path, 'r:') as archive:
+            with restore_archive(archive_path) as (archive, archive_size):
                 seen = set()
                 for item in archive:
                     if item.name in seen: raise ValueError('Duplicate archive member')
                     seen.add(item.name)
                     if len(seen) > 100000: raise ValueError('Too many restore archive entries')
                     parts = item.name.split('/')
-                    if any(part in ('', '.', '..') for part in parts) or item.sparse is not None:
+                    if any(part in ('', '.', '..') for part in parts) or item.sparse is not None or not 0 <= item.size <= archive_size:
                         raise ValueError('Unsafe restore archive path')
                     if item.name == 'export-manifest.json':
                         if not item.isfile() or item.size > 32*METADATA_BYTES: raise ValueError('Invalid export manifest')
-                        export = strict_json(archive.extractfile(item).read())
+                        with archive.extractfile(item) as payload:
+                            raw = bytearray()
+                            while block := payload.read(CHUNK): raw.extend(block)
+                        export = strict_json(raw)
                     if len(parts) < 3 or parts[-2] != 'admin-image-jobs': continue
                     prefixes.add('/'.join(parts[:-1])); name = parts[-1]
                     if name not in ('jobs.json', 'ledger.lock', 'history-format-v2.lock', 'worker.lock') and not re.fullmatch(OBJECT, name) and not re.fullmatch(TEMP, name):
@@ -417,12 +444,29 @@ def restore_history(archive_path, destination, exclusive):
                             output.write(block); checksum.update(block); remaining -= len(block)
                         output.flush(); os.fsync(output.fileno())
             if len(prefixes) != 1 or export is None: raise ValueError('Restore needs one complete history and export manifest')
-            records = export.get('files', [])
+            if (not isinstance(export, dict) or set(export) != {'format_version', 'kind', 'files', 'history'} or
+                    type(export['format_version']) is not int or export['format_version'] != 1 or
+                    export['kind'] != 'user-data-export-not-os-image' or not isinstance(export['files'], list) or
+                    len(export['files']) > 100000 or not isinstance(export['history'], list)):
+                raise ValueError('Invalid complete restore inventory')
+            records = {}
+            prefix = next(iter(prefixes))
+            for record in export['files']:
+                if not isinstance(record, dict) or not isinstance(record.get('path'), str) or record['path'] in records:
+                    raise ValueError('Invalid or duplicate restore inventory record')
+                parts = record['path'].split('/')
+                if any(part in ('', '.', '..') for part in parts): raise ValueError('Unsafe restore inventory path')
+                if len(parts) >= 3 and parts[-2] == 'admin-image-jobs' and '/'.join(parts[:-1]) != prefix:
+                    raise ValueError('Restore needs one history inventory')
+                records[record['path']] = record
+            expected_names = {name[len(prefix)+1:] for name in records if name.startswith(prefix+'/')}
+            actual_names = set(os.listdir(temporary)) | set(aliases)
+            if 'jobs.json' not in actual_names or expected_names != actual_names:
+                raise ValueError('Incomplete committed history restore inventory')
             for name in os.listdir(temporary):
-                full = next(iter(prefixes))+'/'+name
-                expected = next((r for r in records if r.get('path') == full), None)
+                full = prefix+'/'+name
                 path = temporary / name
-                if expected != dict(path=full, bytes=path.stat().st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest()):
+                if records.get(full) != dict(path=full, bytes=path.stat().st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest()):
                     raise ValueError('Restored history checksum mismatch')
             if aliases:
                 if aliases != ['history-format-v2.lock']: raise ValueError('Duplicate restored fence')
@@ -432,7 +476,9 @@ def restore_history(archive_path, destination, exclusive):
                 expected = dict(path=next(iter(prefixes)), revision=view['revision'], alias='history-format-v2.lock', target='ledger.lock')
                 if export.get('history') != [expected]: raise ValueError('Restored relationship is not bound to committed history')
                 alias_record = dict(path=next(iter(prefixes))+'/history-format-v2.lock', hardlink=next(iter(prefixes))+'/ledger.lock')
-                if alias_record not in records: raise ValueError('Missing exported relationship')
+                if records.get(alias_record['path']) != alias_record: raise ValueError('Missing exported relationship')
+            elif export['history']:
+                raise ValueError('Unexpected legacy history relationship')
             fsync_dir(temporary); fsync_dir(temporary.parent)
             with opened(temporary.parent) as fd: publish(fd, temporary.name, destination.name); os.fsync(fd)
             return dict(revision=view['revision'], count=len(view['rows']))

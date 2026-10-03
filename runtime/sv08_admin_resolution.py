@@ -91,10 +91,16 @@ def evidence(jobs, controller, backend, row):
 
 
 def inspect(jobs, identity, controller):
+    with jobs.lock('ledger.lock'):
+        row = jobs.row(identity)
+        if row.get('disposition'):
+            jobs.acknowledged()
+            return {'receipt': jobs.public(row), 'plan': None}
     with admitted(jobs, controller) as (_, backend):
         with jobs.lock('ledger.lock'):
             row = jobs.row(identity)
             if row.get('disposition'):
+                jobs.acknowledged()
                 return {'receipt': jobs.public(row), 'plan': None}
         observed = evidence(jobs, controller, backend, row)
         plan = {'kind': KIND, 'id': identity, 'evidence_sha256': revision(observed)}
@@ -119,6 +125,7 @@ def apply(jobs, plan, controller):
         if disposition:
             if disposition['plan'] != plan:
                 raise ValueError('This receipt was retained with different review evidence')
+            jobs.acknowledged()
             return jobs.public(row)
     with admitted(jobs, controller) as (_, backend):
         with jobs.lock('ledger.lock'):
@@ -127,6 +134,7 @@ def apply(jobs, plan, controller):
             if row.get('disposition'):
                 if row['disposition']['plan'] != plan:
                     raise ValueError('This receipt was retained with different review evidence')
+                jobs.acknowledged(view)
                 return jobs.public(row)
         observed = evidence(jobs, controller, backend, row)
         if revision(observed) != plan['evidence_sha256']:
@@ -140,6 +148,7 @@ def apply(jobs, plan, controller):
             if row.get('disposition'):
                 if row['disposition']['plan'] != plan:
                     raise ValueError('This receipt was retained with different review evidence')
+                jobs.acknowledged(view)
                 return jobs.public(row)
             if not reviewable(jobs, row):
                 raise ValueError('Image receipt changed during review')

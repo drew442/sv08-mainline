@@ -1,0 +1,59 @@
+EEEEE...
+======================================================================
+ERROR: test_post_boot_history_upload_and_new_generation_use_shared_private_lock (test_admin_history_repairs.Repairs.test_post_boot_history_upload_and_new_generation_use_shared_private_lock)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-history-rollover/tests/test_admin_history_repairs.py", line 46, in test_post_boot_history_upload_and_new_generation_use_shared_private_lock
+    staging=Staging(root/'uploads',owner_uid=os.geteuid(),budget=budget)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-history-rollover/runtime/sv08_staging.py", line 36, in __init__
+    entry = path.lstat()
+            ^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 849, in lstat
+    return self.stat(follow_symlinks=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 842, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/drew/.sv08-history-rollover-tmpfs-20261003/repair/tmpmp2cakof/sv08/uploads'
+
+======================================================================
+ERROR: test_public_disposition_ack_and_inspect_settle_before_current_gates (test_admin_history_repairs.Repairs.test_public_disposition_ack_and_inspect_settle_before_current_gates) (v2=False, point='manifest-directory-fsync')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-history-rollover/tests/test_admin_history_repairs.py", line 123, in test_public_disposition_ack_and_inspect_settle_before_current_gates
+    self.assertEqual(resolution.apply(jobs,plan,object())['disposition']['outcome'],'unknown')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'outcome'
+
+======================================================================
+ERROR: test_public_disposition_ack_and_inspect_settle_before_current_gates (test_admin_history_repairs.Repairs.test_public_disposition_ack_and_inspect_settle_before_current_gates) (v2=False, point='manifest-parent-fsync')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-history-rollover/tests/test_admin_history_repairs.py", line 123, in test_public_disposition_ack_and_inspect_settle_before_current_gates
+    self.assertEqual(resolution.apply(jobs,plan,object())['disposition']['outcome'],'unknown')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'outcome'
+
+======================================================================
+ERROR: test_public_disposition_ack_and_inspect_settle_before_current_gates (test_admin_history_repairs.Repairs.test_public_disposition_ack_and_inspect_settle_before_current_gates) (v2=True, point='manifest-directory-fsync')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-history-rollover/tests/test_admin_history_repairs.py", line 123, in test_public_disposition_ack_and_inspect_settle_before_current_gates
+    self.assertEqual(resolution.apply(jobs,plan,object())['disposition']['outcome'],'unknown')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'outcome'
+
+======================================================================
+ERROR: test_public_disposition_ack_and_inspect_settle_before_current_gates (test_admin_history_repairs.Repairs.test_public_disposition_ack_and_inspect_settle_before_current_gates) (v2=True, point='manifest-parent-fsync')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-history-rollover/tests/test_admin_history_repairs.py", line 123, in test_public_disposition_ack_and_inspect_settle_before_current_gates
+    self.assertEqual(resolution.apply(jobs,plan,object())['disposition']['outcome'],'unknown')
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: 'outcome'
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.188s
+
+FAILED (errors=5)

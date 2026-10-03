@@ -29,6 +29,7 @@ try {
  await send('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url});await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
  const stateBefore=fs.readFileSync(fixture+'/state/state.json','utf8'); const transactionBefore=fs.readFileSync(fixture+'/state/update.json','utf8');
+ assert.equal(fs.statSync(fixture+'/state').mode & 0o777,0o711);
  const originals=JSON.parse(fs.readFileSync(fixture+'/originals.json'));
  const rows=()=>{const m=JSON.parse(fs.readFileSync(fixture+'/state/admin-image-jobs/jobs.json'));return Array.isArray(m)?m:[...m.archives,m.active].flatMap(d=>JSON.parse(fs.readFileSync(fixture+'/state/admin-image-jobs/'+d.name)));};
  // Real tmpfs pressure exercises the production 768 MiB floor, within the assigned peak.
@@ -65,6 +66,10 @@ try {
  await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
  await click('#history-retry');await until(`document.querySelector('#history-retry').hidden`);
  await evaluate(`localStorage.setItem('sv08-image-submission',JSON.stringify({method:'image.submit',id:'00000000000000000000000000000000',plan:{}}))`);
+ fs.writeFileSync(fixture+'/history-recovery-failure','injected observer durability failure');
+ await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='Host unavailable'`);
+ assert.notEqual(await evaluate(`localStorage.getItem('sv08-image-submission')`),null);
+ fs.unlinkSync(fixture+'/history-recovery-failure');
  await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
  assert.equal(await evaluate(`localStorage.getItem('sv08-image-submission')`),null);
  await click('[data-page="images"]');await click('#cancel-image');await until(`document.querySelector('#review').open`);await click('#confirm');
@@ -88,6 +93,6 @@ try {
  for(let i=0;i<100 && rows()[129].phase!=='succeeded';i++)await delay(100);
  assert.equal(rows()[129].phase,'succeeded');assert.equal(errors.length,0);
 
- fs.writeFileSync(output+'/result.json',JSON.stringify({browser_shim:true,separate_worker:true,preserved_originals:128,maintenance_cancel:true,lost_ack_retry:true,archived_pending_recovered:true,cancel_once:true,real_tmpfs_no_space:true,pressure_peak_allocated_bytes:pressurePeak,worker_barrier_reconnect_ms:reconnectMs,authority_changed_review_cancelled:true,maintenance_state_unchanged:true,backend_calls:backend.calls,authenticated:false,hardware:false},null,2));
+ fs.writeFileSync(output+'/result.json',JSON.stringify({browser_shim:true,separate_worker:true,post_boot_shared_mode:0o711,preserved_originals:128,maintenance_cancel:true,lost_ack_retry:true,archived_pending_recovered:true,pending_retained_on_durability_failure:true,cancel_once:true,real_tmpfs_no_space:true,pressure_peak_allocated_bytes:pressurePeak,worker_barrier_reconnect_ms:reconnectMs,authority_changed_review_cancelled:true,maintenance_state_unchanged:true,backend_calls:backend.calls,authenticated:false,hardware:false},null,2));
  console.log('Native browser history journey completed (shim transport).');
 }finally{socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}
