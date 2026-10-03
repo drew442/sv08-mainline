@@ -1,0 +1,99 @@
+{
+  "verdict": "PASS WITH CONDITIONS",
+  "status": "done",
+  "target": "test-sv08-01 / owner-reported H616_JC_6Z_V1.2 / reviewed spare eMMC",
+  "scope": "Exact installation, initial diagnostic A confirmation, one normal restart and one five-second HW667 cycle; no release, MCU or output qualification",
+  "source_commit": "8504c463920377c1fb4a0d4058dc5701744218e4",
+  "role": "high_consequence_reviewer",
+  "runtime": {
+    "requested_model": "gpt-6.1-sol",
+    "requested_effort": "medium",
+    "actual_model": "unknown to reviewer",
+    "actual_effort": "unknown to reviewer",
+    "fallback": "separate full-role CLI; coordinator confirmation required"
+  },
+  "action_hashes": {
+    "deployment/action-plan.md": "41a43b35d50d178c682e7fd88ff49ead931f1f449d090372c12e775a8a154d0c",
+    "deployment/browser-check.mjs": "4e1b0c65a7deeaf19ab7794455cea34496abbcad22e302471014fa48b9224d22",
+    "deployment/install.py": "c209b1a6aa282caccdf6942aca61481464f8ccb78610c8c2ddb29c5ecc7d51cd",
+    "deployment/observe-host.py": "955f374bfebfbd2d190f3fcb3f4aebeb1d5089816ce846c6709bb431b3b4cf71",
+    "deployment/overlay/manifest.json": "5bbf75dc1cb0a7bd71442a08f055cbd59edbbdcf7fb7c3175688810bea82dce4",
+    "deployment/packet.json": "c549fdbe07c27f63d8db96932391c28b101f92cf5185a7941d7d35695b217321"
+  },
+  "evidence_hashes": {
+    "physical-facts.json": "21d8b0f184eb3b8f181bdd5c6f43b978353cc98678f43328aff3870e3024606d",
+    "deployment/baseline-observation.json": "a9d51de7ec18f66449b3fa2221cca2d8ee6e7c5de6e69428aadabdec897996f5",
+    "deployment/preflight-v3-f1.txt": "097f95985f3bcbd950d32fbc5af954671c18339c3db3c42a730b808366ca2626",
+    "deployment/actual-file-preimages.json": "186b4bee3d5de871be856d6593d9d5d709949a0a8b569aa144f42d188ee2dd82",
+    "installation-filesystem-preflight.txt": "403167e49604f08a5f8ff7ccbf3b5f14148e0edddd9d789a40a1370083419d83",
+    "selected-tool-closure.json": "a3057ec4a2d1fc20432b8f7a0b251b294438e9037705aca7f4b7f8620dff6c10",
+    "selected-tool-alias-hashes.txt": "94ddf4c8fe9464d760d8d78b32321efca6f6ada8b7698da3f05d36d5bf49da77",
+    "gpt-read.txt": "82b7197009b4716ae3b093bdfc30e37129ce108f71f3aee64c49cda36883a7bd",
+    "untouched-partitions-before.txt": "0e249e59f790ec133b4eb643274c4f02abad8770725ad8bfcc895861ad411be7",
+    "deployment/relay-preflight.txt": "ed20335c24b9cab610f9398443ef0beedf6238d76b4e29f7a445aa609e09247b",
+    "verification-f1/result.json": "df5b328dd285b3cabcdb1564fb84a16ae74da2c4e3a9b19e4672bfb3b456bdcb",
+    "verification-f1/runtime.json": "76797151bb34dcceea425a11dc705b953711499ae38de0821972c9c11cebcd0b",
+    "verification-f1/findings.md": "a5ce1c8ad2a879caa2f6c5f1c147a099471e65f4ac1f8e282b4937c85cc4f945"
+  },
+  "review_sha256": "d5233faaaae7ee2ada016e118dd610b0abd8ca64a8fcbb961677825d49ada4bd",
+  "static_audit_sha256": "0649409ccf71615470240c51ea3b4f20922428d120896ae5e93564de069bdc77",
+  "checks": {
+    "static": 56,
+    "passed": 56,
+    "hardware_executed": false,
+    "network_used": false,
+    "candidate_modified": false
+  },
+  "conditions": [
+    {
+      "id": "C1",
+      "before": "any action",
+      "text": "Coordinator must verify and record this separate full-role CLI actual GPT-6.1 Sol/medium runtime and the reused independent verifier GPT-6.1 Sol/high runtime. Launch requests alone are insufficient. Record review before acting; existing owner authorization remains necessary and is not granted by this verdict."
+    },
+    {
+      "id": "C2",
+      "before": "installation and each consequential step",
+      "text": "Recheck exact reviewed hashes, same initial boot/CID/root/environment preimages before install, root ro, paired boot ro/data rw, seven effective/filesystem masks and inactive services, no pending/trial/update/history conflict or active image writer, available bytes/inodes, and unchanged owner-reported setup. No additional reboot/cycle or retry. Abort on mismatch."
+    },
+    {
+      "id": "C3",
+      "before": "helper or reboot after installation",
+      "text": "Require successful installed file/link/uid/gid/mode/hash readback, preserved beforeimages/status, private certificate directory, root ro and unchanged dependency/tool closure. If any install/remount/chpasswd/sync/readback result is partial or unknown, stop without helper/reboot. Independently inspect root mount and restore ro under existing coordinator authority: mount rw may succeed despite timeout before modified=True, so finally is not guaranteed to attempt restoration. Preserve evidence and reconcile exact preimages/absent paths/links before any rollback; no automatic account-password rollback or raw environment rollback."
+    },
+    {
+      "id": "C4",
+      "before": "each reboot/power transition",
+      "text": "Require boot-bound successful helper record, both CRCs, selected A3/B0/A-only, unchanged other logical environment values and preserved pre-write selected bank. Initially offset 8388608 is selected A2; the first confirmation should preserve that bank and update offset 4194304 to selected A3. The wording older bank means the bank that becomes older after the write, not the initially older A3 bank. Unknown/failure forbids restart or retry."
+    },
+    {
+      "id": "C5",
+      "before": "normal restart",
+      "text": "Record actual authenticated HTTPS login/elevation/Host connected status/Stop demotion/logout/relogin, initial TLS public certificate fingerprint and persistent marker. Baseline public_ssh_fingerprint is code255 because /etc/ssh/ssh_host_ed25519_key.pub is missing: obtain the actual served SSH public host fingerprint from public-only evidence and bind it to the persistent host identity before transitions. Never read private keys. Browser passed=true is insufficient without assessing status/context and unavailable backend controls; TLS ignore-certificate-errors requires the separate fingerprint check."
+    },
+    {
+      "id": "C6",
+      "before": "HW667 cycle and completion",
+      "text": "Normal restart must yield a boot ID different from initial within bounded120s and all acceptance predicates. Before the sole five-second HW667 cycle recheck PSU off/setup unchanged, idle/no writer, stable by-id topology/product/revision and root-owned exact relay hash. Verify effective separate Beelink oneshot RuntimeMaxSec20s/TimeoutStopSec3s/Restart=no/ExecStopPost restore. Require a third boot ID distinct from both previous boots, helper success/A3/B0, SSH/authenticated browser, same public SSH/TLS fingerprints/marker, root ro/data rw and all masks/inactivity. Compare full B/recovery hashes and GPT afterward. Failed return or restoration stops; retain evidence and use documented physical bypass/SD rescue/factory-module fallback only through coordinator authorization, with no automatic repeats."
+    }
+  ],
+  "material_uncertainty_requires_high_profile": true,
+  "unresolved_material_reasoning_issues": [],
+  "limits": [
+    "Owner physical reports are not electrical measurements",
+    "Actual installed browser/boot/persistence acceptance remains pending",
+    "Runtime confirmation belongs to coordinator",
+    "No hardware authority or failed-criterion waiver"
+  ],
+  "diagnostics": {
+    "auxiliary_runs": 1,
+    "auxiliary_elapsed_seconds": 0.014450686052441597,
+    "generated_artifact_bytes": 20507,
+    "primary_allowance_seconds": 480,
+    "generated_allowance_bytes": 16777216
+  },
+  "changed_paths": [
+    "action-review/static-audit.json",
+    "action-review/review.md",
+    "action-review/bindingresult.json"
+  ]
+}

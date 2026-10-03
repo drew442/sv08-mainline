@@ -1,0 +1,14 @@
+{
+  "session": "01a101da-03ce-7da3-9007-1a3a0e478e5b",
+  "full_role_loaded": true,
+  "runtime": {
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "approval_policy": "never",
+    "sandbox_policy": {
+      "type": "danger-full-access"
+    },
+    "cwd": "/home/drew/sv08-mainline"
+  },
+  "fallback": "native thread limit; separate full-role CLI"
+}
