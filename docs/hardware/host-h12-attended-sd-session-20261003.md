@@ -1,7 +1,7 @@
 # H12 attended SD session preparation — 2026-10-03
 
-Status: preparation only. Software delivery verification and exact physical-action
-review are pending. No full-image write or restart is authorized by this record.
+Status: physical preparation. Software delivery verification passed and the
+tool is merged on main. Exact physical-action review is pending. No full-image write or restart is authorized by this record.
 The [owner's scope](../decisions/20261002-h12-scope-reduction.md) and
 [delivery plan](../development/h12-sd-delivery-plan-20261003.md) govern the session.
 

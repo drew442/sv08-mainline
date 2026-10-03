@@ -173,3 +173,24 @@ QEMU exited normally through QMP. Evidence is committed on the feature branch in
 Software acceptance remains pending a fresh independent verifier. Hardware
 session and physical success remain pending; the concrete preparation is in
 [the attended session plan](../hardware/host-h12-attended-sd-session-20261003.md).
+
+### Independent software delivery accepted
+
+Fresh `feature_verifier_high` session `01a0ff6f-dd4c-7dd2-b630-d05dd8a90157`
+passed the five offline checks at complete candidate `b4cd612`. Actual GPT-6.1
+Sol/high, full-access/never and full role contract were corroborated from stored
+runtime metadata. It independently ran 18 backend/composer tests, checked complete
+diff/hash/constraint correspondence and inspected the actual installed GTK receipt.
+It left the candidate unchanged. Formal result is retained in the feature record.
+Coordinator imported the verdict, merged the reviewed commit and completed
+`implement`; main `574389b` and its predecessors were pushed. H12-1 is complete.
+
+H12-2 is now the active canonical human workflow; the offline dispatcher does not
+claim hardware tasks. Local exact config/application/display-drop-in preparation
+is under `local/feature-workflow/probes/h12-sd-delivery-20261003/physical-preparation/`.
+It has not been deployed or enabled. Current read-only device inspection matches
+the intended spare; HDMI is connected/enabled and keyboard/mouse inputs enumerate.
+That is not proof of owner attendance or visible UI. One bundled current setup/
+attendance question is pending; do not repeat it. Exact hardware review and owner
+Yes remain before mutation. Actual write/readback and manual normal boot remain
+unachieved. No unrelated offline task should delay this prepared H12 session.
