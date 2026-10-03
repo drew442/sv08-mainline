@@ -10,7 +10,14 @@
     "installed-source-hashes.json": "54faa3ea3810b54000aa77ebfa1f3fc25ad417dbceaecdf489b2eb75aeeea400",
     "installed-paths.txt": "ac9ff8524062d2febe59674c71586facb87a563706ead3eab98afe067e0359ff",
     "klipper-provenance.txt": "242a38259d0d69aeccb0936de81600e7f62a109b58f57d43f9a7ec0473c139b7",
-    "sensor-file-output.json": "6ef54cb44d5f65161a3a7c02c50a1bac6db3735374604f2d7714da272a1ef464"
+    "sensor-file-output.json": "6ef54cb44d5f65161a3a7c02c50a1bac6db3735374604f2d7714da272a1ef464",
+    "tool-and-geometry.txt": "d574db590a304162a3d65739696876074ba84344e879adfac636f43201afa315",
+    "gpt-read.txt": "82b7197009b4716ae3b093bdfc30e37129ce108f71f3aee64c49cda36883a7bd",
+    "gpt-read.py": "03a1c58487c7c92881631c2cd4d57063c54ec713705d02b1d13cf969e0b8eb0e",
+    "installed-source-hashes-v2.json": "284153ff927d7e95a8d0fc43d250e92429fd05fba09935cdc438fa9bfce19e76",
+    "installed-base-match.json": "3d195bb6acf435e65b5fb3bdf288a3a0eb81b0f3b3981249f7fec0cb6f25b859",
+    "selected-tool-closure.json": "a3057ec4a2d1fc20432b8f7a0b251b294438e9037705aca7f4b7f8620dff6c10",
+    "selected-tool-packages.txt": "28edc41d55fdafb7d3eaef70a0346b83d6e9ddc139e5e4ab38c37235ca6f78de"
   },
   "sensor_configuration_source_sha256": {
     "configs/commissioning/test-sv08-01-sensors.cfg": "09f559caf5793047b2138765c661169b6cd695ab7c3ceaac21278be2521adb7d",

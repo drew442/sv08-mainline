@@ -64,3 +64,23 @@ connection, MCU configuration, heater or motion command was issued. Device prese
 and current MCU firmware still require separate live reconciliation.
 The private packet remains inactive; no printer.cfg was installed in the active
 generation and printer services remain masked.
+
+## Environment tools and isolated source boundary
+
+The installed libubootenv tool is 0.3.5-0.1+b2 and passes package file verification.
+Its binary and five loaded-library/loader files match the retained ARM64 fixture
+root byte-for-byte; see [tool closure](tool-closure.json). With an explicit temporary
+read-only config, fw_printenv selects A2/B0/A-only, agreeing with the newer bank.
+The existing GPT helper validates both GPT CRCs, all six partitions and both reserved
+environment regions against the exact H12 image footprint, without modifying media.
+An initial diagnostic used end offsets where that helper takes lengths; it refused.
+The corrected read used 65,536-byte lengths and passed. The failed diagnostic remains
+in private evidence. A missing sfdisk executable was handled by the existing helper,
+without package installation. These are read-only checks, not environment writes.
+
+All captured installed runtime/UI sources match the parent of accepted TLS fix
+8c6f24f exactly. A narrow overlay can therefore apply that known fix without pulling
+in unrelated newer runtime changes. The newer custom RAUC bootloader module is not
+installed; any read-only helper reuse from it must appear explicitly in the overlay
+dependency inventory. Installed Cockpit 337 has Debian branding in its documented
+/usr/share/cockpit/branding lookup. Keep credentials out of branding assets.

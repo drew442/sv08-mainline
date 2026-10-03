@@ -1,0 +1,66 @@
+{
+  "outcome": "approved-with-constraints",
+  "reviewer": "feature_approver / independent full-role CLI reviewer (coordinator-verified GPT-6.1 Sol, medium)",
+  "session": "commissioning-host-readiness-independent-approval-20261003-0b472787c0a5422e9646fae2b5d6488a",
+  "authority": "delegated",
+  "rationale": "Approved as bounded completion of the owner-authorized installed commissioning host and simple Cockpit theme under decision 0011, subject to the check-bound constraints. Source evidence is concrete: runtime/sv08_boot_health.py:run publishes the idle marker without calling real health/mark-good; _main observes RAUC before selecting IdleBackend; runtime/sv08_rauc.py:Backend.validate_context rejects deployable=false; Transaction.confirm requires a matching trial and holds state/admission/writer exclusion. Selected U-Boot boot/bootmeth_rauc.c decrements and saves attempts before loading A; selected RAUC src/bootloaders/uboot.c and the project handler replenish a named good counter, but neither supplies this initial-baseline eligibility. Thus unmasking the accepted coordinator or issuing unscoped mark-good is not the needed repair. The researcher probe-result.json supports the idle control-flow finding with fake devices/backend; it is diagnosis, not approval or proof of the new helper. Coordinator intake documents A-only A3/A2 valid redundant banks, missing backend/config/context, read-only-root TLS failure, and installed package/helper-matched sensor dictionary file-output success with no real MCU connection. Before: ordinary successful A selections consume finite eligibility and HTTPS fails. After, to be demonstrated: only a stable identity-bound untouched A baseline replenishes one counter; an exact accepted TLS/context overlay plus local theme supports persistent real owner administration. This preserves production trial/failed-target, idle/heater, pinning, profile, 8 GB and recovery requirements. Reusing upstream fw_setenv and supported Cockpit branding is smaller than adding a second RAUC backend, weakening production validation, changing bootloader policy or reimaging. Independent source comparison finds installed Store predates Budget and scripts/stage_admin_ui.py refresh enables a feed timer, so helper closure and narrow staging are material conditions. Selected Cockpit 337 package login HTML and cockpit-ws lookup strings support /usr/share/cockpit/branding, not assumed newer /etc support. Numeric resource limits and interruption-safe same-boot uncertainty handling must be explicit. Approval covers design/software scope, not completion, installed measurements, hardware authority or release qualification. No new spending, licensing, changed owner requirement or authority expansion is identified; existing TLS/boot-health approvals and answered H12 decisions stand.",
+  "proposal_sha256": "3ee3970d558fb69870693ad2a8984db0456499f41ff606b25210b49969269585",
+  "requirements_sha256": {
+    "docs/decisions/0009-atomic-idle-admission.md": "649cb53e46089b0ed5999f39c9c98f9bc01dd35ddd54160a80ff10322744ecd4",
+    "docs/decisions/20261002-h12-scope-reduction.md": "4eb0bbd5418e2890adb052738377a381db0e160153fa8f9b3706889cadd539db",
+    "docs/features/host-admin-cockpit-tls-persistence/task.md": "f3bd869eb8ac23cb32ce4ad5e6d2dd0bdc138439a96e6b5b37cb6ba15afd3589",
+    "docs/features/host-boot-health-composition/proposal.md": "d2e7e9124735047f1b734ed84dc53fc014f8315009edd037cfdb859acf4c5003",
+    "docs/project.md": "a2875043c55a97be6bc28b777ec82670f5d63a23d336caf855cbc1274fcc5a82"
+  },
+  "scope_sha256": "90c786f6a59e4eb0729cbaf7e90d69cdff3bd30257bbc707f657cc97b2d2ebaa",
+  "constraints": [
+    {
+      "checks": [
+        "baseline",
+        "regression",
+        "boots"
+      ],
+      "text": "Applicability remains an explicit initial immutable diagnostic A baseline, deployable=false, one A registry generation with no parent, matching current boot/release/schema and root/paired boot/data on the reviewed actual six-partition disk. Refuse customized/writable state, A0, any B eligibility or non-A order, pending/trial, every update-journal phase, last_failed_trial, normal backend composition, active RAUC or its operation marker, and any loss of the seven filesystem/effective command-line masks. Never erase history to gain applicability. Only selected BOOT_A_LEFT may change to 3; preserve B, recovery, dispatch, trial policy and all other logical environment variables. No printer os-health-ready marker or production-validator relaxation. Supported writable-mode behavior and factory 8 GB requirements remain unchanged."
+    },
+    {
+      "checks": [
+        "overlay",
+        "baseline",
+        "boots"
+      ],
+      "text": "Bind fw_printenv/fw_setenv and their selected libubootenv implementation to package/version and executable/dependency hashes; establish installed agreement before the physical action. Offline regular-file tests must exercise those real selected tools, both CRCs, redundant flag selection (including wrap/ambiguous or inconsistent cases), A1/A2 single-write and A3 no-op, preserved older-bank counter, and unchanged non-counter logical values/bytes outside the two environment regions. Use explicit reviewed config on the verified actual whole disk at the reserved offsets; reject unsafe config/target substitution and tool/default-environment fallback. Existing four-variable parse_values and verify_environment_copies alone do not establish flag selection or preservation of every variable. Do not add a raw writer, package or second RAUC composition."
+    },
+    {
+      "checks": [
+        "baseline",
+        "uncertainty",
+        "regression"
+      ],
+      "text": "Use the existing installed-compatible Store lock -> boot_admission -> Service.writer order with bounded/nonblocking acquisition, held through fresh health, final revalidation, the single tool invocation and readback. Account for the standard tool exclusion without creating an incompatible nested-lock deadlock. Test real competing lock holders and mid-window identity/environment changes. Before invoking the writer, retain a boot-bound in-progress/unknown-outcome record so SIGTERM, SIGKILL, unit timeout, or death after mutation but before result logging cannot permit silent same-boot retry. Refuse if this record cannot be safely retained; clear/resolve it only after verified success. Failed/unknown command, flush or readback is never success and never causes automatic retry, reboot or fallback."
+    },
+    {
+      "checks": [
+        "uncertainty",
+        "overlay"
+      ],
+      "text": "Specify and enforce five stable seconds within a 60-second total helper deadline, bounded subprocess time/output and input sizes, at most 64 KiB per boot diagnostic and 1 MiB retained diagnostics, with no deletion of prior failure/history to satisfy the bound. Include deadline/overflow/full-storage and interrupted-record tests. Stage reports must quantify overlay payload, dependency closure, free bytes/inodes for installation plus preserved beforeimages, and bounded runtime/log impact. No new resident daemon, scheduler, package, external asset or increased storage requirement."
+    },
+    {
+      "checks": [
+        "overlay",
+        "theme",
+        "regression"
+      ],
+      "text": "Build the overlay against exact non-secret installed preimages and their helper APIs, not an assumed current-main runtime. The inspected installed sv08_state lacks the newer Budget integration; transplant only the accepted Cockpit directory initialization and sv08_boot permission delta, preserving old state semantics and all other bytes unless separately reconciled. Reject incompatible/missing dependency closure before installation. Do not invoke stage_admin_ui refresh to deploy this overlay: it replaces UI/configuration/helpers and enables a feed timer. Preserve the installed UI/helper protocol; current-source branding staging remains separately matched. For Cockpit 337 use its actual /usr/share/cockpit/branding lookup and prove the served login branding in a real browser; no guessed /etc branding path, os-release identity alteration, authentication rewrite or behavioral control change. Include deterministic inventories, mode/link/hash/preimage checks and browser evidence at both requested sizes."
+    },
+    {
+      "checks": [
+        "boots",
+        "access",
+        "sensors",
+        "regression"
+      ],
+      "text": "Independent high-effort full-diff delivery verification precedes coordinator installation; this proposal approval does not authorize a physical write, remount, reboot, login/credential inspection, live MCU query or printer activation. A fresh exact-operation review and existing coordinator/owner authority govern the named target, selected artifacts, root ro->rw->ro transition, retained beforeimages, flush/hash checks and SD recovery; stop partial/unknown installs without reboot. Report documented source, offline simulated/file-backed/browser evidence and named installed observations separately, with before/after A consumption/replenishment, HTTPS/authenticated access and persistence over the two planned transitions. Installed file-output/package/helper evidence is parsing/provenance only; both live MCU identities/revisions, actual owner login/elevation/Stop/logout and physical sensor checks remain unproved until observed. Preserve H12 completion and all abandoned/deferred work; no full release, A/B failure or first-print qualification is added as a prerequisite."
+    }
+  ]
+}

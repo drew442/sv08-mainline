@@ -25,6 +25,12 @@ paired-MCU readiness. Native agent launch hit its thread limit; the planner uses
 the documented separate-session fallback with full role and verified Sol/medium.
 The coordinator owns physical access, shared records and publication.
 
+The bounded proposal is independently approved with six constraints. One Sol/medium
+implementer owns the software task on feature/commissioning-host-readiness; fresh
+high-effort verification and exact installed-operation review remain required.
+The initial installed sensor-only file-output check passed; actual paired MCU and
+authenticated browser readiness remain open.
+
 ## Completed goal — finite image-job history, 2026-10-03
 
 Completed `host-image-history-rollover:finite-history`. Explicit browser
