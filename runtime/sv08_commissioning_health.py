@@ -21,7 +21,6 @@ from sv08_state import Store, atomic_json
 from sv08_boot import slot_from_cmdline, device_number
 from sv08_boot_health import boot_admission
 from sv08_rauc_service import Service
-from sv08_rauc_bootloader import verify_environment_copies
 from sv08_gpt import inspect
 
 MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker',
@@ -31,7 +30,7 @@ RECORD_LIMIT = 64 * 1024
 RETAINED_LIMIT = 1024 * 1024
 CONFIG_FIELDS = {'format_version', 'release', 'generation', 'disk', 'fw_config_sha256',
                  'tools', 'dependencies'}
-DISK_FIELDS = {'path', 'major_minor', 'sysfs', 'physical_bytes', 'image_bytes', 'disk_guid', 'partition_records'}
+DISK_FIELDS = {'path', 'controller', 'cid_sha256', 'physical_bytes', 'image_bytes', 'disk_guid', 'partition_records'}
 TOOL_FIELDS = {'package', 'version', 'files'}
 SELECTED_TOOL_SHA256 = '29d6d7b52afa4144a7f40bb9ca852c8058c0b68388904983ab076ac53d467ea0'
 
@@ -94,8 +93,12 @@ def validate_config(config):
             if (not Path(path).is_absolute() or len(expected) != 64 or
                     any(c not in '0123456789abcdef' for c in expected)):
                 raise ValueError('Invalid dependency hash binding')
-    if config['disk']['path'] != str(Path(config['disk']['path']).resolve()):
-        raise ValueError('Whole disk must use its reviewed canonical path')
+    disk = config['disk']
+    if (disk['path'] != '/dev/disk/by-path/platform-4022000.mmc' or
+            disk['controller'] != '/sys/devices/platform/soc/4022000.mmc' or
+            not isinstance(disk['cid_sha256'], str) or len(disk['cid_sha256']) != 64 or
+            any(c not in '0123456789abcdef' for c in disk['cid_sha256'])):
+        raise ValueError('Invalid stable whole-disk binding')
     return config
 
 
@@ -239,13 +242,19 @@ class Runtime:
 
     def devices(self, manifest):
         disk = self.config['disk']
-        path = Path(disk['path'])
+        path = Path(disk['path']).resolve(strict=True)
         info = path.lstat()
-        if (not stat.S_ISBLK(info.st_mode) or
-                f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}' != disk['major_minor'] or
-                str(Path('/sys/dev/block', disk['major_minor']).resolve()) != disk['sysfs'] or
-                int(Path(disk['sysfs'], 'size').read_text()) * 512 != disk['physical_bytes']):
+        if not stat.S_ISBLK(info.st_mode):
             raise ValueError('Reviewed whole-disk identity differs')
+        number = f'{os.major(info.st_rdev)}:{os.minor(info.st_rdev)}'
+        sysfs = Path('/sys/dev/block', number).resolve(strict=True)
+        controller = Path(disk['controller'])
+        if ((sysfs / 'partition').exists() or
+                controller not in sysfs.parents or controller.resolve(strict=True) != controller or
+                digest(sysfs / 'device/cid') != disk['cid_sha256'] or
+                int((sysfs / 'size').read_text()) * 512 != disk['physical_bytes']):
+            raise ValueError('Reviewed whole-disk identity differs')
+        identity = dict(path=str(path), major_minor=number, sysfs=str(sysfs))
         result = inspect(path, allow_block=True, image_bytes=disk['image_bytes'], environment_regions=REGIONS)
         if (disk_guid(path) != disk['disk_guid'] or
                 result['partition_records'] != disk['partition_records'] or result['partitions'] != 6):
@@ -256,7 +265,7 @@ class Runtime:
             number = device_number(configured)
             part = Path('/sys/dev/block', number).resolve()
             record = records.get(Path(configured).name.lower())
-            if (part.parent != Path(disk['sysfs']) or not record or
+            if (part.parent != sysfs or not record or
                     int((part / 'partition').read_text()) != record['number'] or
                     int((part / 'start').read_text()) * 512 != record['offset_bytes'] or
                     int((part / 'size').read_text()) * 512 != record['size_bytes']):
@@ -265,9 +274,12 @@ class Runtime:
             if len(output) != 2 or output[0] != number or option not in output[1].split(','):
                 raise ValueError('Mount identity/mode differs: ' + mount)
 
+        return identity
+
     def environment(self):
-        verify_environment_copies(self.fw_config)
-        fd = os.open(self.config['disk']['path'], os.O_RDONLY | os.O_NOFOLLOW)
+        # bank()/selected_bank() validate both CRCs and full eligible dictionaries.
+        # The historical verifier opens the configured alias with O_NOFOLLOW.
+        fd = os.open(Path(self.config['disk']['path']).resolve(strict=True), os.O_RDONLY | os.O_NOFOLLOW)
         try:
             images = tuple(os.pread(fd, length, offset) for offset, length in REGIONS)
         finally:
@@ -306,14 +318,16 @@ class Runtime:
         if active not in ('inactive', 'failed'):
             raise ValueError('RAUC is active/transitioning')
         self.tool_identity()
-        self.devices(manifest)
+        device = self.devices(manifest)
         images, values = self.environment()
-        return dict(boot=boot, state=state, manifest=manifest, images=images, values=values)
+        if self.devices(manifest) != device:
+            raise ValueError("Device identity changed during environment probe")
+        return dict(boot=boot, state=state, manifest=manifest, device=device, images=images, values=values)
 
     def write(self):
         # Do not pre-acquire fw_printenv.lock: libubootenv owns its standard lock.
         self.command(['/usr/bin/fw_setenv', '-c', str(self.fw_config), 'BOOT_A_LEFT', '3'])
-        fd = os.open(self.config['disk']['path'], os.O_RDONLY | os.O_NOFOLLOW)
+        fd = os.open(Path(self.config['disk']['path']).resolve(strict=True), os.O_RDONLY | os.O_NOFOLLOW)
         try:
             os.fsync(fd)
         finally:
@@ -373,7 +387,7 @@ def run(runtime, admission=boot_admission, writer=None, *, sleep=time.sleep, dia
             record.save('unknown-outcome')  # fsync before the ONLY invocation.
             runtime.write()
             after = runtime.probe()
-            for key in ('boot', 'state', 'manifest'):
+            for key in ('boot', 'state', 'manifest', 'device'):
                 if after[key] != first[key]:
                     raise ValueError('Identity changed after mutation')
             verify_readback(first['images'], after['images'], after['values'])
