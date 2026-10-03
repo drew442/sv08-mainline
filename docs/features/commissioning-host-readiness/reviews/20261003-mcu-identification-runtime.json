@@ -1,0 +1,12 @@
+{
+  "session": "01a101f5-9587-72f3-a8ab-53fbdd6accf6",
+  "full_role_loaded": true,
+  "runtime": {
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "approval_policy": "never",
+    "sandbox_policy": {
+      "type": "danger-full-access"
+    }
+  }
+}

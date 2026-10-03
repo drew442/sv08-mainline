@@ -1,6 +1,7 @@
 # Installed checks — 2026-10-03
 
-Status: in progress; restart acceptance is paused for a diagnosed helper defect.
+Status: healthy normal restart and relay power-cycle acceptance passed; current
+two-MCU identification and independent final delivery review remain pending.
 Board H616_JC_6Z_V1.2 is owner-reported. The owner reconfirmed PSU off,
 USB power through HW667, Ethernet, spare eMMC installed, SD removed,
 factory eMMC stored and no new irreplaceable spare data.
@@ -53,3 +54,26 @@ on the new boot. The new failure record is retained; no relay cycle has run.
 A bounded repair now binds the stable controller alias and CID while checking
 current device/sysfs/partition identity on each boot. No kernel or bootloader
 change is planned. Another reviewed confirmation/restart acceptance is required.
+
+## Stable-device repair and successful restart acceptance
+
+The independently reviewed repair now binds the eMMC controller alias and CID,
+resolving its current Linux device number at each probe. The second normal
+restart passed automatic boot confirmation, followed by one HW-667 power cycle
+with five seconds off. Both returned to slot A with A3/B0 and valid redundant
+environments. The relay boot enumerated the same eMMC as mmcblk2, exercising the
+repair against another device number. Non-counter environment values, persistent
+state, marker, SSH public identity and TLS fingerprint were preserved. Root and
+boot stayed read-only; data stayed writable; all seven diagnostic service masks
+and inactive printer configuration were preserved.
+
+Actual browser login, administrator elevation, connected host status, demotion,
+logout and relogin passed after each successful restart. The simple account
+password and branding persisted. The existing stale authorization notice and
+unavailable image-staging backend remain limitations. Totals are two normal
+restarts (the first exposed the repaired defect) and one relay cycle. No MCU
+communication has yet occurred in this acceptance run.
+
+Full post-cycle hashes of boot B, root B and recovery match the pre-install
+baseline. Fresh installed tool/dependency and controller/CID/GPT/partition checks
+passed against the currently enumerated eMMC.

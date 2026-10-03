@@ -8,8 +8,19 @@
     "browser-initial/result.json": "59646d3dac21d79673e1590d5394a3064e2263c5a396324bcb8aef4831a639d7",
     "initial-tls-fingerprint.txt": "82adc68f38b6e883831127ac5fe1e2d54122693a696f853af54c30665df05b69",
     "persistent-public-ssh-fingerprint.txt": "7aee47dcf2685a68ed0f50b427d5de4988a998876ddc86ccee3a6091a630a9b5",
-    "served-public-ssh-fingerprint.txt": "e89d614299ac872a06fd626b99f94028e61d475bbe8d7f61759f92b1a18da7f2"
+    "served-public-ssh-fingerprint.txt": "e89d614299ac872a06fd626b99f94028e61d475bbe8d7f61759f92b1a18da7f2",
+    "normal-restart-devicefix-observation.json": "91488987d823580ca8d15a18d76b823a9bcecc6e8f51699a2ba15f69c8b2967c",
+    "relay-restart-observation.json": "c197253ab006d6b7df472c7b673a9bae68f29761697980e65c97d233e6bdd609",
+    "browser-normal-restart-devicefix/result.json": "736f38b9eff9882ccbede58c0986fe2ff3280e4e761e4a936b1ed800256c7521",
+    "browser-relay-restart/result.json": "7b615af6c02a64b3bc141439dd6ad1228108090d47c4027bef2b52a31c1e0b63",
+    "relay-tls-fingerprint.txt": "eaabc3908ccad764220b2996ac9498289464cc194afd170edf84858789204add",
+    "relay-completion.txt": "11f45152d53cf0a273a2721fd2fccadc3533e527b47439b1cbcf6206eb3bc779",
+    "untouched-partitions-after.txt": "0e249e59f790ec133b4eb643274c4f02abad8770725ad8bfcc895861ad411be7",
+    "relay-final-device-check.json": "72097d3417f1968aac0f97bfc1163f13c867887fe1ab0bcbb5ff1f9a29a6f437"
   },
-  "restarts": 0,
-  "mcu_communication": false
+  "restarts": 3,
+  "mcu_communication": false,
+  "normal_restarts": 2,
+  "relay_cycles": 1,
+  "healthy_acceptance_restarts": 2
 }

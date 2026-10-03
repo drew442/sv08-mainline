@@ -25,18 +25,16 @@ paired-MCU readiness. Native agent launch hit its thread limit; the planner uses
 the documented separate-session fallback with full role and verified Sol/medium.
 The coordinator owns physical access, shared records and publication.
 
-The bounded proposal is independently approved with six constraints. Software and
-an environment-history correction passed separate high verification. The reviewed
-installation now provides working Cockpit login/elevation/status/logout/relogin,
-branding and the owner-requested password. These and persistent SSH/data survived
-one normal restart. The diagnostic helper succeeded before that restart, then
-refused because Linux renumbered the same eMMC. A bounded stable-controller/CID
-repair is active on fix/commissioning-stable-device. The coordinator retains
-failed evidence and will obtain independent software/action reviews before a
-corrected confirmation and further restart testing. No relay cycle has run in
-this goal. Inactive sensor file-output parsing passed; live paired MCU version
-checks await boot acceptance and owner PSU action. Main/WIP are pushed; superseded
-and merged task branches have archive tags and retained detached worktrees.
+The bounded proposal, software repairs and exact installation actions passed
+independent reviews. Cockpit login, elevation, status, logout/relogin, branding
+and the owner-requested password now work and persist. The first normal restart
+exposed an eMMC-numbering assumption; its independently reviewed controller/CID
+repair passed a second normal restart and one HW-667 power cycle. Automatic
+confirmation returned A3/B0 each time, with persistent SSH/TLS identities and
+state unchanged. B and recovery partition hashes match the baseline. All printer
+output services remain masked and inactive. Inactive sensor file-output parsing
+passed; current paired MCU identification awaits the owner turning PSU on for
+toolhead availability, followed by PSU off and independent final delivery review.
 
 ## Completed goal — finite image-job history, 2026-10-03
 

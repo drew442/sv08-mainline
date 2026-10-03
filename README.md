@@ -23,9 +23,11 @@ below are evidence, not instructions to resume withdrawn work.
 release work remain open.** The v5 image was written to the spare eMMC with
 verified readback and reached Debian, SSH, Wi-Fi, and persistent `/data`. Cockpit
 now has working authenticated access and SV08 Mainline branding after its TLS
-path repair. A reviewed diagnostic boot confirmation succeeded, then a normal
-restart exposed an eMMC-numbering assumption in that helper. Its stable-device
-repair is in progress; do not restart outside the reviewed procedure. This is not a printing system or supported hardware release. Printer
+path repair. The diagnostic boot-confirmation helper's environment-history and stable-device
+repairs passed independent reviews and installed checks. A normal restart and
+HW-667 power cycle now pass automatic confirmation and persistent access checks.
+Current paired MCU identification and final delivery review remain pending.
+This is not a printing system or supported hardware release. Printer
 configuration and detailed printing validation remain outstanding. Both MCUs have
 Katapult and matching Klipper installed, with recorded
 [build provenance](docs/hardware/test-sv08-01-mcu-build.md).
