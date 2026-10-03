@@ -1,0 +1,91 @@
+{
+  "author_runtime": {
+    "continuations": 4,
+    "full_role_loaded": true,
+    "runtime": {
+      "approval_policy": "never",
+      "effort": "medium",
+      "model": "gpt-6.1-sol",
+      "sandbox_policy": {
+        "type": "danger-full-access"
+      }
+    },
+    "session": "01a1017c-be31-7141-8b88-04d5c2f08b42"
+  },
+  "checks": {
+    "browser": "old/current host page and packaged Cockpit337 login at1440x900 and1024x600; synthetic auth responses",
+    "default_assembly": "inert Python module only; no commissioning unit/config/enablement",
+    "focused": "17 passed; one selected-tool opt-in skip; real historical closure positive A1/A2/A3 and wrong GUID/CRC/disk/mount paths",
+    "modes": "state0755/boot0644; existing sv08-state symlink actually executes",
+    "portability": "ordinary tests generate historical fixtures from immutable Git source; no private workstation path required",
+    "regression_and_integration": "112 passed",
+    "selected_tools": "18 actual ARM64 libubootenv regular-file cases, QEMU; no hardware mutation"
+  },
+  "f1": {
+    "finding": "Historical GPT inspector validates but does not return disk_guid; original candidate failed independent review.",
+    "new_fixture_limits": [
+      "block/sysfs shape for regular file",
+      "mount/service/proc inputs",
+      "tool identity and environment tool command; prior actual selected-tool evidence reused",
+      "clock and outer boot/writer locks; actual Store lock and separate existing contention tests retained"
+    ],
+    "original_candidate": "08097f2e5b065325d0e4ef68b358c00ba1e3719f",
+    "repair": "Unchanged historical inspector plus helper-local CRC-checked primary-header GUID read; no dependency upgrade or relaxed binding.",
+    "reused_evidence": "Unchanged selected tools, browser/theme, production regressions and unit lint."
+  },
+  "format_version": 1,
+  "installed_readonly_preflight": {
+    "dependencies": 18,
+    "files": 12,
+    "known_beforeimage_bytes": 39024,
+    "passed": true,
+    "payload_bytes": 76585,
+    "write_executed": false
+  },
+  "kind": "source-bound software evidence; independent review pending",
+  "limitations": [
+    "Offline browser fixtures do not prove installed authentication or branding lookup.",
+    "No host overlay, password, counter write, reboot or live MCU query has been executed for this goal.",
+    "Read-only installed metadata/preflight is supplemental target evidence, not installed acceptance.",
+    "Selected tool proof reused across changes outside environment selection/write code; immutable source hashes retained in original receipts."
+  ],
+  "private_receipt_sha256": {
+    "author": {
+      "implement/evidence-v2.json": "af590c95cd94a9f383a065bc8a3079f4590634e7d20351b4825e37c26d3b2e71",
+      "implement/evidence-v3.json": "935eb69415303282800a19c6e641fc6967fe7ac7b9a360bf8675c140a2c7cd2a",
+      "implement/evidence-v4.json": "fa0fc3b5e3383ce90ab991581c400674f696fca334b3eceae88972818c84c14d",
+      "implement/evidence.json": "150a5e9177464318b8ec795c9f20e5ad5f17b56fe6fced6ce2d88ac58584ccc9",
+      "implement/login-v2/contrast.json": "73eb905480e77494b7c953920c47a1d7a511fbdc3fd22078634245233ddf6136",
+      "implement/login-v2/result.json": "cf4ecb462e05cf454e149cd36f83c454d0f5b7e8e9247795c42d42d067f610cb",
+      "implement/selected-tool-tests.json": "df1d25c8614164d293938547a5de600e06687d6a05b08f560a931362e2aab5ab"
+    },
+    "coordinator": {
+      "deployment/overlay-v2-pre-f1/manifest.json": "cb273b97355ff881e7015c250edb3fbdf9d4b81d35eb280d5af240b8a4693425",
+      "deployment/packet-v2-pre-f1.json": "b60aa57e717c1d43eac5ddddc84e00ece165758147764af6f844aedfb1f87841",
+      "deployment/preflight-v1-state-mode-refused.txt": "6ea9372c1cbf750b1c82b76b426d7eb0363270ff9b8bd4a0bfd81623139e95b7",
+      "deployment/preflight-v2.txt": "097f95985f3bcbd950d32fbc5af954671c18339c3db3c42a730b808366ca2626"
+    },
+    "coordinator_repair": {
+      "deployment/overlay/manifest.json": "5bbf75dc1cb0a7bd71442a08f055cbd59edbbdcf7fb7c3175688810bea82dce4",
+      "deployment/packet.json": "c549fdbe07c27f63d8db96932391c28b101f92cf5185a7941d7d35695b217321",
+      "deployment/preflight-v3-f1.txt": "097f95985f3bcbd950d32fbc5af954671c18339c3db3c42a730b808366ca2626"
+    },
+    "repair": {
+      "implement-f1/evidence.json": "6f8c4b5a5765dc591cf60e475148d7e716daf3f1acf9933c5f328760c49a33ee",
+      "implement-f1/runtime.json": "3246f1b5ac7e9359eebefc43f0bde79589691fa21f9cea05abc3accd4176e70b"
+    }
+  },
+  "repair_runtime": {
+    "full_role_loaded": true,
+    "runtime": {
+      "approval_policy": "never",
+      "cwd": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-host-readiness-f1",
+      "effort": "medium",
+      "model": "gpt-6.1-sol",
+      "sandbox_policy": {
+        "type": "danger-full-access"
+      }
+    },
+    "session": "01a101c4-8709-7cd2-8c8c-061635e3ff65"
+  }
+}

@@ -1,0 +1,19 @@
+[Unit]
+Description=Explicit initial diagnostic A baseline health (not printer readiness)
+Requires=sv08-prepare.service
+After=sv08-prepare.service local-fs.target
+ConditionPathExists=/etc/sv08/commissioning-target.json
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_commissioning_health.py
+TimeoutStartSec=60
+TimeoutStopSec=2
+Restart=no
+UMask=0077
+Environment=PYTHONDONTWRITEBYTECODE=1
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
