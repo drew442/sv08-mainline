@@ -1,0 +1,17 @@
+[
+  {
+    "check": "environment-history-repair",
+    "environment": "offline",
+    "source_commit": "afee93824ec105906dea0bd2b13924fe38af451a",
+    "document": "docs/features/commissioning-host-readiness/environment-repair.md",
+    "document_sha256": "ba95fda2184ee6867e3925e512b020e8d904dbf55d6e19fe1c9cc1d3d3de6705",
+    "source_sha256": {
+      "runtime/sv08_commissioning_health.py": "9d34b5daaa8842a444ddc8f18c2373963ed29c3f30f680ec08f81122d3d9285a",
+      "tests/test_commissioning_host.py": "4b7579a9117d8aad3774d3150c3ed9219342acc01ff15df1ba47c12725753a6c",
+      "docs/features/commissioning-host-readiness/software-contract.md": "173032e315041a2257946abb64535636dc451231a4e32b8f6c65934449cf5bd1",
+      "docs/features/commissioning-host-readiness/environment-repair.md": "ba95fda2184ee6867e3925e512b020e8d904dbf55d6e19fe1c9cc1d3d3de6705"
+    },
+    "method": "18 focused tests including actual ARM64 tool18cases on disposable files; actual historical closure admission/run; unchanged source evidence reused",
+    "limitations": "No installed boot/MCU/release acceptance"
+  }
+]

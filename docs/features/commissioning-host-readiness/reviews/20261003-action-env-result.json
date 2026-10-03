@@ -1,0 +1,116 @@
+{
+  "outcome": "PASS WITH CONDITIONS",
+  "status": "done",
+  "role": "high_consequence_reviewer_high / fresh separate full-role CLI fallback",
+  "candidate": "afee93824ec105906dea0bd2b13924fe38af451a",
+  "base": "e5057bb900f6d910b340560e68207220b6b9cbb1",
+  "scope": "exact two-file root patch, explicit preserved pre-write refusal reconciliation, one corrected helper invocation, conditional original normal restart and HW667 acceptance",
+  "runtime": {
+    "requested_model": "gpt-6.1-sol",
+    "requested_effort": "high",
+    "coordinator_confirmation": "reported in handoff; durable own runtime receipt unavailable during review",
+    "mandatory_before_action": "coordinator recheck and record effective full-role model/effort"
+  },
+  "software_review": "PENDING; no parallel verdict relied upon; exact independent acceptance required before operation",
+  "record_reconciliation": "acceptable only for demonstrated exact first-probe pre-writer refusal with original evidence retained; no unknown writer outcome may be cleared or replayed",
+  "conditions": [
+    {
+      "id": "C1",
+      "text": "Coordinator must record effective separate GPT-6.1 Sol/high runtime and completed independent high software acceptance of exact candidate before action."
+    },
+    {
+      "id": "C2",
+      "text": "Fresh exact artifact/source/receipt hashes, same boot/CID/GPT/mount/preimages/banks, idle/masks/no pending writer/history, capacity and unchanged physical setup required before reconciliation."
+    },
+    {
+      "id": "C3",
+      "text": "One reconciliation; complete exact backup/archive/resolution/file/root-ro readback and both unchanged banks required; partial/unknown stops without helper/reboot; independently restore root ro, retain evidence, no replay or raw-bank rollback."
+    },
+    {
+      "id": "C4",
+      "text": "One corrected helper invocation only after C1-C3; require boot-bound success, selected A3/B0/A, both CRCs, original selected offset8388608 byte-exact and new selected offset4194304 noncounter values copied exactly; no retry/reboot on failure."
+    },
+    {
+      "id": "C5",
+      "text": "Actual authenticated SSH/Cockpit status/elevation/Stop/logout/relogin and public SSH/TLS/marker evidence required; preserve owner-access amendment and credential boundaries."
+    },
+    {
+      "id": "C6",
+      "text": "Conditional original one normal restart then one five-second HW667 cycle only; fresh relay identity/hash/effective oneshot/idle/setup checks, distinct three boot IDs and per-boot helper/access/persistence required; stop on failed return, no repeat."
+    },
+    {
+      "id": "C7",
+      "text": "Final full B/recovery hashes and unchanged GPT; preserve failures/H12 abandonments; no MCU/PSU-on/output/heat/motion/release authority."
+    }
+  ],
+  "bindings": {
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-env.py": "50a9c8a6accd312fa3964237f27abbf0229713ef06f42ff330e40a5ac82c506e",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-packet.json": "c38368f7efd570649f2a3c9db5536418ebcc9c4a16e1f7ab6ef272433e69265a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-plan.md": "060ce461fa8196b6fe774567a842bd97eccc29bedff7caac6a7272d7bf9e185d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-preflight.txt": "b0209ed87492f3000aa2b29854cd0fb8190ba7fc7655607399d8462ed9982108",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/repair-preimages.json": "3365d1c6d34c488f77490edca70d829dded78c0b622ee42e9fcd2ce2c1245a6d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/initial-observation.json": "af39ca605176046445bd9baeaaa26a8c66e44d6838ff61a905929affda597fb7",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/env-difference.json": "cdb50657bd6f328b721cdeabe9b72e14647ac0da467000235d92da998954c2de",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/action-plan.md": "41a43b35d50d178c682e7fd88ff49ead931f1f449d090372c12e775a8a154d0c",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/packet.json": "c549fdbe07c27f63d8db96932391c28b101f92cf5185a7941d7d35695b217321",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/install.py": "c209b1a6aa282caccdf6942aca61481464f8ccb78610c8c2ddb29c5ecc7d51cd",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/installation-result.txt": "24970d499e6e657f48500bcc9ab8924ea41fc8d700e79edf4011700db757fd68",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/installed-closure.txt": "9cf9d1c095304909c3e9450598b46a997636eacc4bc0f4a901747b17948c590a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/initial-helper-start.txt": "4bed668e462812b86c868287daf97dc7f71957abced0d7e5fffccbd4d799dbcd",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/browser-initial/result.json": "59646d3dac21d79673e1590d5394a3064e2263c5a396324bcb8aef4831a639d7",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/initial-tls-fingerprint.txt": "82adc68f38b6e883831127ac5fe1e2d54122693a696f853af54c30665df05b69",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/persistent-marker-success.txt": "228ce1604eef8910f734fa17766a05c5aabd50c311d8f36c92bd3870f6321695",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/persistent-public-ssh-fingerprint.txt": "7aee47dcf2685a68ed0f50b427d5de4988a998876ddc86ccee3a6091a630a9b5",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/served-public-ssh-fingerprint.txt": "e89d614299ac872a06fd626b99f94028e61d475bbe8d7f61759f92b1a18da7f2",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/relay-preflight.txt": "ed20335c24b9cab610f9398443ef0beedf6238d76b4e29f7a445aa609e09247b",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/installed-runtime-closure.json": "6649696284abfe81a656bf9b15cb34ed8e5f9029a776b6f02cdaebcf80747d3d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/physical-facts.json": "21d8b0f184eb3b8f181bdd5c6f43b978353cc98678f43328aff3870e3024606d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/untouched-partitions-before.txt": "0e249e59f790ec133b4eb643274c4f02abad8770725ad8bfcc895861ad411be7",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-review/review.md": "d5233faaaae7ee2ada016e118dd610b0abd8ca64a8fcbb961677825d49ada4bd",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-review/runtime.json": "bdb3d524a108723b2d219469150b5f42c7ca7234acd04352bcc2748a3f660426",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-review/bindings.json": "7e0d9d5d822234c51883f3450a4265039f8448963998af923e05303e9c79903d",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/runtime/sv08_commissioning_health.py": "9d34b5daaa8842a444ddc8f18c2373963ed29c3f30f680ec08f81122d3d9285a",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/configs/host-os/commissioning/sv08-commissioning-health.service": "bd65ba16c41e05424630d4c622944ee4f635d683154c924d61f7bcdccfd4b2a6",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/docs/features/commissioning-host-readiness/software-contract.md": "173032e315041a2257946abb64535636dc451231a4e32b8f6c65934449cf5bd1",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/docs/features/commissioning-host-readiness/environment-repair.md": "ba95fda2184ee6867e3925e512b020e8d904dbf55d6e19fe1c9cc1d3d3de6705",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/docs/features/commissioning-host-readiness/proposal.md": "3ee3970d558fb69870693ad2a8984db0456499f41ff606b25210b49969269585",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/docs/features/commissioning-host-readiness/owner-access-amendment.md": "7a87f8095cb3946ced96176e213baa20e6f5f94024ae45bcae92012de0e0425a",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/docs/features/commissioning-host-readiness/reviews/20261003-approval-result.json": "f645026b4aa67d03583ac5587a21068b1975f14e681d084dff1276f0ac56c933",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/docs/decisions/20261002-h12-scope-reduction.md": "4eb0bbd5418e2890adb052738377a381db0e160153fa8f9b3706889cadd539db",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-environment-history/.codex/agents/high-consequence-reviewer-high.toml": "f010ca7d878499e95c84bcc4f4322479e62b1bf19ba154481e597580dc639bb1",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/installed-source/usr/lib/sv08/sv08_boot_health.py": "e2c568e314ee8499507961696a88e8a6f2fdd21eb8cec79cca2bd4d6259e10cf",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/installed-source/usr/lib/sv08/sv08_rauc_service.py": "eb250f800b80420409a0a170306f84c30a69729817183c059ed13a47454d2bf5",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/installed-source/usr/lib/sv08/sv08_state.py": "254a7cb0f4110b1a96ea7b11136f0fb80b0d2582679060501e4d8535c2fb7bcc"
+  },
+  "review_sha256": "f7310d239b5ffa72d1521000356def9e9a2ebbcd4be647509368764bb047ecbe",
+  "static_audit_sha256": "529282b4c51fc86f147a4912b53b3bedd759a0b18914e84849bf87ff19bdcee4",
+  "evidence": {
+    "static_checks_passed": 38,
+    "static_checks_total": 38,
+    "hardware_execution_by_reviewer": false,
+    "network_by_reviewer": false,
+    "installed_action_success_certified": false,
+    "physical_facts": "owner reported; original record unchanged"
+  },
+  "usage": {
+    "primary_allowance_seconds": 480,
+    "primary_elapsed_seconds": "not independently instrumented; bounded session source review",
+    "auxiliary_runs_used": 1,
+    "auxiliary_limit_runs": 1,
+    "auxiliary_elapsed_seconds": 0.009936516056768596,
+    "auxiliary_limit_seconds": 60,
+    "generated_bytes_before_result": 21030,
+    "generated_limit_bytes": 16777216
+  },
+  "changed_paths": [
+    "action-env/static-audit.json",
+    "action-env/review.md",
+    "action-env/result.json"
+  ],
+  "unresolved_high_risk_issues": [],
+  "limitations": [
+    "fresh runtime/target/idle/hashes and independent software verdict remain action gates",
+    "actual reconciliation/helper execution and two subsequent boots unobserved by reviewer",
+    "review grants no owner authorization or hardware authority"
+  ]
+}
