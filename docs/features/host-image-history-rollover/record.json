@@ -192,10 +192,14 @@
       "evidence": [],
       "human_task": null,
       "id": "finite-history",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "c9b18b2fc55c47778a4c30592a9e487f",
+        "session": "history-rollover-repair-20261003"
+      },
       "repeats": 0,
       "resumption": "Repair independent findings F1-F4: actual boot permissions, complete bounded restore, durable public retries; preserve first candidate and obtain fresh high verification.",
-      "status": "pending",
+      "status": "running",
       "title": "Deliver independently verified finite rollover maintenance journey",
       "verification": null
     }
