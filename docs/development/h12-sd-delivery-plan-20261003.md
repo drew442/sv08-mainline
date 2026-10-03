@@ -101,3 +101,28 @@ need a separately budgeted coordinator/integration run. No hardware/network
 access, shared-record edits, commits, pushes or additional agents are delegated.
 Installed ARM64 evidence and independent verification remain required before
 software completion; physical preparation and acceptance follow afterward.
+
+## Implementation handoff and installed execution
+
+The implementation session completed its bounded assignment. Coordinator inspected
+all ten changed paths and committed/pushed candidate `dd080df` on
+`feature/h12-attended-sd-reimage`. No unowned files changed. Worker evidence:
+11 backend unit tests, seven composer tests and eight native GTK fixture journeys
+passed. These are offline results; delivery verification remains pending.
+
+Coordinator staged the exact committed source on Beelink in
+`/home/drew/sv08-h12-sd-delivery-20261003/candidate-dd080df`. Preserved source
+recovery root and public package inputs were freshly hashed. Existing build tools
+and about 26 GiB free were observed. A fresh test-key composition is assigned a
+600-second build limit and existing 3,500 MiB allocation cap; installed QEMU
+execution uses a separate disposable disk and 768 MiB RAM. No old compressed usr
+cache is reused. The worker's installed driver is inspected but not yet passed.
+
+A coordinator read-only observation also found the existing physical SD host still
+on its October 2 boot, kernel 6.18.51-sv08-candidate1, with SD root read-only and
+display service active. Kernel NFS modules and modprobe are available, but
+mount.nfs is absent. No module was loaded, source mounted, media written or restart
+performed. Current physical setup/attendance remains unconfirmed. Source transport
+closure will be resolved before the concrete physical session; this is not an
+extra rehearsal milestone. Local detailed evidence is kept under
+`local/feature-workflow/probes/h12-sd-delivery-20261003/integration/`.
