@@ -137,10 +137,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "a33293d56e624c4498f34abeadb2392a",
+        "session": "commissioning-host-implementation-20261003"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Deliver software commissioning host readiness",
       "verification": null
     },
