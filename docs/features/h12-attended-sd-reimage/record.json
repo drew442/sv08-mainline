@@ -262,7 +262,7 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "review",
+      "status": "done",
       "title": "Deliver independently verified attended SD maintenance",
       "verification": {
         "decision_sha256": "3753981dfb22ab49c9cd7dc03c7a11ecad0c13af0f4dd7910e4c47d3bf99135a",
