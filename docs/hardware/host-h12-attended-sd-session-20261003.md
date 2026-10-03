@@ -92,3 +92,20 @@ on error, changed facts or ambiguous result, without retry/reboot. Capture match
 write/flush/full-readback screen result, process and block-I/O evidence before
 manual restart. Then observe new boot ID and installed root/SSH. SD remains the
 fallback. No physical write or success is established by this approval.
+
+## Native screen enabled
+
+At 03:25 UTC coordinator staged the exact reviewed files in `/run`, read back
+all five matching SHA-256 hashes, and restarted only the display service.
+Effective ExecStart selects the reviewed `/run/sv08/h12/sv08_sd_reimage_ui.py`;
+Restart=no, service active and boot ID unchanged were measured. An actual Gdk
+capture shows the readable 1024×600 initial screen with Review and Refresh.
+The owner’s physical visibility report preceded this screen change; KVM capture
+remains unverified. Initial eMMC block statistics recorded zero completed writes
+and zero written sectors on this boot. No Review/Yes was selected by coordinator.
+
+Next owner action: use Review image and target; allow integrated complete image
+checking. On a readable confirmation for the prepared source and intended spare,
+owner may select Yes to begin. Keep power/source connected and report the result;
+do not restart until success evidence has been retained. Exact write/flush/readback
+and normal boot are still unachieved at this checkpoint.
