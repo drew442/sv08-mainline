@@ -35,13 +35,14 @@ review, and a fresh exact action review preceded autonomous KVM confirmation
 under the owner's delegation. Final KVM result, closed source/target descriptors,
 matching runtime/configuration and device byte counts are retained.
 
-**Owner action now:** PSU remains OFF. Disconnect USB host power, remove the SD
-card while unpowered (leave spare eMMC installed), then reconnect USB with
-Ethernet/KVM connected. Report restart completion. Coordinator checks new boot,
-installed-system root and SSH. Do not insert/remove media while powered. SD remains
-available for recovery if installed boot fails. No new physical facts or repeated
-flashing permission are being requested. H12 is open only for this normal-boot check;
-no abandoned permission/entropy/cold-capture work is required.
+Owner reported completing the restart and added an HW-667 relay for USB host
+power. The [relay test](host-hw667-test-20261003.md) passed: five seconds off,
+automatic power restoration, new host boot ID, SSH and KVM recovery screen.
+However, the 16 GB SD remains detected and supplies the running root; the 32 GB
+spare eMMC is unused. A clarification about SD removal/reinsertion is pending.
+Do not remove the running SD while powered. Resolve that physical fact, then use
+an unpowered SD removal and observed installed-system boot to finish H12. No
+repeat flash, permission/entropy work or cold-capture investigation is required.
 
 ## Independent SD-loader restoration — 2026-10-02
 

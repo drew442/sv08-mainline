@@ -225,3 +225,13 @@ with Ethernet/KVM connected. Coordinator will observe a new boot, installed root
 and SSH. If normal boot fails, retain SD for unpowered reinsertion/recovery.
 The manual restart has been requested but is not yet observed. H12 remains open
 for that final check. This outcome is not printer/MCU/heater/motion qualification.
+
+### Subsequent restart and USB relay — 06:17 UTC
+
+Owner reported the requested restart and an HW-667 NC-wired USB power relay.
+The [independently reviewed relay test](host-hw667-test-20261003.md) successfully
+power-cycled the host and restored SSH/KVM. Both before and after that test, Linux
+identified the 16 GB SD as the running root and the accepted spare MMC as unused.
+The SD-removal discrepancy is pending owner clarification. Normal eMMC boot has
+not yet been tested by these observed boots; the complete write/readback result
+remains valid. Do not infer failed eMMC boot from this SD recovery screen.

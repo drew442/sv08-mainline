@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-03",
+  "outcome": "One five-second NC USB power interruption and host restart passed",
+  "off_utc": "2026-10-03T06:17:26Z",
+  "restore_utc": "2026-10-03T06:17:31Z",
+  "printer_usb_disappeared": true,
+  "printer_usb_reenumerated": true,
+  "host_boot_id_changed": true,
+  "ssh_returned": true,
+  "kvm_recovery_visible": true,
+  "failed_systemd_units": 0,
+  "media_write_sectors_after_boot": {
+    "SD": 0,
+    "MMC": 0
+  },
+  "root": "16 GB SD read-only; not installed eMMC",
+  "relay_usb": {
+    "path": "1-1",
+    "vid_pid": "1a86:7523",
+    "revision": "0263",
+    "product": "USB2.0-Serial"
+  },
+  "printer_usb": {
+    "path": "1-2",
+    "vid_pid": "1a86:7523",
+    "revision": "0264",
+    "product": "USB Serial"
+  },
+  "review_session": "01a10066-5d06-76b1-ab32-b377be91f066",
+  "review_actual_model": "gpt-6.1-sol",
+  "review_effort": "medium",
+  "raw_evidence_sha256": {
+    "relay.py": "161cdc09fd8e1c530781782d7f7997b36195fafb5888be2af5f694a37c01fcb3",
+    "beelink-intake.txt": "39c32b53175f15375ef49d400a91f0b088e309fa11d2b5efee682451d3b40e97",
+    "printer-intake.txt": "0dbc1959caf4da9c9a23bd9070ffdfbf90b4a33882ea7266f851eeb186dcb1b9",
+    "pre-operation.txt": "7598395205d8364b598401288aabdb1add9bf0bd4b629f0670ebd5a7fcb3a876",
+    "staging.txt": "736a2d4e055fe81702238a889b3053f8a08c20df8c972fefffcd5baf49789ada",
+    "start.txt": "1c6521a780d46797e8b0517fd405169914d547ea3057e3e26c907cc3e3e6c1f8",
+    "cycle-result.txt": "f6b9082761b494523d759431bdd70bda916fd53ac9f45a3d9585a7bf501d305a",
+    "after.txt": "618954f4181f92b0bcf7ca6b121cbec1b25a68c363eb1bafc725056394262dbe",
+    "after-identities.txt": "d9aafb7a900d97d988e6d7c8f37c0d72d2d2947ab5aeff84964b636cf12649a2",
+    "boot-screen.jpg": "e13198b7b6e9aa4fefbf3d34e9bc0b844b788cdb91e6e77bc074399fbacdf7f4",
+    "recovery-screen.jpg": "f22841cd6e3605c029df57be3facc1f3dd31c21c7e22ab1eef7a6d8e51a5ed8f",
+    "review/result.md": "7c0067c204bcda73a9396420ec8cae318d63428078678ceda93115b0e61e5389",
+    "review/runtime.json": "6d431477ac9eb541e10c37d1ea322454bad642711b8f2349227a4d6e3414a14f"
+  }
+}
