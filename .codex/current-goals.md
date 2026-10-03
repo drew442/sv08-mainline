@@ -25,11 +25,18 @@ paired-MCU readiness. Native agent launch hit its thread limit; the planner uses
 the documented separate-session fallback with full role and verified Sol/medium.
 The coordinator owns physical access, shared records and publication.
 
-The bounded proposal is independently approved with six constraints. One Sol/medium
-implementer owns the software task on feature/commissioning-host-readiness; fresh
-high-effort verification and exact installed-operation review remain required.
-The initial installed sensor-only file-output check passed; actual paired MCU and
-authenticated browser readiness remain open.
+The bounded proposal is independently approved with six constraints. Software and
+an environment-history correction passed separate high verification. The reviewed
+installation now provides working Cockpit login/elevation/status/logout/relogin,
+branding and the owner-requested password. These and persistent SSH/data survived
+one normal restart. The diagnostic helper succeeded before that restart, then
+refused because Linux renumbered the same eMMC. A bounded stable-controller/CID
+repair is active on fix/commissioning-stable-device. The coordinator retains
+failed evidence and will obtain independent software/action reviews before a
+corrected confirmation and further restart testing. No relay cycle has run in
+this goal. Inactive sensor file-output parsing passed; live paired MCU version
+checks await boot acceptance and owner PSU action. Main/WIP are pushed; superseded
+and merged task branches have archive tags and retained detached worktrees.
 
 ## Completed goal — finite image-job history, 2026-10-03
 

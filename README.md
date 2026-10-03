@@ -22,9 +22,10 @@ below are evidence, not instructions to resume withdrawn work.
 **Status: diagnostic host image physically boots; printer commissioning and
 release work remain open.** The v5 image was written to the spare eMMC with
 verified readback and reached Debian, SSH, Wi-Fi, and persistent `/data`. Cockpit
-failed because its TLS certificate path was on the immutable root; the boot-health
-confirmation is intentionally masked, so do not reboot before a reviewed next
-step. This is not a printing system or supported hardware release. Printer
+now has working authenticated access and SV08 Mainline branding after its TLS
+path repair. A reviewed diagnostic boot confirmation succeeded, then a normal
+restart exposed an eMMC-numbering assumption in that helper. Its stable-device
+repair is in progress; do not restart outside the reviewed procedure. This is not a printing system or supported hardware release. Printer
 configuration and detailed printing validation remain outstanding. Both MCUs have
 Katapult and matching Klipper installed, with recorded
 [build provenance](docs/hardware/test-sv08-01-mcu-build.md).
@@ -41,7 +42,8 @@ The [complete board A/B diagnostic image](docs/hardware/host-board-image.md)
 has reached Linux, owner-key SSH and read-only-root operation with printer
 services disabled. The earlier loader trace reports a successful 1 GiB DRAM
 initialization, but does not establish DRAM reliability. The latest v5 boot
-revealed Cockpit's immutable-root certificate defect, now under correction.
+revealed Cockpit's immutable-root certificate defect, now repaired and tested
+with actual login. See the [installed progress](docs/features/commissioning-host-readiness/installed-progress.md).
 Physical B/recovery under the current image and printing remain unvalidated.
 The newer v3 image passed offline byte review, direct eMMC readback and a
 [physical slot-A boot](docs/hardware/host-board-v3-first-boot.md). The v4 image

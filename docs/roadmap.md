@@ -159,7 +159,11 @@ generation targeted the read-only root. Boot-health confirmation remains masked
 and a separately reviewed live re-arm set `BOOT_A_LEFT=3` without rebooting.
 That does not confirm A healthy; the counter has not been re-read after the later
 SD trial. The [v5 record](hardware/host-board-image-20260925-v5-first-boot.md)
-retains the evidence and limitations. The disposable
+retains the evidence and limitations. On 2026-10-03, the narrow installed TLS/theme
+repair passed actual Cockpit authentication and persistence through a normal
+restart. Diagnostic A confirmation succeeded before that restart; a device-number
+assumption found afterward is under repair. See [current installed progress](features/commissioning-host-readiness/installed-progress.md).
+The disposable
 [SD/NFS-root diagnostic](hardware/host-sd-network-root-prototype.md) passed its
 single corrected physical retry: SD loader, Linux kernel, wired DHCP and
 read-only NFS root all reached the exact diagnostic pass marker before poweroff.
