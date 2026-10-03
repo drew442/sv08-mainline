@@ -1,0 +1,13 @@
+{
+  "session": "01a101b4-d371-7902-a01a-76bbbeecbfd0",
+  "full_role_loaded": true,
+  "runtime": {
+    "model": "gpt-6.1-sol",
+    "effort": "high",
+    "approval_policy": "never",
+    "sandbox_policy": {
+      "type": "danger-full-access"
+    }
+  },
+  "fallback": "native thread limit; separate full-role CLI"
+}

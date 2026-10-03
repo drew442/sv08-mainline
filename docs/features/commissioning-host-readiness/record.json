@@ -124,7 +124,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Blocking historical API mismatch at runtime/sv08_commissioning_health.py:231: the exact staged/installed pre-Budget sv08_gpt.inspect() returns no disk_guid, so every otherwise valid initial A baseline raises KeyError before confirmation. Reproduced with a valid disposable six-partition GPT and the exact staged historical closure; a follow-up proves zero writes, retained failed-or-unknown diagnostics, and same-boot retry refusal. The passing device test mocks in the missing key; historical compatibility testing imports the closure without exercising devices(). Reconcile the minimal compatible GUID check without weakening identity requirements, and exercise the real historical inspector through the health path before resubmission. Full 25-file base-to-candidate diff reviewed; all 234 hash/scope/provenance/path checks passed; focused suite reproduced 15 passes and one opt-in skip; valid 18-case selected-tool evidence reused. Candidate remains clean at 08097f2e5b065325d0e4ef68b358c00ba1e3719f. Static browser evidence does not prove installed authentication. Installed boots/access/sensors and exact-operation review remain pending; owner access amendment and all six original constraints are preserved.",
       "checks": [
         "baseline",
         "uncertainty",
@@ -283,11 +283,18 @@
         "run": "a33293d56e624c4498f34abeadb2392a",
         "session": "commissioning-host-implementation-20261003"
       },
-      "repeats": 0,
+      "repeats": 1,
       "resumption": null,
-      "status": "review",
+      "status": "blocked",
       "title": "Deliver software commissioning host readiness",
-      "verification": null
+      "verification": {
+        "decision_sha256": "f2891916b20c412c32e8031bcd09c032e1471368b4fb7de0be9d8c3886154eef",
+        "evidence_sha256": "742748cca606b0c4610dd67c0b7a81a9c41baa72c837827016e03b7efd028630",
+        "outcome": "failed",
+        "rationale": "Blocking historical API mismatch at runtime/sv08_commissioning_health.py:231: the exact staged/installed pre-Budget sv08_gpt.inspect() returns no disk_guid, so every otherwise valid initial A baseline raises KeyError before confirmation. Reproduced with a valid disposable six-partition GPT and the exact staged historical closure; a follow-up proves zero writes, retained failed-or-unknown diagnostics, and same-boot retry refusal. The passing device test mocks in the missing key; historical compatibility testing imports the closure without exercising devices(). Reconcile the minimal compatible GUID check without weakening identity requirements, and exercise the real historical inspector through the health path before resubmission. Full 25-file base-to-candidate diff reviewed; all 234 hash/scope/provenance/path checks passed; focused suite reproduced 15 passes and one opt-in skip; valid 18-case selected-tool evidence reused. Candidate remains clean at 08097f2e5b065325d0e4ef68b358c00ba1e3719f. Static browser evidence does not prove installed authentication. Installed boots/access/sensors and exact-operation review remain pending; owner access amendment and all six original constraints are preserved.",
+        "reviewer": "feature_verifier_high / fresh independent full-role CLI reviewer (requested GPT-6.1 Sol/high; effective runtime confirmation remains coordinator-owned)",
+        "session": "01a101b4-d371-7902-a01a-76bbbeecbfd0"
+      }
     },
     {
       "blocker": null,
