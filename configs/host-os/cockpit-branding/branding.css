@@ -1,0 +1,11 @@
+/* Cockpit 337 supported Debian branding, including its packaged PF6 selectors. */
+body.login-pf{--color-body-background:#142b43;--color-primary:#087e83;--color-primary-active:#086569;--color-link:#087e83;--color-link-active:#086569;--color-disabled-background:#e2e8f0;--color-disabled-text:#52677e;background:#142b43;color:#172b42}
+body.login-pf #badge{background-image:url("badge.svg");background-size:contain;background-repeat:no-repeat;inline-size:260px;block-size:64px}
+body.login-pf #brand{font-family:system-ui,sans-serif;color:#086569;letter-spacing:.08em}
+#brand:before{content:"SV08 MAINLINE"}
+body.login-pf .container{background:#f8fafc;color:#172b42;border-top:3px solid #17a4a8}
+body.login-pf .details{background:#f8fafc;color:#172b42;border-color:#cbd5e1}
+body.login-pf .pf-v6-c-button.pf-m-primary{--button-color-background:#087e83;--button-color-border:#087e83;--button-color-text:#fff;--button-color-hover-background:#086569;--button-color-hover-border:#086569;--button-color-hover-text:#fff}
+body.login-pf :focus-visible{outline:3px solid #0b9199;outline-offset:3px}
+body.login-pf .pf-v6-c-button[disabled]{background:#e2e8f0;color:#52677e;border-color:#cbd5e1;opacity:1}
+body.login-pf .pf-v6-c-alert.pf-m-danger,#login-error-message{color:#8b351e;background:#fff0db}

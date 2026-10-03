@@ -58,6 +58,11 @@ def stage(work, context, execute=False, refresh=False):
             allowed_packages.add('sv08-host')
         if packages.is_dir() and any(p.name not in allowed_packages for p in packages.iterdir()):
             raise ValueError('Unexpected Cockpit packages; use the reviewed ws/bridge-only root')
+    branding = []
+    if context == 'host':
+        branding = [root / 'usr/share/cockpit/branding/debian' / p.name
+                    for p in sorted((REPO / 'configs/host-os/cockpit-branding').iterdir())]
+        extra.extend(branding)
     for path in [target, *extra]:
         for parent in [path, *path.parents]:
             if parent == root: break
@@ -82,7 +87,8 @@ def stage(work, context, execute=False, refresh=False):
                     continue
             allowed_refresh_output = refresh and (
                 path == target or (not path.is_symlink() and path.is_file()))
-            if not allowed_refresh_output:
+            allowed_branding_output = path in branding and not path.is_symlink() and path.is_file()
+            if not (allowed_refresh_output or allowed_branding_output):
                 raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
     if not execute: return dict(execute=False, context=context, root=str(root))
     if context == 'host':
@@ -109,6 +115,9 @@ def stage(work, context, execute=False, refresh=False):
         for source, destination in [('rauc-service-policy.json', 'usr/lib/sv08/rauc-service-policy.json'), ('sv08-rauc-policy.conf', 'etc/dbus-1/system.d/zz-sv08-rauc.conf'), ('sv08-rauc-service.conf', 'etc/systemd/system/rauc.service.d/sv08.conf')]:
             path = root / destination; path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO / 'configs/host-os' / source, path)
+        for destination in branding:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(REPO / 'configs/host-os/cockpit-branding' / destination.name, destination)
         (root / 'usr/lib/sv08/admin-context.json').write_text(json.dumps(dict(format_version=1, context='host'))+'\n')
     else:
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -117,6 +126,7 @@ def stage(work, context, execute=False, refresh=False):
         shutil.copyfile(REPO / 'configs/host-os/sv08-recovery-display.service', units / 'sv08-recovery-display.service')
     files = [p for p in (target.rglob('*') if target.is_dir() else [target]) if p.is_file()]
     if context == 'host': files.extend(root / name for name in ('etc/cockpit/cockpit.conf', 'usr/lib/sv08/rauc-service-policy.json', 'etc/dbus-1/system.d/zz-sv08-rauc.conf', 'etc/systemd/system/rauc.service.d/sv08.conf', 'usr/lib/systemd/system/sv08-feed.service', 'usr/lib/systemd/system/sv08-feed.timer'))
+    files.extend(branding)
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
                  ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
