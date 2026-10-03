@@ -1,7 +1,9 @@
 # H12 physical completion evidence — 2026-10-03
 
 The reduced H12 outcome has been observed on test-sv08-01, board marking
-H616_JC_6Z_V1.2 owner-reported. Independent record verification is pending.
+H616_JC_6Z_V1.2 owner-reported. Independent record verification passed in separate session
+`01a10078-b5ad-79d0-a8cc-6f32125c9780` (actual GPT-6.1 Sol/medium verified by
+coordinator). Both session and physical checks are complete in the feature record.
 
 ## Session and write
 

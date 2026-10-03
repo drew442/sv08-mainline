@@ -1,8 +1,9 @@
 # Current delivery goals
 
-Reset: 2026-10-03, at the owner’s request. Active goal: **complete H12 using
-attended SD maintenance**. The owner returned and confirmed current setup/attendance at 03:19 UTC.
-Physical execution has resumed; exact operation review passed with conditions.
+**H12 complete — 2026-10-03.** The minimal attended SD tool, exact physical
+write/flush/full readback and subsequent normal installed-eMMC boot all passed.
+Independent completion review passed. Operator-requested resets now use HW-667;
+USB cable removal is not the normal reset procedure.
 Prior goal/checkpoint text is preserved in
 [the history through October 2](goals-history-through-20261002.md).
 
@@ -14,10 +15,10 @@ is authoritative. All commits are pushed to GitHub under standing authorization.
 | Goal | State | Deliverable and completion evidence |
 | --- | --- | --- |
 | H12-1 — Deliver the minimal SD flashing tool | Complete: installed ARM64 journey passed, independently verified, merged and pushed | Run from independent SD. Select image and installed eMMC, check identity/capacity/source separation/target not in use/image checksum, display image and target, ask yes/no, then write/flush/full readback. No/EOF performs no write. Focused offline tests and independent delivery verification pass. |
-| H12-2 — Prepare the real SD maintenance session | In progress: source/target/tool/display preparation complete; current setup/attendance confirmed; exact action review passed; Complete: corrected production UI, exact reviews, image/target check and KVM confirmation passed | Identify the concrete accepted tool/image and current printer storage; make them available to the SD host. Confirm the SD recovery path, actual physical setup and operator attendance. Exact hardware-operation review is complete. Source/image/target readiness is established without a separate rehearsal milestone. |
-| H12-3 — Complete one attended reimage and normal boot | Write/flush/full readback PASSED; HW-667 remote restart PASSED; host still boots 16 GB SD, awaiting clarification/removal before installed-root check | Write the identified installed eMMC from SD, flush and verify the complete image range, report the outcome, and have the operator restart manually. Observe the installed system’s normal boot. Retain actual evidence and limitations. |
+| H12-2 — Prepare the real SD maintenance session | Complete: exact source/target, independent SD, reviewed UI and KVM confirmation passed | Owner facts, identified artifacts, recovery path and independent operation reviews recorded. |
+| H12-3 — Complete one attended reimage and normal boot | Complete: full write/flush/readback matched; relay restart reached eMMC slot A with SD absent and authenticated SSH | [Physical completion](../docs/features/h12-attended-sd-reimage/physical-completion.md); root identity matches accepted spare, /data mounted, KVM Debian login observed. |
 
-H12 is complete only after all three outcomes pass. Offline acceptance is not a
+All three H12 outcomes passed. Offline acceptance is not a
 physical write or boot result. Historical October 2 SD SSH/clock results are not
 fresh physical admission for a later operation. SD recovery is sufficient.
 Current setup/attendance is requested only when the concrete operation is ready;
@@ -71,3 +72,12 @@ remaining host OS/recovery features and stock release qualification. Existing
 accepted work/evidence is retained. Unrelated administration work must not
 supersede ready H12 work; it may proceed only when H12 truly awaits a physical
 input and it does not delay H12 or duplicate its resources.
+
+## Completion boundary
+
+The current image is diagnostic. Boot-health/RAUC and printer output services
+remain masked; no printing or release qualification is claimed. Do not repeat
+power cycles unnecessarily because diagnostic boot attempts are finite. Use
+HW-667 for authorized resets and hold relay power off for future media changes.
+No further owner action is needed for H12. Broader project work remains governed
+by its existing requirements and [remaining-work plan](../docs/remaining-work-plan.md).

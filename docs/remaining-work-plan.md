@@ -9,15 +9,17 @@ recovery is sufficient. The separate rehearsal is dropped; incorporate minimum
 target/image checks before the flashing yes/no prompt. The old RAM preflight
 is not a gate.
 The [owner-selected scope](decisions/20261002-h12-scope-reduction.md)
-supersedes conflicting historical requirements below. Existing source/artifacts
-and installed boot settings have not yet been adapted to this simpler route.
+supersedes conflicting historical requirements below. The minimal SD tool and physical write/readback/normal eMMC boot passed on
+2026-10-03; [H12 completion](features/h12-attended-sd-reimage/physical-completion.md)
+is recorded. Broader milestones below remain separate.
 
 Recalibrated: 2026-10-01 at the owner’s request. This is an execution order for existing requirements,
 not new hardware authorization or a supported-release claim. Detailed acceptance
 requirements remain in the [host checklist](hardware/host-os-tasks.md),
 [project definition](project.md), and approved feature records.
 
-The authoritative live order is [G1–G5](../.codex/current-goals.md), with an
+Current completion state is in [the goal record](../.codex/current-goals.md);
+the earlier G1–G5 order has an
 [evidence-based assessment](development/goals-reset-20261001.md). Historical
 assignments and shared resource ownership are in the
 [parallel delivery plan](development/parallel-work.md). Use its

@@ -282,15 +282,46 @@
         "h12-attended-sd-reimage:implement"
       ],
       "environment": "hardware",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": "H616_JC_6Z_V1.2 (owner-reported)",
+          "check": "session",
+          "document": "docs/features/h12-attended-sd-reimage/physical-completion.md",
+          "document_sha256": "251326cce8102fc4366008a0100d326df57b8869a8c343b4ae85a1f63f749bad",
+          "environment": "hardware",
+          "limitations": "Owner-reported board marking; diagnostic image, no printing/release qualification; full early cold capture abandoned; SD fallback retained.",
+          "method": "Coordinator measured exact SD session, reviewed native confirmation, full block write/flush/readback and operator-requested relay restart; authenticated eMMC identity/root/slot/SSH and KVM login.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "source_commit": "6eb419c2ae68a7fdf40ccdf1ca89371e94c585b7",
+          "source_sha256": {
+            "docs/features/h12-attended-sd-reimage/installed-boot-evidence.json": "8fc88bcabb7e14a523d1fa8973aaad7f6b66ca53fd8d2b063a180aaddd511e38",
+            "docs/features/h12-attended-sd-reimage/physical-completion.md": "251326cce8102fc4366008a0100d326df57b8869a8c343b4ae85a1f63f749bad",
+            "docs/features/h12-attended-sd-reimage/physical-write-evidence.json": "7136f4361b8886a732da3a40be3fd61a94f3ec21536208ddf85283b1e8e07873",
+            "docs/hardware/host-h12-attended-sd-session-20261003.md": "8d098521f2a3d0504f39c6b3366ba22ee86d8f84844cbb5606c7934f27cd566d",
+            "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+            "runtime/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4"
+          }
+        }
+      ],
       "human_task": "docs/hardware/coordinated-human-tasks.md",
       "id": "prepare-session",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "61728f12b53d459e88373811df6ca634",
+        "session": "01a0f160-a773-7bb3-b621-49cfa92a1d0c/h12-physical"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Prepare exact attended SD reimage session",
-      "verification": null
+      "verification": {
+        "decision_sha256": "3753981dfb22ab49c9cd7dc03c7a11ecad0c13af0f4dd7910e4c47d3bf99135a",
+        "evidence_sha256": "9f01bd8080cc6da78b365064d14f254c0383d7fa4dffeae56e8778b1a9a152a8",
+        "outcome": "passed",
+        "rationale": "Reviewed unchanged main HEAD 6eb419c2ae68a7fdf40ccdf1ca89371e94c585b7 against e877e72f75f5d05dcd68dc0239d7f7a144167ccb. Read-only object/index inspection without Git commands established exactly two new 100644 documents, no other changes, deletions or gitlinks, matching tracked worktree contents and index/HEAD. Clean baseline supplied by coordinator. Complete approved decision canonical digest, proposal/requirements/scope hashes, all submitted document/source hashes and both receipts raw-evidence hashes match. Local document links pass. Reused unchanged original software delivery and independent keyboard-correction verification; correction evidence and submitted-list bindings match. No code repair, candidate/record changes, hardware/network/credential access, publication, agents or auxiliary experiment. Passed prepare-session/session only. Current intake identifies independent read-only SD root, separately mounted read-only NFS image of 7818182656 bytes, accepted SHA-256 ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f, unused spare MMC user area/controller/CID/dev_t with 31272730624-byte capacity and no target mounts/swap or initial writes. Deployed backend/UI/config hashes and production ExecStart/Restart=no match the exact-action review. Actual KVM confirmation shows identical image and target, whole-image user-data/environment replacement, default No and visibly selected Yes. Owner setup/attendance and subsequent delegated coordinator KVM confirmation are recorded; fresh separate write-operation review explicitly reconciles delegation and runtime metadata confirms Sol 6.1/medium/full role. Production invokes installed_session with descriptor-bound checks rather than fixture admission. Bounded 1 MiB buffers and NFS direct reads avoid image RAM staging; no dependencies, capacity policy, pins or service masks changed. Historical readiness statements describe earlier checkpoints and do not supersede later measured evidence. Named evidence applies only to test-sv08-01, board H616_JC_6Z_V1.2 owner-reported. Temporary SD /run runtime and session DPMS workaround do not certify a rebuilt SD artifact or persistent display fix. Diagnostic image boot-health/RAUC/printer masks, finite boot attempts and known Cockpit limitations remain; no healthy release, printing, MCU, heater, motion, generic touch hardware or stock-profile qualification. Stored factory module/history preserved; SD fallback retained. No additional reset is needed. Requested reviewer GPT-6.1 Sol/medium via fresh full-role CLI fallback; effective model/effort remains coordinator verification, not self-certified.",
+        "reviewer": "Independent feature-verifier full-role CLI fallback; requested GPT-6.1 Sol/medium; runtime confirmation coordinator-owned",
+        "session": "h12-completion-independent-20261003-6eb419c-session-physical"
+      }
     },
     {
       "blocker": null,
@@ -301,15 +332,46 @@
         "h12-attended-sd-reimage:prepare-session"
       ],
       "environment": "hardware",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": "H616_JC_6Z_V1.2 (owner-reported)",
+          "check": "physical",
+          "document": "docs/features/h12-attended-sd-reimage/physical-completion.md",
+          "document_sha256": "251326cce8102fc4366008a0100d326df57b8869a8c343b4ae85a1f63f749bad",
+          "environment": "hardware",
+          "limitations": "Owner-reported board marking; diagnostic image, no printing/release qualification; full early cold capture abandoned; SD fallback retained.",
+          "method": "Coordinator measured exact SD session, reviewed native confirmation, full block write/flush/readback and operator-requested relay restart; authenticated eMMC identity/root/slot/SSH and KVM login.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "source_commit": "6eb419c2ae68a7fdf40ccdf1ca89371e94c585b7",
+          "source_sha256": {
+            "docs/features/h12-attended-sd-reimage/installed-boot-evidence.json": "8fc88bcabb7e14a523d1fa8973aaad7f6b66ca53fd8d2b063a180aaddd511e38",
+            "docs/features/h12-attended-sd-reimage/physical-completion.md": "251326cce8102fc4366008a0100d326df57b8869a8c343b4ae85a1f63f749bad",
+            "docs/features/h12-attended-sd-reimage/physical-write-evidence.json": "7136f4361b8886a732da3a40be3fd61a94f3ec21536208ddf85283b1e8e07873",
+            "docs/hardware/host-h12-attended-sd-session-20261003.md": "8d098521f2a3d0504f39c6b3366ba22ee86d8f84844cbb5606c7934f27cd566d",
+            "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+            "runtime/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4"
+          }
+        }
+      ],
       "human_task": "docs/hardware/coordinated-human-tasks.md",
       "id": "physical-reimage",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "1212267f3d8f4975b6fb248a83a33772",
+        "session": "01a0f160-a773-7bb3-b621-49cfa92a1d0c/h12-physical"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "done",
       "title": "Verify physical SD write/readback and normal boot",
-      "verification": null
+      "verification": {
+        "decision_sha256": "3753981dfb22ab49c9cd7dc03c7a11ecad0c13af0f4dd7910e4c47d3bf99135a",
+        "evidence_sha256": "bbadca4c41efddfbeae21e6795b9c686bee1983aedf4b6f87975b6f70cf10cd2",
+        "outcome": "passed",
+        "rationale": "Reviewed unchanged main HEAD 6eb419c2ae68a7fdf40ccdf1ca89371e94c585b7 against e877e72f75f5d05dcd68dc0239d7f7a144167ccb. Read-only object/index inspection without Git commands established exactly two new 100644 documents, no other changes, deletions or gitlinks, matching tracked worktree contents and index/HEAD. Clean baseline supplied by coordinator. Complete approved decision canonical digest, proposal/requirements/scope hashes, all submitted document/source hashes and both receipts raw-evidence hashes match. Local document links pass. Reused unchanged original software delivery and independent keyboard-correction verification; correction evidence and submitted-list bindings match. No code repair, candidate/record changes, hardware/network/credential access, publication, agents or auxiliary experiment. Passed physical-reimage/physical only. Inspected actual default-No/selected-Yes and terminal-result screenshots plus production terminal. Affirmative KVM confirmation under recorded owner delegation precedes complete write/flush/full-range readback success. Reviewed unchanged backend success path requires transferred-source hash/size, fsync, BLKFLSBUF and full accepted-range hash; 15269888 sectors times 512 and process write_bytes both equal 7818182656. Zero inflight target I/O, closed source/target descriptors and matching final runtime/config hashes establish terminal writer. Range-bounded whole-MMC user-area admission excludes boot partitions, unrelated storage and tail; failures retain explicit unusable-image/SD-recovery wording without automatic retry or reboot. Later authenticated installed-boot log shows new boot ID, matching MMC CID/controller, read-only root-a PARTUUID 26c68198-9248-47af-bbd3-643f1b604ef5 and slot A, writable /data, no SD device and active SSH; actual KVM shows Debian 13 sv08 login. Fresh independent exact reset review and verified runtime precede one owner-requested five-second relay power cycle; log records power off/on and USB disappearance/restoration, no automatic repeated cycle. Owner-powered SD removal/SSH closure are explicit handoff facts; fresh recovery review addresses unavailable live checks. This manual/operator-requested action replaces unplugging USB within accepted scope and does not establish automatic maintenance return. Older write receipt and session checkpoints correctly retain boot-pending historical status; later bound boot receipt closes that check. Named evidence applies only to test-sv08-01, board H616_JC_6Z_V1.2 owner-reported. Temporary SD /run runtime and session DPMS workaround do not certify a rebuilt SD artifact or persistent display fix. Diagnostic image boot-health/RAUC/printer masks, finite boot attempts and known Cockpit limitations remain; no healthy release, printing, MCU, heater, motion, generic touch hardware or stock-profile qualification. Stored factory module/history preserved; SD fallback retained. No additional reset is needed. Requested reviewer GPT-6.1 Sol/medium via fresh full-role CLI fallback; effective model/effort remains coordinator verification, not self-certified.",
+        "reviewer": "Independent feature-verifier full-role CLI fallback; requested GPT-6.1 Sol/medium; runtime confirmation coordinator-owned",
+        "session": "h12-completion-independent-20261003-6eb419c-session-physical"
+      }
     }
   ],
   "title": "Complete minimal attended installed-eMMC reimaging from SD"

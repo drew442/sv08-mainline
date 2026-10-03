@@ -1,9 +1,9 @@
 # H12 attended SD session preparation — 2026-10-03
 
-Status: physical execution resumed after the owner repaired KVM video. The original
-software and keyboard correction are merged; separate delivery and exact-action
-reviews passed. Earlier session observations below are historical. The full write/flush/readback passed at 05:23 UTC; manual SD removal/restart and
-installed-system boot remain pending.
+Status: **H12 complete.** Full write/flush/readback passed at 05:23 UTC;
+normal installed-eMMC slot A boot with SD absent and authenticated SSH passed at
+06:32 UTC. Independent completion review passed. Earlier checkpoints below retain
+their historical state and do not reopen completed steps.
 The [owner's scope](../decisions/20261002-h12-scope-reduction.md) and
 [delivery plan](../development/h12-sd-delivery-plan-20261003.md) govern the session.
 
@@ -235,3 +235,21 @@ identified the 16 GB SD as the running root and the accepted spare MMC as unused
 The SD-removal discrepancy is pending owner clarification. Normal eMMC boot has
 not yet been tested by these observed boots; the complete write/readback result
 remains valid. Do not infer failed eMMC boot from this SD recovery screen.
+
+### Final eMMC-only boot and independent completion
+
+After the owner removed SD and requested relay control, fresh action review
+`01a10074-58c1-7a51-a304-1141daa7fe92` passed. The exact tested HW-667 script
+cut USB power at 06:30:50 UTC and restored it at 06:30:55. Authenticated SSH then
+measured a new boot ID, accepted spare MMC CID/controller, read-only root-a,
+slot A, writable /data and no SD device. KVM showed Debian 13 sv08 login.
+No units were failed at that observation; historical diagnostic limitations are
+not declared repaired. The [completion record](../features/h12-attended-sd-reimage/physical-completion.md)
+and boot receipt retain evidence and limits.
+
+Separate verifier session `01a10078-b5ad-79d0-a8cc-6f32125c9780` passed both
+physical preparation and completed-write/normal-boot acceptance. Coordinator
+verified actual GPT-6.1 Sol/medium, full-role loading and independent provenance.
+Formal results are imported into the feature record. No further reset or owner
+action is needed. Use HW-667 for future authorized power resets; coordinate media
+moves with relay power held off. No automatic maintenance return was introduced.

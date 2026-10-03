@@ -1,8 +1,9 @@
 # Roadmap
 
-Current execution order was reset on 2026-10-03: complete attended SD reimaging
-of the installed eMMC, with integrated checks, Yes/No confirmation, full readback
-and manual restart into the installed system. See the
+H12 completed on 2026-10-03: attended SD reimaging of the installed eMMC,
+integrated checks, Yes/No confirmation, full write/readback and an operator-requested
+relay restart into the installed system all passed. This is bounded recovery
+acceptance, not a printing or release qualification. See the
 [current goals](../.codex/current-goals.md),
 [owner's H12 scope decision](decisions/20261002-h12-scope-reduction.md), and
 [remaining-work plan](remaining-work-plan.md). RAM maintenance, permission

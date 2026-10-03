@@ -11,7 +11,7 @@ is not a gate.
 The [owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
 supersedes conflicting historical requirements below. The attended SD software delivery is now independently verified on installed
 ARM64 fixtures. Physical write/flush/full readback passed on October 3 at 05:23 UTC;
-manual SD removal/restart and normal installed boot are still pending.
+normal installed-eMMC boot with SD absent passed at 06:32 UTC. H12 is complete.
 
 Dispatch queue created 2026-09-18 for the [parallel assignments](../development/parallel-work.md).
 Pending entries below are coordination items, not requests to act immediately;
@@ -26,23 +26,19 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
-## Attended SD reimage — final manual boot check, 2026-10-03
+## H12 completed — 2026-10-03
 
-The [concrete session](host-h12-attended-sd-session-20261003.md) completed the
-actual 7,818,182,656-byte spare-eMMC write, flush and full readback successfully.
-Owner repaired KVM video; the corrected keyboard UI passed separate delivery
-review, and a fresh exact action review preceded autonomous KVM confirmation
-under the owner's delegation. Final KVM result, closed source/target descriptors,
-matching runtime/configuration and device byte counts are retained.
+The [physical completion record](../features/h12-attended-sd-reimage/physical-completion.md)
+and independent verification establish full attended SD write/flush/readback,
+then normal installed-eMMC slot A boot with SD absent, accepted spare identity,
+authenticated SSH, mounted /data and visible Debian login. No H12 owner task remains.
 
-Owner reported completing the restart and added an HW-667 relay for USB host
-power. The [relay test](host-hw667-test-20261003.md) passed: five seconds off,
-automatic power restoration, new host boot ID, SSH and KVM recovery screen.
-However, the 16 GB SD remains detected and supplies the running root; the 32 GB
-spare eMMC is unused. A clarification about SD removal/reinsertion is pending.
-Do not remove the running SD while powered. Resolve that physical fact, then use
-an unpowered SD removal and observed installed-system boot to finish H12. No
-repeat flash, permission/entropy work or cold-capture investigation is required.
+Owner removed SD and directed the coordinator to use HW-667 for power resets.
+One freshly reviewed five-second cycle at 06:30:50 UTC restored power and reached
+the installed system. Future resets use the relay; do not request USB unplugging
+as the normal procedure. For future media changes, coordinate relay power off
+before the owner moves media. Preserve the current running diagnostic boot and
+avoid unnecessary repeats; boot-health and printer outputs remain masked.
 
 ## Independent SD-loader restoration — 2026-10-02
 
