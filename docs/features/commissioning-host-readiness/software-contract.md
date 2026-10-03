@@ -14,8 +14,10 @@ root-owned 0600 file on the read-only root, bounded to 64 KiB. Its exact top-lev
 keys are `format_version` (1), `release`, `generation`, `disk`,
 `fw_config_sha256`, `tools` and `dependencies`. No public device defaults ship.
 
-`disk` has exactly `path` (canonical whole block-device path), `major_minor`,
-`sysfs` (resolved `/sys/dev/block/<major_minor>`), `physical_bytes` (actual media capacity),
+`disk` has exactly `path` (the supported stable alias
+`/dev/disk/by-path/platform-4022000.mmc`), `controller`
+(`/sys/devices/platform/soc/4022000.mmc`), `cid_sha256` (SHA-256 of the raw
+sysfs `device/cid` file bytes, including its newline), `physical_bytes` (actual media capacity),
 `image_bytes` (reviewed GPT image footprint),
 `disk_guid`, and `partition_records`. The latter is the exact six-record result of
 `sv08_gpt.inspect`: each record contains `number`, `name`, `partuuid`,
@@ -34,6 +36,26 @@ GPT module and its both-header/array CRC, collision and partition checks remain
 unchanged. It checks the actual mounts: root and boot read-only, data writable. Synthetic
 records are examples only; they must never be substituted for measured target facts.
 
+The helper resolves the alias afresh on every probe and requires a whole block
+device (no sysfs partition attribute), the exact canonical controller ancestor
+and the configured CID digest. Its current device number and resolved sysfs path
+are observations, never configured persistent identity. Partition parent links
+must match this current disk. Resolved device path, device number and sysfs path
+join the stable-window and post-write identity comparisons; alias retargeting
+refuses even when the persistent identity and disk contents agree. Normal boots
+may change MMC numbering and device numbers without changing the private binding.
+Direct environment reads and post-write fsync resolve the alias before O_NOFOLLOW
+open. The helper's full bank parser checks both CRCs and policy dictionaries; it
+does not call the historical verifier that rejects symlink config targets. The
+selected libubootenv tool itself consumes the hashed alias-based fw_env config.
+
+This repairs the distinct second installed defect: a reviewed normal restart
+booted Linux but renumbered mmcblk0 to mmcblk1, causing a pre-writer missing-path
+failure. It does not change the earlier historical-bank repair or delete its
+evidence, and provides no installed/hardware acceptance or retry policy. The
+coordinator retains that new boot failure and prepares/reviews the helper, private
+target config and fw_env config as a separate three-file installation patch.
+
 `tools` has exactly `package` (`libubootenv-tool`), `version` (`0.3.5-0.1+b2`) and
 `files` (absolute path to SHA-256 mapping). Both `/usr/bin/fw_printenv` and
 `/usr/bin/fw_setenv` must hash to
@@ -48,11 +70,11 @@ historical APIs; missing/different modules refuse copied-target preflight.
 
 The private `/etc/sv08/commissioning-fw_env.config` is also regular/root-owned
 0600. Its bytes must match the reviewed hash and exactly these two lines, using
-the configured canonical disk path (here **synthetic** `/dev/mmcblk9`):
+the configured stable alias:
 
 ```text
-/dev/mmcblk9 0x400000 0x10000
-/dev/mmcblk9 0x800000 0x10000
+/dev/disk/by-path/platform-4022000.mmc 0x400000 0x10000
+/dev/disk/by-path/platform-4022000.mmc 0x800000 0x10000
 ```
 
 The helper has no user-supplied writer arguments, raw writer, hardware discovery,

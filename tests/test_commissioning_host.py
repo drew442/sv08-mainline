@@ -84,10 +84,10 @@ def config():
             data = staging.source(staging.TLS, 'runtime/' + name + '.py')
         deps['/usr/lib/sv08/'+name+'.py'] = staging.sha(data)
     return dict(format_version=1, release='diagnostic-1', generation='diagnostic-1',
-                disk=dict(path='/dev/mmcblk9', major_minor='179:72', sysfs='/sys/devices/synthetic/mmcblk9',
+                disk=dict(path='/dev/disk/by-path/platform-4022000.mmc', controller='/sys/devices/platform/soc/4022000.mmc', cid_sha256=hashlib.sha256(b'synthetic-cid\n').hexdigest(),
                           physical_bytes=32000000000, image_bytes=8000000000, disk_guid='22222222-2222-4222-8222-222222222222',
                           partition_records=[dict(number=n,name='SYNTHETIC-'+str(n),partuuid=f'00000000-0000-4000-8000-{n:012d}',offset_bytes=16*1024**2+n*1024**3,size_bytes=1024**3) for n in range(1,7)]),
-                fw_config_sha256=staging.sha(b'/dev/mmcblk9 0x400000 0x10000\n/dev/mmcblk9 0x800000 0x10000\n'),
+                fw_config_sha256=staging.sha(b'/dev/disk/by-path/platform-4022000.mmc 0x400000 0x10000\n/dev/disk/by-path/platform-4022000.mmc 0x800000 0x10000\n'),
                 tools=dict(package='libubootenv-tool', version='0.3.5-0.1+b2', files={
                     '/usr/bin/fw_printenv': health.SELECTED_TOOL_SHA256,
                     '/usr/bin/fw_setenv': health.SELECTED_TOOL_SHA256,
@@ -115,7 +115,7 @@ class FixtureRuntime:
         self.calls += 1
         if self.fail == 'prepare':
             raise ValueError('prepare inactive')
-        result = dict(boot={'boot_id': BOOT_ID}, state={'pending': None}, manifest={'deployable': False}, images=self.images, values=self.values)
+        result = dict(boot={'boot_id': BOOT_ID}, state={'pending': None}, manifest={'deployable': False}, device={'synthetic': True}, images=self.images, values=self.values)
         if self.change and self.calls > 2:
             result[self.change] = {'changed': True}
         return copy.deepcopy(result)
@@ -144,7 +144,7 @@ def holder(path, ready, stop):
 def historical_health_fixture(root, h):
     """Real historical GPT -> devices -> probe -> run; only OS/tool edges simulated."""
     check = unittest.TestCase()
-    disk = root/'six-partition.img'
+    disk = root/'mmcblk0'
     size = 32 * 1024 * 1024
     with disk.open('wb') as stream:
         stream.truncate(size)
@@ -159,17 +159,21 @@ def historical_health_fixture(root, h):
     actual_stat = Path.stat
     actual_lstat = Path.lstat
     actual_resolve = Path.resolve
-    sysfs = root/'sysfs'; sysfs.mkdir()
+    controller = root/'controller'; controller.mkdir()
+    sysfs = controller/'mmc_host/mmc0/mmc0:0001/block/mmcblk0'; sysfs.mkdir(parents=True)
     (sysfs/'size').write_text(str(size//512))
+    (sysfs/'device').mkdir(); (sysfs/'device/cid').write_bytes(b'synthetic-cid\n')
+    dev_major = [179]
+    alias_target = [disk]
     def disk_stat(path, *args, **kwargs):
-        if path == disk:
-            return type('Disk', (), dict(st_mode=stat.S_IFBLK, st_rdev=os.makedev(179, 0)))
+        if path == disk or path == root/'alternate':
+            return type('Disk', (), dict(st_mode=stat.S_IFBLK, st_rdev=os.makedev(dev_major[0], 0)))
         return actual_stat(path, *args, **kwargs)
     result = h.inspect(disk, environment_regions=h.REGIONS)
     check.assertNotIn('disk_guid', result)
     check.assertEqual(result['partitions'], 6)
     cfg = config()
-    cfg['disk'] = dict(path=str(disk), major_minor='179:0', sysfs=str(sysfs),
+    cfg['disk'] = dict(path='/dev/disk/by-path/platform-4022000.mmc', controller='/sys/devices/platform/soc/4022000.mmc', cid_sha256=hashlib.sha256(b'synthetic-cid\n').hexdigest(),
                        physical_bytes=size, image_bytes=size, disk_guid=guid,
                        partition_records=result['partition_records'])
     manifest = dict(release='diagnostic-1', state_schema=1, deployable=False, devices={})
@@ -187,8 +191,10 @@ def historical_health_fixture(root, h):
         mappings[path] = '179:'+str(number)
         mounts[mount] = mappings[path]+' '+mode+',relatime'
     def resolve(path, *args, **kwargs):
-        if str(path) == '/sys/dev/block/179:0': return sysfs
-        if str(path).startswith('/sys/dev/block/179:'):
+        if str(path) == cfg['disk']['path']: return alias_target[0]
+        if str(path) == f'/sys/dev/block/{dev_major[0]}:0': return sysfs
+        if str(path).startswith(f'/sys/dev/block/{dev_major[0]}:'):
+            if case == 'parent' and str(path).endswith(':2'): return controller/'p2'
             return sysfs/('p'+str(path).split(':')[-1])
         return actual_resolve(path, *args, **kwargs)
     actual_read = Path.read_text
@@ -208,9 +214,17 @@ def historical_health_fixture(root, h):
         if str(path).startswith(('/run/sv08', '/usr/lib/sv08')) or str(path) == '/etc/rauc/system.conf':
             return False
         return actual_present(path)
-    for case in (1, 2, 3, 'tool-extra', 'tool-missing', 'tool-space', 'stale-copy', 'preserved-mutation', 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk'):
+    for case in (1, 2, 3, 'tool-extra', 'tool-missing', 'tool-space', 'stale-copy', 'preserved-mutation', 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk', 'cid', 'controller', 'parent', 'whole-partition', 'alias-change', 'alias-in-probe', 'alias-postwrite', 'renumbered'):
+        if case == 'renumbered':
+            new_disk = root/'mmcblk1'; disk.rename(new_disk); disk = new_disk; alias_target[0] = disk
+            new_sysfs = controller/'mmc_host/mmc1/mmc1:0001/block/mmcblk1'
+            new_sysfs.parent.mkdir(parents=True); sysfs.rename(new_sysfs); sysfs = new_sysfs
+            dev_major[0] = 180
+            mappings.update({path:'180:'+number.split(':')[1] for path,number in mappings.items()})
+            mounts.update({mount:output.replace('179:', '180:') for mount,output in mounts.items()})
         clock = [0]
         rt = h.Runtime(copy.deepcopy(cfg), now=lambda: clock[0])
+        rt.config['disk']['controller'] = str(controller)
         rt.store = h.Store(root/('state-'+str(case)), reserve_bytes=0)
         rt.store.initialize()
         generation = rt.store.root/'generations/diagnostic-1'; generation.mkdir()
@@ -227,7 +241,7 @@ def historical_health_fixture(root, h):
             for (offset, _), data in zip(h.REGIONS, images):
                 stream.seek(offset); stream.write(data)
         rt.fw_config = root/'fw.config'
-        rt.fw_config.write_text(''.join(f'{disk} {offset:#x} {length:#x}\n' for offset, length in h.REGIONS))
+        rt.fw_config.write_text(''.join(f"{cfg['disk']['path']} {offset:#x} {length:#x}\n" for offset, length in h.REGIONS))
         writes = []
         def command(args):
             if args[0].endswith('findmnt'): return mounts[args[-1]]
@@ -237,6 +251,7 @@ def historical_health_fixture(root, h):
                 if case == 'tool-extra': values['unexpected'] = 'synthetic'
                 if case == 'tool-missing': del values['new_only']
                 if case == 'tool-space': values['spaces'] = values['spaces'].strip()
+                if case == 'alias-in-probe': retarget_valid_device()
                 return '\n'.join(key+'='+value for key, value in values.items())
             check.assertEqual(args, ['/usr/bin/fw_setenv', '-c', str(rt.fw_config), 'BOOT_A_LEFT', '3'])
             writes.append(args)
@@ -246,6 +261,7 @@ def historical_health_fixture(root, h):
             with disk.open('r+b') as stream:
                 for (offset, _), data in zip(h.REGIONS, images):
                     stream.seek(offset); stream.write(data)
+            if case == 'alias-postwrite': retarget_valid_device()
             return ''
         corrupt_offset = {'primary-crc':512+56, 'backup-crc':size-512+56,
                           'array-crc':4096*512, 'backup-array-crc':size-512-16384}.get(case)
@@ -258,17 +274,29 @@ def historical_health_fixture(root, h):
         if case == 'disk': rt.config['disk']['physical_bytes'] += 512
         original_mount = mounts['/boot']
         if case == 'mount': mounts['/boot'] = '179:99 rw'
-        def sleep(seconds): clock[0] += seconds
+        if case == 'cid': rt.config['disk']['cid_sha256'] = '0'*64
+        if case == 'controller': rt.config['disk']['controller'] = str(root/'wrong-controller')
+        original_parent = sysfs/'p2'
+        if case == 'parent': original_parent.rename(controller/'p2')
+        if case == 'whole-partition': (sysfs/'partition').write_text('1')
+        def retarget_valid_device():
+            # The alternate passes every whole-device/GPT/controller/CID/mount check.
+            alternate = root/'alternate'; alternate.write_bytes(disk.read_bytes())
+            alias_target[0] = alternate
+            check.assertEqual(rt.devices(manifest)['path'], str(alternate))
+        def sleep(seconds):
+            clock[0] += seconds
+            if case == 'alias-change': retarget_valid_device()
         try:
             with patch.object(Path, 'stat', disk_stat), \
-                 patch.object(Path, 'lstat', lambda path,*a,**k: disk_stat(path) if path==disk else actual_lstat(path,*a,**k)), \
+                 patch.object(Path, 'lstat', lambda path,*a,**k: disk_stat(path) if path in (disk, root/'alternate') else actual_lstat(path,*a,**k)), \
                  patch.object(Path, 'resolve', resolve), patch.object(Path, 'read_text', read), \
                  patch.object(Path, 'is_symlink', lambda path: True if str(path).startswith('/etc/systemd/system/') else actual_link(path)), \
                  patch.object(h.os, 'readlink', return_value='/dev/null'), \
                  patch.object(h, 'read_json', read_json), patch.object(h, 'present', present), \
                  patch.object(h, 'device_number', side_effect=lambda path:mappings[path]), \
                  patch.object(rt, 'tool_identity'), patch.object(rt, 'command', side_effect=command):
-                if isinstance(case, int):
+                if isinstance(case, int) or case == 'renumbered':
                     check.assertEqual(h.run(rt, nullcontext, nullcontext, sleep=sleep),
                                       'noop' if case==3 else 'confirmed')
                     check.assertEqual(len(writes), int(case!=3))
@@ -277,19 +305,30 @@ def historical_health_fixture(root, h):
                     if case == 3: check.assertEqual(tuple(images), before_images)
                     else: h.verify_readback(before_images, tuple(images), h.bank(images[0])[1])
                 else:
-                    with check.assertRaisesRegex(ValueError, 'GPT|disk identity|Mount|logical values|other variables|older bank'):
+                    expected = {'alias-change': 'Health/identity/environment changed during stable window',
+                                'alias-in-probe': 'Device identity changed during environment probe',
+                                'alias-postwrite': 'Identity changed after mutation'}.get(case,
+                                    'GPT|disk identity|Mount|logical values|other variables|older bank|identity')
+                    with check.assertRaisesRegex(ValueError, expected):
                         h.run(rt, nullcontext, nullcontext, sleep=sleep)
-                    check.assertEqual(len(writes), int(case in ('stale-copy', 'preserved-mutation')))
+                    check.assertEqual(len(writes), int(case in ('stale-copy', 'preserved-mutation', 'alias-postwrite')))
+                    if case in ('alias-change', 'alias-in-probe', 'alias-postwrite'):
+                        with check.assertRaisesRegex(ValueError, 'Same-boot record exists'):
+                            h.run(rt, nullcontext, nullcontext, sleep=sleep)
+                        check.assertEqual(len(writes), int(case == 'alias-postwrite'))
                     if not writes: check.assertEqual(tuple(images), before_images)
                 record = actual_json(rt.store.root/'shared/logs/journal/commissioning-health'/ (BOOT_ID+'.json'))
                 check.assertEqual(record['status'], ('success-noop' if case==3 else 'success')
-                                  if isinstance(case, int) else 'failed-or-unknown')
+                                  if isinstance(case, int) or case == 'renumbered' else 'failed-or-unknown')
         finally:
+            alias_target[0] = disk
+            if case == 'parent': (controller/'p2').rename(original_parent)
+            if case == 'whole-partition': (sysfs/'partition').unlink()
             mounts['/boot'] = original_mount
             if original_byte is not None:
                 with disk.open('r+b') as stream:
                     stream.seek(corrupt_offset); stream.write(original_byte)
-    print('Historical closure: differing old A3 bank, A1/A2 confirmation, A3 no-op, selected mismatch/stale-copy/preserved-bank/GUID/4 CRC/disk/mount refusals OK')
+    print('Historical closure: differing old A3 bank, A1/A2 confirmation, A3 no-op, selected mismatch/stale-copy/preserved-bank/GUID/4 CRC/disk/mount/CID/controller/partition-parent/whole-device refusals, alias mid-window refusal, mmcblk0->mmcblk1 and 179:0->180:0 same-binding confirmation OK')
 
 
 class CommissioningTests(unittest.TestCase):
@@ -641,7 +680,8 @@ class CommissioningTests(unittest.TestCase):
         disk = self.root/'disk';disk.write_bytes(bytes(512)+header)
         sysfs = self.root/'sysfs/disk';sysfs.mkdir(parents=True)
         (sysfs/'size').write_text('32768')
-        cfg['disk'].update(path=str(disk),sysfs=str(sysfs),major_minor='179:0',physical_bytes=32768*512,image_bytes=16384*512)
+        cfg['disk'].update(physical_bytes=32768*512,image_bytes=16384*512)
+        (sysfs/'device').mkdir(); (sysfs/'device/cid').write_bytes(b'synthetic-cid\n')
         partitions=[]
         mappings={}
         manifest={'devices':{}}
@@ -655,12 +695,14 @@ class CommissioningTests(unittest.TestCase):
         partitions += [dict(number=n,name='other',partuuid=f'00000000-0000-4000-8000-{n:012d}',offset_bytes=1,size_bytes=1) for n in range(4,7)]
         cfg['disk']['partition_records']=partitions
         runtime=health.Runtime(cfg)
+        cfg['disk']['controller']=str(sysfs.parent)
         observed=dict(partition_records=copy.deepcopy(partitions),partitions=6)
         original_stat=Path.lstat;original_resolve=Path.resolve
         def lstat(path,*args,**kwargs):
             if path==disk:return type('Disk',(),dict(st_mode=0o060600,st_rdev=os.makedev(179,0)))
             return original_stat(path,*args,**kwargs)
         def resolve(path,*args,**kwargs):
+            if str(path)==cfg['disk']['path']:return disk
             if str(path)=='/sys/dev/block/179:0':return sysfs
             if str(path).startswith('/sys/dev/block/179:'):
                 return sysfs/('p'+str(path).split(':')[-1])
@@ -687,7 +729,7 @@ class CommissioningTests(unittest.TestCase):
             (sysfs/'p2/start').write_text('1')
             with self.assertRaisesRegex(ValueError,'GPT/disk'):runtime.devices(manifest)
             (sysfs/'p2/start').write_text('20020')
-            cfg['disk']['major_minor']='179:99'
+            cfg['disk']['cid_sha256']='0'*64
             with self.assertRaisesRegex(ValueError,'disk identity'):runtime.devices(manifest)
 
     def test_guid_header_read_refuses_unchecked_identity(self):
@@ -710,11 +752,15 @@ class CommissioningTests(unittest.TestCase):
 
     def test_config_selection_and_input_overflow(self):
         cfg=config();health.validate_config(cfg)
-        for change in ('package','version','binary','missing-loader'):
+        for change in ('package','version','binary','missing-loader','disk-path','controller','cid','boot-local'):
             bad=copy.deepcopy(cfg)
             if change in ('package','version'):bad['tools'][change]='wrong'
             elif change=='binary':bad['tools']['files']['/usr/bin/fw_printenv']='0'*64
-            else:del bad['tools']['files']['/lib/ld-linux-aarch64.so.1']
+            elif change=='missing-loader':del bad['tools']['files']['/lib/ld-linux-aarch64.so.1']
+            elif change=='disk-path':bad['disk']['path']='/dev/mmcblk1'
+            elif change=='controller':bad['disk']['controller']='/sys/devices/platform/soc/other.mmc'
+            elif change=='cid':bad['disk']['cid_sha256']='not-a-digest'
+            else:bad['disk']['major_minor']='179:0'
             with self.assertRaises(ValueError):health.validate_config(bad)
         path=self.root/'oversized.json';path.write_bytes(b'x'*65537)
         with self.assertRaisesRegex(ValueError,'oversized'):health.read_json(path)
@@ -733,15 +779,16 @@ class SelectedToolTests(unittest.TestCase):
         self.assertEqual(health.digest(tool),health.SELECTED_TOOL_SHA256)
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary);disk=root/'disk';config_path=root/'fw.config'
+            alias=root/'stable-alias';alias.symlink_to(disk)
             with disk.open('wb') as stream:stream.truncate(0x820000)
-            config_path.write_text(f'{disk} 0x400000 0x10000\n{disk} 0x800000 0x10000\n')
+            config_path.write_text(f'{alias} 0x400000 0x10000\n{alias} 0x800000 0x10000\n')
             def call(name,*arguments):
                 argv=['sudo','-n','/usr/bin/qemu-aarch64-static','-L',str(selected_root),str(selected_root/'usr/bin'/name),'-c',str(config_path),*arguments]
                 result=subprocess.run(argv,capture_output=True,text=True,timeout=5)
                 self.assertEqual(result.returncode,0,result.stderr)
                 return result.stdout
             rt = health.Runtime(config())
-            rt.config['disk']['path'] = str(disk)
+            rt.config['disk']['path'] = str(alias)
             rt.fw_config = config_path
             rt.command = lambda args: call(Path(args[0]).name, *args[3:])
             cases=[]
@@ -768,4 +815,4 @@ class SelectedToolTests(unittest.TestCase):
                                       differing_old_dictionary=True, runtime_environment_admission=True,
                                       selected_before=health.selected_bank(images),selected_after=health.selected_bank(after_images)))
             destination=os.environ.get('SV08_TOOL_EVIDENCE')
-            if destination:Path(destination).write_text(json.dumps(dict(binary_sha256=health.digest(tool),package='0.3.5-0.1+b2',regular_file_only=True,cases=cases),indent=2)+'\n')
+            if destination:Path(destination).write_text(json.dumps(dict(binary_sha256=health.digest(tool),package='0.3.5-0.1+b2',regular_file_only=True,symlink_config=True,cases=cases),indent=2)+'\n')
