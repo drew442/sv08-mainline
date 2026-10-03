@@ -1,0 +1,91 @@
+{
+  "candidate_runtime_revision": "dd080dfef3990baae0a0b0975e1fd05f3d1f87b9",
+  "installed_driver_revision": "2b26b590552b575b9d2956019d73247b99033838",
+  "composition_sha256": "5a3f3a27aea4715529f958ed065812a93e70385c5b98aeb6741cc20259b0bc40",
+  "root_sha256": "024389440bc3ac7176bc121cac0bbbe9d6d529da07285842e9f5e55f1ecba848",
+  "usr_sha256": "cbf5f17ab19c0d4ad2f70685f5ce3bb9a0b0818172bc1b5925bbb6fdfa6bad96",
+  "root_bytes": 536870912,
+  "peak_allocated_build_bytes": 1326407680,
+  "vm_kernel_sha256": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67",
+  "runtime_hashes": {
+    "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+    "runtime/sv08_sd_reimage_ui.py": "593fc4a3efc4cee891c2314a1480e4fffed17a1d55908c12787d8a95b82d767e",
+    "configs/host-os/sd-recovery-host/sv08-recovery-display.service.d/reimage.conf": "2ed09579c29c57556be89e44774547de0e3d2e473c7f0003594421285f69ea08"
+  },
+  "driver_sha256": "0820c87f76e8324ed2c09d2dffc06a960908d18b45ef70427c28ae61fd4174d7",
+  "run": {
+    "installed": {
+      "results": [
+        {
+          "answer": "no",
+          "keyboard": false,
+          "refused": true,
+          "result": "Refused: Source checksum mismatch\nNo write."
+        },
+        {
+          "answer": "no",
+          "keyboard": true,
+          "refused": false,
+          "result": "No write. Restart manually only when ready."
+        },
+        {
+          "answer": "escape",
+          "keyboard": true,
+          "refused": false,
+          "result": "No write. Restart manually only when ready."
+        },
+        {
+          "answer": "close",
+          "keyboard": false,
+          "refused": false,
+          "result": "No write. Restart manually only when ready."
+        },
+        {
+          "answer": "no",
+          "keyboard": false,
+          "refused": false,
+          "result": "No write. Restart manually only when ready."
+        },
+        {
+          "answer": "yes",
+          "keyboard": true,
+          "refused": false,
+          "result": "Complete image-range write, flush and readback matched. The complete image range, including image-contained user data and environment, will be replaced. Files are not preserved. Restart manually when ready; SD remains the recovery route."
+        },
+        {
+          "answer": "no",
+          "keyboard": false,
+          "refused": false,
+          "result": "No write. Restart manually only when ready."
+        },
+        {
+          "answer": "yes",
+          "keyboard": false,
+          "refused": false,
+          "result": "Complete image-range write, flush and readback matched. The complete image range, including image-contained user data and environment, will be replaced. Files are not preserved. Restart manually when ready; SD remains the recovery route."
+        }
+      ],
+      "source_sha256": "414baeca08b52b4131f452480357dd772645f0391d54651da91e57fb9e165f5d",
+      "target_sha256": "84551071c3517bd2157e1a7cae6b4a38f42b7ae5ac0eaf8f868e8f2ad4a6bfc2",
+      "runtime": {
+        "sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+        "sv08_sd_reimage_ui.py": "593fc4a3efc4cee891c2314a1480e4fffed17a1d55908c12787d8a95b82d767e"
+      },
+      "memory": "MemTotal:         733896 kB\nMemFree:           63316 kB\nMemAvailable:     546872 kB\nBuffers:            2464 kB\nCached:           549384 kB\nSwapCached:            0 kB\nActive:           246264 kB\nInactive:         357728 kB\nActive(anon):      62760 kB\nInactive(anon):       20 kB\nActive(file):     183504 kB\nInactive(file):   357708 kB\nUnevictable:        8016 kB\nMlocked:               0 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:                 4 kB\nWriteback:             0 kB\nAnonPages:         60204 kB\nMapped:            95944 kB\nShmem:             10684 kB\nKReclaimable:       8844 kB\nSlab:              30916 kB\nSReclaimable:       8844 kB\nSUnreclaim:        22072 kB\nKernelStack:        1488 kB\nPageTables:         1864 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:      366948 kB\nCommitted_AS:     176844 kB\nVmallocTotal:   135288315904 kB\nVmallocUsed:       12356 kB\nVmallocChunk:          0 kB\nPercpu:              440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:     10240 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nCmaTotal:          65536 kB\nCmaFree:           31644 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\n",
+      "fixture_only": true
+    },
+    "wiring": "# /usr/lib/systemd/system/sv08-recovery-display.service\n[Unit]\nDescription=SV08 local recovery interface\nAfter=systemd-udev-settle.service\nConflicts=getty@tty1.service\nConditionPathExists=/etc/sv08-recovery-image\n\n[Service]\nExecStart=/usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_recovery_ui.py -- :0 vt1 -nolisten tcp\nStandardInput=tty\nTTYPath=/dev/tty1\nTTYReset=yes\nTTYVHangup=yes\nRestart=on-failure\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target\n\n# /etc/systemd/system/sv08-recovery-display.service.d/independent.conf\n[Unit]\nWants=systemd-udev-settle.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n\n# /etc/systemd/system/sv08-recovery-display.service.d/reimage.conf\n[Service]\nExecStart=\nExecStart=/usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_sd_reimage_ui.py -- :0 vt1 -nolisten tcp\nRestart=no\nEnvironment=PYTHONDONTWRITEBYTECODE=1\n609 /usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_sd_reimage_ui.py -- :0 vt1 -nolisten tcp\n",
+    "fixture_exec": "{ path=/usr/bin/xinit ; argv[]=/usr/bin/xinit /usr/bin/python3 /run/sd-owner/h12-gtk.py --runtime /usr/lib/sv08 --work /run/h12/results --source /run/h12/source/image --target /run/h12/target/target -- :0 vt1 -nolisten tcp ; ignore_errors=no ; start_time=[Sat 2026-10-03 01:38:48 UTC] ; stop_time=[n/a] ; pid=716 ; code=(null) ; status=0/0 }\n",
+    "restored_exec": "{ path=/usr/bin/xinit ; argv[]=/usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_sd_reimage_ui.py -- :0 vt1 -nolisten tcp ; ignore_errors=no ; start_time=[Sat 2026-10-03 01:40:19 UTC] ; stop_time=[n/a] ; pid=887 ; code=(null) ; status=0/0 }\n",
+    "installed_hashes": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304  /usr/lib/sv08/sv08_sd_reimage.py\n593fc4a3efc4cee891c2314a1480e4fffed17a1d55908c12787d8a95b82d767e  /usr/lib/sv08/sv08_sd_reimage_ui.py\n2ed09579c29c57556be89e44774547de0e3d2e473c7f0003594421285f69ea08  /etc/systemd/system/sv08-recovery-display.service.d/reimage.conf\n",
+    "mounts_resources": "TARGET          SOURCE   FSTYPE OPTIONS\n/run/h12/source /dev/vdb ext4   ro,relatime,norecovery\nTARGET          SOURCE   FSTYPE OPTIONS\n/run/h12/target /dev/vdc ext4   rw,relatime\nMemTotal:         733896 kB\nMemFree:          103992 kB\nMemAvailable:     589836 kB\nBuffers:            2472 kB\nCached:           547688 kB\nSwapCached:            0 kB\nActive:           199528 kB\nInactive:         358780 kB\nActive(anon):      14788 kB\nInactive(anon):       20 kB\nActive(file):     184740 kB\nInactive(file):   358760 kB\nUnevictable:        4000 kB\nMlocked:               0 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:                 4 kB\nWriteback:             0 kB\nAnonPages:         12260 kB\nMapped:            20660 kB\nShmem:              6652 kB\nKReclaimable:       8844 kB\nSlab:              30608 kB\nSReclaimable:       8844 kB\nSUnreclaim:        21764 kB\nKernelStack:        1248 kB\nPageTables:          792 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:      366948 kB\nCommitted_AS:      26132 kB\nVmallocTotal:   135288315904 kB\nVmallocUsed:       12092 kB\nVmallocChunk:          0 kB\nPercpu:              440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:         0 kB\nFilePmdMapped:         0 kB\nCmaTotal:          65536 kB\nCmaFree:           43324 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nFilesystem     1K-blocks   Used Available Use% Mounted on\n/dev/vda2         498900 302908    159296  66% /\ntmpfs              98304   2652     95652   3% /run\ntmpfs              65536      0     65536   0% /tmp\n",
+    "relaunch": "active\n887 /usr/bin/xinit /usr/bin/python3 /usr/lib/sv08/sv08_sd_reimage_ui.py -- :0 vt1 -nolisten tcp\n84551071c3517bd2157e1a7cae6b4a38f42b7ae5ac0eaf8f868e8f2ad4a6bfc2  /run/h12/target/target\n",
+    "preserved": {
+      "sd.img": "805d045f16c1efa3a9f37b63fd56934a8c94f7d3defb87805ed075bb9a3d6a89",
+      "source.ext4": "49dec865411b88414d67aa229fa6a19b35c00c005b51ffa06bf4676920193ce7"
+    },
+    "driver_sha256": "0820c87f76e8324ed2c09d2dffc06a960908d18b45ef70427c28ae61fd4174d7",
+    "kernel_substitution": "Debian 6.12.107; virtio disks, file-fixture admission; no physical compatibility",
+    "composition_sha256": "5a3f3a27aea4715529f958ed065812a93e70385c5b98aeb6741cc20259b0bc40"
+  }
+}

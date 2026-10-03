@@ -244,7 +244,8 @@ Composition receipts bind exact backend/UI/drop-in input hashes and the buffer
 bound. Compressed `/usr` reuse requires these hashes to match; old receipts or
 changed runtime/drop-in bytes require a fresh userspace build. The 512 MiB root,
 96/64/32 MiB volatile mounts, kernel/DT/loader pins and printer-service masks are
-retained. New installed capacity and memory/storage observations remain pending.
+retained. New installed capacity and memory/storage observations are recorded in the
+[H12 execution evidence](../features/h12-attended-sd-reimage/execution.md).
 The earlier results above remain historical evidence for the previous UI.
 
 Focused commands (put all temporary output in the assigned scratch directory):
@@ -269,9 +270,8 @@ not write. Mount closure, source/SD preservation and memory/storage output are
 recorded in `run.json`. XTest is test instrumentation, not a new runtime dependency;
 its existing installed library availability must be confirmed in that run.
 
-This driver has not yet been executed on the new installed ARM64 composition.
+The repaired driver passed on the fresh installed ARM64 composition; see the
+[execution evidence and receipt](../features/h12-attended-sd-reimage/execution.md).
 It substitutes virtio storage and explicit file-fixture target admission for
-physical MMC identity; it cannot establish physical compatibility. Pending delivery
-checks are fresh composition, installed execution and independent full-diff/hash
-verification. Current measured source/target, exact-operation review, attendance,
+physical MMC identity; it cannot establish physical compatibility. Pending software acceptance is independent full-diff/hash verification. Current measured source/target, exact-operation review, attendance,
 physical full readback and observed manual normal boot remain coordinator-owned.
