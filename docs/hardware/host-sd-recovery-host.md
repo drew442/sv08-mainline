@@ -203,3 +203,75 @@ build and VM resource evidence is distinct from physical runtime usage.
 [H13 in the coordinated human queue](coordinated-human-tasks.md) records the
 pending reviewed SD write/readback, one SD movement and captured host-only boot.
 Its physical result is not part of this offline delivery acceptance.
+
+## Attended SD reimage candidate (H12, 2026-10-03)
+
+The new SD-only display drop-in selects
+[the native screen](../../runtime/sv08_sd_reimage_ui.py) and
+[the backend](../../runtime/sv08_sd_reimage.py). This replaces the generic export
+screen only in this composition; other recovery and A/B mechanisms are unchanged.
+The screen has no automatic write/reboot and no device-path entry. Review checks
+are integrated into the normal Yes/No flow. Default No, Escape and dialog close
+cancel; refresh does not write. Each invocation accepts only one answer. Failure
+reports that the installed image may be unusable; keep SD and restart manually.
+Whole-image replacement includes image-contained user data and environment. There
+is no preservation or atomic rollback promise. Only the accepted image range is
+written; eMMC boot partitions and storage beyond that range are excluded.
+
+Coordinator prepares `/run/sv08/sd-reimage.json` before opening Review, containing
+`source` (absolute regular image path on an independently backed read-only mount),
+`size` (positive exact bytes), `sha256` (accepted lowercase digest), `target`
+(measured whole user-area device), `dev_t` (`major:minor`), `cid` (measured sysfs
+CID) and `controller` (resolved parent of `/sys/class/block/<target>/device`).
+These production identities are unknown until actual admission; no example device
+number or CID is a physical fact. No credentials, private backups or raw captures
+are needed by this screen. Source mounting is separate coordinator preparation,
+not a discovery/upload/network feature. A read-only independent ext4 source is the
+prescribed installed fixture mechanism; NFS can be supplied only with its mount
+closure confirmed separately. No image is staged in RAM or tmpfs.
+
+Linux admission requires the verified recovery gate, unique controller/CID,
+opened dev_t, sufficient capacity, independent read-only source and unused target.
+It checks mounted devices/partitions, device-mapper ancestry, loop backing files,
+holders and swap. Unknown block ancestry refuses. The held exclusive target and
+source descriptors survive review. Immediately after Yes admission runs again.
+The writer uses fixed 1 MiB buffers, short-I/O loops and a hash of transferred
+bytes. It fsyncs, invalidates block cache with BLKFLSBUF, and hashes full image-range
+readback. Any transfer/flush/cache/readback failure terminates without retry.
+Regular targets are admitted only by explicitly constructed test fixtures.
+
+Composition receipts bind exact backend/UI/drop-in input hashes and the buffer
+bound. Compressed `/usr` reuse requires these hashes to match; old receipts or
+changed runtime/drop-in bytes require a fresh userspace build. The 512 MiB root,
+96/64/32 MiB volatile mounts, kernel/DT/loader pins and printer-service masks are
+retained. New installed capacity and memory/storage observations are recorded in the
+[H12 execution evidence](../features/h12-attended-sd-reimage/execution.md).
+The earlier results above remain historical evidence for the previous UI.
+
+Focused commands (put all temporary output in the assigned scratch directory):
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_sd_reimage.py
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_sd_recovery_host.py
+PYTHONDONTWRITEBYTECODE=1 xvfb-run -a /usr/bin/python3 tests/sd_reimage_gtk.py --work "$SCRATCH/gtk"
+python3 tests/sd_reimage_vm.py --build "$BUILD" --work "$SCRATCH/vm" --test-key "$TEST_KEY"
+```
+
+The [installed driver](../../tests/sd_reimage_vm.py) defaults to inspection.
+Coordinator adds `--execute` only on a separately budgeted build/VM host. It uses
+768 MiB RAM, the pinned Debian 6.12.107 VM kernel, independent virtual SD and two
+8 MiB ext4 fixtures (read-only source and separate writable file target). It first
+checks actual production service wiring and installed hashes, then temporarily
+runs the explicit [GTK driver](../../tests/sd_reimage_gtk.py) through that installed
+display service. Native XTest keyboard and pointer activation cover refusal/No,
+Escape/close, Yes/write/full readback and relaunch, checking actual resulting bytes.
+The production service is restored and relaunched without configuration and must
+not write. Mount closure, source/SD preservation and memory/storage output are
+recorded in `run.json`. XTest is test instrumentation, not a new runtime dependency;
+its existing installed library availability must be confirmed in that run.
+
+The repaired driver passed on the fresh installed ARM64 composition; see the
+[execution evidence and receipt](../features/h12-attended-sd-reimage/execution.md).
+It substitutes virtio storage and explicit file-fixture target admission for
+physical MMC identity; it cannot establish physical compatibility. Pending software acceptance is independent full-diff/hash verification. Current measured source/target, exact-operation review, attendance,
+physical full readback and observed manual normal boot remain coordinator-owned.

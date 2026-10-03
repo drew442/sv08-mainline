@@ -126,7 +126,15 @@ def packages(path):
     raise ValueError('Installed package closure manifest required')
 
 
+def reimage_inputs():
+    return {str(p.relative_to(REPO)): sha(p) for p in (
+        REPO/'runtime/sv08_sd_reimage.py', REPO/'runtime/sv08_sd_reimage_ui.py',
+        CONFIG/'sv08-recovery-display.service.d/reimage.conf')}
+
+
 def check_cache(record, source, manifest, additional, namespace):
+    if record.get('sd_reimage_inputs') != reimage_inputs():
+        raise ValueError('Reuse SD reimage runtime/drop-in bytes differ; rebuild userspace')
     if record.get('owner_namespace') != namespace:
         raise ValueError('Reuse package ownership namespace differs')
     if record['inputs'].get(str(source)) != SOURCE_SHA:
@@ -168,7 +176,8 @@ def compose(a):
         if path == work or work in path.parents or path in work.parents:
             raise ValueError('Input/output overlap')
     inputs = {str(p): sha(p) for p in (source, public, package_manifest, *closure,
-              Path(__file__), *sorted(CONFIG.iterdir()), REPO/'configs/host-os/recovery-init', REPO/'configs/host-os/recovery-board-root')}
+              Path(__file__), *[p for p in sorted(CONFIG.rglob('*')) if p.is_file()],
+              REPO/'runtime/sv08_sd_reimage.py', REPO/'runtime/sv08_sd_reimage_ui.py', REPO/'configs/host-os/recovery-init', REPO/'configs/host-os/recovery-board-root')}
     for path in [owner_mapping,*sudo_pam,*([additional] if additional else [])]:
         inputs[str(path)]=sha(path)
     if test_public:
@@ -282,6 +291,11 @@ def compose(a):
                 raise ValueError('Unsupported installed package node')
 
         measure()
+    if not reuse:
+        for name in ('sv08_sd_reimage.py', 'sv08_sd_reimage_ui.py'):
+            put(envelope/'usr/lib/sv08'/name, (REPO/'runtime'/name).read_text())
+    put(envelope/'etc/systemd/system/sv08-recovery-display.service.d/reimage.conf',
+        (CONFIG/'sv08-recovery-display.service.d/reimage.conf').read_text())
     group_path=envelope/'etc/group'
     group_lines=group_path.read_text().splitlines()
     for gid,item in namespace['groups'].items():
@@ -442,7 +456,7 @@ def compose(a):
     if any(sha(Path(path)) != digest for path,digest in payload_before.items()):
         raise ValueError('Installed payload changed during composition')
     record = dict(format_version=1, deployable=False, hardware_profile='test-sv08-01',
-                  physical_boot=False, source_preserved=True, peak_allocated_build_bytes=peak_allocated, inputs=inputs,
+                  physical_boot=False, sd_reimage_inputs=reimage_inputs(), transfer_buffer_bytes=1048576, source_preserved=True, peak_allocated_build_bytes=peak_allocated, inputs=inputs,
                   compression='zstd-level10' if not reuse else reuse_record.get('compression','xz'), usr_sha256=sha(compressed), reused_userspace=bool(reuse), root_sha256=sha(root), root_bytes=SIZE, root_partuuid=PARTUUID,
                   root_uuid=ROOT_UUID, root_index=2, manifest_sha256=binding,
                   boot_gate_sha256=hashlib.sha256(gate(config_digest,links_digest).encode()).hexdigest(),

@@ -54,9 +54,12 @@ class SDHost(unittest.TestCase):
             root=Path(temp);primary=root/'primary';primary.write_text('pinned')
             extra=root/'extra';extra.write_text('sudo')
             source=root/'source';namespace={'groups':{'0':{'name':'root'}}}
-            record={'owner_namespace':namespace,'additional_package_provenance':{'packages':['sudo']},
+            record={'sd_reimage_inputs':M.reimage_inputs(),'owner_namespace':namespace,'additional_package_provenance':{'packages':['sudo']},
                     'inputs':{str(source):M.SOURCE_SHA,str(primary):M.sha(primary),str(extra):M.sha(extra)}}
             M.check_cache(record,source,primary,extra,namespace)
+            changed = dict(record, sd_reimage_inputs={})
+            with self.assertRaisesRegex(ValueError,'runtime/drop-in bytes differ'):
+                M.check_cache(changed,source,primary,extra,namespace)
             with self.assertRaisesRegex(ValueError,'supplemental package presence'):
                 M.check_cache(record,source,primary,None,namespace)
             extra.write_text('changed')
