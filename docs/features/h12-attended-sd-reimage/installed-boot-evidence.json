@@ -1,0 +1,32 @@
+{
+  "observed_utc": "2026-10-03T06:32:36Z",
+  "outcome": "normal installed eMMC slot A boot and SSH passed",
+  "profile": "profiles/test-sv08-01/profile.json",
+  "board_revision": "H616_JC_6Z_V1.2 (owner-reported)",
+  "root_partuuid": "26c68198-9248-47af-bbd3-643f1b604ef5",
+  "root_read_only": true,
+  "data_mounted_read_write": true,
+  "root_media_type": "MMC",
+  "root_controller": "4022000.mmc",
+  "root_cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+  "sd_present": false,
+  "ssh_authenticated": true,
+  "kvm_debian_login": true,
+  "failed_systemd_units_at_observation": 0,
+  "relay_off_utc": "2026-10-03T06:30:50Z",
+  "relay_restore_utc": "2026-10-03T06:30:55Z",
+  "exact_action_review": "01a10074-58c1-7a51-a304-1141daa7fe92",
+  "limitations": [
+    "Diagnostic image; boot-health/RAUC and printer outputs remain masked",
+    "No printing, heater, motion, MCU or release qualification",
+    "No repeated resets: diagnostic slot attempts are finite",
+    "Session DPMS workaround is not persistent product policy"
+  ],
+  "raw_evidence_sha256": {
+    "installed-boot.txt": "a9c873c20cc939acdf901dcb3de4cae3c66d728434d592d1ad4ce7db84778fe0",
+    "cycle.txt": "4f26d3a4193fd42413365fe06a953b0abeb99e9ce4da52a2f9fa4f8beb8c3a1e",
+    "login.jpg": "acd55e6959a0e97ad54dec1495ee21ca6f6c4e43e76afd60e0649b8c4921e75c",
+    "review/result.md": "cf918022d80ce9553fa196542761d4beff56ee9478e5e3998dfdfc71aab5174b",
+    "review/runtime.json": "7326b8a35451548ccb286832912015136fb22850ddc5427285552a87f19e7165"
+  }
+}
