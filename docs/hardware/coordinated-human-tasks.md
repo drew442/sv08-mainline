@@ -30,8 +30,11 @@ inferred from a historical report. Inspect current state before acting.
 
 Active follow-up to completed H12: [bounded proposal](../features/commissioning-host-readiness/proposal.md).
 H02 supplies current physical facts and the two prepared/reviewed normal and HW-667
-boot observations; H04 supplies a private owner password step and authenticated
-Cockpit login after the TLS repair is installed. H05 supplies both MCU availability
+boot observations. The owner confirmed this setup unchanged on October 3: PSU
+off, USB through HW-667, Ethernet, spare eMMC installed, SD removed, factory module
+stored, no new irreplaceable spare data. H04 no longer needs an owner terminal:
+[the owner requested a coordinator-set simple password](../features/commissioning-host-readiness/owner-access-amendment.md),
+and the coordinator will test authenticated Cockpit after the TLS repair. H05 supplies both MCU availability
 and identity for a no-output version reconciliation; sensor accuracy and physical
 input operation follow separately. These are pending coordination items, not an
 instruction to power the PSU, move media or reboot now. Coordinator prepares the
