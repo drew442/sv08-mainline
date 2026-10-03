@@ -137,10 +137,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "cbc26c5d174c4441ba5ab3eabd426324",
+        "session": "commissioning-host-f1-20261003"
+      },
       "repeats": 0,
       "resumption": "Independent F1 reproduction proves historical GPT inspector omits disk_guid. Repair caller within owned helper, preserve exact historical dependency and GUID/CRC checks, and exercise positive/wrong-GUID paths against actual historical closure.",
-      "status": "pending",
+      "status": "running",
       "title": "Deliver software commissioning host readiness",
       "verification": null
     },
