@@ -53,3 +53,21 @@ explicit per-worker scratch; preserved prior artifacts are not cleanup targets.
 Physical-power-loss, actual authenticated installed-service and factory-image-fit
 claims must remain at their supported evidence levels. Offline fixtures cannot
 establish a release or printer result. Printer remains on the completed H12 boot.
+
+## Reconciliation approved — 2026-10-03
+
+Independent approver session `01a1008d-187a-7ab0-9015-2c8563f956d2` approved the
+technical fence amendment with thirteen explicit constraints. Coordinator verified
+actual GPT-6.1 Sol/medium and full role loading. The prior approval is preserved;
+record.json carries the current decision. All seven checks and numeric bounds
+remain. The exact paired-lock exception, old public entrypoint boundary, admitted
+legacy waiters and relationship-preserving export/readback are explicitly reviewed.
+
+One implementer owns the original runtime/UI/staging paths plus narrowly necessary
+sv08_admin_upload.py, sv08_state.py, sv08_staging.py, sv08_export.py and new
+sv08_admin_history.py/sv08_data_budget.py. Assembly scripts may change only for
+necessary matching-runtime or preservation integration. Associated existing tests,
+focused new history/budget tests, browser fixtures, storage-format.md and execution.md
+are assigned in the durable worker packet. Proposal, record, this plan, shared
+goals and publication remain coordinator-owned. No signed-policy or boot-health
+change is authorized. The accepted decision governs if earlier draft prose differs.
