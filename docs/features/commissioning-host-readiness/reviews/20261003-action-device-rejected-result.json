@@ -1,0 +1,122 @@
+{
+  "outcome": "FAIL",
+  "status": "done",
+  "role": "high_consequence_reviewer_high / fresh full-role CLI fallback",
+  "candidate": "7df21f8d2aa9e164be8474e270f1c412a45810b1",
+  "base": "0f563c7a5dfefe56f614281ec1c5b0dd18bdc318",
+  "scope": "exact three-file stable-device reconciliation, one corrected same-boot helper invocation, conditional one additional normal restart and one HW667 cycle",
+  "runtime": {
+    "session": "01a10203-3d8c-77c3-970b-c4c11799f98b",
+    "full_role_loaded": true,
+    "runtime": {
+      "model": "gpt-6.1-sol",
+      "effort": "high",
+      "approval_policy": "never",
+      "sandbox_policy": {
+        "type": "danger-full-access"
+      }
+    }
+  },
+  "software_review": "PENDING; independent high acceptance of exact candidate mandatory before action",
+  "bindings": {
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device.py": "ac57faa71156a73e1cc95ebcec55a766840da5f3fa6895d6fb533775e55cd46d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device-packet.json": "a9e94eef4bf2babb20be3875254f4c2454b13fd058873c286ea234f794d094b8",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device-plan.md": "8c2c4e2d45b50266dfd849d22c3e5d8950bdbed46fbfa01a9e31f677b64d05af",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/device-repair-preimages.json": "8fc943c3a873e2012d7af181b2ecfaa802d970b8b04d86038d0d5202c2161c4e",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/device-readonly-candidate-probe.txt": "8ed2a0ea84917dc86b03ab18f4a1179300fd8487e6a2f7c4d8bc6e16730b8af6",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/device-reconcile-preflight.txt": "b0209ed87492f3000aa2b29854cd0fb8190ba7fc7655607399d8462ed9982108",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/normal-restart-observed-v2.json": "ba2f4583a3ab938889e7b08571df05242a674d50a8d2bdd2b7e810a884c0a2b8",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/normal-restart-diagnosis.txt": "f22ca1079affa662afe93442f5c8402e57c1348e63133d696c5d124901e9f98a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/renumbered-disk.json": "fc9eb3e8522a38c8f7389c1328a6490250d670e1af1fb21ac01190e29fa882dc",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/cid-file-digests.json": "eacf23a816c9daaf10da2d700d7c4404d140b944a8ddec500099945537214c74",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/observe-host-v2.py": "7b81d2ad313422c23b95819b720872a813dcbd363858bf42ab20bfa9eaa0155a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/await-boot-v2.py": "fdceecc173dbb82aa2a3c00286cda468c56b37e6219b1fd883a20f6b73314026",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/browser-check-v2.mjs": "4978a2619de5d29ab94e297310e240760a443760d743c3e604720aeb08902735",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/sv08-commissioning-relay.service": "280c4d4731178e702ea6d83c9cc8bca1b31851e0d10c0417a08ca79225bb33c0",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/relay-effective-prepared.txt": "86ef6ba6814d11819a498686e7379399e341708aef0c2a9d42abc1b512bbcffc",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/corrected-initial-observation.json": "e264e7c7c622a8f0a5022e1d6503b10b406a6cf9f8db34cb9a3dc00a02c1d8e9",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-env.py": "50a9c8a6accd312fa3964237f27abbf0229713ef06f42ff330e40a5ac82c506e",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-packet.json": "c38368f7efd570649f2a3c9db5536418ebcc9c4a16e1f7ab6ef272433e69265a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-plan.md": "060ce461fa8196b6fe774567a842bd97eccc29bedff7caac6a7272d7bf9e185d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-env/review.md": "f7310d239b5ffa72d1521000356def9e9a2ebbcd4be647509368764bb047ecbe",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-env/result.json": "5d702bed43ab3c8c922ea65e5afe7d8457175ced9e9b0327db3ed8456d2f5caf",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-review/review.md": "d5233faaaae7ee2ada016e118dd610b0abd8ca64a8fcbb961677825d49ada4bd",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-review/bindings.json": "7e0d9d5d822234c51883f3450a4265039f8448963998af923e05303e9c79903d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/physical-facts.json": "21d8b0f184eb3b8f181bdd5c6f43b978353cc98678f43328aff3870e3024606d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/untouched-partitions-before.txt": "0e249e59f790ec133b4eb643274c4f02abad8770725ad8bfcc895861ad411be7",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device/packet.md": "32b591d49cfbe6839a3aeac959b6d3d85c6a15c8718bf3512e169ce36efd4c8f",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device/runtime.json": "76ff8825e94c933a75c9155e92559cd05a83955b54a068bd13ecef454ed506fe",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device/bindings.json": "3272e8c76c48a2ffb94463c37dc25927081f11012e080120b4ba4128aeea08ac",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/AGENTS.md": "d9762f88bd3dbe299594d1d474e95260e8ef9f9cb2ab58cf5d3e476f62972c70",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/.codex/agent-guide.md": "24cd52b3bb587b428927d7c022bd002c47ce2dfe3f8e2723e164b6a8f239d08b",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/.codex/agents/high-consequence-reviewer-high.toml": "f010ca7d878499e95c84bcc4f4322479e62b1bf19ba154481e597580dc639bb1",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/configs/host-os/commissioning/sv08-commissioning-health.service": "bd65ba16c41e05424630d4c622944ee4f635d683154c924d61f7bcdccfd4b2a6",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/docs/features/commissioning-host-readiness/software-contract.md": "6bcb96815fa61e402bde6d5e87d1a28daf0936973bc7f810c9fd8ca9e1a7855c",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/docs/features/commissioning-host-readiness/stable-device-repair.md": "ba94cf454dfd0a96496a2bdf0a15fe0529e692ccbe55b7bf1d440fad77de5281",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/docs/features/commissioning-host-readiness/proposal.md": "3ee3970d558fb69870693ad2a8984db0456499f41ff606b25210b49969269585",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/docs/features/commissioning-host-readiness/owner-access-amendment.md": "7a87f8095cb3946ced96176e213baa20e6f5f94024ae45bcae92012de0e0425a",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/docs/features/commissioning-host-readiness/reviews/20261003-installed-action-review.md": "d5233faaaae7ee2ada016e118dd610b0abd8ca64a8fcbb961677825d49ada4bd"
+  },
+  "payload_hashes": {
+    "/etc/sv08/commissioning-fw_env.config": "5617a0a595efdba99a8141389cf2781c304dcb004ddb2cb9bcecffb118020188",
+    "/etc/sv08/commissioning-target.json": "0c8cb07cf484d22f3f67472f163dc699cd7c52c0068bc8ca2e66a272c867e166",
+    "/usr/lib/sv08/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8"
+  },
+  "review_sha256": "0a7286f9255b6a8f5733708a5a1d1e428f8df610fcdf16994273539aee4f015e",
+  "static_audit_sha256": "37229306ec2826232df4360427f3977ffff2d073e516523270c35dee835a4d9a",
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "blocking",
+      "path": "deployment/observe-host-v2.py",
+      "line": 14,
+      "sha256": "7b81d2ad313422c23b95819b720872a813dcbd363858bf42ab20bfa9eaa0155a",
+      "text": "Invalid assert assignment prevents observer execution; next line CID comparison is unenforced. await-boot-v2 invokes this source, preventing required post-boot acceptance.",
+      "required_action": "Coordinator repair observer checks, parse and exercise read-only acceptance path; bind producing source to existing observation; preserve failed packet; submit corrected exact action for high review before any operation."
+    }
+  ],
+  "conditions": [
+    "No operation on this failed packet.",
+    "Independent high software acceptance remains mandatory.",
+    "Fresh exact target/tool/GPT/mask/idle/preimage/bank/capacity/physical-setup evidence required.",
+    "One reconciliation with exact complete readback, then one corrected helper invocation only after reviews pass.",
+    "Partial/unknown/failure stops without retry/reboot; preserve records and independently restore root ro.",
+    "One additional healthy normal restart then one conditional HW667 cycle; actual access/public identity/persistence and B/recovery/GPT comparisons mandatory."
+  ],
+  "evidence": {
+    "static_checks_passed": 37,
+    "static_checks_total": 40,
+    "audit_checker_correction": "preimages check omitted actual uid/bytes fields; primary manual comparison confirms packet/capture all four fields agree; original audit retained",
+    "hardware_execution": false,
+    "network": false,
+    "installed_success_certified": false,
+    "current_boot": "20159059-9edd-46dc-bc10-6598951b3ef6",
+    "earlier_normal_restart_healthy": false
+  },
+  "unresolved_high_risk_issues": [
+    "F1: required exact post-action observer is not executable; failed criterion cannot be waived."
+  ],
+  "limitations": [
+    "Runtime effective settings coordinator-verified; durable supplied runtime receipt inspected.",
+    "Actual operation and new boots unmeasured; no owner/hardware authority granted.",
+    "No PSU-on/MCU/output/heat/motion/kernel/DT/bootloader or release scope."
+  ],
+  "usage": {
+    "primary_allowance_seconds": 480,
+    "primary_elapsed_seconds": "not instrumented from launch; bounded source-review session",
+    "auxiliary_runs_used": 1,
+    "auxiliary_limit_runs": 1,
+    "auxiliary_elapsed_seconds": 0.013742990093305707,
+    "auxiliary_limit_seconds": 60,
+    "generated_limit_bytes": 16777216,
+    "QEMU_used": false,
+    "TMPDIR_used": false,
+    "generated_bytes_before_result": 21475
+  },
+  "changed_paths": [
+    "action-device/static-audit.json",
+    "action-device/review.md",
+    "action-device/result.json"
+  ]
+}
