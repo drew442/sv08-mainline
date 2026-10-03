@@ -214,7 +214,7 @@ def historical_health_fixture(root, h):
         if str(path).startswith(('/run/sv08', '/usr/lib/sv08')) or str(path) == '/etc/rauc/system.conf':
             return False
         return actual_present(path)
-    for case in (1, 2, 3, 'tool-extra', 'tool-missing', 'tool-space', 'stale-copy', 'preserved-mutation', 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk', 'cid', 'controller', 'parent', 'whole-partition', 'alias-change', 'renumbered'):
+    for case in (1, 2, 3, 'tool-extra', 'tool-missing', 'tool-space', 'stale-copy', 'preserved-mutation', 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk', 'cid', 'controller', 'parent', 'whole-partition', 'alias-change', 'alias-in-probe', 'alias-postwrite', 'renumbered'):
         if case == 'renumbered':
             new_disk = root/'mmcblk1'; disk.rename(new_disk); disk = new_disk; alias_target[0] = disk
             new_sysfs = controller/'mmc_host/mmc1/mmc1:0001/block/mmcblk1'
@@ -251,6 +251,7 @@ def historical_health_fixture(root, h):
                 if case == 'tool-extra': values['unexpected'] = 'synthetic'
                 if case == 'tool-missing': del values['new_only']
                 if case == 'tool-space': values['spaces'] = values['spaces'].strip()
+                if case == 'alias-in-probe': retarget_valid_device()
                 return '\n'.join(key+'='+value for key, value in values.items())
             check.assertEqual(args, ['/usr/bin/fw_setenv', '-c', str(rt.fw_config), 'BOOT_A_LEFT', '3'])
             writes.append(args)
@@ -260,6 +261,7 @@ def historical_health_fixture(root, h):
             with disk.open('r+b') as stream:
                 for (offset, _), data in zip(h.REGIONS, images):
                     stream.seek(offset); stream.write(data)
+            if case == 'alias-postwrite': retarget_valid_device()
             return ''
         corrupt_offset = {'primary-crc':512+56, 'backup-crc':size-512+56,
                           'array-crc':4096*512, 'backup-array-crc':size-512-16384}.get(case)
@@ -277,15 +279,17 @@ def historical_health_fixture(root, h):
         original_parent = sysfs/'p2'
         if case == 'parent': original_parent.rename(controller/'p2')
         if case == 'whole-partition': (sysfs/'partition').write_text('1')
+        def retarget_valid_device():
+            # The alternate passes every whole-device/GPT/controller/CID/mount check.
+            alternate = root/'alternate'; alternate.write_bytes(disk.read_bytes())
+            alias_target[0] = alternate
+            check.assertEqual(rt.devices(manifest)['path'], str(alternate))
         def sleep(seconds):
             clock[0] += seconds
-            if case == 'alias-change':
-                # Same bytes/rdev/controller, different resolved path is still refused.
-                alternate = root/'alternate'; alternate.write_bytes(disk.read_bytes())
-                alias_target[0] = alternate
+            if case == 'alias-change': retarget_valid_device()
         try:
             with patch.object(Path, 'stat', disk_stat), \
-                 patch.object(Path, 'lstat', lambda path,*a,**k: disk_stat(path) if path==disk else actual_lstat(path,*a,**k)), \
+                 patch.object(Path, 'lstat', lambda path,*a,**k: disk_stat(path) if path in (disk, root/'alternate') else actual_lstat(path,*a,**k)), \
                  patch.object(Path, 'resolve', resolve), patch.object(Path, 'read_text', read), \
                  patch.object(Path, 'is_symlink', lambda path: True if str(path).startswith('/etc/systemd/system/') else actual_link(path)), \
                  patch.object(h.os, 'readlink', return_value='/dev/null'), \
@@ -301,9 +305,17 @@ def historical_health_fixture(root, h):
                     if case == 3: check.assertEqual(tuple(images), before_images)
                     else: h.verify_readback(before_images, tuple(images), h.bank(images[0])[1])
                 else:
-                    with check.assertRaisesRegex(ValueError, 'GPT|disk identity|Mount|logical values|other variables|older bank|identity'):
+                    expected = {'alias-change': 'Health/identity/environment changed during stable window',
+                                'alias-in-probe': 'Device identity changed during environment probe',
+                                'alias-postwrite': 'Identity changed after mutation'}.get(case,
+                                    'GPT|disk identity|Mount|logical values|other variables|older bank|identity')
+                    with check.assertRaisesRegex(ValueError, expected):
                         h.run(rt, nullcontext, nullcontext, sleep=sleep)
-                    check.assertEqual(len(writes), int(case in ('stale-copy', 'preserved-mutation')))
+                    check.assertEqual(len(writes), int(case in ('stale-copy', 'preserved-mutation', 'alias-postwrite')))
+                    if case in ('alias-change', 'alias-in-probe', 'alias-postwrite'):
+                        with check.assertRaisesRegex(ValueError, 'Same-boot record exists'):
+                            h.run(rt, nullcontext, nullcontext, sleep=sleep)
+                        check.assertEqual(len(writes), int(case == 'alias-postwrite'))
                     if not writes: check.assertEqual(tuple(images), before_images)
                 record = actual_json(rt.store.root/'shared/logs/journal/commissioning-health'/ (BOOT_ID+'.json'))
                 check.assertEqual(record['status'], ('success-noop' if case==3 else 'success')
