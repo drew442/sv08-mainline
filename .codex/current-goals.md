@@ -1,19 +1,25 @@
 # Current delivery goals
 
-## Active goal — finite image-job history, 2026-10-03
+## Completed goal — finite image-job history, 2026-10-03
 
-Complete the next approved delivery, `host-image-history-rollover:finite-history`.
-The browser must review and apply archival maintenance for a settled 128-job
-batch, preserve complete receipts, unknown dispositions and retry identities,
-and admit a separately reviewed new job. Keep the approved finite storage and
-shared-data limits. Complete all seven acceptance checks and fresh independent
-high-effort verification, then merge and push main and WIP.
+Completed `host-image-history-rollover:finite-history`. Explicit browser
+review/apply/cancel maintenance archives settled 128-job batches while preserving
+complete receipts, unknown dispositions and retry identities. New work requires
+its own review. Capacity remains finite: eight archives plus one active batch,
+1,152 retained identities, with the approved storage and shared-data reserves.
 
-The compatibility and allocation design passed independent approval. One active
-implementer owns the integrated runtime, browser and test changes on
-`feature/host-image-history-rollover`. All seven checks and thirteen review
-constraints remain required before fresh independent delivery verification.
-No printer operation or release qualification is required for this goal.
+All seven acceptance checks and thirteen review constraints passed fresh
+independent GPT-6.1 Sol/high verification. The first review found four defects;
+all were repaired before acceptance. The final regression passed 310 tests.
+Reviewed candidate `f77de7859aad88cf4eecd84207c8fadd79f004ea` was merged into main;
+the dispatcher records the task complete and WIP includes the delivery.
+All commits are published under the owner's standing push authorization.
+
+See the [final independent review](../docs/features/host-image-history-rollover/reviews/20261003-final-findings.md)
+and [source-bound repair evidence](../docs/features/host-image-history-rollover/repair-execution.md).
+This completes the approved offline delivery. Current authenticated installation,
+physical power-loss recovery, factory-image fit and release qualification remain
+unproven. No printer operation was performed for this goal.
 
 ## Completed goal — H12
 
