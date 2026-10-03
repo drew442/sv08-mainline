@@ -264,7 +264,14 @@
       "resumption": null,
       "status": "review",
       "title": "Deliver independently verified attended SD maintenance",
-      "verification": null
+      "verification": {
+        "decision_sha256": "3753981dfb22ab49c9cd7dc03c7a11ecad0c13af0f4dd7910e4c47d3bf99135a",
+        "evidence_sha256": "42984a7dd845a015503ba60e7ee0fee10fd9d722fe1259d72be089a19bc50bf0",
+        "outcome": "passed",
+        "rationale": "Passed for h12-attended-sd-reimage:implement's five offline checks only. Reviewed the complete base5834dd41431b6e5abaf9ea66ee87e79421c446b1-to-b4cd612cea1a939d4db1b60482272d2b33122e55 diff, including coordinator bookkeeping; candidate remains clean, with no mode changes, deletions or gitlink changes. Verified complete decision, proposal, requirements and scope hashes, submitted evidence/document/source hashes, and correspondence between installed receipts and unchanged runtime/driver revisions. Admission binds held descriptors to controller/CID/dev_t and rechecks after Yes. Native confirmation defaults to No; cancellation, duplicate prevention, transfer hashing, short writes, flush/cache/full readback and failure handling satisfy the approved constraints. Eighteen focused backend/composer tests independently passed; inspected retained eight-case installed ARM64 GTK evidence and actual resulting-byte checks. Composition binds runtime/drop-in bytes, rejects stale cache and retains capacity, resource bounds, pins and service masks. Documentation paths, JSON/Python syntax and workflow validation passed. Installed evidence uses Debian/virtio and explicit regular-file fixtures; it does not establish physical MMC admission, block-cache durability, touch compatibility or release readiness. Session and physical acceptance remain pending, including exact-operation review, attended write/readback and observed manual normal boot. No candidate repairs, network or hardware access, private artifact inspection or publication performed.",
+        "reviewer": "feature_verifier_high \u2014 independent separate-session fallback",
+        "session": "h12-sd-delivery-independent-20261003"
+      }
     },
     {
       "blocker": null,
