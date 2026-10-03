@@ -177,7 +177,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Reviewed all seven checks and thirteen constraints at clean submitted HEAD 2995232441f4f0d6c95f5784817195238b1521e7, including the complete 60-path run-base diff and metadata. Approval/scope, all 72 unique submitted hashes, author/input/raw-evidence hashes, all 35 staged hashes and indexed upstream pins agree. Failed: F1 normal boot changes /data/sv08 to 0711, but Budget.locked requires its installed allocation root to be exactly 0700; history writes, uploads and new generation copies therefore refuse on the actual post-boot path omitted by 0700 fixtures. F2 an independent isolated probe removed only legacy jobs.json from a valid export while preserving its inventory: restore_history published empty history and public submit accepted a new identity, violating complete preservation and missing-manifest refusal. F3 an independent public-submit probe injected a post-replace manifest-directory-fsync failure: identical retry returned queued with zero fsync/recovery calls, acknowledging an unsettled commit. F4 source tracing shows restore uses unbounded standard tar metadata parsing before its size/sparse checks, bypassing existing bounded readback protections. See findings.md for source locations, reproductions, all constraint dispositions and smallest continuation. Supplied offline crash/concurrency/browser evidence is credible within its stated fixtures but does not cover these defects. Current browser is shim transport with a separate real worker; historical authenticated/service evidence remains at 7ae091807a0177639cb0d1ddc9e33f8e70f9ca08. No current authenticated installation, physical-power-loss, factory-fit, hardware or release acceptance. Two bounded auxiliary probes used; candidate untouched. Return to coordinator for bounded repair/evidence and fresh independent high review; no requirement waived.",
       "checks": [
         "pressure-journey",
         "identity",
@@ -737,11 +737,18 @@
         "run": "38d4f8e9c4514151a0767c1a7802162e",
         "session": "history-rollover-implementation-20261003"
       },
-      "repeats": 0,
+      "repeats": 1,
       "resumption": null,
-      "status": "review",
+      "status": "blocked",
       "title": "Deliver independently verified finite rollover maintenance journey",
-      "verification": null
+      "verification": {
+        "decision_sha256": "7636a967a4e0c4443e42210193e40fe3a8b89200c92f2c34a5ac2dfa517c99f3",
+        "evidence_sha256": "70bad52de63043f4973b787412a2b98954edfb3d1a2befff1005e55e0d235524",
+        "outcome": "failed",
+        "rationale": "Reviewed all seven checks and thirteen constraints at clean submitted HEAD 2995232441f4f0d6c95f5784817195238b1521e7, including the complete 60-path run-base diff and metadata. Approval/scope, all 72 unique submitted hashes, author/input/raw-evidence hashes, all 35 staged hashes and indexed upstream pins agree. Failed: F1 normal boot changes /data/sv08 to 0711, but Budget.locked requires its installed allocation root to be exactly 0700; history writes, uploads and new generation copies therefore refuse on the actual post-boot path omitted by 0700 fixtures. F2 an independent isolated probe removed only legacy jobs.json from a valid export while preserving its inventory: restore_history published empty history and public submit accepted a new identity, violating complete preservation and missing-manifest refusal. F3 an independent public-submit probe injected a post-replace manifest-directory-fsync failure: identical retry returned queued with zero fsync/recovery calls, acknowledging an unsettled commit. F4 source tracing shows restore uses unbounded standard tar metadata parsing before its size/sparse checks, bypassing existing bounded readback protections. See findings.md for source locations, reproductions, all constraint dispositions and smallest continuation. Supplied offline crash/concurrency/browser evidence is credible within its stated fixtures but does not cover these defects. Current browser is shim transport with a separate real worker; historical authenticated/service evidence remains at 7ae091807a0177639cb0d1ddc9e33f8e70f9ca08. No current authenticated installation, physical-power-loss, factory-fit, hardware or release acceptance. Two bounded auxiliary probes used; candidate untouched. Return to coordinator for bounded repair/evidence and fresh independent high review; no requirement waived.",
+        "reviewer": "feature_verifier_high; independent full-role CLI; supplied runtime observation GPT-6.1 Sol/high, full access/never",
+        "session": "01a100d5-f13d-7451-9ad9-b768000eb5a3"
+      }
     }
   ],
   "title": "Preserve finite image job history while admitting another reviewed job"
