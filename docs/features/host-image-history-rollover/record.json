@@ -755,7 +755,14 @@
       "resumption": "Repair independent findings F1-F4: actual boot permissions, complete bounded restore, durable public retries; preserve first candidate and obtain fresh high verification.",
       "status": "review",
       "title": "Deliver independently verified finite rollover maintenance journey",
-      "verification": null
+      "verification": {
+        "decision_sha256": "7636a967a4e0c4443e42210193e40fe3a8b89200c92f2c34a5ac2dfa517c99f3",
+        "evidence_sha256": "a719dfe07d66b9e5b4834ddcfcc9ff6740f736634200f385cf1b1e0f57aa31da",
+        "outcome": "passed",
+        "rationale": "Approved offline delivery is satisfied at clean HEAD f77de7859aad88cf4eecd84207c8fadd79f004ea. Reviewed the entire 81-path diff from recorded base 9905f2b0950be07b6db3f296df8237aa051e0522, all seven checks and thirteen constraints, corrected public entrypoints, consumer paths, failure recovery, documentation and provenance. All submitted document/source/proposal/requirement hashes and scope binding match; all 35 staged hashes match. Independently reproduced 23 focused tests, including F1-F4, finite capacity and old/new allocator/waiter paths; ten additional restore interruption/relationship cases refused or retained a complete durability-gated view. Source-bound 310-test and native Chromium evidence supports the remaining approved checks. No material unmet offline acceptance identified. Ext4 evidence is reused only for unchanged allocation/encoding; historical service evidence stays at its original revision. This does not establish current authenticated installation/systemd, hardware support, physical power-loss recovery, factory-image fit or release acceptance. Author cumulative generated-write accounting remains unknown and is distinct from measured product bounds. See findings.md for the full mapping, probe accounting and the preserved invalid post-cleanup diagnostic field.",
+        "reviewer": "feature_verifier_high / GPT-6.1 Sol high / fresh independent full-delivery review",
+        "session": "01a10105-4f2e-7ed1-a08d-5628e498c599"
+      }
     }
   ],
   "title": "Preserve finite image job history while admitting another reviewed job"
