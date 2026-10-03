@@ -1,0 +1,17 @@
+[
+  {
+    "check": "stable-device-repair",
+    "environment": "offline",
+    "source_commit": "195dce6e0c67fa9beec3de0a45308e54abf4f46b",
+    "document": "docs/features/commissioning-host-readiness/stable-device-repair.md",
+    "document_sha256": "055955a4984bf4436da5d715dbee6bc692247f22a1b03b45b916992c88c325cc",
+    "source_sha256": {
+      "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+      "tests/test_commissioning_host.py": "13028c71dde10563eaee87b7cfa0a90541baa3c3db4458a3147cadfdab7f1c24",
+      "docs/features/commissioning-host-readiness/software-contract.md": "6bcb96815fa61e402bde6d5e87d1a28daf0936973bc7f810c9fd8ca9e1a7855c",
+      "docs/features/commissioning-host-readiness/stable-device-repair.md": "055955a4984bf4436da5d715dbee6bc692247f22a1b03b45b916992c88c325cc"
+    },
+    "method": "Full historical path with valid-device pre/during/postwrite retarget refusals and renumbering;17passes/1opt-in skip; unchanged real ARM64 alias18case evidence reused",
+    "limitations": "No physical boot/MCU/release acceptance; supplemental actual read-only devices/environment only"
+  }
+]

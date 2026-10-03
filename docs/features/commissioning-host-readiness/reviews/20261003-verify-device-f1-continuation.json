@@ -1,0 +1,7 @@
+{
+  "reason": "outer launcher timeout before formal result",
+  "prior_process_limit_seconds": 300,
+  "additional_primary_seconds": 180,
+  "additional_diagnostic_runs": 0,
+  "source_unchanged": true
+}

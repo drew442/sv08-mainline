@@ -1,0 +1,135 @@
+{
+  "outcome": "PASS WITH CONDITIONS",
+  "status": "done",
+  "role": "high_consequence_reviewer_high / resumed full-role CLI fallback",
+  "candidate": "195dce6e0c67fa9beec3de0a45308e54abf4f46b",
+  "base": "0f563c7a5dfefe56f614281ec1c5b0dd18bdc318",
+  "scope": "exact three-file stable-device reconciliation, one corrected same-boot helper invocation, conditional one additional normal restart and one HW667 cycle",
+  "prior_verdict": "FAIL preserved in action-device; this is one authorized F1 correction",
+  "runtime": {
+    "session": "01a10203-3d8c-77c3-970b-c4c11799f98b",
+    "full_role_loaded": true,
+    "runtime": {
+      "model": "gpt-6.1-sol",
+      "effort": "high",
+      "approval_policy": "never",
+      "sandbox_policy": {
+        "type": "danger-full-access"
+      }
+    },
+    "resumed": true
+  },
+  "software_review": "PENDING; exact independent high software acceptance mandatory before any operation",
+  "bindings": {
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device/review.md": "0a7286f9255b6a8f5733708a5a1d1e428f8df610fcdf16994273539aee4f015e",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device/result.json": "6ba2f5ca1e7f971209d33974169da8863503645dc62ecec9694f775f964f8034",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device/static-audit.json": "37229306ec2826232df4360427f3977ffff2d073e516523270c35dee835a4d9a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device-f1/packet.md": "c1d8f003ace95da4431a86cadd50ce3e4385450aac7704b619398e662c081738",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device.py": "ac57faa71156a73e1cc95ebcec55a766840da5f3fa6895d6fb533775e55cd46d",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device-packet.json": "a9e94eef4bf2babb20be3875254f4c2454b13fd058873c286ea234f794d094b8",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device-plan-v2.md": "f555c112b59b1c80fb9530f61f5cecd1707ee51d9890b73c9d07b0bf92ed42b8",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/observe-host-v3.py": "1b035a6024a24fcf882a457d8914299fcb35f0769c2ce7f68838ff49ce29185b",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/await-boot-v3.py": "3cb46c8464f5a3b2529c5387f2ef8d9579fc281082c7ff21fbbb7174863d997b",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/normal-restart-observed-v3.json": "4181f8d095f4c91de2305018153169337177f55234906fdbdc2850fff05eb98a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/observer-v3-live-receipt.json": "5a57d2349b8ce98149571bf3eb4130954c506c1bd7012bf8e4a76043682fc711",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/await-v3-synthetic-check.json": "8769197c49ecfdf5fbb3818f7c65d189893d1332dbe1dcb242b35957db9fc766",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/reconcile-device-plan.md": "8c2c4e2d45b50266dfd849d22c3e5d8950bdbed46fbfa01a9e31f677b64d05af",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/observe-host-v2.py": "7b81d2ad313422c23b95819b720872a813dcbd363858bf42ab20bfa9eaa0155a",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/await-boot-v2.py": "fdceecc173dbb82aa2a3c00286cda468c56b37e6219b1fd883a20f6b73314026",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/normal-restart-observed-v2.json": "ba2f4583a3ab938889e7b08571df05242a674d50a8d2bdd2b7e810a884c0a2b8",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/relay-effective-prepared.txt": "86ef6ba6814d11819a498686e7379399e341708aef0c2a9d42abc1b512bbcffc",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/deployment/sv08-commissioning-relay.service": "280c4d4731178e702ea6d83c9cc8bca1b31851e0d10c0417a08ca79225bb33c0",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/AGENTS.md": "d9762f88bd3dbe299594d1d474e95260e8ef9f9cb2ab58cf5d3e476f62972c70",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/.codex/agent-guide.md": "24cd52b3bb587b428927d7c022bd002c47ce2dfe3f8e2723e164b6a8f239d08b",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/.codex/agents/high-consequence-reviewer-high.toml": "f010ca7d878499e95c84bcc4f4322479e62b1bf19ba154481e597580dc639bb1",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/tests/test_commissioning_host.py": "13028c71dde10563eaee87b7cfa0a90541baa3c3db4458a3147cadfdab7f1c24",
+    "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-stable-device/docs/features/commissioning-host-readiness/stable-device-repair.md": "055955a4984bf4436da5d715dbee6bc692247f22a1b03b45b916992c88c325cc",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/commissioning-host-20261003/action-device-f1/runtime.json": "a0677aff5977c5c9ed1e4da84025f25db213e63ba8bdb732086a45181288ed13"
+  },
+  "payload_hashes": {
+    "/etc/sv08/commissioning-fw_env.config": "5617a0a595efdba99a8141389cf2781c304dcb004ddb2cb9bcecffb118020188",
+    "/etc/sv08/commissioning-target.json": "0c8cb07cf484d22f3f67472f163dc699cd7c52c0068bc8ca2e66a272c867e166",
+    "/usr/lib/sv08/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8"
+  },
+  "prior_result_sha256": "6ba2f5ca1e7f971209d33974169da8863503645dc62ecec9694f775f964f8034",
+  "review_sha256": "8d8000b4df01327ec15b50db67d2e9656bab5bddbd73a3475016aa9f2379d344",
+  "focused_audit_sha256": "3eaaf29ddc2fed08eb038ab00ad2a535725e7e83b982390d64d442ba44aa6ce7",
+  "findings": [
+    {
+      "id": "F1",
+      "status": "resolved",
+      "evidence": "Both v3 scripts AST parse; explicit CID assert and observed_disk; exact-hash coordinator live observation and five-case synthetic receipt; broken source/original FAIL preserved."
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C1",
+      "text": "Record resumed high/fullrole runtime and this review; pending fresh independent high software acceptance must pass before action."
+    },
+    {
+      "id": "C2",
+      "text": "Fresh exact hashes/current boot/identity/GPT/tools/preimages/banks/masks/idle/capacity/unchanged owner setup."
+    },
+    {
+      "id": "C3",
+      "text": "One reconciliation, complete exact beforeimage/archive/resolution/files/root-ro readback and unchanged banks; partial/unknown stops, no replay/raw rollback."
+    },
+    {
+      "id": "C4",
+      "text": "One helper invocation; sameboot success/A3B0/CRCs/original selected bank preserved/noncounter values unchanged/no readiness; failure stops without retry/reboot."
+    },
+    {
+      "id": "C5",
+      "text": "One additional healthy normal restart then one conditional cycle; distinct boot IDs within120s/all state/access/public identity/persistence checks; coordinator independently enforces predicates beyond waiter."
+    },
+    {
+      "id": "C6",
+      "text": "Fresh relay hash/topology/idle/PSUoff/effective Type=exec20s3s/noRestart/restore; sole five-second cycle, no repeats; recovery on failed control/return."
+    },
+    {
+      "id": "C7",
+      "text": "Final original full B/recovery hashes and GPT; no expansion of authority or PSUon/MCU/output/heatmotion/kernelDTbootloader/release scope."
+    }
+  ],
+  "evidence": {
+    "valid_static_checks_passed": 21,
+    "valid_static_checks_total": 21,
+    "raw_audit_passed": 25,
+    "raw_audit_total": 26,
+    "supplemental_execution_results": "All five DISCARDED: reviewer mock used wrong remote SSH argv shape. No independent waiter executable rerun achieved; supplied source-bound five-case receipt used with source inspection.",
+    "hardware_execution": false,
+    "network": false,
+    "installed_success_certified": false
+  },
+  "usage": {
+    "primary_allowance_seconds": 240,
+    "primary_elapsed_seconds": "not instrumented from resumed launch; bounded source review",
+    "primary_retained_limit_bytes": 33554432,
+    "auxiliary": {
+      "runs_this_turn": 1,
+      "prior_runs": 1,
+      "prior_seconds": 0.013742990093305707,
+      "seconds_this_turn": 0.012732057017274201,
+      "limit_this_turn_seconds": 60,
+      "limit_cumulative_seconds": 60.014,
+      "cumulative_seconds": 0.026475047110579908
+    },
+    "effective_focused_followup_limit_seconds": 60,
+    "effective_focused_followup_generated_limit_bytes": 16777216,
+    "larger_fixture_allowance_unused": true,
+    "generated_bytes_before_result": 16453
+  },
+  "unresolved_high_risk_issues": [],
+  "limitations": [
+    "Pending software acceptance and fresh operational observations are mandatory action gates.",
+    "Runtime receipt coordinator-supplied; actual operation unobserved.",
+    "Supplied five-case synthetic evidence source-bound; independent supplemental waiter mock results invalid and retained.",
+    "Review grants no owner authorization or hardware authority."
+  ],
+  "changed_paths": [
+    "action-device-f1/focused-audit.json",
+    "action-device-f1/review.md",
+    "action-device-f1/result.json"
+  ]
+}
