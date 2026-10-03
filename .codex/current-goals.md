@@ -1,5 +1,27 @@
 # Current delivery goals
 
+## Active goal — reliable commissioning host, 2026-10-03
+
+Prepare the installed test-sv08-01 host for sensor-only commissioning: dependable
+normal boot, persistent SSH, usable browser administration, matching host/MCU
+software and an explicitly output-free sensor configuration. Inspect the current
+system before choosing fixes; reuse accepted implementations and their valid
+evidence. Require independent review of new substantive scope and delivery, and
+fresh exact-operation review before boot-policy changes or hardware writes.
+
+This goal includes installed validation and publication to main and WIP. Physical
+sensor accuracy/input commissioning, heat, motion, printing, full A/B failure
+qualification and release qualification remain subsequent work. Preserve the SD
+recovery path and all owner-selected H12 exclusions below.
+
+Initial fresh inspection: the same installed slot-A boot remains reachable, with
+read-only root, writable /data and no failed systemd units. Boot-health, RAUC and
+printer units remain masked in the command line; only one MCU USB identity is
+currently enumerated. These observations do not establish boot reliability or
+paired-MCU readiness. Native agent launch hit its thread limit; the planner uses
+the documented separate-session fallback with full role and verified Sol/medium.
+The coordinator owns physical access, shared records and publication.
+
 ## Completed goal — finite image-job history, 2026-10-03
 
 Completed `host-image-history-rollover:finite-history`. Explicit browser
