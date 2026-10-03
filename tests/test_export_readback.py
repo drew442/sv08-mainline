@@ -1,3 +1,4 @@
+from test_data_budget import fixture_root
 from contextlib import contextmanager
 import hashlib
 import io
@@ -149,7 +150,7 @@ class ReadbackTests(unittest.TestCase):
 
 class PublicationTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        temporary = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name); self.source = self.root / 'source'; self.source.mkdir()
         self.target = self.root / 'destination'; self.target.mkdir()
         self.original = b'x' * 8192

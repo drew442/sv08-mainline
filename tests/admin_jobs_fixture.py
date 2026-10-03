@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 """Disposable process fixture. Never staged into a host image.
 
 Real Controller/HostImages/Staging/Transaction; fake signed payload and disk backend.
@@ -28,12 +29,12 @@ def verify(path):
     return dict(release='release-2', bundle_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
 
 
-def initialize(work, boot):
-    uploads = Path(tempfile.mkdtemp(prefix='.sv08-browser-upload-', dir=Path.home()))
+def initialize(work, boot, budget_root=None):
+    uploads = Path(tempfile.mkdtemp(prefix='.sv08-browser-upload-', dir=Path(fixture_root())))
     (work / 'upload-path.json').write_text(json.dumps(str(uploads)))
     payload = b'offline image job browser fixture only'
     digest = hashlib.sha256(payload).hexdigest()
-    Staging(uploads, reserve_bytes=0, owner_uid=os.getuid()).receive(io.BytesIO(payload), len(payload), digest, verify)
+    Staging(uploads, reserve_bytes=0, owner_uid=os.getuid(), budget=fixture_budget(budget_root)).receive(io.BytesIO(payload), len(payload), digest, verify)
     atomic_json(work / 'backend.json', dict(selected='A', states={'A':True, 'B':False}, calls=[]))
 
 
@@ -64,11 +65,11 @@ def resolution_worker(_identity):
                 ExecMainExitTimestampMonotonic='2', Result='signal')
 
 
-def initialize_resolution(work, boot):
+def initialize_resolution(work, boot, budget_root=None):
     """Create one honest unknown receipt and a cancellable preserved source."""
-    initialize(work, boot)
+    initialize(work, boot, budget_root)
     atomic_json(work / 'backend.json', dict(selected='A', states={'A': True, 'B': True}, calls=[]))
-    store = Store(work / 'state', reserve_bytes=0)
+    store = Store(work / 'state', reserve_bytes=0, budget=fixture_budget(budget_root))
     state = store.load()
     transaction = dict(format_version=1, id='a'*32, phase='armed', slot='B', previous_slot='A',
                        previous_release=boot['release'], release='release-2', bundle_sha256='b'*64,
@@ -76,7 +77,7 @@ def initialize_resolution(work, boot):
     state['pending'] = dict(slot='B', release='release-2', previous_slot='A', phase='armed', id=transaction['id'])
     store.save(state)
     Transaction(store, DiskBackend(work), admitted).save(transaction, 'armed')
-    jobs = Jobs(work / 'state/admin-image-jobs', boot['boot_id'], lambda identity: None)
+    jobs = Jobs(work / 'state/admin-image-jobs', boot['boot_id'], lambda identity: None, budget=fixture_budget(budget_root))
     jobs.root.mkdir(mode=0o700)
     plan = dict(action='image.stage', arguments={'digest': hashlib.sha256(b'offline image job browser fixture only').hexdigest()},
                 revision='c'*64, title=ACTIONS['image.stage'][0], effect=ACTIONS['image.stage'][1], preserves_user_data=True)
@@ -84,9 +85,9 @@ def initialize_resolution(work, boot):
                     message='Disposable image worker stopped before its outcome was recorded.')])
 
 
-def make_controller(work, resolution=False):
+def make_controller(work, resolution=False, budget_root=None):
     work = Path(work)
-    store = Store(work / 'state', reserve_bytes=0)
+    store = Store(work / 'state', reserve_bytes=0, budget=fixture_budget(budget_root))
     boot = json.loads((work / 'ui-fixture.json').read_text())
     def launch(identity):
         unit = 'sv08-job-fixture-'+identity
@@ -94,10 +95,10 @@ def make_controller(work, resolution=False):
         subprocess.run(['/usr/bin/systemd-run', '--user', '--quiet', '--collect', '--unit='+unit,
                         '/usr/bin/python3', str(Path(__file__).resolve()), str(work), identity], check=True, timeout=10)
         with (work / 'units.log').open('a') as stream: stream.write(unit+'\n')
-    jobs = Jobs(work / 'state/admin-image-jobs', boot['boot_id'], launch)
+    jobs = Jobs(work / 'state/admin-image-jobs', boot['boot_id'], launch, budget=fixture_budget(budget_root))
     if resolution: jobs.worker_evidence = resolution_worker
     adapter = HostImages(store, boot, DiskBackend(work),
-                         Staging(Path(json.loads((work / 'upload-path.json').read_text())), reserve_bytes=0, owner_uid=os.getuid()), admitted, verify)
+                         Staging(Path(json.loads((work / 'upload-path.json').read_text())), reserve_bytes=0, owner_uid=os.getuid(), budget=fixture_budget(budget_root)), admitted, verify)
     return Controller(store, boot, adapter=adapter, jobs=jobs)
 
 

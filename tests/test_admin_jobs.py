@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget
 import json
 import os
 from pathlib import Path
@@ -12,7 +13,7 @@ class ImageJobTests(ImageAdministrationTests):
     def setUp(self):
         super().setUp()
         self.launches = []
-        self.jobs = Jobs(self.store.root / 'admin-image-jobs', self.boot['boot_id'], self.launches.append)
+        self.jobs = Jobs(self.store.root / 'admin-image-jobs', self.boot['boot_id'], self.launches.append, budget=fixture_budget())
         self.controller.jobs = self.jobs
 
     def submit(self, identity='1'*32, action='image.stage'):
@@ -90,9 +91,9 @@ class ImageJobTests(ImageAdministrationTests):
 
     def test_result_publication_failure_does_not_repeat_install(self):
         self.submit(); save = self.jobs.save
-        def fail_result(rows):
+        def fail_result(rows, *args, **kwargs):
             if rows[-1]['phase'] == 'succeeded': raise OSError('No space left on device')
-            save(rows)
+            save(rows, *args, **kwargs)
         with patch.object(self.jobs, 'save', side_effect=fail_result):
             with self.assertRaises(OSError): self.jobs.work(lambda: self.controller)
         self.assertEqual(self.jobs.history()['jobs'][0]['phase'], 'interrupted')
@@ -193,7 +194,7 @@ class ImageJobTests(ImageAdministrationTests):
 
     def test_coordinator_loss_after_publication_expires_without_launch(self):
         save = self.jobs.save
-        def die(rows): save(rows); raise SystemExit(9)
+        def die(rows, *args, **kwargs): save(rows, *args, **kwargs); raise SystemExit(9)
         with patch.object(self.jobs, 'save', side_effect=die):
             with self.assertRaises(SystemExit): self.submit()
         self.assertEqual(self.launches, [])

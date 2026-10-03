@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 import json
 import os
 from types import SimpleNamespace
@@ -14,9 +15,9 @@ from sv08_state import Store
 
 class PersistentStateTests(unittest.TestCase):
     def setUp(self):
-        tmp = tempfile.TemporaryDirectory()
+        tmp = tempfile.TemporaryDirectory(dir=fixture_root())
         self.addCleanup(tmp.cleanup)
-        self.store = Store(Path(tmp.name) / 'data', reserve_bytes=0)
+        self.store = Store(Path(tmp.name) / 'data', reserve_bytes=0, budget=fixture_budget())
         self.store.initialize()
         self.a = self.store.prepare_boot('A', 'release-1')
         self.config = Path(self.a['generation']) / 'config/printer.cfg'
@@ -151,7 +152,7 @@ class PersistentStateTests(unittest.TestCase):
 
     def test_staging_reserves_full_late_copy_allowance(self):
         record = self.store.load()['slots']['A']
-        fs = SimpleNamespace(f_frsize=4096, f_bsize=4096, f_bavail=1000, f_favail=10000)
+        fs = SimpleNamespace(f_frsize=4096, f_bsize=4096, f_bavail=3000, f_favail=10000)
         with patch('sv08_state.os.statvfs', return_value=fs):
             self.store.check_copy_budget(record)
             with self.assertRaisesRegex(ValueError, 'space or inodes'):

@@ -1,0 +1,21 @@
+{
+  "browser_shim": true,
+  "separate_worker": true,
+  "post_boot_shared_mode": 457,
+  "preserved_originals": 128,
+  "maintenance_cancel": true,
+  "lost_ack_retry": true,
+  "archived_pending_recovered": true,
+  "pending_retained_on_durability_failure": true,
+  "cancel_once": true,
+  "real_tmpfs_no_space": true,
+  "pressure_peak_allocated_bytes": 731254784,
+  "worker_barrier_reconnect_ms": 114,
+  "authority_changed_review_cancelled": true,
+  "maintenance_state_unchanged": true,
+  "backend_calls": [
+    "bad"
+  ],
+  "authenticated": false,
+  "hardware": false
+}

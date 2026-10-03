@@ -1,0 +1,72 @@
+{
+  "browser-server.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-diagnostics-server.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-diagnostics.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "browser completed"
+  },
+  "browser-server-final.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "regression-1.log": {
+    "tests": 308,
+    "seconds": 47.274,
+    "status": "OK"
+  },
+  "regression-final.log": {
+    "tests": 309,
+    "seconds": 46.772,
+    "status": "OK"
+  },
+  "browser-final.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "browser completed"
+  },
+  "repairs-1.log": {
+    "tests": 5,
+    "seconds": 0.188,
+    "status": "errors=5"
+  },
+  "final-focused-staging.log": {
+    "tests": 20,
+    "seconds": 0.286,
+    "status": "OK"
+  },
+  "repairs-2.log": {
+    "tests": 5,
+    "seconds": 0.195,
+    "status": "OK"
+  },
+  "acknowledged-capacity.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "regression-final-export.log": {
+    "tests": 310,
+    "seconds": 46.839,
+    "status": "OK"
+  },
+  "initial-focused.log": {
+    "tests": 64,
+    "seconds": 0.498,
+    "status": "OK"
+  },
+  "export-final.log": {
+    "tests": 49,
+    "seconds": 0.513,
+    "status": "OK"
+  }
+}

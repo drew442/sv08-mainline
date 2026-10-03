@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 import hashlib
 import io
 import json
@@ -26,12 +27,12 @@ from test_transaction import Backend, admitted
 
 class UploadTests(unittest.TestCase):
     def setUp(self):
-        temp = tempfile.TemporaryDirectory(dir=Path.home(),prefix='.sv08-upload-'); self.addCleanup(temp.cleanup)
-        self.root=Path(temp.name); self.store=Store(self.root/'state',reserve_bytes=0); self.store.initialize()
+        temp = tempfile.TemporaryDirectory(dir=Path(fixture_root()),prefix='.sv08-upload-'); self.addCleanup(temp.cleanup)
+        self.root=Path(temp.name); self.store=Store(self.root/'state',reserve_bytes=0, budget=fixture_budget()); self.store.initialize()
         self.boot=self.store.prepare_boot('A','release-1'); self.boot['boot_id']='boot-1'
         self.stage=self.root/'uploads'; self.stage.mkdir(mode=0o700)
-        self.staging=Staging(self.stage,max_bytes=1024*1024,reserve_bytes=0,owner_uid=os.getuid())
-        self.jobs=Jobs(self.root/'jobs','boot-1',launcher=lambda identity:None)
+        self.staging=Staging(self.stage,max_bytes=1024*1024,reserve_bytes=0,owner_uid=os.getuid(), budget=fixture_budget())
+        self.jobs=Jobs(self.root/'jobs','boot-1',launcher=lambda identity:None, budget=fixture_budget())
         self.backend=Backend(); self.backend.manifest={'deployable':True}
         self.backend.cleanup_observation=lambda boot,lease:dict(primary=self.backend.primary(),good=dict(self.backend.states))
         self.verify=lambda p:dict(bundle_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),release='release-2',full_payload_verified=False)

@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 import hashlib
 import io
 import os
@@ -15,13 +16,13 @@ from test_transaction import Backend, admitted
 
 class ImageAdministrationTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix='.sv08-admin-images-', dir=Path.home())
+        temporary = tempfile.TemporaryDirectory(prefix='.sv08-admin-images-', dir=Path(fixture_root()))
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
-        self.store = Store(root / 'state', reserve_bytes=0); self.store.initialize()
+        self.store = Store(root / 'state', reserve_bytes=0, budget=fixture_budget()); self.store.initialize()
         self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = 'boot-1'
         upload = root / 'uploads'; upload.mkdir(mode=0o700)
-        self.staging = Staging(upload, reserve_bytes=0, owner_uid=os.getuid())
+        self.staging = Staging(upload, reserve_bytes=0, owner_uid=os.getuid(), budget=fixture_budget())
         payload = b'test fixture only'; self.digest = hashlib.sha256(payload).hexdigest()
         verify = lambda path: dict(release='release-2', bundle_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         with self.store.locked(): self.staging.receive(io.BytesIO(payload), len(payload), self.digest, verify)

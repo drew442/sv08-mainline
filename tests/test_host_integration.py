@@ -1,3 +1,4 @@
+from test_data_budget import fixture_root
 import json
 from pathlib import Path
 import sys
@@ -32,7 +33,7 @@ class IntegrationManifestTests(unittest.TestCase):
             validate(changed)
 
     def test_refresh_replaces_only_a_reviewed_existing_runtime(self):
-        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        temporary = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(temporary.cleanup)
         work = Path(temporary.name); root = work / 'rootfs'
         (work / 'refresh-complete').touch()
         for directory in ('etc/systemd/system', 'etc/ssh', 'etc/apt/apt.conf.d',
@@ -58,7 +59,7 @@ class IntegrationManifestTests(unittest.TestCase):
         self.assertEqual(command.readlink(), Path('../lib/sv08/sv08_state.py'))
 
     def test_refresh_refuses_unrecognized_command_before_removing_runtime(self):
-        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        temporary = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(temporary.cleanup)
         work = Path(temporary.name); root = work / 'rootfs'
         (work / 'refresh-complete').touch()
         for directory in ('etc', 'usr/bin', 'usr/lib/sv08'):

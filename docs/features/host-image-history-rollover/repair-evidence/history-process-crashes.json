@@ -1,0 +1,262 @@
+[
+  {
+    "scenario": "migrate",
+    "point": "fence-link",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "fence-link-created",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "fence-validate",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "fence-validated",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "fence-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "fence-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "fence-parent-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "object-create",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "object-write",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "object-flush",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "object-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "object-publish",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "object-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-create",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-write",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-flush",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-replace",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "manifest-parent-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "cleanup",
+    "process_exit": 73
+  },
+  {
+    "scenario": "migrate",
+    "point": "lost-ack",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "object-create",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "object-write",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "object-flush",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "object-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "object-publish",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "object-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-create",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-write",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-flush",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-replace",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "manifest-parent-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "cleanup",
+    "process_exit": 73
+  },
+  {
+    "scenario": "rollover",
+    "point": "lost-ack",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "object-create",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "object-write",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "object-flush",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "object-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "object-publish",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "object-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-create",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-write",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-flush",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-file-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-replace",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-directory-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "manifest-parent-fsync",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "cleanup",
+    "process_exit": 73
+  },
+  {
+    "scenario": "active",
+    "point": "lost-ack",
+    "process_exit": 73
+  }
+]

@@ -34,7 +34,7 @@ def publish(directory_fd, partial, name):
 
 def identity(st):
     return (st.st_dev, st.st_ino, st.st_mode, st.st_size, st.st_mtime_ns,
-            st.st_ctime_ns, st.st_uid, st.st_gid)
+            st.st_ctime_ns, st.st_uid, st.st_gid, st.st_nlink)
 
 
 @contextmanager
@@ -73,6 +73,32 @@ def inventory(root, limit=100000):
                         visit(child, relative)
                     finally: os.close(child)
         visit(root_fd, ())
+    # Read-only validation does not create or repair source lock bookkeeping.
+    paths = {relative for relative, _ in result}
+    for relative, stamp in result:
+        if relative[-1] == 'admin-image-jobs' and stat.S_ISDIR(stamp[2]):
+            if (*relative, 'jobs.json') not in paths: raise ValueError('Missing committed history export manifest')
+            from sv08_admin_jobs import Jobs
+            Jobs(Path(root).joinpath(*relative), '').view()
+    for relative, stamp in result:
+        if stat.S_ISREG(stamp[2]) and stamp[8] != 1:
+            if relative[-1] not in ('ledger.lock', 'history-format-v2.lock') or relative[-2:-1] != ('admin-image-jobs',) or stamp[8] != 2:
+                raise ValueError('Unexpected export hardlink relationship')
+            other = (*relative[:-1], 'history-format-v2.lock' if relative[-1] == 'ledger.lock' else 'ledger.lock')
+            matching = next((value for path, value in result if path == other), None)
+            if matching is None or matching[:2] != stamp[:2]: raise ValueError('Incomplete exported history fence')
+    return result
+
+
+def history_bindings(root, entries):
+    result = []
+    for relative, stamp in entries:
+        if relative[-1] == 'admin-image-jobs' and stat.S_ISDIR(stamp[2]):
+            from sv08_admin_jobs import Jobs
+            view = Jobs(Path(root).joinpath(*relative), '').view()
+            if view['fenced']:
+                result.append(dict(path='data/'+'/'.join(relative), revision=view['revision'],
+                                   alias='history-format-v2.lock', target='ledger.lock'))
     return result
 
 
@@ -81,6 +107,10 @@ def member(relative, stamp):
     info.mode, info.uid, info.gid, info.mtime = stat.S_IMODE(stamp[2]), stamp[6], stamp[7], stamp[4]//10**9
     info.type = tarfile.DIRTYPE if stat.S_ISDIR(stamp[2]) else tarfile.REGTYPE
     info.size = 0 if info.isdir() else stamp[3]
+    if len(stamp) > 8 and stamp[8] == 2 and relative[-1] == 'history-format-v2.lock':
+        info.type = tarfile.LNKTYPE
+        info.linkname = 'data/'+'/'.join((*relative[:-1], 'ledger.lock'))
+        info.size = 0
     return info
 
 
@@ -121,6 +151,28 @@ class ReadbackReader:
         return block
 
 
+
+@contextmanager
+def restore_archive(path):
+    """Bound metadata before tarfile decodes PAX/GNU/sparse declarations."""
+    with open(path, 'rb', buffering=0) as source:
+        info = os.fstat(source.fileno())
+        if not stat.S_ISREG(info.st_mode) or not TAR_BUFFER <= info.st_size <= 2**32-1:
+            raise ValueError('Invalid restore archive size or type')
+        reader = ReadbackReader(source, info.st_size, 65536)
+        class BudgetInfo(tarfile.TarInfo):
+            @classmethod
+            def fromtarfile(cls, archive):
+                if not reader.header_depth: reader.header_start = reader.count
+                reader.header_depth += 1
+                try: return super().fromtarfile(archive)
+                finally: reader.header_depth -= 1
+        with tarfile.open(fileobj=reader, mode='r|', bufsize=TAR_BUFFER, tarinfo=BudgetInfo) as archive:
+            yield archive, info.st_size
+        while reader.read(CHUNK): pass
+        if reader.count != info.st_size or identity(os.fstat(source.fileno())) != identity(info):
+            raise ValueError('Restore archive changed during read')
+
 def verify_stream(stream, expected, size, checksum, header_bytes):
     """One bounded semantic and whole-byte pass over this writer's own archive.
 
@@ -152,7 +204,13 @@ def verify_stream(stream, expected, size, checksum, header_bytes):
             if item.isdir():
                 found[item.name] = None
                 continue
-            if not item.isfile(): raise ValueError('Unexpected archive member')
+            if item.islnk():
+                relation = expected[item.name]
+                if not isinstance(relation, dict) or relation != {'hardlink': item.linkname} or item.size != 0:
+                    raise ValueError('Unexpected archive link relationship')
+                found[item.name] = relation
+                continue
+            if not item.isfile() or isinstance(expected[item.name], dict): raise ValueError('Unexpected archive member')
             with archive.extractfile(item) as payload:
                 digest = hashlib.sha256()
                 while block := payload.read(CHUNK): digest.update(block)
@@ -201,7 +259,7 @@ class Export:
             self.space(target, size)
             if guard is not None: guard.recheck()
             return dict(destination=target_id, source_identity=source_identity,
-                        destination_identity=destination_identity, entries=entries, required_bytes=size,
+                        destination_identity=destination_identity, entries=entries, history=history_bindings(self.source, entries), required_bytes=size,
                         media_fingerprint=guard.fingerprint if guard is not None else None)
 
     def space(self, target, size):
@@ -239,6 +297,10 @@ class Export:
                                     encoding=archive.encoding, errors=archive.errors)))
                                 if info.isdir():
                                     archive.addfile(info); expected[info.name] = None; continue
+                                if info.islnk():
+                                    archive.addfile(info); expected[info.name] = {'hardlink': info.linkname}
+                                    records.append(dict(path=info.name, hardlink=info.linkname))
+                                    continue
                                 with opened(self.source, relative, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK) as source:
                                     if identity(os.fstat(source)) != stamp: raise ValueError('Source file changed')
                                     with os.fdopen(os.dup(source), 'rb') as stream:
@@ -247,7 +309,7 @@ class Export:
                                     checksum = reader.hash.hexdigest()
                                     expected[info.name] = checksum
                                     records.append(dict(path=info.name, bytes=info.size, sha256=checksum))
-                            manifest = json.dumps(dict(format_version=1, kind='user-data-export-not-os-image', files=records), sort_keys=True).encode()
+                            manifest = json.dumps(dict(format_version=1, kind='user-data-export-not-os-image', files=records, history=plan.get('history', [])), sort_keys=True).encode()
                             info = tarfile.TarInfo('export-manifest.json'); info.size=len(manifest); info.mode=0o600
                             header_bytes = max(header_bytes, len(info.tobuf(format=archive.format,
                                 encoding=archive.encoding, errors=archive.errors)))
@@ -258,7 +320,7 @@ class Export:
                         partial_stat = os.fstat(output.fileno())
                         partial_identity = (partial_stat.st_dev, partial_stat.st_ino,
                                              partial_stat.st_mode, partial_stat.st_nlink)
-                    if inventory(self.source) != plan['entries']: raise ValueError('Source changed during export')
+                    if inventory(self.source) != plan['entries'] or history_bindings(self.source, plan['entries']) != plan.get('history', []): raise ValueError('Source changed during export')
                     with opened(self.source) as now:
                         if identity(os.fstat(now))[:2] != tuple(plan['source_identity']): raise ValueError('Source changed')
                     # Read via the held destination descriptor even if the mount path changes.
@@ -315,3 +377,110 @@ class ExportAdapter:
         if self.summary(prepared) != plan['export']:
             raise ValueError('Export source or destination changed. Review again.')
         return self.exporter.execute(prepared)
+
+
+def restore_history(archive_path, destination, exclusive):
+    """Restore one history directory into a NEW isolated destination under lease.
+
+    Caller must exclude live helpers, workers and open lock waiters. This is not
+    a live-lock replacement or a recovery UI operation. Never extract arbitrary
+    archive paths. The resulting directory is published only after validation.
+    """
+    from sv08_admin_jobs import Jobs
+    from sv08_admin_history import OBJECT, TEMP, ENTRIES, ALLOCATED, BATCH_BYTES, METADATA_BYTES, strict_json
+    from sv08_state import fsync_dir
+    import re
+    import shutil
+    destination = Path(destination)
+    if destination.exists() or destination.is_symlink(): raise ValueError('Restore requires a new isolated destination')
+    with exclusive():
+        with opened(destination.parent) as parent_fd:
+            parent = os.fstat(parent_fd)
+            if parent.st_uid != os.geteuid() or parent.st_mode & 0o022:
+                raise ValueError('Unsafe isolated restore parent')
+            fs = os.fstatvfs(parent_fd)
+        block = fs.f_frsize or fs.f_bsize
+        if fs.f_bavail*block < ALLOCATED+4*block or fs.f_favail < ENTRIES+4:
+            raise ValueError('Insufficient isolated restore destination space or inodes')
+        temporary = destination.parent / ('.history-restore-'+uuid.uuid4().hex)
+        temporary.mkdir(mode=0o700)
+        try:
+            count, total, aliases, prefixes, export = 0, 0, [], set(), None
+            with restore_archive(archive_path) as (archive, archive_size):
+                seen = set()
+                for item in archive:
+                    if item.name in seen: raise ValueError('Duplicate archive member')
+                    seen.add(item.name)
+                    if len(seen) > 100000: raise ValueError('Too many restore archive entries')
+                    parts = item.name.split('/')
+                    if any(part in ('', '.', '..') for part in parts) or item.sparse is not None or not 0 <= item.size <= archive_size:
+                        raise ValueError('Unsafe restore archive path')
+                    if item.name == 'export-manifest.json':
+                        if not item.isfile() or item.size > 32*METADATA_BYTES: raise ValueError('Invalid export manifest')
+                        with archive.extractfile(item) as payload:
+                            raw = bytearray()
+                            while block := payload.read(CHUNK): raw.extend(block)
+                        export = strict_json(raw)
+                    if len(parts) < 3 or parts[-2] != 'admin-image-jobs': continue
+                    prefixes.add('/'.join(parts[:-1])); name = parts[-1]
+                    if name not in ('jobs.json', 'ledger.lock', 'history-format-v2.lock', 'worker.lock') and not re.fullmatch(OBJECT, name) and not re.fullmatch(TEMP, name):
+                        raise ValueError('Unexpected history restore entry')
+                    count += 1
+                    if count+1 > ENTRIES or item.size > BATCH_BYTES or item.mode != 0o600 or item.uid != os.geteuid():
+                        raise ValueError('History restore exceeds bounds or ownership')
+                    total += item.size
+                    if total > ALLOCATED: raise ValueError('History restore exceeds storage bound')
+                    if item.islnk():
+                        if name != 'history-format-v2.lock' or item.linkname != '/'.join((*parts[:-1], 'ledger.lock')) or item.size:
+                            raise ValueError('Unexpected restored fence relationship')
+                        aliases.append(name); continue
+                    if not item.isfile(): raise ValueError('Unexpected history restore member')
+                    with archive.extractfile(item) as source, (temporary / name).open('xb') as output:
+                        os.fchmod(output.fileno(), 0o600)
+                        checksum = hashlib.sha256(); remaining = item.size
+                        while remaining:
+                            block = source.read(min(CHUNK, remaining))
+                            if not block: raise ValueError('Truncated history restore')
+                            output.write(block); checksum.update(block); remaining -= len(block)
+                        output.flush(); os.fsync(output.fileno())
+            if len(prefixes) != 1 or export is None: raise ValueError('Restore needs one complete history and export manifest')
+            if (not isinstance(export, dict) or set(export) != {'format_version', 'kind', 'files', 'history'} or
+                    type(export['format_version']) is not int or export['format_version'] != 1 or
+                    export['kind'] != 'user-data-export-not-os-image' or not isinstance(export['files'], list) or
+                    len(export['files']) > 100000 or not isinstance(export['history'], list)):
+                raise ValueError('Invalid complete restore inventory')
+            records = {}
+            prefix = next(iter(prefixes))
+            for record in export['files']:
+                if not isinstance(record, dict) or not isinstance(record.get('path'), str) or record['path'] in records:
+                    raise ValueError('Invalid or duplicate restore inventory record')
+                parts = record['path'].split('/')
+                if any(part in ('', '.', '..') for part in parts): raise ValueError('Unsafe restore inventory path')
+                if len(parts) >= 3 and parts[-2] == 'admin-image-jobs' and '/'.join(parts[:-1]) != prefix:
+                    raise ValueError('Restore needs one history inventory')
+                records[record['path']] = record
+            expected_names = {name[len(prefix)+1:] for name in records if name.startswith(prefix+'/')}
+            actual_names = set(os.listdir(temporary)) | set(aliases)
+            if 'jobs.json' not in actual_names or expected_names != actual_names:
+                raise ValueError('Incomplete committed history restore inventory')
+            for name in os.listdir(temporary):
+                full = prefix+'/'+name
+                path = temporary / name
+                if records.get(full) != dict(path=full, bytes=path.stat().st_size, sha256=hashlib.sha256(path.read_bytes()).hexdigest()):
+                    raise ValueError('Restored history checksum mismatch')
+            if aliases:
+                if aliases != ['history-format-v2.lock']: raise ValueError('Duplicate restored fence')
+                os.link(temporary / 'ledger.lock', temporary / aliases[0])
+            view = Jobs(temporary, '').view()
+            if view['fenced']:
+                expected = dict(path=next(iter(prefixes)), revision=view['revision'], alias='history-format-v2.lock', target='ledger.lock')
+                if export.get('history') != [expected]: raise ValueError('Restored relationship is not bound to committed history')
+                alias_record = dict(path=next(iter(prefixes))+'/history-format-v2.lock', hardlink=next(iter(prefixes))+'/ledger.lock')
+                if records.get(alias_record['path']) != alias_record: raise ValueError('Missing exported relationship')
+            elif export['history']:
+                raise ValueError('Unexpected legacy history relationship')
+            fsync_dir(temporary); fsync_dir(temporary.parent)
+            with opened(temporary.parent) as fd: publish(fd, temporary.name, destination.name); os.fsync(fd)
+            return dict(revision=view['revision'], count=len(view['rows']))
+        finally:
+            if temporary.exists(): shutil.rmtree(temporary)

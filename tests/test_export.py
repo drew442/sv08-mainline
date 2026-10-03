@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 from contextlib import contextmanager
 import hashlib
 import io
@@ -19,7 +20,7 @@ from sv08_state import Store
 
 class ExportTests(unittest.TestCase):
     def setUp(self):
-        temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
+        temporary=tempfile.TemporaryDirectory(dir=fixture_root());self.addCleanup(temporary.cleanup)
         self.root=Path(temporary.name);self.source=self.root/'source';self.source.mkdir()
         self.target=self.root/'usb';self.target.mkdir()
         (self.source/'state.json').write_text('damaged registry')
@@ -48,7 +49,7 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(self.depth,0)
 
     def test_controller_review_and_apply_creates_a_real_archive(self):
-        controller=RecoveryController(Store(self.source),ExportAdapter(self.export))
+        controller=RecoveryController(Store(self.source, budget=fixture_budget()),ExportAdapter(self.export))
         self.assertTrue(controller.status()['capabilities']['recovery.export']['available'])
         plan=controller.plan('recovery.export',{'destination':'usb-1'})
         self.assertIn('private configuration',plan['effect'])

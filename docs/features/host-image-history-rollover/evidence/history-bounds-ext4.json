@@ -1,0 +1,15 @@
+{
+  "encoded": 23175662,
+  "entries": 15,
+  "objects": 9,
+  "metadata": 12288,
+  "allocated": 23199744,
+  "read_peak_bytes": 33044078,
+  "read_seconds": 0.87352949695196,
+  "publication_peak_allocated": 23212032,
+  "publication_peak_entries": 17,
+  "publication_peak_objects": 10,
+  "block_bytes": 4096,
+  "actual_free_bytes": 313483264,
+  "fixture_floor": 0
+}

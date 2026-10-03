@@ -1,0 +1,9 @@
+{
+  "browser_shim": true,
+  "corrupt_history_diagnostic": true,
+  "strict_fields": true,
+  "stale_review_refused": true,
+  "no_apply_fallthrough": true,
+  "source_restored": true,
+  "authenticated": false
+}

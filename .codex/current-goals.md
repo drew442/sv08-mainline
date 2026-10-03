@@ -9,9 +9,10 @@ and admit a separately reviewed new job. Keep the approved finite storage and
 shared-data limits. Complete all seven acceptance checks and fresh independent
 high-effort verification, then merge and push main and WIP.
 
-A bounded planner is resolving old-reader compatibility and shared-data allocation
-locking before implementation. Existing approval is retained; its constraints
-are not waived. One implementation will own the complete integrated change.
+The compatibility and allocation design passed independent approval. One active
+implementer owns the integrated runtime, browser and test changes on
+`feature/host-image-history-rollover`. All seven checks and thirteen review
+constraints remain required before fresh independent delivery verification.
 No printer operation or release qualification is required for this goal.
 
 ## Completed goal — H12
