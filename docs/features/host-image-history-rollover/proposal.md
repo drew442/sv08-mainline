@@ -91,3 +91,20 @@ admin/jobs/resolution/staging tests and browser fixtures, new focused history
 tests/browser case and one dated evidence document. Expand that ownership only
 after tracing a required integration path and coordinator reconciliation. One
 production implementation; Sol/medium, followed by fresh Sol/high delivery review.
+
+
+## 2026-10-03 technical compatibility amendment (pending review)
+
+The original approval is preserved in approval-20261001.json and its original
+proposal remains at its recorded Git revision/hash. The planner established that
+bare unchanged old load() cannot refuse a missing file. The proposed
+[compatibility fence](../../decisions/20261003-history-compatibility-fence.md)
+uses the existing old public entrypoint lock check and preserves the same persistent
+inode. It proposes one strict paired-lock exception to single-link validation,
+with no exception for manifests/snapshots. Supported old public writers refuse;
+direct old internal load/save bypasses and arbitrary privileged removal of all
+compatibility metadata are not contained. The earlier universal bare-reader claim
+must be replaced explicitly by this tested public-entrypoint boundary, not waived
+or represented as passing. All other accepted constraints and seven checks remain.
+Independent amended review is required before implementation. Exact ownership and
+resource handoff are in plan.md. No signed metadata or boot-health policy change.

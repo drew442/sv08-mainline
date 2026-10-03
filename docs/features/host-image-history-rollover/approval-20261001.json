@@ -1,0 +1,97 @@
+{
+  "authority": "delegated",
+  "constraints": [
+    {
+      "checks": [
+        "pressure-journey",
+        "browser-staging",
+        "eligibility"
+      ],
+      "text": "Complete required G4 rollover, not a larger LIMIT or acknowledgement-only substitute. Demonstrate the full-128 baseline including one disposed unknown, browser observation/review/cancel without maintenance publication, explicit apply, disconnect/reconnect, and a separately reviewed safe-source image.cancel executing once afterward. Preserve every original receipt and unknown disposition and assert no maintenance backend install/mark/reconcile/reboot/health/slot/state mutation. Only a complete settled active batch may roll over; terminal or explicitly disposed unknown is eligible, while any queued/running/unresolved receipt blocks. Do not infer settlement merely from elapsed time, changed boot, absent worker or service inactivity. Existing resolution/service evidence remains at its original source revision; retain all original transaction/idle/customization/pinning/profile/heater/recovery gates."
+    },
+    {
+      "checks": [
+        "identity",
+        "eligibility",
+        "concurrency-crash"
+      ],
+      "text": "Use one validated authoritative committed view for lookup across active plus all archives, before capacity, state, current-service or new-operation admission. Preserve all original plan fields, ID, boot, phase, message, queued time and complete bounded disposition evidence canonically or byte-for-byte. Same-ID/same-full-plan retries return historical outcome without execution; changed plans refuse at every capacity. Identical disposition acknowledgement retries return original retained disposition even after rollover/boot/state/service changes; changed disposition evidence refuses. Archived unknowns always render unknown, never succeeded/refused or retryable. Worker selection and result saving operate on active records only, preserve archive references, and reject an explicitly named archived/disposed ID before controller/backend construction or invocation. Test a delayed named old unit while a new active job is queued so it cannot consume that new job."
+    },
+    {
+      "checks": [
+        "identity",
+        "concurrency-crash"
+      ],
+      "text": "Before enabling writes, specify exact versioned manifest/object schemas, generation/revision binding and publication/recovery state machine. jobs.json is the sole commit point; validate the whole manifest and every referenced snapshot before any lookup or admission: supported version, strict fields/types, bounded names/lengths/counts/hashes, global unique IDs, receipt/disposition schemas, private ownership/modes, regular single-link no-symlink files and safe directory-relative access. Never treat missing manifest plus history objects, missing referenced object, duplicate IDs, corrupt/unsupported format or invalid permissions as fresh empty history. Refuse rather than reconstruct identity from orphan files. Define legal empty active snapshots and final-capacity manifests. Valid legacy lists remain observation-readable, with explicit reviewed migration retaining all complete rows; invalid or over-bound legacy input refuses without rewriting it. Do not automatically migrate on polling or retry."
+    },
+    {
+      "checks": [
+        "concurrency-crash",
+        "identity",
+        "bounds"
+      ],
+      "text": "Exercise real process contention plus injected interruption/error at object create/write/flush/file-fsync/no-replace publication/directory-fsync, manifest temporary write/file-fsync/replace/directory-fsync, parent-directory durability, cleanup and lost acknowledgement; include legacy migration and every subsequent active receipt/disposition/result save, not just rollover. Objects must be durable before the manifest commits; no worker launch or successful acknowledgement precedes durable receipt commit. A failed manifest durability acknowledgement after rename is unknown: reread the authoritative view, preserve both possibly required sets and never replay or destructively restore a stale manifest. At each boundary readers see a complete old/new committed view or truthful refusal, never a partial view or forgotten previously durable identity. Serialize writers under persistent lock inodes; document compatible lock ordering with worker->state->RAUC-writer->ledger and upload ledger->nonblocking-state->upload. Keep ledger exclusion short, never across service/transaction/device waits. Reclaim only proved uncommitted owned objects under exclusion after validating the committed view; never clean referenced history or guess through corruption. Repeated failures and restart must not accumulate unbounded orphans or require deletion of receipts to proceed."
+    },
+    {
+      "checks": [
+        "bounds",
+        "identity",
+        "regression"
+      ],
+      "text": "Approve these finite engineering ceilings only: active 128; at most eight immutable full archive batches; at most 1152 distinct IDs; 67108864 allocated bytes total; at most sixteen batch-sized durable/temporary objects each <=2752512 encoded bytes with original receipt and disposition limits preserved; <=1048576 aggregate manifest/pointer/lock/directory metadata bytes; <=64 namespace entries/inodes. Account for current, candidate, previous possibly committed views, legacy source, all publication temporaries, directories, lock files and retained orphans at peak, not only steady state. Independently measure actual encoding, st_blocks, filesystem block rounding, metadata/inodes, memory/read cost and installed-byte delta at final implementation. The coordinator measurement is conservative ext4 allocation feasibility, not production or complete factory 8 GB fit. At total ceiling refuse new IDs and further rollover without offering eviction; identical retries, existing dispositions and observation remain usable within budget. A different ceiling or protocol changing reviewed scope needs an amended bounded review; destructive retention requires owner authority."
+    },
+    {
+      "checks": [
+        "bounds",
+        "concurrency-crash",
+        "regression"
+      ],
+      "text": "Implement concrete shared-/data admission for migration, maintenance and ordinary snapshot saves: account for peak incremental allocations and inode demand while preserving configured state/staging reserves (Store defaults 512 MiB with 256 MiB copy allowance; Staging defaults 768 MiB reserve and 130-inode admission), including existing uploads and other persistent data. Reserve is not archive allowance. Identify supported concurrent allocators and exclusion/recheck or reservation behavior; preflight is not a quota guarantee against unrelated privileged writers. Exercise concurrent upload/state-copy/history allocations, exact reserve and inode edges, ENOSPC during every publication stage and repeated failure. Refuse before starting new work if durable admission/result storage cannot be supported; preserve original manifests, receipts, images, uploads, user data and diagnostic evidence. Do not consume or lower accepted copy/upload reserve to make 64 MiB fit. Leave final factory-artifact and physical-power-loss gates open unless separately measured."
+    },
+    {
+      "checks": [
+        "identity",
+        "regression",
+        "browser-staging"
+      ],
+      "text": "Trace and preserve all Jobs.load consumers and artifact dependencies across archives, specifically runtime/sv08_admin_upload.py Uploads.view/referenced/admitted/cleanup: nonterminal unknown receipts currently block uploads and historical stage plans protect bundles when the journal is missing or mismatched. Do not hide archived unknown/terminal rows from these checks, replace raw phase rules with disposition eligibility, or permit artifact deletion merely because a receipt was archived. The supplied ownership list omits this file; coordinator must reconcile narrowly required upload integration/test ownership before implementation. Separate active writable snapshots from authoritative all-history lookup so combined rows are never saved as one 128-row active ledger. Test archived stage dependencies, missing/failed/mismatched journal, cleanup review invalidation and disposed-unknown preservation. Keep accepted upload behavior; changing artifact retention semantics is outside this approval."
+    },
+    {
+      "checks": [
+        "browser-staging",
+        "pressure-journey",
+        "regression"
+      ],
+      "text": "Deliver reachable browser maintenance status/review/apply/cancel controls through strict fixed privileged RPC with no caller-supplied paths/executables. Bind review to complete committed-history revision and exact eligible identities; stale review refuses under lock. Maintain truthful active/archive/total remaining capacity and distinct reasons for unresolved work, no-space and final ceiling. Reconnect must recover a locally pending submission ID from archives without generating a new ID or automatically resubmitting; explicit identical retry remains supported. Include lost maintenance acknowledgement/idempotent completion recognition, concurrent/stale review, authentication-authority changes, no-space/corrupt history diagnostics, unchanged unsaved drafts, and responsive initial/polling history before state reads while a real separate worker holds a transaction barrier. Render unknown dispositions truthfully and ensure maintenance plan kinds cannot fall through image.submit or ordinary apply. Use real browser plus separate worker/backend fixture; label browser shim, actual authenticated Cockpit/helper and actual service supervision distinctly. Reuse unchanged authenticated/service evidence only with its exact revision and demonstrate matching current installed helper/UI/worker wiring; no shim claim becomes authenticated evidence."
+    },
+    {
+      "checks": [
+        "regression",
+        "identity",
+        "concurrency-crash",
+        "bounds"
+      ],
+      "text": "Prove complete preservation/export/update compatibility paths, not just active helper edits. Stage matching runtime/UI/worker and hash inventory through scripts/integrate_host_os.py, scripts/stage_admin_ui.py and recovery assembly scripts/recovery_image.py as applicable. The existing recovery export inventories its whole quiescent source; test that exported bytes include manifest and every referenced active/archive snapshot, original unknown evidence and legacy history and can be inspected as one validated committed view; source-change/export failure must not publish a misleading complete archive. Cover read-only source and destination bounds; export never licenses history deletion. Shared history survives A/B rollback, update and restore without generation-copy rollback or flattening. Execute an unchanged list-only old Jobs reader/worker against new jobs.json and prove refusal without mutation, and test old-slot/old-runtime fallback cannot recreate an empty ledger or bypass unknown identity. Signed bundle policy currently validates layout/state/Klipper metadata, not history format: document/test the concrete gate or demonstrated reader refusal for every supported old-reader path, including missing/damaged manifest. Do not silently change accepted signed metadata or health/recovery policy; coordinator reconciles necessary integration ownership or records an exact blocker before claiming completion."
+    },
+    {
+      "checks": [
+        "regression"
+      ],
+      "text": "Delivery requires fresh independent feature_verifier_high review of the complete candidate and all seven named acceptance checks, including deterministic offline crash/concurrency evidence and full browser journey. The approver, planner, author and evidence-producing implementation/integration sessions are not that verifier. Run affected jobs/resolution/upload/admin/transaction/staging/export/compatibility regressions, JSON/Markdown/diff/indexed-gitlink/lock consistency checks and record dated source-bound evidence with explicit offline levels. Fix the proposal reference to absent accompanying plan.md in coordinator records or supply its equivalent exact ownership/task handoff; inline ownership is the reviewed boundary. No new dependency, daemon, scheduler, external spending, hardware operation, network/credential access, release decision or retention destruction is granted; original candidates and historical identities/evidence remain preserved."
+    }
+  ],
+  "outcome": "approved-with-constraints",
+  "proposal_sha256": "266ea0ee9d39a8ec7fbcc81d945d6235a571bf07df8db771ae19d67b4d0e2310",
+  "rationale": "Approved bounded required G4 design with delivery constraints. ADR 0010 requires browser administration and disconnect-surviving history; the actual jobs and resolution proposals/decisions expressly retain full-128 refusal until separately reviewed finite rollover. runtime/sv08_admin_jobs.py has LIMIT=128, list-only jobs.json, duplicate-before-capacity submit checks, active-worker locking and full history refusal; tests/test_admin_resolution.py::test_full_history_can_retain_existing_unknown_but_not_admit_new_identity documents the concrete before state. The proposed sole versioned manifest plus durable immutable objects is a sufficient architectural starting point for old/new complete commits, provided the failure and admission state machine below is delivered rather than presumed. Coordinator measurement.json reports 2546691-byte valid disposed-unknown batch and 45088768-byte synthetic allocated peak versus proposed 67108864-byte envelope; its source hashes match current reviewed jobs/resolution/config sources, but it proves neither shared-data admission nor factory fit. Finite preservation and final-capacity refusal are compatible with accepted retention authority, so no new owner decision is needed for these explicit engineering ceilings; deletion/expiry/identity retirement are not approved. Concrete integration gap: sv08_admin_upload.py consumes Jobs.load for ambiguous-work and bundle-dependency gates and is absent from the owned-path list. UI currently renders history before state but has no maintenance controls; recovery export inventories all quiescent source files; core/recovery assemblers copy runtime while stage_admin_ui demands matching sources. sv08_bundle.py signed compatibility checks lack a dedicated history capability. These paths need the exact constraints below, not claims that manifest publication alone completes required browser rollover. Offline design approval preserves existing service/hardware/release gates and historical evidence; no probes or production tests were run in this review.",
+  "requirements_sha256": {
+    "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+    "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+    "docs/features/host-admin-image-jobs/proposal.md": "28f7842010d8c9235482a975f16af06c50c18e6755e42faf3d24cba67d25109b",
+    "docs/features/host-admin-image-jobs/record.json": "1320a21e515ac7be3e31de07b52fa77e211414af7b55bdbcf370399d39095134",
+    "docs/features/host-image-job-resolution/proposal.md": "8227a40110b8ca1ce48abe3bab3b572dbc8f50bd8ddb8e6bbc33ef508ee972e2",
+    "docs/features/host-image-job-resolution/record.json": "191824d8eeaedfb39afb8d9c11badabbddcdd5d932df222bbb87cf71bb9c7586"
+  },
+  "reviewer": "feature_approver / independent history-rollover source review",
+  "scope_sha256": "3e34bc9c265dd31805900089f29c0d31345daca33b727affceae68dc712908da",
+  "session": "sv08-history-approval-20261001-820711cadc5b4b12aed01212a16252e6"
+}
