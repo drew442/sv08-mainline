@@ -155,3 +155,21 @@ was freshly hashed as
 Full client-side checking remains part of integrated Review before confirmation.
 The pre-existing hostname-resolution warning did not prevent these numeric-address
 operations; DNS repair is not an H12 prerequisite.
+
+### Installed repaired journey passed
+
+The same implementer completed repair revision `2b26b59`, changing only the GTK/VM
+test drivers. Runtime model/effort again measured GPT-6.1 Sol/medium. Commands
+are bounded by 90 seconds and the 480-second overall deadline; the late fixture
+drop-in and restored production ExecStart are checked explicitly. GTK deadline
+cancellation now fails rather than counting as a passing No response. Eight local
+GTK journeys passed after repair.
+
+The corrected installed run passed in 303.2 seconds. It exercised all eight GTK
+journeys against exact installed runtime hashes, actual file bytes on independent
+ext4 fixtures, production relaunch and unchanged source/SD artifact hashes.
+QEMU exited normally through QMP. Evidence is committed on the feature branch in
+`docs/features/h12-attended-sd-reimage/execution.md` and `installed-evidence.json`.
+Software acceptance remains pending a fresh independent verifier. Hardware
+session and physical success remain pending; the concrete preparation is in
+[the attended session plan](../hardware/host-h12-attended-sd-session-20261003.md).
