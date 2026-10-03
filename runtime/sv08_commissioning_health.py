@@ -274,8 +274,9 @@ class Runtime:
             os.close(fd)
         selected = selected_bank(images)
         values = parse_environment(self.command(['/usr/bin/fw_printenv', '-c', str(self.fw_config)]))
-        if values != bank(images[selected])[1] or any(without_counter(bank(image)[1]) != without_counter(values) for image in images):
-            raise ValueError('Tool selection or redundant logical values differ')
+        # The other eligible bank is a historical snapshot, not a replica.
+        if values != bank(images[selected])[1]:
+            raise ValueError('Tool selection or selected logical values differ')
         return images, values
 
     def probe(self):

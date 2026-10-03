@@ -63,8 +63,17 @@ def historical_source_fixture(root):
 
 
 def image(flag, counter, extra='keep unchanged'):
-    data = (f'BOOT_A_LEFT={counter}\0BOOT_B_LEFT=0\0BOOT_ORDER=A\0sv08_env_layout=ab-8gb-v1\0extra={extra}\0\0').encode().ljust(65531, b'\xff')
+    values = dict(BOOT_A_LEFT=str(counter), BOOT_B_LEFT='0', BOOT_ORDER='A',
+                  sv08_env_layout='ab-8gb-v1')
+    values.update(extra if isinstance(extra, dict) else {'extra': extra})
+    data = ('\0'.join(key+'='+value for key, value in values.items())+'\0\0').encode().ljust(65531, b'\xff')
     return zlib.crc32(data).to_bytes(4, 'little') + bytes([flag]) + data
+
+
+OLD_VALUES = {'extra': 'old', 'old_only': 'synthetic', 'empty': 'previous',
+              'spaces': 'old space', 'equals': 'old=value'}
+SELECTED_VALUES = {'extra': 'current', 'new_only': 'synthetic', 'empty': '',
+                   'spaces': ' leading and trailing ', 'equals': 'a=b=c'}
 
 
 def config():
@@ -199,7 +208,7 @@ def historical_health_fixture(root, h):
         if str(path).startswith(('/run/sv08', '/usr/lib/sv08')) or str(path) == '/etc/rauc/system.conf':
             return False
         return actual_present(path)
-    for case in (1, 2, 3, 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk'):
+    for case in (1, 2, 3, 'tool-extra', 'tool-missing', 'tool-space', 'stale-copy', 'preserved-mutation', 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk'):
         clock = [0]
         rt = h.Runtime(copy.deepcopy(cfg), now=lambda: clock[0])
         rt.store = h.Store(root/('state-'+str(case)), reserve_bytes=0)
@@ -212,7 +221,8 @@ def historical_health_fixture(root, h):
         boot = dict(slot='A', release='diagnostic-1', mode='immutable', generation=str(generation),
                     trial=False, customized=False, boot_id=BOOT_ID)
         counter = case if isinstance(case, int) else 2
-        images = [image(1, counter), image(2, counter)]
+        images = [image(1, 3, OLD_VALUES), image(2, counter, SELECTED_VALUES)]
+        before_images = tuple(images)
         with disk.open('r+b') as stream:
             for (offset, _), data in zip(h.REGIONS, images):
                 stream.seek(offset); stream.write(data)
@@ -224,12 +234,18 @@ def historical_health_fixture(root, h):
             if args[0].endswith('systemctl'): return 'active' if args[1]=='is-active' else 'inactive'
             if args[0].endswith('fw_printenv'):
                 values = h.bank(images[h.selected_bank(images)])[1]
+                if case == 'tool-extra': values['unexpected'] = 'synthetic'
+                if case == 'tool-missing': del values['new_only']
+                if case == 'tool-space': values['spaces'] = values['spaces'].strip()
                 return '\n'.join(key+'='+value for key, value in values.items())
             check.assertEqual(args, ['/usr/bin/fw_setenv', '-c', str(rt.fw_config), 'BOOT_A_LEFT', '3'])
             writes.append(args)
-            images[0] = image(3, 3)
+            images[0] = image(3, 3, OLD_VALUES if case == 'stale-copy' else SELECTED_VALUES)
+            if case == 'preserved-mutation':
+                images[1] = image(2, counter, {**SELECTED_VALUES, 'extra': 'mutated'})
             with disk.open('r+b') as stream:
-                stream.seek(h.REGIONS[0][0]); stream.write(images[0])
+                for (offset, _), data in zip(h.REGIONS, images):
+                    stream.seek(offset); stream.write(data)
             return ''
         corrupt_offset = {'primary-crc':512+56, 'backup-crc':size-512+56,
                           'array-crc':4096*512, 'backup-array-crc':size-512-16384}.get(case)
@@ -257,11 +273,14 @@ def historical_health_fixture(root, h):
                                       'noop' if case==3 else 'confirmed')
                     check.assertEqual(len(writes), int(case!=3))
                     check.assertEqual(clock[0], 5)
-                    check.assertEqual(h.bank(images[1])[1]['BOOT_A_LEFT'], str(counter))
+                    check.assertEqual(images[1], before_images[1])
+                    if case == 3: check.assertEqual(tuple(images), before_images)
+                    else: h.verify_readback(before_images, tuple(images), h.bank(images[0])[1])
                 else:
-                    with check.assertRaisesRegex(ValueError, 'GPT|disk identity|Mount'):
+                    with check.assertRaisesRegex(ValueError, 'GPT|disk identity|Mount|logical values|other variables|older bank'):
                         h.run(rt, nullcontext, nullcontext, sleep=sleep)
-                    check.assertEqual(writes, [])
+                    check.assertEqual(len(writes), int(case in ('stale-copy', 'preserved-mutation')))
+                    if not writes: check.assertEqual(tuple(images), before_images)
                 record = actual_json(rt.store.root/'shared/logs/journal/commissioning-health'/ (BOOT_ID+'.json'))
                 check.assertEqual(record['status'], ('success-noop' if case==3 else 'success')
                                   if isinstance(case, int) else 'failed-or-unknown')
@@ -270,7 +289,7 @@ def historical_health_fixture(root, h):
             if original_byte is not None:
                 with disk.open('r+b') as stream:
                     stream.seek(corrupt_offset); stream.write(original_byte)
-    print('Historical closure: A1/A2 confirmation, A3 no-op, GUID/4 CRC/disk/mount refusals OK')
+    print('Historical closure: differing old A3 bank, A1/A2 confirmation, A3 no-op, selected mismatch/stale-copy/preserved-bank/GUID/4 CRC/disk/mount refusals OK')
 
 
 class CommissioningTests(unittest.TestCase):
@@ -721,22 +740,32 @@ class SelectedToolTests(unittest.TestCase):
                 result=subprocess.run(argv,capture_output=True,text=True,timeout=5)
                 self.assertEqual(result.returncode,0,result.stderr)
                 return result.stdout
+            rt = health.Runtime(config())
+            rt.config['disk']['path'] = str(disk)
+            rt.fw_config = config_path
+            rt.command = lambda args: call(Path(args[0]).name, *args[3:])
             cases=[]
             for flags in [(1,2),(254,255),(255,0),(0,255),(0,1),(1,0)]:
                 for counter in (1,2,3):
+                    selected = health.selected_bank(tuple(image(flag, counter) for flag in flags))
                     with disk.open('r+b') as stream:
-                        for offset,flag in zip((0x400000,0x800000),flags):stream.seek(offset);stream.write(image(flag,counter))
+                        for index, (offset, flag) in enumerate(zip((0x400000,0x800000),flags)):
+                            stream.seek(offset)
+                            stream.write(image(flag, counter if index == selected else (1 if counter == 3 else 3),
+                                               SELECTED_VALUES if index == selected else OLD_VALUES))
                     before=disk.read_bytes();images=tuple(before[o:o+65536] for o in (0x400000,0x800000))
-                    health.verify_environment_copies(config_path)
-                    values=health.parse_environment(call('fw_printenv'))
+                    admitted, values = rt.environment()
+                    self.assertEqual(admitted, images)
                     self.assertEqual(values,health.bank(images[health.selected_bank(images)])[1])
                     if counter != 3:call('fw_setenv','BOOT_A_LEFT','3')
                     after=disk.read_bytes();after_images=tuple(after[o:o+65536] for o in (0x400000,0x800000))
-                    health.verify_environment_copies(config_path)
-                    post=health.parse_environment(call('fw_printenv'))
+                    admitted_after, post = rt.environment()
+                    self.assertEqual(admitted_after, after_images)
                     if counter==3:self.assertEqual(before,after)
                     else:health.verify_readback(images,after_images,post)
                     for start,end in [(0,0x400000),(0x410000,0x800000),(0x810000,len(before))]:self.assertEqual(before[start:end],after[start:end])
-                    cases.append(dict(flags=flags,counter=counter,selected_before=health.selected_bank(images),selected_after=health.selected_bank(after_images)))
+                    cases.append(dict(flags=flags,counter=counter,old_counter=health.bank(images[1-selected])[1]['BOOT_A_LEFT'],
+                                      differing_old_dictionary=True, runtime_environment_admission=True,
+                                      selected_before=health.selected_bank(images),selected_after=health.selected_bank(after_images)))
             destination=os.environ.get('SV08_TOOL_EVIDENCE')
             if destination:Path(destination).write_text(json.dumps(dict(binary_sha256=health.digest(tool),package='0.3.5-0.1+b2',regular_file_only=True,cases=cases),indent=2)+'\n')

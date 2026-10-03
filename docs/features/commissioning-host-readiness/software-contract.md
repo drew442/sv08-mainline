@@ -89,15 +89,24 @@ most three seconds or the remaining deadline, 32 KiB combined stdout/stderr and
 no inherited environment/default config. Input JSON is bounded to 64 KiB.
 
 Both 65,536-byte banks must have valid CRCs and terminated, unique ASCII variables.
-All logical variables are parsed, not just the four policy variables. Both banks
-must agree on every non-counter value. Only A order, B0 and A1/A2/A3 are eligible;
+All logical variables are parsed, not just the four policy variables. The full
+tool dictionary must equal the selected raw bank dictionary, including
+empty values, whitespace and embedded `=`. The previously saved eligible bank may
+have different or missing non-counter variables; redundant banks are successive
+snapshots. This corrects the earlier contract requirement that both banks agree
+on every non-counter value. Only A order, B0 and A1/A2/A3 in **both** banks are eligible;
 A0 refuses. Equal flags refuse as ambiguous. Incremental flag selection accounts
 for 255→0 wrap and is checked against real tool-selected full output. For A3,
-validation succeeds without invoking the writer. For A1/A2, the only writer vector
+validation succeeds without invoking the writer or changing either bank, even
+when the historical dictionary differs. For A1/A2, the only writer vector
 is `/usr/bin/fw_setenv -c <reviewed config> BOOT_A_LEFT 3`. The target is fsynced,
 then full health/identity, both CRCs and selected output are re-observed. The earlier
 selected bank must be preserved byte-for-byte; the new selected bank must be A3,
-with every other variable unchanged. An unexpected file/kernel storage mode fails
+with every other variable copied exactly from the pre-write selected dictionary.
+The initially stale bank is the write destination; the original selected bank
+becomes the preserved older bank. Readback requires both resulting non-counter
+dictionaries to equal that pre-write selected baseline. An unexpected file/kernel
+storage mode fails
 closed; file tests do not establish physical MMC semantics or power-loss behavior.
 
 ## Interruption and storage limits
