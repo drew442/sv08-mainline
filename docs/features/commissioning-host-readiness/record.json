@@ -310,10 +310,14 @@
       "evidence": [],
       "human_task": "docs/hardware/coordinated-human-tasks.md#commissioning-host-readiness--2026-10-03",
       "id": "installed",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "e76cc03cb3ac45e196cfdf93a3e95564",
+        "session": "01a0f160-a773-7bb3-b621-49cfa92a1d0c/commissioning-installed"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Deliver installed commissioning host readiness",
       "verification": null
     }

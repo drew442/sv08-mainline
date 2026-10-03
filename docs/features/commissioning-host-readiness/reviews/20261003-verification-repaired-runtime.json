@@ -1,0 +1,14 @@
+{
+  "session": "01a101cf-58a9-77e3-b131-82e023a6d65b",
+  "full_role_loaded": true,
+  "runtime": {
+    "model": "gpt-6.1-sol",
+    "effort": "high",
+    "approval_policy": "never",
+    "sandbox_policy": {
+      "type": "danger-full-access"
+    },
+    "cwd": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/commissioning-host-readiness-f1"
+  },
+  "fallback": "known native thread limit; fresh separate full-role CLI"
+}
