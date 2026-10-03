@@ -1,5 +1,21 @@
 # Current delivery goals
 
+## Active goal — finite image-job history, 2026-10-03
+
+Complete the next approved delivery, `host-image-history-rollover:finite-history`.
+The browser must review and apply archival maintenance for a settled 128-job
+batch, preserve complete receipts, unknown dispositions and retry identities,
+and admit a separately reviewed new job. Keep the approved finite storage and
+shared-data limits. Complete all seven acceptance checks and fresh independent
+high-effort verification, then merge and push main and WIP.
+
+A bounded planner is resolving old-reader compatibility and shared-data allocation
+locking before implementation. Existing approval is retained; its constraints
+are not waived. One implementation will own the complete integrated change.
+No printer operation or release qualification is required for this goal.
+
+## Completed goal — H12
+
 **H12 complete — 2026-10-03.** The minimal attended SD tool, exact physical
 write/flush/full readback and subsequent normal installed-eMMC boot all passed.
 Independent completion review passed. Operator-requested resets now use HW-667;
