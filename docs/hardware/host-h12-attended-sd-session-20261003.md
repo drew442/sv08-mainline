@@ -189,3 +189,18 @@ fixture entry point is no longer selected. Actual KVM capture showed the initial
 screen. A released Enter opened Review at 04:57:03 UTC; KVM then showed image/target
 checking. Source hashing is in progress. Target writes remain zero. No Yes or
 physical success is claimed at this checkpoint.
+
+### Confirmation accepted; physical write started
+
+The full client image check completed by 05:08 UTC. The X server's default
+600-second DPMS timeout blanked HDMI during checking; measured X state was
+Monitor Off. Coordinator woke the display and disabled DPMS/screensaver for this
+session using installed xset. KVM video returned. This is a session setting;
+persistent display policy is not claimed fixed.
+
+Actual KVM confirmation showed the accepted image size/SHA, intended spare
+controller/CID/dev_t and complete replacement warning, with No visibly selected.
+One released Tab visibly selected Yes. Under the recorded delegation, coordinator
+sent released Enter at 05:09:57 UTC. KVM then showed Writing and verifying; keep
+power on. Target write counters began increasing. Transfer/readback is in progress;
+no success or permission to disconnect/restart is claimed at this checkpoint.
