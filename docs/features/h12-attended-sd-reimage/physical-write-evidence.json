@@ -1,0 +1,29 @@
+{
+  "observed_by_utc": "2026-10-03T05:23:26Z",
+  "write_started_utc": "2026-10-03T05:09:57Z",
+  "environment": "Physical owner-reported H616_JC_6Z_V1.2, independent read-only SD root, spare installed eMMC",
+  "source_size": 7818182656,
+  "source_sha256": "ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f",
+  "ui_sha256": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4",
+  "backend_sha256": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+  "result": "Complete image-range write, flush and readback matched",
+  "target_written_sectors_512": 15269888,
+  "process_write_bytes": 7818182656,
+  "target_inflight_io": 0,
+  "source_target_descriptors_closed": true,
+  "new_installed_normal_boot_observed": false,
+  "raw_evidence_sha256": {
+    "production-result.jpg": "c7a4f4549f9ea46ae2ab12b7166bccba74ba9d4237f68b98c40c3b6009205883",
+    "production-terminal.txt": "c9e4d811197afa5f382d0c10f2e335d74bcd2ba770f083e8f597ed569ccfdea9",
+    "production-confirmation-visible.jpg": "ebb908b334e66c0ba562735706af63acf5504aa454ed15e802185398419758ff",
+    "production-confirmation-yes.jpg": "8036f037b7074ea11ea1da844b10615bf08817b006787f53b689379dc03e87eb",
+    "deployment.txt": "de9721ea6d0f6282dc0b482334d9c1b0123286eb2bbd289b1079993a3446c28f",
+    "progress.log": "ab2c29597875fd9d94a10422b019359eee3eb9cd7c41a900eaa777e3447b6115",
+    "display-awake.txt": "ab13cc060ac33dcee0f8af813750ecc7767100aa9714f6f5fad04e3407c50c94"
+  },
+  "limitations": [
+    "Manual SD removal/restart and observed installed root/SSH still pending",
+    "Screen DPMS disabled only for this session",
+    "Known diagnostic image Cockpit/boot-health limitations remain; no printing/release qualification"
+  ]
+}

@@ -10,7 +10,8 @@ target/image checks before the flashing yes/no prompt. The old RAM preflight
 is not a gate.
 The [owner-selected scope](../decisions/20261002-h12-scope-reduction.md)
 supersedes conflicting historical requirements below. The attended SD software delivery is now independently verified on installed
-ARM64 fixtures; physical write and normal boot are still pending.
+ARM64 fixtures. Physical write/flush/full readback passed on October 3 at 05:23 UTC;
+manual SD removal/restart and normal installed boot are still pending.
 
 Dispatch queue created 2026-09-18 for the [parallel assignments](../development/parallel-work.md).
 Pending entries below are coordination items, not requests to act immediately;
@@ -25,22 +26,22 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
-## Attended SD reimage readiness — 2026-10-03
+## Attended SD reimage — final manual boot check, 2026-10-03
 
-The [minimal tool](../features/h12-attended-sd-reimage/execution.md) is merged and
-pushed after passing installed ARM64 execution and independent high-effort delivery
-review. The [concrete session](host-h12-attended-sd-session-20261003.md) uses the
-currently running SD host and existing read-only NFSv3 image source. No extra SD
-rewrite or rehearsal boot is planned. Exact runtime/config/display files are
-prepared locally; the flashing UI has not been deployed or enabled.
+The [concrete session](host-h12-attended-sd-session-20261003.md) completed the
+actual 7,818,182,656-byte spare-eMMC write, flush and full readback successfully.
+Owner repaired KVM video; the corrected keyboard UI passed separate delivery
+review, and a fresh exact action review preceded autonomous KVM confirmation
+under the owner's delegation. Final KVM result, closed source/target descriptors,
+matching runtime/configuration and device byte counts are retained.
 
-Current read-only inspection identifies the intended spare eMMC, SD root and
-network source. HDMI is connected/enabled and keyboard/mouse enumerate. A single
-current PSU/USB/media/no-new-data/attendance question is pending with the owner.
-After that input, obtain exact high-consequence review, enable the native
-confirmation screen, and follow actual Yes/write/readback/manual boot evidence.
-H12 remains incomplete. Do not revive the historical permission/entropy/expiry or
-cold-capture work below as a prerequisite.
+**Owner action now:** PSU remains OFF. Disconnect USB host power, remove the SD
+card while unpowered (leave spare eMMC installed), then reconnect USB with
+Ethernet/KVM connected. Report restart completion. Coordinator checks new boot,
+installed-system root and SSH. Do not insert/remove media while powered. SD remains
+available for recovery if installed boot fails. No new physical facts or repeated
+flashing permission are being requested. H12 is open only for this normal-boot check;
+no abandoned permission/entropy/cold-capture work is required.
 
 ## Independent SD-loader restoration — 2026-10-02
 

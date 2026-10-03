@@ -2,8 +2,8 @@
 
 Status: physical execution resumed after the owner repaired KVM video. The original
 software and keyboard correction are merged; separate delivery and exact-action
-reviews passed. Earlier session observations below are historical. No full-image
-write has yet occurred.
+reviews passed. Earlier session observations below are historical. The full write/flush/readback passed at 05:23 UTC; manual SD removal/restart and
+installed-system boot remain pending.
 The [owner's scope](../decisions/20261002-h12-scope-reduction.md) and
 [delivery plan](../development/h12-sd-delivery-plan-20261003.md) govern the session.
 
@@ -204,3 +204,24 @@ One released Tab visibly selected Yes. Under the recorded delegation, coordinato
 sent released Enter at 05:09:57 UTC. KVM then showed Writing and verifying; keep
 power on. Target write counters began increasing. Transfer/readback is in progress;
 no success or permission to disconnect/restart is claimed at this checkpoint.
+
+### Physical write and complete readback passed
+
+By 05:23:26 UTC, actual KVM video displayed **Complete image-range write, flush
+and readback matched**. The unchanged reviewed backend reaches that message only
+after transferred-source hashing, fsync, block-cache flush and full image-range
+readback hashing all pass. The source SHA remains
+`ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`.
+Measured target writes total 15,269,888 sectors of 512 bytes, exactly
+7,818,182,656 bytes, and process write_bytes agrees. No target I/O is in flight.
+The UI process remains alive at its terminal result with source and target
+file descriptors closed. Final runtime/configuration hashes still match review;
+root remains the independent read-only SD. Evidence is summarized in the
+[physical receipt](../features/h12-attended-sd-reimage/physical-write-evidence.json).
+
+The remaining owner step is now concrete: keep PSU off; disconnect USB host
+power; remove SD while unpowered, leaving spare eMMC installed; reconnect USB
+with Ethernet/KVM connected. Coordinator will observe a new boot, installed root
+and SSH. If normal boot fails, retain SD for unpowered reinsertion/recovery.
+The manual restart has been requested but is not yet observed. H12 remains open
+for that final check. This outcome is not printer/MCU/heater/motion qualification.
