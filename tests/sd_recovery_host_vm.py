@@ -99,7 +99,7 @@ def main():
 cat /proc/1/comm
 sudo -n id -u
 systemctl is-active sv08-recovery-display.service sd-host-ssh.service systemd-networkd.service
-pgrep -af sv08_recovery_ui.py
+pgrep -af sv08_sd_reimage_ui.py
 systemctl --no-pager --plain list-units --type=service --state=running --no-legend
 systemctl --no-pager --plain list-sockets --all --no-legend
 cat /run/sv08/boot-report.json
@@ -117,7 +117,7 @@ cat /proc/sys/kernel/random/boot_id
                     raise AssertionError('Root partition ioctl/mount protection absent')
                 initial=ssh(a.port,key,command,known)
                 boot_report=json.loads(ssh(a.port,key,'cat /run/sv08/boot-report.json',known)['stdout'])
-                if not any('sv08_recovery_ui.py' in item['command'] for item in boot_report['processes']):
+                if 'sv08_sd_reimage_ui.py' not in initial['stdout']:
                     raise AssertionError('Actual GTK process missing')
                 if boot_report['registry_exists']:
                     raise AssertionError('Persistent registry initialized unexpectedly')
@@ -127,7 +127,7 @@ cat /proc/sys/kernel/random/boot_id
                     q=QMP(qmp);time.sleep(3);q.shot(work/f'ui-{boot}.ppm')
                     frame=(work/f'ui-{boot}.ppm').read_bytes().split(b'\n',3)[-1]
                     if len(set(frame))<2:raise AssertionError('GTK display frame is blank')
-                    q.key('tab');time.sleep(1);q.key('alt','c');time.sleep(2)
+                    q.key('tab');time.sleep(1);q.key('alt','r');time.sleep(2)
                     q.shot(work/f'ui-review-{boot}.ppm');q.key('esc')
                 else:raise AssertionError('QMP display unavailable')
                 denied=ssh(a.port,work/'unauthorized-key','true',known,False)
@@ -170,12 +170,12 @@ cat /proc/sys/kernel/random/boot_id
                 for line in text.splitlines():
                     if 'SV08_RECOVERY_BOOT_REPORT ' not in line:continue
                     report=json.loads(line.split('SV08_RECOVERY_BOOT_REPORT ',1)[1])
-                    if 'SpiRegistry daemon is running' in text and 'ActiveState=active' in report['display_unit'] and any('sv08_recovery_ui.py' in p['command'] for p in report['processes']):
+                    if 'SpiRegistry daemon is running' in text and 'ActiveState=active' in report['display_unit'] and any('/usr/bin/X' in p['command'] for p in report['processes']):
                         no_network_report=report
                 if no_network_report:break
                 time.sleep(1)
             if not no_network_report:raise AssertionError('No-network GTK deadline')
-            q=QMP(qpath);time.sleep(3);q.shot(work/'no-network-ui.ppm');q.key('alt','c');time.sleep(2)
+            q=QMP(qpath);time.sleep(3);q.shot(work/'no-network-ui.ppm');q.key('alt','r');time.sleep(2)
             q.shot(work/'no-network-review.ppm');q.key('esc')
             time.sleep(15)
             if proc.poll() is not None:raise AssertionError('No-network recovery exited')
