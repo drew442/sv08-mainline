@@ -1,7 +1,9 @@
 # H12 attended SD session preparation — 2026-10-03
 
-Status: physical preparation. Software delivery verification passed and the
-tool is merged on main. Exact physical-action review passed with conditions at 03:19–03:24 UTC. No full-image write or restart is authorized by this record.
+Status: physical execution resumed after the owner repaired KVM video. The original
+software is merged; a keyboard correction and fresh exact action are under separate
+independent review. Earlier session observations below are historical. No full-image
+write has yet occurred.
 The [owner's scope](../decisions/20261002-h12-scope-reduction.md) and
 [delivery plan](../development/h12-sd-delivery-plan-20261003.md) govern the session.
 
@@ -109,3 +111,70 @@ checking. On a readable confirmation for the prepared source and intended spare,
 owner may select Yes to begin. Keep power/source connected and report the result;
 do not restart until success evidence has been retained. Exact write/flush/readback
 and normal boot are still unachieved at this checkpoint.
+
+## KVM return and keyboard correction
+
+The owner reported that Enter chose No, Tab did not visibly change the selection,
+and the selected answer was unclear. After rebooting, bypassing the HDMI splitter
+and updating GLKVM EDID, the owner requested an autonomous retry through KVM.
+This delegates operation of the confirmation to the coordinator under the existing
+identified-image/spare-eMMC authority; it supersedes the earlier owner-alone keypress
+instruction for this retry. The owner last confirmed PSU off, USB host power,
+Ethernet, SD and spare installed and no irreplaceable spare data. Only the reboot
+and video-chain changes were subsequently reported.
+
+On the new SD boot, actual KVM video and discrete press/release keystrokes work.
+The original UI passed a disposable-file Tab/Enter journey after those changes,
+so the prior physical failure has no uniquely established cause. A separate local
+X test reproduced missing native focus. The correction explicitly presents the
+window/dialog and adds a thick selected-button outline and a textual selected
+answer. No remains the default; no backend/write policy changes were made.
+
+The old GTK driver programmatically focused Yes and did not establish native Tab
+navigation. Its historical passing result is preserved with that limitation.
+The replacement uses actual key events and checks native focus, Tab/Shift+Tab,
+No/Yes/Escape/close/absent answer, failure refusal and resulting file bytes.
+An initial installed run failed by sampling focus too early. The corrected driver
+waits within the existing ten-second deadline, preserves timed focus evidence and
+still fails when focus never arrives. All ten cases now pass on the installed
+ARM64 SD desktop; measured dialog focus arrived after roughly half a second.
+Real GLKVM Enter-on-No left the disposable file unchanged, and Tab then Enter-on-Yes
+wrote and read back that file. Readable KVM screenshots show both selected answers.
+These are file fixtures, not an eMMC write or hardware durability qualification.
+
+Correction candidate: `ba40c0c`, based on `282ddca`. Runtime UI SHA-256:
+`b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4`.
+Backend remains
+`a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304`.
+The current SD root remains read-only, the same intended spare is unmounted with
+no swap, and its measured completed writes/written sectors remain zero. The
+read-only NFS source is remounted. Exact identities, screenshots, fixture receipts,
+failed runs and review packets are retained in ignored session evidence.
+This correction is tested in the installed SD userspace via temporary runtime
+files; no newly composed SD image is claimed. Fresh software and action reviews
+must pass before production deployment/confirmation on this new boot.
+
+### Fresh independent reviews before production enablement
+
+Correction delivery verifier `01a1001b-6283-75f2-a9c7-5c1b60e89eba` passed the
+complete candidate diff and evidence, including an independent before/after Xvfb
+reproduction. Its formal result retains its own launch uncertainty; coordinator
+inspection separately confirmed actual GPT-6.1 Sol/medium, full role loaded and
+full-access/never. The [correction evidence](../features/h12-attended-sd-reimage/keyboard-correction-evidence.json)
+and [formal verification](../features/h12-attended-sd-reimage/keyboard-correction-verification.json)
+preserve the result and limits.
+
+Fresh high-consequence reviewer `01a1001b-66fb-7d83-827f-f8d9446810e4` returned
+PASS WITH CONDITIONS for the new boot, unchanged backend/image/target and corrected
+UI. Actual Sol 6.1/medium and complete role were verified. Both reviewers ran as
+separate full-role CLI sessions because native agent capacity was unavailable.
+The action review explicitly permits coordinator KVM confirmation under the
+owner's existing flashing authority and latest autonomous-retry delegation.
+
+Before enablement, verify staged hashes, exact configuration, boot, target,
+capacity, independent recovery marker and effective production entry point with
+Restart=no. Complete native source hashing and inspect the actual confirmation;
+then Tab, inspect visible Yes, then Enter with each key released. Stop on mismatch,
+refusal or ambiguity. Preserve power/source during transfer, record matched result
+and terminal writer before manual restart; observe installed root and SSH after it.
+These reviews are recorded before production enablement; neither claims execution.

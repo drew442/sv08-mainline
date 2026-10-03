@@ -1,0 +1,302 @@
+{
+  "candidate": "ba40c0c",
+  "base": "282ddca",
+  "environment": "Actual ARM64 independent SD userspace on owner-reported H616_JC_6Z_V1.2; disposable regular files only",
+  "installed": {
+    "results": [
+      {
+        "answer": "no",
+        "keyboard": false,
+        "refused": true,
+        "result": "Refused: Source checksum mismatch\nNo write.",
+        "focus": []
+      },
+      {
+        "answer": "no",
+        "keyboard": true,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": [
+          {
+            "step": 0,
+            "elapsed": 0.38,
+            "x_input_focus": 4194601,
+            "dialog_xid": 4194979,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": false,
+            "actual": false
+          },
+          {
+            "step": 0,
+            "elapsed": 0.492,
+            "x_input_focus": 4194979,
+            "dialog_xid": 4194979,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          }
+        ]
+      },
+      {
+        "answer": "escape",
+        "keyboard": true,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": [
+          {
+            "step": 0,
+            "elapsed": 0.356,
+            "x_input_focus": 4195606,
+            "dialog_xid": 4195979,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": false,
+            "actual": false
+          },
+          {
+            "step": 0,
+            "elapsed": 0.464,
+            "x_input_focus": 4195979,
+            "dialog_xid": 4195979,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          }
+        ]
+      },
+      {
+        "answer": "escape-yes",
+        "keyboard": true,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": [
+          {
+            "step": 0,
+            "elapsed": 0.357,
+            "x_input_focus": 4196597,
+            "dialog_xid": 4196965,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": false,
+            "actual": false
+          },
+          {
+            "step": 0,
+            "elapsed": 0.464,
+            "x_input_focus": 4196965,
+            "dialog_xid": 4196965,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 1,
+            "elapsed": 0.588,
+            "x_input_focus": 4196965,
+            "dialog_xid": 4196965,
+            "mapped": true,
+            "choice": "Yes",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 2,
+            "elapsed": 0.694,
+            "x_input_focus": 4196965,
+            "dialog_xid": 4196965,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 3,
+            "elapsed": 0.794,
+            "x_input_focus": 4196965,
+            "dialog_xid": 4196965,
+            "mapped": true,
+            "choice": "Yes",
+            "toplevel": true,
+            "actual": true
+          }
+        ]
+      },
+      {
+        "answer": "absent",
+        "keyboard": true,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": [
+          {
+            "step": 0,
+            "elapsed": 0.357,
+            "x_input_focus": 4198918,
+            "dialog_xid": 4199284,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": false,
+            "actual": false
+          },
+          {
+            "step": 0,
+            "elapsed": 0.464,
+            "x_input_focus": 4199284,
+            "dialog_xid": 4199284,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 1,
+            "elapsed": 0.581,
+            "x_input_focus": 4199284,
+            "dialog_xid": 4199284,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 2,
+            "elapsed": 0.681,
+            "x_input_focus": 4199284,
+            "dialog_xid": 4199284,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          }
+        ]
+      },
+      {
+        "answer": "close",
+        "keyboard": false,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": []
+      },
+      {
+        "answer": "no",
+        "keyboard": false,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": []
+      },
+      {
+        "answer": "yes",
+        "keyboard": true,
+        "refused": false,
+        "result": "Complete image-range write, flush and readback matched. The complete image range, including image-contained user data and environment, will be replaced. Files are not preserved. Restart manually when ready; SD remains the recovery route.",
+        "focus": [
+          {
+            "step": 0,
+            "elapsed": 0.357,
+            "x_input_focus": 4201808,
+            "dialog_xid": 4202173,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": false,
+            "actual": false
+          },
+          {
+            "step": 0,
+            "elapsed": 0.465,
+            "x_input_focus": 4202173,
+            "dialog_xid": 4202173,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 1,
+            "elapsed": 0.586,
+            "x_input_focus": 4202173,
+            "dialog_xid": 4202173,
+            "mapped": true,
+            "choice": "Yes",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 2,
+            "elapsed": 0.693,
+            "x_input_focus": 4202173,
+            "dialog_xid": 4202173,
+            "mapped": true,
+            "choice": "No",
+            "toplevel": true,
+            "actual": true
+          },
+          {
+            "step": 3,
+            "elapsed": 0.793,
+            "x_input_focus": 4202173,
+            "dialog_xid": 4202173,
+            "mapped": true,
+            "choice": "Yes",
+            "toplevel": true,
+            "actual": true
+          }
+        ]
+      },
+      {
+        "answer": "no",
+        "keyboard": false,
+        "refused": false,
+        "result": "No write. Restart manually only when ready.",
+        "focus": []
+      },
+      {
+        "answer": "yes",
+        "keyboard": false,
+        "refused": false,
+        "result": "Complete image-range write, flush and readback matched. The complete image range, including image-contained user data and environment, will be replaced. Files are not preserved. Restart manually when ready; SD remains the recovery route.",
+        "focus": []
+      }
+    ],
+    "source_sha256": "414baeca08b52b4131f452480357dd772645f0391d54651da91e57fb9e165f5d",
+    "target_sha256": "84551071c3517bd2157e1a7cae6b4a38f42b7ae5ac0eaf8f868e8f2ad4a6bfc2",
+    "runtime": {
+      "sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+      "sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4"
+    },
+    "fixture_only": true
+  },
+  "kvm": {
+    "no": {
+      "result": "No write. Restart manually only when ready.",
+      "error": null,
+      "before": "819bcac73487b41732d9b6f9b954175fab6c53a7024971610d7e2ba91b22abfb",
+      "after": "819bcac73487b41732d9b6f9b954175fab6c53a7024971610d7e2ba91b22abfb",
+      "source": "4721ac06d6aa2822ae2364b99b4a36ba7f511602406ba3ca7e560c2b3aef4847",
+      "fixture_only": true
+    },
+    "yes": {
+      "result": "Complete image-range write, flush and readback matched. The complete image range, including image-contained user data and environment, will be replaced. Files are not preserved. Restart manually when ready; SD remains the recovery route.",
+      "error": null,
+      "before": "819bcac73487b41732d9b6f9b954175fab6c53a7024971610d7e2ba91b22abfb",
+      "after": "4721ac06d6aa2822ae2364b99b4a36ba7f511602406ba3ca7e560c2b3aef4847",
+      "source": "4721ac06d6aa2822ae2364b99b4a36ba7f511602406ba3ca7e560c2b3aef4847",
+      "fixture_only": true
+    }
+  },
+  "limitations": [
+    "No physical eMMC write or normal boot established by these fixtures",
+    "Original physical Tab failure not uniquely reproduced after owner KVM repair",
+    "Runtime staged temporarily; composed image not rebuilt for this correction"
+  ],
+  "evidence_sha256": {
+    "installed-final.json": "276dc8a42c4b874f4ec3af1b8ca5c1ce6a817fd74a274111e29a55f40c085eaf",
+    "corrected-kvm-no.json": "b1c57f4b330de32261ccbf2eac4042632335c5ded78a80546484b3b89361a388",
+    "corrected-kvm-yes.json": "5c5467ed280c8758125f0508f96501cc16e91e7301ef15812963eb7c4ce54122",
+    "corrected-no-dialog.jpg": "79e98361d63b2b49194605aa595652d01603eac08dea1f18837913c96d3f8776",
+    "corrected-yes-dialog.jpg": "c4db3a249d3c8e5618e55a8f0017399a213d64fe199435c6ef4de0d6a3530a31",
+    "installed-failure.log": "028f4530baaa66d2220d95459c8434fc695b9bcf27a3fc1358dcca40aa11e15a"
+  }
+}
