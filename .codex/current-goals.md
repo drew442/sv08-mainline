@@ -1,8 +1,10 @@
 # Current delivery goals
 
 Reset: 2026-10-03, at the owner’s request. Active goal: **complete H12 using
-attended SD maintenance**. The application goal tracker is active for this
-objective. Prior goal/checkpoint text is preserved in
+attended SD maintenance**. The application goal tracker is blocked pending the owner’s current physical
+setup/attendance reply. The same dependency persisted across three goal turns;
+software delivery is complete and prepared files remain hash-verified. Resume
+this objective when the pending reply arrives. Prior goal/checkpoint text is preserved in
 [the history through October 2](goals-history-through-20261002.md).
 
 The [owner’s ten-point scope](../docs/decisions/20261002-h12-scope-reduction.md)
