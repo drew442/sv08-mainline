@@ -109,10 +109,14 @@
       "evidence": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "f05281148f074ef5a85f8a6ba15f9d83",
+        "session": "h12-sd-implement-20261003"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Deliver independently verified attended SD maintenance",
       "verification": null
     },

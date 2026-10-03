@@ -12,7 +12,7 @@ is authoritative. All commits are pushed to GitHub under standing authorization.
 
 | Goal | State | Deliverable and completion evidence |
 | --- | --- | --- |
-| H12-1 — Deliver the minimal SD flashing tool | Planner and independent approval completed; implementation is next | Run from independent SD. Select image and installed eMMC, check identity/capacity/source separation/target not in use/image checksum, display image and target, ask yes/no, then write/flush/full readback. No/EOF performs no write. Focused offline tests and independent delivery verification pass. |
+| H12-1 — Deliver the minimal SD flashing tool | Planner and independent approval completed; project_implementer is running on feature/h12-attended-sd-reimage | Run from independent SD. Select image and installed eMMC, check identity/capacity/source separation/target not in use/image checksum, display image and target, ask yes/no, then write/flush/full readback. No/EOF performs no write. Focused offline tests and independent delivery verification pass. |
 | H12-2 — Prepare the real SD maintenance session | Pending H12-1 | Identify the concrete accepted tool/image and current printer storage; make them available to the SD host. Confirm the SD recovery path, actual physical setup and operator attendance. Exact hardware-operation review is complete. Source/image/target readiness is established without a separate rehearsal milestone. |
 | H12-3 — Complete one attended reimage and normal boot | Pending H12-2 and actual affirmative flashing confirmation | Write the identified installed eMMC from SD, flush and verify the complete image range, report the outcome, and have the operator restart manually. Observe the installed system’s normal boot. Retain actual evidence and limitations. |
 

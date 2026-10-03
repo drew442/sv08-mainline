@@ -86,3 +86,18 @@ physical success. Last measured SD boot/SSH was October 2; no current printer
 access, media mutation, image write, new boot or attendance has been performed or
 assumed in this reset. Full-image authorization is reconciled against the exact
 prepared action before execution, without asking again for settled scope choices.
+
+## Active implementation assignment
+
+The approved task is claimed as `h12-attended-sd-reimage:implement`, run
+`f05281148f074ef5a85f8a6ba15f9d83`, coordinator session
+`h12-sd-implement-20261003`. One project_implementer is active on
+`feature/h12-attended-sd-reimage` at baseline `5834dd4`, with only proposal-owned
+files assigned. Separate-session runtime 01a0ff51-a356-73a0-b226-7babab5c5721 confirms
+GPT-6.1 Sol/medium, full-access/never and the complete role contract. Primary
+assignment is 20 minutes of implementation/focused checks with 128 MiB scratch;
+full SD/QEMU artifacts are excluded from the space-limited local checkout and
+need a separately budgeted coordinator/integration run. No hardware/network
+access, shared-record edits, commits, pushes or additional agents are delegated.
+Installed ARM64 evidence and independent verification remain required before
+software completion; physical preparation and acceptance follow afterward.
