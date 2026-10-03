@@ -1,10 +1,9 @@
 # Current delivery goals
 
 Reset: 2026-10-03, at the owner’s request. Active goal: **complete H12 using
-attended SD maintenance**. The application goal tracker is blocked pending the owner’s current physical
-setup/attendance reply. The same dependency persisted across three goal turns;
-software delivery is complete and prepared files remain hash-verified. Resume
-this objective when the pending reply arrives. Prior goal/checkpoint text is preserved in
+attended SD maintenance**. The owner returned and confirmed current setup/attendance at 03:19 UTC.
+Physical execution has resumed; exact operation review passed with conditions.
+Prior goal/checkpoint text is preserved in
 [the history through October 2](goals-history-through-20261002.md).
 
 The [owner’s ten-point scope](../docs/decisions/20261002-h12-scope-reduction.md)
@@ -15,7 +14,7 @@ is authoritative. All commits are pushed to GitHub under standing authorization.
 | Goal | State | Deliverable and completion evidence |
 | --- | --- | --- |
 | H12-1 — Deliver the minimal SD flashing tool | Complete: installed ARM64 journey passed, independently verified, merged and pushed | Run from independent SD. Select image and installed eMMC, check identity/capacity/source separation/target not in use/image checksum, display image and target, ask yes/no, then write/flush/full readback. No/EOF performs no write. Focused offline tests and independent delivery verification pass. |
-| H12-2 — Prepare the real SD maintenance session | In progress: source/target/tool/display preparation complete; current setup/attendance requested; exact action review pending | Identify the concrete accepted tool/image and current printer storage; make them available to the SD host. Confirm the SD recovery path, actual physical setup and operator attendance. Exact hardware-operation review is complete. Source/image/target readiness is established without a separate rehearsal milestone. |
+| H12-2 — Prepare the real SD maintenance session | In progress: source/target/tool/display preparation complete; current setup/attendance confirmed; exact action review passed; enabling attended UI | Identify the concrete accepted tool/image and current printer storage; make them available to the SD host. Confirm the SD recovery path, actual physical setup and operator attendance. Exact hardware-operation review is complete. Source/image/target readiness is established without a separate rehearsal milestone. |
 | H12-3 — Complete one attended reimage and normal boot | Pending H12-2 and actual affirmative flashing confirmation | Write the identified installed eMMC from SD, flush and verify the complete image range, report the outcome, and have the operator restart manually. Observe the installed system’s normal boot. Retain actual evidence and limitations. |
 
 H12 is complete only after all three outcomes pass. Offline acceptance is not a

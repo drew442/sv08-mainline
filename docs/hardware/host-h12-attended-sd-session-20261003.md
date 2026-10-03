@@ -1,7 +1,7 @@
 # H12 attended SD session preparation — 2026-10-03
 
 Status: physical preparation. Software delivery verification passed and the
-tool is merged on main. Exact physical-action review is pending. No full-image write or restart is authorized by this record.
+tool is merged on main. Exact physical-action review passed with conditions at 03:19–03:24 UTC. No full-image write or restart is authorized by this record.
 The [owner's scope](../decisions/20261002-h12-scope-reduction.md) and
 [delivery plan](../development/h12-sd-delivery-plan-20261003.md) govern the session.
 
@@ -65,3 +65,30 @@ No separate rehearsal boot, permission claims, randomness, expiry, cold capture,
 factory restore trial, MCU operation, heater or motion is part of this session.
 Physical setup/attendance is not inferred from SSH reachability. H12 remains open
 until the actual write/readback and manually restarted normal boot are observed.
+
+## Attended authorization and exact review
+
+At 03:19 UTC the owner confirmed PSU off, USB host power, Ethernet, installed SD
+and spare eMMC, no irreplaceable spare data and attendance. Keyboard/mouse input
+woke the physical HDMI recovery menu. KVM capture still reports no HDMI signal;
+physical visibility is owner-reported and KVM capture is not established.
+Fresh read-only inspection matched the prepared spare identity, the same SD boot,
+read-only source and unused eMMC. Stored factory media is not a new gate.
+
+Separate `high_consequence_reviewer` session
+`01a0ffc7-7fd0-7b13-be2f-bcfec9f13f60` returned **PASS WITH CONDITIONS** for
+volatile application/configuration staging, this exact image-range write after
+owner Yes, and the subsequent manual restart. Actual GPT-6.1 Sol/medium,
+full-access/never and complete role instructions were verified from session
+metadata. Exact review and prepared hashes are preserved in ignored session
+records; unique media identifiers remain private. No uncertainty required a
+higher-tier review. This review is recorded before deployment/enablement.
+
+Conditions: read back deployed file hashes and retain the measured boot/source/
+target/recovery gate; verify effective display ExecStart and Restart=no; owner
+must see readable image/target/destructive text after integrated full client hash
+and select Yes themselves. Preserve power/Ethernet/source through transfer. Stop
+on error, changed facts or ambiguous result, without retry/reboot. Capture matched
+write/flush/full-readback screen result, process and block-I/O evidence before
+manual restart. Then observe new boot ID and installed root/SSH. SD remains the
+fallback. No physical write or success is established by this approval.
