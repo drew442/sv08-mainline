@@ -753,7 +753,7 @@
       },
       "repeats": 0,
       "resumption": "Repair independent findings F1-F4: actual boot permissions, complete bounded restore, durable public retries; preserve first candidate and obtain fresh high verification.",
-      "status": "review",
+      "status": "done",
       "title": "Deliver independently verified finite rollover maintenance journey",
       "verification": {
         "decision_sha256": "7636a967a4e0c4443e42210193e40fe3a8b89200c92f2c34a5ac2dfa517c99f3",
