@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 from contextlib import contextmanager
 from pathlib import Path
 import sys
@@ -57,8 +58,8 @@ def admitted():
 
 class TransactionTests(unittest.TestCase):
     def setUp(self):
-        tmp = tempfile.TemporaryDirectory(); self.addCleanup(tmp.cleanup)
-        self.store = Store(Path(tmp.name)/'state', reserve_bytes=0)
+        tmp = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(tmp.cleanup)
+        self.store = Store(Path(tmp.name)/'state', reserve_bytes=0, budget=fixture_budget())
         self.store.initialize()
         self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = 'boot-1'
         self.backend = Backend(); self.tx = Transaction(self.store, self.backend, admitted)

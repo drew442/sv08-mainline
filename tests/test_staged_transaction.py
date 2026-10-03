@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 from contextlib import contextmanager
 import fcntl
 import hashlib
@@ -18,12 +19,12 @@ from test_transaction import Backend
 
 class StagedTransactionTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix='.sv08-transaction-', dir=Path.home())
+        temporary = tempfile.TemporaryDirectory(prefix='.sv08-transaction-', dir=Path(fixture_root()))
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         upload = self.root / 'uploads'; upload.mkdir(mode=0o700)
-        self.staging = Staging(upload, reserve_bytes=0, owner_uid=os.getuid())
-        self.store = Store(self.root / 'state', reserve_bytes=0)
+        self.staging = Staging(upload, reserve_bytes=0, owner_uid=os.getuid(), budget=fixture_budget())
+        self.store = Store(self.root / 'state', reserve_bytes=0, budget=fixture_budget())
         self.store.initialize()
         self.boot = self.store.prepare_boot('A', 'release-1')
         self.boot['boot_id'] = 'boot-1'

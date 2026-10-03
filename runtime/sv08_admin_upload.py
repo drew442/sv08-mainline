@@ -41,7 +41,9 @@ class Uploads:
         tx = view['transaction']
         if view['state']['pending'] or tx and tx['phase'] not in ('complete', 'cancelled', 'failed'):
             raise ValueError('Preserve uploads until transaction reconciliation is complete')
-        view['upload_jobs'] = c.jobs.load()
+        history = c.jobs.view()
+        view['upload_jobs'] = history['rows']
+        view['history_revision'] = history['revision']
         if any(row['phase'] not in TERMINAL for row in view['upload_jobs']):
             raise ValueError('Preserve uploads while an image job is pending or ambiguous')
         return view
@@ -58,6 +60,7 @@ class Uploads:
                 higher.enter_context(c.store.locked(nonblocking=True))
                 view = self.view()
                 lease.enter_context(self.staging.locked())
+                if streaming: lease.enter_context(self.staging.allocating())
                 if not streaming:
                     yield view  # Brief review/removal retains all exclusion.
                     return

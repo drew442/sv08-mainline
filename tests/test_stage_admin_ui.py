@@ -1,3 +1,4 @@
+from test_data_budget import fixture_root
 from pathlib import Path
 import shutil
 import sys
@@ -9,7 +10,7 @@ from stage_admin_ui import stage, REPO
 
 class StageUITests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        temporary = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(temporary.cleanup)
         self.work = Path(temporary.name)
         target = self.work / 'rootfs/usr/lib/sv08'; target.mkdir(parents=True)
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, target / path.name)
@@ -34,6 +35,10 @@ class StageUITests(unittest.TestCase):
             self.assertEqual((self.work / 'rootfs' / relative).read_bytes(),
                              (REPO / 'configs/host-os' / source).read_bytes())
         self.assertIn(unit, result['hashes'])
+        import json, os
+        Path(fixture_root()).joinpath('history-staged-inventory.json').write_text(json.dumps(result, indent=2))
+        for name in ('sv08_admin_history.py', 'sv08_data_budget.py'):
+            self.assertIn('usr/lib/sv08/'+name, result['hashes'])
         for unit_name in ('sv08-feed.service', 'sv08-feed.timer'):
             name = 'usr/lib/systemd/system/' + unit_name
             self.assertEqual((self.work / 'rootfs' / name).read_bytes(),
@@ -152,3 +157,15 @@ class StageUITests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,name):stage(self.work,'host',True)
             self.assertFalse((self.work/'rootfs/usr/share/cockpit').exists())
             path.write_bytes(original)
+
+
+    def test_history_runtime_modules_are_strict_dependencies(self):
+        for name in ('sv08_admin_history.py', 'sv08_data_budget.py'):
+            path = self.work / 'rootfs/usr/lib/sv08' / name
+            raw = path.read_bytes(); path.unlink()
+            with self.assertRaisesRegex(ValueError, name): stage(self.work, 'host', True)
+            self.assertFalse((self.work / 'rootfs/usr/share/cockpit/sv08-host').exists())
+            path.write_bytes(raw)
+            path.write_bytes(raw+b'\n# mismatched fixture\n')
+            with self.assertRaisesRegex(ValueError, name): stage(self.work, 'host', True)
+            path.write_bytes(raw)

@@ -120,6 +120,10 @@ function renderJobs(result) {
     $('retry-submission').disabled = busy;
     jobsBusy = result.blocked || unresolved;
     $('jobs-summary').textContent = result.blocked ? 'An image operation is pending or needs outcome review. You can close this page safely.' : 'No image operation is running.';
+    $('history-capacity').textContent = `Active ${result.active ?? (result.capacity-result.remaining)}/${result.capacity}; archives ${result.archives ?? 0}/8; retained ${result.total ?? result.jobs.length}/${result.total_capacity ?? 1152}. ${result.maintenance_reason || ''}`;
+    $('history-maintenance').disabled = busy || !result.maintenance_available;
+    $('history-retry').hidden = !localStorage.getItem('sv08-history-maintenance');
+    $('history-retry').disabled = busy;
     $('jobs').replaceChildren();
     for (const job of result.jobs) {
         const item = document.createElement('p'); item.dataset.jobId = job.id; item.dataset.phase = job.phase;
@@ -183,17 +187,20 @@ async function review(action, args = {}) {
 $('review').addEventListener('close', async () => {
     if ($('review').returnValue !== 'confirm' || !plan || busy) { plan = null; return; }
     const reviewed = plan;
-    busy = true; if (state) render(); notice('Applying the reviewed change…');
+    busy = true; $('history-maintenance').disabled = true; $('history-retry').disabled = true; if (state) render(); notice('Applying the reviewed change…');
     try {
+        const maintenance = reviewed.kind === 'history-maintenance-v2';
         const disposition = reviewed.kind === 'retain-unknown-v1';
-        const image = !disposition && reviewed.action.startsWith('image.');
-        const message = disposition ? {method: 'image.dispose', plan: reviewed} : image ? {method: 'image.submit', id: crypto.randomUUID().replaceAll('-', ''), plan: reviewed} : {method: 'apply', plan: reviewed};
+        const image = !maintenance && !disposition && reviewed.action.startsWith('image.');
+        const message = maintenance ? {method: 'history.apply', plan: reviewed} : disposition ? {method: 'image.dispose', plan: reviewed} : image ? {method: 'image.submit', id: crypto.randomUUID().replaceAll('-', ''), plan: reviewed} : {method: 'apply', plan: reviewed};
         // Preserve lost-acknowledgement identity across page closure. Refresh only
         // observes server history; it never automatically submits this receipt.
         if (image) localStorage.setItem('sv08-image-submission', JSON.stringify(message));
+        if (maintenance) localStorage.setItem('sv08-history-maintenance', JSON.stringify(message));
         const result = await request(message);
         if (image) localStorage.removeItem('sv08-image-submission');
-        else if (!disposition) appliedDraft(reviewed);
+        if (maintenance) localStorage.removeItem('sv08-history-maintenance');
+        else if (!disposition && !maintenance) appliedDraft(reviewed);
         notice(result.message || 'Change completed.');
     }
     catch (error) { await submissionError(error); }
@@ -202,6 +209,28 @@ $('review').addEventListener('close', async () => {
 document.querySelectorAll('[data-page]').forEach(b => b.addEventListener('click', () => page(b.dataset.page)));
 document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => page(b.dataset.open)));
 $('refresh').addEventListener('click', refresh);
+$('history-retry').addEventListener('click', async () => {
+    if (busy) return;
+    const pending = JSON.parse(localStorage.getItem('sv08-history-maintenance') || 'null');
+    if (!pending || pending.method !== 'history.apply') return;
+    busy = true;
+    try { const result = await request(pending); localStorage.removeItem('sv08-history-maintenance'); notice(result.message); }
+    catch (error) { notice(error.message); }
+    finally { busy = false; await refresh(); }
+});
+$('history-maintenance').addEventListener('click', async () => {
+    if (busy) return;
+    const generation = authorityGeneration;
+    try {
+        const result = await request({method: 'history.review'});
+        if (generation !== authorityGeneration) return;
+        plan = result.plan;
+        $('review-title').textContent = 'Preserve image history';
+        $('review-effect').textContent = result.message;
+        $('review-arguments').textContent = `${plan.operation}: preserve ${plan.ids.length} original receipts. Revision ${plan.revision}`;
+        $('review').returnValue = 'cancel'; $('review').showModal();
+    } catch (error) { notice(error.message); }
+});
 $('retry-submission').addEventListener('click', async () => {
     if (busy) return;
     const pending = JSON.parse(localStorage.getItem('sv08-image-submission') || 'null');

@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget
 import hashlib
 import os
 from pathlib import Path
@@ -14,7 +15,7 @@ class ImageResolutionTests(ImageAdministrationTests):
         super().setUp()
         self.boot['boot_id'] = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
         self.launches = []
-        self.jobs = Jobs(self.store.root / 'admin-image-jobs', self.boot['boot_id'], self.launches.append)
+        self.jobs = Jobs(self.store.root / 'admin-image-jobs', self.boot['boot_id'], self.launches.append, budget=fixture_budget())
         self.controller.jobs = self.jobs
         self.service = {'owner': ':1.41', 'package': '1.15.2-0sv08.1', 'busy_guard': 'GetSlotStatus'}
         self.backend.writer = admitted

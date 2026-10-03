@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 from pathlib import Path
 import os
 import sys
@@ -15,8 +16,8 @@ from sv08_state import Store
 class BootIdentityTests(unittest.TestCase):
     def test_runtime_jobs_use_changing_kernel_boot_not_persistent_identity(self):
         from sv08_admin_jobs import Jobs
-        with tempfile.TemporaryDirectory() as temporary:
-            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
             store.initialize()
             original = store.prepare_boot('A', 'release-1')
             first = 'b16f14c8-389c-4ef4-92c9-c123e1bd7975'
@@ -25,8 +26,8 @@ class BootIdentityTests(unittest.TestCase):
                 one = bind_boot_identity(original)
             with patch('sv08_boot.Path.read_text', return_value=second):
                 two = bind_boot_identity(original)
-            self.assertEqual(Jobs(store.root / 'jobs', one['boot_id']).boot_id, first)
-            self.assertEqual(Jobs(store.root / 'jobs', two['boot_id']).boot_id, second)
+            self.assertEqual(Jobs(store.root / 'jobs', one['boot_id'], budget=fixture_budget()).boot_id, first)
+            self.assertEqual(Jobs(store.root / 'jobs', two['boot_id'], budget=fixture_budget()).boot_id, second)
             self.assertNotIn('boot_id', original)
             self.assertNotIn('boot_id', store.load()['slots']['A'])
             for bad in ('', 'machine-id', '00000000-0000-0000-0000-000000000000'):
@@ -34,8 +35,8 @@ class BootIdentityTests(unittest.TestCase):
                     bind_boot_identity(original)
 
     def test_copied_application_files_receive_application_ownership(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
             store.initialize()
             boot = store.prepare_boot('A', 'release-1')
             config = Path(boot['generation']) / 'config/printer.cfg'
@@ -49,8 +50,8 @@ class BootIdentityTests(unittest.TestCase):
             self.assertNotIn(unittest.mock.call(config, 1000, 1000), chown.call_args_list)
 
     def test_cockpit_certificate_store_is_private_root_owned_persistent_state(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
             store.initialize()
             certs = store.root / 'system/cockpit/ws-certs.d'
             self.assertTrue(certs.is_dir())
@@ -70,8 +71,8 @@ class BootIdentityTests(unittest.TestCase):
             self.assertEqual(key.read_text(), 'private key sentinel')
 
     def test_cockpit_certificate_store_symlink_is_rejected(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            store = Store(Path(temporary) / 'data', reserve_bytes=0)
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
             store.initialize()
             certs = store.root / 'system/cockpit/ws-certs.d'
             certs.rmdir()
@@ -82,8 +83,8 @@ class BootIdentityTests(unittest.TestCase):
                 prepare_permissions(store.root, store.prepare_boot('A', 'release-1')['generation'])
 
     def test_identity_symlink_does_not_modify_target(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            store = Store(Path(temporary) / 'data')
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            store = Store(Path(temporary) / 'data', budget=fixture_budget())
             store.initialize()
             outside = Path(temporary) / 'outside'
             outside.write_text('preserve')
@@ -93,9 +94,9 @@ class BootIdentityTests(unittest.TestCase):
             self.assertEqual(outside.read_text(), 'preserve')
 
     def test_owner_key_is_seeded_once_and_preserves_owner_changes(self):
-        with tempfile.TemporaryDirectory() as temporary:
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
             root = Path(temporary)
-            store = Store(root / 'data', reserve_bytes=0)
+            store = Store(root / 'data', reserve_bytes=0, budget=fixture_budget())
             store.initialize()
             seed = root / 'authorized_keys'
             seed.write_text('ssh-ed25519 initial owner-key\n')
@@ -111,9 +112,9 @@ class BootIdentityTests(unittest.TestCase):
             self.assertEqual(key.read_text(), 'ssh-ed25519 owner-replacement\n')
 
     def test_owner_key_symlink_is_rejected_without_touching_target(self):
-        with tempfile.TemporaryDirectory() as temporary:
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
             root = Path(temporary)
-            store = Store(root / 'data', reserve_bytes=0)
+            store = Store(root / 'data', reserve_bytes=0, budget=fixture_budget())
             store.initialize()
             seed = root / 'authorized_keys'
             seed.write_text('ssh-ed25519 initial owner-key\n')

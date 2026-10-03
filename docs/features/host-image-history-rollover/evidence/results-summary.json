@@ -1,0 +1,162 @@
+{
+  "browser-1.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-2.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "browser completed"
+  },
+  "browser-3.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "browser completed"
+  },
+  "browser-diagnostics-2.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "browser completed"
+  },
+  "browser-diagnostics.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-final.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "browser completed"
+  },
+  "browser-server-2.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-server-3.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-server-final.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "browser-server.log": {
+    "tests": null,
+    "seconds": null,
+    "status": "see log"
+  },
+  "compatibility-final.log": {
+    "tests": 13,
+    "seconds": 10.65,
+    "status": "OK"
+  },
+  "disposition-acquisition-final.log": {
+    "tests": 1,
+    "seconds": 0.138,
+    "status": "OK"
+  },
+  "expanded-1.log": {
+    "tests": 26,
+    "seconds": 36.602,
+    "status": "OK"
+  },
+  "expanded-2.log": {
+    "tests": 37,
+    "seconds": 36.354,
+    "status": "OK"
+  },
+  "ext4-bounds-1.log": {
+    "tests": 1,
+    "seconds": 8.764,
+    "status": "OK"
+  },
+  "faults-1.log": {
+    "tests": 1,
+    "seconds": 5.648,
+    "status": "OK"
+  },
+  "final-compatibility-staging.log": {
+    "tests": 26,
+    "seconds": 10.68,
+    "status": "OK"
+  },
+  "final-focused.log": {
+    "tests": 18,
+    "seconds": 0.313,
+    "status": "OK"
+  },
+  "final-tests-1.log": {
+    "tests": 300,
+    "seconds": 57.791,
+    "status": "errors=10"
+  },
+  "final-tests-2.log": {
+    "tests": 301,
+    "seconds": 57.777,
+    "status": "OK"
+  },
+  "migration-faults-final.log": {
+    "tests": 1,
+    "seconds": 1.118,
+    "status": "OK"
+  },
+  "no-env-budget.log": {
+    "tests": 2,
+    "seconds": 0.008,
+    "status": "OK"
+  },
+  "no-env-regression.log": {
+    "tests": 42,
+    "seconds": 0.141,
+    "status": "OK"
+  },
+  "pinned-admission-repair.log": {
+    "tests": 10,
+    "seconds": 0.195,
+    "status": "OK"
+  },
+  "primary-2.log": {
+    "tests": 79,
+    "seconds": 2.244,
+    "status": "errors=4"
+  },
+  "primary-3.log": {
+    "tests": 87,
+    "seconds": 8.799,
+    "status": "failures=1, errors=2"
+  },
+  "primary-4.log": {
+    "tests": 87,
+    "seconds": 9.728,
+    "status": "OK"
+  },
+  "regression-1.log": {
+    "tests": 117,
+    "seconds": 1.942,
+    "status": "errors=70"
+  },
+  "regression-2.log": {
+    "tests": 148,
+    "seconds": 10.324,
+    "status": "OK"
+  },
+  "regression-independent-1.log": {
+    "tests": 93,
+    "seconds": 2.606,
+    "status": "errors=1"
+  },
+  "repeated-faults-repair.log": {
+    "tests": 1,
+    "seconds": 0.33,
+    "status": "OK"
+  },
+  "repeated-faults.log": {
+    "tests": 1,
+    "seconds": 0.32,
+    "status": "failures=1"
+  }
+}

@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 import hashlib
 import io
 import os
@@ -15,10 +16,10 @@ from sv08_staging import Staging
 class StagingTests(unittest.TestCase):
     def setUp(self):
         # A private home child avoids treating world-writable /tmp as trusted.
-        directory = tempfile.TemporaryDirectory(prefix='.sv08-staging-test-', dir=Path.home())
+        directory = tempfile.TemporaryDirectory(prefix='.sv08-staging-test-', dir=Path(fixture_root()))
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name)
-        self.staging = Staging(self.root, max_bytes=4096, reserve_bytes=0, owner_uid=os.getuid())
+        self.staging = Staging(self.root, max_bytes=4096, reserve_bytes=0, owner_uid=os.getuid(), budget=fixture_budget())
         self.payload = b'fixture upload'
         self.digest = hashlib.sha256(self.payload).hexdigest()
 
@@ -80,7 +81,7 @@ class StagingTests(unittest.TestCase):
     def test_untrusted_directory_and_lock_refused(self):
         self.root.chmod(0o777)
         with self.assertRaisesRegex(ValueError, 'ancestry'):
-            Staging(self.root, owner_uid=os.getuid())
+            Staging(self.root, owner_uid=os.getuid(), budget=fixture_budget())
         self.root.chmod(0o700)
         (self.root / '.lock').symlink_to('/etc/passwd')
         with self.assertRaises(OSError): self.receive()
