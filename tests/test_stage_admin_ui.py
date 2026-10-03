@@ -35,6 +35,11 @@ class StageUITests(unittest.TestCase):
             self.assertEqual((self.work / 'rootfs' / relative).read_bytes(),
                              (REPO / 'configs/host-os' / source).read_bytes())
         self.assertIn(unit, result['hashes'])
+        for name in ('branding.css', 'badge.svg'):
+            relative = 'usr/share/cockpit/branding/debian/' + name
+            self.assertEqual((self.work / 'rootfs' / relative).read_bytes(),
+                             (REPO / 'configs/host-os/cockpit-branding' / name).read_bytes())
+            self.assertIn(relative, result['hashes'])
         import json, os
         Path(fixture_root()).joinpath('history-staged-inventory.json').write_text(json.dumps(result, indent=2))
         for name in ('sv08_admin_history.py', 'sv08_data_budget.py'):
@@ -52,6 +57,16 @@ class StageUITests(unittest.TestCase):
         self.assertIn('usr/lib/sv08/sv08_admin_jobs.py', result['hashes'])
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/sockets.target.wants').exists())
         with self.assertRaises(ValueError): stage(self.work, 'host', True)
+
+    def test_current_image_branding_replaces_only_regular_supported_assets(self):
+        branding = self.work / 'rootfs/usr/share/cockpit/branding/debian'
+        branding.mkdir(parents=True)
+        (branding / 'branding.css').write_text('stock package branding fixture')
+        (branding / 'preserve.txt').write_text('unrelated asset')
+        stage(self.work, 'host', True)
+        self.assertEqual((branding / 'branding.css').read_bytes(),
+                         (REPO / 'configs/host-os/cockpit-branding/branding.css').read_bytes())
+        self.assertEqual((branding / 'preserve.txt').read_text(), 'unrelated asset')
 
     def test_host_refresh_replaces_only_reviewed_ui_outputs(self):
         stage(self.work, 'host', True)
