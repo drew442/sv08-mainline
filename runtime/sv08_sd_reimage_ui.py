@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""SD-only native attended screen; GTK controls, no automatic write or restart."""
+"""SD-only native attended screen; GTK controls, no automatic write or restart.
+
+Present the modal explicitly for the recovery X server without a window manager.
+GTK's internal focus alone does not establish X keyboard focus. Keep No as the
+fallback default while focused buttons accept Enter through native GTK traversal.
+"""
 import threading
 import gi
 gi.require_version('Gtk', '3.0')
@@ -72,9 +77,27 @@ class ReimageWindow(Gtk.Window):
         dialog.add_button('_No', Gtk.ResponseType.NO)
         dialog.add_button('_Yes, replace image', Gtk.ResponseType.YES)
         dialog.set_default_response(Gtk.ResponseType.NO)
-        dialog.get_widget_for_response(Gtk.ResponseType.NO).grab_focus()
+        no = dialog.get_widget_for_response(Gtk.ResponseType.NO)
+        yes = dialog.get_widget_for_response(Gtk.ResponseType.YES)
+        selection = Gtk.Label(label='Tab / Shift+Tab selects; Enter activates; Escape cancels.', wrap=True)
+        dialog.get_content_area().pack_end(selection, False, False, 8)
+        # Always show focus, even when the theme suppresses keyboard focus rings.
+        style = Gtk.CssProvider()
+        style.load_from_data(b'button:focus { outline: 4px solid #204a87; outline-offset: -5px; }')
+        def show_selection(*_):
+            selected = next((button.get_label().replace('_', '') for button in (no, yes)
+                             if button.has_focus()), None)
+            selection.set_text(('Keyboard selection: '+selected+'. Enter activates. ' if selected else
+                                'No keyboard selection. ')+
+                               'Tab / Shift+Tab selects; Escape cancels. No is the default.')
+        for button in (no, yes):
+            button.get_style_context().add_provider(style, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            button.connect('notify::has-focus', show_selection)
         self.dialog = dialog
         dialog.show_all()
+        dialog.present()  # Request native input focus; no WM is present in recovery.
+        no.grab_focus()
+        show_selection()
         response = dialog.run(); dialog.destroy(); self.dialog = None
         self.answered = True
         self.review_button.set_sensitive(False)
@@ -90,6 +113,7 @@ def main():
     window = ReimageWindow()
     window.set_decorated(False)
     window.show_all()
+    window.present()
     Gtk.main()
 
 

@@ -116,7 +116,7 @@ def main():
                     result = json.loads(guest('sudo -n cat /run/h12/results/run.json')); break
                 except (AssertionError, json.JSONDecodeError): time.sleep(1)
             else: raise AssertionError('Installed GTK driver deadline')
-            assert len(result['results']) == 8
+            assert len(result['results']) == 10
             assert result['source_sha256'] == hashlib.sha256(data).hexdigest()
             assert result['target_sha256'] == hashlib.sha256(data+b'x'*512).hexdigest()
             mounts = guest('findmnt /run/h12/source; findmnt /run/h12/target; cat /proc/meminfo; df -k / /run /tmp')

@@ -2,8 +2,10 @@
 """Native GTK fixture driver, also runnable against installed ARM64 runtime.
 
 Run under Xvfb locally; in the installed VM use the service X display. Only an
-explicit regular-file fixture is admitted. Native key events and button activation
-exercise the dialog; target bytes, not screenshots, determine the result.
+explicit regular-file fixture is admitted. No window manager is required. Native
+Return opens Review; Tab/Shift+Tab navigate from No to Yes without grab_focus.
+Pointer activation also exercises the dialog; target bytes, not screenshots,
+determine the result.
 """
 import argparse
 import ctypes
@@ -47,46 +49,83 @@ def pump_until(condition):
         time.sleep(.01)
 
 
+# XTest sends real keys through X input focus, rather than GTK widget activation.
+x = ctypes.CDLL(ctypes.util.find_library('X11'))
+xt = ctypes.CDLL(ctypes.util.find_library('Xtst'))
+x.XOpenDisplay.restype = ctypes.c_void_p
+x.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+x.XFlush.argtypes = [ctypes.c_void_p]
+x.XCloseDisplay.argtypes = [ctypes.c_void_p]
+xt.XTestFakeKeyEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
+xt.XTestFakeMotionEvent.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_ulong]
+xt.XTestFakeButtonEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
+display = x.XOpenDisplay(None)
+if not display: raise AssertionError('No X display')
+
+
+def key(symbol, shift=False):
+    code = x.XKeysymToKeycode(display, symbol)
+    modifier = x.XKeysymToKeycode(display, Gdk.KEY_Shift_L)
+    if shift: xt.XTestFakeKeyEvent(display, modifier, 1, 0)
+    xt.XTestFakeKeyEvent(display, code, 1, 0)
+    xt.XTestFakeKeyEvent(display, code, 0, 0)
+    if shift: xt.XTestFakeKeyEvent(display, modifier, 0, 0)
+    x.XFlush(display)
+
+
 def journey(answer, keyboard=False, refused=False):
     def factory():
         return Session(dict(cfg, sha256='0'*64) if refused else cfg, FileFixtureAdmission())
-    window = ReimageWindow(factory); window.set_title('SV08 · Explicit disposable file fixture'); window.show_all()
+    window = ReimageWindow(factory)
+    window.set_title('SV08 · Explicit disposable file fixture')
+    window.set_decorated(False)
+    window.show_all(); window.present()
+    failures, focus = [], []
+    step = 0
     def respond():
+        nonlocal step
         if not getattr(window, 'dialog', None): return True
         dialog = window.dialog
-        if keyboard:
-            widget = dialog.get_widget_for_response(Gtk.ResponseType.YES if answer == 'yes' else Gtk.ResponseType.NO)
-            widget.grab_focus()
-            # XTest injects actual keyboard events into the installed X display.
-            x = ctypes.CDLL(ctypes.util.find_library('X11'))
-            xt = ctypes.CDLL(ctypes.util.find_library('Xtst'))
-            x.XOpenDisplay.restype = ctypes.c_void_p
-            display = x.XOpenDisplay(None)
-            if not display: raise AssertionError('No X display')
-            x.XKeysymToKeycode.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
-            code = x.XKeysymToKeycode(display, Gdk.KEY_Escape if answer == 'escape' else Gdk.KEY_Return)
-            xt.XTestFakeKeyEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
-            xt.XTestFakeKeyEvent(display, code, 1, 0)
-            xt.XTestFakeKeyEvent(display, code, 0, 0)
-            x.XFlush.argtypes = [ctypes.c_void_p]; x.XFlush(display)
-            x.XCloseDisplay.argtypes = [ctypes.c_void_p]; x.XCloseDisplay(display)
-        elif answer == 'close': dialog.response(Gtk.ResponseType.DELETE_EVENT)
-        else:
-            widget = dialog.get_widget_for_response(Gtk.ResponseType.YES if answer == 'yes' else Gtk.ResponseType.NO)
-            x = ctypes.CDLL(ctypes.util.find_library('X11'))
-            xt = ctypes.CDLL(ctypes.util.find_library('Xtst'))
-            x.XOpenDisplay.restype = ctypes.c_void_p
-            display = x.XOpenDisplay(None)
-            coords = widget.translate_coordinates(dialog, widget.get_allocated_width()//2, widget.get_allocated_height()//2)
-            origin = dialog.get_window().get_origin()
-            xt.XTestFakeMotionEvent.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_ulong]
-            xt.XTestFakeButtonEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_int, ctypes.c_ulong]
-            xt.XTestFakeMotionEvent(display, -1, origin[-2]+coords[0], origin[-1]+coords[1], 0)
-            xt.XTestFakeButtonEvent(display, 1, 1, 0); xt.XTestFakeButtonEvent(display, 1, 0, 0)
-            x.XFlush.argtypes = [ctypes.c_void_p]; x.XFlush(display)
-            x.XCloseDisplay.argtypes = [ctypes.c_void_p]; x.XCloseDisplay(display)
+        try:
+            if keyboard:
+                no = dialog.get_widget_for_response(Gtk.ResponseType.NO)
+                yes = dialog.get_widget_for_response(Gtk.ResponseType.YES)
+                expected = yes if answer != 'absent' and step in (1, 3) else no
+                focus.append(dict(step=step, choice='Yes' if dialog.get_focus() == yes else
+                                  'No' if dialog.get_focus() == no else 'other',
+                                  toplevel=dialog.has_toplevel_focus(), actual=expected.has_focus()))
+                assert dialog.get_focus() == expected and expected.has_focus(), focus
+                assert dialog.get_default_widget() == no, 'No must remain the default'
+                assert dialog.get_property('secondary-text') == window.session.review()
+                labels = [child.get_text() for child in dialog.get_content_area().get_children()
+                          if isinstance(child, Gtk.Label)]
+                choice = expected.get_label().replace('_', '')
+                assert any(text.startswith('Keyboard selection: '+choice+'.') for text in labels), labels
+                if answer == 'absent':
+                    assert target.read_bytes() == old, 'No answer must leave target unchanged'
+                    step += 1
+                    if step < 3: return True
+                    dialog.response(Gtk.ResponseType.CANCEL)
+                    return False
+                if answer in ('yes', 'escape-yes') and step < 3:
+                    # Forward, backward, forward: test both native traversal directions.
+                    key(Gdk.KEY_Tab, shift=step == 1)
+                    step += 1
+                    return True
+                key(Gdk.KEY_Escape if answer.startswith('escape') else Gdk.KEY_Return)
+            elif answer == 'close': dialog.response(Gtk.ResponseType.DELETE_EVENT)
+            else:
+                widget = dialog.get_widget_for_response(Gtk.ResponseType.YES if answer == 'yes' else Gtk.ResponseType.NO)
+                coords = widget.translate_coordinates(dialog, widget.get_allocated_width()//2, widget.get_allocated_height()//2)
+                origin = dialog.get_window().get_origin()
+                xt.XTestFakeMotionEvent(display, -1, origin[-2]+coords[0], origin[-1]+coords[1], 0)
+                xt.XTestFakeButtonEvent(display, 1, 1, 0); xt.XTestFakeButtonEvent(display, 1, 0, 0)
+                x.XFlush(display)
+        except Exception as exc:
+            failures.append(str(exc))
+            dialog.response(Gtk.ResponseType.CANCEL)
         return False
-    if not refused: GLib.timeout_add(20, respond)
+    if not refused: GLib.timeout_add(100, respond)
     expired = False
     def deadline():
         nonlocal expired
@@ -94,26 +133,34 @@ def journey(answer, keyboard=False, refused=False):
         if getattr(window, 'dialog', None): window.dialog.response(Gtk.ResponseType.CANCEL)
         return False
     timer = GLib.timeout_add_seconds(10, deadline)
-    window.review_button.clicked()
+    if keyboard:
+        pump_until(lambda: window.review_button.has_focus())
+        key(Gdk.KEY_Return)
+    else: window.review_button.clicked()
     pump_until(lambda: not window.busy and ('No write' in window.message.get_text() or
                                            'readback matched' in window.message.get_text()))
     GLib.source_remove(timer)
+    assert not failures, failures
     assert not expired, 'GTK response deadline exceeded; cancellation is not a passing answer'
     result = window.message.get_text()
     assert ('Refused' in result) if refused else ('readback matched' in result if answer == 'yes' else 'No write' in result), result
     window.refresh_button.clicked()
     window.destroy()
-    results.append(dict(answer=answer, keyboard=keyboard, refused=refused, result=result))
+    results.append(dict(answer=answer, keyboard=keyboard, refused=refused, result=result, focus=focus))
 
 
 journey('no', refused=True); assert target.read_bytes() == old
 journey('no', keyboard=True); assert target.read_bytes() == old
 journey('escape', keyboard=True); assert target.read_bytes() == old
+journey('escape-yes', keyboard=True); assert target.read_bytes() == old
+journey('absent', keyboard=True); assert target.read_bytes() == old
 journey('close'); assert target.read_bytes() == old
 journey('no'); assert target.read_bytes() == old
 journey('yes', keyboard=True); assert target.read_bytes() == data+old[len(data):]
 journey('no'); assert target.read_bytes() == data+old[len(data):]  # relaunch does not write
+target.write_bytes(old)  # Make the pointer Yes case prove a fresh byte replacement.
 journey('yes'); assert target.read_bytes() == data+old[len(data):]
+x.XCloseDisplay(display)
 report = dict(results=results, source_sha256=cfg['sha256'], target_sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
               runtime={n:hashlib.sha256((a.runtime/n).read_bytes()).hexdigest() for n in ('sv08_sd_reimage.py','sv08_sd_reimage_ui.py')},
               memory=Path('/proc/meminfo').read_text(), fixture_only=True)
