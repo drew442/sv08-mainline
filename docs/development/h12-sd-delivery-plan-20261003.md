@@ -86,3 +86,90 @@ physical success. Last measured SD boot/SSH was October 2; no current printer
 access, media mutation, image write, new boot or attendance has been performed or
 assumed in this reset. Full-image authorization is reconciled against the exact
 prepared action before execution, without asking again for settled scope choices.
+
+## Active implementation assignment
+
+The approved task is claimed as `h12-attended-sd-reimage:implement`, run
+`f05281148f074ef5a85f8a6ba15f9d83`, coordinator session
+`h12-sd-implement-20261003`. One project_implementer is active on
+`feature/h12-attended-sd-reimage` at baseline `5834dd4`, with only proposal-owned
+files assigned. Separate-session runtime 01a0ff51-a356-73a0-b226-7babab5c5721 confirms
+GPT-6.1 Sol/medium, full-access/never and the complete role contract. Primary
+assignment is 20 minutes of implementation/focused checks with 128 MiB scratch;
+full SD/QEMU artifacts are excluded from the space-limited local checkout and
+need a separately budgeted coordinator/integration run. No hardware/network
+access, shared-record edits, commits, pushes or additional agents are delegated.
+Installed ARM64 evidence and independent verification remain required before
+software completion; physical preparation and acceptance follow afterward.
+
+## Implementation handoff and installed execution
+
+The implementation session completed its bounded assignment. Coordinator inspected
+all ten changed paths and committed/pushed candidate `dd080df` on
+`feature/h12-attended-sd-reimage`. No unowned files changed. Worker evidence:
+11 backend unit tests, seven composer tests and eight native GTK fixture journeys
+passed. These are offline results; delivery verification remains pending.
+
+Coordinator staged the exact committed source on Beelink in
+`/home/drew/sv08-h12-sd-delivery-20261003/candidate-dd080df`. Preserved source
+recovery root and public package inputs were freshly hashed. Existing build tools
+and about 26 GiB free were observed. A fresh test-key composition is assigned a
+600-second build limit and existing 3,500 MiB allocation cap; installed QEMU
+execution uses a separate disposable disk and 768 MiB RAM. No old compressed usr
+cache is reused. The worker's installed driver is inspected but not yet passed.
+
+A coordinator read-only observation also found the existing physical SD host still
+on its October 2 boot, kernel 6.18.51-sv08-candidate1, with SD root read-only and
+display service active. Kernel NFS modules and modprobe are available, but
+mount.nfs is absent. No module was loaded, source mounted, media written or restart
+performed. Current physical setup/attendance remains unconfirmed. Source transport
+closure will be resolved before the concrete physical session; this is not an
+extra rehearsal milestone. Local detailed evidence is kept under
+`local/feature-workflow/probes/h12-sd-delivery-20261003/integration/`.
+
+### Fresh composition and first installed run
+
+Fresh fixture composition of `dd080df` passed in 59.4 seconds. Root SHA-256 is
+`024389440bc3ac7176bc121cac0bbbe9d6d529da07285842e9f5e55f1ecba848`;
+peak additional allocated build bytes were 1,326,407,680. This is explicitly a
+fixture-key image, not the owner-only physical medium.
+
+The first VM run reached the verified envelope, SSH, installed production
+service/hash checks and independent read-only ext4 source mount. It then failed
+when the shared SSH helper's 20-second timeout expired during systemd reload.
+The driver terminated its own QEMU process; this is a terminal failed run, not a
+live process to restart. Coordinator also found that the fixture drop-in sorted
+before the production reimage drop-in. The same implementer session received a
+bounded eight-minute test-driver repair assignment; production behavior and
+acceptance checks are unchanged. The corrected installed run is still required.
+
+The source transport limitation is resolved on the existing physical SD host.
+Coordinator used existing `mount -i` and kernel NFS support. An initial NFSv4
+attempt refused; server inspection showed NFSv3 enabled and v4 disabled. Explicit
+numeric NFSv3/TCP options mounted `/srv/sv08-sd-nfs` read-only at
+`/run/h12-source`; the image file is visible with 7,818,182,656 bytes. No packages
+or server configuration changed. This created a volatile mountpoint and loaded
+NFS modules; no SD/eMMC media write or restart occurred. The server-side image
+was freshly hashed as
+`ba05a82a44599fbf69b9f1f7c0f5d4b65746b350b3f00d350a898b60f9daff4f`.
+Full client-side checking remains part of integrated Review before confirmation.
+The pre-existing hostname-resolution warning did not prevent these numeric-address
+operations; DNS repair is not an H12 prerequisite.
+
+### Installed repaired journey passed
+
+The same implementer completed repair revision `2b26b59`, changing only the GTK/VM
+test drivers. Runtime model/effort again measured GPT-6.1 Sol/medium. Commands
+are bounded by 90 seconds and the 480-second overall deadline; the late fixture
+drop-in and restored production ExecStart are checked explicitly. GTK deadline
+cancellation now fails rather than counting as a passing No response. Eight local
+GTK journeys passed after repair.
+
+The corrected installed run passed in 303.2 seconds. It exercised all eight GTK
+journeys against exact installed runtime hashes, actual file bytes on independent
+ext4 fixtures, production relaunch and unchanged source/SD artifact hashes.
+QEMU exited normally through QMP. Evidence is committed on the feature branch in
+`docs/features/h12-attended-sd-reimage/execution.md` and `installed-evidence.json`.
+Software acceptance remains pending a fresh independent verifier. Hardware
+session and physical success remain pending; the concrete preparation is in
+[the attended session plan](../hardware/host-h12-attended-sd-session-20261003.md).

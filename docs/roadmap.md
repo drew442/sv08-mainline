@@ -1,14 +1,13 @@
 # Roadmap
 
-Current execution order was reset on 2026-10-01; see the
-[recalibrated plan](remaining-work-plan.md). Warm boot capture passed; SD return and corrected
-physical H12 preflight are next. Recovery export composition, printer-interface
-and boot-health implementations are accepted offline. Older dated observations
-below do not establish current boot counters, access or active assignments.
-
-For the current execution order, dependencies and first-print versus release gates,
-see the [remaining-work plan](remaining-work-plan.md) (2026-09-18). Historical
-phase notes below retain their original evidence boundaries.
+Current execution order was reset on 2026-10-03: complete attended SD reimaging
+of the installed eMMC, with integrated checks, Yes/No confirmation, full readback
+and manual restart into the installed system. See the
+[current goals](../.codex/current-goals.md),
+[owner's H12 scope decision](decisions/20261002-h12-scope-reduction.md), and
+[remaining-work plan](remaining-work-plan.md). RAM maintenance, permission
+anti-forgery/replay and cold-capture work are abandoned; automatic launch/return
+are deferred. Historical phase notes below retain their evidence boundaries.
 
 ## 0. Foundation — initial intake complete
 
