@@ -116,6 +116,12 @@ class Controller:
             raise ValueError('Invalid administration context')
         self.store, self.boot, self.context, self.adapter = store, boot, context, adapter
         self.jobs = jobs
+        if jobs is not None and jobs.budget is None:
+            jobs.budget = store.budget
+        if adapter is not None and hasattr(adapter, 'staging'):
+            common = max(store.budget.floor, adapter.staging.budget.floor)
+            store.budget.floor = common
+            adapter.staging.budget = store.budget
 
     def status(self):
         if not (self.store.root / 'state.json').is_file():
@@ -219,9 +225,17 @@ class Controller:
                     'apply': {'method', 'plan'}, 'jobs': {'method'},
                     'image.submit': {'method', 'id', 'plan'},
                     'image.inspect': {'method', 'id'},
-                    'image.dispose': {'method', 'plan'}}.get(method)
+                    'image.dispose': {'method', 'plan'},
+                    'history.review': {'method'}, 'history.apply': {'method', 'plan'}}.get(method)
         if expected is None or set(request) != expected:
             raise ValueError('Unknown request or fields')
+        if method in ('history.review', 'history.apply'):
+            if self.jobs is None or self.context != 'host': raise ValueError('Host history integration unavailable')
+            from sv08_admin_history import History
+            history = History(self.jobs)
+            if method == 'history.apply': return history.apply(request['plan'])
+            with self.jobs.lock('worker.lock', True), self.jobs.lock('ledger.lock'):
+                return dict(plan=history.review(), message='Preserve every receipt and unknown outcome. No image operation runs during history maintenance.')
         if method == 'jobs':
             return self.jobs.history() if self.jobs else dict(jobs=[], capacity=0, remaining=0, blocked=False)
         if method == 'image.submit':
@@ -254,16 +268,21 @@ def disposable_backend_fixture(manifest):
             'sv08.test=rauc-backend' in Path('/proc/cmdline').read_text().split())
 
 
-def installed_controller():
+def installed_job_context():
     if os.geteuid() != 0: raise ValueError('Administrator access is required')
     # Fixed paths only. No request can override roots, devices or executables.
     config = json.loads(Path('/usr/lib/sv08/admin-context.json').read_text())
     if config != {'format_version': 1, 'context': 'host'}:
         raise ValueError('The installed administration context is not supported')
     boot = json.loads(Path('/run/sv08/boot.json').read_text())
-    store = Store('/data/sv08')
     from sv08_admin_jobs import Jobs
-    controller = Controller(store, boot, jobs=Jobs('/data/sv08/admin-image-jobs', boot['boot_id']))
+    return boot, Jobs('/data/sv08/admin-image-jobs', boot['boot_id'])
+
+
+def installed_controller():
+    boot, jobs = installed_job_context()
+    store = Store('/data/sv08')
+    controller = Controller(store, boot, jobs=jobs)
     # These reviewed build inputs do not yet ship in the non-deployable baseline.
     paths = {name: Path('/usr/lib/sv08') / name for name in
              ('release.json', 'update-policy.json', 'layout.json', 'environment.json')}

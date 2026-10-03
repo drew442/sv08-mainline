@@ -122,7 +122,7 @@ def apply(jobs, plan, controller):
             return jobs.public(row)
     with admitted(jobs, controller) as (_, backend):
         with jobs.lock('ledger.lock'):
-            rows = jobs.load()
+            view = jobs.view(); rows = view['active']
             row = next(item for item in rows if item['id'] == plan['id'])
             if row.get('disposition'):
                 if row['disposition']['plan'] != plan:
@@ -135,7 +135,7 @@ def apply(jobs, plan, controller):
         # replacement.  A delayed worker cannot reacquire worker.lock and claim
         # this receipt after the disposition is saved.
         with jobs.lock('ledger.lock'):
-            rows = jobs.load()
+            view = jobs.view(); rows = view['active']
             row = next(item for item in rows if item['id'] == plan['id'])
             if row.get('disposition'):
                 if row['disposition']['plan'] != plan:
@@ -144,5 +144,5 @@ def apply(jobs, plan, controller):
             if not reviewable(jobs, row):
                 raise ValueError('Image receipt changed during review')
             row['disposition'] = {'outcome': 'unknown', 'plan': plan, 'evidence': observed}
-            jobs.save(rows)
+            jobs.save(rows, view['revision'], result=True)
             return jobs.public(row)

@@ -100,13 +100,15 @@ def snapshot(source, target):
 
 
 class Store:
-    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB):
+    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None):
         self.root = Path(root).absolute()
         for path in (self.root, *self.root.parents):
             if path.is_symlink():
                 raise ValueError('Persistent root must not contain symlinks')
         self.reserve_bytes = reserve_bytes
         self.copy_limit_bytes = copy_limit_bytes
+        from sv08_data_budget import Budget
+        self.budget = budget or Budget(self.root, state_reserve=reserve_bytes, copy_limit=copy_limit_bytes)
 
     @contextmanager
     def locked(self, nonblocking=False):
@@ -249,9 +251,8 @@ class Store:
         if required > self.copy_limit_bytes:
             raise ValueError('Insufficient state-copy budget; original state retained')
         allowance = self.copy_limit_bytes if reserve_full_copy else required
-        if (fs.f_bavail * block < self.reserve_bytes + allowance or
-                fs.f_favail < inodes + 128):
-            raise ValueError('Insufficient state-copy space or inodes; original state retained')
+        self.budget.check(allowance, inodes+128, byte_floor=self.reserve_bytes+allowance,
+                          inode_floor=inodes+128+64, fs=fs)
         return dict(copy_bytes=required, copy_inodes=inodes, reserved_copy_bytes=allowance)
 
     def prepare_boot(self, slot, release, schema=1):
@@ -278,23 +279,25 @@ class Store:
                     source = same_release[0]
                 generation = release[:60] + '-' + uuid.uuid4().hex[:12]
                 target = self.root / 'generations' / generation
-                if source:
-                    if source['schema'] != schema:
-                        raise ValueError('No supported state migration for this schema')
-                    origin = self.generation_path(source)
-                    self.check_copy_budget(source)
-                    try:
-                        snapshot(origin, target)
-                    except BaseException:
-                        if target.exists():
-                            shutil.rmtree(target)
-                        raise
-                else:
-                    target.mkdir()
-                    for name in ('config', 'database', 'ui'):
-                        (target / name).mkdir()
-                    fsync_dir(target)
-                fsync_dir(target.parent)
+                with self.budget.locked():
+                    if source:
+                        if source['schema'] != schema:
+                            raise ValueError('No supported state migration for this schema')
+                        origin = self.generation_path(source)
+                        self.check_copy_budget(source)
+                        try:
+                            snapshot(origin, target)
+                        except BaseException:
+                            if target.exists():
+                                shutil.rmtree(target)
+                            raise
+                    else:
+                        self.budget.check(4*(os.statvfs(self.root).f_frsize or os.statvfs(self.root).f_bsize), 4+128)
+                        target.mkdir()
+                        for name in ('config', 'database', 'ui'):
+                            (target / name).mkdir()
+                        fsync_dir(target)
+                    fsync_dir(target.parent)
                 record = dict(release=release, generation=generation, schema=schema,
                               customized=False, parent_generation=source['generation'] if source else None)
                 state['slots'][slot] = record

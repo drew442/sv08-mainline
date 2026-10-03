@@ -1,3 +1,4 @@
+from test_data_budget import fixture_budget, fixture_root
 import json
 from pathlib import Path
 import sys
@@ -12,8 +13,8 @@ from sv08_recovery import RecoveryController
 
 class AdministrationTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
-        self.store = Store(Path(temporary.name) / 'state', reserve_bytes=0)
+        temporary = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(temporary.cleanup)
+        self.store = Store(Path(temporary.name) / 'state', reserve_bytes=0, budget=fixture_budget())
         self.store.initialize()
         self.boot = self.store.prepare_boot('A', 'release-1')
         self.controller = Controller(self.store, self.boot)
@@ -97,9 +98,9 @@ class AdministrationTests(unittest.TestCase):
 
 class RecoveryIndependenceTests(unittest.TestCase):
     def test_missing_data_can_be_inspected_without_creating_it(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:
             root = Path(directory) / 'missing-data'
-            controller = RecoveryController(Store(root))
+            controller = RecoveryController(Store(root, budget=fixture_budget()))
             status = controller.status()
             self.assertTrue(status['capabilities']['recovery.check']['available'])
             result = controller.apply(controller.plan('recovery.check', {}))
@@ -108,9 +109,9 @@ class RecoveryIndependenceTests(unittest.TestCase):
             with self.assertRaises(ValueError): controller.plan('recovery.boot', {'slot':'A'})
 
     def test_corrupt_registry_stays_corrupt(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:
             root = Path(directory); (root / 'state.json').write_text('damaged')
-            controller = RecoveryController(Store(root))
+            controller = RecoveryController(Store(root, budget=fixture_budget()))
             controller.apply(controller.plan('recovery.check', {}))
             self.assertEqual((root / 'state.json').read_text(), 'damaged')
             self.assertFalse((root / '.lock').exists())

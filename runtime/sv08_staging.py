@@ -21,12 +21,15 @@ MIB = 1024 * 1024
 
 
 class Staging:
-    def __init__(self, root, max_bytes=1024*MIB, reserve_bytes=768*MIB, owner_uid=0):
+    def __init__(self, root, max_bytes=1024*MIB, reserve_bytes=768*MIB, owner_uid=0, budget=None):
         self.root = Path(root).absolute()
         self.max_bytes, self.reserve_bytes = max_bytes, reserve_bytes
         # owner_uid is injectable for unprivileged tests, not a service option.
         self.owner_uid = owner_uid
         self.lease_fd = None
+        from sv08_data_budget import Budget
+        self.budget = budget or Budget(self.root.parent, staging_reserve=reserve_bytes)
+        self.allocation_held = False
         if type(max_bytes) is not int or max_bytes <= 0 or type(reserve_bytes) is not int or reserve_bytes < 0:
             raise ValueError('Invalid staging limits')
         for path in (*reversed(self.root.parents), self.root):
@@ -91,8 +94,15 @@ class Staging:
         fs = os.statvfs(self.root)
         block = fs.f_frsize or fs.f_bsize
         allocated = ((size + block - 1) // block) * block
-        if fs.f_bavail * block < allocated + self.reserve_bytes or fs.f_favail < 130:
-            raise ValueError('Insufficient upload space or inodes')
+        self.budget.check(allocated, 2, byte_floor=allocated+self.reserve_bytes, inode_floor=130+64, fs=fs)
+
+    @contextmanager
+    def allocating(self):
+        if self.allocation_held: raise ValueError('Allocation exclusion is already held')
+        with self.budget.locked():
+            self.allocation_held = True
+            try: yield
+            finally: self.allocation_held = False
 
     def receive(self, stream, size, digest, verify):
         self.path(digest)  # Preserve strict explicit-digest API.
@@ -101,6 +111,9 @@ class Staging:
 
     def receive_locked(self, stream, size, verify, digest=None):
         """Caller owns upload lease for entire call; never acquire higher locks."""
+        if not self.allocation_held:
+            with self.allocating():
+                return self.receive_locked(stream, size, verify, digest)
         self.preflight(size)
         temporary = self.root / ('.partial-' + uuid.uuid4().hex)
         try:

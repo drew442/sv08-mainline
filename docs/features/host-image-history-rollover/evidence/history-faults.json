@@ -1,0 +1,458 @@
+{
+  "cases": [
+    {
+      "scenario": "queued",
+      "point": "object-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "object-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "object-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "object-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "object-publish",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "object-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-replace",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "manifest-parent-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "cleanup",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "queued",
+      "point": "lost-ack",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "object-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "object-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "object-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "object-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "object-publish",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "object-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-replace",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "manifest-parent-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "cleanup",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "running",
+      "point": "lost-ack",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "object-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "object-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "object-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "object-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "object-publish",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "object-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-replace",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "manifest-parent-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "cleanup",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "result",
+      "point": "lost-ack",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "object-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "object-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "object-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "object-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "object-publish",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "object-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-replace",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "manifest-parent-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "cleanup",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "disposition",
+      "point": "lost-ack",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "object-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "object-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "object-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "object-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "object-publish",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "object-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-create",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-write",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-flush",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-file-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-replace",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-directory-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "manifest-parent-fsync",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "cleanup",
+      "hit": true,
+      "identities_preserved": true
+    },
+    {
+      "scenario": "rollover",
+      "point": "lost-ack",
+      "hit": true,
+      "identities_preserved": true
+    }
+  ],
+  "fixture_encoded_bytes": 4613385,
+  "peak_allocated_bytes": 90112,
+  "peak_objects": 3,
+  "peak_namespace_entries": 9
+}
