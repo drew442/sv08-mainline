@@ -82,20 +82,24 @@ gates are superseded by the current ordered packages and owner decision.
 - Existing factory media, images and MCU recovery material remain accepted by
   the owner. Beelink storage growth is done; additional backups are not a new gate.
 
-## Immediate H12 delivery — October 3 reset
+## Current delivery — commissioning host, October 3
 
-The [three active H12 goals](../.codex/current-goals.md) and
-[bounded subagent delivery plan](development/h12-sd-delivery-plan-20261003.md)
-now govern immediate execution: deliver SD flashing, prepare the actual session,
-and complete the attended write/readback/manual normal boot. Earlier G1/G2
-packaging below is a broader project map, not extra H12 completion gates.
+H12's software, attended full write/readback and normal installed boot are complete.
+Finite image-job history rollover is also independently verified and merged.
+The next owner-authorized goal is a reliable installed host ready for sensor-only
+commissioning, with a simple SV08 Mainline Cockpit theme. The
+[bounded proposal](features/commissioning-host-readiness/proposal.md) and
+[fresh installed intake](features/commissioning-host-readiness/intake.md) govern
+this delivery. It addresses normal boot attempts, observed Cockpit defects and
+matched input-only preparation; physical sensor/output commissioning and broader
+host/release qualification follow separately.
 
 ## Ordered work packages
 
 | Priority | Goal/work | Immediate execution | Completion evidence |
 | --- | --- | --- | --- |
-| 1 / G1 | Deliver minimal attended SD maintenance | Integrate target/image checks before yes/no confirmation; remove abandoned RAM/permission dependencies | Accepted SD implementation with basic checks and explicit start; no separate rehearsal |
-| 2 / G2 | Verify installed-eMMC reimage and reliable commissioning host | Review the concrete target/image and attended SD write, flush/readback and manual restart | Physical complete-image verification and normal host boot; persistent access/state and usable administration |
+| Complete / G1 | Deliver minimal attended SD maintenance | Integrate target/image checks before yes/no confirmation; remove abandoned RAM/permission dependencies | Accepted SD implementation with basic checks and explicit start; no separate rehearsal |
+| Active / G2 | Reliable commissioning host; eMMC reimage already verified | Resolve observed boot-attempt and Cockpit gaps; verify installed access and prepare matching sensor-only configuration | Bounded repeated normal boot, persistent SSH/authenticated administration, matching host/MCU preparation; see current proposal |
 | 3 / G3 | Commission and print on test-sv08-01 | Finish actual configuration substitutions; H01/H05 facts; staged attended H06 | Matching host/MCUs, sensor/reference/input checks, outputs/homing/heat/calibration, first print and print controls |
 | 4 / G4 | Complete host product and independent recovery | Integrate accepted work, then bounded required administration/update/restore/peripheral gaps | Factory-capacity complete artifact; physical A/B health/fallback, export/restore, persistent state/identity and required UI/peripherals |
 | 5 / G5 | Qualify and document supported stock release | Source/license/rebuild closure plus stock install/recovery/printing/failure tests | Actual stock qualification, representative regressions, documented conversion/recovery and release decision |
@@ -106,23 +110,13 @@ offline requirements while physical work waits, with one implementation active.
 Optional features remain paused. Each new substantive implementation still needs
 its bounded approval and independent verification; this plan is not that approval.
 
-### 1. Immediate H12 work
+### 1. H12 completed
 
-SD recovery and authenticated SSH were restored. Implement the owner-selected
-minimum procedure: boot SD, select image/target, run basic checks, ask yes/no,
-write and verify, then let the operator restart. Use the
-[ten-point decision](decisions/20261002-h12-scope-reduction.md) as the current
-scope. The separate rehearsal is dropped and its checks are integrated before
-confirmation. No further secure-randomness, signed permission, RAM maintenance,
-automatic launch/return or complete cold-capture work is assigned.
-
-Existing source and installed artifacts still implement parts of the superseded
-route; adapt the selected SD path and verify the retained checks before physical
-use. Existing offline evidence may support unchanged components, but does not
-establish the revised physical procedure. Review the concrete image/target/write
-operation under the existing hardware policy; do not resurrect withdrawn gates.
-SD recovery is the sufficient recovery path. An actual full write, flush/readback
-and normal boot remain the physical outcome to establish.
+The owner-selected attended SD procedure, exact write/flush/full readback and
+subsequent normal installed boot passed. Retain its evidence and recovery route;
+do not repeat the reimage merely to start commissioning. The abandoned/deferred
+scope remains in the [ten-point decision](decisions/20261002-h12-scope-reduction.md).
+Current commissioning changes require their own exact operation review.
 
 ### G2–G3. Critical path to printing
 
@@ -175,8 +169,9 @@ configuration parsing, plausible ambient readings or successful MCU communicatio
   operations and customization reconciliation for immutable/writable modes.
 - Complete owner onboarding, persistent account/SSH/TLS identity, network/access
   forms with connectivity rollback, hostname consistency and service controls.
-- Deliver separately scoped finite history rollover without losing retry identity
-  or silently evicting unknown outcomes at the 128-receipt limit.
+- Finite history rollover completed offline on October 3: reviewed archival
+  maintenance retains retry identities and unknown outcomes. Current installed
+  deployment remains distinct from its accepted software evidence.
 - Define and test coordinated host/two-MCU version transitions over Katapult,
   including partial failure and rollback. OS rollback does not roll MCU flash back.
 - Run assembled-system races and failure cases: late state writes, job start vs

@@ -8,14 +8,16 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
-**Current priority (2026-10-02):** deliver attended installed-eMMC reimaging
-from SD using basic image/target checks, explicit yes/no confirmation, complete
-write verification and manual restart. The
-[owner’s ten-point H12 decision](docs/decisions/20261002-h12-scope-reduction.md)
-abandons RAM maintenance, permission anti-forgery/replay and cold-capture work,
-drops the separate rehearsal, and defers automatic launch/return. See the
-[current goals](.codex/current-goals.md) for delivery order. Historical image
-summaries below are evidence, not instructions to resume withdrawn work.
+**Current priority (2026-10-03):** make the installed host ready for sensor-only
+commissioning: dependable normal boot, persistent access, usable Cockpit with
+simple SV08 Mainline branding, and matching host/MCU software. H12's attended SD
+reimage and normal eMMC boot are complete, as is finite image-job history rollover.
+See the [current goals](.codex/current-goals.md) and
+[installed intake](docs/features/commissioning-host-readiness/intake.md).
+The [owner's H12 scope decision](docs/decisions/20261002-h12-scope-reduction.md)
+continues to exclude RAM maintenance, permission anti-forgery/replay and cold-capture
+work; automatic maintenance launch/return remain deferred. Historical summaries
+below are evidence, not instructions to resume withdrawn work.
 
 **Status: diagnostic host image physically boots; printer commissioning and
 release work remain open.** The v5 image was written to the spare eMMC with
