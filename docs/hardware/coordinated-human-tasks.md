@@ -34,11 +34,16 @@ boot observations. The owner confirmed this setup unchanged on October 3: PSU
 off, USB through HW-667, Ethernet, spare eMMC installed, SD removed, factory module
 stored, no new irreplaceable spare data. H04 no longer needs an owner terminal:
 [the owner requested a coordinator-set simple password](../features/commissioning-host-readiness/owner-access-amendment.md),
-and the coordinator will test authenticated Cockpit after the TLS repair. H05 supplies both MCU availability
-and identity for a no-output version reconciliation; sensor accuracy and physical
-input operation follow separately. These are pending coordination items, not an
-instruction to power the PSU, move media or reboot now. Coordinator prepares the
-exact action and review before dispatch. Use HW-667, not USB cable removal.
+and actual authenticated Cockpit checks passed before and after a healthy normal
+restart and HW-667 power cycle. The initial restart exposed a device-number
+assumption, repaired and independently reviewed before those acceptance checks.
+H02/H04 acceptance observations are complete; final delivery review remains pending.
+H05 now waits for the owner to turn PSU on, preserving USB/Ethernet/media, and
+confirm before the reviewed identify-only MCU queries. Afterward the owner will
+turn PSU off while preserving USB host power and confirm. No heat, motion, MCU
+configuration or flashing is included. Sensor accuracy and physical input operation
+follow separately. The instruction was sent after the successful boot/access
+checks; do not infer a physical change until the owner confirms it.
 
 ## H12 completed — 2026-10-03
 
