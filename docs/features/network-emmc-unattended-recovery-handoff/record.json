@@ -240,7 +240,7 @@
       }
     },
     {
-      "blocker": null,
+      "blocker": "Owner dropped separate rehearsal and abandoned RAM maintenance on 2026-10-02. Historical offline evidence retained; this old physical gate is withdrawn and replaced by integrated checks in attended SD flashing.",
       "checks": [
         "urh-04"
       ],
@@ -254,12 +254,12 @@
       "implementation": null,
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "blocked",
       "title": "Validate recovery handoff and return without target write",
       "verification": null
     },
     {
-      "blocker": null,
+      "blocker": "Old RAM/claim/automatic-return physical procedure superseded by attended SD reimage. Whole-image outcome remains required through the new SD delivery, without old dependencies.",
       "checks": [
         "urh-05"
       ],
@@ -273,7 +273,7 @@
       "implementation": null,
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "blocked",
       "title": "Commission one full installed-spare reimage",
       "verification": null
     }

@@ -1,0 +1,159 @@
+{
+  "author": "root/coordinator",
+  "checks": [
+    {
+      "description": "Exact SD-only installed composition without abandoned dependencies",
+      "environment": "offline",
+      "id": "sd-scope"
+    },
+    {
+      "description": "Minimum source/target checks and descriptor-bound write admission",
+      "environment": "offline",
+      "id": "admission"
+    },
+    {
+      "description": "Explicit per-invocation Yes; No/close/absent answer never writes",
+      "environment": "offline",
+      "id": "confirmation"
+    },
+    {
+      "description": "Bounded complete write/flush/full readback with clear failure",
+      "environment": "offline",
+      "id": "transfer"
+    },
+    {
+      "description": "Actual installed ARM64 SD/GTK/backend disposable journey",
+      "environment": "offline",
+      "id": "installed"
+    },
+    {
+      "description": "Current identified artifact/target/SD/source and attended operation readiness",
+      "environment": "hardware",
+      "id": "session"
+    },
+    {
+      "description": "Actual attended write/readback and manual installed-system normal boot",
+      "environment": "hardware",
+      "id": "physical"
+    }
+  ],
+  "created": "2026-10-03",
+  "decision": {
+    "authority": "owner-existing",
+    "constraints": [
+      {
+        "checks": [
+          "admission",
+          "confirmation",
+          "transfer"
+        ],
+        "text": "Bind the displayed review to held source/target descriptors and the measured controller/CID/dev_t; serialize writers and recheck source independence and target unused status immediately after Yes. In focused fixtures demonstrate stale target/in-use/source-on-target refusal before mutation. Hash the bytes actually transferred against the accepted size/SHA-256 as well as checking cache-flushed full-range readback against that digest; an initially valid source that changes or truncates during transfer must never produce success. Use fixed-size buffers, handle short I/O, and report flush/cache-invalidation/readback failures without automatic retry. Regular-file admission remains an explicit fixture-only path. These checks need no permission, randomness, expiry or transaction framework."
+      },
+      {
+        "checks": [
+          "confirmation",
+          "installed"
+        ],
+        "text": "Demonstrate the new native GTK screen can review and answer Yes/No using keyboard alone and pointer/touch-style activation without shell commands or free-form device paths. Default No, Escape/dialog close, absent answer, refresh and relaunch must not write. Exercise refusal/No, one Yes/write/flush/readback and relaunch through the actual installed ARM64 service/backend/UI on independent disposable virtual SD with a separate disposable target; verify resulting bytes rather than only screenshots or mocked callbacks. Verify only the chosen source mechanism and its installed mount closure, not a generic source-discovery framework."
+      },
+      {
+        "checks": [
+          "sd-scope",
+          "installed"
+        ],
+        "text": "Bind exact installed backend/UI/drop-in bytes into composition receipts and prevent an old compressed /usr cache from silently retaining old runtime bytes. Record root capacity, bounded transfer buffers and installed-run memory/storage observations; retain the 512 MiB recovery closure, existing bounded volatile mounts, pinned kernel/DT/loader inputs and printer-service masks without new dependencies or full-image RAM/tmpfs staging. Preserve the factory 8 GB image policy, host A/B signing/persistence/idle behavior, profiles and heater protections. Independent verification reviews the complete owned-file diff and source/artifact hashes; VM evidence states its kernel/device substitutions and does not claim physical compatibility."
+      },
+      {
+        "checks": [
+          "confirmation",
+          "transfer",
+          "session",
+          "physical"
+        ],
+        "text": "The confirmation/result must explicitly say that the complete image range, including image-contained user data/environment, is replaced; do not reuse the old UI promise that OS recovery preserves user data. Do not write eMMC boot partitions, unrelated storage or beyond the accepted image range. On partial write or failed readback, report that the installed image may be unusable and keep SD as the manual recovery route; do not promise atomic rollback, reboot automatically, add factory-restore trials or demand new backup/cold capture. session and physical remain pending until the coordinator has current measured target/source identity, accepted artifact hashes, attendance and exact-operation independent review, followed by actual full readback and observed manual installed-system normal boot. Preserve historical evidence and the stored factory module."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "4d8b11ada1f7650faa3c2389049dbfc6d2bcad5b932ceb5576e2a1b26ade3916",
+    "rationale": "Approved for the smallest attended SD implementation under the actual ten settled choices in docs/decisions/20261002-h12-scope-reduction.md and the retained native GTK/no-Linux-command requirements of decision 0010. No repeated owner scope decision is needed. Source baseline is dd6b7f6cbd1c8f446e49f347e7d86b9337aa13d6 with visible coordinator goal/record/document changes and no production source edits. Before: runtime/sv08_recovery_media.py capability accepts recovery.export only; scripts/build_sd_recovery_host.py removes the eMMC provider configuration and masks preparer units; tests/fixtures/sd-network-root/emmc_image_writer.c requires claims and contains entropy/permission machinery. After: one SD-only backend/native screen supplies integrated image/target checks, per-invocation Yes/No, complete write/flush/readback and manual restart. Thus merely enabling Restore or reusing the old writer unchanged is insufficient. Existing GTK threading/native controls, SD composition and pinned boot inputs are reusable; supported Linux storage interfaces plus Python stdlib fill the specific whole-image gap without new packages, servers or an updater framework. Composer check_cache currently binds package provenance, not new runtime bytes, so cache invalidation must be demonstrated. Focused refusal/cancellation, write/readback and relaunch cases plus actual installed ARM64 execution and separate full-diff verification suffice for this finite delivery; no full release or broad failure matrix is required. Evidence levels: documented owner requirements and historical offline/physical reports; source-inspected behavior in this review; future offline-installed execution and named-profile measured physical acceptance remain pending. docs/hardware/host-sd-recovery-host.md documents the 512 MiB closure, bounded volatile storage and VM kernel substitution; its older tests do not establish new writer/UI correctness or current hardware readiness. Existing superseded records preserve historical evidence and withdraw old physical gates; this record supplies their retained whole-image outcome rather than duplicate RAM work. Workflow validate passed for 39 features/48 tasks; next currently selects host-image-history-rollover:finite-history while this proposal lacks imported approval. Coordinator owns import and selection. This is design approval only: no hardware operation, physical acceptance or release is granted. No experiments, network, devices, credentials, private artifacts, agents or production modifications were used. Conditions below refine the existing seven acceptance IDs without reviving abandoned or deferred work.",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/decisions/20261002-h12-scope-reduction.md": "4eb0bbd5418e2890adb052738377a381db0e160153fa8f9b3706889cadd539db"
+    },
+    "reviewer": "Independent feature_approver fallback session; distinct from root/coordinator and project_planner; runtime model/effort verification remains coordinator-owned",
+    "scope_sha256": "7aa7038c9a95c10bab1f0c9246f83843a68f2030f9f65a0b99857402fc699423",
+    "session": "h12-sd-goal-reset-20261003-independent-approver-source-review"
+  },
+  "format_version": 1,
+  "id": "h12-attended-sd-reimage",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/h12-attended-sd-reimage/proposal.md",
+  "requirements": [
+    "docs/decisions/20261002-h12-scope-reduction.md",
+    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "sd-scope",
+        "admission",
+        "confirmation",
+        "transfer",
+        "installed"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Deliver independently verified attended SD maintenance",
+      "verification": null
+    },
+    {
+      "blocker": null,
+      "checks": [
+        "session"
+      ],
+      "depends_on": [
+        "h12-attended-sd-reimage:implement"
+      ],
+      "environment": "hardware",
+      "evidence": [],
+      "human_task": "docs/hardware/coordinated-human-tasks.md",
+      "id": "prepare-session",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Prepare exact attended SD reimage session",
+      "verification": null
+    },
+    {
+      "blocker": null,
+      "checks": [
+        "physical"
+      ],
+      "depends_on": [
+        "h12-attended-sd-reimage:prepare-session"
+      ],
+      "environment": "hardware",
+      "evidence": [],
+      "human_task": "docs/hardware/coordinated-human-tasks.md",
+      "id": "physical-reimage",
+      "implementation": null,
+      "repeats": 0,
+      "resumption": null,
+      "status": "pending",
+      "title": "Verify physical SD write/readback and normal boot",
+      "verification": null
+    }
+  ],
+  "title": "Complete minimal attended installed-eMMC reimaging from SD"
+}

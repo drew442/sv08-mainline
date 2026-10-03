@@ -80,6 +80,14 @@ gates are superseded by the current ordered packages and owner decision.
 - Existing factory media, images and MCU recovery material remain accepted by
   the owner. Beelink storage growth is done; additional backups are not a new gate.
 
+## Immediate H12 delivery — October 3 reset
+
+The [three active H12 goals](../.codex/current-goals.md) and
+[bounded subagent delivery plan](development/h12-sd-delivery-plan-20261003.md)
+now govern immediate execution: deliver SD flashing, prepare the actual session,
+and complete the attended write/readback/manual normal boot. Earlier G1/G2
+packaging below is a broader project map, not extra H12 completion gates.
+
 ## Ordered work packages
 
 | Priority | Goal/work | Immediate execution | Completion evidence |

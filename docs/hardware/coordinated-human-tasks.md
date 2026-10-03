@@ -436,3 +436,15 @@ the [restoration record](host-h12-sd-loader-restoration-20261002.md). No repeat
 boot is requested. Clock correction/readback and fresh read-only spare/p5
 reconciliation passed. A later preflight needs its own prepared exact review
 and current attendance; the expired SD-boot instruction grants no retry.
+
+
+### H12 goal reset — 2026-10-03
+
+Use the [three active H12 goals](../../.codex/current-goals.md) and
+[attended SD delivery plan](../development/h12-sd-delivery-plan-20261003.md).
+Prepare accepted software/image/target before requesting current physical facts
+and attendance. The owner’s Yes starts the actual write; after verified readback
+the owner performs the prepared manual restart or SD removal/boot selection.
+There is no separate rehearsal, RAM handoff, permission-service, clock-expiry,
+automatic-return or complete cold-capture gate. No new physical action is
+requested at the goal-reset stage; October 2 setup observations are historical.
