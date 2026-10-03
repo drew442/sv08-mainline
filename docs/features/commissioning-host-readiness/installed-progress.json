@@ -1,0 +1,15 @@
+{
+  "status": "in-progress",
+  "receipts": {
+    "installation-result.txt": "24970d499e6e657f48500bcc9ab8924ea41fc8d700e79edf4011700db757fd68",
+    "installed-closure.txt": "9cf9d1c095304909c3e9450598b46a997636eacc4bc0f4a901747b17948c590a",
+    "initial-observation.json": "af39ca605176046445bd9baeaaa26a8c66e44d6838ff61a905929affda597fb7",
+    "env-difference.json": "cdb50657bd6f328b721cdeabe9b72e14647ac0da467000235d92da998954c2de",
+    "browser-initial/result.json": "59646d3dac21d79673e1590d5394a3064e2263c5a396324bcb8aef4831a639d7",
+    "initial-tls-fingerprint.txt": "82adc68f38b6e883831127ac5fe1e2d54122693a696f853af54c30665df05b69",
+    "persistent-public-ssh-fingerprint.txt": "7aee47dcf2685a68ed0f50b427d5de4988a998876ddc86ccee3a6091a630a9b5",
+    "served-public-ssh-fingerprint.txt": "e89d614299ac872a06fd626b99f94028e61d475bbe8d7f61759f92b1a18da7f2"
+  },
+  "restarts": 0,
+  "mcu_communication": false
+}
