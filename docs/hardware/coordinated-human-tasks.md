@@ -26,6 +26,17 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
+## Commissioning host readiness — 2026-10-03
+
+Active follow-up to completed H12: [bounded proposal](../features/commissioning-host-readiness/proposal.md).
+H02 supplies current physical facts and the two prepared/reviewed normal and HW-667
+boot observations; H04 supplies a private owner password step and authenticated
+Cockpit login after the TLS repair is installed. H05 supplies both MCU availability
+and identity for a no-output version reconciliation; sensor accuracy and physical
+input operation follow separately. These are pending coordination items, not an
+instruction to power the PSU, move media or reboot now. Coordinator prepares the
+exact action and review before dispatch. Use HW-667, not USB cable removal.
+
 ## H12 completed — 2026-10-03
 
 The [physical completion record](../features/h12-attended-sd-reimage/physical-completion.md)

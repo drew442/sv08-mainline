@@ -9,6 +9,9 @@ system before choosing fixes; reuse accepted implementations and their valid
 evidence. Require independent review of new substantive scope and delivery, and
 fresh exact-operation review before boot-policy changes or hardware writes.
 
+The owner also requested a simple SV08 Mainline Cockpit theme; include login and
+host-page branding with unchanged controls and authentication.
+
 This goal includes installed validation and publication to main and WIP. Physical
 sensor accuracy/input commissioning, heat, motion, printing, full A/B failure
 qualification and release qualification remain subsequent work. Preserve the SD

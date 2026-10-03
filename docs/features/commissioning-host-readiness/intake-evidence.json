@@ -1,0 +1,20 @@
+{
+  "observed_date": "2026-10-03",
+  "profile": "test-sv08-01",
+  "evidence_level": "coordinator authenticated read-only installed inspection and HTTPS probe",
+  "raw_sha256": {
+    "intake.txt": "23e5be1b7dd7c81c0f8ba5a32bc29c06f9496f003ab0d4a087ba56e478ca37e9",
+    "details.txt": "af51c93ca0ba56e0a418fc26eba02198bfaebf77f490487e61d48549a1aeb849",
+    "environment-and-ui.txt": "dd2e10756298bb801a8110f10974210d25bacaa7320179f1d2c6000ab9e93a7f",
+    "account-package-metadata.txt": "64fa8ec601202b90f549c4b4d5467625702a9a5d26b9019392a0b6ceaae377fc",
+    "installed-source-hashes.json": "54faa3ea3810b54000aa77ebfa1f3fc25ad417dbceaecdf489b2eb75aeeea400",
+    "installed-paths.txt": "ac9ff8524062d2febe59674c71586facb87a563706ead3eab98afe067e0359ff",
+    "klipper-provenance.txt": "242a38259d0d69aeccb0936de81600e7f62a109b58f57d43f9a7ec0473c139b7",
+    "sensor-file-output.json": "6ef54cb44d5f65161a3a7c02c50a1bac6db3735374604f2d7714da272a1ef464"
+  },
+  "sensor_configuration_source_sha256": {
+    "configs/commissioning/test-sv08-01-sensors.cfg": "09f559caf5793047b2138765c661169b6cd695ab7c3ceaac21278be2521adb7d",
+    "configs/commissioning/test-sv08-01-inputs.cfg": "e49abb864d7d64298858f36126cbd977d1e6edd948ddbb9bbd37980fa8705a6e",
+    "configs/commissioning/test-sv08-01-no-outputs.cfg": "2594376fe028e70fc479d4b3a33de7f7c701fdfe14ff33b19b5741a3bcc5f32f"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "format_version": 1,
+  "id": "commissioning-host-readiness",
+  "kind": "improvement",
+  "title": "Reliable installed host ready for sensor-only commissioning",
+  "author": "root/coordinator with separate planner and source researcher",
+  "created": "2026-10-03",
+  "priority": 1,
+  "proposal": "docs/features/commissioning-host-readiness/proposal.md",
+  "requirements": [
+    "docs/project.md",
+    "docs/decisions/20261002-h12-scope-reduction.md",
+    "docs/features/host-admin-cockpit-tls-persistence/task.md",
+    "docs/features/host-boot-health-composition/proposal.md",
+    "docs/decisions/0009-atomic-idle-admission.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "baseline",
+      "description": "Healthy initial A-only confirmation and invalid/trial/history refusal",
+      "environment": "offline"
+    },
+    {
+      "id": "uncertainty",
+      "description": "Bounded health, locks, write uncertainty and no silent retry",
+      "environment": "offline"
+    },
+    {
+      "id": "overlay",
+      "description": "Exact reproducible isolated overlay, accepted TLS/context and real file-backed environment tooling",
+      "environment": "offline"
+    },
+    {
+      "id": "theme",
+      "description": "Simple local SV08 Mainline login/host branding with real browser visibility and unchanged controls",
+      "environment": "offline"
+    },
+    {
+      "id": "regression",
+      "description": "Affected tests, source/inventory/pins and independent high full-diff verification",
+      "environment": "offline"
+    },
+    {
+      "id": "boots",
+      "description": "Reviewed installed health and two bounded normal/power transitions",
+      "environment": "hardware"
+    },
+    {
+      "id": "access",
+      "description": "Persistent owner SSH and actual authenticated themed browser administration",
+      "environment": "hardware"
+    },
+    {
+      "id": "sensors",
+      "description": "Matched installed host/two-MCU provenance and inactive input-only configuration",
+      "environment": "hardware"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "software",
+      "title": "Deliver software commissioning host readiness",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "baseline",
+        "uncertainty",
+        "overlay",
+        "theme",
+        "regression"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    },
+    {
+      "id": "installed",
+      "title": "Deliver installed commissioning host readiness",
+      "status": "pending",
+      "environment": "hardware",
+      "depends_on": [
+        "commissioning-host-readiness:software"
+      ],
+      "checks": [
+        "boots",
+        "access",
+        "sensors"
+      ],
+      "human_task": "docs/hardware/coordinated-human-tasks.md#commissioning-host-readiness--2026-10-03",
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
