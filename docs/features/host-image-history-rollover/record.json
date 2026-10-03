@@ -192,10 +192,14 @@
       "evidence": [],
       "human_task": null,
       "id": "finite-history",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "38d4f8e9c4514151a0767c1a7802162e",
+        "session": "history-rollover-implementation-20261003"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Deliver independently verified finite rollover maintenance journey",
       "verification": null
     }
