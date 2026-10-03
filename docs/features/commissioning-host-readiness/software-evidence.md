@@ -7,7 +7,7 @@ Author/runtime and bounded execution are recorded in [execution](execution.md),
 
 ## Results
 
-- Fifteen focused tests pass; the optional selected-tool test is separately
+- Seventeen focused tests pass; the optional selected-tool test is separately
   evidenced with 18 actual selected ARM64 libubootenv regular-file cases under
   QEMU. Tests cover selection/wrap/CRCs, single write/no-op, other values and
   bytes outside both regions, real competing locks and killed processes.
@@ -28,7 +28,7 @@ Author/runtime and bounded execution are recorded in [execution](execution.md),
 ## Coordinator checks and corrections
 
 Read-only installed inspection matched all23 historical runtime sources and the
-selected tool/library contents. The exact private overlay has12 files,75,774bytes,
+selected tool/library contents. The exact private overlay has12 files,76,585bytes,
 18 module dependencies and39,024known preimage bytes. The measured target has ample
 space/inodes. Actual preflight passes without writing or changing services.
 
@@ -52,3 +52,23 @@ task, with exact-operation review and physical facts. H12 stays complete.
 Raw logs, screenshots, original artifacts and per-turn source hashes remain in
 ignored coordinator scratch; the JSON receipt binds their digests. No generated
 screenshots, device dumps, private bindings or credentials are committed.
+
+## Independent F1 finding and repair
+
+The original candidate08097f2 failed independent high-effort review: its actual
+historical GPT inspector did not return the GUID field used by the new caller.
+This blocked all healthy paths before any write. The original failed review and
+reproductions remain preserved; preimage agreement was never runtime proof.
+
+A bounded repair keeps that historical dependency unchanged and reads the actual
+primary-header GUID locally with its own length/signature/CRC check after the
+existing full inspector succeeds. The new test exercises the exact historical
+closure through inspect/devices/probe/run, real Store and Diagnostics, and
+environment CRC/readback. Positive A1/A2 and A3 no-op pass; wrong GUID, both header
+and array CRCs, disk capacity and mount identity refuse. Block/sysfs/mount/service
+inputs, tool commands, clock and outer locks are simulated; selected real-tool and
+lock-contention evidence is reused unchanged. This remains offline evidence.
+
+The repaired private overlay has a refreshed helper hash/binding and passes a new
+actual read-only preflight. Fresh independent software verification is still
+required before installation. No printer write or password change has occurred.

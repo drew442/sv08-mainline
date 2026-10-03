@@ -52,6 +52,25 @@ def present(path):
     return Path(path).exists() or Path(path).is_symlink()
 
 
+def disk_guid(path):
+    """Read identity without extending the installed historical GPT API.
+
+    Call only after inspect has validated both headers/arrays and reservations.
+    Recheck this header's CRC because identity is read separately from inspect.
+    """
+    with Path(path).open('rb') as stream:
+        stream.seek(512)
+        header = bytearray(stream.read(512))
+    if len(header) != 512 or header[:8] != b'EFI PART':
+        raise ValueError('Missing GPT identity header')
+    length = int.from_bytes(header[12:16], 'little')
+    crc = int.from_bytes(header[16:20], 'little')
+    header[16:20] = bytes(4)
+    if not 92 <= length <= 512 or zlib.crc32(header[:length]) != crc:
+        raise ValueError('GPT identity header CRC/length differs')
+    return str(uuid.UUID(bytes_le=bytes(header[56:72])))
+
+
 def validate_config(config):
     if (set(config) != CONFIG_FIELDS or config['format_version'] != 1 or
             set(config['disk']) != DISK_FIELDS or set(config['tools']) != TOOL_FIELDS or
@@ -228,7 +247,7 @@ class Runtime:
                 int(Path(disk['sysfs'], 'size').read_text()) * 512 != disk['physical_bytes']):
             raise ValueError('Reviewed whole-disk identity differs')
         result = inspect(path, allow_block=True, image_bytes=disk['image_bytes'], environment_regions=REGIONS)
-        if (result['disk_guid'] != disk['disk_guid'] or
+        if (disk_guid(path) != disk['disk_guid'] or
                 result['partition_records'] != disk['partition_records'] or result['partitions'] != 6):
             raise ValueError('Reviewed six-partition GPT differs')
         records = {p['partuuid']: p for p in disk['partition_records']}

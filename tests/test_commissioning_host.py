@@ -7,6 +7,7 @@ import hashlib
 import json
 import multiprocessing
 import os
+import stat
 from pathlib import Path
 import subprocess
 import sys
@@ -129,6 +130,147 @@ def holder(path, ready, stop):
     ready.set()
     stop.wait(5)
     os.close(fd)
+
+
+def historical_health_fixture(root, h):
+    """Real historical GPT -> devices -> probe -> run; only OS/tool edges simulated."""
+    check = unittest.TestCase()
+    disk = root/'six-partition.img'
+    size = 32 * 1024 * 1024
+    with disk.open('wb') as stream:
+        stream.truncate(size)
+    guid = '22222222-2222-4222-8222-222222222222'
+    argv = ['sgdisk', '--clear', '--move-main-table=4096', '--disk-guid='+guid]
+    for number in range(1, 7):
+        start = 32768 + (number-1)*4096
+        argv.append(f'--new={number}:{start}:{start+4095}')
+    subprocess.run(argv+[str(disk)], check=True, capture_output=True, timeout=10)
+    # Bind the real historical inspector, preserving its block call contract;
+    # only stat's device type is simulated for our disposable regular file.
+    actual_stat = Path.stat
+    actual_lstat = Path.lstat
+    actual_resolve = Path.resolve
+    sysfs = root/'sysfs'; sysfs.mkdir()
+    (sysfs/'size').write_text(str(size//512))
+    def disk_stat(path, *args, **kwargs):
+        if path == disk:
+            return type('Disk', (), dict(st_mode=stat.S_IFBLK, st_rdev=os.makedev(179, 0)))
+        return actual_stat(path, *args, **kwargs)
+    result = h.inspect(disk, environment_regions=h.REGIONS)
+    check.assertNotIn('disk_guid', result)
+    check.assertEqual(result['partitions'], 6)
+    cfg = config()
+    cfg['disk'] = dict(path=str(disk), major_minor='179:0', sysfs=str(sysfs),
+                       physical_bytes=size, image_bytes=size, disk_guid=guid,
+                       partition_records=result['partition_records'])
+    manifest = dict(release='diagnostic-1', state_schema=1, deployable=False, devices={})
+    mappings = {}
+    mounts = {}
+    for record, key, mount, mode in zip(result['partition_records'],
+            ('root-a', 'boot-a', 'data'), ('/', '/boot', '/data'), ('ro', 'ro', 'rw')):
+        number = record['number']
+        part = sysfs/('p'+str(number)); part.mkdir()
+        for name, value in (('partition', number), ('start', record['offset_bytes']//512),
+                            ('size', record['size_bytes']//512)):
+            (part/name).write_text(str(value))
+        path = '/dev/disk/by-partuuid/'+record['partuuid']
+        manifest['devices'][key] = path
+        mappings[path] = '179:'+str(number)
+        mounts[mount] = mappings[path]+' '+mode+',relatime'
+    def resolve(path, *args, **kwargs):
+        if str(path) == '/sys/dev/block/179:0': return sysfs
+        if str(path).startswith('/sys/dev/block/179:'):
+            return sysfs/('p'+str(path).split(':')[-1])
+        return actual_resolve(path, *args, **kwargs)
+    actual_read = Path.read_text
+    actual_link = Path.is_symlink
+    actual_json = h.read_json
+    actual_present = h.present
+    cmdline = 'rauc.slot=A '+' '.join('systemd.mask='+name+'.service' for name in h.MASKS)
+    def read(path, *args, **kwargs):
+        if str(path) == '/proc/cmdline': return cmdline
+        if str(path) == '/proc/sys/kernel/random/boot_id': return BOOT_ID
+        return actual_read(path, *args, **kwargs)
+    def read_json(path):
+        if str(path) == '/run/sv08/boot.json': return boot
+        if str(path) == '/usr/lib/sv08/release.json': return manifest
+        return actual_json(path)
+    def present(path):
+        if str(path).startswith(('/run/sv08', '/usr/lib/sv08')) or str(path) == '/etc/rauc/system.conf':
+            return False
+        return actual_present(path)
+    for case in (1, 2, 3, 'wrong-guid', 'primary-crc', 'backup-crc', 'array-crc', 'backup-array-crc', 'mount', 'disk'):
+        clock = [0]
+        rt = h.Runtime(copy.deepcopy(cfg), now=lambda: clock[0])
+        rt.store = h.Store(root/('state-'+str(case)), reserve_bytes=0)
+        rt.store.initialize()
+        generation = rt.store.root/'generations/diagnostic-1'; generation.mkdir()
+        state = dict(format_version=1, requested_mode='immutable', auto_update=True, pending=None,
+            slots={'A':dict(release='diagnostic-1', schema=1, generation='diagnostic-1',
+                            customized=False, parent_generation=None)})
+        (rt.store.root/'state.json').write_text(json.dumps(state))
+        boot = dict(slot='A', release='diagnostic-1', mode='immutable', generation=str(generation),
+                    trial=False, customized=False, boot_id=BOOT_ID)
+        counter = case if isinstance(case, int) else 2
+        images = [image(1, counter), image(2, counter)]
+        with disk.open('r+b') as stream:
+            for (offset, _), data in zip(h.REGIONS, images):
+                stream.seek(offset); stream.write(data)
+        rt.fw_config = root/'fw.config'
+        rt.fw_config.write_text(''.join(f'{disk} {offset:#x} {length:#x}\n' for offset, length in h.REGIONS))
+        writes = []
+        def command(args):
+            if args[0].endswith('findmnt'): return mounts[args[-1]]
+            if args[0].endswith('systemctl'): return 'active' if args[1]=='is-active' else 'inactive'
+            if args[0].endswith('fw_printenv'):
+                values = h.bank(images[h.selected_bank(images)])[1]
+                return '\n'.join(key+'='+value for key, value in values.items())
+            check.assertEqual(args, ['/usr/bin/fw_setenv', '-c', str(rt.fw_config), 'BOOT_A_LEFT', '3'])
+            writes.append(args)
+            images[0] = image(3, 3)
+            with disk.open('r+b') as stream:
+                stream.seek(h.REGIONS[0][0]); stream.write(images[0])
+            return ''
+        corrupt_offset = {'primary-crc':512+56, 'backup-crc':size-512+56,
+                          'array-crc':4096*512, 'backup-array-crc':size-512-16384}.get(case)
+        original_byte = None
+        if corrupt_offset is not None:
+            with disk.open('r+b') as stream:
+                stream.seek(corrupt_offset); original_byte = stream.read(1)
+                stream.seek(corrupt_offset); stream.write(bytes([original_byte[0]^1]))
+        if case == 'wrong-guid': rt.config['disk']['disk_guid'] = BOOT_ID
+        if case == 'disk': rt.config['disk']['physical_bytes'] += 512
+        original_mount = mounts['/boot']
+        if case == 'mount': mounts['/boot'] = '179:99 rw'
+        def sleep(seconds): clock[0] += seconds
+        try:
+            with patch.object(Path, 'stat', disk_stat), \
+                 patch.object(Path, 'lstat', lambda path,*a,**k: disk_stat(path) if path==disk else actual_lstat(path,*a,**k)), \
+                 patch.object(Path, 'resolve', resolve), patch.object(Path, 'read_text', read), \
+                 patch.object(Path, 'is_symlink', lambda path: True if str(path).startswith('/etc/systemd/system/') else actual_link(path)), \
+                 patch.object(h.os, 'readlink', return_value='/dev/null'), \
+                 patch.object(h, 'read_json', read_json), patch.object(h, 'present', present), \
+                 patch.object(h, 'device_number', side_effect=lambda path:mappings[path]), \
+                 patch.object(rt, 'tool_identity'), patch.object(rt, 'command', side_effect=command):
+                if isinstance(case, int):
+                    check.assertEqual(h.run(rt, nullcontext, nullcontext, sleep=sleep),
+                                      'noop' if case==3 else 'confirmed')
+                    check.assertEqual(len(writes), int(case!=3))
+                    check.assertEqual(clock[0], 5)
+                    check.assertEqual(h.bank(images[1])[1]['BOOT_A_LEFT'], str(counter))
+                else:
+                    with check.assertRaisesRegex(ValueError, 'GPT|disk identity|Mount'):
+                        h.run(rt, nullcontext, nullcontext, sleep=sleep)
+                    check.assertEqual(writes, [])
+                record = actual_json(rt.store.root/'shared/logs/journal/commissioning-health'/ (BOOT_ID+'.json'))
+                check.assertEqual(record['status'], ('success-noop' if case==3 else 'success')
+                                  if isinstance(case, int) else 'failed-or-unknown')
+        finally:
+            mounts['/boot'] = original_mount
+            if original_byte is not None:
+                with disk.open('r+b') as stream:
+                    stream.seek(corrupt_offset); stream.write(original_byte)
+    print('Historical closure: A1/A2 confirmation, A3 no-op, GUID/4 CRC/disk/mount refusals OK')
 
 
 class CommissioningTests(unittest.TestCase):
@@ -452,9 +594,32 @@ class CommissioningTests(unittest.TestCase):
             env={**os.environ,'PYTHONPATH':str(modules),'PYTHONDONTWRITEBYTECODE':'1'},capture_output=True,text=True,timeout=5)
         self.assertEqual(result.returncode,0,result.stderr)
 
+    def test_historical_gpt_full_health_closure(self):
+        modules = self.root/'closure'; modules.mkdir()
+        for name, data in staging.dependency_closure().items():
+            if name in ('sv08_state', 'sv08_boot'):
+                data = staging.source(staging.TLS, 'runtime/'+name+'.py')
+            (modules/(name+'.py')).write_bytes(data)
+        code = ("import sys; from pathlib import Path; import test_commissioning_host as t; "
+                "sys.path.insert(0,sys.argv[1]); "
+                "[sys.modules.pop(n) for n in list(sys.modules) if n.startswith('sv08_')]; "
+                "import sv08_commissioning_health as h; "
+                "assert Path(h.inspect.__code__.co_filename).parent==Path(sys.argv[1]); "
+                "t.historical_health_fixture(Path(sys.argv[2]),h)")
+        result = subprocess.run([sys.executable, '-c', code, str(modules), str(self.root)],
+            env={**os.environ, 'PYTHONPATH':os.pathsep.join(map(str, (REPO/'tests', REPO/'runtime', REPO/'scripts'))),
+                 'PYTHONDONTWRITEBYTECODE':'1'}, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('A3 no-op', result.stdout)
+
     def test_device_gpt_and_mount_identity_refusals(self):
         cfg = config()
-        disk = self.root/'disk';disk.write_bytes(b'fixture')
+        header = bytearray(512)
+        header[:8] = b'EFI PART'
+        header[12:16] = (92).to_bytes(4, 'little')
+        header[56:72] = uuid.UUID(cfg['disk']['disk_guid']).bytes_le
+        header[16:20] = zlib.crc32(header[:92]).to_bytes(4, 'little')
+        disk = self.root/'disk';disk.write_bytes(bytes(512)+header)
         sysfs = self.root/'sysfs/disk';sysfs.mkdir(parents=True)
         (sysfs/'size').write_text('32768')
         cfg['disk'].update(path=str(disk),sysfs=str(sysfs),major_minor='179:0',physical_bytes=32768*512,image_bytes=16384*512)
@@ -471,7 +636,7 @@ class CommissioningTests(unittest.TestCase):
         partitions += [dict(number=n,name='other',partuuid=f'00000000-0000-4000-8000-{n:012d}',offset_bytes=1,size_bytes=1) for n in range(4,7)]
         cfg['disk']['partition_records']=partitions
         runtime=health.Runtime(cfg)
-        observed=dict(disk_guid=cfg['disk']['disk_guid'],partition_records=copy.deepcopy(partitions),partitions=6)
+        observed=dict(partition_records=copy.deepcopy(partitions),partitions=6)
         original_stat=Path.lstat;original_resolve=Path.resolve
         def lstat(path,*args,**kwargs):
             if path==disk:return type('Disk',(),dict(st_mode=0o060600,st_rdev=os.makedev(179,0)))
@@ -493,15 +658,36 @@ class CommissioningTests(unittest.TestCase):
                 previous=output[mount];output[mount]='179:99 rw'
                 with self.assertRaisesRegex(ValueError,'Mount'):runtime.devices(manifest)
                 output[mount]=previous
-            for key,value in [('disk_guid','wrong'),('partitions',5),('partition_records',[])]:
+            for key,value in [('partitions',5),('partition_records',[])]:
                 previous=observed[key];observed[key]=value
                 with self.assertRaisesRegex(ValueError,'GPT'):runtime.devices(manifest)
                 observed[key]=previous
+            expected_guid=cfg['disk']['disk_guid'];cfg['disk']['disk_guid']=BOOT_ID
+            with self.assertRaisesRegex(ValueError,'GPT'):runtime.devices(manifest)
+            cfg['disk']['disk_guid']=expected_guid
             (sysfs/'p2/start').write_text('1')
             with self.assertRaisesRegex(ValueError,'GPT/disk'):runtime.devices(manifest)
             (sysfs/'p2/start').write_text('20020')
             cfg['disk']['major_minor']='179:99'
             with self.assertRaisesRegex(ValueError,'disk identity'):runtime.devices(manifest)
+
+    def test_guid_header_read_refuses_unchecked_identity(self):
+        path = self.root/'header'
+        for data in (bytes(512), bytes(1024), bytes(512)+b'EFI PART'+bytes(504)):
+            path.write_bytes(data)
+            with self.assertRaisesRegex(ValueError, 'GPT'):
+                health.disk_guid(path)
+        header = bytearray(512)
+        header[:8] = b'EFI PART'
+        header[12:16] = (92).to_bytes(4, 'little')
+        header[56:72] = uuid.UUID(BOOT_ID).bytes_le
+        header[16:20] = zlib.crc32(header[:92]).to_bytes(4, 'little')
+        path.write_bytes(bytes(512)+header)
+        self.assertEqual(health.disk_guid(path), BOOT_ID)
+        header[56] ^= 1
+        path.write_bytes(bytes(512)+header)
+        with self.assertRaisesRegex(ValueError, 'CRC'):
+            health.disk_guid(path)
 
     def test_config_selection_and_input_overflow(self):
         cfg=config();health.validate_config(cfg)

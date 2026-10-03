@@ -209,3 +209,44 @@ reused; synthetic fixtures do not replace actual deployment agreement evidence.
 Seven-minute continuation anchor12:11:27UTC; concise cumulative usage/hashes are
 in evidence-v4.json and handoff-v4.md. Prior v1/v2/v3 evidence remains preserved.
 No failed run, Git action, hardware/network/credential access or new agent.
+
+## Bounded F1 repair — 2026-10-03
+
+Session `commissioning-host-f1-20261003`, run
+`cbc26c5d174c4441ba5ab3eabd426324`, isolated edit-start `46697e9`.
+The original candidate `08097f2` and independent failure evidence are preserved.
+F1 was a caller assumption: historical BASE `sv08_gpt.inspect` validates both
+headers/arrays but omits the returned disk GUID. The helper now reads and
+CRC-checks the primary header locally after the historical inspector passes,
+then compares the actual GUID. No dependency, stager or accepted policy changes.
+
+The new portable test materializes the exact staged historical/TLS closure from
+Git and imports it in a separate Python process. Installed `sgdisk` creates a
+32 MiB disposable regular GPT file with six partitions and a relocated primary
+array. The real historical inspector runs through `Runtime.devices`, `probe`
+and `run`; A1/A2 confirm once and A3 is a no-op. Wrong GUID, both header CRCs,
+both array CRCs, disk capacity and mount identity refuse with zero writes and
+retained failure records. Only OS device/sysfs/mount/service/tool boundaries and
+the clock are simulated; actual Store, diagnostics, environment CRC/selection,
+health sampling and readback execute. Fixture tool mutations are regular-file
+simulations; the unchanged actual 18-case selected-libubootenv proof is reused.
+
+Focused command (assigned disposable TMPDIR, bytecode disabled, tool opt-in unset):
+
+```text
+PYTHONPATH=tests:runtime:scripts python3 -m unittest test_commissioning_host -v
+```
+
+Result: 17 passed, one explicit selected-tool skip, 18 total in 6.215 seconds.
+The new closure test also passed alone in 1.391 seconds. Header-reader tests
+cover missing/truncated/signature/length/CRC refusal. Both worktree and cached
+whitespace checks pass; only the four assigned paths changed.
+
+Prior browser, unit and 112-case regression evidence is reused for unchanged
+behavior. This repair is author evidence only, with fresh independent review,
+artifact/private-binding refresh and any installed actions left to the coordinator.
+Requested role/settings are project_implementer / GPT-6.1 Sol / medium, with the
+full-role fallback recorded in the coordinator's launch receipt. The worker has
+no effective effort introspection; visible session identity is GPT-6, so actual
+Sol/medium agreement remains unconfirmed here. No settings change, agents,
+hardware, network, credential access, packages or Git mutation occurred.

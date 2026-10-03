@@ -26,7 +26,12 @@ The physical size and GPT footprint are distinct: a larger spare may carry the
 factory-layout GPT backup at the original image end. Require positive integers
 with image_bytes <= physical_bytes; compare sysfs size to physical_bytes and pass
 image_bytes to the existing read-only GPT inspector. Never move/rewrite GPT to
-force those quantities equal. It checks the actual mounts: root and boot read-only, data writable. Synthetic
+force those quantities equal. The exact historical inspector validates both
+headers' GUID agreement but does not return `disk_guid`. After its complete audit,
+the helper reads the primary header's little-endian GUID locally, rechecking its
+signature, length and CRC before comparing the reviewed binding. The historical
+GPT module and its both-header/array CRC, collision and partition checks remain
+unchanged. It checks the actual mounts: root and boot read-only, data writable. Synthetic
 records are examples only; they must never be substituted for measured target facts.
 
 `tools` has exactly `package` (`libubootenv-tool`), `version` (`0.3.5-0.1+b2`) and
