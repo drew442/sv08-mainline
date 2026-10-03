@@ -87,7 +87,10 @@ def journey(answer, keyboard=False, refused=False):
             x.XCloseDisplay.argtypes = [ctypes.c_void_p]; x.XCloseDisplay(display)
         return False
     if not refused: GLib.timeout_add(20, respond)
+    expired = False
     def deadline():
+        nonlocal expired
+        expired = True
         if getattr(window, 'dialog', None): window.dialog.response(Gtk.ResponseType.CANCEL)
         return False
     timer = GLib.timeout_add_seconds(10, deadline)
@@ -95,6 +98,7 @@ def journey(answer, keyboard=False, refused=False):
     pump_until(lambda: not window.busy and ('No write' in window.message.get_text() or
                                            'readback matched' in window.message.get_text()))
     GLib.source_remove(timer)
+    assert not expired, 'GTK response deadline exceeded; cancellation is not a passing answer'
     result = window.message.get_text()
     assert ('Refused' in result) if refused else ('readback matched' in result if answer == 'yes' else 'No write' in result), result
     window.refresh_button.clicked()
