@@ -1,8 +1,8 @@
 # H12 attended SD session preparation — 2026-10-03
 
 Status: physical execution resumed after the owner repaired KVM video. The original
-software is merged; a keyboard correction and fresh exact action are under separate
-independent review. Earlier session observations below are historical. No full-image
+software and keyboard correction are merged; separate delivery and exact-action
+reviews passed. Earlier session observations below are historical. No full-image
 write has yet occurred.
 The [owner's scope](../decisions/20261002-h12-scope-reduction.md) and
 [delivery plan](../development/h12-sd-delivery-plan-20261003.md) govern the session.
@@ -178,3 +178,14 @@ then Tab, inspect visible Yes, then Enter with each key released. Stop on mismat
 refusal or ambiguity. Preserve power/source during transfer, record matched result
 and terminal writer before manual restart; observe installed root and SSH after it.
 These reviews are recorded before production enablement; neither claims execution.
+
+### Corrected production screen enabled and Review started
+
+At 04:56–04:57 UTC the coordinator deployed and read back the accepted backend,
+UI and exact configuration hashes, verified the same current boot/target/capacity
+and recovery marker, and restarted only the display service. Effective ExecStart
+uses the production UI/installed_session, with Restart=no; the prior disposable
+fixture entry point is no longer selected. Actual KVM capture showed the initial
+screen. A released Enter opened Review at 04:57:03 UTC; KVM then showed image/target
+checking. Source hashing is in progress. Target writes remain zero. No Yes or
+physical success is claimed at this checkpoint.
