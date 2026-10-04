@@ -55,7 +55,7 @@ try {
   await evaluate('window.fixtureHoldStatus=true');await click('#authorize');await until('window.fixtureStatusWaiting');
   if(transition==='stop')await click('#stop-authorization');else if(transition==='logout')await click('#logout');else await evaluate('window.fixtureDisconnect()');
   await until('!sv08Session.elevated');
-  if(transition==='stop'){await click('#authorize');await until('sv08Session.elevated');}
+  if(transition==='stop'){await until(`!document.querySelector('#authorize').disabled`);await click('#authorize');await until('sv08Session.elevated');}
   await evaluate('window.fixtureReleaseStatus()');
   await until(`document.querySelector('#printer-notice').textContent.includes('Session or selections changed')`);
   assert.equal(await evaluate(`document.querySelectorAll('#printer-boards fieldset').length`),0);
@@ -126,7 +126,7 @@ try {
  await set('#printer-geometry-fields input',123);await click('#printer-reload');
  await evaluate('window.fixtureHoldStatus=true');await click('#printer-reconcile');await until('window.fixtureStatusWaiting');
  await click('#stop-authorization');await until('!sv08Session.elevated');
- await click('#authorize');await until('sv08Session.elevated');await evaluate('window.fixtureReleaseStatus()');
+ await until(`!document.querySelector('#authorize').disabled`);await click('#authorize');await until('sv08Session.elevated');await evaluate('window.fixtureReleaseStatus()');
  await until(`document.querySelector('#printer-notice').textContent.includes('Session or selections changed') && !document.querySelector('#printer-reconcile').disabled`);
  assert.equal(await evaluate(`document.querySelector('#printer-geometry-fields input').value`),'123');
  await evaluate('window.fixtureHoldStatus=true');await click('#printer-reconcile');await until('window.fixtureStatusWaiting');
@@ -192,7 +192,7 @@ try {
  const ackRevision=state().revision;await fieldSet(deviceField('max temp'),103);
  await click('[data-page=overview]');await click('#stop-authorization');await until('!sv08Session.elevated');
  await evaluate('window.fixtureReleaseApply()');await until(`document.querySelector('#printer-notice').textContent.includes('acknowledged')`);
- await click('#authorize');await until('sv08Session.elevated');await click('[data-page=printer]');
+ await until(`!document.querySelector('#authorize').disabled`);await click('#authorize');await until('sv08Session.elevated');await click('[data-page=printer]');
  await until(`!document.querySelector('#printer-reconciliation').hidden && !document.querySelector('#printer-reconcile').disabled`);
  assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);await click('#printer-reconcile');await ready();
  assert.equal(state().revision,ackRevision);
