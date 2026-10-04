@@ -2,9 +2,11 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'runtime'))
 spec=importlib.util.spec_from_file_location('stage_printer',ROOT/'scripts/stage_printer_ui.py');stage=importlib.util.module_from_spec(spec);spec.loader.exec_module(stage)
 
 class StageTests(unittest.TestCase):
@@ -88,7 +90,7 @@ class StageTests(unittest.TestCase):
     def test_lock_held_through_publication_and_restoration(self):
         from unittest.mock import patch
         import sys
-        sys.path.insert(0,str(ROOT/'scripts'))
+        sys.path.insert(0,str(ROOT/'scripts'));sys.path.insert(0,str(ROOT/'runtime'))
         import stage_admin_ui
         with tempfile.TemporaryDirectory() as tmp:
             work=Path(tmp);root=work/'rootfs';root.mkdir();expected=self.fixture(root)
