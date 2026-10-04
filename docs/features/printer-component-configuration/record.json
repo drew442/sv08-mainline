@@ -137,10 +137,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "e08c2c2cbc944688a5206acaf99cba09",
+        "session": "printer-components-software-f2-20261004"
+      },
       "repeats": 0,
       "resumption": "Repair independently reproduced equal-revision cross-generation draft overwrite; bind loaded content/context under existing locks. Preserve failed 4f865df and review evidence.",
-      "status": "pending",
+      "status": "running",
       "title": "Deliver component catalog, configuration backend and Cockpit page",
       "verification": null
     },
