@@ -1,54 +1,68 @@
-# Shared Cockpit panel: offline evidence
+# Shared Cockpit panel: repaired offline evidence
 
-2026-10-04. Executed code commit `86fd625b8c4fd13d49e047bd4b3218c881ff34b5`.
-The following documentation commit preserves that code tree unchanged.
+2026-10-04. Tested code commit `e7a81479c07f56a4bd06bf24fd12a4e1e63d9844`.
+This evidence-only commit leaves that executable tree unchanged.
+The original failed delivery and approval interpretation are preserved in
+[review-repair.md](review-repair.md). Fresh independent acceptance is required.
 
-## Results
+## Executed checks
 
-- Six printer staging tests and seventeen host staging tests passed. Node navigation
-  checks passed; actual Chromium journeys passed with zero uncaught exceptions.
-- One document, header, sidebar and shared session; allowlisted routes, history,
-  legacy redirect and reload; host/printer dirty values survive section navigation.
-- Reviews and delayed responses are invalidated on navigation or authority loss.
-  Lost apply acknowledgments spanning navigation and Stop/logout/disconnect require
-  explicit saved-state reconciliation without discarding local edits or replaying.
-- Host status failures cannot disable printer controls. Host upload and ordinary
-  review cancellation regressions pass. Existing preset, import/export, inactive
-  apply/restore, CAS and generation journeys pass using the real Store/Budget.
-- Screenshots and root-overflow assertions cover 1440×900, 1024×600 and 390×844.
-  Transport is a Cockpit shim; this is not authenticated installed evidence.
-- Historical installed public assets were copied to a disposable fixture. Exact
-  finite transforms preserve unrelated host bytes. Full restoration, beforeimage
-  refusal, afterimage drift refusal and interrupted entry publication recovery pass.
-  Offline fixture ownership differs from the recorded root-owned installed files.
-  Publication is atomic per file, not across the whole set; retained originals and
-  prechecked partial restoration supply recovery.
+- Ten printer staging and eighteen host staging tests pass, plus Node navigation.
+  Separate focused discovery exposed a test import-order assumption; it was fixed
+  before this run. No production admission or acceptance check was weakened.
+- Actual Chromium passes all prior shared-shell/session/navigation, dirty-draft,
+  delayed-response, lost acknowledgment, host isolation and component journeys.
+  New cases preserve local drafts for export across unsupported catalog, saved
+  schema and draft schema responses. Editing/mutations remain disabled until
+  recovery or explicit discard. No uncaught exceptions.
+- Screenshots and no-overflow assertions cover 1440×900, 1024×600 and 390×844.
+  Cockpit transport is a shim, with real Store/Budget. Installed authentication
+  remains a separate check.
+- Supported stage/restore/host-refresh calls use nonblocking exclusion on the
+  stable root-directory inode. Fresh/historical contention refuses without writes;
+  lock coverage spans validation and publication/restoration. Preexisting drift
+  refuses without mutation, newly visible drift is preserved, and interruption
+  recovery still passes. Exclusive offline-root ownership is required; arbitrary
+  noncooperating writers and root-inode replacement are outside this contract.
+- The final historical public installed fixture passes exact finite transforms,
+  complete restoration, afterimage drift refusal and interrupted-entry recovery.
+  Offline fixture ownership is distinct from root-owned installed metadata.
 
-## Reproducibility and limits
+## Bound receipts and capacity
 
-[Source and artifact hashes](receipts/offline-source.json),
-[commands/results](receipts/offline-commands.json),
-[browser assertions](receipts/offline-browser.json),
-[historical outcome](receipts/historical.json),
-[complete staging inventory](receipts/historical-plan.json), and
-[exact UI overlay summary](receipts/overlay.json) bind these results.
-Private screenshots and full logs are retained under
-`local/feature-workflow/probes/printer-integration-20261004/candidate-check-r1/`.
+[Source/artifact hashes](receipts/repair/source.json),
+[commands](receipts/repair/commands.json), [browser results](receipts/repair/browser.json),
+[historical results](receipts/repair/historical.json),
+[full historical inventory](receipts/repair/historical-plan.json),
+[factory capacity accounting](receipts/repair/factory-capacity.json), and
+[exact UI overlay](receipts/repair/overlay.json).
+Private screenshots and complete logs are retained in
+`local/feature-workflow/probes/printer-integration-20261004/candidate-check-r3/`.
 
-Fresh full payload is 295872 bytes; conservative staging peak is 164 4096-byte
-blocks with three new files. The exact installed UI overlay is 68801 bytes across
-10 files. Existing factory root/data reserve policies and private-feature limits
-are unchanged. The coordinator must separately admit installed free blocks/inodes,
-backup/temporary usage, metadata and preserved runtime closure before installation.
-No backend/catalog/runtime, printer configuration, boot policy or upstream changes.
-Uninitialized submodules in this worktree remain unchanged indexed gitlinks.
-No hardware compatibility, commissioning or release claim.
+Factory root is 2048 MiB, content budget 1536 MiB; boot is 192/144 MiB.
+Data is 2447 MiB with 768 MiB floor and 6.25 MiB history overhead.
+Conservative fresh/synthetic-historical composition peaks are 130/129 root blocks
+and 97/127 data blocks (4096 bytes each), with 13/8 root and 3 data incremental
+inodes. Data admission additionally retains 64 history inodes. Boot demand is zero.
+Counts include hex originals inside the retained report, a report publication
+copy, its directory and a root publication temporary. These bounds compare with
+configured margins; they do not prove an arbitrary full image is within its content
+budget or establish measured free factory inodes. Image-wide content admission
+and actual installed capacity are separate retained gates. Exact historical
+installed projection has its own complete capacity fields in the linked report.
 
-## Preserved unsuccessful attempts
+The final UI-only installed packet is 69303 bytes across ten assets, three new
+files. Runtime/backend/catalog and private feature limits remain unchanged.
+Installation admission must account separately for packet/originals/status backup
+files, check actual free blocks/inodes and preserve factory reserve policies.
+The UI correction activates no printer configuration or outputs and changes no
+boot policy. No hardware compatibility, commissioning or release claim.
 
-The first fixture lacked free workstation space; disposable pip cache removal
-restored space without changing admission. A transport-shim argument mismatch,
-narrow layout overflow and navigation readiness races were repaired and retested.
-The initial coordinator run exposed a historical test using moving HEAD; the test
-now pins the pre-integration commit. That failed run is retained as `candidate-check`;
-`candidate-check-r1` is the passing source-bound run. No check was waived.
+## Attempt history
+
+Earlier matching receipts remain in `receipts/` as historical evidence, not final
+acceptance. The first repaired run failed a standalone test import; `candidate-check-r2`
+preserves that attempt. `candidate-check-r3` is the passing final run. The worker's
+browser startup failed private-directory ancestry; the coordinator used its assigned
+private cache fixture for the actual successful run. Original review failures remain
+in Git history. No test result was relabeled or threshold relaxed.

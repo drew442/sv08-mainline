@@ -1,0 +1,51 @@
+[
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_stage_printer_ui.py"
+    ],
+    "returncode": 0,
+    "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 2.771s\n\nOK\n"
+  },
+  {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_stage_admin_ui.py"
+    ],
+    "returncode": 0,
+    "output": "..................\n----------------------------------------------------------------------\nRan 18 tests in 0.146s\n\nOK\n"
+  },
+  {
+    "command": [
+      "node",
+      "tests/printer_navigation.mjs"
+    ],
+    "returncode": 0,
+    "output": "Navigation routes/history/status/focus PASS\n"
+  },
+  {
+    "command": [
+      "node",
+      "--require",
+      "/home/drew/sv08-mainline/local/feature-workflow/probes/history-rollover-20261003/implement/browser-websocket.cjs",
+      "tests/printer_browser.mjs",
+      "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+      "/home/drew/.cache/sv08-printer-integration-20261004/coordinator-fixture-r3",
+      "/home/drew/sv08-mainline/local/feature-workflow/probes/printer-integration-20261004/candidate-check-r3/browser"
+    ],
+    "returncode": 0,
+    "output": "Printer browser fixture journeys PASS\n(node:2559050) [UNDICI-WS] Warning: WebSockets are experimental, expect them to change at any time.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  }
+]
