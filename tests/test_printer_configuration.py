@@ -42,13 +42,37 @@ def full_draft():
 class CatalogTests(unittest.TestCase):
     def setUp(self):self.c=Catalog(CATALOG)
     def test_catalog_sources(self):
-        source=Path('/home/drew/sv08-mainline')
+        source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         import hashlib
         for board in self.c.boards.values():
             self.assertEqual(hashlib.sha256((source/board['source']['path']).read_bytes()).hexdigest(),board['source']['sha256'])
         self.assertIn('heater',self.c.boards['octopus-v1.1-non-pro']['warning'])
         self.assertEqual(self.c.curves['sovol-bed']['points'],[[25,100000],[50,18085.4],[100,5362.6]])
         self.assertEqual(self.c.curves['sovol-hotend']['points'],[[25,110000],[100,7008],[220,435]])
+    def test_all_selectable_capabilities_primary_line_audit(self):
+        root=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
+        for board in self.c.boards.values():
+            lines=(root/board['source']['path']).read_text().splitlines()
+            for pin,signal in board['signals'].items():
+                source=signal['source'];line=lines[source['line']-1]
+                self.assertIn(source['option']+':',line.replace(' ',''),(board['id'],pin))
+                normalized=line.split(':',1)[1].split('#')[0].strip().replace(' ','').lstrip('^!~').split(':')[-1]
+                self.assertEqual(normalized,pin,(board['id'],pin))
+                option=source['option'];kind=source['section'].split()[0]
+                expected={'step_pin':'step','dir_pin':'dir','enable_pin':'enable','uart_pin':'uart','sensor_pin':'adc','heater_pin':'heater','switch_pin':'input','endstop_pin':'input','diag_pin':'input'}.get(option)
+                if option=='pin':expected='fan' if 'fan' in kind else 'probe' if kind=='probe' else None
+                if kind=='bltouch' and option=='sensor_pin':expected='probe'
+                self.assertEqual(signal['capabilities'],[expected],(board['id'],pin))
+            for cap,count in board['channel_counts'].items():self.assertEqual(count,sum(cap in sig['capabilities'] for sig in board['signals'].values()))
+            for pin in board['reserved_pins']:
+                with self.assertRaises(ValueError):self.c.pin(board,pin,'heater')
+    def test_fixed_factory_schema_and_catalog_corruption(self):
+        for mutate in [lambda c:c['curves'][0]['points'][0].__setitem__(1,109999),lambda c:c['curves'][0].__setitem__('sensor_type','injected\n[heater_bed]'),lambda c:c['boards'][0]['channel_counts'].__setitem__('adc',99),lambda c:c['boards'][0]['signals']['PC5']['capabilities'].append('output_pin')]:
+            data=copy.deepcopy(self.c.data);mutate(data)
+            with tempfile.TemporaryDirectory() as tmp:
+                path=Path(tmp)/'catalog.json';path.write_text(json.dumps(data))
+                with self.assertRaises(ValueError):Catalog(path)
+
     def test_sensor_positive_allowlist_and_determinism(self):
         d=sensor_draft();a=generate(self.c,d,'sensors');self.assertTrue(a['complete']);self.assertEqual(a,generate(self.c,d,'sensors'))
         allowed=('mcu','printer','thermistor ','temperature_sensor ')
@@ -56,6 +80,10 @@ class CatalogTests(unittest.TestCase):
             if line.startswith('['):self.assertTrue(line[1:].startswith(allowed),line)
         self.assertIn('pullup_resistor: 11500',a['text'])
         self.assertFalse(generate(self.c,full_draft(),'sensors')['complete'])
+        onlytool=sensor_draft();del onlytool['boards']['main'];onlytool['devices']=onlytool['devices'][1:]
+        self.assertFalse(generate(self.c,onlytool,'sensors')['complete'])
+        d['devices'].append(dict(name='filament_check',board='main',kind='input',settings=dict(pin='PE9',invert=False,digital_pullup=True)))
+        text=generate(self.c,d,'sensors')['text'];self.assertIn('pause_on_runout: false',text);self.assertNotIn('runout_gcode',text)
     def test_full_protected_and_incomplete(self):
         a=generate(self.c,full_draft(),'full');self.assertTrue(a['complete'],a['blockers'])
         for name in ['stepper_z','stepper_z1','stepper_z2','stepper_z3','extruder','heater_bed']:self.assertIn('['+name+']',a['text'])
@@ -81,12 +109,11 @@ class CatalogTests(unittest.TestCase):
 
 
 class PersistenceTests(unittest.TestCase):
-    @unittest.skipUnless(os.environ.get('SV08_PRINTER_SAFE_ANCESTRY') == '1', 'Current Budget requires non-group-writable ancestry; coordinator safe fixture pending')
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory(prefix='printer-',dir=os.environ.get('SV08_PRINTER_SCRATCH',str(ROOT))); self.root=Path(self.tmp.name);self.root.chmod(0o700)
-        self.capacity=patch('os.statvfs',side_effect=self.filesystem);self.capacity.start();self.addCleanup(self.capacity.stop)
-        self.fd_capacity=patch('os.fstatvfs',side_effect=self.filesystem);self.fd_capacity.start();self.addCleanup(self.fd_capacity.stop)
-        self.store=Store(self.root/'data',reserve_bytes=0,copy_limit_bytes=8*1024*1024)
+        self.tmp=tempfile.TemporaryDirectory(prefix='printer-',dir=os.environ.get('SV08_PRINTER_SCRATCH','/home/drew/.cache/sv08-printer-fixtures-20261004')); self.root=Path(self.tmp.name);self.root.chmod(0o700)
+        from sv08_data_budget import Budget
+        budget=Budget(self.root/'data',state_reserve=0,copy_limit=8*1024*1024,staging_reserve=0)
+        self.store=Store(self.root/'data',reserve_bytes=0,copy_limit_bytes=8*1024*1024,budget=budget)
         self.store.initialize();self.boot=self.store.prepare_boot('A','r1');self.boot['boot_id']='fixture'
         self.boot_path=self.root/'boot.json';self.boot_path.write_text(json.dumps(self.boot))
         self.view=self.root/'config';self.view.symlink_to(Path(self.boot['generation'])/'config')
@@ -132,7 +159,11 @@ class PersistenceTests(unittest.TestCase):
         self.save(sensor_draft());self.apply();original=self.status()
         for label,cls in [('current',Store),('historical',self.historical_store())]:
             with self.subTest(api=label):
-                data=self.root/label;st=cls(data,reserve_bytes=0,copy_limit_bytes=8*1024*1024);st.initialize();a=st.prepare_boot('A','a')
+                data=self.root/label;kwargs={}
+                if cls is Store:
+                    from sv08_data_budget import Budget
+                    kwargs['budget']=Budget(data,state_reserve=0,copy_limit=8*1024*1024,staging_reserve=0)
+                st=cls(data,reserve_bytes=0,copy_limit_bytes=8*1024*1024,**kwargs);st.initialize();a=st.prepare_boot('A','a')
                 source=Path(self.boot['generation'])/'config'/'printer-hardware';target=Path(a['generation'])/'config'/'printer-hardware'
                 import shutil
                 shutil.copytree(source,target)
@@ -143,9 +174,69 @@ class PersistenceTests(unittest.TestCase):
                 b=st.prepare_boot('B','a');self.assertEqual((Path(a['generation'])/'config/printer-hardware/state.json').read_bytes(),(Path(b['generation'])/'config/printer-hardware/state.json').read_bytes())
                 # A rollback is its preserved generation; no shared/global feature state.
                 self.assertEqual(st.prepare_boot('A','a')['generation'],a['generation'])
+    def test_low_blocks_inodes_feature_footprint_and_default_reserve(self):
+        self.save(sensor_draft());self.apply();path=self.service.directory/'state.json';before=path.read_bytes()
+        from types import SimpleNamespace
+        for blocks,inodes in [(1,100000),(1000000,1)]:
+            fs=SimpleNamespace(f_frsize=4096,f_bsize=4096,f_bavail=blocks,f_favail=inodes)
+            with self.subTest(blocks=blocks,inodes=inodes),patch('os.statvfs',return_value=fs),patch('os.fstatvfs',return_value=fs):
+                with self.assertRaises(ValueError):self.save(sensor_draft())
+            self.assertEqual(path.read_bytes(),before)
+        # Production Budget floor is unchanged, and rejects only165MiB capacity.
+        from sv08_data_budget import Budget
+        fs=SimpleNamespace(f_frsize=4096,f_bsize=4096,f_bavail=165*256,f_favail=100000)
+        with self.assertRaises(ValueError):Budget(self.store.root).check(4096,2,fs=fs)
+        abandoned=self.service.directory/'.state.json.abandoned'
+        with abandoned.open('wb') as f:f.truncate(4*1024*1024)
+        abandoned.chmod(0o600)
+        with self.assertRaisesRegex(ValueError,'storage limit'):self.save(sensor_draft())
+        self.assertEqual(path.read_bytes(),before);abandoned.unlink()
+        for n in range(31):
+            p=self.service.directory/('.state.json.'+str(n));p.write_bytes(b'');p.chmod(0o600)
+        with self.assertRaisesRegex(ValueError,'storage limit'):self.save(sensor_draft())
+        self.assertEqual(path.read_bytes(),before)
+
+    def test_independent_process_cas_and_context_change(self):
+        self.save(sensor_draft());self.apply();before=self.status();expected=before['revision']
+        children=[];readers=[]
+        for n in range(2):
+            read,write=os.pipe();pid=os.fork()
+            if pid==0:
+                os.close(read)
+                try:
+                    d=sensor_draft();d['devices'][0]['settings']['max_temp']=100+n
+                    self.save(d,expected);result=b'saved'
+                except ValueError:result=b'refused'
+                os.write(write,result);os.close(write);os._exit(0)
+            os.close(write);children.append(pid);readers.append(read)
+        outcomes=[os.read(fd,32) for fd in readers]
+        for fd in readers:os.close(fd)
+        for pid in children:self.assertEqual(os.waitpid(pid,0)[1],0)
+        self.assertEqual(outcomes.count(b'saved'),1,outcomes)
+        self.assertEqual(self.status()['current'],before['current'])
+        review=self.service.request(dict(action='review',mode='sensors'))
+        # Boot identity changes between review and apply: ordinary hash is stale.
+        boot=copy.deepcopy(self.boot);boot['boot_id']='next-boot';self.boot_path.write_text(json.dumps(boot))
+        with self.assertRaisesRegex(ValueError,'stale'):self.service.request(dict(action='apply',mode='sensors',review=review['review']))
+        self.assertEqual(self.status()['current'],before['current'])
+        boot['generation']='/invalid-generation';self.boot_path.write_text(json.dumps(boot))
+        with self.assertRaisesRegex(ValueError,'generation'):self.status()
+        self.boot_path.write_text(json.dumps(self.boot))
+
     def historical_store(self):
         raw=subprocess.check_output(['git','show','8c6f24f^:runtime/sv08_state.py'],cwd=ROOT)
         path=self.root/'historical.py';path.write_bytes(raw);spec=importlib.util.spec_from_file_location('historical',path);mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);return mod.Store
+    def test_unknown_catalog_diagnosis_corrupt_state_and_mutation_preservation(self):
+        self.save(sensor_draft());self.apply();before=self.status();path=self.service.directory/'state.json';raw=path.read_bytes()
+        catalog=copy.deepcopy(self.c.data);catalog['format_version']=2;p=self.root/'unsupported-catalog.json';p.write_text(json.dumps(catalog))
+        diagnostic=Catalog(p,diagnostic=True);self.service.catalog=diagnostic
+        status=self.service.request({'action':'status'});self.assertFalse(status['catalog_supported']);self.assertEqual(status['state'],before)
+        with self.assertRaises(ValueError):self.save(sensor_draft(),before['revision'])
+        self.assertEqual(path.read_bytes(),raw);self.service.catalog=self.c
+        path.write_bytes(b'{broken');path.chmod(0o600)
+        with self.assertRaises(ValueError):self.status()
+        self.assertEqual(path.read_bytes(),b'{broken')
+
     def test_context_privilege_links_import_and_locks(self):
         self.save(sensor_draft());before=self.status()
         self.service.privileged=lambda:False
@@ -161,22 +252,20 @@ class PersistenceTests(unittest.TestCase):
         self.boot_path.write_text(json.dumps(self.boot));p=self.service.directory/'evil';p.symlink_to(self.boot_path)
         with self.assertRaises(ValueError):self.status()
 
-
-if __name__=='__main__':unittest.main()
-
 class HistoricalPersistenceTests(PersistenceTests):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory(prefix='printer-historical-',dir=os.environ.get('SV08_PRINTER_SCRATCH',str(ROOT)))
+        self.tmp=tempfile.TemporaryDirectory(prefix='printer-historical-',dir=os.environ.get('SV08_PRINTER_SCRATCH','/home/drew/.cache/sv08-printer-fixtures-20261004'))
         self.root=Path(self.tmp.name);self.root.chmod(0o700)
         self.store=self.historical_store()(self.root/'data',reserve_bytes=0,copy_limit_bytes=8*1024*1024)
         self.store.initialize();self.boot=self.store.prepare_boot('A','r1');self.boot['boot_id']='fixture'
         self.boot_path=self.root/'boot.json';self.boot_path.write_text(json.dumps(self.boot))
         self.view=self.root/'config';self.view.symlink_to(Path(self.boot['generation'])/'config')
         self.c=Catalog(CATALOG);self.service=PrinterStore(self.store,self.boot_path,self.view,self.c,privileged=lambda:True)
-    @unittest.skip('Current Budget generation-copy fixture blocked by assigned ancestry; coordinator continuation')
-    def test_real_generation_copy_rollback_current_and_historical(self):pass
     def test_historical_generation_copy_rollback(self):
         self.save(sensor_draft());self.apply();before=self.status();b=self.store.prepare_boot('B','r1')
         self.assertEqual((Path(self.boot['generation'])/'config/printer-hardware/state.json').read_bytes(),(Path(b['generation'])/'config/printer-hardware/state.json').read_bytes())
         self.assertEqual(self.store.prepare_boot('A','r1')['generation'],self.boot['generation'])
         self.assertEqual(self.status(),before)
+
+
+if __name__=='__main__':unittest.main()

@@ -1,7 +1,7 @@
 """Deterministic inactive configs. Sensor mode is a dedicated positive allowlist."""
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 
-GENERATOR_VERSION = 1
+GENERATOR_VERSION = 2
 
 
 def generate(catalog, draft, mode):
@@ -17,8 +17,8 @@ def generate(catalog, draft, mode):
         require(board, ('id', 'transport', 'identity', 'reference_ack'), role)
         if board.get('reference_ack') is not True:
             blockers.append(role + ': explicitly acknowledge provisional reference mapping')
-    if not draft['boards']:
-        blockers.append('Choose at least one MCU board')
+    if 'main' not in draft['boards']:
+        blockers.append('main: choose the primary Klipper MCU board and transport')
     sensors = {d['name']: d for d in draft['devices'] if d['kind'] == 'sensor'}
     for d in draft['devices']:
         s, kind, name = d['settings'], d['kind'], d['name']
@@ -122,6 +122,7 @@ def generate(catalog, draft, mode):
     text='\n'.join(lines)+'\n'
     if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
     warnings=['Reference configuration only. Installed match and physical limits remain unverified.', 'Candidate saved separately; commissioning and activation require their own reviewed steps.']
+    if mode == 'full':
+        warnings.append('Before H06, compose once with the separately reviewed test-sv08-01-print-controls.cfg after the persistent gcodes directory exists. Controls and activation remain separate.')
     warnings += [catalog.curves[d['settings']['curve']]['origin'] for d in sensors.values()]
     return dict(complete=True, blockers=[], warnings=warnings, text=text)
-

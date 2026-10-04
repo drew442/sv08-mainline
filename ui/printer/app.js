@@ -5,7 +5,7 @@
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { $('notice').textContent = text; };
     const invalidate = () => { review = null; ++epoch; if ($('candidate-review').open) $('candidate-review').close(); };
-    const edit = () => { changed = true; invalidate(); notice('Unsaved selections. Save draft before reviewing.'); };
+    const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
     function controls() {
         for (const id of ['save','review','restore','add','apply','import']) $(id).disabled = busy || !authority() || (!draft && id !== 'import');
@@ -78,7 +78,8 @@
         for(const device of draft.devices) {
             const box=el('fieldset');box.append(el('legend',device.name+' · '+device.kind+' · '+device.board));
             const remove=el('button','Remove device');remove.onclick=()=>{draft.devices=draft.devices.filter(d=>d!==device);edit();renderDevices();};box.append(remove);
-            const board=boardData(device.board), settings=el('div');settings.className='settings';
+            const board=boardData(device.board), settings=el('div'), advanced=el('details');settings.className='settings';advanced.append(el('summary','Advanced electrical and motion fields'));
+            const common=new Set(['pin','curve','pullup_resistor','min_temp','max_temp','invert','digital_pullup','connector','invert_dir','invert_enable','sensor','control','max_power','run_current','current_rating_rms']);
             if(!board){box.append(el('p','Choose a board first'));$('devices').append(box);continue;}
             for(const [name,type] of Object.entries(catalog.kinds[device.kind])) {
                 let options;
@@ -92,19 +93,22 @@
                 else if(type==='name')options=draft.devices.filter(d=>d.kind==='sensor'&&d.board===device.board).map(d=>[d.name,d.name]);
                 else if(type==='control')options=[['pid','PID (enter gains)'],['watermark','Watermark']];
                 const text=({'invert':'Invert signal','invert_dir':'Invert direction','invert_enable':'Invert enable','digital_pullup':'Digital input pull-up','pullup_resistor':'Analog pull-up resistance (ohm)','current_rating_rms':'Motor RMS rating (A), owner entered','run_current':'Driver RMS current (A)','sense_resistor':'Sense resistor (ohm), explicit','pin':'Connection / pin'}[name]??name.replaceAll('_',' '));
-                settings.append(field(text,type==='name'?'text':type,device.settings[name],value=>{
+                (common.has(name)?settings:advanced).append(field(text,type==='name'?'text':type,device.settings[name],value=>{
                     if(value===undefined||value==='')delete device.settings[name];else device.settings[name]=value;
                     if(name==='curve'){delete device.settings.pullup_resistor;delete device.settings.min_temp;delete device.settings.max_temp;}
-                    edit();if(name==='curve')renderDevices();
+                    if(name==='connector')for(const key of ['invert_dir','invert_enable','run_current','current_rating_rms','sense_resistor','uart_address','endstop_pin','endstop_invert','endstop_pullup'])delete device.settings[key];
+                    if(name==='control' && value!=='pid')for(const key of ['pid_kp','pid_ki','pid_kd'])delete device.settings[key];
+                    edit();if(['curve','connector','control'].includes(name))renderDevices();
                 },options));
             }
-            box.append(settings);
+            box.append(settings);if(advanced.querySelector('label'))box.append(advanced);
             if(device.kind==='sensor') {
                 const curve=catalog.curves.find(c=>c.id===device.settings.curve);
                 if(curve){
                     box.append(el('small',curve.origin+'. '+curve.pullup_origin+'. Physical sensor/circuit identity unknown.'));
-                    const preset=el('button','Use documented reference pull-up');
-                    preset.onclick=()=>{device.settings.pullup_resistor=curve.reference_pullup;edit();renderDevices();};box.append(preset);
+                    if(curve.reference_bounds)box.append(el('small',curve.bounds_origin+': '+curve.reference_bounds.join(' to ')+' °C.'));
+                    const preset=el('button',curve.reference_bounds?'Use factory configured pull-up and bounds':'Use documented reference pull-up');
+                    preset.onclick=()=>{device.settings.pullup_resistor=curve.reference_pullup;if(curve.reference_bounds){[device.settings.min_temp,device.settings.max_temp]=curve.reference_bounds;}edit();renderDevices();};box.append(preset);
                 }
             }
             $('devices').append(box);
@@ -118,9 +122,9 @@
     }
     async function load() {
         invalidate();const result=await rpc({action:'status'});catalog=result.catalog;saved=result.state;revision=saved.revision;draft=copy(saved.draft);changed=false;
-        if(saved.format_version!==1){notice('Unsupported stored schema. Export for diagnosis; editing is disabled.');draft=null;return;}
+        if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');draft=null;controls();return;}
         $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
-        render();notice('Saved configuration loaded. Candidates remain inactive.');
+        $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');
     }
     $('reload').onclick=()=>operation(load);
     $('add').onclick=()=>{const role=$('device-board').value,name=$('device-name').value;if(!boardData(role)){notice('Choose a board reference first.');return;}if(!/^[a-z][a-z0-9_]{0,39}$/.test(name)||draft.devices.some(d=>d.name===name)){notice('Use a unique lowercase device name.');return;}draft.devices.push({name,board:role,kind:$('device-kind').value,settings:{}});edit();renderDevices();};
@@ -131,9 +135,23 @@
     $('apply').onclick=()=>operation(async()=>{const result=await rpc({action:'apply',mode:$('mode').value,review:review.review});invalidate();await load();notice(result.message+' — use the commissioning handoff before activation.');});
     $('restore').onclick=()=>operation(async()=>{await rpc({action:'restore',expected_revision:revision});await load();notice('Previous candidate draft restored. Review before applying.');});
     function download(name,text,type) {const url=URL.createObjectURL(new Blob([text],{type}));const a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-    $('export').onclick=()=>download('printer-hardware-draft.json',JSON.stringify(draft??saved,null,2),'application/json');
+    $('export').onclick=()=>download(draft?'printer-hardware-draft.json':'printer-hardware-diagnosis.json',JSON.stringify(draft??{state:saved,catalog},null,2),'application/json');
     $('export-config').onclick=()=>{if(saved?.current)download('inactive-candidate.cfg',saved.current.text,'text/plain');else notice('No saved candidate to export.');};
-    $('import').onchange=()=>operation(async()=>{invalidate();const file=$('import').files[0];if(!file)return;if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming});draft=result.draft;revision=result.expected_revision;changed=true;render();notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');$('import').value='';});
+    function showImportDiff(before,after) {
+        const rows=$('import-diff-rows');rows.replaceChildren();
+        function walk(a,b,path) {
+            if(JSON.stringify(a)===JSON.stringify(b))return;
+            if((a && typeof a==='object') || (b && typeof b==='object')) {
+                for(const key of new Set([...Object.keys(a??{}),...Object.keys(b??{})]))walk(a?.[key],b?.[key],path?path+'.'+key:key);
+            } else {
+                const tr=el('tr');for(const value of [path.replaceAll('_',' '),a===undefined?'Not set':String(a),b===undefined?'Not set':String(b)])tr.append(el('td',value));rows.append(tr);
+            }
+        }
+        walk(before,after,'');$('import-diff').hidden=false;
+        if(!rows.children.length){const tr=el('tr');const td=el('td','No changes');td.colSpan=3;tr.append(td);rows.append(tr);}
+    }
+    $('cancel-import').onclick=()=>{invalidate();draft=copy(saved.draft);changed=false;$('import-diff').hidden=true;render();notice('Imported changes discarded. Saved draft preserved.');};
+    $('import').onchange=()=>operation(async()=>{invalidate();const file=$('import').files[0];if(!file)return;if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming});draft=result.draft;revision=result.expected_revision;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');$('import').value='';});
     window.addEventListener('sv08-authority-changed',()=>{invalidate();controls();if(!authority())notice('Administrator access ended. Pending review cancelled. Authorize and reload before editing.');else operation(load);});
     window.addEventListener('pagehide',invalidate);
     window.sv08Session.ready.then(()=>{controls();if(authority())operation(load);else notice('Authorize to load private printer configuration.');});

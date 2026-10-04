@@ -55,7 +55,9 @@ class PrinterStore:
     def safe_owned(self):
         if self.directory.is_symlink():
             raise ValueError('Unexpected owned directory link')
+        created=not self.directory.exists()
         self.directory.mkdir(mode=0o700, exist_ok=True)
+        if created:fsync_dir(self.directory.parent)
         info=self.directory.lstat()
         if not stat.S_ISDIR(info.st_mode) or stat.S_IMODE(info.st_mode)!=0o700 or info.st_uid!=os.geteuid():
             raise ValueError('Feature directory must be private and owned')
@@ -83,6 +85,7 @@ class PrinterStore:
         path=self.directory/'state.json'
         if not path.exists():
             return dict(format_version=1,revision=0,draft=empty_draft(),current=None,previous=None)
+        if path.stat().st_size>STATE_LIMIT:raise ValueError('Stored envelope is oversized; original retained')
         value=strict_json(path.read_bytes(),STATE_LIMIT)
         if not isinstance(value,dict) or set(value)!= {'format_version','revision','draft','current','previous'}:
             raise ValueError('Corrupt configuration state; originals retained')
@@ -147,7 +150,7 @@ class PrinterStore:
             state=self.load(writable=action!='status')
             if action=='status':
                 return dict(state=state,catalog=self.catalog.data,context=context,
-                            catalog_revision=self.catalog.revision)
+                            catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported)
             if action=='import':
                 self.catalog.validate(request['draft'])
                 return dict(draft=request['draft'],changed=digest(request['draft'])!=digest(state['draft']),expected_revision=state['revision'])

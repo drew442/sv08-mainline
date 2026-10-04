@@ -32,300 +32,390 @@
             "step"
           ],
           "source": {
+            "line": 161,
             "section": "stepper_x",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE0": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 162,
             "section": "stepper_x",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE3": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 163,
             "section": "stepper_x",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE1": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 176,
             "section": "tmc2209 stepper_x",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE15": {
           "capabilities": [
             "input"
           ],
           "source": {
+            "line": 184,
             "section": "tmc2209 stepper_x",
-            "option": "diag_pin"
+            "option": "diag_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB8": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 187,
             "section": "stepper_y",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB6": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 188,
             "section": "stepper_y",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB9": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 189,
             "section": "stepper_y",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB7": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 202,
             "section": "tmc2209 stepper_y",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE13": {
           "capabilities": [
             "input"
           ],
           "source": {
+            "line": 210,
             "section": "tmc2209 stepper_y",
-            "option": "diag_pin"
+            "option": "diag_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PC0": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 213,
             "section": "stepper_z",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE5": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 214,
             "section": "stepper_z",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PC1": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 215,
             "section": "stepper_z",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE6": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 229,
             "section": "tmc2209 stepper_z",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD3": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 238,
             "section": "stepper_z1",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD1": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 239,
             "section": "stepper_z1",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD4": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 240,
             "section": "stepper_z1",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD2": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 246,
             "section": "tmc2209 stepper_z1",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD7": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 255,
             "section": "stepper_z2",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD5": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 256,
             "section": "stepper_z2",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB5": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 257,
             "section": "stepper_z2",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD6": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 263,
             "section": "tmc2209 stepper_z2",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD11": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 272,
             "section": "stepper_z3",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD9": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 273,
             "section": "stepper_z3",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD12": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 274,
             "section": "stepper_z3",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD10": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 280,
             "section": "tmc2209 stepper_z3",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PE9": {
           "capabilities": [
             "input"
           ],
           "source": {
+            "line": 339,
             "section": "filament_switch_sensor filament_sensor",
-            "option": "switch_pin"
+            "option": "switch_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA0": {
           "capabilities": [
             "heater"
           ],
           "source": {
+            "line": 350,
             "section": "heater_bed",
-            "option": "heater_pin"
+            "option": "heater_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PC5": {
           "capabilities": [
             "adc"
           ],
           "source": {
+            "line": 352,
             "section": "heater_bed",
-            "option": "sensor_pin"
+            "option": "sensor_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA2": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 376,
             "section": "fan_generic fan3",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         }
       },
       "connectors": {
@@ -334,210 +424,390 @@
           "capability": "step",
           "contact": null,
           "label": "stepper_x / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 161,
+            "section": "stepper_x",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_x / dir_pin": {
           "pin": "PE0",
           "capability": "dir",
           "contact": null,
           "label": "stepper_x / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 162,
+            "section": "stepper_x",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_x / enable_pin": {
           "pin": "PE3",
           "capability": "enable",
           "contact": null,
           "label": "stepper_x / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 163,
+            "section": "stepper_x",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_x / uart_pin": {
           "pin": "PE1",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 stepper_x / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 176,
+            "section": "tmc2209 stepper_x",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_x / diag_pin": {
           "pin": "PE15",
           "capability": "input",
           "contact": "signal (contact number unknown)",
           "label": "X-axis limit",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 184,
+            "section": "tmc2209 stepper_x",
+            "option": "diag_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / step_pin": {
           "pin": "PB8",
           "capability": "step",
           "contact": null,
           "label": "stepper_y / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 187,
+            "section": "stepper_y",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / dir_pin": {
           "pin": "PB6",
           "capability": "dir",
           "contact": null,
           "label": "stepper_y / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 188,
+            "section": "stepper_y",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / enable_pin": {
           "pin": "PB9",
           "capability": "enable",
           "contact": null,
           "label": "stepper_y / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 189,
+            "section": "stepper_y",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_y / uart_pin": {
           "pin": "PB7",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 stepper_y / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 202,
+            "section": "tmc2209 stepper_y",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_y / diag_pin": {
           "pin": "PE13",
           "capability": "input",
           "contact": "signal (contact number unknown)",
           "label": "Y-axis limit",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 210,
+            "section": "tmc2209 stepper_y",
+            "option": "diag_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / step_pin": {
           "pin": "PC0",
           "capability": "step",
           "contact": null,
           "label": "stepper_z / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 213,
+            "section": "stepper_z",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / dir_pin": {
           "pin": "PE5",
           "capability": "dir",
           "contact": null,
           "label": "stepper_z / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 214,
+            "section": "stepper_z",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / enable_pin": {
           "pin": "PC1",
           "capability": "enable",
           "contact": null,
           "label": "stepper_z / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 215,
+            "section": "stepper_z",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_z / uart_pin": {
           "pin": "PE6",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 stepper_z / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 229,
+            "section": "tmc2209 stepper_z",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "stepper_z1 / step_pin": {
           "pin": "PD3",
           "capability": "step",
           "contact": null,
           "label": "stepper_z1 / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 238,
+            "section": "stepper_z1",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_z1 / dir_pin": {
           "pin": "PD1",
           "capability": "dir",
           "contact": null,
           "label": "stepper_z1 / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 239,
+            "section": "stepper_z1",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_z1 / enable_pin": {
           "pin": "PD4",
           "capability": "enable",
           "contact": null,
           "label": "stepper_z1 / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 240,
+            "section": "stepper_z1",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_z1 / uart_pin": {
           "pin": "PD2",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 stepper_z1 / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 246,
+            "section": "tmc2209 stepper_z1",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "stepper_z2 / step_pin": {
           "pin": "PD7",
           "capability": "step",
           "contact": null,
           "label": "stepper_z2 / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 255,
+            "section": "stepper_z2",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_z2 / dir_pin": {
           "pin": "PD5",
           "capability": "dir",
           "contact": null,
           "label": "stepper_z2 / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 256,
+            "section": "stepper_z2",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_z2 / enable_pin": {
           "pin": "PB5",
           "capability": "enable",
           "contact": null,
           "label": "stepper_z2 / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 257,
+            "section": "stepper_z2",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_z2 / uart_pin": {
           "pin": "PD6",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 stepper_z2 / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 263,
+            "section": "tmc2209 stepper_z2",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "stepper_z3 / step_pin": {
           "pin": "PD11",
           "capability": "step",
           "contact": null,
           "label": "stepper_z3 / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 272,
+            "section": "stepper_z3",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_z3 / dir_pin": {
           "pin": "PD9",
           "capability": "dir",
           "contact": null,
           "label": "stepper_z3 / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 273,
+            "section": "stepper_z3",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_z3 / enable_pin": {
           "pin": "PD12",
           "capability": "enable",
           "contact": null,
           "label": "stepper_z3 / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 274,
+            "section": "stepper_z3",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 stepper_z3 / uart_pin": {
           "pin": "PD10",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 stepper_z3 / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 280,
+            "section": "tmc2209 stepper_z3",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "filament_switch_sensor filament_sensor / switch_pin": {
           "pin": "PE9",
           "capability": "input",
           "contact": "signal (contact number unknown)",
           "label": "Filament detection",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 339,
+            "section": "filament_switch_sensor filament_sensor",
+            "option": "switch_pin",
+            "reference_only": false
+          }
         },
         "heater_bed / heater_pin": {
           "pin": "PA0",
           "capability": "heater",
           "contact": "signal (contact number unknown)",
           "label": "Heated bed output",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 350,
+            "section": "heater_bed",
+            "option": "heater_pin",
+            "reference_only": false
+          }
         },
         "heater_bed / sensor_pin": {
           "pin": "PC5",
           "capability": "adc",
           "contact": "signal (contact number unknown)",
           "label": "Heated bed thermistor",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 352,
+            "section": "heater_bed",
+            "option": "sensor_pin",
+            "reference_only": false
+          }
         },
         "fan_generic fan3 / pin": {
           "pin": "PA2",
           "capability": "fan",
           "contact": "signal (contact number unknown)",
           "label": "Exhaust fan 2",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 376,
+            "section": "fan_generic fan3",
+            "option": "pin",
+            "reference_only": false
+          }
         }
       },
       "motors": {
@@ -582,10 +852,19 @@
         "adc": 1,
         "heater": 1,
         "fan": 1,
-        "step": 6
+        "step": 6,
+        "uart": 6,
+        "input": 3,
+        "probe": 0
       },
       "channel_scope": "Only evidenced selectable channels, not total physical capacity",
-      "sharing_rules": []
+      "sharing_rules": [],
+      "reserved_pins": {
+        "PA11": "USB transport",
+        "PA12": "USB transport"
+      },
+      "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
+      "reservation_evidence": "Klipper MCU USB dictionary RESERVE_PINS_USB (SV08) / explicit sample USB PA11/PA12 (EBB)"
     },
     {
       "id": "sv08-tool",
@@ -618,100 +897,130 @@
             "probe"
           ],
           "source": {
+            "line": 68,
             "section": "probe",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA8": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 297,
             "section": "extruder",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB8": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 298,
             "section": "extruder",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB11": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 299,
             "section": "extruder",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB9": {
           "capabilities": [
             "heater"
           ],
           "source": {
+            "line": 306,
             "section": "extruder",
-            "option": "heater_pin"
+            "option": "heater_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA5": {
           "capabilities": [
             "adc"
           ],
           "source": {
+            "line": 309,
             "section": "extruder",
-            "option": "sensor_pin"
+            "option": "sensor_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB10": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 322,
             "section": "tmc2209 extruder",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA7": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 368,
             "section": "fan_generic fan0",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB1": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 372,
             "section": "fan_generic fan1",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA6": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 380,
             "section": "heater_fan hotend_fan",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         }
       },
       "connectors": {
@@ -720,70 +1029,130 @@
           "capability": "probe",
           "contact": "signal (contact number unknown)",
           "label": "BL-TOUCH sensor",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 68,
+            "section": "probe",
+            "option": "pin",
+            "reference_only": false
+          }
         },
         "extruder / step_pin": {
           "pin": "PA8",
           "capability": "step",
           "contact": null,
           "label": "extruder / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 297,
+            "section": "extruder",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "extruder / dir_pin": {
           "pin": "PB8",
           "capability": "dir",
           "contact": null,
           "label": "extruder / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 298,
+            "section": "extruder",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "extruder / enable_pin": {
           "pin": "PB11",
           "capability": "enable",
           "contact": null,
           "label": "extruder / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 299,
+            "section": "extruder",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "extruder / heater_pin": {
           "pin": "PB9",
           "capability": "heater",
           "contact": "signal (contact number unknown)",
           "label": "HEATER",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 306,
+            "section": "extruder",
+            "option": "heater_pin",
+            "reference_only": false
+          }
         },
         "extruder / sensor_pin": {
           "pin": "PA5",
           "capability": "adc",
           "contact": "signal (contact number unknown)",
           "label": "TH",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 309,
+            "section": "extruder",
+            "option": "sensor_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 extruder / uart_pin": {
           "pin": "PB10",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 extruder / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 322,
+            "section": "tmc2209 extruder",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "fan_generic fan0 / pin": {
           "pin": "PA7",
           "capability": "fan",
           "contact": "signal (contact number unknown)",
           "label": "FAN2",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 368,
+            "section": "fan_generic fan0",
+            "option": "pin",
+            "reference_only": false
+          }
         },
         "fan_generic fan1 / pin": {
           "pin": "PB1",
           "capability": "fan",
           "contact": "signal (contact number unknown)",
           "label": "FAN4",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 372,
+            "section": "fan_generic fan1",
+            "option": "pin",
+            "reference_only": false
+          }
         },
         "heater_fan hotend_fan / pin": {
           "pin": "PA6",
           "capability": "fan",
           "contact": "signal (contact number unknown)",
           "label": "FAN1",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 380,
+            "section": "heater_fan hotend_fan",
+            "option": "pin",
+            "reference_only": false
+          }
         }
       },
       "motors": {
@@ -798,10 +1167,19 @@
         "adc": 1,
         "heater": 1,
         "fan": 3,
-        "step": 1
+        "step": 1,
+        "uart": 1,
+        "input": 0,
+        "probe": 1
       },
       "channel_scope": "Only evidenced selectable channels, not total physical capacity",
-      "sharing_rules": []
+      "sharing_rules": [],
+      "reserved_pins": {
+        "PA11": "USB transport",
+        "PA12": "USB transport"
+      },
+      "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
+      "reservation_evidence": "Klipper MCU USB dictionary RESERVE_PINS_USB (SV08) / explicit sample USB PA11/PA12 (EBB)"
     },
     {
       "id": "octopus-v1.1-non-pro",
@@ -828,220 +1206,338 @@
             "step"
           ],
           "source": {
+            "line": 19,
             "section": "stepper_x",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF12": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 20,
             "section": "stepper_x",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF14": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 21,
             "section": "stepper_x",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG6": {
           "capabilities": [
             "input"
           ],
           "source": {
+            "line": 24,
             "section": "stepper_x",
-            "option": "endstop_pin"
+            "option": "endstop_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG0": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 31,
             "section": "stepper_y",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG1": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 32,
             "section": "stepper_y",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF15": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 33,
             "section": "stepper_y",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG9": {
           "capabilities": [
             "input"
           ],
           "source": {
+            "line": 36,
             "section": "stepper_y",
-            "option": "endstop_pin"
+            "option": "endstop_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF11": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 43,
             "section": "stepper_z",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG3": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 44,
             "section": "stepper_z",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG5": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 45,
             "section": "stepper_z",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG10": {
           "capabilities": [
             "input"
           ],
           "source": {
+            "line": 48,
             "section": "stepper_z",
-            "option": "endstop_pin"
+            "option": "endstop_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF9": {
           "capabilities": [
             "step"
           ],
           "source": {
+            "line": 65,
             "section": "extruder",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF10": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 66,
             "section": "extruder",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG2": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 67,
             "section": "extruder",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA2": {
           "capabilities": [
             "heater"
           ],
           "source": {
+            "line": 72,
             "section": "extruder",
-            "option": "heater_pin"
+            "option": "heater_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF4": {
           "capabilities": [
             "adc"
           ],
           "source": {
+            "line": 73,
             "section": "extruder",
-            "option": "sensor_pin"
+            "option": "sensor_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA1": {
           "capabilities": [
             "heater"
           ],
           "source": {
+            "line": 122,
             "section": "heater_bed",
-            "option": "heater_pin"
+            "option": "heater_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PF3": {
           "capabilities": [
             "adc"
           ],
           "source": {
+            "line": 123,
             "section": "heater_bed",
-            "option": "sensor_pin"
+            "option": "sensor_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA8": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 130,
             "section": "fan",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB7": {
           "capabilities": [
             "probe"
           ],
           "source": {
-            "section": "commented input",
-            "option": "pin"
+            "line": 283,
+            "section": "bltouch",
+            "option": "sensor_pin",
+            "reference_only": true
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PG12": {
           "capabilities": [
             "input"
           ],
           "source": {
-            "section": "commented input",
-            "option": "pin"
+            "line": 83,
+            "section": "filament_switch_sensor material_0",
+            "option": "switch_pin",
+            "reference_only": true
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
+        },
+        "PC4": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "line": 163,
+            "section": "tmc2209 stepper_x",
+            "option": "uart_pin",
+            "reference_only": true
+          },
+          "reserved": false,
+          "evidence": "documented-reference"
+        },
+        "PD11": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "line": 169,
+            "section": "tmc2209 stepper_y",
+            "option": "uart_pin",
+            "reference_only": true
+          },
+          "reserved": false,
+          "evidence": "documented-reference"
+        },
+        "PC6": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "line": 175,
+            "section": "tmc2209 stepper_z",
+            "option": "uart_pin",
+            "reference_only": true
+          },
+          "reserved": false,
+          "evidence": "documented-reference"
+        },
+        "PF2": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "line": 187,
+            "section": "tmc2209 extruder",
+            "option": "uart_pin",
+            "reference_only": true
+          },
+          "reserved": false,
+          "evidence": "documented-reference"
         }
       },
       "connectors": {
@@ -1050,186 +1546,328 @@
           "capability": "step",
           "contact": null,
           "label": "stepper_x / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 19,
+            "section": "stepper_x",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_x / dir_pin": {
           "pin": "PF12",
           "capability": "dir",
           "contact": null,
           "label": "stepper_x / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 20,
+            "section": "stepper_x",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_x / enable_pin": {
           "pin": "PF14",
           "capability": "enable",
           "contact": null,
           "label": "stepper_x / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 21,
+            "section": "stepper_x",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "stepper_x / endstop_pin": {
           "pin": "PG6",
           "capability": "input",
           "contact": null,
           "label": "stepper_x / endstop_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 24,
+            "section": "stepper_x",
+            "option": "endstop_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / step_pin": {
           "pin": "PG0",
           "capability": "step",
           "contact": null,
           "label": "stepper_y / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 31,
+            "section": "stepper_y",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / dir_pin": {
           "pin": "PG1",
           "capability": "dir",
           "contact": null,
           "label": "stepper_y / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 32,
+            "section": "stepper_y",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / enable_pin": {
           "pin": "PF15",
           "capability": "enable",
           "contact": null,
           "label": "stepper_y / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 33,
+            "section": "stepper_y",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "stepper_y / endstop_pin": {
           "pin": "PG9",
           "capability": "input",
           "contact": null,
           "label": "stepper_y / endstop_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 36,
+            "section": "stepper_y",
+            "option": "endstop_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / step_pin": {
           "pin": "PF11",
           "capability": "step",
           "contact": null,
           "label": "stepper_z / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 43,
+            "section": "stepper_z",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / dir_pin": {
           "pin": "PG3",
           "capability": "dir",
           "contact": null,
           "label": "stepper_z / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 44,
+            "section": "stepper_z",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / enable_pin": {
           "pin": "PG5",
           "capability": "enable",
           "contact": null,
           "label": "stepper_z / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 45,
+            "section": "stepper_z",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "stepper_z / endstop_pin": {
           "pin": "PG10",
           "capability": "input",
           "contact": null,
           "label": "stepper_z / endstop_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 48,
+            "section": "stepper_z",
+            "option": "endstop_pin",
+            "reference_only": false
+          }
         },
         "extruder / step_pin": {
           "pin": "PF9",
           "capability": "step",
           "contact": null,
           "label": "extruder / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 65,
+            "section": "extruder",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "extruder / dir_pin": {
           "pin": "PF10",
           "capability": "dir",
           "contact": null,
           "label": "extruder / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 66,
+            "section": "extruder",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "extruder / enable_pin": {
           "pin": "PG2",
           "capability": "enable",
           "contact": null,
           "label": "extruder / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 67,
+            "section": "extruder",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "extruder / heater_pin": {
           "pin": "PA2",
           "capability": "heater",
           "contact": null,
           "label": "extruder / heater_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 72,
+            "section": "extruder",
+            "option": "heater_pin",
+            "reference_only": false
+          }
         },
         "extruder / sensor_pin": {
           "pin": "PF4",
           "capability": "adc",
           "contact": null,
           "label": "extruder / sensor_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 73,
+            "section": "extruder",
+            "option": "sensor_pin",
+            "reference_only": false
+          }
         },
         "heater_bed / heater_pin": {
           "pin": "PA1",
           "capability": "heater",
           "contact": null,
           "label": "heater_bed / heater_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 122,
+            "section": "heater_bed",
+            "option": "heater_pin",
+            "reference_only": false
+          }
         },
         "heater_bed / sensor_pin": {
           "pin": "PF3",
           "capability": "adc",
           "contact": null,
           "label": "heater_bed / sensor_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 123,
+            "section": "heater_bed",
+            "option": "sensor_pin",
+            "reference_only": false
+          }
         },
         "fan / pin": {
           "pin": "PA8",
           "capability": "fan",
           "contact": null,
           "label": "fan / pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 130,
+            "section": "fan",
+            "option": "pin",
+            "reference_only": false
+          }
         },
         "Reference PB7": {
           "pin": "PB7",
           "capability": "probe",
           "contact": null,
           "label": "Reference PB7",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 283,
+            "section": "bltouch",
+            "option": "sensor_pin",
+            "reference_only": true
+          }
         },
         "Reference PG12": {
           "pin": "PG12",
           "capability": "input",
           "contact": null,
           "label": "Reference PG12",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 83,
+            "section": "filament_switch_sensor material_0",
+            "option": "switch_pin",
+            "reference_only": true
+          }
         }
       },
       "motors": {
         "stepper_x": {
           "step": "PF13",
           "dir": "PF12",
-          "enable": "PF14"
+          "enable": "PF14",
+          "uart": "PC4"
         },
         "stepper_y": {
           "step": "PG0",
           "dir": "PG1",
-          "enable": "PF15"
+          "enable": "PF15",
+          "uart": "PD11"
         },
         "stepper_z": {
           "step": "PF11",
           "dir": "PG3",
-          "enable": "PG5"
+          "enable": "PG5",
+          "uart": "PC6"
         },
         "extruder": {
           "step": "PF9",
           "dir": "PF10",
-          "enable": "PG2"
+          "enable": "PG2",
+          "uart": "PF2"
         }
       },
       "channel_counts": {
         "adc": 2,
         "heater": 2,
         "fan": 1,
-        "step": 4
+        "step": 4,
+        "uart": 4,
+        "input": 4,
+        "probe": 1
       },
       "channel_scope": "Only evidenced selectable channels, not total physical capacity",
-      "sharing_rules": []
+      "sharing_rules": [],
+      "reserved_pins": {},
+      "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
+      "reservation_evidence": "No reservation inventory in selected sample; only selected documented signals exposed."
     },
     {
       "id": "ebb-v1.2",
@@ -1256,100 +1894,130 @@
             "step"
           ],
           "source": {
+            "line": 18,
             "section": "extruder",
-            "option": "step_pin"
+            "option": "step_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD1": {
           "capabilities": [
             "dir"
           ],
           "source": {
+            "line": 19,
             "section": "extruder",
-            "option": "dir_pin"
+            "option": "dir_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PD2": {
           "capabilities": [
             "enable"
           ],
           "source": {
+            "line": 20,
             "section": "extruder",
-            "option": "enable_pin"
+            "option": "enable_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB13": {
           "capabilities": [
             "heater"
           ],
           "source": {
+            "line": 25,
             "section": "extruder",
-            "option": "heater_pin"
+            "option": "heater_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA3": {
           "capabilities": [
             "adc"
           ],
           "source": {
+            "line": 27,
             "section": "extruder",
-            "option": "sensor_pin"
+            "option": "sensor_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA15": {
           "capabilities": [
             "uart"
           ],
           "source": {
+            "line": 43,
             "section": "tmc2209 extruder",
-            "option": "uart_pin"
+            "option": "uart_pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA0": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 48,
             "section": "fan",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PA1": {
           "capabilities": [
             "fan"
           ],
           "source": {
+            "line": 51,
             "section": "heater_fan hotend_fan",
-            "option": "pin"
+            "option": "pin",
+            "reference_only": false
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB8": {
           "capabilities": [
             "probe"
           ],
           "source": {
-            "section": "commented input",
-            "option": "pin"
+            "line": 59,
+            "section": "bltouch",
+            "option": "sensor_pin",
+            "reference_only": true
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         },
         "PB4": {
           "capabilities": [
             "input"
           ],
           "source": {
-            "section": "commented input",
-            "option": "pin"
+            "line": 63,
+            "section": "filament_switch_sensor switch_sensor",
+            "option": "switch_pin",
+            "reference_only": true
           },
-          "reserved": false
+          "reserved": false,
+          "evidence": "documented-reference"
         }
       },
       "connectors": {
@@ -1358,70 +2026,130 @@
           "capability": "step",
           "contact": null,
           "label": "extruder / step_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 18,
+            "section": "extruder",
+            "option": "step_pin",
+            "reference_only": false
+          }
         },
         "extruder / dir_pin": {
           "pin": "PD1",
           "capability": "dir",
           "contact": null,
           "label": "extruder / dir_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 19,
+            "section": "extruder",
+            "option": "dir_pin",
+            "reference_only": false
+          }
         },
         "extruder / enable_pin": {
           "pin": "PD2",
           "capability": "enable",
           "contact": null,
           "label": "extruder / enable_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 20,
+            "section": "extruder",
+            "option": "enable_pin",
+            "reference_only": false
+          }
         },
         "extruder / heater_pin": {
           "pin": "PB13",
           "capability": "heater",
           "contact": null,
           "label": "extruder / heater_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 25,
+            "section": "extruder",
+            "option": "heater_pin",
+            "reference_only": false
+          }
         },
         "extruder / sensor_pin": {
           "pin": "PA3",
           "capability": "adc",
           "contact": null,
           "label": "extruder / sensor_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 27,
+            "section": "extruder",
+            "option": "sensor_pin",
+            "reference_only": false
+          }
         },
         "tmc2209 extruder / uart_pin": {
           "pin": "PA15",
           "capability": "uart",
           "contact": null,
           "label": "tmc2209 extruder / uart_pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 43,
+            "section": "tmc2209 extruder",
+            "option": "uart_pin",
+            "reference_only": false
+          }
         },
         "fan / pin": {
           "pin": "PA0",
           "capability": "fan",
           "contact": null,
           "label": "fan / pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 48,
+            "section": "fan",
+            "option": "pin",
+            "reference_only": false
+          }
         },
         "heater_fan hotend_fan / pin": {
           "pin": "PA1",
           "capability": "fan",
           "contact": null,
           "label": "heater_fan hotend_fan / pin",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 51,
+            "section": "heater_fan hotend_fan",
+            "option": "pin",
+            "reference_only": false
+          }
         },
         "Reference PB8": {
           "pin": "PB8",
           "capability": "probe",
           "contact": null,
           "label": "Reference PB8",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 59,
+            "section": "bltouch",
+            "option": "sensor_pin",
+            "reference_only": true
+          }
         },
         "Reference PB4": {
           "pin": "PB4",
           "capability": "input",
           "contact": null,
           "label": "Reference PB4",
-          "evidence": "documented-reference"
+          "evidence": "documented-reference",
+          "source": {
+            "line": 63,
+            "section": "filament_switch_sensor switch_sensor",
+            "option": "switch_pin",
+            "reference_only": true
+          }
         }
       },
       "motors": {
@@ -1436,10 +2164,19 @@
         "adc": 1,
         "heater": 1,
         "fan": 2,
-        "step": 1
+        "step": 1,
+        "uart": 1,
+        "input": 1,
+        "probe": 1
       },
       "channel_scope": "Only evidenced selectable channels, not total physical capacity",
-      "sharing_rules": []
+      "sharing_rules": [],
+      "reserved_pins": {
+        "PA11": "USB transport",
+        "PA12": "USB transport"
+      },
+      "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
+      "reservation_evidence": "Klipper MCU USB dictionary RESERVE_PINS_USB (SV08) / explicit sample USB PA11/PA12 (EBB)"
     }
   ],
   "curves": [
@@ -1469,7 +2206,13 @@
         "revision": "a60644875f8c756d20b3828c9416518b414b5491",
         "accessed": "2026-10-04"
       },
-      "pullup_origin": "vendor configured 11500 ohm"
+      "pullup_origin": "vendor configured 11500 ohm",
+      "reference_bounds": [
+        5,
+        305
+      ],
+      "bounds_origin": "Vendor configured min/max software settings; not measured safe component limits",
+      "bounds_source_section": "extruder"
     },
     {
       "id": "sovol-bed",
@@ -1497,7 +2240,13 @@
         "revision": "a60644875f8c756d20b3828c9416518b414b5491",
         "accessed": "2026-10-04"
       },
-      "pullup_origin": "Klipper default 4700 ohm; not a measured circuit"
+      "pullup_origin": "Klipper default 4700 ohm; not a measured circuit",
+      "reference_bounds": [
+        5,
+        105
+      ],
+      "bounds_origin": "Vendor configured min/max software settings; not measured safe component limits",
+      "bounds_source_section": "heater_bed"
     },
     {
       "id": "generic3950",

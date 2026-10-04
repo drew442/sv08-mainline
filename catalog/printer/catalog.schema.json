@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Printer reference catalog v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "boards",
+    "curves",
+    "kinds"
+  ],
+  "properties": {
+    "format_version": {
+      "const": 1
+    },
+    "boards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "role",
+          "source",
+          "signals",
+          "connectors",
+          "motors",
+          "channel_counts",
+          "sharing_rules",
+          "reserved_pins"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9.-]{0,79}$"
+          },
+          "role": {
+            "enum": [
+              "main",
+              "tool"
+            ]
+          },
+          "sharing_rules": {
+            "const": []
+          },
+          "signals": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "capabilities",
+                "source",
+                "reserved",
+                "evidence"
+              ],
+              "properties": {
+                "capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "enum": [
+                      "adc",
+                      "input",
+                      "probe",
+                      "fan",
+                      "heater",
+                      "step",
+                      "dir",
+                      "enable",
+                      "uart"
+                    ]
+                  }
+                },
+                "source": {
+                  "type": "object",
+                  "required": [
+                    "line",
+                    "section",
+                    "option",
+                    "reference_only"
+                  ],
+                  "properties": {
+                    "line": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                },
+                "reserved": {
+                  "type": "boolean"
+                },
+                "evidence": {
+                  "const": "documented-reference"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "curves": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "sensor_type",
+          "reference_pullup",
+          "points",
+          "limits",
+          "origin",
+          "source"
+        ],
+        "properties": {
+          "reference_pullup": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "points": {
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "kinds": {
+      "type": "object",
+      "required": [
+        "sensor",
+        "input",
+        "probe",
+        "fan",
+        "bed",
+        "motor",
+        "extruder"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "enum": [
+            "adc",
+            "address",
+            "boolean",
+            "control",
+            "curve",
+            "fan",
+            "fraction",
+            "heater",
+            "input",
+            "integer",
+            "motor",
+            "name",
+            "number",
+            "positive",
+            "probe"
+          ]
+        }
+      }
+    }
+  }
+}

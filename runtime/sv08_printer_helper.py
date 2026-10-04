@@ -15,7 +15,7 @@ def main():
         context=strict_json(Path('/usr/lib/sv08/admin-context.json').read_bytes())
         if context!={'format_version':1,'context':'host'}:raise ValueError('Unsupported host context')
         request=strict_json(sys.stdin.buffer.read(DRAFT_LIMIT+4097),DRAFT_LIMIT+4096)
-        catalog=Catalog('/usr/share/sv08/printer/catalog.json')
+        catalog=Catalog('/usr/share/sv08/printer/catalog.json',diagnostic=request.get('action')=='status')
         service=PrinterStore(Store('/data/sv08'),'/run/sv08/boot.json','/run/sv08/printer_data/config',catalog)
         result=service.request(request)
         print(json.dumps(dict(ok=True,result=result),allow_nan=False))

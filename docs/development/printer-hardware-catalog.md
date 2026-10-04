@@ -1,7 +1,8 @@
 # Printer hardware catalog and inactive candidates
 
-This implementation is an offline software candidate, pending independent delivery
-review and installed acceptance. No board combination is certified compatible.
+This implementation is an offline software candidate with focused source, persistence,
+staging and Chromium fixture evidence, pending independent delivery review and
+installed acceptance. No board combination is certified compatible.
 The separate `sv08-printer` Cockpit package uses the selected Cockpit 337 base1
 API and the existing session authorization behavior. The host shell has one ordinary
 navigation link. Installed authenticated second-package navigation remains a check.
@@ -10,8 +11,9 @@ Choose board references, enter each private MCU transport identity, acknowledge
 the provisional reference, and add named connected devices. Forms show the
 catalog's supported connectors and canonical pins. Choose inversion and digital
 input pull-up explicitly. Analog temperature pull-up resistance is a separate
-numeric field. Use the reference resistance button only when deliberately selecting
-that software default. Factory thermal points are vendor DEFAULTs, not newly fitted
+numeric field. Use the reference preset button only when deliberately selecting
+that software default. The two factory presets also supply vendor-configured
+min/max bounds, clearly distinguished from measured component limits. Factory thermal points are vendor DEFAULTs, not newly fitted
 calibration; selecting one does not identify the physical thermistor or resistor.
 Min/max temperatures, motor ratings, geometry and controls require explicit entries.
 
@@ -29,7 +31,8 @@ Review defaults to Cancel. Apply saves only an inactive configuration string in
 feature-owned storage. It never touches live printer.cfg, services, MCU ports,
 firmware or host state. Export is a local browser download; private identities are
 not placed in URLs, localStorage, logs or catalog files. Import accepts only bounded
-structured data, replaces the visible forms, and requires explicit Save. Restore
+structured data, shows saved/imported values field by field, replaces the visible
+forms, and requires explicit Save. Discard returns to the saved draft. Restore
 loads the prior candidate's draft; review/apply is required again. Board change
 requires confirmation and removes the affected devices and private identity while
 preserving the other board and both saved candidates.
@@ -38,7 +41,10 @@ preserving the other board and both saved candidates.
 
 [Catalog](../../catalog/printer/catalog.json) contains four exact references and
 [structured draft schema](../../catalog/printer/draft.schema.json) describes the
-versioned envelope. Catalog `kinds` is the runtime/UI field specification. Runtime
+versioned envelope. The [catalog schema](../../catalog/printer/catalog.schema.json)
+and runtime semantic checks reject mismatched counts, capabilities and fixed
+factory definitions. Every selectable capability has an audited exact source line;
+commented upstream reference channels are labeled as such. Catalog `kinds` is the runtime/UI field specification. Runtime
 rejects unknown keys, kinds, pins and circuit roles; it uses canonical MCU role plus
 GPIO for exclusive allocation. No electrical sharing rule is presently enabled.
 Channel counts mean evidenced selectable channels only, not total board capacity.
@@ -112,32 +118,69 @@ counted. Existing Store copy allowance and shared reserve are retained. Current
 Budget is used when present; historical Store uses its existing copy/reserve API
 with a feature-local projected-write check. Corrupt/unknown schema originals are
 preserved; unsupported stored schema is available through status for diagnosis.
-Current Budget ancestry acceptance is still pending in a coordinator-owned safe
-fixture: the assigned workspace has group-writable ancestors. No check was relaxed.
+The initial group-writable workspace ancestry failure is retained in the original
+handoff. Current Store/Budget and historical Store now run under the assigned safe
+fixture ancestry without bypassing that guard. Small disposable fixtures use explicit
+zero state reserve and 8MiB copy allowance through the existing Budget constructor;
+production defaults remain unchanged. Low block/inode capacity is injected only
+through statvfs results for fault tests, with actual state files and publication code.
+The production768MiB floor is independently asserted to refuse165MiB capacity.
 
 `stage_printer_ui.py` defaults to dry-run against a reviewed root and exact supplied
-hash/mode closure. It adds only the new package/catalog/helper and the one navigation
+hash/mode/uid/gid file and directory closure. Imports are traced with Python AST
+through the actual existing Store, so current Budget is required only when that
+Store imports it. No imported helper is refreshed. It adds only the new package/catalog/helper and the one navigation
 line, preserving existing Shell and helper closure. Its restoration checks all
 afterimages before restoring. Use it after host/core staging on a fresh root, or
 against the captured historical installed closure for an overlay. It does not
 install or activate. Recovery/diagnostic assemblies gain nothing automatically.
 `stage_admin_ui.py` permits only the additional named Cockpit package; its existing
-core checks remain. Coordinator installation must additionally audit ownership,
-directory modes, complete historical dependencies and physical root/data capacity.
+core checks remain. Coordinator installation must verify the captured uid/gid and directory-mode
+inventory against the deployed target and measure physical root/data capacity.
 4 MiB per configured generation fits within existing factory 8GB state allocations;
 it is not a new reservation, nor proof of installed free space.
 
 ## Local evidence and remaining checks
 
-Focused catalog, validation, historical Store CAS/current/previous, killed-writer,
-ENOSPC injection, corrupt/schema refusal, privilege/import/lock and actual
-historical generation-copy/rollback tests are provided. Two additive stager tests
-pass. Pinned dual-MCU file-output parsing passed for sensor and full fixtures; this
-proves software syntax only. Fixture motor ratings and limits are explicit test
-values and make no physical claim.
+Focused catalog, validation, current and historical Store CAS/current/previous,
+killed-writer, low-block/low-inode capacity, corrupt/schema refusal, privilege,
+import, independent-process CAS and boot-context tests pass without skips. Both
+Store APIs have actual disposable generation-copy/rollback evidence. Exact
+additive/fresh staging and restoration tests include before/after mode and uid/gid
+checks, directory tampering, missing dependency and preimage refusals.
 
-Current Store/Budget tests are explicitly pending, as are a complete primary
-connector/capability audit, real capacity/inode exhaustion, concurrent process
-writers/context changes, browser fixture journeys, keyboard/touch/layout review,
-selected Cockpit337 custom-Shell navigation, and installed ARM64 acceptance. The
-software feature must not be marked complete or installed on this evidence alone.
+Pinned dual-MCU file-output parsing passed for sensor and full fixtures; generated
+bytes remain identical to the original passing parse fixtures. A further full
+fixture composed once with the separately owned print-controls include also
+passes. Only its fixed gcodes path was substituted for that disposable parse.
+Generated full machine sections intentionally retain separate controls ownership:
+before H06, include the accepted controls file once after the persistent gcodes
+directory exists. No control section, macro, service or activation is reinvented.
+Fixture motor ratings and limits are explicit test values and make no physical claim.
+
+`tests/test_printer_browser_fixture.py` runs a loopback Cockpit transport/session
+shim with actual Store/Budget storage under a safe private root.
+`tests/printer_browser.mjs` uses the existing CDP WebSocket shim and supplied
+Chromium with an explicit no-sandbox flag and a closed-loopback proxy for nonlocal
+traffic. Journeys at1024x600 and1440x900 cover incomplete save/reopen, connector/pin
+and factory preset forms, keyboard Escape/default cancel, touch reload, import
+before/after and discard/save, review/apply inactive, exports, prior restoration,
+lost acknowledgment reconciliation, board-change clearing, Stop/disconnect/logout,
+no localStorage and unchanged live configuration. Screenshots were inspected for
+layout and horizontal overflow. The shim is excluded from production payload.
+
+The exact selected Cockpit337 `packages.py` and `superuser.py` hashes match the
+package lock. The actual packaged Packages/Manifest/Package classes loaded both
+packages and served both HTML paths under their CSP. The packaged manpage defines
+Shell as a relative URL to a top-level component. The ordinary relative link
+resolves from the host package to the printer package; no Shell replacement is
+needed. Both manifests retain identical existing sudo bridge declarations, with
+no new authentication policy. This establishes offline package/source behavior,
+not a real authenticated Cockpit337 or installed ARM64 journey.
+
+Remaining acceptance is independent high delivery verification and the
+coordinator's reviewed named-host installation/authenticated ARM64 journey,
+including root restored read-only, unchanged masks/live configuration and physical
+root/data capacity. No hardware operation, printing or compatibility claim follows.
+The catalog intentionally exposes only audited source channels: no complete
+connector/electrical inventory is asserted and unavailable pins cannot be assigned.
