@@ -14,8 +14,11 @@
 
 Owner scope: [October4 request](../docs/features/printer-component-configuration/owner-request.md).
 Separate planning and sensor research completed; independent proposal approval
-passed. Sol6.1/medium implementation is active in feature/printer-components via
-the verified full-role fallback. Beelink receives the owner-confirmed BTH01Y_v3.1
+passed. Independent software review found stale-import revision handling, a missing
+pinned driver-current limit and insufficient component presets. The original
+candidate/review are preserved; bounded Sol6.1/medium repairs are active in
+feature/printer-components via the verified full-role fallback. No page installation
+has occurred. Beelink receives the owner-confirmed BTH01Y_v3.1
 chamber reference. The reviewed correction to an early first-callback query now
 passes: 12 stable ambient samples, unchanged factory curves, concurrent BLE
 reference and verified PSU-off cleanup. See the
