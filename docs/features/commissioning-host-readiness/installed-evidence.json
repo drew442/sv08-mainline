@@ -1,0 +1,59 @@
+{
+  "status": "execution-passed-independent-delivery-review-pending",
+  "profile": "test-sv08-01",
+  "board_revision": "H616_JC_6Z_V1.2 (owner-reported)",
+  "normal_restarts_total": 2,
+  "relay_cycles": 1,
+  "healthy_acceptance_transitions": 2,
+  "host_klipper_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+  "mcu_metadata_matches": {
+    "mainboard": {
+      "build_versions": "gcc: (15:13.2.rel1-2) 13.2.1 20231009 binutils: (2.42-1ubuntu1+23) 2.42",
+      "command_count": 139,
+      "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+      "method": "identify dictionary only; no MCU config/reset/output command",
+      "reported_clock_freq": 72000000,
+      "reported_mcu": "stm32f103xe",
+      "role": "mainboard",
+      "version": "f0892d8"
+    },
+    "toolhead": {
+      "build_versions": "gcc: (15:13.2.rel1-2) 13.2.1 20231009 binutils: (2.42-1ubuntu1+23) 2.42",
+      "command_count": 139,
+      "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+      "method": "identify dictionary only; no MCU config/reset/output command",
+      "reported_clock_freq": 72000000,
+      "reported_mcu": "stm32f103xe",
+      "role": "toolhead",
+      "version": "f0892d8"
+    }
+  },
+  "psu_final_status": "OFF",
+  "host_remains_usb_powered": true,
+  "receipts": {
+    "local/feature-workflow/probes/commissioning-host-20261004/completion.json": "6f8f2890d47f8844687774f15f6e42dee0a9ab4e7c180b6d0e6d870edbe84dfe",
+    "local/feature-workflow/probes/commissioning-host-20261004/mcu-results.json": "6b67cdaff754512ad94898d5ab747b532cb513dbf9c5a1809fde8d76322facbc",
+    "local/feature-workflow/probes/commissioning-host-20261004/power-events.jsonl": "5f65293afa97bd721aafe8ffa5c6d91f015f2f43cc9ccf5f7458b81065dee484",
+    "local/feature-workflow/probes/commissioning-host-20261004/action-admission.json": "d9163b4683a43a04f4b00ef092cca69a0e24a18cca5585aed4e6859b5cb03496",
+    "local/feature-workflow/probes/commissioning-host-20261004/run-identify.py": "c3d4eb43676dbd233093953fa68a75e22ff8249c5f3ca918c696594131c63db9",
+    "local/feature-workflow/probes/commissioning-host-20261004/power-control-sha256.txt": "8605017e433714096ec2c74d5d3268209f3e99b0b95bc3d8ef0b9ae5c3ea9d4f",
+    "local/feature-workflow/probes/commissioning-host-20261004/before-idle.stdout": "d317eb2dc68a9fd7c26c148f76e256217e2ca7fe3dea092ca19123e52f494d8f",
+    "local/feature-workflow/probes/commissioning-host-20261004/powered-preflight.stdout": "6614c3c31feb85e7597590dab331ad563b43dd9354b874cbe1cc9c9bcaf33342",
+    "local/feature-workflow/probes/commissioning-host-20261004/powered-idle.stdout": "5d1fd005e7674146eabda2916afdc5642e6491fde86739d5520b972b02d590c9",
+    "local/feature-workflow/probes/commissioning-host-20261004/post-off-preflight.stdout": "9560ba58e3c8d42390e50e6ea9c932b60393c29665c8d8cd8dbdc225ed367c7b",
+    "local/feature-workflow/probes/commissioning-host-20261004/post-off-idle.stdout": "d317eb2dc68a9fd7c26c148f76e256217e2ca7fe3dea092ca19123e52f494d8f",
+    "local/feature-workflow/probes/commissioning-host-20261004/post-off-observation.stdout": "33a3063167a53b721c2b7e3f9cf29a1c4706d6275155a207dce01b0dd991f041",
+    "local/feature-workflow/probes/commissioning-host-20261004/fresh-observation.stdout": "4e3ccd8bd6618d6cace14ea4bafa070bcef5c8b5544330cb42f203c342b36dd2",
+    "local/feature-workflow/probes/commissioning-host-20261004/fresh-preflight.stdout": "9560ba58e3c8d42390e50e6ea9c932b60393c29665c8d8cd8dbdc225ed367c7b",
+    "local/feature-workflow/probes/commissioning-host-20261003/sensor-file-output.json": "6ef54cb44d5f65161a3a7c02c50a1bac6db3735374604f2d7714da272a1ef464",
+    "local/feature-workflow/probes/commissioning-host-20261003/klipper-provenance.txt": "242a38259d0d69aeccb0936de81600e7f62a109b58f57d43f9a7ec0473c139b7",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/untouched-partitions-after.txt": "0e249e59f790ec133b4eb643274c4f02abad8770725ad8bfcc895861ad411be7",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/normal-restart-devicefix-observation.json": "91488987d823580ca8d15a18d76b823a9bcecc6e8f51699a2ba15f69c8b2967c",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/relay-restart-observation.json": "c197253ab006d6b7df472c7b673a9bae68f29761697980e65c97d233e6bdd609",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/relay-final-device-check.json": "72097d3417f1968aac0f97bfc1163f13c867887fe1ab0bcbb5ff1f9a29a6f437",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/browser-normal-restart-devicefix/result.json": "736f38b9eff9882ccbede58c0986fe2ff3280e4e761e4a936b1ed800256c7521",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/browser-relay-restart/result.json": "7b615af6c02a64b3bc141439dd6ad1228108090d47c4027bef2b52a31c1e0b63",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/device-installed-readback.txt": "1d128b937a3ff722b2fbf28ff9db32e3e0882b0f5924bd748ce3f51a1211e18b",
+    "local/feature-workflow/probes/commissioning-host-20261003/deployment/relay-completion.txt": "11f45152d53cf0a273a2721fd2fccadc3533e527b47439b1cbcf6206eb3bc779"
+  }
+}
