@@ -74,10 +74,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "0b8f3fe9aa7b4e158e256efc00de060b",
+        "session": "printer-integration-20261004-inventory"
+      },
       "repeats": 0,
       "resumption": "Add existing-directory membership validation for the independently reproduced preexisting inventory drift; integration/lifecycle and capacity checks accepted offline.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify shared Cockpit panel",
       "verification": null
     },
