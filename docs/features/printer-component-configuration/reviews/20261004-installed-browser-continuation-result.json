@@ -1,0 +1,92 @@
+{
+  "decision": "PASS WITH CONDITIONS",
+  "status": "done",
+  "utc": "2026-10-04T07:51:11.693060+00:00",
+  "scope": "R2 bounded inactive browser harness continuation; installation already recorded successful, no reinstall",
+  "candidate": "7a2894adf20575e84bf6d305be1c5cd04e72bc27",
+  "profile": "high_consequence_reviewer_high",
+  "runtime": "Same independent high-role lineage; coordinator confirms Sol6.1/high. Original runtime.json and R1 runtime evidence preserved.",
+  "original_reports_preserved_sha256": {
+    "review.md": "dd0ed16bc80cdc5a07d8c14504b2fe756b953a9b9dbca0925e529b9784b878fa",
+    "result.json": "195bbab3d2a46b21c5d19e05578529424094b0d2cef005218af9768396a5224f",
+    "r1-review.md": "646eaee8785a0059b3164d21d2cf5354a880074a0342373ddc8a83925295cc9f",
+    "r1-result.json": "57cad4ceeb74319bfe69783a3b5b3e509b7b8a38c75de182cd49209beb1b0d8d"
+  },
+  "r2_artifact_sha256": {
+    "browser-installed-r1.mjs": "4b9923e773fd0c397d93675a7208aea81dff4414adacfdda0875d61d99b9a6e2",
+    "run-browser-r1.py": "33400e8ebaee0062d0af1bc3e4e7c88a0741789dcca1e644b072b57e818e1ef5",
+    "browser-resume-state.json": "7d5820300aa76cfa4f87a76a70fa7f311323d7d91617606733bc501f8f9cf24b",
+    "browser-correction.md": "c4520a6481f6aeb012c57938cae8a804c9a34d24c5cee8e054b7278694845d15"
+  },
+  "unchanged_original_artifact_sha256": {
+    "action-plan.md": "49543fea70ab8f46563cdd8e32e895af8c8d3d600a313ddbd389e5b1a8ecebaf",
+    "packet.json": "a22c19f2907f355ac2665fd309f5e3d657113b1a66fc06f32a58068408114a2d",
+    "install-page.py": "f3df3ee43513fc05a2dc02a023e451c768f2b00f179edb11e8a9c963258902b2",
+    "run-installation.py": "b6ce7086ec03c8f8d43bafcdb11abd05448846a03d94432e1355ed63bf13c994",
+    "browser-installed.mjs": "60e0fafd28f407790ba2d891d8f65c76613d97857620cba02e7a890e1f217c6f",
+    "installed-draft.json": "f659fbaa8d6108f73920c2e8c5f3d4fa496568c90df703d1b74d9f845f409e21",
+    "run-browser.py": "0117a1040586e6d281c48388f8f5cb0ff63bb1bae3195013ff01c648da416bf1",
+    "check-installed-state.py": "cdd67088e33454c3b93132108bad5af3f6e0e0eee034e0d0ee081d4829ff88b1",
+    "closure-request.json": "dc927481c11ee244bd3f73c8c043b5516a4eb204fd60abe894008930da3db479"
+  },
+  "unchanged_auxiliary_source_sha256": {
+    "preflight-mcu.py": "9c453919da01ce75a37d0907cfce63647216e684ec98fee1577460073bf10832",
+    "observe-host-v3.py": "1b035a6024a24fcf882a457d8914299fcb35f0769c2ce7f68838ff49ce29185b",
+    "browser-websocket.cjs": "74eed3927f39171925d4db5a75af4a2f8beb2fc9f01423451734dab9aefa03f7"
+  },
+  "unchanged_final_sensor_text_sha256": "b7674682709c17d4a28238be7ca8b18a43831210e72dd97452c73491ac559a5e",
+  "evidence_sha256": {
+    "browser-correction.md": "c4520a6481f6aeb012c57938cae8a804c9a34d24c5cee8e054b7278694845d15",
+    "browser-installed/result.json": "d9b06c50fb9dca3dcc2c38273b37f4fbbda1df797957618c77cc7a865145a188",
+    "execution-r1/result.json": "951272930d178a8a0f018ef578160c6d06d8aabb78c8f751ba6f775be841bbfa",
+    "execution-r1/events.json": "5789ffdb2c7774bc4022036bfebb60354d30814675097dbd9a6300ed2035985a",
+    "execution-r1/installation.stdout": "5d2316683a48738dfedc29c12d1e86909fa3f11a1344fd7c4ee2951321411012",
+    "execution-r1/closure-errors.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "execution-r1/unit-after.stdout": "a64fecb99a35e55c98d2d44288a904ae8994105b87529ee96c8043c211efb945",
+    "execution-r1/psu-after.stdout": "0855c353c8a126265186a268bbc57583247a8d131a7e602f0e48ac6105a09c48",
+    "execution-r1/observation-before.stdout": "915d515dcd23bd507630b60173c9aebf67ac1dc30ec9724dc50e9f02844730f2",
+    "execution-r1/observation-after.stdout": "c089cdad68a92652bfb11b07d4d1a7e284083530160eabd43a24139d14601b8a",
+    "browser-failure-preflight.stdout": "9560ba58e3c8d42390e50e6ea9c932b60393c29665c8d8cd8dbdc225ed367c7b",
+    "browser-failure-preflight.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "browser-failure-psu.stdout": "0855c353c8a126265186a268bbc57583247a8d131a7e602f0e48ac6105a09c48",
+    "browser-lexical-repro.json": "ee6b30b84782722bc538bfb4defb1ac1691b0f4a4599c5b7534b8f1d517b38b4"
+  },
+  "facts": {
+    "locally_measured": [
+      "Four exact R2 bindings and original nine/three auxiliary hashes agree.",
+      "Browser diff only changes output directory, loads checkpoint, replaces initial revision0/new-draft sequence with exact full-envelope comparison and block-scopes repeated top-level const evaluations.",
+      "Wrapper diff only selects continuation and unique receipt/admission paths; destination/TLS/deadline/cleanup unchanged.",
+      "Checkpoint privately inspected: format/revision/draft/current/previous envelope; revision1, main id sv08-main only, zero devices, currentnull and previousnull.",
+      "Remaining original journey and final expected draft/closure unchanged; continuation output/admission absent; corrected wrapper AST parses without execution."
+    ],
+    "recorded": [
+      "execution-r1 result and all events pass; installation receipt reports13 readback/root-ro/no service restart/no activation; closure errors empty and unit inactive/MainPID0.",
+      "Before/after observer summaries retain packet boot/CID and registry/masks; seven filesystem/cmdline masks true and root/boot ro; PSU after OFF.",
+      "Earlier browser result records actual authenticated navigation and incomplete-save-reopen, then generic Browser evaluation failed.",
+      "Post-browser-failure preflight reports package/helper/masks/root-ro/no active config; PSU receipt OFF.",
+      "Node VM receipt demonstrates global const collision and successful block-scoped continuations; separate exact-candidate software PASS retained."
+    ],
+    "inferred": [
+      "Persistent lexical redeclaration plausibly explains the failed later Runtime.evaluate. The generic actual failure receipt does not prove its exact exception type; source-level VM demonstration is not CDP exception capture."
+    ],
+    "pending": [
+      "Fresh complete checkpoint/target/safety/tunnel/TLS admission by coordinator.",
+      "Actual corrected remaining browser journey and unchanged final checker/full safety closure."
+    ]
+  },
+  "conditions": [
+    "Rehash all four R2 artifacts, original nine, R1 wrapper and three auxiliary sources before use; retain formal exact-candidate software PASS and runtime evidence. Any substantive artifact change requires renewed review.",
+    "Before continuation, coordinator freshly compares complete feature envelope with the bound checkpoint (revision1, main SV08 board id only, devices empty/currentnull/previousnull), verifies same boot/CID/generation/view and private state modes, PSU utility OFF, read-only root/boot, seven inactive filesystem/cmdline masks, no health-ready/live config/serial users and no competing writer. State mismatch stops; do not reset, erase, reinstall or substitute a new checkpoint without review. Continuation repeats full envelope equality before its first preset operation.",
+    "Run only bound run-browser-r1.py once with fresh output/admission paths. Freshly verify existing loopback listener ownership/destination and pinned TLS before credentials, and reconcile termination of the earlier attempt's Chrome processes. Preserve earlier receipts/state; never stop the inherited tunnel. Keep unchanged 180s deadline/SIGTERM/5s escalation and own-Chrome cleanup; verify process termination after this attempt.",
+    "Require every remaining authenticated preset/import-cancel/default/review-keyboard-cancel/inactive-apply/previous-restore/board-clear-discard/export/touch/desktop/Stop/logout-relogin assertion. Combine preserved earlier navigation/incomplete-save-reopen evidence with this explicit continuation. Any further failure or ambiguous save acknowledgment stops for state/receipt reconciliation; no blind replay, state erasure or criterion waiver.",
+    "After success, require original check-installed-state.py with unchanged closure-request.json PASS: all13 afterimages, same generation/view, exact expected two-sensor draft/current text hash b7674682709c17d4a28238be7ca8b18a43831210e72dd97452c73491ac559a5e, current sensors/previous retained, 0700 directory/0600 files, reserves/root+boot ro/no live config. Coordinator additionally repeats OFF/idle/masks/target/context/inherited-closure and unit inactive/MainPID0. Keep screenshots/downloads/checkpoint private. Installed acceptance remains pending until those observations pass."
+  ],
+  "C1_C5_application": "Original source/software/artifact, one-shot/reconciliation, privacy, inactive-output, safety and final-closure requirements retained. Recorded installation evidence completes installation-stage obligations only at its documented level. The original initial revision0 guard is replaced for this reviewed continuation by exact bound revision1 full-state equality; no owner requirement or failure criterion waived. Do not replay installer admission/write steps.",
+  "diagnostics": {
+    "new_auxiliary_experiments": 0,
+    "broad_tests": false,
+    "reviewed_scripts_executed": false,
+    "hardware_network_access": false
+  },
+  "authority": "Review input only. Same coordinator authority; no MCU/service/reset/heat/motion/release action."
+}

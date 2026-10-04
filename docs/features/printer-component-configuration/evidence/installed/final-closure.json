@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "same_boot_cid_registry_masks_environment": true,
+  "root_boot_read_only": true,
+  "psu_off": true,
+  "serial_idle": true,
+  "unit_inactive_pid0": true,
+  "exact_inherited_closure": true,
+  "all_payload_afterimages_match": true,
+  "own_chrome_stopped": true,
+  "existing_tunnel_retained": true,
+  "outputs_activated": false
+}

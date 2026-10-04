@@ -1,0 +1,13 @@
+{
+  "preflight": {
+    "outcome": "stopped before write",
+    "reason": "System Python missing cffi; unchanged preflight succeeds in existing Klipper venv",
+    "no_page_backup_or_unit_created": true,
+    "new_review_before_corrected_first_write": true
+  },
+  "browser": {
+    "outcome": "partial navigation/incomplete-save-reopen then generic evaluation failure",
+    "diagnosis": "Repeated top-level const declarations conflict across CDP evaluations; inferred from source and bounded JS VM reproduction, exact CDP exception details not retained",
+    "correction": "block-scoped expressions; exact full revision1 checkpoint preserved, reviewed continuation without reset or reinstall"
+  }
+}

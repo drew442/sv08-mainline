@@ -1,0 +1,8 @@
+{
+  "installed": true,
+  "same_boot_cid": true,
+  "root_boot_read_only": true,
+  "state_masks_preserved": true,
+  "psu_utility_off": true,
+  "browser_acceptance": "not yet executed"
+}

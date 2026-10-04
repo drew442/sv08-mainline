@@ -1,0 +1,93 @@
+{
+  "decision": "PASS WITH CONDITIONS",
+  "status": "done",
+  "utc": "2026-10-04T07:43:47.996298+00:00",
+  "review_scope": "Bounded R1 interpreter-only wrapper correction and preserved pre-write failure reconciliation; same independent high action-review session",
+  "candidate": "7a2894adf20575e84bf6d305be1c5cd04e72bc27",
+  "runtime_evidence": {
+    "session": "01a105d4-4fa5-7010-8790-a5a6d6cc9a58",
+    "full_role_loaded": true,
+    "runtime": {
+      "model": "gpt-6.1-sol",
+      "effort": "high",
+      "approval_policy": "never",
+      "sandbox_policy": {
+        "type": "danger-full-access"
+      }
+    }
+  },
+  "original_reports_preserved_sha256": {
+    "review.md": "dd0ed16bc80cdc5a07d8c14504b2fe756b953a9b9dbca0925e529b9784b878fa",
+    "result.json": "195bbab3d2a46b21c5d19e05578529424094b0d2cef005218af9768396a5224f"
+  },
+  "r1_artifact_sha256": {
+    "run-installation-r1.py": "d027a1364e298cfb69c3861656825f86f8d2f54aea8d3da6074230f937ae04f4",
+    "preflight-correction.md": "6293073a7465265aba196f448dee5ca399f8f6ee6dd5bf20c6aae923e6d60bc2"
+  },
+  "unchanged_original_artifact_sha256": {
+    "action-plan.md": "49543fea70ab8f46563cdd8e32e895af8c8d3d600a313ddbd389e5b1a8ecebaf",
+    "packet.json": "a22c19f2907f355ac2665fd309f5e3d657113b1a66fc06f32a58068408114a2d",
+    "install-page.py": "f3df3ee43513fc05a2dc02a023e451c768f2b00f179edb11e8a9c963258902b2",
+    "run-installation.py": "b6ce7086ec03c8f8d43bafcdb11abd05448846a03d94432e1355ed63bf13c994",
+    "browser-installed.mjs": "60e0fafd28f407790ba2d891d8f65c76613d97857620cba02e7a890e1f217c6f",
+    "installed-draft.json": "f659fbaa8d6108f73920c2e8c5f3d4fa496568c90df703d1b74d9f845f409e21",
+    "run-browser.py": "0117a1040586e6d281c48388f8f5cb0ff63bb1bae3195013ff01c648da416bf1",
+    "check-installed-state.py": "cdd67088e33454c3b93132108bad5af3f6e0e0eee034e0d0ee081d4829ff88b1",
+    "closure-request.json": "dc927481c11ee244bd3f73c8c043b5516a4eb204fd60abe894008930da3db479"
+  },
+  "unchanged_auxiliary_source_sha256": {
+    "preflight-mcu.py": "9c453919da01ce75a37d0907cfce63647216e684ec98fee1577460073bf10832",
+    "observe-host-v3.py": "1b035a6024a24fcf882a457d8914299fcb35f0769c2ce7f68838ff49ce29185b",
+    "browser-websocket.cjs": "74eed3927f39171925d4db5a75af4a2f8beb2fc9f01423451734dab9aefa03f7"
+  },
+  "evidence_sha256": {
+    "events.json": "248a6a7a9ec25f4e60ac27853044e3c95bd0c57deab7063424890360d458709e",
+    "preflight-before.stderr": "c04d704ec670a84922a981f611528e4133dcfd80df9c076f6808c6f5e90edfdc",
+    "psu-before.stdout": "0855c353c8a126265186a268bbc57583247a8d131a7e602f0e48ac6105a09c48",
+    "power-helper.stdout": "8605017e433714096ec2c74d5d3268209f3e99b0b95bc3d8ef0b9ae5c3ea9d4f",
+    "no-write-reconciliation": "4be93109f4ece04cc4f54f119b488a1ea8e30a766a455616080a2a8ccac80fe2",
+    "correct-interpreter-preflight.stdout": "9560ba58e3c8d42390e50e6ea9c932b60393c29665c8d8cd8dbdc225ed367c7b",
+    "fresh-admission.stdout": "af6ba8c23f58ded1f2b06c9fee41837f78fa96db801b5001749b9cd8482a8be1",
+    "fresh-dry-run.stdout": "fd377a9b0ddcd71274a44e116a90e3ddd893abdd801098700042afe2f5d24093",
+    "software-verification.json": "2f78dbb11c21eb0f861771cefa00c635f16a8acbce4e497eebc0e4c8a6d6c72c",
+    "software-runtime.json": "db6698d651ac4a46e9c092b027fc1d01cace7b965ff8601b9b02b69c7f053b0f",
+    "action-review-runtime.json": "ca28d72a47cc66ca02e63168220aec3008dbffd352ab80095b9c57a1b84640ca"
+  },
+  "source_delta": [
+    "execution -> execution-r1; fresh directory with exist_ok=False",
+    "New preflight_python constant uses existing Klipper venv with PYTHONDONTWRITEBYTECODE=1",
+    "Only preflight-before/after use preflight_python; observer/installer/interruption/recovery/browser/payload logic unchanged"
+  ],
+  "evidence_assessment": {
+    "locally_measured": "Exact wrapper delta, Python AST syntax, original nine and three auxiliary source hashes and both R1 bindings verified without executing scripts.",
+    "recorded_observations": "Events show power/helper PASS, OFF, then cffi failure. No-write receipt reports no install artifacts/unit and root+boot ro. Corrected-interpreter receipt reports package verification, prebuilt helper, root ro, masks inactive and no live config; stderr empty. Fresh admission and dry-run report success.",
+    "inference": "Import failure happened before installation command construction; changing only preflight interpreter resolves the demonstrated dependency-location mismatch without changing reviewed write boundary.",
+    "not_established": "No fresh target observations by reviewer; no installation/browser/final-state evidence. Interpreter binary/venv closure hashes not supplied; pinned path and prior documented use plus successful preflight establish the bounded operational rationale, not a new reproducibility certificate."
+  },
+  "original_C1_C5": [
+    "C1: Coordinator records a fresh separate feature_verifier_high PASS for candidate 7a2894adf20575e84bf6d305be1c5cd04e72bc27 and its complete source/evidence bindings. A failed, stale or missing software review blocks action; no condition here waives it. Record effective independent review runtimes. Rehash all nine bound artifacts and the three auxiliary sources immediately before use; any change requires renewed exact review.",
+    "C2: Immediately before the single write, coordinator obtains exact current dry-run and independent PSU utility hash/status OFF, same boot/CID/controller/root-A, context hashes and configuration view, root+boot ro/data rw, all seven filesystem AND cmdline masks inactive, no health-ready/live printer.cfg/serial users, package/helper and all 33 inherited preimages, capacity and unused unit/backup. Confirm all three prospective directories (/usr/share/sv08, /usr/share/sv08/printer, /usr/share/cockpit/sv08-printer) absent and no concurrent host/configuration mutator. Installer guards new files but does not itself reject every pre-existing prospective directory. Unexpected directory or target state stops action for reconciliation.",
+    "C3: One bounded installation only. Retain private beforeimages/receipts. Any failure, ambiguous acknowledgment, timeout, unexpected bytes, active transient unit or failed ro restoration stops browser progression; independently observe OFF/idle/masks/root+boot ro and unit inactive/MainPID0. No automatic retry/reset. Partial file publication, temporary files or SIGKILL/power-loss require exact coordinator reconciliation from admitted before/after hashes; do not delete foreign content. Recovery SD/card reader and factory module availability remain coordinator-confirmed physical prerequisites.",
+    "C4: After successful overlay closure, run the bound browser wrapper once. Confirm its existing tunnel PID still belongs to the intended loopback forwarding listener/destination, pinned TLS fingerprint and no competing feature writer. Require revision0 guard and every real authenticated journey assertion, screenshots/downloads kept private, logout and termination of only this attempt's Chrome processes. Browser failure preserves inactive state and requires reconciliation, without resetting/erasing it or stopping the inherited tunnel.",
+    "C5: Require bound final checker PASS plus coordinator repeat of C2 safety/context observations and exact inherited closure (host HTML replaced only by its reviewed afterimage). Verify all 13 afterimages, current generation/view unchanged, exact private expected draft and sensor-text hash, current inactive mode, previous retained, directory0700/files0600, reserves, no live configuration, OFF and idle. Draft transports may be compared privately with fresh inventory; their presence cannot establish board revision, circuit identity or physical associations. Do not mark installed acceptance complete from offline results."
+  ],
+  "condition_application_updates": [
+    "C1 evidence update: fresh independent verification.json now records passed for exact 7a2894ad candidate, with separate session 01a105d2-8a0f-73b1-8e96-9747da3783f3 and runtime.json confirming Sol6.1/high. Coordinator records that evidence and rechecks unchanged bindings. Prior failed software review remains historical.",
+    "C2 interpreter application: use only the corrected bound wrapper and existing /opt/sv08-mainline/venvs/klipper-f0892d8/bin/python for preflight-before/after; retain standard Python for observer and installer. Confirm active assertions/no Python optimization and unchanged pinned interpreter/environment. The successful receipt supports functional preflight; no interpreter executable/dependency hash was supplied, and a path name alone is not a binary identity proof. No package installation, rebuild or environment repair is authorized.",
+    "C2-C5 remain mandatory immediately before/after this proposed first write: fresh exact dry-run, all bindings, all three new directories absent, PSU OFF, same target/boot/context, masks/idle/no-health-ready, capacity, unused unit/backup; then bounded installation closure, actual browser journey and final exact checker/inherited closure. The earlier fresh receipts do not replace this repeat.",
+    "C3 retry reconciliation satisfied at the reviewed evidence level: original events end at failed preflight before installer construction; no-write reconciliation reports root+boot ro, absent backup/page and unit not-found. execution-r1 was absent at review. Corrected run is a newly reviewed one-shot first proposed target write, not a blind installation retry. Any contradictory fresh observation stops it."
+  ],
+  "software_dependency": {
+    "verification_outcome": "passed",
+    "candidate": "7a2894adf20575e84bf6d305be1c5cd04e72bc27",
+    "effective_runtime": "Source runtime.json: gpt-6.1-sol/high, full role loaded",
+    "merged_main": "be8fd33 reported in handoff; no Git inspection required or performed for bounded correction"
+  },
+  "diagnostics": {
+    "broad_tests": false,
+    "reviewed_scripts_executed": false,
+    "network_hardware_operations": false,
+    "new_auxiliary_experiments": 0
+  },
+  "authority": "Same coordinator-owned operation and existing authorization. Conditions do not waive any failed criterion or permit activation, reset, heat, motion or release."
+}

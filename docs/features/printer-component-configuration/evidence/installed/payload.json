@@ -1,0 +1,86 @@
+{
+  "candidate": "7a2894adf20575e84bf6d305be1c5cd04e72bc27",
+  "net_additive_bytes": 256434,
+  "total_afterimage_bytes": 265476,
+  "afterimages": {
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "ead2fcd9912e29e662ab23a168fa1d3a3413ba5b59ff07bf8e0c708f4db6ec1d",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/index.html": {
+      "sha256": "50b701978e46fa21bfb88fbc779e9b5a00677a0d4f0f7b618fcab41b23fe2572",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/manifest.json": {
+      "sha256": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/session.js": {
+      "sha256": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "1b9cee0729b7d4b17755a26991c638a60a48e8224240402f00e3143b63986691",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.json": {
+      "sha256": "c78f3563bab8a45a86fce794ad7039f38b9048b1ce892bce4486d8a5df111f9d",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.schema.json": {
+      "sha256": "cf07a9b08d7fae5e94f14a6cee8e9289371640954a88dc4b3a3fd3dee538cfaa",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/draft.schema.json": {
+      "sha256": "805d07d0037f501cb69e2b799483eb632d5060ecda61d1e2d3cfb9ab03cf0663",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_catalog.py": {
+      "sha256": "2040c6677af8ab2a9edf502297e286ff39cb11f482a3fa1592dc65eb2ecf377d",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_generate.py": {
+      "sha256": "3ec9fbb55ddc029a1b536bc8ca69f11b8514110324b96f28b9a231bc074a25a3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_helper.py": {
+      "sha256": "719db028e92a8ce9c030117c781caf31c8a757704ef4e62b37dec2b06afe6063",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_store.py": {
+      "sha256": "13b3f4d1ff351cc15baebd33d1975604c28d920471169f7a6f2b0a1ffc637971",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "ed0cadd8d49eb6371286ba37d22ce1de52487433db7211090d63dc42ce0aa095",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "existing_host_change": "Only58byte navigation insertion into exact installed historical beforeimage; entire repository hostHTML was not installed."
+}

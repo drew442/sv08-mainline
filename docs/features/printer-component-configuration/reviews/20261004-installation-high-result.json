@@ -1,0 +1,159 @@
+{
+  "decision": "PASS WITH CONDITIONS",
+  "status": "done",
+  "utc": "2026-10-04T07:37:05.636854+00:00",
+  "review_scope": "Exact additive component-page installation and inactive authenticated browser journey on test-sv08-01; no activation/release decision",
+  "candidate": "7a2894adf20575e84bf6d305be1c5cd04e72bc27",
+  "independent_session": "01a105d4-4fa5-7010-8790-a5a6d6cc9a58",
+  "profile": "high_consequence_reviewer_high",
+  "requested_model": "gpt-6.1-sol",
+  "requested_effort": "high",
+  "effective_runtime": "Coordinator-confirmed in handoff; profile pins Sol6.1/high. Not independently established by thread identifier. Coordinator must retain launch evidence.",
+  "artifact_sha256": {
+    "action-plan.md": "49543fea70ab8f46563cdd8e32e895af8c8d3d600a313ddbd389e5b1a8ecebaf",
+    "packet.json": "a22c19f2907f355ac2665fd309f5e3d657113b1a66fc06f32a58068408114a2d",
+    "install-page.py": "f3df3ee43513fc05a2dc02a023e451c768f2b00f179edb11e8a9c963258902b2",
+    "run-installation.py": "b6ce7086ec03c8f8d43bafcdb11abd05448846a03d94432e1355ed63bf13c994",
+    "browser-installed.mjs": "60e0fafd28f407790ba2d891d8f65c76613d97857620cba02e7a890e1f217c6f",
+    "installed-draft.json": "f659fbaa8d6108f73920c2e8c5f3d4fa496568c90df703d1b74d9f845f409e21",
+    "run-browser.py": "0117a1040586e6d281c48388f8f5cb0ff63bb1bae3195013ff01c648da416bf1",
+    "check-installed-state.py": "cdd67088e33454c3b93132108bad5af3f6e0e0eee034e0d0ee081d4829ff88b1",
+    "closure-request.json": "dc927481c11ee244bd3f73c8c043b5516a4eb204fd60abe894008930da3db479"
+  },
+  "auxiliary_source_sha256": {
+    "preflight-mcu.py": "9c453919da01ce75a37d0907cfce63647216e684ec98fee1577460073bf10832",
+    "observe-host-v3.py": "1b035a6024a24fcf882a457d8914299fcb35f0769c2ce7f68838ff49ce29185b",
+    "browser-websocket.cjs": "74eed3927f39171925d4db5a75af4a2f8beb2fc9f01423451734dab9aefa03f7"
+  },
+  "target": {
+    "name": "test-sv08-01",
+    "boot_id": "2e1e3701-e7a3-4999-8fa5-107360d3a8b5",
+    "cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+    "controller_alias": "/dev/disk/by-path/platform-4022000.mmc",
+    "root_partition": "identified controller p2 / root A",
+    "context_sha256": {
+      "/run/sv08/boot.json": "da21382c850caf00379e69844d32b52dab116c897df23f2753b65ac5408072b5",
+      "/data/sv08/state.json": "fd843ead9f73af878999e7a19cc72864e6df531bcc9c9c73d9fe999a249482e6"
+    }
+  },
+  "payload": {
+    "file_count": 13,
+    "total_afterimage_bytes": 265476,
+    "net_additive_bytes": 256434,
+    "afterimages": {
+      "/usr/share/cockpit/sv08-printer/app.js": {
+        "sha256": "ead2fcd9912e29e662ab23a168fa1d3a3413ba5b59ff07bf8e0c708f4db6ec1d",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/cockpit/sv08-printer/index.html": {
+        "sha256": "50b701978e46fa21bfb88fbc779e9b5a00677a0d4f0f7b618fcab41b23fe2572",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/cockpit/sv08-printer/manifest.json": {
+        "sha256": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/cockpit/sv08-printer/session.js": {
+        "sha256": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/cockpit/sv08-printer/style.css": {
+        "sha256": "1b9cee0729b7d4b17755a26991c638a60a48e8224240402f00e3143b63986691",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/sv08/printer/catalog.json": {
+        "sha256": "c78f3563bab8a45a86fce794ad7039f38b9048b1ce892bce4486d8a5df111f9d",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/sv08/printer/catalog.schema.json": {
+        "sha256": "cf07a9b08d7fae5e94f14a6cee8e9289371640954a88dc4b3a3fd3dee538cfaa",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/sv08/printer/draft.schema.json": {
+        "sha256": "805d07d0037f501cb69e2b799483eb632d5060ecda61d1e2d3cfb9ab03cf0663",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/lib/sv08/sv08_printer_catalog.py": {
+        "sha256": "2040c6677af8ab2a9edf502297e286ff39cb11f482a3fa1592dc65eb2ecf377d",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/lib/sv08/sv08_printer_generate.py": {
+        "sha256": "3ec9fbb55ddc029a1b536bc8ca69f11b8514110324b96f28b9a231bc074a25a3",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/lib/sv08/sv08_printer_helper.py": {
+        "sha256": "719db028e92a8ce9c030117c781caf31c8a757704ef4e62b37dec2b06afe6063",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/lib/sv08/sv08_printer_store.py": {
+        "sha256": "13b3f4d1ff351cc15baebd33d1975604c28d920471169f7a6f2b0a1ffc637971",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "/usr/share/cockpit/sv08-host/index.html": {
+        "sha256": "ed0cadd8d49eb6371286ba37d22ce1de52487433db7211090d63dc42ce0aa095",
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      }
+    },
+    "expected_sensor_text_sha256": "b7674682709c17d4a28238be7ca8b18a43831210e72dd97452c73491ac559a5e"
+  },
+  "measured_locally": [
+    "Nine artifact SHA256 bindings match.",
+    "Twelve new payloads match candidate committed source and worktree byte-for-byte; host delta is exactly 58 bytes.",
+    "33 captured public preimages match packet; restored local fixture retains those hashes and has no new payload files.",
+    "Closure request binds exact draft/afterimages; source-only generator reproduces expected sensor-text hash."
+  ],
+  "recorded_evidence": [
+    "offline-installed-overlay-result.json reports exact source-bound stage/readback/restoration passed; current fixture independently reconciled.",
+    "dry-run.stdout reports preflight passed/executed false/13 files; receipt alone does not establish current target state.",
+    "context-capacity.json reports root 688562176 free bytes, data 2433626112 and read-only root/boot."
+  ],
+  "conditions": [
+    "C1: Coordinator records a fresh separate feature_verifier_high PASS for candidate 7a2894adf20575e84bf6d305be1c5cd04e72bc27 and its complete source/evidence bindings. A failed, stale or missing software review blocks action; no condition here waives it. Record effective independent review runtimes. Rehash all nine bound artifacts and the three auxiliary sources immediately before use; any change requires renewed exact review.",
+    "C2: Immediately before the single write, coordinator obtains exact current dry-run and independent PSU utility hash/status OFF, same boot/CID/controller/root-A, context hashes and configuration view, root+boot ro/data rw, all seven filesystem AND cmdline masks inactive, no health-ready/live printer.cfg/serial users, package/helper and all 33 inherited preimages, capacity and unused unit/backup. Confirm all three prospective directories (/usr/share/sv08, /usr/share/sv08/printer, /usr/share/cockpit/sv08-printer) absent and no concurrent host/configuration mutator. Installer guards new files but does not itself reject every pre-existing prospective directory. Unexpected directory or target state stops action for reconciliation.",
+    "C3: One bounded installation only. Retain private beforeimages/receipts. Any failure, ambiguous acknowledgment, timeout, unexpected bytes, active transient unit or failed ro restoration stops browser progression; independently observe OFF/idle/masks/root+boot ro and unit inactive/MainPID0. No automatic retry/reset. Partial file publication, temporary files or SIGKILL/power-loss require exact coordinator reconciliation from admitted before/after hashes; do not delete foreign content. Recovery SD/card reader and factory module availability remain coordinator-confirmed physical prerequisites.",
+    "C4: After successful overlay closure, run the bound browser wrapper once. Confirm its existing tunnel PID still belongs to the intended loopback forwarding listener/destination, pinned TLS fingerprint and no competing feature writer. Require revision0 guard and every real authenticated journey assertion, screenshots/downloads kept private, logout and termination of only this attempt's Chrome processes. Browser failure preserves inactive state and requires reconciliation, without resetting/erasing it or stopping the inherited tunnel.",
+    "C5: Require bound final checker PASS plus coordinator repeat of C2 safety/context observations and exact inherited closure (host HTML replaced only by its reviewed afterimage). Verify all 13 afterimages, current generation/view unchanged, exact private expected draft and sensor-text hash, current inactive mode, previous retained, directory0700/files0600, reserves, no live configuration, OFF and idle. Draft transports may be compared privately with fresh inventory; their presence cannot establish board revision, circuit identity or physical associations. Do not mark installed acceptance complete from offline results."
+  ],
+  "limitations": [
+    "No reviewed action or live observation performed by this reviewer. No installation/browser/final-check execution evidence yet.",
+    "Current separate software PASS pending; checked durable software-f2-result.json describes prior failed 4f865df candidate and is not approval for 7a2894ad.",
+    "Physical PSU/recovery/transport/circuit/board facts require coordinator evidence. Older commissioning observations inspected have different boot IDs and do not prove this packet's live state.",
+    "Exception restoration is conditional on matching bytes and writable root; all-file power-loss atomicity and guaranteed rollback under forced termination are not claimed.",
+    "Observer source writes its fixed /run observation config and reads boot environment/device; it must remain coordinator-only. Reviewer inspected source and summary only, no raw banks."
+  ],
+  "diagnostics": {
+    "probe": "A1 source-only expected-candidate generation",
+    "command": "python3 -B; import unchanged Catalog/generate, privately load expected draft and compare only resulting hash/section headers",
+    "internal_elapsed_seconds": 0.006,
+    "generated_data_bytes": 0,
+    "auxiliary_runs_used": 1,
+    "broad_tests": false
+  },
+  "authority": "Review input only; existing owner authority and all operation ownership remain with coordinator. No physical compatibility, commissioning, service or release claim."
+}

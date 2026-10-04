@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "error": "Browser evaluation failed",
+  "checks": [
+    "actual authenticated second-package navigation",
+    "incomplete draft save and reopen"
+  ]
+}

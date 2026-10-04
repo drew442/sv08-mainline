@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "same_expected_draft": true,
+  "inactive_sensor_candidate": true,
+  "previous_retained": true,
+  "private_directory_0700_files_0600": true,
+  "root_boot_read_only": true,
+  "live_printer_config_absent": true,
+  "payload_afterimages_match": true,
+  "revision": 9,
+  "state_sha256": "bc7fab9e6d493d214b9ad9858f0aa8c5ffbfe8476357694f325c4af63838a6e2",
+  "candidate_sha256": "b7674682709c17d4a28238be7ca8b18a43831210e72dd97452c73491ac559a5e",
+  "data_available_bytes": 2433216512,
+  "data_available_inodes": 156681,
+  "feature_apparent_bytes": 5964
+}

@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "authenticated": true,
+  "hardware_profile": "test-sv08-01",
+  "environment": "actual installed ARM64 Cockpit337/helper over existing SSH tunnel",
+  "checks": [
+    "actual authenticated navigation and exact preserved revision1 checkpoint",
+    "documented sensor and motor presets with explicit unknown physical rating",
+    "import comparison and cancel preserve stored draft",
+    "two boards and default temperature curves/pins/bounds",
+    "keyboard review cancellation",
+    "actual helper inactive publication",
+    "browser touch reload at 1024x600",
+    "previous candidate restoration through review",
+    "board change clears only affected draft devices",
+    "actual draft and candidate downloads",
+    "Stop administrator access",
+    "new authenticated session reopens persistent draft"
+  ],
+  "private_values_omitted": true,
+  "outputs_activated": false
+}
