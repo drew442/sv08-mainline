@@ -1,0 +1,21 @@
+{
+  "captured_utc": "2026-10-04T05:12:16.008951+00:00",
+  "reader": "existing Beelink /home/drew/bthome-scan.py",
+  "protocol": "unencrypted BTHome v2",
+  "advertisements": 5,
+  "unique_packet_ids": [
+    212,
+    213,
+    214
+  ],
+  "temperature_c_range": [
+    27.67,
+    27.68
+  ],
+  "humidity_percent": 49.75,
+  "battery_percent": 100,
+  "raw_private_receipt_sha256": "9e001d34712e1a0d042f5e9d2e575b88fdb817329359b3f54ced81019b31ac5e",
+  "limitation": "One observed BTH01 advertiser; association to owner chamber sensor pending confirmation. Ambient observation only, not contact/high-temperature calibration.",
+  "decoder_reference": "https://bthome.io/format/",
+  "reference_access_date": "2026-10-04"
+}
