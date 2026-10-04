@@ -363,19 +363,69 @@
         "printer-component-configuration:software"
       ],
       "environment": "hardware",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": "H616_JC_6Z_V1.2 owner-reported; MCU board revisions unknown",
+          "check": "installed",
+          "document": "docs/features/printer-component-configuration/installed-evidence.md",
+          "document_sha256": "c37de35a6fe82c363d404bd64794c5f68975cc7d38a9cd90270ddc9698c6c931",
+          "environment": "hardware",
+          "limitations": "Inactive configuration only. No physical touchscreen/input transitions, heat/motion, circuit/rating/calibration, full A/B or release claim. MCUs remain unconfigured by this page.",
+          "method": "Exact reviewed additive overlay, actual authenticated ARM64 Cockpit337 native journey with preserved partial-harness failure and exact-state continuation, final private-state/afterimage/read-only/masks/OFF/idle closure.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "source_commit": "063c6c0e34cedc0dfcd03350511ef74aadd4f758",
+          "source_sha256": {
+            "catalog/printer/catalog.json": "c78f3563bab8a45a86fce794ad7039f38b9048b1ce892bce4486d8a5df111f9d",
+            "catalog/printer/catalog.schema.json": "cf07a9b08d7fae5e94f14a6cee8e9289371640954a88dc4b3a3fd3dee538cfaa",
+            "catalog/printer/draft.schema.json": "805d07d0037f501cb69e2b799483eb632d5060ecda61d1e2d3cfb9ab03cf0663",
+            "docs/development/printer-hardware-catalog.md": "1e8f8e2a9cc2f232731474580c90af0399b734a7a1d77831424a1d887c11e976",
+            "docs/features/printer-component-configuration/evidence/installed/browser-continuation.json": "8fb2db510236e2b9c823f1acc4db392ee369d0c032ab8ec5dd92cb8177488db7",
+            "docs/features/printer-component-configuration/evidence/installed/browser-first-partial.json": "d9b06c50fb9dca3dcc2c38273b37f4fbbda1df797957618c77cc7a865145a188",
+            "docs/features/printer-component-configuration/evidence/installed/final-closure.json": "c4c20e4c7df0334af762d60b1c8d0d155a68ced5d268637b7f2da6e6f2c24785",
+            "docs/features/printer-component-configuration/evidence/installed/final-inherited.json": "6d12760d8fac0910d31aff4f02a952ff93a5405179777f63358203438cc3f580",
+            "docs/features/printer-component-configuration/evidence/installed/final-state.json": "152698f7ab7c35d2d7460d173520e27e276b1fdf2cb9ab9aa914f4dc0619f79b",
+            "docs/features/printer-component-configuration/evidence/installed/overlay-result.json": "951272930d178a8a0f018ef578160c6d06d8aabb78c8f751ba6f775be841bbfa",
+            "docs/features/printer-component-configuration/evidence/installed/payload.json": "357ba1c87330df845bb739e23fe7fdc11659af35dbcc765a18895c860d5da4f7",
+            "docs/features/printer-component-configuration/evidence/installed/preserved-failures.json": "66f7e5f3573b7fb40ff8cc00643921dc964c3c1a9d90c1ec89a203d0222c1a7c",
+            "docs/features/printer-component-configuration/installed-evidence.md": "c37de35a6fe82c363d404bd64794c5f68975cc7d38a9cd90270ddc9698c6c931",
+            "runtime/sv08_printer_catalog.py": "2040c6677af8ab2a9edf502297e286ff39cb11f482a3fa1592dc65eb2ecf377d",
+            "runtime/sv08_printer_generate.py": "3ec9fbb55ddc029a1b536bc8ca69f11b8514110324b96f28b9a231bc074a25a3",
+            "runtime/sv08_printer_helper.py": "719db028e92a8ce9c030117c781caf31c8a757704ef4e62b37dec2b06afe6063",
+            "runtime/sv08_printer_store.py": "13b3f4d1ff351cc15baebd33d1975604c28d920471169f7a6f2b0a1ffc637971",
+            "scripts/stage_admin_ui.py": "c5d48723e25487ca3c994be9b72f5ea8c545dc90b795ec75ae01dba91999fea1",
+            "scripts/stage_printer_ui.py": "d77003ec5f7979408a69b04adc3572bd0cb6d7b42a2adfc509b9249edc165c99",
+            "tests/printer_browser.mjs": "c2cf99b97998128e3d61ab9929344341b137b66e17e7632b7f78ac39ec6529cd",
+            "tests/test_printer_browser_fixture.py": "0bd014eb06852c70159a1a696ffd3fe09df762e2681b812a92751b84688c51ae",
+            "tests/test_printer_configuration.py": "c2736b77b4271a27e097412f6aeabbe76d358b784c328282396d407f5d5e5e9b",
+            "tests/test_stage_printer_ui.py": "df6eb7b67fdc05b0a135a15bad1b8dd8d3952832c33632e54f30368a9b32dc3d",
+            "ui/host/index.html": "31511f59b81930634dec42005332fefc1036b9ef3935d9aebced60db0cc7d48a",
+            "ui/printer/app.js": "ead2fcd9912e29e662ab23a168fa1d3a3413ba5b59ff07bf8e0c708f4db6ec1d",
+            "ui/printer/index.html": "50b701978e46fa21bfb88fbc779e9b5a00677a0d4f0f7b618fcab41b23fe2572",
+            "ui/printer/manifest.json": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+            "ui/printer/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+            "ui/printer/style.css": "1b9cee0729b7d4b17755a26991c638a60a48e8224240402f00e3143b63986691"
+          }
+        }
+      ],
       "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
       "id": "installed",
       "implementation": {
         "actor": "root/coordinator",
-        "session": "printer-components-installed-20261004",
-        "run": "000acfadec1643cb891a8986a34bb006"
+        "run": "000acfadec1643cb891a8986a34bb006",
+        "session": "printer-components-installed-20261004"
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "done",
       "title": "Verify installed printer hardware configuration page",
-      "verification": null
+      "verification": {
+        "decision_sha256": "a3da77de13fccb18617a342544f770acec730263a3391769c8148ad1e3e4318d",
+        "evidence_sha256": "a29719972b1d6bbef8c90b27ee3d680433fe0038713242439d9035db1885b5f2",
+        "outcome": "passed",
+        "rationale": "Installed check passes at clean detached HEAD063c6c0e34cedc0dfcd03350511ef74aadd4f758. Complete 23-path diff from be8fd331 inspected; no software, modes, deletions or gitlinks changed. Exact decision/scope/requirement/source/document hashes and authoritative one-entry evidence list match; 134 named private manifest hashes match. Six unchanged software checks reuse independent high acceptance at7a2894ad. Actual authenticated installed ARM64 Cockpit337/helper evidence combines explicitly partial initial navigation/save/reopen with reviewed exact revision1 continuation; remaining presets/defaults/import-cancel/review-cancel/inactive apply/restore/board-clear/exports/keyboard/touch/desktop/Stop/logout/relogin pass. Final revision9 exact draft/text, previous retained, private0700/0600, 13 afterimages, 33 inherited closure, reserves, same boot/CID/registry/environment/seven masks, root/boot ro, no live config/health-ready/serial users, PSU OFF and inactive unit/PID0 are supported by bound scripts and receipts. Nonblocking documentation discrepancy: current-goals.md still says no installation occurred; coordinator should update it. No fresh hardware operation or broad rerun performed. Physical unknowns, touchscreen/input transitions, fine calibration, printing, activation, full A/B and release remain unaccepted; no requirement waived.",
+        "reviewer": "Fresh independent full-role feature_verifier CLI fallback; requested GPT-6.1 Sol/medium; effective runtime confirmation coordinator-owned",
+        "session": "printer-components-20261004-installed-review-fresh-cli"
+      }
     }
   ],
   "title": "Board and component configuration in Cockpit"
