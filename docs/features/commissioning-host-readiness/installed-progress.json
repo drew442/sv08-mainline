@@ -1,5 +1,5 @@
 {
-  "status": "in-progress",
+  "status": "complete",
   "receipts": {
     "installation-result.txt": "24970d499e6e657f48500bcc9ab8924ea41fc8d700e79edf4011700db757fd68",
     "installed-closure.txt": "9cf9d1c095304909c3e9450598b46a997636eacc4bc0f4a901747b17948c590a",
@@ -19,8 +19,9 @@
     "relay-final-device-check.json": "72097d3417f1968aac0f97bfc1163f13c867887fe1ab0bcbb5ff1f9a29a6f437"
   },
   "restarts": 3,
-  "mcu_communication": false,
+  "mcu_communication": true,
   "normal_restarts": 2,
   "relay_cycles": 1,
-  "healthy_acceptance_restarts": 2
+  "healthy_acceptance_restarts": 2,
+  "final_acceptance": "installed-completion.md"
 }

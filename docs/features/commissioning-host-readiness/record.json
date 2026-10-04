@@ -307,7 +307,86 @@
         "commissioning-host-readiness:software"
       ],
       "environment": "hardware",
-      "evidence": [],
+      "evidence": [
+        {
+          "check": "boots",
+          "environment": "hardware",
+          "document": "docs/features/commissioning-host-readiness/installed-evidence.md",
+          "document_sha256": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+          "source_sha256": {
+            "docs/features/commissioning-host-readiness/installed-evidence.md": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+            "docs/features/commissioning-host-readiness/installed-evidence.json": "e4590068d7e50268ea2cb48edec5ee63a7d1ff968cb8f22e05e50557b7ecca47",
+            "docs/features/commissioning-host-readiness/software-contract.md": "6bcb96815fa61e402bde6d5e87d1a28daf0936973bc7f810c9fd8ca9e1a7855c",
+            "docs/features/commissioning-host-readiness/environment-repair.md": "ba95fda2184ee6867e3925e512b020e8d904dbf55d6e19fe1c9cc1d3d3de6705",
+            "docs/features/commissioning-host-readiness/stable-device-repair.md": "055955a4984bf4436da5d715dbee6bc692247f22a1b03b45b916992c88c325cc",
+            "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+            "scripts/stage_commissioning_host.py": "247a344c01c1ee24d3bf063ed417197bf7b09cee3ff60998979a5dc92950ec97",
+            "configs/host-os/commissioning/sv08-commissioning-health.service": "bd65ba16c41e05424630d4c622944ee4f635d683154c924d61f7bcdccfd4b2a6",
+            "configs/host-os/cockpit-branding/branding.css": "76a614e5131b94ddd337b5c20b24c9bea123e8f37e252553a2d47093f4bdfdc4",
+            "configs/host-os/cockpit-branding/badge.svg": "4beb2b783491867352df93bcfb3073452552dbac1168c94e6c0cd98a3385f92c",
+            "ui/host/index.html": "b919f79d955fc01511a0fef3b00ae31e9b7a7794647dfb8b8c10708ab2431613",
+            "ui/host/style.css": "48c7b299dba9b7a76b94b7a8b19317f193d51b589cbcb1ba5c09373bd6192d32",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          },
+          "source_commit": "35a69eedeb7aa5f223e299d5c7e91b17c3357df1",
+          "method": "Exact reviewed narrow overlay/reconciliations, automatic healthy normal restart and HW667 five-second power cycle, immutable mounts/masks/selected A3/B0 and unchanged B/recovery hashes. First failed normal-helper observation retained.",
+          "limitations": "Named diagnostic host acceptance only. No live sensor accuracy/input transitions, heat/motion/printing, full binary/clock attestation, physical A/B/release qualification. Existing stale authorization notice and unavailable image backend retained.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "board_revision": "H616_JC_6Z_V1.2 (owner-reported)"
+        },
+        {
+          "check": "access",
+          "environment": "hardware",
+          "document": "docs/features/commissioning-host-readiness/installed-evidence.md",
+          "document_sha256": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+          "source_sha256": {
+            "docs/features/commissioning-host-readiness/installed-evidence.md": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+            "docs/features/commissioning-host-readiness/installed-evidence.json": "e4590068d7e50268ea2cb48edec5ee63a7d1ff968cb8f22e05e50557b7ecca47",
+            "docs/features/commissioning-host-readiness/software-contract.md": "6bcb96815fa61e402bde6d5e87d1a28daf0936973bc7f810c9fd8ca9e1a7855c",
+            "docs/features/commissioning-host-readiness/environment-repair.md": "ba95fda2184ee6867e3925e512b020e8d904dbf55d6e19fe1c9cc1d3d3de6705",
+            "docs/features/commissioning-host-readiness/stable-device-repair.md": "055955a4984bf4436da5d715dbee6bc692247f22a1b03b45b916992c88c325cc",
+            "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+            "scripts/stage_commissioning_host.py": "247a344c01c1ee24d3bf063ed417197bf7b09cee3ff60998979a5dc92950ec97",
+            "configs/host-os/commissioning/sv08-commissioning-health.service": "bd65ba16c41e05424630d4c622944ee4f635d683154c924d61f7bcdccfd4b2a6",
+            "configs/host-os/cockpit-branding/branding.css": "76a614e5131b94ddd337b5c20b24c9bea123e8f37e252553a2d47093f4bdfdc4",
+            "configs/host-os/cockpit-branding/badge.svg": "4beb2b783491867352df93bcfb3073452552dbac1168c94e6c0cd98a3385f92c",
+            "ui/host/index.html": "b919f79d955fc01511a0fef3b00ae31e9b7a7794647dfb8b8c10708ab2431613",
+            "ui/host/style.css": "48c7b299dba9b7a76b94b7a8b19317f193d51b589cbcb1ba5c09373bd6192d32",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          },
+          "source_commit": "35a69eedeb7aa5f223e299d5c7e91b17c3357df1",
+          "method": "Actual installed Chromium login/elevation/status/Stop/logout/relogin,1024x600 and1440x900 branding; SSH/TLS/marker and password persistence across healthy transitions.",
+          "limitations": "Named diagnostic host acceptance only. No live sensor accuracy/input transitions, heat/motion/printing, full binary/clock attestation, physical A/B/release qualification. Existing stale authorization notice and unavailable image backend retained.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "board_revision": "H616_JC_6Z_V1.2 (owner-reported)"
+        },
+        {
+          "check": "sensors",
+          "environment": "hardware",
+          "document": "docs/features/commissioning-host-readiness/installed-evidence.md",
+          "document_sha256": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+          "source_sha256": {
+            "docs/features/commissioning-host-readiness/installed-evidence.md": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+            "docs/features/commissioning-host-readiness/installed-evidence.json": "e4590068d7e50268ea2cb48edec5ee63a7d1ff968cb8f22e05e50557b7ecca47",
+            "docs/features/commissioning-host-readiness/software-contract.md": "6bcb96815fa61e402bde6d5e87d1a28daf0936973bc7f810c9fd8ca9e1a7855c",
+            "docs/features/commissioning-host-readiness/environment-repair.md": "ba95fda2184ee6867e3925e512b020e8d904dbf55d6e19fe1c9cc1d3d3de6705",
+            "docs/features/commissioning-host-readiness/stable-device-repair.md": "055955a4984bf4436da5d715dbee6bc692247f22a1b03b45b916992c88c325cc",
+            "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+            "scripts/stage_commissioning_host.py": "247a344c01c1ee24d3bf063ed417197bf7b09cee3ff60998979a5dc92950ec97",
+            "configs/host-os/commissioning/sv08-commissioning-health.service": "bd65ba16c41e05424630d4c622944ee4f635d683154c924d61f7bcdccfd4b2a6",
+            "configs/host-os/cockpit-branding/branding.css": "76a614e5131b94ddd337b5c20b24c9bea123e8f37e252553a2d47093f4bdfdc4",
+            "configs/host-os/cockpit-branding/badge.svg": "4beb2b783491867352df93bcfb3073452552dbac1168c94e6c0cd98a3385f92c",
+            "ui/host/index.html": "b919f79d955fc01511a0fef3b00ae31e9b7a7794647dfb8b8c10708ab2431613",
+            "ui/host/style.css": "48c7b299dba9b7a76b94b7a8b19317f193d51b589cbcb1ba5c09373bd6192d32",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          },
+          "source_commit": "35a69eedeb7aa5f223e299d5c7e91b17c3357df1",
+          "method": "Installed exact-pin package/prebuilt helper/venv, live identify-only twoMCU dictionary/version/build matches, inactive installed ARM64 file-output config parsing; autonomous reviewed PSU ON/OFF with same host boot/closed ports.",
+          "limitations": "Named diagnostic host acceptance only. No live sensor accuracy/input transitions, heat/motion/printing, full binary/clock attestation, physical A/B/release qualification. Existing stale authorization notice and unavailable image backend retained.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "board_revision": "H616_JC_6Z_V1.2 (owner-reported)"
+        }
+      ],
       "human_task": "docs/hardware/coordinated-human-tasks.md#commissioning-host-readiness--2026-10-03",
       "id": "installed",
       "implementation": {
@@ -317,9 +396,16 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "done",
       "title": "Deliver installed commissioning host readiness",
-      "verification": null
+      "verification": {
+        "outcome": "passed",
+        "reviewer": "Fresh independent full-role feature_verifier CLI fallback; GPT-6.1 Sol/medium requested; effective runtime verification remains coordinator-owned",
+        "session": "commissioning-host-installed-independent-delivery-20261004-final-review",
+        "rationale": "Passed commissioning-host-readiness:installed (boots/access/sensors) at clean HEAD 35a69eedeb7aa5f223e299d5c7e91b17c3357df1. Complete 43-file diff from installed run base 586415e reviewed, including both independently high-verified repairs, retained failed/rejected observations and documentation. Full approved decision, proposal/requirement/scope and submitted document/source/receipt hashes agree; canonical digests bind all six constraints and the complete evidence list. Source comparison establishes runtime/scripts/tests/configs/UI/pins unchanged since accepted stable-device candidate 195dce6; valid software8504c46 and environment-repair afee938 evidence reused with explicit changed-source tracing, no broad tests rerun. Actual installed second normal restart and five-second HW667 cycle have distinct boot IDs, successful automatic A2-to-A3 replenishment, B0/A-only unchanged state/non-counter values, valid CRCs, immutable root/boot, writable data, seven masks/inactive services, persistent public SSH/TLS/marker and unchanged B/recovery hashes. First normal restart remains failed automatic health and is not counted healthy. Actual authenticated browser login/elevation/status/Stop/logout/relogin and branding persisted across both accepted transitions; stale authorization notice and unavailable image backend remain explicit. Reviewed current identify-only sequential bounded processes match both exact MCU identities, version/build and retained dictionary hash to the installed exact-pin host package/helper; input-only file-output parsing is offline on the installed host and configuration remains inactive. Exact installation/reconciliation/MCU/power action reviews and distinct runtime receipts inspected. Smartplug ON/statusON then OFF/statusOFF completed, serial ports closed, USB unchanged and same host boot/root/masks retained. Owner-reported host board revision does not establish physical MCU board identity, sensor accuracy/circuits/polarity, full binary/clock attestation, outputs, A/B qualification, printing, supported profile or release. Historical progress/current-goals text predates current receipts and awaits coordinator update; it does not override current acceptance. No hardware/network/credential/private-dump access, candidate edits, Git mutation, publication or agents. Coordinator must verify this fresh reviewer effective runtime before reliance. Explicit same-session evidence correction: the original list used directory profiles/test-sv08-01 and failed workflow public_path validation. Only the three profile fields now name the existing tracked file profiles/test-sv08-01/profile.json. All other evidence fields and bound source/document worktree and HEAD bytes remain unchanged. Original list/result/findings are preserved under before-profile-path filenames. Corrected canonical evidence digest replaces the original digest; boots/access/sensors scope and acceptance remain unchanged. Coordinator draft completion documents and pending record were excluded from this bounded correction review.",
+        "decision_sha256": "f2891916b20c412c32e8031bcd09c032e1471368b4fb7de0be9d8c3886154eef",
+        "evidence_sha256": "afe4cc8dd6293d8276e040e0e51a1f2d678f8e3aa60fdbc66647a874485d61af"
+      }
     }
   ],
   "title": "Reliable installed host ready for sensor-only commissioning"

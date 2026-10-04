@@ -8,12 +8,12 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
-**Current priority (2026-10-03):** make the installed host ready for sensor-only
-commissioning: dependable normal boot, persistent access, usable Cockpit with
-simple SV08 Mainline branding, and matching host/MCU software. H12's attended SD
-reimage and normal eMMC boot are complete, as is finite image-job history rollover.
-See the [current goals](.codex/current-goals.md) and
-[installed intake](docs/features/commissioning-host-readiness/intake.md).
+**Current priority (2026-10-04):** proceed to attended sensor/input commissioning.
+The installed commissioning-host goal is complete: dependable bounded boot checks,
+persistent SSH/Cockpit with simple SV08 Mainline branding, and matching host/MCU
+software. H12's attended SD reimage and finite image-job history rollover are also
+complete. See [current goals](.codex/current-goals.md) and
+[installed completion](docs/features/commissioning-host-readiness/installed-completion.md).
 The [owner's H12 scope decision](docs/decisions/20261002-h12-scope-reduction.md)
 continues to exclude RAM maintenance, permission anti-forgery/replay and cold-capture
 work; automatic maintenance launch/return remain deferred. Historical summaries
@@ -26,7 +26,8 @@ now has working authenticated access and SV08 Mainline branding after its TLS
 path repair. The diagnostic boot-confirmation helper's environment-history and stable-device
 repairs passed independent reviews and installed checks. A normal restart and
 HW-667 power cycle now pass automatic confirmation and persistent access checks.
-Current paired MCU identification and final delivery review remain pending.
+Both live MCU firmware dictionaries/build metadata match the installed host, and
+independent final delivery verification passed.
 This is not a printing system or supported hardware release. Printer
 configuration and detailed printing validation remain outstanding. Both MCUs have
 Katapult and matching Klipper installed, with recorded

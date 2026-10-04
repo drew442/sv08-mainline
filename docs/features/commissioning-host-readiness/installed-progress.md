@@ -1,7 +1,7 @@
 # Installed checks — 2026-10-03
 
-Status: healthy normal restart and relay power-cycle acceptance passed; current
-two-MCU identification and independent final delivery review remain pending.
+Status: complete; [final acceptance](installed-completion.md) passed on October4.
+The sections below preserve chronological observations and repaired failures.
 Board H616_JC_6Z_V1.2 is owner-reported. The owner reconfirmed PSU off,
 USB power through HW667, Ethernet, spare eMMC installed, SD removed,
 factory eMMC stored and no new irreplaceable spare data.
@@ -77,3 +77,9 @@ communication has yet occurred in this acceptance run.
 Full post-cycle hashes of boot B, root B and recovery match the pre-install
 baseline. Fresh installed tool/dependency and controller/CID/GPT/partition checks
 passed against the currently enumerated eMMC.
+
+## October4 completion
+
+Autonomous reviewed PSU control enabled identify-only communication with both MCUs;
+version/build/dictionary matched the host. PSU returned OFF with USB host boot
+preserved and ports closed. Independent final installed verification passed.

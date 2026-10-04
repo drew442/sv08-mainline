@@ -28,22 +28,23 @@ inferred from a historical report. Inspect current state before acting.
 
 ## Commissioning host readiness — 2026-10-03
 
-Active follow-up to completed H12: [bounded proposal](../features/commissioning-host-readiness/proposal.md).
-H02 supplies current physical facts and the two prepared/reviewed normal and HW-667
-boot observations. The owner confirmed this setup unchanged on October 3: PSU
-off, USB through HW-667, Ethernet, spare eMMC installed, SD removed, factory module
-stored, no new irreplaceable spare data. H04 no longer needs an owner terminal:
-[the owner requested a coordinator-set simple password](../features/commissioning-host-readiness/owner-access-amendment.md),
-and actual authenticated Cockpit checks passed before and after a healthy normal
-restart and HW-667 power cycle. The initial restart exposed a device-number
-assumption, repaired and independently reviewed before those acceptance checks.
-H02/H04 acceptance observations are complete; final delivery review remains pending.
-H05 now waits for the owner to turn PSU on, preserving USB/Ethernet/media, and
-confirm before the reviewed identify-only MCU queries. Afterward the owner will
-turn PSU off while preserving USB host power and confirm. No heat, motion, MCU
-configuration or flashing is included. Sensor accuracy and physical input operation
-follow separately. The instruction was sent after the successful boot/access
-checks; do not infer a physical change until the owner confirms it.
+Completed October4: [installed acceptance](../features/commissioning-host-readiness/installed-completion.md).
+Healthy normal and HW-667 boot checks, persistent authenticated SSH/Cockpit, matching
+host/two-MCU metadata and inactive sensor-config parsing passed independent review.
+No owner password/PSU action remains for this goal. Physical sensor accuracy and
+input transitions are subsequent attended H05 work; no output activation occurred.
+
+### Autonomous PSU control — owner authorized 2026-10-04
+
+On Beelink use `/usr/local/bin/sv08-power on`, `off`, or `status`. The owner maps
+this plug to the printer PSU. Read status separately after commands; SETACK alone
+is not observed state. Keep credentials in Beelink's existing private configuration.
+Status is plug state, not voltage measurement or proof of whole-printer isolation.
+USB through HW-667 independently powers H616: PSU off alone does not stop the host.
+Use the appropriate reviewed power sequence for the intended operation. For the
+completed identify-only check, USB stayed on and PSU returned off with the same
+host boot. No heater/motion/MCU-flash authority follows from power-control access.
+
 
 ## H12 completed — 2026-10-03
 

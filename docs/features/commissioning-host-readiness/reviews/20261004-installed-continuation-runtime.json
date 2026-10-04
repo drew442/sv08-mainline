@@ -1,0 +1,13 @@
+{
+  "session": "01a1051c-7297-7031-a079-e794274d0c41",
+  "continuation": "profile metadata path correction",
+  "full_role_loaded": true,
+  "runtime": {
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "approval_policy": "never",
+    "sandbox_policy": {
+      "type": "danger-full-access"
+    }
+  }
+}

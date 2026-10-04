@@ -164,7 +164,8 @@ repair passed actual Cockpit authentication and persistence through a normal
 restart. A device-number assumption found afterward was repaired with stable
 controller/CID binding and independently reviewed. A subsequent normal restart
 and HW-667 power cycle passed automatic diagnostic A confirmation and persistent
-SSH/Cockpit checks; paired MCU identification and final delivery review are pending. See [current installed progress](features/commissioning-host-readiness/installed-progress.md).
+SSH/Cockpit checks. On October4 both live MCU firmware dictionaries/build metadata
+matched the host, and independent final delivery verification passed. See [current installed progress](features/commissioning-host-readiness/installed-progress.md).
 The disposable
 [SD/NFS-root diagnostic](hardware/host-sd-network-root-prototype.md) passed its
 single corrected physical retry: SD loader, Linux kernel, wired DHCP and

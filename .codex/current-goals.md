@@ -1,40 +1,21 @@
 # Current delivery goals
 
-## Active goal — reliable commissioning host, 2026-10-03
+## Completed goal — reliable commissioning host, 2026-10-04
 
-Prepare the installed test-sv08-01 host for sensor-only commissioning: dependable
-normal boot, persistent SSH, usable browser administration, matching host/MCU
-software and an explicitly output-free sensor configuration. Inspect the current
-system before choosing fixes; reuse accepted implementations and their valid
-evidence. Require independent review of new substantive scope and delivery, and
-fresh exact-operation review before boot-policy changes or hardware writes.
+The installed test-sv08-01 host passed independent final delivery verification:
+automatic boot confirmation after a normal restart and HW-667 power cycle,
+persistent SSH/Cockpit account access and simple SV08 Mainline branding, matching
+host/two-MCU build metadata/dictionaries, and inactive input-only config parsing.
+The initial environment-history and device-numbering defects were repaired and
+independently verified; original failures remain recorded. See
+[installed completion](../docs/features/commissioning-host-readiness/installed-completion.md).
 
-The owner also requested a simple SV08 Mainline Cockpit theme; include login and
-host-page branding with unchanged controls and authentication.
-
-This goal includes installed validation and publication to main and WIP. Physical
-sensor accuracy/input commissioning, heat, motion, printing, full A/B failure
-qualification and release qualification remain subsequent work. Preserve the SD
-recovery path and all owner-selected H12 exclusions below.
-
-Initial fresh inspection: the same installed slot-A boot remains reachable, with
-read-only root, writable /data and no failed systemd units. Boot-health, RAUC and
-printer units remain masked in the command line; only one MCU USB identity is
-currently enumerated. These observations do not establish boot reliability or
-paired-MCU readiness. Native agent launch hit its thread limit; the planner uses
-the documented separate-session fallback with full role and verified Sol/medium.
-The coordinator owns physical access, shared records and publication.
-
-The bounded proposal, software repairs and exact installation actions passed
-independent reviews. Cockpit login, elevation, status, logout/relogin, branding
-and the owner-requested password now work and persist. The first normal restart
-exposed an eMMC-numbering assumption; its independently reviewed controller/CID
-repair passed a second normal restart and one HW-667 power cycle. Automatic
-confirmation returned A3/B0 each time, with persistent SSH/TLS identities and
-state unchanged. B and recovery partition hashes match the baseline. All printer
-output services remain masked and inactive. Inactive sensor file-output parsing
-passed; current paired MCU identification awaits the owner turning PSU on for
-toolhead availability, followed by PSU off and independent final delivery review.
+Owner-authorized autonomous smartplug control now handles printer PSU on/off;
+HW-667 separately controls USB power. Final PSU status OFF, H616 still USB-powered,
+printer services masked, no active printer.cfg, no open MCU serial sessions.
+Main/WIP publication completes the goal. This is diagnostic-host acceptance;
+physical sensor/input accuracy, heating, motion, printing, full A/B/release
+qualification remain subsequent work. H12 exclusions below remain authoritative.
 
 ## Completed goal — finite image-job history, 2026-10-03
 
