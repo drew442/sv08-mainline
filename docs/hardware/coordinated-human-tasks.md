@@ -483,3 +483,15 @@ the owner performs the prepared manual restart or SD removal/boot selection.
 There is no separate rehearsal, RAM handoff, permission-service, clock-expiry,
 automatic-return or complete cold-capture gate. No new physical action is
 requested at the goal-reset stage; October 2 setup observations are historical.
+
+## Component configuration — 2026-10-04
+
+[Owner scope](../features/printer-component-configuration/owner-request.md) and
+[proposal](../features/printer-component-configuration/proposal.md) add the Cockpit
+board/component page and default-curve sensor work. Coordinator can operate PSU
+and USB power under existing authority. UI save/generate/apply creates only an
+inactive candidate; installed validation needs no physical manipulation. Existing
+H05 physical probe/filament transitions remain attended. Sensor model/ratings and
+circuit uncertainties are recorded without blocking draft/catalog development.
+BLE reference intake has fresh BTH01 readings; association confirmation pending.
+Fine calibration is deferred; no heat/motion from this page or sensor-only slice.

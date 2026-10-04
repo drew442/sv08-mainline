@@ -1,0 +1,99 @@
+{
+  "format_version": 1,
+  "id": "printer-component-configuration",
+  "kind": "feature",
+  "title": "Board and component configuration in Cockpit",
+  "author": "root/coordinator with separate planner and sensor researcher",
+  "created": "2026-10-04",
+  "priority": 1,
+  "proposal": "docs/features/printer-component-configuration/proposal.md",
+  "requirements": [
+    "docs/project.md",
+    "docs/features/printer-component-configuration/owner-request.md",
+    "docs/decisions/0006-host-state-integration.md",
+    "docs/decisions/0010-host-administration-and-recovery-ui.md",
+    "docs/decisions/20261002-h12-scope-reduction.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "catalog",
+      "environment": "offline",
+      "description": "Sourced extensible catalog and explicit defaults/unknowns"
+    },
+    {
+      "id": "validation",
+      "environment": "offline",
+      "description": "Board/component/pin/resource and bounded input validation"
+    },
+    {
+      "id": "generation",
+      "environment": "offline",
+      "description": "Deterministic protected sensor-only and full inactive config output"
+    },
+    {
+      "id": "persistence",
+      "environment": "offline",
+      "description": "Generation-aware bounded atomic draft/candidate publication and recovery"
+    },
+    {
+      "id": "browser",
+      "environment": "offline",
+      "description": "Structured accessible user journey and privilege transitions"
+    },
+    {
+      "id": "staging",
+      "environment": "offline",
+      "description": "Exact additive package staging and existing host regression"
+    },
+    {
+      "id": "installed",
+      "environment": "hardware",
+      "description": "Real authenticated installed configuration journey with outputs inactive"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "software",
+      "title": "Deliver component catalog, configuration backend and Cockpit page",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "catalog",
+        "validation",
+        "generation",
+        "persistence",
+        "browser",
+        "staging"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    },
+    {
+      "id": "installed",
+      "title": "Verify installed printer hardware configuration page",
+      "status": "pending",
+      "environment": "hardware",
+      "depends_on": [
+        "printer-component-configuration:software"
+      ],
+      "checks": [
+        "installed"
+      ],
+      "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
