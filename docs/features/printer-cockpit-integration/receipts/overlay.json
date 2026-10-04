@@ -1,0 +1,68 @@
+{
+  "source_commit": "86fd625b8c4fd13d49e047bd4b3218c881ff34b5",
+  "files": {
+    "/usr/share/cockpit/sv08-host/style.css": {
+      "sha256": "432eaeace1b245fd86d0242258973f46d5d0e7bc89ea11856b056c3192702a99",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "e4df68dce86fbc8224323533ebaa46ec6c1f1d91486efa9b82a8315724536cea",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/app.js": {
+      "sha256": "b6087b5c504625b02efed6bf48c4d3f65742c117cc732fb4cce829f7602ac9b7",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/upload.js": {
+      "sha256": "dc2dfdbd3837d3afc3e0eda8a2f24113904336b54c0a52be5896425bd93b4b9a",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/navigation.js": {
+      "sha256": "04a45b4d2b39782303f1c30c201fbf39662b76c79d3abcc26b51a60650e3282b",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/index.html": {
+      "sha256": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "eaf489554b665d4c3387b597501431d3d8643f2228de413246d385e57e582ece",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "c5be01fc58085aca472d9261c9ce3de7a92a6ef859a50607a648f588e48e7c95",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/redirect.js": {
+      "sha256": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "c2c829165677abaeef046cdd370cd9d0113eab13dc465eaedd3acddffce0c6b5",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "payload_bytes": 68801,
+  "original_bytes": 66492,
+  "added_files": 3
+}
