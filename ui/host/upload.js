@@ -117,6 +117,7 @@ $('upload-review').addEventListener('close', async () => {
     finally { uploadActive = false; $('cancel-upload').hidden = true; await uploadListing(); await refresh(); }
 });
 $('cancel-upload').addEventListener('click', () => { uploadProcess?.close('terminated'); uploadText('Cancellation requested. Inspect managed storage; no OS transaction was cancelled.'); });
+window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; uploadReview = null; if ($('upload-review').open) $('upload-review').close('cancel'); });
 window.addEventListener('sv08-authority-changed', () => {
     uploadReview = null;
     if ($('upload-review').open) $('upload-review').close('cancel');
