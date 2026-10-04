@@ -1,10 +1,117 @@
 {
+  "author": "root/coordinator with separate planner and sensor researcher",
+  "checks": [
+    {
+      "description": "Sourced extensible catalog and explicit defaults/unknowns",
+      "environment": "offline",
+      "id": "catalog"
+    },
+    {
+      "description": "Board/component/pin/resource and bounded input validation",
+      "environment": "offline",
+      "id": "validation"
+    },
+    {
+      "description": "Deterministic protected sensor-only and full inactive config output",
+      "environment": "offline",
+      "id": "generation"
+    },
+    {
+      "description": "Generation-aware bounded atomic draft/candidate publication and recovery",
+      "environment": "offline",
+      "id": "persistence"
+    },
+    {
+      "description": "Structured accessible user journey and privilege transitions",
+      "environment": "offline",
+      "id": "browser"
+    },
+    {
+      "description": "Exact additive package staging and existing host regression",
+      "environment": "offline",
+      "id": "staging"
+    },
+    {
+      "description": "Real authenticated installed configuration journey with outputs inactive",
+      "environment": "hardware",
+      "id": "installed"
+    }
+  ],
+  "created": "2026-10-04",
+  "decision": {
+    "authority": "owner-existing",
+    "constraints": [
+      {
+        "checks": [
+          "catalog",
+          "validation",
+          "browser"
+        ],
+        "text": "Catalog evidence must distinguish documented reference, inferred, owner-entered and measured/installed-match facts. Deliver SV08 main/tool and exact pinned Octopus non-Pro/EBB v1.2 references and component choices; preserve the Octopus Pro v1.1 heater warning. Audit each selectable connector/contact/capability/reserved pin/channel count against primary source with revision/path/page/access date; unknown facts remain unknown and cannot enable unsupported assignments. Sample configuration is not a complete connector/electrical rating inventory or hardware compatibility certificate. Factory curves must retain the two exact vendor point sets, explicit curve origins and reference pull-ups, without claiming sensor identity or measured resistor values."
+      },
+      {
+        "checks": [
+          "generation",
+          "validation",
+          "browser",
+          "installed"
+        ],
+        "text": "Preserve incomplete draft/save/export and explicitly selected provisional inactive candidates with physical evidence gaps. Generation requires mode-specific software completeness, not heated calibration or universal installed board identification. Sensor-only generation must positively allow only named MCU transports, kinematics none, temperature_sensor, the two fixed factory thermistor definitions and approved empty-action inputs; reject every output section, macro, arbitrary include/text and injection. Full complete SV08 fixtures must cover CoreXY/four-Z and selected components with upstream heater protection retained; missing geometry/current/control facts cause field blockers. Parse with pinned Klipper and matching dictionaries; evidence remains offline syntax only. Apply cannot alter live printer.cfg, services, MCU/host state or outputs."
+      },
+      {
+        "checks": [
+          "persistence",
+          "browser"
+        ],
+        "text": "Resolve boot.json, Store registry and actual generation/config view consistently under Store exclusion before the feature lock; reject trial/unknown/mismatched context and unexpected owned-path links. Use bounded nonblocking acquisition. Save CAS and review/apply identity must bind draft, catalog, generator, mode, current candidate and generation context, revalidated under lock. Prove stale tabs/reviews, generation change, lost acknowledgment, privilege loss, cancel/disconnect and concurrent writers preserve prior complete state. Publication must durably commit draft/current/previous coherently, with killed-process/no-space/corruption/schema-downgrade tests and actual Store generation copy/rollback tests; no mock-only persistence acceptance."
+      },
+      {
+        "checks": [
+          "persistence",
+          "staging",
+          "installed"
+        ],
+        "text": "Enforce 128KiB structured draft/import, 64 attachments, 512KiB generated bundle and 4MiB feature storage including temporary publication space; count filesystem blocks/inodes and abandoned temporary files. Preserve corrupt/unsupported originals and never silently reset/migrate. Files0600 and private owned directory, no wider config ownership changes or sensitive values in logs/URLs/localStorage. Test both current Store/Budget and historical installed pre-Budget Store APIs with accepted reserve/copy behavior. A narrow feature-local compatibility path may use existing APIs; do not broadly refresh Store/runtime or introduce a generic allocation platform. Report root/data payload and factory 8GB impact without weakening shared reserves/recovery/idle admission."
+      },
+      {
+        "checks": [
+          "staging",
+          "browser",
+          "generation"
+        ],
+        "text": "Keep the finite separate sv08-printer Cockpit package/helper and one host navigation delta, existing Shell and host RPC/session behavior. Demonstrate second-package navigation/session authority using selected Cockpit337; an actual incompatibility requires concrete evidence before a smaller supported alternative. No new authentication, permission tokens, daemon, dependencies, executable catalog plugins or upstream modifications. Fresh-root and exact-preimage additive overlay inventories must cover installed historical API closure, file modes, new package allowance, beforeimages and bounded restoration; reject unexpected preimages and keep recovery/diagnostic assemblies inert. Preserve accepted printer-controls include ownership rather than duplicating/reimplementing that workflow."
+      },
+      {
+        "checks": [
+          "catalog",
+          "validation",
+          "generation",
+          "persistence",
+          "browser",
+          "staging",
+          "installed"
+        ],
+        "text": "Before delivery acceptance provide named evidence levels: offline catalog/validation, pinned file-output, actual disposable Store generations and browser fixture journeys, then actual authenticated installed ARM64 Cockpit/helper evidence on the named host. Compare absent workflow with board/device selection, connector/pin display, defaults, incomplete draft/reopen, board-change clearing, review/cancel/apply inactive, import/export/prior-candidate restoration, Stop/logout and keyboard/touch1024x600/desktop. Observe root restored ro and unchanged masks/live printer.cfg. Independent software verification and exact installation review precede coordinator installation; this proposal grants no hardware operation or sensor-session activation. Reuse valid A/B evidence without demanding a new full VM/physical A-B campaign; H01/H05/H06 and all H12 completion/exclusions remain intact."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "210b6476e06260854a39553239e62ca2699afb3758abf36e06c86d11f7021e4c",
+    "rationale": "The direct owner request authorizes the structured installed component workflow within docs/project.md and decisions0006/0010; no additional product permission is needed. Current ui/host/index.html and finite sv08_admin.py have no component catalog/generator, so this is useful nonduplicate work; accepted printer-interface-config supplies separate controls and must be reused. Pinned Sovol printer.cfg exactly matches the two commissioning factory thermistor curves; pinned Klipper thermistor.py defaults bed pull-up to4700 while vendor hotend specifies11500, which are software reference facts only. Pinned Octopus non-Pro sample explicitly warns against Pro v1.1 and EBB sample is a reference, not complete physical capability evidence. runtime/sv08_mounts.py deliberately supplies a config view symlink, while Store generation_path rejects arbitrary links. Current Store imports Budget, but historical installed Store at8c6f24f parent has no Budget: installation must resolve that concrete API gap without a broad runtime refresh. stage_admin_ui.py currently requires matching whole core closure and excludes a second package, warranting the proposed narrow additive stager. Approval conditions make catalog provenance, coherent CAS/durable publication, reserve accounting, historical API compatibility and real installed journey testable. Draft/provisional inactive output remains usable before physical evidence; no activation, compatibility, printing, release or H05 acceptance is certified. Review context and every file hash were independently recomputed and exactly matched the supplied context.",
+    "requirements_sha256": {
+      "docs/decisions/0006-host-state-integration.md": "b7ff2326445139e99296ecbe5b1203061fe7e2f55a7327abd866e989303658f4",
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/decisions/20261002-h12-scope-reduction.md": "4eb0bbd5418e2890adb052738377a381db0e160153fa8f9b3706889cadd539db",
+      "docs/features/printer-component-configuration/owner-request.md": "e8aca12714cc8e509fd72dcac1f0e716ba3267077d2f88a4cf3e89076c91fade",
+      "docs/project.md": "a2875043c55a97be6bc28b777ec82670f5d63a23d336caf855cbc1274fcc5a82"
+    },
+    "reviewer": "Independent feature-approver full-role fallback; requested GPT-6.1 Sol/medium, effective runtime confirmation coordinator-owned",
+    "scope_sha256": "bd97604b827352909edac145c06abc28d4976d5966c0f909afc026f40e1ead62",
+    "session": "printer-components-20261004-independent-approval-cli-root"
+  },
   "format_version": 1,
   "id": "printer-component-configuration",
   "kind": "feature",
-  "title": "Board and component configuration in Cockpit",
-  "author": "root/coordinator with separate planner and sensor researcher",
-  "created": "2026-10-04",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-component-configuration/proposal.md",
   "requirements": [
@@ -14,52 +121,9 @@
     "docs/decisions/0010-host-administration-and-recovery-ui.md",
     "docs/decisions/20261002-h12-scope-reduction.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "catalog",
-      "environment": "offline",
-      "description": "Sourced extensible catalog and explicit defaults/unknowns"
-    },
-    {
-      "id": "validation",
-      "environment": "offline",
-      "description": "Board/component/pin/resource and bounded input validation"
-    },
-    {
-      "id": "generation",
-      "environment": "offline",
-      "description": "Deterministic protected sensor-only and full inactive config output"
-    },
-    {
-      "id": "persistence",
-      "environment": "offline",
-      "description": "Generation-aware bounded atomic draft/candidate publication and recovery"
-    },
-    {
-      "id": "browser",
-      "environment": "offline",
-      "description": "Structured accessible user journey and privilege transitions"
-    },
-    {
-      "id": "staging",
-      "environment": "offline",
-      "description": "Exact additive package staging and existing host regression"
-    },
-    {
-      "id": "installed",
-      "environment": "hardware",
-      "description": "Real authenticated installed configuration journey with outputs inactive"
-    }
-  ],
   "tasks": [
     {
-      "id": "software",
-      "title": "Deliver component catalog, configuration backend and Cockpit page",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "catalog",
         "validation",
@@ -68,32 +132,37 @@
         "browser",
         "staging"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "software",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Deliver component catalog, configuration backend and Cockpit page",
+      "verification": null
     },
     {
-      "id": "installed",
-      "title": "Verify installed printer hardware configuration page",
-      "status": "pending",
-      "environment": "hardware",
-      "depends_on": [
-        "printer-component-configuration:software"
-      ],
+      "blocker": null,
       "checks": [
         "installed"
       ],
-      "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [
+        "printer-component-configuration:software"
+      ],
+      "environment": "hardware",
       "evidence": [],
-      "verification": null,
+      "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
+      "id": "installed",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Verify installed printer hardware configuration page",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Board and component configuration in Cockpit"
 }
