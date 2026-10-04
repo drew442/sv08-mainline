@@ -1,0 +1,8 @@
+{
+  "outcome": "passed",
+  "reviewer": "Independent full-role feature_verifier; GPT-6.1 Sol/medium confirmed by coordinator-checked runtime.json",
+  "session": "01a10645-f34a-7782-aa5b-72f8474380da",
+  "rationale": "PASS for the bounded offline visual correction at clean 69d660b. Complete diff, ui/printer/index.html/style.css/app.js/session.js, ui/host/style.css and theme-correction.md checked. Identifiers, control attributes and scripts remain unchanged. Checked visual-receipt.json, visual-bound.mjs, visual-bound/source-before.json/result.json, four bound screenshots and historical before screenshot. All artifact and source hashes match; viewport, overflow, Tab-focus and Escape-cancellation evidence supports acceptance. Approved decision hashes verified. Updated verdict saved to local/feature-workflow/probes/printer-theme-20261004/feature-verifier/final-r1.md; original final.md preserved. No additional probes or production changes. Conditions: installed check remains pending; no broad browser-suite, hardware or release pass claimed. Evidence digest covers the correction-specific receipt artifacts list.",
+  "decision_sha256": "a3da77de13fccb18617a342544f770acec730263a3391769c8148ad1e3e4318d",
+  "evidence_sha256": "09d1033ff15c8ef368a6cd0c10f1da34640142db7c6ff544e5be3c4c34182482"
+}

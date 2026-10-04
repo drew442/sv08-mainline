@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "sourceCommit": "69d660b8844d777776a402dd744d49759d12fb06",
+  "sourceHashes": {
+    "ui/printer/index.html": "3683c8deb1d61d17e9ff167551718b83da470b913ff29135013a16779b0a66eb",
+    "ui/printer/style.css": "1c51b45172e157ccf46ebe3bc3ea8f451f2c2187b8b6754318826644bd78eeec",
+    "ui/printer/app.js": "ead2fcd9912e29e662ab23a168fa1d3a3413ba5b59ff07bf8e0c708f4db6ec1d",
+    "ui/printer/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+    "tests/test_printer_browser_fixture.py": "0bd014eb06852c70159a1a696ffd3fe09df762e2681b812a92751b84688c51ae"
+  },
+  "visuals": [
+    {
+      "width": 1440,
+      "height": 900,
+      "background": "rgba(0, 0, 0, 0)",
+      "root": "rgb(241, 245, 249)",
+      "header": "rgb(20, 43, 67)",
+      "brand": "SV08MAINLINE",
+      "overflow": false,
+      "button": "rgb(8, 126, 131)"
+    },
+    {
+      "width": 1024,
+      "height": 600,
+      "background": "rgba(0, 0, 0, 0)",
+      "root": "rgb(241, 245, 249)",
+      "header": "rgb(20, 43, 67)",
+      "brand": "SV08MAINLINE",
+      "overflow": false,
+      "button": "rgb(8, 126, 131)"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "background": "rgba(0, 0, 0, 0)",
+      "root": "rgb(241, 245, 249)",
+      "header": "rgb(20, 43, 67)",
+      "brand": "SV08MAINLINE",
+      "overflow": false,
+      "button": "rgb(8, 126, 131)"
+    }
+  ],
+  "keyboard_tab": true,
+  "dialog_escape": true,
+  "errors": 0
+}

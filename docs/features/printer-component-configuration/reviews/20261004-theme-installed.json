@@ -1,0 +1,8 @@
+{
+  "outcome": "passed",
+  "reviewer": "Independent full-role feature_verifier; coordinator-confirmed GPT-6.1 Sol/medium",
+  "session": "01a10645-f34a-7782-aa5b-72f8474380da",
+  "rationale": "PASS for the installed theme correction at clean 69d660b on test-sv08-01. Checked installed-receipt.json artifact hashes, action-review conditions, deployment/browser/postcheck scripts, dry-run, PSU OFF evidence, exact asset readbacks, post-browser state checks and all three installed screenshots. Authenticated Cockpit evidence supports corrected branding, palette and no overflow at 1440/1024/390 widths, unchanged saved configuration and completed logout. Root/boot remain read-only; boot/state hashes and masked/inactive services are preserved. No unsatisfied condition for this bounded update. Saved to local/feature-workflow/probes/printer-theme-20261004/feature-verifier/final-installed.md; prior verdicts preserved. No further probes or hardware access. No broad browser-suite, hardware compatibility or release certification.",
+  "decision_sha256": "a3da77de13fccb18617a342544f770acec730263a3391769c8148ad1e3e4318d",
+  "evidence_sha256": "a5236d13509fc5eb2df89210996e504cbb07e9255ac210f15389af84e23bd852"
+}

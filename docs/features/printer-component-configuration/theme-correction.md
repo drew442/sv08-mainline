@@ -19,7 +19,38 @@ The visual harness first requested the already-selected board (no dialog expecte
 correcting its fixture selection passed. Initial fixture launches also refused
 writable repository ancestry; the successful fixture uses a private cache directory.
 
-Installed update and independent review are pending. Scope is only
+Installed update and independent review passed. Scope was only
 `/usr/share/cockpit/sv08-printer/{index.html,style.css}`, with exact preimages,
 backup, readback and restoration of the read-only root. No service restart,
 configuration activation, boot-policy change, heat or motion is required.
+
+
+## Installed acceptance
+
+Source candidate `69d660b8844d777776a402dd744d49759d12fb06` is installed on
+test-sv08-01. The exact two-file update passed its dry run, separate action review,
+backup and hash readback. Root and boot are read-only; boot identity, saved
+configuration and generation context are unchanged. Printer services remain
+masked and inactive. PSU was confirmed OFF immediately before installation.
+No restart or physical commissioning was performed.
+
+Actual authenticated Cockpit checks passed at 1440×900, 1024×600 and 390×844:
+matching header/palette, no horizontal overflow and unchanged saved state.
+The browser logged out afterward. Desktop and printer-screen captures were
+visually inspected. Private screenshots and original files are retained locally.
+
+The first software review rejected missing source/evidence binding; the corrected
+run records and checks source hashes before and after capture. The independent
+review then passed. Native agent slots were exhausted, so separate full-role CLI
+sessions used verified GPT-6.1 Sol/medium, full access, and disabled delegation.
+The verifier's two independent browser probes failed in its harness and are
+preserved; acceptance uses inspected coordinator evidence, not a claimed
+independent browser execution.
+
+- [Offline visual receipt](evidence/theme/offline.json)
+- [Installed browser receipt](evidence/theme/installed.json)
+- [Post-installation checks](evidence/theme/postcheck.json)
+- [Initial software review](reviews/20261004-theme-software-initial.json)
+- [Final software review](reviews/20261004-theme-software-final.json)
+- [Exact-operation review](reviews/20261004-theme-action.md)
+- [Installed delivery review](reviews/20261004-theme-installed.json)

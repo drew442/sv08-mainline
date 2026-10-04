@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "authenticated": true,
+  "hardware_profile": "test-sv08-01",
+  "checks": [
+    {
+      "width": 1440,
+      "height": 900,
+      "brand": "SV08MAINLINE",
+      "header": "rgb(20, 43, 67)",
+      "root": "rgb(241, 245, 249)",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "height": 600,
+      "brand": "SV08MAINLINE",
+      "header": "rgb(20, 43, 67)",
+      "root": "rgb(241, 245, 249)",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "brand": "SV08MAINLINE",
+      "header": "rgb(20, 43, 67)",
+      "root": "rgb(241, 245, 249)",
+      "overflow": false
+    },
+    "saved configuration unchanged"
+  ],
+  "outputs_activated": false
+}

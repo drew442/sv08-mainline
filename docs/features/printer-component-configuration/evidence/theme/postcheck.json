@@ -1,0 +1,11 @@
+{
+  "root_read_only": true,
+  "boot_read_only": true,
+  "boot_id_unchanged": true,
+  "files": {
+    "/usr/share/cockpit/sv08-printer/index.html": "3683c8deb1d61d17e9ff167551718b83da470b913ff29135013a16779b0a66eb",
+    "/usr/share/cockpit/sv08-printer/style.css": "1c51b45172e157ccf46ebe3bc3ea8f451f2c2187b8b6754318826644bd78eeec"
+  },
+  "context_unchanged": true,
+  "masks_inactive": true
+}
