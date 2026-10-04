@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "source_commit": "8ec6aec8758e09bdb362c5782a43fcdf8ba78e5c",
+  "source_sha256": {
+    "docs/features/printer-cockpit-integration/installed-race-repair.md": "da9c45446b9154642c7be7eab1da26e74091a6158140a2d7ea5a4cdf19ee3f15",
+    "tests/printer_browser.mjs": "8a8fca962b72662f4488fb695b65214211a221e834d36237ef942c3e86de6f42",
+    "tests/test_printer_browser_fixture.py": "6899b002a38ffb726fa3f0e4317ec6ada93b76a34add445993a9ddec71f6905b",
+    "ui/printer/app.js": "992569b53168b37d3231114674ffc032a0885ca2785a7f7cc4b882488680a0dd"
+  },
+  "artifacts": {
+    "navigation-check-r5/source-before.json": "ab9ea1f72713ef6140110366720eb1f7ba858746fda26f269491b9e3368b57a0",
+    "navigation-check-r5/commands.json": "29be3eafbd3e30011dde0d4fb3fb507c05b2146c75af3121db20d28a83dcc573",
+    "navigation-check-r5/browser/printer-hardware-draft.json": "504b1b7afcf4bd9e4cae42a82f601abf06feeff5d32bdcfa744ccf89037c7ba0",
+    "navigation-check-r5/browser/profile-usage.json": "616c58ecf8a67f5fd2c44ff72057652ce4a67a9758461dd6714ec64474623e79",
+    "navigation-check-r5/browser/result.json": "8189bb34f7b7d973aaccde6625dc324aabb93d41a58ee0a07fdc31c7689caf54",
+    "navigation-check-r5/browser/boards-desktop.png": "e1b4059e03ca50b14efaf9c55a7c8e385d29ad3b1bdf477822aa54f7095d0659",
+    "navigation-check-r5/browser/boards-narrow.png": "0e05fcbdf5cc11badf778199bcc8ecf08a5e56e2c11f5315e5e18d16cb6106c4",
+    "navigation-check-r5/browser/sensor-1024x600.png": "55db774dc9a0e62c2d513ee7f39bb17185f958b777c2f173080d9eac3aaf1ad4"
+  }
+}
