@@ -1,0 +1,10 @@
+{
+  "outcome": "failed-no-valid-temperature-sample",
+  "first_query": "ready but both initial temperature=0, measured_min=99999999,max=0",
+  "source": "pinned temperature_sensor.py initializes these exact sentinels until callback",
+  "capture_behaviour": "cold sanity check terminated session before first sensor callback",
+  "coordinator_error": "unit property check observed service already inactive and asserted; retained streamed row and cleanup receipts",
+  "cleanup": "unit inactive/MainPID0, no serial users, PSU off separately verified",
+  "curves_changed": false,
+  "retry_authorized_automatically": false
+}

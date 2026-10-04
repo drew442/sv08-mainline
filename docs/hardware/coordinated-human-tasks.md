@@ -493,5 +493,6 @@ and USB power under existing authority. UI save/generate/apply creates only an
 inactive candidate; installed validation needs no physical manipulation. Existing
 H05 physical probe/filament transitions remain attended. Sensor model/ratings and
 circuit uncertainties are recorded without blocking draft/catalog development.
-BLE reference intake has fresh BTH01 readings; association confirmation pending.
+BLE reference intake has fresh BTH01 readings; owner confirmed the exact device
+is BTH01Y_v3.1 with pvvx/THB2 firmware, in the chamber beside the bed.
 Fine calibration is deferred; no heat/motion from this page or sensor-only slice.

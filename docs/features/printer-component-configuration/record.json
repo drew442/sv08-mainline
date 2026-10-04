@@ -137,10 +137,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "f634299085f143e4842096da231c2a76",
+        "session": "printer-components-software-20261004"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Deliver component catalog, configuration backend and Cockpit page",
       "verification": null
     },

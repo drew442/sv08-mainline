@@ -18,7 +18,8 @@ bytes; live MCU input configuration needs a fresh exact action review.
 Beelink's existing BTHome reader completed a bounded25-second scan: five
 advertisements across three packet IDs, one BTH01 advertiser, 27.67–27.68°C,
 49.75%RH and100% battery. [Sanitized receipt](ble-intake.json) binds the private
-capture. Mapping to the owner's chamber sensor awaits identity confirmation;
+capture. Owner confirmed the exact observed identity is the chamber BTH01Y_v3.1 running
+[pvvx/THB2 custom firmware](https://github.com/pvvx/THB2); installed revision unknown;
 this scan is not a simultaneous bed/hotend comparison. Decoder signed little-endian
 0.01°C temperature handling agrees with [BTHome v2 format](https://bthome.io/format/),
 accessed2026-10-04. A fresh paired capture is needed for an ambient comparison.
@@ -34,3 +35,14 @@ baselines alongside fresh BLE advertisements, stop the temporary session and
 return PSU off. No heaters/steppers/fans or normal printer service activation.
 Attended probe/filament resting→operated→resting checks are separate H05 rows;
 X/Y sensorless homing is subsequent motion work. No automatic calibration fitting.
+
+## Initial live observation and correction
+
+The separately reviewed temporary input-only session reached ready, but the first
+query preceded both ADC callbacks: temperature0/min99999999/max0 exactly match
+pinned temperature_sensor.py initial sentinels. The cold sanity check stopped the
+process; coordinator monitoring then observed the unit already inactive. These
+are not measured zero-degree temperatures. Unit inactive/MainPID0, closed ports,
+PSU OFF/statusOFF and unchanged host boot/masks were recorded. No valid12-sample
+baseline was obtained. A bounded first-callback wait is prepared for separate
+review; no curves/pull-ups/limits changed and no automatic rerun occurred.

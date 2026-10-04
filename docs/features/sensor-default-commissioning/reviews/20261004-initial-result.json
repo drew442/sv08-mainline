@@ -1,0 +1,63 @@
+{
+  "outcome": "PASS WITH CONDITIONS",
+  "scope": "Exact sensor-action script/packet and stated single-run passive observation plan; source review, operation not performed",
+  "bindings": {
+    "target": "test-sv08-01",
+    "capture_script_sha256": "0482b745e7d30cb206db901078b2de083e3b8393c4aa2641859254ea5173dbb6",
+    "packet_sha256": "9a90a51a5743a284e1f5a00d930626ed111383874c717526e2c80bf1a647c7c9",
+    "configuration_sha256": "48c5dfeda52fc6bff547cff631dafedbb70accb25a01444e579e3782f353de51",
+    "public_sources_sha256": {
+      "configs/commissioning/test-sv08-01-no-outputs.cfg": "2594376fe028e70fc479d4b3a33de7f7c701fdfe14ff33b19b5741a3bcc5f32f",
+      "configs/commissioning/test-sv08-01-sensors.cfg": "09f559caf5793047b2138765c661169b6cd695ab7c3ceaac21278be2521adb7d",
+      "configs/commissioning/test-sv08-01-inputs.cfg": "e49abb864d7d64298858f36126cbd977d1e6edd948ddbb9bbd37980fa8705a6e"
+    },
+    "klipper_pin": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+    "sovol_pin": "a60644875f8c756d20b3828c9416518b414b5491",
+    "power_utility_sha256": "512ae106d30cf572f65eb400fd8955a27c2937bf9179f3090cfd2fd933f2acea",
+    "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+    "prior_host_boot_id": "2e1e3701-e7a3-4999-8fa5-107360d3a8b5",
+    "device_cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+    "mainboard_by_id": "/dev/serial/by-id/usb-Klipper_stm32f103xe_[private-device-id]-if00",
+    "toolhead_by_id": "/dev/serial/by-id/usb-Klipper_stm32f103xe_[private-device-id]-if00"
+  },
+  "conditions": [
+    "Coordinator must verify and record effective separate full-role GPT-6.1 Sol/medium runtime before reliance; this session cannot independently attest its runtime. No authority is granted by this review.",
+    "Before ON bind uploaded script and packet to these SHA256 values, immutable exact-pin installed package/venv/prebuilt-helper evidence, host identity/boot, root and boot read-only, controller/CID, seven masks/inactive units, no active printer config, no port users and utility hash plus fresh status OFF. Stage only diagnostic files in a new root-owned 0700 /run path; persistent evidence directory /data/sv08/sensor-observation-20261004 must be absent and its parent safe/root-owned. Run Python without -O/PYTHONOPTIMIZE because safety checks use assert.",
+    "Arm independent coordinator-side cleanup before the sole PSU ON; require separate status ON, two exact distinct by-id character devices and fresh idle check. Do not change USB relay. Use one root transient unit, RuntimeMaxSec=105, TimeoutStopSec=5, KillMode=control-group, --pipe/--wait and separate outer SSH deadline 120 seconds. No Restart policy or manual rerun. Log actual unit properties and start/stop outcomes.",
+    "Monitor streamed rows and stop the entire unit for unexplained button changes, implausible/rapidly changing temperatures, unexpected heat/motion/output, communication failure or identity mismatch. Script automatically stops on readiness/query failure and cold values outside 5..60 C, but has no transition or rate-of-change stop. Missing BLE/reference or BLE identity blocks comparison claims, not the bounded MCU baseline; preserve raw paired timestamps, do not fit or invent tolerance.",
+    "On every completion/failure stop whole unit if necessary and establish no serial users; independently issue PSU OFF and separate status OFF via Beelink even if printer SSH fails. Failure to stop/observe ports must not delay OFF. OFF failure/unconfirmed OFF requires coordinator escalation for owner physical intervention, no repeated ON or MCU query. Retain USB host power; OFF is not wiring isolation.",
+    "Final evidence must show unit/cgroup stopped, serial ports closed, same host boot/identity, root+boot read-only, seven masks/inactive units, no active configuration, private no-output config inactive, OFF/statusOFF and unchanged USB relay. Exactly 12 valid rows spanning about 55 seconds and readiness within 30 seconds are required for successful baseline; partial rows remain failed/incomplete evidence. No H05 polarity/accuracy, H06, heater/motion, UI feature or release acceptance follows."
+  ],
+  "evidence_sha256": {
+    "docs/features/sensor-default-commissioning/intake.md": "978418427b171f563641db506ef548c0b6aae6c7d7878effc1850c993d8adbf6",
+    "docs/features/sensor-default-commissioning/source-findings.md": "24cf832538816832a99c20d3c659321f5f76bc11cc152af7ce290cc9f80a2250",
+    "docs/features/commissioning-host-readiness/installed-completion.md": "f091ebc160b346aa6876475a3bd76643462a446e32850e5aa0129b1df6b63439",
+    "docs/features/commissioning-host-readiness/installed-evidence.md": "96445e3fa35c8149b1b8abbdeeb2479ddbcc6d83866ec4be4bda8051a81c58e4",
+    "local/feature-workflow/probes/commissioning-host-20261004/mcu-results.json": "6b67cdaff754512ad94898d5ab747b532cb513dbf9c5a1809fde8d76322facbc",
+    "local/feature-workflow/probes/commissioning-host-20261004/completion.json": "6f8f2890d47f8844687774f15f6e42dee0a9ab4e7c180b6d0e6d870edbe84dfe",
+    "local/feature-workflow/probes/commissioning-host-20261004/powered-preflight.stdout": "6614c3c31feb85e7597590dab331ad563b43dd9354b874cbe1cc9c9bcaf33342",
+    "local/feature-workflow/probes/commissioning-host-20261004/post-off-observation.stdout": "33a3063167a53b721c2b7e3f9cf29a1c4706d6275155a207dce01b0dd991f041",
+    "local/feature-workflow/probes/commissioning-host-20261004/power-events.jsonl": "5f65293afa97bd721aafe8ffa5c6d91f015f2f43cc9ccf5f7458b81065dee484",
+    "local/feature-workflow/probes/commissioning-host-20261003/sensor-file-output.json": "6ef54cb44d5f65161a3a7c02c50a1bac6db3735374604f2d7714da272a1ef464",
+    "profiles/test-sv08-01/observations/2026-09-08-sensor-bringup.json": "187c84a1b4a0e0306aa98f537f0b052591a5142628d89fd30a4837ed37345b98",
+    "upstream/klipper/klippy/mcu.py": "d24971313bf30b47e4cb8ffeeb74d3f4bcdfbbbd3f552a04332b7fe609f92d85",
+    "upstream/klipper/klippy/klippy.py": "aa9eb47fbe3598fc814d40ed8e0b2b814a0af459fca7acab6732c59bf42e4659",
+    "upstream/klipper/klippy/extras/temperature_sensor.py": "fd3e0c438b549d3d9baec607308f01c7f7b52704d2c7d95a9b448d968b9081b5",
+    "upstream/klipper/klippy/extras/gcode_button.py": "09b10303ad84d1f576417704d97fab59df2834b1be61ec2e21b5f9bd9750a57c",
+    "upstream/klipper/klippy/extras/buttons.py": "6d283901aef866645cb43b534cb79cd43c5f90f95a20c7fff62b18125524db15",
+    "upstream/klipper/src/buttons.c": "2d1ba8729445436b49664046066fa837ae83cb98907707c7dd898291333394d4",
+    "upstream/klipper/src/stm32/gpio.c": "a795200fcff149df6adba4bff8075ed2d79d4bb45a388d0d423fa9534db7cc3d",
+    "upstream/klipper/src/stm32/adc.c": "b39c9d4fdc9d9c59441665c0d4541e52f7c038df0cd783598479e27becd735b4",
+    "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289"
+  },
+  "physical_blocker_for_passive_reading": null,
+  "unknowns": [
+    "installed sensor models/circuits/pullups/board revisions",
+    "probe and filament physical associations/polarities",
+    "BLE identity/calibration/placement",
+    "fresh preflight and actual execution results",
+    "effective reviewer runtime pending coordinator verification"
+  ],
+  "material_uncertainty_requiring_high_profile": false,
+  "review_limitations": "Power/unit/BLE orchestration supplied as plan, not an exact submitted executable wrapper. PASS is conditional on coordinator enforcing and recording those controls. No hardware/network/Git operations; no private backups, credentials or dumps read."
+}

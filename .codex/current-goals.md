@@ -13,9 +13,11 @@
    independently approve the proposal and verify software plus installed behavior.
 
 Owner scope: [October4 request](../docs/features/printer-component-configuration/owner-request.md).
-Separate Sol6.1/medium planner and sensor-source researcher are active through the
-documented full-role CLI fallback; effective roles/model/effort were verified.
-Coordinator found Beelink's existing BTHome reader and is checking fresh BLE data.
+Separate planning and sensor research completed; independent proposal approval
+passed. Sol6.1/medium implementation is active in feature/printer-components via
+the verified full-role fallback. Beelink receives the owner-confirmed BTH01Y_v3.1
+chamber reference. Initial live sensor query exposed a first-callback timing bug
+in the diagnostic script; PSU returned off, and a bounded correction is in review.
 No heater/motion activation or new calibration tuning is authorized by this slice.
 Use autonomous PSU control as reviewed, preserving independent USB host power.
 
