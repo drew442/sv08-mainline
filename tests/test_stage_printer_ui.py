@@ -57,7 +57,7 @@ class StageTests(unittest.TestCase):
             stage.restore(root,report,interrupted=True)
             self.assertEqual(stage.inventory(root,expected),expected)
     def test_historical_narrow_transform(self):
-        raw=subprocess.check_output(['git','show','HEAD:ui/host/app.js'],cwd=ROOT)
+        raw=subprocess.check_output(['git','show','85cb5c7:ui/host/app.js'],cwd=ROOT)
         result=stage.integrate_app(raw)
         self.assertIn(b'not(#printer button)',result)
         # Unrelated host operations/receipts remain byte-for-byte.
