@@ -20,7 +20,7 @@ try {
  await send('Runtime.enable');await send('Page.enable');
  const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const until=async expression=>{for(let i=0;i<100;i++){try{if(await evaluate(expression))return;}catch(error){if(error.code!==-32000 || !/navigated|context/i.test(error.message))throw error;}await delay(100);}throw Error('Timeout: '+expression+' '+await evaluate(`JSON.stringify({notice:document.querySelector('#printer-notice')?.textContent,session:document.querySelector('#session-status')?.textContent})`));};
- const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+ const click=async selector=>{if(selector==='#authorize')await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);return evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);};
  const set=async(selector,value)=>evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});if(!e)throw Error('Missing field');e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  const key=async key=>{await send('Input.dispatchKeyEvent',{type:'keyDown',key,code:key,windowsVirtualKeyCode:{Tab:9,Enter:13,Escape:27}[key],text:key==='Enter'?'\r':undefined});await send('Input.dispatchKeyEvent',{type:'keyUp',key,code:key});};
  let statepath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).state;
