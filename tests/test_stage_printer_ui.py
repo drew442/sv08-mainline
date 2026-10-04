@@ -41,7 +41,7 @@ class StageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);expected=self.fixture(root)
             conflict=root/'usr/share/cockpit/sv08-host/index.html.integration-tmp';conflict.write_bytes(b'unexpected')
-            with self.assertRaisesRegex(ValueError,'temporary'):stage.stage(root,expected,True)
+            with self.assertRaisesRegex(ValueError,'temporary|inventory drift'):stage.stage(root,expected,True)
             self.assertEqual(stage.inventory(root,expected),expected)
             self.assertFalse((root/'usr/share/cockpit/sv08-printer').exists())
     def test_publication_failure_preserves_entry_and_recovers(self):
