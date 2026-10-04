@@ -63,9 +63,22 @@ difference as a calibration correction. Factory curves and pull-ups are unchange
 fine calibration remains deferred.
 
 Probe and filament inputs remained RELEASED throughout; no physical transitions
-were tested. The transient process stopped, unit inactive/MainPID0 and MCU ports
-closed. PSU OFF was independently confirmed through Beelink. Host boot/CID,
+were tested. The temporary process exited, unit inactive/dead/MainPID0; there were
+no open users of the remaining mainboard serial port, and the toolhead port was
+absent after OFF. The redundant stop returned 5 because the completed transient
+unit had already unloaded. PSU OFF was confirmed by Beelink's utility, not a
+voltage measurement. Host boot/CID,
 root and boot read-only mounts, masks, inactive printer services and absence of
 active printer.cfg were preserved. No heater, motor or fan output was configured.
 This completes the autonomous ambient observation slice, not H05 physical input
 polarity, temperature accuracy over the operating range, or heat/motion acceptance.
+
+[Independent closure review](reviews/closure-review.md) supports this result with
+record clarifications, now incorporated. Its separate Sol6.1/medium/full-role
+runtime was coordinator-verified. The inherited private review field
+`target_bindings.capture_script_sha256` retains the original failed script hash;
+the F2 `bindings.capture-inputs.py`, admission and executed staging instead use
+`b3269815bf2022a301eaa5e8fee75cd3fc47e10f0320044279f3cf996ec85407`.
+Historical fields are preserved rather than rewritten. Cleanup's empty exception
+list does not mean every redundant command returned zero. Preservation claims
+cover the sampled invariants, not an exhaustive host-file or cgroup inventory.

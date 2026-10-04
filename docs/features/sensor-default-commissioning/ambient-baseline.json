@@ -55,5 +55,13 @@
     "psu-off-status.stdout": "0855c353c8a126265186a268bbc57583247a8d131a7e602f0e48ac6105a09c48",
     "admission.json": "48bb2cb6755afcdf3ef34bd46bdda0e6c4c1f1e125be823a84927178f0256b0c"
   },
-  "sample_span_seconds": 55.03594277799857
+  "sample_span_seconds": 55.03594277799857,
+  "cleanup_details": {
+    "redundant_stop_returncode": 5,
+    "redundant_stop_reason": "Transient unit already unloaded after completed process",
+    "final_unit": "inactive/dead/MainPID0",
+    "serial_resources": "No open users of remaining enumerated mainboard serial port; toolhead port absent after OFF",
+    "power_evidence": "Utility-reported OFF; no voltage measurement",
+    "preservation_scope": "Sampled host boot/CID/state/masks/mounts/environment/package/helper invariants; not all host files"
+  }
 }
