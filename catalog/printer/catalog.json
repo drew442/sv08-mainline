@@ -1,0 +1,1625 @@
+{
+  "format_version": 1,
+  "boards": [
+    {
+      "id": "sv08-main",
+      "label": "Sovol SV08 original mainboard reference",
+      "role": "main",
+      "revision": "unknown installed/drawing revision",
+      "source": {
+        "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+        "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+        "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+        "accessed": "2026-10-04",
+        "drawing": {
+          "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+          "page": 1,
+          "revision": "unknown drawing revision",
+          "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+        }
+      },
+      "evidence": "documented-reference",
+      "warning": "Reference mapping only; installed identity and electrical ratings require confirmation.",
+      "unknowns": [
+        "MCU clock/offset",
+        "installed match",
+        "electrical ratings",
+        "complete connector inventory"
+      ],
+      "signals": {
+        "PE2": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PE0": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PE3": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PE1": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_x",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PE15": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_x",
+            "option": "diag_pin"
+          },
+          "reserved": false
+        },
+        "PB8": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PB6": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PB9": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PB7": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_y",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PE13": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_y",
+            "option": "diag_pin"
+          },
+          "reserved": false
+        },
+        "PC0": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PE5": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PC1": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PE6": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_z",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PD3": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_z1",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PD1": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_z1",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PD4": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_z1",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PD2": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_z1",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PD7": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_z2",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PD5": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_z2",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PB5": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_z2",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PD6": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_z2",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PD11": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_z3",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PD9": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_z3",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PD12": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_z3",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PD10": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 stepper_z3",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PE9": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "filament_switch_sensor filament_sensor",
+            "option": "switch_pin"
+          },
+          "reserved": false
+        },
+        "PA0": {
+          "capabilities": [
+            "heater"
+          ],
+          "source": {
+            "section": "heater_bed",
+            "option": "heater_pin"
+          },
+          "reserved": false
+        },
+        "PC5": {
+          "capabilities": [
+            "adc"
+          ],
+          "source": {
+            "section": "heater_bed",
+            "option": "sensor_pin"
+          },
+          "reserved": false
+        },
+        "PA2": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "fan_generic fan3",
+            "option": "pin"
+          },
+          "reserved": false
+        }
+      },
+      "connectors": {
+        "stepper_x / step_pin": {
+          "pin": "PE2",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_x / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_x / dir_pin": {
+          "pin": "PE0",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_x / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_x / enable_pin": {
+          "pin": "PE3",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_x / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_x / uart_pin": {
+          "pin": "PE1",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 stepper_x / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_x / diag_pin": {
+          "pin": "PE15",
+          "capability": "input",
+          "contact": "signal (contact number unknown)",
+          "label": "X-axis limit",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / step_pin": {
+          "pin": "PB8",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_y / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / dir_pin": {
+          "pin": "PB6",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_y / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / enable_pin": {
+          "pin": "PB9",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_y / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_y / uart_pin": {
+          "pin": "PB7",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 stepper_y / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_y / diag_pin": {
+          "pin": "PE13",
+          "capability": "input",
+          "contact": "signal (contact number unknown)",
+          "label": "Y-axis limit",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / step_pin": {
+          "pin": "PC0",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_z / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / dir_pin": {
+          "pin": "PE5",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_z / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / enable_pin": {
+          "pin": "PC1",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_z / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_z / uart_pin": {
+          "pin": "PE6",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 stepper_z / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z1 / step_pin": {
+          "pin": "PD3",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_z1 / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z1 / dir_pin": {
+          "pin": "PD1",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_z1 / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z1 / enable_pin": {
+          "pin": "PD4",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_z1 / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_z1 / uart_pin": {
+          "pin": "PD2",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 stepper_z1 / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z2 / step_pin": {
+          "pin": "PD7",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_z2 / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z2 / dir_pin": {
+          "pin": "PD5",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_z2 / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z2 / enable_pin": {
+          "pin": "PB5",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_z2 / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_z2 / uart_pin": {
+          "pin": "PD6",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 stepper_z2 / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z3 / step_pin": {
+          "pin": "PD11",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_z3 / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z3 / dir_pin": {
+          "pin": "PD9",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_z3 / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z3 / enable_pin": {
+          "pin": "PD12",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_z3 / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 stepper_z3 / uart_pin": {
+          "pin": "PD10",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 stepper_z3 / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "filament_switch_sensor filament_sensor / switch_pin": {
+          "pin": "PE9",
+          "capability": "input",
+          "contact": "signal (contact number unknown)",
+          "label": "Filament detection",
+          "evidence": "documented-reference"
+        },
+        "heater_bed / heater_pin": {
+          "pin": "PA0",
+          "capability": "heater",
+          "contact": "signal (contact number unknown)",
+          "label": "Heated bed output",
+          "evidence": "documented-reference"
+        },
+        "heater_bed / sensor_pin": {
+          "pin": "PC5",
+          "capability": "adc",
+          "contact": "signal (contact number unknown)",
+          "label": "Heated bed thermistor",
+          "evidence": "documented-reference"
+        },
+        "fan_generic fan3 / pin": {
+          "pin": "PA2",
+          "capability": "fan",
+          "contact": "signal (contact number unknown)",
+          "label": "Exhaust fan 2",
+          "evidence": "documented-reference"
+        }
+      },
+      "motors": {
+        "stepper_x": {
+          "step": "PE2",
+          "dir": "PE0",
+          "enable": "PE3",
+          "uart": "PE1"
+        },
+        "stepper_y": {
+          "step": "PB8",
+          "dir": "PB6",
+          "enable": "PB9",
+          "uart": "PB7"
+        },
+        "stepper_z": {
+          "step": "PC0",
+          "dir": "PE5",
+          "enable": "PC1",
+          "uart": "PE6"
+        },
+        "stepper_z1": {
+          "step": "PD3",
+          "dir": "PD1",
+          "enable": "PD4",
+          "uart": "PD2"
+        },
+        "stepper_z2": {
+          "step": "PD7",
+          "dir": "PD5",
+          "enable": "PB5",
+          "uart": "PD6"
+        },
+        "stepper_z3": {
+          "step": "PD11",
+          "dir": "PD9",
+          "enable": "PD12",
+          "uart": "PD10"
+        }
+      },
+      "channel_counts": {
+        "adc": 1,
+        "heater": 1,
+        "fan": 1,
+        "step": 6
+      },
+      "channel_scope": "Only evidenced selectable channels, not total physical capacity",
+      "sharing_rules": []
+    },
+    {
+      "id": "sv08-tool",
+      "label": "Sovol SV08 Extra_MCU reference",
+      "role": "tool",
+      "revision": "unknown installed/drawing revision",
+      "source": {
+        "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+        "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+        "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+        "accessed": "2026-10-04",
+        "drawing": {
+          "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+          "page": 1,
+          "revision": "unknown drawing revision",
+          "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+        }
+      },
+      "evidence": "documented-reference",
+      "warning": "Reference mapping only; installed identity and electrical ratings require confirmation.",
+      "unknowns": [
+        "MCU clock/offset",
+        "installed match",
+        "electrical ratings",
+        "complete connector inventory"
+      ],
+      "signals": {
+        "PB6": {
+          "capabilities": [
+            "probe"
+          ],
+          "source": {
+            "section": "probe",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PA8": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PB8": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PB11": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PB9": {
+          "capabilities": [
+            "heater"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "heater_pin"
+          },
+          "reserved": false
+        },
+        "PA5": {
+          "capabilities": [
+            "adc"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "sensor_pin"
+          },
+          "reserved": false
+        },
+        "PB10": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 extruder",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PA7": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "fan_generic fan0",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PB1": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "fan_generic fan1",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PA6": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "heater_fan hotend_fan",
+            "option": "pin"
+          },
+          "reserved": false
+        }
+      },
+      "connectors": {
+        "probe / pin": {
+          "pin": "PB6",
+          "capability": "probe",
+          "contact": "signal (contact number unknown)",
+          "label": "BL-TOUCH sensor",
+          "evidence": "documented-reference"
+        },
+        "extruder / step_pin": {
+          "pin": "PA8",
+          "capability": "step",
+          "contact": null,
+          "label": "extruder / step_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / dir_pin": {
+          "pin": "PB8",
+          "capability": "dir",
+          "contact": null,
+          "label": "extruder / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / enable_pin": {
+          "pin": "PB11",
+          "capability": "enable",
+          "contact": null,
+          "label": "extruder / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / heater_pin": {
+          "pin": "PB9",
+          "capability": "heater",
+          "contact": "signal (contact number unknown)",
+          "label": "HEATER",
+          "evidence": "documented-reference"
+        },
+        "extruder / sensor_pin": {
+          "pin": "PA5",
+          "capability": "adc",
+          "contact": "signal (contact number unknown)",
+          "label": "TH",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 extruder / uart_pin": {
+          "pin": "PB10",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 extruder / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "fan_generic fan0 / pin": {
+          "pin": "PA7",
+          "capability": "fan",
+          "contact": "signal (contact number unknown)",
+          "label": "FAN2",
+          "evidence": "documented-reference"
+        },
+        "fan_generic fan1 / pin": {
+          "pin": "PB1",
+          "capability": "fan",
+          "contact": "signal (contact number unknown)",
+          "label": "FAN4",
+          "evidence": "documented-reference"
+        },
+        "heater_fan hotend_fan / pin": {
+          "pin": "PA6",
+          "capability": "fan",
+          "contact": "signal (contact number unknown)",
+          "label": "FAN1",
+          "evidence": "documented-reference"
+        }
+      },
+      "motors": {
+        "extruder": {
+          "step": "PA8",
+          "dir": "PB8",
+          "enable": "PB11",
+          "uart": "PB10"
+        }
+      },
+      "channel_counts": {
+        "adc": 1,
+        "heater": 1,
+        "fan": 3,
+        "step": 1
+      },
+      "channel_scope": "Only evidenced selectable channels, not total physical capacity",
+      "sharing_rules": []
+    },
+    {
+      "id": "octopus-v1.1-non-pro",
+      "label": "BTT Octopus v1.1 non-Pro reference",
+      "role": "main",
+      "revision": "v1.1 non-Pro",
+      "source": {
+        "path": "upstream/klipper/config/generic-bigtreetech-octopus-v1.1.cfg",
+        "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+        "sha256": "4a986df11c6e79c6ced396ed8b5dd9035e9820b074a12ed3a9bb6ae3898c0acb",
+        "accessed": "2026-10-04"
+      },
+      "evidence": "documented-reference",
+      "warning": "Do not use with Octopus Pro v1.1: heater may be inadvertently enabled.",
+      "unknowns": [
+        "MCU clock/offset",
+        "installed match",
+        "electrical ratings",
+        "complete connector inventory"
+      ],
+      "signals": {
+        "PF13": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PF12": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PF14": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PG6": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "stepper_x",
+            "option": "endstop_pin"
+          },
+          "reserved": false
+        },
+        "PG0": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PG1": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PF15": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PG9": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "stepper_y",
+            "option": "endstop_pin"
+          },
+          "reserved": false
+        },
+        "PF11": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PG3": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PG5": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PG10": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "stepper_z",
+            "option": "endstop_pin"
+          },
+          "reserved": false
+        },
+        "PF9": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PF10": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PG2": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PA2": {
+          "capabilities": [
+            "heater"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "heater_pin"
+          },
+          "reserved": false
+        },
+        "PF4": {
+          "capabilities": [
+            "adc"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "sensor_pin"
+          },
+          "reserved": false
+        },
+        "PA1": {
+          "capabilities": [
+            "heater"
+          ],
+          "source": {
+            "section": "heater_bed",
+            "option": "heater_pin"
+          },
+          "reserved": false
+        },
+        "PF3": {
+          "capabilities": [
+            "adc"
+          ],
+          "source": {
+            "section": "heater_bed",
+            "option": "sensor_pin"
+          },
+          "reserved": false
+        },
+        "PA8": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "fan",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PB7": {
+          "capabilities": [
+            "probe"
+          ],
+          "source": {
+            "section": "commented input",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PG12": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "commented input",
+            "option": "pin"
+          },
+          "reserved": false
+        }
+      },
+      "connectors": {
+        "stepper_x / step_pin": {
+          "pin": "PF13",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_x / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_x / dir_pin": {
+          "pin": "PF12",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_x / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_x / enable_pin": {
+          "pin": "PF14",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_x / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_x / endstop_pin": {
+          "pin": "PG6",
+          "capability": "input",
+          "contact": null,
+          "label": "stepper_x / endstop_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / step_pin": {
+          "pin": "PG0",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_y / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / dir_pin": {
+          "pin": "PG1",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_y / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / enable_pin": {
+          "pin": "PF15",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_y / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_y / endstop_pin": {
+          "pin": "PG9",
+          "capability": "input",
+          "contact": null,
+          "label": "stepper_y / endstop_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / step_pin": {
+          "pin": "PF11",
+          "capability": "step",
+          "contact": null,
+          "label": "stepper_z / step_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / dir_pin": {
+          "pin": "PG3",
+          "capability": "dir",
+          "contact": null,
+          "label": "stepper_z / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / enable_pin": {
+          "pin": "PG5",
+          "capability": "enable",
+          "contact": null,
+          "label": "stepper_z / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "stepper_z / endstop_pin": {
+          "pin": "PG10",
+          "capability": "input",
+          "contact": null,
+          "label": "stepper_z / endstop_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / step_pin": {
+          "pin": "PF9",
+          "capability": "step",
+          "contact": null,
+          "label": "extruder / step_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / dir_pin": {
+          "pin": "PF10",
+          "capability": "dir",
+          "contact": null,
+          "label": "extruder / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / enable_pin": {
+          "pin": "PG2",
+          "capability": "enable",
+          "contact": null,
+          "label": "extruder / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / heater_pin": {
+          "pin": "PA2",
+          "capability": "heater",
+          "contact": null,
+          "label": "extruder / heater_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / sensor_pin": {
+          "pin": "PF4",
+          "capability": "adc",
+          "contact": null,
+          "label": "extruder / sensor_pin",
+          "evidence": "documented-reference"
+        },
+        "heater_bed / heater_pin": {
+          "pin": "PA1",
+          "capability": "heater",
+          "contact": null,
+          "label": "heater_bed / heater_pin",
+          "evidence": "documented-reference"
+        },
+        "heater_bed / sensor_pin": {
+          "pin": "PF3",
+          "capability": "adc",
+          "contact": null,
+          "label": "heater_bed / sensor_pin",
+          "evidence": "documented-reference"
+        },
+        "fan / pin": {
+          "pin": "PA8",
+          "capability": "fan",
+          "contact": null,
+          "label": "fan / pin",
+          "evidence": "documented-reference"
+        },
+        "Reference PB7": {
+          "pin": "PB7",
+          "capability": "probe",
+          "contact": null,
+          "label": "Reference PB7",
+          "evidence": "documented-reference"
+        },
+        "Reference PG12": {
+          "pin": "PG12",
+          "capability": "input",
+          "contact": null,
+          "label": "Reference PG12",
+          "evidence": "documented-reference"
+        }
+      },
+      "motors": {
+        "stepper_x": {
+          "step": "PF13",
+          "dir": "PF12",
+          "enable": "PF14"
+        },
+        "stepper_y": {
+          "step": "PG0",
+          "dir": "PG1",
+          "enable": "PF15"
+        },
+        "stepper_z": {
+          "step": "PF11",
+          "dir": "PG3",
+          "enable": "PG5"
+        },
+        "extruder": {
+          "step": "PF9",
+          "dir": "PF10",
+          "enable": "PG2"
+        }
+      },
+      "channel_counts": {
+        "adc": 2,
+        "heater": 2,
+        "fan": 1,
+        "step": 4
+      },
+      "channel_scope": "Only evidenced selectable channels, not total physical capacity",
+      "sharing_rules": []
+    },
+    {
+      "id": "ebb-v1.2",
+      "label": "BTT EBB CAN v1.2 reference",
+      "role": "tool",
+      "revision": "v1.2",
+      "source": {
+        "path": "upstream/klipper/config/sample-bigtreetech-ebb-canbus-v1.2.cfg",
+        "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+        "sha256": "33f9837452286c68bc210844a38c25ac4ad2ab831454189053aa5b853427ccf7",
+        "accessed": "2026-10-04"
+      },
+      "evidence": "documented-reference",
+      "warning": "Reference mapping only; installed identity and electrical ratings require confirmation.",
+      "unknowns": [
+        "MCU clock/offset",
+        "installed match",
+        "electrical ratings",
+        "complete connector inventory"
+      ],
+      "signals": {
+        "PD0": {
+          "capabilities": [
+            "step"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "step_pin"
+          },
+          "reserved": false
+        },
+        "PD1": {
+          "capabilities": [
+            "dir"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "dir_pin"
+          },
+          "reserved": false
+        },
+        "PD2": {
+          "capabilities": [
+            "enable"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "enable_pin"
+          },
+          "reserved": false
+        },
+        "PB13": {
+          "capabilities": [
+            "heater"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "heater_pin"
+          },
+          "reserved": false
+        },
+        "PA3": {
+          "capabilities": [
+            "adc"
+          ],
+          "source": {
+            "section": "extruder",
+            "option": "sensor_pin"
+          },
+          "reserved": false
+        },
+        "PA15": {
+          "capabilities": [
+            "uart"
+          ],
+          "source": {
+            "section": "tmc2209 extruder",
+            "option": "uart_pin"
+          },
+          "reserved": false
+        },
+        "PA0": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "fan",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PA1": {
+          "capabilities": [
+            "fan"
+          ],
+          "source": {
+            "section": "heater_fan hotend_fan",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PB8": {
+          "capabilities": [
+            "probe"
+          ],
+          "source": {
+            "section": "commented input",
+            "option": "pin"
+          },
+          "reserved": false
+        },
+        "PB4": {
+          "capabilities": [
+            "input"
+          ],
+          "source": {
+            "section": "commented input",
+            "option": "pin"
+          },
+          "reserved": false
+        }
+      },
+      "connectors": {
+        "extruder / step_pin": {
+          "pin": "PD0",
+          "capability": "step",
+          "contact": null,
+          "label": "extruder / step_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / dir_pin": {
+          "pin": "PD1",
+          "capability": "dir",
+          "contact": null,
+          "label": "extruder / dir_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / enable_pin": {
+          "pin": "PD2",
+          "capability": "enable",
+          "contact": null,
+          "label": "extruder / enable_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / heater_pin": {
+          "pin": "PB13",
+          "capability": "heater",
+          "contact": null,
+          "label": "extruder / heater_pin",
+          "evidence": "documented-reference"
+        },
+        "extruder / sensor_pin": {
+          "pin": "PA3",
+          "capability": "adc",
+          "contact": null,
+          "label": "extruder / sensor_pin",
+          "evidence": "documented-reference"
+        },
+        "tmc2209 extruder / uart_pin": {
+          "pin": "PA15",
+          "capability": "uart",
+          "contact": null,
+          "label": "tmc2209 extruder / uart_pin",
+          "evidence": "documented-reference"
+        },
+        "fan / pin": {
+          "pin": "PA0",
+          "capability": "fan",
+          "contact": null,
+          "label": "fan / pin",
+          "evidence": "documented-reference"
+        },
+        "heater_fan hotend_fan / pin": {
+          "pin": "PA1",
+          "capability": "fan",
+          "contact": null,
+          "label": "heater_fan hotend_fan / pin",
+          "evidence": "documented-reference"
+        },
+        "Reference PB8": {
+          "pin": "PB8",
+          "capability": "probe",
+          "contact": null,
+          "label": "Reference PB8",
+          "evidence": "documented-reference"
+        },
+        "Reference PB4": {
+          "pin": "PB4",
+          "capability": "input",
+          "contact": null,
+          "label": "Reference PB4",
+          "evidence": "documented-reference"
+        }
+      },
+      "motors": {
+        "extruder": {
+          "step": "PD0",
+          "dir": "PD1",
+          "enable": "PD2",
+          "uart": "PA15"
+        }
+      },
+      "channel_counts": {
+        "adc": 1,
+        "heater": 1,
+        "fan": 2,
+        "step": 1
+      },
+      "channel_scope": "Only evidenced selectable channels, not total physical capacity",
+      "sharing_rules": []
+    }
+  ],
+  "curves": [
+    {
+      "id": "sovol-hotend",
+      "label": "Sovol factory hotend DEFAULT",
+      "sensor_type": "sv08_factory_hotend",
+      "reference_pullup": 11500,
+      "points": [
+        [
+          25,
+          110000
+        ],
+        [
+          100,
+          7008
+        ],
+        [
+          220,
+          435
+        ]
+      ],
+      "limits": null,
+      "origin": "vendor DEFAULT; not fitted calibration or sensor identification",
+      "source": {
+        "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+        "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+        "accessed": "2026-10-04"
+      },
+      "pullup_origin": "vendor configured 11500 ohm"
+    },
+    {
+      "id": "sovol-bed",
+      "label": "Sovol factory bed DEFAULT",
+      "sensor_type": "sv08_factory_bed",
+      "reference_pullup": 4700,
+      "points": [
+        [
+          25,
+          100000
+        ],
+        [
+          50,
+          18085.4
+        ],
+        [
+          100,
+          5362.6
+        ]
+      ],
+      "limits": null,
+      "origin": "vendor DEFAULT; not fitted calibration or sensor identification",
+      "source": {
+        "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+        "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+        "accessed": "2026-10-04"
+      },
+      "pullup_origin": "Klipper default 4700 ohm; not a measured circuit"
+    },
+    {
+      "id": "generic3950",
+      "label": "Generic 3950",
+      "sensor_type": "Generic 3950",
+      "reference_pullup": 4700,
+      "points": null,
+      "limits": null,
+      "origin": "pinned Klipper definition",
+      "source": {
+        "path": "upstream/klipper/klippy/extras/thermistor.py",
+        "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+        "accessed": "2026-10-04"
+      },
+      "pullup_origin": "Klipper default 4700 ohm; not a measured circuit"
+    },
+    {
+      "id": "epcos100k",
+      "label": "EPCOS 100K B57560G104F",
+      "sensor_type": "EPCOS 100K B57560G104F",
+      "reference_pullup": 4700,
+      "points": null,
+      "limits": null,
+      "origin": "pinned Klipper definition",
+      "source": {
+        "path": "upstream/klipper/klippy/extras/thermistor.py",
+        "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+        "accessed": "2026-10-04"
+      },
+      "pullup_origin": "Klipper default 4700 ohm; not a measured circuit"
+    },
+    {
+      "id": "semitec104gt2",
+      "label": "ATC Semitec 104GT-2",
+      "sensor_type": "ATC Semitec 104GT-2",
+      "reference_pullup": 4700,
+      "points": null,
+      "limits": null,
+      "origin": "pinned Klipper definition",
+      "source": {
+        "path": "upstream/klipper/klippy/extras/thermistor.py",
+        "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+        "accessed": "2026-10-04"
+      },
+      "pullup_origin": "Klipper default 4700 ohm; not a measured circuit"
+    }
+  ],
+  "kinds": {
+    "sensor": {
+      "pin": "adc",
+      "curve": "curve",
+      "pullup_resistor": "positive",
+      "min_temp": "number",
+      "max_temp": "number"
+    },
+    "input": {
+      "pin": "input",
+      "invert": "boolean",
+      "digital_pullup": "boolean"
+    },
+    "probe": {
+      "pin": "probe",
+      "invert": "boolean",
+      "digital_pullup": "boolean",
+      "x_offset": "number",
+      "y_offset": "number",
+      "z_offset": "number"
+    },
+    "fan": {
+      "pin": "fan",
+      "invert": "boolean",
+      "max_power": "fraction"
+    },
+    "bed": {
+      "pin": "heater",
+      "invert": "boolean",
+      "sensor": "name",
+      "max_power": "fraction",
+      "control": "control",
+      "pid_kp": "positive",
+      "pid_ki": "positive",
+      "pid_kd": "positive"
+    },
+    "motor": {
+      "connector": "motor",
+      "invert_dir": "boolean",
+      "invert_enable": "boolean",
+      "microsteps": "integer",
+      "rotation_distance": "positive",
+      "run_current": "positive",
+      "current_rating_rms": "positive",
+      "sense_resistor": "positive",
+      "uart_address": "address",
+      "position_min": "number",
+      "position_max": "number",
+      "position_endstop": "number",
+      "homing_speed": "positive",
+      "endstop_pin": "input",
+      "endstop_invert": "boolean",
+      "endstop_pullup": "boolean"
+    },
+    "extruder": {
+      "connector": "motor",
+      "invert_dir": "boolean",
+      "invert_enable": "boolean",
+      "microsteps": "integer",
+      "rotation_distance": "positive",
+      "run_current": "positive",
+      "current_rating_rms": "positive",
+      "sense_resistor": "positive",
+      "uart_address": "address",
+      "pin": "heater",
+      "invert": "boolean",
+      "sensor": "name",
+      "max_power": "fraction",
+      "control": "control",
+      "pid_kp": "positive",
+      "pid_ki": "positive",
+      "pid_kd": "positive",
+      "nozzle_diameter": "positive",
+      "filament_diameter": "positive",
+      "min_extrude_temp": "number"
+    }
+  }
+}

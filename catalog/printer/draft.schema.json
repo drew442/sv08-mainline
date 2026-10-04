@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Printer hardware draft v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "boards",
+    "devices",
+    "geometry"
+  ],
+  "properties": {
+    "format_version": {
+      "const": 1
+    },
+    "boards": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "main": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "transport": {
+              "enum": [
+                "serial",
+                "can"
+              ]
+            },
+            "identity": {
+              "type": "string",
+              "maxLength": 240
+            },
+            "reference_ack": {
+              "type": "boolean"
+            }
+          }
+        },
+        "tool": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "transport": {
+              "enum": [
+                "serial",
+                "can"
+              ]
+            },
+            "identity": {
+              "type": "string",
+              "maxLength": 240
+            },
+            "reference_ack": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "devices": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "kind",
+          "board",
+          "settings"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,39}$"
+          },
+          "kind": {
+            "enum": [
+              "sensor",
+              "input",
+              "probe",
+              "fan",
+              "bed",
+              "motor",
+              "extruder"
+            ]
+          },
+          "board": {
+            "enum": [
+              "main",
+              "tool"
+            ]
+          },
+          "settings": {
+            "type": "object",
+            "description": "Fields are typed by catalog kinds; runtime rejects unlisted keys."
+          }
+        }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_velocity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_accel": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_z_velocity": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_z_accel": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    }
+  }
+}
