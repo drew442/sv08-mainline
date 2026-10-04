@@ -23,10 +23,11 @@ SHIM=r'''
  client.proxy=()=>proxy;
  window.fixtureDisconnect=async()=>{await change('none');client.dispatchEvent(new Event('close'));};
  window.fixtureLoseAck=false;
+ window.fixtureRequests=[];window.fixtureLoadedIdentity=null;
  window.cockpit={dbus:()=>client,logout:()=>{void change('none');document.body.dataset.loggedOut='true';},spawn:(argv,options)=>{
    if(JSON.stringify(argv)!==JSON.stringify(['/usr/bin/python3','/usr/lib/sv08/sv08_printer_helper.py'])||options.superuser!=='require')throw Error('Unexpected fixture helper invocation');
    let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});
-   promise.input=data=>{fetch('/request',{method:'POST',body:data}).then(r=>r.text()).then(raw=>{if(window.fixtureLoseAck&&JSON.parse(data).action==='apply'){window.fixtureLoseAck=false;reject(Error('Injected lost acknowledgment'));}else resolve(raw);},reject);};return promise;
+   promise.input=data=>{window.fixtureRequests.push({request:JSON.parse(data),loaded:window.fixtureLoadedIdentity});fetch('/request',{method:'POST',body:data}).then(r=>r.text()).then(raw=>{const reply=JSON.parse(raw);if(JSON.parse(data).action==='status'&&reply.ok)window.fixtureLoadedIdentity=reply.result.loaded_identity;if(window.fixtureLoseAck&&JSON.parse(data).action==='apply'){window.fixtureLoseAck=false;reject(Error('Injected lost acknowledgment'));}else resolve(raw);},reject);};return promise;
  }};
 })();
 '''
@@ -69,6 +70,12 @@ def serve(work):
                 if self.path=='/authority':
                     if set(request)!={'elevated'} or type(request['elevated']) is not bool:raise ValueError('Invalid fixture authority')
                     authority.update(request);result={}
+                elif self.path=='/swap-generation':
+                    if request!={}:raise ValueError('Invalid fixture swap')
+                    copied=store.prepare_boot('B','browser-fixture')
+                    bootfile.write_text(json.dumps(copied));view.unlink();view.symlink_to(Path(copied['generation'])/'config')
+                    result=dict(generation=copied['generation'],state=str(Path(copied['generation'])/'config/printer-hardware/state.json'))
+                    (work/'fixture.json').write_text(json.dumps(result))
                 elif self.path=='/request':result=service.request(request)
                 else:raise ValueError('Unknown fixture route')
                 self.response(json.dumps(dict(ok=True,result=result)))

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const [chrome,fixture,output]=process.argv.slice(2);
 const {url}=JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url,/^http:\/\/127\.0\.0\.1:\d+$/);
-fs.mkdirSync(output);const profile=fs.mkdtempSync('/dev/shm/sv08-printer-repair-f1-');fs.chmodSync(profile,0o700);const log=fs.openSync(output+'/browser.log','w');
+fs.mkdirSync(output);const profile=fs.mkdtempSync('/dev/shm/sv08-printer-repair-f2-');fs.chmodSync(profile,0o700);const log=fs.openSync(output+'/browser.log','w');
 const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
 let socket,secondSocket,secondTarget;
 try {
@@ -23,7 +23,7 @@ try {
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  const set=async(selector,value)=>evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});if(!e)throw Error('Missing field');e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  const key=async key=>{await send('Input.dispatchKeyEvent',{type:'keyDown',key,code:key,windowsVirtualKeyCode:{Tab:9,Enter:13,Escape:27}[key],text:key==='Enter'?'\r':undefined});await send('Input.dispatchKeyEvent',{type:'keyUp',key,code:key});};
- const statepath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).state;
+ let statepath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).state;
  const state=()=>JSON.parse(fs.readFileSync(statepath));
  const screenshot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name+'.png',Buffer.from(r.data,'base64'));};
  const ready=()=>until(`document.querySelector('#boards fieldset') && !document.querySelector('#save').disabled`);
@@ -103,10 +103,27 @@ try {
  before=state().revision;await click('#add-preset');await until(`document.querySelector('#notice').textContent.includes('unique') && !document.querySelector('#save').disabled`);assert.equal(state().revision,before);assert.equal(state().draft.devices.length,2);
  await set('#mode','full');await click('#review');await until(`document.querySelector('#candidate-review').open`);assert.match(await evaluate(`document.querySelector('#review-detail').textContent`),/current_rating_rms/);assert.equal(await evaluate(`document.querySelector('#apply').disabled`),true);await click('#cancel-review');
  await click('#devices fieldset:nth-child(2) button');await click('#save');await ready();await set('#mode','sensors');
+ // Actual Store copies identical revision into B while this native tab holds A.
+ const loadedRevision=state().revision,originalPath=statepath,originalBytes=fs.readFileSync(statepath);
+ const swapped=await(await fetch(url+'/swap-generation',{method:'POST',body:'{}'})).json();assert(swapped.ok);statepath=swapped.result.state;
+ assert.equal(state().revision,loadedRevision);assert.deepEqual(fs.readFileSync(statepath),originalBytes);
+ const staleBytes=fs.readFileSync(statepath);
+ await click('#review');await until(`document.querySelector('#notice').textContent.includes('context is stale') && !document.querySelector('#save').disabled`);assert.equal(await evaluate(`document.querySelector('#candidate-review').open`),false);
+ await click('#restore');await until(`document.querySelector('#notice').textContent.includes('context is stale') && !document.querySelector('#save').disabled`);
+ await injectFile(state().draft);await until(`document.querySelector('#notice').textContent.includes('context is stale') && !document.querySelector('#save').disabled`);assert.equal(await evaluate(`document.querySelector('#import-diff').hidden`),true);
+ await set('#device-preset','stepper_x');await click('#add-preset');await until(`document.querySelector('#notice').textContent.includes('context is stale') && !document.querySelector('#save').disabled`);
+ await fieldSet(deviceField('max temp'),99);await click('#save');await until(`document.querySelector('#notice').textContent.includes('context is stale') && !document.querySelector('#save').disabled`);
+ assert.deepEqual(fs.readFileSync(statepath),staleBytes);assert.deepEqual(fs.readFileSync(originalPath),originalBytes);
+ await click('#reload');await ready();await fieldSet(deviceField('max temp'),104);await click('#save');await until(`document.querySelector('#notice').textContent==='Draft saved' && !document.querySelector('#save').disabled`);assert.equal(state().draft.devices[0].settings.max_temp,104);
+ await click('#review');await until(`document.querySelector('#candidate-review').open`);await click('#apply');await ready();assert.equal(state().current.draft.devices[0].settings.max_temp,104);
+ const calls=await evaluate('window.fixtureRequests');
+ assert(calls.filter(c=>c.request.action!=='status').length>0);
+ for(const c of calls)if(c.request.action!=='status'){assert.equal(typeof c.loaded,'string');assert.equal(c.request.expected_identity,c.loaded);}
  // Authority loss cancels review, and backend refuses direct mutations too.
  await click('#review');await until(`document.querySelector('#candidate-review').open`);await click('#stop-authorization');await until(`!document.querySelector('#candidate-review').open && document.querySelector('#save').disabled`);
  before=state().revision;
- const denied=await(await fetch(url+'/request',{method:'POST',body:JSON.stringify({action:'save',expected_revision:before,draft:state().draft})})).json();assert.equal(denied.ok,false);assert.equal(state().revision,before);
+ const deniedIdentity=await evaluate('window.fixtureLoadedIdentity');
+ const denied=await(await fetch(url+'/request',{method:'POST',body:JSON.stringify({action:'save',expected_revision:before,expected_identity:deniedIdentity,draft:state().draft})})).json();assert.equal(denied.ok,false);assert.equal(state().revision,before);
  await click('#authorize');await ready();
  await set('#boards fieldset:nth-child(1) select','octopus-v1.1-non-pro');await click('#confirm-board');await click('#save');await ready();assert.equal(state().draft.devices.length,0);assert.equal(state().draft.boards.main.identity,undefined);assert(state().current);
  await send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});await screenshot('boards-desktop');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
@@ -116,6 +133,6 @@ try {
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900]],second_package_link:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900]],second_package_link:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
-} finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes}));assert(profileBytes<64*1024*1024);fs.rmSync(profile,{recursive:true,force:true});}
+} finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

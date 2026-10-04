@@ -145,25 +145,29 @@ class PrinterStore:
                  'review':{'action','mode'},'apply':{'action','mode','review'},
                  'restore':{'action','expected_revision'},'import':{'action','draft','expected_revision'},
                  'preset':{'action','draft','role','preset','expected_revision'}}
+        if action in allowed and action != 'status':
+            allowed[action] = allowed[action] | {'expected_identity'}
         if action not in allowed or set(request)!=allowed[action]:
             raise ValueError('Unsupported finite helper operation')
+        # Exact finite schemas include the identity of the last loaded status.
         with self.locked() as (context,record):
             state=self.load(writable=action!='status')
             if action=='status':
                 return dict(state=state,catalog=self.catalog.data,context=context,
-                            catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported)
-            if action=='import':
+                            catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,
+                            loaded_identity=self.identity(state,context,None))
+            if 'expected_revision' in request:
+                messages={'import':'importing','preset':'selecting defaults','save':'saving','restore':'saving'}
                 if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
-                    raise ValueError('Draft changed in another session; refresh before importing')
+                    raise ValueError('Draft changed in another session; refresh before '+messages[action])
+            if request['expected_identity'] != self.identity(state,context,None):
+                raise ValueError('Loaded configuration context is stale; refresh before continuing')
+            if action=='import':
                 self.catalog.validate(request['draft'])
                 return dict(draft=request['draft'],changed=digest(request['draft'])!=digest(state['draft']),expected_revision=state['revision'])
             if action=='preset':
-                if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
-                    raise ValueError('Draft changed in another session; refresh before selecting defaults')
                 return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
             if action in ('save','restore'):
-                if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
-                    raise ValueError('Draft changed in another session; refresh before saving')
                 if action=='restore':
                     if not state['previous']:raise ValueError('No previous candidate')
                     draft=state['previous']['draft']

@@ -147,8 +147,18 @@ view target must agree. Unexpected links inside feature storage refuse. The sing
 publishes draft/current/previous together, with fsync and directory fsync. The wider
 configuration tree's ownership/modes remain untouched.
 
-Save and import use expected revision CAS. Reference-default previews also refuse a stale loaded revision. Review binds draft, revision, current candidate,
-catalog, generator version, mode and boot context. Apply regenerates under lock.
+Status returns a deterministic loaded identity binding the saved draft, revision,
+current candidate, catalog revision, generator version and boot context (slot,
+release, generation, operating mode and boot ID). Every subsequent finite helper
+operation requires that identity from the tab's last successful status. Save,
+restore, import and reference-default preparation additionally require integer
+revision CAS. Under Store then feature exclusion, mismatch refuses before draft
+publication, import comparison, preset preparation or candidate generation. Equal
+revisions after generation copy/rollback do not permit writes from the old context.
+Local edits and candidate-mode selection retain the loaded identity; they never
+refresh or rebase it. Explicit reload obtains a new identity and permits explicit
+edits. Review additionally binds its output mode; Apply retains that review check
+and regenerates under lock.
 Disconnect, edits, cancel, Stop/logout and context changes invalidate UI review;
 unknown save acknowledgment requires reload before retry. A prior review cannot
 reapply after a publication. No permission/replay ledger is introduced.
@@ -244,3 +254,21 @@ refuses these currents before generation. Original unchanged positive sensor/ful
 bytes retain their prior passing parser evidence. These are focused implementation
 checks; fresh independent review, installed authentication and physical
 commissioning remain coordinator work.
+
+## Loaded-context F2 repair
+
+Focused regressions reproduce the failed review's revision1 A→B copy and its
+revision3 divergent A/B overwrite using actual current Store/Budget and historical
+Store. Stale Save, restore, import, preset, review and apply refuse with unchanged
+envelope bytes. Boot ID, operating mode, catalog, generator, saved draft and current
+candidate changes also invalidate equal-revision requests. Explicit refresh and
+subsequent edits/import/save remain possible; revision CAS remains mandatory.
+
+The native Chromium journey switches the fixture's actual Store generation while
+the tab retains its loaded status, exercises all stale preparation/write controls,
+then refreshes and explicitly edits/saves/reviews/applies an inactive candidate.
+The shim records that every operation carries the identity from its last successful
+status. This is ordinary content/context consistency, with no nonce, permission
+token or replay ledger. Existing publication, capacity, parser and staging code
+retain their prior evidence; this repair does not establish independent acceptance
+or authenticated installed Cockpit behavior.

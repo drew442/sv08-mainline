@@ -1,7 +1,7 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById(id);
-    let catalog, draft, revision, saved, review, busy = false, epoch = 0, changed = false;
+    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, changed = false;
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { $('notice').textContent = text; };
     const invalidate = () => { review = null; ++epoch; if ($('candidate-review').open) $('candidate-review').close(); };
@@ -16,6 +16,7 @@
     }
     async function rpc(request) {
         if (!authority()) throw new Error('Administrator access is required.');
+        if (request.action !== 'status') request = {...request, expected_identity: loadedIdentity};
         const attempt = epoch;
         const proc = cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_printer_helper.py'], {superuser:'require',err:'message'});
         proc.input(JSON.stringify(request));
@@ -155,7 +156,7 @@
         controls();
     }
     async function load() {
-        invalidate();const result=await rpc({action:'status'});catalog=result.catalog;saved=result.state;revision=saved.revision;draft=copy(saved.draft);changed=false;
+        invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;revision=saved.revision;draft=copy(saved.draft);changed=false;
         if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');draft=null;controls();return;}
         $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
         $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');

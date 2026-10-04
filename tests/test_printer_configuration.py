@@ -203,20 +203,101 @@ class PersistenceTests(unittest.TestCase):
         return SimpleNamespace(f_frsize=4096,f_bsize=4096,f_bavail=1024*1024,f_favail=1000000)
     def tearDown(self):self.tmp.cleanup()
     def status(self):return self.service.request({'action':'status'})['state']
-    def save(self,d,revision=None):return self.service.request(dict(action='save',draft=d,expected_revision=self.status()['revision'] if revision is None else revision))
+    def request(self, request):
+        # Existing same-generation fixtures load current context explicitly;
+        # stale-context regressions below submit their captured status directly.
+        request.setdefault('expected_identity',self.service.request({'action':'status'})['loaded_identity'])
+        return self.service.request(request)
+    def save(self,d,revision=None):return self.request(dict(action='save',draft=d,expected_revision=self.status()['revision'] if revision is None else revision))
+    def activate(self, boot):
+        self.boot_path.write_text(json.dumps(boot))
+        self.view.unlink();self.view.symlink_to(Path(boot['generation'])/'config')
+
+    def assert_stale_operations(self, loaded):
+        path=self.service.directory/'state.json';before=path.read_bytes()
+        requests=[dict(action='save',draft=loaded['state']['draft'],expected_revision=loaded['state']['revision']),
+                  dict(action='restore',expected_revision=loaded['state']['revision']),
+                  dict(action='import',draft=loaded['state']['draft'],expected_revision=loaded['state']['revision']),
+                  dict(action='preset',draft=loaded['state']['draft'],role='main',preset='stepper_x',expected_revision=loaded['state']['revision']),
+                  dict(action='review',mode='sensors'),
+                  dict(action='apply',mode='sensors',review='old-review')]
+        for request in requests:
+            with self.subTest(action=request['action']):
+                request['expected_identity']=loaded['loaded_identity']
+                with patch('sv08_printer_store.generate',side_effect=AssertionError('must refuse before generation')), patch.object(self.c,'apply_preset',side_effect=AssertionError('must refuse before preview')):
+                    with self.assertRaisesRegex(ValueError,'stale'):
+                        self.service.request(request)
+                self.assertEqual(path.read_bytes(),before)
+
+    def test_loaded_context_actual_copy_equal_revision_and_divergence(self):
+        # Exact original reproduction: A revision1 copied by actual Store into B.
+        self.save(sensor_draft());a=copy.deepcopy(self.boot)
+        loaded=self.service.request({'action':'status'})
+        b=self.store.prepare_boot('B','r1');self.activate(b)
+        current=self.service.request({'action':'status'})
+        self.assertEqual(current['state']['revision'],1)
+        self.assertEqual(current['state'],loaded['state'])
+        self.assertNotEqual(current['loaded_identity'],loaded['loaded_identity'])
+        self.assert_stale_operations(loaded)
+        # Explicit refresh permits edits in B, while A remains unchanged.
+        d=sensor_draft();d['devices'][0]['settings']['max_temp']=100
+        self.service.request(dict(action='save',draft=d,expected_revision=1,expected_identity=current['loaded_identity']))
+        self.activate(a);self.assertEqual(self.status(),loaded['state'])
+
+    def test_loaded_context_actual_copy_equal_revision_overwrite(self):
+        # Exact reviewer follow-up: apply in A, copy revision2, diverge to3.
+        self.save(sensor_draft());self.apply();a=copy.deepcopy(self.boot)
+        b=self.store.prepare_boot('B','r1');self.activate(b)
+        d=sensor_draft();d['devices'][0]['settings']['max_temp']=100;self.save(d)
+        self.activate(a);d['devices'][0]['settings']['max_temp']=90;self.save(d)
+        loaded=self.service.request({'action':'status'})
+        self.activate(b);current=self.service.request({'action':'status'})
+        self.assertEqual(loaded['state']['revision'],current['state']['revision'])
+        self.assertEqual(loaded['state']['revision'],3)
+        self.assertEqual(current['state']['draft']['devices'][0]['settings']['max_temp'],100)
+        self.assert_stale_operations(loaded)
+        imported=self.service.request(dict(action='import',draft=loaded['state']['draft'],expected_revision=3,expected_identity=current['loaded_identity']))
+        self.assertTrue(imported['changed'])
+        self.service.request(dict(action='save',draft=imported['draft'],expected_revision=3,expected_identity=current['loaded_identity']))
+        self.assertEqual(self.status()['draft']['devices'][0]['settings']['max_temp'],90)
+        self.activate(a);self.assertEqual(self.status(),loaded['state'])
+
+    def test_loaded_binding_boot_mode_catalog_generator_and_content(self):
+        self.save(sensor_draft());self.apply()
+        for field,value in [('boot_id','next-boot'),('mode','writable')]:
+            loaded=self.service.request({'action':'status'})
+            boot=copy.deepcopy(self.boot);boot[field]=value;self.activate(boot)
+            self.service.request({'action':'status'});self.assert_stale_operations(loaded)
+            self.activate(self.boot)
+        loaded=self.service.request({'action':'status'})
+        with patch.object(self.c,'revision','changed-catalog'):
+            self.assert_stale_operations(loaded)
+        with patch('sv08_printer_store.GENERATOR_VERSION',999):
+            self.assert_stale_operations(loaded)
+        # Content identity also protects equal revision envelope replacements.
+        path=self.service.directory/'state.json';before=path.read_bytes()
+        for mutate in [lambda s:s['draft']['devices'][0]['settings'].__setitem__('max_temp',100),lambda s:s.__setitem__('current',None)]:
+            state=copy.deepcopy(loaded['state']);mutate(state);path.write_text(json.dumps(state))
+            self.assert_stale_operations(loaded);path.write_bytes(before)
+        # Identity never replaces mandatory integer revision CAS or strict schema.
+        for expected in [True,0]:
+            with self.assertRaises(ValueError):self.service.request(dict(action='save',draft=sensor_draft(),expected_revision=expected,expected_identity=loaded['loaded_identity']))
+        with self.assertRaises(ValueError):self.service.request(dict(action='save',draft=sensor_draft(),expected_revision=loaded['state']['revision']))
+        self.assertEqual(path.read_bytes(),before)
+
     def test_two_sessions_stale_import_and_reviewed_replacement(self):
         self.save(sensor_draft());tab_a=copy.deepcopy(self.status())
         # Independent logical session over the actual same generation/locks.
         tab_b=PrinterStore(self.service.store,self.service.boot_path,self.service.config_view,self.c,privileged=lambda:True)
         changed=copy.deepcopy(tab_a['draft']);changed['devices'][0]['settings']['max_temp']=100
-        tab_b.request(dict(action='save',draft=changed,expected_revision=tab_a['revision']))
+        tab_b.request(dict(action='save',draft=changed,expected_revision=tab_a['revision'],expected_identity=tab_b.request({'action':'status'})['loaded_identity']))
         before=self.status()
         with self.assertRaisesRegex(ValueError,'refresh before importing'):
-            self.service.request(dict(action='import',draft=tab_a['draft'],expected_revision=tab_a['revision']))
+            self.request(dict(action='import',draft=tab_a['draft'],expected_revision=tab_a['revision']))
         self.assertEqual(self.status(),before)
         with self.assertRaisesRegex(ValueError,'refresh before saving'):self.save(tab_a['draft'],tab_a['revision'])
         refreshed=self.status()
-        imported=self.service.request(dict(action='import',draft=tab_a['draft'],expected_revision=refreshed['revision']))
+        imported=self.request(dict(action='import',draft=tab_a['draft'],expected_revision=refreshed['revision']))
         self.assertTrue(imported['changed']);self.assertEqual(imported['expected_revision'],refreshed['revision'])
         self.assertEqual(refreshed['draft']['devices'][0]['settings']['max_temp'],100)
         self.save(imported['draft'],refreshed['revision']);self.assertEqual(self.status()['draft']['devices'][0]['settings']['max_temp'],105)
@@ -225,20 +306,20 @@ class PersistenceTests(unittest.TestCase):
 
     def test_preset_request_is_preview_only(self):
         d=empty_draft();d['boards']['main']={'id':'sv08-main'};self.save(d);before=self.status()
-        result=self.service.request(dict(action='preset',draft=d,role='main',preset='stepper_x',expected_revision=before['revision']))
+        result=self.request(dict(action='preset',draft=d,role='main',preset='stepper_x',expected_revision=before['revision']))
         self.assertEqual(self.status(),before);self.assertEqual(result['draft']['devices'][0]['name'],'stepper_x')
         self.save(result['draft'],before['revision']);self.assertNotIn('current_rating_rms',self.status()['draft']['devices'][0]['settings'])
     def apply(self,mode='sensors'):
-        r=self.service.request(dict(action='review',mode=mode));return self.service.request(dict(action='apply',mode=mode,review=r['review']))
+        r=self.request(dict(action='review',mode=mode));return self.request(dict(action='apply',mode=mode,review=r['review']))
     def test_cas_review_previous_restore_ack(self):
         self.save(sensor_draft(),0);self.apply();first=self.status()['current']
         with self.assertRaises(ValueError):self.save(sensor_draft(),0)
-        r=self.service.request(dict(action='review',mode='sensors'));d=sensor_draft();d['devices'][0]['settings']['max_temp']=100;self.save(d)
-        with self.assertRaises(ValueError):self.service.request(dict(action='apply',mode='sensors',review=r['review']))
+        r=self.request(dict(action='review',mode='sensors'));d=sensor_draft();d['devices'][0]['settings']['max_temp']=100;self.save(d)
+        with self.assertRaises(ValueError):self.request(dict(action='apply',mode='sensors',review=r['review']))
         self.apply();state=self.status();self.assertEqual(state['previous'],first)
         # Lost response: actual status reconciles applied identity; old review cannot reapply.
-        with self.assertRaises(ValueError):self.service.request(dict(action='apply',mode='sensors',review=r['review']))
-        self.service.request(dict(action='restore',expected_revision=state['revision']));self.assertEqual(self.status()['draft'],first['draft'])
+        with self.assertRaises(ValueError):self.request(dict(action='apply',mode='sensors',review=r['review']))
+        self.request(dict(action='restore',expected_revision=state['revision']));self.assertEqual(self.status()['draft'],first['draft'])
     def test_no_space_killed_publication_and_corruption(self):
         self.save(sensor_draft());self.apply();path=self.service.directory/'state.json';before=path.read_bytes()
         with patch('sv08_printer_store.atomic_json',side_effect=OSError('ENOSPC')):
@@ -273,7 +354,7 @@ class PersistenceTests(unittest.TestCase):
                 bootfile=self.root/(label+'.json');bootfile.write_text(json.dumps(a));view=self.root/(label+'view');view.symlink_to(Path(a['generation'])/'config')
                 svc=PrinterStore(st,bootfile,view,self.c,privileged=lambda:True)
                 self.assertEqual(svc.request({'action':'status'})['state'],original)
-                svc.request(dict(action='save',draft=sensor_draft(),expected_revision=original['revision']))
+                svc.request(dict(action='save',draft=sensor_draft(),expected_revision=original['revision'],expected_identity=svc.request({'action':'status'})['loaded_identity']))
                 b=st.prepare_boot('B','a');self.assertEqual((Path(a['generation'])/'config/printer-hardware/state.json').read_bytes(),(Path(b['generation'])/'config/printer-hardware/state.json').read_bytes())
                 # A rollback is its preserved generation; no shared/global feature state.
                 self.assertEqual(st.prepare_boot('A','a')['generation'],a['generation'])
@@ -317,10 +398,10 @@ class PersistenceTests(unittest.TestCase):
         for pid in children:self.assertEqual(os.waitpid(pid,0)[1],0)
         self.assertEqual(outcomes.count(b'saved'),1,outcomes)
         self.assertEqual(self.status()['current'],before['current'])
-        review=self.service.request(dict(action='review',mode='sensors'))
+        review=self.request(dict(action='review',mode='sensors'))
         # Boot identity changes between review and apply: ordinary hash is stale.
         boot=copy.deepcopy(self.boot);boot['boot_id']='next-boot';self.boot_path.write_text(json.dumps(boot))
-        with self.assertRaisesRegex(ValueError,'stale'):self.service.request(dict(action='apply',mode='sensors',review=review['review']))
+        with self.assertRaisesRegex(ValueError,'stale'):self.request(dict(action='apply',mode='sensors',review=review['review']))
         self.assertEqual(self.status()['current'],before['current'])
         boot['generation']='/invalid-generation';self.boot_path.write_text(json.dumps(boot))
         with self.assertRaisesRegex(ValueError,'generation'):self.status()
@@ -345,9 +426,9 @@ class PersistenceTests(unittest.TestCase):
         self.service.privileged=lambda:False
         with self.assertRaises(ValueError):self.status()
         self.service.privileged=lambda:True
-        result=self.service.request(dict(action='import',draft=sensor_draft(),expected_revision=before['revision']));self.assertIn('expected_revision',result);self.assertEqual(self.status(),before)
+        result=self.request(dict(action='import',draft=sensor_draft(),expected_revision=before['revision']));self.assertIn('expected_revision',result);self.assertEqual(self.status(),before)
         bad=sensor_draft();bad['devices'][0]['name']='inject\n'
-        with self.assertRaises(ValueError):self.service.request(dict(action='import',draft=bad,expected_revision=before['revision']))
+        with self.assertRaises(ValueError):self.request(dict(action='import',draft=bad,expected_revision=before['revision']))
         with self.store.locked(nonblocking=True):
             with self.assertRaises(ValueError):self.status()
         boot=copy.deepcopy(self.boot);boot['trial']=True;self.boot_path.write_text(json.dumps(boot))
