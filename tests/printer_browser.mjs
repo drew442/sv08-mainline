@@ -27,6 +27,7 @@ try {
  const state=()=>JSON.parse(fs.readFileSync(statepath));
  const screenshot=async name=>{await evaluate('scrollTo(0,0)');const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name+'.png',Buffer.from(r.data,'base64'));};
  const ready=()=>until(`document.querySelector('#printer-boards fieldset') && !document.querySelector('#printer-save').disabled && !document.querySelector('#printer-candidate-review').open`);
+ const reloadDocument=async()=>{const origin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${origin} && window.sv08Session?.available===true && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);};
  const reload=async()=>{await click('#printer-reload');if(await evaluate("!document.querySelector('#printer-reconciliation').hidden")){await send('Page.handleJavaScriptDialog',{accept:true}).catch(()=>{});await click('#printer-reconcile');}await ready();};
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html'});await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
@@ -44,13 +45,13 @@ try {
   assert.equal(await evaluate('document===window.documentIdentity && sv08Session===window.sessionIdentity'),true);
   if(initialBytes)assert.deepEqual(fs.readFileSync(statepath),initialBytes);else assert.equal(fs.existsSync(statepath),false);
   if(from==='overview') {
-   await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
+   await reloadDocument();
    await evaluate('window.documentIdentity=document; window.sessionIdentity=sv08Session');
   }
  }
  // Stop/logout/disconnect invalidate delayed status even if authority is later restored.
  for(const transition of ['stop','logout','disconnect']) {
-  await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
+  await reloadDocument();
   await evaluate('window.fixtureHoldStatus=true');await click('#authorize');await until('window.fixtureStatusWaiting');
   if(transition==='stop')await click('#stop-authorization');else if(transition==='logout')await click('#logout');else await evaluate('window.fixtureDisconnect()');
   await until('!sv08Session.elevated');
@@ -60,7 +61,7 @@ try {
   assert.equal(await evaluate(`document.querySelectorAll('#printer-boards fieldset').length`),0);
   assert.deepEqual(await evaluate('window.fixtureRequests.map(r=>r.request.action)'),['status']);
  }
- await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
+ await reloadDocument();
  await evaluate('window.documentIdentity=document; window.sessionIdentity=sv08Session');
  await click('[data-page=printer]');await click('#authorize');await ready();
  assert.equal(await evaluate('new Set([...document.querySelectorAll("[id]")].map(e=>e.id)).size===document.querySelectorAll("[id]").length'),true);
@@ -96,7 +97,7 @@ try {
  assert.match(await evaluate(`document.querySelector('#printer-preset-preview').textContent`),/physically measured/);
  await click('#printer-add-preset');await until(`document.querySelector('#printer-devices fieldset') && !document.querySelector('#printer-save').disabled`);
  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);assert.equal(state().draft.devices[0].settings.pin,'PC5');
- await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();assert.equal(state().draft.devices[0].name,'bed_sensor');
+ await reloadDocument();await click('#authorize');await ready();assert.equal(state().draft.devices[0].name,'bed_sensor');
  const deviceField=text=>`(()=>{const box=document.querySelector('#printer-devices fieldset');return [...box.querySelectorAll('label')].find(e=>e.firstChild.textContent===${JSON.stringify(text)}).querySelector('input,select');})()`;
  await fieldSet(deviceField('max temp'),105);
  await click('[data-page=overview]');await click('[data-page=printer]');
@@ -251,7 +252,7 @@ try {
  const beforeReloadOrigin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${beforeReloadOrigin} && location.hash==='#printer' && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();
  await evaluate(`document.querySelector('#printer-save').focus()`);await key('Tab');assert.equal(await evaluate(`document.activeElement.id`),'printer-review');
  await evaluate('window.fixtureDisconnect()');await until(`document.querySelector('#printer-save').disabled`);assert.match(await evaluate(`document.querySelector('#session-status').textContent`),/disconnected/);
- await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();await click('#logout');await until(`document.body.dataset.loggedOut==='true'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);
+ await reloadDocument();await click('#authorize');await ready();await click('#logout');await until(`document.body.dataset.loggedOut==='true'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
