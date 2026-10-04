@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "files_checked": 50,
+  "changed_assets": 1,
+  "added_assets": 0,
+  "exact_asset_metadata_and_inventory": true,
+  "unrelated_runtime_catalog_unchanged": true,
+  "saved_configuration_context_unchanged": true,
+  "boot_identity_unchanged": true,
+  "masked_inactive_units_unchanged": true,
+  "root_boot_read_only": true,
+  "live_configuration_absent": true,
+  "before_capacity": {
+    "/": {
+      "read_only": true,
+      "free_bytes": 688250880,
+      "free_inodes": 99451
+    },
+    "/boot": {
+      "read_only": true,
+      "free_bytes": 149522944,
+      "free_inodes": 0
+    },
+    "/data": {
+      "read_only": false,
+      "free_bytes": 2433003520,
+      "free_inodes": 156674
+    }
+  },
+  "after_capacity": {
+    "/": {
+      "read_only": true,
+      "free_bytes": 688246784,
+      "free_inodes": 99451
+    },
+    "/boot": {
+      "read_only": true,
+      "free_bytes": 149522944,
+      "free_inodes": 0
+    },
+    "/data": {
+      "read_only": false,
+      "free_bytes": 2432933888,
+      "free_inodes": 156670
+    }
+  },
+  "source_commit": "4e8eed92ecfc45046610d4b3eaea864d416a1cfc",
+  "packet_sha256": "f3e9aed7d143304e68f1db93731f435b5470e41b7c232a358982591dff1f66bf"
+}

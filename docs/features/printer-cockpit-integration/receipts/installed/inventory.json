@@ -1,0 +1,105 @@
+{
+  "directories": {
+    "/usr/share/cockpit/sv08-host": {
+      "mode": 493,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer": {
+      "mode": 493,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "entries": {
+    "/usr/share/cockpit/sv08-host": {
+      "index.html": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "app.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "style.css": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "session.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "navigation.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "upload.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "manifest.json": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      }
+    },
+    "/usr/share/cockpit/sv08-printer": {
+      "index.html": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "redirect.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "app.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "style.css": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "session.js": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "panel.html": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      },
+      "manifest.json": {
+        "mode": 420,
+        "uid": 0,
+        "gid": 0
+      }
+    }
+  },
+  "capacity": {
+    "/": {
+      "free_bytes": 688246784,
+      "free_inodes": 99451,
+      "required_bytes": 536870912,
+      "required_inodes": 128
+    },
+    "/data": {
+      "free_bytes": 2432933888,
+      "free_inodes": 156670,
+      "required_bytes": 805306368,
+      "required_inodes": 128
+    }
+  },
+  "passed": true
+}

@@ -1,6 +1,7 @@
 # Shared Cockpit printer configuration panel
 
-Date: 2026-10-04. Status: approved; implementation and installed acceptance pending.
+Date: 2026-10-04. Status: implemented and installed on test-sv08-01. Independent acceptance is
+tracked in the [feature record](../features/printer-cockpit-integration/record.json).
 
 The [owner correction](../features/printer-cockpit-integration/owner-request.md)
 requires Printer hardware to behave as a section of the existing Cockpit

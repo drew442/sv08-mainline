@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "authenticated": true,
+  "hardware_profile": "test-sv08-01",
+  "checks": [
+    {
+      "headers": 1,
+      "sessions": 1,
+      "authorization": 1,
+      "frames": 0,
+      "uniqueIDs": true
+    },
+    "single document, dirty host/printer drafts retained and Back/Forward",
+    "host header status settled after navigation",
+    {
+      "width": 1440,
+      "height": 900,
+      "header": "rgb(20, 43, 67)",
+      "active": "page",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "height": 600,
+      "header": "rgb(20, 43, 67)",
+      "active": "page",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "header": "rgb(20, 43, 67)",
+      "active": "page",
+      "overflow": false
+    },
+    "saved configuration unchanged through draft navigation",
+    "old bookmark redirects into shared shell, saved state unchanged"
+  ],
+  "configuration_writes": false,
+  "outputs_activated": false
+}

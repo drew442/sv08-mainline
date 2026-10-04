@@ -3,9 +3,11 @@
 Independent software and installed delivery verification passed on test-sv08-01;
 see the [installed evidence](../features/printer-component-configuration/installed-evidence.md).
 The workflow creates inactive candidates. No board combination is certified compatible.
-The separate `sv08-printer` Cockpit package uses the selected Cockpit 337 base1
-API and the existing session authorization behavior. The host shell has one ordinary
-navigation link. Installed authenticated second-package navigation passed.
+The internal `sv08-printer` asset/helper package uses the selected Cockpit 337 base1
+API. Its panel is composed into the shared host shell with one sidebar, header and
+authorization session; section navigation retains local drafts. The old separate URL
+redirects into this shell. See [shared-panel design](printer-cockpit-panel.md) and
+[installed integration evidence](../features/printer-cockpit-integration/installed-evidence.md).
 
 Choose board references, enter each private MCU transport identity, acknowledge
 its provisional status, then choose a human-readable **Documented component**.
@@ -181,9 +183,11 @@ The production768MiB floor is independently asserted to refuse165MiB capacity.
 `stage_printer_ui.py` defaults to dry-run against a reviewed root and exact supplied
 hash/mode/uid/gid file and directory closure. Imports are traced with Python AST
 through the actual existing Store, so current Budget is required only when that
-Store imports it. No imported helper is refreshed. It adds only the new package/catalog/helper and the one navigation
-line, preserving existing Shell and helper closure. Its restoration checks all
-afterimages before restoring. Use it after host/core staging on a fresh root, or
+Store imports it. No imported helper is refreshed. Fresh composition adds the package/catalog/helper
+and compiles the printer panel into the existing Shell; historical overlays use exact
+finite UI transformations while preserving helper closure. Supported staging and
+restoration share root exclusion and check file/directory metadata and membership
+before mutation. Its restoration checks all afterimages before restoring. Use it after host/core staging on a fresh root, or
 against the captured historical installed closure for an overlay. It does not
 install or activate. Recovery/diagnostic assemblies gain nothing automatically.
 `stage_admin_ui.py` permits only the additional named Cockpit package; its existing

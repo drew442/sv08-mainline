@@ -1,0 +1,103 @@
+{
+  "source_commit": "4e8eed92ecfc45046610d4b3eaea864d416a1cfc",
+  "ui_assets": {
+    "/usr/share/cockpit/sv08-host/app.js": {
+      "sha256": "b6087b5c504625b02efed6bf48c4d3f65742c117cc732fb4cce829f7602ac9b7",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "e4df68dce86fbc8224323533ebaa46ec6c1f1d91486efa9b82a8315724536cea",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/manifest.json": {
+      "sha256": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/navigation.js": {
+      "sha256": "04a45b4d2b39782303f1c30c201fbf39662b76c79d3abcc26b51a60650e3282b",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/session.js": {
+      "sha256": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/style.css": {
+      "sha256": "432eaeace1b245fd86d0242258973f46d5d0e7bc89ea11856b056c3192702a99",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/upload.js": {
+      "sha256": "dc2dfdbd3837d3afc3e0eda8a2f24113904336b54c0a52be5896425bd93b4b9a",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "992569b53168b37d3231114674ffc032a0885ca2785a7f7cc4b882488680a0dd",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/index.html": {
+      "sha256": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/manifest.json": {
+      "sha256": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "eaf489554b665d4c3387b597501431d3d8643f2228de413246d385e57e582ece",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/redirect.js": {
+      "sha256": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/session.js": {
+      "sha256": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "c2c829165677abaeef046cdd370cd9d0113eab13dc465eaedd3acddffce0c6b5",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "ui_asset_count": 14,
+  "checked_closure_files": 50,
+  "first_overlay_bytes": 69303,
+  "followup_printer_app_bytes": 20632,
+  "followup_packet_sha256": "f3e9aed7d143304e68f1db93731f435b5470e41b7c232a358982591dff1f66bf",
+  "followup_script_sha256": "add426b8d5a83bc4bc261e4fa8afcc17e4ed2475573df1b27bf8a36a1332f522",
+  "first_browser_attempt": {
+    "passed": false,
+    "error": "Timed out: configuration operation",
+    "checks": []
+  },
+  "restarted": false,
+  "configuration_writes": false,
+  "outputs_activated": false
+}

@@ -1,0 +1,19 @@
+{
+  "installation-r2/execution.json": "2eb12b2bb708370965a503b8056484819fd249f8856eeaad9c7d71493889a4d0",
+  "installation-r2/bound-dry-run.json": "e301cddf470792cbecd0eaffd5cf94fbdb329db3e1d790b5f65fdee09108f590",
+  "installation-r2/installed-browser-settled.mjs": "71f2b10c396621ae83d0affa36c9341d3c57ed644712b035c218ed09f5d56ee0",
+  "installation-r2/run-settled.py": "cf826d9e6728d1b37ca67c40da4b01e82bc448bdfec1caf6ee61e180705a53c3",
+  "installation-r2/installed-browser-settled/result.json": "4fb79ec7356cdd6ca2f11730cb8c8b8e9dd35ec20ae79432f8185ab7cae9c9df",
+  "installation-r2/postcheck-final.json": "b6e767ad6f4e266fffbb46f401decc7d18b5a659e7406efcbc19b612271793f5",
+  "installation-r2/inventory-final.json": "99860b9948013a042a6dd5486b4c6ab0bbeed6d9a930a5d82df8584575d02089",
+  "installation-r2/check-installed-final.py": "20bc8b70a629346d45955852aa7a0caf1473b5f2bef6abfba3c27a6f8a8dfa8a",
+  "installation-r2/check-inventory.py": "a7b9dfffbbc2c5c576fde5f1e45ad22d0459d14b2bc8f4105a13b629df750f85",
+  "installation-r2/target-after-settled.json": "0707ab3f8b32a48547dadfe9e40a78126cafc9c39a994cd2b01847679d7e271a",
+  "navigation-review/final.md": "1a7bf78e7ec3948c57243ca25c364f57744a358a4df614126ae656bada0c9666",
+  "navigation-review/runtime.json": "39acdf595741e00606f955f187c4250f5455d9305c589bc61d4e120ccefe9e7c",
+  "action-review-r2/final.md": "22474b3caead42731a43d23544635df1495d44993a9395e953d9d4d710658017",
+  "action-review-r2/runtime.json": "4acbcea5dae3ad8167e1aaff1fd1068f4bb912206947dacdb4640d5b970f76ee",
+  "installation-r2/installed-browser-settled/integrated-1024.png": "edee33a2f4ee44c382a77e77d4c88389d7cab3cb57912f75af52702142d5019e",
+  "installation-r2/installed-browser-settled/integrated-1440.png": "ce448b508d04c7779d3da6b0fdf154761a5d169d02f847760608ccf891bf433e",
+  "installation-r2/installed-browser-settled/integrated-390.png": "d9a47a90b289e32464d891d482c9ab47e9f6d36cfc66fa6e1e1c36503b644ae3"
+}
