@@ -137,10 +137,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "5e4a1d6636ce4481893b3fa1ab0a8cbd",
+        "session": "printer-components-software-f1-20261004"
+      },
       "repeats": 0,
       "resumption": "Repair independently reproduced stale-import CAS bypass, pinned TMC2209 software-current bound and source-qualified board/component presets; preserve cbf793a and original review, then reverify.",
-      "status": "pending",
+      "status": "running",
       "title": "Deliver component catalog, configuration backend and Cockpit page",
       "verification": null
     },
