@@ -1,0 +1,6 @@
+{
+  "source_commit": "4c3f9cc1b864ab05da1e32f2bc8fc551b5445dc2",
+  "command": "python3 -m unittest discover -s tests -p test_stage*ui.py",
+  "returncode": 0,
+  "output": ".............................\n----------------------------------------------------------------------\nRan 29 tests in 8.380s\n\nOK\n"
+}

@@ -3,7 +3,7 @@
 2026-10-04. Tested code commit `e7a81479c07f56a4bd06bf24fd12a4e1e63d9844`.
 This evidence-only commit leaves that executable tree unchanged.
 The original failed delivery and approval interpretation are preserved in
-[review-repair.md](review-repair.md). Fresh independent acceptance is required.
+[review-repair.md](review-repair.md). The later inventory repair below supersedes staging acceptance from this candidate.
 
 ## Executed checks
 
@@ -66,3 +66,24 @@ preserves that attempt. `candidate-check-r3` is the passing final run. The worke
 browser startup failed private-directory ancestry; the coordinator used its assigned
 private cache fixture for the actual successful run. Original review failures remain
 in Git history. No test result was relabeled or threshold relaxed.
+
+## Final existing-directory inventory repair
+
+Executed code commit `4c3f9cc` adds directory membership validation to the snapshot
+checks, including dry-run admission and existing package directories. Only the
+operation's explicitly named temporary is allowed during replacement.
+[All 29 focused tests](receipts/inventory/tests.json) pass. Eighteen fresh/historical
+cases add a file, directory or link before staging, normal restoration or interrupted
+restoration; each refuses and verifies the entire tree remains unchanged. Existing
+lock, metadata, interruption and host-refresh tests remain passing. The existing
+stale-temporary test accepts the new earlier inventory error and still checks no
+mutation; only its error-message match changed.
+
+[Final historical projection](receipts/inventory/historical-plan-r1-complete.json)
+and [restoration result](receipts/inventory/historical-result-r1.json) pass on the
+exact public installed preimages. [Browser reuse](receipts/inventory/browser-reuse.json)
+records byte-for-byte unchanged UI/runtime/browser fixture since the actual passing
+Chromium run at `e7a8147`. No browser rerun is claimed or needed for this packaging-only
+repair. The second failed review is preserved in Git history at `69bab32`; it
+accepted integration/lifecycle and capacity accounting but found this inventory gap.
+Fresh independent verification remains required before installation.

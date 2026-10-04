@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "historical_app_preserved_outside_transform": true,
+  "full_restore": true,
+  "afterimage_drift_refused_without_mutation": true,
+  "interrupted_entry_recovered": true,
+  "metadata": "Public installed file ownership is root:root; offline copy ownership is worker uid/gid, explicitly not installed metadata evidence. Directory metadata from offline fixture, not supplied device metadata.",
+  "installed_backend": "Unchanged accepted component source used to populate fixture only; actual device closure coordinator-owned.",
+  "payload_bytes": 296374,
+  "peak_blocks_4096": 164,
+  "added_inodes": 3
+}
