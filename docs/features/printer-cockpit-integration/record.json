@@ -74,10 +74,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "91beabae27c648e1b3cdb2982fe5e33c",
+        "session": "printer-integration-20261004-repair"
+      },
       "repeats": 0,
       "resumption": "Repair reproduced staging concurrency and dirty reconciliation defects; add factory storage accounting. Preserve original candidate and failed review.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify shared Cockpit panel",
       "verification": null
     },
