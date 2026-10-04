@@ -1,0 +1,78 @@
+{
+  "format_version": 1,
+  "id": "printer-cockpit-integration",
+  "kind": "improvement",
+  "title": "Integrate printer configuration into the shared Cockpit interface",
+  "author": "root/coordinator with independent project planner",
+  "created": "2026-10-04",
+  "priority": 1,
+  "proposal": "docs/features/printer-cockpit-integration/proposal.md",
+  "requirements": [
+    "docs/features/printer-cockpit-integration/owner-request.md",
+    "docs/decisions/0012-cockpit-session-integration.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "checks": [
+    {
+      "id": "integration",
+      "description": "Single shared shell, navigation, styling, routes and dirty draft retention",
+      "environment": "offline"
+    },
+    {
+      "id": "lifecycle",
+      "description": "Shared session, review invalidation and host/printer controller isolation",
+      "environment": "offline"
+    },
+    {
+      "id": "staging",
+      "description": "Exact fresh/historical composition, preservation and restoration",
+      "environment": "offline"
+    },
+    {
+      "id": "installed",
+      "description": "Actual authenticated installed integrated interface and unchanged configuration",
+      "environment": "hardware"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "software",
+      "title": "Implement and verify shared Cockpit panel",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "integration",
+        "lifecycle",
+        "staging"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    },
+    {
+      "id": "installed",
+      "title": "Install and verify integrated Cockpit interface",
+      "status": "pending",
+      "environment": "hardware",
+      "depends_on": [
+        "printer-cockpit-integration:software"
+      ],
+      "checks": [
+        "installed"
+      ],
+      "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
