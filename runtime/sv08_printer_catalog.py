@@ -67,8 +67,9 @@ class Catalog:
         if set(self.data['kinds']) != {'sensor','input','probe','fan','bed','motor','extruder'}:
             raise ValueError('New device kinds require a generator extension')
         expected_fields={'sensor': {'pin': 'adc', 'curve': 'curve', 'pullup_resistor': 'positive', 'min_temp': 'number', 'max_temp': 'number'}, 'input': {'pin': 'input', 'invert': 'boolean', 'digital_pullup': 'boolean'}, 'probe': {'pin': 'probe', 'invert': 'boolean', 'digital_pullup': 'boolean', 'x_offset': 'number', 'y_offset': 'number', 'z_offset': 'number'}, 'fan': {'pin': 'fan', 'invert': 'boolean', 'max_power': 'fraction'}, 'bed': {'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive'}, 'motor': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'position_min': 'number', 'position_max': 'number', 'position_endstop': 'number', 'homing_speed': 'positive', 'endstop_pin': 'input', 'endstop_invert': 'boolean', 'endstop_pullup': 'boolean'}, 'extruder': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive', 'nozzle_diameter': 'positive', 'filament_diameter': 'positive', 'min_extrude_temp': 'number'}}
+        for kind in ('motor','extruder'):expected_fields[kind]['gear_ratio']='ratio'
         if self.data['kinds'] != expected_fields:raise ValueError('Catalog field changes require a generator extension')
-        types={'adc','heater','fan','probe','input','step','dir','enable','uart','motor','curve','boolean','name','control','positive','number','fraction','integer','address'}
+        types={'adc','heater','fan','probe','input','step','dir','enable','uart','motor','curve','boolean','name','control','positive','number','fraction','integer','address','ratio'}
         for fields in self.data['kinds'].values():
             if not isinstance(fields,dict) or not fields or any(not NAME.fullmatch(k) or t not in types for k,t in fields.items()):
                 raise ValueError('Invalid catalog field schema')
@@ -120,6 +121,50 @@ class Catalog:
                 for value in c['limits']:self.number(value,'number')
                 if c['limits'][0]>=c['limits'][1]:raise ValueError('Invalid component limits')
         if not set(factory)<=ids:raise ValueError('Factory DEFAULT definitions are required')
+        # Existing kinds may acquire data-only reference bundles. Validate the
+        # same bounded typed draft and exclusive resources as user-entered data.
+        self.boards = {b['id']: b for b in self.data['boards']}
+        self.curves = {c['id']: c for c in self.data['curves']}
+        self.kinds = self.data['kinds']
+        for board in self.boards.values():
+            preset_ids = set()
+            if not isinstance(board.get('presets',[]),list) or len(board.get('presets',[]))>64:
+                raise ValueError('At most 64 declarative reference presets per board')
+            for preset in board.get('presets', []):
+                keys(preset, ('id','label','notes','devices'), ('id','label','notes','devices'))
+                if not isinstance(preset['id'],str) or not NAME.fullmatch(preset['id']) or preset['id'] in preset_ids:
+                    raise ValueError('Invalid or duplicate reference preset')
+                preset_ids.add(preset['id'])
+                if not all(isinstance(preset[k],str) and 0 < len(preset[k]) <= 2000 for k in ('label','notes')):
+                    raise ValueError('Reference preset needs bounded labels and uncertainty notes')
+                if not isinstance(preset['devices'],list) or not 1 <= len(preset['devices']) <= 64:
+                    raise ValueError('Invalid preset dependency bundle')
+                for device in preset['devices']:
+                    keys(device, ('name','kind','settings','sources'), ('name','kind','settings','sources'))
+                    if device['kind'] not in self.kinds or not isinstance(device['sources'],dict) or set(device['sources']) != set(device['settings']):
+                        raise ValueError('Every reference default needs field provenance')
+                    if 'current_rating_rms' in device['settings'] or 'z_offset' in device['settings']:
+                        raise ValueError('Physical motor rating and calibrated probe offset cannot be reference defaults')
+                    for source in device['sources'].values():
+                        self.source({**board['source'], **source})
+                        if type(source.get('line')) is not int or source['line'] < 1 or not {'option','section','value','transform'} <= set(source):
+                            raise ValueError('Reference defaults need exact source option/line and transformation')
+                        if source['transform'] not in ('number','pin','invert','pullup','curve','text','software-default','connector','association'):
+                            raise ValueError('Unsupported reference default transformation')
+                self.apply_preset(dict(format_version=1,boards={board['role']:{'id':board['id']}},devices=[],geometry={}), board['role'], preset['id'])
+
+    def apply_preset(self, draft, role, preset_id):
+        self.validate(draft)
+        board = self.board(draft, role)
+        preset = next((p for p in board.get('presets',[]) if p['id'] == preset_id), None)
+        if preset is None:
+            raise ValueError('Unknown reference preset for selected board')
+        result = strict_json(encoded(draft))
+        # Append atomically; do not overwrite, silently rename or merge a sensor
+        # dependency with an existing user selection. Validation refuses collisions.
+        result['devices'] += [dict(name=d['name'],kind=d['kind'],board=role,settings=strict_json(encoded(d['settings']))) for d in preset['devices']]
+        self.validate(result)
+        return result
 
     @staticmethod
     def source(source):
@@ -205,6 +250,9 @@ class Catalog:
                 elif typ == 'curve':
                     if value not in self.curves:
                         raise ValueError('Unknown temperature curve')
+                elif typ == 'ratio':
+                    if not isinstance(value,str) or len(value)>120 or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)?:[0-9]+(?:\.[0-9]+)?(?:,[0-9]+(?:\.[0-9]+)?:[0-9]+(?:\.[0-9]+)?)*',value) or any(float(n)<=0 for pair in value.split(',') for n in pair.split(':')):
+                        raise ValueError('Gear ratio needs positive numeric upstream pairs')
                 elif typ == 'boolean':
                     if type(value) is not bool:
                         raise ValueError('Polarity and digital pull-up need explicit Boolean values')
@@ -228,6 +276,10 @@ class Catalog:
                     raise ValueError('Temperatures exceed documented component limits')
             if 'run_current' in settings and 'current_rating_rms' in settings and settings['run_current'] > settings['current_rating_rms']:
                 raise ValueError('RMS driver current exceeds owner-entered motor RMS rating')
+            # Pinned tmc2209 selects tmc2130.TMCCurrentHelper (MAX_CURRENT).
+            # A software parser limit, never a physical safe-current rating.
+            if settings.get('run_current', 0) > 2.000:
+                raise ValueError(name + '.run_current: pinned TMC2209 software maximum is 2.000 A; physical rating remains unverified')
             if 'position_min' in settings and 'position_max' in settings and settings['position_min'] >= settings['position_max']:
                 raise ValueError('Axis minimum must be below maximum')
         heater_sensors = set()

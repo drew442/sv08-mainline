@@ -6,9 +6,9 @@ import assert from 'node:assert/strict';
 const [chrome,fixture,output]=process.argv.slice(2);
 const {url}=JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url,/^http:\/\/127\.0\.0\.1:\d+$/);
-fs.mkdirSync(output);const profile=output+'/profile',log=fs.openSync(output+'/browser.log','w');
+fs.mkdirSync(output);const profile=fs.mkdtempSync('/dev/shm/sv08-printer-repair-f1-');fs.chmodSync(profile,0o700);const log=fs.openSync(output+'/browser.log','w');
 const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
-let socket;
+let socket,secondSocket,secondTarget;
 try {
  let port;
  for(let i=0;i<100;i++){try{port=fs.readFileSync(profile+'/DevToolsActivePort','utf8').split('\n')[0];break;}catch{await delay(100);}}
@@ -37,12 +37,14 @@ try {
  const boardField=(text)=>`(()=>{const box=document.querySelector('#boards fieldset');return [...box.querySelectorAll('label')].find(e=>e.firstChild.textContent===${JSON.stringify(text)}).querySelector('input,select');})()`;
  const fieldSet=async(expr,value)=>evaluate(`(()=>{const e=${expr};e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  await fieldSet(boardField('Transport'),'serial');await fieldSet(boardField('Private MCU identity'),'/dev/null');await fieldSet(boardField('Use this reference provisionally'),'true');
- await set('#device-kind','sensor');await set('#device-name','bed_check');await click('#add');
- await click('#save');await ready();assert.equal(state().draft.devices[0].settings.pin,undefined);
- await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();assert.equal(state().draft.devices[0].name,'bed_check');
+ await set('#device-preset','bed_sensor');
+ assert.match(await evaluate(`document.querySelector('#preset-preview').textContent`),/PC5/);
+ assert.match(await evaluate(`document.querySelector('#preset-preview').textContent`),/physically measured/);
+ await click('#add-preset');await until(`document.querySelector('#devices fieldset') && !document.querySelector('#save').disabled`);
+ await click('#save');await ready();assert.equal(state().draft.devices[0].settings.pin,'PC5');
+ await send('Page.reload');await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();assert.equal(state().draft.devices[0].name,'bed_sensor');
  const deviceField=text=>`(()=>{const box=document.querySelector('#devices fieldset');return [...box.querySelectorAll('label')].find(e=>e.firstChild.textContent===${JSON.stringify(text)}).querySelector('input,select');})()`;
- await fieldSet(deviceField('Connection / pin'),'PC5');await fieldSet(deviceField('curve'),'sovol-bed');
- await click('#devices fieldset button:last-child');await fieldSet(deviceField('min temp'),5);await fieldSet(deviceField('max temp'),105);
+ await fieldSet(deviceField('max temp'),105);
  assert.equal(await evaluate(`document.querySelector('#review').disabled`),true);
  await click('#save');await ready();assert.equal(state().draft.devices[0].settings.pullup_resistor,4700);
  assert.match(await evaluate(`document.querySelector('#devices').textContent`),/PC5/);
@@ -55,12 +57,32 @@ try {
  // Default focus and real Escape cancellation; no state publication.
  let before=state().revision;await click('#review');await until(`document.querySelector('#candidate-review').open`);
  assert.equal(await evaluate(`document.activeElement.id`),'cancel-review');await key('Escape');assert.equal(state().revision,before);
- await click('#review');await until(`document.querySelector('#candidate-review').open`);await click('#apply');await ready();assert.equal(state().current.mode,'sensors');assert.match(state().current.text,/\[temperature_sensor bed_check\]/);
+ await click('#review');await until(`document.querySelector('#candidate-review').open`);await click('#apply');await ready();assert.equal(state().current.mode,'sensors');assert.match(state().current.text,/\[temperature_sensor bed_sensor\]/);
  // Board change cancel preserves settings; confirmation clears only affected assignments.
  await set('#boards fieldset:nth-child(1) select','octopus-v1.1-non-pro');await key('Escape');assert.equal(await evaluate(`document.querySelector('#boards select').value`),'sv08-main');
  // Import explicit before/after comparison and cancellation. Private data stays in-memory.
  const imported=structuredClone(state().draft);imported.devices[0].settings.max_temp=100;
  const injectFile=async d=>evaluate(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(JSON.stringify(d))}],'draft.json',{type:'application/json'}));const e=document.querySelector('#import');e.files=dt.files;e.dispatchEvent(new Event('change'));})()`);
+ // Real tab B loads A's revision, edits its native form and saves independently.
+ const staleA=structuredClone(state().draft),revisionA=state().revision;
+ await injectFile(staleA);await until(`!document.querySelector('#import-diff').hidden && !document.querySelector('#save').disabled`);assert.match(await evaluate(`document.querySelector('#import-diff').textContent`),/No changes/); // prior valid comparison must disappear on stale refusal
+ secondTarget=await(await fetch(`http://127.0.0.1:${port}/json/new?${encodeURIComponent(url+'/cockpit/@localhost/sv08-printer/index.html')}`,{method:'PUT'})).json();
+ secondSocket=new WebSocket(secondTarget.webSocketDebuggerUrl);await new Promise((resolve,reject)=>{secondSocket.onopen=resolve;secondSocket.onerror=reject;});
+ let bid=0;const bpending=new Map();
+ const sendB=(method,params={})=>new Promise((resolve,reject)=>{const id=++bid;bpending.set(id,{resolve,reject});secondSocket.send(JSON.stringify({id,method,params}));});
+ secondSocket.onmessage=({data})=>{const r=JSON.parse(data);if(r.id){const p=bpending.get(r.id);bpending.delete(r.id);r.error?p.reject(r.error):p.resolve(r.result);}};
+ const evalB=async expression=>{const r=await sendB('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+ const untilB=async expression=>{for(let i=0;i<100;i++){if(await evalB(expression))return;await delay(100);}throw Error('Tab B timeout '+expression);};
+ await untilB(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await evalB(`document.querySelector('#authorize').click()`);await untilB(`document.querySelector('#devices fieldset') && !document.querySelector('#save').disabled`);
+ await evalB(`(()=>{const e=[...document.querySelector('#devices fieldset').querySelectorAll('label')].find(e=>e.firstChild.textContent==='max temp').querySelector('input');e.value=100;e.dispatchEvent(new Event('change'));document.querySelector('#save').click();})()`);
+ await untilB(`document.querySelector('#notice').textContent==='Draft saved'`);assert.equal(state().draft.devices[0].settings.max_temp,100);assert.equal(state().revision,revisionA+1);
+ await injectFile(staleA);await until(`document.querySelector('#notice').textContent.includes('refresh before importing') && !document.querySelector('#save').disabled`);
+ assert.equal(await evaluate(`document.querySelector('#import-diff').hidden`),true);assert.equal(state().revision,revisionA+1);assert.equal(state().draft.devices[0].settings.max_temp,100);
+ await click('#save');await until(`document.querySelector('#notice').textContent.includes('refresh before saving')`);assert.equal(state().revision,revisionA+1);
+ await click('#reload');await ready();await injectFile(staleA);await until(`!document.querySelector('#import-diff').hidden && !document.querySelector('#save').disabled`);
+ assert.match(await evaluate(`document.querySelector('#import-diff').textContent`),/100/);assert.match(await evaluate(`document.querySelector('#import-diff').textContent`),/105/);assert.doesNotMatch(await evaluate(`document.querySelector('#import-diff').textContent`),/No changes/);
+ await click('#save');await ready();assert.equal(state().draft.devices[0].settings.max_temp,105);secondSocket.close();secondSocket=null;
+ await fetch(`http://127.0.0.1:${port}/json/close/${secondTarget.id}`);secondTarget=null;
  await injectFile(imported);await until(`!document.querySelector('#import-diff').hidden && !document.querySelector('#save').disabled`);
  assert.match(await evaluate(`document.querySelector('#import-diff').textContent`),/max temp/);assert.match(await evaluate(`document.querySelector('#import-diff').textContent`),/105/);assert.match(await evaluate(`document.querySelector('#import-diff').textContent`),/100/);
  assert.equal(state().draft.devices[0].settings.max_temp,105);await click('#cancel-import');assert.equal(state().draft.devices[0].settings.max_temp,105);
@@ -73,6 +95,14 @@ try {
  await send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:output});await click('#export');await click('#export-config');
  for(let i=0;i<100 && (!fs.existsSync(output+'/printer-hardware-draft.json')||!fs.existsSync(output+'/inactive-candidate.cfg'));i++)await delay(100);
  assert.equal(JSON.parse(fs.readFileSync(output+'/printer-hardware-draft.json')).devices[0].settings.max_temp,105);assert.match(fs.readFileSync(output+'/inactive-candidate.cfg','utf8'),/kinematics: none/);
+ // Friendly X motor / TMC2209 defaults require no raw section-name entry.
+ await set('#device-preset','stepper_x');assert.match(await evaluate(`document.querySelector('#device-preset').selectedOptions[0].textContent`),/X axis motor/);
+ await click('#add-preset');await until(`document.querySelectorAll('#devices fieldset').length===2 && !document.querySelector('#save').disabled`);
+ await click('#save');await ready();const motor=state().draft.devices.find(d=>d.kind==='motor');
+ assert.equal(motor.name,'stepper_x');assert.equal(motor.settings.microsteps,16);assert.equal(motor.settings.rotation_distance,40);assert.equal(motor.settings.uart_address,3);assert.equal(motor.settings.run_current,1.5);assert.equal(motor.settings.current_rating_rms,undefined);
+ before=state().revision;await click('#add-preset');await until(`document.querySelector('#notice').textContent.includes('unique') && !document.querySelector('#save').disabled`);assert.equal(state().revision,before);assert.equal(state().draft.devices.length,2);
+ await set('#mode','full');await click('#review');await until(`document.querySelector('#candidate-review').open`);assert.match(await evaluate(`document.querySelector('#review-detail').textContent`),/current_rating_rms/);assert.equal(await evaluate(`document.querySelector('#apply').disabled`),true);await click('#cancel-review');
+ await click('#devices fieldset:nth-child(2) button');await click('#save');await ready();await set('#mode','sensors');
  // Authority loss cancels review, and backend refuses direct mutations too.
  await click('#review');await until(`document.querySelector('#candidate-review').open`);await click('#stop-authorization');await until(`!document.querySelector('#candidate-review').open && document.querySelector('#save').disabled`);
  before=state().revision;
@@ -86,6 +116,6 @@ try {
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900]],second_package_link:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900]],second_package_link:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
-} finally {socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}
+} finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes}));assert(profileBytes<64*1024*1024);fs.rmSync(profile,{recursive:true,force:true});}

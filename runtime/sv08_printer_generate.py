@@ -1,7 +1,7 @@
 """Deterministic inactive configs. Sensor mode is a dedicated positive allowlist."""
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 
-GENERATOR_VERSION = 2
+GENERATOR_VERSION = 3
 
 
 def generate(catalog, draft, mode):
@@ -107,6 +107,7 @@ def generate(catalog, draft, mode):
                 motor=catalog.board(draft,d['board'])['motors'][s['connector']]
                 values={k+'_pin':('!' if s.get('invert_'+k) else '')+qualified(d['board'],motor[k]) for k in ('step','dir','enable')}
                 values.update({k:s[k] for k in ('microsteps','rotation_distance')})
+                if 'gear_ratio' in s:values['gear_ratio']=s['gear_ratio']
                 if name in ('stepper_x','stepper_y','stepper_z'):
                     values.update({k:s[k] for k in ('position_min','position_max','homing_speed')})
                     if name=='stepper_z':values['endstop_pin']='probe:z_virtual_endstop'
@@ -121,7 +122,7 @@ def generate(catalog, draft, mode):
             elif kind=='probe':section('probe',{**{'pin':digital(d)},**{k:s[k] for k in ('x_offset','y_offset','z_offset')}})
     text='\n'.join(lines)+'\n'
     if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
-    warnings=['Reference configuration only. Installed match and physical limits remain unverified.', 'Candidate saved separately; commissioning and activation require their own reviewed steps.']
+    warnings=['Reference configuration only. Installed match and physical limits remain unverified.', 'Configured polarity is not measured polarity. TMC2209 2.000 A is a pinned software maximum, not a safe electrical rating.', 'Candidate saved separately; commissioning and activation require their own reviewed steps.']
     if mode == 'full':
         warnings.append('Before H06, compose once with the separately reviewed test-sv08-01-print-controls.cfg after the persistent gcodes directory exists. Controls and activation remain separate.')
     warnings += [catalog.curves[d['settings']['curve']]['origin'] for d in sensors.values()]

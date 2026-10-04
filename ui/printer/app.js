@@ -8,7 +8,8 @@
     const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
     function controls() {
-        for (const id of ['save','review','restore','add','apply','import']) $(id).disabled = busy || !authority() || (!draft && id !== 'import');
+        for (const id of ['save','review','restore','add','add-preset','apply','import']) $(id).disabled = busy || !authority() || (!draft && id !== 'import');
+        $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= changed || !draft;
         $('apply').disabled ||= !review?.complete;
         $('restore').disabled ||= !saved?.previous;
@@ -41,10 +42,33 @@
         let control;
         if (options) control=select([['','Unknown / choose explicitly'],...options],value,onchange);
         else if(type==='boolean') control=select([['','Unknown / choose explicitly'],['true','Yes'],['false','No']],value===undefined?'':String(value),v=>onchange(v===''?undefined:v==='true'));
-        else {control=el('input');control.type=type==='text'?'text':'number';if(control.type==='number')control.step='any';control.value=value??'';control.addEventListener('change',()=>onchange(control.value===''?undefined:control.type==='number'?Number(control.value):control.value));}
+        else {control=el('input');control.type=['text','ratio'].includes(type)?'text':'number';if(control.type==='number')control.step='any';control.value=value??'';control.addEventListener('change',()=>onchange(control.value===''?undefined:control.type==='number'?Number(control.value):control.value));}
         return label(text,control);
     }
     function boardData(role) {return catalog.boards.find(b=>b.id===draft.boards[role]?.id);}
+    function presetPreview() {
+        const preset=boardData($('device-board').value)?.presets?.find(p=>p.id===$('device-preset').value);
+        const box=$('preset-preview');box.replaceChildren();
+        if(preset){
+            box.append(el('p',preset.notes),el('p','Configured reference polarity and circuit settings are not physically measured. Physical motor RMS rating remains unknown. Adds the named devices below; existing names or pins refuse the whole addition.'));
+            const details=el('details');details.append(el('summary','Preview defaults and exact sources'));
+            for(const device of preset.devices){
+                details.append(el('strong',device.name+' · '+device.kind));
+                for(const [key,value] of Object.entries(device.settings)){
+                    const source={...boardData($('device-board').value).source,...device.sources[key]};details.append(el('p',key.replaceAll('_',' ')+': '+value+' — '+source.path+':'+source.line+' ['+source.section+'] '+source.option+' @ '+source.revision+'; accessed '+source.accessed));
+                }
+            }
+            box.append(details);
+        }else box.append(el('p','Choose a board, then a source-qualified component reference.'));
+        controls();
+    }
+    function renderPresets() {
+        const options=boardData($('device-board').value)?.presets??[];
+        const selected=$('device-preset').value;$('device-preset').replaceChildren();
+        const empty=el('option','Choose documented component');empty.value='';$('device-preset').append(empty);
+        for(const p of options){const o=el('option',p.label);o.value=p.id;$('device-preset').append(o);}
+        $('device-preset').value=options.some(p=>p.id===selected)?selected:'';presetPreview();
+    }
     function renderBoards() {
         $('boards').replaceChildren();
         for(const role of ['main','tool']) {
@@ -81,6 +105,16 @@
             const board=boardData(device.board), settings=el('div'), advanced=el('details');settings.className='settings';advanced.append(el('summary','Advanced electrical and motion fields'));
             const common=new Set(['pin','curve','pullup_resistor','min_temp','max_temp','invert','digital_pullup','connector','invert_dir','invert_enable','sensor','control','max_power','run_current','current_rating_rms']);
             if(!board){box.append(el('p','Choose a board first'));$('devices').append(box);continue;}
+            box.append(el('small','Configured selections; physical identity, measured polarity and circuit limits remain unverified. Motor RMS rating requires an explicit owner value.'));
+            const references=(board.presets??[]).filter(p=>p.devices.some(d=>d.name===device.name&&d.kind===device.kind));
+            if(references.length){
+                const origin=el('details');origin.append(el('summary','Available documented defaults and origins'));
+                for(const p of references){origin.append(el('p',p.label+'. '+p.notes));
+                    for(const d of p.devices.filter(d=>d.name===device.name&&d.kind===device.kind))for(const [key,value] of Object.entries(d.settings)){
+                        const source={...board.source,...d.sources[key]};origin.append(el('p',key.replaceAll('_',' ')+': reference '+value+' — '+source.path+':'+source.line+' @ '+source.revision+'; accessed '+source.accessed));
+                    }
+                }box.append(origin);
+            }
             for(const [name,type] of Object.entries(catalog.kinds[device.kind])) {
                 let options;
                 if(['adc','input','probe','heater','fan'].includes(type)) {
@@ -115,7 +149,7 @@
         }
     }
     function render() {
-        renderBoards();renderDevices();$('geometry-fields').replaceChildren();
+        renderBoards();renderDevices();renderPresets();$('geometry-fields').replaceChildren();
         for(const key of ['max_velocity','max_accel','max_z_velocity','max_z_accel'])$('geometry-fields').append(field(key.replaceAll('_',' '),'positive',draft.geometry[key],v=>{if(v===undefined)delete draft.geometry[key];else draft.geometry[key]=v;edit();}));
         $('current').textContent=saved.current?'Candidate saved — inactive ('+saved.current.mode+'). Commissioning and activation require separate reviewed steps.':'No saved candidate.';
         controls();
@@ -127,6 +161,9 @@
         $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');
     }
     $('reload').onclick=()=>operation(load);
+    $('device-board').onchange=renderPresets;
+    $('device-preset').onchange=presetPreview;
+    $('add-preset').onclick=()=>operation(async()=>{invalidate();const result=await rpc({action:'preset',draft,role:$('device-board').value,preset:$('device-preset').value,expected_revision:revision});draft=result.draft;edit();render();notice('Reference defaults added to unsaved draft. Inspect settings; physical identity, motor ratings and measured polarity remain unverified. Save may remain incomplete.');});
     $('add').onclick=()=>{const role=$('device-board').value,name=$('device-name').value;if(!boardData(role)){notice('Choose a board reference first.');return;}if(!/^[a-z][a-z0-9_]{0,39}$/.test(name)||draft.devices.some(d=>d.name===name)){notice('Use a unique lowercase device name.');return;}draft.devices.push({name,board:role,kind:$('device-kind').value,settings:{}});edit();renderDevices();};
     $('save').onclick=()=>operation(async()=>{const result=await rpc({action:'save',expected_revision:revision,draft});revision=result.revision;changed=false;invalidate();await load();notice(result.message);});
     $('mode').onchange=()=>{invalidate();controls();};
@@ -151,7 +188,7 @@
         if(!rows.children.length){const tr=el('tr');const td=el('td','No changes');td.colSpan=3;tr.append(td);rows.append(tr);}
     }
     $('cancel-import').onclick=()=>{invalidate();draft=copy(saved.draft);changed=false;$('import-diff').hidden=true;render();notice('Imported changes discarded. Saved draft preserved.');};
-    $('import').onchange=()=>operation(async()=>{invalidate();const file=$('import').files[0];if(!file)return;if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming});draft=result.draft;revision=result.expected_revision;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');$('import').value='';});
+    $('import').onchange=()=>operation(async()=>{invalidate();$('import-diff').hidden=true;const file=$('import').files[0];if(!file)return;$('import').value='';if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming,expected_revision:revision});draft=result.draft;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');});
     window.addEventListener('sv08-authority-changed',()=>{invalidate();controls();if(!authority())notice('Administrator access ended. Pending review cancelled. Authorize and reload before editing.');else operation(load);});
     window.addEventListener('pagehide',invalidate);
     window.sv08Session.ready.then(()=>{controls();if(authority())operation(load);else notice('Authorize to load private printer configuration.');});

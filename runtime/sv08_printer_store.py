@@ -143,7 +143,8 @@ class PrinterStore:
         action=request['action']
         allowed={'status':{'action'},'save':{'action','expected_revision','draft'},
                  'review':{'action','mode'},'apply':{'action','mode','review'},
-                 'restore':{'action','expected_revision'},'import':{'action','draft'}}
+                 'restore':{'action','expected_revision'},'import':{'action','draft','expected_revision'},
+                 'preset':{'action','draft','role','preset','expected_revision'}}
         if action not in allowed or set(request)!=allowed[action]:
             raise ValueError('Unsupported finite helper operation')
         with self.locked() as (context,record):
@@ -152,8 +153,14 @@ class PrinterStore:
                 return dict(state=state,catalog=self.catalog.data,context=context,
                             catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported)
             if action=='import':
+                if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
+                    raise ValueError('Draft changed in another session; refresh before importing')
                 self.catalog.validate(request['draft'])
                 return dict(draft=request['draft'],changed=digest(request['draft'])!=digest(state['draft']),expected_revision=state['revision'])
+            if action=='preset':
+                if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
+                    raise ValueError('Draft changed in another session; refresh before selecting defaults')
+                return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
             if action in ('save','restore'):
                 if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
                     raise ValueError('Draft changed in another session; refresh before saving')

@@ -89,6 +89,85 @@ class CatalogTests(unittest.TestCase):
         for name in ['stepper_z','stepper_z1','stepper_z2','stepper_z3','extruder','heater_bed']:self.assertIn('['+name+']',a['text'])
         self.assertIn('min_extrude_temp: 150',a['text']);self.assertNotIn('verify_heater',a['text']) # upstream defaults retained
         self.assertFalse(generate(self.c,sensor_draft(),'full')['complete'])
+    def test_tmc2209_software_current_boundary(self):
+        for current in (3,4):
+            d=full_draft();d['devices'][2]['settings'].update(run_current=current,current_rating_rms=4)
+            with self.subTest(current=current),self.assertRaisesRegex(ValueError,'2.000 A'):
+                generate(self.c,d,'full')
+        d=full_draft();d['devices'][2]['settings'].update(run_current=2,current_rating_rms=4)
+        self.assertTrue(generate(self.c,d,'full')['complete'])
+        del d['devices'][2]['settings']['current_rating_rms']
+        self.assertIn('stepper_x.current_rating_rms', '\n'.join(generate(self.c,d,'full')['blockers']))
+
+    def test_reference_presets_and_dependencies(self):
+        d=empty_draft();d['boards']['main']={'id':'sv08-main'}
+        original=copy.deepcopy(d);d=self.c.apply_preset(d,'main','bed_sensor')
+        self.assertEqual(original['devices'],[])
+        self.assertEqual(d['devices'][0]['settings'],dict(pin='PC5',curve='sovol-bed',min_temp=5,max_temp=105,pullup_resistor=4700))
+        d=self.c.apply_preset(d,'main','stepper_x');motor=d['devices'][1]
+        self.assertEqual(motor['name'],'stepper_x');self.assertEqual(motor['settings']['uart_address'],3)
+        self.assertEqual(motor['settings']['rotation_distance'],40);self.assertEqual(motor['settings']['run_current'],1.5)
+        self.assertNotIn('current_rating_rms',motor['settings']);self.assertNotIn('endstop_pin',motor['settings'])
+        before=copy.deepcopy(d)
+        with self.assertRaisesRegex(ValueError,'unique'):self.c.apply_preset(d,'main','stepper_x')
+        with self.assertRaises(ValueError):self.c.apply_preset(d,'main','bed_assembly')
+        self.assertEqual(d,before)
+        d['devices'][0]['name']='custom_sensor'
+        with self.assertRaisesRegex(ValueError,'collision'):self.c.apply_preset(d,'main','bed_sensor')
+        tool=empty_draft();tool['boards']['tool']={'id':'sv08-tool'}
+        tool=self.c.apply_preset(tool,'tool','hotend_assembly');self.assertEqual(tool['devices'][1]['settings']['sensor'],'hotend_sensor')
+        z=self.c.apply_preset(original,'main','stepper_z')['devices'][0]['settings']
+        self.assertEqual((z['rotation_distance'],z['gear_ratio']),(40,'80:12'))
+        full=full_draft();full['devices'][4]['settings']['gear_ratio']='80:12'
+        self.assertIn('gear_ratio: 80:12',generate(self.c,full,'full')['text'])
+        full['devices'][4]['settings']['gear_ratio']='80:0\n[heater_bed]'
+        with self.assertRaisesRegex(ValueError,'ratio'):self.c.validate(full)
+
+    def test_reference_field_primary_sources(self):
+        import ast
+        root=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
+        for board in self.c.boards.values():
+            for preset in board['presets']:
+                for device in preset['devices']:
+                    self.assertNotIn('current_rating_rms',device['settings'])
+                    for key,field_source in device['sources'].items():
+                        s={**board['source'],**field_source}
+                        with self.subTest(board=board['id'],preset=preset['id'],field=key):
+                            lines=(root/s['path']).read_text().splitlines();line=lines[s['line']-1]
+                            actual=device['settings'][key];transform=s['transform']
+                            if transform=='software-default':
+                                tree=ast.parse((root/s['path']).read_text())
+                                calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and n.lineno<=s['line']<=getattr(n,'end_lineno',n.lineno) and len(n.args)>=2 and isinstance(n.args[0],ast.Constant) and n.args[0].value==key]
+                                self.assertTrue(any(isinstance(n.args[1],ast.Constant) and n.args[1].value==actual for n in calls));continue
+                            raw=line.strip().lstrip('#').strip().split(':',1)[1].split('#')[0].strip()
+                            self.assertEqual(raw,s['value']);self.assertIn(s['option'].lower(),line.lower())
+                            if transform=='number':self.assertEqual(actual,float(raw))
+                            elif transform=='pin':self.assertEqual(actual,raw.replace(' ','').lstrip('^!~').split(':')[-1])
+                            elif transform=='invert':self.assertEqual(actual,'!' in raw)
+                            elif transform=='pullup':self.assertEqual(actual,'^' in raw)
+                            elif transform=='text':self.assertEqual(actual,raw)
+                            elif transform=='connector':self.assertEqual(actual,s['section']);self.assertIn(actual,board['motors'])
+                            elif transform=='association':self.assertTrue(any(d['name']==actual and d['kind']=='sensor' for d in preset['devices']))
+                            elif transform=='curve':self.assertEqual(self.c.curves[actual]['sensor_type'],{'my_thermistor':'sv08_factory_bed','my_thermistor_e':'sv08_factory_hotend'}.get(raw,raw))
+                            else:self.fail('Unexpected transformation')
+
+    def test_data_only_preset_extension_and_negatives(self):
+        data=copy.deepcopy(self.c.data);board=data['boards'][0]
+        extra=copy.deepcopy(board['presets'][0]);extra['id']='contributor_sensor';extra['label']='Contributor EPCOS reference option';extra['devices'][0]['name']='contributor_sensor'
+        # An existing supported curve option and its exact primary origin are data.
+        octopus=next(b for b in data['boards'] if b['id']=='octopus-v1.1-non-pro')
+        sample=next(p for p in octopus['presets'] if p['id']=='hotend_sensor')['devices'][0]
+        extra['devices'][0]['settings']['curve']=sample['settings']['curve']
+        extra['devices'][0]['sources']['curve']={**octopus['source'],**copy.deepcopy(sample['sources']['curve'])}
+        board['presets'].append(extra)
+        with tempfile.TemporaryDirectory() as tmp:
+            p=Path(tmp)/'catalog.json';p.write_text(json.dumps(data));ext=Catalog(p)
+            d=empty_draft();d['boards']['main']={'id':board['id']}
+            selected=ext.apply_preset(d,'main','contributor_sensor')['devices'][0]
+            self.assertEqual((selected['name'],selected['settings']['curve']),('contributor_sensor','epcos100k'))
+            for mutate in (lambda d:d['sources'].pop('pin'),lambda d:d['settings'].__setitem__('pin','PA0'),lambda d:d['settings'].__setitem__('current_rating_rms',4),lambda d:d['settings'].__setitem__('raw','[include x]')):
+                bad=copy.deepcopy(data);mutate(bad['boards'][0]['presets'][0]['devices'][0]);p.write_text(json.dumps(bad))
+                with self.assertRaises(ValueError):Catalog(p)
     def test_rejections(self):
         for key,value in [('pin','!PC5'),('pin','PA0'),('pullup_resistor',True),('max_temp',float('nan')),('digital_pullup',True),('min_temp',110),('curve','x\n[heater_bed]')]:
             d=sensor_draft();d['devices'][0]['settings'][key]=value
@@ -125,6 +204,30 @@ class PersistenceTests(unittest.TestCase):
     def tearDown(self):self.tmp.cleanup()
     def status(self):return self.service.request({'action':'status'})['state']
     def save(self,d,revision=None):return self.service.request(dict(action='save',draft=d,expected_revision=self.status()['revision'] if revision is None else revision))
+    def test_two_sessions_stale_import_and_reviewed_replacement(self):
+        self.save(sensor_draft());tab_a=copy.deepcopy(self.status())
+        # Independent logical session over the actual same generation/locks.
+        tab_b=PrinterStore(self.service.store,self.service.boot_path,self.service.config_view,self.c,privileged=lambda:True)
+        changed=copy.deepcopy(tab_a['draft']);changed['devices'][0]['settings']['max_temp']=100
+        tab_b.request(dict(action='save',draft=changed,expected_revision=tab_a['revision']))
+        before=self.status()
+        with self.assertRaisesRegex(ValueError,'refresh before importing'):
+            self.service.request(dict(action='import',draft=tab_a['draft'],expected_revision=tab_a['revision']))
+        self.assertEqual(self.status(),before)
+        with self.assertRaisesRegex(ValueError,'refresh before saving'):self.save(tab_a['draft'],tab_a['revision'])
+        refreshed=self.status()
+        imported=self.service.request(dict(action='import',draft=tab_a['draft'],expected_revision=refreshed['revision']))
+        self.assertTrue(imported['changed']);self.assertEqual(imported['expected_revision'],refreshed['revision'])
+        self.assertEqual(refreshed['draft']['devices'][0]['settings']['max_temp'],100)
+        self.save(imported['draft'],refreshed['revision']);self.assertEqual(self.status()['draft']['devices'][0]['settings']['max_temp'],105)
+        # Another write after a successful import still cannot bypass Save CAS.
+        with self.assertRaises(ValueError):self.save(imported['draft'],imported['expected_revision'])
+
+    def test_preset_request_is_preview_only(self):
+        d=empty_draft();d['boards']['main']={'id':'sv08-main'};self.save(d);before=self.status()
+        result=self.service.request(dict(action='preset',draft=d,role='main',preset='stepper_x',expected_revision=before['revision']))
+        self.assertEqual(self.status(),before);self.assertEqual(result['draft']['devices'][0]['name'],'stepper_x')
+        self.save(result['draft'],before['revision']);self.assertNotIn('current_rating_rms',self.status()['draft']['devices'][0]['settings'])
     def apply(self,mode='sensors'):
         r=self.service.request(dict(action='review',mode=mode));return self.service.request(dict(action='apply',mode=mode,review=r['review']))
     def test_cas_review_previous_restore_ack(self):
@@ -242,9 +345,9 @@ class PersistenceTests(unittest.TestCase):
         self.service.privileged=lambda:False
         with self.assertRaises(ValueError):self.status()
         self.service.privileged=lambda:True
-        result=self.service.request(dict(action='import',draft=sensor_draft()));self.assertIn('expected_revision',result);self.assertEqual(self.status(),before)
+        result=self.service.request(dict(action='import',draft=sensor_draft(),expected_revision=before['revision']));self.assertIn('expected_revision',result);self.assertEqual(self.status(),before)
         bad=sensor_draft();bad['devices'][0]['name']='inject\n'
-        with self.assertRaises(ValueError):self.service.request(dict(action='import',draft=bad))
+        with self.assertRaises(ValueError):self.service.request(dict(action='import',draft=bad,expected_revision=before['revision']))
         with self.store.locked(nonblocking=True):
             with self.assertRaises(ValueError):self.status()
         boot=copy.deepcopy(self.boot);boot['trial']=True;self.boot_path.write_text(json.dumps(boot))

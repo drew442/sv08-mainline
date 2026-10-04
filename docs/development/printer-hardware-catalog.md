@@ -8,14 +8,41 @@ API and the existing session authorization behavior. The host shell has one ordi
 navigation link. Installed authenticated second-package navigation remains a check.
 
 Choose board references, enter each private MCU transport identity, acknowledge
-the provisional reference, and add named connected devices. Forms show the
-catalog's supported connectors and canonical pins. Choose inversion and digital
-input pull-up explicitly. Analog temperature pull-up resistance is a separate
-numeric field. Use the reference preset button only when deliberately selecting
-that software default. The two factory presets also supply vendor-configured
-min/max bounds, clearly distinguished from measured component limits. Factory thermal points are vendor DEFAULTs, not newly fitted
-calibration; selecting one does not identify the physical thermistor or resistor.
-Min/max temperatures, motor ratings, geometry and controls require explicit entries.
+its provisional status, then choose a human-readable **Documented component**.
+Preview its defaults and exact source lines before **Use provisional reference
+defaults**. This adds unsaved typed settings with suitable generator names, such as
+“X axis motor / TMC2209” → `stepper_x`; raw section names are unnecessary for
+reference choices. Custom device forms remain available. Saved cards expose the
+available documented defaults and origins; edited settings remain explicit draft
+selections and are not asserted to equal their reference.
+
+SV08 choices cover factory bed/hotend sensors, bed/hotend assemblies, six mainboard
+motors with TMC2209, part/exhaust fans, filament input and tool probe. Octopus
+non-Pro and EBB v1.2 provide their exact supported sample components, including
+commented sample inputs. Assemblies add their named sensor dependency together.
+Duplicate names, occupied pins and existing sensor dependencies refuse the entire
+addition without overwriting any user setting. To combine with an existing sensor,
+use the custom forms and choose its association explicitly. Board changes still
+confirm and clear only the affected board's devices and private identity.
+
+Reference polarity is the configured pin marker (`!` / `^`, or its absence),
+**not physically measured polarity**. Reference thermal bounds, PID gains,
+rotation distances, current, microsteps, UART addresses and sense resistance are
+source-configured software values or explicitly named pinned parser defaults.
+SV08 Z references preserve upstream `gear_ratio: 80:12` alongside the documented
+rotation distance; no new effective-distance calibration is created. Vendor
+sensorless X/Y virtual endstops and actions are not translated into guessed GPIO
+endstops. Probe z offset and motor RMS ratings are not preset; missing values keep
+the full draft incomplete. Physical circuit/resistor identity, safe electrical
+limits and firmware clocks/offsets remain unknown. Factory curves retain the vendor
+point sets, not new calibration. The curve dropdown retains common pinned Klipper
+options; the separate pull-up/bounds button is an explicit reference selection.
+
+All generated drivers are TMC2209. `run_current` must be positive and at most
+**2.000 A**, as required by pinned `tmc2209.TMCCurrentHelper` →
+`tmc2130.MAX_CURRENT`, and must not exceed the explicit owner motor RMS rating.
+This software maximum never certifies a physically safe current. Missing ratings
+stay unknown and block full generation; incomplete drafts can still be saved.
 
 Save draft accepts incomplete settings. Review reports fields needed for its mode.
 Sensor mode positively emits MCU transports, kinematics none, temperature sensors,
@@ -31,7 +58,9 @@ Review defaults to Cancel. Apply saves only an inactive configuration string in
 feature-owned storage. It never touches live printer.cfg, services, MCU ports,
 firmware or host state. Export is a local browser download; private identities are
 not placed in URLs, localStorage, logs or catalog files. Import accepts only bounded
-structured data, shows saved/imported values field by field, replaces the visible
+structured data and the revision actually loaded in that tab. A stale tab must
+reload before importing; it cannot adopt a newer unseen revision. A successful
+import shows that exact saved/imported comparison field by field, replaces the visible
 forms, and requires explicit Save. Discard returns to the saved draft. Restore
 loads the prior candidate's draft; review/apply is required again. Board change
 requires confirmation and removes the affected devices and private identity while
@@ -75,15 +104,28 @@ physical limits and sensor identity remain unknown.
 
 ## Contributor recipe
 
-For an existing device kind, add a board JSON entry with a unique ID, exact role
-and variant, primary source revision/path/page/date/hash, individually sourced
-signals/capabilities and motor bundles, supported connector labels, unknowns,
-reserved flags and channel scope. Add component data only with its curve origin
-and supported input circuit. Do not copy a nearby board's capacities or ratings.
-The data-extension fixture in `tests/test_printer_configuration.py` adds a board
-without runtime/UI changes and exercises generation. Add a positive config fixture
-and negative unsupported-pin/collision fixtures for the new entry. A new kind or
-sharing rule requires a bounded code change and independent approval/review.
+For an existing device kind, extend a board's declarative `presets` array without
+runtime/UI changes. Each preset has a unique lowercase `id`, a human-readable
+`label`, bounded uncertainty `notes`, and a `devices` bundle. Each device supplies
+`name`, existing `kind`, typed `settings`, and a `sources` entry for every setting.
+Sources inherit board path/revision/access-date/hash unless explicitly overridden;
+each field records exact `line`, `section`, `option`, original source `value`, and
+its finite `transform` (`number`, `pin`, `invert`, `pullup`, `curve`, `text`,
+`connector`, `association`, or `software-default`). These labels describe provenance,
+not executable transformations. Runtime copies only typed settings; no template,
+include, code or plugin is evaluated. `association` names a sensor in the same
+bundle. Source defaults from upstream parser code carry their own path/revision.
+Do not supply `current_rating_rms`, calibrated probe `z_offset`, unknown ratings,
+firmware facts or newly fitted curves as defaults.
+
+Add positive default-selection and exact source-line fixtures, plus missing-origin,
+unsupported-pin, dependency/name and collision negatives. The contributor fixture
+adds a named EPCOS reference option using its exact pinned sample origin without
+runtime/UI edits. For a new board, retain unique ID, exact role/variant, primary
+path/revision/page/date/hash, sourced signals/capabilities and motor bundles,
+connector labels, unknowns, reservations, counts and channel scope. Do not copy a
+nearby board's capacities or electrical ratings. A new kind or sharing rule still
+needs a bounded code change and independent approval/review.
 
 For example, duplicate an evidenced reference entry in a disposable test catalog,
 set `id` to `contributor-fixture`, retain its provenance and change the test draft's
@@ -105,7 +147,7 @@ view target must agree. Unexpected links inside feature storage refuse. The sing
 publishes draft/current/previous together, with fsync and directory fsync. The wider
 configuration tree's ownership/modes remain untouched.
 
-Save uses expected revision CAS. Review binds draft, revision, current candidate,
+Save and import use expected revision CAS. Reference-default previews also refuse a stale loaded revision. Review binds draft, revision, current candidate,
 catalog, generator version, mode and boot context. Apply regenerates under lock.
 Disconnect, edits, cancel, Stop/logout and context changes invalidate UI review;
 unknown save acknowledgment requires reload before retry. A prior review cannot
@@ -184,3 +226,21 @@ including root restored read-only, unchanged masks/live configuration and physic
 root/data capacity. No hardware operation, printing or compatibility claim follows.
 The catalog intentionally exposes only audited source channels: no complete
 connector/electrical inventory is asserted and unavailable pins cannot be assigned.
+
+
+## Bounded F1–F3 repair evidence
+
+Focused regressions cover two independent Store sessions and two actual Chromium
+tabs: B changes 105→100; A imports its identical old 105 draft and is refused,
+without revision promotion, overwrite or “No changes” comparison. After reload,
+A sees the exact 100→105 comparison and may explicitly save; later writes still
+invalidate Save CAS. Native browser forms exercise factory sensor defaults and
+friendly X-motor/TMC2209 defaults, unknown motor rating, incomplete save/full
+blockers and duplicate preset refusal. The Cockpit transport remains shimmed.
+
+Pinned Klipper file-output parsing accepts the 2 A boundary with source Z gearing
+and rejects deliberately supplied 3 A and 4 A configurations. Local validation
+refuses these currents before generation. Original unchanged positive sensor/full
+bytes retain their prior passing parser evidence. These are focused implementation
+checks; fresh independent review, installed authentication and physical
+commissioning remain coordinator work.
