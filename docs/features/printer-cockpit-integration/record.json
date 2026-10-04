@@ -74,10 +74,14 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "c2f3e644c49d421680bff40e5a7b5a29",
+        "session": "printer-integration-20261004-implement"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify shared Cockpit panel",
       "verification": null
     },
