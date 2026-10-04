@@ -53,7 +53,7 @@ def stage(work, context, execute=False, refresh=False):
             if not cert_dir.is_dir() or any(cert_dir.iterdir()):
                 raise ValueError('Cockpit certificate directory must be empty before persistence staging')
         packages = root / 'usr/share/cockpit'
-        allowed_packages = {'base1', 'static', 'branding', 'issue', 'motd'}
+        allowed_packages = {'base1', 'static', 'branding', 'issue', 'motd', 'sv08-printer'}
         if refresh:
             allowed_packages.add('sv08-host')
         if packages.is_dir() and any(p.name not in allowed_packages for p in packages.iterdir()):

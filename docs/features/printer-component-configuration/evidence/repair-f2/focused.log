@@ -1,0 +1,21 @@
+test_loaded_context_actual_copy_equal_revision_and_divergence (test_printer_configuration.PersistenceTests.test_loaded_context_actual_copy_equal_revision_and_divergence) ... ok
+test_loaded_context_actual_copy_equal_revision_and_divergence (test_printer_configuration.HistoricalPersistenceTests.test_loaded_context_actual_copy_equal_revision_and_divergence) ... ok
+test_loaded_context_actual_copy_equal_revision_overwrite (test_printer_configuration.PersistenceTests.test_loaded_context_actual_copy_equal_revision_overwrite) ... ok
+test_loaded_context_actual_copy_equal_revision_overwrite (test_printer_configuration.HistoricalPersistenceTests.test_loaded_context_actual_copy_equal_revision_overwrite) ... ok
+test_loaded_binding_boot_mode_catalog_generator_and_content (test_printer_configuration.PersistenceTests.test_loaded_binding_boot_mode_catalog_generator_and_content) ... ok
+test_loaded_binding_boot_mode_catalog_generator_and_content (test_printer_configuration.HistoricalPersistenceTests.test_loaded_binding_boot_mode_catalog_generator_and_content) ... ok
+test_two_sessions_stale_import_and_reviewed_replacement (test_printer_configuration.PersistenceTests.test_two_sessions_stale_import_and_reviewed_replacement) ... ok
+test_two_sessions_stale_import_and_reviewed_replacement (test_printer_configuration.HistoricalPersistenceTests.test_two_sessions_stale_import_and_reviewed_replacement) ... ok
+test_preset_request_is_preview_only (test_printer_configuration.PersistenceTests.test_preset_request_is_preview_only) ... ok
+test_preset_request_is_preview_only (test_printer_configuration.HistoricalPersistenceTests.test_preset_request_is_preview_only) ... ok
+test_cas_review_previous_restore_ack (test_printer_configuration.PersistenceTests.test_cas_review_previous_restore_ack) ... ok
+test_cas_review_previous_restore_ack (test_printer_configuration.HistoricalPersistenceTests.test_cas_review_previous_restore_ack) ... ok
+test_context_privilege_links_import_and_locks (test_printer_configuration.PersistenceTests.test_context_privilege_links_import_and_locks) ... ok
+test_context_privilege_links_import_and_locks (test_printer_configuration.HistoricalPersistenceTests.test_context_privilege_links_import_and_locks) ... ok
+test_independent_process_cas_and_context_change (test_printer_configuration.PersistenceTests.test_independent_process_cas_and_context_change) ... ok
+test_independent_process_cas_and_context_change (test_printer_configuration.HistoricalPersistenceTests.test_independent_process_cas_and_context_change) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.708s
+
+OK

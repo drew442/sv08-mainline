@@ -1,0 +1,62 @@
+[
+  {
+    "path": "catalog/printer/catalog.json",
+    "mode": "0o664",
+    "bytes": 173421,
+    "sha256": "c78f3563bab8a45a86fce794ad7039f38b9048b1ce892bce4486d8a5df111f9d"
+  },
+  {
+    "path": "catalog/printer/catalog.schema.json",
+    "mode": "0o664",
+    "bytes": 6504,
+    "sha256": "cf07a9b08d7fae5e94f14a6cee8e9289371640954a88dc4b3a3fd3dee538cfaa"
+  },
+  {
+    "path": "docs/development/printer-hardware-catalog.md",
+    "mode": "0o664",
+    "bytes": 16813,
+    "sha256": "cdef1f0e7ff2b1fc3f7f63c93c9a5f6e43c569ec879c73131987ac404d2573d3"
+  },
+  {
+    "path": "runtime/sv08_printer_catalog.py",
+    "mode": "0o664",
+    "bytes": 21856,
+    "sha256": "2040c6677af8ab2a9edf502297e286ff39cb11f482a3fa1592dc65eb2ecf377d"
+  },
+  {
+    "path": "runtime/sv08_printer_generate.py",
+    "mode": "0o664",
+    "bytes": 8889,
+    "sha256": "3ec9fbb55ddc029a1b536bc8ca69f11b8514110324b96f28b9a231bc074a25a3"
+  },
+  {
+    "path": "runtime/sv08_printer_store.py",
+    "mode": "0o664",
+    "bytes": 11346,
+    "sha256": "e5ad5f05347cf6afada33df2d235749eaffdde98b8015c184e447893bf29b97c"
+  },
+  {
+    "path": "tests/printer_browser.mjs",
+    "mode": "0o664",
+    "bytes": 18264,
+    "sha256": "13fe7e6f214d682bb64c183c57d3e068075b9c1b8586999a0373c378d741039b"
+  },
+  {
+    "path": "tests/test_printer_configuration.py",
+    "mode": "0o664",
+    "bytes": 29699,
+    "sha256": "e81e10497a8045bd84dc8ecd278685938820f180577fe1a43cbe17eff91bfbce"
+  },
+  {
+    "path": "ui/printer/app.js",
+    "mode": "0o664",
+    "bytes": 18362,
+    "sha256": "e2fb1daa76faf4e2a7c71c48cac170a4296a9bbd323ce9d5e694a99b9083c675"
+  },
+  {
+    "path": "ui/printer/index.html",
+    "mode": "0o664",
+    "bytes": 4270,
+    "sha256": "50b701978e46fa21bfb88fbc779e9b5a00677a0d4f0f7b618fcab41b23fe2572"
+  }
+]
