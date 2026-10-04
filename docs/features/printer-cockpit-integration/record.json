@@ -252,7 +252,50 @@
         "printer-cockpit-integration:software"
       ],
       "environment": "hardware",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": "H616_JC_6Z_V1.2 (owner-reported)",
+          "check": "installed",
+          "document": "docs/features/printer-cockpit-integration/installed-evidence.md",
+          "document_sha256": "a990eac2f9e2ee98f174617e81a81da65dd2e1d131338533cec8aebdef1de019",
+          "environment": "hardware",
+          "limitations": "Named spare eMMC host profile only. No configuration save/apply or outputs. Hardware revision owner-reported, not new physical identification. Offline broader lifecycle acceptance remains separately bound; no printing or release claim.",
+          "method": "Coordinator exact reviewed UI overlays; actual authenticated Cockpit browser/shared document/nav/draft/history/legacy/three viewports, then exact50-file closure,14 UI directory inventories, configuration/context/masks/readonly and PSUOFF checks. Source-bound receipts and private artifact hashes linked.",
+          "profile": "profiles/test-sv08-01/profile.json",
+          "source_commit": "d61bf65c163a21f0122fe899fa6487471f8dc724",
+          "source_sha256": {
+            "docs/decisions/20261004-cockpit-shared-printer-panel.md": "732012b3b15cef75980a4ce1d6cbc8b9dd93aa36fdf338076c16f3726b28397a",
+            "docs/development/printer-hardware-catalog.md": "63954fe4db5ed46fb86b64a3d31537f4e1771cb8e0327b0babb89c094484df64",
+            "docs/features/printer-cockpit-integration/installation-review.md": "3b170a3bed22d42728890047721ae471bb453037219be0a9da943264ae275342",
+            "docs/features/printer-cockpit-integration/installed-evidence.md": "a990eac2f9e2ee98f174617e81a81da65dd2e1d131338533cec8aebdef1de019",
+            "docs/features/printer-cockpit-integration/installed-race-repair.md": "dc3fd0dffe0893128567bd27a2b7fa60388edd8fbdeb3257a293873536ea055e",
+            "docs/features/printer-cockpit-integration/receipts/installed/artifacts.json": "90cde45289c6e1e29267dfab9692e5cb27108654d21393f32043bd7eb918e4df",
+            "docs/features/printer-cockpit-integration/receipts/installed/browser.json": "4fb79ec7356cdd6ca2f11730cb8c8b8e9dd35ec20ae79432f8185ab7cae9c9df",
+            "docs/features/printer-cockpit-integration/receipts/installed/inventory.json": "99860b9948013a042a6dd5486b4c6ab0bbeed6d9a930a5d82df8584575d02089",
+            "docs/features/printer-cockpit-integration/receipts/installed/manifest.json": "1b236d83a629b9275f26c869a59f89dff7c8026503b749cde2e3f0127c73f1fd",
+            "docs/features/printer-cockpit-integration/receipts/installed/power.json": "d3dad94184088c477da7a363b9fee12fe02d7296ee9b7c3f65e7cf440c0c6d52",
+            "docs/features/printer-cockpit-integration/receipts/installed/preservation.json": "b6e767ad6f4e266fffbb46f401decc7d18b5a659e7406efcbc19b612271793f5",
+            "docs/features/printer-cockpit-integration/receipts/navigation/browser.json": "8189bb34f7b7d973aaccde6625dc324aabb93d41a58ee0a07fdc31c7689caf54",
+            "docs/features/printer-cockpit-integration/receipts/navigation/commands.json": "29be3eafbd3e30011dde0d4fb3fb507c05b2146c75af3121db20d28a83dcc573",
+            "docs/features/printer-cockpit-integration/receipts/navigation/source.json": "6046fad9a8e9cb2d264d527019ccebd20fdc7631a585472a3ed7ffcc419653c3",
+            "profiles/test-sv08-01/profile.json": "1191a4e9fb9895a1daec4d6f7cd0b3a2ff294cdb49faac41924772ef6adf6dc0",
+            "scripts/stage_admin_ui.py": "73131a3c452d10c90a4aac7d43ad2937cff948ebbe8287860caa19babc68471b",
+            "scripts/stage_printer_ui.py": "bb635128598fadebd4bcf6e5b20e08b914b9a8c8868b20390ac71fe0d7acb33e",
+            "tests/printer_browser.mjs": "8a8fca962b72662f4488fb695b65214211a221e834d36237ef942c3e86de6f42",
+            "tests/test_printer_browser_fixture.py": "6899b002a38ffb726fa3f0e4317ec6ada93b76a34add445993a9ddec71f6905b",
+            "ui/host/app.js": "0fce5eed03c9cc9c2134c8c9a046fc545a7f972f1e2c29ff73d320f67a10f3e7",
+            "ui/host/index.html": "34dfb825e2d27715bcbb188cd01f6218270f69cb315606b1427e0d59e1c715b6",
+            "ui/host/navigation.js": "04a45b4d2b39782303f1c30c201fbf39662b76c79d3abcc26b51a60650e3282b",
+            "ui/host/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+            "ui/host/style.css": "432eaeace1b245fd86d0242258973f46d5d0e7bc89ea11856b056c3192702a99",
+            "ui/printer/app.js": "992569b53168b37d3231114674ffc032a0885ca2785a7f7cc4b882488680a0dd",
+            "ui/printer/index.html": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+            "ui/printer/panel.html": "eaf489554b665d4c3387b597501431d3d8643f2228de413246d385e57e582ece",
+            "ui/printer/redirect.js": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+            "ui/printer/style.css": "c2c829165677abaeef046cdd370cd9d0113eab13dc465eaedd3acddffce0c6b5"
+          }
+        }
+      ],
       "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
       "id": "installed",
       "implementation": {
@@ -262,9 +305,16 @@
       },
       "repeats": 0,
       "resumption": null,
-      "status": "running",
+      "status": "done",
       "title": "Install and verify integrated Cockpit interface",
-      "verification": null
+      "verification": {
+        "decision_sha256": "ad0bbf31af9832ac3b0e5c672832df8603cbbcc086e5902f36d98fbb5566a56d",
+        "evidence_sha256": "5b93268d623777da66bd66ec557f67dc89a42a507d357fb881943ee093dfaaa4",
+        "outcome": "passed",
+        "rationale": "Passed installed delivery verification at clean detached candidate d61bf65c163a21f0122fe899fa6487471f8dc724. The authoritative root task now has status review and exactly matches the corrected supplied evidence list. The lease identifies this frozen worktree and preserves its run, base and session. Root changes are limited to expected submission bookkeeping; the candidate record is correctly treated as the pre-submission snapshot.\n\nVerified the public profile path and SHA256 1191a4e9fb9895a1daec4d6f7cd0b3a2ff294cdb49faac41924772ef6adf6dc0 against the submitted commit. Recomputed complete decision, proposal, requirement, scope, document, source and artifact hashes. The corrected intake differs only in profile binding. Workflow validation and diff checks pass.\n\nReused unchanged complete delivery findings from the preserved failed review, SHA256 3bc756692547721281f806aef9397d827ba8b98a12a0678bdd79fd553c17a0dd. Its sole submission blocker is resolved. Those findings establish actual authenticated shared-shell navigation, dirty-draft retention, history, legacy redirect, three responsive viewports, exact 14-asset/50-file preservation, unchanged configuration/context/service masks and boot identity, read-only root/boot, capacity reserves and final PSU OFF. Source equality preserves the accepted software and navigation-repair findings. No probes or hardware repetition occurred. This certifies the bounded installed UI delivery on test-sv08-01, not electronics compatibility, commissioning, printing or release.",
+        "reviewer": "Independent feature_verifier_high; requested Sol6.1/high; runtime coordinator-verified separately",
+        "session": "printer-integration-20261004-installed-verifier-final"
+      }
     }
   ],
   "title": "Integrate printer configuration into the shared Cockpit interface"
