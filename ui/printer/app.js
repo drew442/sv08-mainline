@@ -1,10 +1,10 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById('printer-' + id);
-    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, changed = false, reconcile = false, diagnostic = false;
+    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { $('notice').textContent = text; };
-    const invalidate = () => { review = null; ++epoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); };
+    const invalidate = (status = true) => { review = null; ++epoch; if (status) ++statusEpoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); };
     const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
     function controls() {
@@ -20,12 +20,12 @@
     async function rpc(request) {
         if (!authority()) throw new Error('Administrator access is required.');
         if (request.action !== 'status') request = {...request, expected_identity: loadedIdentity};
-        const attempt = epoch;
+        const status = request.action === 'status', attempt = status ? statusEpoch : epoch;
         const proc = cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_printer_helper.py'], {superuser:'require',err:'message'});
         proc.input(JSON.stringify(request));
         let raw;
         try { raw = await proc; } catch (error) { if (['save','apply','restore'].includes(request.action)) reconcile = true; throw error; }
-        if (!authority() || attempt !== epoch) { if (['save','apply','restore'].includes(request.action)) reconcile = true; throw new Error('Session or selections changed. Reconcile saved configuration; submitted operations may have completed.'); }
+        if (!authority() || attempt !== (status ? statusEpoch : epoch)) { if (['save','apply','restore'].includes(request.action)) reconcile = true; throw new Error('Session or selections changed. Reconcile saved configuration; submitted operations may have completed.'); }
         const reply = JSON.parse(raw);
         if (!reply.ok) throw new Error(reply.error);
         return reply.result;
@@ -159,11 +159,15 @@
         $('current').textContent=saved.current?'Candidate saved — inactive ('+saved.current.mode+'). Commissioning and activation require separate reviewed steps.':'No saved candidate.';
         controls();
     }
+    // Route changes cancel reviews, but a read-only load may finish in either panel.
     async function load(keep = false) {
-        invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;revision=saved.revision;if (!keep) { draft=copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
-        if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;controls();return;}
-        $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
-        $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');
+        loading=true;
+        try {
+            invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;revision=saved.revision;if (!keep || !draft) { draft=copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
+            if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;controls();return;}
+            $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
+            $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');
+        } finally { loading=false; }
     }
     $('reload').onclick=()=>{ if (changed || reconcile) { reconcile=true; controls(); notice('Choose reconciliation to retain local selections, or explicitly discard them.'); } else operation(()=>load()); };
     $('reconcile').onclick=()=>operation(()=>load(true));
@@ -197,8 +201,8 @@
     $('cancel-import').onclick=()=>{invalidate();draft=copy(saved.draft);changed=false;$('import-diff').hidden=true;render();notice('Imported changes discarded. Saved draft preserved.');};
     $('import').onchange=()=>operation(async()=>{invalidate();$('import-diff').hidden=true;const file=$('import').files[0];if(!file)return;$('import').value='';if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming,expected_revision:revision});draft=result.draft;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');});
     window.addEventListener('sv08-authority-changed',()=>{invalidate();controls();if(!authority())notice('Administrator access ended. Pending review cancelled. Authorize and reload before editing.');else if (changed || reconcile) { reconcile=true; controls(); notice('Administrator access restored. Reconcile saved state explicitly; local selections retained.'); } else operation(()=>load());});
-    window.addEventListener('sv08-navigation-changed',()=>{ if(busy) reconcile=true; invalidate(); controls(); });
+    window.addEventListener('sv08-navigation-changed',()=>{ if(busy && !loading) reconcile=true; invalidate(false); controls(); });
     window.addEventListener('beforeunload',event=>{if(changed){event.preventDefault();event.returnValue='';}});
-    window.addEventListener('pagehide',invalidate);
+    window.addEventListener('pagehide',()=>invalidate());
     window.sv08Session.ready.then(()=>{controls();if(authority())operation(load);else notice('Authorize to load private printer configuration.');});
 })();
