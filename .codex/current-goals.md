@@ -1,5 +1,25 @@
 # Current delivery goals
 
+## Active goals — sensors and component configuration, 2026-10-04
+
+1. **Sensor-only commissioning:** use component default conversion curves without
+   fine tuning. Obtain fresh chamber BLE ambient reference and no-output printer
+   temperature/input observations. Separate autonomous readings from physical
+   input-transition checks. Unknown component/circuit facts remain explicit.
+2. **Cockpit hardware configuration:** deliver a board-first component selector
+   with defaults/common options, pins/connectors and temperature limits, validated
+   private machine configuration and an extensible contributor catalog. Develop
+   concrete UX/storage/generation/activation boundaries before implementation,
+   independently approve the proposal and verify software plus installed behavior.
+
+Owner scope: [October4 request](../docs/features/printer-component-configuration/owner-request.md).
+Separate Sol6.1/medium planner and sensor-source researcher are active through the
+documented full-role CLI fallback; effective roles/model/effort were verified.
+Coordinator found Beelink's existing BTHome reader and is checking fresh BLE data.
+No heater/motion activation or new calibration tuning is authorized by this slice.
+Use autonomous PSU control as reviewed, preserving independent USB host power.
+
+
 ## Completed goal — reliable commissioning host, 2026-10-04
 
 The installed test-sv08-01 host passed independent final delivery verification:
