@@ -255,10 +255,14 @@
       "evidence": [],
       "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
       "id": "installed",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "217f160f478e49ec9c69cbac0be6f5f9",
+        "session": "printer-integration-20261004-installed"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Install and verify integrated Cockpit interface",
       "verification": null
     }
