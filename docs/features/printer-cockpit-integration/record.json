@@ -232,7 +232,7 @@
       },
       "repeats": 0,
       "resumption": "Add existing-directory membership validation for the independently reproduced preexisting inventory drift; integration/lifecycle and capacity checks accepted offline.",
-      "status": "review",
+      "status": "done",
       "title": "Implement and verify shared Cockpit panel",
       "verification": {
         "decision_sha256": "ad0bbf31af9832ac3b0e5c672832df8603cbbcc086e5902f36d98fbb5566a56d",
