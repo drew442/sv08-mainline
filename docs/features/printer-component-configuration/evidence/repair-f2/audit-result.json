@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "independent_verification": false,
+  "head": "443e105b6c36a1bcda548bbf01a3d0a71fb68cc7",
+  "owned": [
+    "runtime/sv08_printer_store.py",
+    "ui/printer/app.js",
+    "tests/test_printer_configuration.py",
+    "tests/test_printer_browser_fixture.py",
+    "tests/printer_browser.mjs",
+    "docs/development/printer-hardware-catalog.md"
+  ],
+  "untracked": [],
+  "index_changes": [],
+  "mode_changes": [],
+  "python_ast": true,
+  "node_syntax": true,
+  "markdown_targets": [
+    "../../catalog/printer/catalog.json",
+    "../../catalog/printer/draft.schema.json",
+    "../../catalog/printer/catalog.schema.json"
+  ],
+  "gitlink_lock_agreement": true,
+  "submodules": [
+    "-ec59b9bb9ad6c2ec8d4dc6831fbc77f0b308e29e upstream/katapult",
+    "-f0892d82b0f1c1228454f09eb508eddde2250f4b upstream/klipper",
+    "-3791fdf749df20c2a32fc43818749aa9f1754a9f upstream/klipperscreen",
+    "-32f99e1cf97640b23a52829dfa3a0aceee11d382 upstream/mainsail",
+    "-ab2b16dd619ad5f6979a4fbe69cfa324a6fcc35f upstream/monocypher",
+    "-985c1d0bbeb90bc057d34a232c9dc3b05e0c6c8d upstream/moonraker",
+    "-a60644875f8c756d20b3828c9416518b414b5491 upstream/sovol-sv08",
+    "-d7bbd172a5da601a08f94479de308c6fb714a19a upstream/sunxi-tools"
+  ],
+  "reused_source_unchanged_since": "4f865df15153bfe88e21552f7ac59319dc680f20"
+}
