@@ -137,14 +137,10 @@
       "evidence": [],
       "human_task": null,
       "id": "software",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "5e4a1d6636ce4481893b3fa1ab0a8cbd",
-        "session": "printer-components-software-f1-20261004"
-      },
+      "implementation": null,
       "repeats": 0,
-      "resumption": "Repair independently reproduced stale-import CAS bypass, pinned TMC2209 software-current bound and source-qualified board/component presets; preserve cbf793a and original review, then reverify.",
-      "status": "running",
+      "resumption": "Repair independently reproduced equal-revision cross-generation draft overwrite; bind loaded content/context under existing locks. Preserve failed 4f865df and review evidence.",
+      "status": "pending",
       "title": "Deliver component catalog, configuration backend and Cockpit page",
       "verification": null
     },
