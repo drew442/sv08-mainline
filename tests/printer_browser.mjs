@@ -7,7 +7,7 @@ const [chrome,fixture,output]=process.argv.slice(2);
 const {url}=JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url,/^http:\/\/127\.0\.0\.1:\d+$/);
 fs.mkdirSync(output);const profile=fs.mkdtempSync((process.env.SV08_BROWSER_PROFILE_ROOT??output)+'/profile-');fs.chmodSync(profile,0o700);const log=fs.openSync(output+'/browser.log','w');
-const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
+const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
 let socket,secondSocket,secondTarget;
 try {
  let port;
