@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "authenticated": false,
+  "hardware": false,
+  "transport": "Cockpit session/RPC shim; actual Store/Budget",
+  "viewport_sizes": [
+    [
+      1024,
+      600
+    ],
+    [
+      1440,
+      900
+    ]
+  ],
+  "second_package_link": true,
+  "incomplete_save_reopen": true,
+  "connector_pin_form": true,
+  "factory_default": true,
+  "sensor_reference_journey": true,
+  "motor_reference_journey": true,
+  "preset_collision_refused": true,
+  "two_real_tab_stale_import_refused": true,
+  "refresh_exact_import_diff": true,
+  "keyboard_escape": true,
+  "touch_reload": true,
+  "import_diff_cancel_save": true,
+  "review_cancel_apply": true,
+  "previous_restore": true,
+  "lost_ack_reconciled": true,
+  "board_change_clears": true,
+  "stop_disconnect_logout": true,
+  "live_config_unchanged": true,
+  "uncaught_exceptions": 0
+}

@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "changed_paths": [
+    "catalog/printer/catalog.json",
+    "catalog/printer/catalog.schema.json",
+    "docs/development/printer-hardware-catalog.md",
+    "runtime/sv08_printer_catalog.py",
+    "runtime/sv08_printer_generate.py",
+    "runtime/sv08_printer_store.py",
+    "tests/printer_browser.mjs",
+    "tests/test_printer_configuration.py",
+    "ui/printer/app.js",
+    "ui/printer/index.html"
+  ],
+  "new_paths": [],
+  "deleted_paths": [],
+  "mode_changes": [],
+  "gitlinks_unchanged": true,
+  "presets": 30,
+  "payload_bytes_excluding_existing_navigation": 256028,
+  "source_boards_signals_curves_unchanged": true
+}

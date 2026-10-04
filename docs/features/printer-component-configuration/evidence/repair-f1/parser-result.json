@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "amps": 2,
+      "exit": 0,
+      "parser_refused": false
+    },
+    {
+      "amps": 3,
+      "exit": 255,
+      "parser_refused": true
+    },
+    {
+      "amps": 4,
+      "exit": 255,
+      "parser_refused": true
+    }
+  ],
+  "elapsed": 0.34857518889475614,
+  "original_positive_bytes_unchanged": true,
+  "physical_safe_current": false
+}
