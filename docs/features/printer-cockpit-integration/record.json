@@ -1,78 +1,105 @@
 {
+  "author": "root/coordinator with independent project planner",
+  "checks": [
+    {
+      "description": "Single shared shell, navigation, styling, routes and dirty draft retention",
+      "environment": "offline",
+      "id": "integration"
+    },
+    {
+      "description": "Shared session, review invalidation and host/printer controller isolation",
+      "environment": "offline",
+      "id": "lifecycle"
+    },
+    {
+      "description": "Exact fresh/historical composition, preservation and restoration",
+      "environment": "offline",
+      "id": "staging"
+    },
+    {
+      "description": "Actual authenticated installed integrated interface and unchanged configuration",
+      "environment": "hardware",
+      "id": "installed"
+    }
+  ],
+  "created": "2026-10-04",
+  "decision": {
+    "authority": "owner-existing",
+    "constraints": [
+      {
+        "checks": [
+          "staging"
+        ],
+        "text": "For fresh composition and the exact historical overlay, enumerate every changed/new file and directory with before/after hashes, modes and ownership. Test that all preimages are checked before any mutation and restoration checks all afterimages before restoring/deleting anything; unexpected bytes, metadata or concurrent drift must refuse without partial restoration. Exercise interrupted publication so host navigation never exposes missing panel assets and originals remain recoverable; report per-file rather than all-file atomicity where applicable. Include host-only staging/refresh regressions. Quantify root payload, temporary/backup peak blocks and inodes against existing factory8GB reserves, preserving the accepted private-feature limits and unchanged backend/runtime closure."
+      },
+      {
+        "checks": [
+          "lifecycle",
+          "integration"
+        ],
+        "text": "Add a delayed or lost-acknowledgment inactive-apply journey spanning section navigation and Stop/logout/disconnect. Navigation or authority changes must invalidate reviews/delayed UI results without claiming an already submitted save/apply was cancelled. Reconcile saved revision/context explicitly before another mutation, preserve any dirty local draft during that reconciliation and never replay automatically. Cover the host upload/review cancellation path in relevant host regressions as well as printer review, import/export/save/cancel; installed navigation acceptance may remain read-only and need not repeat candidate application."
+      }
+    ],
+    "outcome": "approved-with-constraints",
+    "proposal_sha256": "34b9a1b76601e98dda619563e3751513548f7affe020360648c1975e1a03cc6b",
+    "rationale": "The actual owner-request.md explicitly replaces the standalone-link UX; no further owner decision is required. At reviewed HEAD 4392f2ba3a336ac0dd02ecb651aec38cc86960b0, ui/host/index.html links to a separate document and ui/printer/index.html duplicates the header/session. The installed-evidence.md and theme-correction.md establish the existing accepted component workflow and source-bound theme evidence, not integrated-shell acceptance. ui/host/app.js has document-wide main-button failure handlers, while ui/printer/app.js reloads saved state on reauthorization: the proposal explicitly addresses these concrete isolation/draft risks. stage_printer_ui.py currently supports only an additive link and refuses existing printer payload; stage_admin_ui.py refresh replaces the host directory and requires current core inputs. Neither is suitable unchanged for the historical installed overlay. Preserve exact historical host bytes outside uniquely matched navigation/control-isolation boundaries; HEAD at 85cb5c7 is a before-UX reference, not an installed preimage. The prior component approval remains applicable to backend, catalog, persistence, limits and safety; its separate-page condition is superseded by the owner correction. Decision0012 and host-admin-cockpit.md support reuse of the pinned Cockpit337 adapter and existing privileged bridge. Ordinary second-package navigation reproduces the reported problem; replacing the selected shell or adding an iframe/dependencies is unnecessary. Compare source-bound before/after document identity, sidebar/session continuity, captures and dirty-state journeys. Evidence levels remain offline composition/browser/regression versus actual authenticated installed ARM64 checks on test-sv08-01; neither establishes physical compatibility, commissioning or release. Constraints below close multi-file recovery and asynchronous-outcome acceptance gaps without expanding backend scope. Preserve heater protections, idle admission, generation/CAS persistence, 8GB reserves, profiles, pins and recovery; H12 exclusions and deferred physical checks remain intact. This approves design/offline work only, grants no hardware authority and requires independent delivery verification. Workflow validate passed for42features/54tasks; next returned null. Hashes were recomputed from actual files and scope bound using review-context. No experimental probes, hardware/credential access or tracked edits were performed; actual runtime settings remain unknown here pending coordinator verification.",
+    "requirements_sha256": {
+      "docs/decisions/0012-cockpit-session-integration.md": "22cc25b7b412d2ac90474a272c693dabb3c450a658b9709aa21ecdd9443a9b82",
+      "docs/features/printer-cockpit-integration/owner-request.md": "9ba95298c4cac0db148ec686df5f366d2e34a661df2d74789390e40ab227dcfe"
+    },
+    "reviewer": "Independent feature-approver, full-role separate-session fallback; requested Sol6.1/medium; effective role/model/effort verification coordinator-owned and not attested by this review",
+    "scope_sha256": "cab68a31224313999eb364d817f4575d527112b6eef54d5f27ba38946c702170",
+    "session": "printer-integration-20261004-approver-independent-01"
+  },
   "format_version": 1,
   "id": "printer-cockpit-integration",
   "kind": "improvement",
-  "title": "Integrate printer configuration into the shared Cockpit interface",
-  "author": "root/coordinator with independent project planner",
-  "created": "2026-10-04",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-cockpit-integration/proposal.md",
   "requirements": [
     "docs/features/printer-cockpit-integration/owner-request.md",
     "docs/decisions/0012-cockpit-session-integration.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "checks": [
-    {
-      "id": "integration",
-      "description": "Single shared shell, navigation, styling, routes and dirty draft retention",
-      "environment": "offline"
-    },
-    {
-      "id": "lifecycle",
-      "description": "Shared session, review invalidation and host/printer controller isolation",
-      "environment": "offline"
-    },
-    {
-      "id": "staging",
-      "description": "Exact fresh/historical composition, preservation and restoration",
-      "environment": "offline"
-    },
-    {
-      "id": "installed",
-      "description": "Actual authenticated installed integrated interface and unchanged configuration",
-      "environment": "hardware"
-    }
-  ],
   "tasks": [
     {
-      "id": "software",
-      "title": "Implement and verify shared Cockpit panel",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "integration",
         "lifecycle",
         "staging"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
+      "human_task": null,
+      "id": "software",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Implement and verify shared Cockpit panel",
+      "verification": null
     },
     {
-      "id": "installed",
-      "title": "Install and verify integrated Cockpit interface",
-      "status": "pending",
-      "environment": "hardware",
-      "depends_on": [
-        "printer-cockpit-integration:software"
-      ],
+      "blocker": null,
       "checks": [
         "installed"
       ],
-      "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [
+        "printer-cockpit-integration:software"
+      ],
+      "environment": "hardware",
       "evidence": [],
-      "verification": null,
+      "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
+      "id": "installed",
+      "implementation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "status": "pending",
+      "title": "Install and verify integrated Cockpit interface",
+      "verification": null
     }
-  ]
+  ],
+  "title": "Integrate printer configuration into the shared Cockpit interface"
 }
