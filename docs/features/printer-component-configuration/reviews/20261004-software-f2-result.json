@@ -1,0 +1,8 @@
+{
+  "outcome": "failed",
+  "reviewer": "Independent feature_verifier_high full-role native-thread-limit fallback; requested GPT-6.1 Sol/high; effective runtime confirmation coordinator-owned",
+  "session": "20261004-printer-components-software-review-f1-fresh",
+  "rationale": "R1: Save/import compare only a generation-local integer revision. Actual current and historical Store generation copies produce equal revision 3 with different drafts; an old A request successfully overwrites B max_temp100 with90 at revision4. The loaded generation/context is not bound to CAS, violating approved constraint3 and leaving persistence/browser integration unmet. Original F1-F3 repairs are supported; 18 focused tests and current 256086-byte exact captured-source staging/restoration pass. Decision/evidence/source hashes match clean submitted HEAD4f865df15153bfe88e21552f7ac59319dc680f20. See assigned software-review-f1/findings.md and generation-save-repro.py. Installed/hardware/release acceptance remains separate and unclaimed.",
+  "decision_sha256": "a3da77de13fccb18617a342544f770acec730263a3391769c8148ad1e3e4318d",
+  "evidence_sha256": "6ebd8f027a6b78e21697d62fd580b577e0ca3393304d165c602a8d2541ae243b"
+}
