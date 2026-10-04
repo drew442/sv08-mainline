@@ -1,10 +1,11 @@
 # Feature checklist
 
-Current execution order was reset on 2026-10-01; see the
-[recalibrated plan](../remaining-work-plan.md). Warm boot capture passed; SD return and corrected
-physical H12 preflight are next. Recovery export composition, printer-interface
-and boot-health implementations are accepted offline. Older dated observations
-below do not establish current boot counters, access or active assignments.
+Current goals are in the [goal record](../../.codex/current-goals.md). Minimal H12
+SD reimaging, commissioning-host readiness, default-curve ambient checks and the
+installed Cockpit component page are complete within their documented limits.
+Physical input checks and fine calibration are owner-deferred. Historical boot
+observations do not establish current counters or assignments; abandoned RAM,
+permission/replay and cold-capture work must not be resumed.
 
 This is the short project overview. A checked item has the evidence described in
 its linked record; it is not automatically a supported-release claim. Detailed
@@ -33,21 +34,20 @@ host and hardware acceptance work remains in the
 - [x] Source-built diagnostic host image, recovery root and A/B disk composition.
 - [x] Physical diagnostic-host boot with full SPL, U-Boot, Linux, serial-login,
   SSH and Cockpit evidence; read-only root and persistent data verified.
-- [ ] The latest v5 A-slot boot reached SSH and persistent `/data`; Cockpit
-  failed on immutable root and A-slot trial confirmation is masked. See its
-  [first-boot findings](../hardware/host-board-image-20260925-v5-first-boot.md).
+- [x] [Installed commissioning-host repairs](commissioning-host-readiness/installed-completion.md)
+  passed normal restart, relay restart and persistent authenticated access.
+  Production boot-health/RAUC remains masked on this diagnostic host.
 - [x] Disposable SD launcher and read-only NFS-root diagnostic boot passed on
   `test-sv08-01`; see the [physical result](../hardware/host-sd-network-first-boot-20260926.md).
 - [x] The named SD host test reached Linux, authenticated SSH and GUI; see its
   [physical result](../hardware/host-sd-recovery-host-first-boot-20260929.md).
-  Current SD access needs regaining after the later H12 fallback.
+  Later minimal H12 SD recovery and reimaging also passed.
 - [ ] Complete-host NFS and production signed network recovery remain unvalidated;
   see the [development assessment](../hardware/host-network-boot-investigation.md).
 - [x] DRAM diagnostic loader with bounded failures and a captured successful
   final-validation path.
-- [ ] After the reviewed H12 SD return, reconcile current raw environments,
-  marker and RTC before preparing the corrected preflight. Historical v5
-  counters are not current-state evidence.
+- [x] [Minimal attended SD reimage](h12-attended-sd-reimage/physical-completion.md)
+  and normal eMMC return passed. Superseded RAM/permission preflights are abandoned.
 - [ ] Complete reproducible production boot-chain pins, physical power-loss tests,
   health confirmation and release-image assembly.
 
@@ -56,6 +56,8 @@ host and hardware acceptance work remains in the
 - [x] Pinned Klipper, Moonraker, Mainsail and KlipperScreen packages assembled
   and tested offline.
 - [x] Physical MCU USB update path verified for mainboard and toolhead.
+- [x] [Default-curve ambient sensor baseline](sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed)
+  passed with a chamber BLE reference; physical transitions/calibration remain deferred.
 - [ ] Activate the printer stack with the selected configuration.
 - [ ] Validate sensors, fans, endstops, probe, motion, homing, gantry leveling,
   heaters, mesh and representative prints.
@@ -65,13 +67,16 @@ host and hardware acceptance work remains in the
 - [x] Cockpit host administration UI and local GTK recovery UI implemented and
   tested offline.
 - [x] Physical Cockpit endpoint and owner-key SSH access to the diagnostic host.
+- [x] [Installed printer hardware page](printer-component-configuration/installed-evidence.md):
+  board/component presets, private drafts and reviewed inactive candidates.
 - [x] Signed bundle admission, staging, RAUC backend, idle admission and automatic
   staging policy tested offline.
 - [x] Browser upload, reconnect-safe image jobs and recovery archive export tested
   offline.
 - [x] Interrupted image-job resolution independently verified offline; see the
   [delivery record](host-image-job-resolution/record.json).
-- [ ] Deliver bounded image-job history rollover as a separate reviewed task.
+- [x] [Bounded image-job history rollover](host-image-history-rollover/record.json)
+  passed independent offline verification.
 - [ ] Add production onboarding, TLS, network/access forms, software catalog and
   complete assembled-system update testing.
 

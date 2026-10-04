@@ -8,12 +8,13 @@ Stock electronics are the first target. Modified mainboards, Linux hosts,
 toolheads, probes, and displays will be supported through explicit hardware
 profiles. A profile being present does not mean it has been tested.
 
-**Current priority (2026-10-04):** proceed to attended sensor/input commissioning.
-The installed commissioning-host goal is complete: dependable bounded boot checks,
-persistent SSH/Cockpit with simple SV08 Mainline branding, and matching host/MCU
-software. H12's attended SD reimage and finite image-job history rollover are also
-complete. See [current goals](.codex/current-goals.md) and
-[installed completion](docs/features/commissioning-host-readiness/installed-completion.md).
+**Current state (2026-10-04):** the default-curve ambient sensor baseline and
+installed Cockpit **Printer hardware** page are complete and independently reviewed.
+The page offers board/component selection, sourced presets and inactive configuration
+candidates. Physical input checks and fine calibration are owner-deferred.
+The commissioning host, minimal attended SD reimage and finite image-job history
+are also complete. See [current goals](.codex/current-goals.md) and
+[component-page evidence](docs/features/printer-component-configuration/installed-evidence.md).
 The [owner's H12 scope decision](docs/decisions/20261002-h12-scope-reduction.md)
 continues to exclude RAM maintenance, permission anti-forgery/replay and cold-capture
 work; automatic maintenance launch/return remain deferred. Historical summaries
@@ -28,8 +29,8 @@ repairs passed independent reviews and installed checks. A normal restart and
 HW-667 power cycle now pass automatic confirmation and persistent access checks.
 Both live MCU firmware dictionaries/build metadata match the installed host, and
 independent final delivery verification passed.
-This is not a printing system or supported hardware release. Printer
-configuration and detailed printing validation remain outstanding. Both MCUs have
+This is not a printing system or supported hardware release. Full printer
+configuration, activation and detailed printing validation remain outstanding. Both MCUs have
 Katapult and matching Klipper installed, with recorded
 [build provenance](docs/hardware/test-sv08-01-mcu-build.md).
 [USB updates and paired MCU communication](docs/hardware/test-sv08-01-mainboard-usb.md)

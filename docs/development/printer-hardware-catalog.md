@@ -1,11 +1,11 @@
 # Printer hardware catalog and inactive candidates
 
-This implementation is an offline software candidate with focused source, persistence,
-staging and Chromium fixture evidence, pending independent delivery review and
-installed acceptance. No board combination is certified compatible.
+Independent software and installed delivery verification passed on test-sv08-01;
+see the [installed evidence](../features/printer-component-configuration/installed-evidence.md).
+The workflow creates inactive candidates. No board combination is certified compatible.
 The separate `sv08-printer` Cockpit package uses the selected Cockpit 337 base1
 API and the existing session authorization behavior. The host shell has one ordinary
-navigation link. Installed authenticated second-package navigation remains a check.
+navigation link. Installed authenticated second-package navigation passed.
 
 Choose board references, enter each private MCU transport identity, acknowledge
 its provisional status, then choose a human-readable **Documented component**.
@@ -230,10 +230,10 @@ needed. Both manifests retain identical existing sudo bridge declarations, with
 no new authentication policy. This establishes offline package/source behavior,
 not a real authenticated Cockpit337 or installed ARM64 journey.
 
-Remaining acceptance is independent high delivery verification and the
-coordinator's reviewed named-host installation/authenticated ARM64 journey,
-including root restored read-only, unchanged masks/live configuration and physical
-root/data capacity. No hardware operation, printing or compatibility claim follows.
+Subsequent independent high software verification and the named-host authenticated
+ARM64 journey passed, including read-only root, masks, inactive configuration and
+capacity. The offline evidence below retains its original scope. No printing or
+hardware compatibility claim follows.
 The catalog intentionally exposes only audited source channels: no complete
 connector/electrical inventory is asserted and unavailable pins cannot be assigned.
 
@@ -252,8 +252,8 @@ Pinned Klipper file-output parsing accepts the 2 A boundary with source Z gearin
 and rejects deliberately supplied 3 A and 4 A configurations. Local validation
 refuses these currents before generation. Original unchanged positive sensor/full
 bytes retain their prior passing parser evidence. These are focused implementation
-checks; fresh independent review, installed authentication and physical
-commissioning remain coordinator work.
+checks; later independent review and installed authentication passed as linked
+above. Physical commissioning remains separate.
 
 ## Loaded-context F2 repair
 

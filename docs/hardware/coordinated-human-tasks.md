@@ -504,3 +504,7 @@ temperature capture or physical action is needed for that result. Availability
 for a separately prepared filament/probe transition check was requested. The owner
 selected “Continue software; physical checks later.” Defer that attended work;
 no physical manipulation is currently requested.
+
+The [component page](../features/printer-component-configuration/installed-evidence.md)
+is now installed and independently verified. Its saved two-sensor candidate is
+inactive. PSU remains OFF; no attended action is needed to complete this software goal.

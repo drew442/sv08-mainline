@@ -82,25 +82,26 @@ gates are superseded by the current ordered packages and owner decision.
 - Existing factory media, images and MCU recovery material remain accepted by
   the owner. Beelink storage growth is done; additional backups are not a new gate.
 
-## Current delivery — commissioning host, October 3
+## Current delivery state — October 4
 
-H12's software, attended full write/readback and normal installed boot are complete.
-Finite image-job history rollover is also independently verified and merged.
-The next owner-authorized goal is a reliable installed host ready for sensor-only
-commissioning, with a simple SV08 Mainline Cockpit theme. The
-[bounded proposal](features/commissioning-host-readiness/proposal.md) and
-[fresh installed intake](features/commissioning-host-readiness/intake.md) govern
-this delivery. It addresses normal boot attempts, observed Cockpit defects and
-matched input-only preparation; physical sensor/output commissioning and broader
-host/release qualification follow separately.
+H12, finite image-job history and the reliable commissioning host are complete.
+The unchanged default-curve ambient baseline and the installed Cockpit component
+configuration page also passed independent delivery review. See
+[the installed page](features/printer-component-configuration/installed-evidence.md)
+and [current goals](../.codex/current-goals.md).
+
+The owner deferred attended filament/probe checks and fine calibration. Preserve
+that deferral; no physical manipulation is currently requested. Configuration
+candidates remain inactive, PSU off, and printer services masked. Heating, motion,
+printing and broader host/release qualification remain separate work.
 
 ## Ordered work packages
 
 | Priority | Goal/work | Immediate execution | Completion evidence |
 | --- | --- | --- | --- |
 | Complete / G1 | Deliver minimal attended SD maintenance | Integrate target/image checks before yes/no confirmation; remove abandoned RAM/permission dependencies | Accepted SD implementation with basic checks and explicit start; no separate rehearsal |
-| Active / G2 | Reliable commissioning host; eMMC reimage already verified | Resolve observed boot-attempt and Cockpit gaps; verify installed access and prepare matching sensor-only configuration | Bounded repeated normal boot, persistent SSH/authenticated administration, matching host/MCU preparation; see current proposal |
-| 3 / G3 | Commission and print on test-sv08-01 | Finish actual configuration substitutions; H01/H05 facts; staged attended H06 | Matching host/MCUs, sensor/reference/input checks, outputs/homing/heat/calibration, first print and print controls |
+| Complete / G2 | Reliable commissioning host | Boot/access/branding and matching host/MCUs verified | [Installed host completion](features/commissioning-host-readiness/installed-completion.md) |
+| 3 / G3 — physical checks deferred | Commission and print on test-sv08-01 | Ambient defaults and component UI complete; later H01/H05 physical checks and staged H06 | Matching host/MCUs, sensor/reference/input checks, outputs/homing/heat/calibration, first print and print controls |
 | 4 / G4 | Complete host product and independent recovery | Integrate accepted work, then bounded required administration/update/restore/peripheral gaps | Factory-capacity complete artifact; physical A/B health/fallback, export/restore, persistent state/identity and required UI/peripherals |
 | 5 / G5 | Qualify and document supported stock release | Source/license/rebuild closure plus stock install/recovery/printing/failure tests | Actual stock qualification, representative regressions, documented conversion/recovery and release decision |
 

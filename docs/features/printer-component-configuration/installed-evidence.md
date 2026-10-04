@@ -1,6 +1,6 @@
 # Installed printer hardware configuration — 2026-10-04
 
-All installed execution checks passed; independent delivery verification is pending.
+All installed execution checks passed; [independent delivery verification](reviews/20261004-installed-final-findings.md) passed.
 Target: test-sv08-01 diagnostic slot A on the preserved spare eMMC; H616_JC_6Z_V1.2
 is owner-reported, MCU board revisions remain unknown. Same host boot throughout;
 PSU OFF and USB power unchanged. No restart, MCU operation, heat or motion.

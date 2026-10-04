@@ -1,6 +1,7 @@
 # Printer component configuration in Cockpit
 
-Date: 2026-10-04. Status: approved design; delivery and installation checks pending.
+Date: 2026-10-04. Status: delivered; independent software and installed checks passed.
+See [installed evidence](../features/printer-component-configuration/installed-evidence.md).
 
 ## Context
 

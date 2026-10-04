@@ -207,6 +207,12 @@ The [mainboard bootloader](hardware/test-sv08-01-mainboard-katapult.md) is now
 installed with full readback verification. Its
 [USB updates and paired MCU test](hardware/test-sv08-01-mainboard-usb.md) now pass:
 both MCUs report the pinned Klipper version and reach ready without outputs.
+On October 4, the unchanged factory-curve ambient baseline passed with the chamber
+BLE reference. The [installed Cockpit component page](features/printer-component-configuration/installed-evidence.md)
+now supports board/device presets and inactive configuration candidates with
+independent software and installed acceptance. Physical filament/probe transitions
+and fine calibration are owner-deferred; outputs and printing remain unvalidated.
+
 The [sensor bring-up and offline configuration migration](hardware/test-sv08-01-sensor-bringup.md)
 now provide the next commissioning stage. Full-printer activation and hardware
 validation remain outstanding. Routine USB updates are selected by

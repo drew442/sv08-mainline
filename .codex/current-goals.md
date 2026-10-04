@@ -1,34 +1,31 @@
 # Current delivery goals
 
-## Active goals — sensors and component configuration, 2026-10-04
+## Completed goals — sensors and component configuration, 2026-10-04
 
-1. **Sensor-only ambient baseline complete:** unchanged factory conversion curves,
-   fresh chamber BLE reference and 12 stable no-output printer observations passed
-   independent closure review. Fine tuning remains deferred. Attended physical
-   input transitions and unknown component/circuit facts remain separate H05 work.
-2. **Cockpit hardware configuration:** deliver a board-first component selector
-   with defaults/common options, pins/connectors and temperature limits, validated
-   private machine configuration and an extensible contributor catalog. Develop
-   concrete UX/storage/generation/activation boundaries before implementation,
-   independently approve the proposal and verify software plus installed behavior.
+1. **Default-curve ambient baseline complete:** 12 stable no-output observations
+   and concurrent chamber BLE readings passed independent closure review. Original
+   factory conversion curves are unchanged. Fine calibration remains deferred.
+2. **Cockpit printer hardware configuration complete:** installed board/component
+   selectors, 30 sourced presets, explicit pins/limits, extensible data catalog,
+   incomplete drafts and reviewed inactive candidates. Independent high software
+   verification and separate installed delivery verification passed. Actual Cockpit
+   login, presets, save/reopen, import/export, cancel/apply, previous restore,
+   board clearing and session behavior passed on test-sv08-01.
 
-Owner scope: [October4 request](../docs/features/printer-component-configuration/owner-request.md).
-Separate planning and sensor research completed; independent proposal approval
-passed. The stale-import, current-bound, presets and cross-generation findings are
-repaired. Fresh independent high verification passed all six offline checks;
-software is merged and pushed to main/WIP. The coordinator is performing the
-separate reviewed installed journey with PSU off. First preflight stopped before
-writes because system Python lacks cffi; the existing Klipper venv passes it.
-Original failures and review evidence are preserved. No page installation has
-yet occurred. Beelink receives the owner-confirmed BTH01Y_v3.1
-chamber reference. The reviewed correction to an early first-callback query now
-passes: 12 stable ambient samples, unchanged factory curves, concurrent BLE
-reference and verified PSU-off cleanup. See the
-[baseline](../docs/features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
-Physical input transitions are owner-deferred until later; fine calibration remains deferred.
-No heater/motion activation or new calibration tuning is authorized by this slice.
-Use autonomous PSU control as reviewed, preserving independent USB host power.
+See [installed evidence and limits](../docs/features/printer-component-configuration/installed-evidence.md)
+and [ambient baseline](../docs/features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
+Source/review failures and both installed test-harness corrections remain recorded;
+no failed result was overwritten or counted as a complete pass. The final saved
+configuration contains the two default-curve sensors and remains inactive.
 
+**Next physical work is deferred by the owner:** filament/probe transitions,
+component/circuit facts and later output commissioning. Fine calibration remains
+for later. No physical action is requested now. The PSU is OFF, USB-powered host
+available, root/boot read-only, printer services masked and no live printer.cfg or
+open MCU session. No heat, motion, printing or release qualification is claimed.
+The dispatcher has no authorized ready task; broader requirements remain in the
+[remaining-work plan](../docs/remaining-work-plan.md). Main/WIP and completed feature
+history are published under standing push authorization.
 
 ## Completed goal — reliable commissioning host, 2026-10-04
 
