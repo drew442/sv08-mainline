@@ -493,5 +493,14 @@ and USB power under existing authority. UI save/generate/apply creates only an
 inactive candidate; installed validation needs no physical manipulation. Existing
 H05 physical probe/filament transitions remain attended. Sensor model/ratings and
 circuit uncertainties are recorded without blocking draft/catalog development.
-BLE reference intake has fresh BTH01 readings; association confirmation pending.
+BLE reference intake has fresh BTH01 readings; owner confirmed the exact device
+is BTH01Y_v3.1 with pvvx/THB2 firmware, in the chamber beside the bed.
 Fine calibration is deferred; no heat/motion from this page or sensor-only slice.
+
+The autonomous ambient baseline is now complete and independently reviewed:
+[results and limits](../features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
+PSU utility reports OFF; the USB-powered host remains available. No repeat
+temperature capture or physical action is needed for that result. Availability
+for a separately prepared filament/probe transition check was requested. The owner
+selected “Continue software; physical checks later.” Defer that attended work;
+no physical manipulation is currently requested.

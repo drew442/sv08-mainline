@@ -139,7 +139,7 @@
       "id": "software",
       "implementation": null,
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Repair independently reproduced stale-import CAS bypass, pinned TMC2209 software-current bound and source-qualified board/component presets; preserve cbf793a and original review, then reverify.",
       "status": "pending",
       "title": "Deliver component catalog, configuration backend and Cockpit page",
       "verification": null

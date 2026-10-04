@@ -2,10 +2,10 @@
 
 ## Active goals — sensors and component configuration, 2026-10-04
 
-1. **Sensor-only commissioning:** use component default conversion curves without
-   fine tuning. Obtain fresh chamber BLE ambient reference and no-output printer
-   temperature/input observations. Separate autonomous readings from physical
-   input-transition checks. Unknown component/circuit facts remain explicit.
+1. **Sensor-only ambient baseline complete:** unchanged factory conversion curves,
+   fresh chamber BLE reference and 12 stable no-output printer observations passed
+   independent closure review. Fine tuning remains deferred. Attended physical
+   input transitions and unknown component/circuit facts remain separate H05 work.
 2. **Cockpit hardware configuration:** deliver a board-first component selector
    with defaults/common options, pins/connectors and temperature limits, validated
    private machine configuration and an extensible contributor catalog. Develop
@@ -13,9 +13,14 @@
    independently approve the proposal and verify software plus installed behavior.
 
 Owner scope: [October4 request](../docs/features/printer-component-configuration/owner-request.md).
-Separate Sol6.1/medium planner and sensor-source researcher are active through the
-documented full-role CLI fallback; effective roles/model/effort were verified.
-Coordinator found Beelink's existing BTHome reader and is checking fresh BLE data.
+Separate planning and sensor research completed; independent proposal approval
+passed. Sol6.1/medium implementation is active in feature/printer-components via
+the verified full-role fallback. Beelink receives the owner-confirmed BTH01Y_v3.1
+chamber reference. The reviewed correction to an early first-callback query now
+passes: 12 stable ambient samples, unchanged factory curves, concurrent BLE
+reference and verified PSU-off cleanup. See the
+[baseline](../docs/features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
+Physical input transitions remain attended; fine calibration remains deferred.
 No heater/motion activation or new calibration tuning is authorized by this slice.
 Use autonomous PSU control as reviewed, preserving independent USB host power.
 

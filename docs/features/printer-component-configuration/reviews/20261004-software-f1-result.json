@@ -1,0 +1,8 @@
+{
+  "outcome": "failed",
+  "reviewer": "Independent feature_verifier_high full-role native thread-limit fallback; requested GPT-6.1 Sol/high; effective runtime confirmation coordinator-owned",
+  "session": "printer-components-20261004-software-review-independent-cli-root-cbf793a",
+  "rationale": "At cbf793a9003f6122091f0505b090ebf9a6e7a742, software acceptance fails: stale import adopts a newer revision while comparing stale saved data and can overwrite another tab; a 3 A TMC2209 candidate is marked complete despite pinned Klipper maxval 2 A; source-qualified board/component reference defaults required by the owner are largely absent. Actual guarded Store reproduction and source-contract checks are retained in software-review/findings.md. Submitted hashes, scope, clean worktree and full 29-file diff checked. Valid sensor/full bytes match retained passing syntax fixtures. Installed ARM64/authentication, physical inputs/calibration, hardware compatibility and release are not certified. Independent visual connector-label inspection was unavailable with installed PDF tools.",
+  "decision_sha256": "a3da77de13fccb18617a342544f770acec730263a3391769c8148ad1e3e4318d",
+  "evidence_sha256": "35b605ad6698de7f36294ed7b265078be46496845ef307fa552a93e9ff332e5e"
+}

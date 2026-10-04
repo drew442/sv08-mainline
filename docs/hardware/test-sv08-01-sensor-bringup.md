@@ -57,6 +57,13 @@ No vendor Python extensions were copied into upstream Klipper.
 
 ## Remaining commissioning tasks
 
+Update 2026-10-04: the new commissioning host completed a separately reviewed
+[default-curve ambient baseline](../features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed)
+with concurrent BTH01 chamber reference readings. This supersedes the missing
+current ambient-reference task below, without rewriting the September evidence.
+Fine calibration is owner-deferred; physical input transitions, sensor/circuit
+identification and heat/motion commissioning remain separate.
+
 - Owner: record current room/reference temperature and installed hotend sensor
   part/repair details; compare both ambient readings against an independent
   instrument. Earlier room measurements are not a current reference.

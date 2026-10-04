@@ -1,0 +1,61 @@
+{
+  "outcome": "PASS WITH CONDITIONS",
+  "status": "done",
+  "scope": "Observed exact F2 autonomous passive ambient sensor-only closure; no new hardware authority or broader acceptance",
+  "source_revision": "4bd4565b2f8a2ac34d31bf0a631974cbd2cd3b98",
+  "candidate_sha256": {
+    "docs/features/sensor-default-commissioning/intake.md": "e0c52ec913603a5ddd5b73b30d690dd42ad842048b455414dfd67d38c8e1e270",
+    "docs/features/sensor-default-commissioning/ambient-baseline.json": "6eca8ab17b2234a2208099f792bfc1149a463f308ee7debba0c6d80d3bbda1c2"
+  },
+  "evidence": {
+    "all_f2_review_admission_hashes_match": true,
+    "all_public_receipt_hashes_match": true,
+    "all_configuration_and_inherited_source_hashes_match": true,
+    "exact_target_continuity": true,
+    "samples": 12,
+    "span_seconds": 55.03594277799857,
+    "hotend_range": [
+      26.56,
+      26.62
+    ],
+    "bed_range": [
+      27.46,
+      27.56
+    ],
+    "ble_advertisements": 15,
+    "ble_range": [
+      27.68,
+      27.7
+    ],
+    "static_inputs": [
+      "RELEASED"
+    ],
+    "psu_off_utility_verified": true,
+    "unit_inactive_mainpid_zero": true,
+    "stop_command_returncode": 5,
+    "remaining_serial_port_users": [],
+    "toolhead_port_absent_after_off": true,
+    "same_boot_cid_state_masks_environment": true,
+    "root_and_boot_read_only": true,
+    "normal_printer_services_inactive_and_active_config_absent": true
+  },
+  "conditions": [
+    "Coordinator verifies actual separate full-role Sol6.1/medium closure-review runtime before reliance.",
+    "Record inherited stale capture_script_sha256 field separately from correct F2 capture binding without rewriting historical evidence.",
+    "Explain redundant stop returncode 5 and qualify serial-resource/host-preservation claims to observations; no physical retest required."
+  ],
+  "limitations": [
+    "Not calibration, sensor/circuit identity or pull-up measurement, physical input transitions/polarity, heat/motion, UI feature delivery, author-scope approval or release acceptance.",
+    "BLE has no individual UTC timestamps; placement/model/firmware association owner-reported.",
+    "No physical PSU voltage/USB supply measurement or separate cgroup-member listing.",
+    "No independent proof of absence of unrecorded attempts; runtime records coordinator-produced."
+  ],
+  "material_uncertainty_requiring_high_profile": false,
+  "operation_performed": false,
+  "diagnostic_experiments": 0,
+  "changed_paths": [
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/printer-components-20261004/sensor-closure-review/review.md",
+    "/home/drew/sv08-mainline/local/feature-workflow/probes/printer-components-20261004/sensor-closure-review/result.json"
+  ],
+  "review_sha256": "c6ea09a1a4796c8a086e1393ed19bc1b32317a337164135c842b0b29f142e64e"
+}
