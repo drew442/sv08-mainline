@@ -93,6 +93,29 @@ try {
  await click('[data-page=printer]');await click('#printer-reconcile');await ready();
  await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);await click('[data-page=settings]');assert.equal(await evaluate(`document.querySelector('#printer-candidate-review').open`),false);await click('[data-page=printer]');
  // Board change cancel preserves settings; confirmation clears only affected assignments.
+ // Actual Chromium: dirty selections survive unsupported status reconciliation.
+ await send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:output+'/recovery'});
+ for(const unsupported of ['catalog','state','draft']) {
+  await set('#printer-geometry-fields input',123);
+  await click('#stop-authorization');await until('!sv08Session.elevated');
+  await evaluate('window.fixtureUnsupported='+JSON.stringify(unsupported));
+  await click('#authorize');await until(`!document.querySelector('#printer-reconcile').disabled`);
+  const requestCount=await evaluate('window.fixtureRequests.length');
+  await click('#printer-reconcile');await until(`document.querySelector('#printer-notice').textContent.includes('Unsupported stored') && !document.querySelector('#printer-reconcile').disabled`);
+  for(const id of ['save','review','restore','add','add-preset','apply','import'])assert.equal(await evaluate(`document.querySelector('#printer-${id}').disabled`),true);
+  assert.equal(await evaluate(`document.querySelector('#printer-geometry-fields input').disabled`),true);
+  const requests=await evaluate('window.fixtureRequests.slice('+requestCount+')');assert.deepEqual(requests.map(r=>r.request.action),['status']);
+  await click('#printer-export');
+  const recovery=output+'/recovery/printer-hardware-draft.json';
+  for(let n=0;n<100&&!fs.existsSync(recovery);n++)await delay(50);
+  const recovered=JSON.parse(fs.readFileSync(recovery));assert.equal(recovered.geometry.max_velocity,123);assert.equal(recovered.format_version,1);fs.renameSync(recovery,output+'/recovery/'+unsupported+'-draft.json');
+  await evaluate('window.fixtureUnsupported=null');await click('#printer-reconcile');await ready();
+  assert.equal(await evaluate(`document.querySelector('#printer-geometry-fields input').value`),'123');
+ }
+ // Explicit choice alone discards the retained local draft.
+ await click('#printer-reload');await until(`!document.querySelector('#printer-reconciliation').hidden`);
+ await evaluate('window.confirm=()=>true');await click('#printer-discard');await ready();
+ assert.equal(await evaluate(`document.querySelector('#printer-geometry-fields input').value`),String(state().draft.geometry.max_velocity??''));
  await set('#printer-boards fieldset:nth-child(1) select','octopus-v1.1-non-pro');await key('Escape');assert.equal(await evaluate(`document.querySelector('#printer-boards select').value`),'sv08-main');
  // Import explicit before/after comparison and cancellation. Private data stays in-memory.
  const imported=structuredClone(state().draft);imported.devices[0].settings.max_temp=100;
@@ -192,6 +215,6 @@ try {
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],shared_panel:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
 } finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

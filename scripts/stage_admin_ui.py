@@ -11,10 +11,15 @@ import os
 from pathlib import Path
 import shutil
 from prepare_host_os import REPO, work_path
-from stage_printer_ui import compose_host, NAV
+from stage_printer_ui import compose_host, NAV, root_lock
 
 
 def stage(work, context, execute=False, refresh=False):
+    with root_lock(work / 'rootfs'):
+        return _stage(work, context, execute, refresh)
+
+
+def _stage(work, context, execute=False, refresh=False):
     if context not in ('host', 'recovery'): raise ValueError('Unknown UI context')
     if refresh and context != 'host':
         raise ValueError('UI refresh is only supported for the host context')

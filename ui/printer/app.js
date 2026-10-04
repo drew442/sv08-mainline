@@ -1,19 +1,20 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById('printer-' + id);
-    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, changed = false, reconcile = false;
+    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, changed = false, reconcile = false, diagnostic = false;
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { $('notice').textContent = text; };
     const invalidate = () => { review = null; ++epoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); };
     const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
     function controls() {
-        for (const id of ['save','review','restore','add','add-preset','apply','import']) $(id).disabled = busy || reconcile || !authority() || (!draft && id !== 'import');
+        for (const id of ['save','review','restore','add','add-preset','apply','import']) $(id).disabled = busy || reconcile || diagnostic || !authority() || (!draft && id !== 'import');
+        for (const field of document.querySelectorAll('#printer-boards input, #printer-boards select, #printer-boards button, #printer-devices input, #printer-devices select, #printer-devices button, #printer-geometry-fields input, #printer-device-board, #printer-device-kind, #printer-device-name, #printer-device-preset, #printer-mode, #printer-cancel-import')) field.disabled = busy || reconcile || diagnostic || !authority();
         $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= changed || !draft;
         $('apply').disabled ||= !review?.complete;
         $('restore').disabled ||= !saved?.previous;
-        $('reconciliation').hidden = !reconcile;
+        $('reconciliation').hidden = !(reconcile || diagnostic);
         $('reconcile').disabled = $('discard').disabled = busy || !authority();
     }
     async function rpc(request) {
@@ -159,8 +160,8 @@
         controls();
     }
     async function load(keep = false) {
-        invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;revision=saved.revision;if (!keep) { draft=copy(saved.draft);changed=false; } reconcile=false;
-        if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');draft=null;controls();return;}
+        invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;revision=saved.revision;if (!keep) { draft=copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
+        if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;controls();return;}
         $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
         $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');
     }

@@ -16,6 +16,18 @@ class StageUITests(unittest.TestCase):
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, target / path.name)
         (target / 'sv08_rauc_bootloader.py').chmod(0o755)
 
+    def test_shared_root_lock_refuses_stage_and_refresh(self):
+        from stage_printer_ui import root_lock
+        root=self.work/'rootfs'
+        before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
+        with root_lock(root):
+            for execute,refresh in ((False,False),(True,False),(True,True)):
+                with self.assertRaisesRegex(ValueError,'busy'):stage(self.work,'host',execute,refresh)
+        self.assertEqual({str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()},before)
+        stage(self.work,'host',True)
+        with root_lock(root):
+            with self.assertRaisesRegex(ValueError,'busy'):stage(self.work,'host',True,True)
+
     def test_host_only_navigation_has_no_dead_printer_references(self):
         stage(self.work,'host',True)
         entry=self.work/'rootfs/usr/share/cockpit/sv08-host/index.html'

@@ -5,6 +5,8 @@ Overlay requires a caller-supplied complete file/mode inventory of the reviewed
 host closure. Restoration checks every afterimage before restoring one host file.
 """
 import argparse
+from contextlib import contextmanager
+import fcntl
 import ast
 import hashlib
 import json
@@ -17,6 +19,30 @@ NAV=b'<a href="../sv08-printer/index.html">Printer hardware</a>'
 KNOWN_HOST={'app.js': ['eed0e2d76d8256f2a9fd590aefd47790f99b99511d9258358700f1825f47def4', 'feadb60128aba22ed0d7b61936ebd8e94fbeb6269173ca81ac7d7427a4d75b10'], 'upload.js': ['15cfc6d17922e78a9b60885d99e6742608ffc397e6e84109dcb93bf47370aeb7']}
 KNOWN_PRINTER={'app.js': 'ead2fcd9912e29e662ab23a168fa1d3a3413ba5b59ff07bf8e0c708f4db6ec1d', 'index.html': '3683c8deb1d61d17e9ff167551718b83da470b913ff29135013a16779b0a66eb', 'manifest.json': 'acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e', 'session.js': 'a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef', 'style.css': '1c51b45172e157ccf46ebe3bc3ea8f451f2c2187b8b6754318826644bd78eeec'}
 ANCHOR=b'<p class="eyebrow">YOUR PRINTER</p>'
+
+
+@contextmanager
+def root_lock(root):
+    """Serialize supported offline writers on the stable root directory inode.
+
+    The caller exclusively owns this root and must not rename/replace it or run
+    uncooperative writers. No lock file is created, removed or recreated.
+    """
+    fd=os.open(root,os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        try:fcntl.flock(fd,fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:raise ValueError('Offline root busy; no mutation') from None
+        yield
+    finally:os.close(fd)
+
+
+def check_snapshot(root, expected):
+    for name, metadata in expected.items():
+        path=safe(root,name)
+        if metadata is None:
+            if path.exists() or path.is_symlink():raise ValueError('Filesystem drift; operation refused')
+        elif not path.exists() or inventory(root,[name])[name]!=metadata:
+            raise ValueError('Filesystem drift; operation refused')
 
 
 def sha(raw):return hashlib.sha256(raw).hexdigest()
@@ -117,6 +143,11 @@ def integrate_style(raw):
 
 
 def stage(root, expected, execute=False, fresh=False):
+    with root_lock(root):
+        return _stage(root, expected, execute, fresh)
+
+
+def _stage(root, expected, execute=False, fresh=False):
     root=Path(root).absolute()
     if not root.is_dir() or root.is_symlink():raise ValueError('Expected disposable root')
     required={'usr/lib/sv08/sv08_state.py','usr/lib/sv08/admin-context.json','etc/cockpit/cockpit.conf','usr/share/cockpit/sv08-host/index.html','usr/share/cockpit/sv08-host/session.js','usr/share/cockpit/sv08-host/app.js','usr/share/cockpit/sv08-host/upload.js','usr/share/cockpit/sv08-host/manifest.json'}
@@ -178,26 +209,52 @@ def stage(root, expected, execute=False, fresh=False):
                 root_delta_bytes=sum(len(raw)-(len(bytes.fromhex(originals[name])) if name in originals else 0) for name,raw in files.items()),
                 largest_temporary_bytes=max(map(len,files.values()),default=0),
                 added_inodes=len(set(files)-set(expected))+len(directories),publication='per-file atomic; host index published last')
+    # Conservative allocation bounds, not statvfs admission. Backups are hex in
+    # one retained report on /data; allow a second report copy during publication.
+    block=lambda size:(size+4095)//4096
+    report_bound=len(json.dumps(report,indent=2).encode())+8192
+    report['capacity']=dict(block_size=4096,
+        root_peak_increment_blocks=sum(block(len(raw)) for raw in files.values())+len(directories)+block(report['largest_temporary_bytes']),
+        root_peak_increment_inodes=report['added_inodes']+1,
+        data_report_bytes_upper_bound=report_bound,
+        data_peak_increment_blocks=2*block(report_bound)+1,
+        data_peak_increment_inodes=3,
+        boot_peak_increment_blocks=0,boot_peak_increment_inodes=0,
+        root_temporary_inodes=1,data_retained_report_inodes=1,data_report_temporary_inodes=1,
+        backup_bytes_in_report=sum(len(raw) for raw in originals.values()),
+        assumptions='one report plus publication temporary in one new /data directory; no separate backup files; exclusive offline root; no deployment packet included')
+    if len(json.dumps(report,indent=2).encode())>report_bound:raise ValueError('Report accounting bound exceeded')
     if report['payload_bytes']>report['feature_storage_limit']:raise ValueError('Feature payload exceeds limit')
     if execute:
+        snapshot=dict(expected)
+        snapshot.update({name:None for name in set(after)|set(directories) if name not in expected})
+        check_snapshot(root,snapshot)
         for name in files:
             temporary=safe(root,name).with_name(Path(name).name+'.integration-tmp')
             if temporary.exists() or temporary.is_symlink():raise ValueError('Unexpected publication temporary')
         for name,metadata in sorted(directories.items(),key=lambda item:len(Path(item[0]).parts)):
-            path=safe(root,name);path.mkdir();path.chmod(metadata['mode']);os.chown(path,metadata['uid'],metadata['gid'])
+            check_snapshot(root,snapshot)
+            path=safe(root,name);path.mkdir();path.chmod(metadata['mode']);os.chown(path,metadata['uid'],metadata['gid']);snapshot[name]=metadata
         # Publish the host entry last: additions are present before navigation.
         for name in sorted(files,key=lambda n:3 if n==host+'index.html' else 0 if n.endswith('sv08-printer/redirect.js') else 1 if n.endswith('sv08-printer/index.html') else 2):
             if name in expected and expected[name]==after[name]:continue
+            check_snapshot(root,snapshot)
             path=safe(root,name);metadata=after[name];temporary=path.with_name(path.name+'.integration-tmp')
             try:
                 with temporary.open('xb') as stream:stream.write(files[name]);stream.flush();os.fsync(stream.fileno())
-                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);os.replace(temporary,path)
+                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);check_snapshot(root,snapshot);os.replace(temporary,path);snapshot[name]=metadata
             finally:
                 if temporary.exists():temporary.unlink()
+        check_snapshot(root,snapshot)
     return report
 
 
 def restore(root, report, interrupted=False):
+    with root_lock(root):
+        return _restore(root, report, interrupted)
+
+
+def _restore(root, report, interrupted=False):
     root=Path(root).absolute()
     # Check every afterimage and unchanged preimage before touching anything.
     expected=dict(report['before']);expected.update(report['after']);expected.update(report['new_directories'])
@@ -219,22 +276,26 @@ def restore(root, report, interrupted=False):
     for name in report['originals']:
         temporary=safe(root,name).with_name(Path(name).name+'.restore-tmp')
         if temporary.exists() or temporary.is_symlink():raise ValueError('Unexpected restoration temporary')
+    snapshot={name:checked.get(name) for name in expected} if interrupted else dict(expected)
     # Revert navigation first, then its dependencies. Originals remain in report.
     names=sorted(report['after'],key=lambda n:0 if n.endswith('sv08-host/index.html') else 1)
     for name in names:
+        check_snapshot(root,snapshot)
         path=safe(root,name)
         if name in report['originals']:
             if sha(path.read_bytes())==report['before'][name]['sha256']:continue
             metadata=report['before'][name];temporary=path.with_name(path.name+'.restore-tmp')
             try:
                 with temporary.open('xb') as stream:stream.write(bytes.fromhex(report['originals'][name]));stream.flush();os.fsync(stream.fileno())
-                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);os.replace(temporary,path)
+                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);check_snapshot(root,snapshot);os.replace(temporary,path);snapshot[name]=metadata
             finally:
                 if temporary.exists():temporary.unlink()
-        elif path.exists():path.unlink()
+        elif path.exists():path.unlink();snapshot[name]=None
     for name in sorted(report['new_directories'],key=lambda n:len(Path(n).parts),reverse=True):
+        check_snapshot(root,snapshot)
         path=safe(root,name)
-        if path.exists():path.rmdir()
+        if path.exists():path.rmdir();snapshot[name]=None
+    check_snapshot(root,snapshot)
     return {'restored':True,'activated':False}
 
 
