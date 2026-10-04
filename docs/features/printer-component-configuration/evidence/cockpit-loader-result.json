@@ -1,0 +1,15 @@
+{
+  "sv08-host": {
+    "served": true,
+    "csp": "default-src 'self'; connect-src 'self' ws: wss:; form-action 'self'; base-uri 'self'; object-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'self'; block-all-mixed-content"
+  },
+  "sv08-printer": {
+    "served": true,
+    "csp": "default-src 'self'; connect-src 'self' ws: wss:; form-action 'self'; base-uri 'self'; object-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'self'; block-all-mixed-content"
+  },
+  "version": "337-1+deb13u2",
+  "auth": "not exercised; loader and manifest evidence only",
+  "identical_existing_bridge_declarations": true,
+  "shell_document_sha256": "0d2d2979a547c3a3409d3950c9249741b0a6b2768f7fd0ade25159dfa2629e32",
+  "packages_sha256": "556a7cf96d0a190bc09018593ba8334705575c408b992eeffccf20f8491752f7"
+}

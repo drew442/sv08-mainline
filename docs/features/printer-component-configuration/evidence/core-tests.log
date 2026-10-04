@@ -1,0 +1,27 @@
+test_all_selectable_capabilities_primary_line_audit (test_printer_configuration.CatalogTests.test_all_selectable_capabilities_primary_line_audit) ... ok
+test_board_change_and_data_extension (test_printer_configuration.CatalogTests.test_board_change_and_data_extension) ... ok
+test_catalog_sources (test_printer_configuration.CatalogTests.test_catalog_sources) ... ok
+test_fixed_factory_schema_and_catalog_corruption (test_printer_configuration.CatalogTests.test_fixed_factory_schema_and_catalog_corruption) ... ok
+test_full_protected_and_incomplete (test_printer_configuration.CatalogTests.test_full_protected_and_incomplete) ... ok
+test_rejections (test_printer_configuration.CatalogTests.test_rejections) ... ok
+test_sensor_positive_allowlist_and_determinism (test_printer_configuration.CatalogTests.test_sensor_positive_allowlist_and_determinism) ... ok
+test_cas_review_previous_restore_ack (test_printer_configuration.HistoricalPersistenceTests.test_cas_review_previous_restore_ack) ... ok
+test_context_privilege_links_import_and_locks (test_printer_configuration.HistoricalPersistenceTests.test_context_privilege_links_import_and_locks) ... ok
+test_historical_generation_copy_rollback (test_printer_configuration.HistoricalPersistenceTests.test_historical_generation_copy_rollback) ... ok
+test_independent_process_cas_and_context_change (test_printer_configuration.HistoricalPersistenceTests.test_independent_process_cas_and_context_change) ... ok
+test_low_blocks_inodes_feature_footprint_and_default_reserve (test_printer_configuration.HistoricalPersistenceTests.test_low_blocks_inodes_feature_footprint_and_default_reserve) ... ok
+test_no_space_killed_publication_and_corruption (test_printer_configuration.HistoricalPersistenceTests.test_no_space_killed_publication_and_corruption) ... ok
+test_real_generation_copy_rollback_current_and_historical (test_printer_configuration.HistoricalPersistenceTests.test_real_generation_copy_rollback_current_and_historical) ... ok
+test_unknown_catalog_diagnosis_corrupt_state_and_mutation_preservation (test_printer_configuration.HistoricalPersistenceTests.test_unknown_catalog_diagnosis_corrupt_state_and_mutation_preservation) ... ok
+test_cas_review_previous_restore_ack (test_printer_configuration.PersistenceTests.test_cas_review_previous_restore_ack) ... ok
+test_context_privilege_links_import_and_locks (test_printer_configuration.PersistenceTests.test_context_privilege_links_import_and_locks) ... ok
+test_independent_process_cas_and_context_change (test_printer_configuration.PersistenceTests.test_independent_process_cas_and_context_change) ... ok
+test_low_blocks_inodes_feature_footprint_and_default_reserve (test_printer_configuration.PersistenceTests.test_low_blocks_inodes_feature_footprint_and_default_reserve) ... ok
+test_no_space_killed_publication_and_corruption (test_printer_configuration.PersistenceTests.test_no_space_killed_publication_and_corruption) ... ok
+test_real_generation_copy_rollback_current_and_historical (test_printer_configuration.PersistenceTests.test_real_generation_copy_rollback_current_and_historical) ... ok
+test_unknown_catalog_diagnosis_corrupt_state_and_mutation_preservation (test_printer_configuration.PersistenceTests.test_unknown_catalog_diagnosis_corrupt_state_and_mutation_preservation) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.672s
+
+OK

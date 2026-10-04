@@ -501,5 +501,6 @@ The autonomous ambient baseline is now complete and independently reviewed:
 [results and limits](../features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
 PSU utility reports OFF; the USB-powered host remains available. No repeat
 temperature capture or physical action is needed for that result. Availability
-for a separately prepared filament/probe transition check has been requested;
-no physical manipulation is instructed until the exact steps are ready.
+for a separately prepared filament/probe transition check was requested. The owner
+selected “Continue software; physical checks later.” Defer that attended work;
+no physical manipulation is currently requested.
