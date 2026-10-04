@@ -36,13 +36,17 @@ def root_lock(root):
     finally:os.close(fd)
 
 
-def check_snapshot(root, expected):
+def check_snapshot(root, expected, temporary=None):
     for name, metadata in expected.items():
         path=safe(root,name)
         if metadata is None:
             if path.exists() or path.is_symlink():raise ValueError('Filesystem drift; operation refused')
         elif not path.exists() or inventory(root,[name])[name]!=metadata:
             raise ValueError('Filesystem drift; operation refused')
+        if metadata is not None and metadata['kind']=='directory':
+            children={Path(n).name for n,m in expected.items() if m is not None and str(Path(n).parent)==name}
+            if temporary is not None and temporary.parent==path:children.add(temporary.name)
+            if {child.name for child in path.iterdir()}!=children:raise ValueError('Directory inventory drift; operation refused')
 
 
 def sha(raw):return hashlib.sha256(raw).hexdigest()
@@ -150,6 +154,7 @@ def stage(root, expected, execute=False, fresh=False):
 def _stage(root, expected, execute=False, fresh=False):
     root=Path(root).absolute()
     if not root.is_dir() or root.is_symlink():raise ValueError('Expected disposable root')
+    check_snapshot(root,expected)
     required={'usr/lib/sv08/sv08_state.py','usr/lib/sv08/admin-context.json','etc/cockpit/cockpit.conf','usr/share/cockpit/sv08-host/index.html','usr/share/cockpit/sv08-host/session.js','usr/share/cockpit/sv08-host/app.js','usr/share/cockpit/sv08-host/upload.js','usr/share/cockpit/sv08-host/manifest.json'}
     if not isinstance(expected,dict) or not required<=set(expected):raise ValueError('Exact reviewed closure inventory is required')
     files=payload()
@@ -242,7 +247,7 @@ def _stage(root, expected, execute=False, fresh=False):
             path=safe(root,name);metadata=after[name];temporary=path.with_name(path.name+'.integration-tmp')
             try:
                 with temporary.open('xb') as stream:stream.write(files[name]);stream.flush();os.fsync(stream.fileno())
-                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);check_snapshot(root,snapshot);os.replace(temporary,path);snapshot[name]=metadata
+                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);check_snapshot(root,snapshot,temporary);os.replace(temporary,path);snapshot[name]=metadata
             finally:
                 if temporary.exists():temporary.unlink()
         check_snapshot(root,snapshot)
@@ -287,7 +292,7 @@ def _restore(root, report, interrupted=False):
             metadata=report['before'][name];temporary=path.with_name(path.name+'.restore-tmp')
             try:
                 with temporary.open('xb') as stream:stream.write(bytes.fromhex(report['originals'][name]));stream.flush();os.fsync(stream.fileno())
-                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);check_snapshot(root,snapshot);os.replace(temporary,path);snapshot[name]=metadata
+                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);check_snapshot(root,snapshot,temporary);os.replace(temporary,path);snapshot[name]=metadata
             finally:
                 if temporary.exists():temporary.unlink()
         elif path.exists():path.unlink();snapshot[name]=None

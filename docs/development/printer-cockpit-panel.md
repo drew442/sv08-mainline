@@ -82,3 +82,8 @@ node --require /home/drew/sv08-mainline/local/feature-workflow/probes/history-ro
 The fixture supports successful host status, injected polling failure and delayed host/printer reviews and inactive apply acknowledgments. Browser execution requires sufficient free space for the unchanged Store/Budget
 and private non-group-writable fixture ancestry. Browser shim evidence is offline,
 not authenticated Cockpit or installed/hardware acceptance.
+
+Existing managed directory membership is checked as well as file metadata. Extra
+files, directories or links in that inventory refuse before staging or restoration,
+including interrupted restoration. The only temporary entry allowed during a
+replacement is that operation’s explicitly named publication temporary.

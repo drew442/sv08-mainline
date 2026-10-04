@@ -119,6 +119,43 @@ class StageTests(unittest.TestCase):
             # Earlier navigation restoration is per-file, never claimed atomic.
             self.assertEqual((root/'usr/share/cockpit/sv08-host/index.html').read_bytes(),bytes.fromhex(report['originals']['usr/share/cockpit/sv08-host/index.html']))
 
+    def test_existing_directory_inventory_drift_refuses_without_mutation(self):
+        import os, shutil, stat
+        def snapshot(root):
+            result={}
+            for path in root.rglob('*'):
+                st=path.lstat()
+                content=os.readlink(path) if stat.S_ISLNK(st.st_mode) else path.read_bytes() if stat.S_ISREG(st.st_mode) else None
+                result[str(path.relative_to(root))]=(st.st_mode,st.st_uid,st.st_gid,content)
+            return result
+        for historical in (False,True):
+            for phase in ('stage','restore','interrupted'):
+                for kind in ('file','directory','link'):
+                    with self.subTest(historical=historical,phase=phase,kind=kind),tempfile.TemporaryDirectory() as tmp:
+                        root=Path(tmp);self.fixture(root)
+                        if historical:
+                            for folder,package in [('ui/host','sv08-host'),('ui/printer','sv08-printer')]:
+                                target=root/'usr/share/cockpit'/package
+                                if target.exists():shutil.rmtree(target)
+                                target.mkdir()
+                                for name in subprocess.check_output(['git','ls-tree','--name-only','85cb5c7',folder+'/'],cwd=ROOT,text=True).splitlines():
+                                    (target/Path(name).name).write_bytes(subprocess.check_output(['git','show','85cb5c7:'+name],cwd=ROOT))
+                        expected=stage.inventory(root,[str(p.relative_to(root)) for p in root.rglob('*')])
+                        if phase!='stage':report=stage.stage(root,expected,True)
+                        directory=root/'usr/share/cockpit'/('sv08-host' if phase=='stage' else 'sv08-printer')
+                        extra=directory/'unexpected'
+                        if kind=='file':extra.write_bytes(b'preserve unexpected bytes')
+                        elif kind=='directory':extra.mkdir()
+                        else:extra.symlink_to('app.js')
+                        before=snapshot(root)
+                        if phase=='stage':
+                            for execute in (False,True):
+                                with self.assertRaises(ValueError):stage.stage(root,expected,execute)
+                                self.assertEqual(snapshot(root),before)
+                        else:
+                            with self.assertRaises(ValueError):stage.restore(root,report,phase=='interrupted')
+                            self.assertEqual(snapshot(root),before)
+
     def test_fresh_and_historical_factory_capacity(self):
         import os
         layout=json.loads((ROOT/'configs/images/host-ab.json').read_text())
