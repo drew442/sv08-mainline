@@ -29,7 +29,7 @@ The hotend name alone cannot select a sensor: the manufacturer's current
 lists NTC and PT1000 options (accessed2026-10-04). This does not identify which part
 is installed. Catalog choices must distinguish these alternatives explicitly.
 
-Next: prepare/review a bounded temporary input-only Klippy session, use autonomous
+Planned operation (now completed below): prepare/review a bounded temporary input-only Klippy session, use autonomous
 PSU on/off while retaining USB host power, collect repeated temperature/button
 baselines alongside fresh BLE advertisements, stop the temporary session and
 return PSU off. No heaters/steppers/fans or normal printer service activation.
@@ -46,3 +46,26 @@ are not measured zero-degree temperatures. Unit inactive/MainPID0, closed ports,
 PSU OFF/statusOFF and unchanged host boot/masks were recorded. No valid12-sample
 baseline was obtained. A bounded first-callback wait is prepared for separate
 review; no curves/pull-ups/limits changed and no automatic rerun occurred.
+
+## Corrected ambient baseline completed
+
+The first correction was rejected by independent review before execution: late
+responses and one initialized sensor beside an uninitialized sensor needed tighter
+checks. The corrected F2 script passed [exact action review](reviews/f2-review.md)
+with verified separate Sol6.1/medium runtime, then ran once. The original failure
+and rejected F1 candidate remain preserved; neither was silently retried.
+
+The [measured result](ambient-baseline.json) contains 12 valid samples spanning
+55.04 seconds: hotend 26.56–26.62°C, bed 27.46–27.56°C. Beelink simultaneously
+received 15 advertisements from the owner-confirmed chamber sensor, 27.68–27.70°C.
+Different locations and unknown reference accuracy prevent treating their
+difference as a calibration correction. Factory curves and pull-ups are unchanged;
+fine calibration remains deferred.
+
+Probe and filament inputs remained RELEASED throughout; no physical transitions
+were tested. The transient process stopped, unit inactive/MainPID0 and MCU ports
+closed. PSU OFF was independently confirmed through Beelink. Host boot/CID,
+root and boot read-only mounts, masks, inactive printer services and absence of
+active printer.cfg were preserved. No heater, motor or fan output was configured.
+This completes the autonomous ambient observation slice, not H05 physical input
+polarity, temperature accuracy over the operating range, or heat/motion acceptance.

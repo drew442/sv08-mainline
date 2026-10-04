@@ -16,8 +16,11 @@ Owner scope: [October4 request](../docs/features/printer-component-configuration
 Separate planning and sensor research completed; independent proposal approval
 passed. Sol6.1/medium implementation is active in feature/printer-components via
 the verified full-role fallback. Beelink receives the owner-confirmed BTH01Y_v3.1
-chamber reference. Initial live sensor query exposed a first-callback timing bug
-in the diagnostic script; PSU returned off, and a bounded correction is in review.
+chamber reference. The reviewed correction to an early first-callback query now
+passes: 12 stable ambient samples, unchanged factory curves, concurrent BLE
+reference and verified PSU-off cleanup. See the
+[baseline](../docs/features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
+Physical input transitions remain attended; fine calibration remains deferred.
 No heater/motion activation or new calibration tuning is authorized by this slice.
 Use autonomous PSU control as reviewed, preserving independent USB host power.
 

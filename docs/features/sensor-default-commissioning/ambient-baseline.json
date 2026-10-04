@@ -1,0 +1,59 @@
+{
+  "samples": 12,
+  "psu_off": true,
+  "same_host_boot": true,
+  "masks_and_state_preserved": true,
+  "configuration_sha256": "48c5dfeda52fc6bff547cff631dafedbb70accb25a01444e579e3782f353de51",
+  "hotend_range": [
+    26.56,
+    26.62
+  ],
+  "bed_range": [
+    27.46,
+    27.56
+  ],
+  "input_states": {
+    "gcode_button probe_check": [
+      "RELEASED"
+    ],
+    "gcode_button filament_check": [
+      "RELEASED"
+    ]
+  },
+  "physical_transitions_tested": false,
+  "sensor_accuracy_calibrated": false,
+  "date": "2026-10-04",
+  "profile": "profiles/test-sv08-01/profile.json",
+  "evidence_level": "measured passive ambient input-only session",
+  "board_revision": "Unknown installed MCU board revisions; reference pins from pinned Sovol factory configuration",
+  "ble": {
+    "model": "BTH01Y_v3.1 (owner-reported)",
+    "firmware_source": "https://github.com/pvvx/THB2",
+    "firmware_revision": null,
+    "placement": "chamber beside bed (owner-reported)",
+    "advertisements": 15,
+    "temperature_c_range": [
+      27.68,
+      27.7
+    ],
+    "limitation": "Concurrent bounded ambient scan, not contact calibration; advertisements have no individual UTC timestamps"
+  },
+  "cleanup": {
+    "errors": [],
+    "psu_off_verified": true
+  },
+  "private_receipt_sha256": {
+    "live-inputs.stdout": "de810060269519c5911b14f49bd5e5d39b246ad521b7dd2590c9781ecb79266d",
+    "ble-concurrent.stdout": "9d2873db63d2e1561fd13700ba9f154e719c64e917e1162e7163f5b1be678f33",
+    "events.json": "1e1aa71f74dd251ceb3c20d65a03d302f62f785f101976ea89cd5f9075973aaa",
+    "initial-preflight.stdout": "9560ba58e3c8d42390e50e6ea9c932b60393c29665c8d8cd8dbdc225ed367c7b",
+    "initial-observation.stdout": "e34e7df54f0312761bfe616f8b7b42ee175ce3b8d10b45bca489ba6479f229ff",
+    "final-preflight.stdout": "9560ba58e3c8d42390e50e6ea9c932b60393c29665c8d8cd8dbdc225ed367c7b",
+    "final-observation.stdout": "72d8258e30510aafccfdba52d3da37f9496773b487786eab266953f6766b2cfe",
+    "final-unit.stdout": "496f978c0e3933fa117a6ed952ffe874e91e4cbe711b8dd4d6dc2ea623ac96ad",
+    "final-idle.stdout": "d8a2f57b45f655f515ad7fb2da073024aba51d66a70c2e80be7aab8ea720b098",
+    "psu-off-status.stdout": "0855c353c8a126265186a268bbc57583247a8d131a7e602f0e48ac6105a09c48",
+    "admission.json": "48bb2cb6755afcdf3ef34bd46bdda0e6c4c1f1e125be823a84927178f0256b0c"
+  },
+  "sample_span_seconds": 55.03594277799857
+}
