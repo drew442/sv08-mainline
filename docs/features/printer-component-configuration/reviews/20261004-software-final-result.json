@@ -1,0 +1,8 @@
+{
+  "outcome": "passed",
+  "reviewer": "Fresh independent feature_verifier_high full-role CLI fallback; coordinator runtime confirms gpt-6.1-sol/high",
+  "session": "01a105d2-8a0f-73b1-8e96-9747da3783f3",
+  "rationale": "All six approved offline software checks pass at 7a2894adf20575e84bf6d305be1c5cd04e72bc27. Independent actual current/historical Store checks close equal-revision cross-generation overwrite for all six non-status operations, preserve bytes on refusal and permit explicit refresh/recovery. Full diff, clean actual HEAD, complete decision/scope/requirements and submitted evidence hashes verified. Unchanged catalog/parser/durability/browser/staging evidence remains valid; exact payload256434 bytes stays below256KiB. No material software blocker. Required authenticated installed ARM64 acceptance, exact installation review, root-ro/masks/live-config checks and physical commissioning remain separate and are neither certified nor waived.",
+  "decision_sha256": "a3da77de13fccb18617a342544f770acec730263a3391769c8148ad1e3e4318d",
+  "evidence_sha256": "cec6d224532e1e550dad99e3932c9fbc6c05892d597caeeb244d19addab64c72"
+}

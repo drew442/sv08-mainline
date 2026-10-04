@@ -14,12 +14,13 @@
 
 Owner scope: [October4 request](../docs/features/printer-component-configuration/owner-request.md).
 Separate planning and sensor research completed; independent proposal approval
-passed. The first software review findings (stale import, driver-current bound
-and useful presets) are repaired and passed fresh review. That review reproduced
-an equal-revision cross-generation draft overwrite; a bounded Sol6.1/medium repair
-now binds loaded content/context before requests. Both failed candidates/reviews
-are preserved. Work continues in feature/printer-components via the full-role fallback. No page installation
-has occurred. Beelink receives the owner-confirmed BTH01Y_v3.1
+passed. The stale-import, current-bound, presets and cross-generation findings are
+repaired. Fresh independent high verification passed all six offline checks;
+software is merged and pushed to main/WIP. The coordinator is performing the
+separate reviewed installed journey with PSU off. First preflight stopped before
+writes because system Python lacks cffi; the existing Klipper venv passes it.
+Original failures and review evidence are preserved. No page installation has
+yet occurred. Beelink receives the owner-confirmed BTH01Y_v3.1
 chamber reference. The reviewed correction to an early first-callback query now
 passes: 12 stable ambient samples, unchanged factory curves, concurrent BLE
 reference and verified PSU-off cleanup. See the

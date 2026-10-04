@@ -366,10 +366,14 @@
       "evidence": [],
       "human_task": "docs/hardware/coordinated-human-tasks.md#component-configuration--2026-10-04",
       "id": "installed",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "session": "printer-components-installed-20261004",
+        "run": "000acfadec1643cb891a8986a34bb006"
+      },
       "repeats": 0,
       "resumption": null,
-      "status": "pending",
+      "status": "running",
       "title": "Verify installed printer hardware configuration page",
       "verification": null
     }
