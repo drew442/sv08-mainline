@@ -2,10 +2,10 @@
 
 ## Active goals — sensors and component configuration, 2026-10-04
 
-1. **Sensor-only commissioning:** use component default conversion curves without
-   fine tuning. Obtain fresh chamber BLE ambient reference and no-output printer
-   temperature/input observations. Separate autonomous readings from physical
-   input-transition checks. Unknown component/circuit facts remain explicit.
+1. **Sensor-only ambient baseline complete:** unchanged factory conversion curves,
+   fresh chamber BLE reference and 12 stable no-output printer observations passed
+   independent closure review. Fine tuning remains deferred. Attended physical
+   input transitions and unknown component/circuit facts remain separate H05 work.
 2. **Cockpit hardware configuration:** deliver a board-first component selector
    with defaults/common options, pins/connectors and temperature limits, validated
    private machine configuration and an extensible contributor catalog. Develop

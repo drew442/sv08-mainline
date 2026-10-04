@@ -496,3 +496,10 @@ circuit uncertainties are recorded without blocking draft/catalog development.
 BLE reference intake has fresh BTH01 readings; owner confirmed the exact device
 is BTH01Y_v3.1 with pvvx/THB2 firmware, in the chamber beside the bed.
 Fine calibration is deferred; no heat/motion from this page or sensor-only slice.
+
+The autonomous ambient baseline is now complete and independently reviewed:
+[results and limits](../features/sensor-default-commissioning/intake.md#corrected-ambient-baseline-completed).
+PSU utility reports OFF; the USB-powered host remains available. No repeat
+temperature capture or physical action is needed for that result. Availability
+for a separately prepared filament/probe transition check has been requested;
+no physical manipulation is instructed until the exact steps are ready.
