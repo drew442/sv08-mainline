@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'runtime'))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+from stage_printer_ui import compose_host
 from sv08_state import Store
 from sv08_data_budget import Budget
 from sv08_printer_catalog import Catalog, strict_json
@@ -22,12 +24,25 @@ SHIM=r'''
  Object.assign(proxy,{Start:()=>change('sudo'),Answer:()=>{},Stop:()=>change('none')});
  client.proxy=()=>proxy;
  window.fixtureDisconnect=async()=>{await change('none');client.dispatchEvent(new Event('close'));};
- window.fixtureLoseAck=false;
+ window.fixtureLoseAck=false;window.fixtureHoldApply=false;window.fixtureApplyWaiting=false;
+ window.fixtureHoldReview=false;window.fixtureReviewWaiting=false;window.fixtureHostFailure=false;window.fixtureHostCalls=[];window.fixtureHostHold=null;
+ const hostState={fixture:true,boot:{release:'offline',slot:'A',mode:'immutable',customized:false},free_bytes:1073741824,slots:{A:{release:'offline',customized:false},B:null},auto_update:false,requested_mode:'immutable',hostname:'fixture',images:[],catalog:[],capabilities:Object.fromEntries(['policy.auto','policy.mode','image.stage','image.arm','image.cancel','config.hostname','software.install','software.remove'].map(k=>[k,{available:true}]))};
+ function hostReply(message){
+  window.fixtureHostCalls.push(message);
+  if(window.fixtureHostFailure)throw Error('Injected host refresh failure');
+  if(message.method==='jobs')return {jobs:[],blocked:false,capacity:128,remaining:128,maintenance_available:false};
+  if(message.method==='status')return hostState;
+  if(message.method==='upload.list')return {objects:[],busy:false,message:'Offline upload fixture'};
+  if(message.method==='upload.plan')return {object:{bytes:message.size},name:message.name};
+  if(message.method==='plan')return {title:'Offline host review',effect:'Fixture only',arguments:message.arguments,action:message.action};
+  throw Error('Unassigned host fixture operation '+message.method);
+ }
  window.fixtureRequests=[];window.fixtureLoadedIdentity=null;
  window.cockpit={dbus:()=>client,logout:()=>{void change('none');document.body.dataset.loggedOut='true';},spawn:(argv,options)=>{
-   if(JSON.stringify(argv)!==JSON.stringify(['/usr/bin/python3','/usr/lib/sv08/sv08_printer_helper.py'])||options.superuser!=='require')throw Error('Unexpected fixture helper invocation');
+   const host=argv[1]==='/usr/lib/sv08/sv08_admin.py';
+   if(!host && argv[1]!=='/usr/lib/sv08/sv08_printer_helper.py')throw Error('Unexpected fixture helper invocation');
    let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});
-   promise.input=data=>{window.fixtureRequests.push({request:JSON.parse(data),loaded:window.fixtureLoadedIdentity});fetch('/request',{method:'POST',body:data}).then(r=>r.text()).then(raw=>{const reply=JSON.parse(raw);if(JSON.parse(data).action==='status'&&reply.ok)window.fixtureLoadedIdentity=reply.result.loaded_identity;if(window.fixtureLoseAck&&JSON.parse(data).action==='apply'){window.fixtureLoseAck=false;reject(Error('Injected lost acknowledgment'));}else resolve(raw);},reject);};return promise;
+   promise.input=data=>{if(host){try{const message=JSON.parse(data),result=hostReply(message),raw=JSON.stringify({ok:true,result});if(window.fixtureHostHold===message.method){window.fixtureHostWaiting=true;window.fixtureHostRelease=()=>{window.fixtureHostWaiting=false;window.fixtureHostHold=null;resolve(raw);};}else resolve(raw);}catch(error){reject(error);}return promise;}window.fixtureRequests.push({request:JSON.parse(data),loaded:window.fixtureLoadedIdentity});fetch('/request',{method:'POST',body:data}).then(r=>r.text()).then(raw=>{const reply=JSON.parse(raw);if(JSON.parse(data).action==='status'&&reply.ok)window.fixtureLoadedIdentity=reply.result.loaded_identity;if(window.fixtureHoldReview&&JSON.parse(data).action==='review'){window.fixtureReviewWaiting=true;window.fixtureReleaseReview=()=>{window.fixtureHoldReview=false;window.fixtureReviewWaiting=false;resolve(raw);};return;}if(window.fixtureHoldApply&&JSON.parse(data).action==='apply'){window.fixtureApplyWaiting=true;window.fixtureReleaseApply=()=>{window.fixtureHoldApply=false;window.fixtureApplyWaiting=false;reject(Error('Injected lost acknowledgment after submitted apply'));};return;}if(window.fixtureLoseAck&&JSON.parse(data).action==='apply'){window.fixtureLoseAck=false;reject(Error('Injected lost acknowledgment'));}else resolve(raw);},reject);return promise;};return promise;
  }};
 })();
 '''
@@ -54,13 +69,11 @@ def serve(work):
             if self.path.endswith('/base1/cockpit.js'):return self.response(SHIM,'text/javascript')
             package='sv08-host' if '/sv08-host/' in self.path else 'sv08-printer'
             name=self.path.rsplit('/',1)[-1]
-            if name not in ('index.html','app.js','style.css','session.js','manifest.json','upload.js'):return self.send_error(404)
+            if name not in ('index.html','app.js','style.css','session.js','manifest.json','upload.js','navigation.js','redirect.js'):return self.send_error(404)
             path=ROOT/'ui'/('host' if package=='sv08-host' else 'printer')/name
             raw=path.read_bytes()
             if package=='sv08-host' and name=='index.html':
-                # Navigation fixture: existing host operation implementation has its
-                # own tests. Do not submit unrelated host RPC to printer controller.
-                raw=raw.replace(b'<script defer src="app.js"></script>',b'').replace(b'<script defer src="upload.js"></script>',b'')
+                raw=compose_host(raw)
             self.response(raw,'text/html' if name.endswith('.html') else 'text/css' if name.endswith('.css') else 'text/javascript')
         def do_POST(self):
             try:

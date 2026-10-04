@@ -14,6 +14,8 @@ import stat
 
 REPO=Path(__file__).resolve().parents[1]
 NAV=b'<a href="../sv08-printer/index.html">Printer hardware</a>'
+KNOWN_HOST={'app.js': ['eed0e2d76d8256f2a9fd590aefd47790f99b99511d9258358700f1825f47def4', 'feadb60128aba22ed0d7b61936ebd8e94fbeb6269173ca81ac7d7427a4d75b10'], 'upload.js': ['15cfc6d17922e78a9b60885d99e6742608ffc397e6e84109dcb93bf47370aeb7']}
+KNOWN_PRINTER={'app.js': 'ead2fcd9912e29e662ab23a168fa1d3a3413ba5b59ff07bf8e0c708f4db6ec1d', 'index.html': '3683c8deb1d61d17e9ff167551718b83da470b913ff29135013a16779b0a66eb', 'manifest.json': 'acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e', 'session.js': 'a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef', 'style.css': '1c51b45172e157ccf46ebe3bc3ea8f451f2c2187b8b6754318826644bd78eeec'}
 ANCHOR=b'<p class="eyebrow">YOUR PRINTER</p>'
 
 
@@ -64,15 +66,60 @@ def payload():
     result={}
     for directory,target in [('ui/printer','usr/share/cockpit/sv08-printer'),('catalog/printer','usr/share/sv08/printer')]:
         for p in sorted((REPO/directory).rglob('*')):
-            if p.is_file():result[target+'/'+str(p.relative_to(REPO/directory))]=p.read_bytes()
+            if p.is_file() and p.name!='session.js':result[target+'/'+str(p.relative_to(REPO/directory))]=p.read_bytes()
     for p in sorted((REPO/'runtime').glob('sv08_printer_*.py')):result['usr/lib/sv08/'+p.name]=p.read_bytes()
     return result
+
+
+def replace_once(raw, before, after):
+    if raw.count(before) != 1: raise ValueError('Unknown or ambiguous integration anchor')
+    return raw.replace(before, after, 1)
+
+
+def compose_host(raw, panel=None):
+    """Compile the persistent panel; never fetch markup in the browser."""
+    if panel is None: panel=(REPO/'ui/printer/panel.html').read_bytes()
+    raw=replace_once(raw,NAV,b'<button data-page="printer">Printer hardware</button>')
+    raw=replace_once(raw,b'<div id="notice"',b'<div data-host-status id="notice"')
+    raw=replace_once(raw,b'<article class="card" aria-live="polite">',b'<article data-host-status class="card" aria-live="polite">')
+    raw=replace_once(raw,b'</main>',b'<!-- printer panel -->'+panel+b'<!-- /printer panel -->\n</main>')
+    if b'src="navigation.js"' not in raw:raw=replace_once(raw,b'<script defer src="app.js"></script>',b'<script defer src="navigation.js"></script><script defer src="app.js"></script>')
+    return replace_once(raw,b'</head>',b'<link rel="stylesheet" href="../sv08-printer/style.css"><script defer src="../sv08-printer/app.js"></script></head>')
+
+
+def integrate_app(raw):
+    """Narrow patch: all unrelated installed host bytes are retained."""
+    if raw.count(b'function page(name, focus = true) {')!=1:raise ValueError('Ambiguous host route anchor')
+    start=raw.find(b'function page(name, focus = true) {')
+    end=raw.find(b'function capability(',start)
+    if start<0 or end<0: raise ValueError('Unknown host route anchor')
+    original=raw[start:end]
+    if original.count(b'function ')!=1: raise ValueError('Ambiguous host route anchor')
+    raw=replace_once(raw,original,original.replace(b'function page(name, focus = true) {',b'function page(name, focus = true) {\n    if (window.sv08Navigation) { sv08Navigation.go(name); return; }',1))
+    selector=b'main button:not([data-open]):not(#retry-submission):not([data-inspect-job])'
+    if raw.count(selector)!=2: raise ValueError('Unknown host isolation anchors')
+    raw=raw.replace(selector,selector+b':not(#printer button)')
+    raw=replace_once(raw,b"} catch (error) { $('connection').textContent",b"} catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent")
+    # Navigation invalidates pending host plans using the existing response epoch.
+    return replace_once(raw,b"window.addEventListener('sv08-authority-changed', () => {",b"window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });\nwindow.addEventListener('sv08-authority-changed', () => {")
+
+
+def integrate_upload(raw):
+    return replace_once(raw,b"window.addEventListener('sv08-authority-changed', () => {",b"window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; uploadReview = null; if ($('upload-review').open) $('upload-review').close('cancel'); });\nwindow.addEventListener('sv08-authority-changed', () => {")
+
+
+STYLE_EXTENSION=b'\n/* Shared panel intrinsic sizing and narrow header. */\n.layout{grid-template-columns:230px minmax(0,1fr)}main,nav{min-width:0}@media(max-width:800px){.layout{grid-template-columns:minmax(0,1fr)}}@media(max-width:500px){header{height:auto;min-height:72px;flex-wrap:wrap;gap:8px;padding:16px 20px}.header-end{flex-wrap:wrap}}\n'
+
+
+def integrate_style(raw):
+    if sha(raw)!='48c7b299dba9b7a76b94b7a8b19317f193d51b589cbcb1ba5c09373bd6192d32':raise ValueError('Unknown host style preimage')
+    return raw+STYLE_EXTENSION
 
 
 def stage(root, expected, execute=False, fresh=False):
     root=Path(root).absolute()
     if not root.is_dir() or root.is_symlink():raise ValueError('Expected disposable root')
-    required={'usr/lib/sv08/sv08_state.py','usr/lib/sv08/admin-context.json','etc/cockpit/cockpit.conf','usr/share/cockpit/sv08-host/index.html','usr/share/cockpit/sv08-host/session.js','usr/share/cockpit/sv08-host/app.js','usr/share/cockpit/sv08-host/manifest.json'}
+    required={'usr/lib/sv08/sv08_state.py','usr/lib/sv08/admin-context.json','etc/cockpit/cockpit.conf','usr/share/cockpit/sv08-host/index.html','usr/share/cockpit/sv08-host/session.js','usr/share/cockpit/sv08-host/app.js','usr/share/cockpit/sv08-host/upload.js','usr/share/cockpit/sv08-host/manifest.json'}
     if not isinstance(expected,dict) or not required<=set(expected):raise ValueError('Exact reviewed closure inventory is required')
     files=payload()
     closure=dependencies(root,files)
@@ -94,48 +141,100 @@ def stage(root, expected, execute=False, fresh=False):
         if json.loads((root/'usr/lib/sv08/admin-context.json').read_text())!={'format_version':1,'context':'host'}:raise ValueError('Unsupported context')
     if (root/'etc/cockpit/cockpit.conf').read_bytes()!=b'[WebService]\nShell=/sv08-host/index.html\n':raise ValueError('Unsupported custom Shell')
     packages=root/'usr/share/cockpit'
-    if any(p.name not in {'base1','static','branding','issue','motd','sv08-host'} for p in packages.iterdir()):raise ValueError('Unexpected package inventory')
-    host='usr/share/cockpit/sv08-host/index.html';before=safe(root,host).read_bytes()
-    if fresh:
-        if before!=(REPO/'ui/host/index.html').read_bytes() or (root/'usr/lib/sv08/sv08_state.py').read_bytes()!=(REPO/'runtime/sv08_state.py').read_bytes():
-            raise ValueError('Fresh staging requires matching current host/core inputs')
-        after=before
-    else:
-        if before.count(ANCHOR)!=1 or NAV in before:raise ValueError('Unexpected host navigation preimage')
-        after=before.replace(ANCHOR,ANCHOR+b'\n'+NAV,1)
-    for name in files:
-        p=safe(root,name)
-        if p.exists():raise ValueError('Existing printer payload conflict')
+    if any(p.name not in {'base1','static','branding','issue','motd','sv08-host','sv08-printer'} for p in packages.iterdir()):raise ValueError('Unexpected package inventory')
+    host='usr/share/cockpit/sv08-host/'
+    before=safe(root,host+'index.html').read_bytes()
+    if sha(before) not in ['ed0cadd8d49eb6371286ba37d22ce1de52487433db7211090d63dc42ce0aa095', '31511f59b81930634dec42005332fefc1036b9ef3935d9aebced60db0cc7d48a', '3529c93ddbe866d58a9d291b3e5f84c97417aacfef07d37fd0487761c24f8e92'] and before not in ((REPO/'ui/host/index.html').read_bytes(),(REPO/'ui/host/index.html').read_bytes().replace(NAV,b'')):raise ValueError('Unknown host HTML preimage')
+    if NAV not in before:
+        before=replace_once(before,ANCHOR,ANCHOR+b'\n'+NAV)
+    files[host+'index.html']=compose_host(before)
+    files[host+'navigation.js']=(REPO/'ui/host/navigation.js').read_bytes()
+    for name,transform in [('app.js',integrate_app),('upload.js',integrate_upload),('style.css',integrate_style)]:
+        original=safe(root,host+name).read_bytes()
+        current=(REPO/'ui/host'/name).read_bytes()
+        if original==current: files[host+name]=original
+        else:
+            if name!='style.css' and sha(original) not in KNOWN_HOST[name]: raise ValueError('Unknown host '+name+' preimage')
+            files[host+name]=transform(original)
     owner=safe(root,'usr/lib/sv08/sv08_state.py').stat()
-    directories={}
-    for name in files:
+    originals={};after={};directories={}
+    for name,raw in files.items():
+        path=safe(root,name)
+        if path.exists():
+            if name not in expected:raise ValueError('Missing reviewed payload preimage: '+name)
+            # Backend/catalog are unchanged closure, never refreshed in an overlay.
+            if not name.startswith('usr/share/cockpit/') and path.read_bytes()!=raw:raise ValueError('Backend/catalog mismatch')
+            if name.startswith('usr/share/cockpit/sv08-printer/') and path.read_bytes()!=raw and sha(path.read_bytes())!=KNOWN_PRINTER.get(path.name):raise ValueError('Unknown printer asset preimage')
+            originals[name]=path.read_bytes().hex()
+            after[name]=dict(expected[name],sha256=sha(raw))
+        else:
+            after[name]=dict(kind='file',sha256=sha(raw),mode=0o644,uid=owner.st_uid,gid=owner.st_gid)
         parent=Path(name).parent
         while str(parent)!='.' and not safe(root,str(parent)).exists():
             directories[str(parent)]=dict(kind='directory',mode=0o755,uid=owner.st_uid,gid=owner.st_gid);parent=parent.parent
-    report={'format_version':2,'activated':False,'before':expected,'host_before':before.decode(),'host_after':sha(after),'new':{n:{'kind':'file','sha256':sha(raw),'mode':0o644,'uid':owner.st_uid,'gid':owner.st_gid} for n,raw in files.items()},'new_directories':directories,'dependency_closure':closure,'payload_bytes':sum(map(len,files.values()))+len(after)-len(before),'feature_storage_limit':4*1024*1024,'runtime_dependencies':['existing Python3 standard library','selected Cockpit337 base1','existing sudo privileged bridge']}
+    report=dict(format_version=3,activated=False,before=expected,after=after,originals=originals,new_directories=directories,dependency_closure=closure,
+                payload_bytes=sum(map(len,files.values())),feature_storage_limit=4*1024*1024,
+                peak_blocks_4096=sum((len(raw)+4095)//4096 for raw in files.values())+sum((len(bytes.fromhex(raw))+4095)//4096 for raw in originals.values()),
+                root_delta_bytes=sum(len(raw)-(len(bytes.fromhex(originals[name])) if name in originals else 0) for name,raw in files.items()),
+                largest_temporary_bytes=max(map(len,files.values()),default=0),
+                added_inodes=len(set(files)-set(expected))+len(directories),publication='per-file atomic; host index published last')
+    if report['payload_bytes']>report['feature_storage_limit']:raise ValueError('Feature payload exceeds limit')
     if execute:
-        # All preconditions checked before the first mutation. Disposable staging
-        # may be discarded on interruption; installation remains coordinator-owned.
+        for name in files:
+            temporary=safe(root,name).with_name(Path(name).name+'.integration-tmp')
+            if temporary.exists() or temporary.is_symlink():raise ValueError('Unexpected publication temporary')
         for name,metadata in sorted(directories.items(),key=lambda item:len(Path(item[0]).parts)):
-            p=safe(root,name);p.mkdir();p.chmod(metadata['mode'])
-            if (p.stat().st_uid,p.stat().st_gid)!=(metadata['uid'],metadata['gid']):os.chown(p,metadata['uid'],metadata['gid'])
-        for name,raw in files.items():
-            p=safe(root,name);p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw);p.chmod(0o644)
-            if (p.stat().st_uid,p.stat().st_gid)!=(owner.st_uid,owner.st_gid):os.chown(p,owner.st_uid,owner.st_gid)
-        safe(root,host).write_bytes(after)
+            path=safe(root,name);path.mkdir();path.chmod(metadata['mode']);os.chown(path,metadata['uid'],metadata['gid'])
+        # Publish the host entry last: additions are present before navigation.
+        for name in sorted(files,key=lambda n:3 if n==host+'index.html' else 0 if n.endswith('sv08-printer/redirect.js') else 1 if n.endswith('sv08-printer/index.html') else 2):
+            if name in expected and expected[name]==after[name]:continue
+            path=safe(root,name);metadata=after[name];temporary=path.with_name(path.name+'.integration-tmp')
+            try:
+                with temporary.open('xb') as stream:stream.write(files[name]);stream.flush();os.fsync(stream.fileno())
+                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);os.replace(temporary,path)
+            finally:
+                if temporary.exists():temporary.unlink()
     return report
 
 
-def restore(root, report):
-    root=Path(root).absolute();host='usr/share/cockpit/sv08-host/index.html'
-    host_metadata=dict(report['before'][host],sha256=report['host_after'])
-    if inventory(root,[host])!={host:host_metadata} or inventory(root,report['new'])!=report['new'] or inventory(root,report['new_directories'])!=report['new_directories']:
-        raise ValueError('Afterimage changed; restoration refused')
-    expected=dict(report['before']);expected.pop(host)
-    if inventory(root,expected)!=expected:raise ValueError('Existing closure changed; restoration refused')
-    safe(root,host).write_text(report['host_before']);safe(root,host).chmod(report['before'][host]['mode'])
-    for name in report['new']:safe(root,name).unlink()
-    for relative in sorted(report['new_directories'],key=lambda name:len(Path(name).parts),reverse=True):safe(root,relative).rmdir()
+def restore(root, report, interrupted=False):
+    root=Path(root).absolute()
+    # Check every afterimage and unchanged preimage before touching anything.
+    expected=dict(report['before']);expected.update(report['after']);expected.update(report['new_directories'])
+    if interrupted:
+        # Only exact recorded preimages/afterimages are recoverable; no guessing.
+        checked={}
+        for name,metadata in expected.items():
+            path=safe(root,name)
+            if not path.exists():
+                if name in report['before']:raise ValueError('Missing preimage during restoration')
+                continue
+            actual=inventory(root,[name])[name]
+            if actual!=metadata and actual!=report['before'].get(name):raise ValueError('Afterimage changed; restoration refused')
+            checked[name]=actual
+    elif inventory(root,expected)!=expected:raise ValueError('Afterimage changed; restoration refused')
+    for name in report['new_directories']:
+        path=safe(root,name)
+        if path.exists() and any(str(child.relative_to(root)) not in expected for child in path.rglob('*')):raise ValueError('Afterimage directory contents changed; restoration refused')
+    for name in report['originals']:
+        temporary=safe(root,name).with_name(Path(name).name+'.restore-tmp')
+        if temporary.exists() or temporary.is_symlink():raise ValueError('Unexpected restoration temporary')
+    # Revert navigation first, then its dependencies. Originals remain in report.
+    names=sorted(report['after'],key=lambda n:0 if n.endswith('sv08-host/index.html') else 1)
+    for name in names:
+        path=safe(root,name)
+        if name in report['originals']:
+            if sha(path.read_bytes())==report['before'][name]['sha256']:continue
+            metadata=report['before'][name];temporary=path.with_name(path.name+'.restore-tmp')
+            try:
+                with temporary.open('xb') as stream:stream.write(bytes.fromhex(report['originals'][name]));stream.flush();os.fsync(stream.fileno())
+                temporary.chmod(metadata['mode']);os.chown(temporary,metadata['uid'],metadata['gid']);os.replace(temporary,path)
+            finally:
+                if temporary.exists():temporary.unlink()
+        elif path.exists():path.unlink()
+    for name in sorted(report['new_directories'],key=lambda n:len(Path(n).parts),reverse=True):
+        path=safe(root,name)
+        if path.exists():path.rmdir()
     return {'restored':True,'activated':False}
 
 

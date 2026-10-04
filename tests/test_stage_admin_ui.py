@@ -16,12 +16,34 @@ class StageUITests(unittest.TestCase):
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, target / path.name)
         (target / 'sv08_rauc_bootloader.py').chmod(0o755)
 
+    def test_host_only_navigation_has_no_dead_printer_references(self):
+        stage(self.work,'host',True)
+        entry=self.work/'rootfs/usr/share/cockpit/sv08-host/index.html'
+        for refresh in (False,True):
+            if refresh:stage(self.work,'host',True,refresh=True)
+            html=entry.read_text()
+            self.assertNotIn('../sv08-printer/',html)
+            self.assertIn('src="navigation.js"',html)
+            self.assertTrue((entry.parent/'navigation.js').is_file())
+    def test_matching_printer_package_composes_before_host_refresh(self):
+        package=self.work/'rootfs/usr/share/cockpit/sv08-printer';package.parent.mkdir(parents=True)
+        shutil.copytree(REPO/'ui/printer',package)
+        stage(self.work,'host',True)
+        entry=package.parent/'sv08-host/index.html';before=entry.read_bytes()
+        self.assertIn(b'id="printer"',before)
+        self.assertEqual(before.count(b'src="session.js"'),1)
+        (package/'app.js').write_bytes(b'unknown')
+        with self.assertRaisesRegex(ValueError,'matching printer'):stage(self.work,'host',True,refresh=True)
+        self.assertEqual(entry.read_bytes(),before)
     def test_dry_run_and_explicit_host_staging(self):
         result = stage(self.work, 'host')
         self.assertFalse(result['execute'])
         target = self.work / 'rootfs/usr/share/cockpit/sv08-host'
         self.assertFalse(target.exists())
         result = stage(self.work, 'host', True)
+        entry=(self.work/'rootfs/usr/share/cockpit/sv08-host/index.html').read_text()
+        self.assertNotIn('../sv08-printer/',entry)
+        self.assertIn('navigation.js',entry)
         self.assertTrue((target / 'manifest.json').is_file())
         self.assertEqual((self.work / 'rootfs/etc/cockpit/ws-certs.d').readlink(),
                          Path('/data/sv08/system/cockpit/ws-certs.d'))
