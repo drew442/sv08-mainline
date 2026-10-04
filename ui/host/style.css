@@ -4,3 +4,6 @@
 
 /* Local SV08 Mainline branding; controls and responsive layout are unchanged. */
 header{background:#142b43;color:#f8fafc;border-bottom:3px solid #17a4a8}.brand b{letter-spacing:-.04em}.brand span{color:#6ce0df;border-color:#63788e}.header-end button{background:#203c56;color:#f8fafc;border-color:#63788e}.header-end button:hover:enabled{background:#31536f}button:disabled{opacity:1;background:#e2e8f0;color:#64748b;border-color:#cbd5e1}:focus-visible{outline:3px solid #0b9199;outline-offset:3px}header :focus-visible{outline-color:#6ce0df}.session{background:#fff}.reason{font-weight:600}
+
+/* Shared panel intrinsic sizing and narrow header. */
+.layout{grid-template-columns:230px minmax(0,1fr)}main,nav{min-width:0}@media(max-width:800px){.layout{grid-template-columns:minmax(0,1fr)}}@media(max-width:500px){header{height:auto;min-height:72px;flex-wrap:wrap;gap:8px;padding:16px 20px}.header-end{flex-wrap:wrap}}

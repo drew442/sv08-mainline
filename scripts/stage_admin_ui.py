@@ -11,9 +11,15 @@ import os
 from pathlib import Path
 import shutil
 from prepare_host_os import REPO, work_path
+from stage_printer_ui import compose_host, NAV, root_lock
 
 
 def stage(work, context, execute=False, refresh=False):
+    with root_lock(work / 'rootfs'):
+        return _stage(work, context, execute, refresh)
+
+
+def _stage(work, context, execute=False, refresh=False):
     if context not in ('host', 'recovery'): raise ValueError('Unknown UI context')
     if refresh and context != 'host':
         raise ValueError('UI refresh is only supported for the host context')
@@ -90,6 +96,10 @@ def stage(work, context, execute=False, refresh=False):
             allowed_branding_output = path in branding and not path.is_symlink() and path.is_file()
             if not (allowed_refresh_output or allowed_branding_output):
                 raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
+    if context == 'host' and (root/'usr/share/cockpit/sv08-printer').exists():
+        for name in ('app.js','style.css','panel.html'):
+            path=root/'usr/share/cockpit/sv08-printer'/name
+            if not path.is_file() or path.read_bytes()!=(REPO/'ui/printer'/name).read_bytes():raise ValueError('Stage matching printer assets before integrated host refresh')
     if not execute: return dict(execute=False, context=context, root=str(root))
     if context == 'host':
         if target_exists:
@@ -97,6 +107,15 @@ def stage(work, context, execute=False, refresh=False):
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(REPO / 'ui/host', target)
         target.chmod(0o755)
+        entry=target/'index.html'
+        package=root/'usr/share/cockpit/sv08-printer'
+        if package.exists():
+            for name in ('app.js','style.css','panel.html'):
+                if not (package/name).is_file() or (package/name).read_bytes() != (REPO/'ui/printer'/name).read_bytes():
+                    raise ValueError('Stage matching printer assets before integrated host refresh')
+            entry.write_bytes(compose_host(entry.read_bytes()))
+        else:
+            entry.write_bytes(entry.read_bytes().replace(NAV,b''))
         config = root / 'etc/cockpit/cockpit.conf'; config.parent.mkdir(parents=True, exist_ok=True)
         config.write_text('[WebService]\nShell=/sv08-host/index.html\n')
         cert_dir = root / 'etc/cockpit/ws-certs.d'

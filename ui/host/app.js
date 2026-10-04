@@ -23,6 +23,7 @@ async function submissionError(error) {
 }
 function notice(message) { $('notice').textContent = message; }
 function page(name, focus = true) {
+    if (window.sv08Navigation) { sv08Navigation.go(name); return; }
     document.querySelectorAll('.page').forEach(p => { p.hidden = p.id !== name; });
     document.querySelectorAll('[data-page]').forEach(button => {
         if (button.dataset.page === name) button.setAttribute('aria-current', 'page');
@@ -149,13 +150,13 @@ async function refresh() {
         renderJobs(result);
         if (result.blocked) {
             $('connection').textContent = 'Image worker status connected';
-            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job])').forEach(b => { b.disabled = true; });
+            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button)').forEach(b => { b.disabled = true; });
             return;
         }
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
-    } catch (error) { $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job])').forEach(b => { b.disabled = true; }); }
+    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function inspectJob(id) {
@@ -254,6 +255,7 @@ $('cancel-image').addEventListener('click', () => review('image.cancel'));
 $('install-package').addEventListener('click', () => review('software.install', {package: $('package-choice').value}));
 $('remove-package').addEventListener('click', () => review('software.remove', {package: $('package-choice').value}));
 $('save-hostname').addEventListener('click', () => review('config.hostname', {hostname: $('hostname').value}));
+window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });
 window.addEventListener('sv08-authority-changed', () => {
     ++authorityGeneration;
     plan = null;

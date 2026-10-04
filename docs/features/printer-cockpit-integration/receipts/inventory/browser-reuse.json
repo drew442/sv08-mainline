@@ -1,0 +1,6 @@
+{
+  "source_commit": "4c3f9cc1b864ab05da1e32f2bc8fc551b5445dc2",
+  "tested_browser_commit": "e7a81479c07f56a4bd06bf24fd12a4e1e63d9844",
+  "ui_runtime_browser_fixture_unchanged": true,
+  "browser_receipt_sha256": "1eaf6852a2944577a99cad21c6e1ca5ead84b9a4c50fb1d677aacc99089e3445"
+}
