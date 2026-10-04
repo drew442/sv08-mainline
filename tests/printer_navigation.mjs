@@ -1,0 +1,18 @@
+import vm from 'node:vm';
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const names=['overview','images','software','settings','recovery','printer'];
+const nodes=names.map(id=>({id,hidden:false}));
+const buttons=names.map(name=>({dataset:{page:name},attrs:{},setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];},addEventListener(){}}));
+const status=[{hidden:false},{hidden:false}],events=[],listeners={};
+const location={hash:'#printer'},history={replaceState(a,b,url){location.hash=url;},pushState(a,b,url){location.hash=url;}};
+let focused=false;
+const document={querySelector(){return null;},getElementById(id){return id==='main'?{focus(){focused=true;}}:nodes.find(n=>n.id===id);},querySelectorAll(s){return s==='main > .page'?nodes:s==='[data-host-status]'?status:buttons;}};
+const window={addEventListener(n,f){listeners[n]=f;},dispatchEvent(e){events.push(e);}};
+const context={window,document,location,history,CustomEvent:class{constructor(type,init){this.type=type;this.detail=init.detail;}}};
+vm.runInNewContext(fs.readFileSync(new URL('../ui/host/navigation.js',import.meta.url),'utf8'),context);
+assert.equal(nodes.find(n=>n.id==='printer').hidden,false);assert(status.every(n=>n.hidden));
+window.sv08Navigation.go('settings');assert(focused);assert(status.every(n=>!n.hidden));
+location.hash='#printer';listeners.popstate();assert.equal(buttons.at(-1).attrs['aria-current'],'page');
+location.hash='#unknown';listeners.hashchange();assert.equal(location.hash,'#overview');
+assert.equal(events.length,4);console.log('Navigation routes/history/status/focus PASS');
