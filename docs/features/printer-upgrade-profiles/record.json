@@ -43,7 +43,42 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/printer-upgrade-profiles/evidence.md",
+          "document_sha256": "c9e578ec140866b7b0b8f67b1a47f7fdf4e1b7a36173a7266accdb5ed24caa91",
+          "environment": "offline",
+          "limitations": "Offline only; Funssor thermistor unspecified, original SV08 CAN adaptation and module firmware compatibility pending. Not installed; no physical outputs accessed.",
+          "method": "Coordinator self-validation: 41 core tests, 11 staging tests, complete Chromium journeys, pinned Klippy three-MCU file-output ready, JSON schemas, document links, syntax and complete stable diff inspection.",
+          "profile": null,
+          "source_commit": "5f418ce411035d07fb2fc6e0291ac8a8c67d1f0f",
+          "source_sha256": {
+            "catalog/printer/catalog.json": "af2f050480ab2a3ce1d96c794b81bd53a4e823bfc497a62d6961ef44f17b448f",
+            "catalog/printer/catalog.schema.json": "e84f9fd629e2a900ac6f52cc27c95faa1cf1dbc3e0babb8b22d9b13f23d31751",
+            "catalog/printer/draft.schema.json": "7583da7408b810e6eb8db66d032c03d4d5c1b653605c4af9130359867fd8449a",
+            "catalog/printer/sources/sovol-sv08-max/chamber-reference.cfg": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+            "catalog/printer/sources/sovol-sv08-max/provenance.json": "1604705151a4d816f045b76abebf3696dfe842e6c7202c14ba0bd37614f69385",
+            "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+            "docs/development/printer-hardware-catalog.md": "489d34c9ee116ddfddf127f28d3de270727325ab43712ef94c4435ab6b6a2434",
+            "docs/features/printer-upgrade-profiles/browser.json": "2f42070963db04e2a800bae4660d2f7d00a1c1a19330d5f132a15bd0c4b3a379",
+            "docs/features/printer-upgrade-profiles/evidence.md": "c9e578ec140866b7b0b8f67b1a47f7fdf4e1b7a36173a7266accdb5ed24caa91",
+            "docs/features/printer-upgrade-profiles/owner-request.md": "443ba1615269e645e03df99658a413023adab046d338cfee0d607c0876f495ee",
+            "docs/features/printer-upgrade-profiles/proposal.md": "3b102657edf9acb9155c655bcf0a97105158a6b4cc239194b47c09a5523c6aff",
+            "runtime/sv08_printer_catalog.py": "e9de0f10593baab1a5f9a94ff63adb8a708747982b4b3364ca5988b22b7f2986",
+            "runtime/sv08_printer_generate.py": "3d762dd7b2f1294ef34d2fc6684f52c02748777fc65ddac8f3fc15cb54d9f7f7",
+            "runtime/sv08_printer_store.py": "b326d1a36683b4a5d3926a9c8cb9284020568461780149d0f8e01d62d31d8dbd",
+            "scripts/stage_printer_ui.py": "bb635128598fadebd4bcf6e5b20e08b914b9a8c8868b20390ac71fe0d7acb33e",
+            "tests/printer_browser.mjs": "41dbe7884002f2aa497987ed14d7c015a221edc9c6973de189e31b10cb9f11fc",
+            "tests/test_printer_browser_fixture.py": "6899b002a38ffb726fa3f0e4317ec6ada93b76a34add445993a9ddec71f6905b",
+            "tests/test_printer_configuration.py": "800dd4b0d8413846c1904b476c485ff15ec3fe2f5eb4ba5b683a2dbd877d26a3",
+            "tests/test_stage_printer_ui.py": "722ea690f243cd914e6585124f75347245eaad9581983d4d2d005686a51b09a0",
+            "ui/printer/app.js": "d22a20ddec098b6dc793c289715b1f990efdb4c1f661edb3d2527e798dc944c3",
+            "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
@@ -78,9 +113,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and offline fixture changes, no devices, live settings or installed host mutations; exact hardware facts remain required for activation.",
-      "status": "running",
+      "status": "validated",
       "title": "Implement and validate named upgrade profile selection",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "03571f7added436e52de150af6493f96e0c2600e876a0eac810d09683ef14ac8",
+        "evidence_sha256": "8d9815efd518220cb6bd18d971320f28055f554479e74194fee115565e98ef4a",
+        "outcome": "passed",
+        "rationale": "Source-backed selections and scoped offline checks passed; physical compatibility remains explicit.",
+        "session": "printer-upgrade-profiles-20261005",
+        "source_commit": "5f418ce411035d07fb2fc6e0291ac8a8c67d1f0f"
+      },
       "verification": null
     }
   ],
