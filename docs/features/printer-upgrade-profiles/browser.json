@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "authenticated": false,
+  "hardware": false,
+  "transport": "Cockpit session/RPC shim; actual Store/Budget",
+  "viewport_sizes": [
+    [
+      1024,
+      600
+    ],
+    [
+      1440,
+      900
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "unsupported_status_draft_export_recovery": true,
+  "shared_panel": true,
+  "initial_status_navigation": true,
+  "stale_status_authority_rejected": true,
+  "printer_review_late_response_ignored": true,
+  "host_refresh_failure_isolation": true,
+  "incomplete_save_reopen": true,
+  "connector_pin_form": true,
+  "factory_default": true,
+  "simple_assembly_selectors": true,
+  "named_funssor_bed_preserves_unknown_sensor": true,
+  "separate_can_chamber_module": true,
+  "chamber_add_remove_reload": true,
+  "one_click_enclosure_fan": true,
+  "ntc_ptc_defaults": true,
+  "hardware_save_before_pid": true,
+  "advanced_fields_collapsed": true,
+  "sensor_reference_journey": true,
+  "motor_reference_journey": true,
+  "preset_collision_refused": true,
+  "two_real_tab_stale_import_refused": true,
+  "generation_swap_refused": true,
+  "last_status_identity_carried": true,
+  "refresh_generation_edit_apply": true,
+  "refresh_exact_import_diff": true,
+  "keyboard_escape": true,
+  "touch_reload": true,
+  "import_diff_cancel_save": true,
+  "review_cancel_apply": true,
+  "previous_restore": true,
+  "lost_ack_reconciled": true,
+  "lost_ack_stop_logout_disconnect": true,
+  "upload_review_navigation_cancelled": true,
+  "host_review_late_response_ignored": true,
+  "legacy_deeplink_reload": true,
+  "skip_retains_route": true,
+  "board_change_clears": true,
+  "stop_disconnect_logout": true,
+  "live_config_unchanged": true,
+  "uncaught_exceptions": 0
+}

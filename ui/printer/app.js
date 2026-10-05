@@ -77,8 +77,8 @@
     function renderBoards() {
         const expanded=Object.fromEntries([...$('boards').querySelectorAll('details[data-role]')].map(d=>[d.dataset.role,d.open]));
         $('boards').replaceChildren();
-        for(const role of ['main','tool']) {
-            const box=el('fieldset');box.append(el('legend',role==='main'?'Mainboard':'Toolhead board'));
+        for(const role of ['main','tool',...(draft.boards.chamber?['chamber']:[])]) {
+            const box=el('fieldset');box.append(el('legend',({main:'Mainboard',tool:'Toolhead board',chamber:'Chamber module connection'})[role]));
             const board=boardData(role), selection=draft.boards[role]??{};
             const choice=select([['','Choose board reference'],...catalog.boards.filter(b=>b.role===role).map(b=>[b.id,b.label])],selection.id, value=>{
                 if(value===selection.id)return;
@@ -98,7 +98,7 @@
                 box.append(connection);
                 connection.append(el('p',board.warning),el('small','Documented reference. Installed match: unknown. '+board.unknowns.join('; ')));
                 connection.append(el('small',board.source.path+' @ '+board.source.revision+'; accessed '+board.source.accessed));
-                connection.append(field('Transport','text',selection.transport,v=>{if(v)selection.transport=v;else delete selection.transport;delete selection.identity;edit();renderBoards();},[['serial','USB / serial'],['can','CAN']]));
+                connection.append(field('Transport','text',selection.transport,v=>{if(v)selection.transport=v;else delete selection.transport;delete selection.identity;edit();renderBoards();},[['serial','USB / serial'],['can','CAN']].filter(([value])=>!board.supported_transports||board.supported_transports.includes(value))));
                 connection.append(field('Private MCU identity','text',selection.identity,v=>{if(v)selection.identity=v;else delete selection.identity;edit();}));
                 connection.append(field('Use this reference provisionally','boolean',selection.reference_ack,v=>{if(v===undefined)delete selection.reference_ack;else selection.reference_ack=v;edit();}));
             }
@@ -111,7 +111,7 @@
             invalidate();
             const result=await rpc({action:'component',draft,role,preset,expected_revision:revision});
             draft=result.draft;edit();render();
-            notice('Hardware settings filled in. Save your selections; calibration can be done later.');
+            notice(draft.devices.some(d=>d.kind==='sensor'&&!d.settings.curve)?'Bed selected. Choose the supplied sensor type before preparing a candidate; you can save the hardware choice now.':'Hardware settings filled in. Save your selections; calibration can be done later.');
         });
         renderComponents();controls();
     }
@@ -141,6 +141,24 @@
             root.append(box);
         }
         if(!root.children.length)root.append(el('p','Choose a mainboard and toolhead board to see supported components.'));
+        const module=catalog.boards.find(b=>b.role==='chamber');
+        if(module) {
+            const box=el('div');box.append(el('h3','Chamber heating'));
+            const toggle=el('input');toggle.type='checkbox';toggle.dataset.component='chamber_module';toggle.dataset.board='chamber';
+            toggle.checked=draft.boards.chamber?.id===module.id&&draft.devices.some(d=>d.board==='chamber'&&d.kind==='chamber');
+            toggle.onchange=()=>{
+                if(!toggle.checked){delete draft.boards.chamber;draft.devices=draft.devices.filter(d=>d.board!=='chamber');edit();render();return;}
+                operation(async()=>{
+                    invalidate();const selection=copy(draft);
+                    if(selection.boards.chamber?.id!==module.id)selection.boards.chamber={id:module.id,transport:'can'};
+                    const result=await rpc({action:'component',draft:selection,role:'chamber',preset:'chamber_module',expected_revision:revision});
+                    draft=result.draft;edit();render();notice('Chamber module selected. Set up its CAN connection before preparing a candidate.');
+                }).then(()=>{renderComponents();controls();});
+            };
+            box.append(label('Sovol SV08 MAX chamber heating module',toggle));
+            box.append(el('p','Uses the module’s own CAN controller. Original SV08 installations need a confirmed CAN adapter and compatible module firmware.'));
+            root.append(box);
+        }
     }
     function renderSensors() {
         const root=$('sensors');root.replaceChildren();
@@ -189,7 +207,7 @@
                 if(['adc','input','probe','heater','fan'].includes(type)) {
                     options=Object.entries(board.signals).filter(([,s])=>s.capabilities.includes(type)&&!s.reserved).map(([p])=>{
                         const c=Object.values(board.connectors).find(c=>c.pin===p&&c.capability===type);
-                        return [p,(c?.label??'Reference signal')+' → '+(device.board==='tool'?'tool:':'')+p+(c?.contact?' ('+c.contact+')':' (contact unknown)')];
+                        return [p,(c?.label??'Reference signal')+' → '+(device.board==='main'?'':device.board+':')+p+(c?.contact?' ('+c.contact+')':' (contact unknown)')];
                     });
                 } else if(type==='motor') options=Object.entries(board.motors).map(([n,p])=>[n,n+' → '+Object.entries(p).map(([k,p])=>k+':'+p).join(', ')]);
                 else if(type==='curve')options=catalog.curves.map(c=>[c.id,c.label]);
@@ -253,6 +271,7 @@
         try {
             invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;revision=saved.revision;if (!keep || !draft) { draft=copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
             if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;controls();return;}
+            if(catalog.boards.some(b=>b.role==='chamber')&&!$('device-board').querySelector('[value=chamber]')){const o=el('option','Chamber module');o.value='chamber';$('device-board').append(o);}
             $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
             $('import-diff').hidden=true;render();notice('Saved configuration loaded. Candidates remain inactive.');
         } finally { loading=false; }

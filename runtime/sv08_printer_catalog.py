@@ -64,10 +64,11 @@ class Catalog:
         keys(self.data, ('format_version','boards','curves','kinds'), ('format_version','boards','curves','kinds'))
         if self.data['format_version'] != 1 or type(self.data['format_version']) is not int:
             raise ValueError('Unsupported catalog schema')
-        if set(self.data['kinds']) != {'sensor','input','probe','fan','bed','motor','extruder'}:
+        if set(self.data['kinds']) != {'sensor','input','probe','fan','bed','motor','extruder','chamber'}:
             raise ValueError('New device kinds require a generator extension')
         expected_fields={'sensor': {'pin': 'adc', 'curve': 'curve', 'pullup_resistor': 'positive', 'min_temp': 'number', 'max_temp': 'number'}, 'input': {'pin': 'input', 'invert': 'boolean', 'digital_pullup': 'boolean'}, 'probe': {'pin': 'probe', 'invert': 'boolean', 'digital_pullup': 'boolean', 'x_offset': 'number', 'y_offset': 'number', 'z_offset': 'number'}, 'fan': {'pin': 'fan', 'invert': 'boolean', 'max_power': 'fraction'}, 'bed': {'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive'}, 'motor': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'position_min': 'number', 'position_max': 'number', 'position_endstop': 'number', 'homing_speed': 'positive', 'endstop_pin': 'input', 'endstop_invert': 'boolean', 'endstop_pullup': 'boolean'}, 'extruder': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive', 'nozzle_diameter': 'positive', 'filament_diameter': 'positive', 'min_extrude_temp': 'number'}}
         expected_fields['sensor']['custom_curve']='thermistor_points'
+        expected_fields['chamber']={'pin':'heater','invert':'boolean','sensor':'name','max_power':'fraction','control':'control','max_delta':'positive'}
         for kind in ('motor','extruder'):expected_fields[kind]['gear_ratio']='ratio'
         if self.data['kinds'] != expected_fields:raise ValueError('Catalog field changes require a generator extension')
         types={'adc','heater','fan','probe','input','step','dir','enable','uart','motor','curve','boolean','name','control','positive','number','fraction','integer','address','ratio','thermistor_points'}
@@ -78,9 +79,11 @@ class Catalog:
         for b in self.data['boards']:
             if not isinstance(b,dict) or not {'id','role','signals','motors','connectors','channel_counts','source','sharing_rules'} <= set(b):
                 raise ValueError('Incomplete board catalog schema')
-            if not isinstance(b['id'],str) or not re.fullmatch(r'[a-z0-9][a-z0-9.-]{0,79}',b['id']) or b['id'] in ids or b['role'] not in ('main','tool'):
+            if not isinstance(b['id'],str) or not re.fullmatch(r'[a-z0-9][a-z0-9.-]{0,79}',b['id']) or b['id'] in ids or b['role'] not in ('main','tool','chamber'):
                 raise ValueError('Invalid or duplicate catalog board')
             ids.add(b['id']);self.source(b['source'])
+            if 'supported_transports' in b and (not isinstance(b['supported_transports'],list) or not b['supported_transports'] or any(t not in ('serial','can') for t in b['supported_transports']) or len(set(b['supported_transports'])) != len(b['supported_transports'])):
+                raise ValueError('Invalid supported MCU transports')
             if b['sharing_rules'] != []:
                 raise ValueError('Pin sharing requires an explicit code extension')
             if not isinstance(b['signals'],dict) or not b['signals']:
@@ -195,7 +198,7 @@ class Catalog:
     @staticmethod
     def source(source):
         if not isinstance(source,dict) or not {'path','revision','accessed'} <= set(source):raise ValueError('Catalog provenance required')
-        if not isinstance(source['path'],str) or not source['path'].startswith('upstream/') or '..' in source['path'].split('/'):
+        if not isinstance(source['path'],str) or not source['path'].startswith(('upstream/', 'catalog/printer/sources/')) or '..' in source['path'].split('/'):
             raise ValueError('Invalid primary source path')
         if not re.fullmatch(r'[0-9a-f]{40}',source['revision']) or not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}',source['accessed']):
             raise ValueError('Catalog requires exact revision and access date')
@@ -221,13 +224,15 @@ class Catalog:
         keys(draft, ('format_version', 'boards', 'devices', 'geometry'), ('format_version', 'boards', 'devices', 'geometry'))
         if type(draft['format_version']) is not int or draft['format_version'] != 1:
             raise ValueError('Unsupported draft schema; original retained')
-        keys(draft['boards'], ('main', 'tool'))
+        keys(draft['boards'], ('main', 'tool', 'chamber'))
         for role, selection in draft['boards'].items():
             keys(selection, ('id', 'transport', 'identity', 'reference_ack'))
             if 'id' in selection:
                 self.board(draft, role)
             if 'transport' in selection and selection['transport'] not in ('serial', 'can'):
                 raise ValueError('Unsupported MCU transport')
+            if selection.get('transport') and 'id' in selection and selection['transport'] not in self.board(draft,role).get('supported_transports', ['serial','can']):
+                raise ValueError('Unsupported transport for selected board')
             if 'identity' in selection:
                 identity = selection['identity']
                 if not isinstance(identity, str) or len(identity) > 240:
@@ -251,9 +256,11 @@ class Catalog:
             if not isinstance(name, str) or not NAME.fullmatch(name) or name in names:
                 raise ValueError('Device names must be unique simple lowercase names')
             names.add(name)
-            if kind not in self.kinds or role not in ('main', 'tool'):
+            if kind not in self.kinds or role not in ('main', 'tool', 'chamber'):
                 raise ValueError('Unknown device kind or board role')
             board = self.board(draft, role)
+            if kind == 'chamber' and (role != 'chamber' or name != 'chamber_temp' or device['settings'].get('control','watermark') != 'watermark'):
+                raise ValueError('Chamber module requires its own board and watermark heater reference')
             if 'profile' in device and not any(p['id'] == device['profile'] and any(d['name'] == name and d['kind'] == kind for d in p['devices']) for p in board.get('presets', [])):
                 raise ValueError('Unknown component profile for this board/device')
             settings = device['settings']; keys(settings, self.kinds[kind])

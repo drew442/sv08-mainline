@@ -31,9 +31,15 @@ platinum definition. A selected assembly profile remains visible after overrides
 
 SV08 choices cover documented factory bed/hotend assemblies, part/exhaust fans,
 and additional motors, filament input and tool probe. Octopus non-Pro and EBB v1.2
-retain their exact sample mappings. Product-specific Funssor/CN3D bed, hotend and
-chamber-heater profiles remain pending exact specifications; generic names do not
-supply hardware settings. No undocumented output is inferred.
+retain their exact sample mappings. The named Funssor/CN3D complete-bed choice retains the original SV08 bed interface
+reference and clears its unidentified replacement sensor curve; choose the supplied
+sensor before generation. It never copies the stock custom curve or guesses beta.
+The Sovol SV08 MAX chamber-module checkbox selects its separate CAN controller,
+two source-backed EPCOS inputs and watermark heater. Its CAN identity is explicitly
+entered in module connection setup. The MAX manual's CAN2 connection does not
+establish original-SV08 adapter/firmware compatibility. See
+[profile source and offline evidence](../features/printer-upgrade-profiles/evidence.md).
+Product choices still save before PID calibration. No undocumented output is inferred.
 
 Assembly replacement is atomic for its named devices on the selected board,
 preserves unrelated devices, and rejects occupied pins, cross-board names and
@@ -84,7 +90,7 @@ preserving the other board and both saved candidates.
 
 ## Data and source audit
 
-[Catalog](../../catalog/printer/catalog.json) contains four exact references and
+[Catalog](../../catalog/printer/catalog.json) contains the original four board references and a separate CAN chamber-module reference and
 [structured draft schema](../../catalog/printer/draft.schema.json) describes the
 versioned envelope. The [catalog schema](../../catalog/printer/catalog.schema.json)
 and runtime semantic checks reject mismatched counts, capabilities and fixed

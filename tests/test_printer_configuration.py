@@ -21,6 +21,12 @@ from sv08_state import Store, snapshot
 CATALOG=ROOT/'catalog/printer/catalog.json'
 
 
+def primary_source(path):
+    local=ROOT/path
+    if local.is_file():return local
+    return Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))/path
+
+
 def sensor_draft():
     return dict(format_version=1,boards={r:dict(id='sv08-'+('main' if r=='main' else 'tool'),transport='serial',identity='/dev/null',reference_ack=True) for r in ('main','tool')},geometry={},devices=[dict(name=n,kind='sensor',board=r,settings=dict(pin=p,curve=c,pullup_resistor=u,min_temp=5,max_temp=m)) for n,r,p,c,u,m in [('bed_check','main','PC5','sovol-bed',4700,105),('hotend_check','tool','PA5','sovol-hotend',11500,305)]])
 
@@ -45,14 +51,14 @@ class CatalogTests(unittest.TestCase):
         source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         import hashlib
         for board in self.c.boards.values():
-            self.assertEqual(hashlib.sha256((source/board['source']['path']).read_bytes()).hexdigest(),board['source']['sha256'])
+            self.assertEqual(hashlib.sha256(primary_source(board['source']['path']).read_bytes()).hexdigest(),board['source']['sha256'])
         self.assertIn('heater',self.c.boards['octopus-v1.1-non-pro']['warning'])
         self.assertEqual(self.c.curves['sovol-bed']['points'],[[25,100000],[50,18085.4],[100,5362.6]])
         self.assertEqual(self.c.curves['sovol-hotend']['points'],[[25,110000],[100,7008],[220,435]])
     def test_all_selectable_capabilities_primary_line_audit(self):
         root=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         for board in self.c.boards.values():
-            lines=(root/board['source']['path']).read_text().splitlines()
+            lines=primary_source(board['source']['path']).read_text().splitlines()
             for pin,signal in board['signals'].items():
                 source=signal['source'];line=lines[source['line']-1]
                 self.assertIn(source['option']+':',line.replace(' ',''),(board['id'],pin))
@@ -129,6 +135,45 @@ class CatalogTests(unittest.TestCase):
             s['custom_curve']=points
             with self.assertRaises(ValueError):self.c.validate(d)
 
+    def test_catalog_transport_metadata_is_bounded(self):
+        for value in ([], ['usb'], ['can','can'], 'can'):
+            data=copy.deepcopy(self.c.data);data['boards'][-1]['supported_transports']=value
+            with tempfile.TemporaryDirectory() as tmp:
+                p=Path(tmp)/'catalog.json';p.write_text(json.dumps(data))
+                with self.assertRaisesRegex(ValueError,'transports'):Catalog(p)
+
+    def test_named_bed_preserves_unknown_sensor_and_defers_pid(self):
+        d=empty_draft();d['boards']['main']={'id':'sv08-main'}
+        d=self.c.select_component(d,'main','bed_assembly')
+        d['devices'][0]['settings']['curve']='sovol-bed'
+        selected=self.c.select_component(d,'main','funssor_cn3d_bed')
+        sensor=next(x for x in selected['devices'] if x['kind']=='sensor')
+        heater=next(x for x in selected['devices'] if x['kind']=='bed')
+        self.assertNotIn('curve',sensor['settings']);self.assertEqual(sensor['settings']['max_temp'],105)
+        self.assertEqual(heater['profile'],'funssor_cn3d_bed');self.assertNotIn('pid_kp',heater['settings'])
+        self.c.validate(selected)
+        self.assertFalse(generate(self.c,selected,'full')['complete'])
+
+    def test_chamber_module_uses_separate_can_identity_and_internal_pins(self):
+        d=full_draft();d['boards']['chamber']={'id':'sovol-sv08-max-chamber','transport':'can'}
+        d=self.c.select_component(d,'chamber','chamber_module')
+        review=generate(self.c,d,'full')
+        self.assertFalse(review['complete']);self.assertIn('chamber.identity','\n'.join(review['blockers']))
+        d['boards']['chamber'].update(identity='0123456789ab',reference_ack=True)
+        review=generate(self.c,d,'full');self.assertTrue(review['complete'],review['blockers'])
+        self.assertIn('[mcu chamber]',review['text']);self.assertIn('heater_pin: chamber:PA0',review['text'])
+        self.assertIn('sensor_pin: chamber:PA5',review['text']);self.assertIn('pullup_resistor: 20000.0',review['text'])
+        self.assertIn('[heater_generic chamber_temp]',review['text']);self.assertIn('control: watermark',review['text'])
+        self.assertNotIn('[verify_heater chamber_temp]',review['text']);self.assertNotIn('[gcode_macro',review['text'])
+        self.assertNotIn('58a72bb93aa4',review['text'])
+        self.assertFalse(generate(self.c,d,'sensors')['complete'])
+        serial=copy.deepcopy(d);serial['boards']['chamber'].update(transport='serial',identity='/dev/null')
+        with self.assertRaisesRegex(ValueError,'transport'):self.c.validate(serial)
+        collision=copy.deepcopy(d);collision['devices'].append(dict(name='extra_chamber_sensor',kind='sensor',board='chamber',settings={'pin':'PA5'}))
+        with self.assertRaisesRegex(ValueError,'collision'):self.c.validate(collision)
+        rewire=copy.deepcopy(d);heater=next(x for x in rewire['devices'] if x['kind']=='chamber');heater['board']='main'
+        with self.assertRaisesRegex(ValueError,'own board'):self.c.validate(rewire)
+
     def test_reference_presets_and_dependencies(self):
         d=empty_draft();d['boards']['main']={'id':'sv08-main'}
         original=copy.deepcopy(d);d=self.c.apply_preset(d,'main','bed_sensor')
@@ -163,10 +208,10 @@ class CatalogTests(unittest.TestCase):
                     for key,field_source in device['sources'].items():
                         s={**board['source'],**field_source}
                         with self.subTest(board=board['id'],preset=preset['id'],field=key):
-                            lines=(root/s['path']).read_text().splitlines();line=lines[s['line']-1]
+                            lines=primary_source(s['path']).read_text().splitlines();line=lines[s['line']-1]
                             actual=device['settings'][key];transform=s['transform']
                             if transform=='software-default':
-                                tree=ast.parse((root/s['path']).read_text())
+                                tree=ast.parse(primary_source(s['path']).read_text())
                                 calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and n.lineno<=s['line']<=getattr(n,'end_lineno',n.lineno) and len(n.args)>=2 and isinstance(n.args[0],ast.Constant) and n.args[0].value==key]
                                 self.assertTrue(any(isinstance(n.args[1],ast.Constant) and n.args[1].value==actual for n in calls));continue
                             raw=line.strip().lstrip('#').strip().split(':',1)[1].split('#')[0].strip()

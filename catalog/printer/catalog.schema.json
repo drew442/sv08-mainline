@@ -38,7 +38,8 @@
           "role": {
             "enum": [
               "main",
-              "tool"
+              "tool",
+              "chamber"
             ]
           },
           "sharing_rules": {
@@ -151,7 +152,8 @@
                           "fan",
                           "bed",
                           "motor",
-                          "extruder"
+                          "extruder",
+                          "chamber"
                         ]
                       },
                       "settings": {
@@ -180,6 +182,17 @@
                   }
                 }
               }
+            }
+          },
+          "supported_transports": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "serial",
+                "can"
+              ]
             }
           }
         }
@@ -223,7 +236,8 @@
         "fan",
         "bed",
         "motor",
-        "extruder"
+        "extruder",
+        "chamber"
       ],
       "additionalProperties": {
         "type": "object",
