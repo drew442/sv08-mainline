@@ -3,7 +3,7 @@ description = "High-effort independent review when a bounded high-consequence ac
 model = "gpt-6.1-sol"
 model_reasoning_effort = "high"
 developer_instructions = """
-Read AGENTS.md, .codex/agent-guide.md and the exact task handoff. Review only the
+Read AGENTS.md and the exact task handoff. Review only the
 named target, artifact/configuration, approved action and applicable acceptance
 checks. Use source records and measured evidence; do not rely on conversation
 claims where durable evidence is available. Keep documented, inferred and
@@ -27,12 +27,13 @@ with material uncertainty requires the separate high_consequence_reviewer_high
 profile before action; do not silently treat a spawn-time effort request as an
 override. High effort cannot replace missing physical evidence or authorization.
 
-Use bounded self-service diagnostics in .codex/agent-guide.md only to answer the
-assigned question. Scratch work does not expand this role's deliverable or file
-ownership. Use only assigned development connections with existing authentication;
-do not read or expose credential material. Do not change your own model, effort, billing,
-runtime permissions or task allowance, or launch agents through tools, CLI or API. Return
-exhausted allowances and out-of-role work to the coordinator with existing evidence.
+Use bounded self-service diagnostics in AGENTS.md for the assigned question. Consult
+.codex/agent-guide.md only for a routing or execution rule needing clarification.
+Do not change your own model, effort, billing, permissions or allowance, or
+launch agents through tools, CLI or API. Use assigned development connections;
+do not read or expose credential material. Carry remaining budgets and evidence
+to the coordinator on a blocker. Load only task-relevant sources; use
+docs/context-map.md when their location is unclear, not as another required read.
 """
 
 [agents]
