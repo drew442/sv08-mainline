@@ -1810,6 +1810,112 @@
             }
           ],
           "notes": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported."
+        },
+        {
+          "id": "funssor_cn3d_bed",
+          "label": "Funssor CN3D complete SV08 heated bed kit \u00b7 supplied sensor needed",
+          "devices": [
+            {
+              "name": "bed_sensor",
+              "kind": "sensor",
+              "settings": {
+                "pin": "PC5",
+                "min_temp": 5,
+                "max_temp": 105,
+                "pullup_resistor": 4700
+              },
+              "sources": {
+                "pin": {
+                  "line": 352,
+                  "section": "heater_bed",
+                  "option": "sensor_pin",
+                  "value": "PC5",
+                  "transform": "pin",
+                  "reference": "active reference"
+                },
+                "min_temp": {
+                  "line": 354,
+                  "section": "heater_bed",
+                  "option": "min_temp",
+                  "value": "5",
+                  "transform": "number",
+                  "reference": "active reference"
+                },
+                "max_temp": {
+                  "line": 355,
+                  "section": "heater_bed",
+                  "option": "max_temp",
+                  "value": "105",
+                  "transform": "number",
+                  "reference": "active reference"
+                },
+                "pullup_resistor": {
+                  "path": "upstream/klipper/klippy/extras/thermistor.py",
+                  "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+                  "accessed": "2026-10-04",
+                  "line": 73,
+                  "option": "pullup_resistor",
+                  "section": "upstream software default",
+                  "value": 4700,
+                  "transform": "software-default"
+                }
+              }
+            },
+            {
+              "name": "heater_bed",
+              "kind": "bed",
+              "settings": {
+                "pin": "PA0",
+                "invert": false,
+                "max_power": 1,
+                "control": "pid",
+                "sensor": "bed_sensor"
+              },
+              "sources": {
+                "pin": {
+                  "line": 350,
+                  "section": "heater_bed",
+                  "option": "heater_pin",
+                  "value": "PA0",
+                  "transform": "pin",
+                  "reference": "active reference"
+                },
+                "invert": {
+                  "line": 350,
+                  "section": "heater_bed",
+                  "option": "heater_pin",
+                  "value": "PA0",
+                  "transform": "invert",
+                  "reference": "active reference"
+                },
+                "max_power": {
+                  "line": 353,
+                  "section": "heater_bed",
+                  "option": "max_power",
+                  "value": "1.0",
+                  "transform": "number",
+                  "reference": "active reference"
+                },
+                "control": {
+                  "line": 356,
+                  "section": "heater_bed",
+                  "option": "control",
+                  "value": "pid",
+                  "transform": "text",
+                  "reference": "active reference"
+                },
+                "sensor": {
+                  "line": 352,
+                  "section": "heater_bed",
+                  "option": "sensor_pin",
+                  "value": "PC5",
+                  "transform": "association",
+                  "reference": "active reference"
+                }
+              }
+            }
+          ],
+          "notes": "Owner-selected manufacturer kit: 8mm aluminum plate, advertised 120\u00b0C bed and 135\u00b0C thermal fuse. Reference assumes the stock SV08 bed interface. Factory sensor curve and PID gains are cleared; select the supplied thermistor, which the product page does not identify. Board-reference power/bias/software bounds retained; no new safe electrical limit inferred."
         }
       ]
     },
@@ -5056,6 +5162,265 @@
           "notes": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported."
         }
       ]
+    },
+    {
+      "id": "sovol-sv08-max-chamber",
+      "label": "Sovol SV08 MAX chamber module controller",
+      "role": "chamber",
+      "revision": "unknown installed board/MCU revision",
+      "source": {
+        "path": "catalog/printer/sources/sovol-sv08-max/chamber-reference.cfg",
+        "revision": "68c28ea4ef5a81279d69c0e7d3b6433f0945192b",
+        "sha256": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+        "accessed": "2026-10-05",
+        "url": "https://raw.githubusercontent.com/Sovol3d/SV08MAX/68c28ea4ef5a81279d69c0e7d3b6433f0945192b/home/sovol/printer_data/config/chamber_hot.cfg"
+      },
+      "warning": "Separate CAN module. SV08 MAX installation uses CAN2; original SV08 adaptation and firmware compatibility require separate confirmation. No CAN UUID is supplied.",
+      "unknowns": [
+        "installed MCU/board revision",
+        "MCU clock and flash layout",
+        "installed CAN identity/interface",
+        "mainline host/module firmware compatibility",
+        "physical sensor and electrical limits"
+      ],
+      "supported_transports": [
+        "can"
+      ],
+      "sharing_rules": [],
+      "reserved_pins": {},
+      "motors": {},
+      "channel_counts": {
+        "adc": 2,
+        "heater": 1
+      },
+      "signals": {
+        "PA4": {
+          "capabilities": [
+            "adc"
+          ],
+          "reserved": false,
+          "source": {
+            "line": 7,
+            "section": "temperature_sensor room_temp",
+            "option": "sensor_pin",
+            "value": "hot_mcu: PA4",
+            "transform": "pin",
+            "reference_only": false
+          },
+          "evidence": "documented-reference"
+        },
+        "PA5": {
+          "capabilities": [
+            "adc"
+          ],
+          "reserved": false,
+          "source": {
+            "line": 17,
+            "section": "heater_generic chamber_temp",
+            "option": "sensor_pin",
+            "value": "hot_mcu: PA5",
+            "transform": "pin",
+            "reference_only": false
+          },
+          "evidence": "documented-reference"
+        },
+        "PA0": {
+          "capabilities": [
+            "heater"
+          ],
+          "reserved": false,
+          "source": {
+            "line": 13,
+            "section": "heater_generic chamber_temp",
+            "option": "heater_pin",
+            "value": "hot_mcu: PA0",
+            "transform": "pin",
+            "reference_only": false
+          },
+          "evidence": "documented-reference"
+        }
+      },
+      "connectors": {
+        "PA4": {
+          "label": "TH2 room sensor",
+          "pin": "PA4",
+          "capability": "adc",
+          "contact": null
+        },
+        "PA5": {
+          "label": "TH1 heater sensor",
+          "pin": "PA5",
+          "capability": "adc",
+          "contact": null
+        },
+        "PA0": {
+          "label": "Module heater output",
+          "pin": "PA0",
+          "capability": "heater",
+          "contact": null
+        }
+      },
+      "presets": [
+        {
+          "id": "chamber_module",
+          "label": "Sovol SV08 MAX chamber heating module",
+          "notes": "Vendor reference internal mappings and watermark settings. CAN connection/identity remain required. Upstream heater verification is retained; relaxed vendor verification and macros are omitted.",
+          "devices": [
+            {
+              "name": "chamber_room",
+              "kind": "sensor",
+              "settings": {
+                "pin": "PA4",
+                "curve": "epcos100k",
+                "pullup_resistor": 20000.0,
+                "min_temp": 0.0,
+                "max_temp": 150.0
+              },
+              "sources": {
+                "pin": {
+                  "line": 7,
+                  "section": "temperature_sensor room_temp",
+                  "option": "sensor_pin",
+                  "value": "hot_mcu: PA4",
+                  "transform": "pin"
+                },
+                "curve": {
+                  "line": 5,
+                  "section": "temperature_sensor room_temp",
+                  "option": "sensor_type",
+                  "value": "EPCOS 100K B57560G104F",
+                  "transform": "curve"
+                },
+                "pullup_resistor": {
+                  "line": 6,
+                  "section": "temperature_sensor room_temp",
+                  "option": "pullup_resistor",
+                  "value": "20000",
+                  "transform": "number"
+                },
+                "min_temp": {
+                  "line": 8,
+                  "section": "temperature_sensor room_temp",
+                  "option": "min_temp",
+                  "value": "0",
+                  "transform": "number"
+                },
+                "max_temp": {
+                  "line": 9,
+                  "section": "temperature_sensor room_temp",
+                  "option": "max_temp",
+                  "value": "150",
+                  "transform": "number"
+                }
+              }
+            },
+            {
+              "name": "chamber_sensor",
+              "kind": "sensor",
+              "settings": {
+                "pin": "PA5",
+                "curve": "epcos100k",
+                "pullup_resistor": 20000.0,
+                "min_temp": 0.0,
+                "max_temp": 65.0
+              },
+              "sources": {
+                "pin": {
+                  "line": 17,
+                  "section": "heater_generic chamber_temp",
+                  "option": "sensor_pin",
+                  "value": "hot_mcu: PA5",
+                  "transform": "pin"
+                },
+                "curve": {
+                  "line": 15,
+                  "section": "heater_generic chamber_temp",
+                  "option": "sensor_type",
+                  "value": "EPCOS 100K B57560G104F",
+                  "transform": "curve"
+                },
+                "pullup_resistor": {
+                  "line": 16,
+                  "section": "heater_generic chamber_temp",
+                  "option": "pullup_resistor",
+                  "value": "20000",
+                  "transform": "number"
+                },
+                "min_temp": {
+                  "line": 20,
+                  "section": "heater_generic chamber_temp",
+                  "option": "min_temp",
+                  "value": "0",
+                  "transform": "number"
+                },
+                "max_temp": {
+                  "line": 21,
+                  "section": "heater_generic chamber_temp",
+                  "option": "max_temp",
+                  "value": "65",
+                  "transform": "number"
+                }
+              }
+            },
+            {
+              "name": "chamber_temp",
+              "kind": "chamber",
+              "settings": {
+                "pin": "PA0",
+                "invert": false,
+                "sensor": "chamber_sensor",
+                "max_power": 1.0,
+                "control": "watermark",
+                "max_delta": 1.0
+              },
+              "sources": {
+                "pin": {
+                  "line": 13,
+                  "section": "heater_generic chamber_temp",
+                  "option": "heater_pin",
+                  "value": "hot_mcu: PA0",
+                  "transform": "pin"
+                },
+                "invert": {
+                  "line": 13,
+                  "section": "heater_generic chamber_temp",
+                  "option": "heater_pin",
+                  "value": "hot_mcu: PA0",
+                  "transform": "invert"
+                },
+                "sensor": {
+                  "line": 15,
+                  "section": "heater_generic chamber_temp",
+                  "option": "sensor_type",
+                  "value": "EPCOS 100K B57560G104F",
+                  "transform": "association"
+                },
+                "max_power": {
+                  "line": 14,
+                  "section": "heater_generic chamber_temp",
+                  "option": "max_power",
+                  "value": "1.0",
+                  "transform": "number"
+                },
+                "control": {
+                  "line": 18,
+                  "section": "heater_generic chamber_temp",
+                  "option": "control",
+                  "value": "watermark",
+                  "transform": "text"
+                },
+                "max_delta": {
+                  "line": 19,
+                  "section": "heater_generic chamber_temp",
+                  "option": "max_delta",
+                  "value": "1.0",
+                  "transform": "number"
+                }
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "curves": [
@@ -5266,6 +5631,14 @@
       "filament_diameter": "positive",
       "min_extrude_temp": "number",
       "gear_ratio": "ratio"
+    },
+    "chamber": {
+      "pin": "heater",
+      "invert": "boolean",
+      "sensor": "name",
+      "max_power": "fraction",
+      "control": "control",
+      "max_delta": "positive"
     }
   }
 }

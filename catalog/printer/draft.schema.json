@@ -60,6 +60,28 @@
               "type": "boolean"
             }
           }
+        },
+        "chamber": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "transport": {
+              "enum": [
+                "serial",
+                "can"
+              ]
+            },
+            "identity": {
+              "type": "string",
+              "maxLength": 240
+            },
+            "reference_ack": {
+              "type": "boolean"
+            }
+          }
         }
       }
     },
@@ -88,13 +110,15 @@
               "fan",
               "bed",
               "motor",
-              "extruder"
+              "extruder",
+              "chamber"
             ]
           },
           "board": {
             "enum": [
               "main",
-              "tool"
+              "tool",
+              "chamber"
             ]
           },
           "settings": {

@@ -1,7 +1,7 @@
 """Deterministic inactive configs. Sensor mode is a dedicated positive allowlist."""
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 
-GENERATOR_VERSION = 4
+GENERATOR_VERSION = 5
 
 
 def generate(catalog, draft, mode):
@@ -39,8 +39,9 @@ def generate(catalog, draft, mode):
             require(s, fields, name)
         elif kind in ('probe','fan'):
             require(s, catalog.kinds[kind], name)
-        elif kind == 'bed':
+        elif kind in ('bed','chamber'):
             require(s, ('pin','invert','sensor','max_power','control'), name)
+            if kind == 'chamber':require(s, ('max_delta',), name)
         if mode == 'full' and kind in ('bed','extruder') and s.get('control') == 'pid':
             require(s, ('pid_kp','pid_ki','pid_kd'), name)
     if mode == 'sensors' and not sensors:
@@ -72,12 +73,12 @@ def generate(catalog, draft, mode):
         for key, value in values.items():
             lines.append(key + ': ' + (str(value).lower() if type(value) is bool else str(value)))
     def qualified(role, pin):
-        return ('tool:' if role == 'tool' else '') + pin
+        return (role+':' if role != 'main' else '') + pin
     def digital(d, field='pin', invert='invert', pull='digital_pullup'):
         s=d['settings']
         return ('^' if s.get(pull) else '') + ('!' if s.get(invert) else '') + qualified(d['board'], s[field])
     for role, b in sorted(draft['boards'].items()):
-        section('mcu' + (' tool' if role == 'tool' else ''), {'canbus_uuid' if b['transport']=='can' else 'serial': b['identity']})
+        section('mcu' + (' '+role if role != 'main' else ''), {'canbus_uuid' if b['transport']=='can' else 'serial': b['identity']})
     section('printer', {'kinematics':'none','max_velocity':1,'max_accel':1} if mode=='sensors' else {'kinematics':'corexy',**draft['geometry']})
     for cid in sorted({d['settings']['curve'] for d in sensors.values()}):
         c = catalog.curves[cid]
@@ -91,7 +92,7 @@ def generate(catalog, draft, mode):
             for i, (t, r) in enumerate(d['settings']['custom_curve'], 1):
                 values.update({f'temperature{i}': t, f'resistance{i}': r})
             section('thermistor sv08_custom_' + name, values)
-    heater_sensors = {d['settings']['sensor'] for d in draft['devices'] if mode=='full' and d['kind'] in ('bed','extruder')}
+    heater_sensors = {d['settings']['sensor'] for d in draft['devices'] if mode=='full' and d['kind'] in ('bed','extruder','chamber')}
     def thermal(d):
         s=d['settings'];c=catalog.curves[s['curve']]
         return dict(sensor_type='sv08_custom_'+d['name'] if 'custom_curve' in s else c['sensor_type'], sensor_pin=qualified(d['board'], s['pin']), pullup_resistor=s['pullup_resistor'], min_temp=s['min_temp'],max_temp=s['max_temp'])
@@ -99,6 +100,7 @@ def generate(catalog, draft, mode):
         s = d['settings']
         values = thermal(sensors[s['sensor']])
         values.update(heater_pin=digital(d), max_power=s['max_power'], control=s['control'])
+        if d['kind'] == 'chamber':values.update(gcode_id='C',max_delta=s['max_delta'])
         if s['control'] == 'pid':
             values.update({k:s[k] for k in ('pid_kp','pid_ki','pid_kd')})
         return values
@@ -124,6 +126,7 @@ def generate(catalog, draft, mode):
                 section(name,values)
                 section('tmc2209 '+name, {**{'uart_pin':qualified(d['board'],motor['uart'])},**{k:s[k] for k in ('run_current','sense_resistor','uart_address')}})
             elif kind=='bed':section(name,heater_values(d))
+            elif kind=='chamber':section('heater_generic '+name,heater_values(d))
             elif kind=='fan':section('fan_generic '+name,dict(pin=digital(d),max_power=s['max_power']))
             elif kind=='probe':section('probe',{**{'pin':digital(d)},**{k:s[k] for k in ('x_offset','y_offset','z_offset')}})
     text='\n'.join(lines)+'\n'

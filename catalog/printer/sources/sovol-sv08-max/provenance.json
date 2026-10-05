@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Sovol3d/SV08MAX",
+  "revision": "68c28ea4ef5a81279d69c0e7d3b6433f0945192b",
+  "url": "https://raw.githubusercontent.com/Sovol3d/SV08MAX/68c28ea4ef5a81279d69c0e7d3b6433f0945192b/home/sovol/printer_data/config/chamber_hot.cfg",
+  "accessed": "2026-10-05",
+  "upstream_sha256": "044c11bea50c742bc406fae3ce099d63dd7095e746f93f55a72722fbe1e52a33",
+  "snapshot_sha256": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+  "transformation": "Replace only source line 2, a sample MCU CAN UUID, with a comment. No hardware identity is imported."
+}
