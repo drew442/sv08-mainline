@@ -1,0 +1,76 @@
+{
+  "source_commit": "cca84ba5e69c4de6ec7af1dc4dfae6ea8a19256c",
+  "after": {
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "d22a20ddec098b6dc793c289715b1f990efdb4c1f661edb3d2527e798dc944c3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "a337006608d9f68418aa3aeb03a5b7d352d3cd10cd44b288fb3a4d08aec857e7",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.json": {
+      "sha256": "af2f050480ab2a3ce1d96c794b81bd53a4e823bfc497a62d6961ef44f17b448f",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.schema.json": {
+      "sha256": "e84f9fd629e2a900ac6f52cc27c95faa1cf1dbc3e0babb8b22d9b13f23d31751",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/draft.schema.json": {
+      "sha256": "7583da7408b810e6eb8db66d032c03d4d5c1b653605c4af9130359867fd8449a",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/sources/sovol-sv08-max/chamber-reference.cfg": {
+      "sha256": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/sources/sovol-sv08-max/provenance.json": {
+      "sha256": "1604705151a4d816f045b76abebf3696dfe842e6c7202c14ba0bd37614f69385",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_catalog.py": {
+      "sha256": "e9de0f10593baab1a5f9a94ff63adb8a708747982b4b3364ca5988b22b7f2986",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_generate.py": {
+      "sha256": "3d762dd7b2f1294ef34d2fc6684f52c02748777fc65ddac8f3fc15cb54d9f7f7",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_store.py": {
+      "sha256": "b326d1a36683b4a5d3926a9c8cb9284020568461780149d0f8e01d62d31d8dbd",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "c0c325e0c5e073040f77feb9d02598d5e420e84bd3328d29174396b86b0985df",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "new_directories": [
+    "/usr/share/sv08/printer/sources",
+    "/usr/share/sv08/printer/sources/sovol-sv08-max"
+  ],
+  "payload_bytes": 296137
+}

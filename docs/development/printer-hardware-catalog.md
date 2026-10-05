@@ -11,7 +11,8 @@ redirects into this shell. See [shared-panel design](printer-cockpit-panel.md) a
 
 The simpler interface is implemented and self-validated offline; see
 [simplification evidence](../features/printer-hardware-simplification/evidence.md).
-The installed evidence above concerns the previous interface.
+The installed evidence above concerns the previous interface. The simplified page
+and named upgrade profiles now have [current installed acceptance](../features/printer-upgrade-profiles/installed-evidence.md).
 
 Choose the mainboard and toolhead board, then their **Heated bed** and **Hotend**
 assemblies. These fill in documented settings together with the sensor dependency.
