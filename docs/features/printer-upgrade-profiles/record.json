@@ -1,0 +1,70 @@
+{
+  "format_version": 2,
+  "id": "printer-upgrade-profiles",
+  "kind": "feature",
+  "title": "Named Funssor bed and Sovol CAN chamber module profiles",
+  "author": "coordinator",
+  "created": "2026-10-05",
+  "priority": 1,
+  "proposal": "docs/features/printer-upgrade-profiles/proposal.md",
+  "requirements": [
+    "docs/features/printer-upgrade-profiles/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "offline-journey",
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate named upgrade profile selection",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "offline-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and offline fixture changes, no devices, live settings or installed host mutations; exact hardware facts remain required for activation.",
+      "hazards": [],
+      "owned_paths": [
+        "catalog/printer/catalog.json",
+        "catalog/printer/catalog.schema.json",
+        "catalog/printer/draft.schema.json",
+        "catalog/printer/sources/sovol-sv08-max/chamber-reference.cfg",
+        "catalog/printer/sources/sovol-sv08-max/provenance.json",
+        "runtime/sv08_printer_catalog.py",
+        "runtime/sv08_printer_generate.py",
+        "ui/printer/app.js",
+        "tests/test_printer_configuration.py",
+        "tests/printer_browser.mjs",
+        "docs/development/printer-hardware-catalog.md",
+        "docs/features/printer-upgrade-profiles/evidence.md",
+        "docs/features/printer-upgrade-profiles/browser.json"
+      ],
+      "input_paths": [
+        "runtime/sv08_printer_store.py",
+        "scripts/stage_printer_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "upstream-lock.json"
+      ]
+    }
+  ]
+}
