@@ -47,7 +47,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "cb00b59558564b4faa4bcc9130f5c009",
+        "session": "printer-upgrade-profiles-20261005"
+      },
       "input_paths": [
         "runtime/sv08_printer_store.py",
         "scripts/stage_printer_ui.py",
@@ -74,7 +78,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and offline fixture changes, no devices, live settings or installed host mutations; exact hardware facts remain required for activation.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate named upgrade profile selection",
       "validation": null,
       "verification": null
