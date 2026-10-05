@@ -113,7 +113,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and offline fixture changes, no devices, live settings or installed host mutations; exact hardware facts remain required for activation.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate named upgrade profile selection",
       "validation": {
         "actor": "coordinator",
