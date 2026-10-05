@@ -57,7 +57,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "b80cfdb286a146e780d1f5a9b49f08d0",
+        "session": "printer-hardware-simplification-20261005"
+      },
       "input_paths": [
         "scripts/stage_printer_ui.py",
         "tests/test_stage_printer_ui.py",
@@ -86,7 +90,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible offline UI/catalog/runtime development with disposable state; no host or live printer writes. Self-validated under the accepted development review decision.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate simple hardware controls",
       "validation": null,
       "verification": null
