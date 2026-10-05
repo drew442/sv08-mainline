@@ -2,24 +2,21 @@
 
 ## Start with the assignment
 
-Build maintainable SV08 software with reproducible artifacts and explicit hardware
-profiles, stock first. Subsystem evidence is not a supported printing release.
-Preserve owner decisions; separate documented, inferred and measured facts. Unknown
-identities, clocks, offsets, polarities and calibration stay unknown, not borrowed
-from similar boards.
+Build maintainable SV08 software: reproducible artifacts, explicit profiles, stock
+first. Subsystem evidence is not a printing release. Preserve owner decisions and
+distinguish documented, inferred and measured facts. Do not borrow unknown hardware
+identities, clocks, offsets, polarities or calibration from similar boards.
 
-Read this file, your selected role instructions and the task handoff. Apply policy
-already loaded at the same revision instead of fetching it again. Start from
-the named source, tests, acceptance checks and applicable accepted requirements.
+Apply this file, your role and handoff; do not refetch same-revision instructions.
+Start with named sources, tests, checks and applicable accepted requirements.
 Do not read README, roadmap, all decisions or hardware history before every edit.
 Use [the context map](docs/context-map.md) only when relevant sources are unclear.
 Expand retrieval when a requirement, dependency or conflicting fact needs checking;
 a short handoff never licenses ignoring applicable requirements or part of a diff.
 
-Coordinators use [.codex/agent-guide.md](.codex/agent-guide.md) to dispatch work and
-[the workflow entry](.codex/README.md) for queue/record operations. Delegated workers
-answer their assignment, not the whole backlog; they do not run global queue
-selection. Current goals and dated owner decisions govern priority and scope;
+Coordinators use [.codex/agent-guide.md](.codex/agent-guide.md) for dispatch and
+[the workflow entry](.codex/README.md) for records. Workers answer their assignment,
+not the whole backlog, and do not run global queue selection. Current goals and owner decisions govern priority and scope;
 historical notes are evidence at their stated revision, not new authorization.
 
 ## Role, execution and authority
@@ -34,9 +31,8 @@ assigned development connections; never inspect/expose credentials, private back
 or dumps. Even read-only printer access is coordinator-owned. Prompts, worktrees and
 disabled child delegation do not enforce isolation.
 
-Safe local work within the handoff needs no renewed permission: use installed
-tools and assigned disposable fixtures, run relevant tests, inspect results and
-correct failures within your role, scope and primary-task allowance. Researchers,
+Safe assigned local work needs no renewed permission: use installed tools and
+disposable fixtures, run checks and correct in-scope failures within the primary-task allowance. Researchers,
 planners and reviewers leave tracked candidates unchanged; integration may correct
 its disposable inputs/invocation, not production code, tracked tests or requirements.
 Keep scratch outside the candidate in the coordinator-assigned directory.
@@ -53,8 +49,7 @@ the coordinator can grant bounded continuations under standing consent. See
 ## Implement, check and finish
 
 Implement the complete assigned outcome, run appropriate checks, inspect results
-and fix in-scope failures; a first patch is not completion. Keep the existing
-one diagnosed repair cycle for the same unresolved failure, not a one-failing-test
+and fix in-scope failures; a first patch is not completion. Keep one diagnosed repair cycle for the same unresolved failure, not a one-failing-test
 limit for an entire delivery. Address distinct defects within the assignment;
 persistent failure, design/scope ambiguity or exhausted allowance requires a handoff
 with the patch, evidence and next useful check. Never repeat unchanged attempts.
@@ -75,38 +70,41 @@ configuration and artifact hashes. Preserve A/B rollback, data, immutable/writab
 modes, idle admission, factory storage limits and heater protections. Never guess
 physical constants or disable protections to claim success.
 
-Report source revision, changed paths, actual commands/results, evidence level and
-limits. Documentation needs relevant link/consistency checks; code needs focused
-behavior tests; foundation changes also need diff/JSON/gitlink/lock checks. Keep
-build, offline, named-hardware and release evidence separate. Preserve other workers'
+Report revision, paths, commands/results and limitations. Check relevant doc links,
+code behavior and, for foundation changes, diff/JSON/gitlink/lock agreement. Distinguish
+build, offline, named-hardware and release evidence. Preserve other workers'
 changes, including unexpected ones; report conflicts rather than reverting them.
 
 ## Review and publication
 
-Existing approval needs no repeated product decision. New substantive scope uses a
-separate feature approver; use project_planner only when a plan is needed. Substantive
-delivery needs a separate feature verifier (feature_verifier_high for difficult review).
-Mechanical corrections use short records and normal review.
-Authors, planners, approvers and evidence producers do not verify their own delivery.
-Review the complete stable diff and every applicable acceptance check, including
-source/decision/evidence hashes. A smaller reading plan never narrows verification.
+Use the [development review decision](docs/decisions/20261005-proportionate-development-review.md).
+Authorized reversible development is self-validated by default, including substantive
+features: implement, run checks, inspect results and continue. No automatic approver
+or fresh verifier. Use project_planner or a targeted review only for a concrete need.
+Inspect the complete stable diff and every applicable acceptance check; report actual
+validation, never invent independent verification.
+An approver may review delivery and a reviewer may check a suggested correction.
+Material implementation/design authors need another reviewer; feedback alone is not authorship.
+Blockers name accepted requirements, demonstrated defects or concrete serious-loss
+paths. Speculative hardening is non-blocking; do not grow scope.
 Owner requirement changes, expanded scope/authority and new spending need the owner.
 
-Immediately before eMMC/MCU writes, boot-policy changes, heater/motion commissioning
-or release decisions, obtain the exact-operation review from
-`.codex/agents/high-consequence-reviewer.toml`, or
-`.codex/agents/high-consequence-reviewer-high.toml` for material uncertainty.
-Use the configured GPT-6.1 Sol medium/high effort and verify actual settings.
-A review cannot grant hardware authority or replace owner authorization, identified
-targets, reviewed artifacts, recovery paths or observed execution evidence.
-Unavailable review or unresolved physical facts keep the action pending.
+Require independent assessment before credible physical harm, hardware damage, loss
+of the usable recovery route, irreplaceable data loss, secret disclosure or material
+external effects. Gate the consequential operation, not every offline preparation.
+Use `.codex/agents/high-consequence-reviewer.toml` or its high variant
+`.codex/agents/high-consequence-reviewer-high.toml` for difficult reasoning; medium/high
+settings and evidence need verification. A review cannot grant hardware authority
+or replace owner authorization. Recheck target/image, write boundary, recovery and
+preconditions even when reusing a procedure within explicit coverage.
+Changed safety-relevant inputs require reassessment; unknown facts stop action.
+A recoverable failed boot is not loss of the recovery route. Publishing source is
+not approval to distribute an unvalidated flashable release or activate outputs.
 
 The owner gives standing authorization to push every project commit to origin on
-main and feature branches. The coordinator commits/pushes promptly and verifies
-the remote contains the commit before reporting completion. Report and resolve push
-failures; reconcile divergence without force pushes. Archive obsolete branch tips
+main and feature branches. The coordinator commits/pushes and verifies remote receipt before reporting completion. Resolve push failures without force pushes. Archive obsolete branch tips
 in pushed, verified tags before owner-requested cleanup. Do not publish secrets,
 dumps, generated images or unrelated changes. Publication is not deployment authority.
-Preserve historical identities and evidence; changed requirement hashes need genuine
-review, not mechanical refresh. Continue the next authorized task after completion
+Preserve historical identities and evidence. V2 permits recorded nonmaterial
+requirement rechecks, not silent hash refreshes or waived constraints. Continue the next authorized task after completion
 or blocking; scheduling remains disabled unless explicitly configured.

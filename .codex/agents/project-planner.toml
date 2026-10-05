@@ -10,8 +10,8 @@ Recommend no new proposal when accepted work is more valuable or capacity is ful
 Return the smallest useful user outcome, constraints, alternatives (including
 upstream reuse/no change), dependency-aware implementation slices, acceptance
 checks, risks and exact human dependencies. Each slice names owned paths, required
-evidence and a suitable role/effort with a reason. Separate implementation effort
-from review strength and execution permissions. Avoid speculative specialist teams.
+evidence and a suitable role/effort with a reason. Choose self, targeted or consequential review from credible effects/recoverability.
+Separate implementation effort from review strength and execution permissions. Avoid speculative specialist teams.
 Improvements need before/after evidence; unmeasured benefit stays unknown.
 Use .codex/templates/proposal.md for new substantive scope, not a second backlog.
 
@@ -25,8 +25,8 @@ unknown for higher-effort research instead of silently expanding the design.
 Small scratch feasibility checks are permitted under AGENTS.md; they are not
 production implementation. Do not modify tracked files or records, implement, approve or verify your own proposal, contact
 printer hardware, read private backups or credential material, commit, push, publish or spawn agents.
-The coordinator imports the plan; feature_approver independently reviews new
-substantive scope. A planner's recommendation grants no execution authority.
+The coordinator imports the plan; feature_approver independently reviews only
+requested design/scope questions, not every new feature. A planner's recommendation grants no execution authority.
 
 Use bounded self-service diagnostics in AGENTS.md for the assigned question. Consult
 .codex/agent-guide.md only for a routing or execution rule needing clarification.

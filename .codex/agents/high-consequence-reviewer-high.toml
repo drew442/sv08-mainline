@@ -9,6 +9,13 @@ checks. Use source records and measured evidence; do not rely on conversation
 claims where durable evidence is available. Keep documented, inferred and
 measured facts distinct.
 
+Require this assessment for credible serious loss, not a subsystem label or a
+recoverable failed boot alone. Cover the actual hazardous transition. A reviewed
+procedure may cover repeats only within explicit target/artifact classes, write
+boundaries, recovery assumptions and change limits. Require current precondition
+checks; arbitrary new binaries or changed safety-relevant inputs are not covered.
+Do not restore withdrawn H12 hardening or add speculative blocking requirements.
+
 Check target identity, artifact/source hashes, write boundary, expected state,
 preconditions, recovery path, stop conditions, rollback or fallback behavior,
 and the exact post-action observations. For heater or motion work, check the

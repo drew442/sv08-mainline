@@ -1,28 +1,30 @@
 {
-  "format_version": 1,
+  "format_version": 2,
   "id": "example",
   "kind": "feature",
-  "title": "One useful outcome",
+  "title": "One useful reversible outcome",
   "author": "proposal-author-session",
-  "created": "2026-09-12",
+  "created": "2026-10-05",
   "priority": 2,
   "proposal": "docs/features/example/proposal.md",
   "requirements": [
-    "docs/decisions/0010-host-administration-and-recovery-ui.md"
+    "docs/decisions/20261005-proportionate-development-review.md"
   ],
   "owner_decision_required": false,
   "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
   "checks": [
     {
       "id": "offline-journey",
-      "description": "Reproduce the complete approved user journey and its preservation failure cases.",
+      "description": "Run the scoped behavior and regression checks; record actual results.",
       "environment": "offline"
     }
   ],
   "tasks": [
     {
       "id": "implement",
-      "title": "Implement and verify the offline journey",
+      "title": "Implement and validate the offline journey",
       "status": "pending",
       "environment": "offline",
       "depends_on": [],
@@ -34,8 +36,17 @@
       "implementation": null,
       "evidence": [],
       "verification": null,
+      "validation": null,
       "repeats": 0,
-      "resumption": null
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Replace with the actual effects and recovery assessment; a label is not evidence of safety.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/example.py",
+        "docs/features/example/evidence.md"
+      ],
+      "input_paths": []
     }
   ]
 }
