@@ -1,7 +1,7 @@
 """Deterministic inactive configs. Sensor mode is a dedicated positive allowlist."""
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 
-GENERATOR_VERSION = 3
+GENERATOR_VERSION = 4
 
 
 def generate(catalog, draft, mode):
@@ -23,7 +23,7 @@ def generate(catalog, draft, mode):
     for d in draft['devices']:
         s, kind, name = d['settings'], d['kind'], d['name']
         if kind == 'sensor':
-            require(s, catalog.kinds[kind], name)
+            require(s, [k for k in catalog.kinds[kind] if k != 'custom_curve'], name)
         elif kind == 'input':
             require(s, catalog.kinds[kind], name)
         elif mode == 'sensors':
@@ -85,10 +85,16 @@ def generate(catalog, draft, mode):
             values={}
             for i,(t,r) in enumerate(c['points'],1):values.update({f'temperature{i}':t,f'resistance{i}':r})
             section('thermistor '+c['sensor_type'], values)
+    for name, d in sorted(sensors.items()):
+        if 'custom_curve' in d['settings']:
+            values = {}
+            for i, (t, r) in enumerate(d['settings']['custom_curve'], 1):
+                values.update({f'temperature{i}': t, f'resistance{i}': r})
+            section('thermistor sv08_custom_' + name, values)
     heater_sensors = {d['settings']['sensor'] for d in draft['devices'] if mode=='full' and d['kind'] in ('bed','extruder')}
     def thermal(d):
         s=d['settings'];c=catalog.curves[s['curve']]
-        return dict(sensor_type=c['sensor_type'], sensor_pin=qualified(d['board'], s['pin']), pullup_resistor=s['pullup_resistor'], min_temp=s['min_temp'],max_temp=s['max_temp'])
+        return dict(sensor_type='sv08_custom_'+d['name'] if 'custom_curve' in s else c['sensor_type'], sensor_pin=qualified(d['board'], s['pin']), pullup_resistor=s['pullup_resistor'], min_temp=s['min_temp'],max_temp=s['max_temp'])
     def heater_values(d):
         s = d['settings']
         values = thermal(sensors[s['sensor']])
@@ -125,5 +131,5 @@ def generate(catalog, draft, mode):
     warnings=['Reference configuration only. Installed match and physical limits remain unverified.', 'Configured polarity is not measured polarity. TMC2209 2.000 A is a pinned software maximum, not a safe electrical rating.', 'Candidate saved separately; commissioning and activation require their own reviewed steps.']
     if mode == 'full':
         warnings.append('Before H06, compose once with the separately reviewed test-sv08-01-print-controls.cfg after the persistent gcodes directory exists. Controls and activation remain separate.')
-    warnings += [catalog.curves[d['settings']['curve']]['origin'] for d in sensors.values()]
+    warnings += [(d['name'] + ': owner-entered custom NTC curve; calibration remains unverified') if 'custom_curve' in d['settings'] else catalog.curves[d['settings']['curve']]['origin'] for d in sensors.values()]
     return dict(complete=True, blockers=[], warnings=warnings, text=text)

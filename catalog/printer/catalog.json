@@ -5171,6 +5171,21 @@
         "accessed": "2026-10-04"
       },
       "pullup_origin": "Klipper default 4700 ohm; not a measured circuit"
+    },
+    {
+      "id": "pt1000",
+      "label": "PT1000 \u00b7 PTC platinum sensor",
+      "sensor_type": "PT1000",
+      "reference_pullup": 4700,
+      "points": null,
+      "limits": null,
+      "origin": "Pinned Klipper Callendar\u2013Van Dusen PT1000 definition; requires a compatible analog input circuit",
+      "source": {
+        "path": "upstream/klipper/klippy/extras/adc_temperature.py",
+        "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+        "accessed": "2026-10-05"
+      },
+      "pullup_origin": "Klipper default 4700 ohm; board-specific bias takes precedence"
     }
   ],
   "kinds": {
@@ -5179,7 +5194,8 @@
       "curve": "curve",
       "pullup_resistor": "positive",
       "min_temp": "number",
-      "max_temp": "number"
+      "max_temp": "number",
+      "custom_curve": "thermistor_points"
     },
     "input": {
       "pin": "input",

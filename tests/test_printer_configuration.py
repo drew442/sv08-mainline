@@ -99,6 +99,36 @@ class CatalogTests(unittest.TestCase):
         del d['devices'][2]['settings']['current_rating_rms']
         self.assertIn('stepper_x.current_rating_rms', '\n'.join(generate(self.c,d,'full')['blockers']))
 
+    def test_component_replacement_is_atomic_and_keeps_unrelated_devices(self):
+        d=empty_draft();d['boards']={'main':{'id':'sv08-main'}}
+        d=self.c.apply_preset(d,'main','bed_sensor')
+        d=self.c.apply_preset(d,'main','exhaust_fan')
+        before=copy.deepcopy(d)
+        selected=self.c.select_component(d,'main','bed_assembly')
+        self.assertEqual(d,before)
+        self.assertEqual({x['name'] for x in selected['devices']},{'bed_sensor','heater_bed','exhaust_fan'})
+        selected['devices'][-1]['settings']['pid_kp']=99
+        replacement=self.c.select_component(selected,'main','bed_assembly')
+        self.assertNotEqual(replacement['devices'][-1]['settings'].get('pid_kp'),99)
+        bad=copy.deepcopy(d);bad['devices'].append(dict(name='other_heater',kind='bed',board='main',settings={'pin':'PA0'}))
+        with self.assertRaisesRegex(ValueError,'collision'):
+            self.c.select_component(bad,'main','bed_assembly')
+        self.assertEqual(d,before)
+
+    def test_pt1000_and_advanced_custom_ntc_curve(self):
+        d=sensor_draft();s=d['devices'][0]['settings'];s['curve']='pt1000'
+        self.assertIn('sensor_type: PT1000',generate(self.c,d,'sensors')['text'])
+        s['custom_curve']=[[25,100000],[100,7008],[220,435]]
+        with self.assertRaisesRegex(ValueError,'PT1000'):self.c.validate(d)
+        s['curve']='generic3950'
+        text=generate(self.c,d,'sensors')['text']
+        self.assertIn('[thermistor sv08_custom_bed_check]',text)
+        self.assertIn('sensor_type: sv08_custom_bed_check',text)
+        self.assertIn('pullup_resistor: 4700',text)
+        for points in ([[25,100000],[25,7008],[220,435]],[[25,-1],[100,7008],[220,435]],[[25,100000],[100,7008]],[[25,435],[100,7008],[220,100000]]):
+            s['custom_curve']=points
+            with self.assertRaises(ValueError):self.c.validate(d)
+
     def test_reference_presets_and_dependencies(self):
         d=empty_draft();d['boards']['main']={'id':'sv08-main'}
         original=copy.deepcopy(d);d=self.c.apply_preset(d,'main','bed_sensor')

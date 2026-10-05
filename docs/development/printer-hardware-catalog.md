@@ -9,23 +9,37 @@ authorization session; section navigation retains local drafts. The old separate
 redirects into this shell. See [shared-panel design](printer-cockpit-panel.md) and
 [installed integration evidence](../features/printer-cockpit-integration/installed-evidence.md).
 
-Choose board references, enter each private MCU transport identity, acknowledge
-its provisional status, then choose a human-readable **Documented component**.
-Preview its defaults and exact source lines before **Use provisional reference
-defaults**. This adds unsaved typed settings with suitable generator names, such as
-“X axis motor / TMC2209” → `stepper_x`; raw section names are unnecessary for
-reference choices. Custom device forms remain available. Saved cards expose the
-available documented defaults and origins; edited settings remain explicit draft
-selections and are not asserted to equal their reference.
+The simpler interface is implemented and self-validated offline; see
+[simplification evidence](../features/printer-hardware-simplification/evidence.md).
+The installed evidence above concerns the previous interface.
 
-SV08 choices cover factory bed/hotend sensors, bed/hotend assemblies, six mainboard
-motors with TMC2209, part/exhaust fans, filament input and tool probe. Octopus
-non-Pro and EBB v1.2 provide their exact supported sample components, including
-commented sample inputs. Assemblies add their named sensor dependency together.
-Duplicate names, occupied pins and existing sensor dependencies refuse the entire
-addition without overwriting any user setting. To combine with an existing sensor,
-use the custom forms and choose its association explicitly. Board changes still
-confirm and clear only the affected board's devices and private identity.
+Choose the mainboard and toolhead board, then their **Heated bed** and **Hotend**
+assemblies. These fill in documented settings together with the sensor dependency.
+An enclosure exhaust fan or part cooling fan has a checkbox. **Save hardware
+settings** preserves incomplete selections without requiring PID calibration.
+Connection setup, extra components, pin assignments, electrical fields and motion
+limits are expandable. Candidate preparation, export/import and restoration are
+separate from everyday hardware choices.
+
+The temperature sensor dropdown shows its current type and supports replacement
+with the pinned defaults, including PT1000. Replacement restores the documented
+board input bias, keeps existing temperature bounds, clears custom NTC overrides and
+heater PID gains, and invalidates review. A custom input without documented bias
+remains incomplete until its advanced bias is entered. Advanced settings also
+support a three-point custom NTC calibration curve; PT1000 uses its separate
+platinum definition. A selected assembly profile remains visible after overrides.
+
+SV08 choices cover documented factory bed/hotend assemblies, part/exhaust fans,
+and additional motors, filament input and tool probe. Octopus non-Pro and EBB v1.2
+retain their exact sample mappings. Product-specific Funssor/CN3D bed, hotend and
+chamber-heater profiles remain pending exact specifications; generic names do not
+supply hardware settings. No undocumented output is inferred.
+
+Assembly replacement is atomic for its named devices on the selected board,
+preserves unrelated devices, and rejects occupied pins, cross-board names and
+conflicting dependencies. The advanced additive reference operation still refuses
+duplicate names rather than overwriting. Board changes confirm and clear only the
+affected board’s devices and private identity.
 
 Reference polarity is the configured pin marker (`!` / `^`, or its absence),
 **not physically measured polarity**. Reference thermal bounds, PID gains,
@@ -38,7 +52,7 @@ endstops. Probe z offset and motor RMS ratings are not preset; missing values ke
 the full draft incomplete. Physical circuit/resistor identity, safe electrical
 limits and firmware clocks/offsets remain unknown. Factory curves retain the vendor
 point sets, not new calibration. The curve dropdown retains common pinned Klipper
-options; the separate pull-up/bounds button is an explicit reference selection.
+options; advanced bias and bounds overrides remain explicit reference selections.
 
 All generated drivers are TMC2209. `run_current` must be positive and at most
 **2.000 A**, as required by pinned `tmc2209.TMCCurrentHelper` →

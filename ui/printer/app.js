@@ -9,7 +9,7 @@
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
     function controls() {
         for (const id of ['save','review','restore','add','add-preset','apply','import']) $(id).disabled = busy || reconcile || diagnostic || !authority() || (!draft && id !== 'import');
-        for (const field of document.querySelectorAll('#printer-boards input, #printer-boards select, #printer-boards button, #printer-devices input, #printer-devices select, #printer-devices button, #printer-geometry-fields input, #printer-device-board, #printer-device-kind, #printer-device-name, #printer-device-preset, #printer-mode, #printer-cancel-import')) field.disabled = busy || reconcile || diagnostic || !authority();
+        for (const field of document.querySelectorAll('#printer-components input, #printer-components select, #printer-components button, #printer-sensors select, #printer-boards input, #printer-boards select, #printer-boards button, #printer-devices input, #printer-devices select, #printer-devices button, #printer-calibration input, #printer-geometry-fields input, #printer-device-board, #printer-device-kind, #printer-device-name, #printer-device-preset, #printer-mode, #printer-cancel-import')) field.disabled = busy || reconcile || diagnostic || !authority();
         $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= changed || !draft;
         $('apply').disabled ||= !review?.complete;
@@ -75,6 +75,7 @@
         $('device-preset').value=options.some(p=>p.id===selected)?selected:'';presetPreview();
     }
     function renderBoards() {
+        const expanded=Object.fromEntries([...$('boards').querySelectorAll('details[data-role]')].map(d=>[d.dataset.role,d.open]));
         $('boards').replaceChildren();
         for(const role of ['main','tool']) {
             const box=el('fieldset');box.append(el('legend',role==='main'?'Mainboard':'Toolhead board'));
@@ -93,22 +94,84 @@
             });
             box.append(label('Board / revision',choice));
             if(board){
-                box.append(el('p',board.warning),el('small','Documented reference. Installed match: unknown. '+board.unknowns.join('; ')));
-                box.append(el('small',board.source.path+' @ '+board.source.revision+'; accessed '+board.source.accessed));
-                box.append(field('Transport','text',selection.transport,v=>{if(v)selection.transport=v;else delete selection.transport;delete selection.identity;edit();renderBoards();},[['serial','USB / serial'],['can','CAN']]));
-                box.append(field('Private MCU identity','text',selection.identity,v=>{if(v)selection.identity=v;else delete selection.identity;edit();}));
-                box.append(field('Use this reference provisionally','boolean',selection.reference_ack,v=>{if(v===undefined)delete selection.reference_ack;else selection.reference_ack=v;edit();}));
+                const connection=el('details');connection.dataset.role=role;connection.open=expanded[role]??false;connection.append(el('summary','Connection setup and board details'));
+                box.append(connection);
+                connection.append(el('p',board.warning),el('small','Documented reference. Installed match: unknown. '+board.unknowns.join('; ')));
+                connection.append(el('small',board.source.path+' @ '+board.source.revision+'; accessed '+board.source.accessed));
+                connection.append(field('Transport','text',selection.transport,v=>{if(v)selection.transport=v;else delete selection.transport;delete selection.identity;edit();renderBoards();},[['serial','USB / serial'],['can','CAN']]));
+                connection.append(field('Private MCU identity','text',selection.identity,v=>{if(v)selection.identity=v;else delete selection.identity;edit();}));
+                connection.append(field('Use this reference provisionally','boolean',selection.reference_ack,v=>{if(v===undefined)delete selection.reference_ack;else selection.reference_ack=v;edit();}));
             }
             $('boards').append(box);
         }
+    }
+    const friendlyPreset = (preset, board) => preset.label.replace(/ · .*$/, '').replace('Bed heater + temperature sensor', board.id==='sv08-main'?'Stock SV08 heated bed':'Reference bed configuration').replace('Hotend + extruder motor / TMC2209 + sensor', board.id==='sv08-tool'?'Stock SV08 hotend and extruder':'Reference hotend configuration');
+    async function chooseComponent(role, preset) {
+        await operation(async()=>{
+            invalidate();
+            const result=await rpc({action:'component',draft,role,preset,expected_revision:revision});
+            draft=result.draft;edit();render();
+            notice('Hardware settings filled in. Save your selections; calibration can be done later.');
+        });
+        renderComponents();controls();
+    }
+    function renderComponents() {
+        const root=$('components');root.replaceChildren();
+        for(const role of ['main','tool']) {
+            const board=boardData(role);if(!board)continue;
+            const box=el('div');box.append(el('h3',role==='main'?'Mainboard components':'Toolhead components'));
+            for(const kind of ['bed','extruder']) {
+                const presets=(board.presets??[]).filter(p=>p.devices.some(d=>d.kind===kind));
+                if(!presets.length)continue;
+                const target=draft.devices.find(d=>d.board===role&&d.kind===kind);
+                const match=presets.find(p=>p.id===target?.profile)??presets.find(p=>p.devices.every(expected=>draft.devices.some(d=>d.board===role&&d.name===expected.name&&d.kind===expected.kind&&Object.entries(expected.settings).every(([k,v])=>d.settings[k]===v))));
+                const choice=select([['',target?'Current configuration (modified)':'Choose installed component'],...presets.map(p=>[p.id,friendlyPreset(p,board)])],match?.id??'',value=>{if(value)chooseComponent(role,value);});
+                choice.dataset.component=kind;choice.dataset.board=role;
+                box.append(label(kind==='bed'?'Heated bed':'Hotend',choice));
+            }
+            for(const preset of (board.presets??[]).filter(p=>p.devices.length===1&&p.devices[0].kind==='fan')) {
+                const device=preset.devices[0], present=draft.devices.find(d=>d.board===role&&d.name===device.name&&d.kind==='fan');
+                const toggle=el('input');toggle.type='checkbox';toggle.checked=!!present;toggle.dataset.component=preset.id;toggle.dataset.board=role;
+                toggle.onchange=()=>{
+                    if(toggle.checked)chooseComponent(role,preset.id);
+                    else {draft.devices=draft.devices.filter(d=>d!==present);edit();render();}
+                };
+                box.append(label(preset.id==='exhaust_fan'?'Enclosure exhaust fan':friendlyPreset(preset,board),toggle));
+            }
+            root.append(box);
+        }
+        if(!root.children.length)root.append(el('p','Choose a mainboard and toolhead board to see supported components.'));
+    }
+    function renderSensors() {
+        const root=$('sensors');root.replaceChildren();
+        for(const device of draft.devices.filter(d=>d.kind==='sensor')) {
+            const current=catalog.curves.find(c=>c.id===device.settings.curve);
+            const box=el('div');box.append(el('p',device.name.replaceAll('_',' ')+' · Current sensor: '+(current?.label??'Not selected')));
+            const choice=select([['','Choose replacement sensor'],...catalog.curves.map(c=>[c.id,c.label])],device.settings.curve,value=>{
+                if(!value||value===device.settings.curve)return;
+                const curve=catalog.curves.find(c=>c.id===value), board=boardData(device.board);
+                // Bias belongs to the board input circuit, not the replacement curve.
+                const reference=(board.presets??[]).flatMap(p=>p.devices).find(d=>d.kind==='sensor'&&d.settings.pin===device.settings.pin);
+                device.settings.curve=value;
+                delete device.settings.pullup_resistor;delete device.settings.custom_curve;
+                if(reference)device.settings.pullup_resistor=reference.settings.pullup_resistor;
+                // Keep existing heater temperature protections; do not raise bounds.
+                for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))
+                    for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];
+                edit();render();
+                notice('Sensor changed to '+curve.label+'. Board input defaults restored; heater PID calibration can be done later.'+(reference?'':' Set the input bias in advanced settings for this custom connection.'));
+            });
+            choice.dataset.sensor=device.name;box.append(label('Temperature sensor',choice));root.append(box);
+        }
+        if(!root.children.length)root.append(el('p','Select a heated bed or hotend to configure its sensor.'));
     }
     function renderDevices() {
         $('devices').replaceChildren();
         for(const device of draft.devices) {
             const box=el('fieldset');box.append(el('legend',device.name+' · '+device.kind+' · '+device.board));
-            const remove=el('button','Remove device');remove.onclick=()=>{draft.devices=draft.devices.filter(d=>d!==device);edit();renderDevices();};box.append(remove);
+            const remove=el('button','Remove device');remove.onclick=()=>{draft.devices=draft.devices.filter(d=>d!==device);edit();render();};box.append(remove);
             const board=boardData(device.board), settings=el('div'), advanced=el('details');settings.className='settings';advanced.append(el('summary','Advanced electrical and motion fields'));
-            const common=new Set(['pin','curve','pullup_resistor','min_temp','max_temp','invert','digital_pullup','connector','invert_dir','invert_enable','sensor','control','max_power','run_current','current_rating_rms']);
+
             if(!board){box.append(el('p','Choose a board first'));$('devices').append(box);continue;}
             box.append(el('small','Configured selections; physical identity, measured polarity and circuit limits remain unverified. Motor RMS rating requires an explicit owner value.'));
             const references=(board.presets??[]).filter(p=>p.devices.some(d=>d.name===device.name&&d.kind===device.kind));
@@ -121,6 +184,7 @@
                 }box.append(origin);
             }
             for(const [name,type] of Object.entries(catalog.kinds[device.kind])) {
+                if(name==='custom_curve'||name.startsWith('pid_'))continue;
                 let options;
                 if(['adc','input','probe','heater','fan'].includes(type)) {
                     options=Object.entries(board.signals).filter(([,s])=>s.capabilities.includes(type)&&!s.reserved).map(([p])=>{
@@ -132,29 +196,53 @@
                 else if(type==='name')options=draft.devices.filter(d=>d.kind==='sensor'&&d.board===device.board).map(d=>[d.name,d.name]);
                 else if(type==='control')options=[['pid','PID (enter gains)'],['watermark','Watermark']];
                 const text=({'invert':'Invert signal','invert_dir':'Invert direction','invert_enable':'Invert enable','digital_pullup':'Digital input pull-up','pullup_resistor':'Analog pull-up resistance (ohm)','current_rating_rms':'Motor RMS rating (A), owner entered','run_current':'Driver RMS current (A)','sense_resistor':'Sense resistor (ohm), explicit','pin':'Connection / pin'}[name]??name.replaceAll('_',' '));
-                (common.has(name)?settings:advanced).append(field(text,type==='name'?'text':type,device.settings[name],value=>{
+                advanced.append(field(text,type==='name'?'text':type,device.settings[name],value=>{
                     if(value===undefined||value==='')delete device.settings[name];else device.settings[name]=value;
-                    if(name==='curve'){delete device.settings.pullup_resistor;delete device.settings.min_temp;delete device.settings.max_temp;}
+                    if(device.kind==='sensor'&&['curve','pullup_resistor'].includes(name))for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];
+                    if(name==='curve'){delete device.settings.custom_curve;delete device.settings.pullup_resistor;delete device.settings.min_temp;delete device.settings.max_temp;}
                     if(name==='connector')for(const key of ['invert_dir','invert_enable','run_current','current_rating_rms','sense_resistor','uart_address','endstop_pin','endstop_invert','endstop_pullup'])delete device.settings[key];
                     if(name==='control' && value!=='pid')for(const key of ['pid_kp','pid_ki','pid_kd'])delete device.settings[key];
-                    edit();if(['curve','connector','control'].includes(name))renderDevices();
+                    edit();renderSensors();renderComponents();renderCalibration();if(['curve','connector','control'].includes(name))renderDevices();
                 },options));
             }
             box.append(settings);if(advanced.querySelector('label'))box.append(advanced);
             if(device.kind==='sensor') {
                 const curve=catalog.curves.find(c=>c.id===device.settings.curve);
                 if(curve){
+                    if(curve.sensor_type!=='PT1000') {
+                        const custom=el('details');custom.append(el('summary','Custom NTC calibration curve'));
+                        custom.append(el('p','Enter three temperature / resistance pairs. Leave this closed to use the sensor’s default curve.'));
+                        const points=copy(device.settings.custom_curve??curve.points??[[null,null],[null,null],[null,null]]);
+                        for(let i=0;i<3;i++)for(const [j,title] of [[0,'Temperature (°C)'],[1,'Resistance (ohm)']])
+                            custom.append(field(title+' '+(i+1),'number',points[i][j],v=>{points[i][j]=v;}));
+                        const use=el('button','Use custom curve');use.onclick=()=>{
+                            if(!points.every(p=>p.every(v=>typeof v==='number'&&Number.isFinite(v)))){notice('Enter all three temperature / resistance pairs.');return;}
+                            device.settings.custom_curve=copy(points);
+                            for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];
+                            edit();render();
+                        };
+                        const reset=el('button','Use default sensor curve');reset.onclick=()=>{delete device.settings.custom_curve;for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];edit();render();};
+                        custom.append(use,reset);box.append(custom);
+                    }
                     box.append(el('small',curve.origin+'. '+curve.pullup_origin+'. Physical sensor/circuit identity unknown.'));
                     if(curve.reference_bounds)box.append(el('small',curve.bounds_origin+': '+curve.reference_bounds.join(' to ')+' °C.'));
                     const preset=el('button',curve.reference_bounds?'Use factory configured pull-up and bounds':'Use documented reference pull-up');
-                    preset.onclick=()=>{device.settings.pullup_resistor=curve.reference_pullup;if(curve.reference_bounds){[device.settings.min_temp,device.settings.max_temp]=curve.reference_bounds;}edit();renderDevices();};box.append(preset);
+                    preset.onclick=()=>{device.settings.pullup_resistor=curve.reference_pullup;if(curve.reference_bounds){[device.settings.min_temp,device.settings.max_temp]=curve.reference_bounds;}for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];edit();renderCalibration();renderDevices();};box.append(preset);
                 }
             }
             $('devices').append(box);
         }
     }
+    function renderCalibration() {
+        const root=$('calibration');root.replaceChildren();
+        for(const heater of draft.devices.filter(d=>['bed','extruder'].includes(d.kind))) {
+            const box=el('fieldset');box.append(el('legend',heater.name.replaceAll('_',' ')));
+            for(const key of ['pid_kp','pid_ki','pid_kd'])box.append(field(key.replaceAll('_',' '),'positive',heater.settings[key],value=>{if(value===undefined)delete heater.settings[key];else heater.settings[key]=value;edit();}));
+            root.append(box);
+        }
+    }
     function render() {
-        renderBoards();renderDevices();renderPresets();$('geometry-fields').replaceChildren();
+        renderBoards();renderComponents();renderSensors();renderDevices();renderPresets();renderCalibration();$('geometry-fields').replaceChildren();
         for(const key of ['max_velocity','max_accel','max_z_velocity','max_z_accel'])$('geometry-fields').append(field(key.replaceAll('_',' '),'positive',draft.geometry[key],v=>{if(v===undefined)delete draft.geometry[key];else draft.geometry[key]=v;edit();}));
         $('current').textContent=saved.current?'Candidate saved — inactive ('+saved.current.mode+'). Commissioning and activation require separate reviewed steps.':'No saved candidate.';
         controls();

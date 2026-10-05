@@ -144,7 +144,8 @@ class PrinterStore:
         allowed={'status':{'action'},'save':{'action','expected_revision','draft'},
                  'review':{'action','mode'},'apply':{'action','mode','review'},
                  'restore':{'action','expected_revision'},'import':{'action','draft','expected_revision'},
-                 'preset':{'action','draft','role','preset','expected_revision'}}
+                 'preset':{'action','draft','role','preset','expected_revision'},
+                 'component':{'action','draft','role','preset','expected_revision'}}
         if action in allowed and action != 'status':
             allowed[action] = allowed[action] | {'expected_identity'}
         if action not in allowed or set(request)!=allowed[action]:
@@ -157,7 +158,7 @@ class PrinterStore:
                             catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,
                             loaded_identity=self.identity(state,context,None))
             if 'expected_revision' in request:
-                messages={'import':'importing','preset':'selecting defaults','save':'saving','restore':'saving'}
+                messages={'import':'importing','preset':'selecting defaults','component':'selecting hardware','save':'saving','restore':'saving'}
                 if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
                     raise ValueError('Draft changed in another session; refresh before '+messages[action])
             if request['expected_identity'] != self.identity(state,context,None):
@@ -167,6 +168,8 @@ class PrinterStore:
                 return dict(draft=request['draft'],changed=digest(request['draft'])!=digest(state['draft']),expected_revision=state['revision'])
             if action=='preset':
                 return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
+            if action=='component':
+                return dict(draft=self.catalog.select_component(request['draft'],request['role'],request['preset']))
             if action in ('save','restore'):
                 if action=='restore':
                     if not state['previous']:raise ValueError('No previous candidate')

@@ -1,0 +1,14 @@
+[
+  {
+    "curve": "pt1000",
+    "custom_curve": false,
+    "ready": true,
+    "physical_hardware": false
+  },
+  {
+    "curve": "generic3950",
+    "custom_curve": true,
+    "ready": true,
+    "physical_hardware": false
+  }
+]

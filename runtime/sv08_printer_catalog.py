@@ -67,9 +67,10 @@ class Catalog:
         if set(self.data['kinds']) != {'sensor','input','probe','fan','bed','motor','extruder'}:
             raise ValueError('New device kinds require a generator extension')
         expected_fields={'sensor': {'pin': 'adc', 'curve': 'curve', 'pullup_resistor': 'positive', 'min_temp': 'number', 'max_temp': 'number'}, 'input': {'pin': 'input', 'invert': 'boolean', 'digital_pullup': 'boolean'}, 'probe': {'pin': 'probe', 'invert': 'boolean', 'digital_pullup': 'boolean', 'x_offset': 'number', 'y_offset': 'number', 'z_offset': 'number'}, 'fan': {'pin': 'fan', 'invert': 'boolean', 'max_power': 'fraction'}, 'bed': {'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive'}, 'motor': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'position_min': 'number', 'position_max': 'number', 'position_endstop': 'number', 'homing_speed': 'positive', 'endstop_pin': 'input', 'endstop_invert': 'boolean', 'endstop_pullup': 'boolean'}, 'extruder': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive', 'nozzle_diameter': 'positive', 'filament_diameter': 'positive', 'min_extrude_temp': 'number'}}
+        expected_fields['sensor']['custom_curve']='thermistor_points'
         for kind in ('motor','extruder'):expected_fields[kind]['gear_ratio']='ratio'
         if self.data['kinds'] != expected_fields:raise ValueError('Catalog field changes require a generator extension')
-        types={'adc','heater','fan','probe','input','step','dir','enable','uart','motor','curve','boolean','name','control','positive','number','fraction','integer','address','ratio'}
+        types={'adc','heater','fan','probe','input','step','dir','enable','uart','motor','curve','boolean','name','control','positive','number','fraction','integer','address','ratio','thermistor_points'}
         for fields in self.data['kinds'].values():
             if not isinstance(fields,dict) or not fields or any(not NAME.fullmatch(k) or t not in types for k,t in fields.items()):
                 raise ValueError('Invalid catalog field schema')
@@ -114,7 +115,7 @@ class Catalog:
                     raise ValueError('Fixed vendor configured temperature bounds changed')
                 if (c['sensor_type'],c['reference_pullup'],c['points']) != expected:
                     raise ValueError('Fixed vendor DEFAULT thermal definition changed')
-            elif c['points'] is not None or c['sensor_type'] not in ('Generic 3950','EPCOS 100K B57560G104F','ATC Semitec 104GT-2'):
+            elif c['points'] is not None or c['sensor_type'] not in ('Generic 3950','EPCOS 100K B57560G104F','ATC Semitec 104GT-2','PT1000'):
                 raise ValueError('Only sourced fixed factory custom thermistors are supported')
             if c.get('limits') is not None:
                 if not isinstance(c['limits'],list) or len(c['limits'])!=2:raise ValueError('Invalid component limits')
@@ -163,6 +164,31 @@ class Catalog:
         # Append atomically; do not overwrite, silently rename or merge a sensor
         # dependency with an existing user selection. Validation refuses collisions.
         result['devices'] += [dict(name=d['name'],kind=d['kind'],board=role,settings=strict_json(encoded(d['settings']))) for d in preset['devices']]
+        self.validate(result)
+        return result
+
+    def select_component(self, draft, role, preset_id):
+        """Replace a named assembly atomically, retaining unrelated selections.
+
+        Existing calibration belongs to the removed assembly, not its replacement.
+        Validation still refuses incompatible pins and external dependencies.
+        """
+        self.validate(draft)
+        board = self.board(draft, role)
+        preset = next((p for p in board.get('presets', []) if p['id'] == preset_id), None)
+        if preset is None:
+            raise ValueError('Unknown component for selected board')
+        names = {d['name'] for d in preset['devices']}
+        if any(d['name'] in names and d['board'] != role for d in draft['devices']):
+            raise ValueError('Component name belongs to another board')
+        result = strict_json(encoded(draft))
+        result['devices'] = [d for d in result['devices'] if d['name'] not in names]
+        result = self.apply_preset(result, role, preset_id)
+        for device in result['devices']:
+            if device['name'] in names:
+                device['profile'] = preset_id
+                for key in ('pid_kp', 'pid_ki', 'pid_kd'):
+                    device['settings'].pop(key, None)
         self.validate(result)
         return result
 
@@ -220,7 +246,7 @@ class Catalog:
             raise ValueError('At most 64 connected devices are supported')
         used, names = {}, set()
         for device in draft['devices']:
-            keys(device, ('name', 'board', 'kind', 'settings'), ('name', 'board', 'kind', 'settings'))
+            keys(device, ('name', 'board', 'kind', 'settings', 'profile'), ('name', 'board', 'kind', 'settings'))
             name, kind, role = device['name'], device['kind'], device['board']
             if not isinstance(name, str) or not NAME.fullmatch(name) or name in names:
                 raise ValueError('Device names must be unique simple lowercase names')
@@ -228,6 +254,8 @@ class Catalog:
             if kind not in self.kinds or role not in ('main', 'tool'):
                 raise ValueError('Unknown device kind or board role')
             board = self.board(draft, role)
+            if 'profile' in device and not any(p['id'] == device['profile'] and any(d['name'] == name and d['kind'] == kind for d in p['devices']) for p in board.get('presets', [])):
+                raise ValueError('Unknown component profile for this board/device')
             settings = device['settings']; keys(settings, self.kinds[kind])
             def allocate(pin, cap):
                 self.pin(board, pin, cap)
@@ -250,6 +278,34 @@ class Catalog:
                 elif typ == 'curve':
                     if value not in self.curves:
                         raise ValueError('Unknown temperature curve')
+                elif typ == 'thermistor_points':
+                    if self.curves.get(settings.get('curve'), {}).get('sensor_type') == 'PT1000':
+                        raise ValueError('PT1000 uses its platinum definition, not a custom NTC curve')
+                    if not isinstance(value, list) or len(value) != 3:
+                        raise ValueError('Custom NTC curve requires three temperature/resistance pairs')
+                    for point in value:
+                        if not isinstance(point, list) or len(point) != 2:
+                            raise ValueError('Custom curve requires temperature/resistance pairs')
+                        self.number(point[0], 'number'); self.number(point[1], 'positive')
+                        if point[0] <= -273.15:
+                            raise ValueError('Custom curve temperatures must exceed absolute zero')
+                    if not all(value[i][0] < value[i+1][0] and value[i][1] > value[i+1][1] for i in (0, 1)):
+                        raise ValueError('NTC curve needs increasing temperatures and decreasing resistances')
+                    # Check coefficients using the pinned upstream three-point math.
+                    # Runtime installs do not include upstream sources; coefficient
+                    # checks below duplicate only the documented three-point math.
+                    inv = [1. / (p[0] + 273.15) for p in value]
+                    logs = [math.log(p[1]) for p in value]
+                    if abs(sum(logs)) < 1.e-12:
+                        raise ValueError('Custom curve has degenerate resistance coefficients')
+                    g2 = (inv[1]-inv[0]) / (logs[1]-logs[0])
+                    g3 = (inv[2]-inv[0]) / (logs[2]-logs[0])
+                    c = (g3-g2) / (logs[2]-logs[1]) / sum(logs)
+                    b = g2-c*(logs[0]**2+logs[0]*logs[1]+logs[1]**2)
+                    if c <= 0:  # Upstream falls back to the outer-point beta curve.
+                        b = (inv[2]-inv[0]) / (logs[2]-logs[0])
+                    if not math.isfinite(b) or not math.isfinite(c) or b <= 0:
+                        raise ValueError('Custom curve has invalid Steinhart-Hart coefficients')
                 elif typ == 'ratio':
                     if not isinstance(value,str) or len(value)>120 or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)?:[0-9]+(?:\.[0-9]+)?(?:,[0-9]+(?:\.[0-9]+)?:[0-9]+(?:\.[0-9]+)?)*',value) or any(float(n)<=0 for pair in value.split(',') for n in pair.split(':')):
                         raise ValueError('Gear ratio needs positive numeric upstream pairs')

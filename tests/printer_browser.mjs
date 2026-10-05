@@ -91,7 +91,8 @@ try {
  await set('#printer-boards fieldset:nth-child(1) select','sv08-main');await click('#printer-confirm-board');
  const boardField=(text)=>`(()=>{const box=document.querySelector('#printer-boards fieldset');return [...box.querySelectorAll('label')].find(e=>e.firstChild.textContent===${JSON.stringify(text)}).querySelector('input,select');})()`;
  const fieldSet=async(expr,value)=>evaluate(`(()=>{const e=${expr};e.value=${JSON.stringify(String(value))};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
- await fieldSet(boardField('Transport'),'serial');await fieldSet(boardField('Private MCU identity'),'/dev/null');await fieldSet(boardField('Use this reference provisionally'),'true');
+ await click('#printer-boards fieldset:first-child > details > summary');
+ await fieldSet(boardField('Transport'),'serial');assert.equal(await evaluate(`document.querySelector('#printer-boards details[data-role=main]').open`),true);await fieldSet(boardField('Private MCU identity'),'/dev/null');await fieldSet(boardField('Use this reference provisionally'),'true');
  await set('#printer-device-preset','bed_sensor');
  assert.match(await evaluate(`document.querySelector('#printer-preset-preview').textContent`),/PC5/);
  assert.match(await evaluate(`document.querySelector('#printer-preset-preview').textContent`),/physically measured/);
@@ -250,12 +251,35 @@ try {
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});await screenshot('boards-narrow');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  const legacyOrigin=await evaluate('performance.timeOrigin');await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-printer/index.html'});await until(`performance.timeOrigin!==${legacyOrigin} && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled && location.pathname.endsWith('/sv08-host/index.html') && location.hash==='#printer' && document.querySelector('#printer') && !document.querySelector('#printer').hidden`);
  const beforeReloadOrigin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${beforeReloadOrigin} && location.hash==='#printer' && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();
- await evaluate(`document.querySelector('#printer-save').focus()`);await key('Tab');assert.equal(await evaluate(`document.activeElement.id`),'printer-review');
+ await click('#printer-backups > summary');await evaluate(`document.querySelector('#printer-save').focus()`);await key('Tab');assert.equal(await evaluate(`document.activeElement.tagName`),'SUMMARY');await key('Tab');assert.equal(await evaluate(`document.activeElement.id`),'printer-mode');
+ // Everyday hardware choices do not require entering pins or calibration.
+ await set('#printer-boards fieldset:nth-child(1) select','sv08-main');await click('#printer-confirm-board');
+ await set('#printer-boards fieldset:nth-child(2) select','sv08-tool');await click('#printer-confirm-board');
+ await set('[data-component=bed][data-board=main]','bed_assembly');await until(`document.querySelector('[data-sensor=bed_sensor]') && !document.querySelector('#printer-save').disabled`);
+ await click('[data-component=exhaust_fan][data-board=main]');await until(`document.querySelector('[data-component=exhaust_fan]').checked && !document.querySelector('#printer-save').disabled`);
+ await set('[data-component=extruder][data-board=tool]','hotend_assembly');await until(`document.querySelector('[data-sensor=hotend_sensor]') && !document.querySelector('#printer-save').disabled`);
+ await set('[data-sensor=hotend_sensor]','pt1000');await set('[data-sensor=bed_sensor]','generic3950');
+ assert.equal(await evaluate(`document.querySelector('#printer-advanced').open`),false);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ const simple=state().draft;
+ assert.equal(simple.devices.find(d=>d.name==='hotend_sensor').settings.pullup_resistor,11500);
+ assert.equal(simple.devices.find(d=>d.name==='bed_sensor').settings.pullup_resistor,4700);
+ assert.equal(simple.devices.find(d=>d.name==='heater_bed').settings.pid_kp,undefined);
+ assert.equal(await evaluate(`document.querySelector('[data-component=bed]').value`),'bed_assembly');
+ assert.equal(simple.devices.find(d=>d.name==='extruder').settings.pid_kp,undefined);
+ assert.equal(simple.devices.find(d=>d.name==='bed_sensor').settings.max_temp,105);
+ assert(simple.devices.some(d=>d.name==='exhaust_fan'));
+ await screenshot('simple-hardware');
+ await reloadDocument();await click('#authorize');await ready();
+ assert.equal(await evaluate(`document.querySelector('[data-sensor=hotend_sensor]').value`),'pt1000');
+ await click('[data-component=exhaust_fan][data-board=main]');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert(!state().draft.devices.some(d=>d.name==='exhaust_fan'));
+ assert(state().draft.devices.some(d=>d.name==='extruder'));
  await evaluate('window.fixtureDisconnect()');await until(`document.querySelector('#printer-save').disabled`);assert.match(await evaluate(`document.querySelector('#session-status').textContent`),/disconnected/);
  await reloadDocument();await click('#authorize');await ready();await click('#logout');await until(`document.body.dataset.loggedOut==='true'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_change_clears:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
 } finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

@@ -100,6 +100,10 @@
           "settings": {
             "type": "object",
             "description": "Fields are typed by catalog kinds; runtime rejects unlisted keys."
+          },
+          "profile": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,39}$"
           }
         }
       }
