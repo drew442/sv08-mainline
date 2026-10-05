@@ -1,58 +1,71 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "f9296c58f373bc13a09eb89b2c78a4e8687d07cb90624251c2e7c440211ef7cf",
+    "rationale": "Record the direct owner request for simpler hardware configuration; offline implementation and validation have been performed, while exact upgrade presets and installed delivery remain pending.",
+    "reference": "docs/features/printer-hardware-simplification/owner-request.md",
+    "reference_sha256": "c4d8b0951a0ff62824854bac9f657737cb6bf5cf2f2a2c521be05fa716efe920",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/printer-hardware-simplification/owner-request.md": "c4d8b0951a0ff62824854bac9f657737cb6bf5cf2f2a2c521be05fa716efe920"
+    },
+    "scope_sha256": "ba6d55945600f4e3ddd2987c433389e29c8d4d35a27c3c60de442a3303d419e7",
+    "session": "printer-hardware-simplification-20261005",
+    "source_commit": "26411af590ad784b38b47d4e54bc375f0749529d"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    },
+    {
+      "description": "Exact sourced product and connection defaults; validate positive and incompatible profiles.",
+      "environment": "human",
+      "id": "upgrade-profiles"
+    },
+    {
+      "description": "Updated installed UI/helper/catalog and host/settings preservation journey.",
+      "environment": "hardware",
+      "id": "installed-journey"
+    }
+  ],
+  "created": "2026-10-05",
+  "decision": null,
   "format_version": 2,
   "id": "printer-hardware-simplification",
   "kind": "feature",
-  "title": "Simple board and hardware upgrade selections",
-  "author": "coordinator",
-  "created": "2026-10-05",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-hardware-simplification/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/printer-hardware-simplification/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    },
-    {
-      "id": "upgrade-profiles",
-      "description": "Exact sourced product and connection defaults; validate positive and incompatible profiles.",
-      "environment": "human"
-    },
-    {
-      "id": "installed-journey",
-      "description": "Updated installed UI/helper/catalog and host/settings preservation journey.",
-      "environment": "hardware"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate simple hardware controls",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible offline UI/catalog/runtime development with disposable state; no host or live printer writes. Self-validated under the accepted development review decision.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "scripts/stage_printer_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_data_budget.py",
+        "upstream-lock.json"
+      ],
       "owned_paths": [
         "ui/printer/app.js",
         "ui/printer/panel.html",
@@ -69,75 +82,76 @@
         "docs/features/printer-hardware-simplification/browser.json",
         "docs/features/printer-hardware-simplification/parser.json"
       ],
-      "input_paths": [
-        "scripts/stage_printer_ui.py",
-        "tests/test_stage_printer_ui.py",
-        "tests/test_printer_browser_fixture.py",
-        "runtime/sv08_state.py",
-        "runtime/sv08_data_budget.py",
-        "upstream-lock.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible offline UI/catalog/runtime development with disposable state; no host or live printer writes. Self-validated under the accepted development review decision.",
+      "status": "pending",
+      "title": "Implement and validate simple hardware controls",
+      "validation": null,
+      "verification": null
     },
     {
-      "id": "upgrade-presets",
-      "title": "Add exact named bed/hotend/chamber upgrade profiles",
-      "status": "pending",
-      "environment": "human",
-      "depends_on": [
-        "printer-hardware-simplification:implement"
-      ],
+      "blocker": null,
       "checks": [
         "upgrade-profiles"
       ],
-      "human_task": "docs/features/printer-hardware-simplification/proposal.md",
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [
+        "printer-hardware-simplification:implement"
+      ],
+      "environment": "human",
       "evidence": [],
-      "verification": null,
-      "validation": null,
+      "hazards": [],
+      "human_task": "docs/features/printer-hardware-simplification/proposal.md",
+      "id": "upgrade-presets",
+      "implementation": null,
+      "input_paths": [],
+      "owned_paths": [
+        "catalog/printer/catalog.json"
+      ],
       "repeats": 0,
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Exact product and connection specifications are missing; obtain them before choosing settings.",
-      "hazards": [],
-      "owned_paths": [
-        "catalog/printer/catalog.json"
-      ],
-      "input_paths": []
+      "status": "pending",
+      "title": "Add exact named bed/hotend/chamber upgrade profiles",
+      "validation": null,
+      "verification": null
     },
     {
-      "id": "installed",
-      "title": "Deliver and check the simpler installed Cockpit page",
-      "status": "pending",
-      "environment": "hardware",
+      "blocker": null,
+      "checks": [
+        "installed-journey"
+      ],
       "depends_on": [
         "printer-hardware-simplification:implement",
         "printer-hardware-simplification:upgrade-presets"
       ],
-      "checks": [
-        "installed-journey"
-      ],
-      "human_task": "docs/features/printer-hardware-simplification/proposal.md",
-      "blocker": null,
-      "implementation": null,
+      "environment": "hardware",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "targeted",
-      "review_reason": "Exact changed runtime/catalog/UI installation and preservation assessment before using the existing immutable-host overlay procedure.",
       "hazards": [],
-      "owned_paths": [
-        "docs/features/printer-hardware-simplification/installed-evidence.md"
-      ],
+      "human_task": "docs/features/printer-hardware-simplification/proposal.md",
+      "id": "installed",
+      "implementation": null,
       "input_paths": [
         "ui/printer/",
         "runtime/sv08_printer_catalog.py",
         "runtime/sv08_printer_generate.py",
         "runtime/sv08_printer_store.py",
         "catalog/printer/"
-      ]
+      ],
+      "owned_paths": [
+        "docs/features/printer-hardware-simplification/installed-evidence.md"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "targeted",
+      "review_reason": "Exact changed runtime/catalog/UI installation and preservation assessment before using the existing immutable-host overlay procedure.",
+      "status": "pending",
+      "title": "Deliver and check the simpler installed Cockpit page",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Simple board and hardware upgrade selections"
 }
