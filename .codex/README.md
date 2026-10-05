@@ -5,6 +5,8 @@
 At queue-session start run `python3 scripts/feature_workflow.py validate` and
 `python3 scripts/feature_workflow.py next`; select again after completion/blocking.
 A null selection means inspect blockers, not declare the project complete.
+For adoption/validation gaps, consult the optional
+[follow-up register](../docs/development/agent-followups.md), not another onboarding read.
 
 **Delegated worker:** read AGENTS.md, your profile and assigned sources/checks.
 Do not select from the global queue or ingest all project history. Use
