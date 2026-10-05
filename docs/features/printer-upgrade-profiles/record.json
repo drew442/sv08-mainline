@@ -1,48 +1,60 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "3b102657edf9acb9155c655bcf0a97105158a6b4cc239194b47c09a5523c6aff",
+    "rationale": "The owner identified the exact kits; implement source-backed offline selections and explicit missing sensor/connection requirements.",
+    "reference": "docs/features/printer-upgrade-profiles/owner-request.md",
+    "reference_sha256": "443ba1615269e645e03df99658a413023adab046d338cfee0d607c0876f495ee",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/printer-upgrade-profiles/owner-request.md": "443ba1615269e645e03df99658a413023adab046d338cfee0d607c0876f495ee"
+    },
+    "scope_sha256": "0fbff680b9df0dac5ca1c1c055d048c4df5bd26b74008b7f294880d2a202af08",
+    "session": "printer-upgrade-profiles-20261005",
+    "source_commit": "830cd7723ad491ae21fae3bf24c2df51c5cac718"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-05",
+  "decision": null,
   "format_version": 2,
   "id": "printer-upgrade-profiles",
   "kind": "feature",
-  "title": "Named Funssor bed and Sovol CAN chamber module profiles",
-  "author": "coordinator",
-  "created": "2026-10-05",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-upgrade-profiles/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/printer-upgrade-profiles/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate named upgrade profile selection",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source and offline fixture changes, no devices, live settings or installed host mutations; exact hardware facts remain required for activation.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_printer_store.py",
+        "scripts/stage_printer_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "upstream-lock.json"
+      ],
       "owned_paths": [
         "catalog/printer/catalog.json",
         "catalog/printer/catalog.schema.json",
@@ -58,13 +70,15 @@
         "docs/features/printer-upgrade-profiles/evidence.md",
         "docs/features/printer-upgrade-profiles/browser.json"
       ],
-      "input_paths": [
-        "runtime/sv08_printer_store.py",
-        "scripts/stage_printer_ui.py",
-        "tests/test_stage_printer_ui.py",
-        "tests/test_printer_browser_fixture.py",
-        "upstream-lock.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and offline fixture changes, no devices, live settings or installed host mutations; exact hardware facts remain required for activation.",
+      "status": "pending",
+      "title": "Implement and validate named upgrade profile selection",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Named Funssor bed and Sovol CAN chamber module profiles"
 }
