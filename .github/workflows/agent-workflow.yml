@@ -1,0 +1,83 @@
+name: Agent workflow checks
+
+# Deterministic workstation checks, not an autonomous agent or release pipeline.
+# No schedule, paid model call, self-hosted runner, device, or deployment access.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/agent-workflow.yml'
+      - 'AGENTS.md'
+      - '.codex/**'
+      - 'scripts/feature_workflow.py'
+      - 'scripts/workflow_inventory.py'
+      - 'tests/test_feature_workflow*.py'
+      - 'tests/test_codex_agent_policy.py'
+      - 'tests/test_agent_context.py'
+      - 'tests/test_workflow_inventory.py'
+      - 'tests/fixtures/feature-workflow/**'
+      - 'docs/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/agent-workflow.yml'
+      - 'AGENTS.md'
+      - '.codex/**'
+      - 'scripts/feature_workflow.py'
+      - 'scripts/workflow_inventory.py'
+      - 'tests/test_feature_workflow*.py'
+      - 'tests/test_codex_agent_policy.py'
+      - 'tests/test_agent_context.py'
+      - 'tests/test_workflow_inventory.py'
+      - 'tests/fixtures/feature-workflow/**'
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-workflow-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+    steps:
+      # Verified actions/checkout v4 commit; explicit pin, not a floating action.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Install existing workstation test dependency
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends python3-jsonschema
+          /usr/bin/python3 --version
+      - name: Workflow transition and evidence-path tests
+        run: /usr/bin/python3 -m unittest discover -s tests -p 'test_feature_workflow*.py' -v
+      - name: All agent policy and context tests, including earlier omitted tests
+        if: ${{ !cancelled() }}
+        run: |
+          /usr/bin/python3 -m unittest discover -s tests -p 'test_codex_agent_policy.py' -v
+          /usr/bin/python3 -m unittest discover -s tests -p 'test_agent_context.py' -v
+      - name: Inventory regression tests
+        if: ${{ !cancelled() }}
+        run: /usr/bin/python3 -m unittest discover -s tests -p 'test_workflow_inventory.py' -v
+      - name: Read-only recorded-state inventory
+        if: ${{ !cancelled() }}
+        run: /usr/bin/python3 scripts/workflow_inventory.py
+      - name: Real-queue validation with complete Git history
+        if: ${{ !cancelled() }}
+        run: |
+          /usr/bin/python3 scripts/feature_workflow.py validate
+          /usr/bin/python3 scripts/feature_workflow.py status
+      - name: Changed-source whitespace
+        if: ${{ !cancelled() }}
+        run: git diff --check HEAD^ HEAD

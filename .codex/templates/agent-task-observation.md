@@ -31,7 +31,8 @@ do not add a measurement agent or duplicate acceptance records. Unknown is not z
 
 ## Accepted outcome
 
-- Separate verifier/session and authoritative verification/evidence reference:
+- Completion route (self / targeted / consequential / legacy) and validation/evidence reference:
+- Verifier/session and scoped findings only when actually used; otherwise not applicable:
 - First-pass acceptance, rework/escalations and escaped defects:
 - Accepted / failed / blocked / abandoned; final source revision:
 - Total observed cost including coordinator, all children, rework and reviews:
@@ -42,3 +43,20 @@ do not add a measurement agent or duplicate acceptance records. Unknown is not z
 Raw runtime transcripts remain private. Publish only sanitized summaries. Never
 insert telemetry into hashed approval/evidence/verification JSON. Benchmark cost
 per successful outcome is an aggregate ratio, not a per-task retry guarantee.
+
+## Optional cost/context sample
+
+Fill this only for an existing representative task or a concrete performance issue.
+Do not launch duplicate work or a separate measurement agent to fill the form.
+
+- Context actually observed: auto-loaded/inherited text, files/sections retrieved,
+  duplicated reads, and why a broader read was needed; unknown when not exposed:
+- Tests actually selected and why; model time, build/tool time, review waiting and
+  owner waiting separately; evidence reused rather than re-executed:
+- Did the chosen review answer its stated question, or add non-blocking scope?:
+- Quality/effort/route change proposed from this observation, benefit and downside:
+
+Do not infer cache hits from filenames, turn source bytes into measured tokens,
+or report included allowance as an API bill. Self-validation has no missing
+reviewer to invent. Compare total effort through accepted completion, including
+failures/rework, against similar tasks; preserve requirements and measured limits.
