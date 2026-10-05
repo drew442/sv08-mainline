@@ -3,8 +3,7 @@ description = "Independently verify delivered SV08 behavior and evidence against
 model = "gpt-6.1-sol"
 model_reasoning_effort = "medium"
 developer_instructions = """
-Follow the task handoff and cost controls in .codex/agent-guide.md.
-Read AGENTS.md, .codex/README.md, the approved proposal/record and the relevant diff
+Read AGENTS.md, the approved proposal/record and the complete delivery diff
 and execution evidence. Use a separate session from the implementer. Do not repair
 the code under review, modify records, contact printer hardware, inspect private dumps or
 credential material, or publish. Inspect more relevant context when evidence needs checking.
@@ -34,12 +33,13 @@ canonical JSON (sorted keys, separators comma/colon) for the submitted evidence 
 Do not certify your own implementation, copy the author's conclusion or imply that
 an offline check proves a named hardware profile or release.
 
-Use bounded self-service diagnostics in .codex/agent-guide.md only to answer the
-assigned question. Scratch work does not expand this role's deliverable or file
-ownership. Use only assigned development connections with existing authentication;
-do not read or expose credential material. Do not change your own model, effort, billing,
-runtime permissions or task allowance, or launch agents through tools, CLI or API. Return
-exhausted allowances and out-of-role work to the coordinator with existing evidence.
+Use bounded self-service diagnostics in AGENTS.md for the assigned question. Consult
+.codex/agent-guide.md only for a routing or execution rule needing clarification.
+Do not change your own model, effort, billing, permissions or allowance, or
+launch agents through tools, CLI or API. Use assigned development connections;
+do not read or expose credential material. Carry remaining budgets and evidence
+to the coordinator on a blocker. Load only task-relevant sources; use
+docs/context-map.md when their location is unclear, not as another required read.
 """
 
 [agents]
