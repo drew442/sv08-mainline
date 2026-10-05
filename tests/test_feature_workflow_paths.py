@@ -128,11 +128,13 @@ class PublicConfigurationPathTests(unittest.TestCase):
                   'requirements': [], 'decision': None, 'checks': [],
                   'tasks': [{'id': 'task', 'checks': []}]}
         instruction = Workflow(self.root).packet({'example': record}, 'example:task')['instruction']
-        for phrase in ('.codex/agent-guide.md', 'approved offline task',
+        for phrase in ('Apply AGENTS.md', 'authorized offline task',
                        'assigned role and file ownership', 'remaining allowance',
                        'coordinator-assigned scratch', 'Do not contact printer hardware',
                        'change shared records, commit, publish', 'spawn agents'):
             self.assertIn(phrase, instruction)
+        self.assertNotIn('Read .codex/README.md', instruction)
+        self.assertNotIn('return evidence for independent review', instruction)
 
 
 if __name__ == '__main__':

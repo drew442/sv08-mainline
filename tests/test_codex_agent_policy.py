@@ -149,16 +149,16 @@ class CodexAgentPolicyTests(unittest.TestCase):
                        'An evidence producer cannot independently verify'):
             self.assertIn(phrase, text)
 
-    def test_root_and_guide_keep_independence_and_hardware_gates(self):
+    def test_root_and_guide_use_proportionate_review_and_hardware_gates(self):
         root = (ROOT / 'AGENTS.md').read_text()
         guide = (ROOT / '.codex/agent-guide.md').read_text()
         for text in (root, guide):
             self.assertIn('owner authorization', text)
             self.assertIn('project_planner', text)
-        for phrase in ('high-consequence-reviewer-high.toml', 'feature_verifier_high',
+        for phrase in ('high-consequence-reviewer-high.toml', 'self-validated by default',
                        'cannot grant hardware authority'):
             self.assertIn(phrase, root)
-        for phrase in ('approver may not be reused as the delivery verifier',
+        for phrase in ('An approver may review delivery',
                        'not formal reviewers', 'generic workers'):
             # Case-insensitive policy wording check, not enforcement.
             self.assertIn(phrase.lower(), guide.lower())

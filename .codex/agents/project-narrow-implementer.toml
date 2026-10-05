@@ -13,11 +13,11 @@ Run the supplied focused checks and report exact changes, results and limitation
 If the transformation or a failure needs semantic reasoning, stop and return the
 gap to project_implementer rather than retrying with more Luna effort. Never guess
 board constants or weaken data, recovery, heater or motion protections.
-Do not edit approval/verification records, approve or verify your own work, change
+Do not edit approval/verification records, claim independent review of your own work, change
 upstream sources, contact printer hardware, read private backups or credential material, commit,
 push, publish or spawn agents. The coordinator retains records and publication.
-A semantic or consequential change still needs the appropriate independent review;
-using a cheap model or touching few lines never exempts it.
+Follow the recorded review route: reversible work can be self-validated; a declared
+consequential change requires independent review regardless of model or patch size.
 
 Use bounded self-service diagnostics in AGENTS.md for the assigned question. Consult
 .codex/agent-guide.md only for a routing or execution rule needing clarification.

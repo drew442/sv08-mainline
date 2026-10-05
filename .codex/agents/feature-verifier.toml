@@ -8,7 +8,12 @@ and execution evidence. Use a separate session from the implementer. Do not repa
 the code under review, modify records, contact printer hardware, inspect private dumps or
 credential material, or publish. Inspect more relevant context when evidence needs checking.
 
-Check every acceptance criterion and review constraint at the submitted revision.
+For the assigned task, check every acceptance criterion against its validation evidence.
+Focus independent reasoning on the recorded review question, not recertifying surrounding
+features. Cite a requirement, demonstrated defect or concrete loss mechanism for blockers;
+optional hardening stays non-blocking. The same reviewer may check a suggested correction
+unless it materially implemented/designed the solution. Routine v2 self-validation does
+not invoke this role. Never claim that separate sessions ensure independent errors.
 Inspect actual entry points and user journeys, meaningful failure/recovery paths,
 resource implications, provenance and documentation. Reproduce critical checks when
 the supplied execution evidence is insufficient, using a disposable authorized
@@ -24,12 +29,12 @@ with regression limits intact. Identify stale evidence and overlooked integratio
 paths. Report failed when material acceptance is unmet; make objections actionable.
 Owner/physical dependencies stay explicit while other ready tasks may continue.
 
-Return JSON matching .codex/schemas/verification.schema.json: outcome passed/failed,
-reviewer, session, rationale, decision_sha256 and evidence_sha256. Compute
-decision_sha256 from canonical JSON of the complete approved decision, including
-proposal/requirement/scope hashes and every constraint.
-Compute the evidence digest from
-canonical JSON (sorted keys, separators comma/colon) for the submitted evidence list.
+For v1 use .codex/schemas/verification.schema.json with decision_sha256.
+For v2 use .codex/schemas/verification-v2.schema.json with basis_sha256 instead:
+hash canonical JSON {"authorization": record.authorization, "decision": record.decision}.
+Return outcome, reviewer, session, rationale and evidence_sha256 (canonical submitted
+list). Canonical JSON uses sorted keys and comma/colon separators. Do not invent a
+decision when authorization is direct. Respect recorded constraints and review scope.
 Do not certify your own implementation, copy the author's conclusion or imply that
 an offline check proves a named hardware profile or release.
 

@@ -1,249 +1,204 @@
 # Operating the feature workflow
 
-Implements [decision 0011](../decisions/0011-feature-agent-workflow.md).
-This workstation tool manages records around existing Codex sessions. It does
-not operate the printer, run commands embedded in records, start agents, create
-an unattended schedule or push Git changes. The coordinator performs those
-development actions using the available supported tools and existing authorization.
+Implements the [development review decision](../decisions/20261005-proportionate-development-review.md).
+This source-workflow helper records authorization, ownership and evidence. It does
+not launch agents, run test commands, operate hardware, merge/push Git, schedule work
+or establish a sandbox. Use Python 3.11+ and `python3-jsonschema` on the workstation.
+Workers load their role and relevant task sources, not this whole operating guide.
 
-## Inputs and role invocation
+## Choose the actual review need
 
-Install Python 3.11+ and `python3-jsonschema` on the development workstation.
-The implementation uses the packaged JSON Schema validator rather than adding
-another schema engine. The host OS image has no dependency on this tooling.
+| Route | When | Completion basis |
+| --- | --- | --- |
+| `self` | Authorized reversible development, including substantive code | Actual implementer check evidence; no second agent or fabricated decision |
+| `targeted` | A concrete question benefits from another perspective | Implementer validation plus the explicitly requested review |
+| `consequential` | Credible serious loss | Validation plus independent assessment before the hazardous transition |
 
-Use [the entry point](../../.codex/README.md) and the project TOML definitions:
-`project_planner`, `feature_approver`, `feature_verifier`. If the client exposes
-named custom agents, invoke the named role with a concrete bounded task. Otherwise
-load the same TOML `developer_instructions` into a separate agent/session. Keep
-reviewers separate from the author and implementer; an unavailable reviewer leaves
-that review pending while other eligible work continues.
-Use the [current agent guide](../../.codex/agent-guide.md) for routing and effort.
-The planner replaces feature_suggester; use it only when planning/triage is useful.
-Research, implementation and integration normally use Sol/low with supported effort
-overrides. Reviews remain pinned. Preserve historical role/session evidence.
+Declare hazards as applicable: physical-harm, hardware-damage, unrecoverable-state,
+irreplaceable-data, secret-disclosure or external-impact. A nonempty hazard list
+requires `consequential`; a missing/unknown policy never defaults to self. These are
+reported classifications, not an automated safety analysis. An empty list is not
+proof of safety. Preparation and execution can have different classifications.
+Hardware actions remain with the coordinator and their real authorization/prechecks;
+no format or `--checks-passed` flag makes them dispatchable.
 
-The [execution decision](../decisions/20260930-agent-execution-and-diagnostics.md)
-supersedes the offline pilot's restricted-runner requirement. Project configuration
-now requests full access without approval prompts; child roles inherit that mode
-and disable their own native multi-agent tools. Verify actual permissions and role
-loading with the [deployment checks](agent-execution.md). Worktrees and instructions
-are not secret/device isolation. No unattended schedule is introduced.
+Keep planning optional. `feature_approver` is an optional design/scope challenge, not
+an obligatory stage for an owner-requested feature. Use medium/high only when the
+reasoning warrants it. A reviewer may check a correction it suggested and an approver
+may review delivery, unless it materially authored the solution. Do not spawn a new
+reviewer merely because useful feedback was adopted. Material authors cannot provide
+independent verification of their own work. Blocking findings need an accepted requirement,
+demonstrated defect or concrete loss mechanism; optional hardening is not a veto.
 
-Before delegation, the coordinator supplies file ownership, an unchanged review
-candidate where applicable, assigned resources, a unique scratch directory and
-remaining diagnostic allowance from the agent guide. Small scratch experiments do
-not authorize production repairs by research/integration/review roles, publication,
-printer access or new agent launches. Use existing authentication only for named
-assigned development connections, without inspecting or exposing secret material.
+## Register a new version-2 task
 
-Keep private session transcripts, run output and reports awaiting sanitization
-under `local/feature-workflow/`. Version only reviewed role files, templates,
-schemas, proposals and sanitized evidence. Personal `.codex` configuration remains
-ignored. No API credentials, billing change or main-session model override are
-introduced. The project configuration sets spawned-agent defaults; selected roles
-can pin model/effort. Verify effective settings as described in the agent guide.
+Copy [.codex/templates/record.json](../../.codex/templates/record.json) to
+`docs/features/<id>/record.json`. Set its ID, dates, task/check IDs, environments,
+review policy/reason, owned paths and dependencies. Use a short `proposal.md` stating
+the outcome, scope, acceptance checks and authorization reference; a full design
+proposal is needed only for an actual design question. Existing product requirements
+remain authoritative. `decision` is null when no independent design decision occurred.
 
-## Record and approval
+`owned_paths` names exact tracked files the task may change, including its evidence
+document. Do not include shared record.json bookkeeping. `input_paths` names relevant
+additional dependencies; a trailing `/` protects an entire subtree, including new
+files. No globs. Both are part of authorized scope. Evidence input paths, proposal
+and requirement files are added to the protected footprint automatically. Explicitly
+include build/config/import dependencies; the helper cannot discover semantic coupling.
 
-Copy [the record template](../../.codex/templates/record.json) into
-`docs/features/<id>/record.json` and [the proposal form](../../.codex/templates/proposal.md)
-into the adjacent `proposal.md`. Use [the short form](../../.codex/templates/fix.md)
-for bounded corrections to already documented behavior. These files contain scope
-and execution metadata; existing project requirements and release checklists
-remain authoritative.
-
-Assign each acceptance check to one task. Dependencies use `<feature>:<task>`.
-Use `offline`, `hardware` or `human` environments honestly. Physical tasks link
-their canonical entry in the existing human checklist. A feature with outstanding
-physical acceptance remains open even if all its offline tasks finish.
-
-Ask a separate approver to review the real proposal, relevant source and accepted
-requirements. The `owner_decision_required` flag is an aid, not evidence that a
-proposal stays within scope. Compute current inputs with:
+Include the actual public authorization reference among `requirements`; it may be
+a recorded owner request or accepted standing scope. Commit scope/requirement sources,
+then register that existing authority from the primary checkout:
 
 ```sh
 python3 scripts/feature_workflow.py review-context <feature>
+python3 scripts/feature_workflow.py --execute authorize <feature> \
+  --actor coordinator --session <coordinator-session> --basis standing \
+  --reference docs/decisions/<actual-authority>.md \
+  --reason 'This bounded task is within the cited standing scope; no new owner decision.'
 ```
 
-The returned hashes bind proposal text, requirement files and immutable record
-scope, including task/check definitions and dependencies. Output must satisfy
-[the decision schema](../../.codex/schemas/decision.schema.json). Save the review
-privately, inspect it, then import it from the primary checkout:
+Use `--basis owner-request` for a direct recorded owner decision. Tasks marked
+`owner_decision_required` cannot use standing authority. The tool does not determine
+whether the cited text truly grants permission; inspect it, do not invent it. `authorize`
+binds the committed scope/requirements, actual actor and source revision. It is not an
+independent approval. Replacing an unused authorization requires a committed prior
+record; no live/completed authorization is overwritten. A requested design review in
+`decision` must be approved and match the same scope/requirement snapshot, or work waits.
 
-```sh
-python3 scripts/feature_workflow.py decide <feature> --result local/feature-workflow/decision.json
-python3 scripts/feature_workflow.py --execute decide <feature> --result local/feature-workflow/decision.json
-```
+Commit/push the registered record under standing source-publication authority.
+No secret, transcript or private dump belongs in a public requirement/evidence file.
 
-`approved-with-constraints` requires constraints linked to acceptance check IDs.
-`needs-research` names a bounded investigation and its exit evidence in the
-rationale/proposal; the research task itself needs authorized scope. `deferred`
-and `rejected` work does not dispatch. Existing owner authorization can use
-`owner-existing` with a cited decision, but an agent must not invent that consent.
+## Claim, implement and submit actual results
 
-The structured schemas are local validation contracts. A client can request JSON
-output or use its supported structured-output mechanism, but the coordinator
-always validates the returned JSON locally. Do not assume every client accepts
-the entire JSON Schema dialect as a model-output constraint.
-
-## Dispatch and implement
-
-These commands inspect without creating locks, worktrees or records:
+The coordinator uses these commands; delegated workers do not select the global queue:
 
 ```sh
 python3 scripts/feature_workflow.py validate
 python3 scripts/feature_workflow.py status
 python3 scripts/feature_workflow.py next
-python3 scripts/feature_workflow.py packet <feature>:<task>
-```
-
-Selection favors the recorded priority, then oldest creation date and stable ID.
-The coordinator sets priority from the approved design's ordering and explains
-exceptions in the proposal. A ready task needs current approval, completed
-dependencies, an offline environment and available implementation capacity.
-The dispatcher rejects more than three ready features and allows one active task.
-It does not manufacture another proposal when existing work should be finished.
-Both `running` and `review` occupy the single active slot. `next` can therefore be
-null during review; this is not a sandbox failure. Auxiliary research/review can
-accompany the current task, but this change does not enable a second dispatched
-implementation or make hardware tasks dispatchable.
-
-Commit the approved proposal/record before starting its branch. Create a clean
-worktree at the current integration HEAD using Git's supported command:
-
-```sh
 git worktree add -b feature/<feature>-<task> local/feature-workflow/worktrees/<feature>-<task> HEAD
 python3 scripts/feature_workflow.py --execute claim <feature>:<task> \
-  --actor <implementer> --session <session-id> \
+  --actor <implementer> --session <implementation-session> \
   --worktree local/feature-workflow/worktrees/<feature>-<task>
 ```
 
-All mutations require `--execute` before the subcommand. The primary checkout is
-the sole queue writer; a lock in its ignored local directory is shared across
-worktrees. Claiming saves a private run lease before recording active ownership.
-Keep the recorded session ID stable for submit/complete/block operations. The
-helper never evaluates shell text from a proposal, task or model output.
+Only one task is `running`. V2 `review` and `validated` candidates release that slot,
+but reserve their owned/input paths. Conflicting or dependent work waits; unrelated
+v2 work can proceed with a distinct worktree/resource allocation. The two-child cap
+remains a runtime/coordinator constraint, not a count of all durable queued records.
+Keep submitted candidates frozen until completion. A timeout does not end ownership.
 
-The implementer receives the task packet and relevant source. It performs the
-bounded implementation, checks and documentation in its worktree. The coordinator
-then commits the complete candidate in that owned worktree; child profiles do not
-commit or publish. Independent verification precedes integration/publication.
-Commit only intended files and retain private artifacts in ignored paths. Normal
-code, build and foundation checks in AGENTS.md still apply.
-
-## Evidence, verification and integration
-
-Prepare a list satisfying [the evidence schema](../../.codex/schemas/evidence.schema.json).
-Every required check needs a sanitized evidence document, exact method and
-limitations. Record the document SHA-256, relevant source hashes and the complete
-implementation commit. The commit must be the clean worktree's HEAD; it binds
-the whole delivered tree even when the explicit input hash map is narrower.
-Hash public inputs with `feature_workflow.py --repo <worktree> hash <paths...>`.
-The explicit public `.codex` allowlist includes README, config, agent guide and
-current goals, plus the existing agent/schema/template files. Scratch and private
-configuration remain excluded. Promote sanitized results through the coordinator.
-A change to any hashed requirement still invalidates active approval as before;
-review the actual changed basis instead of copying new hashes into old decisions.
+Implement, run relevant checks, inspect results and fix in-scope failures. The coordinator
+commits the complete candidate and sanitized evidence in the assigned worktree. Prepare
+an evidence list using the existing [evidence schema](../../.codex/schemas/evidence.schema.json):
+one result per assigned check, actual commands/method, limitations, document/input hashes
+and exact clean candidate HEAD. Test failures are blockers, not evidence of passing.
 
 ```sh
 python3 scripts/feature_workflow.py --execute submit <feature>:<task> \
-  --session <session-id> --evidence local/feature-workflow/evidence.json
+  --session <implementation-session> --evidence local/feature-workflow/evidence.json \
+  --checks-passed --reason 'State the actual checks run, inspected results and remaining limits.'
 ```
 
-Ask a separate verifier to inspect the entire diff from the run's base commit
-to the submitted commit, the acceptance checks and actual execution evidence.
-Reproduce critical checks where needed. Matching JSON and hashes do not themselves
-prove test execution, useful behavior or hardware safety. A fixture does not meet
-a hardware acceptance check. The verifier returns
-[a verification result](../../.codex/schemas/verification.schema.json), binding
-the complete approved decision through `decision_sha256` and the evidence list
-with SHA-256 of canonical JSON (sorted keys and compact
-comma/colon separators).
+`--checks-passed` attests observed results on behalf of the identified implementation
+actor/session. It does not execute checks or prove the claim. The tool binds a distinct
+`validation` object to those results, the candidate and authorization. It never invents
+an independent reviewer. `self` enters `validated`; `targeted`/`consequential` enter `review`.
+Missing evidence, ownership violations, dirty candidates or absent attestation fail.
+
+## Review only when selected; then integrate
+
+For `self`, skip `verify` entirely. For a requested review, give the actual candidate,
+full diff for context, declared question/consequence and relevant validation evidence to
+an appropriate independent session. Do not make it audit unrelated features. Use
+[verification-v2.schema.json](../../.codex/schemas/verification-v2.schema.json).
+Its `basis_sha256` is the SHA-256 of canonical JSON containing the full `authorization`
+and `decision` values (including null); `evidence_sha256` hashes the submitted list.
+Canonical JSON uses sorted keys and comma/colon separators. `review-context` and `packet`
+report the current basis digest; the reviewer must inspect the actual bound inputs.
 
 ```sh
 python3 scripts/feature_workflow.py --execute verify <feature>:<task> \
   --result local/feature-workflow/verification.json
 ```
 
-A failed review blocks the task with actionable rationale and lets other ready
-work proceed. A passed review permits integration; it does not complete the task.
-The coordinator commits queue bookkeeping as needed, merges the reviewed branch
-while preserving its commit in history, and checks the integration. Use Git's
-normal merge/fast-forward operations. Squashing/cherry-picking requires review of
-the replacement commit; an unreachable evidence commit will not survive a clone.
+Selected reviews must pass; failures block the task. A reviewer cannot share the
+implementation actor or session. A passed targeted review answers the scoped question,
+not a blanket hardware or release certificate. A substantive author cannot become
+independent by changing a label; identity fields are not an anti-forgery mechanism.
+
+The coordinator merges the actual validated/reviewed commit, preserving it in history,
+and runs necessary integration checks. Evidence/owned/input changes, modes, deletions
+and gitlinks are checked; unrelated committed changes no longer demand blanket re-review.
+Uncommitted source outside record bookkeeping remains a conflict to reconcile, not
+permission to discard someone else's work. Rebase/squash changes candidate identity:
+submit current evidence again rather than asserting the old commit was integrated.
 
 ```sh
-python3 scripts/feature_workflow.py --execute complete <feature>:<task> --session <session-id>
+python3 scripts/feature_workflow.py --execute complete <feature>:<task> \
+  --session <implementation-session>
 ```
 
-Completion requires committed evidence/source files, the reviewed commit in
-integration history, and the reviewed source tree unchanged except feature
-`record.json` bookkeeping. Unrelated concurrent source changes conservatively
-require renewed integration review. Then commit/push the completed record under
-the existing authorization and select the next ready task.
+Completion requires its recorded basis, committed evidence and preserved candidate.
+It is reported as self, targeted or consequential, not universally independent.
+Commit/push bookkeeping and continue. Keep candidate worktrees until completion so
+freeze/ownership checks can inspect them. Later code changes do not erase historical
+results; they may make those results inapplicable to the new checkout.
 
-Completed records preserve historical evidence at its original commit. Later
-approved changes do not erase that history. Status reports whether the recorded
-input hashes still match the checkout; historical evidence cannot be reused as
-proof of a new implementation or a current hardware release. Release checklists
-are updated only when their own acceptance criteria are satisfied.
-Do not reuse an old passing verification for changed acceptance criteria. Use a
-follow-on feature/improvement record for completed work, or explicitly reopen
-and review affected acceptance before trying to replace its decision.
+## Nonmaterial requirement changes
 
-## Blocking, interruption and resumption
-
-Use `block <task> --session <id> --reason <reason>` with `--execute` to pause an
-owned task and continue other ready work. The worktree and lease remain intact.
-For a physical dependency, update/link the existing human task entry and keep its
-required power/connection state, steps and expected evidence explicit.
-
-Use `runs` to inspect retained lease/worktree locations. After an interruption,
-inspect the previous session and worktree using the current client's session tools.
-Stop the previous worker before reclaiming ownership. The helper does not infer
-that a timeout or PID disappearance means an agent has stopped elsewhere.
+Whole-file hashes remain exact. When only unrelated explanatory text changed in a
+requirement document, a coordinator can inspect the actual old/new diff and record
+why this task's requirements and checks are unchanged. Commit the changed documents,
+then use `review-context` to obtain `expected_recheck_sha256`:
 
 ```sh
-python3 scripts/feature_workflow.py --execute recover <feature>:<task> \
-  --expected-run <recorded-run-id> --previous-session-stopped \
-  --reason '<what was inspected and stopped; where unfinished work remains>'
-python3 scripts/feature_workflow.py --execute resume <feature>:<task> \
-  --reason '<changed evidence, diagnosis or method>'
+python3 scripts/feature_workflow.py --execute recheck-requirements <feature> \
+  --actor coordinator --session <coordinator-session> \
+  --expected-sha256 <expected_recheck_sha256> \
+  --reason 'Describe the exact nonmaterial change and why task acceptance is unchanged.'
 ```
 
-Recovery checks the exact run identity to avoid releasing a newer owner. It marks
-the interrupted task blocked and preserves all files. Resuming clears stale
-submission/review metadata, not the old worktree or lease. Reuse preserved work
-only after reviewing and moving it into a clean worktree based on current HEAD.
-The same unsuccessful resumption reason retains the failure counter; after two
-failed repeats, change the investigation rather than repeating it indefinitely.
+The append-only recheck chain records original/new hashes, rationale and the actual
+commit. Original authorization/decision/reviewer hashes stay unchanged. It cannot
+replace task/proposal scope, the authorization reference or non-Markdown requirements.
+It cannot bypass changed owned files, test inputs or evidence source paths, even if
+those are also Markdown requirements. Fresh unacknowledged changes still block.
+This is a coordinator judgment, not machine proof of semantic equivalence. Material
+requirement changes need revised scoped work and the appropriate authority/review;
+never call them nonmaterial merely to avoid rework. Leave completed historical records alone.
 
-An orphan lease without an active record cannot dispatch work. Inspect it before
-cleanup; cleanup is deliberately a separate Git/filesystem operation. Missing
-ownership/evidence is an inspection problem, never permission to claim completion.
+## Existing records, interruptions and checks
 
-## Validation and retirement
+Version 1 remains readable under its unchanged schema. Its original approval,
+independent verification, whole-tree freshness and review reservation still apply.
+This is intentional compatibility, not the default for new work. The new template is
+v2. No automatic/bulk migration is performed. Do not flip version numbers or invent
+reviews. For unfinished legacy work, explicitly re-register remaining scope with its
+requirements, dependencies and applicable constraints, retain the original record,
+and mark superseded unfinished tasks blocked with the replacement reference. Update
+future dependencies explicitly; a superseded task is not a completed dependency.
+Completed tasks and their evidence/identities are never rewritten.
+
+Existing `block`, `runs`, `recover` and `resume` commands retain leases/worktrees and
+explicit stopped-session checks. Commit failed results before resumption. Rework
+carries attempt history and budgets; the same reviewer may inspect the repair.
+Resume clears stale submission/validation, not private artifacts. Never relabel a
+failed review as self to skip its finding. Legacy verification still uses
+[verification.schema.json](../../.codex/schemas/verification.schema.json) and its original
+`decision_sha256`; v2 uses the distinct basis format. Both validate real source evidence.
 
 ```sh
-python3 -m unittest discover -s tests -p 'test_feature_workflow*.py'
+python3 -m unittest discover -s tests -p 'test_feature_workflow*.py' -v
+python3 -m unittest discover -s tests -p 'test_codex_agent_policy.py' -v
+python3 -m unittest discover -s tests -p 'test_agent_context.py' -v
 python3 scripts/feature_workflow.py validate
 ```
 
-Tests use disposable Git repositories/worktrees and actual file locks. No paid
-agent calls, printer access or network is needed for deterministic gate tests.
-The pilot separately exercises live suggestion/review and actual product behavior.
-For a live review evaluation, give the approver only
-[the case inputs](../../tests/fixtures/feature-workflow/review-cases.json) and request
-[the result format](../../.codex/schemas/review-cases.schema.json), then run:
-
-```sh
-python3 scripts/feature_workflow.py check-review-cases --result local/feature-workflow/review-cases.json
-```
-
-The check rejects missing, duplicated or incompatible decisions and requires the
-owner boundary to remain intact. A successful process exit or structurally valid
-empty response is not a successful evaluation. Inspect rationales and tool evidence
-as well; deterministic outcome checks do not establish the quality of every review.
-Retire custom coordination when upstream mechanisms cover these same tested
-record, dependency, ownership and evidence guarantees; keep the regression cases.
+Tests use disposable Git repositories and no paid agent calls or hardware. They prove
+record transitions and guards, not model behavior, semantic dependency completeness,
+actual safety classification or the truth of a submitted test report. Real queue/history
+validation requires a complete checkout. No API transport, scheduler, model or permission
+change is introduced. All mutations remain inspection-only unless `--execute` precedes
+the subcommand; shared records remain locked and coordinator-owned.
