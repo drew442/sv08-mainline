@@ -1,48 +1,62 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "b8591d92e1357d6a3096faf9ff504aa3cd044c04bddeecda442d0f91bf4be220",
+    "rationale": "Owner requests a separate Definitions page with grouping and uncluttered drill-down.",
+    "reference": "docs/features/printer-definitions-browser/owner-request.md",
+    "reference_sha256": "961eb731b3bf0a955109da36ec1b59de9b8b4495e7cf431becd6f170f20f378b",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/printer-definitions-browser/owner-request.md": "961eb731b3bf0a955109da36ec1b59de9b8b4495e7cf431becd6f170f20f378b"
+    },
+    "scope_sha256": "08d368f90727abce90497e787c6bfc9d80991b72cb415d1400c3f6fca26c95ce",
+    "session": "printer-definitions-browser-20261006",
+    "source_commit": "636531b2ec3d576addd4251c6837e2e5d042b94f"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-06",
+  "decision": null,
   "format_version": 2,
   "id": "printer-definitions-browser",
   "kind": "feature",
-  "title": "Standalone Definitions catalogue browser",
-  "author": "coordinator",
-  "created": "2026-10-06",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-definitions-browser/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/printer-definitions-browser/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate the offline journey",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible frontend and disposable fixtures; no hardware operation.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "catalog/printer/",
+        "tests/test_printer_browser_fixture.py",
+        "ui/host/index.html",
+        "ui/host/session.js",
+        "ui/host/upload.js",
+        "ui/host/style.css"
+      ],
       "owned_paths": [
         "ui/printer/app.js",
         "ui/printer/panel.html",
@@ -55,15 +69,15 @@
         "docs/features/printer-definitions-browser/evidence.md",
         "docs/features/printer-definitions-browser/browser.json"
       ],
-      "input_paths": [
-        "runtime/",
-        "catalog/printer/",
-        "tests/test_printer_browser_fixture.py",
-        "ui/host/index.html",
-        "ui/host/session.js",
-        "ui/host/upload.js",
-        "ui/host/style.css"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible frontend and disposable fixtures; no hardware operation.",
+      "status": "pending",
+      "title": "Implement and validate the offline journey",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Standalone Definitions catalogue browser"
 }
