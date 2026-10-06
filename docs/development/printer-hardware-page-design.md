@@ -1,10 +1,10 @@
 # Printer hardware page — design brief
 
-**Project:** sv08-mainline  
-**Status:** Owner-selected implementation requirements; delivery evidence remains separate  
-**Prepared:** 6 October 2026  
-**Revision:** 0.2 — creator-published definition sources added  
-**Target:** The existing SV08 Mainline Cockpit host-administration interface, `#printer`  
+**Project:** sv08-mainline
+**Status:** Owner-selected implementation requirements; delivery evidence remains separate
+**Prepared:** 6 October 2026
+**Revision:** 0.2 — creator-published definition sources added
+**Target:** The existing SV08 Mainline Cockpit host-administration interface, `#printer`
 **Repository baseline inspected:** `main` at `11912e05c7a14650cc7a0c486e40482da9241760`
 
 ## 1. Purpose and recommended direction

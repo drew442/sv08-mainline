@@ -1,0 +1,100 @@
+{
+  "format_version": 2,
+  "id": "printer-definition-redesign",
+  "kind": "feature",
+  "title": "Definition-driven printer hardware page",
+  "author": "coordinator",
+  "created": "2026-10-06",
+  "priority": 1,
+  "proposal": "docs/features/printer-definition-redesign/proposal.md",
+  "requirements": [
+    "docs/features/printer-definition-redesign/owner-request.md",
+    "docs/development/printer-hardware-page-design.md",
+    "docs/development/printer-definition-sources-design.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "offline-journey",
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate accepted design",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "offline-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable offline fixtures. Live printer deployment and physical commissioning require separately assessed action before execution.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/printer/panel.html",
+        "ui/printer/app.js",
+        "ui/printer/style.css",
+        "runtime/sv08_printer_catalog.py",
+        "runtime/sv08_printer_generate.py",
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_printer_helper.py",
+        "runtime/sv08_printer_definitions.py",
+        "runtime/sv08_printer_sources.py",
+        "runtime/sv08_printer_publish.py",
+        "runtime/sv08_printer_compose.py",
+        "catalog/printer/draft.schema.json",
+        "catalog/printer/definitions/builtin.json",
+        "scripts/printer_definitions.py",
+        "scripts/stage_printer_ui.py",
+        "tests/test_printer_definitions.py",
+        "tests/test_printer_publication.py",
+        "tests/test_printer_configuration.py",
+        "tests/printer_browser.mjs",
+        "tests/test_printer_browser_fixture.py",
+        "tests/test_stage_printer_ui.py",
+        "docs/development/printer-public-format.md",
+        "docs/development/printer-hardware-catalog.md",
+        "docs/features/printer-definition-redesign/evidence.md",
+        "docs/features/printer-definition-redesign/browser.json",
+        "schemas/printer-definitions/v1/catalog.schema.json",
+        "schemas/printer-definitions/v1/definition.schema.json",
+        "schemas/printer-definitions/v1/component.schema.json",
+        "schemas/printer-definitions/v1/board.schema.json",
+        "schemas/printer-definitions/v1/assembly.schema.json",
+        "schemas/printer-definitions/v1/behaviour.schema.json",
+        "schemas/printer-definitions/v1/connection.schema.json",
+        "examples/printer-definitions/catalog.json",
+        "examples/printer-definitions/README.md",
+        "examples/printer-definitions/LICENSE",
+        "examples/printer-definitions/definitions/bed.json",
+        "examples/printer-definitions/definitions/board.json",
+        "examples/printer-definitions/definitions/assembly.json",
+        "examples/printer-definitions/definitions/behaviour.json",
+        "examples/printer-definitions/fixtures/installation.json"
+      ],
+      "input_paths": [
+        "runtime/sv08_state.py",
+        "runtime/sv08_data_budget.py",
+        "ui/host/",
+        "catalog/printer/catalog.json",
+        "catalog/printer/catalog.schema.json",
+        "upstream-lock.json"
+      ]
+    }
+  ]
+}
