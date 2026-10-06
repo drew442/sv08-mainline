@@ -1,50 +1,65 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "30dea186531f7eaf08e8b231e2167c23fc4bad43560ab321a19d9f2bdc6ecb38",
+    "rationale": "Explicit owner request selects both new designs and complete implementation.",
+    "reference": "docs/features/printer-definition-redesign/owner-request.md",
+    "reference_sha256": "694396d78dae3654179a2fc39db9540e1c2492d9378b8e34319c75a671fcca69",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/printer-definition-sources-design.md": "e411e1cbfb05fdb937ead0e60386e0717882b44edecfc50f7d58e10806dca279",
+      "docs/development/printer-hardware-page-design.md": "2ba0bfdcc43a7266e806ecf87dfba56f328462dff2347192371b189d4e97d692",
+      "docs/features/printer-definition-redesign/owner-request.md": "694396d78dae3654179a2fc39db9540e1c2492d9378b8e34319c75a671fcca69"
+    },
+    "scope_sha256": "35f8dd796727ccad932e493dbd61d0a9654312d14f9a7db01b4188c36809b61e",
+    "session": "printer-definition-redesign-20261006",
+    "source_commit": "c59035c398cb51c5dbd151c9fa2ed40279452fa5"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-06",
+  "decision": null,
   "format_version": 2,
   "id": "printer-definition-redesign",
   "kind": "feature",
-  "title": "Definition-driven printer hardware page",
-  "author": "coordinator",
-  "created": "2026-10-06",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-definition-redesign/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/printer-definition-redesign/owner-request.md",
     "docs/development/printer-hardware-page-design.md",
     "docs/development/printer-definition-sources-design.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate accepted design",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source and disposable offline fixtures. Live printer deployment and physical commissioning require separately assessed action before execution.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_state.py",
+        "runtime/sv08_data_budget.py",
+        "ui/host/",
+        "catalog/printer/catalog.json",
+        "catalog/printer/catalog.schema.json",
+        "upstream-lock.json"
+      ],
       "owned_paths": [
         "ui/printer/panel.html",
         "ui/printer/app.js",
@@ -87,14 +102,15 @@
         "examples/printer-definitions/definitions/behaviour.json",
         "examples/printer-definitions/fixtures/installation.json"
       ],
-      "input_paths": [
-        "runtime/sv08_state.py",
-        "runtime/sv08_data_budget.py",
-        "ui/host/",
-        "catalog/printer/catalog.json",
-        "catalog/printer/catalog.schema.json",
-        "upstream-lock.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable offline fixtures. Live printer deployment and physical commissioning require separately assessed action before execution.",
+      "status": "pending",
+      "title": "Implement and validate accepted design",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Definition-driven printer hardware page"
 }
