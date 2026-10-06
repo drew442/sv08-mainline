@@ -3,7 +3,7 @@
     const $ = id => document.getElementById('printer-' + id);
     let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
     const copy = value => JSON.parse(JSON.stringify(value));
-    const notice = text => { $('notice').textContent = text; };
+    const notice = text => { $('notice').textContent = text; $('source-notice').textContent = text; };
     const invalidate = (status = true) => { review = null; publicationReview=null; pendingDefinition=null; ++epoch; if (status) ++statusEpoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); for(const id of ['definition-review','publication-dialog'])if($(id).open)$(id).close(); };
     const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
@@ -282,7 +282,7 @@
     let localView='components', selectedCategory=null, advancedMode=false, definitionRows=[], sourceRows={}, sourcePreview=null, pendingDefinition=null, publicationReview=null, mapMode=true, selectedConnection=null;
     const categories=[['bed','Bed & build surface','M4 17h20M5 13l11-5 11 5-11 5zM8 5V2m8 3V2m8 3V2'],['probe','Probe & levelling','M12 3h8v15l-4 5-4-5zM5 28h22'],['toolhead','Toolhead & extrusion','M8 4h16v10H8zM11 14h10v7l-5 7-5-7zM4 9h4m16 0h4'],['filament','Filament & multi-colour','M4 4h10v24H4zM18 4h10v24H18zM9 10h0m14 0h0M9 20h14'],['boards','Boards & connections','M6 6h20v20H6zM11 11h10v10H11zM2 10h4m20 0h4M2 22h4m20 0h4'],['cooling','Cooling & enclosure','M16 13c-13-15-13 9 0 3m3 0c15-13-9-13-3 0m0 3c13 15 13-9 0-3m-3 0c-15 13 9 13 3 0'],['motion','Motion & endstops','M3 25L25 3M3 8V3h5M24 29h5v-5']];
     function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(device.kind==='probe')return 'probe';if(device.kind==='extruder'||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
-    function setView(view){localView=view;for(const name of ['components','connections','changes','sources'])$(name==='sources'?'sources-view':name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='connections')renderConnections();if(view==='changes')renderChanges();if(view==='sources')renderSources();}
+    function setView(view){localView=view;for(const name of ['components','connections','changes'])$(name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='connections')renderConnections();if(view==='changes')renderChanges();}
     function renderDesign(){
         $('board-summary').textContent=Object.entries(draft.boards).map(([role])=>boardData(role)?.label??'Unknown '+role).join(' · ')||'Boards not selected';
         const root=$('cards');root.replaceChildren();
@@ -342,7 +342,6 @@
     $('advanced-toggle').onchange=()=>{advancedMode=$('advanced-toggle').checked;renderBoards();renderDesign();};
     $('show-changes').onclick=()=>setView('changes');$('history').onclick=()=>{$('history-panel').hidden=!$('history-panel').hidden;};
     $('map-toggle').onclick=()=>{mapMode=true;renderConnections();};$('table-toggle').onclick=()=>{mapMode=false;renderConnections();};$('connection-filter').oninput=renderConnections;
-    $('source-open').onclick=()=>setView('sources');$('source-back').onclick=()=>setView('components');
     $('definition-cancel').onclick=()=>{$('definition-review').close();pendingDefinition=null;};$('definition-confirm').onclick=()=>{if(!pendingDefinition||!authority()||busy||reconcile)return;draft=pendingDefinition;pendingDefinition=null;$('definition-review').close();edit();render();};
     $('source-preview').onclick=()=>operation(async()=>{sourcePreview=await rpc({action:'source_preview',url:$('source-url').value,ref:$('source-ref').value||null,path:$('source-path').value||null,expected_revision:revision});showSourcePreview();});
     $('source-import').onchange=()=>operation(async()=>{const file=$('source-import').files[0];if(!file)return;if(file.size>524288)throw Error('Bundle exceeds limit');sourcePreview=await rpc({action:'bundle_preview',bundle:JSON.parse(await file.text()),expected_revision:revision});showSourcePreview();});
