@@ -1,0 +1,66 @@
+{
+  "format_version": 2,
+  "id": "printer-connections-graph",
+  "kind": "feature",
+  "title": "Blueprint-style printer connections page",
+  "author": "coordinator",
+  "created": "2026-10-06",
+  "priority": 1,
+  "proposal": "docs/features/printer-connections-graph/proposal.md",
+  "requirements": [
+    "docs/features/printer-connections-graph/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "offline-journey",
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate the offline journey",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "offline-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible frontend and disposable fixture changes; no hardware operations.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "ui/printer/style.css",
+        "ui/host/navigation.js",
+        "ui/host/app.js",
+        "scripts/stage_printer_ui.py",
+        "tests/printer_browser.mjs",
+        "tests/test_stage_printer_ui.py",
+        "docs/features/printer-connections-graph/evidence.md",
+        "docs/features/printer-connections-graph/browser.json"
+      ],
+      "input_paths": [
+        "catalog/printer/",
+        "runtime/sv08_printer_fields.py",
+        "tests/test_printer_browser_fixture.py",
+        "ui/host/index.html"
+      ]
+    }
+  ]
+}
