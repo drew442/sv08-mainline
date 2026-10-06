@@ -3,7 +3,7 @@
     const $ = id => document.getElementById('printer-' + id);
     let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
     const copy = value => JSON.parse(JSON.stringify(value));
-    const notice = text => { $('notice').textContent = text; $('source-notice').textContent = text; $('connection-notice').textContent = text; };
+    const notice = text => { $('notice').textContent = text; $('source-notice').textContent = text; $('connection-notice').textContent = text; $('definitions-notice').textContent = text; };
     const invalidate = (status = true) => { review = null; publicationReview=null; pendingDefinition=null; ++epoch; if (status) ++statusEpoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); for(const id of ['definition-review','publication-dialog'])if($(id).open)$(id).close(); };
     const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
@@ -37,7 +37,7 @@
         if (busy) return; busy = true; controls();
         try { await fn(); }
         catch (e) { invalidate(); notice(e.message + (reconcile ? ' Reload to reconcile before retrying.' : '')); }
-        finally { busy = false; controls(); if(catalog&&draft&&!diagnostic){renderDefinitionChoices();renderSources();} }
+        finally { busy = false; controls(); if(catalog&&draft&&!diagnostic){renderDefinitionChoices();renderSources();renderDefinitionsBrowser();} }
     }
     function el(tag,text) { const e=document.createElement(tag); if (text !== undefined) e.textContent=text; return e; }
     function select(options,value,onchange) {
@@ -451,6 +451,70 @@
     $('connection-map').addEventListener('keydown',event=>{if(event.target!==event.currentTarget)return;const actions={'+':()=>zoomGraph(1.25),'=':()=>zoomGraph(1.25),'-':()=>zoomGraph(.8),'0':fitGraph,ArrowLeft:()=>{graph.x+=50;transformGraph();},ArrowRight:()=>{graph.x-=50;transformGraph();},ArrowUp:()=>{graph.y+=50;transformGraph();},ArrowDown:()=>{graph.y-=50;transformGraph();}};if(actions[event.key]){event.preventDefault();actions[event.key]();}});
     $('graph-in').onclick=()=>zoomGraph(1.25);$('graph-out').onclick=()=>zoomGraph(.8);$('graph-fit').onclick=fitGraph;$('graph-reset').onclick=()=>{graph.positions.clear();graph.signature=null;renderConnections();};
     window.addEventListener('resize',()=>{if(location.hash==='#printer-connections'&&mapMode)openGraph();});
+    // Read-only catalogue browsing over the already-loaded source cache.
+    let definitionsView='source', definitionsGroup=null, definitionsTrail=[];
+    const definitionKey=row=>row.reference.source+'::'+row.record.id+'@'+row.record.version;
+    function browseDefinitions(){
+        const rows=definitionRows.map(row=>({...row,enabled:true})),known=new Set(rows.map(definitionKey));
+        for(const source of Object.values(sourceRows)){
+            for(const record of source.records??[]){const row={record,reference:{source:source.id,id:record.id,version:record.version},origin:source.repository??source.manifest.name,enabled:source.enabled};if(!known.has(definitionKey(row))){rows.push(row);known.add(definitionKey(row));}}
+            for(const entry of source.unavailable??[])rows.push({record:{id:entry.id,version:entry.version,name:entry.id,kind:'unavailable',category:'unavailable',description:entry.reason},reference:{source:source.id,id:entry.id,version:entry.version},origin:source.repository??source.manifest.name,enabled:source.enabled,unavailable:true});
+        }
+        return rows;
+    }
+    function definitionSource(row){return row.reference.source==='builtin'?'SV08 Mainline · built-in':sourceRows[row.reference.source]?.manifest.name??row.origin;}
+    function definitionCategory(row){return categories.find(([key])=>key===row.record.category)?.[1]??pretty(row.record.category??'Other');}
+    function definitionStatus(row){return row.unavailable?'Unsupported'+(row.enabled?'':' · Source disabled'):row.enabled?'Available':'Source disabled';}
+    function definitionButton(text,small,action){const b=el('button');b.className='printer-definition-card';b.append(el('strong',text),el('small',small));b.onclick=action;return b;}
+    function definitionsBack(){definitionsTrail.length?definitionsTrail.pop():definitionsGroup=null;renderDefinitionsBrowser(true);}
+    function renderDefinitionsBrowser(focus=false){
+        if(location.hash!=='#definitions')return;
+        const all=browseDefinitions(),root=$('definitions-content'),breadcrumb=$('definitions-breadcrumb');root.replaceChildren();breadcrumb.replaceChildren();
+        const rows=all.filter(row=>!$('definitions-search').value.trim()||[row.record.name,row.record.id,...row.record.aliases??[],definitionSource(row),definitionCategory(row)].join(' ').toLowerCase().includes($('definitions-search').value.trim().toLowerCase()));
+        const trail=definitionsTrail.at(-1);let row=trail?all.find(r=>definitionKey(r)===trail.key):null;if(trail&&!row){definitionsTrail=[];row=null;}
+        const back=$('definitions-back');back.hidden=!definitionsGroup&&!definitionsTrail.length;back.onclick=definitionsBack;
+        $('definitions-count').textContent=all.length+' definitions · '+all.filter(r=>r.reference.source==='builtin').length+' built-in';
+        $('definitions-by-source').setAttribute('aria-pressed',String(definitionsView==='source'));$('definitions-by-category').setAttribute('aria-pressed',String(definitionsView==='category'));
+        const home=el('button','All '+(definitionsView==='source'?'sources':'categories'));home.onclick=()=>{definitionsGroup=null;definitionsTrail=[];renderDefinitionsBrowser(true);};breadcrumb.append(home);
+        if(definitionsGroup){const group=el('button',definitionsGroup.label);group.onclick=()=>{definitionsTrail=[];renderDefinitionsBrowser(true);};breadcrumb.append(el('span',' / '),group);}
+        if(row){breadcrumb.append(el('span',' / '+row.record.name));renderDefinitionDetail(root,row,trail.component,all);}
+        else if(definitionsGroup){
+            root.append(el('h2',definitionsGroup.label));const list=el('div');list.className='printer-definitions-grid';root.append(list);
+            const matches=rows.filter(row=>(definitionsView==='source'?row.reference.source:row.record.category)===definitionsGroup.id);
+            for(const item of matches.sort((a,b)=>a.record.name.localeCompare(b.record.name))){const button=definitionButton(item.record.name,[pretty(item.record.kind),item.record.version,definitionSource(item),definitionStatus(item)].join(' · '),()=>{definitionsTrail.push({key:definitionKey(item)});renderDefinitionsBrowser(true);});button.dataset.definitionId=item.record.id;button.dataset.definitionSource=item.reference.source;list.append(button);}
+            if(!matches.length)root.append(el('p','No matching definitions.'));
+        } else {
+            const groups=new Map();for(const item of rows){const id=definitionsView==='source'?item.reference.source:item.record.category;const label=definitionsView==='source'?definitionSource(item):definitionCategory(item);if(!groups.has(id))groups.set(id,{id,label,count:0});groups.get(id).count++;}
+            const grid=el('div');grid.className='printer-definitions-grid';root.append(grid);
+            for(const group of [...groups.values()].sort((a,b)=>a.label.localeCompare(b.label))){const button=definitionButton(group.label,group.count+' definition'+(group.count===1?'':'s')+(definitionsView==='source'&&sourceRows[group.id]?.enabled===false?' · Source disabled':''),()=>{definitionsGroup=group;definitionsTrail=[];renderDefinitionsBrowser(true);});button.dataset.definitionGroup=group.id;grid.append(button);}
+            if(!groups.size)root.append(el('p',catalog?'No matching definitions.':'Authorize to load the definitions catalogue.'));
+        }
+        if(focus){const target=root.querySelector('h2')??root;target.tabIndex=-1;target.focus();}
+    }
+    function definitionValues(root,values){const list=el('dl');list.className='printer-definition-values';for(const [name,value] of Object.entries(values)){if(value===undefined)continue;list.append(el('dt',pretty(name)),el('dd',typeof value==='boolean'?(value?'Yes':'No'):typeof value==='object'?JSON.stringify(value):String(value)));}root.append(list);}
+    function definitionDisclosure(root,title,value){if(value===undefined||value===null||Array.isArray(value)&&!value.length)return;const box=el('details');box.append(el('summary',title),el('pre',JSON.stringify(value,null,2)));root.append(box);}
+    function renderDefinitionDetail(root,row,componentIndex,all){
+        const d=row.record,component=componentIndex===undefined?null:d.components?.[componentIndex];root.append(el('h2',component?pretty(component.name):d.name));
+        if(component){
+            root.append(el('p',pretty(component.kind)+' · '+pretty(component.board)+' controller'));definitionValues(root,component.settings??{});
+            const endpoints=new Set(Object.values(component.endpoints??{})),connections=(d.connections??[]).filter(c=>endpoints.has(c.endpoint));
+            if(connections.length){root.append(el('h3','Documented connections'));for(const c of connections)definitionValues(root,{endpoint:c.endpoint,board:c.board,connector:c.connector,contact:c.contact??'Unknown',function:c.capability});}
+            definitionDisclosure(root,'Component record',component);return;
+        }
+        root.append(el('p',definitionSource(row)+' · '+d.version+' · '+definitionStatus(row)),el('p',d.description??''));
+        if(row.unavailable){root.append(el('p','This import entry has no supported component record. View its source to manage availability.'));return;}
+        definitionValues(root,{product:d.hardware?.product,hardware_revision:d.hardware?.revision,definition_type:pretty(d.kind),category:definitionCategory(row),license:d.license});
+        if(d.components?.length){root.append(el('h3','Components'));const list=el('div');list.className='printer-definitions-grid';root.append(list);d.components.forEach((c,index)=>{const b=definitionButton(pretty(c.name),pretty(c.kind)+' · '+pretty(c.board)+' controller',()=>{definitionsTrail.push({key:definitionKey(row),component:index});renderDefinitionsBrowser(true);});b.dataset.definitionComponent=c.name;list.append(b);});}
+        if(d.dependencies?.length){root.append(el('h3','Included definitions'));const list=el('div');list.className='printer-definitions-grid';root.append(list);
+            for(const dep of d.dependencies){const source=dep.source??row.reference.source,target=all.find(r=>!r.unavailable&&r.reference.source===source&&r.record.id===dep.id&&r.record.version===dep.version&&r.reference.sha256===dep.sha256);const cycle=target&&definitionsTrail.some(t=>t.key===definitionKey(target)&&t.component===undefined);const b=definitionButton(target?.record.name??dep.id,dep.version+' · '+(target?definitionSource(target):'Pinned dependency unavailable'),()=>{if(target&&!cycle){definitionsTrail.push({key:definitionKey(target)});renderDefinitionsBrowser(true);}});b.disabled=!target||cycle;b.dataset.definitionDependency=dep.id;list.append(b);}
+        }
+        if(d.mapping){root.append(el('h3','Controller'));definitionValues(root,{board:d.mapping.label,role:d.mapping.role,revision:d.mapping.revision});definitionDisclosure(root,'Documented board mapping',d.mapping);}
+        for(const [key,title] of [['curves','Sensor curves'],['compatibility','Compatibility'],['inputs','Variant inputs'],['printer_settings','Printer settings'],['connections','Connection records'],['calibration','Calibration requirements'],['behaviours','Defined behaviours']])definitionDisclosure(root,title,d[key]);
+        const provenance=el('details');provenance.append(el('summary','Sources & provenance'));definitionValues(provenance,{definition_id:d.id,source_id:row.reference.source,source_revision:row.reference.commit??sourceRows[row.reference.source]?.commit,content_digest:row.reference.sha256,published_file_digest:sourceRows[row.reference.source]?.file_hashes?.[d.id+'@'+d.version]});
+        for(const source of d.sources??[]){const p=el('p');let url;try{url=new URL(source.url);}catch{}if(url&&['http:','https:'].includes(url.protocol)){const a=el('a',source.id??'Source');a.href=url.href;a.target='_blank';a.rel='noopener noreferrer';p.append(a);}else p.append(el('span',source.id??'Source'));p.append(el('span',' · '+(source.revision??'')+' · '+(source.locator??'')));provenance.append(p);}root.append(provenance);definitionDisclosure(root,'Full definition record',d);
+    }
+    for(const mode of ['source','category'])$('definitions-by-'+mode).onclick=()=>{definitionsView=mode;definitionsGroup=null;definitionsTrail=[];renderDefinitionsBrowser();};
+    $('definitions-search').oninput=()=>{definitionsTrail=[];renderDefinitionsBrowser();};
     function renderSources(){const root=$('source-list');root.replaceChildren();const table=el('table'),body=el('tbody');table.append(body);const builtin=el('tr');for(const text of ['SV08 Mainline','Built-in','Available'])builtin.append(el('td',text));body.append(builtin);for(const source of Object.values(sourceRows)){const tr=el('tr');for(const text of [source.manifest.name,source.repository??'Local bundle',source.enabled?'Available':'Disabled'])tr.append(el('td',text));const td=el('td');for(const [label,action] of [['Check for updates','source_check'],[source.enabled?'Disable':'Enable',source.enabled?'source_disable':'source_enable'],['Remove','source_remove']]){const b=el('button',label);b.disabled=!authority()||busy||reconcile||action==='source_check'&&(!source.enabled||source.origin!=='github');b.onclick=()=>operation(async()=>{const r=await rpc({action,source_id:source.id,expected_revision:revision});if(action==='source_check'){sourcePreview=r;showSourcePreview();}else{await load(true);renderSources();notice('Subscription updated; selected locked definitions retained.');}});td.append(b);}tr.append(td);body.append(tr);}root.append(table);}
     function showSourcePreview(){const root=$('source-preview-detail');root.replaceChildren();if(!sourcePreview)return;root.append(el('h3',sourcePreview.manifest.name),el('p',(sourcePreview.repository??'Local bundle')+' · '+sourcePreview.commit),el('p','Publisher declaration: '+JSON.stringify(sourcePreview.manifest.publisher)+' · '+sourcePreview.manifest.license),el('p',sourcePreview.records.length+' supported · '+sourcePreview.unavailable.length+' unavailable'));for(const x of sourcePreview.unavailable)root.append(el('p',x.id+': '+x.reason));$('source-confirm').disabled=!authority();}
     for(const b of document.querySelectorAll('[data-printer-view]'))b.onclick=()=>setView(b.dataset.printerView);
@@ -500,7 +564,7 @@
     $('cancel-import').onclick=()=>{invalidate();draft=saved.draft===undefined?null:copy(saved.draft);changed=false;$('import-diff').hidden=true;render();notice('Imported changes discarded. Saved draft preserved.');};
     $('import').onchange=()=>operation(async()=>{invalidate();$('import-diff').hidden=true;const file=$('import').files[0];if(!file)return;$('import').value='';if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming,expected_revision:revision});draft=result.draft;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');});
     window.addEventListener('sv08-authority-changed',()=>{invalidate();controls();if(!authority())notice('Administrator access ended. Pending review cancelled. Authorize and reload before editing.');else if (changed || reconcile) { reconcile=true; controls(); notice('Administrator access restored. Reconcile saved state explicitly; local selections retained.'); } else operation(()=>load());});
-    window.addEventListener('sv08-navigation-changed',event=>{ if(busy && !loading) reconcile=true; invalidate(false); controls(); cancelGraphDrag(); if(event.detail.to==='printer-connections')queueMicrotask(renderConnections); });
+    window.addEventListener('sv08-navigation-changed',event=>{ if(busy && !loading) reconcile=true; invalidate(false); controls(); cancelGraphDrag(); if(event.detail.to==='printer-connections')queueMicrotask(renderConnections); if(event.detail.to==='definitions')queueMicrotask(renderDefinitionsBrowser); });
     window.addEventListener('beforeunload',event=>{if(changed){event.preventDefault();event.returnValue='';}});
     window.addEventListener('pagehide',()=>invalidate());
     window.sv08Session.ready.then(()=>{controls();if(authority())operation(load);else notice('Authorize to load private printer configuration.');});

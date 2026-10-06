@@ -115,7 +115,7 @@ def replace_once(raw, before, after):
 def compose_host(raw, panel=None):
     """Compile the persistent panel; never fetch markup in the browser."""
     if panel is None: panel=(REPO/'ui/printer/panel.html').read_bytes()
-    raw=replace_once(raw,NAV,b'<button data-page="printer">Printer hardware</button><button data-page="printer-connections">Connections</button><button data-page="definition-sources">Definition sources</button>')
+    raw=replace_once(raw,NAV,b'<button data-page="printer">Printer hardware</button><button data-page="printer-connections">Connections</button><button data-page="definitions">Definitions</button><button data-page="definition-sources">Definition sources</button>')
     raw=replace_once(raw,b'<div id="notice"',b'<div data-host-status id="notice"')
     raw=replace_once(raw,b'<article class="card" aria-live="polite">',b'<article data-host-status class="card" aria-live="polite">')
     raw=replace_once(raw,b'</main>',b'<!-- printer panel -->'+panel+b'<!-- /printer panel -->\n</main>')
@@ -134,7 +134,7 @@ def integrate_app(raw):
     raw=replace_once(raw,original,original.replace(b'function page(name, focus = true) {',b'function page(name, focus = true) {\n    if (window.sv08Navigation) { sv08Navigation.go(name); return; }',1))
     selector=b'main button:not([data-open]):not(#retry-submission):not([data-inspect-job])'
     if raw.count(selector)!=2: raise ValueError('Unknown host isolation anchors')
-    raw=raw.replace(selector,selector+b':not(#printer button):not(#definition-sources button):not(#printer-connections button)')
+    raw=raw.replace(selector,selector+b':not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button)')
     raw=replace_once(raw,b"} catch (error) { $('connection').textContent",b"} catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent")
     # Navigation invalidates pending host plans using the existing response epoch.
     return replace_once(raw,b"window.addEventListener('sv08-authority-changed', () => {",b"window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });\nwindow.addEventListener('sv08-authority-changed', () => {")
