@@ -1,48 +1,59 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "a205bcdcadb3168424e08cfbd5beacc0bd3959df5798d20f5a0fa058844c00c1",
+    "rationale": "Owner requests proposed lightweight graph and separate main navigation page.",
+    "reference": "docs/features/printer-connections-graph/owner-request.md",
+    "reference_sha256": "26fa24edde38c6a0e85f5487d1faf35ca312c8281dd1178393ad227a01bbb48e",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/printer-connections-graph/owner-request.md": "26fa24edde38c6a0e85f5487d1faf35ca312c8281dd1178393ad227a01bbb48e"
+    },
+    "scope_sha256": "4603d51982d00e758d0a54df005da361fba3ecb8dca77850dc010b64c3077535",
+    "session": "printer-connections-graph-20261006",
+    "source_commit": "4ed9d43f24628efd18f3bf596a04162dde1735df"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-06",
+  "decision": null,
   "format_version": 2,
   "id": "printer-connections-graph",
   "kind": "feature",
-  "title": "Blueprint-style printer connections page",
-  "author": "coordinator",
-  "created": "2026-10-06",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-connections-graph/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/printer-connections-graph/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate the offline journey",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible frontend and disposable fixture changes; no hardware operations.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "catalog/printer/",
+        "runtime/sv08_printer_fields.py",
+        "tests/test_printer_browser_fixture.py",
+        "ui/host/index.html"
+      ],
       "owned_paths": [
         "ui/printer/app.js",
         "ui/printer/panel.html",
@@ -55,12 +66,15 @@
         "docs/features/printer-connections-graph/evidence.md",
         "docs/features/printer-connections-graph/browser.json"
       ],
-      "input_paths": [
-        "catalog/printer/",
-        "runtime/sv08_printer_fields.py",
-        "tests/test_printer_browser_fixture.py",
-        "ui/host/index.html"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible frontend and disposable fixture changes; no hardware operations.",
+      "status": "pending",
+      "title": "Implement and validate the offline journey",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Blueprint-style printer connections page"
 }
