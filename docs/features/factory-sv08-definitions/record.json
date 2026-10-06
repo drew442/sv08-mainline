@@ -1,6 +1,22 @@
 {
   "author": "coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "71f0c83657b02d463aa0c5490a1a74d0cd00b1f22d73039bf39ed989797865c1",
+    "rationale": "Owner requests complete factory definitions using the pinned Sovol source; reversible development self-validated, installation separately assessed.",
+    "reference": "docs/features/factory-sv08-definitions/owner-request.md",
+    "reference_sha256": "310297e89bea4235b3565425a6f6d6f14c28f5fe360fc24a9cb0a9c6e4dc67cb",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/printer-definition-sources-design.md": "e411e1cbfb05fdb937ead0e60386e0717882b44edecfc50f7d58e10806dca279",
+      "docs/development/printer-hardware-page-design.md": "2ba0bfdcc43a7266e806ecf87dfba56f328462dff2347192371b189d4e97d692",
+      "docs/features/factory-sv08-definitions/owner-request.md": "310297e89bea4235b3565425a6f6d6f14c28f5fe360fc24a9cb0a9c6e4dc67cb"
+    },
+    "scope_sha256": "b2e842013026d16d2d1eea60df6358db749147dc0cac16afb5a5ffb8671c4f0e",
+    "session": "factory-sv08-definitions-20261006",
+    "source_commit": "f1c206e1d5fe6ef6f612c09bcb1796a2956f1d9e"
+  },
   "checks": [
     {
       "description": "Run the scoped behavior and regression checks; record actual results.",
