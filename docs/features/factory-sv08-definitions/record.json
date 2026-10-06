@@ -1,0 +1,87 @@
+{
+  "author": "coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-06",
+  "decision": null,
+  "format_version": 2,
+  "id": "factory-sv08-definitions",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/factory-sv08-definitions/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/factory-sv08-definitions/owner-request.md",
+    "docs/development/printer-hardware-page-design.md",
+    "docs/development/printer-definition-sources-design.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "offline-journey"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_state.py",
+        "runtime/sv08_data_budget.py",
+        "upstream-lock.json",
+        "ui/host/"
+      ],
+      "owned_paths": [
+        "runtime/sv08_printer_fields.py",
+        "runtime/sv08_printer_catalog.py",
+        "runtime/sv08_printer_compose.py",
+        "runtime/sv08_printer_definitions.py",
+        "runtime/sv08_printer_generate.py",
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_printer_publish.py",
+        "catalog/printer/catalog.json",
+        "catalog/printer/catalog.schema.json",
+        "catalog/printer/draft.schema.json",
+        "catalog/printer/definitions/builtin.json",
+        "scripts/update_factory_definitions.py",
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "tests/test_printer_definitions.py",
+        "tests/test_printer_configuration.py",
+        "tests/test_printer_publication.py",
+        "tests/test_factory_sv08.py",
+        "tests/printer_browser.mjs",
+        "docs/development/printer-public-format.md",
+        "docs/development/printer-hardware-catalog.md",
+        "docs/features/factory-sv08-definitions/evidence.md",
+        "docs/features/factory-sv08-definitions/browser.json",
+        "schemas/printer-definitions/v1/definition.schema.json",
+        "schemas/printer-definitions/v1/component.schema.json",
+        "schemas/printer-definitions/v1/board.schema.json",
+        "schemas/printer-definitions/v1/assembly.schema.json",
+        "schemas/printer-definitions/v1/behaviour.schema.json",
+        "schemas/printer-definitions/v1/connection.schema.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable offline fixtures. Live printer deployment and physical commissioning require separately assessed action before execution.",
+      "status": "pending",
+      "title": "Complete sourced factory hardware composition",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "Complete factory SV08 definitions"
+}
