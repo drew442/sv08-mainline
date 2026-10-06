@@ -33,7 +33,7 @@
     async function operation(fn) {
         if (busy) return; busy = true; controls();
         try { await fn(); }
-        catch (e) { invalidate(); notice(e.message + ' If a save was not acknowledged, reload to reconcile before retrying.'); }
+        catch (e) { invalidate(); notice(e.message + (reconcile ? ' Reload to reconcile before retrying.' : '')); }
         finally { busy = false; controls(); }
     }
     function el(tag,text) { const e=document.createElement(tag); if (text !== undefined) e.textContent=text; return e; }

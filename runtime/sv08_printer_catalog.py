@@ -184,8 +184,18 @@ class Catalog:
         names = {d['name'] for d in preset['devices']}
         if any(d['name'] in names and d['board'] != role for d in draft['devices']):
             raise ValueError('Component name belongs to another board')
+        # Legacy standalone temperature checks may use different names for the
+        # same physical input. Selecting its assembly replaces that sensor too,
+        # but must never remove a sensor used by a retained heater.
+        sensor_pins = {d['settings'].get('pin') for d in preset['devices'] if d['kind'] == 'sensor'}
+        replaced = names | {d['name'] for d in draft['devices']
+                            if d['board'] == role and d['kind'] == 'sensor'
+                            and d['settings'].get('pin') in sensor_pins}
+        if any(d['name'] not in replaced and d['settings'].get('sensor') in replaced
+               for d in draft['devices']):
+            raise ValueError('Component sensor is used by another heater')
         result = strict_json(encoded(draft))
-        result['devices'] = [d for d in result['devices'] if d['name'] not in names]
+        result['devices'] = [d for d in result['devices'] if d['name'] not in replaced]
         result = self.apply_preset(result, role, preset_id)
         for device in result['devices']:
             if device['name'] in names:

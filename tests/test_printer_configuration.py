@@ -121,6 +121,22 @@ class CatalogTests(unittest.TestCase):
             self.c.select_component(bad,'main','bed_assembly')
         self.assertEqual(d,before)
 
+    def test_component_replaces_legacy_standalone_sensor_on_its_input(self):
+        d=sensor_draft();d['devices'][0]['name']='bed_temperature';d['devices'][1]['name']='hotend_temperature'
+        before=copy.deepcopy(d)
+        bed=self.c.select_component(d,'main','funssor_cn3d_bed')
+        self.assertEqual(d,before)
+        self.assertNotIn('bed_temperature',{x['name'] for x in bed['devices']})
+        self.assertEqual(next(x for x in bed['devices'] if x['board']=='tool'),before['devices'][1])
+        hotend=self.c.select_component(bed,'tool','hotend_assembly')
+        self.assertNotIn('hotend_temperature',{x['name'] for x in hotend['devices']})
+        self.c.validate(hotend)
+        protected=copy.deepcopy(d)
+        protected['devices'].append(dict(name='other_heater',kind='bed',board='main',settings={'sensor':'bed_temperature','pin':'PA0'}))
+        with self.assertRaisesRegex(ValueError,'another heater'):
+            self.c.select_component(protected,'main','funssor_cn3d_bed')
+        self.assertEqual(d,before)
+
     def test_pt1000_and_advanced_custom_ntc_curve(self):
         d=sensor_draft();s=d['devices'][0]['settings'];s['curve']='pt1000'
         self.assertIn('sensor_type: PT1000',generate(self.c,d,'sensors')['text'])
