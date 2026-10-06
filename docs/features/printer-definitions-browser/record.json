@@ -43,11 +43,39 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/printer-definitions-browser/evidence.md",
+          "document_sha256": "fcd38d13f703381d72c81f8d92c398eb2923ffe479880e9ee48cf17920cab301",
+          "environment": "offline",
+          "limitations": "Offline Cockpit session/RPC shim, simulated MCU parser. No authenticated ARM64 or physical wiring/commissioning evidence, no outputs or configuration activation. Installation separately assessed.",
+          "method": "Coordinator self-validation: 12 staging tests, full Chromium real Store/Budget journey including built-in/external/disabled/unsupported catalogue, both grouping modes, dependency/component drill-down, search/back/keyboard/route/reload/responsive, no browsing RPC/draft writes; syntax, whitespace, stable diff and visual inspection.",
+          "profile": null,
+          "source_commit": "c8d7b57ac25792bf5f444ec69426e3e0ea5d6e60",
+          "source_sha256": {
+            "docs/features/printer-definitions-browser/browser.json": "e288847ff07e0d89866508dcaf06f74e4cdf4c0d488841793ddf502c4d18f612",
+            "docs/features/printer-definitions-browser/evidence.md": "fcd38d13f703381d72c81f8d92c398eb2923ffe479880e9ee48cf17920cab301",
+            "scripts/stage_printer_ui.py": "2bf57dc29443a3c5206e57d63abb492bb8a489c37efa1b2441b8aee1f662f3fa",
+            "tests/printer_browser.mjs": "2f888cffb5071f2d176211ae85137ad77dbb4df548d846b5335af12cdb580dd6",
+            "tests/test_stage_printer_ui.py": "8cf5edd443a84311aa238efcdee748e400f50332800d97fd7a7d6cf621aa23bb",
+            "ui/host/app.js": "f5be72badee0e64678ff1bd151cff843e76512df8c8478344c1060056de8df65",
+            "ui/host/navigation.js": "019cd243ccd42155c342d1ffcd11546feda3bb2325990d058b2a3441709effc0",
+            "ui/printer/app.js": "f4430d339bc4ed7e1faa1f7eb64888f01cf4a2725867627beb8d9bede08f93f3",
+            "ui/printer/panel.html": "5b46be7342dd00072cf2f75c87ddd333c26fb37cd0aeb724cc3ba090dd410c7d",
+            "ui/printer/style.css": "ef446ea351175ca4a3da5c66d5fb2797af8e21dd26621a64f60f15f45750b8b3"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "8315b9c178dd4a898702c39a3104eab8",
+        "session": "printer-definitions-browser-20261006"
+      },
       "input_paths": [
         "runtime/",
         "catalog/printer/",
@@ -73,9 +101,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible frontend and disposable fixtures; no hardware operation.",
-      "status": "pending",
+      "status": "done",
       "title": "Implement and validate the offline journey",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "8a4c81535d21185ae20d1d180fa0c53dc2f33f3227ba2cc15e1c8fe601645dbe",
+        "evidence_sha256": "757d92db5f9ec186e87ac9f056d9f2959b6cfd597ec9180d3f508027b26e7ab6",
+        "outcome": "passed",
+        "rationale": "Scoped staging and complete Chromium journey passed; catalogue coverage, read-only behavior, route, drill-down and stable diff inspected.",
+        "session": "printer-definitions-browser-20261006",
+        "source_commit": "c8d7b57ac25792bf5f444ec69426e3e0ea5d6e60"
+      },
       "verification": null
     }
   ],
