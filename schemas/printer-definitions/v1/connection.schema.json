@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "endpoint",
+    "board",
+    "connector",
+    "capability",
+    "board_ids"
+  ],
+  "properties": {
+    "endpoint": {
+      "type": "string"
+    },
+    "board": {
+      "enum": [
+        "main",
+        "tool",
+        "chamber"
+      ]
+    },
+    "connector": {
+      "type": "string"
+    },
+    "capability": {
+      "enum": [
+        "adc",
+        "heater",
+        "fan",
+        "probe",
+        "input",
+        "motor"
+      ]
+    },
+    "board_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "contact": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

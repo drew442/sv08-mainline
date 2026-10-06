@@ -79,8 +79,8 @@ def serve(work):
         def do_POST(self):
             try:
                 size=int(self.headers.get('Content-Length','0'))
-                if not 0<size<=135168:raise ValueError('Fixture input size bound')
-                request=strict_json(self.rfile.read(size),135168)
+                if not 0<size<=786432:raise ValueError('Fixture input size bound')
+                request=strict_json(self.rfile.read(size),786432)
                 if self.path=='/authority':
                     if set(request)!={'elevated'} or type(request['elevated']) is not bool:raise ValueError('Invalid fixture authority')
                     authority.update(request);result={}

@@ -12,15 +12,21 @@ import stat
 from sv08_state import atomic_json, fsync_dir
 from sv08_printer_catalog import encoded, digest, strict_json, empty_draft, BUNDLE_LIMIT
 from sv08_printer_generate import generate, GENERATOR_VERSION
+from sv08_printer_definitions import builtins
+from sv08_printer_compose import select_definition, migration_preview, remap_board, runtime_assets, catalog_for, remove_definition
+from sv08_printer_sources import GitHub, accept_source, bundle_preview
+from sv08_printer_publish import Publisher
 
 STORAGE_LIMIT = 4 * 1024 * 1024
 STATE_LIMIT = 2 * 1024 * 1024
 
 
 class PrinterStore:
-    def __init__(self, store, boot_path, config_view, catalog, privileged=lambda: os.geteuid() == 0):
+    def __init__(self, store, boot_path, config_view, catalog, privileged=lambda: os.geteuid() == 0, source_fetch=None, publication_admit=lambda:False,publication_validate=None):
         self.store, self.boot_path, self.config_view = store, Path(boot_path), Path(config_view)
         self.catalog, self.privileged = catalog, privileged
+        self.source_fetch, self.publication_admit = source_fetch, publication_admit
+        self.publication_validate=publication_validate
 
     def context(self):
         if not self.privileged():
@@ -87,7 +93,7 @@ class PrinterStore:
             return dict(format_version=1,revision=0,draft=empty_draft(),current=None,previous=None)
         if path.stat().st_size>STATE_LIMIT:raise ValueError('Stored envelope is oversized; original retained')
         value=strict_json(path.read_bytes(),STATE_LIMIT)
-        if not isinstance(value,dict) or set(value)!= {'format_version','revision','draft','current','previous'}:
+        if not isinstance(value,dict) or not {'format_version','revision','draft','current','previous'} <= set(value) or set(value)-{'format_version','revision','draft','current','previous','sources'}:
             raise ValueError('Corrupt configuration state; originals retained')
         if value['format_version']!=1:
             if writable:raise ValueError('Unsupported stored schema; export original for diagnosis')
@@ -95,7 +101,7 @@ class PrinterStore:
         if type(value['revision']) is not int or value['revision']<0:
             raise ValueError('Corrupt revision; original retained')
         if writable:
-            self.catalog.validate(value['draft'])
+            catalog_for(value['draft'],self.catalog).validate(value['draft'])
             for candidate in (value['current'],value['previous']):
                 if candidate is not None:
                     if not isinstance(candidate,dict) or set(candidate)!={'draft','mode','text','catalog','generator','id'}:
@@ -134,8 +140,18 @@ class PrinterStore:
     def identity(self, state, context, mode):
         return digest(dict(revision=state['revision'],draft=state['draft'],
                            current=state['current']['id'] if state['current'] else None,
-                           catalog=self.catalog.revision,generator=GENERATOR_VERSION,
+                           catalog=self.catalog.revision,sources=state.get('sources',{}),generator=GENERATOR_VERSION,
                            mode=mode,context=context))
+
+    def definitions(self,state):
+        rows=[]
+        for record in builtins(self.catalog):
+            rows.append(dict(record=record,reference=dict(source='builtin',id=record['id'],version=record['version'],sha256=digest(record),commit=self.catalog.revision),origin='Built-in'))
+        for source in state.get('sources',{}).values():
+            if not source['enabled']:continue
+            for record in source['records']:
+                rows.append(dict(record=record,reference=dict(source=source['id'],id=record['id'],version=record['version'],sha256=digest(record),commit=source['commit']),origin=source.get('repository','Local definition')))
+        return rows
 
     def request(self, request):
         if not isinstance(request,dict) or 'action' not in request:
@@ -146,6 +162,24 @@ class PrinterStore:
                  'restore':{'action','expected_revision'},'import':{'action','draft','expected_revision'},
                  'preset':{'action','draft','role','preset','expected_revision'},
                  'component':{'action','draft','role','preset','expected_revision'}}
+        allowed.update({
+            'migration':{'action','expected_revision'},
+            'review_draft':{'action','draft','mode','expected_revision'},
+            'board_preview':{'action','draft','role','board','expected_revision'},
+            'definition':{'action','draft','reference','expected_revision'},
+            'definition_remove':{'action','draft','reference','expected_revision'},
+            'source_preview':{'action','url','ref','path','expected_revision'},
+            'bundle_preview':{'action','bundle','expected_revision'},
+            'source_add':{'action','source','expected_revision'},
+            'source_check':{'action','source_id','expected_revision'},
+            'source_disable':{'action','source_id','expected_revision'},
+            'source_enable':{'action','source_id','expected_revision'},
+            'source_remove':{'action','source_id','expected_revision'},
+            'publication_review':{'action','expected_revision'},
+            'publication_apply':{'action','expected_revision','review'},
+            'publication_restore_review':{'action','expected_revision'},
+            'publication_restore':{'action','expected_revision','review'},
+            'publication_reconcile':{'action','expected_revision'}})
         if action in allowed and action != 'status':
             allowed[action] = allowed[action] | {'expected_identity'}
         if action not in allowed or set(request)!=allowed[action]:
@@ -153,18 +187,75 @@ class PrinterStore:
         # Exact finite schemas include the identity of the last loaded status.
         with self.locked() as (context,record):
             state=self.load(writable=action!='status')
+            if action=='status' and (state['format_version']!=1 or not isinstance(state.get('draft'),dict) or state['draft'].get('format_version')!=1):
+                # Future envelopes are opaque diagnostic data, never composed.
+                return dict(state=state,catalog=self.catalog.data,context=context,catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,loaded_identity=digest(dict(state=state,context=context)),definitions=[],sources={},migration_available=False)
+            available=[row['record'] for row in self.definitions(state)]
+            effective=catalog_for(request.get('draft',state['draft']),self.catalog,available)
             if action=='status':
-                return dict(state=state,catalog=self.catalog.data,context=context,
+                return dict(state=state,catalog=effective.data,context=context,
                             catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,
-                            loaded_identity=self.identity(state,context,None))
+                            loaded_identity=self.identity(state,context,None),definitions=self.definitions(state),sources=state.get('sources',{}),migration_available='definition_plan' not in state['draft'])
             if 'expected_revision' in request:
                 messages={'import':'importing','preset':'selecting defaults','component':'selecting hardware','save':'saving','restore':'saving'}
                 if type(request['expected_revision']) is not int or request['expected_revision']!=state['revision']:
-                    raise ValueError('Draft changed in another session; refresh before '+messages[action])
+                    raise ValueError('Draft changed in another session; refresh before '+messages.get(action,'continuing'))
             if request['expected_identity'] != self.identity(state,context,None):
                 raise ValueError('Loaded configuration context is stale; refresh before continuing')
+            if action=='review_draft':return dict(**generate(self.catalog,request['draft'],request['mode']),review=None,revision=state['revision'])
+            if action=='migration':return migration_preview(state['draft'],self.catalog,builtins(self.catalog))
+            if action=='board_preview':return remap_board(request['draft'],request['role'],request['board'],effective)
+            if action=='definition_remove':return dict(draft=remove_definition(effective,request['draft'],request['reference']))
+            if action=='definition':
+                effective.validate(request['draft'])
+                snapshots={}
+                for row in self.definitions(state):
+                    snapshots[row['reference']['source']+'::'+row['record']['id']+'@'+row['record']['version']]=row['record']
+                return dict(draft=select_definition(effective,request['draft'],request['reference'],snapshots))
+            if action=='source_preview':return GitHub(self.source_fetch).preview(request['url'],self.catalog,request['ref'],request['path'])
+            if action=='bundle_preview':return bundle_preview(request['bundle'],self.catalog)
+            if action=='source_check':
+                source=state.get('sources',{}).get(request['source_id'])
+                if not source or not source['enabled'] or source['origin']!='github':raise ValueError('No enabled GitHub source')
+                return GitHub(self.source_fetch).preview(source['url'],self.catalog,source['ref'],source['path'])
+            if action in ('source_add','source_disable','source_enable','source_remove'):
+                sources=state.get('sources',{})
+                if action=='source_add':
+                    candidate=request['source']
+                    if candidate.get('origin')=='github':
+                        verified=GitHub(self.source_fetch).preview(candidate['url'],self.catalog,candidate['commit'],candidate['path'])
+                        verified['ref']=candidate['ref']
+                        if digest(verified)!=digest(candidate):raise ValueError('Source preview changed; preview again')
+                    for retained in [state['draft'],*[c['draft'] for c in (state['current'],state['previous']) if c]]:
+                        snapshots=retained.get('definition_plan',{}).get('snapshots',{})
+                        for definition in candidate['records']:
+                            key=candidate['id']+'::'+definition['id']+'@'+definition['version']
+                            if key in snapshots and digest(snapshots[key])!=digest(definition):raise ValueError('Pinned version changed; author must bump version')
+                    sources=accept_source(sources,candidate,self.catalog)
+                else:
+                    if request['source_id'] not in sources:raise ValueError('Unknown source')
+                    sources=dict(sources)
+                    if action in ('source_disable','source_enable'):sources[request['source_id']]={**sources[request['source_id']],'enabled':action=='source_enable'}
+                    else:del sources[request['source_id']]
+                state.update(sources=sources,revision=state['revision']+1);self.publish(state,record)
+                return dict(revision=state['revision'],message='Definition source updated; selected snapshots unchanged')
+            if action.startswith('publication_'):
+                if action in ('publication_restore_review','publication_restore'):
+                    publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate)
+                    if action=='publication_restore_review':return publisher.restore_preview(context)
+                    return publisher.restore(request['review'],context)
+                if action=='publication_reconcile':return Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate).reconcile()
+                if not state['current'] or state['current']['mode']!='full' or digest(state['current']['draft'])!=digest(state['draft']):raise ValueError('Save a complete full candidate for these selections before publication')
+                generated=generate(self.catalog,state['draft'],'full')
+                if not generated['complete'] or generated['text']!=state['current']['text']:raise ValueError('Candidate or definition lock changed; regenerate before publication')
+                files={'hardware.cfg':generated['text']}
+                publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate)
+                plan=self.identity(state,context,'full')
+                if action=='publication_review':return publisher.preview(files,context,plan)
+                result=publisher.apply(request['review'],files,context,plan)
+                return dict(applied=True,receipt=result,message='Managed configuration applied; printer remains stopped. Commission changed components separately.')
             if action=='import':
-                self.catalog.validate(request['draft'])
+                effective.validate(request['draft'])
                 return dict(draft=request['draft'],changed=digest(request['draft'])!=digest(state['draft']),expected_revision=state['revision'])
             if action=='preset':
                 return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
@@ -175,7 +266,19 @@ class PrinterStore:
                     if not state['previous']:raise ValueError('No previous candidate')
                     draft=state['previous']['draft']
                 else:draft=request['draft']
-                self.catalog.validate(draft)
+                catalog_for(draft,self.catalog,available).validate(draft)
+                if 'definition_plan' in draft:
+                    # Keep old assets unless an explicit new override requires a lock.
+                    draft=json.loads(json.dumps(draft))
+                    pinned=draft['definition_plan'].get('runtime_assets')
+                    updated=runtime_assets(draft,catalog_for(draft,self.catalog,available))
+                    if pinned:
+                        old_curves={c['id']:c for c in pinned['curves']}
+                        for c in updated['curves']:
+                            if c['id'] in old_curves:c.update(old_curves[c['id']])
+                        old_boards={b['id']:b for b in pinned['boards']}
+                        updated['boards']=[old_boards.get(b['id'],b) for b in updated['boards']]
+                    draft['definition_plan']['runtime_assets']=updated
                 state.update(draft=draft,revision=state['revision']+1)
                 self.publish(state,record)
                 return dict(revision=state['revision'],message='Draft saved' if action=='save' else 'Previous draft restored; review before applying')

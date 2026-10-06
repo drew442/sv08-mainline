@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -31,6 +32,12 @@ class StageTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'Afterimage'):stage.restore(root,report)
             self.assertEqual((root/'usr/share/cockpit/sv08-host/index.html').read_text(),html)
             target.write_bytes(raw);stage.restore(root,report);self.assertEqual(stage.inventory(root,expected),expected)
+    def test_validation_asset_requires_exact_pinned_dictionary(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            fake=Path(temporary)/'dict';fake.write_bytes(b'wrong revision')
+            with self.assertRaisesRegex(ValueError,'revision'):stage.payload(fake)
+        source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'
+        if source.exists():self.assertEqual(stage.payload(source)['usr/share/sv08/printer/validation/klipper.dict'],source.read_bytes())
     def test_unknown_preimage_refuses_before_mutation(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);self.fixture(root);target=root/'usr/share/cockpit/sv08-host/app.js';target.write_bytes(b'unknown')

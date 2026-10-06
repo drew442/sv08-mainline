@@ -1,0 +1,53 @@
+{
+  "format_version": "0.1",
+  "id": "no-additional-check-example",
+  "version": "0.1.0",
+  "kind": "behaviour",
+  "name": "No additional check in this sample",
+  "description": "Factory reference: no additional levelling policy is contributed.",
+  "aliases": [],
+  "category": "probe",
+  "hardware": {
+    "product": "Bed heater + temperature sensor \u00b7 reference",
+    "revision": "unknown installed/drawing revision"
+  },
+  "compatibility": {
+    "requires_capabilities": [
+      "klipper.settings.v1"
+    ],
+    "boards": [
+      "sv08-main"
+    ],
+    "unknown": [
+      "MCU clock/offset",
+      "installed match",
+      "electrical ratings",
+      "complete connector inventory"
+    ]
+  },
+  "sources": [
+    {
+      "id": "reference",
+      "url": "https://github.com/drew442/sv08-mainline",
+      "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+      "locator": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg"
+    },
+    {
+      "id": "commissioning-policy",
+      "url": "https://github.com/drew442/sv08-mainline/blob/main/runtime/sv08_printer_definitions.py",
+      "revision": "generator-6",
+      "locator": "builtins: exclude instance calibration and physical motor ratings; watermark until measured PID gains"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "calibration": [],
+  "behaviours": [
+    {
+      "hook": "levelling.preconditions",
+      "operation": "none",
+      "sources": [
+        "software-example"
+      ]
+    }
+  ]
+}

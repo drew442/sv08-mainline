@@ -153,6 +153,46 @@
           "exclusiveMinimum": 0
         }
       }
+    },
+    "definition_plan": {
+      "type": "object",
+      "required": [
+        "format_version",
+        "selections",
+        "snapshots"
+      ],
+      "properties": {
+        "format_version": {
+          "const": 1
+        },
+        "selections": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object"
+          }
+        },
+        "snapshots": {
+          "type": "object"
+        },
+        "origins": {
+          "type": "object"
+        },
+        "overrides": {
+          "type": "object"
+        },
+        "runtime_assets": {
+          "type": "object"
+        },
+        "instance_values": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "custom_config": {
+      "type": "string",
+      "maxLength": 65536
     }
   }
 }

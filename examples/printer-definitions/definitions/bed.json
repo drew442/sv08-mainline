@@ -1,0 +1,98 @@
+{
+  "format_version": "0.1",
+  "id": "sv08-bed",
+  "version": "0.1.0",
+  "kind": "component",
+  "name": "Bed heater + temperature sensor \u00b7 reference",
+  "description": "Configured PID and thermal bounds are source software values, not measured limits or a new calibration. Missing output limits remain unknown. Uncalibrated heater control uses watermark; measured PID calibration is a separate commissioning task.",
+  "aliases": [],
+  "category": "bed",
+  "hardware": {
+    "product": "Bed heater + temperature sensor \u00b7 reference",
+    "revision": "unknown installed/drawing revision"
+  },
+  "compatibility": {
+    "requires_capabilities": [
+      "klipper.settings.v1"
+    ],
+    "boards": [
+      "sv08-main"
+    ],
+    "unknown": [
+      "MCU clock/offset",
+      "installed match",
+      "electrical ratings",
+      "complete connector inventory"
+    ]
+  },
+  "sources": [
+    {
+      "id": "reference",
+      "url": "https://github.com/drew442/sv08-mainline",
+      "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+      "locator": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg"
+    },
+    {
+      "id": "commissioning-policy",
+      "url": "https://github.com/drew442/sv08-mainline/blob/main/runtime/sv08_printer_definitions.py",
+      "revision": "generator-6",
+      "locator": "builtins: exclude instance calibration and physical motor ratings; watermark until measured PID gains"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "components": [
+    {
+      "name": "bed_sensor",
+      "kind": "sensor",
+      "board": "main",
+      "settings": {
+        "curve": "sovol-bed",
+        "min_temp": 5,
+        "max_temp": 105,
+        "pullup_resistor": 4700
+      },
+      "endpoints": {
+        "pin": "bed_sensor.pin"
+      }
+    },
+    {
+      "name": "heater_bed",
+      "kind": "bed",
+      "board": "main",
+      "settings": {
+        "invert": false,
+        "max_power": 1,
+        "control": "watermark",
+        "sensor": "bed_sensor"
+      },
+      "endpoints": {
+        "pin": "heater_bed.pin"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "endpoint": "bed_sensor.pin",
+      "board": "main",
+      "connector": "heater_bed / sensor_pin",
+      "capability": "adc",
+      "board_ids": [
+        "sv08-main"
+      ],
+      "contact": null
+    },
+    {
+      "endpoint": "heater_bed.pin",
+      "board": "main",
+      "connector": "heater_bed / heater_pin",
+      "capability": "heater",
+      "board_ids": [
+        "sv08-main"
+      ],
+      "contact": null
+    }
+  ],
+  "calibration": [
+    "thermal_pid"
+  ]
+}

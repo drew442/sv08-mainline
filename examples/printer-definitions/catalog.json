@@ -1,0 +1,35 @@
+{
+  "format_version": "0.1",
+  "catalog_id": "sv08-example-definitions",
+  "name": "SV08 creator starter",
+  "publisher": {
+    "name": "SV08 Mainline contributors"
+  },
+  "license": "GPL-3.0-or-later",
+  "definitions": [
+    {
+      "id": "sv08-bed-bundle",
+      "version": "0.1.0",
+      "path": "definitions/assembly.json",
+      "sha256": "e1a508adeb7b357ce66a7e6d9d20f6f5d0a5e780a0b504fe8406f1666ec3d9bc"
+    },
+    {
+      "id": "sv08-bed",
+      "version": "0.1.0",
+      "path": "definitions/bed.json",
+      "sha256": "481c1b5a6596d4e73cc277bfd4cd2512a957419b8c3898603282554c9a11ea84"
+    },
+    {
+      "id": "no-additional-check-example",
+      "version": "0.1.0",
+      "path": "definitions/behaviour.json",
+      "sha256": "3772825888447793ee9e1d7609ac0c0fbe2790b12b1c01b2d16e854931e75e8e"
+    },
+    {
+      "id": "sv08-mainboard",
+      "version": "0.1.0",
+      "path": "definitions/board.json",
+      "sha256": "113fa42c2048b9e88c782615759da8baa197121cddd199ae1be52e8b96f58104"
+    }
+  ]
+}

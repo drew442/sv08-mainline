@@ -1,0 +1,899 @@
+{
+  "format_version": "0.1",
+  "id": "sv08-mainboard",
+  "version": "0.1.0",
+  "kind": "board",
+  "name": "SV08 factory mainboard example",
+  "description": "Reference mapping only; installed identity and electrical ratings require confirmation.",
+  "category": "boards",
+  "hardware": {
+    "product": "Sovol SV08 original mainboard reference",
+    "revision": "unknown installed/drawing revision"
+  },
+  "compatibility": {
+    "requires_capabilities": [
+      "klipper.settings.v1"
+    ],
+    "unknown": [
+      "MCU clock/offset",
+      "installed match",
+      "electrical ratings",
+      "complete connector inventory"
+    ]
+  },
+  "sources": [
+    {
+      "id": "reference",
+      "url": "https://github.com/drew442/sv08-mainline",
+      "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+      "locator": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "mapping": {
+    "id": "sv08-main",
+    "label": "Sovol SV08 original mainboard reference",
+    "role": "main",
+    "revision": "unknown installed/drawing revision",
+    "source": {
+      "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+      "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+      "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+      "accessed": "2026-10-04",
+      "drawing": {
+        "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+        "page": 1,
+        "revision": "unknown drawing revision",
+        "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+      }
+    },
+    "evidence": "documented-reference",
+    "warning": "Reference mapping only; installed identity and electrical ratings require confirmation.",
+    "unknowns": [
+      "MCU clock/offset",
+      "installed match",
+      "electrical ratings",
+      "complete connector inventory"
+    ],
+    "signals": {
+      "PE2": {
+        "capabilities": [
+          "step"
+        ],
+        "source": {
+          "line": 161,
+          "section": "stepper_x",
+          "option": "step_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE0": {
+        "capabilities": [
+          "dir"
+        ],
+        "source": {
+          "line": 162,
+          "section": "stepper_x",
+          "option": "dir_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE3": {
+        "capabilities": [
+          "enable"
+        ],
+        "source": {
+          "line": 163,
+          "section": "stepper_x",
+          "option": "enable_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE1": {
+        "capabilities": [
+          "uart"
+        ],
+        "source": {
+          "line": 176,
+          "section": "tmc2209 stepper_x",
+          "option": "uart_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE15": {
+        "capabilities": [
+          "input"
+        ],
+        "source": {
+          "line": 184,
+          "section": "tmc2209 stepper_x",
+          "option": "diag_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PB8": {
+        "capabilities": [
+          "step"
+        ],
+        "source": {
+          "line": 187,
+          "section": "stepper_y",
+          "option": "step_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PB6": {
+        "capabilities": [
+          "dir"
+        ],
+        "source": {
+          "line": 188,
+          "section": "stepper_y",
+          "option": "dir_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PB9": {
+        "capabilities": [
+          "enable"
+        ],
+        "source": {
+          "line": 189,
+          "section": "stepper_y",
+          "option": "enable_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PB7": {
+        "capabilities": [
+          "uart"
+        ],
+        "source": {
+          "line": 202,
+          "section": "tmc2209 stepper_y",
+          "option": "uart_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE13": {
+        "capabilities": [
+          "input"
+        ],
+        "source": {
+          "line": 210,
+          "section": "tmc2209 stepper_y",
+          "option": "diag_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PC0": {
+        "capabilities": [
+          "step"
+        ],
+        "source": {
+          "line": 213,
+          "section": "stepper_z",
+          "option": "step_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE5": {
+        "capabilities": [
+          "dir"
+        ],
+        "source": {
+          "line": 214,
+          "section": "stepper_z",
+          "option": "dir_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PC1": {
+        "capabilities": [
+          "enable"
+        ],
+        "source": {
+          "line": 215,
+          "section": "stepper_z",
+          "option": "enable_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE6": {
+        "capabilities": [
+          "uart"
+        ],
+        "source": {
+          "line": 229,
+          "section": "tmc2209 stepper_z",
+          "option": "uart_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD3": {
+        "capabilities": [
+          "step"
+        ],
+        "source": {
+          "line": 238,
+          "section": "stepper_z1",
+          "option": "step_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD1": {
+        "capabilities": [
+          "dir"
+        ],
+        "source": {
+          "line": 239,
+          "section": "stepper_z1",
+          "option": "dir_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD4": {
+        "capabilities": [
+          "enable"
+        ],
+        "source": {
+          "line": 240,
+          "section": "stepper_z1",
+          "option": "enable_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD2": {
+        "capabilities": [
+          "uart"
+        ],
+        "source": {
+          "line": 246,
+          "section": "tmc2209 stepper_z1",
+          "option": "uart_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD7": {
+        "capabilities": [
+          "step"
+        ],
+        "source": {
+          "line": 255,
+          "section": "stepper_z2",
+          "option": "step_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD5": {
+        "capabilities": [
+          "dir"
+        ],
+        "source": {
+          "line": 256,
+          "section": "stepper_z2",
+          "option": "dir_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PB5": {
+        "capabilities": [
+          "enable"
+        ],
+        "source": {
+          "line": 257,
+          "section": "stepper_z2",
+          "option": "enable_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD6": {
+        "capabilities": [
+          "uart"
+        ],
+        "source": {
+          "line": 263,
+          "section": "tmc2209 stepper_z2",
+          "option": "uart_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD11": {
+        "capabilities": [
+          "step"
+        ],
+        "source": {
+          "line": 272,
+          "section": "stepper_z3",
+          "option": "step_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD9": {
+        "capabilities": [
+          "dir"
+        ],
+        "source": {
+          "line": 273,
+          "section": "stepper_z3",
+          "option": "dir_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD12": {
+        "capabilities": [
+          "enable"
+        ],
+        "source": {
+          "line": 274,
+          "section": "stepper_z3",
+          "option": "enable_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PD10": {
+        "capabilities": [
+          "uart"
+        ],
+        "source": {
+          "line": 280,
+          "section": "tmc2209 stepper_z3",
+          "option": "uart_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PE9": {
+        "capabilities": [
+          "input"
+        ],
+        "source": {
+          "line": 339,
+          "section": "filament_switch_sensor filament_sensor",
+          "option": "switch_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PA0": {
+        "capabilities": [
+          "heater"
+        ],
+        "source": {
+          "line": 350,
+          "section": "heater_bed",
+          "option": "heater_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PC5": {
+        "capabilities": [
+          "adc"
+        ],
+        "source": {
+          "line": 352,
+          "section": "heater_bed",
+          "option": "sensor_pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      },
+      "PA2": {
+        "capabilities": [
+          "fan"
+        ],
+        "source": {
+          "line": 376,
+          "section": "fan_generic fan3",
+          "option": "pin",
+          "reference_only": false
+        },
+        "reserved": false,
+        "evidence": "documented-reference"
+      }
+    },
+    "connectors": {
+      "stepper_x / step_pin": {
+        "pin": "PE2",
+        "capability": "step",
+        "contact": null,
+        "label": "stepper_x / step_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 161,
+          "section": "stepper_x",
+          "option": "step_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_x / dir_pin": {
+        "pin": "PE0",
+        "capability": "dir",
+        "contact": null,
+        "label": "stepper_x / dir_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 162,
+          "section": "stepper_x",
+          "option": "dir_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_x / enable_pin": {
+        "pin": "PE3",
+        "capability": "enable",
+        "contact": null,
+        "label": "stepper_x / enable_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 163,
+          "section": "stepper_x",
+          "option": "enable_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_x / uart_pin": {
+        "pin": "PE1",
+        "capability": "uart",
+        "contact": null,
+        "label": "tmc2209 stepper_x / uart_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 176,
+          "section": "tmc2209 stepper_x",
+          "option": "uart_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_x / diag_pin": {
+        "pin": "PE15",
+        "capability": "input",
+        "contact": "signal (contact number unknown)",
+        "label": "X-axis limit",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 184,
+          "section": "tmc2209 stepper_x",
+          "option": "diag_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_y / step_pin": {
+        "pin": "PB8",
+        "capability": "step",
+        "contact": null,
+        "label": "stepper_y / step_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 187,
+          "section": "stepper_y",
+          "option": "step_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_y / dir_pin": {
+        "pin": "PB6",
+        "capability": "dir",
+        "contact": null,
+        "label": "stepper_y / dir_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 188,
+          "section": "stepper_y",
+          "option": "dir_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_y / enable_pin": {
+        "pin": "PB9",
+        "capability": "enable",
+        "contact": null,
+        "label": "stepper_y / enable_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 189,
+          "section": "stepper_y",
+          "option": "enable_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_y / uart_pin": {
+        "pin": "PB7",
+        "capability": "uart",
+        "contact": null,
+        "label": "tmc2209 stepper_y / uart_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 202,
+          "section": "tmc2209 stepper_y",
+          "option": "uart_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_y / diag_pin": {
+        "pin": "PE13",
+        "capability": "input",
+        "contact": "signal (contact number unknown)",
+        "label": "Y-axis limit",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 210,
+          "section": "tmc2209 stepper_y",
+          "option": "diag_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z / step_pin": {
+        "pin": "PC0",
+        "capability": "step",
+        "contact": null,
+        "label": "stepper_z / step_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 213,
+          "section": "stepper_z",
+          "option": "step_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z / dir_pin": {
+        "pin": "PE5",
+        "capability": "dir",
+        "contact": null,
+        "label": "stepper_z / dir_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 214,
+          "section": "stepper_z",
+          "option": "dir_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z / enable_pin": {
+        "pin": "PC1",
+        "capability": "enable",
+        "contact": null,
+        "label": "stepper_z / enable_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 215,
+          "section": "stepper_z",
+          "option": "enable_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_z / uart_pin": {
+        "pin": "PE6",
+        "capability": "uart",
+        "contact": null,
+        "label": "tmc2209 stepper_z / uart_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 229,
+          "section": "tmc2209 stepper_z",
+          "option": "uart_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z1 / step_pin": {
+        "pin": "PD3",
+        "capability": "step",
+        "contact": null,
+        "label": "stepper_z1 / step_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 238,
+          "section": "stepper_z1",
+          "option": "step_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z1 / dir_pin": {
+        "pin": "PD1",
+        "capability": "dir",
+        "contact": null,
+        "label": "stepper_z1 / dir_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 239,
+          "section": "stepper_z1",
+          "option": "dir_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z1 / enable_pin": {
+        "pin": "PD4",
+        "capability": "enable",
+        "contact": null,
+        "label": "stepper_z1 / enable_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 240,
+          "section": "stepper_z1",
+          "option": "enable_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_z1 / uart_pin": {
+        "pin": "PD2",
+        "capability": "uart",
+        "contact": null,
+        "label": "tmc2209 stepper_z1 / uart_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 246,
+          "section": "tmc2209 stepper_z1",
+          "option": "uart_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z2 / step_pin": {
+        "pin": "PD7",
+        "capability": "step",
+        "contact": null,
+        "label": "stepper_z2 / step_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 255,
+          "section": "stepper_z2",
+          "option": "step_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z2 / dir_pin": {
+        "pin": "PD5",
+        "capability": "dir",
+        "contact": null,
+        "label": "stepper_z2 / dir_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 256,
+          "section": "stepper_z2",
+          "option": "dir_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z2 / enable_pin": {
+        "pin": "PB5",
+        "capability": "enable",
+        "contact": null,
+        "label": "stepper_z2 / enable_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 257,
+          "section": "stepper_z2",
+          "option": "enable_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_z2 / uart_pin": {
+        "pin": "PD6",
+        "capability": "uart",
+        "contact": null,
+        "label": "tmc2209 stepper_z2 / uart_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 263,
+          "section": "tmc2209 stepper_z2",
+          "option": "uart_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z3 / step_pin": {
+        "pin": "PD11",
+        "capability": "step",
+        "contact": null,
+        "label": "stepper_z3 / step_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 272,
+          "section": "stepper_z3",
+          "option": "step_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z3 / dir_pin": {
+        "pin": "PD9",
+        "capability": "dir",
+        "contact": null,
+        "label": "stepper_z3 / dir_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 273,
+          "section": "stepper_z3",
+          "option": "dir_pin",
+          "reference_only": false
+        }
+      },
+      "stepper_z3 / enable_pin": {
+        "pin": "PD12",
+        "capability": "enable",
+        "contact": null,
+        "label": "stepper_z3 / enable_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 274,
+          "section": "stepper_z3",
+          "option": "enable_pin",
+          "reference_only": false
+        }
+      },
+      "tmc2209 stepper_z3 / uart_pin": {
+        "pin": "PD10",
+        "capability": "uart",
+        "contact": null,
+        "label": "tmc2209 stepper_z3 / uart_pin",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 280,
+          "section": "tmc2209 stepper_z3",
+          "option": "uart_pin",
+          "reference_only": false
+        }
+      },
+      "filament_switch_sensor filament_sensor / switch_pin": {
+        "pin": "PE9",
+        "capability": "input",
+        "contact": "signal (contact number unknown)",
+        "label": "Filament detection",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 339,
+          "section": "filament_switch_sensor filament_sensor",
+          "option": "switch_pin",
+          "reference_only": false
+        }
+      },
+      "heater_bed / heater_pin": {
+        "pin": "PA0",
+        "capability": "heater",
+        "contact": "signal (contact number unknown)",
+        "label": "Heated bed output",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 350,
+          "section": "heater_bed",
+          "option": "heater_pin",
+          "reference_only": false
+        }
+      },
+      "heater_bed / sensor_pin": {
+        "pin": "PC5",
+        "capability": "adc",
+        "contact": "signal (contact number unknown)",
+        "label": "Heated bed thermistor",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 352,
+          "section": "heater_bed",
+          "option": "sensor_pin",
+          "reference_only": false
+        }
+      },
+      "fan_generic fan3 / pin": {
+        "pin": "PA2",
+        "capability": "fan",
+        "contact": "signal (contact number unknown)",
+        "label": "Exhaust fan 2",
+        "evidence": "documented-reference",
+        "source": {
+          "line": 376,
+          "section": "fan_generic fan3",
+          "option": "pin",
+          "reference_only": false
+        }
+      }
+    },
+    "motors": {
+      "stepper_x": {
+        "step": "PE2",
+        "dir": "PE0",
+        "enable": "PE3",
+        "uart": "PE1"
+      },
+      "stepper_y": {
+        "step": "PB8",
+        "dir": "PB6",
+        "enable": "PB9",
+        "uart": "PB7"
+      },
+      "stepper_z": {
+        "step": "PC0",
+        "dir": "PE5",
+        "enable": "PC1",
+        "uart": "PE6"
+      },
+      "stepper_z1": {
+        "step": "PD3",
+        "dir": "PD1",
+        "enable": "PD4",
+        "uart": "PD2"
+      },
+      "stepper_z2": {
+        "step": "PD7",
+        "dir": "PD5",
+        "enable": "PB5",
+        "uart": "PD6"
+      },
+      "stepper_z3": {
+        "step": "PD11",
+        "dir": "PD9",
+        "enable": "PD12",
+        "uart": "PD10"
+      }
+    },
+    "channel_counts": {
+      "adc": 1,
+      "heater": 1,
+      "fan": 1,
+      "step": 6,
+      "uart": 6,
+      "input": 3,
+      "probe": 0
+    },
+    "channel_scope": "Only evidenced selectable channels, not total physical capacity",
+    "sharing_rules": [],
+    "reserved_pins": {
+      "PA11": "USB transport",
+      "PA12": "USB transport"
+    },
+    "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
+    "reservation_evidence": "Klipper MCU USB dictionary RESERVE_PINS_USB (SV08) / explicit sample USB PA11/PA12 (EBB)",
+    "presets": []
+  }
+}

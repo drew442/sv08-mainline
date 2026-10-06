@@ -1,0 +1,60 @@
+{
+  "format_version": "0.1",
+  "id": "sv08-bed-bundle",
+  "version": "0.1.0",
+  "kind": "assembly",
+  "name": "Bed heater + temperature sensor \u00b7 reference",
+  "description": "Configured PID and thermal bounds are source software values, not measured limits or a new calibration. Missing output limits remain unknown. Uncalibrated heater control uses watermark; measured PID calibration is a separate commissioning task.",
+  "aliases": [],
+  "category": "bed",
+  "hardware": {
+    "product": "Bed heater + temperature sensor \u00b7 reference",
+    "revision": "unknown installed/drawing revision"
+  },
+  "compatibility": {
+    "requires_capabilities": [
+      "klipper.settings.v1"
+    ],
+    "boards": [
+      "sv08-main"
+    ],
+    "unknown": [
+      "MCU clock/offset",
+      "installed match",
+      "electrical ratings",
+      "complete connector inventory"
+    ]
+  },
+  "sources": [
+    {
+      "id": "reference",
+      "url": "https://github.com/drew442/sv08-mainline",
+      "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+      "locator": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg"
+    },
+    {
+      "id": "commissioning-policy",
+      "url": "https://github.com/drew442/sv08-mainline/blob/main/runtime/sv08_printer_definitions.py",
+      "revision": "generator-6",
+      "locator": "builtins: exclude instance calibration and physical motor ratings; watermark until measured PID gains"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "components": [],
+  "connections": [],
+  "calibration": [
+    "thermal_pid"
+  ],
+  "dependencies": [
+    {
+      "id": "sv08-bed",
+      "version": "0.1.0",
+      "sha256": "14d2cd04418192f81ea31f4bc3445dcadcf247770a61d2d3cabee7790c169a96"
+    },
+    {
+      "id": "sv08-mainboard",
+      "version": "0.1.0",
+      "sha256": "4bd337e44ec287c9780e93c2dc5c5af8d2213bcee334e871d131b74d2c33f7c4"
+    }
+  ]
+}

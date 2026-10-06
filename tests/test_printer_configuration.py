@@ -304,6 +304,32 @@ class PersistenceTests(unittest.TestCase):
         self.boot_path.write_text(json.dumps(boot))
         self.view.unlink();self.view.symlink_to(Path(boot['generation'])/'config')
 
+    def test_future_opaque_draft_is_exportable_without_composition(self):
+        self.save(sensor_draft());path=self.service.directory/'state.json';future=self.status()
+        future.update(format_version=2,draft={'format_version':2,'future_topology':[]},current={'future_candidate':True})
+        path.write_text(json.dumps(future));before=path.read_bytes()
+        status=self.service.request({'action':'status'});self.assertEqual(status['state'],future);self.assertEqual(status['definitions'],[])
+        with self.assertRaises(ValueError):self.save(sensor_draft(),future['revision'])
+        self.assertEqual(path.read_bytes(),before)
+    def test_source_lifecycle_retains_locked_offline_plan_and_invalidates_old_review(self):
+        import base64
+        from sv08_printer_catalog import digest
+        root=ROOT/'examples/printer-definitions';manifest=json.loads((root/'catalog.json').read_text())
+        bundle=dict(manifest=manifest,files={r['path']:base64.b64encode((root/r['path']).read_bytes()).decode() for r in manifest['definitions']})
+        self.save(sensor_draft());before=self.service.request({'action':'status'})
+        preview=self.request(dict(action='bundle_preview',bundle=bundle,expected_revision=self.status()['revision']))
+        self.assertNotIn('sources',self.status());self.request(dict(action='source_add',source=preview,expected_revision=self.status()['revision']))
+        with self.assertRaisesRegex(ValueError,'stale|changed'):self.service.request(dict(action='save',draft=sensor_draft(),expected_revision=before['state']['revision'],expected_identity=before['loaded_identity']))
+        source_id=preview['id'];row=next(r for r in self.service.request({'action':'status'})['definitions'] if r['reference']['source']==source_id and r['record']['id']=='sv08-bed')
+        selected=self.request(dict(action='definition',draft=self.status()['draft'],reference=row['reference'],expected_revision=self.status()['revision']))['draft']
+        self.save(selected)
+        for action in ('source_disable','source_enable','source_remove'):
+            self.request(dict(action=action,source_id=source_id,expected_revision=self.status()['revision']))
+            self.assertEqual(self.status()['draft']['definition_plan'],selected['definition_plan'])
+        offline=self.service.request({'action':'status'});self.assertEqual(offline['sources'],{})
+        self.assertEqual(offline['state']['draft']['definition_plan']['snapshots'][source_id+'::sv08-bed@0.1.0']['name'],row['record']['name'])
+        changed=copy.deepcopy(preview);changed['records'][0]['description']='forged bytes'
+        with self.assertRaises(ValueError):self.request(dict(action='source_add',source=changed,expected_revision=self.status()['revision']))
     def assert_stale_operations(self, loaded):
         path=self.service.directory/'state.json';before=path.read_bytes()
         requests=[dict(action='save',draft=loaded['state']['draft'],expected_revision=loaded['state']['revision']),

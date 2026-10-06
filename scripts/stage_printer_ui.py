@@ -92,12 +92,18 @@ def dependencies(root, files):
     return seen
 
 
-def payload():
+def payload(validation_dictionary=None):
     result={}
     for directory,target in [('ui/printer','usr/share/cockpit/sv08-printer'),('catalog/printer','usr/share/sv08/printer')]:
         for p in sorted((REPO/directory).rglob('*')):
             if p.is_file() and p.name!='session.js':result[target+'/'+str(p.relative_to(REPO/directory))]=p.read_bytes()
     for p in sorted((REPO/'runtime').glob('sv08_printer_*.py')):result['usr/lib/sv08/'+p.name]=p.read_bytes()
+    if validation_dictionary is not None:
+        path=Path(validation_dictionary)
+        if path.is_symlink() or not path.is_file() or path.stat().st_size>128*1024:raise ValueError('Invalid validation dictionary')
+        raw=path.read_bytes()
+        if sha(raw)!='86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b':raise ValueError('Validation dictionary revision mismatch')
+        result['usr/share/sv08/printer/validation/klipper.dict']=raw
     return result
 
 
@@ -146,18 +152,18 @@ def integrate_style(raw):
     return raw+STYLE_EXTENSION
 
 
-def stage(root, expected, execute=False, fresh=False):
+def stage(root, expected, execute=False, fresh=False, validation_dictionary=None):
     with root_lock(root):
-        return _stage(root, expected, execute, fresh)
+        return _stage(root, expected, execute, fresh,validation_dictionary)
 
 
-def _stage(root, expected, execute=False, fresh=False):
+def _stage(root, expected, execute=False, fresh=False,validation_dictionary=None):
     root=Path(root).absolute()
     if not root.is_dir() or root.is_symlink():raise ValueError('Expected disposable root')
     check_snapshot(root,expected)
     required={'usr/lib/sv08/sv08_state.py','usr/lib/sv08/admin-context.json','etc/cockpit/cockpit.conf','usr/share/cockpit/sv08-host/index.html','usr/share/cockpit/sv08-host/session.js','usr/share/cockpit/sv08-host/app.js','usr/share/cockpit/sv08-host/upload.js','usr/share/cockpit/sv08-host/manifest.json'}
     if not isinstance(expected,dict) or not required<=set(expected):raise ValueError('Exact reviewed closure inventory is required')
-    files=payload()
+    files=payload(validation_dictionary)
     closure=dependencies(root,files)
     required.update(name for name in closure if name not in files)
     if not required<=set(expected):raise ValueError('Missing reviewed Python dependency closure')
@@ -307,5 +313,6 @@ def _restore(root, report, interrupted=False):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root',type=Path,required=True);parser.add_argument('--preimages',type=Path,required=True)
+    parser.add_argument('--validation-dictionary',type=Path)
     parser.add_argument('--execute',action='store_true');parser.add_argument('--fresh',action='store_true');args=parser.parse_args()
-    print(json.dumps(stage(args.root,json.loads(args.preimages.read_text()),args.execute,args.fresh),indent=2))
+    print(json.dumps(stage(args.root,json.loads(args.preimages.read_text()),args.execute,args.fresh,args.validation_dictionary),indent=2))

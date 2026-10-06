@@ -1,0 +1,10 @@
+{
+  "format_version": 1,
+  "boards": {
+    "main": {
+      "id": "sv08-main"
+    }
+  },
+  "devices": [],
+  "geometry": {}
+}

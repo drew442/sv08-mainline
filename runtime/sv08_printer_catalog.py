@@ -41,8 +41,11 @@ def strict_json(raw, limit=DRAFT_LIMIT):
 
 
 def keys(value, allowed, required=()):
-    if not isinstance(value, dict) or set(value) - set(allowed) or set(required) - set(value):
-        raise ValueError('Unsupported fields or missing structural fields')
+    if not isinstance(value,dict):raise ValueError('Object required; inspect structural fields')
+    unknown=set(value)-set(allowed);missing=set(required)-set(value)
+    if unknown or missing:
+        detail='; '.join(label+': '+', '.join(str(k) for k in sorted(names,key=str)) for label,names in [('unsupported',unknown),('missing',missing)] if names)
+        raise ValueError('Unsupported fields or missing structural fields — '+detail)
 
 
 class Catalog:
@@ -231,9 +234,17 @@ class Catalog:
         if not self.supported:raise ValueError('Unsupported catalog; export draft for diagnosis')
         if len(encoded(draft)) > DRAFT_LIMIT:
             raise ValueError('Draft exceeds 128 KiB')
-        keys(draft, ('format_version', 'boards', 'devices', 'geometry'), ('format_version', 'boards', 'devices', 'geometry'))
+        keys(draft, ('format_version', 'boards', 'devices', 'geometry', 'definition_plan', 'custom_config'), ('format_version', 'boards', 'devices', 'geometry'))
         if type(draft['format_version']) is not int or draft['format_version'] != 1:
             raise ValueError('Unsupported draft schema; original retained')
+        if 'custom_config' in draft:
+            if not isinstance(draft['custom_config'], str) or len(draft['custom_config'].encode())>65536:raise ValueError('Custom configuration exceeds 64 KiB')
+            from sv08_printer_publish import sections
+            custom_sections=sections(draft['custom_config'])
+            if any(s.startswith('include ') for s in custom_sections):raise ValueError('Custom includes require managed closure adoption')
+        if 'definition_plan' in draft:
+            from sv08_printer_compose import validate_plan
+            validate_plan(draft['definition_plan'], self)
         keys(draft['boards'], ('main', 'tool', 'chamber'))
         for role, selection in draft['boards'].items():
             keys(selection, ('id', 'transport', 'identity', 'reference_ack'))

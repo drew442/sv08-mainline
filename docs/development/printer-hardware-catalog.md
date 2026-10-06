@@ -16,8 +16,10 @@ compare revision and loaded host identity. Reviews bind draft, catalogue,
 generator and host context; uncertain acknowledgment requires reconciliation.
 Corrupt/newer-schema input is preserved for diagnostic export. Private MCU
 identities belong to the instance, not published definitions or browser storage.
-Incomplete selections can be saved. Current candidate storage is inactive;
-a configuration publication operation must be separately implemented and labelled.
+Incomplete selections can be saved. Generated candidates remain inactive until
+explicit, reviewed managed publication. See [the public contract and publication
+requirements](printer-public-format.md). Built-in choices are factory SV08 only;
+third-party definitions use the source workflow.
 
 Sensor generation uses a positive allowlist. Full candidates require resolved
 motion, currents and thermal inputs. Preserve upstream heater protections.

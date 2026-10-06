@@ -1,14 +1,35 @@
 """Deterministic inactive configs. Sensor mode is a dedicated positive allowlist."""
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 
-GENERATOR_VERSION = 5
+GENERATOR_VERSION = 6
 
 
 def generate(catalog, draft, mode):
+    from sv08_printer_compose import locked_catalog, apply_inputs
+    draft=apply_inputs(draft,catalog)
+    catalog=locked_catalog(draft,catalog)
     catalog.validate(draft)
     if mode not in ('sensors', 'full'):
         raise ValueError('Choose sensors or full inactive SV08 candidate')
     blockers = []
+    policies={}
+    if 'definition_plan' in draft:
+        from sv08_printer_compose import validate_plan, connection_devices
+        closure,policies=validate_plan(draft['definition_plan'],catalog)
+        for ident,definition in sorted(closure.items()):
+            try:connection_devices(definition,draft,catalog)
+            except ValueError as error:blockers.append(ident+': '+str(error))
+            for component in definition.get('components',[]):
+                if not any(d['name']==component['name'] and d['board']==component['board'] and d['kind']==component['kind'] for d in draft['devices']):blockers.append(ident+': definition contribution removed — '+component['name'])
+            for gap in definition.get('unresolved',[]):blockers.append(ident+': definition incomplete — '+gap)
+            for key,inp in definition.get('inputs',{}).items():
+                if not inp.get('required'):continue
+                device,field=inp['target'].split('.',1)
+                actual=next((d for d in draft['devices'] if d['name']==device),None)
+                supplied=actual and field in actual['settings'] or inp['target'] in draft['definition_plan'].get('instance_values',{})
+                if not supplied:blockers.append(ident+': needs your input — '+inp['label'])
+        if policies and mode!='full':blockers.append('Behaviour outputs require full mode; sensor mode remains output-free')
+
     def require(settings, fields, label):
         for field in fields:
             if field not in settings:
@@ -19,6 +40,7 @@ def generate(catalog, draft, mode):
             blockers.append(role + ': explicitly acknowledge provisional reference mapping')
     if 'main' not in draft['boards']:
         blockers.append('main: choose the primary Klipper MCU board and transport')
+    if draft.get('custom_config') and mode=='sensors':blockers.append('Custom configuration requires full mode; sensor allowlist unchanged')
     sensors = {d['name']: d for d in draft['devices'] if d['kind'] == 'sensor'}
     for d in draft['devices']:
         s, kind, name = d['settings'], d['kind'], d['name']
@@ -130,9 +152,28 @@ def generate(catalog, draft, mode):
             elif kind=='fan':section('fan_generic '+name,dict(pin=digital(d),max_power=s['max_power']))
             elif kind=='probe':section('probe',{**{'pin':digital(d)},**{k:s[k] for k in ('x_offset','y_offset','z_offset')}})
     text='\n'.join(lines)+'\n'
+    if draft.get('custom_config'):
+        from sv08_printer_publish import sections
+        if sections(text)&sections(draft['custom_config']):raise ValueError('Custom configuration duplicates managed sections; transfer ownership before editing')
+        text+='\n# Explicit user-owned configuration\n'+draft['custom_config']+'\n'
     if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
     warnings=['Reference configuration only. Installed match and physical limits remain unverified.', 'Configured polarity is not measured polarity. TMC2209 2.000 A is a pinned software maximum, not a safe electrical rating.', 'Candidate saved separately; commissioning and activation require their own reviewed steps.']
+    if draft.get('custom_config'):warnings.append('User-owned custom code: structural validation only; review and commission any thermal/motion/startup effects separately.')
     if mode == 'full':
-        warnings.append('Before H06, compose once with the separately reviewed test-sv08-01-print-controls.cfg after the persistent gcodes directory exists. Controls and activation remain separate.')
+        warnings.append('Validate configured limits and complete component commissioning before starting the printer. Configuration application does not grant a printing release.')
     warnings += [(d['name'] + ': owner-entered custom NTC curve; calibration remains unverified') if 'custom_curve' in d['settings'] else catalog.curves[d['settings']['curve']]['origin'] for d in sensors.values()]
-    return dict(complete=True, blockers=[], warnings=warnings, text=text)
+    behaviours=''
+    if policies:
+        # A finite check-only hook; no heating, cooling wait or homing side effect.
+        # Threshold semantics are explicit; unsupported operations never approximate.
+        behaviours='[gcode_macro SV08_LEVELLING_PRECONDITIONS]\ngcode:\n'
+        for index,b in enumerate(policies['levelling.preconditions']):
+            sensor=sensors.get(b['sensor'])
+            if not sensor:raise ValueError('Levelling policy sensor is not selected')
+            var='t'+str(index)
+            conditions={'at_least':var+' < '+str(b['threshold']),'at_most':var+' > '+str(b['threshold']),'within_range':var+' < '+str(b['threshold'])+' or '+var+' > '+str(b.get('upper'))}
+            thermal=next((d['name'] if d['kind']!='chamber' else 'heater_generic '+d['name'] for d in draft['devices'] if d['settings'].get('sensor')==b['sensor']), 'temperature_sensor '+b['sensor'])
+            behaviours+='  {% set '+var+' = printer["'+thermal+'"].temperature %}\n  {% if '+conditions[b['comparison']]+' %}\n    { action_raise_error("Levelling temperature condition not satisfied") }\n  {% endif %}\n'
+    if behaviours:text+='\n# Managed check-only behaviour hook\n'+behaviours
+    if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
+    return dict(complete=True, blockers=[], warnings=warnings, text=text,behaviours=behaviours)
