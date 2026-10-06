@@ -146,3 +146,27 @@ application. No physical MCU is contacted. Parser acceptance establishes softwar
 composition only. Hardware matching, calibration and commissioning remain separate.
 Advanced custom text requires explicit section ownership and the same complete
 validation; unsupported includes/startup behaviours fail rather than being ignored.
+
+## Factory hardware vocabulary (runtime generator 7)
+
+The finite `klipper.factory.v1` capability adds heater-controlled fans, digital/PWM
+outputs, neopixels, UC1701 display controls, ADXL345 accelerometers, MCU temperature
+sensors and pressure-contact inputs. Existing component kinds gain sourced driver,
+sensorless-homing, probe-sampling, filament-delay and heater-verification fields.
+Unsupported kinds, enum values, electrical capabilities and operational keys still
+fail admission. The public format remains draft 0.1; changed built-in content uses
+immutable version 0.2.0. Existing 0.1.0 snapshots retain their content and meaning.
+
+Assemblies may carry finite `printer_settings` groups: `geometry`, `bed_mesh`,
+`quad_gantry_level` and `safe_z_home`. These are typed data, never raw startup code.
+Conflicting settings ownership refuses generation. New native sections are checked
+through the same pinned complete-output validator; sensor-only mode remains
+output-free and refuses a complete hardware assembly.
+
+An instance plan can explicitly replace a pinned assembly dependency using its
+`replacements` map. Every target carries source, ID, immutable version, digest and
+commit, resolves from retained snapshots, and obeys the same depth/cycle/ownership
+checks. Selecting a bed directly or through a creator bundle replaces that child
+without discarding the full factory assembly. Inactive old snapshots remain for
+restoration; source removal cannot silently alter selected components. Shared,
+unchanged dependencies preserve local overrides and calibration.

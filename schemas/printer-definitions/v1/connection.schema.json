@@ -29,7 +29,8 @@
         "fan",
         "probe",
         "input",
-        "motor"
+        "motor",
+        "output"
       ]
     },
     "board_ids": {

@@ -36,3 +36,39 @@ composition and managed output must follow the two current design briefs.
 [Shared-shell runtime invariants](printer-cockpit-panel.md) cover session,
 navigation and exact staging. [Dated installed evidence](../features/printer-upgrade-profiles/installed-evidence.md)
 records previous delivered software, not the new design's acceptance.
+
+## Complete factory SV08 reference
+
+`sv08.factory` version 0.2.0 composes the two controller mappings and 24 devices
+from Sovol's pinned `a60644875f8c756d20b3828c9416518b414b5491` tree: X/Y and
+four geared Z motors, extruder/hotend and both thermistors, bed heater, inductive
+probe, pressure contact, filament switch, three generic fans, the heater-controlled
+hotend fan and tachometer, ADXL345, UC1701 display/controls, beeper, case LED,
+display neopixels and both MCU temperature monitors. Bed mesh, gantry levelling
+and documented motion defaults belong to the assembly. Host temperature monitoring
+belongs to host software rather than an additional printer hardware device.
+
+Reproduce the catalogue and public records with
+`python3 scripts/update_factory_definitions.py --source-root /path/to/pinned/checkout`.
+The script refuses a changed vendor configuration hash. Each hardware field has a
+source line and transformation; derived software defaults cite their own pinned
+source file and hash. LCD GPIOs resolve the vendor's EXP aliases. Board snapshots
+retain exact electrical mappings and source lines without repeating the full
+citation at every pin, keeping the complete selection within the existing 128 KiB
+limit. Additional documented GPIOs cannot change an existing pin's capabilities,
+reservation, connector/contact identity or motor bundle.
+
+Mainline adaptations are explicit: ADXL345 uses the vendor SPI2 wires and rate
+with software SPI; native `safe_z_home` uses documented home coordinates/speeds
+instead of copying the vendor raw homing override; sensorless X/Y omit
+`hold_current` as required by the pinned mainline TMC guidance. The vendor's 5 s
+LED PWM period exceeds mainline's 3 s maximum, so the definition uses the pinned
+0.1 s upstream default. Obsolete `max_accel_to_decel` is not emitted. The pressure
+contact is an empty-action native input, not a replacement implementation of
+Sovol's proprietary pressure probing/automatic Z-calibration workflow.
+
+Private MCU identities and measured probe Z offset are local inputs. Published
+motor currents are documented configuration defaults, not invented motor ratings;
+changing a current or its connector requires a separate owner-entered rating.
+Measured PID gains are excluded and watermark control is the uncalibrated state.
+Hardware selection requires no PID calibration and never activates outputs.

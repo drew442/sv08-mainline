@@ -1,7 +1,8 @@
 """Deterministic inactive configs. Sensor mode is a dedicated positive allowlist."""
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
+from sv08_printer_fields import LEGACY_FIELDS
 
-GENERATOR_VERSION = 6
+GENERATOR_VERSION = 7
 
 
 def generate(catalog, draft, mode):
@@ -12,12 +13,15 @@ def generate(catalog, draft, mode):
     if mode not in ('sensors', 'full'):
         raise ValueError('Choose sensors or full inactive SV08 candidate')
     blockers = []
-    policies={}
+    policies={};closure={};printer_settings={};documented_devices=[]
     if 'definition_plan' in draft:
         from sv08_printer_compose import validate_plan, connection_devices
         closure,policies=validate_plan(draft['definition_plan'],catalog)
         for ident,definition in sorted(closure.items()):
-            try:connection_devices(definition,draft,catalog)
+            for group,values in definition.get('printer_settings',{}).items():
+                if group in printer_settings and printer_settings[group]!=values:raise ValueError('Conflicting printer settings ownership')
+                printer_settings[group]=values
+            try:documented_devices.extend(connection_devices(definition,draft,catalog))
             except ValueError as error:blockers.append(ident+': '+str(error))
             for component in definition.get('components',[]):
                 if not any(d['name']==component['name'] and d['board']==component['board'] and d['kind']==component['kind'] for d in draft['devices']):blockers.append(ident+': definition contribution removed — '+component['name'])
@@ -26,7 +30,7 @@ def generate(catalog, draft, mode):
                 if not inp.get('required'):continue
                 device,field=inp['target'].split('.',1)
                 actual=next((d for d in draft['devices'] if d['name']==device),None)
-                supplied=actual and field in actual['settings'] or inp['target'] in draft['definition_plan'].get('instance_values',{})
+                supplied=actual and field in actual['settings'] or field in draft['boards'].get(device,{}) or inp['target'] in draft['definition_plan'].get('instance_values',{})
                 if not supplied:blockers.append(ident+': needs your input — '+inp['label'])
         if policies and mode!='full':blockers.append('Behaviour outputs require full mode; sensor mode remains output-free')
 
@@ -47,23 +51,29 @@ def generate(catalog, draft, mode):
         if kind == 'sensor':
             require(s, [k for k in catalog.kinds[kind] if k != 'custom_curve'], name)
         elif kind == 'input':
-            require(s, catalog.kinds[kind], name)
+            require(s, LEGACY_FIELDS[kind], name)
         elif mode == 'sensors':
             blockers.append(name + ': output-bearing device is not allowed in sensor mode')
         elif kind in ('motor', 'extruder'):
-            fields = ['connector','invert_dir','invert_enable','microsteps','rotation_distance','run_current','current_rating_rms','sense_resistor','uart_address']
+            fields = ['connector','invert_dir','invert_enable','microsteps','rotation_distance','run_current','sense_resistor','uart_address']
             if name in ('stepper_x','stepper_y'):
                 fields += ['position_min','position_max','position_endstop','homing_speed','endstop_pin','endstop_invert','endstop_pullup']
             elif name == 'stepper_z':
                 fields += ['position_min','position_max','homing_speed']
             if kind == 'extruder':
                 fields += ['pin','invert','sensor','max_power','control','nozzle_diameter','filament_diameter','min_extrude_temp']
+            documented=any(c['name']==name and c['kind']==kind and c['board']==d['board'] and c['settings'].get('run_current')==s.get('run_current') and c['settings'].get('connector')==s.get('connector') for c in documented_devices)
+            if not documented:fields.append('current_rating_rms')
+            if s.get('endstop_mode')=='sensorless':fields+=['driver_sgthrs','homing_retract_dist']
             require(s, fields, name)
         elif kind in ('probe','fan'):
-            require(s, catalog.kinds[kind], name)
+            require(s, LEGACY_FIELDS[kind], name)
         elif kind in ('bed','chamber'):
             require(s, ('pin','invert','sensor','max_power','control'), name)
             if kind == 'chamber':require(s, ('max_delta',), name)
+        elif kind not in ('sensor','input'):
+            if kind=='heater_fan' and s.get('heater') and not any(x['name']==s['heater'] and x['kind'] in ('bed','extruder','chamber') for x in draft['devices']):blockers.append(name+': choose the controlled heater')
+            require(s, [k for k in catalog.kinds[kind] if not (kind=='mcu_temperature' or kind=='output' and k=='cycle_time')], name)
         if mode == 'full' and kind in ('bed','extruder') and s.get('control') == 'pid':
             require(s, ('pid_kp','pid_ki','pid_kd'), name)
     if mode == 'sensors' and not sensors:
@@ -93,6 +103,8 @@ def generate(catalog, draft, mode):
     def section(name, values):
         lines.extend(['', '[' + name + ']'])
         for key, value in values.items():
+            if isinstance(value,list):
+                value=('\n  '+'\n  '.join(', '.join(map(str,p)) for p in value)) if value and isinstance(value[0],list) else ', '.join(map(str,value))
             lines.append(key + ': ' + (str(value).lower() if type(value) is bool else str(value)))
     def qualified(role, pin):
         return (role+':' if role != 'main' else '') + pin
@@ -102,6 +114,10 @@ def generate(catalog, draft, mode):
     for role, b in sorted(draft['boards'].items()):
         section('mcu' + (' '+role if role != 'main' else ''), {'canbus_uuid' if b['transport']=='can' else 'serial': b['identity']})
     section('printer', {'kinematics':'none','max_velocity':1,'max_accel':1} if mode=='sensors' else {'kinematics':'corexy',**draft['geometry']})
+    if mode=='full':
+        for group,values in sorted(printer_settings.items()):
+            if group!='geometry':section(group,values)
+        if any(d['kind']=='input' and d['settings'].get('pause_on_runout') for d in draft['devices']):section('pause_resume',{})
     for cid in sorted({d['settings']['curve'] for d in sensors.values()}):
         c = catalog.curves[cid]
         if c['points']:
@@ -131,26 +147,44 @@ def generate(catalog, draft, mode):
         if kind=='sensor':
             if name not in heater_sensors:section('temperature_sensor '+name, thermal(d))
         elif kind=='input':
-            section('filament_switch_sensor '+name,dict(switch_pin=digital(d),pause_on_runout=False))
+            section('filament_switch_sensor '+name,dict(switch_pin=digital(d),pause_on_runout=s.get('pause_on_runout',False) if mode=='full' else False,**{k:s[k] for k in ('event_delay','pause_delay') if k in s}))
         elif mode=='full':
             if kind in ('motor','extruder'):
                 motor=catalog.board(draft,d['board'])['motors'][s['connector']]
                 values={k+'_pin':('!' if s.get('invert_'+k) else '')+qualified(d['board'],motor[k]) for k in ('step','dir','enable')}
                 values.update({k:s[k] for k in ('microsteps','rotation_distance')})
-                if 'gear_ratio' in s:values['gear_ratio']=s['gear_ratio']
+                for k in ('gear_ratio','full_steps_per_rotation','homing_retract_dist','homing_positive_dir','homing_retract_speed','second_homing_speed'):
+                    if k in s:values[k]=s[k]
                 if name in ('stepper_x','stepper_y','stepper_z'):
                     values.update({k:s[k] for k in ('position_min','position_max','homing_speed')})
                     if name=='stepper_z':values['endstop_pin']='probe:z_virtual_endstop'
-                    else:values.update(position_endstop=s['position_endstop'],endstop_pin=digital(d,'endstop_pin','endstop_invert','endstop_pullup'))
+                    else:values.update(position_endstop=s['position_endstop'],endstop_pin='tmc2209_'+name+':virtual_endstop' if s.get('endstop_mode')=='sensorless' else digital(d,'endstop_pin','endstop_invert','endstop_pullup'))
                 if kind=='extruder':
                     values.update({k:s[k] for k in ('nozzle_diameter','filament_diameter','min_extrude_temp')})
                     values.update(heater_values(d))
                 section(name,values)
-                section('tmc2209 '+name, {**{'uart_pin':qualified(d['board'],motor['uart'])},**{k:s[k] for k in ('run_current','sense_resistor','uart_address')}})
+                driver={'uart_pin':qualified(d['board'],motor['uart']),**{k:s[k] for k in ('run_current','sense_resistor','uart_address')}}
+                driver.update({k:s[k] for k in ('interpolate','stealthchop_threshold') if k in s})
+                if s.get('endstop_mode')=='sensorless':driver.update(diag_pin=digital(d,'endstop_pin','endstop_invert','endstop_pullup'),driver_SGTHRS=s['driver_sgthrs'])
+                section('tmc2209 '+name,driver)
             elif kind=='bed':section(name,heater_values(d))
             elif kind=='chamber':section('heater_generic '+name,heater_values(d))
             elif kind=='fan':section('fan_generic '+name,dict(pin=digital(d),max_power=s['max_power']))
-            elif kind=='probe':section('probe',{**{'pin':digital(d)},**{k:s[k] for k in ('x_offset','y_offset','z_offset')}})
+            elif kind=='probe':section('probe',{**{'pin':digital(d)},**{k:s[k] for k in ('x_offset','y_offset','z_offset','speed','samples','sample_retract_dist','lift_speed','samples_result','samples_tolerance','samples_tolerance_retries') if k in s}})
+            elif kind=='heater_fan':
+                section('heater_fan '+name,dict(pin=digital(d),tachometer_pin=qualified(d['board'],s['tachometer_pin']),**{k:s[k] for k in ('max_power','kick_start_time','heater','heater_temp','tachometer_ppr','tachometer_poll_interval')}))
+            elif kind=='output':
+                section('output_pin '+name,dict(pin=digital(d),**{k:s[k] for k in ('pwm','value','shutdown_value')},**({'cycle_time':s['cycle_time']} if s['pwm'] and 'cycle_time' in s else {})))
+            elif kind=='neopixel':
+                section('neopixel '+name,dict(pin=qualified(d['board'],s['pin']),**{k:s[k] for k in ('chain_count','color_order','initial_red','initial_green','initial_blue')}))
+            elif kind=='display':
+                section('display',dict(lcd_type='uc1701',**{k:qualified(d['board'],s[k]) for k in ('cs_pin','a0_pin','rst_pin')},**{'spi_software_'+k+'_pin':qualified(d['board'],s[k+'_pin']) for k in ('miso','mosi','sclk')},encoder_pins=', '.join(('^' if s['encoder_pullup'] else '')+qualified(d['board'],s[k]) for k in ('encoder_a','encoder_b')),click_pin=digital(d,'click_pin','click_invert','click_pullup'),contrast=s['contrast']))
+            elif kind=='accelerometer':
+                section('adxl345'+(' '+name if name!='adxl345' else ''),dict(cs_pin=qualified(d['board'],s['cs_pin']),spi_speed=s['spi_speed'],**{'spi_software_'+k+'_pin':qualified(d['board'],s[k+'_pin']) for k in ('miso','mosi','sclk')}))
+            elif kind=='mcu_temperature':section('temperature_sensor '+name,dict(sensor_type='temperature_mcu',sensor_mcu=d['board'] if d['board']!='main' else 'mcu',**s))
+            elif kind=='pressure_switch':section('gcode_button '+name,dict(pin=digital(d),press_gcode='',release_gcode=''))
+            if kind in ('extruder','bed') and any(k.startswith('verify_') for k in s):
+                section('verify_heater '+name,{k:s['verify_'+k] for k in ('max_error','check_gain_time','hysteresis','heating_gain') if 'verify_'+k in s})
     text='\n'.join(lines)+'\n'
     if draft.get('custom_config'):
         from sv08_printer_publish import sections

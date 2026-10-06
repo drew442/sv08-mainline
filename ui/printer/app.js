@@ -10,7 +10,7 @@
     function controls() {
         for (const id of ['save','review','restore','add','add-preset','apply','import']) $(id).disabled = busy || reconcile || diagnostic || !authority() || (!draft && id !== 'import');
         for (const field of document.querySelectorAll('#printer-components input, #printer-components select, #printer-components button, #printer-sensors select, #printer-boards input, #printer-boards select, #printer-boards button, #printer-devices input, #printer-devices select, #printer-devices button, #printer-calibration input, #printer-geometry-fields input, #printer-device-board, #printer-device-kind, #printer-device-name, #printer-device-preset, #printer-mode, #printer-cancel-import')) field.disabled = busy || reconcile || diagnostic || !authority();
-        for(const id of ['custom-save','source-preview','source-import','migration-preview','publication-review','publication-reconcile','publication-restore-review','publication-apply','definition-confirm'])$(id).disabled=busy||reconcile||diagnostic||!authority();
+        for(const id of ['use-factory','custom-save','source-preview','source-import','migration-preview','publication-review','publication-reconcile','publication-restore-review','publication-apply','definition-confirm'])$(id).disabled=busy||reconcile||diagnostic||!authority();
         $('source-confirm').disabled=busy||reconcile||diagnostic||!authority()||!sourcePreview;
         $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= !draft;
@@ -193,7 +193,7 @@
             const board=boardData(device.board), settings=el('div'), advanced=el('details');settings.className='settings';advanced.append(el('summary','Advanced electrical and motion fields'));
 
             if(!board){box.append(el('p','Choose a board first'));$('devices').append(box);continue;}
-            box.append(el('small','Configured selections; physical identity, measured polarity and circuit limits remain unverified. Motor RMS rating requires an explicit owner value.'));
+            box.append(el('small','Configured selections; physical identity, measured polarity and circuit limits remain unverified. Factory currents come from the selected definition; custom current settings require a motor RMS rating.'));
             const references=(board.presets??[]).filter(p=>p.devices.some(d=>d.name===device.name&&d.kind===device.kind));
             if(references.length){
                 const origin=el('details');origin.append(el('summary','Available documented defaults and origins'));
@@ -206,14 +206,17 @@
             for(const [name,type] of Object.entries(catalog.kinds[device.kind])) {
                 if(name==='custom_curve'||name.startsWith('pid_'))continue;
                 let options;
-                if(['adc','input','probe','heater','fan'].includes(type)) {
+                if(['adc','input','probe','heater','fan','output'].includes(type)) {
                     options=Object.entries(board.signals).filter(([,s])=>s.capabilities.includes(type)&&!s.reserved).map(([p])=>{
                         const c=Object.values(board.connectors).find(c=>c.pin===p&&c.capability===type);
                         return [p,(c?.label??'Reference signal')+' → '+(device.board==='main'?'':device.board+':')+p+(c?.contact?' ('+c.contact+')':' (contact unknown)')];
                     });
                 } else if(type==='motor') options=Object.entries(board.motors).map(([n,p])=>[n,n+' → '+Object.entries(p).map(([k,p])=>k+':'+p).join(', ')]);
                 else if(type==='curve')options=catalog.curves.map(c=>[c.id,c.label]);
-                else if(type==='name')options=draft.devices.filter(d=>d.kind==='sensor'&&d.board===device.board).map(d=>[d.name,d.name]);
+                else if(type==='name')options=draft.devices.filter(d=>name==='heater'?['bed','extruder','chamber'].includes(d.kind):d.kind==='sensor'&&d.board===device.board).map(d=>[d.name,d.name]);
+                else if(type==='endstop_mode')options=[['physical','Physical switch'],['sensorless','Driver stall detection']];
+                else if(type==='samples_result')options=[['average','Average'],['median','Median']];
+                else if(type==='color_order')options=['RGB','GRB','BRG','BGR','RBG','GBR'].map(v=>[v,v]);
                 else if(type==='control')options=[['pid','PID (enter gains)'],['watermark','Watermark']];
                 const text=({'invert':'Invert signal','invert_dir':'Invert direction','invert_enable':'Invert enable','digital_pullup':'Digital input pull-up','pullup_resistor':'Analog pull-up resistance (ohm)','current_rating_rms':'Motor RMS rating (A), owner entered','run_current':'Driver RMS current (A)','sense_resistor':'Sense resistor (ohm), explicit','pin':'Connection / pin'}[name]??name.replaceAll('_',' '));
                 advanced.append(field(text,type==='name'?'text':type,device.settings[name],value=>{
@@ -281,7 +284,7 @@
     // Component-first presentation over the same instance state and RPC authority.
     let localView='components', selectedCategory=null, advancedMode=false, definitionRows=[], sourceRows={}, sourcePreview=null, pendingDefinition=null, publicationReview=null, mapMode=true, selectedConnection=null;
     const categories=[['bed','Bed & build surface','M4 17h20M5 13l11-5 11 5-11 5zM8 5V2m8 3V2m8 3V2'],['probe','Probe & levelling','M12 3h8v15l-4 5-4-5zM5 28h22'],['toolhead','Toolhead & extrusion','M8 4h16v10H8zM11 14h10v7l-5 7-5-7zM4 9h4m16 0h4'],['filament','Filament & multi-colour','M4 4h10v24H4zM18 4h10v24H18zM9 10h0m14 0h0M9 20h14'],['boards','Boards & connections','M6 6h20v20H6zM11 11h10v10H11zM2 10h4m20 0h4M2 22h4m20 0h4'],['cooling','Cooling & enclosure','M16 13c-13-15-13 9 0 3m3 0c15-13-9-13-3 0m0 3c13 15 13-9 0-3m-3 0c-15 13 9 13 3 0'],['motion','Motion & endstops','M3 25L25 3M3 8V3h5M24 29h5v-5']];
-    function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(device.kind==='probe')return 'probe';if(device.kind==='extruder'||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
+    function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(['probe','pressure_switch'].includes(device.kind))return 'probe';if(['extruder','accelerometer'].includes(device.kind)||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber','heater_fan'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
     function setView(view){localView=view;for(const name of ['components','connections','changes'])$(name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='connections')renderConnections();if(view==='changes')renderChanges();}
     function renderDesign(){
         $('board-summary').textContent=Object.entries(draft.boards).map(([role])=>boardData(role)?.label??'Unknown '+role).join(' · ')||'Boards not selected';
@@ -303,11 +306,13 @@
         $('selection-status').textContent=changed?'Unsaved component selections':'Selections saved · configuration and commissioning separate';renderChanges();renderDefinitionChoices();
         if(localView==='connections')renderConnections();
     }
+    function previewDefinition(row){const d=row.record;return operation(async()=>{invalidate();const result=await rpc({action:'definition',draft,reference:row.reference,expected_revision:revision});if(d.components?.length===1&&d.components[0].kind==='fan'&&!d.dependencies?.length&&!d.behaviours?.length){draft=result.draft;edit();render();notice('Fan settings added to your selections. Save when ready.');return;}pendingDefinition=result.draft;const before=draft.devices.map(d=>d.name);$('definition-effects').textContent=d.name+'\n'+d.description+'\n\nDevices: '+result.draft.devices.map(d=>d.name).join(', ')+'\nPrevious: '+before.join(', ')+'\nCalibration for replaced hardware is cleared. Nothing is saved or applied.';$('definition-review').showModal();$('definition-cancel').focus();});}
+    $('use-factory').onclick=()=>{const row=definitionRows.find(r=>r.reference.source==='builtin'&&r.record.id==='sv08.factory');if(row)previewDefinition(row);};
     function renderDefinitionChoices(){
         const root=$('definition-choices');root.replaceChildren();const search=$('definition-search').value.toLowerCase(),filter=$('definition-filter').value;
         for(const row of definitionRows){const d=row.record;if(d.category!==selectedCategory||filter&&row.reference.source!==filter||search&&!([d.name,...d.aliases??[]].join(' ').toLowerCase().includes(search)))continue;
             const compatible=d.kind==='board'||(d.compatibility.boards??[]).every(id=>Object.values(draft.boards).some(b=>b.id===id));
-            const b=el('button');b.className='printer-choice';b.append(el('strong',d.name),el('small',row.origin+' · '+d.version),el('small',compatible?'Documented defaults; instance details remain local':'Choose a compatible board first'));b.disabled=!compatible||!authority()||busy||diagnostic||reconcile;b.onclick=()=>operation(async()=>{invalidate();const result=await rpc({action:'definition',draft,reference:row.reference,expected_revision:revision});if(d.components?.length===1&&d.components[0].kind==='fan'&&!d.dependencies?.length&&!d.behaviours?.length){draft=result.draft;edit();render();notice('Fan settings added to your selections. Save when ready.');return;}pendingDefinition=result.draft;const before=draft.devices.map(d=>d.name);$('definition-effects').textContent=d.name+'\n'+d.description+'\n\nDevices: '+result.draft.devices.map(d=>d.name).join(', ')+'\nPrevious: '+before.join(', ')+'\nCalibration for replaced hardware is cleared. Nothing is saved or applied.';$('definition-review').showModal();$('definition-cancel').focus();});root.append(b);
+            const b=el('button');b.className='printer-choice';b.append(el('strong',d.name),el('small',row.origin+' · '+d.version),el('small',compatible?'Documented defaults; instance details remain local':'Choose a compatible board first'));b.disabled=!compatible||!authority()||busy||diagnostic||reconcile;b.onclick=()=>previewDefinition(row);root.append(b);
         }
         for(const ref of draft.definition_plan?.selections??[]){const d=draft.definition_plan.snapshots[ref.source+'::'+ref.id+'@'+ref.version];if(d.category!==selectedCategory)continue;for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=draft.definition_plan.instance_values?.[inp.target];root.append(field(inp.label,inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{draft.definition_plan.instance_values??={};if(v===undefined)delete draft.definition_plan.instance_values[inp.target];else draft.definition_plan.instance_values[inp.target]=v;edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined));}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
             const guide=el('details');guide.append(el('summary','Defaults, overrides and sources'));
@@ -325,7 +330,7 @@
     }
     function renderConnections(){
         const filter=$('connection-filter').value.toLowerCase(), rows=[];
-        for(const d of draft.devices){const board=boardData(d.board);if(!board)continue;for(const [field,value] of Object.entries(d.settings)){const type=catalog.kinds[d.kind][field];if(!['adc','heater','fan','probe','input','motor'].includes(type))continue;const connector=type==='motor'?{label:value,contact:null}:Object.values(board.connectors).find(c=>c.pin===value&&c.capability===type);rows.push({d,field,value,type,board,connector});}}
+        for(const d of draft.devices){const board=boardData(d.board);if(!board)continue;for(const [field,value] of Object.entries(d.settings)){const type=catalog.kinds[d.kind][field];if(!['adc','heater','fan','probe','input','output','motor'].includes(type))continue;const connector=type==='motor'?{label:value,contact:null}:Object.values(board.connectors).find(c=>c.pin===value&&c.capability===type);rows.push({d,field,value,type,board,connector});}}
         const root=$('connection-map'),tableRoot=$('connection-table');root.replaceChildren();tableRoot.replaceChildren();root.hidden=!mapMode;tableRoot.hidden=mapMode;
         const table=el('table'),head=el('tr');for(const label of ['Board','Header','Contact','Signal / controller','Device'])head.append(el('th',label));const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');table.append(body);
         for(const row of rows){const values=[row.board.label,row.connector?.label??'Unresolved',row.connector?.contact??'Contact unknown',row.d.board+':'+row.value,row.d.name];if(filter&&!values.join(' ').toLowerCase().includes(filter))continue;const selectRow=()=>{selectedConnection=row;renderConnectionInspector();};const path=el('div');path.className='printer-connection-path';for(const text of [values[0],values[1]+' · '+values[2],values[3]])path.append(el('span',text));const button=el('button',values[4]);button.onclick=selectRow;path.append(button);root.append(path);const tr=el('tr');for(const text of values.slice(0,4))tr.append(el('td',text));const td=el('td'),b=el('button',values[4]);b.onclick=selectRow;td.append(b);tr.append(td);body.append(tr);}

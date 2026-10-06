@@ -48,6 +48,9 @@ def keys(value, allowed, required=()):
         raise ValueError('Unsupported fields or missing structural fields — '+detail)
 
 
+from sv08_printer_fields import FIELDS, LEGACY_FIELDS, ELECTRICAL, CHOICES
+
+
 class Catalog:
     def __init__(self, path, diagnostic=False):
         self.data = strict_json(Path(path).read_bytes(), 512 * 1024)
@@ -64,17 +67,15 @@ class Catalog:
         self.kinds = self.data['kinds']
 
     def validate_catalog(self):
-        keys(self.data, ('format_version','boards','curves','kinds'), ('format_version','boards','curves','kinds'))
+        keys(self.data, ('format_version','boards','curves','kinds','factory'), ('format_version','boards','curves','kinds'))
         if self.data['format_version'] != 1 or type(self.data['format_version']) is not int:
             raise ValueError('Unsupported catalog schema')
-        if set(self.data['kinds']) != {'sensor','input','probe','fan','bed','motor','extruder','chamber'}:
+        if not set(LEGACY_FIELDS)<=set(self.data['kinds']) or set(self.data['kinds'])-set(FIELDS):
             raise ValueError('New device kinds require a generator extension')
-        expected_fields={'sensor': {'pin': 'adc', 'curve': 'curve', 'pullup_resistor': 'positive', 'min_temp': 'number', 'max_temp': 'number'}, 'input': {'pin': 'input', 'invert': 'boolean', 'digital_pullup': 'boolean'}, 'probe': {'pin': 'probe', 'invert': 'boolean', 'digital_pullup': 'boolean', 'x_offset': 'number', 'y_offset': 'number', 'z_offset': 'number'}, 'fan': {'pin': 'fan', 'invert': 'boolean', 'max_power': 'fraction'}, 'bed': {'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive'}, 'motor': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'position_min': 'number', 'position_max': 'number', 'position_endstop': 'number', 'homing_speed': 'positive', 'endstop_pin': 'input', 'endstop_invert': 'boolean', 'endstop_pullup': 'boolean'}, 'extruder': {'connector': 'motor', 'invert_dir': 'boolean', 'invert_enable': 'boolean', 'microsteps': 'integer', 'rotation_distance': 'positive', 'run_current': 'positive', 'current_rating_rms': 'positive', 'sense_resistor': 'positive', 'uart_address': 'address', 'pin': 'heater', 'invert': 'boolean', 'sensor': 'name', 'max_power': 'fraction', 'control': 'control', 'pid_kp': 'positive', 'pid_ki': 'positive', 'pid_kd': 'positive', 'nozzle_diameter': 'positive', 'filament_diameter': 'positive', 'min_extrude_temp': 'number'}}
-        expected_fields['sensor']['custom_curve']='thermistor_points'
-        expected_fields['chamber']={'pin':'heater','invert':'boolean','sensor':'name','max_power':'fraction','control':'control','max_delta':'positive'}
-        for kind in ('motor','extruder'):expected_fields[kind]['gear_ratio']='ratio'
-        if self.data['kinds'] != expected_fields:raise ValueError('Catalog field changes require a generator extension')
-        types={'adc','heater','fan','probe','input','step','dir','enable','uart','motor','curve','boolean','name','control','positive','number','fraction','integer','address','ratio','thermistor_points'}
+        for kind,fields in self.data['kinds'].items():
+            if not isinstance(fields,dict) or any(FIELDS[kind].get(k)!=v for k,v in fields.items()) or not set(LEGACY_FIELDS.get(kind,FIELDS[kind]))<=set(fields):
+                raise ValueError('Catalog field changes require a generator extension')
+        types={t for fields in FIELDS.values() for t in fields.values()}|{'step','dir','enable','uart'}
         for fields in self.data['kinds'].values():
             if not isinstance(fields,dict) or not fields or any(not NAME.fullmatch(k) or t not in types for k,t in fields.items()):
                 raise ValueError('Invalid catalog field schema')
@@ -93,7 +94,7 @@ class Catalog:
                 raise ValueError('Empty signal catalog')
             for pin,signal in b['signals'].items():
                 if not re.fullmatch(r'P[A-Z][0-9]{1,2}',pin):raise ValueError('Catalog needs canonical MCU GPIO names')
-                if type(signal.get('reserved')) is not bool or not isinstance(signal.get('capabilities'),list) or not signal['capabilities'] or set(signal['capabilities'])-{'adc','heater','fan','probe','input','step','dir','enable','uart'}:
+                if type(signal.get('reserved')) is not bool or not isinstance(signal.get('capabilities'),list) or not signal['capabilities'] or set(signal['capabilities'])-{'adc','heater','fan','probe','input','output','step','dir','enable','uart'}:
                     raise ValueError('Invalid signal capabilities or reservation')
                 if type(signal['source'].get('line')) is not int or signal['source']['line'] < 1:
                     raise ValueError('Selectable signal needs exact primary source line')
@@ -128,6 +129,10 @@ class Catalog:
                 for value in c['limits']:self.number(value,'number')
                 if c['limits'][0]>=c['limits'][1]:raise ValueError('Invalid component limits')
         if not set(factory)<=ids:raise ValueError('Factory DEFAULT definitions are required')
+        if 'factory' in self.data:
+            from sv08_printer_fields import validate_printer_settings
+            keys(self.data['factory'],('printer_settings','source'),('printer_settings','source'))
+            self.source(self.data['factory']['source']);validate_printer_settings(self.data['factory']['printer_settings'],self)
         # Existing kinds may acquire data-only reference bundles. Validate the
         # same bounded typed draft and exclusive resources as user-entered data.
         self.boards = {b['id']: b for b in self.data['boards']}
@@ -156,7 +161,7 @@ class Catalog:
                         self.source({**board['source'], **source})
                         if type(source.get('line')) is not int or source['line'] < 1 or not {'option','section','value','transform'} <= set(source):
                             raise ValueError('Reference defaults need exact source option/line and transformation')
-                        if source['transform'] not in ('number','pin','invert','pullup','curve','text','software-default','connector','association'):
+                        if source['transform'] not in ('number','pin','invert','pullup','curve','text','software-default','connector','association','boolean','alias','sensorless','firmware-spi','firmware-default'):
                             raise ValueError('Unsupported reference default transformation')
                 self.apply_preset(dict(format_version=1,boards={board['role']:{'id':board['id']}},devices=[],geometry={}), board['role'], preset['id'])
 
@@ -265,7 +270,7 @@ class Catalog:
                     raise ValueError('Serial identity requires a single documented /dev path')
             if 'reference_ack' in selection and type(selection['reference_ack']) is not bool:
                 raise ValueError('Reference acknowledgment must be explicit')
-        keys(draft['geometry'], GEOMETRY)
+        keys(draft['geometry'], (*GEOMETRY,'square_corner_velocity'))
         for v in draft['geometry'].values():
             self.number(v, 'positive')
         if not isinstance(draft['devices'], list) or len(draft['devices']) > 64:
@@ -293,7 +298,7 @@ class Catalog:
                 used[resource] = name
             for field, value in settings.items():
                 typ = self.kinds[kind][field]
-                if typ in ('adc', 'heater', 'fan', 'probe', 'input'):
+                if typ in ELECTRICAL and typ!='motor':
                     allocate(value, typ)
                 elif typ == 'motor':
                     connector = board['motors'].get(value)
@@ -343,6 +348,8 @@ class Catalog:
                 elif typ == 'name':
                     if not isinstance(value, str) or not NAME.fullmatch(value):
                         raise ValueError('Invalid sensor association')
+                elif typ in CHOICES:
+                    if value not in CHOICES[typ]:raise ValueError('Unsupported '+typ)
                 elif typ == 'control':
                     if value not in ('pid', 'watermark'):
                         raise ValueError('Unsupported heater control')
@@ -358,6 +365,9 @@ class Catalog:
                 curve = self.curves.get(settings.get('curve'))
                 if curve and curve.get('limits') and not (curve['limits'][0] <= settings['min_temp'] < settings['max_temp'] <= curve['limits'][1]):
                     raise ValueError('Temperatures exceed documented component limits')
+            if kind=='output' and settings.get('pwm') and settings.get('cycle_time',.1)>3:raise ValueError('Mainline PWM cycle must be at most 3 seconds')
+            if settings.get('verify_max_error',120)>120 or settings.get('verify_check_gain_time',120)>120 or settings.get('verify_hysteresis',10)>10:raise ValueError('Heater verification exceeds supported protection bounds')
+            if settings.get('endstop_mode')=='sensorless' and ('homing_retract_dist' in settings and settings['homing_retract_dist']!=0):raise ValueError('Sensorless homing needs an explicit threshold and zero retract')
             if 'run_current' in settings and 'current_rating_rms' in settings and settings['run_current'] > settings['current_rating_rms']:
                 raise ValueError('RMS driver current exceeds owner-entered motor RMS rating')
             # Pinned tmc2209 selects tmc2130.TMCCurrentHelper (MAX_CURRENT).
@@ -381,11 +391,13 @@ class Catalog:
     def number(value, typ):
         if type(value) not in (int, float) or not math.isfinite(value):
             raise ValueError('Numeric fields must be finite numbers')
+        if typ in ('nonnegative','nonnegative_integer','byte','unit_interval') and value<0:raise ValueError('Value must be nonnegative')
+        if typ in ('byte','unit_interval') and value>(255 if typ=='byte' else 1):raise ValueError('Value exceeds supported range')
         if typ in ('positive', 'integer') and value <= 0:
             raise ValueError('Value must be positive')
         if typ == 'fraction' and not 0 < value <= 1:
             raise ValueError('Power fraction must be above zero and at most one')
-        if typ in ('integer', 'address') and type(value) is not int:
+        if typ in ('integer','address','byte','nonnegative_integer') and type(value) is not int:
             raise ValueError('An integer is required')
         if typ == 'address' and not 0 <= value <= 3:
             raise ValueError('TMC2209 UART address must be 0 through 3')

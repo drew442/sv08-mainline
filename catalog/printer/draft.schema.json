@@ -111,7 +111,14 @@
               "bed",
               "motor",
               "extruder",
-              "chamber"
+              "chamber",
+              "heater_fan",
+              "output",
+              "neopixel",
+              "display",
+              "accelerometer",
+              "mcu_temperature",
+              "pressure_switch"
             ]
           },
           "board": {
@@ -151,6 +158,10 @@
         "max_z_accel": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "square_corner_velocity": {
+          "type": "number",
+          "exclusiveMinimum": 0
         }
       }
     },
@@ -186,6 +197,13 @@
         },
         "instance_values": {
           "type": "object"
+        },
+        "replacements": {
+          "type": "object",
+          "maxProperties": 32,
+          "additionalProperties": {
+            "type": "object"
+          }
         }
       },
       "additionalProperties": false

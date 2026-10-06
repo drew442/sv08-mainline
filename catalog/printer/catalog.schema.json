@@ -71,7 +71,8 @@
                       "step",
                       "dir",
                       "enable",
-                      "uart"
+                      "uart",
+                      "output"
                     ]
                   }
                 },
@@ -94,7 +95,8 @@
                   "type": "boolean"
                 },
                 "evidence": {
-                  "const": "documented-reference"
+                  "type": "string",
+                  "minLength": 1
                 }
               }
             }
@@ -153,7 +155,14 @@
                           "bed",
                           "motor",
                           "extruder",
-                          "chamber"
+                          "chamber",
+                          "heater_fan",
+                          "output",
+                          "neopixel",
+                          "display",
+                          "accelerometer",
+                          "mcu_temperature",
+                          "pressure_switch"
                         ]
                       },
                       "settings": {
@@ -246,8 +255,11 @@
             "adc",
             "address",
             "boolean",
+            "byte",
+            "color_order",
             "control",
             "curve",
+            "endstop_mode",
             "fan",
             "fraction",
             "heater",
@@ -255,12 +267,48 @@
             "integer",
             "motor",
             "name",
+            "nonnegative",
+            "nonnegative_integer",
             "number",
+            "output",
             "positive",
             "probe",
             "ratio",
-            "thermistor_points"
+            "samples_result",
+            "thermistor_points",
+            "unit_interval"
           ]
+        }
+      }
+    },
+    "factory": {
+      "type": "object",
+      "required": [
+        "printer_settings",
+        "source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "printer_settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "geometry": {
+              "type": "object"
+            },
+            "bed_mesh": {
+              "type": "object"
+            },
+            "quad_gantry_level": {
+              "type": "object"
+            },
+            "safe_z_home": {
+              "type": "object"
+            }
+          }
+        },
+        "source": {
+          "type": "object"
         }
       }
     }

@@ -129,7 +129,14 @@
                   "bed",
                   "motor",
                   "extruder",
-                  "chamber"
+                  "chamber",
+                  "heater_fan",
+                  "output",
+                  "neopixel",
+                  "display",
+                  "accelerometer",
+                  "mcu_temperature",
+                  "pressure_switch"
                 ]
               },
               "board": {
@@ -185,7 +192,8 @@
                   "fan",
                   "probe",
                   "input",
-                  "motor"
+                  "motor",
+                  "output"
                 ]
               },
               "board_ids": {
@@ -203,6 +211,24 @@
               }
             },
             "additionalProperties": false
+          }
+        },
+        "printer_settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "geometry": {
+              "type": "object"
+            },
+            "bed_mesh": {
+              "type": "object"
+            },
+            "quad_gantry_level": {
+              "type": "object"
+            },
+            "safe_z_home": {
+              "type": "object"
+            }
           }
         }
       },
@@ -336,7 +362,14 @@
                   "bed",
                   "motor",
                   "extruder",
-                  "chamber"
+                  "chamber",
+                  "heater_fan",
+                  "output",
+                  "neopixel",
+                  "display",
+                  "accelerometer",
+                  "mcu_temperature",
+                  "pressure_switch"
                 ]
               },
               "board": {
@@ -392,7 +425,8 @@
                   "fan",
                   "probe",
                   "input",
-                  "motor"
+                  "motor",
+                  "output"
                 ]
               },
               "board_ids": {
@@ -417,6 +451,24 @@
           "maxItems": 256,
           "items": {
             "type": "object"
+          }
+        },
+        "printer_settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "geometry": {
+              "type": "object"
+            },
+            "bed_mesh": {
+              "type": "object"
+            },
+            "quad_gantry_level": {
+              "type": "object"
+            },
+            "safe_z_home": {
+              "type": "object"
+            }
           }
         }
       },
@@ -527,6 +579,24 @@
         "unresolved": {},
         "mapping": {
           "type": "object"
+        },
+        "printer_settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "geometry": {
+              "type": "object"
+            },
+            "bed_mesh": {
+              "type": "object"
+            },
+            "quad_gantry_level": {
+              "type": "object"
+            },
+            "safe_z_home": {
+              "type": "object"
+            }
+          }
         }
       },
       "additionalProperties": false
@@ -639,6 +709,24 @@
           "maxItems": 256,
           "items": {
             "type": "object"
+          }
+        },
+        "printer_settings": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "geometry": {
+              "type": "object"
+            },
+            "bed_mesh": {
+              "type": "object"
+            },
+            "quad_gantry_level": {
+              "type": "object"
+            },
+            "safe_z_home": {
+              "type": "object"
+            }
           }
         }
       },

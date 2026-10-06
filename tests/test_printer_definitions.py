@@ -21,7 +21,7 @@ class Definitions(unittest.TestCase):
         self.d=empty_draft();self.d['boards']['main']={'id':'sv08-main'}
     def test_factory_only_builtin_choices(self):
         self.assertTrue(self.records)
-        self.assertTrue(all(d['id'].startswith(('sv08-main.','sv08-tool.')) for d in self.records))
+        self.assertTrue(all(d['id'].startswith(('sv08-main.','sv08-tool.','sv08.factory')) for d in self.records))
         self.assertFalse(any('funssor' in d['id'] for d in self.records))
     def test_all_builtins_public_schema_and_semantics(self):
         import jsonschema
@@ -44,7 +44,7 @@ class Definitions(unittest.TestCase):
     def test_explicit_update_preserves_local_override_and_old_snapshot(self):
         selected=select_definition(self.c,self.d,self.ref,self.snapshots)
         selected['devices'][0]['settings']['max_temp']=90
-        new=copy.deepcopy(self.bed);new['version']='0.2.0';new['components'][0]['settings']['max_temp']=100
+        new=copy.deepcopy(self.bed);new['version']='0.3.0';new['components'][0]['settings']['max_temp']=100
         ref={**self.ref,'version':new['version'],'sha256':digest(new)}
         updated=select_definition(self.c,selected,ref,{'builtin::'+new['id']+'@'+new['version']:new})
         self.assertEqual(updated['devices'][0]['settings']['max_temp'],90)
@@ -55,8 +55,8 @@ class Definitions(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'unavailable'):resolve(r,{next(iter(self.snapshots)):d},self.c)
         with self.assertRaisesRegex(ValueError,'changed'):resolve({**self.ref,'sha256':'0'*64},self.snapshots,self.c)
     def test_conflicting_dependency_versions(self):
-        v2=copy.deepcopy(self.bed);v2['version']='0.2.0'
-        plan=dict(format_version=1,selections=[self.ref,{**self.ref,'version':'0.2.0','sha256':digest(v2)}],snapshots={**self.snapshots,'builtin::'+v2['id']+'@0.2.0':v2})
+        v2=copy.deepcopy(self.bed);v2['version']='0.3.0'
+        plan=dict(format_version=1,selections=[self.ref,{**self.ref,'version':'0.3.0','sha256':digest(v2)}],snapshots={**self.snapshots,'builtin::'+v2['id']+'@0.3.0':v2})
         with self.assertRaisesRegex(ValueError,'versions'):validate_plan(plan,self.c)
     def test_unknown_operational_fields_and_raw_code_are_rejected(self):
         for field in ('setup_script','raw_macros','python'):
@@ -105,20 +105,21 @@ class Definitions(unittest.TestCase):
         draft=full_draft();records={};refs=[]
         for ident,comparison,threshold in [('fixture-lower','at_least',25),('fixture-upper','at_most',50)]:
             d=copy.deepcopy(self.bed);d.update(id=ident,kind='behaviour',category='probe',behaviours=[dict(hook='levelling.preconditions',operation='check',sensor='bed_check',comparison=comparison,threshold=threshold,abort='error',sources=['software-fixture'])]);d.pop('components');d.pop('connections')
-            records['fixture::'+ident+'@0.1.0']=d;refs.append(dict(source='fixture',id=ident,version='0.1.0',sha256=digest(d),commit='a'*40))
+            records['fixture::'+ident+'@0.2.0']=d;refs.append(dict(source='fixture',id=ident,version='0.2.0',sha256=digest(d),commit='a'*40))
         outputs=[]
         for order in [refs,list(reversed(refs))]:
             candidate=copy.deepcopy(draft);candidate['definition_plan']=dict(format_version=1,selections=order,snapshots=records)
             output=generate(self.c,candidate,'full');self.assertTrue(output['complete']);outputs.append(output['text'])
         self.assertEqual(*outputs);self.assertEqual(outputs[0].count('[gcode_macro SV08_LEVELLING_PRECONDITIONS]'),1)
         self.assertNotIn('M140',outputs[0]);self.assertNotIn('TEMPERATURE_WAIT',outputs[0])
-        records['fixture::fixture-upper@0.1.0']['behaviours'][0]['threshold']=20
-        refs[1]['sha256']=digest(records['fixture::fixture-upper@0.1.0'])
+        records['fixture::fixture-upper@0.2.0']['behaviours'][0]['threshold']=20
+        refs[1]['sha256']=digest(records['fixture::fixture-upper@0.2.0'])
         with self.assertRaisesRegex(ValueError,'Conflicting levelling'):validate_plan(dict(format_version=1,selections=refs,snapshots=records),self.c)
     def test_multiple_factory_motors_fans_and_boards_coexist(self):
         draft=copy.deepcopy(self.d);draft['boards']['tool']={'id':'sv08-tool'}
         snapshots={'builtin::'+d['id']+'@'+d['version']:d for d in self.records}
         for d in self.records:
+            if d['id']=='sv08.factory':continue
             if d['category'] not in ('motion','cooling','boards') or d['kind']!='board' and any(c['kind']=='sensor' for c in d.get('components',[])):continue
             draft=select_definition(self.c,draft,dict(source='builtin',id=d['id'],version=d['version'],sha256=digest(d),commit=self.c.revision),snapshots)
         self.assertEqual(len([d for d in draft['devices'] if d['kind']=='motor']),6)
@@ -134,12 +135,12 @@ class Definitions(unittest.TestCase):
         self.assertEqual(locked_catalog(selected,self.c).boards['fixture-main']['connectors'],board['mapping']['connectors'])
     def test_shared_dependency_removal_and_addition_preserve_override_and_calibration(self):
         bed=copy.deepcopy(self.bed);bed['id']='shared-bed'
-        snap={'fixture::shared-bed@0.1.0':bed}
+        snap={'fixture::shared-bed@0.2.0':bed}
         selections=[]
         for ident,category in [('bundle-bed','bed'),('bundle-probe','probe')]:
-            bundle=copy.deepcopy(bed);bundle.update(id=ident,category=category,components=[],connections=[],dependencies=[dict(id='shared-bed',version='0.1.0',sha256=digest(bed))])
-            snap['fixture::'+ident+'@0.1.0']=bundle
-            selections.append(dict(source='fixture',id=ident,version='0.1.0',sha256=digest(bundle),commit='a'*40))
+            bundle=copy.deepcopy(bed);bundle.update(id=ident,category=category,components=[],connections=[],dependencies=[dict(id='shared-bed',version='0.2.0',sha256=digest(bed))])
+            snap['fixture::'+ident+'@0.2.0']=bundle
+            selections.append(dict(source='fixture',id=ident,version='0.2.0',sha256=digest(bundle),commit='a'*40))
         selected=select_definition(self.c,self.d,selections[0],snap)
         heater=next(d for d in selected['devices'] if d['kind']=='bed');heater['settings']['max_power']=.6;heater['settings'].update(pid_kp=1,pid_ki=2,pid_kd=3)
         shared=select_definition(self.c,selected,selections[1],snap)
@@ -152,7 +153,7 @@ class Definitions(unittest.TestCase):
         self.bed['components']=[c for c in self.bed['components'] if c['kind']=='sensor']
         self.bed['connections']=[c for c in self.bed['connections'] if c['capability']=='adc']
         self.bed['inputs']={'limit':dict(type='number',label='Fixture limit',target='bed_sensor.max_temp',default=95,required=True)}
-        ref={**self.ref,'sha256':digest(self.bed)};snapshot={'builtin::'+self.bed['id']+'@0.1.0':self.bed}
+        ref={**self.ref,'sha256':digest(self.bed)};snapshot={'builtin::'+self.bed['id']+'@0.2.0':self.bed}
         selected=select_definition(self.c,self.d,ref,snapshot)
         output=generate(self.c,selected,'sensors');self.assertTrue(output['complete']);self.assertIn('max_temp: 95',output['text'])
         selected['definition_plan']['instance_values']={'bed_sensor.max_temp':90}

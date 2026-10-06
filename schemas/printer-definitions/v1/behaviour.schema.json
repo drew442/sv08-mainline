@@ -109,6 +109,24 @@
       "items": {
         "type": "object"
       }
+    },
+    "printer_settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "geometry": {
+          "type": "object"
+        },
+        "bed_mesh": {
+          "type": "object"
+        },
+        "quad_gantry_level": {
+          "type": "object"
+        },
+        "safe_z_home": {
+          "type": "object"
+        }
+      }
     }
   },
   "additionalProperties": false

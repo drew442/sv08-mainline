@@ -56,17 +56,21 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(self.c.curves['sovol-bed']['points'],[[25,100000],[50,18085.4],[100,5362.6]])
         self.assertEqual(self.c.curves['sovol-hotend']['points'],[[25,110000],[100,7008],[220,435]])
     def test_all_selectable_capabilities_primary_line_audit(self):
-        root=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
+        import re
+        vendor=primary_source('upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg').read_text()
+        aliases=dict(re.findall(r'(EXP[12]_[0-9]+)=(P[A-Z][0-9]+)',vendor))
         for board in self.c.boards.values():
-            lines=primary_source(board['source']['path']).read_text().splitlines()
             for pin,signal in board['signals'].items():
-                source=signal['source'];line=lines[source['line']-1]
-                self.assertIn(source['option']+':',line.replace(' ',''),(board['id'],pin))
-                normalized=line.split(':',1)[1].split('#')[0].strip().replace(' ','').lstrip('^!~').split(':')[-1]
-                self.assertEqual(normalized,pin,(board['id'],pin))
+                source={**board['source'],**signal['source']};line=primary_source(source['path']).read_text().splitlines()[source['line']-1]
                 option=source['option'];kind=source['section'].split()[0]
-                expected={'step_pin':'step','dir_pin':'dir','enable_pin':'enable','uart_pin':'uart','sensor_pin':'adc','heater_pin':'heater','switch_pin':'input','endstop_pin':'input','diag_pin':'input'}.get(option)
-                if option=='pin':expected='fan' if 'fan' in kind else 'probe' if kind=='probe' else None
+                if source.get('transform')=='firmware-spi':
+                    self.assertIn(pin,line);self.assertEqual(signal['capabilities'],['input' if option=='miso_pin' else 'output']);continue
+                self.assertIn(option+':',line.replace(' ',''),(board['id'],pin))
+                raw=line.split(':',1)[1].split('#')[0].strip()
+                values=[v.strip().lstrip('^!~').split(':')[-1].strip() for v in raw.split(',')]
+                self.assertIn(pin,[aliases.get(v,v) for v in values],(board['id'],pin))
+                expected={'step_pin':'step','dir_pin':'dir','enable_pin':'enable','uart_pin':'uart','sensor_pin':'adc','heater_pin':'heater','switch_pin':'input','endstop_pin':'input','diag_pin':'input','tachometer_pin':'input','encoder_pins':'input','click_pin':'input','cs_pin':'output','a0_pin':'output','rst_pin':'output','spi_software_miso_pin':'input','spi_software_mosi_pin':'output','spi_software_sclk_pin':'output'}.get(option)
+                if option=='pin':expected='fan' if 'fan' in kind else 'probe' if kind=='probe' else 'input' if kind=='probe_pressure' else 'output'
                 if kind=='bltouch' and option=='sensor_pin':expected='probe'
                 self.assertEqual(signal['capabilities'],[expected],(board['id'],pin))
             for cap,count in board['channel_counts'].items():self.assertEqual(count,sum(cap in sig['capabilities'] for sig in board['signals'].values()))
@@ -198,7 +202,7 @@ class CatalogTests(unittest.TestCase):
         d=self.c.apply_preset(d,'main','stepper_x');motor=d['devices'][1]
         self.assertEqual(motor['name'],'stepper_x');self.assertEqual(motor['settings']['uart_address'],3)
         self.assertEqual(motor['settings']['rotation_distance'],40);self.assertEqual(motor['settings']['run_current'],1.5)
-        self.assertNotIn('current_rating_rms',motor['settings']);self.assertNotIn('endstop_pin',motor['settings'])
+        self.assertNotIn('current_rating_rms',motor['settings']);self.assertEqual(motor['settings']['endstop_pin'],'PE15');self.assertEqual(motor['settings']['endstop_mode'],'sensorless')
         before=copy.deepcopy(d)
         with self.assertRaisesRegex(ValueError,'unique'):self.c.apply_preset(d,'main','stepper_x')
         with self.assertRaises(ValueError):self.c.apply_preset(d,'main','bed_assembly')
@@ -215,7 +219,9 @@ class CatalogTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'ratio'):self.c.validate(full)
 
     def test_reference_field_primary_sources(self):
-        import ast
+        import ast,re
+        vendor=primary_source('upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg').read_text()
+        aliases=dict(re.findall(r'(EXP[12]_[0-9]+)=(P[A-Z][0-9]+)',vendor))
         root=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         for board in self.c.boards.values():
             for preset in board['presets']:
@@ -226,6 +232,10 @@ class CatalogTests(unittest.TestCase):
                         with self.subTest(board=board['id'],preset=preset['id'],field=key):
                             lines=primary_source(s['path']).read_text().splitlines();line=lines[s['line']-1]
                             actual=device['settings'][key];transform=s['transform']
+                            if transform=='firmware-spi':
+                                self.assertIn(actual,line);self.assertIn('BUS_PINS_spi2',line);continue
+                            if transform=='firmware-default':
+                                self.assertIn('default_speed='+str(actual),line);continue
                             if transform=='software-default':
                                 tree=ast.parse(primary_source(s['path']).read_text())
                                 calls=[n for n in ast.walk(tree) if isinstance(n,ast.Call) and n.lineno<=s['line']<=getattr(n,'end_lineno',n.lineno) and len(n.args)>=2 and isinstance(n.args[0],ast.Constant) and n.args[0].value==key]
@@ -233,6 +243,11 @@ class CatalogTests(unittest.TestCase):
                             raw=line.strip().lstrip('#').strip().split(':',1)[1].split('#')[0].strip()
                             self.assertEqual(raw,s['value']);self.assertIn(s['option'].lower(),line.lower())
                             if transform=='number':self.assertEqual(actual,float(raw))
+                            elif transform=='boolean':self.assertEqual(actual,raw.lower() in ('true','1'))
+                            elif transform=='sensorless':self.assertEqual(raw,'tmc2209_'+device['name']+': virtual_endstop');self.assertEqual(actual,'sensorless')
+                            elif transform=='alias':
+                                values=[aliases[v.strip().lstrip('^!')] for v in raw.split(',')]
+                                self.assertEqual(actual,values[0 if key!='encoder_b' else 1])
                             elif transform=='pin':self.assertEqual(actual,raw.replace(' ','').lstrip('^!~').split(':')[-1])
                             elif transform=='invert':self.assertEqual(actual,'!' in raw)
                             elif transform=='pullup':self.assertEqual(actual,'^' in raw)

@@ -84,10 +84,23 @@
             "input"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
             "line": 184,
             "section": "tmc2209 stepper_x",
             "option": "diag_pin",
-            "reference_only": false
+            "value": "PE15",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -149,10 +162,23 @@
             "input"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
             "line": 210,
             "section": "tmc2209 stepper_y",
             "option": "diag_pin",
-            "reference_only": false
+            "value": "PE13",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -370,10 +396,23 @@
             "input"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
             "line": 339,
             "section": "filament_switch_sensor filament_sensor",
             "option": "switch_pin",
-            "reference_only": false
+            "value": "PE9",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -383,10 +422,23 @@
             "heater"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
             "line": 350,
             "section": "heater_bed",
             "option": "heater_pin",
-            "reference_only": false
+            "value": "PA0",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -396,10 +448,23 @@
             "adc"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
             "line": 352,
             "section": "heater_bed",
             "option": "sensor_pin",
-            "reference_only": false
+            "value": "PC5",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -409,13 +474,364 @@
             "fan"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
             "line": 376,
             "section": "fan_generic fan3",
             "option": "pin",
-            "reference_only": false
+            "value": "PA2",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
+        },
+        "PE12": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 83,
+            "section": "probe_pressure",
+            "option": "pin",
+            "value": "^!PE12",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PA3": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 434,
+            "section": "output_pin main_led",
+            "option": "pin",
+            "value": "PA3",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PA8": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 418,
+            "section": "output_pin beeper",
+            "option": "pin",
+            "value": "EXP1_1",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PA10": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 407,
+            "section": "display",
+            "option": "cs_pin",
+            "value": "EXP1_3",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PA9": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 408,
+            "section": "display",
+            "option": "a0_pin",
+            "value": "EXP1_4",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PC11": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 409,
+            "section": "display",
+            "option": "rst_pin",
+            "value": "EXP1_5",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB14": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 413,
+            "section": "display",
+            "option": "spi_software_miso_pin",
+            "value": "EXP2_1",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB15": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 414,
+            "section": "display",
+            "option": "spi_software_mosi_pin",
+            "value": "EXP2_6",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB13": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 415,
+            "section": "display",
+            "option": "spi_software_sclk_pin",
+            "value": "EXP2_2",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PC6": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 410,
+            "section": "display",
+            "option": "encoder_pins",
+            "value": "^EXP2_5, ^EXP2_3",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PC7": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 410,
+            "section": "display",
+            "option": "encoder_pins",
+            "value": "^EXP2_5, ^EXP2_3",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PC9": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 411,
+            "section": "display",
+            "option": "click_pin",
+            "value": "^!EXP1_2",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PC10": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 423,
+            "section": "neopixel Screen_Colour",
+            "option": "pin",
+            "value": "EXP1_6",
+            "transform": "alias",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
         }
       },
       "connectors": {
@@ -808,6 +1224,331 @@
             "option": "pin",
             "reference_only": false
           }
+        },
+        "pressure_switch_pin": {
+          "label": "pressure switch pin",
+          "pin": "PE12",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 83,
+            "section": "probe_pressure",
+            "option": "pin",
+            "value": "^!PE12",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "main_led_pin": {
+          "label": "main led pin",
+          "pin": "PA3",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 434,
+            "section": "output_pin main_led",
+            "option": "pin",
+            "value": "PA3",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "beeper_pin": {
+          "label": "beeper pin",
+          "pin": "PA8",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 390,
+            "section": "board_pins",
+            "option": "aliases",
+            "value": "",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_cs_pin": {
+          "label": "display cs pin",
+          "pin": "PA10",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 407,
+            "section": "display",
+            "option": "cs_pin",
+            "value": "EXP1_3",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_a0_pin": {
+          "label": "display a0 pin",
+          "pin": "PA9",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 408,
+            "section": "display",
+            "option": "a0_pin",
+            "value": "EXP1_4",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_rst_pin": {
+          "label": "display rst pin",
+          "pin": "PC11",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 409,
+            "section": "display",
+            "option": "rst_pin",
+            "value": "EXP1_5",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_miso_pin": {
+          "label": "display miso pin",
+          "pin": "PB14",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 413,
+            "section": "display",
+            "option": "spi_software_miso_pin",
+            "value": "EXP2_1",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_mosi_pin": {
+          "label": "display mosi pin",
+          "pin": "PB15",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 414,
+            "section": "display",
+            "option": "spi_software_mosi_pin",
+            "value": "EXP2_6",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_sclk_pin": {
+          "label": "display sclk pin",
+          "pin": "PB13",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 415,
+            "section": "display",
+            "option": "spi_software_sclk_pin",
+            "value": "EXP2_2",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_encoder_a": {
+          "label": "display encoder a",
+          "pin": "PC6",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 410,
+            "section": "display",
+            "option": "encoder_pins",
+            "value": "^EXP2_5, ^EXP2_3",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_encoder_b": {
+          "label": "display encoder b",
+          "pin": "PC7",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 410,
+            "section": "display",
+            "option": "encoder_pins",
+            "value": "^EXP2_5, ^EXP2_3",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "display_click_pin": {
+          "label": "display click pin",
+          "pin": "PC9",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 411,
+            "section": "display",
+            "option": "click_pin",
+            "value": "^!EXP1_2",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "screen_colour_pin": {
+          "label": "screen colour pin",
+          "pin": "PC10",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+            },
+            "line": 423,
+            "section": "neopixel Screen_Colour",
+            "option": "pin",
+            "value": "EXP1_6",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
         }
       },
       "motors": {
@@ -850,12 +1591,14 @@
       },
       "channel_counts": {
         "adc": 1,
-        "heater": 1,
+        "dir": 6,
+        "enable": 6,
         "fan": 1,
+        "heater": 1,
+        "input": 8,
+        "output": 8,
         "step": 6,
-        "uart": 6,
-        "input": 3,
-        "probe": 0
+        "uart": 6
       },
       "channel_scope": "Only evidenced selectable channels, not total physical capacity",
       "sharing_rules": [],
@@ -887,7 +1630,8 @@
                   "option": "sensor_pin",
                   "value": "PC5",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "curve": {
                   "line": 351,
@@ -949,7 +1693,8 @@
                   "option": "sensor_pin",
                   "value": "PC5",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "curve": {
                   "line": 351,
@@ -998,7 +1743,11 @@
                 "pid_ki": 1.82,
                 "pid_kd": 783.849,
                 "control": "pid",
-                "sensor": "bed_sensor"
+                "sensor": "bed_sensor",
+                "verify_max_error": 120,
+                "verify_check_gain_time": 40,
+                "verify_hysteresis": 5,
+                "verify_heating_gain": 2
               },
               "sources": {
                 "pin": {
@@ -1007,7 +1756,8 @@
                   "option": "heater_pin",
                   "value": "PA0",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 350,
@@ -1064,6 +1814,42 @@
                   "value": "PC5",
                   "transform": "association",
                   "reference": "active reference"
+                },
+                "verify_max_error": {
+                  "line": 362,
+                  "section": "verify_heater heater_bed",
+                  "option": "max_error",
+                  "value": "120",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_check_gain_time": {
+                  "line": 363,
+                  "section": "verify_heater heater_bed",
+                  "option": "check_gain_time",
+                  "value": "40",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_hysteresis": {
+                  "line": 364,
+                  "section": "verify_heater heater_bed",
+                  "option": "hysteresis",
+                  "value": "5",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_heating_gain": {
+                  "line": 365,
+                  "section": "verify_heater heater_bed",
+                  "option": "heating_gain",
+                  "value": "2",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1089,7 +1875,17 @@
                 "invert_enable": true,
                 "run_current": 1.5,
                 "sense_resistor": 0.15,
-                "uart_address": 3
+                "uart_address": 3,
+                "interpolate": true,
+                "stealthchop_threshold": 0,
+                "full_steps_per_rotation": 200,
+                "endstop_mode": "sensorless",
+                "endstop_pin": "PE15",
+                "endstop_invert": false,
+                "endstop_pullup": false,
+                "driver_sgthrs": 65,
+                "homing_retract_dist": 0,
+                "homing_positive_dir": true
               },
               "sources": {
                 "connector": {
@@ -1187,6 +1983,96 @@
                   "value": "3",
                   "transform": "number",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 177,
+                  "section": "tmc2209 stepper_x",
+                  "option": "interpolate",
+                  "value": "True",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "stealthchop_threshold": {
+                  "line": 181,
+                  "section": "tmc2209 stepper_x",
+                  "option": "stealthchop_threshold",
+                  "value": "0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "full_steps_per_rotation": {
+                  "line": 166,
+                  "section": "stepper_x",
+                  "option": "full_steps_per_rotation",
+                  "value": "200",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_mode": {
+                  "line": 167,
+                  "section": "stepper_x",
+                  "option": "endstop_pin",
+                  "value": "tmc2209_stepper_x: virtual_endstop",
+                  "transform": "sensorless",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_pin": {
+                  "line": 184,
+                  "section": "tmc2209 stepper_x",
+                  "option": "diag_pin",
+                  "value": "PE15",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_invert": {
+                  "line": 184,
+                  "section": "tmc2209 stepper_x",
+                  "option": "diag_pin",
+                  "value": "PE15",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_pullup": {
+                  "line": 184,
+                  "section": "tmc2209 stepper_x",
+                  "option": "diag_pin",
+                  "value": "PE15",
+                  "transform": "pullup",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "driver_sgthrs": {
+                  "line": 183,
+                  "section": "tmc2209 stepper_x",
+                  "option": "driver_sgthrs",
+                  "value": "65",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "homing_retract_dist": {
+                  "line": 172,
+                  "section": "stepper_x",
+                  "option": "homing_retract_dist",
+                  "value": "0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "homing_positive_dir": {
+                  "line": 173,
+                  "section": "stepper_x",
+                  "option": "homing_positive_dir",
+                  "value": "True",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1212,7 +2098,17 @@
                 "invert_enable": true,
                 "run_current": 1.5,
                 "sense_resistor": 0.15,
-                "uart_address": 3
+                "uart_address": 3,
+                "interpolate": true,
+                "stealthchop_threshold": 0,
+                "full_steps_per_rotation": 200,
+                "endstop_mode": "sensorless",
+                "endstop_pin": "PE13",
+                "endstop_invert": false,
+                "endstop_pullup": false,
+                "driver_sgthrs": 65,
+                "homing_retract_dist": 0,
+                "homing_positive_dir": true
               },
               "sources": {
                 "connector": {
@@ -1310,6 +2206,96 @@
                   "value": "3",
                   "transform": "number",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 203,
+                  "section": "tmc2209 stepper_y",
+                  "option": "interpolate",
+                  "value": "True",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "stealthchop_threshold": {
+                  "line": 207,
+                  "section": "tmc2209 stepper_y",
+                  "option": "stealthchop_threshold",
+                  "value": "0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "full_steps_per_rotation": {
+                  "line": 192,
+                  "section": "stepper_y",
+                  "option": "full_steps_per_rotation",
+                  "value": "200",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_mode": {
+                  "line": 193,
+                  "section": "stepper_y",
+                  "option": "endstop_pin",
+                  "value": "tmc2209_stepper_y: virtual_endstop",
+                  "transform": "sensorless",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_pin": {
+                  "line": 210,
+                  "section": "tmc2209 stepper_y",
+                  "option": "diag_pin",
+                  "value": "PE13",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_invert": {
+                  "line": 210,
+                  "section": "tmc2209 stepper_y",
+                  "option": "diag_pin",
+                  "value": "PE13",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "endstop_pullup": {
+                  "line": 210,
+                  "section": "tmc2209 stepper_y",
+                  "option": "diag_pin",
+                  "value": "PE13",
+                  "transform": "pullup",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "driver_sgthrs": {
+                  "line": 209,
+                  "section": "tmc2209 stepper_y",
+                  "option": "driver_sgthrs",
+                  "value": "65",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "homing_retract_dist": {
+                  "line": 198,
+                  "section": "stepper_y",
+                  "option": "homing_retract_dist",
+                  "value": "0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "homing_positive_dir": {
+                  "line": 199,
+                  "section": "stepper_y",
+                  "option": "homing_positive_dir",
+                  "value": "true",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1335,7 +2321,12 @@
                 "run_current": 0.58,
                 "sense_resistor": 0.15,
                 "uart_address": 3,
-                "gear_ratio": "80:12"
+                "gear_ratio": "80:12",
+                "interpolate": true,
+                "stealthchop_threshold": 999999,
+                "homing_retract_dist": 5,
+                "homing_retract_speed": 15,
+                "second_homing_speed": 10
               },
               "sources": {
                 "connector": {
@@ -1433,6 +2424,51 @@
                   "value": "80:12",
                   "transform": "text",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 230,
+                  "section": "tmc2209 stepper_z",
+                  "option": "interpolate",
+                  "value": "true",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "stealthchop_threshold": {
+                  "line": 234,
+                  "section": "tmc2209 stepper_z",
+                  "option": "stealthchop_threshold",
+                  "value": "999999",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "homing_retract_dist": {
+                  "line": 224,
+                  "section": "stepper_z",
+                  "option": "homing_retract_dist",
+                  "value": "5.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "homing_retract_speed": {
+                  "line": 225,
+                  "section": "stepper_z",
+                  "option": "homing_retract_speed",
+                  "value": "15.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "second_homing_speed": {
+                  "line": 226,
+                  "section": "stepper_z",
+                  "option": "second_homing_speed",
+                  "value": "10.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1455,7 +2491,9 @@
                 "run_current": 0.58,
                 "sense_resistor": 0.15,
                 "uart_address": 3,
-                "gear_ratio": "80:12"
+                "gear_ratio": "80:12",
+                "interpolate": true,
+                "stealthchop_threshold": 999999
               },
               "sources": {
                 "connector": {
@@ -1529,6 +2567,24 @@
                   "value": "80:12",
                   "transform": "text",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 247,
+                  "section": "tmc2209 stepper_z1",
+                  "option": "interpolate",
+                  "value": "true",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "stealthchop_threshold": {
+                  "line": 251,
+                  "section": "tmc2209 stepper_z1",
+                  "option": "stealthchop_threshold",
+                  "value": "999999",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1551,7 +2607,9 @@
                 "run_current": 0.58,
                 "sense_resistor": 0.15,
                 "uart_address": 3,
-                "gear_ratio": "80:12"
+                "gear_ratio": "80:12",
+                "interpolate": true,
+                "stealthchop_threshold": 999999
               },
               "sources": {
                 "connector": {
@@ -1625,6 +2683,24 @@
                   "value": "80:12",
                   "transform": "text",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 264,
+                  "section": "tmc2209 stepper_z2",
+                  "option": "interpolate",
+                  "value": "true",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "stealthchop_threshold": {
+                  "line": 268,
+                  "section": "tmc2209 stepper_z2",
+                  "option": "stealthchop_threshold",
+                  "value": "999999",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1647,7 +2723,9 @@
                 "run_current": 0.58,
                 "sense_resistor": 0.15,
                 "uart_address": 3,
-                "gear_ratio": "80:12"
+                "gear_ratio": "80:12",
+                "interpolate": true,
+                "stealthchop_threshold": 999999
               },
               "sources": {
                 "connector": {
@@ -1721,6 +2799,24 @@
                   "value": "80:12",
                   "transform": "text",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 281,
+                  "section": "tmc2209 stepper_z3",
+                  "option": "interpolate",
+                  "value": "true",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "stealthchop_threshold": {
+                  "line": 286,
+                  "section": "tmc2209 stepper_z3",
+                  "option": "stealthchop_threshold",
+                  "value": "999999",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1737,7 +2833,10 @@
               "settings": {
                 "pin": "PE9",
                 "invert": false,
-                "digital_pullup": false
+                "digital_pullup": false,
+                "pause_on_runout": true,
+                "event_delay": 3,
+                "pause_delay": 0.5
               },
               "sources": {
                 "pin": {
@@ -1746,7 +2845,8 @@
                   "option": "switch_pin",
                   "value": "PE9",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 339,
@@ -1763,6 +2863,33 @@
                   "value": "PE9",
                   "transform": "pullup",
                   "reference": "active reference"
+                },
+                "pause_on_runout": {
+                  "line": 336,
+                  "section": "filament_switch_sensor filament_sensor",
+                  "option": "pause_on_runout",
+                  "value": "True",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "event_delay": {
+                  "line": 337,
+                  "section": "filament_switch_sensor filament_sensor",
+                  "option": "event_delay",
+                  "value": "3.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "pause_delay": {
+                  "line": 338,
+                  "section": "filament_switch_sensor filament_sensor",
+                  "option": "pause_delay",
+                  "value": "0.5",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -1788,7 +2915,8 @@
                   "option": "pin",
                   "value": "PA2",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 376,
@@ -1916,6 +3044,472 @@
             }
           ],
           "notes": "Owner-selected manufacturer kit: 8mm aluminum plate, advertised 120\u00b0C bed and 135\u00b0C thermal fuse. Reference assumes the stock SV08 bed interface. Factory sensor curve and PID gains are cleared; select the supplied thermistor, which the product page does not identify. Board-reference power/bias/software bounds retained; no new safe electrical limit inferred."
+        },
+        {
+          "id": "pressure_switch",
+          "label": "Factory nozzle-contact pressure input",
+          "notes": "Source probe_pressure electrical input monitored with an empty-action mainline gcode_button. Proprietary pressure-probing and automatic Z-calibration workflows are separate; no probing/motion hook is installed.",
+          "devices": [
+            {
+              "name": "pressure_switch",
+              "kind": "pressure_switch",
+              "settings": {
+                "pin": "PE12",
+                "invert": true,
+                "digital_pullup": true
+              },
+              "sources": {
+                "pin": {
+                  "line": 83,
+                  "section": "probe_pressure",
+                  "option": "pin",
+                  "value": "^!PE12",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "invert": {
+                  "line": 83,
+                  "section": "probe_pressure",
+                  "option": "pin",
+                  "value": "^!PE12",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "digital_pullup": {
+                  "line": 83,
+                  "section": "probe_pressure",
+                  "option": "pin",
+                  "value": "^!PE12",
+                  "transform": "pullup",
+                  "reference": "active reference",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "main_led",
+          "label": "Factory main led",
+          "notes": "Vendor LED PWM period 5 s exceeds the mainline maximum of 3 s; this definition uses the pinned upstream default 0.1 s.",
+          "devices": [
+            {
+              "name": "main_led",
+              "kind": "output",
+              "settings": {
+                "pin": "PA3",
+                "invert": false,
+                "pwm": true,
+                "value": 1,
+                "shutdown_value": 0,
+                "cycle_time": 0.1
+              },
+              "sources": {
+                "pin": {
+                  "line": 434,
+                  "section": "output_pin main_led",
+                  "option": "pin",
+                  "value": "PA3",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "invert": {
+                  "line": 434,
+                  "section": "output_pin main_led",
+                  "option": "pin",
+                  "value": "PA3",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "pwm": {
+                  "line": 435,
+                  "section": "output_pin main_led",
+                  "option": "pwm",
+                  "value": "1",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "value": {
+                  "line": 436,
+                  "section": "output_pin main_led",
+                  "option": "value",
+                  "value": "1",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "shutdown_value": {
+                  "path": "upstream/klipper/klippy/extras/output_pin.py",
+                  "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+                  "sha256": "9c4d4cbc956eb7a3f7d019445e8ca9a8df8b99cbdebadf45191c03aa780aaaef",
+                  "accessed": "2026-10-06",
+                  "line": 222,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "shutdown_value",
+                  "value": 0,
+                  "transform": "software-default",
+                  "reference": "Pinned upstream shutdown default; no physical rating inferred",
+                  "reference_only": true
+                },
+                "cycle_time": {
+                  "path": "upstream/klipper/klippy/extras/output_pin.py",
+                  "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+                  "sha256": "9c4d4cbc956eb7a3f7d019445e8ca9a8df8b99cbdebadf45191c03aa780aaaef",
+                  "accessed": "2026-10-06",
+                  "line": 209,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "cycle_time",
+                  "value": 0.1,
+                  "transform": "software-default",
+                  "reference": "Pinned mainline PWM default; vendor LED 5 s exceeds mainline 3 s maximum. Omitted for digital beeper.",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "beeper",
+          "label": "Factory beeper",
+          "notes": "Digital beeper output; no audible startup action.",
+          "devices": [
+            {
+              "name": "beeper",
+              "kind": "output",
+              "settings": {
+                "pin": "PA8",
+                "invert": false,
+                "pwm": false,
+                "value": 0,
+                "shutdown_value": 0,
+                "cycle_time": 0.1
+              },
+              "sources": {
+                "pin": {
+                  "line": 418,
+                  "section": "output_pin beeper",
+                  "option": "pin",
+                  "value": "EXP1_1",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "invert": {
+                  "line": 418,
+                  "section": "output_pin beeper",
+                  "option": "pin",
+                  "value": "EXP1_1",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "pwm": {
+                  "line": 419,
+                  "section": "output_pin beeper",
+                  "option": "pwm",
+                  "value": "False",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "value": {
+                  "line": 420,
+                  "section": "output_pin beeper",
+                  "option": "value",
+                  "value": "0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "shutdown_value": {
+                  "path": "upstream/klipper/klippy/extras/output_pin.py",
+                  "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+                  "sha256": "9c4d4cbc956eb7a3f7d019445e8ca9a8df8b99cbdebadf45191c03aa780aaaef",
+                  "accessed": "2026-10-06",
+                  "line": 222,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "shutdown_value",
+                  "value": 0,
+                  "transform": "software-default",
+                  "reference": "Pinned upstream shutdown default; no physical rating inferred",
+                  "reference_only": true
+                },
+                "cycle_time": {
+                  "path": "upstream/klipper/klippy/extras/output_pin.py",
+                  "revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+                  "sha256": "9c4d4cbc956eb7a3f7d019445e8ca9a8df8b99cbdebadf45191c03aa780aaaef",
+                  "accessed": "2026-10-06",
+                  "line": 209,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "cycle_time",
+                  "value": 0.1,
+                  "transform": "software-default",
+                  "reference": "Pinned mainline PWM default; vendor LED 5 s exceeds mainline 3 s maximum. Omitted for digital beeper.",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "display",
+          "label": "Factory UC1701 display and controls",
+          "notes": "Pinned factory configuration; identity and calibration remain local.",
+          "devices": [
+            {
+              "name": "display",
+              "kind": "display",
+              "settings": {
+                "cs_pin": "PA10",
+                "a0_pin": "PA9",
+                "rst_pin": "PC11",
+                "miso_pin": "PB14",
+                "mosi_pin": "PB15",
+                "sclk_pin": "PB13",
+                "encoder_a": "PC6",
+                "encoder_b": "PC7",
+                "encoder_pullup": true,
+                "click_pin": "PC9",
+                "click_pullup": true,
+                "click_invert": true,
+                "contrast": 63
+              },
+              "sources": {
+                "cs_pin": {
+                  "line": 407,
+                  "section": "display",
+                  "option": "cs_pin",
+                  "value": "EXP1_3",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "a0_pin": {
+                  "line": 408,
+                  "section": "display",
+                  "option": "a0_pin",
+                  "value": "EXP1_4",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "rst_pin": {
+                  "line": 409,
+                  "section": "display",
+                  "option": "rst_pin",
+                  "value": "EXP1_5",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "miso_pin": {
+                  "line": 413,
+                  "section": "display",
+                  "option": "spi_software_miso_pin",
+                  "value": "EXP2_1",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "mosi_pin": {
+                  "line": 414,
+                  "section": "display",
+                  "option": "spi_software_mosi_pin",
+                  "value": "EXP2_6",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "sclk_pin": {
+                  "line": 415,
+                  "section": "display",
+                  "option": "spi_software_sclk_pin",
+                  "value": "EXP2_2",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "encoder_a": {
+                  "line": 410,
+                  "section": "display",
+                  "option": "encoder_pins",
+                  "value": "^EXP2_5, ^EXP2_3",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "encoder_b": {
+                  "line": 410,
+                  "section": "display",
+                  "option": "encoder_pins",
+                  "value": "^EXP2_5, ^EXP2_3",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "encoder_pullup": {
+                  "line": 410,
+                  "section": "display",
+                  "option": "encoder_pins",
+                  "value": "^EXP2_5, ^EXP2_3",
+                  "transform": "pullup",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "click_pin": {
+                  "line": 411,
+                  "section": "display",
+                  "option": "click_pin",
+                  "value": "^!EXP1_2",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "click_pullup": {
+                  "line": 411,
+                  "section": "display",
+                  "option": "click_pin",
+                  "value": "^!EXP1_2",
+                  "transform": "pullup",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "click_invert": {
+                  "line": 411,
+                  "section": "display",
+                  "option": "click_pin",
+                  "value": "^!EXP1_2",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "contrast": {
+                  "line": 412,
+                  "section": "display",
+                  "option": "contrast",
+                  "value": "63",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "screen_colour",
+          "label": "Factory display lighting",
+          "notes": "Pinned factory configuration; identity and calibration remain local.",
+          "devices": [
+            {
+              "name": "screen_colour",
+              "kind": "neopixel",
+              "settings": {
+                "pin": "PC10",
+                "chain_count": 3,
+                "color_order": "RGB",
+                "initial_red": 0.5,
+                "initial_green": 0.4,
+                "initial_blue": 0.7
+              },
+              "sources": {
+                "pin": {
+                  "line": 423,
+                  "section": "neopixel Screen_Colour",
+                  "option": "pin",
+                  "value": "EXP1_6",
+                  "transform": "alias",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "chain_count": {
+                  "line": 424,
+                  "section": "neopixel Screen_Colour",
+                  "option": "chain_count",
+                  "value": "3",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "color_order": {
+                  "line": 425,
+                  "section": "neopixel Screen_Colour",
+                  "option": "color_order",
+                  "value": "RGB",
+                  "transform": "text",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "initial_red": {
+                  "line": 426,
+                  "section": "neopixel Screen_Colour",
+                  "option": "initial_RED",
+                  "value": "0.5",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "initial_green": {
+                  "line": 427,
+                  "section": "neopixel Screen_Colour",
+                  "option": "initial_GREEN",
+                  "value": "0.4",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "initial_blue": {
+                  "line": 428,
+                  "section": "neopixel Screen_Colour",
+                  "option": "initial_BLUE",
+                  "value": "0.7",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "mcu_temp",
+          "label": "Factory main controller temperature",
+          "notes": "Pinned factory configuration; identity and calibration remain local.",
+          "devices": [
+            {
+              "name": "mcu_temp",
+              "kind": "mcu_temperature",
+              "settings": {
+                "min_temp": 0,
+                "max_temp": 100
+              },
+              "sources": {
+                "min_temp": {
+                  "line": 33,
+                  "section": "temperature_sensor mcu_temp",
+                  "option": "min_temp",
+                  "value": "0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "max_temp": {
+                  "line": 34,
+                  "section": "temperature_sensor mcu_temp",
+                  "option": "max_temp",
+                  "value": "100",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -1950,10 +3544,23 @@
             "probe"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
             "line": 68,
             "section": "probe",
             "option": "pin",
-            "reference_only": false
+            "value": "extra_mcu:PB6",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -2002,10 +3609,23 @@
             "heater"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
             "line": 306,
             "section": "extruder",
             "option": "heater_pin",
-            "reference_only": false
+            "value": "extra_mcu:PB9",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -2015,10 +3635,23 @@
             "adc"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
             "line": 309,
             "section": "extruder",
             "option": "sensor_pin",
-            "reference_only": false
+            "value": "extra_mcu:PA5",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -2041,10 +3674,23 @@
             "fan"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
             "line": 368,
             "section": "fan_generic fan0",
             "option": "pin",
-            "reference_only": false
+            "value": "extra_mcu:PA7",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -2054,10 +3700,23 @@
             "fan"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
             "line": 372,
             "section": "fan_generic fan1",
             "option": "pin",
-            "reference_only": false
+            "value": "extra_mcu:PB1",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
@@ -2067,13 +3726,156 @@
             "fan"
           ],
           "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
             "line": 380,
             "section": "heater_fan hotend_fan",
             "option": "pin",
-            "reference_only": false
+            "value": "extra_mcu:PA6",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
           },
           "reserved": false,
           "evidence": "documented-reference"
+        },
+        "PA1": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 385,
+            "section": "heater_fan hotend_fan",
+            "option": "tachometer_pin",
+            "value": "extra_mcu:PA1",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB12": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 17,
+            "section": "adxl345",
+            "option": "cs_pin",
+            "value": "extra_mcu:PB12",
+            "transform": "pin",
+            "reference": "active reference",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB14": {
+          "capabilities": [
+            "input"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+            "accessed": "2026-10-06",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 19,
+            "section": "upstream software default / explicit mainline adaptation",
+            "option": "miso_pin",
+            "value": "PB14",
+            "transform": "firmware-spi",
+            "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB15": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+            "accessed": "2026-10-06",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 19,
+            "section": "upstream software default / explicit mainline adaptation",
+            "option": "mosi_pin",
+            "value": "PB15",
+            "transform": "firmware-spi",
+            "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
+        },
+        "PB13": {
+          "capabilities": [
+            "output"
+          ],
+          "reserved": false,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+            "accessed": "2026-10-06",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 19,
+            "section": "upstream software default / explicit mainline adaptation",
+            "option": "sclk_pin",
+            "value": "PB13",
+            "transform": "firmware-spi",
+            "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI",
+            "reference_only": true
+          },
+          "evidence": "Pinned factory configuration/firmware source; physical contact remains unknown"
         }
       },
       "connectors": {
@@ -2206,6 +4008,131 @@
             "option": "pin",
             "reference_only": false
           }
+        },
+        "hotend_fan_tachometer_pin": {
+          "label": "hotend fan tachometer pin",
+          "pin": "PA1",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 385,
+            "section": "heater_fan hotend_fan",
+            "option": "tachometer_pin",
+            "value": "extra_mcu:PA1",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "adxl345_cs_pin": {
+          "label": "adxl345 cs pin",
+          "pin": "PB12",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+            "accessed": "2026-10-04",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 17,
+            "section": "adxl345",
+            "option": "cs_pin",
+            "value": "extra_mcu:PB12",
+            "transform": "pin",
+            "reference": "active reference"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "adxl345_miso_pin": {
+          "label": "adxl345 miso pin",
+          "pin": "PB14",
+          "capability": "input",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+            "accessed": "2026-10-06",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 19,
+            "section": "upstream software default / explicit mainline adaptation",
+            "option": "miso_pin",
+            "value": "PB14",
+            "transform": "software-default",
+            "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "adxl345_mosi_pin": {
+          "label": "adxl345 mosi pin",
+          "pin": "PB15",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+            "accessed": "2026-10-06",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 19,
+            "section": "upstream software default / explicit mainline adaptation",
+            "option": "mosi_pin",
+            "value": "PB15",
+            "transform": "software-default",
+            "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI"
+          },
+          "evidence": "Source-qualified logical connection"
+        },
+        "adxl345_sclk_pin": {
+          "label": "adxl345 sclk pin",
+          "pin": "PB13",
+          "capability": "output",
+          "contact": null,
+          "source": {
+            "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+            "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+            "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+            "accessed": "2026-10-06",
+            "drawing": {
+              "path": "upstream/sovol-sv08/Motherboard/Extra_PIN_definition.pdf",
+              "page": 1,
+              "revision": "unknown drawing revision",
+              "sha256": "6e1e2873d5ef7230fa94c6741e9b81da6eca28101f80618c9db11e452ab0beb6"
+            },
+            "line": 19,
+            "section": "upstream software default / explicit mainline adaptation",
+            "option": "sclk_pin",
+            "value": "PB13",
+            "transform": "software-default",
+            "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI"
+          },
+          "evidence": "Source-qualified logical connection"
         }
       },
       "motors": {
@@ -2218,12 +4145,15 @@
       },
       "channel_counts": {
         "adc": 1,
-        "heater": 1,
+        "dir": 1,
+        "enable": 1,
         "fan": 3,
+        "heater": 1,
+        "input": 2,
+        "output": 3,
+        "probe": 1,
         "step": 1,
-        "uart": 1,
-        "input": 0,
-        "probe": 1
+        "uart": 1
       },
       "channel_scope": "Only evidenced selectable channels, not total physical capacity",
       "sharing_rules": [],
@@ -2255,7 +4185,8 @@
                   "option": "sensor_pin",
                   "value": "extra_mcu:PA5",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "curve": {
                   "line": 307,
@@ -2315,7 +4246,8 @@
                   "option": "sensor_pin",
                   "value": "extra_mcu:PA5",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "curve": {
                   "line": 307,
@@ -2373,7 +4305,13 @@
                 "pid_kp": 33.838,
                 "pid_ki": 5.223,
                 "pid_kd": 47.752,
-                "sensor": "hotend_sensor"
+                "sensor": "hotend_sensor",
+                "interpolate": true,
+                "full_steps_per_rotation": 200,
+                "verify_max_error": 120,
+                "verify_check_gain_time": 30,
+                "verify_hysteresis": 5,
+                "verify_heating_gain": 2
               },
               "sources": {
                 "connector": {
@@ -2470,7 +4408,8 @@
                   "option": "heater_pin",
                   "value": "extra_mcu:PB9",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 306,
@@ -2527,6 +4466,60 @@
                   "value": "extra_mcu:PA5",
                   "transform": "association",
                   "reference": "active reference"
+                },
+                "interpolate": {
+                  "line": 323,
+                  "section": "tmc2209 extruder",
+                  "option": "interpolate",
+                  "value": "True",
+                  "transform": "boolean",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "full_steps_per_rotation": {
+                  "line": 302,
+                  "section": "extruder",
+                  "option": "full_steps_per_rotation",
+                  "value": "200",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_max_error": {
+                  "line": 330,
+                  "section": "verify_heater extruder",
+                  "option": "max_error",
+                  "value": "120",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_check_gain_time": {
+                  "line": 331,
+                  "section": "verify_heater extruder",
+                  "option": "check_gain_time",
+                  "value": "30",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_hysteresis": {
+                  "line": 332,
+                  "section": "verify_heater extruder",
+                  "option": "hysteresis",
+                  "value": "5",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "verify_heating_gain": {
+                  "line": 333,
+                  "section": "verify_heater extruder",
+                  "option": "heating_gain",
+                  "value": "2",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
@@ -2552,7 +4545,8 @@
                   "option": "pin",
                   "value": "extra_mcu:PA7",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 368,
@@ -2594,7 +4588,8 @@
                   "option": "pin",
                   "value": "extra_mcu:PB1",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 372,
@@ -2629,7 +4624,14 @@
                 "invert": false,
                 "digital_pullup": false,
                 "x_offset": -17,
-                "y_offset": 10
+                "y_offset": 10,
+                "speed": 5,
+                "samples": 2,
+                "sample_retract_dist": 2,
+                "lift_speed": 50,
+                "samples_result": "average",
+                "samples_tolerance": 0.016,
+                "samples_tolerance_retries": 2
               },
               "sources": {
                 "pin": {
@@ -2638,7 +4640,8 @@
                   "option": "pin",
                   "value": "extra_mcu:PB6",
                   "transform": "pin",
-                  "reference": "active reference"
+                  "reference": "active reference",
+                  "reference_only": true
                 },
                 "invert": {
                   "line": 68,
@@ -2671,11 +4674,273 @@
                   "value": "10",
                   "transform": "number",
                   "reference": "active reference"
+                },
+                "speed": {
+                  "line": 73,
+                  "section": "probe",
+                  "option": "speed",
+                  "value": "5.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "samples": {
+                  "line": 74,
+                  "section": "probe",
+                  "option": "samples",
+                  "value": "2",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "sample_retract_dist": {
+                  "line": 75,
+                  "section": "probe",
+                  "option": "sample_retract_dist",
+                  "value": "2.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "lift_speed": {
+                  "line": 76,
+                  "section": "probe",
+                  "option": "lift_speed",
+                  "value": "50",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "samples_result": {
+                  "line": 77,
+                  "section": "probe",
+                  "option": "samples_result",
+                  "value": "average",
+                  "transform": "text",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "samples_tolerance": {
+                  "line": 78,
+                  "section": "probe",
+                  "option": "samples_tolerance",
+                  "value": "0.016",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "samples_tolerance_retries": {
+                  "line": 79,
+                  "section": "probe",
+                  "option": "samples_tolerance_retries",
+                  "value": "2",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
                 }
               }
             }
           ],
-          "notes": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported."
+          "notes": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported. The duplicate vendor probe speed entries resolve to the last active value, 5 mm/s. Probe Z calibration is not a factory default."
+        },
+        {
+          "id": "hotend_fan",
+          "label": "Factory hotend cooling fan with tachometer",
+          "notes": "Pinned factory configuration; identity and calibration remain local.",
+          "devices": [
+            {
+              "name": "hotend_fan",
+              "kind": "heater_fan",
+              "settings": {
+                "pin": "PA6",
+                "invert": false,
+                "max_power": 1,
+                "kick_start_time": 0.5,
+                "heater": "extruder",
+                "heater_temp": 45,
+                "tachometer_ppr": 1,
+                "tachometer_poll_interval": 0.0013,
+                "tachometer_pin": "PA1"
+              },
+              "sources": {
+                "pin": {
+                  "line": 380,
+                  "section": "heater_fan hotend_fan",
+                  "option": "pin",
+                  "value": "extra_mcu:PA6",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "invert": {
+                  "line": 380,
+                  "section": "heater_fan hotend_fan",
+                  "option": "pin",
+                  "value": "extra_mcu:PA6",
+                  "transform": "invert",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "max_power": {
+                  "line": 381,
+                  "section": "heater_fan hotend_fan",
+                  "option": "max_power",
+                  "value": "1.0",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "kick_start_time": {
+                  "line": 382,
+                  "section": "heater_fan hotend_fan",
+                  "option": "kick_start_time",
+                  "value": "0.5",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "heater": {
+                  "line": 383,
+                  "section": "heater_fan hotend_fan",
+                  "option": "heater",
+                  "value": "extruder",
+                  "transform": "text",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "heater_temp": {
+                  "line": 384,
+                  "section": "heater_fan hotend_fan",
+                  "option": "heater_temp",
+                  "value": "45",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "tachometer_ppr": {
+                  "line": 386,
+                  "section": "heater_fan hotend_fan",
+                  "option": "tachometer_ppr",
+                  "value": "1",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "tachometer_poll_interval": {
+                  "line": 387,
+                  "section": "heater_fan hotend_fan",
+                  "option": "tachometer_poll_interval",
+                  "value": "0.0013",
+                  "transform": "number",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "tachometer_pin": {
+                  "line": 385,
+                  "section": "heater_fan hotend_fan",
+                  "option": "tachometer_pin",
+                  "value": "extra_mcu:PA1",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "adxl345",
+          "label": "Factory ADXL345 accelerometer",
+          "notes": "Pinned factory configuration; identity and calibration remain local.",
+          "devices": [
+            {
+              "name": "adxl345",
+              "kind": "accelerometer",
+              "settings": {
+                "cs_pin": "PB12",
+                "miso_pin": "PB14",
+                "mosi_pin": "PB15",
+                "sclk_pin": "PB13",
+                "spi_speed": 5000000
+              },
+              "sources": {
+                "cs_pin": {
+                  "line": 17,
+                  "section": "adxl345",
+                  "option": "cs_pin",
+                  "value": "extra_mcu:PB12",
+                  "transform": "pin",
+                  "reference": "active reference",
+                  "reference_only": true
+                },
+                "miso_pin": {
+                  "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+                  "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+                  "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+                  "accessed": "2026-10-06",
+                  "line": 19,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "miso_pin",
+                  "value": "PB14",
+                  "transform": "firmware-spi",
+                  "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI",
+                  "reference_only": true
+                },
+                "mosi_pin": {
+                  "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+                  "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+                  "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+                  "accessed": "2026-10-06",
+                  "line": 19,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "mosi_pin",
+                  "value": "PB15",
+                  "transform": "firmware-spi",
+                  "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI",
+                  "reference_only": true
+                },
+                "sclk_pin": {
+                  "path": "upstream/sovol-sv08/home/sovol/klipper/src/stm32/spi.c",
+                  "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+                  "sha256": "960ea0ef0dd58ca928ed5c3f01110c00f63460e9e5a483b5491a38e1ca3b69b4",
+                  "accessed": "2026-10-06",
+                  "line": 19,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "sclk_pin",
+                  "value": "PB13",
+                  "transform": "firmware-spi",
+                  "reference": "Vendor spi2 is enumeration 0/default; explicitly bind the same wires for mainline software SPI",
+                  "reference_only": true
+                },
+                "spi_speed": {
+                  "path": "upstream/sovol-sv08/home/sovol/klipper/klippy/extras/adxl345.py",
+                  "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+                  "sha256": "efb89a29c2034661579331519545f09e500d95b965a2a3902da6c941d4749f94",
+                  "accessed": "2026-10-06",
+                  "line": 248,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "spi_speed",
+                  "value": 5000000,
+                  "transform": "firmware-default",
+                  "reference": "Vendor driver configured SPI rate, not an inferred MCU clock",
+                  "reference_only": true
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "toolhead_temp",
+          "label": "Factory tool controller temperature",
+          "notes": "Pinned factory configuration; identity and calibration remain local.",
+          "devices": [
+            {
+              "name": "toolhead_temp",
+              "kind": "mcu_temperature",
+              "settings": {},
+              "sources": {}
+            }
+          ]
         }
       ]
     },
@@ -5565,7 +7830,10 @@
     "input": {
       "pin": "input",
       "invert": "boolean",
-      "digital_pullup": "boolean"
+      "digital_pullup": "boolean",
+      "pause_on_runout": "boolean",
+      "event_delay": "nonnegative",
+      "pause_delay": "nonnegative"
     },
     "probe": {
       "pin": "probe",
@@ -5573,7 +7841,14 @@
       "digital_pullup": "boolean",
       "x_offset": "number",
       "y_offset": "number",
-      "z_offset": "number"
+      "z_offset": "number",
+      "speed": "positive",
+      "samples": "integer",
+      "sample_retract_dist": "positive",
+      "lift_speed": "positive",
+      "samples_result": "samples_result",
+      "samples_tolerance": "positive",
+      "samples_tolerance_retries": "nonnegative_integer"
     },
     "fan": {
       "pin": "fan",
@@ -5588,7 +7863,11 @@
       "control": "control",
       "pid_kp": "positive",
       "pid_ki": "positive",
-      "pid_kd": "positive"
+      "pid_kd": "positive",
+      "verify_max_error": "positive",
+      "verify_check_gain_time": "positive",
+      "verify_hysteresis": "positive",
+      "verify_heating_gain": "positive"
     },
     "motor": {
       "connector": "motor",
@@ -5607,7 +7886,16 @@
       "endstop_pin": "input",
       "endstop_invert": "boolean",
       "endstop_pullup": "boolean",
-      "gear_ratio": "ratio"
+      "gear_ratio": "ratio",
+      "full_steps_per_rotation": "integer",
+      "interpolate": "boolean",
+      "stealthchop_threshold": "nonnegative",
+      "endstop_mode": "endstop_mode",
+      "driver_sgthrs": "byte",
+      "homing_retract_dist": "nonnegative",
+      "homing_positive_dir": "boolean",
+      "homing_retract_speed": "positive",
+      "second_homing_speed": "positive"
     },
     "extruder": {
       "connector": "motor",
@@ -5630,7 +7918,14 @@
       "nozzle_diameter": "positive",
       "filament_diameter": "positive",
       "min_extrude_temp": "number",
-      "gear_ratio": "ratio"
+      "gear_ratio": "ratio",
+      "full_steps_per_rotation": "integer",
+      "interpolate": "boolean",
+      "stealthchop_threshold": "nonnegative",
+      "verify_max_error": "positive",
+      "verify_check_gain_time": "positive",
+      "verify_hysteresis": "positive",
+      "verify_heating_gain": "positive"
     },
     "chamber": {
       "pin": "heater",
@@ -5639,6 +7934,158 @@
       "max_power": "fraction",
       "control": "control",
       "max_delta": "positive"
+    },
+    "heater_fan": {
+      "pin": "fan",
+      "invert": "boolean",
+      "max_power": "fraction",
+      "kick_start_time": "nonnegative",
+      "heater": "name",
+      "heater_temp": "positive",
+      "tachometer_pin": "input",
+      "tachometer_ppr": "positive",
+      "tachometer_poll_interval": "positive"
+    },
+    "output": {
+      "pin": "output",
+      "invert": "boolean",
+      "pwm": "boolean",
+      "value": "unit_interval",
+      "shutdown_value": "unit_interval",
+      "cycle_time": "positive"
+    },
+    "neopixel": {
+      "pin": "output",
+      "chain_count": "integer",
+      "color_order": "color_order",
+      "initial_red": "unit_interval",
+      "initial_green": "unit_interval",
+      "initial_blue": "unit_interval"
+    },
+    "display": {
+      "cs_pin": "output",
+      "a0_pin": "output",
+      "rst_pin": "output",
+      "encoder_a": "input",
+      "encoder_b": "input",
+      "click_pin": "input",
+      "encoder_pullup": "boolean",
+      "click_pullup": "boolean",
+      "click_invert": "boolean",
+      "miso_pin": "input",
+      "mosi_pin": "output",
+      "sclk_pin": "output",
+      "contrast": "byte"
+    },
+    "accelerometer": {
+      "cs_pin": "output",
+      "miso_pin": "input",
+      "mosi_pin": "output",
+      "sclk_pin": "output",
+      "spi_speed": "positive"
+    },
+    "mcu_temperature": {
+      "min_temp": "number",
+      "max_temp": "number"
+    },
+    "pressure_switch": {
+      "pin": "input",
+      "invert": "boolean",
+      "digital_pullup": "boolean"
+    }
+  },
+  "factory": {
+    "printer_settings": {
+      "geometry": {
+        "max_velocity": 700,
+        "max_accel": 40000,
+        "max_z_velocity": 20,
+        "max_z_accel": 500,
+        "square_corner_velocity": 5
+      },
+      "bed_mesh": {
+        "speed": 500,
+        "horizontal_move_z": 5,
+        "mesh_min": [
+          10,
+          10
+        ],
+        "mesh_max": [
+          333,
+          340
+        ],
+        "probe_count": [
+          9,
+          9
+        ],
+        "algorithm": "bicubic",
+        "bicubic_tension": 0.4,
+        "split_delta_z": 0.016,
+        "mesh_pps": [
+          3,
+          3
+        ],
+        "adaptive_margin": 5,
+        "fade_start": 0,
+        "fade_end": 10,
+        "fade_target": 0
+      },
+      "quad_gantry_level": {
+        "gantry_corners": [
+          [
+            -60,
+            -10
+          ],
+          [
+            410,
+            420
+          ]
+        ],
+        "points": [
+          [
+            36,
+            10
+          ],
+          [
+            36,
+            320
+          ],
+          [
+            346,
+            320
+          ],
+          [
+            346,
+            10
+          ]
+        ],
+        "speed": 400,
+        "horizontal_move_z": 10,
+        "retry_tolerance": 0.05,
+        "retries": 5,
+        "max_adjust": 30
+      },
+      "safe_z_home": {
+        "home_xy_position": [
+          191,
+          165
+        ],
+        "speed": 60,
+        "z_hop": 10,
+        "z_hop_speed": 15
+      }
+    },
+    "source": {
+      "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+      "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+      "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+      "accessed": "2026-10-04",
+      "drawing": {
+        "path": "upstream/sovol-sv08/Motherboard/MCU_PIN_definition.pdf",
+        "page": 1,
+        "revision": "unknown drawing revision",
+        "sha256": "8b1f418b4f264442274be6a45abfbcba5c09b7445a168294ca7d730f4a0d18fa"
+      }
     }
   }
 }

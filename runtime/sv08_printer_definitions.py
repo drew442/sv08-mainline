@@ -6,14 +6,16 @@ import copy
 import re
 from sv08_printer_catalog import strict_json, encoded, digest, keys, NAME
 
+from sv08_printer_fields import compact_mapping, ELECTRICAL, CHOICES, compatible_mapping, validate_printer_settings
+
 FORMAT = '0.1'
 FILE_LIMIT = 128 * 1024
 SOURCE_LIMIT = 384 * 1024
 MAX_DEFINITIONS = 32
 MAX_DEPTH = 12
 CATEGORIES = ('bed','probe','toolhead','filament','boards','cooling','motion')
-CAPABILITIES = {'klipper.settings.v1', 'klipper.watermark.v1', 'levelling.condition.v1'}
-COMMON = ('format_version','id','version','kind','name','description','aliases','category','hardware','compatibility','sources','license','extensions','dependencies','conflicts','inputs','calibration','unresolved')
+CAPABILITIES = {'klipper.settings.v1', 'klipper.watermark.v1', 'levelling.condition.v1','klipper.factory.v1'}
+COMMON = ('format_version','id','version','kind','name','description','aliases','category','hardware','compatibility','sources','license','extensions','dependencies','conflicts','inputs','calibration','unresolved','printer_settings')
 KINDS = {'component':('components','connections'), 'assembly':('components','connections','behaviours'), 'board':('mapping',), 'behaviour':('behaviours',)}
 
 def bounded(value, depth=0):
@@ -81,7 +83,7 @@ def validate_definition(d,catalog):
         if 'default' in inp and inp['type']=='identity':raise ValueError('Published controller identity forbidden')
         if not re.fullmatch(r'[a-z][a-z0-9_]{0,39}\.[a-z][a-z0-9_]{0,39}',inp['target']):raise ValueError('Input target must be a semantic field')
         field=inp['target'].split('.')[1]
-        allowed={k for fields in catalog.kinds.values() for k,t in fields.items() if t not in ('adc','heater','fan','probe','input','motor','thermistor_points')}|{'identity'}
+        allowed={k for fields in catalog.kinds.values() for k,t in fields.items() if t not in (*ELECTRICAL,'thermistor_points')}|{'identity','transport','reference_ack'}
         if field not in allowed:raise ValueError('Unsupported input target field')
         for bound in ('minimum','maximum'):
             if bound in inp:catalog.number(inp[bound],'number')
@@ -94,6 +96,7 @@ def validate_definition(d,catalog):
             elif inp['type']=='boolean' and type(value) is not bool:raise ValueError('Boolean input default required')
             elif inp['type']=='curve' and value not in catalog.curves:raise ValueError('Unsupported default curve')
             elif inp['type']=='choice' and value not in inp.get('choices',[]):raise ValueError('Default must be a declared choice')
+    if 'printer_settings' in d:validate_printer_settings(d['printer_settings'],catalog)
     names=set()
     for component in d.get('components',[]):
         keys(component,('name','kind','board','settings','endpoints'),('name','kind','board','settings','endpoints'))
@@ -106,16 +109,17 @@ def validate_definition(d,catalog):
             typ=catalog.kinds[component['kind']][field]
             if typ=='curve' and value not in catalog.curves:raise ValueError('Unsupported sensor curve')
             if typ=='boolean' and type(value) is not bool:raise ValueError('Boolean setting required')
-            if typ in ('positive','number','fraction','integer','address'):catalog.number(value,typ)
+            if typ in ('positive','number','fraction','integer','address','nonnegative','nonnegative_integer','byte','unit_interval'):catalog.number(value,typ)
+            if typ in CHOICES and value not in CHOICES[typ]:raise ValueError('Unsupported '+typ)
             if typ=='name' and (not isinstance(value,str) or not NAME.fullmatch(value)):raise ValueError('Invalid sensor role')
             if typ=='control' and value not in ('watermark','pid'):raise ValueError('Unsupported heater control')
             if field=='run_current' and value>2:raise ValueError('Driver software current limit exceeded')
         for field in component['settings']:
-            if catalog.kinds[component['kind']][field] in ('adc','heater','fan','probe','input','motor'):raise ValueError('Portable settings require endpoint bindings, not GPIO')
+            if catalog.kinds[component['kind']][field] in ELECTRICAL:raise ValueError('Portable settings require endpoint bindings, not GPIO')
             if field in ('custom_curve','pid_kp','pid_ki','pid_kd','current_rating_rms','z_offset'):raise ValueError('Instance calibration/rating cannot be a universal default')
         for field,endpoint in component['endpoints'].items():
             if field not in catalog.kinds[component['kind']]:raise ValueError('Unknown endpoint field')
-            if catalog.kinds[component['kind']][field] not in ('adc','heater','fan','probe','input','motor'):raise ValueError('Endpoint must bind a connection field')
+            if catalog.kinds[component['kind']][field] not in ELECTRICAL:raise ValueError('Endpoint must bind a connection field')
             if not isinstance(endpoint,str):raise ValueError('Invalid endpoint binding')
     for inp in d.get('inputs',{}).values():
         name,field=inp['target'].split('.',1)
@@ -133,7 +137,7 @@ def validate_definition(d,catalog):
         if conn['endpoint'] in endpoints:raise ValueError('Duplicate connection endpoint')
         endpoints.add(conn['endpoint'])
         if conn['board'] not in ('main','tool','chamber'):raise ValueError('Unsupported board role')
-        if conn['capability'] not in ('adc','heater','fan','probe','input','motor'):raise ValueError('Unsupported connection capability')
+        if conn['capability'] not in ELECTRICAL:raise ValueError('Unsupported connection capability')
         if not isinstance(conn['board_ids'],list) or not conn['board_ids']:raise ValueError('Exact board scope required')
         for board_id in conn['board_ids']:
             if board_id not in catalog.boards:continue # May be supplied by a pinned board dependency.
@@ -157,7 +161,7 @@ def validate_definition(d,catalog):
         if d['mapping'].get('presets'):raise ValueError('Public board mappings cannot embed component presets')
         data=copy.deepcopy(catalog.data)
         if d['mapping']['id'] in catalog.boards:
-            if {k:v for k,v in d['mapping'].items() if k!='presets'} != {k:v for k,v in catalog.boards[d['mapping']['id']].items() if k!='presets'}:raise ValueError('Board identity conflicts with existing mapping')
+            if not compatible_mapping(d['mapping'],catalog.boards[d['mapping']['id']]):raise ValueError('Board identity conflicts with existing mapping')
         else:data['boards'].append(d['mapping'])
         from sv08_printer_catalog import Catalog
         candidate=object.__new__(Catalog);candidate.data=data;candidate.supported=True;candidate.validate_catalog()
@@ -189,7 +193,7 @@ def builtins(catalog):
     for board in catalog.boards.values():
         if board['id'] not in ('sv08-main','sv08-tool'):continue
         source=board['source']
-        records.append(dict(format_version=FORMAT,id=board['id']+'.board',version='0.1.0',kind='board',name=board['label'],description=board['warning'],category='boards',hardware={'product':board['label'],'revision':board['revision']},compatibility={'requires_capabilities':['klipper.settings.v1'],'unknown':board['unknowns']},sources=[dict(id='reference',url=source.get('url','https://github.com/drew442/sv08-mainline'),revision=source['revision'],locator=source['path'])],license='GPL-3.0-or-later',mapping={**copy.deepcopy(board),'presets':[]}))
+        records.append(dict(format_version=FORMAT,id=board['id']+'.board',version='0.2.0',kind='board',name=board['label'],description=board['warning'],category='boards',hardware={'product':board['label'],'revision':board['revision']},compatibility={'requires_capabilities':['klipper.settings.v1'],'unknown':board['unknowns']},sources=[dict(id='reference',url=source.get('url','https://github.com/drew442/sv08-mainline'),revision=source['revision'],locator=source['path'])],license='GPL-3.0-or-later',mapping=compact_mapping(board),inputs={'transport':dict(type='choice',label='Controller transport',target=board['role']+'.transport',choices=['serial'],default='serial'),'reference_ack':dict(type='boolean',label='Use documented factory reference',target=board['role']+'.reference_ack',default=True)}))
         for p in board.get('presets',[]):
             if p['id'] in ('funssor_cn3d_bed','bed_sensor','hotend_sensor'):continue
             components=[];connections=[]
@@ -197,7 +201,7 @@ def builtins(catalog):
                 settings={};endpoints={}
                 for field,value in dev['settings'].items():
                     typ=catalog.kinds[dev['kind']][field]
-                    if typ in ('adc','heater','fan','probe','input','motor'):
+                    if typ in ELECTRICAL:
                         endpoint=dev['name']+'.'+field;endpoints[field]=endpoint
                         connector=value if typ=='motor' else next((name for name,c in board['connectors'].items() if c['pin']==value and c['capability']==typ),None)
                         if connector is None:raise ValueError('Built-in lacks documented endpoint')
@@ -205,27 +209,44 @@ def builtins(catalog):
                     elif field not in ('pid_kp','pid_ki','pid_kd','current_rating_rms','z_offset'):settings[field]='watermark' if field=='control' and value=='pid' else value
                 components.append(dict(name=dev['name'],kind=dev['kind'],board=board['role'],settings=settings,endpoints=endpoints))
             kinds={c['kind'] for c in components}
-            category='bed' if 'bed' in kinds else 'toolhead' if 'extruder' in kinds else 'probe' if 'probe' in kinds else 'cooling' if kinds&{'fan','chamber'} else 'motion' if 'motor' in kinds else 'filament' if 'input' in kinds else 'boards'
+            category='bed' if 'bed' in kinds else 'toolhead' if 'extruder' in kinds else 'probe' if 'probe' in kinds else 'cooling' if kinds&{'fan','chamber','heater_fan'} else 'toolhead' if 'accelerometer' in kinds else 'probe' if 'pressure_switch' in kinds else 'motion' if 'motor' in kinds else 'filament' if 'input' in kinds else 'boards'
             source=board['source']
-            records.append(dict(format_version=FORMAT,id=board['id']+'.'+p['id'],version='0.1.0',kind='assembly',name=p['label'],description=p.get('notes',''),aliases=['Funnsor'] if 'funssor' in p['id'] else [],category=category,hardware={'product':p['label'],'revision':board['revision']},compatibility={'requires_capabilities':['klipper.settings.v1'],'boards':[board['id']],'unknown':board['unknowns']},sources=[dict(id='reference',url=source.get('url','https://github.com/drew442/sv08-mainline'),revision=source['revision'],locator=source['path'])],license='GPL-3.0-or-later',components=components,connections=connections,calibration=['thermal_pid'] if kinds&{'bed','extruder'} else []))
+            records.append(dict(format_version=FORMAT,id=board['id']+'.'+p['id'],version='0.2.0',kind='assembly',name=p['label'],description=p.get('notes',''),aliases=[],category=category,hardware={'product':p['label'],'revision':board['revision'],'field_sources':{d['name']+'.'+k:('reference' if not v.get('path') else v['path'])+':L'+str(v['line']) for d in p['devices'] for k,v in d['sources'].items()}},compatibility={'requires_capabilities':['klipper.settings.v1','klipper.factory.v1'],'boards':[board['id']],'unknown':board['unknowns']},sources=[dict(id='reference',url=source.get('url','https://github.com/drew442/sv08-mainline'),revision=source['revision'],locator=source['path'])],license='GPL-3.0-or-later',components=components,connections=connections,calibration=['thermal_pid'] if kinds&{'bed','extruder'} else []))
+    for board in catalog.boards.values():
+        for preset in board.get('presets',[]):
+            record=next((d for d in records if d['id']==board['id']+'.'+preset['id']),None)
+            if record is None:continue
+            sources={v['path']:{**board['source'],**v} for device in preset['devices'] for v in device['sources'].values() if v.get('path')}
+            for index,(path,source) in enumerate(sorted(sources.items())):
+                vendor=path.startswith('upstream/sovol-sv08/')
+                relative=path.split('/',2)[2]
+                record['sources'].append(dict(id='software-'+str(index),url=('https://github.com/Sovol3d/SV08' if vendor else 'https://github.com/Klipper3d/klipper')+'/blob/'+source['revision']+'/'+relative,revision=source['revision'],sha256=source['sha256'],locator=path))
     for record in records:
         if any(c['kind'] in ('bed','extruder') for c in record.get('components',[])):
             record['description']+=' Uncalibrated heater control uses watermark; measured PID calibration is a separate commissioning task.'
-            record['sources'].append(dict(id='commissioning-policy',url='https://github.com/drew442/sv08-mainline/blob/main/runtime/sv08_printer_definitions.py',revision='generator-6',locator='builtins: exclude instance calibration and physical motor ratings; watermark until measured PID gains'))
+            record['sources'].append(dict(id='commissioning-policy',url='https://github.com/drew442/sv08-mainline/blob/main/runtime/sv08_printer_definitions.py',revision='generator-7',locator='builtins: exclude instance calibration and physical motor ratings; watermark until measured PID gains'))
+    if catalog.data.get('factory'):
+        settings=copy.deepcopy(catalog.data['factory']['printer_settings']);source=catalog.data['factory']['source']
+        records.append(dict(format_version=FORMAT,id='sv08.factory',version='0.2.0',kind='assembly',name='Sovol SV08 · complete factory hardware',description='Original SV08 factory hardware and documented configuration defaults. Controller identities and measured calibration remain local. Pressure contact is monitored; vendor-specific automatic Z calibration is a separate workflow.',aliases=['Stock SV08','Original SV08'],category='boards',hardware={'product':'Sovol SV08','revision':source['revision']},compatibility={'requires_capabilities':['klipper.settings.v1','klipper.factory.v1'],'printers':['sv08']},sources=[dict(id='reference',url='https://github.com/Sovol3d/SV08/blob/'+source['revision']+'/home/sovol/printer_data/config/printer.cfg',revision=source['revision'],locator='All active factory hardware sections; motion/mesh/gantry/thermal defaults. MCU paths and SAVE_CONFIG calibration excluded.'),dict(id='mainline-adaptation',url='https://github.com/drew442/sv08-mainline/blob/main/scripts/update_factory_definitions.py',revision='generator-7',locator='Explicit SPI wiring; safe_z_home replaces vendor raw homing override; exclude sensorless hold_current per pinned Klipper TMC guide; LED PWM uses pinned mainline default because vendor 5 s exceeds 3 s maximum; no automatic Z calibration')],license='GPL-3.0-or-later',dependencies=[dict(source='builtin',id=d['id'],version=d['version'],sha256=digest(d)) for d in records],printer_settings=settings,inputs={role+'_identity':dict(type='identity',label=('Mainboard' if role=='main' else 'Toolhead')+' MCU identity',target=role+'.identity',required=True) for role in ('main','tool')},calibration=['probe_z_offset','thermal_pid','input_shaper','pressure_z_workflow']))
     return records
 
-def resolve(ref, snapshots, catalog, depth=0, visiting=None, versions=None):
+def resolve(ref, snapshots, catalog, depth=0, visiting=None, versions=None, replacements=None):
     if depth>MAX_DEPTH:raise ValueError('Dependency depth exceeds 12')
     visiting=set() if visiting is None else visiting;versions={} if versions is None else versions
     key=(ref['source'],ref['id']);ident=ref['source']+'::'+ref['id']+'@'+ref['version']
     if ident in visiting:raise ValueError('Definition dependency cycle')
-    if key in versions and versions[key]!=(ref['version'],ref['sha256']):raise ValueError('Conflicting dependency versions')
-    versions[key]=(ref['version'],ref['sha256'])
     d=snapshots.get(ident)
     if d is None or digest(d)!=ref['sha256'] or d['id']!=ref['id'] or d['version']!=ref['version']:raise ValueError('Pinned definition unavailable or changed')
-    validate_definition(d,catalog);result={ident:d};visiting.add(ident)
+    validate_definition(d,catalog);visiting.add(ident)
+    if ident in (replacements or {}):
+        replacement=replacements[ident]
+        result=resolve(replacement,snapshots,catalog,depth+1,visiting,versions,replacements)
+        visiting.remove(ident);return result
+    if key in versions and versions[key]!=(ref['version'],ref['sha256']):raise ValueError('Conflicting dependency versions')
+    versions[key]=(ref['version'],ref['sha256'])
+    result={ident:d}
     for dep in d.get('dependencies',[]):
-        r={**dep,'source':dep.get('source',ref['source'])};result.update(resolve(r,snapshots,catalog,depth+1,visiting,versions))
+        r={**dep,'source':dep.get('source',ref['source'])};result.update(resolve(r,snapshots,catalog,depth+1,visiting,versions,replacements))
     visiting.remove(ident)
     for conflict in d.get('conflicts',[]):
         target=conflict.get('source',ref['source'])+'::'+conflict['id']+'@'+conflict['version']

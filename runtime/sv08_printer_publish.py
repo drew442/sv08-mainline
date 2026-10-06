@@ -223,8 +223,8 @@ def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d
     if not Path(python).is_file() or not Path(klippy).is_file():raise ValueError('Pinned Klipper validation runtime is unavailable')
     if sha(regular(Path(klippy)))!='aa9eb47fbe3598fc814d40ed8e0b2b814a0af459fca7acab6732c59bf42e4659':raise ValueError('Pinned Klipper entry point changed')
     current,_=inventory(Path(root))
-    allowed={'printer','mcu','probe','extruder','heater_bed','bed_mesh','quad_gantry_level','respond','pause_resume','display_status','print_stats','virtual_sdcard','gcode_arcs','exclude_object'}
-    prefixes=('mcu ','stepper_','tmc2209 ','temperature_sensor ','thermistor ','fan_generic ','heater_generic ','filament_switch_sensor ','gcode_macro ')
+    allowed={'printer','mcu','probe','extruder','heater_bed','bed_mesh','quad_gantry_level','respond','pause_resume','display_status','print_stats','virtual_sdcard','gcode_arcs','exclude_object','safe_z_home','display','adxl345'}
+    prefixes=('mcu ','stepper_','tmc2209 ','temperature_sensor ','thermistor ','fan_generic ','heater_generic ','filament_switch_sensor ','gcode_macro ','heater_fan ','output_pin ','neopixel ','gcode_button ','verify_heater ','adxl345 ')
     combined=[v.decode() for v in current.values() if v]+list(preview['files'].values())
     for text in combined:
         for name in sections(text):
@@ -261,7 +261,7 @@ def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d
                                     reply+=chunk
                             message=json.loads(reply.split(b'\x03',1)[0]);state=message.get('result',{}).get('state')
                             if state=='ready':return dict(validated=True,klipper_revision='f0892d82b0f1c1228454f09eb508eddde2250f4b',dictionary_sha256=expected,physical_hardware=False)
-                            if state in ('error','shutdown'):raise ValueError('Complete-output validation failed; inspect configuration before publication')
+                            if state in ('error','shutdown'):raise ValueError('Complete-output validation failed: '+str(message.get('result',{}).get('state_message','inspect configuration before publication'))[:1024])
                         except (OSError,json.JSONDecodeError):pass
                     time.sleep(.05)
                 raise ValueError('Complete-output validation did not reach ready within budget')
