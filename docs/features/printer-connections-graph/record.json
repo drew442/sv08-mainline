@@ -43,11 +43,39 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/printer-connections-graph/evidence.md",
+          "document_sha256": "21213ce42147c2bb62fb519e1e5031e1dd6559058c4b67d0ff37dd72b536f26c",
+          "environment": "offline",
+          "limitations": "Offline Cockpit session/RPC shim, not authenticated ARM64 or hardware verification. No printer outputs, config application or service startup. Idle CPU sample from workstation browser.",
+          "method": "Coordinator self-validation: 12 staging tests, complete Chromium real Store/Budget journey including factory graph interactions, coverage, idle sample, authority, route/history/reload, source/draft regressions; stable diff, syntax, whitespace and visual inspection.",
+          "profile": null,
+          "source_commit": "113bb70639f20cd5db366bdb8dfbca9e5a7450c6",
+          "source_sha256": {
+            "docs/features/printer-connections-graph/browser.json": "b258dce3f992c600f0dfa660e8e63282d4dedf1e66a34c31d3ef80b8723bf3f2",
+            "docs/features/printer-connections-graph/evidence.md": "21213ce42147c2bb62fb519e1e5031e1dd6559058c4b67d0ff37dd72b536f26c",
+            "scripts/stage_printer_ui.py": "0e4172d998cc48769d0cb543691d58227fc27fe3a241e92aa4fce7dfb1ca7040",
+            "tests/printer_browser.mjs": "e4eed8d134b6f8a634063b8f5e5632835a60be596f60448e2ceaf4e8b63277c4",
+            "tests/test_stage_printer_ui.py": "1aae2d94e66dbe070bbeb1a6c1d341c7ebc9c65748eacc6c11eee761bfa5f221",
+            "ui/host/app.js": "2f1c61b8cf2ef654db1b48d5f69cdc2273dc21e4a79ce6a4e92b7a3c1cea61fd",
+            "ui/host/navigation.js": "5ac6119a89719421e753550ce911fc2830007e83d3c1a545d5d131e288c0ba0c",
+            "ui/printer/app.js": "d7734dfc970052afdf0c566ff234294a90d8242690a0790e60bec4913c58fd29",
+            "ui/printer/panel.html": "b6c6d3a45d1d98bef45d3c4cac2c45447fca16936bc6693947e155f8ba4a43a1",
+            "ui/printer/style.css": "4d4685c2f9405a9ca3df0867e8a4206c57febdbe8fbdedc11a06d5fa8deac776"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "054c351c2fc14ab0a9a17531ec7a453a",
+        "session": "printer-connections-graph-20261006"
+      },
       "input_paths": [
         "catalog/printer/",
         "runtime/sv08_printer_fields.py",
@@ -70,9 +98,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible frontend and disposable fixture changes; no hardware operations.",
-      "status": "pending",
+      "status": "done",
       "title": "Implement and validate the offline journey",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "86533ad85fe72ef6850d70d4e657ddaded8d2ed2acafeffa91da77cbd335afd8",
+        "evidence_sha256": "3f0c9dc0ebd586f84d24288a9192b64b233878a8e81fb04bed9971d4caef8519",
+        "outcome": "passed",
+        "rationale": "Scoped staging and complete Chromium journey pass; graph coverage, interaction, idle behavior and stable diff inspected.",
+        "session": "printer-connections-graph-20261006",
+        "source_commit": "113bb70639f20cd5db366bdb8dfbca9e5a7450c6"
+      },
       "verification": null
     }
   ],
