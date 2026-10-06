@@ -80,6 +80,11 @@ printer operation or installation was performed for this delivery. The approxima
 one-minute usability target has not been observed with a human user. Source importer
 unit fixtures exercise GitHub branch/commit/tree semantics and failure cases; the
 browser exercises a local bundle, not authenticated or private GitHub access.
+A separate actual unauthenticated public GitHub fetch of the published starter
+passed at commit `b7f12e0d0a85c2e229f7d22d44f7b08f2ff81025`: source
+`github:1357777497:examples/printer-definitions`, four supported definitions,
+zero unavailable entries, 12 requests and 30,622 fetched bytes. All indexed bytes
+came from that exact commit; no printer inventory or credentials were sent.
 
 Heating/cooling waits, heat soak, new unsupported electrical/device families and raw
 publisher macros require future capabilities. Explicit local custom configuration
