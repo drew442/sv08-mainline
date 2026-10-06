@@ -27,7 +27,7 @@ class StageTests(unittest.TestCase):
             report=stage.stage(root,expected,True,True)
             self.assertEqual(backend.stat().st_ino,backend_inode)
             html=(root/'usr/share/cockpit/sv08-host/index.html').read_text()
-            self.assertIn('id="printer"',html);self.assertEqual(html.count('src="session.js"'),1)
+            self.assertIn('id="printer"',html);self.assertIn('data-page="printer-connections"',html);self.assertIn('id="printer-connections" class="page"',html);self.assertNotIn('data-printer-view="connections"',html);self.assertEqual(html.count('src="session.js"'),1)
             target=root/'usr/share/cockpit/sv08-printer/app.js';raw=target.read_bytes();target.write_bytes(b'drift')
             with self.assertRaisesRegex(ValueError,'Afterimage'):stage.restore(root,report)
             self.assertEqual((root/'usr/share/cockpit/sv08-host/index.html').read_text(),html)

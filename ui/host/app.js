@@ -150,13 +150,13 @@ async function refresh() {
         renderJobs(result);
         if (result.blocked) {
             $('connection').textContent = 'Image worker status connected';
-            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button)').forEach(b => { b.disabled = true; });
+            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button)').forEach(b => { b.disabled = true; });
             return;
         }
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
-    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button)').forEach(b => { b.disabled = true; }); }
+    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function inspectJob(id) {

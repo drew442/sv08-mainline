@@ -3,7 +3,7 @@
     const $ = id => document.getElementById('printer-' + id);
     let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
     const copy = value => JSON.parse(JSON.stringify(value));
-    const notice = text => { $('notice').textContent = text; $('source-notice').textContent = text; };
+    const notice = text => { $('notice').textContent = text; $('source-notice').textContent = text; $('connection-notice').textContent = text; };
     const invalidate = (status = true) => { review = null; publicationReview=null; pendingDefinition=null; ++epoch; if (status) ++statusEpoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); for(const id of ['definition-review','publication-dialog'])if($(id).open)$(id).close(); };
     const edit = () => { changed = true; invalidate(); controls(); notice('Unsaved selections. Save draft before reviewing.'); };
     const authority = () => window.sv08Session?.available && window.sv08Session.elevated;
@@ -17,6 +17,7 @@
         $('apply').disabled ||= !review?.complete || changed;
         $('restore').disabled ||= !saved?.previous;
         $('reconciliation').hidden = !(reconcile || diagnostic);
+        for(const control of $('connection-inspector').querySelectorAll('select'))control.disabled=busy||reconcile||diagnostic||!authority();
         $('reconcile').disabled = $('discard').disabled = busy || !authority();
     }
     async function rpc(request) {
@@ -285,7 +286,7 @@
     let localView='components', selectedCategory=null, advancedMode=false, definitionRows=[], sourceRows={}, sourcePreview=null, pendingDefinition=null, publicationReview=null, mapMode=true, selectedConnection=null;
     const categories=[['bed','Bed & build surface','M4 17h20M5 13l11-5 11 5-11 5zM8 5V2m8 3V2m8 3V2'],['probe','Probe & levelling','M12 3h8v15l-4 5-4-5zM5 28h22'],['toolhead','Toolhead & extrusion','M8 4h16v10H8zM11 14h10v7l-5 7-5-7zM4 9h4m16 0h4'],['filament','Filament & multi-colour','M4 4h10v24H4zM18 4h10v24H18zM9 10h0m14 0h0M9 20h14'],['boards','Boards & connections','M6 6h20v20H6zM11 11h10v10H11zM2 10h4m20 0h4M2 22h4m20 0h4'],['cooling','Cooling & enclosure','M16 13c-13-15-13 9 0 3m3 0c15-13-9-13-3 0m0 3c13 15 13-9 0-3m-3 0c-15 13 9 13 3 0'],['motion','Motion & endstops','M3 25L25 3M3 8V3h5M24 29h5v-5']];
     function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(['probe','pressure_switch'].includes(device.kind))return 'probe';if(['extruder','accelerometer'].includes(device.kind)||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber','heater_fan'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
-    function setView(view){localView=view;for(const name of ['components','connections','changes'])$(name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='connections')renderConnections();if(view==='changes')renderChanges();}
+    function setView(view){localView=view;for(const name of ['components','changes'])$(name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='changes')renderChanges();}
     function renderDesign(){
         $('board-summary').textContent=Object.entries(draft.boards).map(([role])=>boardData(role)?.label??'Unknown '+role).join(' · ')||'Boards not selected';
         const root=$('cards');root.replaceChildren();
@@ -304,7 +305,7 @@
         for(const box of $('devices').children){const legend=box.querySelector('legend')?.textContent;const d=draft.devices.find(d=>legend?.startsWith(d.name+' ·'));box.hidden=!d||categoryFor(d)!==selectedCategory;}
         $('custom-config').value=draft.custom_config??'';
         $('selection-status').textContent=changed?'Unsaved component selections':'Selections saved · configuration and commissioning separate';renderChanges();renderDefinitionChoices();
-        if(localView==='connections')renderConnections();
+        if(location.hash==='#printer-connections')renderConnections();
     }
     function previewDefinition(row){const d=row.record;return operation(async()=>{invalidate();const result=await rpc({action:'definition',draft,reference:row.reference,expected_revision:revision});if(d.components?.length===1&&d.components[0].kind==='fan'&&!d.dependencies?.length&&!d.behaviours?.length){draft=result.draft;edit();render();notice('Fan settings added to your selections. Save when ready.');return;}pendingDefinition=result.draft;const before=draft.devices.map(d=>d.name);$('definition-effects').textContent=d.name+'\n'+d.description+'\n\nDevices: '+result.draft.devices.map(d=>d.name).join(', ')+'\nPrevious: '+before.join(', ')+'\nCalibration for replaced hardware is cleared. Nothing is saved or applied.';$('definition-review').showModal();$('definition-cancel').focus();});}
     $('use-factory').onclick=()=>{const row=definitionRows.find(r=>r.reference.source==='builtin'&&r.record.id==='sv08.factory');if(row)previewDefinition(row);};
@@ -328,16 +329,128 @@
         if(!root.children.length)root.append(el('p','No pending component changes.'));
         $('change-count').textContent=String(count);
     }
-    function renderConnections(){
-        const filter=$('connection-filter').value.toLowerCase(), rows=[];
-        for(const d of draft.devices){const board=boardData(d.board);if(!board)continue;for(const [field,value] of Object.entries(d.settings)){const type=catalog.kinds[d.kind][field];if(!['adc','heater','fan','probe','input','output','motor'].includes(type))continue;const connector=type==='motor'?{label:value,contact:null}:Object.values(board.connectors).find(c=>c.pin===value&&c.capability===type);rows.push({d,field,value,type,board,connector});}}
-        const root=$('connection-map'),tableRoot=$('connection-table');root.replaceChildren();tableRoot.replaceChildren();root.hidden=!mapMode;tableRoot.hidden=mapMode;
-        const table=el('table'),head=el('tr');for(const label of ['Board','Header','Contact','Signal / controller','Device'])head.append(el('th',label));const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');table.append(body);
-        for(const row of rows){const values=[row.board.label,row.connector?.label??'Unresolved',row.connector?.contact??'Contact unknown',row.d.board+':'+row.value,row.d.name];if(filter&&!values.join(' ').toLowerCase().includes(filter))continue;const selectRow=()=>{selectedConnection=row;renderConnectionInspector();};const path=el('div');path.className='printer-connection-path';for(const text of [values[0],values[1]+' · '+values[2],values[3]])path.append(el('span',text));const button=el('button',values[4]);button.onclick=selectRow;path.append(button);root.append(path);const tr=el('tr');for(const text of values.slice(0,4))tr.append(el('td',text));const td=el('td'),b=el('button',values[4]);b.onclick=selectRow;td.append(b);tr.append(td);body.append(tr);}
-        for(const [role,b] of Object.entries(draft.boards)){const line=el('p',role+' controller · '+(b.transport?.toUpperCase()??'Transport needed')+' · '+(b.identity?'Instance identity entered':'Identity needed'));root.append(line);}
-        tableRoot.append(table);if(selectedConnection)renderConnectionInspector();
+    // View-only geometry. No timers, animation loop, layout simulation or RPC.
+    const graph={x:0,y:0,scale:1,width:1000,height:600,positions:new Map(),nodes:new Map(),edges:[],rows:[],signature:null,drag:null};
+    const electrical=new Set(['adc','heater','fan','probe','input','output','motor']);
+    const pretty=value=>value.replaceAll('_',' ');
+    function connectionRows(){
+        const rows=[];
+        for(const d of draft.devices){
+            const board=boardData(d.board);if(!board)continue;
+            for(const [field,value] of Object.entries(d.settings)){
+                const type=catalog.kinds[d.kind]?.[field];if(!electrical.has(type))continue;
+                const connector=type==='motor'?{label:value,contact:null}:Object.values(board.connectors).find(c=>c.pin===value&&c.capability===type);
+                const motor=type==='motor'?board.motors[value]:null;
+                rows.push({key:d.name+':'+field,d,field,value,type,board,connector,motor});
+            }
+            // These devices have an internal MCU sensor, not an external wire.
+            if(d.kind==='mcu_temperature')rows.push({key:d.name+':internal',d,field:'internal sensor',value:'MCU temperature',type:'internal',board});
+        }
+        for(const [role,b] of Object.entries(draft.boards)){
+            const board=boardData(role);if(board)rows.push({key:'transport:'+role,d:{name:role+' controller',board:role},field:'transport',value:b.transport?.toUpperCase()??'Transport needed',type:'transport',board});
+        }
+        // Semantic references are deliberately distinct from electrical wires.
+        for(const d of draft.devices)for(const field of ['sensor','heater'])if(typeof d.settings[field]==='string'){
+            const target=draft.devices.find(x=>x.name===d.settings[field]);if(target)rows.push({key:d.name+':reference:'+field,d,field,value:target.name,type:'reference',target,board:boardData(d.board)});
+        }
+        return rows;
     }
-    function renderConnectionInspector(){const root=$('connection-inspector');root.replaceChildren();const row=selectedConnection;if(!row)return;const d=draft.devices.find(d=>d.name===row.d.name);if(!d)return;root.append(el('h3',d.name.replaceAll('_',' ')+' connection'));const choices=row.type==='motor'?Object.keys(row.board.motors).map(k=>[k,k]):Object.entries(row.board.connectors).filter(([,c])=>c.capability===row.type).map(([k,c])=>[k,c.label+' · '+(c.contact??'Contact unknown')]);const value=row.type==='motor'?row.value:Object.keys(row.board.connectors).find(k=>row.board.connectors[k].pin===row.value&&row.board.connectors[k].capability===row.type);const f=field('Documented connector','text',value,v=>{d.settings[row.field]=row.type==='motor'?v:row.board.connectors[v].pin;for(const key of ['pid_kp','pid_ki','pid_kd','custom_curve'])d.settings[key]&&delete d.settings[key];edit();render();},choices);root.append(f,el('small','Signal derived from the selected board mapping. Physical contacts remain unknown where undocumented.'));}
+    function connectionText(row){
+        if(row.type==='transport')return [row.board.label,'Host connection','Physical port not specified',row.value,row.d.name];
+        if(row.type==='reference')return [row.board?.label??row.d.board,'Logical '+row.field+' reference','Not an electrical wire',pretty(row.value),pretty(row.d.name)];
+        if(row.type==='internal')return [row.board.label,'Internal MCU sensor','No external contact',row.value,pretty(row.d.name)];
+        return [row.board.label,row.connector?.label??'Unresolved','Contact '+(row.connector?.contact??'unknown'),row.d.board+':'+row.value,pretty(row.d.name)+' · '+pretty(row.field)];
+    }
+    function renderConnections(){
+        if(location.hash!=='#printer-connections'||!catalog||!draft||diagnostic)return;
+        cancelGraphDrag();const filter=$('connection-filter').value.trim().toLowerCase();graph.rows=connectionRows();
+        if(selectedConnection)selectedConnection=graph.rows.find(r=>r.key===selectedConnection.key)??null;
+        const rows=graph.rows.filter(row=>!filter||connectionText(row).join(' ').toLowerCase().includes(filter));
+        $('connection-map').hidden=!mapMode;$('connection-table').hidden=mapMode;$('graph-controls').hidden=!mapMode;$('graph-help').hidden=!mapMode;
+        $('map-toggle').setAttribute('aria-pressed',String(mapMode));$('table-toggle').setAttribute('aria-pressed',String(!mapMode));
+        const root=$('connection-table');root.replaceChildren();const table=el('table'),caption=el('caption','Connections in current selections'),head=el('tr');table.append(caption);
+        for(const text of ['Board','Header / function','Contact','Signal / connection','Device']){const th=el('th',text);th.scope='col';head.append(th);}const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');table.append(body);
+        for(const row of rows){const tr=el('tr');tr.dataset.connection=row.key;for(const text of connectionText(row).slice(0,4))tr.append(el('td',text));const td=el('td'),button=el('button',connectionText(row)[4]);button.onclick=()=>chooseConnection(row,true);td.append(button);tr.append(td);body.append(tr);}root.append(table);
+        if(!rows.length)root.append(el('p','No matching connections.'));
+        if(mapMode)buildGraph(rows);
+        renderConnectionInspector();controls();
+    }
+    function chooseConnection(row,focus=false){selectedConnection=row;highlightGraph();renderConnectionInspector();controls();if(focus)$('connection-inspector').focus();}
+    function renderConnectionInspector(){
+        const root=$('connection-inspector');root.replaceChildren();root.tabIndex=-1;
+        const row=selectedConnection;if(!row){root.append(el('p','Select a connection to see its details.'));return;}
+        root.append(el('h2',pretty(row.d.name)+' · '+pretty(row.field)));const details=el('dl');for(const [i,text] of connectionText(row).entries()){details.append(el('dt',['Board','Function','Contact','Signal','Device'][i]),el('dd',text));}root.append(details);
+        if(row.motor){const pins=el('p');pins.textContent='Motor signals: '+Object.entries(row.motor).map(([key,value])=>pretty(key)+': '+value).join(' · ');root.append(pins);}
+        if(!electrical.has(row.type))return;
+        const d=draft.devices.find(x=>x.name===row.d.name);if(!d)return;
+        const choices=row.type==='motor'?Object.keys(row.board.motors).map(k=>[k,k]):Object.entries(row.board.connectors).filter(([,c])=>c.capability===row.type).map(([k,c])=>[k,c.label+' · '+(c.contact??'Contact unknown')]);
+        const value=row.type==='motor'?row.value:Object.keys(row.board.connectors).find(k=>row.board.connectors[k].pin===row.value&&row.board.connectors[k].capability===row.type);
+        const f=field('Documented connector','text',value,v=>{
+            if(!authority()||busy||reconcile||diagnostic)return;
+            if(!choices.some(([key])=>key===v))return;
+            const pin=row.type==='motor'?v:row.board.connectors[v].pin;if(d.settings[row.field]===pin)return;
+            d.settings[row.field]=pin;for(const key of ['pid_kp','pid_ki','pid_kd','custom_curve'])delete d.settings[key];edit();render();
+        },choices);root.append(f,el('small','Changes update your unsaved hardware draft. Save and review through Printer hardware. Physical contacts remain unknown where undocumented.'));
+    }
+    function svgElement(tag){return document.createElementNS('http://www.w3.org/2000/svg',tag);}
+    function buildGraph(rows){
+        const nodes=$('graph-nodes'),wires=$('graph-wires');nodes.replaceChildren();wires.replaceChildren();graph.nodes.clear();graph.edges=[];
+        const signature=rows.map(r=>r.key+'='+r.value).join('|');const fresh=signature!==graph.signature;graph.signature=signature;
+        function node(id,title,subtitle,x,y){
+            const box=el('section');box.className='printer-graph-node';box.dataset.node=id;box.style.width='290px';const heading=el('button',title);heading.className='printer-graph-heading';heading.title='Drag to arrange; selecting highlights connections';heading.onclick=()=>{if(graph.drag?.moved)return;const row=rows.find(r=>'device:'+r.d.name===id||'board:'+r.d.board===id||id==='host'&&r.type==='transport');if(row)chooseConnection(row);};
+            box.append(heading,el('small',subtitle));nodes.append(box);const position=graph.positions.get(id)??{x,y};graph.positions.set(id,position);const record={id,box,heading,position,ports:[]};graph.nodes.set(id,record);placeNode(record);return record;
+        }
+        function port(n,row,side,text){const button=el('button',text);button.className='printer-graph-port '+side+' '+row.type;button.dataset.connection=row.key;button.title=connectionText(row).join(' · ');button.onclick=()=>chooseConnection(row);const item={node:n,index:n.ports.length,side,button};n.ports.push(item);n.box.append(button);return item;}
+        function edge(row,from,to){const path=svgElement('path');path.setAttribute('class','printer-graph-wire '+row.type);path.dataset.connection=row.key;wires.append(path);graph.edges.push({row,from,to,path});}
+        const host=node('host','Printer host','Logical controller transports',20,40);let groupY=40;
+        for(const [role] of Object.entries(draft.boards)){
+            const roleRows=rows.filter(r=>r.d.board===role&&r.type!=='reference');if(!roleRows.length)continue;
+            const board=boardData(role);if(!board)continue;const b=node('board:'+role,board.label,pretty(role)+' controller',400,groupY);
+            const transport=roleRows.find(r=>r.type==='transport');if(transport)edge(transport,port(host,transport,'right',transport.value+' → '+pretty(role)),port(b,transport,'left',transport.value+' ← host'));
+            let deviceY=groupY;
+            for(const d of draft.devices.filter(d=>d.board===role)){
+                const connections=roleRows.filter(r=>r.d.name===d.name);const refs=rows.filter(r=>r.type==='reference'&&(r.d.name===d.name||r.target.name===d.name));if(!connections.length&&!refs.length)continue;
+                const n=node('device:'+d.name,pretty(d.name),pretty(d.kind),900,deviceY);
+                for(const row of connections){const label=row.type==='internal'?'Internal temperature':(row.connector?.label??'Unresolved')+' · '+row.value;edge(row,port(b,row,'right',label),port(n,row,'left',pretty(row.field)));}
+                deviceY+=Math.max(110,80+connections.length*28)+24;
+            }
+            groupY=Math.max(deviceY,groupY+80+b.ports.length*28)+70;
+        }
+        for(const row of rows.filter(r=>r.type==='reference')){const from=graph.nodes.get('device:'+row.target.name),to=graph.nodes.get('device:'+row.d.name);if(from&&to)edge(row,port(from,row,'right','Used by '+pretty(row.d.name)),port(to,row,'left',pretty(row.field)+' reference'));}
+        graph.width=1250;graph.height=200;
+        for(const n of graph.nodes.values()){graph.width=Math.max(graph.width,n.position.x+310);graph.height=Math.max(graph.height,n.position.y+80+n.ports.length*28);}
+        // Positions are session-local UI state, never persisted in hardware definitions.
+        for(const id of graph.positions.keys())if(!graph.nodes.has(id))graph.positions.delete(id);
+        wires.setAttribute('width',graph.width);wires.setAttribute('height',graph.height);$('graph-scene').style.width=graph.width+'px';$('graph-scene').style.height=graph.height+'px';drawWires();highlightGraph();
+        if(fresh)openGraph();else transformGraph();
+        if(!rows.length){const message=el('p','No matching connections.');message.className='printer-graph-empty';nodes.append(message);}
+    }
+    function placeNode(n){n.box.style.left=n.position.x+'px';n.box.style.top=n.position.y+'px';}
+    function endpoint(port){return {x:port.node.position.x+(port.side==='right'?290:0),y:port.node.position.y+83+port.index*28};}
+    function drawWires(){for(const {from,to,path} of graph.edges){const a=endpoint(from),b=endpoint(to),curve=Math.max(70,Math.abs(b.x-a.x)*.45);path.setAttribute('d',`M ${a.x} ${a.y} C ${a.x+(from.side==='right'?curve:-curve)} ${a.y}, ${b.x+(to.side==='left'?-curve:curve)} ${b.y}, ${b.x} ${b.y}`);}}
+    function highlightGraph(){
+        const active=selectedConnection;for(const e of graph.edges){const selected=!!active&&(e.row.key===active.key||e.row.d.name===active.d.name||e.row.target?.name===active.d.name);e.path.classList.toggle('selected',selected);}
+        for(const n of graph.nodes.values()){n.box.classList.toggle('selected',!!active&&n.id==='device:'+active.d.name);for(const p of n.ports){const selected=p.button.dataset.connection===active?.key;p.button.classList.toggle('selected',selected);p.button.setAttribute('aria-pressed',String(selected));}}
+        for(const tr of $('connection-table').querySelectorAll('[data-connection]'))tr.classList.toggle('selected',tr.dataset.connection===active?.key);
+    }
+    function transformGraph(){ $('graph-scene').style.transform=`translate(${graph.x}px,${graph.y}px) scale(${graph.scale})`;$('graph-scale').textContent=Math.round(graph.scale*100)+'%'; }
+    function openGraph(){const rect=$('connection-map').getBoundingClientRect();if(!rect.width)return;graph.scale=Math.max(.6,Math.min(1,(rect.width-40)/1250));graph.x=20;graph.y=20;transformGraph();}
+    function fitGraph(){for(const n of graph.nodes.values()){graph.width=Math.max(graph.width,n.position.x+310);graph.height=Math.max(graph.height,n.position.y+80+n.ports.length*28);}const rect=$('connection-map').getBoundingClientRect();if(!rect.width)return;graph.scale=Math.max(.15,Math.min(1,(rect.width-40)/graph.width,(rect.height-40)/graph.height));graph.x=(rect.width-graph.width*graph.scale)/2;graph.y=20;transformGraph();}
+    function zoomGraph(factor){const rect=$('connection-map').getBoundingClientRect(),old=graph.scale;graph.scale=Math.max(.15,Math.min(2.5,old*factor));graph.x=rect.width/2-(rect.width/2-graph.x)*graph.scale/old;graph.y=rect.height/2-(rect.height/2-graph.y)*graph.scale/old;transformGraph();}
+    function cancelGraphDrag(){if(graph.drag){const root=$('connection-map');if(root.hasPointerCapture(graph.drag.pointer))root.releasePointerCapture(graph.drag.pointer);graph.drag=null;}}
+    $('connection-map').addEventListener('pointerdown',event=>{
+        if(event.button!==0)return;const heading=event.target.closest('.printer-graph-heading');if(event.target.closest('button')&&!heading)return;
+        const node=heading?graph.nodes.get(heading.parentElement.dataset.node):null;graph.drag={pointer:event.pointerId,x:event.clientX,y:event.clientY,node,origin:{...(node?node.position:{x:graph.x,y:graph.y})},moved:false};event.currentTarget.setPointerCapture(event.pointerId);
+    });
+    $('connection-map').addEventListener('pointermove',event=>{
+        const drag=graph.drag;if(!drag||drag.pointer!==event.pointerId)return;const dx=event.clientX-drag.x,dy=event.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)<4&&!drag.moved)return;drag.moved=true;
+        if(drag.node){drag.node.position.x=Math.max(0,drag.origin.x+dx/graph.scale);drag.node.position.y=Math.max(0,drag.origin.y+dy/graph.scale);placeNode(drag.node);drawWires();}else{graph.x=drag.origin.x+dx;graph.y=drag.origin.y+dy;transformGraph();}
+    });
+    $('connection-map').addEventListener('pointerup',event=>{const drag=graph.drag;if(drag?.node&&!drag.moved){const row=graph.rows.find(r=>'device:'+r.d.name===drag.node.id||'board:'+r.d.board===drag.node.id);if(row)chooseConnection(row);}cancelGraphDrag();});
+    $('connection-map').addEventListener('pointercancel',cancelGraphDrag);
+    $('connection-map').addEventListener('keydown',event=>{if(event.target!==event.currentTarget)return;const actions={'+':()=>zoomGraph(1.25),'=':()=>zoomGraph(1.25),'-':()=>zoomGraph(.8),'0':fitGraph,ArrowLeft:()=>{graph.x+=50;transformGraph();},ArrowRight:()=>{graph.x-=50;transformGraph();},ArrowUp:()=>{graph.y+=50;transformGraph();},ArrowDown:()=>{graph.y-=50;transformGraph();}};if(actions[event.key]){event.preventDefault();actions[event.key]();}});
+    $('graph-in').onclick=()=>zoomGraph(1.25);$('graph-out').onclick=()=>zoomGraph(.8);$('graph-fit').onclick=fitGraph;$('graph-reset').onclick=()=>{graph.positions.clear();graph.signature=null;renderConnections();};
+    window.addEventListener('resize',()=>{if(location.hash==='#printer-connections'&&mapMode)openGraph();});
     function renderSources(){const root=$('source-list');root.replaceChildren();const table=el('table'),body=el('tbody');table.append(body);const builtin=el('tr');for(const text of ['SV08 Mainline','Built-in','Available'])builtin.append(el('td',text));body.append(builtin);for(const source of Object.values(sourceRows)){const tr=el('tr');for(const text of [source.manifest.name,source.repository??'Local bundle',source.enabled?'Available':'Disabled'])tr.append(el('td',text));const td=el('td');for(const [label,action] of [['Check for updates','source_check'],[source.enabled?'Disable':'Enable',source.enabled?'source_disable':'source_enable'],['Remove','source_remove']]){const b=el('button',label);b.disabled=!authority()||busy||reconcile||action==='source_check'&&(!source.enabled||source.origin!=='github');b.onclick=()=>operation(async()=>{const r=await rpc({action,source_id:source.id,expected_revision:revision});if(action==='source_check'){sourcePreview=r;showSourcePreview();}else{await load(true);renderSources();notice('Subscription updated; selected locked definitions retained.');}});td.append(b);}tr.append(td);body.append(tr);}root.append(table);}
     function showSourcePreview(){const root=$('source-preview-detail');root.replaceChildren();if(!sourcePreview)return;root.append(el('h3',sourcePreview.manifest.name),el('p',(sourcePreview.repository??'Local bundle')+' · '+sourcePreview.commit),el('p','Publisher declaration: '+JSON.stringify(sourcePreview.manifest.publisher)+' · '+sourcePreview.manifest.license),el('p',sourcePreview.records.length+' supported · '+sourcePreview.unavailable.length+' unavailable'));for(const x of sourcePreview.unavailable)root.append(el('p',x.id+': '+x.reason));$('source-confirm').disabled=!authority();}
     for(const b of document.querySelectorAll('[data-printer-view]'))b.onclick=()=>setView(b.dataset.printerView);
@@ -387,7 +500,7 @@
     $('cancel-import').onclick=()=>{invalidate();draft=saved.draft===undefined?null:copy(saved.draft);changed=false;$('import-diff').hidden=true;render();notice('Imported changes discarded. Saved draft preserved.');};
     $('import').onchange=()=>operation(async()=>{invalidate();$('import-diff').hidden=true;const file=$('import').files[0];if(!file)return;$('import').value='';if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming,expected_revision:revision});draft=result.draft;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');});
     window.addEventListener('sv08-authority-changed',()=>{invalidate();controls();if(!authority())notice('Administrator access ended. Pending review cancelled. Authorize and reload before editing.');else if (changed || reconcile) { reconcile=true; controls(); notice('Administrator access restored. Reconcile saved state explicitly; local selections retained.'); } else operation(()=>load());});
-    window.addEventListener('sv08-navigation-changed',()=>{ if(busy && !loading) reconcile=true; invalidate(false); controls(); });
+    window.addEventListener('sv08-navigation-changed',event=>{ if(busy && !loading) reconcile=true; invalidate(false); controls(); cancelGraphDrag(); if(event.detail.to==='printer-connections')queueMicrotask(renderConnections); });
     window.addEventListener('beforeunload',event=>{if(changed){event.preventDefault();event.returnValue='';}});
     window.addEventListener('pagehide',()=>invalidate());
     window.sv08Session.ready.then(()=>{controls();if(authority())operation(load);else notice('Authorize to load private printer configuration.');});

@@ -7,3 +7,47 @@
 @media(max-width:1100px){#printer .printer-component-layout{grid-template-columns:1fr}#printer .printer-component-layout:has(.printer-detail:not([hidden])) .printer-cards{display:none}#printer .printer-detail{padding:18px}#printer .printer-tabs{gap:4px}#printer .printer-title p{font-size:14px}}@media(max-width:600px){#printer .printer-cards{grid-template-columns:1fr}#printer .printer-tabs{flex-wrap:wrap}#printer .printer-advanced-toggle{margin-left:0}#printer .printer-title{display:block}#printer .printer-footer{align-items:stretch}#printer .printer-footer button{flex:1}#printer .printer-connection-path{grid-template-columns:repeat(4,140px)}}
 
 #definition-sources{min-width:0;overflow-wrap:anywhere}#definition-sources table{border-collapse:collapse;width:100%;table-layout:fixed}#definition-sources td{padding:8px;border-bottom:1px solid var(--border);overflow-wrap:anywhere}#definition-sources #printer-source-list{overflow:auto}#definition-sources button{margin:4px}#definition-sources pre{white-space:pre-wrap;overflow-wrap:anywhere}
+/* Connections is a sibling page, with event-driven HTML nodes and SVG wires. */
+#printer-connections{min-width:0;color:#172b42}
+#printer-connections [hidden]{display:none!important}
+#printer-connections .printer-title,#printer-connections .printer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#printer-connections .printer-toolbar{margin:16px 0}
+#printer-connections .printer-title h1{margin:8px 0}
+#printer-connections button,#printer-connections input,#printer-connections select{min-height:42px}
+#printer-connections [aria-pressed=true]{border-color:#087e83;background:#dff1f1}
+#printer-connections .printer-logical-map{position:relative;width:100%;height:min(70vh,700px);min-height:380px;overflow:hidden;background-color:#142b43;background-image:radial-gradient(#344c64 1px,transparent 1px);background-size:20px 20px;border-radius:9px;touch-action:none;cursor:grab}
+#printer-graph-scene{position:absolute;transform-origin:0 0}
+#printer-graph-wires{position:absolute;inset:0;overflow:visible;pointer-events:none}
+#printer-graph-nodes{position:absolute;inset:0}
+.printer-graph-node{position:absolute;background:#203b55;color:#edf5fb;border:1px solid #63809b;border-radius:7px;box-shadow:0 3px 8px #0004;padding-bottom:8px}
+.printer-graph-node>small{display:block;height:26px;padding:4px 12px;font-size:12px;box-sizing:border-box}
+.printer-graph-node.selected{border:2px solid #4fe2cc}
+.printer-graph-heading{display:block;width:100%;height:42px;border:0!important;border-radius:6px 6px 0 0!important;background:#087e83!important;color:white!important;text-align:left;font-weight:600;padding:8px 12px;cursor:move;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#printer-connections .printer-graph-port{position:relative;display:block;width:100%;height:28px;min-height:28px;border:0;border-radius:0;background:transparent;color:#edf5fb;font-size:12px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:3px 16px}
+.printer-graph-port.right{text-align:right!important}
+.printer-graph-port:before{content:'';position:absolute;left:3px;top:9px;width:9px;height:9px;border-radius:50%;background:#8bd1e6}
+.printer-graph-port.right:before{left:auto;right:3px}
+.printer-graph-port.heater:before{background:#ffb36c}
+.printer-graph-port.motor:before{background:#c4a3f5}
+.printer-graph-port.reference:before{background:#a4b5c6}
+.printer-graph-wire{fill:none;stroke:#8bd1e6;stroke-width:2;vector-effect:non-scaling-stroke}
+.printer-graph-wire.heater{stroke:#ffb36c}
+.printer-graph-wire.motor{stroke:#c4a3f5}
+.printer-graph-wire.reference,.printer-graph-wire.internal{stroke:#a4b5c6;stroke-dasharray:5 5}
+.printer-graph-wire.transport{stroke:#62d8bb;stroke-width:3}
+.printer-graph-wire.selected{stroke:#fff;stroke-width:4}
+#printer-connections .printer-graph-port.selected{background:#355b74;border-color:transparent;color:white}
+.printer-graph-empty{color:white;padding:24px}
+#printer-connection-table{overflow:auto}
+#printer-connection-table table{min-width:650px;width:100%}
+#printer-connection-table caption{text-align:left;padding:12px}
+#printer-connection-table tr.selected{background:#dff1f1}
+#printer-connection-inspector{margin-top:20px;padding:20px;background:white;border:1px solid #cbd5e1;border-radius:8px;overflow-wrap:anywhere}
+#printer-connection-inspector label{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+#printer-connection-inspector select{max-width:100%}
+#printer-connection-inspector dl{display:grid;grid-template-columns:minmax(80px,150px) minmax(0,1fr);gap:6px}
+#printer-connection-inspector dd{margin:0}
+#printer-connections :focus-visible{outline:3px solid #e9ac43;outline-offset:2px}
+@media(max-width:500px){#printer-connections .printer-logical-map{height:500px}
+#printer-connections .printer-toolbar label{width:100%}
+}
