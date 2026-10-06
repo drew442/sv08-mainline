@@ -1,0 +1,107 @@
+{
+  "source_revision": "c8d7b57ac25792bf5f444ec69426e3e0ea5d6e60",
+  "integrated_revision": "a2af799387ce4e0ede56157123dcc8b5eff99fd4",
+  "installed_files": {
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "f4430d339bc4ed7e1faa1f7eb64888f01cf4a2725867627beb8d9bede08f93f3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "5b46be7342dd00072cf2f75c87ddd333c26fb37cd0aeb724cc3ba090dd410c7d",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "ef446ea351175ca4a3da5c66d5fb2797af8e21dd26621a64f60f15f45750b8b3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/navigation.js": {
+      "sha256": "019cd243ccd42155c342d1ffcd11546feda3bb2325990d058b2a3441709effc0",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/app.js": {
+      "sha256": "374b76e5637f3313b7bea4699273094ffd6dafecb3d72545e040b98fc02f2027",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "16f5ca136ef3988e8e15a6b22c6e55c5743d78cf299328fefa5b36bdb8e609f5",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "target": {
+    "cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+    "root_source": "/dev/mmcblk2p2",
+    "boot_id": "2e1e3701-e7a3-4999-8fa5-107360d3a8b5"
+  },
+  "installation_review": {
+    "decision": "PASS WITH CONDITIONS",
+    "reviewed_hashes": {
+      "deploy.py": "c20b06318e22d24c90ad27e5a101720e747d6ac944aba12e5f7198addf85a247",
+      "operate.py": "6c086eb977df80b62b475125204fade2e5fa7007d55f14c6701dc2395cc53050",
+      "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+      "packet.json": "1f4a3108026b2d12079ab3e8b92657c310e748a2e6b5dbf728d59260fddef906",
+      "target-before.json": "f6e74a67b5849c1f39f4297359a4aff0ef6be52b4dae17e6bb1e9a8d4a597838"
+    }
+  },
+  "closure": {
+    "errors": [],
+    "returncode": 0,
+    "root_boot_read_only": true,
+    "preserved_state_masks": true,
+    "psu": "OFF"
+  },
+  "installer_unit": [
+    "MainPID=0",
+    "LoadState=not-found",
+    "ActiveState=inactive"
+  ],
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "Definitions sidebar; all 25 built-ins; source/category groups; factory dependency and component drill-down; Back/disclosures; search/empty; browser history; browsing changes no saved hardware",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, Definitions deep-link reload; saved state unchanged"
+    ]
+  },
+  "post_browser": {
+    "afterimages_unrelated_assets_and_saved_state_hashes_preserved": true,
+    "service_masks_preserved": true,
+    "live_configuration_absent": true,
+    "root_boot_read_only": true,
+    "data_writable": true,
+    "psu": "OFF"
+  },
+  "limitations": [
+    "UI/software acceptance only; no physical wiring or printing release.",
+    "No hardware/source selection, source import, connector edit, Save, Apply, output, service or firmware operation during installed acceptance.",
+    "External/disabled/unsupported catalogue coverage uses the offline real Store fixture; installed checks exercised built-ins."
+  ]
+}
