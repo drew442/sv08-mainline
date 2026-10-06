@@ -50,3 +50,7 @@ the installed page does not invent missing sensor or connection identities.
 Older feature records/evidence retain their historical scope and pending physical
 requirements; this owner-requested installation provides the current software
 receipt without waiving those requirements.
+
+The [2026-10-06 legacy sensor repair](legacy-sensor-repair/evidence.md) fixes
+assembly selection against the preserved older sensor names and records the
+current two-file installed follow-up.

@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "source_commit": "2cbe70c59157dfd6bfacdd8d1b040f4ced0cedde",
+  "files_checked": 52,
+  "changed_files": 2,
+  "directories_checked": 8,
+  "context_unchanged": true,
+  "boot_cid_unchanged": true,
+  "masked_units_inactive": true,
+  "root_boot_read_only": true,
+  "live_config_absent": true,
+  "capacity": {
+    "/": {
+      "read_only": true,
+      "free_bytes": 688201728,
+      "free_inodes": 99447
+    },
+    "/boot": {
+      "read_only": true,
+      "free_bytes": 149522944,
+      "free_inodes": 0
+    },
+    "/data": {
+      "read_only": false,
+      "free_bytes": 2431979520,
+      "free_inodes": 156662
+    }
+  },
+  "packet_sha256": "919fd9d1b6ab435d4ef72d83b18f4912d92a8cb47c1994469d6bc64c37cb29ef"
+}
