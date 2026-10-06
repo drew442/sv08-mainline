@@ -1,0 +1,110 @@
+{
+  "source_revision": "113bb70",
+  "integrated_revision": "7e83b76",
+  "installed_files": {
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "d7734dfc970052afdf0c566ff234294a90d8242690a0790e60bec4913c58fd29",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "b6c6d3a45d1d98bef45d3c4cac2c45447fca16936bc6693947e155f8ba4a43a1",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "4d4685c2f9405a9ca3df0867e8a4206c57febdbe8fbdedc11a06d5fa8deac776",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/navigation.js": {
+      "sha256": "5ac6119a89719421e753550ce911fc2830007e83d3c1a545d5d131e288c0ba0c",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/app.js": {
+      "sha256": "0addba8acaf9654029edc32de3367f59f216dde0633395ce43a5e285ab15b480",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "817e02d4168ebfda9a24ce2417944137faea96f71ef66cf7f616e8c3ee18a88a",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "target": {
+    "cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+    "root_source": "/dev/mmcblk2p2",
+    "boot_id": "2e1e3701-e7a3-4999-8fa5-107360d3a8b5"
+  },
+  "installation_review": {
+    "decision": "PASS WITH CONDITIONS",
+    "reviewed_hashes": {
+      "deploy.py": "3a9338400e542512f628577df2def638ed39f652ef62dd3cc495ab50b6cbee42",
+      "operate.py": "0b2c1feaf25ddb446a76727f6a0ce988a5dfda7b92dec0e96bdd00ba5c7353bf",
+      "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+      "packet.json": "f59079a9894e711315a6cd5628184953e589b936028cf8c5195611a7f953ebd7",
+      "target-before.json": "8e7e6b74213d560c6d3423f02536a204dadf064ebe943622e65bd8a35aa7342c"
+    }
+  },
+  "closure": {
+    "errors": [],
+    "returncode": 0,
+    "root_boot_read_only": true,
+    "preserved_state_masks": true,
+    "psu": "OFF"
+  },
+  "installer_unit": [
+    "MainPID=0",
+    "LoadState=not-found",
+    "ActiveState=inactive"
+  ],
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "complete factory preview including accelerometer; cancellation leaves saved hardware unchanged",
+      "seven component cards, factory-only bed choices, advanced collapsed",
+      "actual ARM64 runtime factory composition preview; unsaved 27-node graph, transport/internal/motor/SPI coverage, filter/table/zoom/highlight; two seconds without graph mutations; saved state unchanged",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, reload discards temporary selection; saved state unchanged"
+    ]
+  },
+  "post_browser": {
+    "afterimages_and_unrelated_assets_preserved": true,
+    "saved_state_hashes_preserved": true,
+    "service_masks_preserved": true,
+    "live_configuration_absent": true,
+    "root_boot_read_only": true,
+    "data_writable": true,
+    "psu": "OFF"
+  },
+  "limitations": [
+    "No physical wiring, commissioning, calibration or printing acceptance.",
+    "Temporary factory definition composition changed only the browser draft; no Save, Apply, connector edit, output, service or firmware operation.",
+    "No ARM64 CPU benchmark; idle timing is a workstation-browser sample recorded separately."
+  ]
+}
