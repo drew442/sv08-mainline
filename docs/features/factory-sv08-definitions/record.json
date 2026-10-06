@@ -47,11 +47,55 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/factory-sv08-definitions/evidence.md",
+          "document_sha256": "5fdf7896514480922c2acdab580afcf375e02e5104239e4c9fffdc61cdddbfed",
+          "environment": "offline",
+          "limitations": "Offline software and source evidence only. Cockpit RPC/session shim, simulated MCU output. No physical commissioning, calibration, configuration activation or printing release.",
+          "method": "Coordinator self-validation: 79 printer tests, 8 complete-factory tests with pinned simulated-MCU parser, 12 staging tests; Chromium full Store/Budget journey; source regeneration, schemas, adapter agreement, legacy creator examples, links and stable diff inspection.",
+          "profile": null,
+          "source_commit": "80c1a52f660daf72837f4ac3fe7f19ddef8c9142",
+          "source_sha256": {
+            "catalog/printer/catalog.json": "a093b161e62688a75336f52a1defe5b6b6e796c24fec24eb9d5b01766e183aae",
+            "catalog/printer/catalog.schema.json": "202b04b31fe06f5cde819dbfb82a482f2b37d12d2a2c47ded63e4b11f09b8fc5",
+            "catalog/printer/definitions/builtin.json": "95051432850d95e5f2ca90ec1ab6a07936c2021c6b623db4626ae78a9b6570aa",
+            "catalog/printer/draft.schema.json": "96b9db837ed9b7e9d06134d8e68f7498a44dd80ac4f880e7deebae79d2f231a1",
+            "docs/development/printer-hardware-catalog.md": "f90bf86c96d233ef1c0fd3171fdcb5caf776e08409f08862b382d53778191bd1",
+            "docs/development/printer-public-format.md": "7ef470adf497982e5eba7609ec239e48efc0bcf251f07ab9273c927c7a2b6152",
+            "docs/features/factory-sv08-definitions/browser.json": "d1857a4a170b89675b5c504bce4cfa79310f4a6d20132667e617c551047113f9",
+            "runtime/sv08_printer_catalog.py": "4928fd146ddfdcc9bc2af503687ba6a5fec759f5a47f05d1bbe2d888b3930703",
+            "runtime/sv08_printer_compose.py": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+            "runtime/sv08_printer_definitions.py": "0ec53a876c96850a034df59081ef025da4119b16d08c47f3d1f9e3028f658de6",
+            "runtime/sv08_printer_fields.py": "b88eac5cc6e4b73fae472246e9d005eaf7c9f154fd5ad4fcca91fc3ed38c3aa3",
+            "runtime/sv08_printer_generate.py": "7b4ceb7d1c625f84194c9e08c9968a390a8623a03b8063db2ef64ec1800fdb25",
+            "runtime/sv08_printer_publish.py": "788a02f8461ca0d7a97f545ec1d966ac1b065004a0bd2f0b1918a290aeea3feb",
+            "schemas/printer-definitions/v1/assembly.schema.json": "c9417aa5a1c0f5a104508f9fd8297bed671ef60aa39e2467dd508532e0074bac",
+            "schemas/printer-definitions/v1/behaviour.schema.json": "1cc861ec502f2098526a5e50293d411930149add9d5d195d698fbbd64ec49cf2",
+            "schemas/printer-definitions/v1/board.schema.json": "5e75fd598a2206a4ab1d05e5a107741d02c54eaeb89aaf74c7717bdb24dd9bc3",
+            "schemas/printer-definitions/v1/component.schema.json": "cae37b3b72cae68b39e906414dd4866c905fd63d3ae4de0f0fee011c18c27cc2",
+            "schemas/printer-definitions/v1/connection.schema.json": "0303c5163c56c560cbce5f53bbcc28362dfc7394b5eae8fb9bfb2711c1691eb5",
+            "schemas/printer-definitions/v1/definition.schema.json": "322e56d6aa0f5d2c7697186eaa224f7c12459b9ab4336c2acbcf81f7f23b95d8",
+            "scripts/update_factory_definitions.py": "685c2de5132022d69e7070de9c5aaba71afd957d73ab08c857c3e4049a92eeb0",
+            "tests/printer_browser.mjs": "5ce64e334396fbb8056c2377e3d522d16302cfe016ec0478538616250af9e352",
+            "tests/test_factory_sv08.py": "96d1b00092f686c0f28a5e4a0b9dcfd5a857b4bdbedd4db7df25425ac41152d6",
+            "tests/test_printer_configuration.py": "298aa9bf43d5e165e228a1e9dac2bf42d7cbccc798c3ebd49ea649a8ad8ff58a",
+            "tests/test_printer_definitions.py": "a25ce68b24696d53f3d810809bbdf5c2a0e8e4ea81de73a43f1012c7c6525f87",
+            "ui/printer/app.js": "58e521355e35c5f73b8c0c2a38e78a97a3ddc9c8ccb78ffaf318a81b76616f20",
+            "ui/printer/panel.html": "c2bbb944687c7e0eb40ba9cdc52d21b70d87d353c1e963e6889b1e32d1ead71c"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "1c851bbf49954081961aa3ebe8ebf6c3",
+        "session": "factory-sv08-definitions-20261006"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_data_budget.py",
@@ -93,9 +137,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and disposable offline fixtures. Live printer deployment and physical commissioning require separately assessed action before execution.",
-      "status": "pending",
+      "status": "done",
       "title": "Complete sourced factory hardware composition",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "d0d0a6bd7c17a0fa92a9e52762be9a2aa21119091e6a4d8b2d9cd8e24cdcdbbf",
+        "evidence_sha256": "6dec7b69b7dc6f7271605ededbf77c865ec543991f2627765394c609c0d67583",
+        "outcome": "passed",
+        "rationale": "Completed scoped offline checks and inspected the stable diff; hardware installation is separately assessed.",
+        "session": "factory-sv08-definitions-20261006",
+        "source_commit": "80c1a52f660daf72837f4ac3fe7f19ddef8c9142"
+      },
       "verification": null
     }
   ],
