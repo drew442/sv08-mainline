@@ -1,0 +1,16 @@
+# Owner requirements — printer hardware page
+
+Source: this project conversation, 6 October 2026. The following messages are preserved as supplied, including spelling. They are product requirements, not sourced hardware specifications.
+
+## Original request
+
+> we need to brainstorm and write a design brief for the printer hardware page. my goal with the printer hardware page is for a user to define how their printer has been modified so that any configuration or macro file can be updated or created based on pre-set definitions. for example i should be able to quickly and easily select the funnsor/cn3d bed upgrade and the required changes are pulled from a definition and applied to the printer. in the case of the funnsor/cn3d bed upgrade this would likely be the temperature maximum and the temperature at which the bed level sensor might wait for before completing the leveling process. additionally I might choose the btt eddy sensor, or perhaps one of the cn3d toolhead or multi-color upgrades. these options would then look up the pre-set definition (based on the published build guides) and apply them to the printer configuration. the user would also be able to use an advanced mode custom config to modify the presets, for example they may have connected a component to a different header than indicated in the build guide, or they have a different toolhead or mainboard and the pins are therefore different. perhaps would could have a board to header to pin to device view so that the user can wire up their modification visually? the current layout mhtml is attached, we will need to keep it as part of the cockpit interface and I like the theme but we need to redesign it from the ground up as the current design is too confusing. please include renders with the design brief.
+
+Original attachment: `SV08 Mainline · Host administration - Printer Hardware.mhtml`, retained unmodified as [printer-hardware-current.mhtml](printer-hardware-current.mhtml).
+
+## Clarification after the first proposed render
+
+> no. the design brief should be a .md to include in the project. the render is just to show what the web interface will look like. we do not want to use images like you have included in your render, we could show component type sectons on the page using basic icons like these [https://www.flaticon.com/free-icons?word=3d%20printer&shape=outline](https://www.flaticon.com/free-icons?word=3d%20printer&shape=outline) to make the page more intuitive. when i say 'cockpit' i mean the administration interface we've included in the sv08-mainline project [https://cockpit-project.org/](https://cockpit-project.org/) renders need to be realistically kept in line with what cockpit can offer. you can see the cockpit branding we've used in the project here [https://github.com/drew442/sv08-mainline/tree/main/configs/host-os/cockpit-branding](https://github.com/drew442/sv08-mainline/tree/main/configs/host-os/cockpit-branding)
+> please try again given this new information. i've changed models, so also include my previous message and attachment.
+
+The earlier generated design-board image is deliberately not part of this reference set. It is neither an accepted design nor a source of hardware settings.
