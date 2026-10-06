@@ -1,0 +1,68 @@
+{
+  "engine": "Chromium via Playwright",
+  "source": "prototype.html",
+  "screens": [
+    {
+      "file": "01-components.png",
+      "route": "components",
+      "width": 1440,
+      "height": 1319,
+      "scrollWidth": 1440,
+      "scrollHeight": 1319
+    },
+    {
+      "file": "02-bed-preset.png",
+      "route": "bed",
+      "width": 1440,
+      "height": 1487,
+      "scrollWidth": 1440,
+      "scrollHeight": 1487
+    },
+    {
+      "file": "03-connections.png",
+      "route": "connections",
+      "width": 1440,
+      "height": 1486,
+      "scrollWidth": 1440,
+      "scrollHeight": 1486
+    },
+    {
+      "file": "04-review-changes.png",
+      "route": "changes",
+      "width": 1440,
+      "height": 1354,
+      "scrollWidth": 1440,
+      "scrollHeight": 1354
+    },
+    {
+      "file": "07-ready-to-apply.png",
+      "route": "ready",
+      "width": 1440,
+      "height": 1324,
+      "scrollWidth": 1440,
+      "scrollHeight": 1324
+    },
+    {
+      "file": "05-components-1024x600.png",
+      "width": 1024,
+      "height": 600,
+      "scrollWidth": 1024,
+      "scrollHeight": 1036
+    },
+    {
+      "file": "06-components-mobile.png",
+      "width": 390,
+      "height": 1883,
+      "scrollWidth": 390,
+      "scrollHeight": 1884
+    }
+  ],
+  "interaction_checks": [
+    "component navigation",
+    "advanced expansion",
+    "connection table switch",
+    "review file-plan switch",
+    "unresolved generation disabled"
+  ],
+  "javascript_errors": []
+}
