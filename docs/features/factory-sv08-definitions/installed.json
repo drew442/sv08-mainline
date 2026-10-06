@@ -1,0 +1,124 @@
+{
+  "source_revision": "80c1a52",
+  "integrated_revision": "c672811155907b49247e8687f4ef8a83ccf81204",
+  "target": {
+    "cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+    "root_source": "/dev/mmcblk2p2",
+    "boot_id": "2e1e3701-e7a3-4999-8fa5-107360d3a8b5"
+  },
+  "installed_files": {
+    "/usr/lib/sv08/sv08_printer_catalog.py": {
+      "sha256": "4928fd146ddfdcc9bc2af503687ba6a5fec759f5a47f05d1bbe2d888b3930703",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_compose.py": {
+      "sha256": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_definitions.py": {
+      "sha256": "0ec53a876c96850a034df59081ef025da4119b16d08c47f3d1f9e3028f658de6",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_fields.py": {
+      "sha256": "b88eac5cc6e4b73fae472246e9d005eaf7c9f154fd5ad4fcca91fc3ed38c3aa3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_generate.py": {
+      "sha256": "7b4ceb7d1c625f84194c9e08c9968a390a8623a03b8063db2ef64ec1800fdb25",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_publish.py": {
+      "sha256": "788a02f8461ca0d7a97f545ec1d966ac1b065004a0bd2f0b1918a290aeea3feb",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.json": {
+      "sha256": "a093b161e62688a75336f52a1defe5b6b6e796c24fec24eb9d5b01766e183aae",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "58e521355e35c5f73b8c0c2a38e78a97a3ddc9c8ccb78ffaf318a81b76616f20",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "c2bbb944687c7e0eb40ba9cdc52d21b70d87d353c1e963e6889b1e32d1ead71c",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "df3d8528458032065d2a7e68deb9a93f8bd6bc27dab4506e71b0401a65be8f8c",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "independent_install_review": {
+    "decision": "PASS WITH CONDITIONS",
+    "hashes": {
+      "deploy.py": "de12f9d5bd92be2cf1b3f6cc2342b62eea882be4374a021effdb501c12a3f787",
+      "operate.py": "98745a5b23a09e78774e5189d137f1f5630c6089873eb0711aee44dab6706309",
+      "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+      "packet.json": "65dfb69bb89d1bcff2658cd2d10c3791cf60c2ab23980ff57b41641026996217",
+      "target-before.json": "efe25781c50c96b8204a16120d4322e021c34ae974f81a405ecd2b0c9081ddcd"
+    }
+  },
+  "closure": {
+    "errors": [],
+    "returncode": 0,
+    "root_boot_read_only": true,
+    "preserved_state_masks": true,
+    "psu": "OFF"
+  },
+  "unit": [
+    "MainPID=0",
+    "LoadState=not-found",
+    "ActiveState=inactive"
+  ],
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "complete factory preview including accelerometer; cancellation leaves saved hardware unchanged",
+      "seven component cards, factory-only bed choices, advanced collapsed",
+      "source manager and logical connections open without mutations",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, reload; saved state unchanged"
+    ]
+  },
+  "limits": [
+    "Software and read-only browser acceptance only; no hardware commissioning or printing release.",
+    "Factory preview cancelled; saved hardware state unchanged. No configuration apply, heater, motion, MCU flash or service startup."
+  ]
+}
