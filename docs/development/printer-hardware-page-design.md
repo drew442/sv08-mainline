@@ -1,7 +1,7 @@
 # Printer hardware page — design brief
 
 **Project:** sv08-mainline  
-**Status:** Design proposal for discussion; not an implemented feature or hardware approval  
+**Status:** Owner-selected implementation requirements; delivery evidence remains separate  
 **Prepared:** 6 October 2026  
 **Revision:** 0.2 — creator-published definition sources added  
 **Target:** The existing SV08 Mainline Cockpit host-administration interface, `#printer`  
@@ -490,11 +490,11 @@ Open [the self-contained prototype](printer-hardware-page-design/prototype.html)
 
 ## Appendix A. Original requirements and reference capture
 
-The original user request is retained verbatim in [owner-requirements.md](printer-hardware-page-design/references/owner-requirements.md), followed by the clarification requesting Markdown, simple outline icons and alignment with the actual Cockpit project.
-
-The supplied page is retained unmodified as [printer-hardware-current.mhtml](printer-hardware-page-design/references/printer-hardware-current.mhtml). It is a historical input/reference, not a runtime asset. Review a host capture for private data before publishing it outside the intended project audience. The rejected earlier image is not a reference design, and none of its temperatures or wiring should be treated as configuration evidence.
-
-The creator-repository requirement is preserved verbatim in [definition-sources-requirement.md](printer-hardware-page-design/references/definition-sources-requirement.md). This revision adds its source-management workflow, public-schema contract, version/identity rules and acceptance tests without replacing the original visual requirements.
+The original requirements and capture were referenced by the imported brief, but
+its `references/` files are absent from this checkout. They are not implementation
+fixtures or usable links. The owner's explicit request selects this brief and its
+companion as the implementation requirements. Retained PNGs and prototype are
+visual references, never sources of hardware constants.
 
 ## Appendix B. Sources and provenance
 

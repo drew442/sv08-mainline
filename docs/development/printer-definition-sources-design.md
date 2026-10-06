@@ -1,7 +1,7 @@
 # Creator-published printer definitions — design proposal
 
 **Project:** sv08-mainline  
-**Status:** Proposed public contract and implementation plan; not a released schema or repository loader  
+**Status:** Owner-selected implementation requirements; the public format is draft until runtime/fixture acceptance  
 **Revision:** 0.2 — 6 October 2026  
 **Companion:** [Printer hardware page design brief](printer-hardware-page-design.md)  
 **Inspected repository:** `main` at `11912e05c7a14650cc7a0c486e40482da9241760`

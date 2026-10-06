@@ -1,6 +1,10 @@
-# Persistent printer panel
+# Printer shared-shell runtime invariants
 
-The selected host shell compiles `ui/printer/panel.html` with
+Interface requirements are defined by [the current page design](printer-hardware-page-design.md)
+and [definition sources](printer-definition-sources-design.md). This document
+records integration and storage invariants rather than page layout.
+
+The host shell compiles `ui/printer/panel.html` with
 `scripts/stage_printer_ui.py:compose_host`. Browser fixtures use this same function.
 The controller mounts once with prefixed IDs and panel-scoped CSS. The existing
 host session adapter owns authorization. Hash navigation retains native form
