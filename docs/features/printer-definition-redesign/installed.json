@@ -1,0 +1,199 @@
+{
+  "format_version": 1,
+  "installed_source_commit": "4586c1ea7c733dbc00963948959fdcb1ecd3a32d",
+  "profile": "test-sv08-01",
+  "target_cid_sha256": "08d24eb0a58bc7288c07020a0432586ea6070b78abdd86b209de362c7b42fe8a",
+  "installed": true,
+  "payload_files": 22,
+  "payload_bytes": 495517,
+  "layout_repair_bytes": 5880,
+  "files": {
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "12b62541808e6ddf0bb52940c1dd99aecc0421f041d447c34965b93ce6bf33c4",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/index.html": {
+      "sha256": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/manifest.json": {
+      "sha256": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "bccd7361e01fa4a5dec8e9944c156d9393df7fa68ba3e92f644a78e1a3d62784",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/redirect.js": {
+      "sha256": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "6aff044d4a4ccc3cfe1324eba87fff8b1a001d7ada65c5a9cd9d8f3e5451f972",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.json": {
+      "sha256": "af2f050480ab2a3ce1d96c794b81bd53a4e823bfc497a62d6961ef44f17b448f",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/catalog.schema.json": {
+      "sha256": "e84f9fd629e2a900ac6f52cc27c95faa1cf1dbc3e0babb8b22d9b13f23d31751",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/definitions/builtin.json": {
+      "sha256": "463d2882173c6c734ec2e25086030b7e744d481635bdaeec833c0e84372ca9e0",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/draft.schema.json": {
+      "sha256": "d548d51ca2be8074e6439a1de9070647dc125383890f55bf36608d5579a07e7d",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/sources/sovol-sv08-max/chamber-reference.cfg": {
+      "sha256": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/sources/sovol-sv08-max/provenance.json": {
+      "sha256": "1604705151a4d816f045b76abebf3696dfe842e6c7202c14ba0bd37614f69385",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_catalog.py": {
+      "sha256": "0a2a3aff12229bc20f0eb5080e4af60576f47541fcf840a7e43d611652f8192b",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_compose.py": {
+      "sha256": "c454f17fe66ab741515374c357316f84aad5f3bab7020ecde618e3bc0b624ecb",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_definitions.py": {
+      "sha256": "08463e91c9f71ea74401ab7713a2c9c035e6a52c79086025eb64b407ea228683",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_generate.py": {
+      "sha256": "87d41a4f5203a667bbbcac4ffe35501a3f1d8fef8d0e6e39f91f6a9dd647bf93",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_helper.py": {
+      "sha256": "4bcc59abae514b90965260f1e1199ce0bde8218e25f3af59cd4db8b34c340ba3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_publish.py": {
+      "sha256": "eebbd1106e38fe06a02f5dd196e814fbff746d59a946683a800982de965a578f",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_sources.py": {
+      "sha256": "b7c5d21fc7aba23d743545471ec96732d83acacb80e699e7c874b966b96619d1",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_store.py": {
+      "sha256": "87ccadd502d38c9cb40efc764d6c2c623f14e6a07ec75bf36dbddbc1cc13df99",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/sv08/printer/validation/klipper.dict": {
+      "sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "7e997da13f3fe59ed0daeda50965fd39690925601e8514559acffb9ad06a227e",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "root_boot_read_only": true,
+  "data_read_write": true,
+  "psu": "OFF",
+  "seven_printer_services_masked_inactive": true,
+  "saved_state_unchanged": true,
+  "live_config_present": false,
+  "service_restart": false,
+  "hardware_operation": false,
+  "rollback_backups": [
+    "/data/sv08/printer-redesign-backup-20261006",
+    "/data/sv08/printer-redesign-layout-backup-20261006"
+  ],
+  "independent_assessment": "high_consequence_reviewer: pass with stated closure conditions, all checked",
+  "reviewed_installation_hashes": {
+    "deploy.py": "ec2de861dbbfbb6065e8d16d90b96806fa56a5720ed03ec8d56d3b36ae46fa9f",
+    "packet.json": "b8fc88ea98b1196b369db7c38baf69b18e30cfb1742d565f10bc02b0eaca47dd",
+    "target-before.json": "8abd20d0512be0bf3592e0426fb6a16b9885c86e2040ce40b04f39da0818a0b0",
+    "preparation.json": "dc65e5a24d6be1e4c2b8b4c137fda8ff9cd79eb8e9b7c29176b465f618ce40a6",
+    "inspect-target.py": "762b230a7bf7a278f0b511319d760d6332f193007289c79ab3bbc70d648d1f5b",
+    "operate.py": "e1d0608763b4e8095a944974b20ad7315ab3a45b2bd71fd37d9c6489f412ca7b"
+  },
+  "reviewed_layout_hashes": {
+    "deploy.py": "871244bc6feb51a4ab7dd1a943102e2725d2ce819d368c8ec1b457c98a37432f",
+    "packet.json": "5f45bc508cd163423c67e0e4002951a12111265cc82cc2bfd4d60c8eb15e8be0",
+    "target-before.json": "df851fef0f092799de31f3967deec5ebe420b8029c2df8422a8eef7390ce4d03",
+    "operate.py": "e08891f18d99458910e5d6f4ddef73065893e7ab492a1a300f4414b9dc208e01",
+    "inspect-target.py": "762b230a7bf7a278f0b511319d760d6332f193007289c79ab3bbc70d648d1f5b"
+  },
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "seven component cards, factory-only bed choices, advanced collapsed",
+      "source manager and logical connections open without mutations",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, reload; saved state unchanged"
+    ]
+  },
+  "temporary_tunnel_closed": true
+}
