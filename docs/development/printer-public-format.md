@@ -9,6 +9,12 @@ Historical instance configurations and mappings remain compatible.
 
 ## Authoring and publication
 
+The **Definition sources** page provides **Download repository starter (.zip)**.
+Extract it as a new repository root. It includes the examples below, a README and
+`tools/update_catalog.py` to refresh local dependency and file hashes without a
+printer connection. Full validation still uses the project creator CLI. The ZIP is
+built deterministically during UI staging, then served as a static asset.
+
 Copy [the creator starter](../../examples/printer-definitions/README.md) into a
 public GitHub repository. Its `catalog.json` indexes each JSON file by ID, immutable
 semantic version, relative path and SHA-256 of the exact bytes. Public files contain

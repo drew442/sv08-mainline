@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import stat
+from definition_repository_template import archive as repository_archive, FILENAME as REPOSITORY_ARCHIVE
 
 REPO=Path(__file__).resolve().parents[1]
 NAV=b'<a href="../sv08-printer/index.html">Printer hardware</a>'
@@ -104,6 +105,7 @@ def payload(validation_dictionary=None):
         raw=path.read_bytes()
         if sha(raw)!='86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b':raise ValueError('Validation dictionary revision mismatch')
         result['usr/share/sv08/printer/validation/klipper.dict']=raw
+    result['usr/share/cockpit/sv08-printer/'+REPOSITORY_ARCHIVE]=repository_archive(REPO)
     return result
 
 

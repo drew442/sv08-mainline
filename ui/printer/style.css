@@ -65,3 +65,5 @@
 @media(max-width:500px){#definitions .printer-definitions-toolbar label{width:100%}#definitions .printer-definition-values{grid-template-columns:minmax(0,1fr)}#definitions .printer-definition-values dt{font-weight:600}}
 
 #definitions .printer-definition-card svg{width:30px;height:30px;flex-shrink:0;stroke:#087e83;fill:none;stroke-width:1.7}#definitions .printer-definition-card>span{display:flex;flex-direction:column;gap:8px;min-width:0}
+
+#definition-sources .printer-source-starter{padding:20px;margin:20px 0;background:white;border:1px solid #cbd5e1;border-radius:8px}#definition-sources .printer-source-template{display:inline-block;padding:12px 18px;background:#087e83;color:white;border-radius:6px;text-decoration:none;overflow-wrap:anywhere}#definition-sources .printer-source-template:focus-visible{outline:3px solid #142b43;outline-offset:3px}

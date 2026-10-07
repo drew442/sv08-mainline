@@ -8,6 +8,7 @@ import tempfile
 import unittest
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'runtime'))
+sys.path.insert(0,str(ROOT/'scripts'))
 spec=importlib.util.spec_from_file_location('stage_printer',ROOT/'scripts/stage_printer_ui.py');stage=importlib.util.module_from_spec(spec);spec.loader.exec_module(stage)
 
 class StageTests(unittest.TestCase):
