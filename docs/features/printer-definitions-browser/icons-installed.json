@@ -1,0 +1,64 @@
+{
+  "source_revision": "0089535",
+  "review": "PASS WITH CONDITIONS",
+  "reviewed_hashes": {
+    "deploy.py": "59517361aeca37968ba5be021821fef74b2c7acc25c47827d4a59d5894a58de9",
+    "operate.py": "534f5a0f4116ce0e419932edc41f26480549b0f686d4a33a263789b38ec9bcd2",
+    "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+    "packet.json": "555bfcbeb666fa26896d4d45eeae85df9d11b819d7c43a7be2ded948c67c7bc3",
+    "target-before.json": "fc13a4fee594aab6f6ea64d8bcaa9efc00fdd5273bf4105e4f68e4a7d5aac35a"
+  },
+  "installed_files": {
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "a9d7d31f04a589308dcce64ff698f9a312ca7fb79e811e9f0f0aa5500aca7375",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "b048b1f1fc378e6f76be5af5d6873f90b57a61c9f43955a5aa7177ab8aafd440",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "Definitions sidebar; all 25 built-ins; source/category groups; factory dependency and component drill-down; Back/disclosures; search/empty; browser history; browsing changes no saved hardware",
+      "definition and category icons match hardware SVG paths; decorative icons retain visible labels",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, Definitions deep-link reload; saved state unchanged"
+    ]
+  },
+  "closure": {
+    "errors": [],
+    "returncode": 0,
+    "root_boot_read_only": true,
+    "preserved_state_masks": true,
+    "psu": "OFF"
+  },
+  "unit": [
+    "MainPID=0",
+    "LoadState=not-found",
+    "ActiveState=inactive"
+  ],
+  "post_browser_state_and_unrelated_assets_unchanged": true
+}
