@@ -68,7 +68,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Offline compact expansion into existing typed validated representation; consequential runtime/static overlay separately assessed.",
-      "status": "ready",
+      "status": "pending",
       "title": "Implement and validate the offline journey",
       "validation": null,
       "verification": null
