@@ -24,7 +24,7 @@ class TemplateTests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout)['definitions'], 4)
         result = subprocess.run([sys.executable, str(ROOT / 'scripts/printer_definitions.py'),
                                  'preview', str(root), '--installation', str(root/'fixtures/installation.json'),
-                                 '--definition', 'sv08-bed-bundle'], capture_output=True, text=True)
+                                 '--definition', 'my-bed-and-probe'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def helper(self, root):
@@ -47,12 +47,10 @@ class TemplateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = self.extract(tmp)
             path = root/'definitions/bed.json'
-            bed = json.loads(path.read_text());bed['name'] += ' edited'
+            bed = json.loads(path.read_text());bed['heater_bed']['max_temp']=110
             path.write_text(json.dumps(bed))
             result = self.helper(root);self.assertEqual(result.returncode,0,result.stderr)
-            assembly = json.loads((root/'definitions/assembly.json').read_text())
-            digest = hashlib.sha256(json.dumps(bed, sort_keys=True, separators=(',',':')).encode()).hexdigest()
-            self.assertIn(digest, [r['sha256'] for r in assembly['dependencies']])
+            self.assertEqual(json.loads((root/'definitions/assembly.json').read_text())['extends'],['my-bed','sv08.factory.probe'])
             manifest = json.loads((root/'catalog.json').read_text())
             for row in manifest['definitions']:
                 self.assertEqual(row['sha256'],hashlib.sha256((root/row['path']).read_bytes()).hexdigest())
@@ -63,8 +61,8 @@ class TemplateTests(unittest.TestCase):
             with self.subTest(kind=kind), tempfile.TemporaryDirectory() as tmp:
                 root=self.extract(tmp);path=root/'definitions/assembly.json'
                 value=json.loads(path.read_text())
-                if kind=='missing':value['dependencies'][0]['version']='99.0.0'
-                else:value['dependencies'][0].update(id=value['id'],version=value['version'])
+                if kind=='missing':value['extends']=['missing-local-base']
+                else:value['extends']=[value['id']]
                 path.write_text(json.dumps(value))
                 before={p:p.read_bytes() for p in root.rglob('*') if p.is_file()}
                 self.assertNotEqual(self.helper(root).returncode,0)

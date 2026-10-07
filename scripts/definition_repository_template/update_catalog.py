@@ -42,6 +42,21 @@ def refresh(root):
             raise ValueError('Duplicate definition ID/version: ' + str(key))
         records[key] = (path, value)
     manifest = read_json(root / 'catalog.json')
+    # Compact local inheritance needs no hand-written dependency hashes.
+    by_id={value['id']:key for key,(_,value) in records.items()}
+    if len(by_id)!=len(records):raise ValueError('Only one version per definition ID can be indexed')
+    inheritance=set();checked=set()
+    def check_base(key,depth=0):
+        if depth>12 or key in inheritance:raise ValueError('Compact inheritance cycle or depth exceeds 12')
+        if key in checked:return
+        inheritance.add(key)
+        value=records[key][1];refs=value.get('extends',[]);refs=[refs] if isinstance(refs,str) else refs
+        if not isinstance(refs,list) or not all(isinstance(ref,str) for ref in refs):raise ValueError('extends must be a name or list')
+        for ref in refs:
+            if ref in by_id:check_base(by_id[ref],depth+1)
+            elif not ref.startswith(('sv08.factory','sv08-main.','sv08-tool.')):raise ValueError('Local inheritance base missing: '+ref)
+        inheritance.remove(key);checked.add(key)
+    for key in records:check_base(key)
     visiting, digests = set(), {}
 
     def resolve(key, depth=0):
@@ -56,6 +71,8 @@ def refresh(root):
         for dependency in value.get('dependencies', []):
             # Explicit external sources retain the publisher's pinned digest.
             if 'source' not in dependency:
+                target=records.get((dependency['id'],dependency['version']))
+                if target and 'kind' not in target[1]:raise ValueError('Use compact extends for compact local bases; expanded dependency digests require the SV08 validator')
                 dependency['sha256'] = resolve((dependency['id'], dependency['version']), depth + 1)
         visiting.remove(key)
         digests[key] = canonical_digest(value)

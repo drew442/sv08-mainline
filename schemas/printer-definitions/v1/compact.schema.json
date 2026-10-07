@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SV08 compact author definition (compact-1)",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,79}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-z0-9.-]+)?$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "board": {
+      "type": "string"
+    },
+    "guide": {
+      "type": "string",
+      "pattern": "^https://"
+    },
+    "license": {
+      "type": "string"
+    },
+    "format_version": {
+      "const": "compact-1"
+    },
+    "extends": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hardware": {
+      "type": "object"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "advanced": {
+      "type": "object",
+      "properties": {
+        "components": {
+          "type": "array"
+        },
+        "connections": {
+          "type": "array"
+        },
+        "mapping": {
+          "type": "object"
+        },
+        "behaviours": {
+          "type": "array"
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "dependencies": {
+          "type": "array"
+        },
+        "conflicts": {
+          "type": "array"
+        },
+        "printer_settings": {
+          "type": "object"
+        },
+        "calibration": {
+          "type": "array"
+        },
+        "unresolved": {
+          "type": "array"
+        },
+        "compatibility": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "configuration": {
+      "type": "object",
+      "patternProperties": {
+        "^(heater_bed|extruder|probe|display|adxl345(?: [a-z][a-z0-9_]*)?|stepper_[a-z0-9_]+|(?:fan_generic|heater_generic|filament_switch_sensor|temperature_sensor|heater_fan|output_pin|neopixel|gcode_button|tmc2209|verify_heater) [a-z][a-z0-9_]*|printer|bed_mesh|quad_gantry_level|safe_z_home)$": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^(heater_bed|extruder|probe|display|adxl345(?: [a-z][a-z0-9_]*)?|stepper_[a-z0-9_]+|(?:fan_generic|heater_generic|filament_switch_sensor|temperature_sensor|heater_fan|output_pin|neopixel|gcode_button|tmc2209|verify_heater) [a-z][a-z0-9_]*|printer|bed_mesh|quad_gantry_level|safe_z_home)$": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

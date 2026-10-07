@@ -7,6 +7,94 @@ upgrades and add-ons will arrive through definition sources. No Funssor, Eddy,
 CN3D or chamber kit is claimed as a complete built-in definition by this delivery.
 Historical instance configurations and mappings remain compatible.
 
+## Compact author format (compact-1)
+
+A modder supplies product identity and changed Klipper settings. Omit `kind` to use
+compact format; `format_version` may be omitted or explicitly `compact-1`. Existing
+rich0.1 definitions and catalogue/index0.1 remain supported.
+
+```json
+{
+  "id": "funssor-cn3d-hotbed",
+  "name": "Funssor CN3D heated bed",
+  "version": "1.0.0",
+  "extends": "sv08.factory.hotbed",
+  "heater_bed": { "max_temp": 120 }
+}
+```
+
+This is the owner's stated factory-equivalent configuration, not independently
+verified manufacturer hardware. `max_temp` is Klipper's temperature shutdown limit.
+An optional HTTPS `guide` cites the exact installation/product; optional category,
+description, licence and sources provide additional detail. Defaults inherited
+from factory hardware do not certify a replacement. PID/calibration stays local.
+
+`extends` accepts any built-in definition ID, a same-catalogue definition ID, or a
+list combining bases. Aliases: `sv08.factory.hotbed`→`sv08-main.bed_assembly`,
+`sv08.factory.hotend`→`sv08-tool.hotend_assembly`, `sv08.factory.mainboard`,
+`sv08.factory.toolhead_board`, `sv08.factory.printer`→`sv08.factory`. Other factory
+presets use `sv08.factory.<preset>` (e.g. probe, stepper_x, exhaust_fan). For a kit
+use `extends: ["my-bed", "sv08.factory.probe"]`. Missing/cyclic/deep bases and
+conflicting component/connection ownership are rejected. No other repository or
+mutable branch is consulted to expand inheritance.
+
+Put a single Klipper section directly on the record, or use `configuration` for
+several sections. Field values are typed JSON numbers, booleans, arrays or strings,
+not executable Klipper text. Coverage follows the finite managed generator:
+
+| Hardware | Compact Klipper section(s) |
+|---|---|
+| Bed/hotend/chamber | `heater_bed`, `extruder`, `heater_generic chamber_temp` |
+| Temperature sensors | `temperature_sensor NAME` (sensor_type or temperature_mcu) |
+| Motion/drivers | `stepper_x`…`stepper_z3`, `extruder`, `tmc2209 NAME` |
+| Fans | `fan_generic NAME`, `heater_fan NAME` |
+| Probe/filament/pressure input | `probe`, `filament_switch_sensor NAME`, `gcode_button NAME` |
+| Outputs/LEDs | `output_pin NAME`, `neopixel NAME` |
+| Display/accelerometer | `display` (uc1701 wiring), `adxl345 NAME` |
+| Printer geometry/levelling | `printer`, `bed_mesh`, `quad_gantry_level`, `safe_z_home` |
+| Heater verification | `verify_heater heater_bed` or `verify_heater extruder` |
+| Boards/finite check-only rules | factory inheritance; explicit documented `advanced.mapping` / `advanced.behaviours` |
+
+Heater `sensor_type`, `sensor_pin`, `pullup_resistor`, `min_temp`, `max_temp` route to
+the associated sensor. Heater/motor/probe/fan fields use the supported typed field
+registry; `heater_pin` and `switch_pin` map to their output/input connection.
+Known sensor names or exact curve IDs are accepted; ambiguous names require the
+curve ID. Optional settings outside the current generator are explicitly rejected;
+compact authoring does not add arbitrary Klipper extensions. The authoritative
+Klipper heater-bed reference is [here](https://www.klipper3d.org/Config_Reference.html#heater_bed),
+with pinned supported fields in [the runtime registry](../../runtime/sv08_printer_fields.py).
+
+New components specify `board` with an exact documented board ID and connector
+name or known pin. Inherited connections retain their exact board scope. Raw pins
+are checked against that mapping; MCU role, capability and collisions remain
+validated. New motor wiring can use a documented `connector`, or Klipper step/dir/enable/UART
+pins that together resolve to an exact documented motor channel. Inherited motor
+channels accept matching individual pins; moving a channel requires all four pins. Board mappings require documented signals,
+connectors and motor channels; advanced does not waive validation. Original SV08
+chamber support retains its own chamber board, chamber_temp role and watermark
+control. Unsupported boards/outputs remain unavailable.
+
+`advanced` exposes existing typed components/connections, inputs, mapping,
+behaviours, dependencies/conflicts, compatibility, printer settings and declared
+gaps. Published PID gains, measured Z offsets, MCU identities, physical ratings
+and calibration curves are prohibited universal defaults. They belong to local
+advanced configuration. Unknown fields, raw macros, scripts and executable
+extensions are rejected. See [the compact schema](../../schemas/printer-definitions/v1/compact.schema.json);
+full runtime/creator validation checks more than JSON shape.
+
+Expansion occurs once during source preview/import into the same validated rich
+record used by existing composition. Author form and resolved base ID/version/SHA
+are retained in `extensions.sv08.compact`. Selected snapshots and generated runtime
+assets are pinned; generation never repeats inheritance against a later factory
+catalogue. Raw authored file hashes stay in the manifest and immutable version
+checks. A new expansion of an already selected version cannot silently replace
+its snapshot. No publisher verification or physical commissioning is implied.
+
+The downloaded starter uses compact examples. `tools/update_catalog.py` generates
+the index/hashes and checks local inheritance; use the full creator validator
+before publishing. Commit JSON as mode100644; a failed preview identifies any
+executable catalogue/file and the `git update-index --chmod=-x PATH` correction.
+
 ## Authoring and publication
 
 The **Definition sources** page provides **Download repository starter (.zip)**.

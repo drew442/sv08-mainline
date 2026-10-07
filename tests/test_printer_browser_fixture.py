@@ -4,6 +4,8 @@ This is browser fixture evidence, never authenticated Cockpit/ARM64 evidence.
 """
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import json
+import base64
+import hashlib
 import os
 from pathlib import Path
 import sys
@@ -57,7 +59,15 @@ def serve(work):
     store.initialize();boot=store.prepare_boot('A','browser-fixture');boot['boot_id']='browser-fixture'
     bootfile=work/'boot.json';bootfile.write_text(json.dumps(boot));view=work/'config-view';view.symlink_to(Path(boot['generation'])/'config')
     authority={'elevated':False}
-    service=PrinterStore(store,bootfile,view,Catalog(ROOT/'catalog/printer/catalog.json'),privileged=lambda:authority['elevated'])
+    compact=dict(id='funssor-cn3d-hotbed',name='Funssor CN3D heated bed',version='1.0.0',extends='sv08.factory.hotbed',heater_bed={'max_temp':120})
+    compact_raw=json.dumps(compact).encode();manifest=dict(format_version='0.1',catalog_id='compact-fixture',name='Compact modder fixture',publisher={'name':'Fixture'},license='GPL-3.0-or-later',definitions=[dict(id=compact['id'],version=compact['version'],path='definitions/bed.json',sha256=hashlib.sha256(compact_raw).hexdigest())]);manifest_raw=json.dumps(manifest).encode()
+    def source_fetch(path):
+        bad='/bad-mode' in path
+        root='/repos/fixture/'+('bad-mode' if bad else 'compact-mods');commit='b'*40
+        responses={root:dict(id=19 if bad else 18,default_branch='main',full_name='fixture/'+('bad-mode' if bad else 'compact-mods'),private=False),root+'/commits/main':dict(sha=commit),root+'/commits/'+commit:dict(sha=commit),root+'/git/commits/'+commit:dict(tree={'sha':'root'}),root+'/git/trees/root':dict(tree=[dict(path='catalog.json',mode='100755' if bad else '100644',type='blob',sha='manifest',size=len(manifest_raw)),dict(path='definitions',mode='040000',type='tree',sha='defs')]),root+'/git/trees/defs':dict(tree=[dict(path='bed.json',mode='100644',type='blob',sha='bed',size=len(compact_raw))]),root+'/git/blobs/manifest':dict(encoding='base64',size=len(manifest_raw),content=base64.b64encode(manifest_raw).decode()),root+'/git/blobs/bed':dict(encoding='base64',size=len(compact_raw),content=base64.b64encode(compact_raw).decode())}
+        if path not in responses:raise ValueError('Unexpected fixture source path')
+        return responses[path]
+    service=PrinterStore(store,bootfile,view,Catalog(ROOT/'catalog/printer/catalog.json'),privileged=lambda:authority['elevated'],source_fetch=source_fetch)
     # Guards demonstrate that browser save/apply never change unrelated files.
     live=Path(boot['generation'])/'config/printer.cfg';live.write_text('# Existing manual live config, untouched\n')
     (work/'original-live.txt').write_bytes(live.read_bytes())

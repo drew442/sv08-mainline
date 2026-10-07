@@ -14,12 +14,20 @@ def archive(repo=REPO):
     repo = Path(repo)
     examples = repo / 'examples/printer-definitions'
     templates = repo / 'scripts/definition_repository_template'
-    names = ['LICENSE', 'fixtures/installation.json', 'definitions/board.json',
-             'definitions/bed.json', 'definitions/assembly.json', 'definitions/behaviour.json']
-    files = {name: (examples / name).read_bytes() for name in names}
-    manifest = json.loads((examples / 'catalog.json').read_bytes())
-    manifest.update(catalog_id='my-printer-definitions', name='My printer definitions',
-                    publisher={'name': 'Your name'})
+    files = {name: (examples / name).read_bytes() for name in ['LICENSE','fixtures/installation.json']}
+    fixture=json.loads(files['fixtures/installation.json']);fixture['boards']['tool']={'id':'sv08-tool'}
+    files['fixtures/installation.json']=(json.dumps(fixture,indent=2)+'\n').encode()
+    definitions = {
+        'board': dict(id='my-mainboard', name='Factory mainboard example', version='1.0.0', extends='sv08.factory.mainboard'),
+        'bed': dict(id='my-bed', name='Bed temperature limit example', version='1.0.0', extends='sv08.factory.hotbed', heater_bed={'max_temp':105}),
+        'assembly': dict(id='my-bed-and-probe', name='Bed and probe bundle example', version='1.0.0', extends=['my-bed','sv08.factory.probe']),
+        'behaviour': dict(id='my-levelling-policy', name='No additional levelling check example', version='1.0.0', category='bed', advanced={'behaviours':[dict(hook='levelling.preconditions',operation='none',sources=['author'])]})}
+    import hashlib
+    entries=[]
+    for name,value in sorted(definitions.items()):
+        path='definitions/'+name+'.json';raw=(json.dumps(value,indent=2)+'\n').encode();files[path]=raw
+        entries.append(dict(id=value['id'],version=value['version'],path=path,sha256=hashlib.sha256(raw).hexdigest()))
+    manifest=dict(format_version='0.1',catalog_id='my-printer-definitions',name='My printer definitions',publisher={'name':'Your name'},license='GPL-3.0-or-later',definitions=entries)
     files['catalog.json'] = (json.dumps(manifest, indent=2) + '\n').encode()
     files.update({'README.md': (templates / 'README.md').read_bytes(),
                   '.gitignore': (templates / 'gitignore').read_bytes(),

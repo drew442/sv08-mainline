@@ -7,6 +7,7 @@ import urllib.parse
 import urllib.request
 from sv08_printer_catalog import keys, digest, encoded, strict_json
 from sv08_printer_definitions import public_json, validate_definition, FORMAT, FILE_LIMIT, SOURCE_LIMIT, MAX_DEFINITIONS
+from sv08_printer_compact import compile_records
 
 
 def relative(path):
@@ -70,7 +71,7 @@ class GitHub:
                     if found['mode']!='040000' or found['type']!='tree':raise ValueError('Non-directory source ancestry')
                     node=found['sha']
                 else:
-                    if found['mode']!='100644' or found['type']!='blob':raise ValueError('Source links, submodules and executable files are refused')
+                    if found['mode']!='100644' or found['type']!='blob':raise ValueError(name+': source links, submodules and executable files are refused; commit JSON files with mode 100644 (git update-index --chmod=-x '+name+')')
                     if found.get('size',FILE_LIMIT+1)>FILE_LIMIT:raise ValueError('Indexed file oversized')
                     content=self.get(root+'/git/blobs/'+found['sha'])
                     if content.get('encoding')!='base64' or content.get('size',FILE_LIMIT+1)>FILE_LIMIT:raise ValueError('Unsupported blob encoding/size')
@@ -81,17 +82,16 @@ class GitHub:
                     return raw
         manifest_raw=blob(path);manifest=public_json(manifest_raw);validate_manifest(manifest)
         directory=path.rsplit('/',1)[0]+'/' if '/' in path else ''
-        records=[];unavailable=[];file_hashes={}
+        records=[];unavailable=[];file_hashes={};authored=[]
         for index in manifest['definitions']:
             name=relative(index['path']);raw=blob(directory+name);file_hash=hashlib.sha256(raw).hexdigest()
             if file_hash!=index['sha256']:raise ValueError('Definition content digest mismatch; previous source retained')
             d=public_json(raw)
             if d.get('id')!=index['id'] or d.get('version')!=index['version']:raise ValueError('Definition/index identity mismatch')
             file_hashes[d['id']+'@'+d['version']]=file_hash
-            try:validate_definition(d,catalog)
-            except (ValueError,KeyError,TypeError) as error:
-                unavailable.append(dict(id=index['id'],version=index['version'],reason=str(error)));continue
-            records.append(d)
+            authored.append(d)
+        records,errors=compile_records(authored,catalog)
+        unavailable=[dict(id=d['id'],version=d['version'],reason=errors[d['id']]) for d in authored if d['id'] in errors]
         source_id='github:'+str(repo_id)+':'+(directory.rstrip('/') or '.')
         return dict(id=source_id,origin='github',repository=metadata['full_name'],repository_id=repo_id,url='https://github.com/'+metadata['full_name'],path=path,ref=ref or metadata['default_branch'],commit=commit,manifest=manifest,manifest_sha256=hashlib.sha256(manifest_raw).hexdigest(),file_hashes=file_hashes,records=records,unavailable=unavailable,enabled=True,bytes=total)
 
@@ -137,7 +137,7 @@ def accept_source(sources, candidate, catalog):
 
 
 def bundle_preview(bundle,catalog):
-    keys(bundle,('manifest','files'),('manifest','files'));m=bundle['manifest'];validate_manifest(m);records=[];unavailable=[];hashes={};total=len(encoded(m))
+    keys(bundle,('manifest','files'),('manifest','files'));m=bundle['manifest'];validate_manifest(m);records=[];unavailable=[];hashes={};authored=[];total=len(encoded(m))
     if set(bundle['files'])!={x['path'] for x in m['definitions']}:raise ValueError('Bundle must contain exactly indexed files')
     for row in m['definitions']:
         raw=base64.b64decode(bundle['files'][row['path']],validate=True);total+=len(raw)
@@ -145,6 +145,7 @@ def bundle_preview(bundle,catalog):
         d=public_json(raw)
         if d.get('id')!=row['id'] or d.get('version')!=row['version']:raise ValueError('Bundle index mismatch')
         hashes[d['id']+'@'+d['version']]=row['sha256']
-        try:validate_definition(d,catalog);records.append(d)
-        except ValueError as e:unavailable.append(dict(id=row['id'],version=row['version'],reason=str(e)))
+        authored.append(d)
+    records,errors=compile_records(authored,catalog)
+    unavailable=[dict(id=d['id'],version=d['version'],reason=errors[d['id']]) for d in authored if d['id'] in errors]
     return dict(id='local:'+digest(m),origin='local',commit=digest(m),manifest=m,records=records,file_hashes=hashes,unavailable=unavailable,enabled=True,bytes=total,raw_files=bundle['files'])
