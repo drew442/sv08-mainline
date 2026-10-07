@@ -1,0 +1,56 @@
+{
+  "source_revision": "f7ecc70a6ca1e7e23052a1a21b7e2566a7c678d3",
+  "date": "2026-10-07",
+  "owner_request": "apply it to the printer services",
+  "configuration_applied": true,
+  "candidate_revision": 13,
+  "hardware_unchanged": true,
+  "managed_include_closure_valid": true,
+  "closed_files_sha256": {
+    "printer.cfg": "d494115f3318dffb3f8dc714ffc1f0c9ee70368a4ec24dfe3b4aa88f103d3f7d",
+    "printer-managed/024fb9699ff2bf268f19bdb64fa24ae55659045c4ae7b289d1f8620c848814a6/bundle.cfg": "ab84efe255f1e84b99cae786a3d36f8e5bb48c387351126ac3ee55fbd2a81b94",
+    "printer-managed/024fb9699ff2bf268f19bdb64fa24ae55659045c4ae7b289d1f8620c848814a6/hardware.cfg": "e0ea5a31fd03a5752f15cf98d9b0ccd4fc34b0a259dfa40839842f91dea51027"
+  },
+  "current_boot_only": true,
+  "services": {
+    "sv08-printer-api.service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "User": "sv08",
+      "Group": "sv08",
+      "PrivateDevices": "yes",
+      "Restart": "no"
+    },
+    "sv08-mainsail.service": {
+      "ActiveState": "active",
+      "SubState": "running",
+      "User": "sv08",
+      "Group": "sv08",
+      "PrivateDevices": "yes",
+      "Restart": "no"
+    }
+  },
+  "klippy_state": "disconnected",
+  "physical_klipper_started": false,
+  "probe_calibration_pending": true,
+  "failed_moonraker_components": 0,
+  "advisories": [
+    "Inotify watch cannot enter the private Cockpit hardware-state directory; its permissions were preserved"
+  ],
+  "http_unauthenticated_and_spoofed_headers_rejected": true,
+  "websocket_unauthenticated_and_spoofed_headers_rejected": true,
+  "normal_masks_preserved": true,
+  "serial_devices_open": false,
+  "psu": "OFF",
+  "root_boot_read_only": true,
+  "data_writable": true,
+  "installer_collected": true,
+  "independent_operation_assessment": "PASS WITH CONDITIONS",
+  "reviewed_hashes": {
+    "apply.py": "6b3abcf756092589be6b1d8e8638c4399d9a6f948fb86819e025a00e64376e51",
+    "operate.py": "4cd02ada267a0d1efe310c092f53c33d3e0259767e3d5cd17929f2cc8ff585d7",
+    "packet-private.json": "5c51a3b964ce997b88441b15b0f7c55cabcad912a2398ff13ace2195dcb754f8",
+    "before-private.json": "0df2cd767e80fd58643b4864b9e7f6b5f176f16437468a25bb9aee5bc384bb18",
+    "installed-service-identity.json": "f63c33dadab13ee338c1b592e72d4c9da454ca8d4823cb71a75736552e2b323a"
+  }
+}
