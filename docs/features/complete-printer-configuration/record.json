@@ -49,11 +49,51 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/complete-printer-configuration/evidence.md",
+          "document_sha256": "a408097659e5b56a157ea381b44b890f0bb301f7889b2b58cfe1008cb29f3720",
+          "environment": "offline",
+          "limitations": "Software and simulated MCU evidence only. No physical outputs or printing release. Private exact installed asset overlay separately reviewed.",
+          "method": "97 printer tests;5 template tests;12 staging tests; Chromium Store/Budget journey; real packaged ARM Klipper/Moonraker/nginx/Mainsail isolated full-stack integration with simulated MCUs; saved instance generation; source/diff/hash inspection. Details in evidence document.",
+          "profile": null,
+          "source_commit": "7b1b1ad852fc80daeddddd8ddf4c0637d65f8ff6",
+          "source_sha256": {
+            "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d",
+            "catalog/printer/definitions/builtin.json": "6ef9b81cae328cf946614193a3465641c4618cad50557f1d711ea8575355a2ac",
+            "docs/development/printer-public-format.md": "9645d795e50d1759313082aec245ca965687b0cabac0a0d4890ea36a8bd2a2ee",
+            "docs/features/complete-printer-configuration/browser.json": "4abf6bfd6e860d32f4280d6080cb975f9a8e83787534d3eb8e31365775fbeb7b",
+            "docs/features/complete-printer-configuration/evidence.md": "a408097659e5b56a157ea381b44b890f0bb301f7889b2b58cfe1008cb29f3720",
+            "runtime/sv08_printer_catalog.py": "b788f50763872c61db6dd6ce47f3f31cde79a9ae424d44348d5589d2cb11f321",
+            "runtime/sv08_printer_definitions.py": "63153d3f0b68e3631808a9a9f57e0cd728374989a1b4afd4c90152bda593e4e7",
+            "runtime/sv08_printer_fields.py": "09a5e2d3e46f9098b03900114d46c94bd3a790ebe2f5b75630b4b87c221a4198",
+            "runtime/sv08_printer_generate.py": "447fa31abae308db9f170f7cecd173481f199f872b29706acd0a208842628862",
+            "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+            "runtime/sv08_printer_stack.py": "781454d9d29cdb12a94d837c26052a68cd4d064ea42ac0b4a24843474487266f",
+            "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+            "scripts/integrate_host_os.py": "58e278ae39505390b4dd4ad813b7c88ec891af5198fbd6bcc572abfe26af844e",
+            "scripts/printer_definitions.py": "d89327cb719c2024031ee2b478fc77b21a58564b6c404e8d855f5871638f9169",
+            "scripts/update_factory_definitions.py": "d59669f2046d20a039b1270176da370bed628982a052bce3772599ce443cc37e",
+            "tests/printer_browser.mjs": "e93376c8125f1944f40842c20fcc4e4014063d46db8c092fefa89fa470b67bf5",
+            "tests/test_printer_browser_fixture.py": "9d57a911382ce134b22a195609b1ec5f318d0f95a59bf113d724d26b3ff818a9",
+            "tests/test_printer_compact.py": "f92cbb87a19f5143bf4d2908769d7bb36fe547763b0afe568c7974fbb81318e2",
+            "tests/test_printer_configuration.py": "47c5e79e39aa6d1ddc74b73cda05fb2d69ac4e947cfafccf0cb830e81414f9f1",
+            "tests/test_printer_stack.py": "e59c09a4ec0ff1d67926af76ab39dc9a96656530388ed9a46c0a9b0354f4f518",
+            "ui/printer/app.js": "b7661869d67281d699711ac5589d9f2c0c2ca0ad67e8de38f984fe1e1fcc2cda",
+            "ui/printer/panel.html": "1cb3aea2a677fa0cd6d7e53beec4083d5c86d7dc2524d4e9ad7dde75351e4500"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "882dd6295fdc458eb6b34df7c6fa9ae0",
+        "session": "complete-printer-configuration-20261007"
+      },
       "input_paths": [
         "runtime/sv08_printer_compose.py",
         "runtime/sv08_printer_helper.py",
@@ -98,9 +138,17 @@
       "resumption": "Revise generation to sourced factory starting Z offset; never copy SAVE_CONFIG calibration. Existing patch and test history retained.",
       "review_policy": "self",
       "review_reason": "Offline generation and export; consequential installation separately assessed.",
-      "status": "pending",
+      "status": "done",
       "title": "Implement and validate the offline journey",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "6270830080e71334eeaa90a64809c5bfa38f7e3f7da658e066e70cfb01a97d3e",
+        "evidence_sha256": "48549e1c7fe0e7658321316bb80d892e678911312e7390bf3b55e8d7756c496c",
+        "outcome": "passed",
+        "rationale": "Observed scoped tests and full software stack pass; complete diff inspected; sourced factory starting offset distinct from calibration; no physical outputs",
+        "session": "complete-printer-configuration-20261007",
+        "source_commit": "7b1b1ad852fc80daeddddd8ddf4c0637d65f8ff6"
+      },
       "verification": null
     }
   ],
