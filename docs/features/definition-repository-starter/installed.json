@@ -1,0 +1,90 @@
+{
+  "source_commit": "77021bbe0e9d7ee20bcfeaaf9b28d4dbd7e3f79d",
+  "installed_files": {
+    "/usr/share/cockpit/sv08-printer/style.css": {
+      "sha256": "a1ae24f55a184ad586d0942dd2b44369fee58a7d0fd82d69df7bdd4f6cb1ee7f",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "7dbc7b20dd483122158bcb36a8636a503c82f6a1b855ab0a938e09bca6f82961",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/definition-repository-starter.zip": {
+      "sha256": "36aa6542883cee90f6243a2b03bcd769763600d2d6da16fa40ee937b48c7e409",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "8f800558fab4c641014015acb6e07511e5407da14078e38054e81a623951abfa",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "payload_bytes": 53790,
+  "archive_bytes": 10233,
+  "review": {
+    "decision": "PASS WITH CONDITIONS",
+    "receipt_sha256": "00097db863b62ff421036ddd96461c3a2183736b74b70c2a0376be3df4fae666",
+    "reviewed_hashes": {
+      "deploy.py": "63e106a58c3086d6124f26937e353089582736a449fb7e0e41ed87e7cf9f29aa",
+      "operate.py": "176060510e1a5598838042cbca48d4d1c6a77205be99984b2045d8407ba3ab11",
+      "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+      "packet.json": "33e8211ecef9b664a545c7e5871c959cdf989abfd02dbbdfd0636901ccf05488",
+      "target-before.json": "36ccca759fd72e0edcede6b65584224fafb584274a74393fa50493f1af3c8a5b"
+    },
+    "configured_role": {
+      "source": ".codex/agents/high-consequence-reviewer.toml previously read in lineage",
+      "role": "high_consequence_reviewer",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "runtime_model_effort": "not independently observable"
+    },
+    "conditions_observed": true
+  },
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "Definition sources actual static ZIP download equals validated public starter archive; saved hardware unchanged",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, Definition sources deep-link reload; saved state unchanged"
+    ]
+  },
+  "closure": {
+    "installed_readback": true,
+    "post_browser_hashes_and_inventory_verified": true,
+    "only_added_inventory_entry": "definition-repository-starter.zip",
+    "saved_state_unchanged": true,
+    "unrelated_assets_unchanged": true,
+    "service_masks_inactive": true,
+    "live_config_absent": true,
+    "root_boot_read_only": true,
+    "data_writable": true,
+    "psu": "OFF",
+    "installer_inactive_mainpid_zero": true,
+    "owned_tunnel_closed": true
+  },
+  "limitations": "Static UI and offline creator evidence only; no Save/Apply, source import, service activation, outputs or physical commissioning. Private packets/screenshots/credentials/ZIP binaries excluded."
+}

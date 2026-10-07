@@ -43,11 +43,43 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/definition-repository-starter/evidence.md",
+          "document_sha256": "14bb8d737d02e5378dee8d922c76843253ac077497ec4033763cdddd5f677ab9",
+          "environment": "offline",
+          "limitations": "Offline session/RPC shim; no authenticated printer or physical commissioning. Root overlay separately assessed.",
+          "method": "4 template tests, 12 staging tests, full Chromium journey with ZIP download byte equality/no RPC or state changes; full creator validation/composition preview of initial and edited archive; stable diff/whitespace inspection.",
+          "profile": null,
+          "source_commit": "77021bbe0e9d7ee20bcfeaaf9b28d4dbd7e3f79d",
+          "source_sha256": {
+            "docs/development/printer-public-format.md": "16c0e886cd0c42cf27800b6ed50ef44dbaa8ac5e65a5e30a3d319b19e864341b",
+            "docs/features/definition-repository-starter/browser.json": "6cefcd1b982047e656e60e613dd87ecde1667da7531fcdb6e72ce9f11ed098bf",
+            "docs/features/definition-repository-starter/evidence.md": "14bb8d737d02e5378dee8d922c76843253ac077497ec4033763cdddd5f677ab9",
+            "scripts/definition_repository_template.py": "3a719d4945f6e6329baf3934a7fc0bb0561eb732a8aa761c6bf802baa6915434",
+            "scripts/definition_repository_template/README.md": "f0716affb0da4e36593fecd10eca623fb63462c5f2866a95cfc7786fe077f160",
+            "scripts/definition_repository_template/gitignore": "9125804abf0173a0abdbdafe02106ddfb47da6b65c784823b46a5c3d7f58a5d9",
+            "scripts/definition_repository_template/update_catalog.py": "5205643d54fa239e965640aa6c17a6af5bc43019097bebcf8d9d00ffcbd68f5d",
+            "scripts/stage_printer_ui.py": "8d41d6df5b328112b37624c9c22c9dbc97dca7fc3c288296c289ed724729cad9",
+            "tests/printer_browser.mjs": "9a79bac749f67e7575ba608c2148e97faba22dd3bbc67f7b1696b33736207990",
+            "tests/test_definition_repository_template.py": "f6a6a098392840d07f502c1a6e2f866083bc436ebacffd6bd8f6611bf0871694",
+            "tests/test_printer_browser_fixture.py": "6e7fb330173b2c5209517cc6784637385a246e602cce48fc87e5f8e549712745",
+            "tests/test_stage_printer_ui.py": "50f3355a4bca9f64d301551f249601b7d8cc68717ccdd29b9b7937671634a94e",
+            "ui/printer/panel.html": "7dbc7b20dd483122158bcb36a8636a503c82f6a1b855ab0a938e09bca6f82961",
+            "ui/printer/style.css": "a1ae24f55a184ad586d0942dd2b44369fee58a7d0fd82d69df7bdd4f6cb1ee7f"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "2f7c87ec6d4f4b3f9fb0fd56fd8cce5c",
+        "session": "definition-repository-starter-20261007"
+      },
       "input_paths": [
         "examples/printer-definitions/",
         "runtime/",
@@ -76,9 +108,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible authoring/staging and disposable browser fixtures; root overlay separately assessed.",
-      "status": "pending",
+      "status": "done",
       "title": "Implement and validate the offline journey",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "b5a1902779224a19ad96200d8e56bca48c0b756d166effe513d8449635592630",
+        "evidence_sha256": "4110362e42123ac134c37caec7306b9490720fc945534d953903b2735b37f9c4",
+        "outcome": "passed",
+        "rationale": "Template validation, dependency refresh, staging and complete Chromium journey passed; stable diff inspected.",
+        "session": "definition-repository-starter-20261007",
+        "source_commit": "77021bbe0e9d7ee20bcfeaaf9b28d4dbd7e3f79d"
+      },
       "verification": null
     }
   ],
