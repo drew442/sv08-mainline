@@ -1,6 +1,20 @@
 {
   "author": "coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "3b3370149c6fd5597ab57f760aafc1d8d6f96d184dee4d96f1f20707a5252ad5",
+    "rationale": "Owner requests compact authoring across supported hardware",
+    "reference": "docs/features/compact-printer-definitions/owner-request.md",
+    "reference_sha256": "162b4fe1cc048f77430640bfd371e4ad52cb2d386050d3eb4930e81a56cc454b",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/compact-printer-definitions/owner-request.md": "162b4fe1cc048f77430640bfd371e4ad52cb2d386050d3eb4930e81a56cc454b"
+    },
+    "scope_sha256": "c64c042643e16e673522cddf69bf52232b52d03c7f8319a6c5904f7958b7dd8e",
+    "session": "compact-printer-definitions-20261007",
+    "source_commit": "122bdca8029a490193563d7aa521211841633279"
+  },
   "checks": [
     {
       "description": "Run the scoped behavior and regression checks; record actual results.",
