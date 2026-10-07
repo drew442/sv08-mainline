@@ -1,0 +1,78 @@
+{
+  "author": "coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-07",
+  "decision": null,
+  "format_version": 2,
+  "id": "compact-printer-definitions",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/compact-printer-definitions/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/compact-printer-definitions/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "offline-journey"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "catalog/printer/",
+        "runtime/sv08_printer_catalog.py",
+        "runtime/sv08_printer_compose.py",
+        "runtime/sv08_printer_store.py",
+        "scripts/stage_printer_ui.py",
+        "examples/printer-definitions/",
+        "upstream/klipper/docs/Config_Reference.md"
+      ],
+      "owned_paths": [
+        "runtime/sv08_printer_compact.py",
+        "runtime/sv08_printer_sources.py",
+        "runtime/sv08_printer_definitions.py",
+        "runtime/sv08_printer_fields.py",
+        "runtime/sv08_printer_generate.py",
+        "scripts/printer_definitions.py",
+        "scripts/definition_repository_template.py",
+        "scripts/definition_repository_template/README.md",
+        "scripts/definition_repository_template/update_catalog.py",
+        "ui/printer/app.js",
+        "tests/test_printer_compact.py",
+        "tests/test_definition_repository_template.py",
+        "tests/test_printer_definitions.py",
+        "tests/printer_browser.mjs",
+        "tests/test_printer_browser_fixture.py",
+        "schemas/printer-definitions/v1/compact.schema.json",
+        "docs/development/printer-public-format.md",
+        "docs/features/compact-printer-definitions/evidence.md",
+        "docs/features/compact-printer-definitions/browser.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Offline compact expansion into existing typed validated representation; consequential runtime/static overlay separately assessed.",
+      "status": "ready",
+      "title": "Implement and validate the offline journey",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "Compact definitions for supported printer hardware"
+}
