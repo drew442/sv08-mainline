@@ -9,7 +9,7 @@ import unittest
 from zipfile import ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from definition_repository_template import archive, PREFIX, FILENAME
+from definition_repository_template import archive, PREFIX, FILENAME, schema_archive, SCHEMA_PREFIX, SCHEMA_FILENAME, SCHEMAS, reference_files
 
 class TemplateTests(unittest.TestCase):
     def extract(self, directory):
@@ -34,7 +34,7 @@ class TemplateTests(unittest.TestCase):
     def test_archive_deterministic_public_allowlist_and_valid(self):
         raw = archive()
         self.assertEqual(raw, archive())
-        expected = ['LICENSE', 'README.md', '.gitignore', 'catalog.json',
+        expected = ['AGENTS.md', *['reference/'+name for name in reference_files(ROOT)], 'LICENSE', 'README.md', '.gitignore', 'catalog.json',
                     'fixtures/installation.json', 'tools/update_catalog.py',
                     *['definitions/'+name+'.json' for name in ['board','bed','assembly','behaviour']]]
         with ZipFile(BytesIO(raw)) as source:
@@ -71,3 +71,26 @@ class TemplateTests(unittest.TestCase):
     def test_staging_serves_exact_static_archive(self):
         import stage_printer_ui
         self.assertEqual(stage_printer_ui.payload()['usr/share/cockpit/sv08-printer/'+FILENAME],archive())
+
+    def test_complete_schema_reference_matches_public_sources(self):
+        from jsonschema import Draft202012Validator
+        raw = schema_archive()
+        self.assertEqual(raw, schema_archive())
+        with ZipFile(BytesIO(raw)) as source, ZipFile(BytesIO(archive())) as starter:
+            self.assertEqual(sorted(source.namelist()), sorted(SCHEMA_PREFIX+n for n in reference_files(ROOT)))
+            self.assertEqual(len(SCHEMAS), len(list((ROOT/'schemas/printer-definitions/v1').glob('*.schema.json'))))
+            for name, contents in reference_files(ROOT).items():
+                self.assertEqual(source.read(SCHEMA_PREFIX+name), starter.read(PREFIX+'reference/'+name))
+            for name in SCHEMAS:
+                contents=source.read(SCHEMA_PREFIX+'schemas/'+name+'.schema.json')
+                self.assertEqual(contents, (ROOT/'schemas/printer-definitions/v1'/(name+'.schema.json')).read_bytes())
+                Draft202012Validator.check_schema(json.loads(contents))
+            guide=source.read(SCHEMA_PREFIX+'public-format.md').decode()
+            self.assertIn('(compact-1)', guide)
+            self.assertNotIn('](../../', guide)
+            import re
+            for link in re.findall(r'\]\(([^)]+)\)', source.read(SCHEMA_PREFIX+'README.md').decode()):
+                self.assertIn(SCHEMA_PREFIX+link, source.namelist())
+            self.assertIn(b'Full SV08 validation', starter.read(PREFIX+'AGENTS.md'))
+        import stage_printer_ui
+        self.assertEqual(stage_printer_ui.payload()['usr/share/cockpit/sv08-printer/'+SCHEMA_FILENAME],raw)

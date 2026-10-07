@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'runtime'))
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from stage_printer_ui import compose_host
-from definition_repository_template import archive, FILENAME
+from definition_repository_template import archive, FILENAME, schema_archive, SCHEMA_FILENAME
 from sv08_state import Store
 from sv08_data_budget import Budget
 from sv08_printer_catalog import Catalog, strict_json
@@ -81,6 +81,7 @@ def serve(work):
             if self.path.endswith('/base1/cockpit.js'):return self.response(SHIM,'text/javascript')
             package='sv08-host' if '/sv08-host/' in self.path else 'sv08-printer'
             name=self.path.rsplit('/',1)[-1]
+            if package=='sv08-printer' and name==SCHEMA_FILENAME:return self.response(schema_archive(ROOT),'application/zip')
             if package=='sv08-printer' and name==FILENAME:return self.response(archive(ROOT),'application/zip')
             if name not in ('index.html','app.js','style.css','session.js','manifest.json','upload.js','navigation.js','redirect.js'):return self.send_error(404)
             path=ROOT/'ui'/('host' if package=='sv08-host' else 'printer')/name

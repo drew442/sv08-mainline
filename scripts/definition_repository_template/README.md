@@ -63,6 +63,13 @@ do not publish them as universal defaults. Already published versions are
 immutable: bump versions before changing their bytes. Updating a source does not
 silently change selected settings. Keep guide/source attribution and GPL terms.
 
+## Included references
+
+Read [reference/README.md](reference/README.md) for the full JSON schema set,
+complete format guide and typed field registry. AGENTS.md guides coding assistants
+working on this repository. The same reference is available separately from the
+Definition sources page.
+
 ## Included files
 
 - `definitions/bed.json`: a compact bed modification.
