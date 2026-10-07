@@ -37,11 +37,12 @@
     "docs/features/complete-printer-configuration/owner-request.md",
     "docs/development/printer-hardware-page-design.md",
     "docs/development/printer-definition-sources-design.md",
-    "docs/decisions/20261005-proportionate-development-review.md"
+    "docs/decisions/20261005-proportionate-development-review.md",
+    "docs/features/complete-printer-configuration/calibration-decision.md"
   ],
   "tasks": [
     {
-      "blocker": "Owner clarifies factory starting values are configuration defaults; calibration must not block generation. Rebind pending authorization before continuing.",
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
@@ -51,11 +52,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "coordinator",
-        "run": "c19f2b262ef74a728f303da1a6748262",
-        "session": "complete-printer-configuration-20261007"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_printer_compose.py",
         "runtime/sv08_printer_helper.py",
@@ -97,10 +94,10 @@
         "docs/features/complete-printer-configuration/browser.json"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Revise generation to sourced factory starting Z offset; never copy SAVE_CONFIG calibration. Existing patch and test history retained.",
       "review_policy": "self",
       "review_reason": "Offline generation and export; consequential installation separately assessed.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate the offline journey",
       "validation": null,
       "verification": null
