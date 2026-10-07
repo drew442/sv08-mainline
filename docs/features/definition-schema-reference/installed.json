@@ -1,0 +1,80 @@
+{
+  "source_commit": "309e8caf6873ac1c960c17197f035aa0cad0673b",
+  "installed_files": {
+    "/usr/share/cockpit/sv08-host/index.html": {
+      "sha256": "a5ca6311b469a4780430c3b2cc29609144a7a32f9bdbe0a945d42a9b51d361d1",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/panel.html": {
+      "sha256": "5cc4e26d50136dd144ecc92b2721f2b17c446fc67861e245ccb1a25ec3855685",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/definition-repository-starter.zip": {
+      "sha256": "9ddfeb51eaa8130b1c65ece2416b01065415e0b09d134b926fa6cecb8be5e4b3",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/definition-schema-reference.zip": {
+      "sha256": "cd979197c5b87a6876b14d539ac5dc494072abb341a10872353e20bd53c46694",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "payload_bytes": 75296,
+  "review": {
+    "outcome": "pass-with-conditions",
+    "reviewer": "/root/redesign_install_review",
+    "role": "high_consequence_reviewer",
+    "configured_effort": "medium",
+    "runtime_model": "unobservable",
+    "source_commit": "309e8ca",
+    "reviewed_hashes": {
+      "deploy.py": "e2955b1d053f859089b6e744c9ee1172faf69ca3ffa204bb9a695b8be5ffa5be",
+      "operate.py": "1b1188f6082725e8cbd6cdacacab2c8555a8cf90685e7c93443f7637a6878b38",
+      "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+      "packet.json": "ce529220daa85edb9a7e7f6f8248b0d66c01edfef95a6b5dcbf1b9144054f219",
+      "target-before.json": "d1906878e8dcc8ee5bd3b269015bd73ee88a90efa56abb99dc767033063b12f7"
+    },
+    "conditions": "Unchanged reviewed inputs; immediate PSU/target admission; exact installed closure; retain backup; reconcile interruptions before continuing."
+  },
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "Both actual static ZIP downloads match candidate archives; Definition sources actual static ZIP download equals validated public starter archive; saved hardware unchanged",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, Definition sources deep-link reload; saved state unchanged"
+    ]
+  },
+  "root_boot_read_only": true,
+  "data_writable": true,
+  "psu": "OFF",
+  "state_and_masks_unchanged": true,
+  "live_configuration_absent": true,
+  "installer_unit_collected": true,
+  "tunnel_closed": true,
+  "backup": "/data/sv08/definition-schema-reference-backup-20261007",
+  "limitations": "Static UI/download acceptance only; no configuration changes or hardware commissioning."
+}

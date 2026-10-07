@@ -43,11 +43,40 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/definition-schema-reference/evidence.md",
+          "document_sha256": "540615df110969c5628a2fa65f033cb10b30f897926215cfd5e4fcd465eb9184",
+          "environment": "offline",
+          "limitations": "Offline fixture evidence; static root overlay separately assessed. No physical commissioning.",
+          "method": "Five template/full-validator tests, twelve staging tests, full Chromium regression with exact both download bytes and unchanged RPC/draft, syntax and diff inspection.",
+          "profile": null,
+          "source_commit": "309e8caf6873ac1c960c17197f035aa0cad0673b",
+          "source_sha256": {
+            "docs/features/definition-schema-reference/browser.json": "5b3aafbbeae9bc024751ce82204b4a5a772180ef86c552f5b7f80d2455eb5ac2",
+            "docs/features/definition-schema-reference/evidence.md": "540615df110969c5628a2fa65f033cb10b30f897926215cfd5e4fcd465eb9184",
+            "scripts/definition_repository_template.py": "9338095b9b758905173d86f4cf5b0d3067619956515012c40c9b6564835659d4",
+            "scripts/definition_repository_template/AGENTS.md": "f85c960708e67dc67d6857d907bdaaa8ce28eea951be2757e1d65ab9c35fb1b7",
+            "scripts/definition_repository_template/README.md": "ebb9d43a1aa92012c087493cb521ed78567699cc2308acb964eb87a2a5692ff9",
+            "scripts/definition_repository_template/schema-reference.md": "64590ff89bd62c9851ab8e44fed4cb4ea34935875609f64250c50eaf7b18dadc",
+            "scripts/stage_printer_ui.py": "8ef640b961363e3c1d4648fb4d708978880b12f6d3a8de7d2c3af99ab7edfae5",
+            "tests/printer_browser.mjs": "170d82b170ab7c9f1ba5f13abd8438e015cbe9f3017e804b820cf2aa93fcebd0",
+            "tests/test_definition_repository_template.py": "724243760b28717c0c5859705d5ab1b0a3898005a8d1586a526b78077b8a9cfe",
+            "tests/test_printer_browser_fixture.py": "c85aa505c6e0360c937384e693a4b3a6e9c2e0f9eef26282739ae5cb613241f7",
+            "ui/printer/panel.html": "5cc4e26d50136dd144ecc92b2721f2b17c446fc67861e245ccb1a25ec3855685"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "185640393db84cc9a97f9fe3a34bfd89",
+        "session": "definition-schema-reference-20261007"
+      },
       "input_paths": [
         "schemas/printer-definitions/",
         "docs/development/printer-public-format.md",
@@ -72,9 +101,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Static public reference assets; separately assessed installed overlay.",
-      "status": "pending",
+      "status": "done",
       "title": "Implement and validate the offline journey",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "b862efe66bd112d5a867a8733a0cc55ede3e19c4706faf1def6bd9abe2ef08d0",
+        "evidence_sha256": "301f53bc466b465a4d5030d96d9fa41940d220b70c27d77a28af2ecc2358929f",
+        "outcome": "passed",
+        "rationale": "Observed archive coverage and author validation, staging and full Chromium download/regression checks pass; complete stable diff inspected.",
+        "session": "definition-schema-reference-20261007",
+        "source_commit": "309e8caf6873ac1c960c17197f035aa0cad0673b"
+      },
       "verification": null
     }
   ],
