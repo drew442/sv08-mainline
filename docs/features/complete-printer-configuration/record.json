@@ -1,22 +1,6 @@
 {
   "author": "coordinator",
-  "authorization": {
-    "actor": "coordinator",
-    "basis": "owner-request",
-    "proposal_sha256": "9420444490bfc8f986d106bbb04014e958bc35392bf870bfb378a262f59f48e6",
-    "rationale": "Owner requests complete configuration from hardware selections",
-    "reference": "docs/features/complete-printer-configuration/owner-request.md",
-    "reference_sha256": "f5a90e6f67ca027625b1283d79b44fd3aed922da1076c5c4cb3a487ee01e9491",
-    "requirements_sha256": {
-      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
-      "docs/development/printer-definition-sources-design.md": "e411e1cbfb05fdb937ead0e60386e0717882b44edecfc50f7d58e10806dca279",
-      "docs/development/printer-hardware-page-design.md": "2ba0bfdcc43a7266e806ecf87dfba56f328462dff2347192371b189d4e97d692",
-      "docs/features/complete-printer-configuration/owner-request.md": "f5a90e6f67ca027625b1283d79b44fd3aed922da1076c5c4cb3a487ee01e9491"
-    },
-    "scope_sha256": "1f67de2c80da3956c2b6bae1ce75fcabf2dea8937b73c2a91484f41749861bd3",
-    "session": "complete-printer-configuration-20261007",
-    "source_commit": "3b1d873ae126372f6383f048f7e3d26db8288cb2"
-  },
+  "authorization": null,
   "checks": [
     {
       "description": "Run the scoped behavior and regression checks; record actual results.",
