@@ -1,0 +1,1 @@
+Owner requests a downloadable ZIP on Definition sources containing a new repository skeleton for users to create their own definition source. Use public creator examples and format, no private printer state. Earlier UI installation authorization remains applicable with separately assessed overlay.

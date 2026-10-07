@@ -1,0 +1,72 @@
+{
+  "format_version": 2,
+  "id": "definition-repository-starter",
+  "kind": "feature",
+  "title": "Definition source repository ZIP starter",
+  "author": "coordinator",
+  "created": "2026-10-07",
+  "priority": 1,
+  "proposal": "docs/features/definition-repository-starter/proposal.md",
+  "requirements": [
+    "docs/features/definition-repository-starter/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "offline-journey",
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate the offline journey",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "offline-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible authoring/staging and disposable browser fixtures; root overlay separately assessed.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/definition_repository_template.py",
+        "scripts/definition_repository_template/README.md",
+        "scripts/definition_repository_template/update_catalog.py",
+        "scripts/definition_repository_template/gitignore",
+        "scripts/stage_printer_ui.py",
+        "ui/printer/panel.html",
+        "ui/printer/style.css",
+        "tests/test_definition_repository_template.py",
+        "tests/test_stage_printer_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "tests/printer_browser.mjs",
+        "docs/development/printer-public-format.md",
+        "docs/features/definition-repository-starter/evidence.md",
+        "docs/features/definition-repository-starter/browser.json"
+      ],
+      "input_paths": [
+        "examples/printer-definitions/",
+        "runtime/",
+        "catalog/printer/",
+        "ui/host/",
+        "scripts/printer_definitions.py",
+        "ui/printer/app.js"
+      ]
+    }
+  ]
+}

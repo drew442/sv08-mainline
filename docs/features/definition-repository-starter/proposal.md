@@ -1,0 +1,5 @@
+# Downloadable definition repository starter
+
+Add a static ZIP download to Definition sources, generated deterministically during staging on the development host. Contents: creator README, valid catalogue, existing source-backed example definitions/license/installation fixture, standalone Python index/dependency hash refresh helper and gitignore. Users extract to a new GitHub repository, edit publisher/hardware information, refresh hashes, validate with project tooling and add the repository URL. No on-printer archive generation/RPC/state change, new dependency or automatic repository publication.
+
+Acceptance: deterministic archive/safe exact members/public-only inputs; extracted initial starter passes creator validation/bundle; edited dependency refresh produces consistent canonical and file hashes and passes validation; staging includes download asset; Chromium actual click downloads ZIP matching staged bytes; source/hardware state unchanged, responsive page and existing journeys retained.
