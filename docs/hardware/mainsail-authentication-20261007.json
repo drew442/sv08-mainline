@@ -1,0 +1,105 @@
+{
+  "source_revision": "3df5d218f824af1caa4fdb91ebf7835df3122bc7",
+  "date": "2026-10-07",
+  "scope": "Installed owner authentication and HTTPS for current-boot Mainsail/Moonraker; physical Klipper stopped",
+  "owner_request": "go ahead and resolve the usable login and authentication mistake",
+  "native_account_and_tls": {
+    "status": "applied",
+    "username": "sv08",
+    "https_login_verified": true,
+    "login_required": true,
+    "klippy_connected": false,
+    "hardware_state_unchanged": true,
+    "certificate_sha256": "b951fcabf21d56dfd63df7b5164b03537ca5a70d79209e46acddba1f74e669ac",
+    "configuration_after": {
+      "moonraker.conf": "4e9e48598f63ad34ffd2c5d34df7e4dfeda107ad790346034f1a6ae1a8f53705",
+      "nginx-mainsail.conf": "19b376de6ebd90ef78212f55f8cb31b8fa8adbc34e16945459dfef7cb974b6e6"
+    },
+    "credential_file_mode": "0o600"
+  },
+  "gateway_application": {
+    "status": "applied",
+    "gateway_basic_authentication": true,
+    "private_backend_api_key": true,
+    "no_lan_trust_expansion": true,
+    "hardware_state_unchanged": true,
+    "klippy_connected": false,
+    "nginx_sha256": "d36db4f0648ee23cfddde4eb498a0a152ec50c07b5e49fd515561812dd21ca30"
+  },
+  "api_acceptance": {
+    "https_certificate_verified": true,
+    "login_required": true,
+    "gateway_basic_login": true,
+    "authenticated_http_and_websocket": true,
+    "unauthenticated_and_spoofed_http_websocket_rejected": true,
+    "mainsail_served_and_http_redirects_to_https": true,
+    "klippy_connected": false
+  },
+  "browser_acceptance": {
+    "https": true,
+    "socket_connected": true,
+    "initialization_complete": true,
+    "moonraker_version": "985c1d0",
+    "klippy_connected": false,
+    "klippy_state": "disconnected",
+    "native_browser_login_verified": true,
+    "certificate_spki_pinned": true
+  },
+  "closure": {
+    "passed": true,
+    "hardware_revision": 13,
+    "hardware_state_unchanged": true,
+    "managed_printer_configuration_unchanged": true,
+    "private_permissions_verified": true,
+    "owner_can_retrieve_login": true,
+    "normal_masks_preserved": true,
+    "physical_klipper_stopped": true,
+    "serial_devices_open": false,
+    "root_and_boot_read_only": true,
+    "services_active": [
+      "sv08-printer-api.service",
+      "sv08-mainsail.service"
+    ],
+    "moonraker_loopback_only": true
+  },
+  "admission": {
+    "same_target_boot_context": true,
+    "private_auth_outside_file_roots": true,
+    "file_root_names": [
+      "config",
+      "logs",
+      "gcodes"
+    ]
+  },
+  "psu": "OFF",
+  "self_signed_certificate_days": 365,
+  "services_current_boot_only": true,
+  "secrets_published": false,
+  "assessments": {
+    "review.json": {
+      "decision": "PASS WITH CONDITIONS",
+      "receipt_sha256": "e73d33a957f40f76a4a1d5a4bb64b4ceab11e89f01956f40e62291a75631c734",
+      "runtime_model_observable": false
+    },
+    "gateway-review.json": {
+      "decision": "PASS WITH CONDITIONS",
+      "receipt_sha256": "6f33846f90361ef9f4fbc49febb2d2f08537bcc1f86ace65e587f8523cfca361",
+      "runtime_model_observable": false
+    }
+  },
+  "private_artifact_sha256": {
+    "setup.py": "82f342333dd2f6945f81d7a73eaac8555f5904bf516664ef265894a43d774db4",
+    "packet.json": "045862f7538992440c00b11c3d38c87ab3b26d99f67901419393abb155c34771",
+    "gateway.py": "950a5e65e2a567ad30c077b6509aeb94c581858779dcaa21a88525fa46b7bea2",
+    "gateway-packet.json": "5e2143bd4407bc0194a1fbcaa97cc653d2a96a9d57cb67d39303ff80b08f1eb0",
+    "verify.py": "92e749dc6b311e61a188fa6a5e729122cf45cc996eec2d352b49e5ebfdc5992f",
+    "gateway-verify.py": "1f90f6b9fc677909d7450f0536eb74dca54e8c1732a147c2613aaf75818fc7b5",
+    "browser.mjs": "e1a19a66e1ef0bcd23b6f8b65a5875ecf5c1c94c347ac00537978e51a5ab3230",
+    "final.py": "a00a18b8628aaf37b4eb02a90130c21de33bb49005e0e4035cd38609117187fe",
+    "execution.json": "1feec40cd4e47b2821883793226d2ff87490e42f6b2c0a66f9612f9d966e5636",
+    "gateway-execution.json": "418831d2675f1db17ce1f5bd052c02749010430369e601292fa0dc0f087af815",
+    "gateway-verification.json": "98af64a92597479b5a44160cf7900c73867d56635136c97c82a9f05b6c671b9b",
+    "browser-verification.json": "38b254cb1d85dce65e90c4513262a551c8bde964a27f0dccbf53ae3d8b5b8fa6",
+    "final-verification.json": "dcefa06289280ceb6f0dd668585c16b06a0bf0e6f458e5246d2f0a06746fe474"
+  }
+}
