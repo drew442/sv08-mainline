@@ -1,6 +1,23 @@
 {
   "author": "coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "67b58d869f985e35d542bbeb30b9aa3b3048f23939a04a9c5dfe4d63dbe5a870",
+    "rationale": "Owner goal and calibration-decision authorize sourced starting defaults; prior unused authorization remains in history",
+    "reference": "docs/features/complete-printer-configuration/owner-request.md",
+    "reference_sha256": "f5a90e6f67ca027625b1283d79b44fd3aed922da1076c5c4cb3a487ee01e9491",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/printer-definition-sources-design.md": "e411e1cbfb05fdb937ead0e60386e0717882b44edecfc50f7d58e10806dca279",
+      "docs/development/printer-hardware-page-design.md": "2ba0bfdcc43a7266e806ecf87dfba56f328462dff2347192371b189d4e97d692",
+      "docs/features/complete-printer-configuration/calibration-decision.md": "25ee02371f9d7c562ec44dbf8a63ec65a758ff08cbb431d78e11fd4df7cfaac7",
+      "docs/features/complete-printer-configuration/owner-request.md": "f5a90e6f67ca027625b1283d79b44fd3aed922da1076c5c4cb3a487ee01e9491"
+    },
+    "scope_sha256": "1214d16e71a861bcdc592187f8c12be3a95b63d276516488e6ca6dc99de3983f",
+    "session": "complete-printer-configuration-20261007",
+    "source_commit": "a78368cdc20d8c18a7d30dd3b3bc3aa223a0b765"
+  },
   "checks": [
     {
       "description": "Run the scoped behavior and regression checks; record actual results.",
