@@ -58,8 +58,10 @@
 #definitions h1{margin:8px 0}#definitions .printer-definitions-toolbar{margin:24px 0}#definitions input,#definitions button{min-height:42px}#definitions [aria-pressed=true]{background:#dff1f1;border-color:#087e83;color:#087e83}
 #printer-definitions-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:0;margin:16px 0;background:transparent;border:0;overflow-wrap:anywhere}
 #printer-definitions-breadcrumb button{display:inline-block;width:auto;margin:0;white-space:normal}#printer-definitions-content{margin-top:16px;min-width:0}#definitions .printer-definitions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;margin:16px 0}
-#definitions .printer-definition-card{display:flex;flex-direction:column;gap:8px;padding:18px;text-align:left;width:100%;min-width:0;background:white;border:1px solid #cbd5e1;border-radius:8px;color:#172b42;overflow-wrap:anywhere}
+#definitions .printer-definition-card{display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px;text-align:left;width:100%;min-width:0;background:white;border:1px solid #cbd5e1;border-radius:8px;color:#172b42;overflow-wrap:anywhere}
 #definitions .printer-definition-card strong{font-size:16px}#definitions .printer-definition-card small{font-size:13px;color:#52677e}
 #definitions .printer-definition-values{display:grid;grid-template-columns:minmax(100px,180px) minmax(0,1fr);gap:10px;padding:16px;background:white;border:1px solid #cbd5e1;border-radius:8px;overflow-wrap:anywhere}#definitions .printer-definition-values dd{margin:0}
 #definitions details{margin:16px 0}#definitions summary{cursor:pointer;min-height:36px}#definitions pre{max-width:100%;max-height:450px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}#definitions :focus-visible{outline:3px solid #087e83;outline-offset:3px}
 @media(max-width:500px){#definitions .printer-definitions-toolbar label{width:100%}#definitions .printer-definition-values{grid-template-columns:minmax(0,1fr)}#definitions .printer-definition-values dt{font-weight:600}}
+
+#definitions .printer-definition-card svg{width:30px;height:30px;flex-shrink:0;stroke:#087e83;fill:none;stroke-width:1.7}#definitions .printer-definition-card>span{display:flex;flex-direction:column;gap:8px;min-width:0}
