@@ -1,48 +1,61 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "22ba11ae6c859f3beb65a9e4a6f8e0212f990e4ae731a9dadc28408639e600b5",
+    "rationale": "Owner requests a repository skeleton ZIP download on Definition sources.",
+    "reference": "docs/features/definition-repository-starter/owner-request.md",
+    "reference_sha256": "ec00f0b7e5e79de269816801487f6c8c0bcc7d8b0d82c77f6081b8e3823f9a5b",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/definition-repository-starter/owner-request.md": "ec00f0b7e5e79de269816801487f6c8c0bcc7d8b0d82c77f6081b8e3823f9a5b"
+    },
+    "scope_sha256": "259d4ede4a1bd5028a561d36f6474c6e26eb464ae103882073a1485bd2305c0f",
+    "session": "definition-repository-starter-20261007",
+    "source_commit": "28bcff506ae7db3b439fbae3ec859d1ee6c24aca"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-07",
+  "decision": null,
   "format_version": 2,
   "id": "definition-repository-starter",
   "kind": "feature",
-  "title": "Definition source repository ZIP starter",
-  "author": "coordinator",
-  "created": "2026-10-07",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/definition-repository-starter/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/definition-repository-starter/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate the offline journey",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible authoring/staging and disposable browser fixtures; root overlay separately assessed.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "examples/printer-definitions/",
+        "runtime/",
+        "catalog/printer/",
+        "ui/host/",
+        "scripts/printer_definitions.py",
+        "ui/printer/app.js"
+      ],
       "owned_paths": [
         "scripts/definition_repository_template.py",
         "scripts/definition_repository_template/README.md",
@@ -59,14 +72,15 @@
         "docs/features/definition-repository-starter/evidence.md",
         "docs/features/definition-repository-starter/browser.json"
       ],
-      "input_paths": [
-        "examples/printer-definitions/",
-        "runtime/",
-        "catalog/printer/",
-        "ui/host/",
-        "scripts/printer_definitions.py",
-        "ui/printer/app.js"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible authoring/staging and disposable browser fixtures; root overlay separately assessed.",
+      "status": "pending",
+      "title": "Implement and validate the offline journey",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Definition source repository ZIP starter"
 }
