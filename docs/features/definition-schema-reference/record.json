@@ -1,48 +1,60 @@
 {
+  "author": "coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "4ceec37435474a1cdd880eaa5bd743e57d11177a85a9d6cdd2025d19d8f3aa03",
+    "rationale": "Owner requests complete downloadable author references",
+    "reference": "docs/features/definition-schema-reference/owner-request.md",
+    "reference_sha256": "745a36614d8982c35599256ce6946a22509336853b27821cca78c0ef9a45eef7",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/definition-schema-reference/owner-request.md": "745a36614d8982c35599256ce6946a22509336853b27821cca78c0ef9a45eef7"
+    },
+    "scope_sha256": "f41677a8702fdda99aa6174b1ee2927b5eae28dde3f062bd89a91267888dcbfa",
+    "session": "definition-schema-reference-20261007",
+    "source_commit": "1be79bfe91725bf3f1da7475fbdf751729dc7e5b"
+  },
+  "checks": [
+    {
+      "description": "Run the scoped behavior and regression checks; record actual results.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-07",
+  "decision": null,
   "format_version": 2,
   "id": "definition-schema-reference",
   "kind": "feature",
-  "title": "Complete definition author references",
-  "author": "coordinator",
-  "created": "2026-10-07",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/definition-schema-reference/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/definition-schema-reference/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Run the scoped behavior and regression checks; record actual results.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate the offline journey",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Static public reference assets; separately assessed installed overlay.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "schemas/printer-definitions/",
+        "docs/development/printer-public-format.md",
+        "runtime/sv08_printer_fields.py",
+        "examples/printer-definitions/",
+        "ui/host/"
+      ],
       "owned_paths": [
         "scripts/definition_repository_template.py",
         "scripts/definition_repository_template/README.md",
@@ -56,13 +68,15 @@
         "docs/features/definition-schema-reference/evidence.md",
         "docs/features/definition-schema-reference/browser.json"
       ],
-      "input_paths": [
-        "schemas/printer-definitions/",
-        "docs/development/printer-public-format.md",
-        "runtime/sv08_printer_fields.py",
-        "examples/printer-definitions/",
-        "ui/host/"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Static public reference assets; separately assessed installed overlay.",
+      "status": "pending",
+      "title": "Implement and validate the offline journey",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Complete definition author references"
 }
