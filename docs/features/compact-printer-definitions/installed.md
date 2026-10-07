@@ -1,0 +1,7 @@
+# Installed compact definitions — 7 October 2026
+
+Source `db0d106` installed on the authorized spare eMMC cockpit after independent bounded operation assessment passed with conditions. Four files/117,541bytes: new typed compact compiler, existing source loader, printer UI script and6,675-byte compact starter ZIP. Runtime generator, factory catalogue and store unchanged. Durable private rollback at `/data/sv08/compact-definitions-backup-20261007`; no new directories, services or outputs.
+
+Authenticated installed Chromium previewed the actual public `drew442/sv08-definitions` repository successfully: one supported compact Funssor CN3D bed, no unavailable entries. Static starter downloaded byte-for-byte equal to the validated archive. Saved hardware remained unchanged; responsive390/1024/1440/shared shell/reload checks passed. Desktop render visually inspected. No actual Add source, selection, Save/Apply or activation. [Receipt](installed.json).
+
+After browser closure exact installed/unrelated hashes, admitted inventory addition, context/state/masks/config absence verified; root/boot RO,data RW,PSU OFF. Installer inactive/MainPID0; owned fixture/browser/tunnel closed. [Offline validation](evidence.md) covers all25factory definitions/all supported kinds, exact105→120generated limit change, source retention, creator/starter and full Chromium regressions. This does not certify replacement hardware, arbitrary Klipper extensions, commissioning or printing release.

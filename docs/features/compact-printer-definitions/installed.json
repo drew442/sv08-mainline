@@ -1,0 +1,91 @@
+{
+  "source_commit": "db0d10656d61a14b8e5a0ab3e5358b342a871969",
+  "installed_files": {
+    "/usr/lib/sv08/sv08_printer_sources.py": {
+      "sha256": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/lib/sv08/sv08_printer_compact.py": {
+      "sha256": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/app.js": {
+      "sha256": "e30672e88ffa7b74711d374a06f22f2f62c105d8d80653c9ac97cfdf63811a7b",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    },
+    "/usr/share/cockpit/sv08-printer/definition-repository-starter.zip": {
+      "sha256": "0199f333b18e82fa25d2862ba0dae25ef54a2c9738f10b03c44f86d5eb658774",
+      "mode": 420,
+      "uid": 0,
+      "gid": 0
+    }
+  },
+  "payload_bytes": 117541,
+  "archive_bytes": 6675,
+  "review": {
+    "decision": "PASS WITH CONDITIONS",
+    "receipt_sha256": "70e09dc570093c17eed83e832c00c6ba0c6b0e1c1dfe4cb4a026f6b43c9461b3",
+    "reviewed_hashes": {
+      "deploy.py": "e6f305da4f45973e2e3db2c272ccdb69ed6d1656a7832ac66d41805cd532d88e",
+      "operate.py": "3b39798d59b87d49271f72535fa1e2ea8bafd590abc6626e5f98ac8a33268f96",
+      "inspect-target.py": "287d654e66e97c658db9c5fa7a41c490e586d811e22b60955fcdca6b61392aef",
+      "packet.json": "0769081fc593c1e9ac99d4c525828f3ff2fd0986ffddb7c32ffba264f022acce",
+      "target-before.json": "4d7663b6f0975e0505a02732b81808f4018b2f0a958c78320a56596b78253ffb"
+    },
+    "configured_role": {
+      "source": ".codex/agents/high-consequence-reviewer.toml previously read in lineage",
+      "role": "high_consequence_reviewer",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "runtime_model_effort": "not independently observable"
+    },
+    "conditions_observed": true
+  },
+  "browser": {
+    "passed": true,
+    "authenticated": true,
+    "hardware": false,
+    "mutations": false,
+    "checks": [
+      "Actual public drew442/sv08-definitions GitHub source preview: one supported compact Funssor CN3D bed; no Add/select/Save/Apply",
+      "Definition sources actual static ZIP download equals validated public starter archive; saved hardware unchanged",
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 1024,
+        "height": 600,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      },
+      "installed ARM64 helper status, authenticated elevation, Definition sources deep-link reload; saved state unchanged"
+    ]
+  },
+  "closure": {
+    "installed_readback": true,
+    "post_browser_hashes_and_inventory_verified": true,
+    "only_added_inventory_entry": "sv08_printer_compact.py",
+    "saved_state_unchanged": true,
+    "unrelated_assets_unchanged": true,
+    "service_masks_inactive": true,
+    "live_config_absent": true,
+    "root_boot_read_only": true,
+    "data_writable": true,
+    "psu": "OFF",
+    "installer_inactive_mainpid_zero": true,
+    "owned_tunnel_closed": true
+  },
+  "limitations": "Actual source PREVIEW and static UI/runtime evidence only; no actual source Add, selection, Save/Apply, heater/motion/service activation or physical commissioning. Private packets/screenshots/credentials/ZIP binaries excluded."
+}

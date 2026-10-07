@@ -43,11 +43,48 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offline-journey",
+          "document": "docs/features/compact-printer-definitions/evidence.md",
+          "document_sha256": "9855474e5fc549af41170532938fb9182ebe1af7890082345864e395fe8cecf7",
+          "environment": "offline",
+          "limitations": "Offline shim/disposable calibration inputs; finite existing generator only, not arbitrary Klipper extensions or physical commissioning. Actual runtime overlay separately assessed.",
+          "method": "90 scoped printer tests (one existing guarded skip),11 compact tests repeated after metadata correction,4 template tests,12 staging checks, complete Chromium journey with GitHub compact preview/selection/save/retention and visible mode error plus rich regression; actual public owner preview1supported; syntax/diff/links inspection.",
+          "profile": null,
+          "source_commit": "db0d10656d61a14b8e5a0ab3e5358b342a871969",
+          "source_sha256": {
+            "docs/development/printer-public-format.md": "3833d373ba3a0f8e1fcb44c5cabd99021987319dec5500f3d00697aeda23abda",
+            "docs/features/compact-printer-definitions/browser.json": "4f62935e996ff46c6fb3172eb300e85f9ff96bf6e76b7d2d9ee8df782c64beb7",
+            "docs/features/compact-printer-definitions/evidence.md": "9855474e5fc549af41170532938fb9182ebe1af7890082345864e395fe8cecf7",
+            "runtime/sv08_printer_compact.py": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+            "runtime/sv08_printer_definitions.py": "0ec53a876c96850a034df59081ef025da4119b16d08c47f3d1f9e3028f658de6",
+            "runtime/sv08_printer_fields.py": "b88eac5cc6e4b73fae472246e9d005eaf7c9f154fd5ad4fcca91fc3ed38c3aa3",
+            "runtime/sv08_printer_generate.py": "7b4ceb7d1c625f84194c9e08c9968a390a8623a03b8063db2ef64ec1800fdb25",
+            "runtime/sv08_printer_sources.py": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+            "schemas/printer-definitions/v1/compact.schema.json": "badd7a45e6fbcc023644537b74f811a5bed346760c79278973b6c10b26665982",
+            "scripts/definition_repository_template.py": "21b9fb1f8bbed806558b3d7aec8f65225efc4fa3c1f00091125d41f4ce9e9fe4",
+            "scripts/definition_repository_template/README.md": "bf7ca24ab14dfb6134ee956d9f437fcaa45392671de7a24c8536f6286ad40878",
+            "scripts/definition_repository_template/update_catalog.py": "29b6d4893b8ae71d8f5b6ce161b4893bd94f9e9b92689eeea839aae1125dbc09",
+            "scripts/printer_definitions.py": "3a84f8e8289a619a669b30424f20f3b99882f5f1669e19253ea7b408c719f2cf",
+            "tests/printer_browser.mjs": "3a5aa9b86303a383f30c95e9779557fac3bdb27c2936a21ad23d47e9d1f0297e",
+            "tests/test_definition_repository_template.py": "06e4f33db1d6a3325db2557dbaaff17ea237f32eb65f84103bb003dccf0a3b06",
+            "tests/test_printer_browser_fixture.py": "6573969acfbd6ea59b3d4e8a1fa2005c3385b8db3b3f97386b43e065b2a24d88",
+            "tests/test_printer_compact.py": "ff8bafd7964420d55d93b08445bb5eb61d8f2d334f4f5a9f1b0111c3eaefabd8",
+            "tests/test_printer_definitions.py": "a25ce68b24696d53f3d810809bbdf5c2a0e8e4ea81de73a43f1012c7c6525f87",
+            "ui/printer/app.js": "e30672e88ffa7b74711d374a06f22f2f62c105d8d80653c9ac97cfdf63811a7b"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "coordinator",
+        "run": "4f60f51104914bd995f8296b2bd812a0",
+        "session": "compact-printer-definitions-20261007"
+      },
       "input_paths": [
         "catalog/printer/",
         "runtime/sv08_printer_catalog.py",
@@ -82,9 +119,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Offline compact expansion into existing typed validated representation; consequential runtime/static overlay separately assessed.",
-      "status": "pending",
+      "status": "done",
       "title": "Implement and validate the offline journey",
-      "validation": null,
+      "validation": {
+        "actor": "coordinator",
+        "basis_sha256": "4167caa81d185817ec8e967f2190ad865468c7e92a155497437d1dc014bc409e",
+        "evidence_sha256": "889fddd10b31b6af89d5d9e77474a140eadca9535c5bdaf7b759766405e74067",
+        "outcome": "passed",
+        "rationale": "Compact coverage, exact generated limit change, offline retention, source/creator/starter/staging and complete Chromium regression observed passing; full stable diff inspected.",
+        "session": "compact-printer-definitions-20261007",
+        "source_commit": "db0d10656d61a14b8e5a0ab3e5358b342a871969"
+      },
       "verification": null
     }
   ],
