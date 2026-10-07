@@ -67,7 +67,11 @@ def serve(work):
         responses={root:dict(id=19 if bad else 18,default_branch='main',full_name='fixture/'+('bad-mode' if bad else 'compact-mods'),private=False),root+'/commits/main':dict(sha=commit),root+'/commits/'+commit:dict(sha=commit),root+'/git/commits/'+commit:dict(tree={'sha':'root'}),root+'/git/trees/root':dict(tree=[dict(path='catalog.json',mode='100755' if bad else '100644',type='blob',sha='manifest',size=len(manifest_raw)),dict(path='definitions',mode='040000',type='tree',sha='defs')]),root+'/git/trees/defs':dict(tree=[dict(path='bed.json',mode='100644',type='blob',sha='bed',size=len(compact_raw))]),root+'/git/blobs/manifest':dict(encoding='base64',size=len(manifest_raw),content=base64.b64encode(manifest_raw).decode()),root+'/git/blobs/bed':dict(encoding='base64',size=len(compact_raw),content=base64.b64encode(compact_raw).decode())}
         if path not in responses:raise ValueError('Unexpected fixture source path')
         return responses[path]
-    service=PrinterStore(store,bootfile,view,Catalog(ROOT/'catalog/printer/catalog.json'),privileged=lambda:authority['elevated'],source_fetch=source_fetch)
+    from functools import partial
+    from sv08_printer_publish import validate_output
+    source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
+    validator=partial(validate_output,python=os.environ.get('SV08_PRINTER_VALIDATION_PYTHON',str(source/'build/printer-interface-prep-20260918/venv/bin/python')),klippy=str(source/'upstream/klipper/klippy/klippy.py'),dictionary=str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'))
+    service=PrinterStore(store,bootfile,view,Catalog(ROOT/'catalog/printer/catalog.json'),privileged=lambda:authority['elevated'],source_fetch=source_fetch,publication_validate=validator)
     # Guards demonstrate that browser save/apply never change unrelated files.
     live=Path(boot['generation'])/'config/printer.cfg';live.write_text('# Existing manual live config, untouched\n')
     (work/'original-live.txt').write_bytes(live.read_bytes())

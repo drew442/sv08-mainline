@@ -2864,7 +2864,7 @@
     {
       "format_version": "0.1",
       "id": "sv08-tool.part_cooling_rear",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "kind": "assembly",
       "name": "Rear part cooling fan \u00b7 reference",
       "description": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported.",
@@ -2876,7 +2876,8 @@
         "field_sources": {
           "part_cooling_rear.pin": "reference:L368",
           "part_cooling_rear.invert": "reference:L368",
-          "part_cooling_rear.max_power": "reference:L369"
+          "part_cooling_rear.max_power": "reference:L369",
+          "part_cooling_rear.print_fan": "reference:L368"
         }
       },
       "compatibility": {
@@ -2910,7 +2911,8 @@
           "board": "tool",
           "settings": {
             "invert": false,
-            "max_power": 1
+            "max_power": 1,
+            "print_fan": true
           },
           "endpoints": {
             "pin": "part_cooling_rear.pin"
@@ -2934,7 +2936,7 @@
     {
       "format_version": "0.1",
       "id": "sv08-tool.part_cooling_front",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "kind": "assembly",
       "name": "Front part cooling fan \u00b7 reference",
       "description": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported.",
@@ -2946,7 +2948,8 @@
         "field_sources": {
           "part_cooling_front.pin": "reference:L372",
           "part_cooling_front.invert": "reference:L372",
-          "part_cooling_front.max_power": "reference:L373"
+          "part_cooling_front.max_power": "reference:L373",
+          "part_cooling_front.print_fan": "reference:L372"
         }
       },
       "compatibility": {
@@ -2980,7 +2983,8 @@
           "board": "tool",
           "settings": {
             "invert": false,
-            "max_power": 1
+            "max_power": 1,
+            "print_fan": true
           },
           "endpoints": {
             "pin": "part_cooling_front.pin"
@@ -3004,7 +3008,7 @@
     {
       "format_version": "0.1",
       "id": "sv08-tool.probe",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "kind": "assembly",
       "name": "Probe input (offset calibration incomplete) \u00b7 reference",
       "description": "No measured polarity, electrical rating or new calibration. Only the existing generic fan/input/probe behavior is generated; vendor actions and automatic heater-fan behavior are not imported. The duplicate vendor probe speed entries resolve to the last active value, 5 mm/s. Probe Z calibration is not a factory default.",
@@ -3025,7 +3029,8 @@
           "probe.lift_speed": "reference:L76",
           "probe.samples_result": "reference:L77",
           "probe.samples_tolerance": "reference:L78",
-          "probe.samples_tolerance_retries": "reference:L79"
+          "probe.samples_tolerance_retries": "reference:L79",
+          "probe.z_offset_start": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg:L71"
         }
       },
       "compatibility": {
@@ -3049,6 +3054,13 @@
           "url": "https://github.com/drew442/sv08-mainline",
           "revision": "a60644875f8c756d20b3828c9416518b414b5491",
           "locator": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg"
+        },
+        {
+          "id": "software-0",
+          "url": "https://github.com/Sovol3d/SV08/blob/a60644875f8c756d20b3828c9416518b414b5491/home/sovol/printer_data/config/printer.cfg",
+          "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+          "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+          "locator": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg"
         }
       ],
       "license": "GPL-3.0-or-later",
@@ -3068,7 +3080,8 @@
             "lift_speed": 50,
             "samples_result": "average",
             "samples_tolerance": 0.016,
-            "samples_tolerance_retries": 2
+            "samples_tolerance_retries": 2,
+            "z_offset_start": 0
           },
           "endpoints": {
             "pin": "probe.pin"
@@ -3087,7 +3100,17 @@
           "contact": null
         }
       ],
-      "calibration": []
+      "calibration": [
+        "probe_z_offset"
+      ],
+      "inputs": {
+        "probe_z_offset": {
+          "type": "number",
+          "label": "Measured probe Z offset (mm)",
+          "target": "probe.z_offset",
+          "required": false
+        }
+      }
     },
     {
       "format_version": "0.1",
@@ -3352,7 +3375,7 @@
     {
       "format_version": "0.1",
       "id": "sv08.factory",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "kind": "assembly",
       "name": "Sovol SV08 \u00b7 complete factory hardware",
       "description": "Original SV08 factory hardware and documented configuration defaults. Controller identities and measured calibration remain local. Pressure contact is monitored; vendor-specific automatic Z calibration is a separate workflow.",
@@ -3384,7 +3407,7 @@
         {
           "id": "mainline-adaptation",
           "url": "https://github.com/drew442/sv08-mainline/blob/main/scripts/update_factory_definitions.py",
-          "revision": "generator-7",
+          "revision": "generator-8",
           "locator": "Explicit SPI wiring; safe_z_home replaces vendor raw homing override; exclude sensorless hold_current per pinned Klipper TMC guide; LED PWM uses pinned mainline default because vendor 5 s exceeds 3 s maximum; no automatic Z calibration"
         }
       ],
@@ -3501,20 +3524,20 @@
         {
           "source": "builtin",
           "id": "sv08-tool.part_cooling_rear",
-          "version": "0.2.0",
-          "sha256": "66577cc6a61a7b569c4202b72a002d8fd7b7b34544f213d306bbe02bb8ba399c"
+          "version": "0.3.0",
+          "sha256": "73b40db285b71f8bea6ad329b63dd76dcac4de230f9e5d9157b0cfe9ee211bb2"
         },
         {
           "source": "builtin",
           "id": "sv08-tool.part_cooling_front",
-          "version": "0.2.0",
-          "sha256": "e3b3cae9b113f49b65e0ae47a47501a478ea37441ca5df6ac41dbf7e70749361"
+          "version": "0.3.0",
+          "sha256": "f24d639fe7abab6efbdc44754b1573130ec13fee3e241e6f42c11c6d071a9fac"
         },
         {
           "source": "builtin",
           "id": "sv08-tool.probe",
-          "version": "0.2.0",
-          "sha256": "251a0044bcf5760d015438e467dc22139eb7beb754dbe5647430d062f59e5bda"
+          "version": "0.3.0",
+          "sha256": "c7477e8fc374e322f29b9ae2b5d3b567622e1511bcb5241b9611594d5e33b225"
         },
         {
           "source": "builtin",

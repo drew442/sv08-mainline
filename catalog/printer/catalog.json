@@ -4536,7 +4536,8 @@
               "settings": {
                 "pin": "PA7",
                 "invert": false,
-                "max_power": 1
+                "max_power": 1,
+                "print_fan": true
               },
               "sources": {
                 "pin": {
@@ -4563,6 +4564,15 @@
                   "value": "1.0",
                   "transform": "number",
                   "reference": "active reference"
+                },
+                "print_fan": {
+                  "line": 368,
+                  "section": "fan_generic fan0",
+                  "option": "pin",
+                  "value": "extra_mcu:PA7",
+                  "transform": "print-fan-role",
+                  "reference": "Factory part cooling role; finite M106/M107 adapter, not a physical calibration",
+                  "reference_only": true
                 }
               }
             }
@@ -4579,7 +4589,8 @@
               "settings": {
                 "pin": "PB1",
                 "invert": false,
-                "max_power": 1
+                "max_power": 1,
+                "print_fan": true
               },
               "sources": {
                 "pin": {
@@ -4606,6 +4617,15 @@
                   "value": "1.0",
                   "transform": "number",
                   "reference": "active reference"
+                },
+                "print_fan": {
+                  "line": 372,
+                  "section": "fan_generic fan1",
+                  "option": "pin",
+                  "value": "extra_mcu:PB1",
+                  "transform": "print-fan-role",
+                  "reference": "Factory part cooling role; finite M106/M107 adapter, not a physical calibration",
+                  "reference_only": true
                 }
               }
             }
@@ -4631,7 +4651,8 @@
                 "lift_speed": 50,
                 "samples_result": "average",
                 "samples_tolerance": 0.016,
-                "samples_tolerance_retries": 2
+                "samples_tolerance_retries": 2,
+                "z_offset_start": 0
               },
               "sources": {
                 "pin": {
@@ -4736,6 +4757,19 @@
                   "value": "2",
                   "transform": "number",
                   "reference": "active reference",
+                  "reference_only": true
+                },
+                "z_offset_start": {
+                  "path": "upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg",
+                  "revision": "a60644875f8c756d20b3828c9416518b414b5491",
+                  "sha256": "8936ceabc98a6583f3cff17093905162ac516a0996c8714ef62825a6cb005289",
+                  "accessed": "2026-10-06",
+                  "line": 71,
+                  "section": "upstream software default / explicit mainline adaptation",
+                  "option": "z_offset_start",
+                  "value": 0,
+                  "transform": "starting-value",
+                  "reference": "Commented factory probe starting value; not measured SAVE_CONFIG calibration. Apply only until local probe calibration is recorded.",
                   "reference_only": true
                 }
               }
@@ -7842,6 +7876,7 @@
       "x_offset": "number",
       "y_offset": "number",
       "z_offset": "number",
+      "z_offset_start": "number",
       "speed": "positive",
       "samples": "integer",
       "sample_retract_dist": "positive",
@@ -7851,6 +7886,7 @@
       "samples_tolerance_retries": "nonnegative_integer"
     },
     "fan": {
+      "print_fan": "boolean",
       "pin": "fan",
       "invert": "boolean",
       "max_power": "fraction"

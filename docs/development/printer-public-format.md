@@ -264,3 +264,17 @@ checks. Selecting a bed directly or through a creator bundle replaces that child
 without discarding the full factory assembly. Inactive old snapshots remain for
 restoration; source removal cannot silently alter selected components. Shared,
 unchanged dependencies preserve local overrides and calibration.
+
+## Complete software generation (generator 8)
+
+Full and Setup output includes closed printer.cfg/hardware.cfg/mainsail.cfg,
+Moonraker configuration and a hash manifest. No external vendor macros are needed.
+`fan_generic NAME: {"print_fan": true}` assigns that fan to M106/M107; enclosure
+fans remain separate. The established semantic factory names part_cooling_front
+and part_cooling_rear retain that role for older locked selections; an explicit
+print_fan false overrides it. Other names need an explicit role. Factory part-cooling definitions provide this role. Existing
+locked definitions can set it explicitly in Printer hardware. Standard print
+start uses slicer-provided BED_TEMP/EXTRUDER_TEMP, selected limits and defined
+gantry/mesh policies. Calibration stays local. Setup refuses print start/file print/resume. Both modes use a documented starting
+probe offset when available, never a borrowed measured calibration. Full uses the sourced `z_offset_start` until a local measured `z_offset` is recorded; printing remains blocked while calibration is pending. A starting offset is definition data, not a measured calibration. PID gains are required only when PID control
+is selected. Both retain heater verification and cold extrusion protection.

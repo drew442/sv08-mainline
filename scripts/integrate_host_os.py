@@ -12,6 +12,7 @@ import re
 import shutil
 import subprocess
 import uuid
+import sys
 from prepare_host_os import REPO, work_path
 
 
@@ -99,7 +100,9 @@ def stage(work, manifest, refresh=False, owner_key=None):
     (target / 'release.json').write_text(json.dumps(manifest, indent=2) + '\n')
     seed = target / 'seed/config'
     seed.mkdir(parents=True)
-    shutil.copyfile(REPO / 'configs/host-os/moonraker.conf', seed / 'moonraker.conf')
+    sys.path.insert(0,str(REPO/'runtime'))
+    from sv08_printer_stack import MOONRAKER
+    (seed/'moonraker.conf').write_text(MOONRAKER)
     units = root / 'etc/systemd/system'
     for path in (REPO / 'configs/host-os/systemd').glob('*.service'):
         shutil.copyfile(path, units / path.name)

@@ -34,7 +34,7 @@ class CompactTests(unittest.TestCase):
         expected=copy.deepcopy(base['components']);expected[0]['settings']['max_temp']=120
         self.assertEqual(d['components'],expected);self.assertEqual(d['connections'],base['connections'])
         before=self.select(base);after=self.select(d,before)
-        text=generate(self.c,after,'full')['text'];self.assertIn('max_temp: 120',text);self.assertEqual(text,generate(self.c,before,'full')['text'].replace('max_temp: 105','max_temp: 120'))
+        text=generate(self.c,after,'full')['text'];self.assertIn('max_temp: 120',text);self.assertEqual(text,generate(self.c,before,'full')['text'].replace('max_temp: 105','max_temp: 120').replace('bed >= 105','bed >= 120'))
         self.assertNotIn('pid_kp',text);self.assertEqual(len(after['devices']),len(before['devices']))
     def test_every_factory_definition_has_compact_inheritance(self):
         for base in self.factory:

@@ -18,7 +18,7 @@ from sv08_printer_generate import generate
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('operation',choices=['validate','index','bundle','preview']);p.add_argument('directory',type=Path)
-    p.add_argument('--installation',type=Path);p.add_argument('--definition');p.add_argument('--mode',choices=['sensors','full'],default='sensors');a=p.parse_args()
+    p.add_argument('--installation',type=Path);p.add_argument('--definition');p.add_argument('--mode',choices=['sensors','setup','full'],default='sensors');a=p.parse_args()
     catalog=Catalog(Path(__file__).resolve().parents[1]/'catalog/printer/catalog.json')
     if a.directory.is_symlink():raise ValueError('Catalogue root must be a regular directory')
     root=a.directory.resolve()

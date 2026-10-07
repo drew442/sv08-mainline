@@ -175,6 +175,7 @@ class PrinterStore:
             'source_disable':{'action','source_id','expected_revision'},
             'source_enable':{'action','source_id','expected_revision'},
             'source_remove':{'action','source_id','expected_revision'},
+            'configuration_export':{'action','expected_revision','mode'},
             'publication_review':{'action','expected_revision'},
             'publication_apply':{'action','expected_revision','review'},
             'publication_restore_review':{'action','expected_revision'},
@@ -202,6 +203,18 @@ class PrinterStore:
                     raise ValueError('Draft changed in another session; refresh before '+messages.get(action,'continuing'))
             if request['expected_identity'] != self.identity(state,context,None):
                 raise ValueError('Loaded configuration context is stale; refresh before continuing')
+            if action=='configuration_export':
+                generated=generate(self.catalog,state['draft'],request['mode'])
+                if not generated['complete']:raise ValueError('Configuration incomplete: '+ '; '.join(generated['blockers']))
+                if 'files' not in generated:raise ValueError('Choose Setup or Full SV08 for a complete software bundle')
+                if not self.publication_validate:raise ValueError('Pinned complete-output validator is unavailable')
+                import tempfile,base64
+                from sv08_printer_stack import archive
+                with tempfile.TemporaryDirectory(prefix='sv08-config-export-') as directory:
+                    preview=Publisher(directory).preview({'hardware.cfg':generated['text']},context,'export')
+                    validation=self.publication_validate(preview,directory)
+                    if not validation.get('validated'):raise ValueError('Complete-output validation failed')
+                return dict(filename='sv08-printer-configuration.zip',data=base64.b64encode(archive(generated['files'])).decode(),validation=validation,printing_enabled=generated['printing_enabled'],setup_requirements=generated['setup_requirements'])
             if action=='review_draft':return dict(**generate(self.catalog,request['draft'],request['mode']),review=None,revision=state['revision'])
             if action=='migration':return migration_preview(state['draft'],self.catalog,builtins(self.catalog))
             if action=='board_preview':return remap_board(request['draft'],request['role'],request['board'],effective)

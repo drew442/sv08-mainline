@@ -41,7 +41,7 @@ def update(source_root):
     def derived(device,role,field,value,relative,needle,note):
         p=source_root/relative;lines=p.read_text().splitlines();line=next(i for i,s in enumerate(lines,1) if needle in s)
         revision='f0892d82b0f1c1228454f09eb508eddde2250f4b' if relative.startswith('upstream/klipper/') else 'a60644875f8c756d20b3828c9416518b414b5491'
-        device['settings'][field]=value;device['sources'][field]=dict(path=relative,revision=revision,sha256=hashlib.sha256(p.read_bytes()).hexdigest(),accessed='2026-10-06',line=line,section='upstream software default / explicit mainline adaptation',option=field,value=value,transform='firmware-spi' if relative.endswith('spi.c') else 'firmware-default' if 'sovol-sv08/' in relative else 'software-default',reference=note,reference_only=True)
+        device['settings'][field]=value;device['sources'][field]=dict(path=relative,revision=revision,sha256=hashlib.sha256(p.read_bytes()).hexdigest(),accessed='2026-10-06',line=line,section='upstream software default / explicit mainline adaptation',option=field,value=value,transform='starting-value' if field=='z_offset_start' else 'firmware-spi' if relative.endswith('spi.c') else 'firmware-default' if 'sovol-sv08/' in relative else 'software-default',reference=note,reference_only=True)
     def device(name,kind):return dict(name=name,kind=kind,settings={},sources={})
     def add(role,ident,label,d,notes='Pinned factory configuration; identity and calibration remain local.'):
         board=boards[role];board['presets']=[p for p in board['presets'] if p['id']!=ident];board['presets'].append(dict(id=ident,label=label,notes=notes,devices=[d]))
@@ -63,9 +63,12 @@ def update(source_root):
                 if kind in ('bed','extruder'):
                     for field in ('max_error','check_gain_time','hysteresis','heating_gain'):put(d,role,'verify_'+field,'verify_heater '+name,field)
                 if kind=='probe':
+                    derived(d,role,'z_offset_start',0,'upstream/sovol-sv08/home/sovol/printer_data/config/printer.cfg','#z_offset : 0','Commented factory probe starting value; not measured SAVE_CONFIG calibration. Apply only until local probe calibration is recorded.')
                     for field in ('speed','samples','sample_retract_dist','lift_speed','samples_result','samples_tolerance','samples_tolerance_retries'):put(d,role,field,'probe',transform='text' if field=='samples_result' else 'number')
                     note=' The duplicate vendor probe speed entries resolve to the last active value, 5 mm/s. Probe Z calibration is not a factory default.'
                     preset['notes']=preset['notes'].replace(note,'')+note
+                if kind=='fan' and name in ('part_cooling_front','part_cooling_rear'):
+                    d['settings']['print_fan']=True;d['sources']['print_fan']={**d['sources']['pin'],'transform':'print-fan-role','reference':'Factory part cooling role; finite M106/M107 adapter, not a physical calibration'}
                 if kind=='input':
                     for field in ('pause_on_runout','event_delay','pause_delay'):put(d,role,field,'filament_switch_sensor filament_sensor')
     d=device('hotend_fan','heater_fan')

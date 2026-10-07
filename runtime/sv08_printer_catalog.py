@@ -161,7 +161,7 @@ class Catalog:
                         self.source({**board['source'], **source})
                         if type(source.get('line')) is not int or source['line'] < 1 or not {'option','section','value','transform'} <= set(source):
                             raise ValueError('Reference defaults need exact source option/line and transformation')
-                        if source['transform'] not in ('number','pin','invert','pullup','curve','text','software-default','connector','association','boolean','alias','sensorless','firmware-spi','firmware-default'):
+                        if source['transform'] not in ('number','pin','invert','pullup','curve','text','software-default','connector','association','boolean','alias','sensorless','firmware-spi','firmware-default','print-fan-role','starting-value'):
                             raise ValueError('Unsupported reference default transformation')
                 self.apply_preset(dict(format_version=1,boards={board['role']:{'id':board['id']}},devices=[],geometry={}), board['role'], preset['id'])
 

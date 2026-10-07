@@ -14,6 +14,7 @@
         $('source-confirm').disabled=busy||reconcile||diagnostic||!authority()||!sourcePreview;
         $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= !draft;
+        $('configuration-export').disabled=busy||reconcile||diagnostic||!authority()||changed||!draft||$('mode').value==='sensors';
         $('apply').disabled ||= !review?.complete || changed;
         $('restore').disabled ||= !saved?.previous;
         $('reconciliation').hidden = !(reconcile || diagnostic);
@@ -120,6 +121,7 @@
     }
     function renderComponents() {
         const root=$('components');root.replaceChildren();
+        for(const fan of draft.devices.filter(d=>d.kind==='fan')){const toggle=el('input');toggle.type='checkbox';toggle.checked=fan.settings.print_fan??['part_cooling_front','part_cooling_rear'].includes(fan.name);toggle.dataset.printFan=fan.name;toggle.onchange=()=>{fan.settings.print_fan=toggle.checked;edit();};root.append(label(fan.name.replaceAll('_',' ')+' · use for part cooling (M106/M107)',toggle));}
         for(const role of ['main','tool']) {
             const board=boardData(role);if(!board)continue;
             const box=el('div');box.append(el('h3',role==='main'?'Mainboard components':'Toolhead components'));
@@ -259,6 +261,7 @@
     }
     function renderCalibration() {
         const root=$('calibration');root.replaceChildren();
+        for(const probe of draft.devices.filter(d=>d.kind==='probe')){const box=el('fieldset');box.append(el('legend','Measured probe calibration'),field('Z offset (mm)','number',probe.settings.z_offset,value=>{if(value===undefined)delete probe.settings.z_offset;else probe.settings.z_offset=value;edit();}));root.append(box);}
         for(const heater of draft.devices.filter(d=>['bed','extruder'].includes(d.kind))) {
             const box=el('fieldset');box.append(el('legend',heater.name.replaceAll('_',' ')));
             for(const key of ['pid_kp','pid_ki','pid_kd'])box.append(field(key.replaceAll('_',' '),'positive',heater.settings[key],value=>{if(value===undefined)delete heater.settings[key];else heater.settings[key]=value;edit();}));
@@ -541,6 +544,7 @@
     $('add-preset').onclick=()=>operation(async()=>{invalidate();const result=await rpc({action:'preset',draft,role:$('device-board').value,preset:$('device-preset').value,expected_revision:revision});draft=result.draft;edit();render();notice('Reference defaults added to unsaved draft. Inspect settings; physical identity, motor ratings and measured polarity remain unverified. Save may remain incomplete.');});
     $('add').onclick=()=>{const role=$('device-board').value,name=$('device-name').value;if(!boardData(role)){notice('Choose a board reference first.');return;}if(!/^[a-z][a-z0-9_]{0,39}$/.test(name)||draft.devices.some(d=>d.name===name)){notice('Use a unique lowercase device name.');return;}draft.devices.push({name,board:role,kind:$('device-kind').value,settings:{}});edit();renderDevices();};
     $('save').onclick=()=>operation(async()=>{const result=await rpc({action:'save',expected_revision:revision,draft});revision=result.revision;changed=false;invalidate();await load();notice(result.message);});
+    $('configuration-export').onclick=()=>operation(async()=>{const result=await rpc({action:'configuration_export',expected_revision:revision,mode:$('mode').value});const raw=Uint8Array.from(atob(result.data),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([raw],{type:'application/zip'}));const link=el('a');link.href=url;link.download=result.filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);notice('Complete configuration downloaded; Klipper software validation passed. '+(result.printing_enabled?'Commission installed hardware before printing.':'Probe calibration pending: file printing is blocked until the measured offset is recorded.')+' This ZIP contains private MCU identities.');});
     $('mode').onchange=()=>{invalidate();controls();};
     $('review').onclick=()=>operation(async()=>{review=await rpc(changed?{action:'review_draft',draft,mode:$('mode').value,expected_revision:revision}:{action:'review',mode:$('mode').value});$('output-diff').replaceChildren(el('h3','Actual inactive candidate text'),el('pre','Previous:\n'+(saved.current?.text??'(none)')+'\nCandidate:\n'+(review.text??'Not emitted: incomplete settings')));$('review-detail').textContent=[...review.blockers,...review.warnings].join('\n');$('review-text').textContent=review.text??'';$('candidate-review').showModal();$('cancel-review').focus();});
     $('cancel-review').onclick=()=>{invalidate();controls();};$('candidate-review').oncancel=()=>{invalidate();controls();};

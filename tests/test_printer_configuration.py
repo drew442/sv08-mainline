@@ -184,7 +184,7 @@ class CatalogTests(unittest.TestCase):
         self.assertIn('[mcu chamber]',review['text']);self.assertIn('heater_pin: chamber:PA0',review['text'])
         self.assertIn('sensor_pin: chamber:PA5',review['text']);self.assertIn('pullup_resistor: 20000.0',review['text'])
         self.assertIn('[heater_generic chamber_temp]',review['text']);self.assertIn('control: watermark',review['text'])
-        self.assertNotIn('[verify_heater chamber_temp]',review['text']);self.assertNotIn('[gcode_macro',review['text'])
+        self.assertNotIn('[verify_heater chamber_temp]',review['text']);self.assertNotIn('SET_HEATER_TEMPERATURE HEATER=chamber_temp',review['text']);self.assertIn('[gcode_macro PRINT_START]',review['text'])
         self.assertNotIn('58a72bb93aa4',review['text'])
         self.assertFalse(generate(self.c,d,'sensors')['complete'])
         serial=copy.deepcopy(d);serial['boards']['chamber'].update(transport='serial',identity='/dev/null')
@@ -234,6 +234,8 @@ class CatalogTests(unittest.TestCase):
                             actual=device['settings'][key];transform=s['transform']
                             if transform=='firmware-spi':
                                 self.assertIn(actual,line);self.assertIn('BUS_PINS_spi2',line);continue
+                            if transform=='starting-value':
+                                self.assertEqual(key,'z_offset_start');self.assertEqual(line.strip(),'#z_offset : 0');self.assertEqual(actual,0);self.assertEqual(s['revision'],'a60644875f8c756d20b3828c9416518b414b5491');continue
                             if transform=='firmware-default':
                                 self.assertIn('default_speed='+str(actual),line);continue
                             if transform=='software-default':
@@ -253,6 +255,7 @@ class CatalogTests(unittest.TestCase):
                             elif transform=='pullup':self.assertEqual(actual,'^' in raw)
                             elif transform=='text':self.assertEqual(actual,raw)
                             elif transform=='connector':self.assertEqual(actual,s['section']);self.assertIn(actual,board['motors'])
+                            elif transform=='print-fan-role':self.assertTrue(actual);self.assertIn(device['name'],('part_cooling_front','part_cooling_rear'));self.assertTrue(s['section'].startswith('fan_generic'))
                             elif transform=='association':self.assertTrue(any(d['name']==actual and d['kind']=='sensor' for d in preset['devices']))
                             elif transform=='curve':self.assertEqual(self.c.curves[actual]['sensor_type'],{'my_thermistor':'sv08_factory_bed','my_thermistor_e':'sv08_factory_hotend'}.get(raw,raw))
                             else:self.fail('Unexpected transformation')

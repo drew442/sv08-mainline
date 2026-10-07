@@ -245,11 +245,14 @@ def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d
         for name in sorted(names):
             if name.startswith('mcu '):args+=['-d',name[4:]+'='+str(dictionary)]
         with (work/'stdout.log').open('wb') as log:
-            process=subprocess.Popen(args,stdin=subprocess.DEVNULL,stdout=log,stderr=log,start_new_session=True)
+            process=subprocess.Popen(args,stdin=subprocess.DEVNULL,stdout=log,stderr=log,start_new_session=True,env={**os.environ,'MALLOC_ARENA_MAX':'1','PYTHONDONTWRITEBYTECODE':'1'})
             try:
                 deadline=time.monotonic()+10
                 while time.monotonic()<deadline:
-                    if process.poll() is not None:raise ValueError('Complete-output validation process stopped before ready')
+                    if process.poll() is not None:
+                        details=(work/'stdout.log').read_text(errors='replace').splitlines()
+                        summary=details[-1] if details else 'no diagnostic output'
+                        raise ValueError('Complete-output validation process stopped before ready ('+str(process.returncode)+'): '+summary[:300])
                     if (work/'api').exists():
                         try:
                             with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as api:

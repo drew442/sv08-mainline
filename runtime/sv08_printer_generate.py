@@ -2,7 +2,7 @@
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 from sv08_printer_fields import LEGACY_FIELDS
 
-GENERATOR_VERSION = 7
+GENERATOR_VERSION = 8
 
 
 def generate(catalog, draft, mode):
@@ -10,8 +10,30 @@ def generate(catalog, draft, mode):
     draft=apply_inputs(draft,catalog)
     catalog=locked_catalog(draft,catalog)
     catalog.validate(draft)
-    if mode not in ('sensors', 'full'):
-        raise ValueError('Choose sensors or full inactive SV08 candidate')
+    import copy
+    draft=copy.deepcopy(draft)
+    source_draft=copy.deepcopy(draft)
+    setup_requirements=[]
+    calibration_pending=False
+    if mode in ('setup','full'):
+        for device in draft['devices']:
+            settings=device['settings']
+            if device['kind']=='probe' and 'z_offset' not in settings:
+                start=settings.get('z_offset_start')
+                # Compatibility for previously saved, locked factory definitions.
+                # Sovol a606448 printer.cfg line71 comments the starting value 0;
+                # the SAVE_CONFIG value 1.0 is measured and is never imported.
+                if start is None and device['name']=='probe' and device['board']=='tool' and draft['boards'].get('tool',{}).get('id')=='sv08-tool' and settings.get('pin')=='PB6' and settings.get('x_offset')==-17 and settings.get('y_offset')==10:
+                    start=0
+                if start is not None:
+                    settings['z_offset']=start
+                    calibration_pending=True
+                    setup_requirements.append('probe.z_offset: calibration pending; sourced factory starting value '+str(start)+' mm is used, not a measured offset')
+            if mode=='setup' and device['kind'] in ('bed','extruder') and settings.get('control')=='pid' and not all(k in settings for k in ('pid_kp','pid_ki','pid_kd')):
+                settings['control']='watermark'
+                setup_requirements.append(device['name']+': setup uses Klipper watermark control until local PID gains are recorded')
+    if mode not in ('sensors', 'setup', 'full'):
+        raise ValueError('Choose sensors, setup or full inactive SV08 candidate')
     blockers = []
     policies={};closure={};printer_settings={};documented_devices=[]
     if 'definition_plan' in draft:
@@ -32,7 +54,7 @@ def generate(catalog, draft, mode):
                 actual=next((d for d in draft['devices'] if d['name']==device),None)
                 supplied=actual and field in actual['settings'] or field in draft['boards'].get(device,{}) or inp['target'] in draft['definition_plan'].get('instance_values',{})
                 if not supplied:blockers.append(ident+': needs your input — '+inp['label'])
-        if policies and mode!='full':blockers.append('Behaviour outputs require full mode; sensor mode remains output-free')
+        if policies and mode=='sensors':blockers.append('Behaviour outputs require full mode; sensor mode remains output-free')
 
     def require(settings, fields, label):
         for field in fields:
@@ -74,11 +96,11 @@ def generate(catalog, draft, mode):
         elif kind not in ('sensor','input'):
             if kind=='heater_fan' and s.get('heater') and not any(x['name']==s['heater'] and x['kind'] in ('bed','extruder','chamber') for x in draft['devices']):blockers.append(name+': choose the controlled heater')
             require(s, [k for k in catalog.kinds[kind] if not (kind=='mcu_temperature' or kind=='output' and k=='cycle_time')], name)
-        if mode == 'full' and kind in ('bed','extruder') and s.get('control') == 'pid':
+        if mode in ('setup','full') and kind in ('bed','extruder') and s.get('control') == 'pid':
             require(s, ('pid_kp','pid_ki','pid_kd'), name)
     if mode == 'sensors' and not sensors:
         blockers.append('Choose at least one temperature sensor')
-    if mode == 'full':
+    if mode in ('setup','full'):
         require(draft['geometry'], GEOMETRY, 'geometry')
         required = {'stepper_x':'motor','stepper_y':'motor','stepper_z':'motor','stepper_z1':'motor','stepper_z2':'motor','stepper_z3':'motor','extruder':'extruder','heater_bed':'bed','probe':'probe'}
         actual = {d['name']: d['kind'] for d in draft['devices']}
@@ -114,7 +136,7 @@ def generate(catalog, draft, mode):
     for role, b in sorted(draft['boards'].items()):
         section('mcu' + (' '+role if role != 'main' else ''), {'canbus_uuid' if b['transport']=='can' else 'serial': b['identity']})
     section('printer', {'kinematics':'none','max_velocity':1,'max_accel':1} if mode=='sensors' else {'kinematics':'corexy',**draft['geometry']})
-    if mode=='full':
+    if mode in ('setup','full'):
         for group,values in sorted(printer_settings.items()):
             if group!='geometry':section(group,values)
         if any(d['kind']=='input' and d['settings'].get('pause_on_runout') for d in draft['devices']):section('pause_resume',{})
@@ -130,7 +152,7 @@ def generate(catalog, draft, mode):
             for i, (t, r) in enumerate(d['settings']['custom_curve'], 1):
                 values.update({f'temperature{i}': t, f'resistance{i}': r})
             section('thermistor sv08_custom_' + name, values)
-    heater_sensors = {d['settings']['sensor'] for d in draft['devices'] if mode=='full' and d['kind'] in ('bed','extruder','chamber')}
+    heater_sensors = {d['settings']['sensor'] for d in draft['devices'] if mode in ('setup','full') and d['kind'] in ('bed','extruder','chamber')}
     def thermal(d):
         s=d['settings'];c=catalog.curves[s['curve']]
         return dict(sensor_type='sv08_custom_'+d['name'] if 'custom_curve' in s else c['sensor_type'], sensor_pin=qualified(d['board'], s['pin']), pullup_resistor=s['pullup_resistor'], min_temp=s['min_temp'],max_temp=s['max_temp'])
@@ -147,8 +169,8 @@ def generate(catalog, draft, mode):
         if kind=='sensor':
             if name not in heater_sensors:section('temperature_sensor '+name, thermal(d))
         elif kind=='input':
-            section('filament_switch_sensor '+name,dict(switch_pin=digital(d),pause_on_runout=s.get('pause_on_runout',False) if mode=='full' else False,**{k:s[k] for k in ('event_delay','pause_delay') if k in s}))
-        elif mode=='full':
+            section('filament_switch_sensor '+name,dict(switch_pin=digital(d),pause_on_runout=s.get('pause_on_runout',False) if mode in ('setup','full') else False,**{k:s[k] for k in ('event_delay','pause_delay') if k in s}))
+        elif mode in ('setup','full'):
             if kind in ('motor','extruder'):
                 motor=catalog.board(draft,d['board'])['motors'][s['connector']]
                 values={k+'_pin':('!' if s.get('invert_'+k) else '')+qualified(d['board'],motor[k]) for k in ('step','dir','enable')}
@@ -193,7 +215,7 @@ def generate(catalog, draft, mode):
     if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
     warnings=['Reference configuration only. Installed match and physical limits remain unverified.', 'Configured polarity is not measured polarity. TMC2209 2.000 A is a pinned software maximum, not a safe electrical rating.', 'Candidate saved separately; commissioning and activation require their own reviewed steps.']
     if draft.get('custom_config'):warnings.append('User-owned custom code: structural validation only; review and commission any thermal/motion/startup effects separately.')
-    if mode == 'full':
+    if mode in ('setup','full'):
         warnings.append('Validate configured limits and complete component commissioning before starting the printer. Configuration application does not grant a printing release.')
     warnings += [(d['name'] + ': owner-entered custom NTC curve; calibration remains unverified') if 'custom_curve' in d['settings'] else catalog.curves[d['settings']['curve']]['origin'] for d in sensors.values()]
     behaviours=''
@@ -210,4 +232,14 @@ def generate(catalog, draft, mode):
             behaviours+='  {% set '+var+' = printer["'+thermal+'"].temperature %}\n  {% if '+conditions[b['comparison']]+' %}\n    { action_raise_error("Levelling temperature condition not satisfied") }\n  {% endif %}\n'
     if behaviours:text+='\n# Managed check-only behaviour hook\n'+behaviours
     if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
+    if mode!='sensors':
+        from sv08_printer_stack import support, files
+        integration=support(draft,printer_settings,mode,policies,calibration_pending)
+        from sv08_printer_publish import sections
+        if sections(text)&sections(integration):raise ValueError('Custom configuration conflicts with managed print controls; explicit ownership review required')
+        exported=files(text,integration,source_draft,mode,GENERATOR_VERSION,catalog.revision,calibration_pending)
+        if sum(len(v.encode()) for v in exported.values())>BUNDLE_LIMIT:raise ValueError('Complete exported configuration exceeds 512 KiB')
+        text+=integration
+        if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
+        return dict(complete=True,blockers=[],warnings=warnings+setup_requirements,text=text,behaviours=behaviours,files=exported,setup_requirements=setup_requirements,printing_enabled=mode=='full' and not calibration_pending)
     return dict(complete=True, blockers=[], warnings=warnings, text=text,behaviours=behaviours)
