@@ -52,7 +52,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Owner recovery-password requirement supersedes an existing key-only test; include that exact regression file in implementation ownership before editing it",
       "checks": [
         "crypto",
         "restore",
@@ -103,7 +103,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
