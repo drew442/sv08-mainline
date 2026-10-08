@@ -1,0 +1,95 @@
+{
+  "format_version": 2,
+  "id": "persistent-printer-identity",
+  "kind": "feature",
+  "title": "Persistent printer CA, SSH identity and Cockpit identity management",
+  "author": "root/coordinator",
+  "created": "2026-10-08",
+  "priority": 1,
+  "proposal": "docs/features/persistent-printer-identity/proposal.md",
+  "requirements": [
+    "docs/features/persistent-printer-identity/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "crypto",
+      "description": "Stable CA, signed certificate renewal and persistent SSH identity with real cryptographic tools",
+      "environment": "offline"
+    },
+    {
+      "id": "restore",
+      "description": "Complete bounded identity bundle validation, atomic restore and failure/refusal cases",
+      "environment": "offline"
+    },
+    {
+      "id": "ui",
+      "description": "Authenticated Cockpit CA download, SSH keys, identity export/review/import",
+      "environment": "offline"
+    },
+    {
+      "id": "integration",
+      "description": "Host boot and recovery staging, SSH access and focused regressions",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate identity and access",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "crypto",
+        "restore",
+        "ui",
+        "integration"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_identity.py",
+        "runtime/sv08_boot.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_admin.py",
+        "scripts/integrate_host_os.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/recovery_image.py",
+        "scripts/build_sd_recovery_host.py",
+        "configs/host-os/sshd.conf",
+        "configs/host-os/sd-recovery-host/sshd_config",
+        "configs/host-os/sv08-identity.service",
+        "configs/host-os/sv08-identity.timer",
+        "configs/host-os/recovery-password.json",
+        "ui/host/index.html",
+        "ui/host/navigation.js",
+        "ui/host/identity.js",
+        "tests/test_identity.py",
+        "tests/identity_browser.mjs",
+        "docs/features/persistent-printer-identity/evidence.md",
+        "docs/hardware/host-os-tasks.md",
+        "docs/hardware/printer-identity.md",
+        ".codex/current-goals.md"
+      ],
+      "input_paths": [
+        "ui/host/session.js",
+        "scripts/stage_printer_ui.py",
+        "runtime/sv08_mounts.py"
+      ]
+    }
+  ]
+}
