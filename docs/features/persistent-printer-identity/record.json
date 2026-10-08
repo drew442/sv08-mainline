@@ -299,7 +299,7 @@
       "resumption": "Retain candidate and authorize complete host composition isolation under existing identity goal",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate identity and access",
       "validation": {
         "actor": "root",
