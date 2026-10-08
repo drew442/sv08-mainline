@@ -52,7 +52,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve candidate while adding generated Mainsail TLS configuration to the same owner-authorized identity goal",
       "checks": [
         "crypto",
         "restore",
@@ -98,13 +98,14 @@
         "docs/hardware/host-os-tasks.md",
         "docs/hardware/printer-identity.md",
         ".codex/current-goals.md",
-        "tests/test_sd_recovery_host.py"
+        "tests/test_sd_recovery_host.py",
+        "runtime/sv08_printer_stack.py"
       ],
       "repeats": 0,
       "resumption": "Preserved implementation in named Git stash; extend owned test paths under the unchanged explicit owner request, then validate the updated recovery-password expectation",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
