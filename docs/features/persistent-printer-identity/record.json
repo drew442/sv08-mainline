@@ -52,7 +52,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve stable candidate and extend host-wide button isolation so unrelated host-status failure cannot disable identity recovery",
       "checks": [
         "crypto",
         "restore",
@@ -72,7 +72,6 @@
       },
       "input_paths": [
         "ui/host/session.js",
-        "scripts/stage_printer_ui.py",
         "runtime/sv08_mounts.py"
       ],
       "owned_paths": [
@@ -99,13 +98,15 @@
         "docs/hardware/printer-identity.md",
         ".codex/current-goals.md",
         "tests/test_sd_recovery_host.py",
-        "runtime/sv08_printer_stack.py"
+        "runtime/sv08_printer_stack.py",
+        "ui/host/app.js",
+        "scripts/stage_printer_ui.py"
       ],
       "repeats": 0,
       "resumption": "Candidate preserved; extend generated service TLS under unchanged owner request",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
