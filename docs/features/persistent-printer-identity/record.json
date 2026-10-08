@@ -65,7 +65,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "2f163b8e7d2246bf975761d41c239815",
+        "session": "identity-20261008"
+      },
       "input_paths": [
         "ui/host/session.js",
         "scripts/stage_printer_ui.py",
@@ -101,7 +105,7 @@
       "resumption": "Candidate preserved; extend generated service TLS under unchanged owner request",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
