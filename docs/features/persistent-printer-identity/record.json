@@ -4,16 +4,16 @@
     "actor": "coordinator",
     "basis": "owner-request",
     "proposal_sha256": "0814029e54233f3d6f5ecee01026f8899bc86bc1bb7be7b25f5e7458c62bef59",
-    "rationale": "Same explicit owner goal: all service certificates are signed by the persistent CA, including regenerated Mainsail configurations",
+    "rationale": "Same owner-requested identity management, including source and installed host application isolation",
     "reference": "docs/features/persistent-printer-identity/owner-request.md",
     "reference_sha256": "6663ba539d746ebfc37530c15a914ec6ff4123612d348f348e8a9cf0fbdecfc9",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/features/persistent-printer-identity/owner-request.md": "6663ba539d746ebfc37530c15a914ec6ff4123612d348f348e8a9cf0fbdecfc9"
     },
-    "scope_sha256": "354166b1e55433483fe0213ed75e23a3d2a2847de9cd5c7fcdeab7e434cb2c40",
+    "scope_sha256": "35412abf60c36889c5ceddfdbd375064c5f85da4d5c13606561112d9e7a1f696",
     "session": "identity-20261008",
-    "source_commit": "05737f4fa156e6599b25558bd93edd86e4b12752"
+    "source_commit": "e6bdb6801723b8536954e09af1d175a8b26cdf5f"
   },
   "checks": [
     {
