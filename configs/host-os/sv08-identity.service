@@ -1,0 +1,13 @@
+[Unit]
+Description=Prepare persistent printer CA and service identity
+Requires=sv08-prepare.service
+After=sv08-prepare.service
+Before=ssh.service cockpit.socket cockpit.service nginx.service
+
+[Service]
+Type=oneshot
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_identity.py --ensure
+ExecStartPost=/usr/bin/python3 /usr/lib/sv08/sv08_identity.py --reload-services
+TimeoutStartSec=120
+TimeoutStopSec=15

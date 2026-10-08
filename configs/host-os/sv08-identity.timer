@@ -1,0 +1,11 @@
+[Unit]
+Description=Renew printer certificates without changing its CA
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1day
+RandomizedDelaySec=10min
+Unit=sv08-identity.service
+
+[Install]
+WantedBy=timers.target

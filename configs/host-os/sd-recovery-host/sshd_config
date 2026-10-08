@@ -3,11 +3,11 @@ ListenAddress 0.0.0.0
 HostKey /run/sd-host-keys/ssh_host_ed25519_key
 AuthorizedKeysFile /etc/sv08/sd-host-authorized_keys
 PermitRootLogin no
-PasswordAuthentication no
+PasswordAuthentication yes
 KbdInteractiveAuthentication no
 PermitEmptyPasswords no
 PubkeyAuthentication yes
-AuthenticationMethods publickey
+AuthenticationMethods any
 UsePAM yes
 AllowUsers recovery
 AllowAgentForwarding no

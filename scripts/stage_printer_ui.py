@@ -137,7 +137,7 @@ def integrate_app(raw):
     raw=replace_once(raw,original,original.replace(b'function page(name, focus = true) {',b'function page(name, focus = true) {\n    if (window.sv08Navigation) { sv08Navigation.go(name); return; }',1))
     selector=b'main button:not([data-open]):not(#retry-submission):not([data-inspect-job])'
     if raw.count(selector)!=2: raise ValueError('Unknown host isolation anchors')
-    raw=raw.replace(selector,selector+b':not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button)')
+    raw=raw.replace(selector,selector+b':not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button)')
     raw=replace_once(raw,b"} catch (error) { $('connection').textContent",b"} catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent")
     # Navigation invalidates pending host plans using the existing response epoch.
     return replace_once(raw,b"window.addEventListener('sv08-authority-changed', () => {",b"window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });\nwindow.addEventListener('sv08-authority-changed', () => {")
