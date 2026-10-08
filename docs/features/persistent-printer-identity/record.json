@@ -65,7 +65,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "8966ef8bc94d4675832f68f884479cbc",
+        "session": "identity-20261008"
+      },
       "input_paths": [
         "ui/host/session.js",
         "scripts/stage_printer_ui.py",
@@ -100,7 +104,7 @@
       "resumption": "Preserved implementation in named Git stash; extend owned test paths under the unchanged explicit owner request, then validate the updated recovery-password expectation",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
