@@ -4,16 +4,16 @@
     "actor": "coordinator",
     "basis": "owner-request",
     "proposal_sha256": "0814029e54233f3d6f5ecee01026f8899bc86bc1bb7be7b25f5e7458c62bef59",
-    "rationale": "Explicit owner request for persistent CA/SSH identity, Cockpit management and simple recovery password",
+    "rationale": "Same owner-requested identity goal; include the existing recovery-policy regression test whose old key-only expectation is superseded by the requested default password",
     "reference": "docs/features/persistent-printer-identity/owner-request.md",
     "reference_sha256": "6663ba539d746ebfc37530c15a914ec6ff4123612d348f348e8a9cf0fbdecfc9",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/features/persistent-printer-identity/owner-request.md": "6663ba539d746ebfc37530c15a914ec6ff4123612d348f348e8a9cf0fbdecfc9"
     },
-    "scope_sha256": "898aa2cace367a8fb9dfc9dd8f9a2dae7139afb245c9be6090f9fd01c1bc5649",
+    "scope_sha256": "a90990da8bb03dd2b976a324f7cd2a7105b05009298f567bc7d541ba36250a56",
     "session": "identity-20261008",
-    "source_commit": "f0a8ae072a2e5a681c9f9286a0bbef5a37f38f17"
+    "source_commit": "6a2f839d3f6e3196cbcd84a05547a0cabef9fc98"
   },
   "checks": [
     {
