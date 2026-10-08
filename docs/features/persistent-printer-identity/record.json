@@ -52,7 +52,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Preserve stable candidate and extend host-wide button isolation so unrelated host-status failure cannot disable identity recovery",
+      "blocker": null,
       "checks": [
         "crypto",
         "restore",
@@ -65,11 +65,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root",
-        "run": "2f163b8e7d2246bf975761d41c239815",
-        "session": "identity-20261008"
-      },
+      "implementation": null,
       "input_paths": [
         "ui/host/session.js",
         "runtime/sv08_mounts.py"
@@ -103,10 +99,10 @@
         "scripts/stage_printer_ui.py"
       ],
       "repeats": 0,
-      "resumption": "Candidate preserved; extend generated service TLS under unchanged owner request",
+      "resumption": "Retain candidate and authorize complete host composition isolation under existing identity goal",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
