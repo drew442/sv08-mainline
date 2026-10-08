@@ -52,7 +52,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Owner recovery-password requirement supersedes an existing key-only test; include that exact regression file in implementation ownership before editing it",
+      "blocker": null,
       "checks": [
         "crypto",
         "restore",
@@ -65,11 +65,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root",
-        "run": "f8819e371a09449eb54288d01fd38ab6",
-        "session": "identity-20261008"
-      },
+      "implementation": null,
       "input_paths": [
         "ui/host/session.js",
         "scripts/stage_printer_ui.py",
@@ -97,13 +93,14 @@
         "docs/features/persistent-printer-identity/evidence.md",
         "docs/hardware/host-os-tasks.md",
         "docs/hardware/printer-identity.md",
-        ".codex/current-goals.md"
+        ".codex/current-goals.md",
+        "tests/test_sd_recovery_host.py"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Preserved implementation in named Git stash; extend owned test paths under the unchanged explicit owner request, then validate the updated recovery-password expectation",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
