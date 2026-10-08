@@ -1,5 +1,29 @@
 # Current delivery goals
 
+## Completed goal — persistent printer identity, 2026-10-08
+
+The printer now has a persistent CA signing Cockpit and Mainsail certificates,
+persistent SSH host authority, and Cockpit **Printer identity** controls for CA
+download, trusted public keys and reviewed identity ZIP backup/restore. Actual
+Cockpit upload authorized a disposable SSH key; restoring the downloaded baseline
+restored original access and rejected that key. Both service leaf certificates
+changed while the original CA continued to verify them. Native Mainsail login and
+websocket initialization remain usable. See [delivery evidence](../docs/features/persistent-printer-identity/evidence.md).
+
+Recovery builders now use the owner-selected **recovery / recovery** convenience
+password, verified through isolated real PAM/SSH. Existing physical recovery media
+were not rewritten. Normal-host key-only policy remains in force. Granular identity
+requirements are complete; unrelated onboarding/network/release and physical checks
+remain open in [host tasks](../docs/hardware/host-os-tasks.md).
+
+Current state supersedes the older October 4 inactive-config wording below:
+the generated hardware configuration has been applied to the diagnostic printer
+services, with Mainsail/API available through their separately installed temporary
+current-boot units. Production Klipper/health/RAUC remain masked, PSU OFF, no MCU
+session, root/boot read-only, hardware state unchanged. This is software identity
+and access acceptance, not heating/motion/printing or normal-release qualification.
+
+
 ## Completed goals — sensors and component configuration, 2026-10-04
 
 1. **Default-curve ambient baseline complete:** 12 stable no-output observations

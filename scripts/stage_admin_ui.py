@@ -25,7 +25,7 @@ def _stage(work, context, execute=False, refresh=False):
         raise ValueError('UI refresh is only supported for the host context')
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir(): raise ValueError('Expected an isolated image rootfs')
-    for name in ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
+    for name in ('sv08_identity.py', 'sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
         path = root / 'usr/lib/sv08' / name
         if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
@@ -137,6 +137,9 @@ def _stage(work, context, execute=False, refresh=False):
         for destination in branding:
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO / 'configs/host-os/cockpit-branding' / destination.name, destination)
+        for unit in ('cockpit.socket',):
+            directory = root / 'etc/systemd/system' / (unit+'.d'); directory.mkdir(parents=True,exist_ok=True)
+            (directory/'sv08-identity.conf').write_text('[Unit]\nRequires=sv08-identity.service\nAfter=sv08-identity.service\n')
         (root / 'usr/lib/sv08/admin-context.json').write_text(json.dumps(dict(format_version=1, context='host'))+'\n')
     else:
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -148,7 +151,7 @@ def _stage(work, context, execute=False, refresh=False):
     files.extend(branding)
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
-                 ('sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
+                 ('sv08_identity.py', 'sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
     if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
     if context == 'host': files.append(root / 'usr/lib/sv08/sv08_feed.py')
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else

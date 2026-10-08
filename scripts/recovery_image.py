@@ -126,7 +126,7 @@ def run(args, **kw):
 
 def integration_inputs():
     paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-systemd-udevd.conf',REPO/'configs/host-os/recovery-systemd-logind.conf',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
-    paths.append(REPO/'configs/host-os/recovery-board-root')
+    paths.extend([REPO/'configs/host-os/recovery-board-root',REPO/'configs/host-os/recovery-password.json'])
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
 
@@ -185,6 +185,23 @@ def mask_recovery_units(units):
         path = units/name
         path.unlink(missing_ok=True)
         path.symlink_to('/dev/null')
+
+
+
+def configure_recovery_password(root):
+    """Owner-selected recovery convenience account; normal-host policy unchanged."""
+    policy = json.loads((REPO/'configs/host-os/recovery-password.json').read_text())
+    if policy['username']!='recovery' or policy['password']!='recovery' or not policy['password_hash'].startswith('$6$'):
+        raise ValueError('Unexpected recovery password policy')
+    for name,line in [('passwd','recovery:x:1000:1000:SV08 recovery:/run/recovery-home:/bin/bash'),
+                      ('group','recovery:x:1000:'),
+                      ('shadow','recovery:'+policy['password_hash']+':20000:0:99999:7:::')]:
+        path = root/'etc'/name
+        text = path.read_text() if path.exists() else ''
+        rows = [row for row in text.splitlines() if not row.startswith('recovery:')]
+        if name!='shadow' and any(row.split(':')[2]=='1000' for row in rows):
+            raise ValueError('Recovery account identity is already occupied')
+        write(path,'\n'.join(rows+[line])+'\n',0o640 if name=='shadow' else 0o644)
 
 
 def stage_recovery_units(units):
@@ -341,7 +358,8 @@ def assemble(a):
         write(work/'imports.txt',imports.stdout+imports.stderr)
     finally:
         for target in reversed(mounts):run(['umount',target])
-    # Fixed appliance identity and no account, persistent state or networking.
+    # Fixed recovery identity and convenience account; no normal-host credentials or networking.
+    configure_recovery_password(root)
     write(root/'etc/machine-id','22b4cce916f7480c96d96e970828c018\n')
     write(root/'etc/hostname','sv08-recovery-vm\n')
     write(root/'etc/hosts','127.0.0.1 localhost\n::1 localhost\n')

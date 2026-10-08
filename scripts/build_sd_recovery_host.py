@@ -128,7 +128,7 @@ def packages(path):
 
 def reimage_inputs():
     return {str(p.relative_to(REPO)): sha(p) for p in (
-        REPO/'runtime/sv08_sd_reimage.py', REPO/'runtime/sv08_sd_reimage_ui.py',
+        REPO/'configs/host-os/recovery-password.json', REPO/'runtime/sv08_sd_reimage.py', REPO/'runtime/sv08_sd_reimage_ui.py',
         CONFIG/'sv08-recovery-display.service.d/reimage.conf')}
 
 
@@ -177,7 +177,7 @@ def compose(a):
             raise ValueError('Input/output overlap')
     inputs = {str(p): sha(p) for p in (source, public, package_manifest, *closure,
               Path(__file__), *[p for p in sorted(CONFIG.rglob('*')) if p.is_file()],
-              REPO/'runtime/sv08_sd_reimage.py', REPO/'runtime/sv08_sd_reimage_ui.py', REPO/'configs/host-os/recovery-init', REPO/'configs/host-os/recovery-board-root')}
+              REPO/'configs/host-os/recovery-password.json', REPO/'runtime/sv08_sd_reimage.py', REPO/'runtime/sv08_sd_reimage_ui.py', REPO/'configs/host-os/recovery-init', REPO/'configs/host-os/recovery-board-root')}
     for path in [owner_mapping,*sudo_pam,*([additional] if additional else [])]:
         inputs[str(path)]=sha(path)
     if test_public:
@@ -334,10 +334,10 @@ def compose(a):
     put(envelope / 'etc/systemd/network/20-wired.network', (CONFIG / '20-wired.network').read_text())
     put(envelope / 'etc/ssh/sshd_config', (CONFIG / 'sshd_config').read_text())
     put(envelope / 'etc/sv08/sd-host-authorized_keys', key + '\n')
-    put(envelope / 'etc/pam.d/sshd', 'auth required pam_deny.so\naccount required pam_permit.so\nsession required pam_permit.so\n')
+    put(envelope / 'etc/pam.d/sshd', 'auth required pam_unix.so\naccount required pam_unix.so\nsession required pam_permit.so\n')
     put(envelope/'etc/passwd', (envelope/'etc/passwd').read_text().rstrip()+'\nsshd:x:991:65534:SSH privilege separation:/run/sshd:/usr/sbin/nologin\n')
     for name, line in [('passwd', 'recovery:x:1000:1000:SD recovery:/run/sd-owner:/bin/bash'),
-                       ('group', 'recovery:x:1000:'), ('shadow', 'recovery:*:20000:0:99999:7:::')]:
+                       ('group', 'recovery:x:1000:'), ('shadow', 'recovery:'+json.loads((REPO/'configs/host-os/recovery-password.json').read_text())['password_hash']+':20000:0:99999:7:::')]:
         target = envelope / 'etc' / name
         current = target.read_text()
         if any(x.startswith('recovery:') for x in current.splitlines()):

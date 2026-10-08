@@ -75,7 +75,7 @@ class SDHost(unittest.TestCase):
         self.assertEqual(M.preflight_space(0,True,False),1536*1024**2)
     def test_ssh_policy(self):
         conf=(M.CONFIG/'sshd_config').read_text()
-        for directive in ('PermitRootLogin no','PasswordAuthentication no','KbdInteractiveAuthentication no','AuthenticationMethods publickey','AllowUsers recovery'):
+        for directive in ('PermitRootLogin no','PasswordAuthentication yes','KbdInteractiveAuthentication no','AuthenticationMethods any','AllowUsers recovery'):
             self.assertIn(directive,conf)
         service=(M.CONFIG/'sd-host-ssh.service').read_text()
         self.assertNotIn('network-online.target',service)

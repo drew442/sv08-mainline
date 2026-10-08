@@ -31,6 +31,14 @@ NGINX = """# Include from the SV08 host nginx http context; no service activatio
 server {
     listen 8080;
     server_name _;
+    return 301 https://$host:8443$request_uri;
+}
+server {
+    listen 8443 ssl;
+    server_name _;
+    ssl_certificate /data/sv08/system/identity/current/services/server.crt;
+    ssl_certificate_key /data/sv08/system/identity/current/services/server.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
     root /usr/share/sv08-mainline/mainsail;
     client_max_body_size 64m;
     location / { try_files $uri $uri/ /index.html; }
@@ -136,7 +144,8 @@ Use on the SV08 Mainline host with its installed pinned applications and firmwar
 Configuration root: /run/sv08/printer_data/config
 G-code files: /run/sv08/printer_data/gcodes
 Klipper socket: /run/sv08/printer_data/comms/klippy.sock
-Moonraker: loopback port7125. nginx-mainsail.conf supplies Mainsail on port8080.
+Moonraker: loopback port7125. nginx-mainsail.conf redirects port8080 to CA-signed HTTPS on port8443.
+The sv08-identity.service provisions persistent authority before web services.
 Place mainsail.json in the configuration root. The host web configuration includes
 nginx-mainsail.conf from its http context. It preserves Moonraker authentication;
 no LAN-wide trusted clients are added. Services remain separately managed by the OS.

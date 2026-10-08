@@ -154,7 +154,19 @@ enumeration were re-established on 2026-09-12; see the
   [Cockpit integration](host-admin-cockpit.md) pins the host delta and tests
   real isolated PAM/sudo/helper sessions. The [independent recovery image](host-recovery-image.md)
   now has a measured closure and actual VM input/accessibility startup. Physical
-  TLS, production owner provisioning and assembled-release acceptance remain open.
+  Production owner provisioning and assembled-release acceptance remain open;
+  installed TLS identity acceptance is recorded below.
+- [x] Persist the printer CA and SSH host identity, issue renewable CA-signed
+  Cockpit/Mainsail certificates and provide a Cockpit CA download. Installed
+  replacement certificates verify against the original downloaded CA.
+- [x] Manage trusted SSH public keys through Cockpit and provide reviewed identity
+  ZIP backup/restore. Actual upload authorized SSH; restoring the downloaded
+  baseline restored original keys and rejected the temporary test key.
+- [x] Apply the owner-selected recovery/recovery convenience-password policy to
+  recovery builders; isolated real PAM/SSH authentication passed. Normal-host
+  key-only policy is retained. Existing recovery media are not rewritten.
+  See [printer identity](printer-identity.md) and
+  [source/installed acceptance](../features/persistent-printer-identity/evidence.md).
 - [x] Implement bounded browser upload, signature/error/progress presentation and
   jobs that survive a closed browser or dropped LAN connection offline.
   [Authenticated upload](host-admin-upload.md) and [durable image jobs](host-admin-image-jobs.md)

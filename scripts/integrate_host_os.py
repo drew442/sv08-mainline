@@ -106,6 +106,12 @@ def stage(work, manifest, refresh=False, owner_key=None):
     units = root / 'etc/systemd/system'
     for path in (REPO / 'configs/host-os/systemd').glob('*.service'):
         shutil.copyfile(path, units / path.name)
+    for name in ('sv08-identity.service','sv08-identity.timer'):
+        shutil.copyfile(REPO / 'configs/host-os' / name, units / name)
+    identity_wants = units / 'timers.target.wants'
+    identity_wants.mkdir(exist_ok=True)
+    link = identity_wants / 'sv08-identity.timer'
+    link.unlink(missing_ok=True); link.symlink_to('/etc/systemd/system/sv08-identity.timer')
     # Keep Debian's backup job in writable mode; skip its read-only destination.
     backup_dropin = units / 'dpkg-db-backup.service.d'
     backup_dropin.mkdir(exist_ok=True)
@@ -154,10 +160,11 @@ def stage(work, manifest, refresh=False, owner_key=None):
     sudoers.write_text('sv08 ALL=(ALL) NOPASSWD: ALL\n')
     sudoers.chmod(0o440)
     for service in ('NetworkManager.service','ssh.service','systemd-random-seed.service',
-                    'systemd-timesyncd.service','systemd-rfkill.service','systemd-logind.service'):
+                    'systemd-timesyncd.service','systemd-rfkill.service','systemd-logind.service','nginx.service'):
         directory = units / (service + '.d')
         directory.mkdir(exist_ok=True)
-        (directory / 'sv08-state.conf').write_text('[Unit]\nRequires=sv08-prepare.service\nAfter=sv08-prepare.service\n')
+        dependency = 'sv08-identity.service' if service in ('ssh.service','nginx.service') else 'sv08-prepare.service'
+        (directory / 'sv08-state.conf').write_text('[Unit]\nRequires='+dependency+'\nAfter='+dependency+'\n')
     # Debian packages may have enabled nginx already; do not expose its default
     # site while authorization/onboarding integration is still outstanding.
     # machine-id is already persistent, not systemd's transient mount to commit.
