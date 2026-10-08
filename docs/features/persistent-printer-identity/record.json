@@ -52,7 +52,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Preserve candidate while adding generated Mainsail TLS configuration to the same owner-authorized identity goal",
+      "blocker": null,
       "checks": [
         "crypto",
         "restore",
@@ -65,11 +65,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root",
-        "run": "8966ef8bc94d4675832f68f884479cbc",
-        "session": "identity-20261008"
-      },
+      "implementation": null,
       "input_paths": [
         "ui/host/session.js",
         "scripts/stage_printer_ui.py",
@@ -102,10 +98,10 @@
         "runtime/sv08_printer_stack.py"
       ],
       "repeats": 0,
-      "resumption": "Preserved implementation in named Git stash; extend owned test paths under the unchanged explicit owner request, then validate the updated recovery-password expectation",
+      "resumption": "Candidate preserved; extend generated service TLS under unchanged owner request",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
