@@ -6,8 +6,9 @@ SSH access and identity backups. Administrator authorization is required.
 Download **CA certificate** and import it as a trusted certificate authority on
 clients that access the printer. Cockpit and Mainsail use certificates signed by
 this CA. The CA stays on `/data/sv08/system/identity`; service certificate renewal
-and OS replacement preserve it. The current host name, `.local` names, global IP
-addresses and loopback names are covered. A daily check renews the service
+and OS replacement preserve it. The current host name, `.local` names, canonical FQDN, qualified names from
+configured DNS search/domain suffixes, global IP addresses and loopback names
+are covered. See [the SAN correction](printer-identity-san-20261008.md). A daily check renews the service
 certificate with fewer than 30 days remaining or changed names. Certificates are
 valid for one year; the CA is valid for twenty years. CA replacement is an
 explicit identity restore, never an automatic response to damaged authority.

@@ -320,14 +320,25 @@ def publish_cockpit(identity):
     os.replace(temporary, target); fsync(directory); return True
 
 
-def installed_names(data):
+def installed_names(data, resolver='/etc/resolv.conf'):
     hostname = (Path(data) / 'system/hostname').read_text().strip()
     running_name = socket.gethostname()
-    names = [hostname,hostname+'.local',running_name,running_name+'.local']
+    names = {hostname,hostname+'.local',running_name,running_name+'.local',socket.getfqdn()}
+    # /etc/hosts may make getfqdn() return only the short hostname, even when
+    # DHCP/DNS supplies a real search domain. Include those qualified names too.
+    try: resolver_text = Path(resolver).read_text()
+    except FileNotFoundError: resolver_text = ''
+    for line in resolver_text.splitlines():
+        fields = line.split('#',1)[0].split()
+        if fields and fields[0] in ('search','domain'):
+            for suffix in fields[1:]:
+                suffix = suffix.rstrip('.')
+                if suffix:
+                    for host in (hostname,running_name): names.add(host.split('.')[0]+'.'+suffix)
     for interface in json.loads(run('ip','-j','address','show')):
         for address in interface.get('addr_info',[]):
-            if address.get('scope') == 'global': names.append(address['local'])
-    return names
+            if address.get('scope') == 'global': names.add(address['local'])
+    return sorted(names)
 
 
 def main():

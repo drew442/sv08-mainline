@@ -15,8 +15,28 @@ from zipfile import ZipFile
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(REPO/'runtime'))
-from sv08_identity import Identity, AUTHORITY, public_keys, publish_cockpit
+from sv08_identity import Identity, AUTHORITY, public_keys, publish_cockpit, installed_names, normal_names
 from test_data_budget import fixture_root, fixture_budget
+
+
+class InstalledNameTests(unittest.TestCase):
+    def test_short_local_hostname_keeps_dhcp_fqdn_and_all_global_ips(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data=Path(temporary);(data/'system').mkdir();(data/'system/hostname').write_text('sv08\n')
+            resolver=data/'resolv.conf';resolver.write_text('# NetworkManager\nsearch drewnet.online example.test. # DHCP\nnameserver 192.0.2.1\n')
+            interfaces=[{'addr_info':[{'scope':'global','local':'192.0.2.141'},{'scope':'link','local':'fe80::1'}]}, {'addr_info':[{'scope':'global','local':'192.0.2.143'}]}]
+            with patch('sv08_identity.socket.gethostname',return_value='sv08'), patch('sv08_identity.socket.getfqdn',return_value='sv08'), patch('sv08_identity.run',return_value=json.dumps(interfaces).encode()):
+                names=normal_names(installed_names(data,resolver))
+            self.assertIn('DNS:sv08',names);self.assertIn('DNS:sv08.local',names)
+            self.assertIn('DNS:sv08.drewnet.online',names);self.assertIn('DNS:sv08.example.test',names)
+            self.assertIn('IP:192.0.2.141',names);self.assertIn('IP:192.0.2.143',names)
+            self.assertNotIn('IP:fe80::1',names)
+
+    def test_canonical_fqdn_and_missing_resolver(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            data=Path(temporary);(data/'system').mkdir();(data/'system/hostname').write_text('sv08\n')
+            with patch('sv08_identity.socket.gethostname',return_value='sv08'), patch('sv08_identity.socket.getfqdn',return_value='sv08.example.test'), patch('sv08_identity.run',return_value=b'[]'):
+                self.assertIn('sv08.example.test',installed_names(data,data/'absent.conf'))
 
 
 class IdentityTests(unittest.TestCase):
