@@ -65,7 +65,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "f8819e371a09449eb54288d01fd38ab6",
+        "session": "identity-20261008"
+      },
       "input_paths": [
         "ui/host/session.js",
         "scripts/stage_printer_ui.py",
@@ -99,7 +103,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
