@@ -65,7 +65,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root",
+        "run": "35f751694dbf48eab505024246b16d70",
+        "session": "identity-20261008"
+      },
       "input_paths": [
         "ui/host/session.js",
         "runtime/sv08_mounts.py"
@@ -102,7 +106,7 @@
       "resumption": "Retain candidate and authorize complete host composition isolation under existing identity goal",
       "review_policy": "self",
       "review_reason": "Source implementation and isolated disposable cryptographic/access fixtures; exact live adoption has separate consequential operation assessment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate identity and access",
       "validation": null,
       "verification": null
