@@ -36,6 +36,34 @@ class ImageJobTests(ImageAdministrationTests):
         self.submit('3'*32, 'image.cancel'); self.jobs.work(lambda: self.controller)
         self.assertEqual(self.backend.primary(), 'A')
 
+    def test_restart_between_plan_validation_and_final_enqueue_closes_race(self):
+        from sv08_restart import publish
+        runtime = self.store.root/'runtime'; runtime.mkdir()
+        boot_id = self.store.root/'boot-id'; boot_id.write_text(self.boot['boot_id'])
+        self.store.runtime, self.store.boot_id = runtime, boot_id
+        plan = self.controller.plan('image.stage', {'digest': self.digest})
+        original = self.controller.plan
+        def plan_then_restart(action, arguments):
+            result = original(action, arguments)
+            with self.store.locked(): publish(runtime, boot_id)
+            return result
+        with patch.object(self.controller, 'plan', side_effect=plan_then_restart):
+            with self.assertRaisesRegex(ValueError, 'shutdown'):
+                self.jobs.submit('1'*32, plan, self.controller)
+        self.assertEqual(self.jobs.load(), [])
+        self.assertEqual(self.launches, [])
+
+    def test_queued_or_uncertain_image_job_blocks_mode_and_restart(self):
+        from sv08_restart import require_restart
+        row, plan = self.submit()
+        with self.assertRaisesRegex(ValueError, 'image job'): self.store.policy(mode='writable')
+        with self.store.locked(), self.assertRaisesRegex(ValueError, 'image job'): require_restart(self.store)
+        with self.jobs.lock('ledger.lock'):
+            view = self.jobs.view(); rows = view['active']
+            rows[0].update(phase='interrupted', message='Uncertain worker outcome')
+            self.jobs.save(rows, view['revision'], result=True)
+        with self.store.locked(), self.assertRaisesRegex(ValueError, 'uncertain'): require_restart(self.store)
+
     def test_conflicting_content_and_exclusion(self):
         row, plan = self.submit()
         other = dict(plan, arguments={'digest': 'a'*64})

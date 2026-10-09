@@ -71,6 +71,19 @@ class AdministrationTests(unittest.TestCase):
         self.controller.apply(self.controller.plan('policy.auto', {'enabled': False}))
         self.assertFalse(self.store.load()['auto_update'])
 
+    def test_shutdown_blocks_capabilities_and_previously_reviewed_policy(self):
+        from sv08_restart import publish
+        runtime = self.store.root/'runtime'; runtime.mkdir()
+        boot_id = self.store.root/'boot-id'; boot_id.write_text('current-boot')
+        self.store.runtime, self.store.boot_id = runtime, boot_id
+        plan = self.controller.plan('policy.auto', {'enabled': False})
+        before = self.store.load()
+        publish(runtime, boot_id)
+        status = self.controller.status()
+        self.assertTrue(all(not value['available'] for value in status['capabilities'].values()))
+        with self.assertRaisesRegex(ValueError, 'shutdown'): self.controller.apply(plan)
+        self.assertEqual(self.store.load(), before)
+
     def test_unknown_fields_and_command_paths_are_rejected(self):
         for request in ({'method':'shell', 'command':'id'}, {'method':'status', 'root':'/'},
                         {'method':'plan', 'action':'policy.auto', 'arguments':{'enabled':'false'}}):

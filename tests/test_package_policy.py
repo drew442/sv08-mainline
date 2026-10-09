@@ -1,8 +1,9 @@
 from pathlib import Path
 import sys
 import unittest
+from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_package import require_writable, SERVICES
+from sv08_package import require_writable, SERVICES, hook
 
 
 class PackagePolicyTests(unittest.TestCase):
@@ -19,3 +20,8 @@ class PackagePolicyTests(unittest.TestCase):
         require_writable({'mode':'writable'}, {'requested_mode':'writable','pending':None}, services)
         with self.assertRaises(ValueError):
             require_writable({'mode':'writable'}, {'requested_mode':'writable','pending':{'slot':'B'}}, services)
+
+    def test_legacy_apt_hook_refuses_shutdown_before_lease_access(self):
+        with patch('sv08_package.require_running', side_effect=ValueError('shutdown admission is closed')) as guard:
+            with self.assertRaisesRegex(ValueError, 'shutdown'): hook()
+        guard.assert_called_once_with()

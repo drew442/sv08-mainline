@@ -70,6 +70,24 @@ class SoftwareTests(unittest.TestCase):
         self.assertEqual(result['status'],'unknown');self.assertEqual(restored,[True])
         time.sleep(.55);self.assertFalse(marker.exists())
 
+    def test_delayed_reboot_blocks_plan_apply_and_worker_before_writes(self):
+        from sv08_restart import clear, publish
+        self.store.runtime = self.apt.runtime
+        boot_id = self.apt.runtime/'boot-id'; boot_id.write_text(self.boot['boot_id'])
+        self.store.boot_id = boot_id
+        plan = self.reviewed()
+        expected = publish(self.store.runtime, boot_id)
+        with self.assertRaisesRegex(ValueError, 'shutdown'): self.reviewed()
+        with self.assertRaisesRegex(ValueError, 'shutdown'): self.api.apply(plan['token'], plan['digest'])
+        self.assertEqual(self.launched, [])
+        self.assertEqual(self.apt.calls, [])
+        clear(self.store.runtime, expected, boot_id)
+        job = self.submit(plan)
+        publish(self.store.runtime, boot_id)
+        with self.assertRaisesRegex(ValueError, 'shutdown'): self.api.worker(job['id'])
+        self.assertEqual(self.apt.calls, [])
+        self.assertEqual(json.loads((self.api.root/'jobs'/(job['id']+'.json')).read_text())['status'], 'queued')
+
     def reviewed(self,action='install',arguments=None): return self.api.plan(action,arguments or {'package':'nano'})
     def test_legacy_store_without_budget_property_uses_shared_reserve_and_lock(self):
         safe=tempfile.TemporaryDirectory(prefix='.sv08-software-budget-',dir=Path.home())
