@@ -263,6 +263,8 @@ def configure_root(root, candidate, release):
     (root/'etc/systemd/system/fixture.service').write_text('[Unit]\nWants=sv08-boot-health.service\nAfter=sv08-boot-health.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 -u /input/guest.py\nStandardOutput=journal+console\nStandardError=journal+console\n')
     (root/'etc/systemd/system/sv08-boot-health.service.d').mkdir(parents=True,exist_ok=True)
     (root/'etc/systemd/system/sv08-boot-health.service.d/fixture.conf').write_text('[Unit]\nRequires=rauc.service\nAfter=rauc.service\n[Service]\nTimeoutStartSec=240\nStandardOutput=journal+console\nStandardError=journal+console\n')
+    (root/'etc/systemd/system/sv08-prepare.service.d').mkdir(parents=True,exist_ok=True)
+    (root/'etc/systemd/system/sv08-prepare.service.d/fixture.conf').write_text('[Service]\nStandardOutput=journal+console\nStandardError=journal+console\n')
     # Explicit synthetic dependency failure; production health callback remains unchanged.
     testbin=runtime/'fixture-bin';testbin.mkdir(exist_ok=True)
     wrapper=testbin/'systemctl'
