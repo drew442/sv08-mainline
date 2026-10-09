@@ -39,8 +39,10 @@ selected No login and opened/cancelled review, then verified policy unchanged.
 A second sidebar entry also succeeded. No mode was applied to the physical host.
 The source/diagnostic work used a bounded300-second primary diagnosis allowance
 and existing local browser tools; no child agents or tool installs were needed.
-An early private-browser cleanup race was corrected with bounded retries, and
-its exact residual profile was removed once no owned browser used it.
+Private-browser cleanup races were isolated to scratch profiles. The final
+driver terminates its owned Chrome process group before bounded profile cleanup
+and exited zero; the two exact residual profiles from earlier attempts were
+removed after verifying no owned browser used them.
 
 This verifies presentation and named web access. It does not claim a permission
 failure was observed, or qualify a printing release. Browser sessions need to
