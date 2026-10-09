@@ -53,6 +53,17 @@ class IntegrationManifestTests(unittest.TestCase):
             stage(work, self.manifest(), refresh=True, owner_key=owner_key)
         rebuild.assert_called_once_with(root)
 
+        from sv08_printer_stack import MOONRAKER, NGINX
+        self.assertEqual((target / 'seed/config/moonraker.conf').read_text(), MOONRAKER)
+        self.assertEqual((target / 'seed/config/nginx-mainsail.conf').read_text(), NGINX)
+        self.assertTrue((root / 'etc/sv08/nginx-mainsail-service.conf').is_file())
+        self.assertEqual((root / 'etc/systemd/system/nginx.service').readlink(), Path('/dev/null'))
+        wants = root / 'etc/systemd/system/multi-user.target.wants'
+        self.assertEqual({p.name for p in wants.iterdir()},
+                         {'sv08-boot-health.service', 'sv08-printer-api.service', 'sv08-mainsail.service'})
+        for name in ('sv08-klipper.service', 'sv08-moonraker.service'):
+            self.assertFalse((wants / name).exists())
+        self.assertFalse((target / 'seed/config/printer.cfg').exists())
         self.assertFalse((target / 'stale.py').exists())
         self.assertEqual((target / 'seed/authorized_keys').read_text(),
                          'ssh-ed25519 fixture owner\n')

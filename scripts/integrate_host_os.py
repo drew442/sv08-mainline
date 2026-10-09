@@ -101,8 +101,14 @@ def stage(work, manifest, refresh=False, owner_key=None):
     seed = target / 'seed/config'
     seed.mkdir(parents=True)
     sys.path.insert(0,str(REPO/'runtime'))
-    from sv08_printer_stack import MOONRAKER
+    from sv08_printer_stack import MOONRAKER, NGINX, MAINSail
     (seed/'moonraker.conf').write_text(MOONRAKER)
+    (seed/'nginx-mainsail.conf').write_text(NGINX)
+    (seed/'mainsail.json').write_text(json.dumps(MAINSail, indent=2)+'\n')
+    web_config = root / 'etc/sv08'
+    web_config.mkdir(exist_ok=True)
+    shutil.copyfile(REPO / 'configs/host-os/nginx-mainsail-service.conf',
+                    web_config / 'nginx-mainsail-service.conf')
     units = root / 'etc/systemd/system'
     for path in (REPO / 'configs/host-os/systemd').glob('*.service'):
         shutil.copyfile(path, units / path.name)
@@ -186,7 +192,11 @@ def stage(work, manifest, refresh=False, owner_key=None):
     if health_link.exists() or health_link.is_symlink():
         health_link.unlink()
     health_link.symlink_to('../sv08-boot-health.service')
-    # No printer config is seeded, and printer units are not enabled here.
+    for name in ('sv08-printer-api.service', 'sv08-mainsail.service'):
+        link = health_wants / name
+        link.unlink(missing_ok=True)
+        link.symlink_to('../' + name)
+    # Physical printer services remain separately gated; no printer.cfg is seeded.
     (work / 'integration-staged.json').write_text(json.dumps(manifest, indent=2)+'\n')
 
 

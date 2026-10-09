@@ -19,6 +19,7 @@ validate_config: False
 # No update_manager: applications and the OS are coordinated image payloads.
 # Authorization remains enabled; do not trust all LAN clients implicitly.
 [authorization]
+force_logins: True
 trusted_clients:
   127.0.0.1
 
@@ -39,12 +40,16 @@ server {
     ssl_certificate /data/sv08/system/identity/current/services/server.crt;
     ssl_certificate_key /data/sv08/system/identity/current/services/server.key;
     ssl_protocols TLSv1.2 TLSv1.3;
+    auth_basic "SV08 printer";
+    auth_basic_user_file /data/sv08/mainsail-auth/users;
     root /usr/share/sv08-mainline/mainsail;
     client_max_body_size 64m;
     location / { try_files $uri $uri/ /index.html; }
     location = /config.json { alias /run/sv08/printer_data/config/mainsail.json; }
     location ~ ^/(printer|server|access|machine|api)/ {
         proxy_pass http://127.0.0.1:7125;
+        proxy_set_header Authorization "";
+        include /data/sv08/mainsail-auth/moonraker-proxy.conf;
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $remote_addr;
@@ -52,6 +57,8 @@ server {
     }
     location /websocket {
         proxy_pass http://127.0.0.1:7125;
+        proxy_set_header Authorization "";
+        include /data/sv08/mainsail-auth/moonraker-proxy.conf;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
