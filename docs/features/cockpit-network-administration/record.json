@@ -1,60 +1,74 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "abd701a3a42d64651c30843872830f1d0157bafd65fa972d66facb39e249e825",
+    "rationale": "Owner explicitly requested this goal and agent implementation",
+    "reference": "docs/features/cockpit-network-administration/owner-request.md",
+    "reference_sha256": "52640c5430976458784382bf2aaac67360b11d2ce4a32e68f3a4fb668f6f5308",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-network-administration/owner-request.md": "52640c5430976458784382bf2aaac67360b11d2ce4a32e68f3a4fb668f6f5308"
+    },
+    "scope_sha256": "7a480660fc15cbf5e38b1a26be8cc2d8d0acc725c2bc458e723081026734d7a4",
+    "session": "cockpit-network-20261009",
+    "source_commit": "595ac0baf89b3225bcc1707b7ed8ea34ae3628ab"
+  },
+  "checks": [
+    {
+      "description": "Network status/configuration/name/restart validation and rollback/process/reboot failure cases",
+      "environment": "offline",
+      "id": "backend"
+    },
+    {
+      "description": "Administrator/loading/review/apply/confirm/reconnect and stale authority browser journeys",
+      "environment": "offline",
+      "id": "browser"
+    },
+    {
+      "description": "Runtime/systemd/UI image integration and appropriate regression checks",
+      "environment": "offline",
+      "id": "integration"
+    }
+  ],
+  "created": "2026-10-09",
+  "decision": null,
   "format_version": 2,
   "id": "cockpit-network-administration",
   "kind": "feature",
-  "title": "Cockpit network administration",
-  "author": "root/coordinator",
-  "created": "2026-10-09",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/cockpit-network-administration/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/cockpit-network-administration/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "backend",
-      "description": "Network status/configuration/name/restart validation and rollback/process/reboot failure cases",
-      "environment": "offline"
-    },
-    {
-      "id": "browser",
-      "description": "Administrator/loading/review/apply/confirm/reconnect and stale authority browser journeys",
-      "environment": "offline"
-    },
-    {
-      "id": "integration",
-      "description": "Runtime/systemd/UI image integration and appropriate regression checks",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate network administration",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "backend",
         "browser",
         "integration"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source implementation and offline validation; live network migration is outside delivery and any consequential operation requires its exact assessment.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_admission.py",
+        "runtime/sv08_data_budget.py",
+        "runtime/sv08_boot.py",
+        "runtime/sv08_mounts.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_identity.py",
+        "ui/host/session.js"
+      ],
       "owned_paths": [
         "runtime/sv08_network.py",
         "tests/test_network_admin.py",
@@ -72,15 +86,15 @@
         "docs/features/cockpit-network-administration/evidence.md",
         "docs/hardware/printer-network.md"
       ],
-      "input_paths": [
-        "runtime/sv08_admission.py",
-        "runtime/sv08_data_budget.py",
-        "runtime/sv08_boot.py",
-        "runtime/sv08_mounts.py",
-        "runtime/sv08_admin.py",
-        "runtime/sv08_identity.py",
-        "ui/host/session.js"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source implementation and offline validation; live network migration is outside delivery and any consequential operation requires its exact assessment.",
+      "status": "pending",
+      "title": "Implement and validate network administration",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Cockpit network administration"
 }
