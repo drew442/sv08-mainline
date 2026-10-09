@@ -439,13 +439,22 @@ class Network:
             if network.command('systemctl','show','klipper.service','-p','ActiveState','--value') not in ('inactive','failed'):
                 raise ValueError('Legacy Klipper prevents controlled restart')
             expected=publish(self.runtime,self.boot_id)
-            try:
-                network.command('systemctl','--no-block','reboot')
-            except Exception:
-                clear(self.runtime,expected,self.boot_id)
-                raise
+            # Once the request can reach systemd, a lost acknowledgement cannot
+            # prove that shutdown was refused. Keep the barrier through that
+            # uncertainty, including interrupted callers.
             systemd.rebooting=True
             if lease is not None: lease.keep_stopped=True
+            try:
+                network.command('systemctl','--no-block','reboot')
+            except (FileNotFoundError, PermissionError):
+                # The subprocess could not launch. Clear only our exact intent
+                # before allowing the admitted services to be restored.
+                clear(self.runtime,expected,self.boot_id)
+                systemd.rebooting=False
+                if lease is not None: lease.keep_stopped=False
+                raise
+            except Exception:
+                raise ValueError('Restart acknowledgment is uncertain; admission remains closed until the next boot') from None
         return dict(restarting=True)
 
     def request(self,r):

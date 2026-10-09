@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 import json
 import os
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -171,17 +172,45 @@ class NetworkTests(unittest.TestCase):
         original = self.command
         def command(*args):
             if args == ('systemctl', '--no-block', 'reboot'):
-                raise ValueError('Reboot queue refused')
+                raise FileNotFoundError('Reboot command could not launch')
             return original(*args)
         self.network.command = command
         with patch('sv08_admission.os.geteuid', return_value=0):
-            with self.assertRaisesRegex(ValueError, 'queue refused'):
+            with self.assertRaisesRegex(FileNotFoundError, 'could not launch'):
                 self.network.request(dict(method='restart', confirm=True))
             self.assertFalse((self.runtime/'shutdown.json').exists())
             self.assertEqual(set(services.states.values()), {'active'})
             self.network.command = original
             self.network.request(dict(method='restart', confirm=True))
         self.assertEqual(set(services.states.values()), {'inactive'})
+
+    def test_lost_reboot_acknowledgment_keeps_services_stopped_and_writers_blocked(self):
+        from sv08_admission import Admission
+        from sv08_restart import start_admitted
+        from sv08_state import Store
+        from test_service_admission import Services
+        original=self.command
+        # A transport timeout or completed command error cannot establish that
+        # systemd did not accept the request before the reply was lost.
+        for error in (subprocess.TimeoutExpired(['systemctl','reboot'],40), ValueError('Reply lost')):
+            with self.subTest(error=type(error).__name__):
+                services=Services()
+                self.network.admission=Admission(self.runtime,services,lambda path:None,boot_id=self.boot)
+                def command(*args):
+                    if args==('systemctl','--no-block','reboot'): raise error
+                    return original(*args)
+                self.network.command=command
+                with patch('sv08_admission.os.geteuid',return_value=0):
+                    with self.assertRaisesRegex(ValueError,'uncertain.*closed'):
+                        self.network.request(dict(method='restart',confirm=True))
+                    self.assertTrue((self.runtime/'shutdown.json').exists())
+                    self.assertEqual(set(services.states.values()),{'inactive'})
+                    self.assertFalse(any(action=='start' for action,name in services.calls))
+                    with self.assertRaisesRegex(ValueError,'shutdown'), Admission(self.runtime,services,boot_id=self.boot)(): pass
+                    with self.assertRaisesRegex(ValueError,'shutdown'), start_admitted(self.runtime,self.boot): pass
+                    store=Store(self.data,budget=self.network.budget,runtime=self.runtime,boot_id=self.boot)
+                    with self.assertRaisesRegex(ValueError,'shutdown'): store.policy(mode='writable')
+                (self.runtime/'shutdown.json').unlink()
 
     def test_intent_no_space_does_not_queue_reboot_and_restores_services(self):
         import errno
