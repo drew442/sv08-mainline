@@ -71,6 +71,19 @@ class SoftwareTests(unittest.TestCase):
         time.sleep(.55);self.assertFalse(marker.exists())
 
     def reviewed(self,action='install',arguments=None): return self.api.plan(action,arguments or {'package':'nano'})
+    def test_legacy_store_without_budget_property_uses_shared_reserve_and_lock(self):
+        safe=tempfile.TemporaryDirectory(prefix='.sv08-software-budget-',dir=Path.home())
+        self.addCleanup(safe.cleanup)
+        store=Store(Path(safe.name),budget=FakeBudget());store.save(self.state)
+        del store.budget
+        api=Software(store,self.boot,self.apt,self.api.admission,self.launched.append)
+        self.assertEqual(api.budget.floor,768*1024*1024)
+        plan=api.plan('reconcile',{})
+        self.assertEqual(plan['preview']['data_reserve_bytes'],api.budget.floor)
+        job=api.apply(plan['token'],plan['digest'])
+        self.assertEqual(api.worker(job['id'])['status'],'completed')
+        self.assertTrue(store.load()['slots']['A']['customized'])
+
     def test_partial_fresh_service_install_is_disabled_before_admission_exits(self):
         real=Apt(root=self.apt.root)
         real.inventory=lambda: []

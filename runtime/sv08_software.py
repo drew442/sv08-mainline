@@ -21,6 +21,7 @@ import time
 import uuid
 from sv08_state import Store, atomic_json
 from sv08_admission import Admission
+from sv08_data_budget import Budget
 from sv08_package import require_writable, SERVICES
 
 CATALOG = [dict(package=name, title=title, service=service) for name, title, service in
@@ -273,6 +274,8 @@ class Apt:
 class Software:
     def __init__(self, store, boot, apt=None, admission=None, launch=None):
         self.store, self.boot = store, boot
+        # Older installed Store versions predate the shared budget property.
+        self.budget = getattr(store, 'budget', None) or Budget(store.root, state_reserve=store.reserve_bytes, copy_limit=store.copy_limit_bytes)
         self.apt = apt or Apt()
         self.admission = admission or Admission()
         self.launch = launch or (lambda ident: subprocess.run(['systemctl', 'start', '--no-block', 'sv08-software-worker@'+ident+'.service'], check=True))
@@ -284,7 +287,7 @@ class Software:
 
     def write(self, path, value):
         if len(json.dumps(value).encode()) > MAX_RECORD: raise ValueError('Software record exceeds its limit')
-        self.store.budget.check(MAX_RECORD, 2)
+        self.budget.check(MAX_RECORD, 2)
         atomic_json(path, value)
 
     def eligibility(self, state):
@@ -346,7 +349,7 @@ class Software:
             preview['service_effect'] = effect
         if action == 'acknowledge': preview['outcome'] = self.inspect(arguments['id'])
         preview['data_free_bytes'] = os.statvfs(self.store.root).f_bavail * os.statvfs(self.store.root).f_frsize
-        preview['data_reserve_bytes'] = self.store.budget.floor
+        preview['data_reserve_bytes'] = self.budget.floor
         return dict(action=action, arguments=arguments, available=not reason, reason=reason, binding=digest(dict(state=state, boot=self.boot, evidence=evidence)), preview=preview,
                     preserves_user_data=True, reconciliation_required=True)
 
@@ -360,7 +363,7 @@ class Software:
                 service_state=evidence['service'] if item['service'] else None) for item in CATALOG],
             capabilities={name: dict(available=not reason or name == 'reconcile', reason='' if name == 'reconcile' else reason) for name in ('install','remove','service','reconcile')},
             storage=dict(root_free_bytes=os.statvfs(self.apt.root).f_bavail*os.statvfs(self.apt.root).f_frsize, root_reserve_bytes=ROOT_RESERVE,
-                data_free_bytes=os.statvfs(self.store.root).f_bavail*os.statvfs(self.store.root).f_frsize, data_reserve_bytes=self.store.budget.floor),
+                data_free_bytes=os.statvfs(self.store.root).f_bavail*os.statvfs(self.store.root).f_frsize, data_reserve_bytes=self.budget.floor),
             jobs=self.jobs(), reconciliation=dict(activation_blocked=state['slots'][self.boot['slot']]['customized'],
                 reason='Customized roots require a validated derived image; this report cannot validate arbitrary root edits.', exports=[p.stem for p in sorted((self.root/'exports').glob('*.json'),key=lambda p:p.stat().st_mtime)]))
 
@@ -383,7 +386,7 @@ class Software:
 
     def plan(self, action, arguments):
         self.validate(action, arguments)
-        with self.store.locked(nonblocking=True), self.store.budget.locked():
+        with self.store.locked(nonblocking=True), self.budget.locked():
             self.setup(); self.prune()
             self.busy(report=action in ('reconcile','acknowledge'))
             if len(list((self.root/'plans').glob('*.json'))) >= MAX_JOBS: raise ValueError('Software review history is full')
@@ -399,7 +402,7 @@ class Software:
 
     def apply(self, token, reviewed_digest):
         if not isinstance(token, str) or not TOKEN.fullmatch(token): raise ValueError('Invalid reviewed token')
-        with self.store.locked(nonblocking=True), self.store.budget.locked():
+        with self.store.locked(nonblocking=True), self.budget.locked():
             self.setup(); self.prune()
             path = self.root/'jobs'/(token+'.json')
             if path.exists():
@@ -418,7 +421,7 @@ class Software:
             self.write(path, job)
         try: self.launch(token)
         except (OSError, subprocess.SubprocessError):
-            with self.store.locked(), self.store.budget.locked():
+            with self.store.locked(), self.budget.locked():
                 job.update(status='failed', message='Could not launch software worker; no package operation was requested')
                 self.write(path, job)
         return job
@@ -537,7 +540,7 @@ class Software:
 
     def worker(self, ident):
         if not TOKEN.fullmatch(ident): raise ValueError('Invalid job identity')
-        with self.store.locked(nonblocking=True), self.store.budget.locked():
+        with self.store.locked(nonblocking=True), self.budget.locked():
             self.setup(); path = self.root/'jobs'/(ident+'.json'); job = read_record(path)
             if job['status'] != 'queued': raise ValueError('Software job is not queued')
             if job['boot_id'] != self.boot['boot_id']: raise ValueError('Software job belongs to an earlier boot')
