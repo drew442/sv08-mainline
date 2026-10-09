@@ -86,7 +86,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible presentation fix with unchanged root and privilege gates; source and exact narrow installed JavaScript update self validated.",
-      "status": "validated",
+      "status": "done",
       "title": "Correct privileged page loading state and verify sidebar entry",
       "validation": {
         "actor": "root/coordinator",
