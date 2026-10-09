@@ -225,7 +225,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source is self validated; installed access and reboot transitions are independently assessed separately before execution.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement, install and validate durable printer web services",
       "validation": {
         "actor": "root/coordinator",
