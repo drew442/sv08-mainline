@@ -217,7 +217,7 @@ class WebTests(unittest.TestCase):
         self.assertNotIn('klipper', api); self.assertNotIn('dialout', api)
         for raw in (api, nginx):
             self.assertIn('PrivateDevices=yes', raw); self.assertIn('User=sv08', raw)
-            self.assertIn('/run/sv08/admission.lock', raw)
+            self.assertIn('/usr/lib/sv08/sv08_restart.py check-start', raw)
         prepare = (root/'sv08-web-prepare.service').read_text()
         # Both preparation helpers use the shared nonblocking data budget lock.
         self.assertIn('Requires=sv08-prepare.service sv08-identity.service', prepare)
