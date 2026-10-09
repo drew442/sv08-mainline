@@ -1,0 +1,90 @@
+{
+  "format_version": 2,
+  "id": "persistent-printer-stack",
+  "kind": "feature",
+  "title": "Persistent authenticated printer web stack",
+  "author": "root/coordinator",
+  "created": "2026-10-09",
+  "priority": 1,
+  "proposal": "docs/features/persistent-printer-stack/proposal.md",
+  "requirements": [
+    "docs/features/persistent-printer-stack/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "source",
+      "description": "Authentication provisioning and focused regression tests",
+      "environment": "offline"
+    },
+    {
+      "id": "staging",
+      "description": "Reproducible image service staging and hardware gates",
+      "environment": "offline"
+    },
+    {
+      "id": "installed",
+      "description": "Supplemental named diagnostic-host authenticated reboot acceptance",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement, install and validate durable printer web services",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "source",
+        "staging",
+        "installed"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source is self validated; installed access and reboot transitions are independently assessed separately before execution.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_web.py",
+        "runtime/sv08_printer_stack.py",
+        "configs/host-os/moonraker.conf",
+        "configs/host-os/nginx-mainsail-service.conf",
+        "configs/host-os/systemd/sv08-printer-api.service",
+        "configs/host-os/systemd/sv08-mainsail.service",
+        "configs/host-os/systemd/sv08-web-prepare.service",
+        "configs/host-os/systemd/sv08-web-auth.service",
+        "scripts/integrate_host_os.py",
+        "tests/test_web_stack.py",
+        "tests/test_host_integration.py",
+        "tests/test_host_boot_health.py",
+        "tests/test_printer_stack.py",
+        "docs/features/persistent-printer-stack/evidence.md",
+        "docs/hardware/printer-web-stack.md"
+      ],
+      "input_paths": [
+        "runtime/sv08_boot.py",
+        "runtime/sv08_identity.py",
+        "runtime/sv08_mounts.py",
+        "runtime/sv08_data_budget.py",
+        "configs/host-os/systemd/sv08-klipper.service",
+        "configs/host-os/sv08-identity.service",
+        "configs/apps/moonraker.json",
+        "scripts/package_python_app.py",
+        "scripts/package_mainsail.py",
+        "scripts/stage_printer_ui.py",
+        "docs/hardware/mainsail-authentication-20261007.md"
+      ]
+    }
+  ]
+}
