@@ -86,7 +86,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Small reversible integration dependency of explicitly requested independent Mainsail access page.",
-      "status": "validated",
+      "status": "done",
       "title": "Keep independent access controls available",
       "validation": {
         "actor": "root/coordinator",
