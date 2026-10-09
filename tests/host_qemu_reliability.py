@@ -134,9 +134,17 @@ def guard():
     seen=set()
     for file in SCRATCH.rglob('*'):
         if file.is_symlink() or not file.is_file() or file==path: continue
-        info=file.stat();identity=f'{info.st_dev}:{info.st_ino}'
+        info=file.stat();base_identity=f'{info.st_dev}:{info.st_ino}'
+        # Reuse the live incarnation through writes and renames: ctime changes
+        # during both. A retired inode gets a new incarnation when seen again.
+        # Owned deletion boundaries must be observed before creating replacements.
+        active=[key for key,row in ledger['files'].items()
+                if (key==base_identity or key.startswith(base_identity+':'))
+                and not row.get('retired')]
+        if len(active)>1:raise ValueError('Ambiguous live allocation identity')
+        identity=active[0] if active else base_identity
         row=ledger['files'].get(identity)
-        if row and row.get('retired'):
+        if not active and row is not None:
             identity+=f':{info.st_ctime_ns}'
             row=ledger['files'].get(identity)
         seen.add(identity)
@@ -451,11 +459,11 @@ def journey():
         if number==CONFIG.get('counter_decrease_boot'):
             intervention=SCRATCH/'normal-counter-decrease.json'
             if intervention.exists() or values['BOOT_ORDER']!='B' or values['BOOT_A_LEFT']!='0' or values['BOOT_B_LEFT']!='3':raise ValueError('Explicit counter-decrease predecessor differs')
-            before=dict(values)
+            environment_before=dict(values)
             subprocess.run(['fw_setenv','-c',str(env),'BOOT_B_LEFT','1'],check=True,capture_output=True,timeout=30)
             values=dict(line.split('=',1) for line in subprocess.check_output(['fw_printenv','-c',str(env),'sv08_env_layout','BOOT_ORDER','BOOT_A_LEFT','BOOT_B_LEFT'],text=True).splitlines())
-            if values!={**before,'BOOT_B_LEFT':'1'}:raise ValueError('Fixture counter decrease changed another boot field')
-            intervention.write_text(json.dumps({'reason':'Explicit fixture counter DECREASE, never refill; next host consumption yields A0/B0 before actual production normal health','boot_number':number,'environment_before':before,'environment_after_decrease':values},indent=2)+'\n')
+            if values!={**environment_before,'BOOT_B_LEFT':'1'}:raise ValueError('Fixture counter decrease changed another boot field')
+            intervention.write_text(json.dumps({'reason':'Explicit fixture counter DECREASE, never refill; next host consumption yields A0/B0 before actual production normal health','boot_number':number,'environment_before':environment_before,'environment_after_decrease':values},indent=2)+'\n')
         slot=next((s for s in values['BOOT_ORDER'].split() if int(values['BOOT_'+s+'_LEFT'])>0),None)
         if slot is None:raise ValueError('No environment boot attempts remain')
         subprocess.run(['fw_setenv','-c',str(env),'BOOT_'+slot+'_LEFT',str(int(values['BOOT_'+slot+'_LEFT'])-1)],check=True,capture_output=True,timeout=30)
