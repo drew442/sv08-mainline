@@ -53,7 +53,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "d912000fae4242b5b1589b894099fb87",
+        "session": "mainsail-access-20261009"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_data_budget.py",
@@ -82,7 +86,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source self validated; exact installed authentication transition independently assessed before operation.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate Mainsail access management",
       "validation": null,
       "verification": null
