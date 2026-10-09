@@ -100,8 +100,9 @@ def snapshot(source, target):
 
 
 class Store:
-    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None):
+    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None, runtime=Path('/run/sv08'), boot_id=Path('/proc/sys/kernel/random/boot_id')):
         self.root = Path(root).absolute()
+        self.runtime, self.boot_id = Path(runtime), Path(boot_id)
         for path in (self.root, *self.root.parents):
             if path.is_symlink():
                 raise ValueError('Persistent root must not contain symlinks')
@@ -178,20 +179,27 @@ class Store:
                 self.save(state)
             return state
 
+    def require_running(self):
+        from sv08_restart import require_running
+        require_running(self.runtime, self.boot_id)
+
     def policy(self, mode=None, auto_update=None):
         with self.locked():
+            if mode is not None or auto_update is not None:
+                self.require_running()
             state = self.load()
             if mode is not None:
                 if mode not in ('immutable', 'writable'):
                     raise ValueError('Unknown operating mode')
-                if state['pending']:
-                    raise ValueError('Finish or cancel the pending image transaction before changing mode')
+                from sv08_restart import require_mode_change
+                require_mode_change(self, state)
                 state['requested_mode'] = mode
             if auto_update is not None:
                 if not isinstance(auto_update, bool):
                     raise ValueError('Automatic update policy must be a boolean')
                 state['auto_update'] = auto_update
-            self.save(state)
+            if mode is not None or auto_update is not None:
+                self.save(state)
             return state
 
     def expect_trial(self, slot, release, previous_slot):
@@ -202,6 +210,7 @@ class Store:
         """
         identifier(release)
         with self.locked():
+            self.require_running()
             state = self.load()
             if slot not in ('A', 'B') or previous_slot not in ('A', 'B') or slot == previous_slot:
                 raise ValueError('Trial must target the other slot')
@@ -217,6 +226,7 @@ class Store:
     def cancel_trial(self):
         """Caller must disarm boot selection first; a running trial cannot be cancelled."""
         with self.locked():
+            self.require_running()
             state = self.load()
             if state['pending'] and state['pending']['phase'] != 'armed':
                 raise ValueError('Trial has started; use explicit rollback')
