@@ -45,7 +45,26 @@
         "mainsail-access:implement"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ui-isolation",
+          "document": "docs/features/mainsail-access-isolation/evidence.md",
+          "document_sha256": "d9c28dd4c2cbc0da8a61225c8184ebc2888954852fe66d4a4f5d6100ebb970a3",
+          "environment": "offline",
+          "limitations": "Diagnostic app retained its older unrelated bytes; no auth-mode changes/restarts/reboots/physical output. Source validation self, exact operation separately independently assessed.",
+          "method": "Chromium production-selector behavior plus existing full access journey, node syntax, stable complete diff, independently assessed one-file exact installed patch and actual HTTPS Cockpit error handler injection/read/review/cancel acceptance.",
+          "profile": "test-sv08-01 diagnostic installed web; disposable Chromium mocks",
+          "source_commit": "10756bac41b07aeaf23eba8aa745224c0e861271",
+          "source_sha256": {
+            "docs/features/mainsail-access-isolation/evidence.md": "d9c28dd4c2cbc0da8a61225c8184ebc2888954852fe66d4a4f5d6100ebb970a3",
+            "tests/test_mainsail_access_ui.py": "154372b97856aa4e407753dac8cf528ed70f184ed999bd9475aa5d60c959b80f",
+            "ui/host/app.js": "4ae3dafd24db8a86ec9210487faeae57fe310307ecbd12a0e511983e3e9a14d0",
+            "ui/host/index.html": "e0152194fb04d6ced93c6c49f72f55e57dd1b9f5e9133a83f1f57cf8be6d6e8d",
+            "ui/host/mainsail-access.js": "ff0c671658f5d48884eec8e07ee8d451e3225e416697da67e6877aaf351c9e84"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
@@ -67,9 +86,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Small reversible integration dependency of explicitly requested independent Mainsail access page.",
-      "status": "running",
+      "status": "validated",
       "title": "Keep independent access controls available",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "74fc6d237da3748af77cdd1de36c5608cfe54b46e4c5cfbbef0e3b953556be40",
+        "evidence_sha256": "d80759569cac66ca25bb983f6d9dbcba7bf193da5e94da97b4e7c546c0d38016",
+        "outcome": "passed",
+        "rationale": "Production error selectors and all access browser journeys passed; exact installed patch preserved older application bytes and actual privileged Cockpit error/cancel acceptance passed",
+        "session": "mainsail-access-isolation-20261009",
+        "source_commit": "10756bac41b07aeaf23eba8aa745224c0e861271"
+      },
       "verification": null
     }
   ],
