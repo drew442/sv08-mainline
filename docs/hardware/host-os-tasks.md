@@ -181,8 +181,13 @@ enumeration were re-established on 2026-09-12; see the
   [verified delivery](../features/host-image-job-resolution/record.json).
 - [ ] Finish additional-software catalog, dependency/space preview, admitted APT
   install/remove, service configuration and customization reconciliation.
-- [ ] Implement network/access forms, connectivity rollback, host naming/hosts
-  consistency and controlled idle restart. Ordinary administration must need no shell.
+- [x] Implement network/access forms, connectivity rollback, host naming/hosts
+  consistency and controlled idle restart. Ordinary administration needs no shell.
+  [Network delivery](../features/cockpit-network-administration/evidence.md) covers
+  backend/browser, actual ARM NetworkManager and installed Cockpit checks;
+  [Mainsail access](../features/mainsail-access-loading/evidence.md) covers the
+  access page. Physical Wi-Fi migration, interruption and boot-hook qualification
+  remain in the hardware/release checks below.
 - [x] Implement reviewed recovery data export with checksummed/readback-verified
   archives, source/destination change refusal, GTK workflow and actual read-only
   source/FAT32 fixture; [export evidence](host-recovery-export.md).

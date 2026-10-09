@@ -1,5 +1,27 @@
 # Current delivery goals
 
+## Completed goal — Cockpit network administration, 2026-10-09
+
+Dedicated **Network** controls are implemented and installed: interfaces and saved
+Wi-Fi connections, DHCP/static IPv4 and DNS, hostname/FQDN, reviewed changes with
+180-second confirmation and durable rollback, existing-CA certificate updates,
+and reviewed restart with atomic idle admission. Backend/browser/integration and
+nine actual ARM NetworkManager journeys passed. Actual printer Cockpit HTTPS
+PAM/sudo status and cancelled reviews passed with all 38 preservation hashes and
+current managed Mainsail **No login** policy unchanged. See [delivery evidence](../docs/features/cockpit-network-administration/evidence.md).
+
+The network/access implementation requirement is complete. Physical network
+migration, interruption, new boot-hook execution, heating/motion and release
+qualification remain separate. Agent implementation/integration and a targeted
+independent source/installation assessment were used; completion is self-validated.
+
+Current October 9 state supersedes the temporary/current-boot wording in the older
+identity summary: persistent Mainsail/API units are installed and have passed their
+normal-boot checks. Generated hardware configuration remains applied to the
+diagnostic printer; Klipper/health/RAUC remain masked, PSU OFF, no MCU session,
+root/boot read-only. No network/name/restart mutation occurred for this goal.
+
+
 ## Completed goal — persistent printer identity, 2026-10-08
 
 The printer now has a persistent CA signing Cockpit and Mainsail certificates,
