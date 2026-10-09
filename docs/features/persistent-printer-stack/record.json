@@ -1,60 +1,78 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "96ca8c05b073d423d5fb11dbb7b070117055deca02d826c2f4103c8e33700a92",
+    "rationale": "Owner explicitly requested this goal, delegated agents, installed persistence and completion.",
+    "reference": "docs/features/persistent-printer-stack/owner-request.md",
+    "reference_sha256": "cc81b864b0de999bf30a5941fb32b2b86889b2e611d60607579018d640099062",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/persistent-printer-stack/owner-request.md": "cc81b864b0de999bf30a5941fb32b2b86889b2e611d60607579018d640099062"
+    },
+    "scope_sha256": "52a58d897ce8143c643571935ae33e5750f8d06ba578d9329e70d8c6e52c395e",
+    "session": "web-stack-20261009",
+    "source_commit": "a0b14574326910727e6d78e67f07c536474c453b"
+  },
+  "checks": [
+    {
+      "description": "Authentication provisioning and focused regression tests",
+      "environment": "offline",
+      "id": "source"
+    },
+    {
+      "description": "Reproducible image service staging and hardware gates",
+      "environment": "offline",
+      "id": "staging"
+    },
+    {
+      "description": "Supplemental named diagnostic-host authenticated reboot acceptance",
+      "environment": "offline",
+      "id": "installed"
+    }
+  ],
+  "created": "2026-10-09",
+  "decision": null,
   "format_version": 2,
   "id": "persistent-printer-stack",
   "kind": "feature",
-  "title": "Persistent authenticated printer web stack",
-  "author": "root/coordinator",
-  "created": "2026-10-09",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/persistent-printer-stack/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/persistent-printer-stack/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "source",
-      "description": "Authentication provisioning and focused regression tests",
-      "environment": "offline"
-    },
-    {
-      "id": "staging",
-      "description": "Reproducible image service staging and hardware gates",
-      "environment": "offline"
-    },
-    {
-      "id": "installed",
-      "description": "Supplemental named diagnostic-host authenticated reboot acceptance",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement, install and validate durable printer web services",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "source",
         "staging",
         "installed"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source is self validated; installed access and reboot transitions are independently assessed separately before execution.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_boot.py",
+        "runtime/sv08_identity.py",
+        "runtime/sv08_mounts.py",
+        "runtime/sv08_data_budget.py",
+        "configs/host-os/systemd/sv08-klipper.service",
+        "configs/host-os/sv08-identity.service",
+        "configs/apps/moonraker.json",
+        "scripts/package_python_app.py",
+        "scripts/package_mainsail.py",
+        "scripts/stage_printer_ui.py",
+        "docs/hardware/mainsail-authentication-20261007.md"
+      ],
       "owned_paths": [
         "runtime/sv08_web.py",
         "runtime/sv08_printer_stack.py",
@@ -72,19 +90,15 @@
         "docs/features/persistent-printer-stack/evidence.md",
         "docs/hardware/printer-web-stack.md"
       ],
-      "input_paths": [
-        "runtime/sv08_boot.py",
-        "runtime/sv08_identity.py",
-        "runtime/sv08_mounts.py",
-        "runtime/sv08_data_budget.py",
-        "configs/host-os/systemd/sv08-klipper.service",
-        "configs/host-os/sv08-identity.service",
-        "configs/apps/moonraker.json",
-        "scripts/package_python_app.py",
-        "scripts/package_mainsail.py",
-        "scripts/stage_printer_ui.py",
-        "docs/hardware/mainsail-authentication-20261007.md"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source is self validated; installed access and reboot transitions are independently assessed separately before execution.",
+      "status": "pending",
+      "title": "Implement, install and validate durable printer web services",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Persistent authenticated printer web stack"
 }
