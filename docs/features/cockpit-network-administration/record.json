@@ -1,0 +1,86 @@
+{
+  "format_version": 2,
+  "id": "cockpit-network-administration",
+  "kind": "feature",
+  "title": "Cockpit network administration",
+  "author": "root/coordinator",
+  "created": "2026-10-09",
+  "priority": 2,
+  "proposal": "docs/features/cockpit-network-administration/proposal.md",
+  "requirements": [
+    "docs/features/cockpit-network-administration/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "backend",
+      "description": "Network status/configuration/name/restart validation and rollback/process/reboot failure cases",
+      "environment": "offline"
+    },
+    {
+      "id": "browser",
+      "description": "Administrator/loading/review/apply/confirm/reconnect and stale authority browser journeys",
+      "environment": "offline"
+    },
+    {
+      "id": "integration",
+      "description": "Runtime/systemd/UI image integration and appropriate regression checks",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate network administration",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "backend",
+        "browser",
+        "integration"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source implementation and offline validation; live network migration is outside delivery and any consequential operation requires its exact assessment.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_network.py",
+        "tests/test_network_admin.py",
+        "tests/test_network_ui.py",
+        "tests/test_host_integration.py",
+        "configs/host-os/systemd/sv08-network-rollback.service",
+        "configs/host-os/systemd/sv08-network-rollback.timer",
+        "scripts/integrate_host_os.py",
+        "scripts/stage_admin_ui.py",
+        "ui/host/network.js",
+        "ui/host/index.html",
+        "ui/host/navigation.js",
+        "ui/host/app.js",
+        "ui/host/style.css",
+        "docs/features/cockpit-network-administration/evidence.md",
+        "docs/hardware/printer-network.md"
+      ],
+      "input_paths": [
+        "runtime/sv08_admission.py",
+        "runtime/sv08_data_budget.py",
+        "runtime/sv08_boot.py",
+        "runtime/sv08_mounts.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_identity.py",
+        "ui/host/session.js"
+      ]
+    }
+  ]
+}

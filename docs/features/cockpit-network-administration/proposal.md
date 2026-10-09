@@ -1,0 +1,5 @@
+# Cockpit network administration
+
+Provide a dedicated Network page for ordinary network administration without a shell. Use NetworkManager rather than a second network stack. Show connections and addresses, select Wi-Fi networks and credentials, configure DHCP or static IPv4 and DNS, and manage persistent hostname/FQDN and hosts aliases. Review changes before applying, retain a bounded rollback window until the browser confirms connectivity, and recover unfinished changes after process loss or reboot. Restart requires atomic idle admission. Never expose saved network secrets. Preserve persistent CA/SSH identity and accepted certificate reconciliation schedule.
+
+Acceptance: backend behavior and failure/rollback tests; browser administrator/loading/review/confirmation/stale-authority journey; image staging/unit integration; stable diff and publication. Installation of the controls may be performed with an exact bounded preservation check; no live network migration, credential change, printer output or reboot is necessary for this delivery. Physical network fault and printing acceptance remain separate.
