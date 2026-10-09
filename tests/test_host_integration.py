@@ -57,6 +57,8 @@ class IntegrationManifestTests(unittest.TestCase):
         self.assertEqual((target / 'seed/config/moonraker.conf').read_text(), MOONRAKER)
         self.assertEqual((target / 'seed/config/nginx-mainsail.conf').read_text(), NGINX)
         self.assertTrue((root / 'etc/sv08/nginx-mainsail-service.conf').is_file())
+        self.assertEqual((target / 'sv08_mainsail_access.py').read_bytes(),
+                         (Path(__file__).resolve().parents[1] / 'runtime/sv08_mainsail_access.py').read_bytes())
         self.assertEqual((root / 'etc/systemd/system/nginx.service').readlink(), Path('/dev/null'))
         wants = root / 'etc/systemd/system/multi-user.target.wants'
         self.assertEqual({p.name for p in wants.iterdir()},

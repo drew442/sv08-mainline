@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-    const routes = new Set(['identity','overview','images','software','settings','recovery','printer','definition-sources','printer-connections','definitions']);
+    const routes = new Set(['mainsail-access','identity','overview','images','software','settings','recovery','printer','definition-sources','printer-connections','definitions']);
     let current;
     document.querySelector('.skip')?.addEventListener('click',event=>{event.preventDefault();document.getElementById('main').focus();});
     function paint(focus = true) {
@@ -11,7 +11,9 @@
         current = name;
         document.querySelectorAll('main > .page').forEach(p => { p.hidden = p.id !== name; });
         document.querySelectorAll('[data-page]').forEach(b => { if(b.dataset.page===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current'); });
-        document.querySelectorAll('[data-host-status]').forEach(e => {e.hidden = ['identity','printer','definition-sources','printer-connections','definitions'].includes(name);});
+        document.querySelectorAll('[data-host-status]').forEach(e => {e.hidden = ['mainsail-access','identity','printer','definition-sources','printer-connections','definitions'].includes(name);});
+        document.getElementById('notice').hidden = name === 'mainsail-access';
+        document.getElementById('jobs-summary').closest('article').hidden = name === 'mainsail-access';
         if (focus) document.getElementById('main').focus();
     }
     window.sv08Navigation = {go(name) {if(!routes.has(name))name='overview';if(location.hash !== '#'+name)history.pushState(null,'','#'+name);paint();}};
