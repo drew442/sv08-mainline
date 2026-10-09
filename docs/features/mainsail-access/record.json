@@ -1,54 +1,68 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "f46413204c011242671e548d85d9f608b715065f0c00aa1512df0996345725d9",
+    "rationale": "Direct owner request for Cockpit Mainsail access controls",
+    "reference": "docs/features/mainsail-access/owner-request.md",
+    "reference_sha256": "8c24120258892de169cf0a512750921e7ca15f4f471e3fc74de1038901e0a4ae",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/mainsail-access/owner-request.md": "8c24120258892de169cf0a512750921e7ca15f4f471e3fc74de1038901e0a4ae"
+    },
+    "scope_sha256": "523fe20efb6d08d43188e5ea43468638213d68401e8d3d72a67814787dcb54e6",
+    "session": "mainsail-access-20261009",
+    "source_commit": "d0575cdfc32ffc846717bf71387c4b315539d410"
+  },
+  "checks": [
+    {
+      "description": "Password, explicit anonymous and CA signed client certificate modes protect all browser routes, survive provisioning, revoke certificates and keep admin access separate.",
+      "environment": "offline",
+      "id": "access-behavior"
+    },
+    {
+      "description": "Cockpit privileged UI and staged integration support settings and protected certificate download; named installation preserves existing password and physical gates.",
+      "environment": "offline",
+      "id": "cockpit-journey"
+    }
+  ],
+  "created": "2026-10-09",
+  "decision": null,
   "format_version": 2,
   "id": "mainsail-access",
   "kind": "feature",
-  "title": "Cockpit Mainsail access settings",
-  "author": "root/coordinator",
-  "created": "2026-10-09",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/mainsail-access/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/mainsail-access/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "access-behavior",
-      "description": "Password, explicit anonymous and CA signed client certificate modes protect all browser routes, survive provisioning, revoke certificates and keep admin access separate.",
-      "environment": "offline"
-    },
-    {
-      "id": "cockpit-journey",
-      "description": "Cockpit privileged UI and staged integration support settings and protected certificate download; named installation preserves existing password and physical gates.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate Mainsail access management",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "access-behavior",
         "cockpit-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source self validated; exact installed authentication transition independently assessed before operation.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_identity.py",
+        "runtime/sv08_data_budget.py",
+        "runtime/sv08_printer_stack.py",
+        "ui/host/session.js",
+        "ui/host/identity.js",
+        "configs/host-os/systemd/sv08-mainsail.service",
+        "tests/test_web_stack.py"
+      ],
       "owned_paths": [
         "runtime/sv08_mainsail_access.py",
         "runtime/sv08_web.py",
@@ -64,15 +78,15 @@
         "docs/hardware/printer-web-stack.md",
         "docs/features/mainsail-access/evidence.md"
       ],
-      "input_paths": [
-        "runtime/sv08_identity.py",
-        "runtime/sv08_data_budget.py",
-        "runtime/sv08_printer_stack.py",
-        "ui/host/session.js",
-        "ui/host/identity.js",
-        "configs/host-os/systemd/sv08-mainsail.service",
-        "tests/test_web_stack.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source self validated; exact installed authentication transition independently assessed before operation.",
+      "status": "pending",
+      "title": "Implement and validate Mainsail access management",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Cockpit Mainsail access settings"
 }
