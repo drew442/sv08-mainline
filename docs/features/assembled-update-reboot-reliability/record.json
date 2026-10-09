@@ -63,11 +63,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "c3b4c2c5669d499e9c285b45d6aaf7dc",
-        "session": "reliability-20261009"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_data_budget.py",
         "runtime/sv08_boot.py",
@@ -113,10 +109,10 @@
         "tests/test_stage_admin_ui.py"
       ],
       "repeats": 0,
-      "resumption": "Worker stopped with no active handles; retain all edits and allowances, record exact required guard ownership and reauthorize before reclaiming",
-      "review_policy": "self",
-      "review_reason": "Authorized reversible source and disposable-system work self-validated; concrete shutdown/concurrency uncertainty receives targeted independent assessment before delivery.",
-      "status": "running",
+      "resumption": "No source processes active; preserve published 218-test correction and fixture progress, explicitly select targeted review before final submission",
+      "review_policy": "targeted",
+      "review_reason": "Independent assessment of the named shutdown acknowledgment and update/package/start concurrency uncertainty must pass against final source and actual native/ARM evidence; failed prior finding and correction are retained.",
+      "status": "pending",
       "title": "Implement and validate assembled reliability",
       "validation": null,
       "verification": null
