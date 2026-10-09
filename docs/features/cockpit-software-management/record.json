@@ -1,62 +1,79 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "3e1502a29095bc957589fac525a946aa85c3d8f82f27340f718945505a30b32d",
+    "rationale": "Owner explicitly requested complete software management with agents",
+    "reference": "docs/features/cockpit-software-management/owner-request.md",
+    "reference_sha256": "f75e2489ffa2f53fbe4db12d8da87dcede82fc47251d7b2488ba89aee17591f9",
+    "requirements_sha256": {
+      "docs/decisions/0004-os-operating-modes.md": "8b8de6e89c34900e40e4d8865340a374b28dfca96e7fb3d346cc7c594753c94c",
+      "docs/decisions/0006-host-state-integration.md": "b7ff2326445139e99296ecbe5b1203061fe7e2f55a7327abd866e989303658f4",
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-software-management/owner-request.md": "f75e2489ffa2f53fbe4db12d8da87dcede82fc47251d7b2488ba89aee17591f9"
+    },
+    "scope_sha256": "b533354521b906801162012babdf88cf014b937e22139e602267bec9318191ab",
+    "session": "cockpit-software-20261009",
+    "source_commit": "61a472728b2b595e086a7654fbf59a9ae25f09a7"
+  },
+  "checks": [
+    {
+      "description": "Package preview/admission/durable jobs/reconciliation and failure checks",
+      "environment": "offline",
+      "id": "backend"
+    },
+    {
+      "description": "Software catalog preview/review/job/authority/resume browser checks",
+      "environment": "offline",
+      "id": "browser"
+    },
+    {
+      "description": "Actual disposable APT and service execution plus image/runtime staging",
+      "environment": "offline",
+      "id": "integration"
+    }
+  ],
+  "created": "2026-10-09",
+  "decision": null,
   "format_version": 2,
   "id": "cockpit-software-management",
   "kind": "feature",
-  "title": "Cockpit additional-software management",
-  "author": "root/coordinator",
-  "created": "2026-10-09",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/cockpit-software-management/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/cockpit-software-management/owner-request.md",
     "docs/decisions/0004-os-operating-modes.md",
     "docs/decisions/0006-host-state-integration.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "backend",
-      "description": "Package preview/admission/durable jobs/reconciliation and failure checks",
-      "environment": "offline"
-    },
-    {
-      "id": "browser",
-      "description": "Software catalog preview/review/job/authority/resume browser checks",
-      "environment": "offline"
-    },
-    {
-      "id": "integration",
-      "description": "Actual disposable APT and service execution plus image/runtime staging",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate Cockpit software management",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "backend",
         "browser",
         "integration"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Authorized reversible source and disposable package development self-validated. Any consequential real target operation receives exact bounded independent assessment.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_state.py",
+        "runtime/sv08_data_budget.py",
+        "runtime/sv08_admission.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_admin_images.py",
+        "runtime/sv08_boot.py",
+        "runtime/sv08_mounts.py",
+        "ui/host/session.js"
+      ],
       "owned_paths": [
         "runtime/sv08_software.py",
         "runtime/sv08_package.py",
@@ -76,16 +93,15 @@
         "docs/features/cockpit-software-management/evidence.md",
         "docs/hardware/printer-software.md"
       ],
-      "input_paths": [
-        "runtime/sv08_state.py",
-        "runtime/sv08_data_budget.py",
-        "runtime/sv08_admission.py",
-        "runtime/sv08_admin.py",
-        "runtime/sv08_admin_images.py",
-        "runtime/sv08_boot.py",
-        "runtime/sv08_mounts.py",
-        "ui/host/session.js"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Authorized reversible source and disposable package development self-validated. Any consequential real target operation receives exact bounded independent assessment.",
+      "status": "pending",
+      "title": "Implement and validate Cockpit software management",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Cockpit additional-software management"
 }
