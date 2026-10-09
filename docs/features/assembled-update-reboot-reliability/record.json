@@ -104,7 +104,9 @@
         "configs/host-os/systemd/sv08-mainsail.service",
         "configs/host-os/systemd/sv08-web-prepare.service",
         "configs/host-os/systemd/sv08-web-auth.service",
-        "configs/host-os/systemd/sv08-printer-api.service"
+        "configs/host-os/systemd/sv08-printer-api.service",
+        "scripts/stage_admin_ui.py",
+        "tests/test_stage_admin_ui.py"
       ],
       "repeats": 0,
       "resumption": "Worker stopped with no active handles; retain all edits and allowances, record exact required guard ownership and reauthorize before reclaiming",
