@@ -14,8 +14,10 @@ unmanaged printer services, changed reviews, busy package locks and insufficient
 space refuse execution. Dependencies may not replace existing core software or
 boot/kernel/printer/access packages. Removal retains configuration and user data;
 this page does not purge or automatically remove dependencies. Package services
-stay stopped during installation; vnStat can be explicitly enabled or disabled
-through its reviewed service setting.
+stay stopped during installation. A fresh vnStat install stays disabled until its
+reviewed service setting enables it; reinstall preserves its existing service
+setting, and removal stops it first. A partial fresh install also disables any
+created vnStat unit before reporting the uncertain result.
 
 Supported operations record package versions and configured-source fingerprints,
 manual package requests and service changes privately. A compatibility report can

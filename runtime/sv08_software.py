@@ -228,9 +228,46 @@ class Apt:
 
     def execute(self, action, arguments, token):
         if action in ('install', 'remove'):
-            self.run(self.command(action, arguments['package'])[:1]+['--yes']+self.command(action, arguments['package'])[1:], timeout=1800, token=token)
+            vnstat = arguments['package'] == 'vnstat'
+            installed = vnstat and any(row[0].split(':')[0] == 'vnstat' for row in self.inventory())
+            previous = self.service() if installed and action == 'install' else None
+            if vnstat and installed and action == 'remove':
+                # policy-rc.d suppresses maintainer-script stop as well as start;
+                # explicitly stop the unit before its files are removed.
+                self.run(['systemctl', 'disable', '--now', 'vnstat.service'], token=token)
+            command = self.command(action, arguments['package'])
+            try:
+                self.run(command[:1]+['--yes']+command[1:], timeout=1800, token=token)
+            except Exception:
+                # A postinst may enable the unit before a later trigger fails.
+                # Keep the fresh-install intent while admission is still held.
+                if vnstat and action == 'install' and not installed and (self.root/'usr/lib/systemd/system/vnstat.service').is_file():
+                    self.run(['systemctl', 'disable', '--now', 'vnstat.service'], token=token)
+                raise
+            if vnstat and action == 'install':
+                if not installed:
+                    # Debian postinst can enable a unit for a later boot even
+                    # when policy-rc.d refused its immediate start.
+                    self.run(['systemctl', 'disable', '--now', 'vnstat.service'], token=token)
+                else:
+                    self.restore_service(previous, token)
         elif action == 'service':
             self.run(['systemctl', 'enable' if arguments['enabled'] else 'disable', '--now', 'vnstat.service'], token=token)
+
+    def restore_service(self, previous, token):
+        """Retain the existing user's enablement and activity across reinstall."""
+        current = self.service()
+        if current['UnitFileState'] != previous['UnitFileState']:
+            commands = {'enabled': ['enable'], 'disabled': ['disable'],
+                        'enabled-runtime': ['enable', '--runtime'],
+                        'masked': ['mask'], 'masked-runtime': ['mask', '--runtime']}
+            options = commands.get(previous['UnitFileState'])
+            if options is None:
+                raise ValueError('Existing vnstat service enablement changed; inspect the uncertain outcome')
+            self.run(['systemctl', *options, 'vnstat.service'], token=token)
+        was_active = previous['ActiveState'] == 'active'
+        if (current['ActiveState'] == 'active') != was_active:
+            self.run(['systemctl', 'start' if was_active else 'stop', 'vnstat.service'], token=token)
 
 
 class Software:
@@ -298,6 +335,15 @@ class Software:
             raise ValueError('Install vnstat before configuring its service')
         preview = self.apt.simulate(action, arguments['package'], evidence['inventory']) if action in ('install', 'remove') else dict(install=[], remove=[], download_bytes=0, installed_delta_bytes=0)
         if action != 'reconcile': preview.update(self.apt.root_capacity(preview['download_bytes']+preview['installed_delta_bytes'], writable=not reason))
+        if action in ('install', 'remove') and arguments['package'] == 'vnstat':
+            installed = 'vnstat' in {row[0].split(':')[0] for row in evidence['inventory']}
+            if action == 'remove':
+                effect = 'Stop and disable vnstat before removing its package; preserve conffiles and user artifacts.'
+            elif installed:
+                effect = 'Preserve the existing vnstat service enablement and activity.'
+            else:
+                effect = 'Install vnstat stopped and disabled; enable it only through a separate reviewed service action.'
+            preview['service_effect'] = effect
         if action == 'acknowledge': preview['outcome'] = self.inspect(arguments['id'])
         preview['data_free_bytes'] = os.statvfs(self.store.root).f_bavail * os.statvfs(self.store.root).f_frsize
         preview['data_reserve_bytes'] = self.store.budget.floor

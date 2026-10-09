@@ -71,6 +71,32 @@ class SoftwareTests(unittest.TestCase):
         time.sleep(.55);self.assertFalse(marker.exists())
 
     def reviewed(self,action='install',arguments=None): return self.api.plan(action,arguments or {'package':'nano'})
+    def test_partial_fresh_service_install_is_disabled_before_admission_exits(self):
+        real=Apt(root=self.apt.root)
+        real.inventory=lambda: []
+        calls=[]
+        def run(command, **kwargs):
+            calls.append(command)
+            self.assertTrue((self.apt.runtime/'package-lease.json').exists())
+            if command[0]=='apt-get':
+                unit=real.root/'usr/lib/systemd/system/vnstat.service'
+                unit.parent.mkdir(parents=True);unit.write_text('[Service]\nExecStart=/bin/true\n')
+                raise ValueError('Later APT trigger failed')
+            self.assertEqual(command,['systemctl','disable','--now','vnstat.service'])
+            return ''
+        real.run=run
+        self.apt.execute=real.execute
+        @contextmanager
+        def admission():
+            try: yield
+            finally: self.assertEqual(calls[-1],['systemctl','disable','--now','vnstat.service'])
+        self.api.admission=admission
+        plan=self.reviewed(arguments={'package':'vnstat'});job=self.submit(plan)
+        result=self.api.worker(job['id'])
+        self.assertEqual(result['status'],'unknown')
+        self.assertTrue(self.store.load()['slots']['A']['customized'])
+        self.assertFalse((self.apt.runtime/'package-lease.json').exists())
+
     def submit(self,plan): return self.api.apply(plan['token'],plan['digest'])
     def test_real_command_is_finite_and_never_purges_or_autoremoves(self):
         apt=Apt()
@@ -118,6 +144,15 @@ class SoftwareTests(unittest.TestCase):
         self.boot['mode']='immutable'; plan=self.api.plan('reconcile',{}); receipt=self.submit(plan)
         self.assertEqual(self.api.worker(receipt['id'])['status'],'completed')
         self.assertTrue(self.store.load()['slots']['A']['customized']); self.assertFalse(self.apt.calls)
+    def test_review_explains_fresh_service_and_removal_effects(self):
+        fresh=self.api.plan('install',dict(package='vnstat'))
+        self.assertIn('stopped and disabled',fresh['preview']['service_effect'])
+        self.apt.packages=[['vnstat','1','arm64','ii ']]
+        existing=self.api.plan('install',dict(package='vnstat'))
+        self.assertIn('Preserve the existing',existing['preview']['service_effect'])
+        removed=self.api.plan('remove',dict(package='vnstat'))
+        self.assertIn('before removing',removed['preview']['service_effect'])
+
     def test_service_only_known_unit_installed(self):
         with self.assertRaises(ValueError): self.api.plan('service',dict(package='nano',enabled=True))
         with self.assertRaisesRegex(ValueError,'Install'): self.api.plan('service',dict(package='vnstat',enabled=True))
@@ -179,6 +214,49 @@ class SoftwareTests(unittest.TestCase):
             self.assertGreater(Apt().root_capacity(0,writable=False)['root_free_bytes'],0)
             fs.f_bavail=1
             with self.assertRaisesRegex(ValueError,'space'): Apt().root_capacity(0,writable=False)
+
+
+class AptServiceLifecycleTests(unittest.TestCase):
+    def execution(self, action, installed=False, before=None, after=None):
+        apt = Apt()
+        calls = []
+        apt.inventory = lambda: [['vnstat','2','arm64','ii ']] if installed else []
+        states = iter([before,after]) if before else iter([])
+        apt.service = lambda: next(states)
+        apt.run = lambda command, **kwargs: calls.append((command,kwargs)) or ''
+        apt.execute(action, {'package':'vnstat'}, 'lease')
+        return calls
+
+    def test_fresh_install_disables_postinst_enablement_after_apt(self):
+        calls = self.execution('install')
+        self.assertEqual([command[0] for command,kwargs in calls], ['apt-get','systemctl'])
+        self.assertEqual(calls[1][0], ['systemctl','disable','--now','vnstat.service'])
+        self.assertTrue(all(kwargs['token']=='lease' for command,kwargs in calls))
+
+    def test_remove_stops_before_apt_while_policy_blocks_maintainer_stops(self):
+        calls = self.execution('remove',installed=True)
+        self.assertEqual(calls[0][0], ['systemctl','disable','--now','vnstat.service'])
+        self.assertEqual(calls[1][0][0], 'apt-get')
+        self.assertIn('remove',calls[1][0]); self.assertNotIn('purge',calls[1][0])
+
+    def test_reinstall_preserves_existing_enabled_active_service(self):
+        state = dict(UnitFileState='enabled',ActiveState='active')
+        calls = self.execution('install',installed=True,before=state,after=state)
+        self.assertEqual(len(calls),1); self.assertEqual(calls[0][0][0],'apt-get')
+
+    def test_reinstall_restores_disabled_and_inactive_user_state(self):
+        calls = self.execution('install',installed=True,
+            before=dict(UnitFileState='disabled',ActiveState='inactive'),
+            after=dict(UnitFileState='enabled',ActiveState='active'))
+        self.assertEqual([command for command,kwargs in calls[1:]],
+            [['systemctl','disable','vnstat.service'],['systemctl','stop','vnstat.service']])
+
+    def test_reinstall_restores_enabled_active_user_state_if_changed(self):
+        calls = self.execution('install',installed=True,
+            before=dict(UnitFileState='enabled',ActiveState='active'),
+            after=dict(UnitFileState='disabled',ActiveState='inactive'))
+        self.assertEqual([command for command,kwargs in calls[1:]],
+            [['systemctl','enable','vnstat.service'],['systemctl','start','vnstat.service']])
 
 
 class AptSimulationTests(unittest.TestCase):
