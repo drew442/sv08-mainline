@@ -1,6 +1,22 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "18b94879c943f7b46a84878024e7f77113254456fcc8641c019232d724f3db5d",
+    "rationale": "Retain existing service executable/unit/config identity checks with explicit normal writable observation while default image paths require immutable inputs",
+    "reference": "docs/features/assembled-update-reboot-reliability/owner-request.md",
+    "reference_sha256": "2f52f484f40bc4da6df7722a7947b672f0d7485d496247203515cbfc87c53b1d",
+    "requirements_sha256": {
+      "docs/decisions/0004-os-operating-modes.md": "8b8de6e89c34900e40e4d8865340a374b28dfca96e7fb3d346cc7c594753c94c",
+      "docs/decisions/0006-host-state-integration.md": "b7ff2326445139e99296ecbe5b1203061fe7e2f55a7327abd866e989303658f4",
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/assembled-update-reboot-reliability/owner-request.md": "2f52f484f40bc4da6df7722a7947b672f0d7485d496247203515cbfc87c53b1d"
+    },
+    "scope_sha256": "62896ab8b5b06a50ce17346e9a7a65d93e9468a207a6064e6aa2a76c0e67ca82",
+    "session": "reliability-20261009",
+    "source_commit": "ab1ea3d257b031ea069db54fce1933881adca741"
+  },
   "checks": [
     {
       "description": "Native concurrency/reboot/policy/interruption/storage checks",
