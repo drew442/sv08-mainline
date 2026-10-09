@@ -1,0 +1,59 @@
+{
+  "format_version": 2,
+  "id": "mainsail-access-isolation",
+  "kind": "feature",
+  "title": "Isolate Mainsail access controls from unrelated host status errors",
+  "author": "root/coordinator",
+  "created": "2026-10-09",
+  "priority": 2,
+  "proposal": "docs/features/mainsail-access-isolation/proposal.md",
+  "requirements": [
+    "docs/features/mainsail-access/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "ui-isolation",
+      "description": "Host image-operation failures do not disable independent Mainsail access controls; session privilege guard still applies.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Keep independent access controls available",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [
+        "mainsail-access:implement"
+      ],
+      "checks": [
+        "ui-isolation"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Small reversible integration dependency of explicitly requested independent Mainsail access page.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/host/app.js",
+        "docs/features/mainsail-access-isolation/evidence.md"
+      ],
+      "input_paths": [
+        "ui/host/mainsail-access.js",
+        "ui/host/index.html",
+        "tests/test_mainsail_access_ui.py"
+      ]
+    }
+  ]
+}
