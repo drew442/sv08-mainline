@@ -46,7 +46,7 @@ reachability. Final run: 105.437 seconds; cumulative fixture runtime about 421 o
 900 seconds, allocated scratch about 76 MiB of 128 MiB.
 
 Private receipt: `/home/drew/.sv08-network-fixture-20261009/integration-evidence.json`.
-Receipt and installed hashes are added below after final checks. Its recorded
+Receipt and installed hashes are recorded below. Its recorded
 source bytes match the committed implementation; no mutable-checkout revision
 is presented as a clean tested commit.
 
@@ -62,11 +62,40 @@ completion route is self-validation, with this additional targeted assessment.
 
 ## Installed acceptance
 
-Pending the exact bounded installation and real Cockpit status/review/cancel
-journey. The operation changes controls/runtime and registers the rollback timer;
-it does not apply a connection/name change, issue a live certificate, reboot,
-start Klipper or activate printer outputs. Existing network, login, identity,
-configuration, recovery route, read-only mode and printer masks must be preserved.
+Installed on `test-sv08-01` diagnostic A through trusted Ethernet SSH with fresh
+exact preimage/preservation admission. The separate reviewer passed the bounded
+operation assessment after reproducing and checking unique temporary-file cleanup.
+Nine assets were installed; the rollback timer is active. The installed older host
+app received only the exact hostname-control removal and Network-button exemptions,
+preserving unrelated deployed code. The composed printer panel was retained.
+
+Actual HTTPS Cockpit PAM/sudo browser acceptance passed: already-elevated Network
+sidebar entry, real Ethernet/Wi-Fi status and saved SSID metadata without passwords,
+name/Wi-Fi/restart reviews cancelled, repeated navigation and existing Mainsail
+**No login** access retained. Current leaf verified against the original printer CA
+and address before using its exact SPKI in disposable Chromium. No connection/name
+change, live certificate issuance, restart or printer output was performed.
+
+Post-install checks passed all 38 preserved file hashes, exact installed asset
+hashes, active timer, unchanged boot ID, hostname, active interfaces, configuration,
+root/boot read-only, printer services masked/inactive and no MCU descriptors. The
+historical password-policy baseline had changed before this task; current managed
+No login policy was reconciled from read-only status and preserved. Backups are
+root-only on persistent storage. This is installed software acceptance; the new
+boot cleanup hook was not exercised by rebooting the physical printer.
+
+Private local receipt hashes (no keys/passwords/profile contents published):
+
+- `install.py`: `931adb8e6e1e50e5fe726c3f51875523fe121b5940336d3acf513b237742e728`.
+- `packet.json`: `381ba9beaf1cbf1c3d82c77f3f4014ac5da39f54e115fde2d960bf2d0724bc71`.
+- `admission-final.json`: `57d85b5e3a114e2a28a1edd77eb1f55fcc5a0fc5ebe73ad76e3fe3947f3c6ae0`.
+- `installed.json`: `791091258d545be43aa9673de9ddcb0be8bb36da9f281614aca0044dca33f308`.
+- `installed-state.json`: `a175364d79725ebaddd869618287012c2f1ac3f345220e72e98d676e5827779f`.
+- `browser-result.json`: `e863053b49cc67d75d40b03d2997aad416a410c1f5d9bdc845c70425462ff371`.
+- `tls-proof.json`: `f26c46099ba4bf7cac3bf8432f3ed26fb272e06d259e67f8e702cc10994f63b3`.
+- ARM `integration-evidence.json`: `aa818e1248db1ffa545257f75c0cd9b0acd2e6e1f6894816ea4c2d504db92204`.
+
+Independent exact-operation basis: `4bac227375a6dcdfee8a39aa53f3015f77767b2aaa498cac284232fc47aea38e`; canonical packet evidence: `fc21c04a378e2b175781fc0b9b7bf736907b4015f5cf93470ef680151da7620b`.
 
 ## Limits
 
