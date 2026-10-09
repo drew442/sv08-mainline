@@ -1,0 +1,93 @@
+{
+  "format_version": 2,
+  "id": "assembled-update-reboot-reliability",
+  "kind": "feature",
+  "title": "Assembled update and reboot reliability",
+  "author": "root/coordinator",
+  "created": "2026-10-09",
+  "priority": 2,
+  "proposal": "docs/features/assembled-update-reboot-reliability/proposal.md",
+  "requirements": [
+    "docs/features/assembled-update-reboot-reliability/owner-request.md",
+    "docs/decisions/0004-os-operating-modes.md",
+    "docs/decisions/0006-host-state-integration.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "coordination",
+      "description": "Native concurrency/reboot/policy/interruption/storage checks",
+      "environment": "offline"
+    },
+    {
+      "id": "assembled-arm",
+      "description": "Production ARM systemd/boot/update preservation and failure journeys with exact inputs",
+      "environment": "offline"
+    },
+    {
+      "id": "storage-publication",
+      "description": "Storage/retention ledger, source/diff/doc checks and publication",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate assembled reliability",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "coordination",
+        "assembled-arm",
+        "storage-publication"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Authorized reversible source and disposable-system work self-validated; concrete shutdown/concurrency uncertainty receives targeted independent assessment before delivery.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_restart.py",
+        "runtime/sv08_admission.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_network.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_admin_images.py",
+        "runtime/sv08_software.py",
+        "runtime/sv08_transaction.py",
+        "tests/test_restart.py",
+        "tests/test_service_admission.py",
+        "tests/test_host_state.py",
+        "tests/test_network_admin.py",
+        "tests/test_admin.py",
+        "tests/test_software_admin.py",
+        "tests/test_transaction.py",
+        "tests/host_qemu_reliability.py",
+        "tests/fixtures/reliability",
+        "scripts/integrate_host_os.py",
+        "docs/features/assembled-update-reboot-reliability/evidence.md",
+        "docs/hardware/host-reliability.md"
+      ],
+      "input_paths": [
+        "runtime/sv08_data_budget.py",
+        "runtime/sv08_boot.py",
+        "runtime/sv08_boot_health.py",
+        "runtime/sv08_package.py",
+        "runtime/sv08_admin_jobs.py",
+        "configs/host-os/systemd",
+        "configs/images/host-ab.json"
+      ]
+    }
+  ]
+}
