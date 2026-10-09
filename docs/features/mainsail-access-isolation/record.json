@@ -49,7 +49,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "e2da63ba44d64ece902f89c7e2fd6678",
+        "session": "mainsail-access-isolation-20261009"
+      },
       "input_paths": [
         "ui/host/mainsail-access.js",
         "ui/host/index.html",
@@ -63,7 +67,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Small reversible integration dependency of explicitly requested independent Mainsail access page.",
-      "status": "pending",
+      "status": "running",
       "title": "Keep independent access controls available",
       "validation": null,
       "verification": null
