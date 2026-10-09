@@ -88,7 +88,13 @@ def validate_moonraker(raw):
         raise ValueError('Moonraker trust must remain loopback only')
 
 
-def validate_nginx(raw):
+def validate_nginx(raw, policy=None):
+    if policy is not None:
+        from sv08_mainsail_access import render
+        if raw != render(policy): raise ValueError('Managed gateway disagrees with browser policy')
+        return
+    if raw.startswith('# SV08 managed browser access v1'):
+        raise ValueError('Managed browser policy is required')
     # Inspect each lexical block, allowing existing accepted formatting/308 redirects.
     text = re.sub(r'#.*', '', raw)
     tokens = re.findall(r'"[^"\\]*(?:\\.[^"\\]*)*"|\'[^\'\\]*(?:\\.[^\'\\]*)*\'|[{};]|[^\s{};]+', text)
@@ -184,9 +190,9 @@ class API:
 
 class Web:
     def __init__(self, data='/data/sv08', config='/run/sv08/printer_data/config',
-                 uid=1000, gid=1000, budget=None, api=None):
+                 uid=1000, gid=1000, budget=None, api=None, root_uid=0):
         self.data = Path(data); self.config = Path(config).resolve(strict=True)
-        self.uid = uid; self.gid = gid
+        self.uid = uid; self.gid = gid; self.root_uid = root_uid
         self.budget = budget or Budget(self.data)
         self.api = api or API()
         self.auth = self.data / 'mainsail-auth'
@@ -209,13 +215,23 @@ class Web:
                  'mainsail.json': json.dumps(MAINSail, indent=2)+'\n'}
         with self.budget.locked():
             self.budget.check(6*LIMIT, inodes=12)
+            managed = self.managed(prepare=True)
             for name, seed in seeds.items():
                 path = self.config / name
                 if not path.exists() and not path.is_symlink(): create(path, seed, self.uid, self.gid)
                 raw = read(path, self.uid, root_gid=self.gid)
                 if name == 'moonraker.conf': validate_moonraker(raw)
-                elif name == 'nginx-mainsail.conf': validate_nginx(raw)
+                elif name == 'nginx-mainsail.conf': validate_nginx(raw, managed)
                 else: json.loads(raw)
+
+    def managed(self, prepare=False):
+        from sv08_mainsail_access import MainsailAccess
+        access = MainsailAccess(self.data, self.config, self.uid, self.gid, root_uid=self.root_uid, budget=self.budget)
+        if not access.root.exists() and not access.root.is_symlink(): return None
+        access.recover_unlocked(reload=False)
+        policy = access.load()
+        if policy is not None: access.verify(policy, prepare=prepare)
+        return policy
 
     def existing_gateway(self, fields):
         users = self.auth / 'users'; proxy = self.auth / 'moonraker-proxy.conf'
@@ -240,6 +256,10 @@ class Web:
         self.api.ready()
         with self.budget.locked():
             self.budget.check(6*LIMIT, inodes=12)
+            if self.managed() is not None:
+                # Browser password changes never reset or compare native credentials.
+                self.proxy_key()
+                return
             if not self.auth.exists() and not self.auth.is_symlink():
                 self.auth.mkdir(mode=0o700); os.chown(self.auth, self.uid, self.gid)
             directory(self.auth, self.uid, 0o700)

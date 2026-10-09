@@ -23,7 +23,7 @@ Terminal with:
 cat /data/sv08/moonraker-login.txt
 ```
 
-The native browser authentication prompt protects all HTTPS routes, including
+The default browser password prompt protects all HTTPS routes, including
 static files, API and WebSocket requests. The gateway supplies a private backend
 API key; it removes browser Basic credentials before proxying to Moonraker and
 preserves the browser's client address. Moonraker listens only on loopback port
@@ -33,9 +33,46 @@ Authentication files under `/data/sv08/mainsail-auth` and the retrieval file are
 private, outside website and Moonraker file roots. The account database belongs
 to the selected persistent generation. Existing credentials, configuration and
 hardware selections are retained. Unknown or inconsistent authentication state
-fails closed rather than resetting an existing account. Changing the native
-Moonraker password alone does not change the gateway password; coordinated password
-rotation is a separate operation.
+fails closed rather than resetting an existing account.
+
+Cockpit's **Mainsail access** section manages the browser gateway independently of
+Cockpit/SSH administrator access and the private Moonraker account. Choose Password
+and enter a new password (at least eight characters), or explicitly choose No login.
+No login allows anyone who can reach Mainsail to use its API and control the printer;
+HTTPS remains enabled. Changing the browser password does not change the native
+Moonraker credentials in the original retrieval file. The original file therefore
+only describes the initial browser password after a later Cockpit password change.
+
+For certificate access, generate a labelled browser client certificate and download
+its password-protected `.p12` file. Import it into your browser/device's personal
+certificates, then separately select Client certificate and apply. Issuance alone
+does not change the login method. The certificate is signed by the persistent printer
+CA, has client authentication usage, and expires after one year. Keep the download
+and its password private: its private key is delivered once and is not retained by
+the printer. A lost download requires a new certificate; revoke the old one.
+
+Certificate mode requires both a valid CA chain and a listed, unrevoked certificate
+fingerprint on static, API and WebSocket routes. Revoke certificates from Cockpit.
+A revocation blocks new requests/connections after the gateway reload; existing
+WebSocket sessions can remain until disconnected. Cockpit's own login stays available
+if all client certificates are revoked, lost or expired. It can issue replacements
+or restore password access. Restoring a different printer CA invalidates old browser
+certificates; regenerate them or select another access mode. Ordinary server
+certificate renewal keeps the CA and browser certificates valid. CA trust on client
+devices remains a separate import from the personal client certificate.
+
+Private root-owned policy lives in `/data/sv08/system/mainsail-access/policy.json`;
+service-readable gateway hashes and public client CA are rendered under
+`/data/sv08/mainsail-auth`. Updates keep a bounded durable recovery transaction,
+validate nginx before reloading, and restore prior access on a rejected change.
+Boot provisioning reconstructs accepted managed state without resetting passwords.
+Passwords travel through Cockpit's privileged channel and are stored as salted
+hashes for the gateway; exported private client keys require an HTTPS Cockpit session.
+Identity backup bundles back up the CA/SSH authority, not browser access policy or
+client private keys. Back up downloaded client certificates separately.
+
+The gateway uses upstream [nginx client-certificate verification](https://nginx.org/en/docs/http/ngx_http_ssl_module.html)
+and [OpenSSL PKCS#12 export](https://docs.openssl.org/3.0/man1/openssl-pkcs12/).
 
 Generated hardware exports reference the managed gateway and identity paths;
 credentials are provisioned by the host, never included in a hardware ZIP. The
