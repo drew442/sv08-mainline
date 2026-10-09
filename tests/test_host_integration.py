@@ -59,6 +59,14 @@ class IntegrationManifestTests(unittest.TestCase):
         self.assertTrue((root / 'etc/sv08/nginx-mainsail-service.conf').is_file())
         self.assertEqual((target / 'sv08_mainsail_access.py').read_bytes(),
                          (Path(__file__).resolve().parents[1] / 'runtime/sv08_mainsail_access.py').read_bytes())
+        self.assertEqual((target/'sv08_network.py').read_bytes(),
+                         (Path(__file__).resolve().parents[1]/'runtime/sv08_network.py').read_bytes())
+        units=root/'etc/systemd/system'
+        self.assertIn('--recover-boot',(units/'sv08-prepare.service.d/network-rollback.conf').read_text())
+        self.assertFalse((units/'NetworkManager.service.d/sv08-network-rollback.conf').exists())
+        self.assertEqual((units/'timers.target.wants/sv08-network-rollback.timer').readlink(),
+                         Path('/etc/systemd/system/sv08-network-rollback.timer'))
+        self.assertIn('After=sv08-prepare.service NetworkManager.service',(units/'sv08-network-rollback.service').read_text())
         self.assertEqual((root / 'etc/systemd/system/nginx.service').readlink(), Path('/dev/null'))
         wants = root / 'etc/systemd/system/multi-user.target.wants'
         self.assertEqual({p.name for p in wants.iterdir()},

@@ -32,7 +32,7 @@ def _stage(work, context, execute=False, refresh=False):
         if name == 'sv08_rauc_bootloader.py' and not path.stat().st_mode & 0o111:
             raise ValueError('The RAUC custom bootloader handler must be executable')
     if context == 'host':
-        for name in ('sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'):
+        for name in ('sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'):
             path = root / 'usr/lib/sv08' / name
             if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
                 raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
@@ -155,7 +155,7 @@ def _stage(work, context, execute=False, refresh=False):
     if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
     if context == 'host':
         files.extend(root / 'usr/lib/sv08' / name for name in
-                     ('sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
+                     ('sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
     hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}

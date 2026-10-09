@@ -1,0 +1,11 @@
+[Unit]
+Description=Check unconfirmed SV08 network changes
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec=60s
+AccuracySec=1s
+Unit=sv08-network-rollback.service
+
+[Install]
+WantedBy=timers.target

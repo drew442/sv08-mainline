@@ -1,0 +1,11 @@
+[Unit]
+Description=Recover unconfirmed SV08 network changes
+Requires=sv08-prepare.service
+After=sv08-prepare.service NetworkManager.service
+
+[Service]
+Type=oneshot
+User=root
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_network.py --recover
+TimeoutStartSec=120
