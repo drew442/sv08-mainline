@@ -1,0 +1,11 @@
+[Unit]
+Description=SV08 reviewed additional software operation
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_software.py --worker %i
+User=root
+UMask=0077
+TimeoutStartSec=infinity
+Restart=no

@@ -61,7 +61,12 @@ class IntegrationManifestTests(unittest.TestCase):
                          (Path(__file__).resolve().parents[1] / 'runtime/sv08_mainsail_access.py').read_bytes())
         self.assertEqual((target/'sv08_network.py').read_bytes(),
                          (Path(__file__).resolve().parents[1]/'runtime/sv08_network.py').read_bytes())
+        self.assertEqual((target/'sv08_software.py').read_bytes(),
+                         (Path(__file__).resolve().parents[1]/'runtime/sv08_software.py').read_bytes())
+        self.assertEqual((target/'software-catalog.json').read_bytes(),
+                         (Path(__file__).resolve().parents[1]/'configs/host-os/software-catalog.json').read_bytes())
         units=root/'etc/systemd/system'
+        self.assertIn('--worker %i',(units/'sv08-software-worker@.service').read_text())
         self.assertIn('--recover-boot',(units/'sv08-prepare.service.d/network-rollback.conf').read_text())
         self.assertFalse((units/'NetworkManager.service.d/sv08-network-rollback.conf').exists())
         self.assertEqual((units/'timers.target.wants/sv08-network-rollback.timer').readlink(),

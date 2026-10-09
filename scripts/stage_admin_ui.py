@@ -32,10 +32,14 @@ def _stage(work, context, execute=False, refresh=False):
         if name == 'sv08_rauc_bootloader.py' and not path.stat().st_mode & 0o111:
             raise ValueError('The RAUC custom bootloader handler must be executable')
     if context == 'host':
-        for name in ('sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'):
+        for name in ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'):
             path = root / 'usr/lib/sv08' / name
             if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
                 raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
+    if context == 'host':
+        catalog = root / 'usr/lib/sv08/software-catalog.json'
+        if catalog.exists() and (catalog.is_symlink() or not catalog.is_file() or catalog.read_bytes() != (REPO / 'configs/host-os/software-catalog.json').read_bytes()):
+            raise ValueError('Stage the matching reviewed software catalog before UI integration')
     target = root / ('usr/share/cockpit/sv08-host' if context == 'host' else 'usr/share/xsessions/sv08-recovery.desktop')
     target_exists = target.exists() or target.is_symlink()
     if target_exists:
@@ -45,6 +49,7 @@ def _stage(work, context, execute=False, refresh=False):
             raise ValueError('Existing host UI target is not a regular directory')
     extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
     if context == 'host':
+        extra.extend([root / 'usr/lib/sv08/software-catalog.json', root / 'usr/lib/systemd/system/sv08-software-worker@.service'])
         extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json', root / 'usr/lib/sv08/rauc-service-policy.json', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf', root / 'etc/systemd/system/rauc.service.d/sv08.conf'])
         extra.extend(root / name for name in ('usr/lib/systemd/system/sv08-feed.service',
                                                'usr/lib/systemd/system/sv08-feed.timer',
@@ -125,6 +130,7 @@ def _stage(work, context, execute=False, refresh=False):
             cert_dir.symlink_to('/data/sv08/system/cockpit/ws-certs.d')
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-admin-image-worker@.service', units / 'sv08-admin-image-worker@.service')
+        shutil.copyfile(REPO / 'configs/host-os/systemd/sv08-software-worker@.service', units / 'sv08-software-worker@.service')
         for unit in ('sv08-feed.service', 'sv08-feed.timer'):
             shutil.copyfile(REPO / 'configs/host-os' / unit, units / unit)
         wanted = root / 'etc/systemd/system/timers.target.wants'
@@ -140,6 +146,7 @@ def _stage(work, context, execute=False, refresh=False):
         for unit in ('cockpit.socket',):
             directory = root / 'etc/systemd/system' / (unit+'.d'); directory.mkdir(parents=True,exist_ok=True)
             (directory/'sv08-identity.conf').write_text('[Unit]\nRequires=sv08-identity.service\nAfter=sv08-identity.service\n')
+        shutil.copyfile(REPO / 'configs/host-os/software-catalog.json', root / 'usr/lib/sv08/software-catalog.json')
         (root / 'usr/lib/sv08/admin-context.json').write_text(json.dumps(dict(format_version=1, context='host'))+'\n')
     else:
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -152,10 +159,13 @@ def _stage(work, context, execute=False, refresh=False):
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
                  ('sv08_identity.py', 'sv08_state.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
-    if context == 'host': files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
+    if context == 'host':
+        files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
+        files.append(root / 'usr/lib/systemd/system/sv08-software-worker@.service')
+        files.append(root / 'usr/lib/sv08/software-catalog.json')
     if context == 'host':
         files.extend(root / 'usr/lib/sv08' / name for name in
-                     ('sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
+                     ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
     hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}

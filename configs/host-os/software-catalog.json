@@ -1,0 +1,1 @@
+{"format_version":1,"packages":[{"package":"nano","title":"Nano text editor","service":null},{"package":"htop","title":"Process monitor","service":null},{"package":"tmux","title":"Terminal multiplexer","service":null},{"package":"vnstat","title":"Network usage statistics","service":"vnstat.service"}]}
