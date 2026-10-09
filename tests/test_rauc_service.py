@@ -72,7 +72,7 @@ class ServiceTests(unittest.TestCase):
         ])
         service = Service(self.policy, self.lock)
         service.call = lambda destination, interface, method, *args: calls.append((destination, interface, method)) or next(answers)
-        service.identity = lambda owner, policy: {'pid': 42, 'package': policy['version']}
+        service.identity = lambda owner, policy, **kwargs: {'pid': 42, 'package': policy['version']}
         with self.assertRaisesRegex(ValueError, 'requires writer'):
             service.observe()
         with patch('sv08_rauc_service.os.geteuid', return_value=0), patch('sv08_rauc_service.os.fstat', self.root_lock_stat):
@@ -80,6 +80,41 @@ class ServiceTests(unittest.TestCase):
                 observed = service.observe()
         self.assertEqual(observed['busy_guard'], 'GetSlotStatus')
         self.assertIn((':1.4', 'de.pengutronix.rauc.Installer', 'GetSlotStatus'), calls)
+
+    def test_normal_observation_retains_idle_guard_and_identity_comparison(self):
+        service = Service(self.policy, self.lock)
+        service.depth = 1
+        answers = iter([['bus-id'], [':1.4'], [0], [{'data': 'idle'}],
+                        [[['rootfs.0', {}]]], ['bus-id'], [':1.4']])
+        calls, modes = [], []
+        service.call = lambda destination, interface, method, *args: calls.append(method) or next(answers)
+        service.identity = lambda owner, policy, **kwargs: modes.append(kwargs['require_immutable']) or {'files': {'config': 'hash'}}
+        observed = service.observe(require_immutable=False)
+        self.assertEqual(modes, [False, False])
+        self.assertIn('GetSlotStatus', calls)
+        self.assertEqual(observed['identity']['files'], {'config': 'hash'})
+
+    def test_normal_identity_allows_writable_files_but_retains_hashes_and_unit_pin(self):
+        service = Service(self.policy, self.lock)
+        policy = service.policy()
+        config = self.root / 'system.conf'; config.write_text('reviewed config')
+        policy['config_paths'] = [str(config)]
+        service.call = lambda *_: [42]
+        unit = ('MainPID=42\nInvocationID='+'a'*32+'\nActiveState=active\n'
+                'FragmentPath=/usr/lib/systemd/system/rauc.service\n'
+                'DropInPaths=/etc/systemd/system/rauc.service.d/sv08.conf\n')
+        with patch('sv08_rauc_service.Path.resolve', return_value=Path('/usr/bin/rauc')), \
+             patch.object(Service, 'digest', side_effect=lambda path: policy['executable_sha256'] if str(path).endswith('/exe') else 'config-hash'), \
+             patch('sv08_rauc_service.subprocess.check_output', side_effect=lambda args, **_: policy['version'] if 'dpkg-query' in args[0] else unit), \
+             patch('sv08_rauc_service.os.statvfs', return_value=SimpleNamespace(f_flag=0)):
+            with self.assertRaisesRegex(ValueError, 'mutable'):
+                service.identity(':1.41', policy)
+            evidence = service.identity(':1.41', policy, require_immutable=False)
+            self.assertEqual(evidence['files'], {str(config): 'config-hash'})
+            self.assertEqual(evidence['package'], policy['version'])
+            config.unlink()
+            with self.assertRaisesRegex(ValueError, 'missing'):
+                service.identity(':1.41', policy, require_immutable=False)
 
     def test_writer_exclusion_is_nonblocking_and_reentrant(self):
         first, second = Service(self.policy, self.lock), Service(self.policy, self.lock)

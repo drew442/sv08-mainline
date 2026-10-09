@@ -11,7 +11,7 @@ import subprocess
 import time
 import uuid
 
-from sv08_boot import slot_from_cmdline, verify_devices
+from sv08_boot import device_number, slot_from_cmdline, verify_devices
 from sv08_state import Store, atomic_json, identifier
 from sv08_transaction import Transaction
 
@@ -149,7 +149,7 @@ class HostHealth:
         self.stable, self.deadline = stable, deadline
         self.last_probe_failure = None
 
-    def probe(self, boot):
+    def probe(self, boot, *, normal=False):
         unit = self.command(['systemctl', 'is-active', 'sv08-prepare.service'],
                             text=True, timeout=3).strip()
         if unit != 'active':
@@ -161,15 +161,25 @@ class HostHealth:
         # resolution_evidence performs the backend context validation and then
         # samples the writer/busy guard. Do not repeat the expensive device and
         # RAUC identity walk immediately before that same observation.
-        self.backend.resolution_evidence(boot)
+        if normal:
+            return self.backend.normal_resolution_evidence(boot)
+        else:
+            return self.backend.resolution_evidence(boot)
+
+    def normal(self, boot):
+        """Ordinary OS viability includes supported writable/customized roots."""
+        return self._stable(boot, normal=True)
 
     def __call__(self, boot):
         if boot['mode'] != 'immutable':
             raise HealthFailure('Image trial requires immutable root')
-        start, stable_since = self.now(), None
-        while self.now() - start <= self.deadline:
+        return self._stable(boot)
+
+    def _stable(self, boot, *, normal=False):
+        start, stable_since, previous_evidence = self.now(), None, None
+        while self.now() - start < self.deadline:
             try:
-                self.probe(boot)
+                evidence = self.probe(boot, normal=normal)
             except (OSError, subprocess.SubprocessError, ValueError) as exc:
                 self.last_probe_failure = f'{type(exc).__name__}: {exc}'[:512]
                 stable_since = None
@@ -177,14 +187,42 @@ class HostHealth:
                 self.last_probe_failure = None
                 if self.now() - start > self.deadline:
                     break  # A slow probe cannot become a late success.
-                if stable_since is None:
+                if stable_since is None or (normal and evidence != previous_evidence):
                     stable_since = self.now()
+                previous_evidence = evidence
                 if self.now() - stable_since >= self.stable:
                     return True
             self.sleep(min(0.5, max(0, self.deadline - (self.now() - start))))
         detail = (f'; last probe failed: {self.last_probe_failure}'
                   if self.last_probe_failure else '')
         raise HealthFailure('Host OS health was not stable within deadline' + detail)
+
+
+class DiagnosticBackend:
+    """Legacy OS readiness only; missing environment policy forbids counter writes.
+
+    This compatibility route preserves usable host diagnostics, but cannot
+    provide ordinary A/B attempt replenishment without complete backend inputs.
+    """
+    diagnostic_only = True
+
+    def __init__(self, manifest):
+        self.manifest = manifest
+
+    def normal_resolution_evidence(self, boot):
+        verify_devices(self.manifest, boot['slot'])
+        actual = subprocess.check_output(
+            ['findmnt', '-n', '-o', 'MAJ:MIN', '--mountpoint', '/boot'], text=True, timeout=3).strip()
+        if actual != device_number(self.manifest['devices']['boot-'+boot['slot'].lower()]):
+            raise ValueError('Legacy boot mount differs from running slot')
+        readonly = bool(os.statvfs('/').f_flag & os.ST_RDONLY)
+        if boot['mode'] not in ('immutable', 'writable') or readonly != (boot['mode'] == 'immutable'):
+            raise ValueError('Legacy root mount differs from operating mode')
+        return dict(slot=boot['slot'], mode=boot['mode'], boot_device=actual)
+
+    def writer(self):
+        from contextlib import nullcontext
+        return nullcontext()
 
 
 def record_failure(store, boot, reason):
@@ -205,7 +243,7 @@ def record_failure(store, boot, reason):
 
 
 def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marker=None,
-        validate, record=record_failure):
+        validate, record=record_failure, normal_health=None):
     """Dispatch one validated boot; only a validated failed target may request fallback."""
     ready = Path(ready)
     ready.unlink(missing_ok=True)
@@ -215,6 +253,7 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
     if tx and tx['phase'] not in ('complete', 'cancelled', 'failed'):
         # Backend validation is trial-only; normal writable source boots stay usable.
         transaction.backend.validate_context(boot)
+    confirmed_trial = False
     outcome = transaction.reconcile(boot, admission=admission)
     if outcome == 'needs-arm':
         transaction.arm(boot)
@@ -271,9 +310,46 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
                 fallback(boot, tx['id'], str(exc))
             return 'needs-health'
         outcome = 'idle'
+        confirmed_trial = True
     if outcome in ('idle', 'staged', 'awaiting-reboot', 'needs-arm'):
         if outcome == 'idle' and transaction.store.load()['pending'] is not None:
             raise ValueError('Pending trial remains after reconciliation')
+        if not confirmed_trial:
+            with transaction.store.locked(), admission(), transaction.writer():
+                transaction.store.require_running()
+                validate()
+                before_state, before_tx = transaction.store.load(), transaction.load()
+                pending = before_state['pending']
+                if boot['trial']:
+                    raise ValueError('Unconfirmed trial cannot use normal health')
+                live = before_tx and before_tx['phase'] not in ('complete', 'cancelled', 'failed')
+                if live:
+                    if (boot['slot'] != before_tx['previous_slot'] or
+                            boot['release'] != before_tx['previous_release'] or
+                            before_tx['phase'] not in ('staged', 'armed') or
+                            (before_tx['phase'] == 'staged' and pending is not None) or
+                            (before_tx['phase'] == 'armed' and
+                             (not pending or pending['phase'] != 'armed' or
+                              pending['id'] != before_tx['id'] or
+                              pending['slot'] != before_tx['slot'] or
+                              pending['release'] != before_tx['release']))):
+                        raise ValueError('Normal source transaction identity is uncertain')
+                elif pending is not None:
+                    raise ValueError('Normal boot has an unresolved pending trial')
+                if (normal_health or os_health)(boot) is not True:
+                    raise HealthFailure('Normal host health has not passed')
+                validate()
+                if transaction.store.load() != before_state or transaction.load() != before_tx:
+                    raise ValueError('Normal boot state changed during health observation')
+                if getattr(transaction.backend, 'diagnostic_only', False):
+                    # Legacy images lack the reviewed environment documents.
+                    # Stable OS readiness is usable; no boot counter is confirmed.
+                    pass
+                else:
+                    transaction.backend.confirm_normal(boot)
+                validate()
+                if transaction.store.load() != before_state or transaction.load() != before_tx:
+                    raise ValueError('Normal confirmation changed state or transaction')
         if boot['trial']:
             if trial_marker is None or not Path(trial_marker).is_file():
                 raise ValueError('Prepared trial marker is missing')
@@ -310,11 +386,7 @@ def _main(*, disposable_fixture=False):
         inputs = [bounded_json(path) for path in documents]
         backend = Backend(*inputs, fixture=disposable_backend_fixture(inputs[0]))
     else:
-        class IdleBackend:
-            def writer(self):
-                from contextlib import nullcontext
-                return nullcontext()
-        backend = IdleBackend()
+        backend = DiagnosticBackend(manifest)
     from sv08_admission import Admission
     tx = Transaction(store, backend, Admission())
     def fallback(_boot, _id, _reason):
@@ -329,7 +401,7 @@ def _main(*, disposable_fixture=False):
                         disposable_fixture=disposable_fixture)
     outcome = run(boot, tx, health, boot_admission, fallback,
                   ready='/run/sv08/os-health-ready', trial_marker='/run/sv08/trial',
-                  validate=validate)
+                  validate=validate, normal_health=health.normal)
     if outcome not in ('idle', 'staged', 'awaiting-reboot', 'needs-arm', 'needs-health'):
         raise ValueError('Unsupported boot outcome')
 
