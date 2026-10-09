@@ -1,5 +1,29 @@
 # Current delivery goals
 
+## Completed goal — Cockpit software management, 2026-10-09
+
+Dedicated **Software** controls are implemented and installed: Nano/htop/tmux/vnStat
+catalog, dependency/download/storage preview, reviewed durable install/remove jobs,
+explicit vnStat service settings and private compatibility report/download.
+Actual writable boot mode and atomic idle admission gate package/service changes.
+Removal preserves configuration/user artifacts; uncertain jobs retain their outcome.
+The report meets ADR 0004's first-stage reconciliation allowance and preserves
+customized image activation blocking pending a validated derived image.
+
+26 native checks, disposable Chromium/staging checks and five actual ARM APT/systemd
+jobs passed. Actual printer Cockpit HTTPS/PAM/sudo preview/cancel, metadata report
+completion/download and navigation passed; all eight final assets and 46 original
+preservation hashes matched. The installed older Store compatibility issue was
+corrected without replacing its state module. Package/mode/network/reboot/printer
+outputs were unchanged; diagnostic masks, root/boot read-only and managed Mainsail
+No login remain. See [delivery evidence](../docs/features/cockpit-software-management/evidence.md).
+
+Agent implementation/integration and a targeted independent source/installation
+assessment were used; completion is self-validated. The exact ARM source hash is
+retained separately from later native-tested corrections. This is software/control
+acceptance, not physical power-loss, heating/motion/printing or release qualification.
+
+
 ## Completed goal — Cockpit network administration, 2026-10-09
 
 Dedicated **Network** controls are implemented and installed: interfaces and saved

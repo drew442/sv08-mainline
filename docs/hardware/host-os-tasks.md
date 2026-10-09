@@ -179,8 +179,13 @@ enumeration were re-established on 2026-09-12; see the
   remains a separately scoped delivery. See the [approved resolution
   task](../features/host-image-job-resolution/proposal.md) and
   [verified delivery](../features/host-image-job-resolution/record.json).
-- [ ] Finish additional-software catalog, dependency/space preview, admitted APT
+- [x] Finish additional-software catalog, dependency/space preview, admitted APT
   install/remove, service configuration and customization reconciliation.
+  [Software delivery](../features/cockpit-software-management/evidence.md) covers
+  Nano/htop/tmux/vnStat, actual disposable ARM package/service changes and installed
+  Cockpit controls. The ADR 0004 first-stage report/preservation allowance is used:
+  customized image activation stays blocked pending a validated derived image.
+  Physical power-loss and printing/release qualification remain separate.
 - [x] Implement network/access forms, connectivity rollback, host naming/hosts
   consistency and controlled idle restart. Ordinary administration needs no shell.
   [Network delivery](../features/cockpit-network-administration/evidence.md) covers
