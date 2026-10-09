@@ -59,7 +59,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "bb77037282504f1a837cc97c3db5814e",
+        "session": "web-stack-20261009"
+      },
       "input_paths": [
         "runtime/sv08_boot.py",
         "runtime/sv08_identity.py",
@@ -94,7 +98,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source is self validated; installed access and reboot transitions are independently assessed separately before execution.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement, install and validate durable printer web services",
       "validation": null,
       "verification": null
