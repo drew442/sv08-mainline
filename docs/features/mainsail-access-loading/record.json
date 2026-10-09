@@ -1,58 +1,72 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "877ac51f18ebc4a2689ea88d6d41800c744c6a73c8be69090f8423fa62b2222d",
+    "rationale": "Direct owner request to fix unusable Mainsail access page",
+    "reference": "docs/features/mainsail-access-loading/owner-request.md",
+    "reference_sha256": "faf4f31465ac7096e9c12d0d810b5d85c5938f23428d5fe3a346173f864e73ea",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/mainsail-access-loading/owner-request.md": "faf4f31465ac7096e9c12d0d810b5d85c5938f23428d5fe3a346173f864e73ea"
+    },
+    "scope_sha256": "24ee2bf384ac29efa5310b1fef7a920190fe0f1d4c8ac4319cc11430a158568b",
+    "session": "mainsail-access-loading-20261009",
+    "source_commit": "2508fed9dff2cc96f1a70c8894ca00c8910d3325"
+  },
+  "checks": [
+    {
+      "description": "Already elevated sidebar entry and privilege transitions show pending load separately from denied administrator access, enable methods after status and retain stale/private-response guards; verify installed sidebar journey.",
+      "environment": "offline",
+      "id": "navigation-loading"
+    }
+  ],
+  "created": "2026-10-09",
+  "decision": null,
   "format_version": 2,
   "id": "mainsail-access-loading",
   "kind": "feature",
-  "title": "Show correct Mainsail access state during privileged settings load",
-  "author": "root/coordinator",
-  "created": "2026-10-09",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/mainsail-access-loading/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/mainsail-access-loading/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "navigation-loading",
-      "description": "Already elevated sidebar entry and privilege transitions show pending load separately from denied administrator access, enable methods after status and retain stale/private-response guards; verify installed sidebar journey.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Correct privileged page loading state and verify sidebar entry",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "navigation-loading"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible presentation fix with unchanged root and privilege gates; source and exact narrow installed JavaScript update self validated.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "ui/host/session.js",
+        "ui/host/navigation.js",
+        "runtime/sv08_mainsail_access.py"
+      ],
       "owned_paths": [
         "ui/host/mainsail-access.js",
         "tests/test_mainsail_access_ui.py",
         "docs/features/mainsail-access-loading/evidence.md"
       ],
-      "input_paths": [
-        "ui/host/session.js",
-        "ui/host/navigation.js",
-        "runtime/sv08_mainsail_access.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible presentation fix with unchanged root and privilege gates; source and exact narrow installed JavaScript update self validated.",
+      "status": "pending",
+      "title": "Correct privileged page loading state and verify sidebar entry",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Show correct Mainsail access state during privileged settings load"
 }
