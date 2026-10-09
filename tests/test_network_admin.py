@@ -57,6 +57,9 @@ class NetworkTests(unittest.TestCase):
             (base/'hostname').write_text('sv08\n'); (base/'hosts').write_text('127.0.0.1 localhost\n127.0.1.1 sv08 old.alias\n')
         self.boot=self.root/'boot-id'; self.boot.write_text('boot1')
         self.command=Commands(); self.clock=10
+        from sv08_state import Store
+        self.store=Store(self.data,budget=Budget(),runtime=self.runtime,boot_id=self.boot)
+        self.store.initialize()
         self.kernel_names=[]
         self.network=Network(self.data,command=self.command,budget=Budget(),etc=self.etc,runtime=self.runtime,boot_id=self.boot,now=lambda:self.clock,monotonic=lambda:self.clock,set_hostname=self.kernel_names.append)
     def request(self,**updates):
@@ -118,6 +121,7 @@ class NetworkTests(unittest.TestCase):
     def test_restart_masked_or_atomic_only(self):
         root_patch=patch('sv08_admission.os.geteuid',return_value=0); root_patch.start(); self.addCleanup(root_patch.stop)
         self.assertTrue(self.network.request(dict(method='restart',confirm=True))['restarting'])
+        (self.runtime/'shutdown.json').unlink()
         self.command.mask='enabled'
         with self.assertRaises(ValueError): self.network.request(dict(method='restart',confirm=True))
         self.command.state='active'; self.command.legacy='active'
@@ -129,11 +133,22 @@ class NetworkTests(unittest.TestCase):
             self.assertTrue(self.network.request(dict(method='restart',confirm=True))['restarting'])
         self.assertEqual(len(quiesced),1)
         self.assertFalse(any(c[:2]==('systemctl','start') for c in self.command.calls))
+        (self.runtime/'shutdown.json').unlink()
         self.command.state='active'; self.command.calls.clear()
         def refuse(path): raise ValueError('Printer busy')
         with patch('sv08_network.Admission',side_effect=lambda *args,**kwargs: Admission(*args,request=refuse,**kwargs)):
             with self.assertRaises(ValueError): self.network.request(dict(method='restart',confirm=True))
         self.assertFalse(any('reboot' in c or 'stop' in c for c in self.command.calls))
+
+    def test_delayed_reboot_keeps_new_admission_closed(self):
+        # Command fixture acknowledges queueing but never performs shutdown.
+        # This reproduces the interval after --no-block returns, offline.
+        from sv08_admission import Admission
+        with patch('sv08_admission.os.geteuid', return_value=0):
+            self.network.request(dict(method='restart', confirm=True))
+            with self.assertRaisesRegex(ValueError, 'restart|shutdown'):
+                with Admission(self.runtime, systemd=type("Stopped", (), {"state": lambda self, name: "inactive"})(),boot_id=self.boot)():
+                    self.fail('New operation admitted after reboot was queued')
 
     def test_public_wifi_metadata_and_duplicate_request_rejection(self):
         self.command.wifi_saved=True

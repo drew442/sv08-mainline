@@ -56,6 +56,7 @@ class Transaction:
         if not isinstance(automatic, bool):
             raise ValueError('Automatic operation must be a boolean')
         with self.store.locked():
+            self.store.require_running()
             state = self.store.load()
             if automatic and not state['auto_update']:
                 raise ValueError('Automatic updates are disabled')
@@ -146,6 +147,7 @@ class Transaction:
     def cancel(self, boot):
         """Disarm before clearing pending state; interrupted calls are retryable."""
         with self.store.locked(), self.admission(), self.writer():
+            self.store.require_running()
             state, tx = self.store.load(), self.load()
             if not tx or tx['phase'] in ('complete', 'cancelled', 'failed'):
                 return tx
@@ -173,6 +175,7 @@ class Transaction:
         checks. It must not release the trial gate merely because this returns.
         """
         with self.store.locked(), (admission or self.admission)(), self.writer():
+            self.store.require_running()
             state, tx = self.store.load(), self.load()
             pending = state['pending']
             if not tx or tx['phase'] in ('complete', 'cancelled', 'failed'):
@@ -223,6 +226,7 @@ class Transaction:
     def confirm(self, boot, health, *, admission=None):
         """Health callback must check this boot; success is never inferred here."""
         with self.store.locked(), (admission or self.admission)(), self.writer():
+            self.store.require_running()
             state, tx = self.store.load(), self.load()
             if (not tx or tx['phase'] not in ('armed', 'confirming') or
                     boot['slot'] != tx['slot'] or boot['release'] != tx['release']):

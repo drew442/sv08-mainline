@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import socket
 import subprocess
+from sv08_restart import require_running, intent
 
 KLIPPER = 'sv08-klipper.service'
 MOONRAKER = 'sv08-moonraker.service'
@@ -45,8 +46,9 @@ class Systemd:
 
 
 class Admission:
-    def __init__(self, runtime=Path('/run/sv08'), systemd=None, request=quiesce):
+    def __init__(self, runtime=Path('/run/sv08'), systemd=None, request=quiesce, boot_id=Path('/proc/sys/kernel/random/boot_id')):
         self.runtime = Path(runtime)
+        self.boot_id = Path(boot_id)
         self.systemd = systemd if systemd is not None else Systemd()
         self.request = request
 
@@ -59,6 +61,7 @@ class Admission:
         entered = False
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            require_running(self.runtime, self.boot_id)
             states = {name: self.systemd.state(name) for name in (KLIPPER, MOONRAKER)}
             if any(state not in ('active', 'inactive', 'failed') for state in states.values()):
                 raise ValueError('Printer services are transitioning; retry after they settle')
@@ -72,11 +75,13 @@ class Admission:
                 self.systemd.stop(MOONRAKER)
                 restore.append(MOONRAKER)
             entered = True
-            yield
+            # Per-operation token; successful restart keeps printers stopped.
+            token = type("Lease", (), {"keep_stopped": False})()
+            yield token
         finally:
             os.close(lock)
             # A failed/timeout stop can leave an outstanding systemd job. Do not
             # enqueue a competing start in that case; surface the failure.
-            if entered:
+            if entered and not token.keep_stopped and not intent(self.runtime, self.boot_id):
                 for name in restore:
                     self.systemd.start(name)

@@ -129,6 +129,10 @@ class Controller:
         with self.store.locked(nonblocking=True):
             view = snapshot(self.store, self.boot, self.context)
             state, transaction = view['state'], view['transaction']
+            from sv08_restart import require_running, require_mode_change
+            blocked = ''
+            try: self.store.require_running()
+            except ValueError as error: blocked = str(error)
             capacities = os.statvfs(self.store.root)
             allowed = HOST_ACTIONS if self.context == 'host' else RECOVERY_ACTIONS
             capabilities = {}
@@ -139,10 +143,12 @@ class Controller:
                     reason = 'Available in the recovery screen.' if action.startswith('recovery.') else 'Available in the running host.'
                 elif action in ('policy.auto', 'policy.mode', 'config.hostname'):
                     available, reason = True, ''
-                    if action == 'policy.mode' and (state['pending'] or transaction and transaction['phase'] not in ('complete', 'cancelled', 'failed')):
-                        available, reason = False, 'Finish or cancel the pending image update first.'
+                    if action == 'policy.mode':
+                        try: require_mode_change(self.store, state)
+                        except ValueError as error: available, reason = False, str(error)
                 elif self.adapter is not None:
                     available, reason = self.adapter.capability(action, view)
+                if blocked: available, reason = False, blocked
                 capabilities[action] = dict(available=available, reason=reason)
             feed_status = None
             feed_path = self.store.root / 'feed-status.json'
@@ -187,10 +193,14 @@ class Controller:
         if action in ('policy.auto', 'policy.mode', 'config.hostname'):
             # Recheck under the same lock as publication; do not nest Store.policy.
             with self.store.locked():
+                self.store.require_running()
                 view = snapshot(self.store, self.boot, self.context)
                 state = view['state']
                 if revision(view) != plan['revision']:
                     raise ValueError('System state changed. Review again.')
+                if action == 'policy.mode':
+                    from sv08_restart import require_mode_change
+                    require_mode_change(self.store, state)
                 if action == 'config.hostname':
                     parent = self.store.root / 'system'
                     parent.mkdir(mode=0o700, exist_ok=True)

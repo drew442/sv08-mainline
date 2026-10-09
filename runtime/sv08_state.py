@@ -100,8 +100,9 @@ def snapshot(source, target):
 
 
 class Store:
-    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None):
+    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None, runtime=Path('/run/sv08'), boot_id=Path('/proc/sys/kernel/random/boot_id')):
         self.root = Path(root).absolute()
+        self.runtime, self.boot_id = Path(runtime), Path(boot_id)
         for path in (self.root, *self.root.parents):
             if path.is_symlink():
                 raise ValueError('Persistent root must not contain symlinks')
@@ -178,14 +179,20 @@ class Store:
                 self.save(state)
             return state
 
+    def require_running(self):
+        from sv08_restart import require_running
+        require_running(self.runtime, self.boot_id)
+
     def policy(self, mode=None, auto_update=None):
         with self.locked():
+            if mode is not None or auto_update is not None:
+                self.require_running()
             state = self.load()
             if mode is not None:
                 if mode not in ('immutable', 'writable'):
                     raise ValueError('Unknown operating mode')
-                if state['pending']:
-                    raise ValueError('Finish or cancel the pending image transaction before changing mode')
+                from sv08_restart import require_mode_change
+                require_mode_change(self, state)
                 state['requested_mode'] = mode
             if auto_update is not None:
                 if not isinstance(auto_update, bool):

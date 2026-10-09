@@ -291,6 +291,7 @@ class Software:
         atomic_json(path, value)
 
     def eligibility(self, state):
+        self.store.require_running()
         if self.boot['mode'] != 'writable' or state['requested_mode'] != 'writable':
             raise ValueError('Package and service changes require writable mode applied at boot')
         if state['pending']: raise ValueError('Finish or cancel the pending image transaction first')
@@ -387,6 +388,7 @@ class Software:
     def plan(self, action, arguments):
         self.validate(action, arguments)
         with self.store.locked(nonblocking=True), self.budget.locked():
+            self.store.require_running()
             self.setup(); self.prune()
             self.busy(report=action in ('reconcile','acknowledge'))
             if len(list((self.root/'plans').glob('*.json'))) >= MAX_JOBS: raise ValueError('Software review history is full')
@@ -403,6 +405,7 @@ class Software:
     def apply(self, token, reviewed_digest):
         if not isinstance(token, str) or not TOKEN.fullmatch(token): raise ValueError('Invalid reviewed token')
         with self.store.locked(nonblocking=True), self.budget.locked():
+            self.store.require_running()
             self.setup(); self.prune()
             path = self.root/'jobs'/(token+'.json')
             if path.exists():
@@ -541,6 +544,7 @@ class Software:
     def worker(self, ident):
         if not TOKEN.fullmatch(ident): raise ValueError('Invalid job identity')
         with self.store.locked(nonblocking=True), self.budget.locked():
+            self.store.require_running()
             self.setup(); path = self.root/'jobs'/(ident+'.json'); job = read_record(path)
             if job['status'] != 'queued': raise ValueError('Software job is not queued')
             if job['boot_id'] != self.boot['boot_id']: raise ValueError('Software job belongs to an earlier boot')

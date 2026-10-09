@@ -14,6 +14,7 @@ import subprocess
 import sys
 import uuid
 from sv08_state import Store, atomic_json
+from sv08_restart import require_running
 
 SERVICES = ('sv08-klipper.service', 'sv08-moonraker.service')
 
@@ -28,6 +29,7 @@ def require_writable(boot, state, service_states):
 
 
 def hook():
+    require_running()
     token = os.environ.get('SV08_PACKAGE_TOKEN')
     if not token:
         raise ValueError('Use sudo sv08-package --execute for package changes in writable mode')
@@ -63,7 +65,10 @@ def main():
     store = Store('/data/sv08')
     with store.locked(), open('/run/sv08/admission.lock', 'a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        store.require_running()
+        from sv08_restart import require_mode_change
         state = store.load()
+        require_mode_change(store, state)
         services = {name: subprocess.check_output(['systemctl', 'show', '-p', 'ActiveState', '--value', name], text=True).strip() for name in SERVICES}
         require_writable(boot, state, services)
         if os.statvfs('/').f_flag & os.ST_RDONLY:
