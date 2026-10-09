@@ -47,7 +47,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "fe2a9557ad294240b27b86069d657891",
+        "session": "mainsail-access-loading-20261009"
+      },
       "input_paths": [
         "ui/host/session.js",
         "ui/host/navigation.js",
@@ -62,7 +66,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible presentation fix with unchanged root and privilege gates; source and exact narrow installed JavaScript update self validated.",
-      "status": "pending",
+      "status": "running",
       "title": "Correct privileged page loading state and verify sidebar entry",
       "validation": null,
       "verification": null
