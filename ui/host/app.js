@@ -104,13 +104,10 @@ function render() {
     }
     renderDrafts();
     options('image-choice', state.images, 'No verified uploaded image available');
-    options('package-choice', state.catalog, 'No reviewed software catalog available');
     capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
     capability('image.stage', 'stage-image', 'stage-reason'); capability('image.arm', 'arm-image', 'image-reason');
     capability('image.cancel', 'cancel-image');
-    capability('software.install', 'install-package', 'software-reason'); capability('software.remove', 'remove-package');
     if (!$('image-choice').value) $('stage-image').disabled = true;
-    if (!$('package-choice').value) { $('install-package').disabled = true; $('remove-package').disabled = true; }
 }
 function renderJobs(result) {
     const pending = JSON.parse(localStorage.getItem('sv08-image-submission') || 'null');
@@ -149,13 +146,13 @@ async function refresh() {
         renderJobs(result);
         if (result.blocked) {
             $('connection').textContent = 'Image worker status connected';
-            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button)').forEach(b => { b.disabled = true; });
+            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; });
             return;
         }
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
-    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button)').forEach(b => { b.disabled = true; }); }
+    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function inspectJob(id) {
@@ -245,14 +242,12 @@ for (const [selector, action] of [['#auto-update', 'policy.auto'], ['[name=mode]
         for (const event of ['input', 'change']) input.addEventListener(event, () => { drafts[action].dirty = true; });
     });
 }
-for (const id of ['image-choice', 'package-choice']) $(id).addEventListener('change', () => { if (state) render(); });
+for (const id of ['image-choice']) $(id).addEventListener('change', () => { if (state) render(); });
 $('save-auto').addEventListener('click', () => review('policy.auto', {enabled: $('auto-update').checked}));
 $('save-mode').addEventListener('click', () => review('policy.mode', {mode: document.querySelector('[name=mode]:checked').value}));
 $('stage-image').addEventListener('click', () => review('image.stage', {digest: $('image-choice').value}));
 $('arm-image').addEventListener('click', () => review('image.arm'));
 $('cancel-image').addEventListener('click', () => review('image.cancel'));
-$('install-package').addEventListener('click', () => review('software.install', {package: $('package-choice').value}));
-$('remove-package').addEventListener('click', () => review('software.remove', {package: $('package-choice').value}));
 window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });
 window.addEventListener('sv08-authority-changed', () => {
     ++authorityGeneration;

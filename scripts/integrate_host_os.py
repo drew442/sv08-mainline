@@ -98,6 +98,7 @@ def stage(work, manifest, refresh=False, owner_key=None):
     (root / 'etc/default').mkdir(parents=True, exist_ok=True)
     (root / 'etc/default/locale').write_text('LANG=C.UTF-8\n')
     (target / 'release.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    shutil.copyfile(REPO / 'configs/host-os/software-catalog.json', target / 'software-catalog.json')
     seed = target / 'seed/config'
     seed.mkdir(parents=True)
     sys.path.insert(0,str(REPO/'runtime'))

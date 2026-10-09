@@ -11,9 +11,9 @@
         current = name;
         document.querySelectorAll('main > .page').forEach(p => { p.hidden = p.id !== name; });
         document.querySelectorAll('[data-page]').forEach(b => { if(b.dataset.page===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current'); });
-        document.querySelectorAll('[data-host-status]').forEach(e => {e.hidden = ['network','mainsail-access','identity','printer','definition-sources','printer-connections','definitions'].includes(name);});
-        document.getElementById('notice').hidden = ['network','mainsail-access'].includes(name);
-        document.getElementById('jobs-summary').closest('article').hidden = ['network','mainsail-access'].includes(name);
+        document.querySelectorAll('[data-host-status]').forEach(e => {e.hidden = ['software','network','mainsail-access','identity','printer','definition-sources','printer-connections','definitions'].includes(name);});
+        document.getElementById('notice').hidden = ['software','network','mainsail-access'].includes(name);
+        document.getElementById('jobs-summary').closest('article').hidden = ['software','network','mainsail-access'].includes(name);
         if (focus) document.getElementById('main').focus();
     }
     window.sv08Navigation = {go(name) {if(!routes.has(name))name='overview';if(location.hash !== '#'+name)history.pushState(null,'','#'+name);paint();}};
