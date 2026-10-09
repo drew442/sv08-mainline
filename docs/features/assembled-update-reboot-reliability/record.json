@@ -63,7 +63,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "06686a793d4447ba87487da3c1809cca",
+        "session": "reliability-20261009"
+      },
       "input_paths": [
         "runtime/sv08_data_budget.py",
         "runtime/sv08_boot.py",
@@ -112,7 +116,7 @@
       "resumption": "No source processes active; preserve published 218-test correction and fixture progress, explicitly select targeted review before final submission",
       "review_policy": "targeted",
       "review_reason": "Independent assessment of the named shutdown acknowledgment and update/package/start concurrency uncertainty must pass against final source and actual native/ARM evidence; failed prior finding and correction are retained.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate assembled reliability",
       "validation": null,
       "verification": null
