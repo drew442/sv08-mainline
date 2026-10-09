@@ -153,7 +153,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source self validated; exact installed authentication transition independently assessed before operation.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate Mainsail access management",
       "validation": {
         "actor": "root/coordinator",
