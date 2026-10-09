@@ -63,7 +63,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "48506e1dc20e4292b3207391b47a92f8",
+        "session": "reliability-20261009"
+      },
       "input_paths": [
         "runtime/sv08_data_budget.py",
         "runtime/sv08_boot.py",
@@ -114,7 +118,7 @@
       "resumption": "Continue same owner-authorized reboot reliability goal with guarded normal-boot confirmation; all superseded owned VM handles reconciled and stopped",
       "review_policy": "targeted",
       "review_reason": "Independent targeted assessment of shutdown acknowledgment/concurrency and demonstrated healthy normal-boot counter exhaustion; guarded normal confirmation must preserve writable/customized modes, failed-trial exhaustion, boot order and other-slot counters.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate assembled reliability",
       "validation": null,
       "verification": null
