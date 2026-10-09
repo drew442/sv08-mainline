@@ -21,6 +21,8 @@ import time
 import uuid
 from sv08_identity import Identity, installed_names, publish_cockpit
 from sv08_admission import Admission, KLIPPER, MOONRAKER
+from sv08_restart import require_running, publish, clear, require_restart
+from sv08_state import Store
 from sv08_data_budget import Budget
 from sv08_state import fsync_dir
 
@@ -432,19 +434,43 @@ class Network:
             def start(self,name):
                 if not self.rebooting: network.command('systemctl','start',name)
         systemd=RestartSystemd()
-        admission=self.admission or Admission(self.runtime,systemd=systemd)
-        with admission():
+        admission=self.admission or Admission(self.runtime,systemd=systemd,boot_id=self.boot_id)
+        with admission() as lease:
             if network.command('systemctl','show','klipper.service','-p','ActiveState','--value') not in ('inactive','failed'):
                 raise ValueError('Legacy Klipper prevents controlled restart')
-            network.command('systemctl','--no-block','reboot')
+            expected=publish(self.runtime,self.boot_id)
+            # Once the request can reach systemd, a lost acknowledgement cannot
+            # prove that shutdown was refused. Keep the barrier through that
+            # uncertainty, including interrupted callers.
             systemd.rebooting=True
+            if lease is not None: lease.keep_stopped=True
+            try:
+                network.command('systemctl','--no-block','reboot')
+            except (FileNotFoundError, PermissionError):
+                # The subprocess could not launch. Clear only our exact intent
+                # before allowing the admitted services to be restored.
+                clear(self.runtime,expected,self.boot_id)
+                systemd.rebooting=False
+                if lease is not None: lease.keep_stopped=False
+                raise
+            except Exception:
+                raise ValueError('Restart acknowledgment is uncertain; admission remains closed until the next boot') from None
         return dict(restarting=True)
 
     def request(self,r):
         if not isinstance(r,dict): raise ValueError('Invalid network request')
         method=r.get('method')
+        if method=='restart':
+            # State precedes network/budget, matching image and software writers.
+            store=Store(self.data,budget=self.budget,runtime=self.runtime,boot_id=self.boot_id)
+            with store.locked(nonblocking=True), self.locked():
+                require_running(self.runtime,self.boot_id)
+                require_restart(store)
+                if r!=dict(method='restart',confirm=True): raise ValueError('Confirm controlled restart explicitly')
+                return self.restart()
         with self.locked():
             p=self.pending()
+            if method!='status': require_running(self.runtime,self.boot_id)
             if method=='status' and set(r)=={'method'}: return self.status()
             if p and self.expired(p): self.rollback(p); p=None
             if method=='wifi.scan' and set(r)=={'method','device'}:
