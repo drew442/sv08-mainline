@@ -1,0 +1,78 @@
+{
+  "format_version": 2,
+  "id": "mainsail-access",
+  "kind": "feature",
+  "title": "Cockpit Mainsail access settings",
+  "author": "root/coordinator",
+  "created": "2026-10-09",
+  "priority": 2,
+  "proposal": "docs/features/mainsail-access/proposal.md",
+  "requirements": [
+    "docs/features/mainsail-access/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "access-behavior",
+      "description": "Password, explicit anonymous and CA signed client certificate modes protect all browser routes, survive provisioning, revoke certificates and keep admin access separate.",
+      "environment": "offline"
+    },
+    {
+      "id": "cockpit-journey",
+      "description": "Cockpit privileged UI and staged integration support settings and protected certificate download; named installation preserves existing password and physical gates.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate Mainsail access management",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "access-behavior",
+        "cockpit-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source self validated; exact installed authentication transition independently assessed before operation.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_mainsail_access.py",
+        "runtime/sv08_web.py",
+        "tests/test_mainsail_access.py",
+        "ui/host/mainsail-access.js",
+        "ui/host/index.html",
+        "ui/host/navigation.js",
+        "ui/host/style.css",
+        "scripts/stage_admin_ui.py",
+        "scripts/integrate_host_os.py",
+        "tests/test_host_integration.py",
+        "tests/test_mainsail_access_ui.py",
+        "docs/hardware/printer-web-stack.md",
+        "docs/features/mainsail-access/evidence.md"
+      ],
+      "input_paths": [
+        "runtime/sv08_identity.py",
+        "runtime/sv08_data_budget.py",
+        "runtime/sv08_printer_stack.py",
+        "ui/host/session.js",
+        "ui/host/identity.js",
+        "configs/host-os/systemd/sv08-mainsail.service",
+        "tests/test_web_stack.py"
+      ]
+    }
+  ]
+}
