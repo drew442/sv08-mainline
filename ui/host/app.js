@@ -41,7 +41,6 @@ const drafts = {
     'policy.auto': {field: 'auto_update', argument: 'enabled', read: () => $('auto-update').checked, write: value => { $('auto-update').checked = value; }},
     'policy.mode': {field: 'requested_mode', argument: 'mode', read: () => document.querySelector('[name=mode]:checked').value,
         write: value => document.querySelectorAll('[name=mode]').forEach(input => { input.checked = input.value === value; })},
-    'config.hostname': {field: 'hostname', argument: 'hostname', read: () => $('hostname').value, write: value => { $('hostname').value = value; }},
 };
 function renderDrafts() {
     for (const draft of Object.values(drafts)) {
@@ -108,7 +107,7 @@ function render() {
     options('package-choice', state.catalog, 'No reviewed software catalog available');
     capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
     capability('image.stage', 'stage-image', 'stage-reason'); capability('image.arm', 'arm-image', 'image-reason');
-    capability('image.cancel', 'cancel-image'); capability('config.hostname', 'save-hostname', 'hostname-reason');
+    capability('image.cancel', 'cancel-image');
     capability('software.install', 'install-package', 'software-reason'); capability('software.remove', 'remove-package');
     if (!$('image-choice').value) $('stage-image').disabled = true;
     if (!$('package-choice').value) { $('install-package').disabled = true; $('remove-package').disabled = true; }
@@ -150,13 +149,13 @@ async function refresh() {
         renderJobs(result);
         if (result.blocked) {
             $('connection').textContent = 'Image worker status connected';
-            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button)').forEach(b => { b.disabled = true; });
+            document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button)').forEach(b => { b.disabled = true; });
             return;
         }
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
-    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button)').forEach(b => { b.disabled = true; }); }
+    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function inspectJob(id) {
@@ -241,7 +240,7 @@ $('retry-submission').addEventListener('click', async () => {
     catch (error) { await submissionError(error); }
     finally { busy = false; await refresh(); }
 });
-for (const [selector, action] of [['#auto-update', 'policy.auto'], ['[name=mode]', 'policy.mode'], ['#hostname', 'config.hostname']]) {
+for (const [selector, action] of [['#auto-update', 'policy.auto'], ['[name=mode]', 'policy.mode']]) {
     document.querySelectorAll(selector).forEach(input => {
         for (const event of ['input', 'change']) input.addEventListener(event, () => { drafts[action].dirty = true; });
     });
@@ -254,7 +253,6 @@ $('arm-image').addEventListener('click', () => review('image.arm'));
 $('cancel-image').addEventListener('click', () => review('image.cancel'));
 $('install-package').addEventListener('click', () => review('software.install', {package: $('package-choice').value}));
 $('remove-package').addEventListener('click', () => review('software.remove', {package: $('package-choice').value}));
-$('save-hostname').addEventListener('click', () => review('config.hostname', {hostname: $('hostname').value}));
 window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });
 window.addEventListener('sv08-authority-changed', () => {
     ++authorityGeneration;

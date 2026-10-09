@@ -114,6 +114,12 @@ def stage(work, manifest, refresh=False, owner_key=None):
         shutil.copyfile(path, units / path.name)
     for name in ('sv08-identity.service','sv08-identity.timer'):
         shutil.copyfile(REPO / 'configs/host-os' / name, units / name)
+    shutil.copyfile(REPO / 'configs/host-os/systemd/sv08-network-rollback.timer', units / 'sv08-network-rollback.timer')
+    network_wants = units / 'timers.target.wants'
+    network_wants.mkdir(exist_ok=True)
+    network_link = network_wants / 'sv08-network-rollback.timer'
+    network_link.unlink(missing_ok=True)
+    network_link.symlink_to('/etc/systemd/system/sv08-network-rollback.timer')
     identity_wants = units / 'timers.target.wants'
     identity_wants.mkdir(exist_ok=True)
     link = identity_wants / 'sv08-identity.timer'
@@ -171,6 +177,12 @@ def stage(work, manifest, refresh=False, owner_key=None):
         directory.mkdir(exist_ok=True)
         dependency = 'sv08-identity.service' if service in ('ssh.service','nginx.service') else 'sv08-prepare.service'
         (directory / 'sv08-state.conf').write_text('[Unit]\nRequires='+dependency+'\nAfter='+dependency+'\n')
+    # NetworkManager's sandbox omits CAP_SYS_ADMIN needed for the kernel name.
+    # Prepare is unrestricted and completes before NM and identity take their
+    # locks; boot cleanup therefore needs neither NM RPC nor a competing flock.
+    network_directory = units / 'sv08-prepare.service.d'
+    network_directory.mkdir(exist_ok=True)
+    (network_directory/'network-rollback.conf').write_text('[Service]\nExecStartPost=/usr/bin/python3 /usr/lib/sv08/sv08_network.py --recover-boot\n')
     # Debian packages may have enabled nginx already; do not expose its default
     # site while authorization/onboarding integration is still outstanding.
     # machine-id is already persistent, not systemd's transient mount to commit.

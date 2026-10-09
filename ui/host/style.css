@@ -9,3 +9,5 @@ header{background:#142b43;color:#f8fafc;border-bottom:3px solid #17a4a8}.brand b
 .layout{grid-template-columns:230px minmax(0,1fr)}main,nav{min-width:0}@media(max-width:800px){.layout{grid-template-columns:minmax(0,1fr)}}@media(max-width:500px){header{height:auto;min-height:72px;flex-wrap:wrap;gap:8px;padding:16px 20px}.header-end{flex-wrap:wrap}}
 
 #access-certificates article{border-top:1px solid var(--border);margin-top:20px;padding-top:20px}#access-certificates code{overflow-wrap:anywhere;word-break:break-all}#access-review-detail{white-space:pre-wrap}
+
+#network-devices p,#network-links a{overflow-wrap:anywhere}#network details{margin:20px 0}#network summary{cursor:pointer;font-weight:600}#network-review-detail{white-space:pre-wrap;overflow-wrap:anywhere}
