@@ -21,6 +21,22 @@ child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-backg
 const tabs=await(await fetch('http://127.0.0.1:'+debug+'/json/list')).json();socket=new WebSocket(tabs.find(x=>x.type==='page').webSocketDebuggerUrl);await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j});let id=0;const pending=new Map();const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>reject(Error('CDP timeout')),10000);pending.set(n,{resolve,reject,timer});socket.send(JSON.stringify({id:n,method,params}));});socket.onmessage=({data})=>{const e=JSON.parse(data),p=pending.get(e.id);if(p){pending.delete(e.id);clearTimeout(p.timer);e.error?p.reject(Error(JSON.stringify(e.error))):p.resolve(e.result)}};
 const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value};const until=async expression=>{for(let i=0;i<100;i++){if(await ev(expression))return;await delay(30)}throw Error('condition: '+expression)};const click=id=>ev(`document.getElementById('${id}').click()`);const fill=(id,value)=>ev(`document.getElementById('${id}').value=${JSON.stringify(value)};document.getElementById('${id}').dispatchEvent(new Event('input'))`);const choose=mode=>ev(`document.querySelector('input[name="access-mode"][value="${mode}"]').click()`);const close=value=>ev(`document.getElementById('access-review').close('${value}')`);
 await send('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:downloads});await send('Page.navigate',{url:'http://localhost:'+port+'/#mainsail-access'});await until(`document.getElementById('access-current')?.textContent==='Password'`);
+// Sidebar entry with an already elevated session and a delayed status reply.
+await ev(`hold=true;sv08Navigation.go('overview')`);
+await ev(`document.querySelector('[data-page="mainsail-access"]').click()`);
+await until('held.length===1');
+assert(await ev(`sv08Session.elevated && document.getElementById('access-status').textContent.includes('Loading Mainsail access')`));
+assert(await ev(`document.getElementById('access-create').disabled && !document.getElementById('access-refresh').disabled`));
+await ev(`held.shift()(JSON.stringify({ok:true,result:{mode:'password',username:'sv08',certificates:[]}}));hold=false`);
+await until(`!document.getElementById('access-create').disabled`);
+// Real denial must still disable controls; reauthorization has a distinct pending state.
+await ev(`sv08Session.elevated=false;window.dispatchEvent(new Event('sv08-authority-changed'))`);
+assert(await ev(`document.getElementById('access-status').textContent.includes('Administrator access is required') && document.getElementById('access-refresh').disabled`));
+await ev(`hold=true;sv08Session.elevated=true;window.dispatchEvent(new Event('sv08-authority-changed'))`);
+await until('held.length===1');
+assert(await ev(`document.getElementById('access-status').textContent.includes('Loading Mainsail access')`));
+await ev(`held.shift()(JSON.stringify({ok:true,result:{mode:'password',username:'sv08',certificates:[]}}));hold=false`);
+await until(`!document.getElementById('access-create').disabled`);
 assert(await ev(`document.getElementById('access-apply').disabled`));await fill('access-password','new secret');await fill('access-password-confirm','wrong');await click('access-apply');assert(await ev(`document.getElementById('access-status').textContent.includes('match')`));await fill('access-password-confirm','new secret');await click('access-apply');await close('cancel');await delay(50);assert.equal(await ev(`requests.filter(x=>x.method==='settings').length`),0);
 await fill('access-password','new secret');await fill('access-password-confirm','new secret');await click('access-apply');await close('confirm');await until(`requests.some(x=>x.method==='settings') && !document.getElementById('access-refresh').disabled`);assert.deepEqual(await ev(`requests.find(x=>x.method==='settings')`),{method:'settings',mode:'password',password:'new secret'});assert.equal(await ev(`document.getElementById('access-password').value`),'');
 await choose('none');await click('access-apply');assert(await ev(`document.getElementById('access-review-detail').textContent.includes('Anyone who can reach Mainsail can control the printer')`));await close('confirm');await until(`document.getElementById('access-current').textContent==='No login'`);assert(await ev(`document.getElementById('access-apply').disabled`));
