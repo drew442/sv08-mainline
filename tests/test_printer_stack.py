@@ -36,7 +36,7 @@ class StackTests(unittest.TestCase):
     def test_factory_complete_closed_bundle_and_print_integration(self):
         catalog,draft=factory(True);original=copy.deepcopy(draft);output=generate(catalog,draft,'full')
         self.assertTrue(output['complete']);self.assertTrue(output['printing_enabled']);self.assertEqual(draft,original)
-        contents=output['files'];self.assertEqual(contents['moonraker.conf'],(Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))/'configs/host-os/moonraker.conf').read_text())
+        contents=output['files'];self.assertEqual(contents['moonraker.conf'],(Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT', str(ROOT)))/'configs/host-os/moonraker.conf').read_text())
         for required in ('virtual_sdcard','pause_resume','display_status','respond','exclude_object','gcode_macro PAUSE','gcode_macro RESUME','gcode_macro CANCEL_PRINT','gcode_macro PRINT_START','gcode_macro PRINT_END','gcode_macro M106','gcode_macro M107'):
             self.assertIn('['+required+']',output['text'])
         self.assertIn('QUAD_GANTRY_LEVEL\n  G28 Z',output['text']);self.assertIn('BED_MESH_CALIBRATE',output['text'])

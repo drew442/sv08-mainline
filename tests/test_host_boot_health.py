@@ -369,7 +369,7 @@ class BootHealthTests(unittest.TestCase):
             stage(work, manifest, owner_key=key)
         rebuild.assert_called_once_with(root)
         wants = root / 'etc/systemd/system/multi-user.target.wants'
-        self.assertEqual({path.name for path in wants.iterdir()}, {'sv08-boot-health.service'})
+        self.assertEqual({path.name for path in wants.iterdir()}, {'sv08-boot-health.service', 'sv08-printer-api.service', 'sv08-mainsail.service'})
         self.assertTrue((wants / 'sv08-boot-health.service').resolve().is_file())
 
 

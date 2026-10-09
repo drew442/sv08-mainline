@@ -1,0 +1,13 @@
+[Unit]
+Description=Validate persistent SV08 web configuration
+Requires=sv08-prepare.service sv08-identity.service
+After=sv08-prepare.service sv08-identity.service
+Before=sv08-printer-api.service
+
+[Service]
+Type=oneshot
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStartPre=/usr/bin/flock --nonblock /run/sv08/admission.lock /usr/bin/true
+ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_web.py prepare
+RemainAfterExit=yes
+TimeoutStartSec=30
