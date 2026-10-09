@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "6e928e80e2ca793f6ea15219e15e6ac4bdb65474cf3bd6f81054b4476222c623",
-    "rationale": "Existing goal requires legacy package/job and managed service-start boundaries; stopped prior claim, preserved history/edits/allowances and corrected exact owned files before resuming",
+    "rationale": "Stopped workers and preserved prior work; include required new-helper staging preflight before reclaiming clean candidate under existing owner goal",
     "reference": "docs/features/assembled-update-reboot-reliability/owner-request.md",
     "reference_sha256": "2f52f484f40bc4da6df7722a7947b672f0d7485d496247203515cbfc87c53b1d",
     "requirements_sha256": {
@@ -13,9 +13,9 @@
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/features/assembled-update-reboot-reliability/owner-request.md": "2f52f484f40bc4da6df7722a7947b672f0d7485d496247203515cbfc87c53b1d"
     },
-    "scope_sha256": "13f4694b4d48e02233a0d65d77d212b228180778db1472b6e8ef301574de1f1f",
+    "scope_sha256": "eab15d41bbc6e1b83e8de0d9dd8b4b0645faeac3b35ed4a4c3c78f348fe43716",
     "session": "reliability-20261009",
-    "source_commit": "ab74dd2f6dc2b261620995d830df4bcb516c2ebe"
+    "source_commit": "128f454214d3d6f194dc36460ee26bfacfb72395"
   },
   "checks": [
     {
