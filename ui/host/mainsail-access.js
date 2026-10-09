@@ -53,6 +53,7 @@
     }
     async function refresh() {
         if (!active()) return;
+        report('Loading Mainsail access settings…');
         const generation = epoch, attempt = ++refreshId;
         try {
             const result = await call({method:'status'});
@@ -122,7 +123,7 @@
     function invalidate() {
         ++epoch; ++refreshId; state = null; pending = null; clearSecrets(); $('access-label').value = '';
         $('access-review').close('cancel'); $('access-current').textContent = '—'; $('access-certificates').replaceChildren();
-        controls(); report('Administrator access is required.');
+        controls(); report(window.sv08Session?.elevated ? 'Loading Mainsail access settings…' : 'Administrator access is required.');
     }
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'mainsail-access') void refresh();});
