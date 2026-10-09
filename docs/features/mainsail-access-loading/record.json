@@ -43,7 +43,27 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "navigation-loading",
+          "document": "docs/features/mainsail-access-loading/evidence.md",
+          "document_sha256": "ec61a575f381de28010b7ac5bd10b9d8431c94b72154e7452bbca32afade5075",
+          "environment": "offline",
+          "limitations": "Observed misleading pending-status warning; no backend privilege rejection measured. Diagnostic web acceptance only, no authentication-mode change, restart/reboot or printing release.",
+          "method": "Delayed-status already-elevated sidebar and reauthorization regression failed before and passed after correction in existing full Chromium journey; node syntax/full diff check; exact one-file installed patch with34 preserved hashes and real HTTPS Cockpit PAM/sudo sidebar/loading/selection/cancel/reentry assertions; final browser driver exited0 and cleaned its profile.",
+          "profile": "factory SV08 diagnostic test-sv08-01; disposable Chromium mock",
+          "source_commit": "a470a4c3e3023f0cd4e34d04ad11b1b26031dc5d",
+          "source_sha256": {
+            "docs/features/mainsail-access-loading/evidence.md": "ec61a575f381de28010b7ac5bd10b9d8431c94b72154e7452bbca32afade5075",
+            "runtime/sv08_mainsail_access.py": "e5ffae4b73b54e917df352bf212551d5901d315e4cf65f4d7dbbe612e6ef76a5",
+            "tests/test_mainsail_access_ui.py": "a8d4509d3e5141f7055a2ec5dd5751f0c3fa9f837366e190171e77f2acc04309",
+            "ui/host/mainsail-access.js": "32fbf550e6a2c0165064659a4206e0333b6bc5b32cd13b41834263dc9c6b0b79",
+            "ui/host/navigation.js": "be20d5b4e0433ceeeba6dbea27deaeaf45c6fe151974cbca774fbdda5fd184ed",
+            "ui/host/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
@@ -66,9 +86,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible presentation fix with unchanged root and privilege gates; source and exact narrow installed JavaScript update self validated.",
-      "status": "running",
+      "status": "validated",
       "title": "Correct privileged page loading state and verify sidebar entry",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "ff537a90b81ba53a3aebab3f3084e57d2712b776e56040a232fbf11c053f0162",
+        "evidence_sha256": "f8bd497ef6e379e8a99bf77c69e7d0a70acdc370a76fdc24e527f5e789fc4d7c",
+        "outcome": "passed",
+        "rationale": "Delayed privileged sidebar regression passed with correct loading vs denied state; actual installed sidebar and login-method review/cancel/reentry assertions passed with policy unchanged",
+        "session": "mainsail-access-loading-20261009",
+        "source_commit": "a470a4c3e3023f0cd4e34d04ad11b1b26031dc5d"
+      },
       "verification": null
     }
   ],
