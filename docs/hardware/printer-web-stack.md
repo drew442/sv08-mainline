@@ -56,9 +56,12 @@ fingerprint on static, API and WebSocket routes. Revoke certificates from Cockpi
 A revocation blocks new requests/connections after the gateway reload; existing
 WebSocket sessions can remain until disconnected. Cockpit's own login stays available
 if all client certificates are revoked, lost or expired. It can issue replacements
-or restore password access. Restoring a different printer CA invalidates old browser
-certificates; regenerate them or select another access mode. Ordinary server
-certificate renewal keeps the CA and browser certificates valid. CA trust on client
+or restore password access. After restoring a different printer CA, Cockpit reports
+that existing client certificates belong to the previous authority. Generate new
+certificates to replace that trust and revoke the old clients, or select another
+access mode. The running gateway keeps its last applied client trust until that
+explicit change; boot provisioning refuses certificate mode with a mismatched CA.
+Ordinary server certificate renewal keeps the CA and browser certificates valid. CA trust on client
 devices remains a separate import from the personal client certificate.
 
 Private root-owned policy lives in `/data/sv08/system/mainsail-access/policy.json`;
