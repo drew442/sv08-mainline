@@ -13,3 +13,13 @@ preservation journeys; actual health/fallback evidence where exercised; bounded
 image storage with checked free space, shared immutable base, hashes/log retention
 and removal of goal-owned temporary overlays after verification. Reuse prior valid
 subsystem evidence without relabelling old hashes as new. No physical/release claim.
+
+Independent assessment found that healthy ordinary boots consume the three boot
+attempts without a production refill. Include guarded stable host-health
+confirmation for ordinary immutable and writable/customized boots, replenishing
+only the identified running slot under serialized state/admission/backend writer
+checks. Preserve boot order, the other slot, image-policy guards and failure
+counters; unhealthy or uncertain boots must not publish readiness or refill.
+Assembled acceptance must exceed three ordinary boots without fixture refill and
+retain real trial-failure exhaustion/fallback evidence. This corrects the accepted
+reboot and long-term operating-mode behavior within the existing owner goal.
