@@ -17,6 +17,10 @@ from sv08_transaction import Transaction
 
 STABLE_SECONDS = 5
 DEADLINE_SECONDS = 60
+HEALTH_WINDOW_SECONDS = DEADLINE_SECONDS - 20
+COORDINATOR_OVERHEAD_SECONDS = 30
+COORDINATOR_SECONDS = HEALTH_WINDOW_SECONDS + COORDINATOR_OVERHEAD_SECONDS
+COORDINATOR_LIMIT_SECONDS = DEADLINE_SECONDS + COORDINATOR_OVERHEAD_SECONDS
 RECORD_LIMIT = 64 * 1024
 RETAINED_LIMIT = 1024 * 1024
 BOOT_FIELDS = {'slot', 'release', 'mode', 'generation', 'trial', 'customized', 'boot_id'}
@@ -114,13 +118,13 @@ class CoordinatorDeadline(Exception):
 
 
 @contextmanager
-def coordinator_deadline(seconds=50, *, disposable_fixture=False):
-    """Bound boot reconciliation; only identified QEMU fixtures get extra time."""
+def coordinator_deadline(seconds=COORDINATOR_SECONDS, *, disposable_fixture=False):
+    """Bound polling plus validation/finalization; retain a hard physical ceiling."""
     def reset(value, *, fixture=False):
-        if not 0 < value or value > (180 if fixture else 50):
+        if not 0 < value or value > (180 if fixture else COORDINATOR_LIMIT_SECONDS):
             raise ValueError('Unreviewed coordinator deadline')
         signal.setitimer(signal.ITIMER_REAL, value)
-    if (not 0 < seconds or seconds > (180 if disposable_fixture else 50)):
+    if (not 0 < seconds or seconds > (180 if disposable_fixture else COORDINATOR_LIMIT_SECONDS)):
         raise ValueError('Unreviewed coordinator deadline')
     previous_handler = signal.getsignal(signal.SIGALRM)
     previous_timer = signal.getitimer(signal.ITIMER_REAL)
@@ -140,7 +144,7 @@ def coordinator_deadline(seconds=50, *, disposable_fixture=False):
 class HostHealth:
     def __init__(self, backend, manifest, *, now=time.monotonic, sleep=time.sleep,
                  command=subprocess.check_output, stable=STABLE_SECONDS,
-                 deadline=DEADLINE_SECONDS - 20, disposable_fixture=False):
+                 deadline=HEALTH_WINDOW_SECONDS, disposable_fixture=False):
         self.backend, self.manifest = backend, manifest
         self.now, self.sleep, self.command = now, sleep, command
         deadline_limit = 180 if disposable_fixture else 60
@@ -397,7 +401,7 @@ def _main(*, disposable_fixture=False):
                         dict(id=_id, reason=str(_reason)[:512]))
             return
         subprocess.run(['/usr/bin/systemctl', 'reboot'], check=True, timeout=5)
-    health = HostHealth(backend, manifest, deadline=120 if disposable_fixture else DEADLINE_SECONDS - 20,
+    health = HostHealth(backend, manifest, deadline=120 if disposable_fixture else HEALTH_WINDOW_SECONDS,
                         disposable_fixture=disposable_fixture)
     outcome = run(boot, tx, health, boot_admission, fallback,
                   ready='/run/sv08/os-health-ready', trial_marker='/run/sv08/trial',
@@ -411,7 +415,7 @@ def main(deadline_seconds=None):
     # manifest loading fails before _main begins.
     Path('/run/sv08/os-health-ready').unlink(missing_ok=True)
     try:
-        with coordinator_deadline(deadline_seconds if deadline_seconds is not None else 50) as reset_deadline:
+        with coordinator_deadline(deadline_seconds if deadline_seconds is not None else COORDINATOR_SECONDS) as reset_deadline:
             manifest = bounded_json('/usr/lib/sv08/release.json')
             cmdline = Path('/proc/cmdline').read_text().split()
             fixture = (manifest.get('deployable') is False and 'sv08.test=rauc-backend' in cmdline and

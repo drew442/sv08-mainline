@@ -8,7 +8,7 @@ Before=sv08-klipper.service
 Type=oneshot
 User=root
 Environment=PYTHONDONTWRITEBYTECODE=1
-TimeoutStartSec=60
+TimeoutStartSec=95
 ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_boot_health.py
 RemainAfterExit=yes
 

@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import json
+import signal
 from pathlib import Path
 import sys
 import tempfile
@@ -11,7 +12,8 @@ from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
 from sv08_boot_health import (CoordinatorDeadline, DiagnosticBackend, HealthFailure, HostHealth,
-                              bounded_json, coordinator_deadline, main,
+                              bounded_json, coordinator_deadline, main, COORDINATOR_SECONDS,
+                              COORDINATOR_LIMIT_SECONDS, HEALTH_WINDOW_SECONDS,
                               observed_rauc_slot, record_failure, run, validate_boot)
 from sv08_state import Store
 from sv08_transaction import Transaction
@@ -391,7 +393,7 @@ class BootHealthTests(unittest.TestCase):
 
     def test_extended_startup_deadline_is_limited_to_identified_fixture_callers(self):
         with self.assertRaises(ValueError):
-            with coordinator_deadline(51): pass
+            with coordinator_deadline(COORDINATOR_LIMIT_SECONDS + 1): pass
         with coordinator_deadline(0.01, disposable_fixture=True):
             pass
         with self.assertRaises(ValueError):
@@ -399,6 +401,70 @@ class BootHealthTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             HostHealth(self.backend, self.manifest, deadline=61)
         HostHealth(self.backend, self.manifest, deadline=61, disposable_fixture=True)
+
+    def test_default_outer_budget_includes_full_poll_and_bounded_overhead(self):
+        self.assertEqual(HEALTH_WINDOW_SECONDS,40)
+        self.assertEqual(COORDINATOR_SECONDS,HEALTH_WINDOW_SECONDS+30)
+        self.assertEqual(COORDINATOR_LIMIT_SECONDS,90)
+        with patch('sv08_boot_health.signal.setitimer') as timer:
+            with coordinator_deadline():
+                pass
+        self.assertEqual(timer.call_args_list[0].args,(signal.ITIMER_REAL,70))
+        unit=Path(__file__).resolve().parents[1]/'configs/host-os/systemd/sv08-boot-health.service'
+        import configparser
+        config=configparser.ConfigParser();config.read(unit)
+        self.assertEqual(config.getint('Service','TimeoutStartSec'),95)
+        self.assertGreater(config.getint('Service','TimeoutStartSec'),COORDINATOR_LIMIT_SECONDS)
+
+    def test_production_dispatch_uses_derived_outer_budget_without_fixture_extension(self):
+        reset=Mock()
+        @contextmanager
+        def deadline(seconds):
+            self.assertEqual(seconds,COORDINATOR_SECONDS)
+            yield reset
+        real_path=Path
+        def path(value):
+            return self.ready if str(value)=='/run/sv08/os-health-ready' else real_path(value)
+        with patch('sv08_boot_health.Path',side_effect=path), \
+             patch.object(Path,'read_text',return_value=''), \
+             patch('sv08_boot_health.bounded_json',return_value={'deployable':True}), \
+             patch('sv08_boot_health.coordinator_deadline',side_effect=deadline), \
+             patch('sv08_boot_health._main') as dispatch:
+            main()
+        dispatch.assert_called_once_with(disposable_fixture=False)
+        reset.assert_not_called()
+
+    def test_failed_health_full_window_records_and_calls_fallback_within_outer_budget(self):
+        clock=[12.0]  # Prior context/boot validation already consumed time.
+        journal=dict(id='trial',phase='armed',slot='B',release='target',previous_slot='A',
+                     previous_release='source',boot_id=str(uuid.uuid4()))
+        state=dict(slots={'A':dict(release='source',generation='source'),
+                         'B':dict(release='target',parent_generation='source')},
+                   pending=dict(id='trial',phase='trial'))
+        store=Mock();store.load.return_value=state;store.locked.side_effect=admitted
+        backend=Mock();transaction=Mock(store=store,backend=backend)
+        transaction.load.return_value=journal;transaction.reconcile.return_value='needs-health'
+        transaction.writer.side_effect=admitted
+        boot=dict(slot='B',release='target',mode='immutable',trial=True,boot_id=str(uuid.uuid4()))
+        health=HostHealth(backend,{},now=lambda:clock[0],
+                          sleep=lambda seconds:clock.__setitem__(0,clock[0]+seconds),
+                          command=lambda *a,**k:'inactive')
+        transaction.confirm.side_effect=lambda boot,callback,**kwargs:callback(boot)
+        def callback(*args):
+            clock[0]+=5  # Bounded final validation/reboot callback allowance.
+        fallback=Mock(side_effect=callback);record=Mock()
+        with patch('sv08_boot_health.signal.setitimer'):
+            with coordinator_deadline():
+                result=run(boot,transaction,health,admitted,fallback,ready=self.ready,
+                           validate=lambda:None,record=record)
+        self.assertEqual(result,'needs-health')
+        self.assertEqual(clock[0],57.0)
+        self.assertLess(clock[0],COORDINATOR_SECONDS)
+        self.assertIsInstance(record.call_args.args[2],HealthFailure)
+        self.assertIn('not stable within deadline',str(record.call_args.args[2]))
+        fallback.assert_called_once()
+        backend.mark_bad.assert_not_called()
+        self.assertFalse(self.ready.exists())
 
     def test_health_probe_uses_one_backend_context_validation(self):
         def command(args, **_):
@@ -490,7 +556,7 @@ class BootHealthTests(unittest.TestCase):
         integration = (repo / 'scripts/integrate_host_os.py').read_text()
         self.assertIn('After=sv08-prepare.service', service)
         self.assertIn('Before=sv08-klipper.service', service)
-        self.assertIn('TimeoutStartSec=60', service)
+        self.assertIn('TimeoutStartSec=95', service)
         self.assertIn('Requires=sv08-prepare.service sv08-boot-health.service', klipper)
         self.assertIn('ConditionPathExists=/run/sv08/os-health-ready', klipper)
         self.assertIn('ConditionPathExists=!/run/sv08/trial', klipper)
