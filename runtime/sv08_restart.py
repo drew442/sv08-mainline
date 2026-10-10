@@ -137,14 +137,43 @@ if __name__ == '__main__':
     main()
 
 
+def persistent_mask(unit, directory=Path('/etc/systemd/system')):
+    """Observe an exact persistent mask without following parent symlinks.
+
+    Kernel-generated masks can win systemd precedence while a real /etc mask
+    remains underneath. A runtime mask alone never supplies this evidence.
+    """
+    if unit not in ('sv08-klipper.service', 'klipper.service'):
+        return False
+    directory = Path(directory)
+    if not directory.is_absolute() or '..' in directory.parts:
+        return False
+    fd = None
+    try:
+        flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+        fd = os.open('/', flags)
+        for component in directory.parts[1:]:
+            child = os.open(component, flags, dir_fd=fd)
+            os.close(fd)
+            fd = child
+        return os.readlink(unit, dir_fd=fd) == '/dev/null'
+    except OSError:
+        return False
+    finally:
+        if fd is not None:
+            os.close(fd)
+
+
 def controlled_restart(command, runtime, boot_id=BOOT_ID, admission=None, *,
-                       before_dispatch=None, acknowledged=None, launch_failed=None, uncertain=None):
+                       before_dispatch=None, acknowledged=None, launch_failed=None, uncertain=None,
+                       persistent_mask_check=None):
     """Shared admitted restart; callbacks persist dispatch, not health completion.
 
     Caller holds persistent state and any operation locks. No callback may
     reopen admission after the command can have reached systemd.
     """
     from sv08_admission import Admission, KLIPPER
+    mask_check = persistent_mask_check or persistent_mask
     class RestartSystemd:
         rebooting=False
         def state(self,name):
@@ -154,7 +183,10 @@ def controlled_restart(command, runtime, boot_id=BOOT_ID, admission=None, *,
                 if legacy not in ('inactive','failed'): raise ValueError('Legacy Klipper prevents controlled restart')
                 if state!='active':
                     modes=[command('systemctl','show',unit,'-p','UnitFileState','--value') for unit in (KLIPPER,'klipper.service')]
-                    if state!='inactive' or legacy!='inactive' or modes!=['masked','masked']:
+                    masks = all(mode == 'masked' or
+                                mode == 'masked-runtime' and mask_check(unit)
+                                for unit, mode in zip((KLIPPER, 'klipper.service'), modes))
+                    if state!='inactive' or legacy!='inactive' or not masks:
                         raise ValueError('Printer idle cannot be proven; restart refused')
             return state
         def stop(self,name):

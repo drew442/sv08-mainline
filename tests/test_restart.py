@@ -3,10 +3,11 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 from test_data_budget import fixture_budget, fixture_root
 from sv08_state import Store, atomic_json
 from sv08_restart import (clear, intent, publish, require_running, require_restart,
-                          start_admitted)
+                          start_admitted, controlled_restart, persistent_mask)
 from sv08_transaction import Transaction
 from test_transaction import Backend, admitted
 
@@ -122,3 +123,77 @@ class RestartTests(unittest.TestCase):
             with self.subTest(unit=name):
                 self.assertIn('/usr/bin/python3 /usr/lib/sv08/sv08_restart.py check-start',
                               (root/('sv08-'+name+'.service')).read_text())
+
+
+class PersistentRestartMaskTests(unittest.TestCase):
+    """Real admission/intent with synthetic systemd responses and local masks."""
+    def setUp(self):
+        RestartTests.setUp(self)
+        self.units = self.runtime.parent/'persistent-units'
+        self.units.mkdir()
+        self.calls = []
+
+    def restart(self, modes, states=None):
+        states = states or {}
+        def command(*args):
+            self.calls.append(args)
+            if args == ('systemctl', '--no-block', 'reboot'):
+                return ''
+            if len(args) == 6 and args[:2] == ('systemctl', 'show'):
+                if args[4] == 'ActiveState': return states.get(args[2], 'inactive')
+                if args[4] == 'UnitFileState': return modes[args[2]]
+            raise AssertionError('Unexpected service command: '+repr(args))
+        with patch('sv08_admission.os.geteuid', return_value=0):
+            return controlled_restart(command, self.runtime, self.boot_id,
+                persistent_mask_check=lambda unit: persistent_mask(unit, self.units))
+
+    def masks(self, target='/dev/null'):
+        for unit in ('sv08-klipper.service', 'klipper.service'):
+            (self.units/unit).symlink_to(target)
+
+    def test_runtime_precedence_with_exact_persistent_masks_restarts(self):
+        self.masks()
+        result=self.restart({'sv08-klipper.service':'masked-runtime','klipper.service':'masked-runtime'})
+        self.assertTrue(result['restarting'])
+        self.assertIn(('systemctl','--no-block','reboot'),self.calls)
+        self.assertIsNotNone(intent(self.runtime,self.boot_id))
+
+    def test_existing_persistent_masked_acceptance_is_retained(self):
+        result=self.restart({'sv08-klipper.service':'masked','klipper.service':'masked'})
+        self.assertTrue(result['restarting'])
+
+    def test_volatile_only_or_enabled_masks_refuse_without_dispatch(self):
+        for modes in ({'sv08-klipper.service':'masked-runtime','klipper.service':'masked-runtime'},
+                      {'sv08-klipper.service':'masked','klipper.service':'masked-runtime'},
+                      {'sv08-klipper.service':'enabled','klipper.service':'masked'}):
+            with self.subTest(modes=modes), self.assertRaisesRegex(ValueError,'idle cannot be proven'):
+                self.restart(modes)
+            self.assertIsNone(intent(self.runtime,self.boot_id))
+        self.assertNotIn(('systemctl','--no-block','reboot'),self.calls)
+
+    def test_wrong_target_regular_file_and_symlink_parent_refuse(self):
+        self.masks('/run/volatile-null')
+        with self.assertRaisesRegex(ValueError,'idle cannot be proven'):
+            self.restart({'sv08-klipper.service':'masked-runtime','klipper.service':'masked-runtime'})
+        for path in self.units.iterdir():path.unlink();path.write_text('regular file is not a mask')
+        self.assertFalse(persistent_mask('sv08-klipper.service',self.units))
+        for path in self.units.iterdir():path.unlink();path.symlink_to('/dev/null')
+        self.assertTrue(persistent_mask('sv08-klipper.service',self.units))
+        alias=self.runtime.parent/'alias-units';alias.symlink_to(self.units,target_is_directory=True)
+        self.assertFalse(persistent_mask('sv08-klipper.service',alias))
+        self.assertIsNone(intent(self.runtime,self.boot_id))
+        self.assertNotIn(('systemctl','--no-block','reboot'),self.calls)
+
+    def test_enabled_state_refuses_even_with_exact_persistent_masks(self):
+        self.masks()
+        with self.assertRaisesRegex(ValueError,'idle cannot be proven'):
+            self.restart({'sv08-klipper.service':'enabled','klipper.service':'masked-runtime'})
+        self.assertIsNone(intent(self.runtime,self.boot_id))
+        self.assertNotIn(('systemctl','--no-block','reboot'),self.calls)
+
+    def test_failed_service_remains_refused_even_with_persistent_runtime_masks(self):
+        self.masks()
+        with self.assertRaisesRegex(ValueError,'idle cannot be proven'):
+            self.restart({'sv08-klipper.service':'masked-runtime','klipper.service':'masked-runtime'},
+                         {'sv08-klipper.service':'failed'})
+        self.assertIsNone(intent(self.runtime,self.boot_id))
