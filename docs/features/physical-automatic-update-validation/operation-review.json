@@ -1,0 +1,130 @@
+{
+  "verdict": "PASS WITH CONDITIONS",
+  "packet_sha256": "497b1e665d8f3b8f66240b6748cb5f85c9a4c1219230d35b30dc9c4109e50cd3",
+  "source_commit_claimed_by_packet": "b431902732c5a0f248e4b78506ccd2ee6185a1c4",
+  "coverage": "One exact bootstrap on observed A, one exact production healthy automatic update to B, then one exact production unhealthy automatic update to A, three automatic unhealthy health boots and fallback to preserved confirmed B; no outputs, MCU flashing, relay cycle, release distribution or arbitrary replacement artifacts.",
+  "configured_reviewer": {
+    "profile": ".codex/agents/high-consequence-reviewer-high.toml",
+    "name": "high_consequence_reviewer_high",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "verification": "Local role file read; coordinator reports fixed tool role selected and same profile verification.",
+    "actual_runtime_model": "not exposed",
+    "actual_runtime_effort": "not exposed",
+    "observed_runtime_telemetry": false
+  },
+  "bound_files_verified": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-printer.py": "ce0eaf3cbee172e933057584362977670ab4e7581c5a61a97180520c7642674d",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/expected-preimages.json": "1c2233a08c4c0346a5616d49d09c67662be1e2191d7b22f73fac13c93a477085",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/payload.json": "7c9ef7e43c6d14ba4f613cadb731a96a17315143bf0b7833e7098c793f1b11bc",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-dry-run.json": "0c242212f38790abe3333834befe496adccf92d45f767290b8d976f25e330f9a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/fresh-environment.json": "2b9440865e58d30678a78acd73f601439dc16738181ef52cb92f345e817d7cc5",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/preserved-data-before.json": "daf7bf4aeba2c3e008e8872a1532d509ff9f9659462c6b3b87adc1b9c396b596",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart.py": "2e26abff9de20e960092c928e4bcde711135d9d179881ae1b17fde2acf4d5c30",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/serve-feed.py": "61dec93848ee0d96dcdfa6cc0de4d83ac5d6669665a3bb335042659775c12221",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-printer.py": "22d4ec84d924ff75f83eb44ebdb35f08cedfc68f8d86e2173221e0b2fec7556c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/check-preservation.py": "09cb934dbea877fc49f5e2452b4c6aecfb3d02464d9f866c3ff1af2e121d2aa2",
+    "/home/drew/.sv08-physical-update-builder-20261010/bootstrap-public-manifest.json": "9340bd25e5f2c4bb525a6f3fe17a3e9861533ea331ca18e5e8e4926f31feb595",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-dry-run-final.json": "0c242212f38790abe3333834befe496adccf92d45f767290b8d976f25e330f9a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/signed-artifacts-reviewed.json": "5e22da0dc47a20304087af1b159faeb8e6dd6aa112b59d57cd622f9dbbe37901",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/backup-gpt-before.json": "19a85019330eaceb829c72d7dfacec8c9aaa0fb97c541c56ae2b082150a8e2d8",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-index.json": "2374131bccbd1a961e1d77acb4475568a2c055fac7f0eebf7a3750295dda53c3",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-index.json.p7s": "5c32de6a607852e7ff4fe1de4bdcfb0300b9f8c10b8185a550ff6bd1cee68098",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-index.json": "c7f350901d2917749475caa8232ded34cd84ce9f874bc9d6f652bb175e15abc6",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-index.json.p7s": "1e75aab32e91989ff68fbdfa483b27c102edf4aa48656309dfdfb0d22648ce5d",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-authenticated-info-reviewed.json": "abf9e9f54624e37c0e8600b1b61691ba2158ba7200a715294c892342424a8104",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-authenticated-info-reviewed.json": "22ad640b273ca235cc79b9b8f3f999952036b5d4cbac5e0ad79078483391552b"
+  },
+  "composition_receipt_sha256": "5a69e6d45515a1a368c9bfb6c1dd558b98d5f22f21eaa3110c4ea6479a11ad30",
+  "signed_artifacts": {
+    "healthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 1,
+        "issued": 1791605946,
+        "expires": 1791692406,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.2",
+        "release_revision": 2,
+        "bundle": "healthy.raucb",
+        "bytes": 488425518,
+        "sha256": "5950b995a6feb8c2eb34cbd2126ccc928790bee7549803947bd6c6134ff5d502"
+      },
+      "index_sha256": "2374131bccbd1a961e1d77acb4475568a2c055fac7f0eebf7a3750295dda53c3",
+      "signature_sha256": "5c32de6a607852e7ff4fe1de4bdcfb0300b9f8c10b8185a550ff6bd1cee68098"
+    },
+    "unhealthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 2,
+        "issued": 1791605947,
+        "expires": 1791692407,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.3",
+        "release_revision": 3,
+        "bundle": "unhealthy.raucb",
+        "bytes": 488413230,
+        "sha256": "dad3fa7f0ba1cbd9e72e6492c0f05b4076abf0b050d7289a7a7a6791b3f7f64f"
+      },
+      "index_sha256": "c7f350901d2917749475caa8232ded34cd84ce9f874bc9d6f652bb175e15abc6",
+      "signature_sha256": "1e75aab32e91989ff68fbdfa483b27c102edf4aa48656309dfdfb0d22648ce5d"
+    }
+  },
+  "measured_local_checks": [
+    "All final bound public file hashes matched",
+    "All six unsigned image/manifest hashes and image sizes independently streamed and matched composition receipt",
+    "All 118 bootstrap rows matched copied bootstrap root and dry-run expected preimages",
+    "Read-only debugfs confirmed real health unit in healthy root image and unhealthy PATH dropin in unhealthy root image",
+    "Actual RAUC executable in all three copied roots matched 2d4a14c0371a28e0a81255a3a9a9de901a5fa4b6c24b6530ab2aef37e0ba40ba",
+    "Both detached index CMS signatures verified successfully with openssl against public test certificate",
+    "Both served bundle bytes/hashes independently matched exact final signed index"
+  ],
+  "source_records": [
+    "AGENTS.md",
+    "docs/features/commissioning-host-readiness/installed-completion.md",
+    "docs/features/h12-attended-sd-reimage/physical-completion.md",
+    "docs/development/automatic-update-policy.md",
+    "runtime/sv08_boot_health.py",
+    "runtime/sv08_transaction.py",
+    "runtime/sv08_rauc.py",
+    "runtime/sv08_rauc_bootloader.py",
+    "configs/host-os/sv08-default.env",
+    "configs/host-os/boot-dispatch.cmd",
+    "scripts/prepare_physical_update_qualification.py",
+    "docs/hardware/coordinated-human-tasks.md"
+  ],
+  "measured_coordinator_records_reviewed": [
+    "intake.json",
+    "actual-markers.json",
+    "fresh-environment.json",
+    "boot-recovery-payloads.json",
+    "recovery-script-receipt.json",
+    "preserved-data-before.json",
+    "backup-gpt-before.json",
+    "bootstrap-dry-run-final.json",
+    "healthy-authenticated-info-reviewed.json",
+    "unhealthy-authenticated-info-reviewed.json"
+  ],
+  "reported_facts": [
+    "Current rescue SD availability is owner-reported in exact packet; previously tested independent SD boot/SSH is documented.",
+    "Configured fixed Sol/high reviewer role verified by coordinator; actual sampling telemetry unavailable.",
+    "Owner execution authority and source commit/remote receipt are coordinator/packet claims; reviewer performed no Git or owner contact."
+  ],
+  "inferences": [
+    "Untouched p5/loader/GPT and available previously tested SD preserve a usable recovery option; no current p5 login qualification is claimed.",
+    "Targeted PATH wrapper produces production HostHealth failure rather than disabling preparation/backend validation; actual trial/fallback behavior remains to be observed."
+  ],
+  "conditions": [
+    "Immediately before bootstrap, coordinator verifies the packet, staged script/payload/package/preimage hashes and reruns exact bootstrap preflight: same source boot/CID/controller/GPT/partition map, A3/B0 and CRC-valid banks flags11/10, immutable A, inactive unmounted B, absent actual journals/barriers, trusted time, idle jobs, data reserve, PSU status OFF, all five output services inactive and no printer serial writers. Any mismatch stops dependent actions.",
+    "After bootstrap, observe read-only source root, unchanged protected regions/application data/public identities, successful local shadow bind/equality without exposing contents, exact RAUC .2 service/executable/config identity, only the two console mask tokens removed and all other logical environment keys preserved, all five filesystem/kernel output masks retained, current source health ready and automatic updates disabled. Failure or uncertainty stops before feed activation; preserve evidence and do not blindly rerun bootstrap.",
+    "Activate only the exact healthy revision2 sequence1 bundle/index/CMS. Before publishing unhealthy revision3 sequence2 or permitting inactive A overwrite, observe B on its exact root/boot devices, immutable root and writable data, matching admitted image readback, complete healthy transaction, pending none, health-ready, B confirmed good/primary with replenished attempts, preserved A pair/source generation and matching application/public identity/protected-region hashes. Repeat output inactivity, source/backend identity and admission checks at this boundary.",
+    "Unhealthy validation covers only the exact revision3 artifact and its health-observation PATH wrapper. Require three distinct A/revision3 trial boot IDs with matching retained HostHealth failure records, closed readiness gate on failed trials, production reboot requests and actual UART/environment evidence of finite A attempt exhaustion followed by B selection. No manual attempt consumption, changed validator, extra relay cycle or arbitrary new binary is covered.",
+    "After fallback, observe exact healthy revision2 B, health-ready, pending none, failed-trial reconciliation and target disarm with B good/primary; immediately disable automatic policy, stop the feed timer and stop serving the fixed feed. Compare config/database/UI/gcodes/timelapse aggregates, machine/public identities, protected loader reservations, primary GPT and exact backup GPT tail plus p5 hashes. Missing observations remain incomplete acceptance, not success.",
+    "Keep the owner-confirmed previously tested rescue SD available. Any unknown outcome, preservation failure, refused authentication/provenance, unexpected write or exhausted bounded monitoring stops dependent actions without automatic retry. Recovery/media/relay actions beyond this packet need their own applicable authorization and exact review; preserve installed account seed and runtime/generations during local bulk-artifact retirement."
+  ],
+  "limits": "Passing assessment is an input to coordinator, not owner authorization or execution/acceptance evidence. Physical power-loss tolerance, printing and release distribution remain unqualified.",
+  "reviewer_actions": "Local source/receipt reads, public hash/signature checks and these untracked review records only. No hardware/remote commands, tracked edits, credential/private-backup access, implementation, Git or agents.",
+  "allowance": "Primary900s/128MiB: conservative local checking runtime under60s; generated review files under32KiB. No incidental exploratory experiments or device experiments."
+}

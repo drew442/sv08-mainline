@@ -1,0 +1,114 @@
+{
+  "format_version": 1,
+  "context": "physical-update-qualification",
+  "source_commit": "b431902732c5a0f248e4b78506ccd2ee6185a1c4",
+  "owner_authority": "Latest goal acceptance: physical healthy update and deliberately unhealthy automatic trial/fallback; root operates printer. Owner now confirms previously tested rescue SD available.",
+  "recovery": {
+    "availability": "owner-reported current confirmation 2026-10-10",
+    "prior_test": "docs/hardware/coordinated-human-tasks.md H12 SD-return evidence",
+    "p5": "Preserved and hashed independent recovery inputs; not claiming newly observed usable login"
+  },
+  "target": {
+    "ssh": "sv08@192.168.1.141",
+    "boot_id": "b1fbaf69-26b9-4f1d-a4e8-369b61ff563f",
+    "source": "A/root-p2/boot-p1",
+    "healthy_target": "B/root-p4/boot-p3",
+    "unhealthy_target": "A/root-p2/boot-p1",
+    "whole_device": "/dev/mmcblk2",
+    "identity_path": "/dev/disk/by-path/platform-4022000.mmc",
+    "cid_file_sha256": "d95fdc00fd925e9bd9bd2a90119f9b0b1c9e11b5df67d075ad22afcc0ec04141"
+  },
+  "write_boundaries": {
+    "bootstrap": "Selected public file leaves on source root A, pinned RAUC package database and .2 package, one server-local 0600 account seed, registry release_revision1/auto disabled. Never overwrite live account auth, network, identity, GPT, loader, boot-A or p5.",
+    "environment_provisioning": {
+      "only_changed_key": "sv08_consoleargs",
+      "before": "console=tty0 console=ttyS0,115200 systemd.mask=sv08-klipper.service systemd.mask=sv08-moonraker.service systemd.mask=klipper.service systemd.mask=moonraker.service systemd.mask=KlipperScreen.service systemd.mask=rauc.service systemd.mask=sv08-boot-health.service",
+      "after": "console=tty0 console=ttyS0,115200 systemd.mask=sv08-klipper.service systemd.mask=sv08-moonraker.service systemd.mask=klipper.service systemd.mask=moonraker.service systemd.mask=KlipperScreen.service",
+      "preserve": "All other logical keys; redundant environment CRC/flags legitimately change using libubootenv."
+    },
+    "automatic": "Actual production feed/controller/RAUC writes inactive root+boot pair, registry/journal and admitted order/counters. Healthy B must be confirmed before unhealthy A overwrites source A.",
+    "fallback": "Production callback requests reboot; bootloader consumes three A attempts and selects confirmed B. No manual counter consumption/fallbackmarker."
+  },
+  "safety": {
+    "printer_psu": "Beelink plug status OFF measured; no voltage or full-isolation claim. USB host powered.",
+    "outputs": "Both roots and bootstrap five persistent filesystem masks, five kernelmasktokens retained; services inactive and no USB serial writers immediately before operation.",
+    "uart": "Beelink exact stable printer UART revision0264/pathusb0:2,1152008N1 O_RDONLY withTIOCEXCL andsharedlock; no TX/relay action.",
+    "stop_conditions": [
+      "Preflight mismatch, pending/uncertain transactions, busy job/serial writer, signature/time/provenance refusal, unexpected write boundary, root not readonly, failed preservation or source health, unknown outcome: stop dependent actions; preserve working fallback/recovery.",
+      "No repeated physical installation attempt without diagnosis and bounded independent reassessment.",
+      "Healthy confirmation must precede unhealthy publication; final automatic opt-out and timer stop prevent bad release replay."
+    ],
+    "limits": "One healthy update plus one deliberately unhealthy update with three normal failed health boots; bounded 1500sUART/2MiB, bounded monitoring. No heating/motion/printing/MCUflash/relaycycle."
+  },
+  "preservation": "Before and after aggregate config/database/UI/gcodes/timelapse, machine identity and CA/SSHpublic/keylist hashes; protected loader reservations excludingenv,GPT,p5 hashes. No private dumps/export.",
+  "composition_receipt_sha256": "5a69e6d45515a1a368c9bfb6c1dd558b98d5f22f21eaa3110c4ea6479a11ad30",
+  "preparation_checks": "11 focused tests pass including enabled current health unit; both corrected root images pass fsck. Earlier preparation receipt remains historical, superseded by exact new receipt.",
+  "bound_files": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-printer.py": "ce0eaf3cbee172e933057584362977670ab4e7581c5a61a97180520c7642674d",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/expected-preimages.json": "1c2233a08c4c0346a5616d49d09c67662be1e2191d7b22f73fac13c93a477085",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/payload.json": "7c9ef7e43c6d14ba4f613cadb731a96a17315143bf0b7833e7098c793f1b11bc",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-dry-run.json": "0c242212f38790abe3333834befe496adccf92d45f767290b8d976f25e330f9a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/fresh-environment.json": "2b9440865e58d30678a78acd73f601439dc16738181ef52cb92f345e817d7cc5",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/preserved-data-before.json": "daf7bf4aeba2c3e008e8872a1532d509ff9f9659462c6b3b87adc1b9c396b596",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart.py": "2e26abff9de20e960092c928e4bcde711135d9d179881ae1b17fde2acf4d5c30",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/serve-feed.py": "61dec93848ee0d96dcdfa6cc0de4d83ac5d6669665a3bb335042659775c12221",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-printer.py": "22d4ec84d924ff75f83eb44ebdb35f08cedfc68f8d86e2173221e0b2fec7556c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/check-preservation.py": "09cb934dbea877fc49f5e2452b4c6aecfb3d02464d9f866c3ff1af2e121d2aa2",
+    "/home/drew/.sv08-physical-update-builder-20261010/bootstrap-public-manifest.json": "9340bd25e5f2c4bb525a6f3fe17a3e9861533ea331ca18e5e8e4926f31feb595",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-dry-run-final.json": "0c242212f38790abe3333834befe496adccf92d45f767290b8d976f25e330f9a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/signed-artifacts-reviewed.json": "5e22da0dc47a20304087af1b159faeb8e6dd6aa112b59d57cd622f9dbbe37901",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/backup-gpt-before.json": "19a85019330eaceb829c72d7dfacec8c9aaa0fb97c541c56ae2b082150a8e2d8",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-index.json": "2374131bccbd1a961e1d77acb4475568a2c055fac7f0eebf7a3750295dda53c3",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-index.json.p7s": "5c32de6a607852e7ff4fe1de4bdcfb0300b9f8c10b8185a550ff6bd1cee68098",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-index.json": "c7f350901d2917749475caa8232ded34cd84ce9f874bc9d6f652bb175e15abc6",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-index.json.p7s": "1e75aab32e91989ff68fbdfa483b27c102edf4aa48656309dfdfb0d22648ce5d",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-authenticated-info-reviewed.json": "abf9e9f54624e37c0e8600b1b61691ba2158ba7200a715294c892342424a8104",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-authenticated-info-reviewed.json": "22ad640b273ca235cc79b9b8f3f999952036b5d4cbac5e0ad79078483391552b"
+  },
+  "exact_sequence": [
+    "Read-only staging of public 1.925MiB archive in /run already complete; dry-run passed and exact preimages bound. No root/env/state/account/service changes yet.",
+    "Verify exact installed staged script/payload hashes, fresh target and PSU/UART state, then sudo python3 /run/sv08-physical-auto-20261010/bootstrap-printer.py --execute once. Script remounts root for package+allowlisted leaves, returns ro, account seed, envmask provisioning, real RAUC+normal health source readiness.",
+    "Start exact readonly UART capture on Beelink; bounded1500s2MiB; fixed HTTPS server on Codex192.168.1.132:18843.",
+    "Publish signed healthy index and CMS only after bootstrap pass; store.policy(auto_update=True), systemctl start --no-block sv08-feed.service. Production feed discovers/authenticates/downloads/stages/arms/controlledreboot. Monitor actual B healthycomplete.",
+    "Verify preservation and real B health/slot/environment source readiness; then atomically publish signed unhealthy index seq2 revision3 and run same production feed.",
+    "Observe three A unhealthy bootIDs and real retained healthfailure records, production reboot requests and actual U-Boot attempt countdown/fallback B.",
+    "After B fallback readiness/pendingclear, immediately store.policy(auto_update=False) and systemctl stop sv08-feed.timer; fixed source no longer served. Validate persistent data/identity/protected regions, retain small evidence and retire bulk goal-owned artifacts."
+  ],
+  "signed_artifacts": {
+    "healthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 1,
+        "issued": 1791605946,
+        "expires": 1791692406,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.2",
+        "release_revision": 2,
+        "bundle": "healthy.raucb",
+        "bytes": 488425518,
+        "sha256": "5950b995a6feb8c2eb34cbd2126ccc928790bee7549803947bd6c6134ff5d502"
+      },
+      "index_sha256": "2374131bccbd1a961e1d77acb4475568a2c055fac7f0eebf7a3750295dda53c3",
+      "signature_sha256": "5c32de6a607852e7ff4fe1de4bdcfb0300b9f8c10b8185a550ff6bd1cee68098"
+    },
+    "unhealthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 2,
+        "issued": 1791605947,
+        "expires": 1791692407,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.3",
+        "release_revision": 3,
+        "bundle": "unhealthy.raucb",
+        "bytes": 488413230,
+        "sha256": "dad3fa7f0ba1cbd9e72e6492c0f05b4076abf0b050d7289a7a7a6791b3f7f64f"
+      },
+      "index_sha256": "c7f350901d2917749475caa8232ded34cd84ce9f874bc9d6f652bb175e15abc6",
+      "signature_sha256": "1e75aab32e91989ff68fbdfa483b27c102edf4aa48656309dfdfb0d22648ce5d"
+    }
+  },
+  "acceptance": "Exactly three distinct unhealthy A/revision3 retained HostHealthfailure records, U-Boot serial countdownA3to0/fallbackB, finalpendingnone and healthyBready; allpreservationaggregates plusprimary+backupGPT hashes match."
+}
