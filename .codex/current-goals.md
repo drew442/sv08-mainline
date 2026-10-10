@@ -1,6 +1,6 @@
 # Current delivery goals
 
-## Active goal — Physical automatic-update validation, 2026-10-10
+## Completed goal — Physical automatic-update validation, 2026-10-10
 
 Owner authorized agents and completion of a harmless trusted automatic update,
 then an unhealthy trial demonstrating actual H616 bootloader fallback. Preserve
@@ -9,6 +9,10 @@ Prepare the missing installed backend, exact artifacts and recovery/precondition
 evidence, obtain independent operation assessment, execute the bounded journey
 and publish measured results. Physical coordination: H13; source preparation:
 [scope](../docs/features/physical-automatic-update-validation/proposal.md).
+
+Actual healthy update and three-failure U-Boot fallback completed with preservation,
+outputs inactive and automatic test policy disabled. Reviewed continuation repairs
+and qualification limits are recorded in [completion](../docs/features/physical-automatic-update-validation/completion.md).
 
 ## Completed goal — Automatic update policy and activation, 2026-10-10
 

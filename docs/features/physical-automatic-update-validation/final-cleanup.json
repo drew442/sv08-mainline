@@ -1,0 +1,19 @@
+{
+  "consumer_checks": "no local mounts/build/sign/feed/monitor consumers; final monitor completed 0; UART intentionally retired",
+  "removed": [
+    "/home/drew/.sv08-physical-update-builder-20261010/composition-v1/bootstrap/rootfs",
+    "/home/drew/.sv08-physical-update-builder-20261010/composition-v1/healthy/rootfs",
+    "/home/drew/.sv08-physical-update-builder-20261010/composition-v1/healthy/bundle",
+    "/home/drew/.sv08-physical-update-builder-20261010/composition-v1/unhealthy/rootfs",
+    "/home/drew/.sv08-physical-update-builder-20261010/composition-v1/unhealthy/bundle",
+    "/home/drew/.sv08-physical-update-builder-20261010/composition-v1/boot",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/feed-content/healthy.raucb",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/feed-content/unhealthy.raucb",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/test-signing-key.pem"
+  ],
+  "free_before": 26220261376,
+  "free_after": 33948749824,
+  "cumulative_allocation_not_reset": true,
+  "shared_bases_and_installed_identity_preserved": true,
+  "reclaimed_bytes": 7728488448
+}

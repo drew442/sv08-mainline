@@ -33,10 +33,11 @@ update and deliberately unhealthy trial/fallback on test-sv08-01, preserving
 configuration, calibration, identity and user data with heaters/motion inactive.
 This is a physical coordination record; no human action is presumed necessary.
 Source preparation uses [the scoped feature](../features/physical-automatic-update-validation/proposal.md).
-Exact artifact/target/write-boundary/recovery assessment gates mutation. Current
-read-only intake finds old commissioning A, RAUC/health masked, no feed runtime;
-bootstrap preparation is required. Physical acceptance and operation reviews will
-be recorded separately; H11 printing qualification remains open.
+Completed: healthy signed automatic update confirmed B; three genuine unhealthy A
+health failures produced measured U-Boot A3/A2/A1/B3 fallback. Configuration,
+calibration, identity and user data preservation passed; outputs remain inactive
+and automatic test policy is disabled. See [completion and qualification limits](../features/physical-automatic-update-validation/completion.md).
+Reviewed continuation repairs are explicit; H11 printing qualification remains open.
 
 ## Commissioning host readiness — 2026-10-03
 

@@ -1,0 +1,1 @@
+{"automatic_updates_disabled": true, "feed_timer_stopped": true, "boot": {"slot": "B", "release": "0.1.0-physical-update.2", "mode": "immutable", "generation": "/data/sv08/generations/0.1.0-physical-update.2-c3077261f526", "trial": false, "customized": false, "boot_id": "54350b61-1d93-46aa-b3a4-96426cf7a419"}, "transaction_phase": "failed", "unhealthy_failures": 3}

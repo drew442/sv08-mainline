@@ -1,0 +1,69 @@
+{
+  "sequence": [
+    [
+      "B",
+      "3"
+    ],
+    [
+      "A",
+      "3"
+    ],
+    [
+      "A",
+      "2"
+    ],
+    [
+      "A",
+      "1"
+    ],
+    [
+      "B",
+      "3"
+    ]
+  ],
+  "segments": [
+    {
+      "file": "uart-trials-original.log",
+      "bytes": 136291,
+      "sha256": "ff92777238c3f5f6d7d9fab5572c1d60650b7315208c2519a743a7a4a912d6b0",
+      "sequence": [
+        [
+          "B",
+          "3"
+        ],
+        [
+          "A",
+          "3"
+        ]
+      ]
+    },
+    {
+      "file": "uart-continuation-paused.log",
+      "bytes": 68951,
+      "sha256": "31304df0c8ebdeed7c9a6d8e1122252dca182a514221b5a03fcf8113efffa4aa",
+      "sequence": [
+        [
+          "A",
+          "2"
+        ]
+      ]
+    },
+    {
+      "file": "uart-final.log",
+      "bytes": 151610,
+      "sha256": "373331e59d4e274fe41374faaf3cf8e5e16b6f83e50a8bdd0d523039fd604e81",
+      "sequence": [
+        [
+          "A",
+          "1"
+        ],
+        [
+          "B",
+          "3"
+        ]
+      ]
+    }
+  ],
+  "final_collector_verified_pid": 189153,
+  "retirement": "SIGTERM; local SSH handle exited 255 after intentional termination"
+}

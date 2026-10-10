@@ -1,0 +1,17 @@
+# Installed automatic-update completion — 2026-10-10
+
+H13 completed on test-sv08-01. The healthy trusted signed automatic update discovered, installed, rebooted and confirmed slot B. Discovery to observed readiness took **335.701120 seconds** on the actual 100 Mbps Ethernet link; this is not a gigabit performance measurement.
+
+The deliberately unhealthy signed update installed A. After the separately reviewed repairs documented in [operation history](operation-status.md), three distinct production HostHealth failures invoked their normal reboot callbacks. Receive-only UART measured **A3 → A2 → A1 → B3**; no manual reboot, slot selection or counter manipulation forced fallback. See [UART receipt](final-uart-receipt.json).
+
+The final healthy B boot is `54350b61-1d93-46aa-b3a4-96426cf7a419`, release `0.1.0-physical-update.2`. [Installed boundary](final-boundary.json) verifies read-only root, writable data, healthy B, A0/B3, reconciled failed transaction, empty pending state, preserved account binding and all five output services masked/inactive. [Automatic-update opt-out](final-optout.json) disables the test policy and stops the feed timer; the local feed server and observers are stopped.
+
+[Preservation comparison](final-preservation-comparison.json) passed configuration/calibration, UI settings, shared user files, machine identity, CA/SSH public identity and authorized-key digests, protected loader/GPT/recovery regions and the original B boot image. [Read-only SQL comparison](final-database-preservation.json) passed integrity, schema and all five tables including authorized users against the naturally frozen source generation. Only the documented Moonraker startup unsafe-shutdown counter is excluded; no private database rows or credentials were exported.
+
+Physical execution found and corrected runtime-mask admission, absent upload staging, Linux eMMC renumbering, insufficient health coordinator overhead, collision with an earlier startup diagnostic, and a too-short concurrent RAUC status query. Relevant checks passed: 30 mask checks, 28 staging/state checks, 64 resolver/integration checks and 26 host-health checks; subsequent changed health/rearm checks passed 35 tests, and the final shared-status/service/health/backend checks passed 61 tests. These suites overlap and are not summed. Exact high-consequence operation assessments and their rejected/pre-write attempts remain in the operation history. No independent delivery-test execution is claimed.
+
+Source composition refreshes all runtime Python modules through `integrate_host_os.stage` before cloning the signed candidates, so the shared status reader is included together with boot health in future compositions. No additional image was built for that source check.
+
+Qualification limits: A and B contain explicitly reviewed continuation repairs and therefore are not byte-identical to their original signed root payloads. No original prewarm logical database baseline exists. This demonstrates installed host update/fallback behavior with inactive outputs, not a printing release or an unmodified final-release image qualification. The installed persistent account seed and generations remain intact.
+
+Temporary image/rootfs copies, signed test bundles and the ephemeral test signing private key are retired after their consumers stop; [cleanup receipt](final-cleanup.json) records reclaimed storage without resetting cumulative resource charges. Shared bases and unrelated historical artifacts remain.

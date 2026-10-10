@@ -1,0 +1,17 @@
+{
+  "configuration_equal": true,
+  "ui_equal": true,
+  "shared_equal": true,
+  "machine_id_equal": true,
+  "public_identity_equal": true,
+  "protected_equal": {
+    "leading_before_env": true,
+    "leading_between_env": true,
+    "leading_after_env": true,
+    "recovery": true,
+    "backup_gpt_tail": true
+  },
+  "boot_b_matches_signed_original": true,
+  "database_equal": true,
+  "root_readonly": true
+}

@@ -1,0 +1,1 @@
+{"source_generation": "0.1.0-board.3-9458d3f0fb2a", "target_generation": "0.1.0-physical-update.2-c3077261f526", "integrity_ok": true, "schema_equal": true, "tables_equal": {"authorized_users": true, "job_history": true, "job_totals": true, "namespace_store": true, "table_registry": true}}
