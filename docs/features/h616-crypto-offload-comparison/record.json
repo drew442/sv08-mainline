@@ -1,0 +1,70 @@
+{
+  "format_version": 2,
+  "id": "h616-crypto-offload-comparison",
+  "kind": "feature",
+  "title": "Installed H616 crypto offload and automatic update timing",
+  "author": "root/coordinator",
+  "created": "2026-10-10",
+  "priority": 2,
+  "proposal": "docs/features/h616-crypto-offload-comparison/proposal.md",
+  "requirements": [
+    "docs/features/h616-crypto-offload-comparison/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "installed-offload",
+      "description": "Measure only CE/offload requests, prove hardware versus fallback, check digests and preserved installed state.",
+      "environment": "hardware"
+    },
+    {
+      "id": "timing-model",
+      "description": "Trace hash consumers and estimate end-to-end time with explicit specifications and software assumptions, including activation wait.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Measure bounded offload and publish timing comparison",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "installed-offload",
+        "timing-model"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Bounded existing AF_ALG hashing of synthetic memory with inactive printer services; no outputs, device writes, updates or restart. Source and arithmetic self-validated with two research agents.",
+      "hazards": [],
+      "owned_paths": [
+        "tests/host_crypto_offload.py",
+        "docs/features/h616-crypto-offload-comparison/evidence.md",
+        "docs/features/h616-crypto-offload-comparison/results.json",
+        "docs/hardware/host-crypto-offload.md"
+      ],
+      "input_paths": [
+        "runtime/sv08_feed.py",
+        "runtime/sv08_staging.py",
+        "runtime/sv08_bundle.py",
+        "runtime/sv08_transaction.py",
+        "runtime/sv08_rauc.py",
+        "runtime/sv08_boot_health.py",
+        "configs/images/host-ab.json",
+        "configs/host-os/rauc-system.conf.in"
+      ]
+    }
+  ]
+}
