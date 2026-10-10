@@ -1,21 +1,33 @@
 # Current delivery goals
 
-## Active goal — Automatic update policy and activation, 2026-10-10
+## Completed goal — Automatic update policy and activation, 2026-10-10
 
-Owner-requested trusted automatic metadata/bundle signatures, reviewed manual
-provenance exceptions and individually configurable version/compatibility-label/
-customization checks. Preserve physical layout, integrity/readback, immutable
-source, capacity, recovery and idle admission. Implement autonomous staging,
-arming, controlled reboot and existing health/fallback using agents.
+Automatic updates require trusted metadata and bundle signatures. Cockpit provides
+reviewed per-operation manual provenance exceptions and separate advanced version,
+compatibility-label, customization and downgrade controls. Physical target/layout,
+integrity/readback, immutable source, capacity, recovery and idle protections remain
+mandatory. Autonomous discovery now stages, arms and requests controlled reboot;
+durable receipts handle opt-out, interrupted dispatch, confirmation and fallback.
 
-Source implementation and native/ARM packaging are complete; targeted independent
-review corrected undispatched receipt cancellation/discovery. Source frozen at
-af70d6d for bounded six-boot ARM validation, with storage checked on Codex/Beelink
-and goal-owned compiler already retired. Physical update/printing qualification
-is excluded; no live printer write/reboot is authorized by this goal.
+Agents implemented and reviewed the delivery. Focused native checks passed 307 tests;
+after corrections, 66 overlapping affected checks passed. Actual patched RAUC passed
+16 trust/integrity cases, Chromium passed the policy/review UI checks, and a fresh
+six-boot disposable ARM journey confirmed a healthy update and fallback after three
+failed trial attempts with settings and identity preserved. Targeted independent
+review passed candidate 1a958824b3b4938fcc84949b26e33ff0d4ea213e, preserved in main.
 
-See [proposal](../docs/features/automatic-update-policy/proposal.md) and
-[owner scope](../docs/features/automatic-update-policy/owner-request.md).
+One initial fixture exceeded its live-storage cap; its failed receipts were retained
+and one diagnosed fresh-fixture repair passed without resetting cumulative charges.
+Codex/Beelink storage was checked. Cleanup reclaimed 6,646,181,888 bytes; final Codex
+free space was 34,012,852,224 bytes. Carried runtime was 2772.026/3600 seconds and
+cumulative allocation 24,352,382,976/32 GiB, within the revised 10 GiB live ceiling
+and 16 GiB free-space floor. Shared bases and unrelated history were preserved.
+
+Source and evidence are integrated; no physical printer update, reboot, service
+change or output activation occurred. Offline boot selection and failed-health
+callback limitations are explicit; physical/printing qualification remains separate.
+See [evidence](../docs/features/automatic-update-policy/evidence.md) and
+[product contract](../docs/development/automatic-update-policy.md).
 
 ## Completed goal — Installed H616 crypto offload comparison, 2026-10-10
 
@@ -33,7 +45,7 @@ end-to-end acceleration. CPU software and other update stages were deliberately 
 benchmarked. Specification ceilings plus explicit planning assumptions give serial
 cold-read examples; the central 620 MB bundle scenario is 7 min 45 s with an ideal
 1 Gbps receiver/immediate reboot, or 8 min 29 s at the reported 100 Mbps link. These
-are illustrative estimates, not observed ready times. Current feed arms next boot
+are illustrative estimates, not observed ready times. At the measured revision, the feed armed next boot
 without requesting reboot; installed diagnostic feed is absent and runtime differs.
 
 Source/evidence/arithmetic are self-validated; source research is not independent

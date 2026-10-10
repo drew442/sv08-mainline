@@ -587,7 +587,7 @@
       "resumption": null,
       "review_policy": "targeted",
       "review_reason": "Independent assessment of trust-chain-only bypass and durable automatic reboot crash/concurrency semantics; offline disposable execution only.",
-      "status": "review",
+      "status": "done",
       "title": "Implement, review and validate policy and activation",
       "validation": {
         "actor": "root/coordinator",
