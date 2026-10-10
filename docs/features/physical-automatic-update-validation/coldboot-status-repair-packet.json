@@ -1,0 +1,57 @@
+{
+  "format_version": 1,
+  "revision": "3c36a244307873ad17c406e790394628be0467ff",
+  "target": "sv08@192.168.1.141",
+  "boot_id": "320e78b6-defb-4bdf-8de9-2772f4a76cb9",
+  "canonical": "/dev/mmcblk1",
+  "stable_alias": "/dev/disk/by-path/platform-4022000.mmc",
+  "cid_sha256": "d95fdc00fd925e9bd9bd2a90119f9b0b1c9e11b5df67d075ad22afcc0ec04141",
+  "environment_before": {
+    "BOOT_ORDER": "A B",
+    "BOOT_A_LEFT": "1",
+    "BOOT_B_LEFT": "3"
+  },
+  "owner_recovery": "Owner confirmed previously tested rescue SD remains available",
+  "power": "PSU OFF observed via Beelink normal-user sv08-power status immediately before packet",
+  "leaves": [
+    {
+      "file": "sv08_boot_health.py",
+      "path": "usr/lib/sv08/sv08_boot_health.py",
+      "before": "735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9",
+      "after": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+      "mode": 420
+    },
+    {
+      "file": "sv08_rauc.py",
+      "path": "usr/lib/sv08/sv08_rauc.py",
+      "before": "586e33e09d2e01c7be06d8e448953287a828a98702d8a44dd8240dcffa0baf9d",
+      "after": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "usr/lib/systemd/system/sv08-boot-health.service",
+      "before": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "after": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "etc/systemd/system/sv08-boot-health.service",
+      "before": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "after": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+      "mode": 420
+    }
+  ],
+  "script_sha256": "18de50ee266408ad85f258ad08309a47a5f0605888523c3b45e201f2fc9cdccf",
+  "preflight": "coldboot-status-repair-preflight.log PASS currentA320e78/envA1B3/armed/idlewriter andfour exact preimages/modes bothslots; measured currentcanonicalmmc1/CIDGPT/root/data binding passes.",
+  "write_boundary": "Four public leaves perroot: healthmodule+sharedRAUCmodule+both95secondhealthunitcopies, all0644. Preserve existingmap/resolver/boots/loaderGPT/P5/data/privateaccount/diagnostics. SameStore/RAUCwriter/identity/idle/admissionlocks andboundedrootmounts.",
+  "postconditions": "Fourafterimages/modesbothroots; Aro/Bunmounted; state/tx/queuedmarker/current320e78unknownrecordunchanged; canonicalmapro/CIDGPT/rootparent/bothCRC/contextvalid/envA1B3; effective/etcTimeout95 optionalAfterRAUC (noRequires/WantsRAUC), unhealthyAsolePATHdropin, healthyBnooverride; actualfresh10sboundedquery observedA; outputs/accountunchanged.",
+  "continuation": "AfterPASS/exact4leafrepair+preservation, ONEproductionhealthstart currentA2320e78 mustretainitsunknownstartuprecordandcreateonevalidatedHostHealthsupplement/rebootcallback. OnlyoneexpectedHostHealthfailurealreadyrecorded8477. RemainingnaturalA1bootmustfailHostHealththenactualB3fallback. No manualcounter/reboot/slot/install/prepare/rebind/feedpublication.",
+  "preservation": "Actual signed bundle and prepatch healthy preservation evidence retained. Patched roots are explicitly continuation artifacts, not byte-identical signed original payload. Boot partitions and protected loader/P5/GPTtail unchanged; final logicalDB comparison includes all tables/authorized_users except documented unsafe_shutdowns key; config/calibration/publicidentity/UI/shared/machine unchanged. Disable automatic opt-in and stop timer on confirmed goodB and three distinct failure boot IDs; server stays stopped.",
+  "checks": "61health/rearm/backend/service tests pass; complete5filediff inspected/diffcheckclean; sourcecommitpushedremoteverified. Noadditionalimagebuild/install/trial.",
+  "budget": "Carry all prior charges. Newest coordinator-authorized continuation +2700local/remote processseconds and16MiBsmallgenerateddata covers coldbootdiagnosis/new1500s2MiBUART/600smonitor/exactrepair/preservation. Cumulative ceilings resource-budget.json: primary13500sec/remote10500sec/cumulative32GiB/live10GiB/freefloor16GiB. No builds/newinstallations/newboottrials or budgetreset.",
+  "writer_exclusion": "Store lock plus existing selected RAUC writer lock; service immutable process/package/unit identity and DBus Operation idle/same owner checked before stop. GetSlotStatus before repair would invoke invalid old map; full backend context after readonlycanonicalbinding remains required.",
+  "diagnosis": "FirstA8477 genuineHostHealthfailure andnormalcallback observed; UARTA2. CurrentA2320e78 failsstartup3sRAUCquerybeforeHostHealth; warmactualnativequery2.7574/2.4439s, servicesstartsimultaneously. Shared10s/32KiB statusreader kill/reap plusoptionalAfterRAUC addresses both causes;40poll/70outer90max/unit95 unchanged.",
+  "additional_diagnosis": "Priorhealth3leafrepairpassed; subsequentnaturalA2startupquerytimedout beforesecondHostHealthfailure. Existingdiagnosticpreservationlogicappliesnow320e78. RetainallpriorUART/sourceerrors/reviewFAILs; originalcollector/monitorretiredverifiedbeforeexpiry. Freshboundedreadonlyobserversrequired beforehealth."
+}

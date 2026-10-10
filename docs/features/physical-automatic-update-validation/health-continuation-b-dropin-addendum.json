@@ -1,0 +1,11 @@
+{
+  "format_version": 1,
+  "decision": "PASS WITH CONDITIONS UNCHANGED",
+  "parent_review_sha256": "87c02c88764788026d886fb14da5ea0c9ac80bbc2104f64095d6b4a2035611a2",
+  "packet_sha256": "b54a9d6db376a565447350e770e628938e0fe251479dd391c794cbc97b36e370",
+  "change": "Read-only auxiliary checker expected a qualification health drop-in in healthyB, but actualB has no/etc or/usr health drop-in directory. No source/payload/slot changes or new health invocation.",
+  "documented": "Composer configure() creates qualification-bin/systemctl and qualification health PATH drop-in only under if unhealthy. HealthyB uses real production systemctl.",
+  "reported_measured": "Coordinator reports reviewedthree-leafrepair and preservationPASS; B effective/etc95s unit hashc8ac393 matches, bothBdropindirsabsent and finallyunmounted; currentA qualificationPATHdropin intact; health not restarted yet. Reviewer did not access hardware.",
+  "assessment": "Babsence satisfies existing condition B has reviewed95s unit contents and no unreviewed timeout override. SolequalificationPATHdropin assertion applies current unhealthyA. Correcting reversible readonlychecker expectation adds no write/restart authority and does not require a new payload review.",
+  "conditions": "All previous exactrepair/preservation/backend/env/originaldiagnostic/no-hostrecord/output/account/recovery checks remain. Recheck B dirs absent, rootAro/Bunmounted and currentA Fragment/etc/Timeout95/solePATHdropin. Then at most the single alreadycoveredproductionhealthstart; no installation/manualreboot/counters. Final actualthreefailedboots/UARTfallback/preservation/optout conditions unchanged."
+}

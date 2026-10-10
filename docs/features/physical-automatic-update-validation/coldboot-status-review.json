@@ -1,0 +1,85 @@
+{
+  "format_version": 1,
+  "decision": "PASS WITH CONDITIONS",
+  "scope": "Exact four-public-leaf repair per currentA and inactiveconfirmedB; RAUCrestart, ONEcurrentA2/320e78productionhealthrestart then remainingnaturalA1HostHealthfailure/finite-counterfallbackB. No new trial/imageinstallation/manualreboot.",
+  "packet_path": "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair-packet.json",
+  "packet_sha256": "99054ba0f9039c1da52360e805fbaec08c8a154eb18282b79a4c77030f7f8d56",
+  "source_revision": "3c36a244307873ad17c406e790394628be0467ff",
+  "script_sha256": "18de50ee266408ad85f258ad08309a47a5f0605888523c3b45e201f2fc9cdccf",
+  "profile": {
+    "role": "high_consequence_reviewer_high",
+    "configured_model": "gpt-6.1-sol",
+    "configured_effort": "high",
+    "actual_sampling_telemetry": "unknown/not exposed"
+  },
+  "bindings": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair-packet.json": "99054ba0f9039c1da52360e805fbaec08c8a154eb18282b79a4c77030f7f8d56",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair/repair-coldboot-status-slots.py": "18de50ee266408ad85f258ad08309a47a5f0605888523c3b45e201f2fc9cdccf",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair/payload.json": "8cd6822337a0aa7e29c30d1e6dcf21f246c74484bbcb8c600e60bcc96dfc6340",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair-preflight.log": "ecea0057b2706c810b5a0635bbeccbd7450df6552be5729cf0d5611578dc374f",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/rauc-status-readonly-timing.json": "5b7a45ed99a18c1c7dee5ed88af342899fedb5baa8894986a06b0a4fbc9af810",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair/sv08_boot_health.py": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair/sv08_rauc.py": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/coldboot-status-repair/sv08-boot-health.service": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+    "/home/drew/sv08-mainline/runtime/sv08_boot_health.py": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+    "/home/drew/sv08-mainline/runtime/sv08_rauc.py": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+    "/home/drew/sv08-mainline/configs/host-os/systemd/sv08-boot-health.service": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+    "/home/drew/sv08-mainline/tests/test_host_boot_health.py": "69b33a306dbe67926f6ba71ba670bbedce9ac996b35f0daac73c3640e9e993b6",
+    "/home/drew/sv08-mainline/tests/test_rauc_backend.py": "6bb57c906121eef265acd6f816fec310f1b9baf57006ebb4074093baa24a0823"
+  },
+  "leaves": [
+    {
+      "file": "sv08_boot_health.py",
+      "path": "usr/lib/sv08/sv08_boot_health.py",
+      "before": "735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9",
+      "after": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+      "mode": 420
+    },
+    {
+      "file": "sv08_rauc.py",
+      "path": "usr/lib/sv08/sv08_rauc.py",
+      "before": "586e33e09d2e01c7be06d8e448953287a828a98702d8a44dd8240dcffa0baf9d",
+      "after": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "usr/lib/systemd/system/sv08-boot-health.service",
+      "before": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "after": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "etc/systemd/system/sv08-boot-health.service",
+      "before": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "after": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+      "mode": 420
+    }
+  ],
+  "measured_local_evidence": [
+    "Exactpacket/script/payload/source hashes agree; fourmanifest rows verified. Full health/sharedRAUC/unit sourcechanges and exactdeployerscript inspected.",
+    "Actualpreflight receiptecea0057b2706c810b5a0635bbeccbd7450df6552be5729cf0d5611578dc374f records320e78/A B/A1/B3/armed/fourpreimagesbothslots and idlewriter.",
+    "Readonlytimingreceipt5b7a45ed99a18c1c7dee5ed88af342899fedb5baa8894986a06b0a4fbc9af810 records actualwarmstatus2.757404679s and2.443926563s on320e78 identifyingA; it supports3s margin concern but is not coldboot proof.",
+    "Producerrauc-status-budget-tests.log records61tests/0.782s/OK. Inspected causal4.5s reader success,total10s budget,32KiB refusal,kill/reap timeout/oversize cases, backend/injectedreader consistency and optionalordering/noactivationdependency tests. No independenthardwarequery performed."
+  ],
+  "source_assessment": "SharedRAUC statusquery reader enforces total10s wall budget and32KiB output limit, strict parse/slot and existingcontext checks. Timeout/oversize/error cleanup kills/reaps activechild. Both startupobservedslot and backendstatus use it. Healthunit adds optionalAfterRAUC to order with scheduledcoldservice while retaining onlyprepareRequires; noRAUCWants/Requires introduced.40s poll/70s coordinator90cap/95s unit and strictdiagnostic supplement remain unchanged. Deployerreloads sharedRAUCmodule before postcontext checks.",
+  "conditions": [
+    "Only exact packet99054ba0f9039c1da52360e805fbaec08c8a154eb18282b79a4c77030f7f8d56/script18de50ee266408ad85f258ad08309a47a5f0605888523c3b45e201f2fc9cdccf and four listed rows. Fresh staged hashes/modes/preimages in BOTHroots must match. Currentboot320e78b6-defb-4bdf-8de9-2772f4a76cb9, revision3/A trial, physical platform4022000 alias canonicalmmcblk1, exactCID/GPT/six-partition geometry/root/data pairing, readonlycanonicalmap/bothCRC and envA B/A1/B3 must match. Confirm matching armed transaction/pending/priorB queued marker and exact current unknownstartup diagnostic intact; no validated HostHealth record for320e78 yet. Previous8477 expectedfailure remains retained.",
+    "PSU OFF, five kernel/filesystem physical masks remain active/inactive services, no USBserialwriter/hardwareoutput, accountseed equality/binding intact, no conflictingjobs/markers, timer/server stopped and owner-confirmed tested rescueSD available. Script Store and selected RAUCwriter identity/idle/same-owner exclusion plus admission gates must pass before idleRAUCstop and bounded root writes.",
+    "Write only healthmodule, sharedRAUCmodule and both effective/etc and packaged/usr healthunit in eachroot, rootowned0644 as listed. Preserve resolver/existingcanonicalmap, bootpair/kernel/initrd/loader/GPT/p5, originalstartup and HostHealth diagnostics, data/application/shared/identity/privateaccount state. No imagebuild/install/feedpublication/rawenvwrite/slotselection/manualreboot or prepare/rebind is covered. Failed/partialwrite or unknownoutcome stops dependentactions for diagnosis and independent reassessment.",
+    "Before ONE current320e78 healthrestart, exactscriptrepair mustPASS afterimagehashes/modes in bothroots, Aro/Bunmounted, byteidentical registry/update/queuedmarker/currentunknownrecord, maprecheck/CRC/contextvalid/envunchangedA1B3. Recheck effective/etc fragment,95s timeout, optionalAfterRAUC with no addedRequires/WantsRAUC, currentAsolequalificationPATHdropin and Bnohealthoverride; postcontext must use reloaded/fresh sharedstatusmodule and actual10s-boundedquery identifyA. Verify protectedboot/loader/GPT/p5 and all applicationdata preservation before health; do not infer these from scriptcompletion alone.",
+    "Only after all repair/postchecks, start existingproductionhealth ONCE on currentA2/320e78. It must preserveunknownstartuprecord, create one validatedHostHealth supplement, holdreadyclosed and request actualnormalcallback reboot under unchanged backend/state/admission guards. RemainingnaturalA1boot must produce third distinctHostHealthfailure and normalcallback to actualBfallback. Currentstartupquerytimeout is zero expectedHostHealthfailures; exactlyone prior expectedfailure8477 exists. No extra retry/manualreboot/counterreset/consumption is authorized by this review.",
+    "Keep new exclusive exact receive-onlyUART and boundedreadonlymonitor active through continuation, no overlapwith retiredconsumers. RetaincombinedinitialA3/A2 and futureA1/B3 actualbootloadercountdown; require exactlythree distinct revision3/A HostHealthfailurebootIDs, including8477 and320e78. Queryrefusal/deadline/record/callback uncertainty, changedinput, unexpectedwrites or evidenceexpiration stops furthermanualactions and successclaims; resolve outcome before any newoperation.",
+    "FinalB must be verifiedhealthyrevision2, immutable/readonly/ready, failedtrialreconciled/pendingnull/envA0B3. Immediatelyautomaticoptout/stop timer/server. Require final protectedboot/loader/GPT/p5/config/calibration/UI/shared/machine/publicidentity preservation and exactlocalSQL allfive-table/schema/integrity equality excluding only documentedunsafe_shutdowns. Keepinstalledaccountseed/generations. Explicitpatchedcontinuation artifacts cannot certify originalunpatchedsignedimage or waive originalprewarmlogicalDBproofgap. Respect carriedruntime/storage allowances without reset."
+  ],
+  "hazard_assessment": "Current unhealthyA2 still has one remainingnaturalA1 attempt and preservedconfirmedB plus availabletested rescueSD. Exact boundedpublic repair to B is the consequential fallbacktransition; source/target/hash/mode/identity/currentstate/pre-postchecks and recoveryavailability contain that risk. Recoverablefailedboot alone is notloss ofrecovery.",
+  "limitations": [
+    "PASS is review input, no owner/hardwareauthority grant and no executionproof.",
+    "Currenttarget/state changed from previous8477 reviewedrestart; oldcoverage not reused.",
+    "Originalsignedunhealthyartifact stopped on integrationdefects; eventual patchedcontinuation doesnot validate originalunpatchedartifact.",
+    "OriginalprewarmlogicalDBpreservation remainsunproven and unwaived; comparisonexcludes only mutableunsafe_shutdowns withoutcountertype/value/existenceclaim.",
+    "Sourcecommit/push and currentPSUOFF/recoveryavailability are coordinator/ownerrecords; reviewerperformed no hardwareaccess/trackededit/credentialinspection."
+  ],
+  "allowance": "Alllineagechargescarryforward; this assessment uses only localboundedreads/hashes and smallrecords within300processsec/16MiB reviewcontinuation. Operatorallowance as correctedpacket+2700processsec16MiB is coordinatorallocated; no reset."
+}
