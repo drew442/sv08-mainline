@@ -609,6 +609,24 @@ class BootHealthTests(unittest.TestCase):
         with self.assertRaises(ValueError):record_failure(self.store,self.boot,HealthFailure('failed'))
         self.assertTrue(secondary.is_symlink())
 
+    def test_initial_rauc_observation_uses_shared_budget_and_retains_slot_validation(self):
+        from sv08_boot_health import bounded_rauc_output
+        command=Mock(return_value='{"booted":"A"}')
+        self.assertEqual(observed_rauc_slot(command),'A')
+        self.assertEqual(command.call_args.kwargs['timeout'],10)
+        with patch('sv08_boot_health.bounded_status_output',return_value='{"booted":"B"}') as reader:
+            self.assertEqual(bounded_rauc_output(),'{'+'"booted":"B"}')
+            reader.assert_called_once_with(['/usr/bin/rauc','status','--output-format=json'])
+        with self.assertRaises(ValueError):observed_rauc_slot(lambda *a,**k:'{"booted":"C"}')
+
+    def test_health_waits_for_scheduled_rauc_without_activating_legacy_dependency(self):
+        import configparser
+        config=configparser.ConfigParser()
+        config.read(Path(__file__).resolve().parents[1]/'configs/host-os/systemd/sv08-boot-health.service')
+        self.assertIn('rauc.service',config['Unit']['After'].split())
+        self.assertEqual(config['Unit']['Requires'],'sv08-prepare.service')
+        self.assertNotIn('Wants',config['Unit'])
+
     def test_service_orders_health_before_klipper_and_enables_on_host(self):
         repo = Path(__file__).resolve().parents[1]
         service = (repo / 'configs/host-os/systemd/sv08-boot-health.service').read_text()

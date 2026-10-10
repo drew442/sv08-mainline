@@ -1,7 +1,7 @@
 [Unit]
 Description=Validate SV08 host boot and reconcile image trial
 Requires=sv08-prepare.service
-After=sv08-prepare.service
+After=sv08-prepare.service rauc.service
 Before=sv08-klipper.service
 
 [Service]

@@ -12,9 +12,11 @@ import json
 import os
 from pathlib import Path
 import secrets
+import selectors
 import stat
 import subprocess
 import tempfile
+import time
 from sv08_boot import verify_devices
 from sv08_gpt import inspect as inspect_gpt
 from sv08_bundle import inspect as inspect_bundle
@@ -23,10 +25,40 @@ from sv08_rauc_bootloader import verify_environment_copies
 
 MIB = 1024*1024
 CLEANUP_SECONDS = 10
+STATUS_TIMEOUT_SECONDS = 10
+STATUS_OUTPUT_LIMIT = 32 * 1024
 SLOT_NAMES = {'rootfs.0': ('root-a', 'ext4', 'A', None),
               'boot.0': ('boot-a', 'vfat', None, 'rootfs.0'),
               'rootfs.1': ('root-b', 'ext4', 'B', None),
               'boot.1': ('boot-b', 'vfat', None, 'rootfs.1')}
+
+
+def bounded_status_output(command):
+    process = subprocess.Popen(command,
+                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    data = bytearray()
+    deadline = time.monotonic() + STATUS_TIMEOUT_SECONDS
+    try:
+        with selectors.DefaultSelector() as selector:
+            selector.register(process.stdout, selectors.EVENT_READ)
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0 or not selector.select(remaining):
+                    raise ValueError('RAUC status observation timed out')
+                block = os.read(process.stdout.fileno(), min(4096, STATUS_OUTPUT_LIMIT + 1 - len(data)))
+                if not block:
+                    break
+                data.extend(block)
+                if len(data) > STATUS_OUTPUT_LIMIT:
+                    raise ValueError('RAUC status observation exceeds bound')
+        if process.wait(timeout=max(0, deadline - time.monotonic())) != 0:
+            raise ValueError('RAUC status observation failed')
+        return data.decode()
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait()
+
 
 
 def root_disk_name():
@@ -150,6 +182,8 @@ class Backend:
         return self.service.observe()
 
     def command(self, *args):
+        if args == ('status', '--output-format=json'):
+            return bounded_status_output(['/usr/bin/rauc', '--conf='+str(self.config), *args])
         return subprocess.check_output(['/usr/bin/rauc', '--conf='+str(self.config), *args], text=True)
 
     @contextmanager
@@ -182,9 +216,12 @@ class Backend:
             Path(temporary).unlink(missing_ok=True)
 
     def status(self, read_command=None):
-        if read_command:
-            return json.loads(read_command(['/usr/bin/rauc', '--conf='+str(self.config), 'status', '--output-format=json'], text=True))
-        return json.loads(self.command('status', '--output-format=json'))
+        output = (read_command(['/usr/bin/rauc', '--conf='+str(self.config), 'status', '--output-format=json'],
+                               text=True, timeout=STATUS_TIMEOUT_SECONDS) if read_command else
+                  self.command('status', '--output-format=json'))
+        if len(output.encode()) > STATUS_OUTPUT_LIMIT:
+            raise ValueError('RAUC status observation exceeds bound')
+        return json.loads(output)
 
     def validate_context(self, boot, read_command=None):
         """Image operations always require the original immutable context."""

@@ -5,7 +5,6 @@ import json
 import os
 from contextlib import contextmanager
 from pathlib import Path
-import selectors
 import signal
 import subprocess
 import time
@@ -14,6 +13,7 @@ import uuid
 from sv08_boot import device_number, slot_from_cmdline, verify_devices
 from sv08_state import Store, atomic_json, identifier
 from sv08_transaction import Transaction
+from sv08_rauc import STATUS_TIMEOUT_SECONDS, STATUS_OUTPUT_LIMIT, bounded_status_output
 
 STABLE_SECONDS = 5
 DEADLINE_SECONDS = 60
@@ -59,36 +59,12 @@ def validate_boot(boot, store, manifest, *, boot_id, cmdline, observed_slot,
 
 
 def bounded_rauc_output():
-    process = subprocess.Popen(['/usr/bin/rauc', 'status', '--output-format=json'],
-                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-    data = bytearray()
-    deadline = time.monotonic() + 3
-    try:
-        with selectors.DefaultSelector() as selector:
-            selector.register(process.stdout, selectors.EVENT_READ)
-            while True:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0 or not selector.select(remaining):
-                    raise ValueError('RAUC boot observation timed out')
-                block = os.read(process.stdout.fileno(), min(4096, 32 * 1024 + 1 - len(data)))
-                if not block:
-                    break
-                data.extend(block)
-                if len(data) > 32 * 1024:
-                    raise ValueError('RAUC boot observation exceeds bound')
-        if process.wait(timeout=max(0, deadline - time.monotonic())) != 0:
-            raise ValueError('RAUC boot observation failed')
-        return data.decode()
-    finally:
-        if process.poll() is None:
-            process.kill()
-            process.wait()
-
+    return bounded_status_output(['/usr/bin/rauc', 'status', '--output-format=json'])
 
 def observed_rauc_slot(command=None):
     output = (command(['/usr/bin/rauc', 'status', '--output-format=json'],
-                      text=True, timeout=3) if command else bounded_rauc_output())
-    if len(output.encode()) > 32 * 1024:
+                      text=True, timeout=STATUS_TIMEOUT_SECONDS) if command else bounded_rauc_output())
+    if len(output.encode()) > STATUS_OUTPUT_LIMIT:
         raise ValueError('RAUC boot observation exceeds bound')
     slot = json.loads(output)['booted']
     if slot not in ('A', 'B'):

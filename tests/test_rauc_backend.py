@@ -274,3 +274,51 @@ class InstallAdmissionOptionTests(unittest.TestCase):
         proof['signer_trusted'] = True
         with patch('sv08_rauc.digest_device', return_value='a'*64):
             with self.assertRaisesRegex(ValueError, 'exact manual'): backend.install('bundle', proof, 'B')
+
+
+class BoundedStatusTests(unittest.TestCase):
+    def test_delayed_output_within_shared_budget_is_accepted(self):
+        from sv08_rauc import bounded_status_output, STATUS_TIMEOUT_SECONDS
+        clock=[0.0];process=Mock();process.stdout.fileno.return_value=123
+        process.wait.return_value=0;process.poll.return_value=0
+        selector=Mock();selector.__enter__=Mock(return_value=selector);selector.__exit__=Mock(return_value=False)
+        def select(remaining):
+            self.assertGreater(remaining,0)
+            clock[0]=4.5
+            return [True]
+        selector.select.side_effect=select
+        with patch('sv08_rauc.subprocess.Popen',return_value=process) as launch, \
+             patch('sv08_rauc.selectors.DefaultSelector',return_value=selector), \
+             patch('sv08_rauc.time.monotonic',side_effect=lambda:clock[0]), \
+             patch('sv08_rauc.os.read',side_effect=[b'{"booted":"A"}',b'']):
+            self.assertEqual(bounded_status_output(['fixture-status']),'{'+'"booted":"A"}')
+        self.assertEqual(STATUS_TIMEOUT_SECONDS,10)
+        self.assertEqual(selector.select.call_args_list[0].args,(10,))
+        process.wait.assert_called_once_with(timeout=5.5)
+        process.kill.assert_not_called()
+        self.assertEqual(launch.call_args.args[0],['fixture-status'])
+
+    def test_timeout_and_oversized_output_kill_and_reap_process(self):
+        from sv08_rauc import bounded_status_output
+        for oversized in (False,True):
+            with self.subTest(oversized=oversized):
+                process=Mock();process.poll.return_value=None
+                selector=Mock();selector.__enter__=Mock(return_value=selector);selector.__exit__=Mock(return_value=False)
+                selector.select.return_value=[True] if oversized else []
+                with patch('sv08_rauc.subprocess.Popen',return_value=process), \
+                     patch('sv08_rauc.selectors.DefaultSelector',return_value=selector), \
+                     patch('sv08_rauc.os.read',return_value=b'x'*(32*1024+1)):
+                    with self.assertRaisesRegex(ValueError,'exceeds bound' if oversized else 'timed out'):
+                        bounded_status_output(['fixture-status'])
+                process.kill.assert_called_once();process.wait.assert_called_once_with()
+
+    def test_backend_status_uses_shared_reader_and_injected_budget(self):
+        from sv08_rauc import STATUS_TIMEOUT_SECONDS
+        backend=Backend({}, {}, {}, {})
+        with patch('sv08_rauc.bounded_status_output',return_value='{"booted":"A"}') as reader:
+            self.assertEqual(backend.status(),{'booted':'A'})
+            reader.assert_called_once_with(['/usr/bin/rauc','--conf=/etc/rauc/system.conf','status','--output-format=json'])
+        command=Mock(return_value='{"booted":"B"}')
+        self.assertEqual(backend.status(command),{'booted':'B'})
+        self.assertEqual(command.call_args.kwargs['timeout'],STATUS_TIMEOUT_SECONDS)
+        with self.assertRaises(ValueError):backend.status(lambda *a,**k:'x'*(32*1024+1))
