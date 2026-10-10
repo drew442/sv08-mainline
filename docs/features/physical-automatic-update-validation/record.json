@@ -1,56 +1,57 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "05daec350f0662cedd62ce353c461d7702f1fab5812db51db4265076e716ce88",
+    "rationale": "Owner accepted physical healthy and unhealthy automatic-update validation with agents, preserved data and inactive outputs.",
+    "reference": "docs/features/physical-automatic-update-validation/owner-request.md",
+    "reference_sha256": "707922e426052455e8c1f0d3d6c58945a82af74a4460c20cb55ff7bcf9a2dc7c",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/design/host-os-ab.md": "37da87c53fa40587e9cb50cd1ff260eba0df039b37203b545be9907bea7b3299",
+      "docs/development/automatic-update-policy.md": "b97b774fb11bb341c5a97fc6dfb2a4f27f6896dbdfd2c5c47f3e4d3062d4b217",
+      "docs/features/physical-automatic-update-validation/owner-request.md": "707922e426052455e8c1f0d3d6c58945a82af74a4460c20cb55ff7bcf9a2dc7c"
+    },
+    "scope_sha256": "9e9fc36af265541a97b0d6b16a3c9560f8d93e8f8a276043ae4f1668241a05dc",
+    "session": "physical-auto-20261010",
+    "source_commit": "98e455fba77aa6c228cd6d488098e3bfbd15d8d9"
+  },
+  "checks": [
+    {
+      "description": "Offline named-hardware composer, exact source/artifact/config/toolchain hashes, bounded storage and appropriate tests.",
+      "environment": "offline",
+      "id": "artifacts"
+    }
+  ],
+  "created": "2026-10-10",
+  "decision": null,
   "format_version": 2,
   "id": "physical-automatic-update-validation",
   "kind": "feature",
-  "title": "Physical automatic update and fallback validation",
-  "author": "root/coordinator",
-  "created": "2026-10-10",
+  "owner_decision_required": true,
   "priority": 2,
   "proposal": "docs/features/physical-automatic-update-validation/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/physical-automatic-update-validation/owner-request.md",
     "docs/development/automatic-update-policy.md",
     "docs/design/host-os-ab.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": true,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "artifacts",
-      "description": "Offline named-hardware composer, exact source/artifact/config/toolchain hashes, bounded storage and appropriate tests.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "prepare",
-      "title": "Prepare exact named-hardware test artifacts",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "artifacts"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Offline regular-file preparation with no physical writes or identity imports is reversible and self-validated.",
       "hazards": [],
-      "owned_paths": [
-        "scripts/prepare_physical_update_qualification.py",
-        "tests/test_prepare_physical_update_qualification.py",
-        "docs/features/physical-automatic-update-validation/preparation.md",
-        "docs/features/physical-automatic-update-validation/preparation.json"
-      ],
+      "human_task": null,
+      "id": "prepare",
+      "implementation": null,
       "input_paths": [
         "runtime/",
         "configs/host-os/",
@@ -58,7 +59,22 @@
         "scripts/integrate_host_os.py",
         "scripts/stage_admin_ui.py",
         "scripts/assemble_board_diagnostic.py"
-      ]
+      ],
+      "owned_paths": [
+        "scripts/prepare_physical_update_qualification.py",
+        "tests/test_prepare_physical_update_qualification.py",
+        "docs/features/physical-automatic-update-validation/preparation.md",
+        "docs/features/physical-automatic-update-validation/preparation.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Offline regular-file preparation with no physical writes or identity imports is reversible and self-validated.",
+      "status": "pending",
+      "title": "Prepare exact named-hardware test artifacts",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Physical automatic update and fallback validation"
 }
