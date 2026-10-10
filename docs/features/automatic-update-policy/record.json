@@ -65,7 +65,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "86ffe8043581434fb482938667994dac",
+        "session": "auto-policy-20261010"
+      },
       "input_paths": [
         "runtime/sv08_admission.py",
         "runtime/sv08_boot_health.py",
@@ -134,7 +138,7 @@
       "resumption": null,
       "review_policy": "targeted",
       "review_reason": "Independent assessment of trust-chain-only bypass and durable automatic reboot crash/concurrency semantics; offline disposable execution only.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement, review and validate policy and activation",
       "validation": null,
       "verification": null

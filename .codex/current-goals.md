@@ -1,5 +1,22 @@
 # Current delivery goals
 
+## Active goal — Automatic update policy and activation, 2026-10-10
+
+Owner-requested trusted automatic metadata/bundle signatures, reviewed manual
+provenance exceptions and individually configurable version/compatibility-label/
+customization checks. Preserve physical layout, integrity/readback, immutable
+source, capacity, recovery and idle admission. Implement autonomous staging,
+arming, controlled reboot and existing health/fallback using agents.
+
+Source implementation and native/ARM packaging are complete; targeted independent
+review corrected undispatched receipt cancellation/discovery. Source frozen at
+af70d6d for bounded six-boot ARM validation, with storage checked on Codex/Beelink
+and goal-owned compiler already retired. Physical update/printing qualification
+is excluded; no live printer write/reboot is authorized by this goal.
+
+See [proposal](../docs/features/automatic-update-policy/proposal.md) and
+[owner scope](../docs/features/automatic-update-policy/owner-request.md).
+
 ## Completed goal — Installed H616 crypto offload comparison, 2026-10-10
 
 Bounded existing-driver Ethernet measurements completed on test-sv08-01 without
