@@ -1,0 +1,447 @@
+{
+  "format_version": 1,
+  "date": "2026-10-10",
+  "hardware_profile": "test-sv08-01",
+  "board_revision": null,
+  "connection": "Ethernet, existing trusted SSH identity",
+  "kernel": "6.18.51-sv08-candidate1",
+  "openssl": "OpenSSL 3.5.7 9 Jun 2026",
+  "python": "3.13.5 (main, Jun 13 2026, 14:18:01) [GCC 14.2.0]",
+  "hashlib_sha256_module": "_hashlib",
+  "rauc": "rauc 1.15.2",
+  "cpu_crypto_features": [
+    "aes",
+    "pmull",
+    "sha1",
+    "sha2"
+  ],
+  "openssl_armcap": "0xbd",
+  "ce_clock_hz": 300000000,
+  "mmc_spec": {
+    "actual_clock_hz": 42857142,
+    "bus_width_bits": 8,
+    "transfers_per_clock": 2,
+    "timing": "DDR52",
+    "ideal_bus_bytes_per_second": 85714284
+  },
+  "reported_ethernet_mbps": 100,
+  "root_boot_readonly": true,
+  "services_preserved_inactive": true,
+  "same_boot": true,
+  "status": "passed",
+  "bounds": {
+    "wall_seconds": 80,
+    "processed_bytes": 536870912,
+    "synthetic_buffer_bytes": 65536
+  },
+  "final_processed_bytes": 461434880,
+  "final_wall_seconds": 5.340134854006465,
+  "remote_execution_wall_seconds": 7.083844484994188,
+  "temperatures_mC": {
+    "before": 47771,
+    "after": 49148
+  },
+  "script_sha256": "b6f139aaaf47e982771e57814897ebea4d11b649a490b32d6a01742452efa2fa",
+  "expected_zero_digests": {
+    "4096": "ad7facb2586fc6e966c004d7d1d16b024f5805ff7cb47c7a85dabd8b48892ca7",
+    "16384": "4fe7b59af6de3b665b67788cc2f99892ab827efae3a467342b3bb4e3bc8e5bfe",
+    "28672": "18619b678a5c207a971a0aa931604f48162e307c57ecdec450d5f095fe9f32c7",
+    "32768": "c35020473aed1b4642cd726cad727b63fff2824ad68cedd7ffb73c7cbd890479",
+    "65536": "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31",
+    "8388608": "2daeb1f36095b44b318410b3f4e8b5d989dcc7bb023d1426c492dab0a3053e74"
+  },
+  "samples": [
+    {
+      "message_bytes": 4096,
+      "repeat": 0,
+      "messages": 12288,
+      "bytes": 50331648,
+      "wall_seconds": 0.9690014980005799,
+      "process_cpu_seconds": 0.40967400000000004,
+      "delta": {
+        "requests": 12288,
+        "fallback": 0,
+        "channel_requests": 12288
+      },
+      "digests_match": true,
+      "temperature_mC": 49634,
+      "ce_bytes_per_second": 51941764.903205425
+    },
+    {
+      "message_bytes": 4096,
+      "repeat": 1,
+      "messages": 12288,
+      "bytes": 50331648,
+      "wall_seconds": 0.9540134870039765,
+      "process_cpu_seconds": 0.42065200000000014,
+      "delta": {
+        "requests": 12288,
+        "fallback": 0,
+        "channel_requests": 12288
+      },
+      "digests_match": true,
+      "temperature_mC": 49067,
+      "ce_bytes_per_second": 52757795.026633844
+    },
+    {
+      "message_bytes": 4096,
+      "repeat": 2,
+      "messages": 12288,
+      "bytes": 50331648,
+      "wall_seconds": 0.8959332880040165,
+      "process_cpu_seconds": 0.35689700000000013,
+      "delta": {
+        "requests": 12288,
+        "fallback": 0,
+        "channel_requests": 12288
+      },
+      "digests_match": true,
+      "temperature_mC": 49229,
+      "ce_bytes_per_second": 56177897.03084943
+    },
+    {
+      "message_bytes": 16384,
+      "repeat": 0,
+      "messages": 3072,
+      "bytes": 50331648,
+      "wall_seconds": 0.413025044996175,
+      "process_cpu_seconds": 0.09592699999999976,
+      "delta": {
+        "requests": 3072,
+        "fallback": 0,
+        "channel_requests": 3072
+      },
+      "digests_match": true,
+      "temperature_mC": 49229,
+      "ce_bytes_per_second": 121861007.24343754
+    },
+    {
+      "message_bytes": 16384,
+      "repeat": 1,
+      "messages": 3072,
+      "bytes": 50331648,
+      "wall_seconds": 0.42120403100852855,
+      "process_cpu_seconds": 0.10285200000000005,
+      "delta": {
+        "requests": 3072,
+        "fallback": 0,
+        "channel_requests": 3072
+      },
+      "digests_match": true,
+      "temperature_mC": 49148,
+      "ce_bytes_per_second": 119494696.85626271
+    },
+    {
+      "message_bytes": 16384,
+      "repeat": 2,
+      "messages": 3072,
+      "bytes": 50331648,
+      "wall_seconds": 0.4176747690071352,
+      "process_cpu_seconds": 0.0993179999999999,
+      "delta": {
+        "requests": 3072,
+        "fallback": 0,
+        "channel_requests": 3072
+      },
+      "digests_match": true,
+      "temperature_mC": 49148,
+      "ce_bytes_per_second": 120504401.35429914
+    },
+    {
+      "message_bytes": 28672,
+      "repeat": 0,
+      "messages": 1755,
+      "bytes": 50319360,
+      "wall_seconds": 0.3528689210070297,
+      "process_cpu_seconds": 0.06758999999999982,
+      "delta": {
+        "requests": 1755,
+        "fallback": 0,
+        "channel_requests": 1755
+      },
+      "digests_match": true,
+      "temperature_mC": 49148,
+      "ce_bytes_per_second": 142600713.76191714
+    },
+    {
+      "message_bytes": 28672,
+      "repeat": 1,
+      "messages": 1755,
+      "bytes": 50319360,
+      "wall_seconds": 0.35759118699934334,
+      "process_cpu_seconds": 0.07156300000000004,
+      "delta": {
+        "requests": 1755,
+        "fallback": 0,
+        "channel_requests": 1755
+      },
+      "digests_match": true,
+      "temperature_mC": 49148,
+      "ce_bytes_per_second": 140717561.92384127
+    },
+    {
+      "message_bytes": 28672,
+      "repeat": 2,
+      "messages": 1755,
+      "bytes": 50319360,
+      "wall_seconds": 0.3538166329963133,
+      "process_cpu_seconds": 0.06949300000000003,
+      "delta": {
+        "requests": 1755,
+        "fallback": 0,
+        "channel_requests": 1755
+      },
+      "digests_match": true,
+      "temperature_mC": 49148,
+      "ce_bytes_per_second": 142218752.05206737
+    },
+    {
+      "message_bytes": 32768,
+      "repeat": 0,
+      "messages": 1,
+      "bytes": 32768,
+      "wall_seconds": 0.00026129299658350646,
+      "process_cpu_seconds": 0.00029199999999995896,
+      "delta": {
+        "requests": 0,
+        "fallback": 1,
+        "channel_requests": 0
+      },
+      "digests_match": true,
+      "temperature_mC": 49148
+    },
+    {
+      "message_bytes": 65536,
+      "repeat": 0,
+      "messages": 1,
+      "bytes": 65536,
+      "wall_seconds": 0.0004107929999008775,
+      "process_cpu_seconds": 0.0004459999999997244,
+      "delta": {
+        "requests": 0,
+        "fallback": 1,
+        "channel_requests": 0
+      },
+      "digests_match": true,
+      "temperature_mC": 49148
+    }
+  ],
+  "throughput_summary": [
+    {
+      "message_bytes": 4096,
+      "median_MB_per_second": 52.75779502663384,
+      "min_MB_per_second": 51.941764903205424,
+      "max_MB_per_second": 56.17789703084943,
+      "process_cpu_wall_fraction": 0.42115813595008444
+    },
+    {
+      "message_bytes": 16384,
+      "median_MB_per_second": 120.50440135429915,
+      "min_MB_per_second": 119.49469685626272,
+      "max_MB_per_second": 121.86100724343754,
+      "process_cpu_wall_fraction": 0.23811493285826657
+    },
+    {
+      "message_bytes": 28672,
+      "median_MB_per_second": 142.21875205206737,
+      "min_MB_per_second": 140.71756192384126,
+      "max_MB_per_second": 142.60071376191715,
+      "process_cpu_wall_fraction": 0.1960448743842963
+    }
+  ],
+  "streaming_diagnostic": {
+    "bytes": 8388608,
+    "chunk_bytes": 65536,
+    "digests_match": true,
+    "delta": {
+      "requests": 0,
+      "fallback": 1,
+      "channel_requests": 0
+    },
+    "role": "capability check, not software throughput baseline"
+  },
+  "private_receipts_sha256": {
+    "offload-results.json": "9b9882d926411e693e913fec6b52caf3bd2bdfd1fa072155e4e0c1d5f81014a3",
+    "execution.json": "291260f3845e231d36df0b5c1869e7452b61947ef2869684bb5ee10aa6bd1cdb",
+    "installed-preflight.json": "0c3704ddb2ae45d6a38bf46145db8582ba55a2f3c769ec1f45c5c4789f380cbf",
+    "driver-preflight.json": "987995db28d61ae99616971da4592e7acde834a659940c68c047a0b04365a0b7",
+    "stats-preflight.json": "6c292afe371095687faebc3289b6bae73247ed11dc621825da9c95649634b51e",
+    "storage-spec-and-runtime.json": "19a993e9b47583336ec709068767635daba6d5e2a40111bdc26e69271afb8753",
+    "consumer-preflight.json": "648429385206bd41efda5e7b5acbb91eb625ec7edf56e4fc192f23c2693290fe",
+    "expected-digests.json": "e63cfe8310f4bb3a6ab46e72d8aa123cae0d193c256b3940169e450aedd4ffa8",
+    "attempt1-execution.json": "04f2824bcc80410485ebcad7ef122b0e378d955bd94a5711e5e9f62ca30fa2a4",
+    "attempt1-offload-results.json": "edb2775efcc4576d581564387c3c7632c73f8783e70f4aec08ab0c9bec5976cd",
+    "attempt1-script.py": "f1f6c093e46646a06bda1cc6cdde9ff564e9fca2d75dd912e11b670c9a5280d4",
+    "short-samples-execution.json": "4ab6c1b819ff1742c97e616c07980dd344e8077c20ec6487d0f6e2c7814d18c7",
+    "short-samples-offload-results.json": "2727fcca5b17f5090e3c4068ec2a49b8346ae09ac876ecaf38aa14fb961eafca",
+    "short-samples-script.py": "c2a181b39d4ada61dfeee65ecd6f2e32a19c883e0836a48cdaed4088a7207e97"
+  },
+  "installed_runtime_hashes": {
+    "sv08_staging.py": "8f54fbf7af84f4e978e213e5c9b5309a310321d3787d1418c9c28358e032f65a",
+    "sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+    "sv08_transaction.py": "de2d33148e88814a0d9cc9b660de0144fdf79c58e67272ee086fb736991fe313",
+    "sv08_rauc.py": "ab52f6d4f15a7ab10704d9dba206fb2f593168bb62bc483c40c408e11f5d4478",
+    "sv08_boot_health.py": "e2c568e314ee8499507961696a88e8a6f2fdd21eb8cec79cca2bd4d6259e10cf"
+  },
+  "prior_attempts": [
+    {
+      "name": "pre-send polling timeout",
+      "status": "failed",
+      "remote_wall_seconds": 4.826934979995713,
+      "completed_messages": 0,
+      "description": "Python socket timeout polling did not reach the first AF_ALG hash send; replaced by blocking calls bounded by SIGALRM/SSH watchdog."
+    },
+    {
+      "name": "preliminary short samples",
+      "status": "passed",
+      "remote_wall_seconds": 1.920970757957548,
+      "processed_bytes": 71278592,
+      "description": "Hardware samples too short for final acceptance; retained separately. Larger-message requests proved fallback; their timings are not a software baseline."
+    }
+  ],
+  "lineage_processed_bytes": 532713472,
+  "lineage_remote_wall_seconds": 13.831750222947448,
+  "lineage_limits": {
+    "remote_process_seconds": 180,
+    "processed_bytes": 1073741824,
+    "retained_generated_bytes": 16777216,
+    "images_created": 0,
+    "guest_files_written": 0
+  },
+  "model": {
+    "scope": "Repository fresh-feed successful update, not executed installed update. Immediate reboot assumed; current feed only arms next boot.",
+    "bundle_bytes": 620480437,
+    "raw_boot_root_bytes": 2348810240,
+    "python_hashed_bytes": 10148832905,
+    "physical_read_bytes_cold_serial": 10769313342,
+    "physical_write_bytes": 2969290677,
+    "stable_health_seconds": 5,
+    "other_rates_measured": false,
+    "software_baseline_measured": false,
+    "cases": [
+      {
+        "name": "fast-assumptions",
+        "assumed_rates_decimal_MBps": {
+          "network_payload_ideal": 125,
+          "storage_read": 80,
+          "storage_write": 50,
+          "python_sha": 400,
+          "verity_sha": 400,
+          "decompression_output": 200
+        },
+        "assumed_fixed_seconds": {
+          "boot": 20,
+          "state_copy": 2,
+          "other": 2
+        },
+        "serial_components_seconds": {
+          "download": 4.963843496,
+          "storage_read": 134.616416775,
+          "storage_write": 59.38581354,
+          "python_sha": 25.3720822625,
+          "verity_sha": 3.102402185,
+          "decompression": 11.7440512,
+          "boot": 20,
+          "state_copy": 2,
+          "other": 2,
+          "stable_health": 5
+        },
+        "serial_total_seconds": 268.18460945849995,
+        "serial_total_seconds_100Mbps": 312.85920092249995
+      },
+      {
+        "name": "planning-assumptions",
+        "assumed_rates_decimal_MBps": {
+          "network_payload_ideal": 125,
+          "storage_read": 50,
+          "storage_write": 25,
+          "python_sha": 200,
+          "verity_sha": 200,
+          "decompression_output": 100
+        },
+        "assumed_fixed_seconds": {
+          "boot": 30,
+          "state_copy": 5,
+          "other": 5
+        },
+        "serial_components_seconds": {
+          "download": 4.963843496,
+          "storage_read": 215.38626684,
+          "storage_write": 118.77162708,
+          "python_sha": 50.744164525,
+          "verity_sha": 6.20480437,
+          "decompression": 23.4881024,
+          "boot": 30,
+          "state_copy": 5,
+          "other": 5,
+          "stable_health": 5
+        },
+        "serial_total_seconds": 464.558808711,
+        "serial_total_seconds_100Mbps": 509.23340017500004
+      },
+      {
+        "name": "slow-assumptions",
+        "assumed_rates_decimal_MBps": {
+          "network_payload_ideal": 125,
+          "storage_read": 25,
+          "storage_write": 15,
+          "python_sha": 100,
+          "verity_sha": 100,
+          "decompression_output": 50
+        },
+        "assumed_fixed_seconds": {
+          "boot": 60,
+          "state_copy": 10,
+          "other": 10
+        },
+        "serial_components_seconds": {
+          "download": 4.963843496,
+          "storage_read": 430.77253368,
+          "storage_write": 197.9527118,
+          "python_sha": 101.48832905,
+          "verity_sha": 12.40960874,
+          "decompression": 46.9762048,
+          "boot": 60,
+          "state_copy": 10,
+          "other": 10,
+          "stable_health": 5
+        },
+        "serial_total_seconds": 879.563231566,
+        "serial_total_seconds_100Mbps": 924.2378230300001
+      }
+    ],
+    "current_ce_effect": "No inspected Python/OpenSSL or dm-verity consumer invokes this CE AHASH path; source-inferred no acceleration, not a measured update-speed difference.",
+    "software_sha_sensitivity": [
+      {
+        "assumed_decimal_MBps": 100,
+        "python_sha_seconds": 101.48832905
+      },
+      {
+        "assumed_decimal_MBps": 200,
+        "python_sha_seconds": 50.744164525
+      },
+      {
+        "assumed_decimal_MBps": 400,
+        "python_sha_seconds": 25.3720822625
+      }
+    ],
+    "cold_serial_ideal_bus_floor_seconds": 160.28371676067434
+  },
+  "repository_runtime_hashes": {
+    "sv08_feed.py": "916fddad33c6fb4a96d3e69ad798e9eb57922f053bfb59e01c3d60da5dee8edf",
+    "sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+    "sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+    "sv08_transaction.py": "4390addefc58be86801eb97f69bd832e1b75e993087972ba14c9f254bb60c597",
+    "sv08_rauc.py": "ac501761bb4a611911a24af1c093d4516153fab6771706c0e597767062a9c71e",
+    "sv08_boot_health.py": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f"
+  },
+  "limitations": [
+    "Synthetic zero buffers, three runs per supported geometry, cache-warm request/API throughput including digest checking; not whole-image hashing.",
+    "Process CPU fraction excludes interrupt/kernel-thread work and background tasks; no comparative CPU utilization measurement.",
+    "Global counters may be shared; exact request deltas and digest checks matched all timed batches.",
+    "No independent CPU software benchmark, storage/network/decompression/boot measurements, actual update or reboot.",
+    "Specification ceilings and illustrative throughput/fixed-time assumptions are not measured performance or upper/lower bounds for the complete update.",
+    "Installed feed module absent; other installed updater files differ from current repository. Timing describes repository source with representative image sizes.",
+    "Current driver cannot preserve SHA state across offloaded chunks; concatenating per-chunk digests is not a whole-image SHA digest."
+  ]
+}
