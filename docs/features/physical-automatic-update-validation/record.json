@@ -51,7 +51,11 @@
       "hazards": [],
       "human_task": null,
       "id": "prepare",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "7fa88afef8824a2ab9157da0e1a8c047",
+        "session": "physical-auto-20261010"
+      },
       "input_paths": [
         "runtime/",
         "configs/host-os/",
@@ -70,7 +74,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Offline regular-file preparation with no physical writes or identity imports is reversible and self-validated.",
-      "status": "pending",
+      "status": "running",
       "title": "Prepare exact named-hardware test artifacts",
       "validation": null,
       "verification": null
