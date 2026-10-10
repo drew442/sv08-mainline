@@ -1,5 +1,30 @@
 # Current delivery goals
 
+## Completed goal — Installed H616 crypto offload comparison, 2026-10-10
+
+Bounded existing-driver Ethernet measurements completed on test-sv08-01 without
+updates, reboot, outputs, configuration changes or guest files. Nine approximately
+48 MiB CE batches gave correct digests/exact task counters and median 52.76/120.50/
+142.22 decimal MB/s at 4/16/28 KiB. Larger one-shot and streaming requests fell back.
+Root/boot read-only, boot identity and inspected service masks/states were preserved.
+Final probe processed 461,434,880 bytes in 5.340 seconds; retained preliminary and
+pre-send failure bring remote command duration to 13.832 seconds. No images created.
+
+Two research agents traced hash consumers and pinned kernel semantics. Python/OpenSSL
+and dm-verity do not invoke the measured CE AHASH path, so these results establish no
+end-to-end acceleration. CPU software and other update stages were deliberately not
+benchmarked. Specification ceilings plus explicit planning assumptions give serial
+cold-read examples; the central 620 MB bundle scenario is 7 min 45 s with an ideal
+1 Gbps receiver/immediate reboot, or 8 min 29 s at the reported 100 Mbps link. These
+are illustrative estimates, not observed ready times. Current feed arms next boot
+without requesting reboot; installed diagnostic feed is absent and runtime differs.
+
+Source/evidence/arithmetic are self-validated; source research is not independent
+delivery verification. See [measurement and model](../docs/hardware/host-crypto-offload.md).
+The existing offloader is unsuitable for whole-image incremental hashes; no updater
+integration or policy bypass controls were changed. Recovery/update-policy product
+work and physical/printing qualification remain separate goals.
+
 ## Completed goal — Assembled update and reboot reliability, 2026-10-10
 
 Controlled reboot now closes service-start and mutation admission before systemd

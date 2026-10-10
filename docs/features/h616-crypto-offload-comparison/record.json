@@ -131,7 +131,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Bounded existing AF_ALG hashing of synthetic memory with inactive printer services; no outputs, device writes, updates or restart. Source and arithmetic self-validated with two research agents.",
-      "status": "validated",
+      "status": "done",
       "title": "Measure bounded offload and publish timing comparison",
       "validation": {
         "actor": "root/coordinator",
