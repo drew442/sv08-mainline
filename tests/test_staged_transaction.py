@@ -26,7 +26,7 @@ class StagedTransactionTests(unittest.TestCase):
         self.staging = Staging(upload, reserve_bytes=0, owner_uid=os.getuid(), budget=fixture_budget())
         self.store = Store(self.root / 'state', reserve_bytes=0, budget=fixture_budget())
         self.store.initialize()
-        self.boot = self.store.prepare_boot('A', 'release-1')
+        self.boot = self.store.prepare_boot('A', 'release-1', release_revision=1)
         self.boot['boot_id'] = 'boot-1'
         self.events = []
         self.payload = b'offline fixture, not a signed bundle'
@@ -40,7 +40,7 @@ class StagedTransactionTests(unittest.TestCase):
     def verify(self, path):
         self.events.append('verify')
         # Actual signatures are covered by the separate real RAUC fixtures.
-        return dict(release='release-2', bundle_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        return dict(release='release-2', release_revision=2, signer_trusted=True, bundle_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
 
     def assert_locks(self):
         with (self.store.root / '.lock').open('rb') as stream:

@@ -18,6 +18,7 @@ from sv08_admin import revision, snapshot
 from sv08_admin_jobs import TERMINAL
 from sv08_bundle import inspect as inspect_bundle
 from sv08_staging import Staging
+from sv08_update_policy import effective
 
 CHUNK = 65536
 HEADER = 4096
@@ -31,7 +32,7 @@ class Uploads:
     def __init__(self, controller, staging, policy, keyring, verify=None):
         self.controller, self.staging = controller, staging
         self.policy, self.keyring = policy, keyring
-        self.verify = verify or (lambda path: inspect_bundle(path, policy, keyring, lease_fd=staging.lease_fd))
+        self.verify = verify
         self.policy_revision = revision(dict(policy=policy, keyring=Path(keyring).read_text()))
 
     def view(self):
@@ -73,21 +74,25 @@ class Uploads:
             raise ValueError('Choose a file with a bounded printable display name')
         if type(size) is not int or size <= 0: raise ValueError('Choose a nonempty bundle')
 
-    def plan(self, name, size):
+    def plan(self, name, size, options=None):
+        options = effective(options)
         self.metadata(name, size)
         with self.admitted() as view:
             self.staging.preflight(size)
-            return dict(name=name, size=size, revision=revision(view), policy=self.policy_revision)
+            return dict(name=name, size=size, revision=revision(view), policy=self.policy_revision, options=options)
 
     def receive(self, plan, stream):
-        if not isinstance(plan, dict) or set(plan) != {'name', 'size', 'revision', 'policy'}:
+        if not isinstance(plan, dict) or set(plan) != {'name', 'size', 'revision', 'policy', 'options'}:
             raise ValueError('Review the file before uploading')
+        options = effective(plan['options'])
+        if options != plan['options']: raise ValueError('Review exact upload policy options')
         self.metadata(plan['name'], plan['size'])
         with self.admitted(streaming=True) as view:
             if plan['revision'] != revision(view) or plan['policy'] != self.policy_revision:
                 raise ValueError('System or verification policy changed; review again')
-            path, proof = self.staging.receive_locked(stream, plan['size'], self.verify)
-            return dict(name=path.name, proof=proof, message='Signed manifest authenticated. Full payload verification occurs during installation. No image was installed or activated.')
+            path, proof = self.staging.receive_locked(stream, plan['size'], self.verify or
+                (lambda path: inspect_bundle(path, self.policy, self.keyring, lease_fd=self.staging.lease_fd, options=options)))
+            return dict(name=path.name, proof=proof, message=('Cryptographic signature checked; signer trust explicitly waived for this upload. ' if options['allow_untrusted_provenance'] else 'Trusted signed manifest authenticated. ') + 'Full payload verification occurs during installation. No image was installed or activated.')
 
     def object(self, name):
         if not isinstance(name, str) or not re.fullmatch(NAME, name):

@@ -14,6 +14,30 @@ from prepare_host_os import REPO, work_path
 from stage_printer_ui import compose_host, NAV, root_lock
 
 
+def package_service_policy(root):
+    """Bind the built RAUC package to this image's service identity policy."""
+    policy = json.loads((REPO/'configs/host-os/rauc-service-policy.json').read_text())
+    provenance = root/'usr/share/doc/rauc/sv08-source.json'
+    if not provenance.exists():
+        return policy  # The separately recorded legacy package stays strict.
+    expected = json.loads((REPO/'configs/host-os/rauc-package.json').read_text())
+    if provenance.is_symlink() or json.loads(provenance.read_text()) != expected:
+        raise ValueError('RAUC package provenance differs from the pinned source and patches')
+    executable = root/'usr/bin/rauc'
+    status = root/'var/lib/dpkg/status'
+    if executable.is_symlink() or not executable.is_file() or not status.is_file():
+        raise ValueError('Built RAUC package identity is incomplete')
+    records = [dict(line.split(': ',1) for line in section.splitlines() if ': ' in line)
+               for section in status.read_text().split('\n\n')]
+    package = next((r for r in records if r.get('Package') == 'rauc'), {})
+    if (package.get('Version') != expected['version'] or package.get('Architecture') != 'arm64' or
+            package.get('Status') != 'install ok installed'):
+        raise ValueError('Built RAUC package version or architecture differs')
+    policy['version'] = expected['version']
+    policy['executable_sha256'] = hashlib.sha256(executable.read_bytes()).hexdigest()
+    return policy
+
+
 def stage(work, context, execute=False, refresh=False):
     with root_lock(work / 'rootfs'):
         return _stage(work, context, execute, refresh)
@@ -25,14 +49,14 @@ def _stage(work, context, execute=False, refresh=False):
         raise ValueError('UI refresh is only supported for the host context')
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir(): raise ValueError('Expected an isolated image rootfs')
-    for name in ('sv08_identity.py', 'sv08_state.py', 'sv08_restart.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
+    for name in ('sv08_identity.py', 'sv08_state.py', 'sv08_update_policy.py', 'sv08_restart.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'):
         path = root / 'usr/lib/sv08' / name
         if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
             raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
         if name == 'sv08_rauc_bootloader.py' and not path.stat().st_mode & 0o111:
             raise ValueError('The RAUC custom bootloader handler must be executable')
     if context == 'host':
-        for name in ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'):
+        for name in ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_auto_reboot.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'):
             path = root / 'usr/lib/sv08' / name
             if not path.is_file() or path.read_bytes() != (REPO / 'runtime' / name).read_bytes():
                 raise ValueError('Stage the matching reviewed core runtime before UI integration: '+name)
@@ -105,6 +129,7 @@ def _stage(work, context, execute=False, refresh=False):
         for name in ('app.js','style.css','panel.html'):
             path=root/'usr/share/cockpit/sv08-printer'/name
             if not path.is_file() or path.read_bytes()!=(REPO/'ui/printer'/name).read_bytes():raise ValueError('Stage matching printer assets before integrated host refresh')
+    service_policy = package_service_policy(root) if context == 'host' else None
     if not execute: return dict(execute=False, context=context, root=str(root))
     if context == 'host':
         if target_exists:
@@ -139,7 +164,10 @@ def _stage(work, context, execute=False, refresh=False):
             (wanted / 'sv08-feed.timer').symlink_to('/usr/lib/systemd/system/sv08-feed.timer')
         for source, destination in [('rauc-service-policy.json', 'usr/lib/sv08/rauc-service-policy.json'), ('sv08-rauc-policy.conf', 'etc/dbus-1/system.d/zz-sv08-rauc.conf'), ('sv08-rauc-service.conf', 'etc/systemd/system/rauc.service.d/sv08.conf')]:
             path = root / destination; path.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(REPO / 'configs/host-os' / source, path)
+            if source == 'rauc-service-policy.json' and (root/'usr/share/doc/rauc/sv08-source.json').exists():
+                path.write_text(json.dumps(service_policy, indent=2)+'\n')
+            else:
+                shutil.copyfile(REPO / 'configs/host-os' / source, path)
         for destination in branding:
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(REPO / 'configs/host-os/cockpit-branding' / destination.name, destination)
@@ -158,14 +186,14 @@ def _stage(work, context, execute=False, refresh=False):
     files.extend(branding)
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
-                 ('sv08_identity.py', 'sv08_state.py', 'sv08_restart.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
+                 ('sv08_identity.py', 'sv08_state.py', 'sv08_update_policy.py', 'sv08_restart.py', 'sv08_admin.py', 'sv08_admin_images.py', 'sv08_admin_jobs.py', 'sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_admin_resolution.py', 'sv08_rauc_service.py', 'sv08_admin_upload.py', 'sv08_staging.py', 'sv08_bundle.py', 'sv08_rauc.py', 'sv08_rauc_bootloader.py', 'sv08_boot.py', 'sv08_export.py', 'sv08_recovery.py', 'sv08_recovery_media.py', 'sv08_recovery_ui.py'))
     if context == 'host':
         files.append(root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service')
         files.append(root / 'usr/lib/systemd/system/sv08-software-worker@.service')
         files.append(root / 'usr/lib/sv08/software-catalog.json')
     if context == 'host':
         files.extend(root / 'usr/lib/sv08' / name for name in
-                     ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
+                     ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_auto_reboot.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
     hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}

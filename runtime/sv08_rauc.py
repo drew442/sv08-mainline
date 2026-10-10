@@ -346,7 +346,7 @@ class Backend:
     def validate_bundle(self, bundle, proof, target):
         if self.boot is None or target == self.boot['slot']:
             raise ValueError('Validate the running source before inspecting a target bundle')
-        actual = inspect_bundle(bundle, self.policy, self.keyring)
+        actual = inspect_bundle(bundle, self.policy, self.keyring, options=proof.get('update_policy'))
         if actual != proof:
             raise ValueError('Staged file or signed admission proof changed')
 
@@ -422,7 +422,16 @@ class Backend:
             devices = self.manifest['devices']
             before = {kind: digest_device(devices[kind+'-'+source], size) for kind, size in sizes.items()}
             with self.operation('install', target):
-                self.command('install', str(bundle))
+                from sv08_update_policy import effective
+                options = effective(proof.get('update_policy'))
+                arguments = []
+                if options['allow_untrusted_provenance']:
+                    if proof.get('signer_trusted') is not False:
+                        raise ValueError('Missing exact manual provenance admission proof')
+                    arguments.append('--ignore-signer-trust')
+                if not options['check_compatibility']: arguments.append('--ignore-compatible')
+                if proof.get('manifest_hash'): arguments.append('--require-manifest-hash='+proof['manifest_hash'])
+                self.command('install', *arguments, str(bundle))
             for kind, size in sizes.items():
                 if digest_device(devices[kind+'-'+source], size) != before[kind]:
                     raise ValueError('Active slot changed during installation')

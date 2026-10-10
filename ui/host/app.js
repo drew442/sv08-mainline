@@ -32,13 +32,24 @@ function page(name, focus = true) {
     if (focus) $('main').focus();
 }
 function capability(action, button, reason) {
-    const cap = state.capabilities[action];
+    const cap = state.capabilities[action] || {available:false, reason:'This host does not support this operation.'};
     $(button).disabled = busy || jobsBusy || !cap.available;
     if (reason) $(reason).textContent = cap.available ? '' : cap.reason;
+}
+const updateChecks = ['check_compatibility', 'check_customization', 'check_version', 'allow_downgrade', 'allow_untrusted_provenance'];
+function updateOptions(prefix) {
+    return Object.fromEntries(updateChecks.map(name => [name, $(prefix+'-'+name.replaceAll('_','-'))?.checked ?? false]));
+}
+function writeUpdateOptions(value) {
+    for (const name of updateChecks) {
+        const input = $('auto-'+name.replaceAll('_','-'));
+        if (input) input.checked = value[name];
+    }
 }
 // Draft state is local to each editable control, separate from fresh host status.
 const drafts = {
     'policy.auto': {field: 'auto_update', argument: 'enabled', read: () => $('auto-update').checked, write: value => { $('auto-update').checked = value; }},
+    'policy.update': {field: 'update_policy', argument: 'options', read: () => JSON.stringify(updateOptions('auto')), write: value => writeUpdateOptions(value || {check_version:true,check_compatibility:true,check_customization:true})},
     'policy.mode': {field: 'requested_mode', argument: 'mode', read: () => document.querySelector('[name=mode]:checked').value,
         write: value => document.querySelectorAll('[name=mode]').forEach(input => { input.checked = input.value === value; })},
 };
@@ -47,14 +58,14 @@ function renderDrafts() {
         // Also detect edits made by autofill or input methods without an event.
         if (draft.initialized && draft.read() !== draft.painted) draft.dirty = true;
         if (!draft.dirty) {
-            draft.write(state[draft.field]); draft.painted = state[draft.field];
+            draft.write(state[draft.field]); draft.painted = draft.read();
         }
         draft.initialized = true;
     }
 }
 function appliedDraft(reviewed) {
     const draft = drafts[reviewed.action];
-    if (draft && draft.read() === reviewed.arguments[draft.argument]) {
+    if (draft && draft.read() === (reviewed.action === 'policy.update' ? JSON.stringify(reviewed.arguments.options) : reviewed.arguments[draft.argument])) {
         draft.dirty = false; draft.painted = draft.read();
     }
 }
@@ -91,6 +102,11 @@ function render() {
         const feed = state.feed_status;
         $('update-detail').textContent = feed.result === 'blocked'
             ? `Last automatic check was blocked: ${feed.reason}`
+            : feed.result === 'reboot-queued' ? 'Automatic update restart requested. The new release must still pass its health checks.'
+            : feed.result === 'reboot-uncertain' ? 'Restart acknowledgment is uncertain. Inspect the update state; no automatic retry will be sent.'
+            : feed.result === 'reboot-suppressed' ? 'Automatic restart was suppressed by opting out. The armed update remains selected for the next boot.'
+            : feed.result === 'awaiting-health-reconciliation' ? 'Waiting for boot health to reconcile the previous update.'
+            : feed.result === 'reboot-observed' ? 'The update restart was observed. Check the current release and transaction result.'
             : feed.result === 'armed-next-boot'
                 ? `Last automatic check armed ${feed.release} for a normal boot. Current selection is shown in the update state.`
                 : `Last automatic check already considered ${feed.release}. Current selection is shown in the update state.`;
@@ -104,7 +120,7 @@ function render() {
     }
     renderDrafts();
     options('image-choice', state.images, 'No verified uploaded image available');
-    capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
+    capability('policy.update', 'save-update-policy'); capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
     capability('image.stage', 'stage-image', 'stage-reason'); capability('image.arm', 'arm-image', 'image-reason');
     capability('image.cancel', 'cancel-image');
     if (!$('image-choice').value) $('stage-image').disabled = true;
@@ -176,7 +192,7 @@ async function review(action, args = {}) {
         if (generation !== authorityGeneration) return;
         plan = reviewed; notice('Review the change before applying.');
         $('review-title').textContent = plan.title; $('review-effect').textContent = plan.effect;
-        $('review-arguments').textContent = Object.entries(plan.arguments).map(([key, value]) => `${key}: ${value}`).join('\n') || 'Apply to the current update.';
+        $('review-arguments').textContent = Object.entries(plan.arguments).map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value, null, 2) : value}`).join('\n') || 'Apply to the current update.';
         $('review').returnValue = 'cancel';
         $('review').showModal();
     } catch (error) { notice(error.message); await refresh(); }
@@ -237,15 +253,16 @@ $('retry-submission').addEventListener('click', async () => {
     catch (error) { await submissionError(error); }
     finally { busy = false; await refresh(); }
 });
-for (const [selector, action] of [['#auto-update', 'policy.auto'], ['[name=mode]', 'policy.mode']]) {
+for (const [selector, action] of [['#auto-update', 'policy.auto'], ['[name=mode]', 'policy.mode'], ['[id^=auto-check-],#auto-allow-downgrade', 'policy.update']]) {
     document.querySelectorAll(selector).forEach(input => {
         for (const event of ['input', 'change']) input.addEventListener(event, () => { drafts[action].dirty = true; });
     });
 }
 for (const id of ['image-choice']) $(id).addEventListener('change', () => { if (state) render(); });
 $('save-auto').addEventListener('click', () => review('policy.auto', {enabled: $('auto-update').checked}));
+$('save-update-policy').addEventListener('click', () => review('policy.update', {options: updateOptions('auto')}));
 $('save-mode').addEventListener('click', () => review('policy.mode', {mode: document.querySelector('[name=mode]:checked').value}));
-$('stage-image').addEventListener('click', () => review('image.stage', {digest: $('image-choice').value}));
+$('stage-image').addEventListener('click', () => review('image.stage', {digest: $('image-choice').value, options: updateOptions('manual')}));
 $('arm-image').addEventListener('click', () => review('image.arm'));
 $('cancel-image').addEventListener('click', () => review('image.cancel'));
 window.addEventListener('sv08-navigation-changed', () => { ++authorityGeneration; plan = null; if ($('review').open) $('review').close('cancel'); });

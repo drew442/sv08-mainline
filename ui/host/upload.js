@@ -42,11 +42,11 @@ $('review-upload').addEventListener('click', async () => {
     const file = $('bundle-file').files[0], generation = authorityGeneration;
     if (!file || uploadActive) return;
     try {
-        const reviewed = await request({method:'upload.plan', name:file.name, size:file.size});
+        const reviewed = await request({method:'upload.plan', name:file.name, size:file.size, options:updateOptions('manual')});
         if (generation !== authorityGeneration) return;
         uploadReview = {kind:'upload', plan:reviewed, file};
         $('upload-review-title').textContent = 'Upload this OS bundle?';
-        $('upload-review-detail').textContent = `${file.name}\n${file.size} bytes\nAuthenticate its signed manifest and store it privately. Image staging requires a separate review.`;
+        $('upload-review-detail').textContent = `${file.name}\n${file.size} bytes\nCheck its signed manifest using the reviewed options and store it privately. Image staging requires a separate review.\n${JSON.stringify(reviewed.options, null, 2)}`;
         $('upload-review').returnValue = 'cancel'; $('upload-review').showModal();
     } catch(error) { uploadText(error.message); }
 });

@@ -49,3 +49,21 @@ class BundlePolicyTests(unittest.TestCase):
         for size in (0, 1025, True):
             with self.subTest(size=size), self.assertRaises(ValueError):
                 validate(self.info, self.policy, size)
+
+    def test_info_exception_is_trust_chain_only_and_proof_records_manifest_hash(self):
+        import json
+        import tempfile
+        from unittest.mock import patch
+        from sv08_bundle import inspect
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / 'test.raucb'; bundle.write_bytes(b'fixture bytes')
+            info = dict(self.info, **{'manifest-hash': 'c'*64})
+            with patch('sv08_bundle.manifest_output', return_value=json.dumps(info).encode()) as command:
+                proof = inspect(bundle, self.policy, '/fixed/keyring', options={'allow_untrusted_provenance': True})
+            self.assertIn('--ignore-signer-trust', command.call_args.args[0])
+            self.assertNotIn('--no-verify', command.call_args.args[0])
+            self.assertFalse(proof['signer_trusted'])
+            self.assertEqual(proof['manifest_hash'], 'c'*64)
+            with patch('sv08_bundle.manifest_output', side_effect=ValueError('bad mathematical signature')):
+                with self.assertRaisesRegex(ValueError, 'mathematical'):
+                    inspect(bundle, self.policy, '/fixed/keyring', options={'allow_untrusted_provenance': True})

@@ -20,6 +20,7 @@ from urllib.request import HTTPSHandler, HTTPHandler, HTTPRedirectHandler, build
 
 from sv08_state import atomic_json, fsync_dir, identifier
 from sv08_transaction import Transaction
+from sv08_update_policy import effective
 
 MAX_INDEX = 16 * 1024
 MAX_SIGNATURE = 32 * 1024
@@ -68,11 +69,12 @@ class LimitedReader:
 
 class Feed:
     def __init__(self, store, staging, transaction, boot, verify_bundle, config,
-                 *, now=None, fetch=None):
+                 *, now=None, fetch=None, restart=None):
         self.store, self.staging, self.tx, self.boot = store, staging, transaction, boot
         self.verify_bundle, self.config = verify_bundle, config
         self.now = now or trusted_time
         self.fetch = fetch or self._fetch
+        self.restart = restart
         if set(config) != {'format_version', 'url', 'channel', 'ca_file', 'signer_ca_file'} or config['format_version'] != 1:
             raise ValueError('Unsupported fixed feed configuration')
         origin(config['url'])
@@ -123,7 +125,7 @@ class Feed:
             if result.returncode:
                 raise ValueError('Release index signature is invalid')
         index = json.loads(document, object_pairs_hook=unique_object)
-        if not isinstance(index, dict) or set(index) != {'format_version', 'channel', 'sequence', 'issued', 'expires',
+        if not isinstance(index, dict) or set(index) - {'release_revision'} != {'format_version', 'channel', 'sequence', 'issued', 'expires',
                                                        'compatible', 'release', 'bundle', 'bytes', 'sha256'}:
             raise ValueError('Invalid signed release index schema')
         if (index['format_version'] != 1 or index['channel'] != self.config['channel'] or
@@ -134,7 +136,10 @@ class Feed:
                 not isinstance(index['bundle'], str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,100}\.raucb', index['bundle'])):
             raise ValueError('Invalid signed release values')
         identifier(index['release'])
-        if index['compatible'] != self.tx.backend.policy['compatible']:
+        if 'release_revision' in index and (type(index['release_revision']) is not int or index['release_revision'] < 1):
+            raise ValueError('Invalid signed release revision')
+        policy = effective(self.store.load().get('update_policy'), automatic=True)
+        if policy['check_compatibility'] and index['compatible'] != self.tx.backend.policy['compatible']:
             raise ValueError('Release targets another hardware profile')
         now = self.now()
         if type(now) is not int or now < MIN_TRUSTED_EPOCH or not index['issued'] <= now < index['expires'] or index['expires'] - index['issued'] > 30*86400:
@@ -175,7 +180,9 @@ class Feed:
             state = self.store.load()
             if not state['auto_update']:
                 raise ValueError('Automatic updates are disabled')
-            self.tx.require_source(state, self.boot)
+            from sv08_restart import require_jobs_idle
+            require_jobs_idle(self.store)
+            self.tx.require_source(state, self.boot, policy=effective(state.get('update_policy'), automatic=True))
             tx = self.tx.load()
             if state['pending'] or tx and tx['phase'] not in ('complete', 'cancelled', 'failed', 'staged'):
                 raise ValueError('An update is already active or requires reconciliation')
@@ -227,6 +234,15 @@ class Feed:
     def run(self):
         """One timer poll. Same-sequence retry may resume only a known staged tx."""
         try:
+            if self.restart:
+                with self.store.locked():
+                    existing = self.tx.load()
+                if existing and existing.get('automatic') is True and (existing['phase'] == 'armed' or
+                        (self.store.root / 'automatic-reboot.json').exists() and existing['phase'] in ('complete', 'failed', 'cancelled')):
+                    result = self.restart()
+                    if result != 'reboot-observed':
+                        self._status(result, {'release': existing['release'], 'sequence': None})
+                        return result
             self._policy()
             index, checked_at = self.index()
             with self.store.locked():
@@ -255,7 +271,8 @@ class Feed:
                     with self.fetch(url, index['bytes'], deadline) as stream:
                         _, proof = self.staging.receive(LimitedReader(stream, deadline), index['bytes'],
                                                         index['sha256'], self.verify_bundle)
-                if proof['release'] != index['release'] or proof['compatible'] != index['compatible']:
+                if (proof['release'] != index['release'] or proof['compatible'] != index['compatible'] or
+                        proof.get('release_revision') != index.get('release_revision')):
                     raise ValueError('Signed bundle and channel index disagree')
                 refreshed = self.now()
                 if type(refreshed) is not int or refreshed < checked_at or refreshed >= index['expires']:
@@ -264,6 +281,8 @@ class Feed:
                 self.tx.stage_upload(self.staging, index['sha256'], self.verify_bundle, self.boot, automatic=True)
                 self.tx.arm(self.boot, automatic=True)
                 result = 'armed-next-boot'
+            if self.restart and result == 'armed-next-boot':
+                result = self.restart()
             self._status(result, index)
             return result
         except Exception as error:
@@ -295,9 +314,16 @@ def main():
     adapter = controller.adapter
     from sv08_staging import Staging
     staging = Staging('/data/sv08/feed-bundles', max_bytes=adapter.backend.policy['max_bundle_bytes'])
-    feed = Feed(controller.store, staging,
-                Transaction(controller.store, adapter.backend, adapter.admission),
-                controller.boot, adapter.verify, config)
+    transaction = Transaction(controller.store, adapter.backend, adapter.admission)
+    from sv08_auto_reboot import AutoReboot
+    restart = AutoReboot(controller.store, transaction, controller.boot)
+    from sv08_bundle import inspect
+    def verify(path):
+        # Resolve freshly for every inspection. Automatic origin never accepts
+        # a manual exception, including a retained digest from another intake.
+        policy = effective(controller.store.load().get('update_policy'), automatic=True)
+        return inspect(path, adapter.backend.policy, adapter.backend.keyring, lease_fd=staging.lease_fd, options=policy, automatic=True)
+    feed = Feed(controller.store, staging, transaction, controller.boot, verify, config, restart=restart.run)
     lock = os.open('/run/sv08/feed.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)

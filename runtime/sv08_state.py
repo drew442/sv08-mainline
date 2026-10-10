@@ -29,6 +29,24 @@ def identifier(value):
     return value
 
 
+def installed_release_revision(release, schema, path=Path('/usr/lib/sv08/release.json')):
+    """Use this immutable image's explicit metadata, never its display version."""
+    path = Path(path)
+    if not path.exists(): return None
+    if any(p.is_symlink() for p in (path, *path.parents)) or not stat.S_ISREG(path.stat().st_mode):
+        raise ValueError('Installed release manifest must be a regular file')
+    if path.stat().st_size > 65536:
+        raise ValueError('Installed release manifest exceeds its bound')
+    manifest = json.loads(path.read_text())
+    if manifest.get('release') != release or manifest.get('state_schema') != schema:
+        return None
+    value = manifest.get('release_revision')
+    if value is not None:
+        from sv08_update_policy import release_revision
+        release_revision(value)
+    return value
+
+
 def fsync_dir(path):
     fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
     try:
@@ -142,7 +160,12 @@ class Store:
             raise ValueError('Unsupported or corrupt state registry; use recovery')
         if not isinstance(state['auto_update'], bool) or not isinstance(state['slots'], dict):
             raise ValueError('Invalid policy/slot registry')
+        from sv08_update_policy import effective, release_revision
+        if 'update_policy' in state and not isinstance(state['update_policy'], dict):
+            raise ValueError('Invalid automatic update policy')
+        effective(state.get('update_policy'), automatic=True)
         for slot, record in state['slots'].items():
+            if 'release_revision' in record: release_revision(record['release_revision'])
             if slot not in ('A', 'B') or not isinstance(record['customized'], bool):
                 raise ValueError('Invalid slot record')
             identifier(record['release'])
@@ -192,9 +215,9 @@ class Store:
         from sv08_restart import require_running
         require_running(self.runtime, self.boot_id)
 
-    def policy(self, mode=None, auto_update=None):
+    def policy(self, mode=None, auto_update=None, update_policy=None):
         with self.locked():
-            if mode is not None or auto_update is not None:
+            if mode is not None or auto_update is not None or update_policy is not None:
                 self.require_running()
             state = self.load()
             if mode is not None:
@@ -203,11 +226,14 @@ class Store:
                 from sv08_restart import require_mode_change
                 require_mode_change(self, state)
                 state['requested_mode'] = mode
+            if update_policy is not None:
+                from sv08_update_policy import effective
+                state['update_policy'] = effective(update_policy, automatic=True)
             if auto_update is not None:
                 if not isinstance(auto_update, bool):
                     raise ValueError('Automatic update policy must be a boolean')
                 state['auto_update'] = auto_update
-            if mode is not None or auto_update is not None:
+            if mode is not None or auto_update is not None or update_policy is not None:
                 self.save(state)
             return state
 
@@ -288,8 +314,13 @@ class Store:
                           inode_floor=inodes+128+64, fs=fs)
         return dict(copy_bytes=required, copy_inodes=inodes, reserved_copy_bytes=allowance)
 
-    def prepare_boot(self, slot, release, schema=1):
+    def prepare_boot(self, slot, release, schema=1, release_revision=None):
         """Run before any state-writing applications, not at image staging time."""
+        if release_revision is None:
+            release_revision = installed_release_revision(release, schema)
+        if release_revision is not None:
+            from sv08_update_policy import release_revision as validate_revision
+            validate_revision(release_revision)
         identifier(release)
         if slot not in ('A', 'B') or schema != 1:
             raise ValueError('Unsupported slot/schema')
@@ -334,6 +365,22 @@ class Store:
                 record = dict(release=release, generation=generation, schema=schema,
                               customized=False, parent_generation=source['generation'] if source else None)
                 state['slots'][slot] = record
+            if release_revision is not None:
+                if record.get('release_revision', release_revision) != release_revision:
+                    raise ValueError('Installed release revision differs from slot registry')
+                if trial:
+                    from sv08_transaction import Transaction
+                    journal = Transaction(self, None, None).load()
+                    if journal and journal['id'] == pending['id'] and journal.get('release_revision') != release_revision:
+                        raise ValueError('Installed release revision differs from admitted signed metadata')
+                record['release_revision'] = release_revision
+            elif trial:
+                journal = self.root / 'update.json'
+                if journal.is_symlink(): raise ValueError('Invalid update journal')
+                tx = json.loads(journal.read_text()) if journal.exists() else {}
+                if tx.get('id') == pending['id'] and tx.get('release_revision') is not None:
+                    from sv08_update_policy import release_revision as validate_revision
+                    record['release_revision'] = validate_revision(tx['release_revision'])
             self.generation_path(record)
             # Conservatively retain customization status across writable -> immutable.
             if state['requested_mode'] == 'writable':

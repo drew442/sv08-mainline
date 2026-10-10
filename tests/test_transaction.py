@@ -61,9 +61,9 @@ class TransactionTests(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory(dir=fixture_root()); self.addCleanup(tmp.cleanup)
         self.store = Store(Path(tmp.name)/'state', reserve_bytes=0, budget=fixture_budget())
         self.store.initialize()
-        self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = 'boot-1'
+        self.boot = self.store.prepare_boot('A', 'release-1', release_revision=1); self.boot['boot_id'] = 'boot-1'
         self.backend = Backend(); self.tx = Transaction(self.store, self.backend, admitted)
-        self.proof = dict(release='release-2', bundle_sha256='a'*64)
+        self.proof = dict(release='release-2', release_revision=2, signer_trusted=True, bundle_sha256='a'*64)
 
     def stage(self):
         return self.tx.stage('test-bundle', self.proof, self.boot)
@@ -271,7 +271,7 @@ class TransactionTests(unittest.TestCase):
 
     def test_fallback_disarms_before_clearing_journal(self):
         self.trial()
-        boot = self.store.prepare_boot('A', 'release-1'); boot['boot_id'] = 'boot-3'
+        boot = self.store.prepare_boot('A', 'release-1', release_revision=1); boot['boot_id'] = 'boot-3'
         self.assertEqual(self.tx.cancel(boot)['phase'], 'failed')
         self.assertFalse(self.backend.good('B'))
         self.assertEqual(self.backend.primary(), 'A')
@@ -390,7 +390,7 @@ class TransactionTests(unittest.TestCase):
 
     def test_reconcile_actual_fallback_retains_failed_trial(self):
         self.trial()
-        fallback = self.store.prepare_boot('A', 'release-1'); fallback['boot_id'] = 'boot-3'
+        fallback = self.store.prepare_boot('A', 'release-1', release_revision=1); fallback['boot_id'] = 'boot-3'
         self.assertEqual(self.tx.reconcile(fallback), 'needs-cancel')
         self.assertEqual(self.tx.cancel(fallback)['phase'], 'failed')
         self.assertEqual(self.tx.reconcile(fallback), 'idle')
@@ -406,3 +406,73 @@ class TransactionTests(unittest.TestCase):
         boot = self.store.prepare_boot('B', 'release-2'); boot['boot_id'] = 'boot-2'
         with self.assertRaisesRegex(ValueError, 'disagree'):
             self.tx.reconcile(boot)
+
+    def test_unknown_revision_blocks_staging_before_disarm(self):
+        self.proof.pop('release_revision')
+        with self.assertRaisesRegex(ValueError, 'ordering is unknown'): self.stage()
+        self.assertEqual(self.backend.calls, [])
+        self.assertIsNone(self.tx.load())
+        from sv08_update_policy import effective
+        self.proof['update_policy'] = effective({'check_version': False})
+        self.tx.stage('bundle', self.proof, self.boot, options={'check_version': False})
+        self.assertFalse(self.tx.load()['update_policy']['check_version'])
+        self.tx.arm(self.boot)
+
+    def test_customized_source_exception_survives_trial_health_and_fallback(self):
+        state = self.store.load(); state['slots']['A']['customized'] = True; self.store.save(state)
+        options = {'check_customization': False}
+        from sv08_update_policy import effective
+        proof = dict(self.proof, update_policy=effective(options))
+        self.tx.stage('bundle', proof, self.boot, options=options)
+        journal = self.tx.load()
+        self.assertEqual(journal['admission_proof'], proof)
+        self.assertFalse(journal['update_policy']['check_customization'])
+        self.tx.arm(self.boot)
+        trial = self.store.prepare_boot('B', 'release-2'); trial['boot_id'] = 'boot-2'
+        self.assertEqual(self.store.load()['slots']['B']['release_revision'], 2)
+        self.assertTrue(self.store.load()['slots']['A']['customized'])
+        self.assertEqual(self.tx.reconcile(trial), 'needs-health')
+        self.tx.confirm(trial, lambda boot: True)
+        self.assertTrue(self.store.load()['slots']['A']['customized'])
+
+    def test_changed_policy_and_source_revision_refuse_activation(self):
+        self.tx.stage('bundle', self.proof, self.boot, automatic=True)
+        self.store.policy(update_policy={'check_version': False})
+        with self.assertRaisesRegex(ValueError, 'changed after staging'): self.tx.arm(self.boot, automatic=True)
+        self.assertEqual(self.backend.primary(), 'A')
+        self.store.policy(update_policy={})
+        state = self.store.load(); state['slots']['A']['release_revision'] = 3; self.store.save(state)
+        with self.assertRaisesRegex(ValueError, 'downgrade'): self.tx.arm(self.boot, automatic=True)
+        self.assertIsNone(self.store.load()['pending'])
+
+    def test_automatic_cannot_arm_manually_admitted_unknown_signer(self):
+        from sv08_update_policy import effective
+        options = {'allow_untrusted_provenance': True}
+        proof = dict(self.proof, signer_trusted=False, update_policy=effective(options))
+        self.tx.stage('bundle', proof, self.boot, options=options)
+        with self.assertRaisesRegex(ValueError, 'origin'): self.tx.arm(self.boot, automatic=True)
+        self.assertEqual(self.backend.primary(), 'A')
+        self.tx.arm(self.boot)
+
+    def test_journal_proof_digest_and_policy_must_agree(self):
+        self.stage()
+        tx = self.tx.load(); tx['admission_proof']['bundle_sha256'] = 'b'*64
+        self.tx.save(tx, 'staged')
+        with self.assertRaisesRegex(ValueError, 'disagree'): self.tx.arm(self.boot)
+        self.assertEqual(self.backend.primary(), 'A')
+
+    def test_manual_activation_can_use_automatically_staged_trusted_policy_after_optout(self):
+        self.tx.stage('bundle',self.proof,self.boot,automatic=True)
+        self.store.policy(auto_update=False)
+        tx=self.tx.arm(self.boot)
+        self.assertTrue(tx['automatic']);self.assertTrue(tx['admission_proof']['signer_trusted'])
+        self.assertEqual(self.backend.primary(),'B')
+        self.assertFalse(self.store.load()['auto_update'])
+
+    def test_pending_software_job_blocks_automatic_stage_before_disarm(self):
+        from sv08_state import atomic_json
+        root=self.store.root/'software/jobs';root.mkdir(parents=True)
+        atomic_json(root/'pending.json',dict(status='queued'))
+        with self.assertRaisesRegex(ValueError,'software job'):
+            self.tx.stage('bundle',self.proof,self.boot,automatic=True)
+        self.assertEqual(self.backend.calls,[]);self.assertIsNone(self.tx.load())

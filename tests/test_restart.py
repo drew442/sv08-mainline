@@ -21,14 +21,14 @@ class RestartTests(unittest.TestCase):
         self.store = Store(root/'data', reserve_bytes=0, budget=fixture_budget(),
                            runtime=self.runtime, boot_id=self.boot_id)
         self.store.initialize()
-        self.boot = self.store.prepare_boot('A', 'release-1')
+        self.boot = self.store.prepare_boot('A', 'release-1', release_revision=1)
         self.boot['boot_id'] = 'boot-1'
         atomic_json(self.runtime/'boot.json', self.boot)
         self.backend = Backend()
         self.transaction = Transaction(self.store, self.backend, admitted)
 
     def stage(self):
-        self.transaction.stage('bundle', dict(release='release-2', bundle_sha256='a'*64), self.boot)
+        self.transaction.stage('bundle', dict(release='release-2', release_revision=2, signer_trusted=True, bundle_sha256='a'*64), self.boot)
 
     def test_shutdown_intent_closes_start_and_policy_until_new_boot(self):
         expected = publish(self.runtime, self.boot_id)

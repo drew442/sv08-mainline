@@ -8,13 +8,18 @@ from contextlib import contextmanager
 from sv08_admin import revision, snapshot
 from sv08_bundle import inspect as inspect_bundle
 from sv08_transaction import Transaction
+from sv08_update_policy import effective, check_source
 
 
 class HostImages:
     def __init__(self, store, boot, backend, staging, admission, verify=None):
         self.store, self.boot, self.backend = store, boot, backend
         self.staging, self.admission = staging, admission
-        self.verify = verify or (lambda path: inspect_bundle(path, backend.policy, backend.keyring, lease_fd=staging.lease_fd))
+        self.verify = verify
+
+    def verifier(self, options):
+        return self.verify or (lambda path: inspect_bundle(path, self.backend.policy, self.backend.keyring,
+                              lease_fd=self.staging.lease_fd, options=options))
 
     def catalog(self): return []
     def destinations(self): return []
@@ -40,8 +45,8 @@ class HostImages:
             if live and boot['slot'] == tx['previous_slot'] and boot['release'] == tx['previous_release']:
                 return True, ''
             return False, 'No cancellable update is running from the preserved source.'
-        if boot['mode'] != 'immutable' or state['requested_mode'] != 'immutable' or any(r['customized'] for r in state['slots'].values()):
-            return False, 'Image replacement requires immutable mode and reconciliation of all customizations.'
+        if boot['mode'] != 'immutable' or state['requested_mode'] != 'immutable':
+            return False, 'Image replacement requires immutable mode.'
         if action == 'image.stage':
             if not leased and self.staging.busy():
                 return False, 'Bundle intake or another upload lease is active; wait before staging.'
@@ -60,10 +65,14 @@ class HostImages:
                 raise ValueError('System state changed. Refresh and review again.')
             allowed, reason = self.capability(plan['action'], view, leased=plan['action'] == 'image.stage')
             if not allowed: raise ValueError(reason)
+            if plan['action'] != 'image.cancel':
+                options = plan['arguments'].get('options') if plan['action'] == 'image.stage' else (view['transaction'] or {}).get('update_policy')
+                check_source(view['state'], self.boot, options)
             with self.admission(): yield
         tx = Transaction(self.store, self.backend, admitted)
         if plan['action'] == 'image.stage':
-            tx.stage_upload(self.staging, plan['arguments']['digest'], self.verify, self.boot)
+            options = effective(plan['arguments'].get('options'))
+            tx.stage_upload(self.staging, plan['arguments']['digest'], self.verifier(options), self.boot, options=options)
             message = 'Image verified and staged. The current system remains selected.'
         elif plan['action'] == 'image.arm':
             tx.arm(self.boot)
