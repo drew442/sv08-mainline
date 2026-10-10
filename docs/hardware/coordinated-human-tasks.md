@@ -26,6 +26,18 @@ or prerequisites against an existing H ID before proposing a new physical task.
 No current power state, reachability, installed slot or hardware identity is
 inferred from a historical report. Inspect current state before acting.
 
+## H13 — Physical automatic-update validation, 2026-10-10
+
+Owner authorized coordinator execution with agents: healthy trusted automatic
+update and deliberately unhealthy trial/fallback on test-sv08-01, preserving
+configuration, calibration, identity and user data with heaters/motion inactive.
+This is a physical coordination record; no human action is presumed necessary.
+Source preparation uses [the scoped feature](../features/physical-automatic-update-validation/proposal.md).
+Exact artifact/target/write-boundary/recovery assessment gates mutation. Current
+read-only intake finds old commissioning A, RAUC/health masked, no feed runtime;
+bootstrap preparation is required. Physical acceptance and operation reviews will
+be recorded separately; H11 printing qualification remains open.
+
 ## Commissioning host readiness — 2026-10-03
 
 Completed October4: [installed acceptance](../features/commissioning-host-readiness/installed-completion.md).

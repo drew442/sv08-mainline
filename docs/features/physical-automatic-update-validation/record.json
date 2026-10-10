@@ -1,0 +1,64 @@
+{
+  "format_version": 2,
+  "id": "physical-automatic-update-validation",
+  "kind": "feature",
+  "title": "Physical automatic update and fallback validation",
+  "author": "root/coordinator",
+  "created": "2026-10-10",
+  "priority": 2,
+  "proposal": "docs/features/physical-automatic-update-validation/proposal.md",
+  "requirements": [
+    "docs/features/physical-automatic-update-validation/owner-request.md",
+    "docs/development/automatic-update-policy.md",
+    "docs/design/host-os-ab.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": true,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "artifacts",
+      "description": "Offline named-hardware composer, exact source/artifact/config/toolchain hashes, bounded storage and appropriate tests.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "prepare",
+      "title": "Prepare exact named-hardware test artifacts",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "artifacts"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Offline regular-file preparation with no physical writes or identity imports is reversible and self-validated.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/prepare_physical_update_qualification.py",
+        "tests/test_prepare_physical_update_qualification.py",
+        "docs/features/physical-automatic-update-validation/preparation.md",
+        "docs/features/physical-automatic-update-validation/preparation.json"
+      ],
+      "input_paths": [
+        "runtime/",
+        "configs/host-os/",
+        "configs/images/host-ab.json",
+        "scripts/integrate_host_os.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/assemble_board_diagnostic.py"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# Owner request — physical automatic-update validation
+
+On 2026-10-10 the owner accepted the proposed next goal and requested agents and completion. The authorized outcome is a harmless trusted signed automatic update on the actual printer, followed by a deliberately unhealthy signed trial demonstrating real H616 bootloader fallback. Preserve configuration, calibration, identity and user data; keep heaters and motion inactive throughout. This authorizes the bounded host bootstrap and inactive paired-slot update/reboots necessary for that test, subject to exact target/write-boundary/recovery checks and independent consequential assessment. It does not authorize output activation, a general release, unrelated media replacement or destruction of persistent user data.
