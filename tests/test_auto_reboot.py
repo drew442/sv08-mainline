@@ -1,6 +1,7 @@
 """Durable automatic restart fixtures; real transaction, no system service calls."""
 from contextlib import contextmanager
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -141,6 +142,26 @@ class AutoRebootTests(unittest.TestCase):
                     self.restart.admission=None
                     self.assertEqual(self.restart.run(),'reboot-queued')
         self.assertEqual(self.dispatches(),1)
+
+    def test_cancelled_terminal_receipt_allows_feed_to_discover_next_release(self):
+        from sv08_feed import Feed
+        from sv08_staging import Staging
+        self.store.policy(auto_update=False);self.restart.run();self.tx.cancel(self.boot)
+        self.store.policy(auto_update=True)
+        cert=self.store.root/'fixture-anchor';cert.write_text('not used by instrumented discovery')
+        staging=Staging(self.store.root/'feed-bundles',max_bytes=1024,reserve_bytes=0,budget=fixture_budget(),owner_uid=os.getuid())
+        config=dict(format_version=1,url='https://updates.invalid/',channel='fixture',ca_file=str(cert),signer_ca_file=str(cert))
+        feed=Feed(self.store,staging,self.tx,self.boot,lambda p:None,config,restart=self.restart.run)
+        with patch.object(feed,'index',side_effect=RuntimeError('discovery reached')) as discovery:
+            with self.assertRaisesRegex(RuntimeError,'discovery reached'):feed.run()
+        discovery.assert_called_once()
+        self.assertEqual(self.restart.load()['state'],'retired');self.assertEqual(self.dispatches(),0)
+        self.assertIsNone(intent(self.runtime,self.boot_id))
+
+    def test_source_revision_is_rechecked_before_restart_dispatch(self):
+        state=self.store.load();state['slots']['A']['release_revision']=3;self.store.save(state)
+        with self.assertRaisesRegex(ValueError,'downgrade'):self.restart.run()
+        self.assertEqual(self.dispatches(),0);self.assertIsNone(intent(self.runtime,self.boot_id))
 
     def test_malformed_receipt_and_identity_mismatch_fail_closed(self):
         self.restart.path.write_text('{}')

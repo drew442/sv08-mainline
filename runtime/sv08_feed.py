@@ -240,7 +240,7 @@ class Feed:
                 if existing and existing.get('automatic') is True and (existing['phase'] == 'armed' or
                         (self.store.root / 'automatic-reboot.json').exists() and existing['phase'] in ('complete', 'failed', 'cancelled')):
                     result = self.restart()
-                    if result != 'reboot-observed':
+                    if result not in ('reboot-observed', 'reboot-retired'):
                         self._status(result, {'release': existing['release'], 'sequence': None})
                         return result
             self._policy()

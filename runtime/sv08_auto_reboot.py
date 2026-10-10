@@ -9,9 +9,9 @@ import json
 from pathlib import Path
 from sv08_state import atomic_json
 from sv08_restart import controlled_restart, require_restart, require_running
-from sv08_update_policy import effective, policy_revision
+from sv08_update_policy import effective, policy_revision, admit
 
-STATES = {'ready', 'dispatching', 'queued', 'uncertain', 'suppressed', 'observed'}
+STATES = {'ready', 'dispatching', 'queued', 'uncertain', 'suppressed', 'observed', 'retired'}
 
 
 class AutoReboot:
@@ -52,8 +52,14 @@ class AutoReboot:
             record = self.load()
             tx = self.tx.load()
             boot_id = self.store.boot_id.read_text().strip()
+            if (record and tx and tx['id'] == record['id'] and
+                    record['boot_id'] == boot_id and tx['phase'] in ('complete', 'failed', 'cancelled') and
+                    record['state'] in ('ready', 'suppressed', 'retired')):
+                require_running(self.store.runtime, self.store.boot_id)
+                self.save(record, 'retired')
+                return 'reboot-retired'
             if (record and tx and tx['id'] != record['id'] and
-                    record['state'] in ('ready', 'suppressed')):
+                    record['state'] in ('ready', 'suppressed', 'retired')):
                 # A new admitted transaction can replace only a terminal
                 # predecessor. These states precede dispatch; an outstanding
                 # shutdown barrier still refuses replacement after interruption.
@@ -88,6 +94,7 @@ class AutoReboot:
             require_running(self.store.runtime, self.store.boot_id)
             require_restart(self.store)
             self.tx.require_source(state, self.boot, policy=options)
+            admit(tx['admission_proof'], state, self.boot, options, automatic=True)
             if self.network.pending(): raise ValueError('Confirm or roll back network changes before restarting')
             record = self.save(expected, 'ready')
             controlled_restart(self.command, self.store.runtime, self.store.boot_id, self.admission,

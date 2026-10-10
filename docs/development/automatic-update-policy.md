@@ -59,7 +59,8 @@ policy edits, queued/uncertain software/image work and pending network rollback
 through dispatch. `/run/sv08/shutdown.json` closes service-start admission.
 `automatic-reboot.json` binds the request to transaction, source boot, release,
 slot and policy; states distinguish ready, dispatching, queued, uncertain,
-suppressed and observed. Acknowledgment means **queued**, never healthy completion.
+suppressed, retired and observed. Undispatched terminal receipts are retired so
+cancelling an update cannot prevent future discovery. Acknowledgment means **queued**, never healthy completion.
 Timeout, nonzero acknowledgment, interrupted caller or lost receipt after dispatch
 retain admission closed and are never automatically replayed. Only proven failure
 to launch clears the exact barrier and permits retry. Opt-out before dispatch
