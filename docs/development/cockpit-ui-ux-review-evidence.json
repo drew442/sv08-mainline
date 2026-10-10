@@ -1,0 +1,210 @@
+{
+  "review_revision": "b4bfb437a3f3e4fe000e08768102855ea871d416",
+  "kind": "source and disposable rendered UX review; not installed acceptance",
+  "local_evidence_directory": "/home/drew/.sv08-ui-review-20261010",
+  "source_sha256": {
+    "ui/host/upload.js": "5c028fbe6bc7f7e399f95f251d74daa520d4d7232b963c2c75a5add3ac7c5882",
+    "ui/host/software.js": "773cb429d8bfbbac94469f9ba0b70a4e43327c48ce41d20c3805821ebcaeb869",
+    "ui/host/mainsail-access.js": "32fbf550e6a2c0165064659a4206e0333b6bc5b32cd13b41834263dc9c6b0b79",
+    "ui/host/index.html": "0ed3636cdfc65cd1009bf1a3d0c59fe92ca36eda6f81aafae168999a392f509c",
+    "ui/host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+    "ui/host/app.js": "9c31e421dee65aaba05befb1644804c12f456ff75fef4e48833036f8e8eee0d7",
+    "ui/host/network.js": "baaed9f623cd6f27ecb8a76aa697b2d1653237f3390f26b4c0d7109af97e0367",
+    "ui/host/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+    "ui/host/navigation.js": "e28d007aa57b685807ad850229fb7877ffaf64c923b8ca24cdffcc55231f1c17",
+    "ui/host/style.css": "9957c802919adc01556b3d4ac7aa8eeb38bff9a5e7afc12f05742055c5288992",
+    "ui/host/identity.js": "28788fd119a9fa8006b4937ab8eef178026a2270c9a2f58979bf5c5b887561a6",
+    "ui/printer/index.html": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+    "ui/printer/panel.html": "1cb3aea2a677fa0cd6d7e53beec4083d5c86d7dc2524d4e9ad7dde75351e4500",
+    "ui/printer/manifest.json": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+    "ui/printer/app.js": "b7661869d67281d699711ac5589d9f2c0c2ca0ad67e8de38f984fe1e1fcc2cda",
+    "ui/printer/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+    "ui/printer/redirect.js": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+    "ui/printer/style.css": "a1ae24f55a184ad586d0942dd2b44369fee58a7d0fd82d69df7bdd4f6cb1ee7f",
+    "scripts/stage_printer_ui.py": "f08cc663291c93448f76d4bd34865dc3aefe9b28d7572f42a13a18d682664397",
+    "tests/test_printer_browser_fixture.py": "9d57a911382ce134b22a195609b1ec5f318d0f95a59bf113d724d26b3ff818a9"
+  },
+  "screenshots": [
+    {
+      "file": "detail-screens/definition-sources-1440.png",
+      "sha256": "98f51e11b6fbecfe15c203c06dde649041fbbd40e1831815edd4d3a25e9a57c1",
+      "bytes": 107420
+    },
+    {
+      "file": "detail-screens/definition-sources-390.png",
+      "sha256": "a0d9977575edada09464bf27ca6a9f52d964fd5acd0070900b2919c1bda69498",
+      "bytes": 60708
+    },
+    {
+      "file": "detail-screens/images-1440.png",
+      "sha256": "a0194b99883cb04f3078d0f94274f0087431ef82016bb89a9c351a1e17119619",
+      "bytes": 118409
+    },
+    {
+      "file": "detail-screens/printer-1440.png",
+      "sha256": "ef738825bc6cabb10462a388a4c773d673ef7e1ad359d0d23351ffab7b165fa2",
+      "bytes": 142053
+    },
+    {
+      "file": "detail-screens/printer-390.png",
+      "sha256": "b1cb9f8b0f42ce9fac13486b5b222ed081c52bc30dde0829bfec3b11b04b1511",
+      "bytes": 49756
+    },
+    {
+      "file": "detail-screens/printer-connections-1440.png",
+      "sha256": "ab5e56ec5fcc1c65e61f6207dfb8a78738ab03ba90b8338b73bdff04b62c7136",
+      "bytes": 74970
+    },
+    {
+      "file": "screens/definition-sources-1440.png",
+      "sha256": "6d9033b123e992bfa65f75f8c86c2482caede77bd405306ac113795d768b5c22",
+      "bytes": 118227
+    },
+    {
+      "file": "screens/definition-sources-390.png",
+      "sha256": "39cc7c52a8a816331e65955a8d893a4a63882e11eb6ff3b6ea25b46e28b4b0e6",
+      "bytes": 52138
+    },
+    {
+      "file": "screens/definitions-1440.png",
+      "sha256": "e7df0b36c71496eb113ed3460bfad4e5a188fb9e52f702d932f4c652b7ac5d7d",
+      "bytes": 112731
+    },
+    {
+      "file": "screens/identity-1440.png",
+      "sha256": "1facc4615e361d061f1f0748c1f8fa4ed1b4c29c0a319859b3ead7cb08ee72cc",
+      "bytes": 119634
+    },
+    {
+      "file": "screens/images-1024.png",
+      "sha256": "59a5f6b010872a16ea2f58408db199b7cac42625dd71e05b60db6ce3ec578f07",
+      "bytes": 68962
+    },
+    {
+      "file": "screens/images-1440.png",
+      "sha256": "56faaf109469efffba43ef293230a64d8b772a6d9747da0b0234094913df8c06",
+      "bytes": 120337
+    },
+    {
+      "file": "screens/mainsail-access-1440.png",
+      "sha256": "a719fea38f871c11b45e1b9e7ace9fe76b4d966f48b3f557d1f833727e5fecde",
+      "bytes": 103798
+    },
+    {
+      "file": "screens/network-1440.png",
+      "sha256": "cb892540a329027927f5534303be71b9f02d9eb69dc00f83c997e1b22b54816b",
+      "bytes": 97348
+    },
+    {
+      "file": "screens/network-390.png",
+      "sha256": "978d1d451ffca4ea55d8b57c2ca946103f32ee890abe37098f55d8ac04df9db9",
+      "bytes": 54340
+    },
+    {
+      "file": "screens/overview-1440.png",
+      "sha256": "19464a436111f7ae3d5744bf5b6c743c6f8af878b44d008f5501b539481ecf3c",
+      "bytes": 116893
+    },
+    {
+      "file": "screens/printer-1024.png",
+      "sha256": "fba8dfeeeff86768b39da20df6775bd3b92c11ddca3a1d58ce60e344f5072829",
+      "bytes": 68135
+    },
+    {
+      "file": "screens/printer-1440.png",
+      "sha256": "6016050b311513d77d601f17d00ec95a74d76fdd0227c1727482009ca628683a",
+      "bytes": 111777
+    },
+    {
+      "file": "screens/printer-390.png",
+      "sha256": "1e0e6f7db0c6f507cc635b2f79f6718deff7fc39bf7a8dfc22efbc3f2bed6837",
+      "bytes": 52544
+    },
+    {
+      "file": "screens/printer-connections-1440.png",
+      "sha256": "5df91c4ffa88ab187599ac3e1ef128749280a9a6b185d78cc922e502f7318528",
+      "bytes": 115692
+    },
+    {
+      "file": "screens/recovery-1440.png",
+      "sha256": "c322beae4a992455e43402e27f41a2f53e2f61b65df78d6ed701f11836470cf7",
+      "bytes": 146568
+    },
+    {
+      "file": "screens/settings-1440.png",
+      "sha256": "5b7cc9dcac251c1105b58b7a3fb5460ffe75551245c954349dec7091948fc67d",
+      "bytes": 116941
+    },
+    {
+      "file": "screens/software-1440.png",
+      "sha256": "3d96a44a9dbc847514b82eb8891a56ddcd3c15ab150e6df9be7547790b56f23b",
+      "bytes": 106232
+    }
+  ],
+  "captures": [
+    {
+      "file": "capture.mjs",
+      "sha256": "674a50a1c5316e82a83fea66adab3de31e879bf87bab54643c71333b451d375d"
+    },
+    {
+      "file": "capture-detail.mjs",
+      "sha256": "beb8bf1aa581c58b7974bda8fd599ee393f7c4b724b16ed6c28b9012f0eff8be"
+    },
+    {
+      "file": "fixture.py",
+      "sha256": "b776d3ce49d0bac3882256f55b4c4ead02f1049d45d78b106ad868c8ab632adc"
+    },
+    {
+      "file": "rendered-review.json",
+      "sha256": "392c739d2aa1685b2a30e57e55001503a30afe37a18ef51efd55ef9ed45f8b98"
+    },
+    {
+      "file": "detail-review.json",
+      "sha256": "2e68a196122843332a62bb72f16ecbeb63d7b735bdcad0d7268a43c961d91bd1"
+    },
+    {
+      "file": "process-retirement.json",
+      "sha256": "8b93ee9eeaa92de1cb3d22e7024169186d78f789f061665b4c9067ec00589a49"
+    }
+  ],
+  "tools": {
+    "node": "v18.19.1 with existing WebSocket shim; no installation",
+    "chromium": "Google Chrome for Testing 145.0.7632.6"
+  },
+  "limits": {
+    "primary_review_fixture_and_capture_seconds": 600,
+    "output_bytes": 134217728,
+    "browser_captures": 2,
+    "new_images": 0
+  },
+  "fixture_limitations": [
+    "Host service RPCs unsupported; errors not product defects",
+    "No outer production Cockpit shell",
+    "No installed/printer operations"
+  ],
+  "visual_inspected": [
+    "screens/printer-1440.png",
+    "screens/definition-sources-1440.png",
+    "screens/printer-390.png",
+    "screens/images-1024.png",
+    "screens/overview-1440.png",
+    "screens/definitions-1440.png",
+    "screens/network-1440.png",
+    "screens/mainsail-access-1440.png",
+    "detail-screens/printer-1440.png",
+    "detail-screens/definition-sources-1440.png",
+    "detail-screens/images-1440.png",
+    "detail-screens/printer-390.png"
+  ],
+  "scratch_cleanup": {
+    "retired_owned_fixture_pid": 3683822,
+    "fixture_exit": 143,
+    "browser_exit_codes": [
+      0,
+      0
+    ],
+    "browser_profiles_removed": true,
+    "bytes_before": 15764951,
+    "bytes_after": 2293186
+  }
+}
