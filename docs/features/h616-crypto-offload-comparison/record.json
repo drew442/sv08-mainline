@@ -49,11 +49,68 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "offload-evidence",
+          "document": "docs/features/h616-crypto-offload-comparison/evidence.md",
+          "document_sha256": "102c1e3484da19af4314d7411e17b73d0973441aa99449e532cfd8c4041f16ce",
+          "environment": "offline",
+          "limitations": "Offline analysis of named installed H616 measurements; hardwareprofiletest-sv08-01, board revisionunknown. AFALG rates include validatedloop overhead; currentstreamingPython/OpenSSL anddmveritySHASH consumers notaccelerated. No independentCPUbenchmark or actualupdate/reboot; timingthroughput/fixedtimes illustrativeassumptions, not guaranteedreadytime. Selfvalidation with source research agents, no independentdeliveryverification claimed.",
+          "method": "Coordinator-authorized installed explicit SHA256 CE AF_ALG probe: nine three-size approximately48MiB batches with matching hardware/task counts, zero fallback and every digest correct;32/64KiB and8MiBstreamdiagnostics correct via fallback. Exact script SHA and final raw/remote receipt hashes bound in committed evidence/results. Final461434880bytes5.340s, lineage532713472bytes13.832s; preserved boot/root/bootro/service masks; offline script/receipt/lineage assertions passed. No actual update or independentCPUbenchmark.",
+          "profile": "test-sv08-01 installed diagnostic / offline timing projection",
+          "source_commit": "869b7dbc5db43e65fef94f4a40926bc9fcc820a6",
+          "source_sha256": {
+            "configs/host-os/kernel-61851-compile-candidate.json": "09fc0e682b7082a19741b5178722e43899abc5d02b46b0291e81457251117bcd",
+            "configs/host-os/rauc-system.conf.in": "b128bc83c37073540aac481b7335cb5b78a48a3eca9b42f19717552b098d11e2",
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/features/h616-crypto-offload-comparison/evidence.md": "102c1e3484da19af4314d7411e17b73d0973441aa99449e532cfd8c4041f16ce",
+            "docs/features/h616-crypto-offload-comparison/results.json": "6f2e551b31895e9e8834c0c7be0696ede176cde9e04a60ca9adec9a68a6a4215",
+            "docs/hardware/host-crypto-offload.md": "af9caaa0f10f8ea45f82b5bdad8aa57ae62acc79fef3258085181554b23b913c",
+            "runtime/sv08_boot_health.py": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f",
+            "runtime/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+            "runtime/sv08_feed.py": "916fddad33c6fb4a96d3e69ad798e9eb57922f053bfb59e01c3d60da5dee8edf",
+            "runtime/sv08_rauc.py": "ac501761bb4a611911a24af1c093d4516153fab6771706c0e597767062a9c71e",
+            "runtime/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+            "runtime/sv08_transaction.py": "4390addefc58be86801eb97f69bd832e1b75e993087972ba14c9f254bb60c597",
+            "tests/host_crypto_offload.py": "b6f139aaaf47e982771e57814897ebea4d11b649a490b32d6a01742452efa2fa"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "timing-model",
+          "document": "docs/features/h616-crypto-offload-comparison/evidence.md",
+          "document_sha256": "102c1e3484da19af4314d7411e17b73d0973441aa99449e532cfd8c4041f16ce",
+          "environment": "offline",
+          "limitations": "Offline analysis of named installed H616 measurements; hardwareprofiletest-sv08-01, board revisionunknown. AFALG rates include validatedloop overhead; currentstreamingPython/OpenSSL anddmveritySHASH consumers notaccelerated. No independentCPUbenchmark or actualupdate/reboot; timingthroughput/fixedtimes illustrativeassumptions, not guaranteedreadytime. Selfvalidation with source research agents, no independentdeliveryverification claimed.",
+          "method": "Two research agents traced pinned CE/AFALG/SHASH and repository fresh-feed five bundle plus three raw-pair hash passes. Model arithmetic and specification/rateceilings validated. Representative620480437bytebundle/2348810240rawpair; three explicit serial cold-read planning cases at1Gbps and100Mbps; immediate reboot assumption, current feed next-boot wait and installed/repository mismatch documented. No network/storage/boot timing experiments.",
+          "profile": "test-sv08-01 installed diagnostic / offline timing projection",
+          "source_commit": "869b7dbc5db43e65fef94f4a40926bc9fcc820a6",
+          "source_sha256": {
+            "configs/host-os/kernel-61851-compile-candidate.json": "09fc0e682b7082a19741b5178722e43899abc5d02b46b0291e81457251117bcd",
+            "configs/host-os/rauc-system.conf.in": "b128bc83c37073540aac481b7335cb5b78a48a3eca9b42f19717552b098d11e2",
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "docs/features/h616-crypto-offload-comparison/evidence.md": "102c1e3484da19af4314d7411e17b73d0973441aa99449e532cfd8c4041f16ce",
+            "docs/features/h616-crypto-offload-comparison/results.json": "6f2e551b31895e9e8834c0c7be0696ede176cde9e04a60ca9adec9a68a6a4215",
+            "docs/hardware/host-crypto-offload.md": "af9caaa0f10f8ea45f82b5bdad8aa57ae62acc79fef3258085181554b23b913c",
+            "runtime/sv08_boot_health.py": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f",
+            "runtime/sv08_bundle.py": "a140066b92bb7aa58fc60899c83f04390c1e4b795cede1b5182276c1c0aef975",
+            "runtime/sv08_feed.py": "916fddad33c6fb4a96d3e69ad798e9eb57922f053bfb59e01c3d60da5dee8edf",
+            "runtime/sv08_rauc.py": "ac501761bb4a611911a24af1c093d4516153fab6771706c0e597767062a9c71e",
+            "runtime/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+            "runtime/sv08_transaction.py": "4390addefc58be86801eb97f69bd832e1b75e993087972ba14c9f254bb60c597",
+            "tests/host_crypto_offload.py": "b6f139aaaf47e982771e57814897ebea4d11b649a490b32d6a01742452efa2fa"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "0d4570c395654da59b0acd07390db22d",
+        "session": "crypto-20261010"
+      },
       "input_paths": [
         "runtime/sv08_feed.py",
         "runtime/sv08_staging.py",
@@ -74,9 +131,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Bounded existing AF_ALG hashing of synthetic memory with inactive printer services; no outputs, device writes, updates or restart. Source and arithmetic self-validated with two research agents.",
-      "status": "pending",
+      "status": "validated",
       "title": "Measure bounded offload and publish timing comparison",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "04c2e9281be830b9cb87591898ed534cda401604bed280c2943bb9dca3b57d11",
+        "evidence_sha256": "92a00f6378f403e53d0211493b11e08f1dbb106bc4195422e30fba2ddfca0537",
+        "outcome": "passed",
+        "rationale": "Actual CE/fallback digests and counters inspected, preservation/budgets and exact source receipts agree, all model arithmetic passes; no software baseline/update timing fabricated.",
+        "session": "crypto-20261010",
+        "source_commit": "869b7dbc5db43e65fef94f4a40926bc9fcc820a6"
+      },
       "verification": null
     }
   ],
