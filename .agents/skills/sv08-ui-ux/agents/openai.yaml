@@ -1,0 +1,5 @@
+interface:
+  display_name: "SV08 UI/UX"
+  short_description: "Task-scoped SV08 web UI design and evaluation"
+policy:
+  allow_implicit_invocation: false

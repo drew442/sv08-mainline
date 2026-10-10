@@ -8,7 +8,9 @@ const {url} = JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url, /^http:\/\/127\.0\.0\.1:\d+$/);
 fs.mkdirSync(output); const profile = output+'/profile';
 const log = fs.openSync(output+'/browser.log','w');
-const child = spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
+// The wrapper owns the Node process group; direct invocations retain their own browser group.
+const ownedGroup = process.env.SV08_UI_OWNED_PROCESS_GROUP === '1';
+const child = spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:!ownedGroup,stdio:['ignore',log,log]});
 let socket;
 try {
  let port;
@@ -58,4 +60,4 @@ try {
  assert.equal(errors.length,0);
  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,physical_hardware:false,transport:'test Cockpit bridge shim; real disposable Controller',keyboard_navigation:true,escape_cancels:true,policy_persistence:true,mode_applies_only_on_boot:true,touch_navigation:true,unavailable_installer_disabled:true,uncaught_exceptions:0},null,2)+'\n');
  console.log('Browser administration tests PASS');
-}finally{socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}
+}finally{socket?.close();try{ownedGroup?child.kill('SIGTERM'):process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}

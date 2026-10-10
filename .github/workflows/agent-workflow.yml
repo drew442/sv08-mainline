@@ -9,6 +9,10 @@ on:
       - '.github/workflows/agent-workflow.yml'
       - 'AGENTS.md'
       - '.codex/**'
+      - '.agents/skills/sv08-ui-ux/**'
+      - 'scripts/check_ui.py'
+      - 'tests/test_ui_workflow.py'
+      - 'tests/admin_browser.mjs'
       - 'scripts/feature_workflow.py'
       - 'scripts/workflow_inventory.py'
       - 'tests/test_feature_workflow*.py'
@@ -23,6 +27,10 @@ on:
       - '.github/workflows/agent-workflow.yml'
       - 'AGENTS.md'
       - '.codex/**'
+      - '.agents/skills/sv08-ui-ux/**'
+      - 'scripts/check_ui.py'
+      - 'tests/test_ui_workflow.py'
+      - 'tests/admin_browser.mjs'
       - 'scripts/feature_workflow.py'
       - 'scripts/workflow_inventory.py'
       - 'tests/test_feature_workflow*.py'
@@ -67,6 +75,9 @@ jobs:
         run: |
           /usr/bin/python3 -m unittest discover -s tests -p 'test_codex_agent_policy.py' -v
           /usr/bin/python3 -m unittest discover -s tests -p 'test_agent_context.py' -v
+      - name: UI workflow and context-isolation regression tests
+        if: ${{ !cancelled() }}
+        run: /usr/bin/python3 -m unittest discover -s tests -p 'test_ui_workflow.py' -v
       - name: Inventory regression tests
         if: ${{ !cancelled() }}
         run: /usr/bin/python3 -m unittest discover -s tests -p 'test_workflow_inventory.py' -v
