@@ -1,0 +1,17 @@
+{
+  "config_equal": true,
+  "shared_equal": true,
+  "machine_id_equal": true,
+  "public_identity_values_equal": true,
+  "database_raw_equal": false,
+  "protected_equal": {
+    "leading_before_env": true,
+    "leading_between_env": true,
+    "leading_after_env": true,
+    "recovery": true,
+    "backup_gpt_tail": true,
+    "source_a_boot": true
+  },
+  "source_a_root_expected_changed_by_exact_restart_repair": true,
+  "database_disposition": "Raw bytes changed after Moonraker startup; original logical preservation cannot be proven from raw hashes. Automatic trial compares natural frozen source generation with selected new generation, SQL boolean equality only, excluding documented startup unsafe_shutdowns counter."
+}

@@ -1,0 +1,29 @@
+{
+  "verdict": "PASS WITH CONDITIONS",
+  "scope": "Source-only uploads repair; automatic feed/slot installation excluded.",
+  "packet_sha256": "18300dc9b0f644dbabf967f78745019d00b40925b268eb3c381cec158901f5d5",
+  "source_revision_bound_by_packet": "55343bcdeb61f0bae0b86487ccc3a7ad972dfaf8",
+  "boot_id": "4e55fcc3-9939-4839-ad42-8ca99d7bd6a4",
+  "repair_script_sha256": "af507065f12ad347abd628d2f96efe7e2721ad7b609effd3af1b8133752cde6a",
+  "state_before_sha256": "b632137305aa2976c6fdf82e2c9a9bf8a47eac451ce213f0eac2028a6ccb0771",
+  "state_after_sha256": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+  "evidence": [
+    "Complete exact script and state.py diff read",
+    "Exact hashes checked locally",
+    "Actual source dry-run receipt reports pass on new A boot",
+    "Source-preservation receipt reviewed; protected non-database categories match initial baseline"
+  ],
+  "conditions": [
+    "Immediate exact staged hash/preflight checks, fresh PSU status OFF, five output filesystem/kernel masks and inactive services/no serial writers.",
+    "Execute once: exact one0644root-owned source state.py copy under Store/admission; return immutable root; no reboot/environment/account/feed/slot writes.",
+    "New Store.initialize creates absent uploads as root-owned0700 and refuses unsafe existing uploads; require existing state registry bytes unchanged and actual installed_controller construction success. Any failure or changed input stops without blind rerun.",
+    "Database raw hash mismatch remains unresolved for original prewarm logical preservation. This source-only pass neither waives it nor admits automatic feed."
+  ],
+  "configured_role": {
+    "name": "high_consequence_reviewer_high",
+    "model": "gpt-6.1-sol",
+    "effort": "high",
+    "actual_sampling_telemetry": "not exposed"
+  },
+  "limits": "Review input only, not hardware authority or observed execution. No hardware/Git/tracked edits/credential contents accessed."
+}

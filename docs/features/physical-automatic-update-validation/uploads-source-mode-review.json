@@ -1,0 +1,15 @@
+{
+  "verdict": "PASS WITH CONDITIONS",
+  "scope": "Changed-input source-only uploads repair, no feed or reboot.",
+  "script_sha256": "ccbe9613c55b993ce214e2792df02f745ffb7757257cedb7ce00565925033393",
+  "prior_script_sha256": "af507065f12ad347abd628d2f96efe7e2721ad7b609effd3af1b8133752cde6a",
+  "base_packet_sha256": "18300dc9b0f644dbabf967f78745019d00b40925b268eb3c381cec158901f5d5",
+  "evidence": "Local full diff and hash show exactly two0644-to0755 literals changed: source mode precondition and installed chmod. Coordinator reports actual root-owned0755 and prior failure before source write; previous runtime hash/root read-only/uploads absent preserved.",
+  "conditions": [
+    "All prior uploads-source-review.json conditions carry.",
+    "Immediately verify actual source ownership/mode0755, old/new runtime hashes and exact staged revised script; retain prior failed prewrite attempt.",
+    "One changed-input execution only; preserve0755root ownership, restore rootro, initializeuploads0700, existingregistrybytesunchanged, installed_controller success; any mismatch stops without replay.",
+    "Automatic feed remains separately gated; no database preservation criterion waived."
+  ],
+  "configured_role": "Fixed high_consequence_reviewer_high Sol/high; actual sampling telemetry unavailable."
+}

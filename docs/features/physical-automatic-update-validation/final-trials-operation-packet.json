@@ -1,0 +1,118 @@
+{
+  "format_version": 1,
+  "context": "physical-automatic-update-final-trials",
+  "source_commit": "55343bcdeb61f0bae0b86487ccc3a7ad972dfaf8",
+  "original_packet_sha256": "497b1e665d8f3b8f66240b6748cb5f85c9a4c1219230d35b30dc9c4109e50cd3",
+  "owner_authority": "Latest goal acceptance: physical healthy update and deliberately unhealthy automatic trial/fallback; root operates printer. Owner now confirms previously tested rescue SD available.",
+  "recovery": {
+    "availability": "owner-reported current confirmation 2026-10-10",
+    "prior_test": "docs/hardware/coordinated-human-tasks.md H12 SD-return evidence",
+    "p5": "Preserved and hashed independent recovery inputs; not claiming newly observed usable login"
+  },
+  "target": {
+    "ssh": "sv08@192.168.1.141",
+    "boot_id": "4e55fcc3-9939-4839-ad42-8ca99d7bd6a4",
+    "source": "A/root-p2/boot-p1",
+    "healthy_target": "B/root-p4/boot-p3",
+    "unhealthy_target": "A/root-p2/boot-p1",
+    "whole_device": "/dev/mmcblk2",
+    "identity_path": "/dev/disk/by-path/platform-4022000.mmc",
+    "cid_file_sha256": "d95fdc00fd925e9bd9bd2a90119f9b0b1c9e11b5df67d075ad22afcc0ec04141"
+  },
+  "initial_failure": "Full source warmboot succeeded; installed_controller source boundary failed missing private uploads directory. No feed or automatic installation started.",
+  "write_boundaries": {
+    "continuation": "COMPLETED source state.py repair preserving observed0755root:root; uploads0700/controllerpass/rootro/registrybytesunchanged. First0644precondition stoppedbeforewrite; exactmodechange separatelyassessed. No more source repair/reboot permitted.",
+    "automatic": "Actual production feed/controller/RAUC writes inactive root+boot pair, registry/journal and admitted order/counters. Healthy B must be confirmed before unhealthy A overwrites source A.",
+    "fallback": "Production callback requests reboot; bootloader consumes three A attempts and selects confirmed B. No manual counter consumption/fallbackmarker."
+  },
+  "safety": {
+    "printer_psu": "Beelink plug status OFF measured; no voltage or full-isolation claim. USB host powered.",
+    "outputs": "Both roots and bootstrap five persistent filesystem masks, five kernelmasktokens retained; services inactive and no USB serial writers immediately before operation.",
+    "uart": "Beelink exact stable printer UART revision0264/pathusb0:2,1152008N1 O_RDONLY withTIOCEXCL andsharedlock; no TX/relay action.",
+    "stop_conditions": [
+      "Preflight mismatch, pending/uncertain transactions, busy job/serial writer, signature/time/provenance refusal, unexpected write boundary, root not readonly, failed preservation or source health, unknown outcome: stop dependent actions; preserve working fallback/recovery.",
+      "No repeated physical installation attempt without diagnosis and bounded independent reassessment.",
+      "Healthy confirmation must precede unhealthy publication; final automatic opt-out and timer stop prevent bad release replay."
+    ],
+    "limits": "One healthy update plus one deliberately unhealthy update with three normal failed health boots; bounded 1500sUART/2MiB, bounded monitoring. No heating/motion/printing/MCUflash/relaycycle."
+  },
+  "acceptance": "Actual healthyBcomplete/pendingnone/ready/readback/mountpair/B3goodprimary; sourceAroot+boot unchanged, all protectedconfig/calibration/shared/publicidentity and localSQLdatabases equal excludingonlyknown startupunsafe_shutdowns. ONLYthen unhealthyAtrial exactly3 distinctHostHealthfailures andactualUART A3,A2,A1,B3; finalhealthyBreadyfailedtrialreconciled/pendingnoneA0/B3; optout/timer/serverstop; final preservation. InitialprewarmoriginalDBlogicalpreservation remainsunproven and cannotbeclaimed.",
+  "bound_files": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/continuation.json": "fda9570a4e72cd0328f6d73057ef3234a1d6d58d5336d2856237a1c9cc04e448",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-stopped-state.json": "46715028fb728081dc53a4fa6c6c9b6947c6f59717e9b0f79f0bdfd6c81229d3",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-preservation.json": "6e2b42b97469b56b9d474cb2e00900e123cd5880fe0612aa1694ae1dde5f696e",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-preservation-comparison.json": "5971597f05cac84dc1b830fa940105a4f10f967189010aeaebcd24fa6d79e0ee",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-source.py": "4541b12996fa99e325b44351f953bd40e121c1819776dd67f6ae9022a6baea24",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-printer.py": "22d4ec84d924ff75f83eb44ebdb35f08cedfc68f8d86e2173221e0b2fec7556c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart.py": "2e26abff9de20e960092c928e4bcde711135d9d179881ae1b17fde2acf4d5c30",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/serve-feed.py": "61dec93848ee0d96dcdfa6cc0de4d83ac5d6669665a3bb335042659775c12221",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/check-preservation.py": "09cb934dbea877fc49f5e2452b4c6aecfb3d02464d9f866c3ff1af2e121d2aa2",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-checkpoint.py": "4109fee00bc7855c1971a4eace2d4cbaf4172f5eaa56bb56de73d11c1b24a6c8",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/preserved-data-before.json": "daf7bf4aeba2c3e008e8872a1532d509ff9f9659462c6b3b87adc1b9c396b596",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/backup-gpt-before.json": "19a85019330eaceb829c72d7dfacec8c9aaa0fb97c541c56ae2b082150a8e2d8",
+    "/home/drew/sv08-mainline/runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+    "/home/drew/sv08-mainline/tests/test_restart.py": "844bfc1ba9a72f72a57bc96aa77ec46caf07488d70602ce300e47d39c2193e76",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uploads-repair-dry-run.log": "4461481cdb27dcb91d30c847e60eedbb56a076d9fee7c121d6f0625e81bb0c8b",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/signed-artifacts-uploads.json": "88160b4571e11f01a3261a84ac2625075cb87338eb9d4e64f40f371182356143",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-uploads-index.json": "a29c2a6e7bbdae74004a5c001e629dac0f4260d180080bae44e0c729f4563d19",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-uploads-index.json.p7s": "bb1f7d98a2708fc7ef05550e6399850940eaf9efadcb7a1cc9e8ed5604a8f77b",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-uploads-index.json": "4e37907b799a6855fe012060fe9a4f8ce3a95f86c5a31019349080b3591f43f6",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-uploads-index.json.p7s": "879af6a7e24e992aad4132f7af9f2e4a47613eecde7b48a1e030ce129efc4cfa",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-authenticated-info-uploads.json": "aaf93c281240acaadd257c6e6c58b55bb02daa4be0049bcf92bbc8a75ef93eae",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-authenticated-info-uploads.json": "cdd01f5f7df1915a2dd44294ce11a29836de246bb9bc7b1582bb50acc2c4e1d4",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-preservation.json": "213b7c1a5fdf25e3169ece477d0ad3c701970a3e06542a6981bc3305c2175509",
+    "/home/drew/sv08-mainline/runtime/sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/repair-uploads-preserve-mode.py": "ccbe9613c55b993ce214e2792df02f745ffb7757257cedb7ce00565925033393",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uploads-repair-execution.log": "d1fdf5430dc4b67d006b4484dcab38763fb5e287b5a00de2c223733d07da711c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uploads-repair-preserve-mode-execution.log": "66c2f8bfe1ed4a6f07c184c60443cd5b1f0d09851cdef972a50b10248a314a77",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-boundary.py": "f11576562242afc8ccfb65aecfac46392ab8590e745cc802996a3055d77b3a4f",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-boundary-after-uploads.json": "b6891fba6ed159b5cc34c1dbd07bd76d0fc7e1e77790c00da837f6db9dfbdd06",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-preservation-disposition.json": "673dbfb885986ad653cf8a4b30cf907ab7eabcdffe99e1525051eb09c6d207bb",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/database-preservation.py": "2950596bc120a731dbdb7500437ba1f37baa6bd1427ea0804390498f0d889088"
+  },
+  "exact_sequence": [
+    "One exact repair-uploads.py --execute after review/fresh full preflight+PSUoff; no reboot. Full actual installed_controller boundary and semantic preservation verified before feed.",
+    "Only aftersource readiness publish newlytrustedhealthyrev2seq1 and startproductionfeed withpolicyTRUE. ObservecompletedconfirmedhealthyB withpendingnone/readiness andmatchingadmittedreadback. ChecksourceAroot/bootpairunchanged andall application/identity/GPT/recovery.",
+    "Only afterBconfirmation publish exactunhealthyrev3seq2 andstartproductionfeed. Observe3distinctAfailedHostHealthbootIDs,readyclosed andrealUBootfinitecounterexhaustion/fallbackB.",
+    "OnexacthealthyBready/pendingnone/reconciledfailedtarget immediatelydisableautomaticpolicy/stopfeedtimer/server, verifyallprotecteddata/identity/GPT/p5 andcleanuponlygoal-ownedlocalbulk; neverdeleteinstalledaccountseed/generations."
+  ],
+  "composition_receipt_sha256": "85c1d9dd9e3c4672ebebbdf6a51f6943ecd6c56b79c0ef6dad3f20af7662a137",
+  "source_tests": "28 state/staging tests pass, including actual Staging fresh/existing registry and registry byte preservation; both repaired root images fsck pass. Earlier30restart/11composer results historical.",
+  "signed_artifacts": {
+    "healthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 1,
+        "issued": 1791607642,
+        "expires": 1791694042,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.2",
+        "release_revision": 2,
+        "bundle": "healthy.raucb",
+        "bytes": 488425518,
+        "sha256": "4b7ab2834b94e6d59b76f3824da0ee05cf331fe771aa7d67032881b986fcb517"
+      },
+      "index_sha256": "a29c2a6e7bbdae74004a5c001e629dac0f4260d180080bae44e0c729f4563d19",
+      "signature_sha256": "bb1f7d98a2708fc7ef05550e6399850940eaf9efadcb7a1cc9e8ed5604a8f77b"
+    },
+    "unhealthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 2,
+        "issued": 1791607642,
+        "expires": 1791694042,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.3",
+        "release_revision": 3,
+        "bundle": "unhealthy.raucb",
+        "bytes": 488413230,
+        "sha256": "0866fca172601db3db6008fb2e453d9f013da7d1e1b62a9cb4b3a00aca40a541"
+      },
+      "index_sha256": "4e37907b799a6855fe012060fe9a4f8ce3a95f86c5a31019349080b3591f43f6",
+      "signature_sha256": "879af6a7e24e992aad4132f7af9f2e4a47613eecde7b48a1e030ce129efc4cfa"
+    }
+  },
+  "preservation_status": "Source warmboot config/calibration/shared/machine/longtermpublicCA+SSHkeys/loader/GPT/P5 preserved. InitialrawDBbytechange originalprewarmlogicalproof unavailable; documented sourceMoonrakerstartupwrites. Actualautomaticupdates gated by exactSQLboolean-only sourcegeneration\u2192newgeneration equality comparator, excludesonlydocumented database.unsafe_shutdowns. No rows/secrets/hashes exported. Originalsourcegeneration naturallyfrozen afterhealthyrestart."
+}
