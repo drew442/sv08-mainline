@@ -1,0 +1,53 @@
+{
+  "format_version": 1,
+  "environment": "offline",
+  "context": "physical-update-qualification",
+  "physical_execution": false,
+  "composition_receipt_sha256": "00254ddc731712436c6b1171a40c68d81cd520ca8f20d28e28f016d467a8f97f",
+  "artifacts": {
+    "healthy/bundle/boot.img": "692cb38bc0ff3cfb73b7296a2aea4a6cda9e97917606d41c73a4afef970fcdcd",
+    "healthy/bundle/rootfs.img": "3486241cffae12e680af85111560091735986a4380c69684100973e6253c7f3a",
+    "healthy/bundle/manifest.raucm": "c3fd1c6b1beaf9a2357d5abe25603ca115231ffe6b31880911d875dc6b8a61ed",
+    "unhealthy/bundle/boot.img": "692cb38bc0ff3cfb73b7296a2aea4a6cda9e97917606d41c73a4afef970fcdcd",
+    "unhealthy/bundle/rootfs.img": "8b9d05af6b1fb24a05c8dc1faf7ab6b7d79075dafa5ab62c238870ea55896a9a",
+    "unhealthy/bundle/manifest.raucm": "145927327fff688bb9cf8a94e855cb67cc689bc696a2be19a5a911d41995a513"
+  },
+  "boot_payloads": {
+    "boot.scr": "be1a5a5d3badaf3a431d8a81ffdc970c18c7789e1b68e82bff107fd1109905ce",
+    "Image": "5bc7c62df2b521610d0dea0a82b38aceb54af7d340a44b02a27428d6ea28dc34",
+    "initrd.img": "9a1f234d3df04c83012df4ac11308282c7e042a912a698eceb15064bd54843fe",
+    "dtb/sv08.dtb": "571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f"
+  },
+  "tools": {
+    "mkimage": "mkimage version 2025.10",
+    "mkfs.ext4": "mke2fs 1.47.0 (5-Feb-2023)\n\tUsing EXT2FS Library version 1.47.0",
+    "mcopy": "mcopy (GNU mtools) 4.0.43\nconfigured with the following options: enable-xdf disable-vold disable-new-vold disable-debug enable-raw-term",
+    "dpkg": "Debian 'dpkg' package management program version 1.22.6 (amd64).\nThis is free software; see the GNU General Public License version 2 or\nlater for copying conditions. There is NO warranty."
+  },
+  "environment_binding": {
+    "device": "/dev/mmcblk2",
+    "by_path": "/dev/disk/by-path/platform-4022000.mmc",
+    "preflight": "coordinator must recheck by-path identity resolves to the canonical whole root device"
+  },
+  "tests": {
+    "command": "python3 -m unittest discover -s tests -p test_prepare_physical_update_qualification.py",
+    "passed": 10
+  },
+  "resource_charge": {
+    "worker_process_seconds_conservative": 240,
+    "worker_generated_gib_conservative": 14,
+    "live_bytes": 9393336320,
+    "free_bytes": 24592011264
+  },
+  "repairs": [
+    "Reuse identical healthy boot filesystem for unhealthy bundle; rootfs unchanged",
+    "Stage current public printer UI/catalog/dictionary payload via unchanged payload() then strict host UI refresh in all roots; recreate only unsigned rootfs images",
+    "Use independently observed canonical /dev/mmcblk2 environment node for unchanged O_NOFOLLOW validator; retain identity by-path binding for coordinator preflight; regenerate only rootfs images"
+  ],
+  "limitations": [
+    "Named test-sv08-01 qualification profile only; no printing release.",
+    "Physical execution and recovery assessment remain separately gated.",
+    "Recipe and hashes recorded; byte-identical image rebuilds not established.",
+    "Server-local account shadow seed is never included; password atomic replacement is not qualified."
+  ]
+}
