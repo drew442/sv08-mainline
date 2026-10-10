@@ -1,60 +1,59 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "abdc5b90aaafaf5f19c7fd41fd5f9be6eb29d6efd5050909d925ea3fb78f0faf",
+    "rationale": "Owner-authorized CE-only measurement; offline evidence analysis does not certify physical updates or release.",
+    "reference": "docs/features/h616-crypto-offload-comparison/owner-request.md",
+    "reference_sha256": "a0497c3c6decc667a33cdf04cd7ac72b093c975475140e96783e5c9b5fe346b6",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/h616-crypto-offload-comparison/owner-request.md": "a0497c3c6decc667a33cdf04cd7ac72b093c975475140e96783e5c9b5fe346b6"
+    },
+    "scope_sha256": "2c4f7e72d2e955b6991a493ca3da469ae3eafc4e529252618e58ef53694ccd0f",
+    "session": "crypto-20261010",
+    "source_commit": "390845546ab72e9bafaf0a7e6dfd3d0af1df7ac4"
+  },
+  "checks": [
+    {
+      "description": "Analyze coordinator-authorized installed CE measurements: driver/fallback counters, digests, request limits and preserved state; retain hardware provenance separately.",
+      "environment": "offline",
+      "id": "offload-evidence"
+    },
+    {
+      "description": "Trace hash consumers and estimate end-to-end time with explicit specifications and software assumptions, including activation wait.",
+      "environment": "offline",
+      "id": "timing-model"
+    }
+  ],
+  "created": "2026-10-10",
+  "decision": null,
   "format_version": 2,
   "id": "h616-crypto-offload-comparison",
   "kind": "feature",
-  "title": "Installed H616 crypto offload and automatic update timing",
-  "author": "root/coordinator",
-  "created": "2026-10-10",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/h616-crypto-offload-comparison/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/h616-crypto-offload-comparison/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offload-evidence",
-      "description": "Analyze coordinator-authorized installed CE measurements: driver/fallback counters, digests, request limits and preserved state; retain hardware provenance separately.",
-      "environment": "offline"
-    },
-    {
-      "id": "timing-model",
-      "description": "Trace hash consumers and estimate end-to-end time with explicit specifications and software assumptions, including activation wait.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Measure bounded offload and publish timing comparison",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offload-evidence",
         "timing-model"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Bounded existing AF_ALG hashing of synthetic memory with inactive printer services; no outputs, device writes, updates or restart. Source and arithmetic self-validated with two research agents.",
       "hazards": [],
-      "owned_paths": [
-        "tests/host_crypto_offload.py",
-        "docs/features/h616-crypto-offload-comparison/evidence.md",
-        "docs/features/h616-crypto-offload-comparison/results.json",
-        "docs/hardware/host-crypto-offload.md"
-      ],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_feed.py",
         "runtime/sv08_staging.py",
@@ -64,7 +63,22 @@
         "runtime/sv08_boot_health.py",
         "configs/images/host-ab.json",
         "configs/host-os/rauc-system.conf.in"
-      ]
+      ],
+      "owned_paths": [
+        "tests/host_crypto_offload.py",
+        "docs/features/h616-crypto-offload-comparison/evidence.md",
+        "docs/features/h616-crypto-offload-comparison/results.json",
+        "docs/hardware/host-crypto-offload.md"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Bounded existing AF_ALG hashing of synthetic memory with inactive printer services; no outputs, device writes, updates or restart. Source and arithmetic self-validated with two research agents.",
+      "status": "pending",
+      "title": "Measure bounded offload and publish timing comparison",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Installed H616 crypto offload and automatic update timing"
 }
