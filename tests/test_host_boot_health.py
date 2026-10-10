@@ -6,10 +6,11 @@ import tempfile
 import time
 import unittest
 import uuid
-from unittest.mock import Mock
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_boot_health import (CoordinatorDeadline, HealthFailure, HostHealth,
+from sv08_boot_health import (CoordinatorDeadline, DiagnosticBackend, HealthFailure, HostHealth,
                               bounded_json, coordinator_deadline, main,
                               observed_rauc_slot, record_failure, run, validate_boot)
 from sv08_state import Store
@@ -27,15 +28,21 @@ class Backend:
     def __init__(self):
         self.selected, self.states = 'A', {'A': True, 'B': False}
         self.calls = []
+        self.policy = dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B', BOOT_A_LEFT='3', BOOT_B_LEFT='0')
     def writer(self): return admitted()
     def validate_context(self, boot): self.calls.append('validate')
     def resolution_evidence(self, boot):
         self.validate_context(boot)
         return {'operation': 'idle'}
+    def normal_resolution_evidence(self, boot):
+        self.calls.append('normal-validate')
+    def confirm_normal(self, boot):
+        self.calls.append('normal-good')
+        self.policy['BOOT_'+boot['slot']+'_LEFT'] = '3'
     def primary(self): return self.selected
     def good(self, slot): return self.states[slot]
     def validate_bundle(self, bundle, proof, target): pass
-    def boot_policy(self): return dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B', BOOT_A_LEFT='3', BOOT_B_LEFT='0')
+    def boot_policy(self): return dict(self.policy)
     def disarm_target(self, target, source): self.calls.append('bad'); self.states[target] = False
     def restore_pre_disarm(self, previous, target, source): self.calls.append('restore')
     def install(self, bundle, proof, target): self.calls.append('install'); self.states[target] = False
@@ -84,7 +91,7 @@ class BootHealthTests(unittest.TestCase):
     def test_nontrial_writable_boot_releases_only_host_marker(self):
         self.store.policy(mode='writable')
         self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = str(uuid.uuid4())
-        self.assertEqual(run(self.boot, self.tx, Mock(side_effect=AssertionError('health')),
+        self.assertEqual(run(self.boot, self.tx, Mock(return_value=True),
                              admitted, Mock(side_effect=AssertionError('reboot')),
                              ready=self.ready, validate=self.validate), 'idle')
         self.assertTrue(self.ready.is_file())
@@ -92,7 +99,7 @@ class BootHealthTests(unittest.TestCase):
     def test_staged_source_boot_can_publish_health_marker(self):
         proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
         self.tx.stage('bundle', proof, self.boot)
-        self.assertEqual(run(self.boot, self.tx, Mock(side_effect=AssertionError('health')),
+        self.assertEqual(run(self.boot, self.tx, Mock(return_value=True),
                              admitted, Mock(side_effect=AssertionError('reboot')),
                              ready=self.ready, validate=self.validate), 'staged')
         self.assertTrue(self.ready.is_file())
@@ -117,12 +124,117 @@ class BootHealthTests(unittest.TestCase):
         def boot_admission():
             calls.append('boot'); yield
         self.tx.admission = staging
-        self.assertEqual(run(self.boot, self.tx, Mock(side_effect=AssertionError('health')),
+        self.assertEqual(run(self.boot, self.tx, Mock(return_value=True),
                              boot_admission, Mock(side_effect=AssertionError('reboot')),
                              ready=self.ready, validate=self.validate), 'needs-arm')
-        self.assertEqual(calls, ['boot', 'staging'])
+        self.assertEqual(calls, ['boot', 'staging', 'boot'])
         self.assertEqual(self.tx.load()['phase'], 'armed')
         self.assertTrue(self.ready.is_file())
+
+    def test_more_than_three_healthy_normal_boots_refill_only_running_slot(self):
+        self.backend.policy.update(BOOT_A_LEFT='1', BOOT_B_LEFT='2')
+        for _ in range(5):
+            # Model upstream U-Boot consuming one attempt before entering Linux.
+            self.backend.policy['BOOT_A_LEFT'] = str(int(self.backend.policy['BOOT_A_LEFT']) - 1)
+            self.boot['boot_id'] = str(uuid.uuid4())
+            state = self.store.load()
+            health = Mock(return_value=True)
+            run(self.boot, self.tx, health, admitted, Mock(), ready=self.ready, validate=self.validate)
+            health.assert_called_once_with(self.boot)
+            self.assertEqual(self.backend.policy,
+                             dict(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A B', BOOT_A_LEFT='3', BOOT_B_LEFT='2'))
+            self.assertEqual(self.store.load(), state)
+            self.assertIsNone(self.tx.load())
+            self.assertTrue(self.ready.exists())
+
+    def test_failed_normal_health_does_not_refill_or_release_stale_ready(self):
+        self.ready.touch()
+        self.backend.policy['BOOT_A_LEFT'] = '0'
+        fallback = Mock()
+        with self.assertRaises(HealthFailure):
+            run(self.boot, self.tx, Mock(side_effect=HealthFailure('unstable')),
+                admitted, fallback, ready=self.ready, validate=self.validate)
+        self.assertEqual(self.backend.policy['BOOT_A_LEFT'], '0')
+        self.assertNotIn('normal-good', self.backend.calls)
+        self.assertFalse(self.ready.exists())
+        fallback.assert_not_called()
+
+    def test_unknown_normal_context_and_changed_state_do_not_refill(self):
+        for fail in ('identity', 'state'):
+            with self.subTest(fail=fail):
+                self.backend.calls.clear()
+                def health(_boot):
+                    if fail == 'state':
+                        state = self.store.load(); state['auto_update'] = False; self.store.save(state)
+                    return True
+                def validate():
+                    if fail == 'identity': raise ValueError('unknown boot identity')
+                    return self.validate()
+                with self.assertRaises(ValueError):
+                    run(self.boot, self.tx, health, admitted, Mock(), ready=self.ready, validate=validate)
+                self.assertNotIn('normal-good', self.backend.calls)
+                self.assertFalse(self.ready.exists())
+
+    def test_normal_health_and_write_hold_state_admission_and_writer(self):
+        held = []
+        @contextmanager
+        def admission():
+            held.append('admission')
+            try: yield
+            finally: held.pop()
+        @contextmanager
+        def writer():
+            held.append('writer')
+            try: yield
+            finally: held.pop()
+        self.tx.writer = writer
+        def assert_locks(_boot):
+            self.assertEqual(held, ['admission', 'writer'])
+            with self.assertRaisesRegex(ValueError, 'busy'):
+                with self.store.locked(nonblocking=True): pass
+            return True
+        self.backend.confirm_normal = assert_locks
+        run(self.boot, self.tx, assert_locks, admission, Mock(), ready=self.ready, validate=self.validate)
+
+    def test_armed_source_refill_preserves_pending_trial_and_target_attempts(self):
+        self.tx.stage('bundle', {'release': 'release-2', 'bundle_sha256': 'a'*64}, self.boot)
+        self.tx.arm(self.boot)
+        self.backend.policy.update(BOOT_ORDER='B A', BOOT_A_LEFT='0', BOOT_B_LEFT='1')
+        state, journal = self.store.load(), self.tx.load()
+        self.assertEqual(run(self.boot, self.tx, Mock(return_value=True), admitted, Mock(),
+                             ready=self.ready, validate=self.validate), 'awaiting-reboot')
+        self.assertEqual(self.backend.policy['BOOT_ORDER'], 'B A')
+        self.assertEqual(self.backend.policy['BOOT_B_LEFT'], '1')
+        self.assertEqual(self.backend.policy['BOOT_A_LEFT'], '3')
+        self.assertEqual(self.store.load(), state)
+        self.assertEqual(self.tx.load(), journal)
+
+    def test_legacy_diagnostic_health_has_no_environment_write(self):
+        self.backend.diagnostic_only = True
+        self.backend.confirm_normal = Mock(side_effect=AssertionError('legacy write'))
+        health = Mock(return_value=True)
+        run(self.boot, self.tx, health, admitted, Mock(), ready=self.ready, validate=self.validate)
+        health.assert_called_once_with(self.boot)
+        self.backend.confirm_normal.assert_not_called()
+        self.assertTrue(self.ready.exists())
+
+    def test_writable_customized_normal_health_keeps_image_operations_blocked(self):
+        self.store.policy(mode='writable')
+        self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = str(uuid.uuid4())
+        self.assertTrue(self.boot['customized'])
+        self.manifest['devices'] = {'data': '/data-device'}
+        clock = [0.0]
+        health = HostHealth(self.backend, self.manifest, now=lambda: clock[0],
+                            sleep=lambda seconds: clock.__setitem__(0, clock[0]+seconds),
+                            command=lambda args, **_: 'active' if args[0] == 'systemctl' else '/data-device')
+        run(self.boot, self.tx, health, admitted, Mock(), ready=self.ready,
+            validate=self.validate, normal_health=health.normal)
+        self.assertIn('normal-validate', self.backend.calls)
+        self.assertIn('normal-good', self.backend.calls)
+        with self.assertRaisesRegex(ValueError, 'reconciliation'):
+            self.tx.stage('bundle', {'release': 'release-2', 'bundle_sha256': 'a'*64}, self.boot)
+        with self.assertRaisesRegex(HealthFailure, 'immutable'):
+            health(self.boot)
 
     def trial(self):
         proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
@@ -325,6 +437,35 @@ class BootHealthTests(unittest.TestCase):
                             command=command)
         self.assertTrue(health(dict(self.boot, mode='immutable')))
         self.assertEqual({args[0] for args in commands}, {'systemctl', 'findmnt'})
+
+    def test_legacy_backend_requires_current_paired_mount_and_mode(self):
+        manifest = {'devices': {'boot-a': '/explicit/boot-a'}}
+        backend = DiagnosticBackend(manifest)
+        self.assertFalse(hasattr(backend, 'confirm_normal'))
+        with patch('sv08_boot_health.verify_devices') as verify, \
+             patch('sv08_boot_health.device_number', return_value='254:1'), \
+             patch('sv08_boot_health.subprocess.check_output', return_value='254:1'), \
+             patch('sv08_boot_health.os.statvfs', return_value=SimpleNamespace(f_flag=0)):
+            backend.normal_resolution_evidence(dict(self.boot, mode='writable'))
+            verify.assert_called_once_with(manifest, 'A')
+            with self.assertRaisesRegex(ValueError, 'operating mode'):
+                backend.normal_resolution_evidence(self.boot)
+        with patch('sv08_boot_health.verify_devices'), \
+             patch('sv08_boot_health.device_number', return_value='254:1'), \
+             patch('sv08_boot_health.subprocess.check_output', return_value='254:3'):
+            with self.assertRaisesRegex(ValueError, 'boot mount'):
+                backend.normal_resolution_evidence(self.boot)
+
+    def test_normal_stability_restarts_when_backend_identity_changes(self):
+        clock = [0.0]
+        self.manifest['devices'] = {'data': '/data-device'}
+        self.backend.normal_resolution_evidence = lambda boot: {'identity': clock[0]}
+        health = HostHealth(self.backend, self.manifest, now=lambda: clock[0],
+                            sleep=lambda seconds: clock.__setitem__(0, clock[0]+seconds),
+                            command=lambda args, **_: 'active' if args[0] == 'systemctl' else '/data-device',
+                            stable=1, deadline=2)
+        with self.assertRaises(HealthFailure):
+            health.normal(self.boot)
 
     def test_malformed_and_oversized_records_refused(self):
         path = self.root / 'input.json'

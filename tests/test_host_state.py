@@ -10,7 +10,7 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_state import Store
+from sv08_state import Store, fingerprint
 
 
 class PersistentStateTests(unittest.TestCase):
@@ -59,7 +59,9 @@ class PersistentStateTests(unittest.TestCase):
             self.store.expect_trial('B', 'release-2', 'A')
             db.execute("INSERT INTO settings VALUES ('late committed value')")
             db.commit()
+            before = fingerprint(Path(self.a['generation']))
             b = self.store.prepare_boot('B', 'release-2')
+            self.assertEqual(fingerprint(Path(self.a['generation'])), before)
             with sqlite3.connect(Path(b['generation']) / 'database/test.db') as copied:
                 self.assertEqual(copied.execute('SELECT value FROM settings').fetchall(), [('late committed value',)])
 
@@ -72,6 +74,97 @@ class PersistentStateTests(unittest.TestCase):
         self.store.cancel_trial()
         self.assertIsNone(self.store.load()['pending'])
         self.store.policy(mode='writable')
+
+    def test_closed_wal_database_snapshot_leaves_source_files_unchanged(self):
+        database = Path(self.a['generation']) / 'database/test.db'
+        db = sqlite3.connect(database)
+        db.execute('PRAGMA journal_mode=WAL')
+        db.execute('CREATE TABLE settings(value TEXT)')
+        db.execute("INSERT INTO settings VALUES ('checkpointed value')")
+        db.commit()
+        db.close()
+        self.assertFalse(Path(str(database) + '-wal').exists())
+        before = fingerprint(Path(self.a['generation']))
+        self.store.expect_trial('B', 'release-2', 'A')
+        b = self.store.prepare_boot('B', 'release-2')
+        self.assertEqual(fingerprint(Path(self.a['generation'])), before)
+        self.assertFalse(Path(str(database) + '-wal').exists())
+        copied = sqlite3.connect(Path(b['generation']) / 'database/test.db')
+        try:
+            self.assertEqual(copied.execute('SELECT value FROM settings').fetchall(), [('checkpointed value',)])
+            self.assertEqual(copied.execute('PRAGMA quick_check').fetchone(), ('ok',))
+        finally:
+            copied.close()
+
+    def test_sqlite_backup_workspace_is_reserved_before_copy(self):
+        database = Path(self.a['generation']) / 'database/test.db'
+        db = sqlite3.connect(database)
+        db.execute('CREATE TABLE settings(value TEXT)')
+        db.commit()
+        db.close()
+        record = self.store.load()['slots']['A']
+        block = os.statvfs(self.store.root).f_frsize
+        ordinary_copy = block + sum(block if p.is_dir() else ((p.stat().st_size + block - 1) // block) * block
+                                    for p in Path(self.a['generation']).rglob('*'))
+        report = self.store.check_copy_budget(record)
+        self.assertGreaterEqual(report['copy_bytes'], ordinary_copy + database.stat().st_size + 4 * block)
+        self.store.copy_limit_bytes = ordinary_copy
+        self.store.expect_trial('B', 'release-2', 'A')
+        before = self.store.load()
+        with self.assertRaisesRegex(ValueError, 'budget'):
+            self.store.prepare_boot('B', 'release-2')
+        self.assertEqual(self.store.load(), before)
+
+    def test_snapshot_still_rejects_real_source_changes(self):
+        import shutil
+        copytree = shutil.copytree
+        self.store.expect_trial('B', 'release-2', 'A')
+        before = self.store.load()
+        def changed(source, target, *args, **kwargs):
+            result = copytree(source, target, *args, **kwargs)
+            if Path(source) == Path(self.a['generation']):
+                self.config.write_text('external writer changed source')
+            return result
+        with patch('sv08_state.shutil.copytree', side_effect=changed):
+            with self.assertRaisesRegex(ValueError, 'State changed during copy'):
+                self.store.prepare_boot('B', 'release-2')
+        self.assertEqual(self.store.load(), before)
+
+    def test_private_sqlite_peak_fits_copy_admission_without_shm(self):
+        from sv08_state import snapshot
+        source = Path(self.a['generation'])
+        database = source / 'database/test.db'
+        db = sqlite3.connect(database)
+        self.addCleanup(db.close)
+        db.execute('PRAGMA page_size=512')
+        db.execute('PRAGMA journal_mode=WAL')
+        db.execute('PRAGMA wal_autocheckpoint=0')
+        db.execute('CREATE TABLE values_seen(value BLOB)')
+        db.executemany('INSERT INTO values_seen VALUES (?)', [(bytes(400),)] * 4500)
+        db.commit()
+        target = self.store.root / 'generations/private-copy-probe'
+        budget = self.store.check_copy_budget(self.store.load()['slots']['A'])['copy_bytes']
+        peaks = []
+        def observe():
+            files = list(target.rglob('*'))
+            self.assertFalse(any(p.name.endswith('-shm') for p in files))
+            peaks.append(target.stat().st_blocks * 512 + sum(p.stat().st_blocks * 512 for p in files))
+        class ObservedConnection(sqlite3.Connection):
+            def execute(connection, *args, **kwargs):
+                result = super().execute(*args, **kwargs)
+                observe()
+                return result
+            def backup(connection, other, *args, **kwargs):
+                result = super().backup(other, *args, **kwargs)
+                observe()
+                return result
+        connect = sqlite3.connect
+        before = fingerprint(source)
+        with patch('sv08_state.sqlite3.connect', side_effect=lambda *args, **kwargs: connect(*args, factory=ObservedConnection, **kwargs)):
+            snapshot(source, target)
+        self.assertEqual(fingerprint(source), before)
+        self.assertTrue(peaks)
+        self.assertLessEqual(max(peaks), budget)
 
     def test_policy_rejects_non_boolean_without_publishing_other_changes(self):
         before = self.store.load()

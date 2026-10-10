@@ -12,7 +12,7 @@ User=sv08
 Group=sv08
 SupplementaryGroups=dialout
 Environment=PYTHONDONTWRITEBYTECODE=1
-ExecStartPre=+/usr/bin/flock --nonblock /run/sv08/admission.lock /usr/bin/true
+ExecStartPre=+/usr/bin/python3 /usr/lib/sv08/sv08_restart.py check-start
 ExecStart=/opt/sv08-mainline/venvs/klipper-f0892d8/bin/python /opt/sv08-mainline/klipper/klippy/klippy.py /run/sv08/printer_data/config/printer.cfg -a /run/sv08/printer_data/comms/klippy.sock -l /var/log/printer/klippy.log
 Restart=on-failure
 RestartSec=5

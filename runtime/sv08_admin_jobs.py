@@ -242,7 +242,11 @@ class Jobs:
         # publication, so this avoids a ledger/state inversion.
         if controller.context != 'host' or controller.plan(plan['action'], plan['arguments']) != plan:
             raise ValueError('System state changed. Refresh and review again.')
-        with self.lock('ledger.lock'):
+        with controller.store.locked(), self.lock('ledger.lock'):
+            controller.store.require_running()
+            from sv08_admin import revision, snapshot
+            if revision(snapshot(controller.store, controller.boot, controller.context)) != plan['revision']:
+                raise ValueError('System state changed. Refresh and review again.')
             view = self.view(); rows = view['rows']
             for row in rows:
                 if row['id'] == identity:

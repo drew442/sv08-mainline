@@ -76,7 +76,7 @@ class StageUITests(unittest.TestCase):
             self.assertIn(relative, result['hashes'])
         import json, os
         Path(fixture_root()).joinpath('history-staged-inventory.json').write_text(json.dumps(result, indent=2))
-        for name in ('sv08_admin_history.py', 'sv08_data_budget.py'):
+        for name in ('sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_restart.py'):
             self.assertIn('usr/lib/sv08/'+name, result['hashes'])
         for unit_name in ('sv08-feed.service', 'sv08-feed.timer'):
             name = 'usr/lib/systemd/system/' + unit_name
@@ -209,7 +209,7 @@ class StageUITests(unittest.TestCase):
 
 
     def test_history_runtime_modules_are_strict_dependencies(self):
-        for name in ('sv08_admin_history.py', 'sv08_data_budget.py'):
+        for name in ('sv08_admin_history.py', 'sv08_data_budget.py', 'sv08_restart.py'):
             path = self.work / 'rootfs/usr/lib/sv08' / name
             raw = path.read_bytes(); path.unlink()
             with self.assertRaisesRegex(ValueError, name): stage(self.work, 'host', True)
@@ -218,3 +218,9 @@ class StageUITests(unittest.TestCase):
             path.write_bytes(raw+b'\n# mismatched fixture\n')
             with self.assertRaisesRegex(ValueError, name): stage(self.work, 'host', True)
             path.write_bytes(raw)
+
+    def test_restart_helper_is_a_strict_recovery_dependency_too(self):
+        path = self.work/'rootfs/usr/lib/sv08/sv08_restart.py'
+        path.unlink()
+        with self.assertRaisesRegex(ValueError, 'sv08_restart.py'): stage(self.work, 'recovery', True)
+        self.assertFalse((self.work/'rootfs/usr/share/xsessions').exists())

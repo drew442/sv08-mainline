@@ -73,7 +73,7 @@ class Service:
         if not isinstance(owner, str) or not re.fullmatch(r':[0-9]+\.[0-9]+', owner): raise ValueError('Invalid RAUC service owner')
         return owner
 
-    def identity(self, owner, policy):
+    def identity(self, owner, policy, *, require_immutable=True):
         pid = self.call('org.freedesktop.DBus', 'org.freedesktop.DBus', 'GetConnectionUnixProcessID', 's', owner)[0]
         if type(pid) is not int or pid <= 1: raise ValueError('Invalid RAUC service process')
         process = Path('/proc') / str(pid)
@@ -91,20 +91,20 @@ class Service:
         files = {}
         for name in policy['config_paths']:
             path = Path(name)
-            if not path.is_file() or not os.statvfs(path).f_flag & os.ST_RDONLY: raise ValueError('RAUC execution/configuration identity is mutable or missing')
+            if not path.is_file() or (require_immutable and not os.statvfs(path).f_flag & os.ST_RDONLY): raise ValueError('RAUC execution/configuration identity is mutable or missing')
             files[name] = self.digest(path)
         return {'pid': pid, 'executable_sha256': policy['executable_sha256'], 'package': version, 'unit': values, 'files': files}
 
-    def observe(self):
+    def observe(self, *, require_immutable=True):
         if not self.depth: raise ValueError('RAUC observation requires writer exclusion')
         policy = self.policy(); name = policy['bus_name']; bus = self.call('org.freedesktop.DBus', 'org.freedesktop.DBus', 'GetId')[0]; owner = self.owner(name)
         if self.call('org.freedesktop.DBus', 'org.freedesktop.DBus', 'GetConnectionUnixUser', 's', owner) != [0]: raise ValueError('Unexpected RAUC service credentials')
-        identity = self.identity(owner, policy)
+        identity = self.identity(owner, policy, require_immutable=require_immutable)
         operation = self.call(owner, 'org.freedesktop.DBus.Properties', 'Get', 'ss', name+'.Installer', 'Operation')[0]
         if not isinstance(operation, dict) or operation.get('data') != 'idle': raise ValueError('RAUC service is busy')
         # RAUC 1.15.2 checks its internal busy flag before GetSlotStatus.
         slots = self.call(owner, name+'.Installer', 'GetSlotStatus')
         if not slots: raise ValueError('RAUC slot observation is unavailable')
-        if self.call('org.freedesktop.DBus', 'org.freedesktop.DBus', 'GetId')[0] != bus or self.owner(name) != owner or self.identity(owner, policy) != identity:
+        if self.call('org.freedesktop.DBus', 'org.freedesktop.DBus', 'GetId')[0] != bus or self.owner(name) != owner or self.identity(owner, policy, require_immutable=require_immutable) != identity:
             raise ValueError('RAUC service owner or identity changed during observation')
         return {'bus': bus, 'owner': owner, 'identity': identity, 'operation': 'idle', 'busy_guard': 'GetSlotStatus', 'slot_status_sha256': hashlib.sha256(json.dumps(slots, sort_keys=True, separators=(',', ':')).encode()).hexdigest()}

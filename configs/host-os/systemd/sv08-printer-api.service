@@ -9,7 +9,7 @@ User=sv08
 Group=sv08
 PrivateDevices=yes
 Environment=PYTHONDONTWRITEBYTECODE=1
-ExecStartPre=+/usr/bin/flock --nonblock /run/sv08/admission.lock /usr/bin/true
+ExecStartPre=+/usr/bin/python3 /usr/lib/sv08/sv08_restart.py check-start
 ExecStart=/opt/sv08-mainline/venvs/moonraker-985c1d0/bin/python /opt/sv08-mainline/moonraker/moonraker/moonraker.py -d /run/sv08/printer_data -l /var/log/printer/moonraker.log
 Restart=on-failure
 RestartSec=5

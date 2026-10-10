@@ -7,7 +7,7 @@ Before=sv08-printer-api.service
 [Service]
 Type=oneshot
 Environment=PYTHONDONTWRITEBYTECODE=1
-ExecStartPre=/usr/bin/flock --nonblock /run/sv08/admission.lock /usr/bin/true
+ExecStartPre=/usr/bin/python3 /usr/lib/sv08/sv08_restart.py check-start
 ExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_web.py prepare
 RemainAfterExit=yes
 TimeoutStartSec=30

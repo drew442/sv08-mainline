@@ -187,6 +187,14 @@ class Backend:
         return json.loads(self.command('status', '--output-format=json'))
 
     def validate_context(self, boot, read_command=None):
+        """Image operations always require the original immutable context."""
+        return self._validate_context(boot, read_command=read_command)
+
+    def validate_normal_context(self, boot, read_command=None):
+        """Identify an ordinary running OS without authorizing image writes."""
+        return self._validate_context(boot, read_command=read_command, normal=True)
+
+    def _validate_context(self, boot, read_command=None, *, normal=False):
         if os.geteuid() != 0:
             raise ValueError('RAUC backend operations require root')
         if self.fixture:
@@ -201,13 +209,18 @@ class Backend:
               not 0 <= self.environment['board_mmc_device_index'] <= 31 or
               self.policy['compatible'].startswith('sv08-offline')):
             raise ValueError('Backend requires a reviewed deployable board manifest')
-        if not os.statvfs('/').f_flag & os.ST_RDONLY or boot['mode'] != 'immutable':
+        readonly = bool(os.statvfs('/').f_flag & os.ST_RDONLY)
+        if normal:
+            if boot['mode'] not in ('immutable', 'writable') or readonly != (boot['mode'] == 'immutable'):
+                raise ValueError('Running root mount differs from operating mode')
+        elif not readonly or boot['mode'] != 'immutable':
             raise ValueError('Image backend requires an immutable running root')
         if self.manifest['release'] != boot['release'] or self.manifest['state_schema'] != self.policy['state_schema']:
             raise ValueError('Running release/schema differs from update policy')
-        packaged = json.loads(Path('/usr/share/doc/sv08-klipper/release.json').read_text())
-        if packaged['source_commit'] != self.policy['klipper_commit']:
-            raise ValueError('Installed host Klipper differs from the permitted MCU-compatible pin')
+        if not normal:
+            packaged = json.loads(Path('/usr/share/doc/sv08-klipper/release.json').read_text())
+            if packaged['source_commit'] != self.policy['klipper_commit']:
+                raise ValueError('Installed host Klipper differs from the permitted MCU-compatible pin')
         verify_devices(self.manifest, boot['slot'], read_command=read_command)
         validate_config(self.config.read_text(), self.manifest, self.policy, self.keyring)
         info = {name: block_info(path) for name, path in self.manifest['devices'].items()}
@@ -252,7 +265,44 @@ class Backend:
         other = 'b' if boot['slot'] == 'A' else 'a'
         if any(info[kind+'-'+other]['number'] in mounted for kind in ('boot', 'root')):
             raise ValueError('Inactive target filesystem is mounted')
-        self.boot = dict(boot)
+        if normal:
+            mounted_boot = (read_command or subprocess.check_output)(
+                ['findmnt', '-n', '-o', 'MAJ:MIN', '--mountpoint', '/boot'], text=True).strip()
+            if mounted_boot != info['boot-'+boot['slot'].lower()]['number']:
+                raise ValueError('Mounted boot device differs from running slot')
+        else:
+            self.boot = dict(boot)
+
+    def normal_resolution_evidence(self, boot):
+        """Writable OS confirmation uses current identity, not image provenance.
+
+        The selected service's immutable-file policy remains required for image
+        operations. Ordinary health instead binds the live bus owner and its
+        actual busy guard while all supported writers are excluded.
+        """
+        self.validate_normal_context(boot)
+        return self.service.observe(require_immutable=False)
+
+    def confirm_normal(self, boot):
+        """Replenish only the proven running slot; never select or arm a slot."""
+        with self.writer():
+            evidence = self.normal_resolution_evidence(boot)
+            # Slot health legitimately changes from bad to good at counter zero.
+            # Retain bus/process/configuration identity, not the slot-status hash.
+            evidence.pop('slot_status_sha256', None)
+            verify_environment_copies(self.env_config)
+            before = self.boot_policy()
+            if boot['trial'] or boot['slot'] not in before['BOOT_ORDER'].split():
+                raise ValueError('Normal confirmation requires a configured nontrial running slot')
+            with self.operation('set-good', boot['slot']):
+                self.command('status', 'mark-good', 'rootfs.'+str(('A', 'B').index(boot['slot'])))
+            verify_environment_copies(self.env_config)
+            expected = dict(before)
+            expected['BOOT_'+boot['slot']+'_LEFT'] = '3'
+            after_evidence = self.normal_resolution_evidence(boot)
+            after_evidence.pop('slot_status_sha256', None)
+            if self.boot_policy() != expected or after_evidence != evidence:
+                raise ValueError('Normal confirmation changed boot policy or running context')
 
     def cleanup_observation(self, boot, lease_fd):
         """Bound only new read-only cleanup probes; install duration is unchanged.

@@ -7,7 +7,7 @@ an upstream state-migration integration if it provides these semantics. See ADR
 0006 and tests/test_host_state.py. This module does not install or select slots.
 """
 import argparse
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 import fcntl
 import hashlib
 import json
@@ -17,6 +17,7 @@ import re
 import shutil
 import sqlite3
 import stat
+import tempfile
 import uuid
 
 MIB = 1024 * 1024
@@ -77,17 +78,25 @@ def snapshot(source, target):
         if not is_sqlite:
             continue
         copied = target / path.relative_to(source)
-        copied.unlink()
-        for suffix in ('-wal', '-shm'):
-            Path(str(copied) + suffix).unlink(missing_ok=True)
-        # SQLite's backup API includes committed WAL data without modifying A's DB.
-        with sqlite3.connect(path.as_uri() + '?mode=ro', uri=True) as src:
-            if src.execute('PRAGMA quick_check').fetchone() != ('ok',):
-                raise ValueError('Source SQLite integrity check failed')
-            with sqlite3.connect(copied) as dst:
-                src.backup(dst)
-                if dst.execute('PRAGMA quick_check').fetchone() != ('ok',):
-                    raise ValueError('Copied SQLite integrity check failed')
+        # Even mode=ro can create WAL/SHM beside a quiesced WAL-mode database.
+        # Recover the private copy instead; never open the source with SQLite.
+        Path(str(copied) + '-shm').unlink(missing_ok=True)
+        with tempfile.TemporaryDirectory(prefix='.sqlite-backup-', dir=target) as scratch:
+            recovered = Path(scratch) / 'database'
+            with closing(sqlite3.connect(copied)) as src:
+                # Private databases have one client. Keep WAL indexes in memory
+                # rather than allocating unbounded shared-memory sidecar files.
+                src.execute('PRAGMA locking_mode=EXCLUSIVE')
+                if src.execute('PRAGMA quick_check').fetchone() != ('ok',):
+                    raise ValueError('Source SQLite integrity check failed')
+                with closing(sqlite3.connect(recovered)) as dst:
+                    dst.execute('PRAGMA locking_mode=EXCLUSIVE')
+                    src.backup(dst)
+                    if dst.execute('PRAGMA quick_check').fetchone() != ('ok',):
+                        raise ValueError('Copied SQLite integrity check failed')
+            for suffix in ('-wal', '-shm'):
+                Path(str(copied) + suffix).unlink(missing_ok=True)
+            os.replace(recovered, copied)
     if fingerprint(source) != before:
         raise ValueError('State changed during copy; keep applications quiesced and retry')
     for path in target.rglob('*'):
@@ -100,8 +109,9 @@ def snapshot(source, target):
 
 
 class Store:
-    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None):
+    def __init__(self, root, reserve_bytes=512*MIB, copy_limit_bytes=256*MIB, budget=None, runtime=Path('/run/sv08'), boot_id=Path('/proc/sys/kernel/random/boot_id')):
         self.root = Path(root).absolute()
+        self.runtime, self.boot_id = Path(runtime), Path(boot_id)
         for path in (self.root, *self.root.parents):
             if path.is_symlink():
                 raise ValueError('Persistent root must not contain symlinks')
@@ -178,20 +188,27 @@ class Store:
                 self.save(state)
             return state
 
+    def require_running(self):
+        from sv08_restart import require_running
+        require_running(self.runtime, self.boot_id)
+
     def policy(self, mode=None, auto_update=None):
         with self.locked():
+            if mode is not None or auto_update is not None:
+                self.require_running()
             state = self.load()
             if mode is not None:
                 if mode not in ('immutable', 'writable'):
                     raise ValueError('Unknown operating mode')
-                if state['pending']:
-                    raise ValueError('Finish or cancel the pending image transaction before changing mode')
+                from sv08_restart import require_mode_change
+                require_mode_change(self, state)
                 state['requested_mode'] = mode
             if auto_update is not None:
                 if not isinstance(auto_update, bool):
                     raise ValueError('Automatic update policy must be a boolean')
                 state['auto_update'] = auto_update
-            self.save(state)
+            if mode is not None or auto_update is not None:
+                self.save(state)
             return state
 
     def expect_trial(self, slot, release, previous_slot):
@@ -202,6 +219,7 @@ class Store:
         """
         identifier(release)
         with self.locked():
+            self.require_running()
             state = self.load()
             if slot not in ('A', 'B') or previous_slot not in ('A', 'B') or slot == previous_slot:
                 raise ValueError('Trial must target the other slot')
@@ -217,6 +235,7 @@ class Store:
     def cancel_trial(self):
         """Caller must disarm boot selection first; a running trial cannot be cancelled."""
         with self.locked():
+            self.require_running()
             state = self.load()
             if state['pending'] and state['pending']['phase'] != 'armed':
                 raise ValueError('Trial has started; use explicit rollback')
@@ -242,12 +261,26 @@ class Store:
         fs = os.statvfs(self.root)
         block = fs.f_frsize or fs.f_bsize
         required, inodes = block, 1  # Destination generation directory.
+        sqlite_workspace = 0
         for path in origin.rglob('*'):
             entry = path.lstat()
             if not (stat.S_ISREG(entry.st_mode) or stat.S_ISDIR(entry.st_mode)):
                 raise ValueError('State copy requires regular files/directories; export unsupported links first')
             required += block if stat.S_ISDIR(entry.st_mode) else ((entry.st_size + block - 1) // block) * block
             inodes += 1
+            if stat.S_ISREG(entry.st_mode):
+                with path.open('rb') as stream:
+                    if stream.read(16) == b'SQLite format 3\0':
+                        wal = Path(str(path) + '-wal')
+                        wal_bytes = wal.stat().st_size if wal.is_file() else 0
+                        # Sequential backup plus a possible destination WAL,
+                        # bounded by main+WAL input; exclusive clients omit SHM.
+                        # Also reserve its directory and journal headers.
+                        sqlite_workspace = max(sqlite_workspace,
+                            (2 * ((entry.st_size + wal_bytes + block - 1) // block) + 4) * block)
+        required += sqlite_workspace
+        if sqlite_workspace:
+            inodes += 4
         if required > self.copy_limit_bytes:
             raise ValueError('Insufficient state-copy budget; original state retained')
         allowance = self.copy_limit_bytes if reserve_full_copy else required
