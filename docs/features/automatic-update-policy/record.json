@@ -1,66 +1,79 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "5669f879e9ac42774affd99fca41cefef6cd2841870e000c4ff990767e8e0e89",
+    "rationale": "Owner requests policy controls and autonomous activation with disposable ARM validation; no physical printer update.",
+    "reference": "docs/features/automatic-update-policy/owner-request.md",
+    "reference_sha256": "c684e53330fb4dd86877e8d95f9e5ef51c695900d83cdbd43a2c1bacc9e54281",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/automatic-update-policy/owner-request.md": "c684e53330fb4dd86877e8d95f9e5ef51c695900d83cdbd43a2c1bacc9e54281"
+    },
+    "scope_sha256": "1ca5bded4aa2c6203d3d9b1bdf565522c14b83a95bc2410bc23c26e229c74acd",
+    "session": "auto-policy-20261010",
+    "source_commit": "6b9354418e989a14f69f948c175ffe24c188f724"
+  },
+  "checks": [
+    {
+      "description": "Strict defaults, named exceptions, review and recovery policy binding.",
+      "environment": "offline",
+      "id": "policy"
+    },
+    {
+      "description": "Real patched RAUC signer-trust bypass retains signature/payload verification and source preservation.",
+      "environment": "offline",
+      "id": "rauc"
+    },
+    {
+      "description": "Autonomous activation concurrency, durable reboot uncertainty and disposable ARM healthy/fallback journey.",
+      "environment": "offline",
+      "id": "activation"
+    },
+    {
+      "description": "UI, packaging, documentation and storage cleanup agreement.",
+      "environment": "offline",
+      "id": "integration"
+    }
+  ],
+  "created": "2026-10-10",
+  "decision": null,
   "format_version": 2,
   "id": "automatic-update-policy",
   "kind": "feature",
-  "title": "Automatic update policy and activation",
-  "author": "root/coordinator",
-  "created": "2026-10-10",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/automatic-update-policy/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/automatic-update-policy/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "policy",
-      "description": "Strict defaults, named exceptions, review and recovery policy binding.",
-      "environment": "offline"
-    },
-    {
-      "id": "rauc",
-      "description": "Real patched RAUC signer-trust bypass retains signature/payload verification and source preservation.",
-      "environment": "offline"
-    },
-    {
-      "id": "activation",
-      "description": "Autonomous activation concurrency, durable reboot uncertainty and disposable ARM healthy/fallback journey.",
-      "environment": "offline"
-    },
-    {
-      "id": "integration",
-      "description": "UI, packaging, documentation and storage cleanup agreement.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement, review and validate policy and activation",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "policy",
         "rauc",
         "activation",
         "integration"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "targeted",
-      "review_reason": "Independent assessment of trust-chain-only bypass and durable automatic reboot crash/concurrency semantics; offline disposable execution only.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_admission.py",
+        "runtime/sv08_boot_health.py",
+        "runtime/sv08_staging.py",
+        "configs/images/host-ab.json",
+        "configs/host-os/rauc-system.conf.in",
+        "configs/host-os/update-policy.json"
+      ],
       "owned_paths": [
         "runtime/sv08_update_policy.py",
         "runtime/sv08_auto_reboot.py",
@@ -117,14 +130,15 @@
         "docs/features/automatic-update-policy/evidence.md",
         "docs/features/automatic-update-policy/results.json"
       ],
-      "input_paths": [
-        "runtime/sv08_admission.py",
-        "runtime/sv08_boot_health.py",
-        "runtime/sv08_staging.py",
-        "configs/images/host-ab.json",
-        "configs/host-os/rauc-system.conf.in",
-        "configs/host-os/update-policy.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "targeted",
+      "review_reason": "Independent assessment of trust-chain-only bypass and durable automatic reboot crash/concurrency semantics; offline disposable execution only.",
+      "status": "pending",
+      "title": "Implement, review and validate policy and activation",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Automatic update policy and activation"
 }
