@@ -1,0 +1,123 @@
+{
+  "verdict": "PASS WITH CONDITIONS",
+  "packet_sha256": "d6f8e57785130d1b63211cffbc5b2c52190098fb3e75c742b66de621e941de77",
+  "original_review_packet_sha256": "497b1e665d8f3b8f66240b6748cb5f85c9a4c1219230d35b30dc9c4109e50cd3",
+  "source_revision_bound_by_packet": "ff99d8c4f6549fa9076c7fa91e5ba9ab5954368e",
+  "coverage": "One exact same-boot source-A restart.py repair and one controlled source-A warm reboot, then exact healthy B automatic update, exact unhealthy A automatic update, three unsuccessful production health trial boots and fallback B. Original bootstrap stays stopped; no blind rerun.",
+  "configured_reviewer": {
+    "profile": "high_consequence_reviewer_high",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "verification": "Role file read and coordinator verified fixed-role selection in this lineage.",
+    "actual_sampling_model": "not exposed",
+    "actual_sampling_effort": "not exposed",
+    "observed_telemetry_claimed": false
+  },
+  "bound_files_verified": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/repair-and-source-reboot.py": "46d3a35aada805a8abcc5c4118365c92e17bee468cf226eb4464dd445ac39b78",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/continuation.json": "fda9570a4e72cd0328f6d73057ef3234a1d6d58d5336d2856237a1c9cc04e448",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-repair-dry-run.json": "208eafe2af0ffce2a83070c20f9cfaa19e03b1d791f87a791b2ed2212608d191",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-stopped-state.json": "46715028fb728081dc53a4fa6c6c9b6947c6f59717e9b0f79f0bdfd6c81229d3",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-preservation.json": "6e2b42b97469b56b9d474cb2e00900e123cd5880fe0612aa1694ae1dde5f696e",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-preservation-comparison.json": "5971597f05cac84dc1b830fa940105a4f10f967189010aeaebcd24fa6d79e0ee",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-source.py": "4541b12996fa99e325b44351f953bd40e121c1819776dd67f6ae9022a6baea24",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-printer.py": "22d4ec84d924ff75f83eb44ebdb35f08cedfc68f8d86e2173221e0b2fec7556c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart.py": "2e26abff9de20e960092c928e4bcde711135d9d179881ae1b17fde2acf4d5c30",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/serve-feed.py": "61dec93848ee0d96dcdfa6cc0de4d83ac5d6669665a3bb335042659775c12221",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/check-preservation.py": "09cb934dbea877fc49f5e2452b4c6aecfb3d02464d9f866c3ff1af2e121d2aa2",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-checkpoint.py": "4109fee00bc7855c1971a4eace2d4cbaf4172f5eaa56bb56de73d11c1b24a6c8",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/preserved-data-before.json": "daf7bf4aeba2c3e008e8872a1532d509ff9f9659462c6b3b87adc1b9c396b596",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/backup-gpt-before.json": "19a85019330eaceb829c72d7dfacec8c9aaa0fb97c541c56ae2b082150a8e2d8",
+    "/home/drew/sv08-mainline/runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+    "/home/drew/sv08-mainline/tests/test_restart.py": "844bfc1ba9a72f72a57bc96aa77ec46caf07488d70602ce300e47d39c2193e76",
+    "/home/drew/.sv08-physical-update-builder-20261010/bootstrap-public-manifest.json": "c40f74f0834e1c4e6d2a9963125209d273524509745fdf29339de43182f0ffec",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/signed-artifacts-continuation.json": "09e3b66e4bd18cfc35690b09372e8689d38032cbc31bfa39a101326d8295b359",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-continuation-index.json": "fd65d6ecea43cfb213b075240bc4f32f5c4d195eb215c53d88933ae5207e563d",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-continuation-index.json.p7s": "fafcde9c9be3d2cae83989779dfd5bd218f0452026f2b1608e11c73fcfdb2392",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-continuation-index.json": "46ea89aa59f5362481fea5395a492539e2c21f963c35e049f2f25b60c4a1bb45",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-continuation-index.json.p7s": "ea30a19222d774b4e40a26584487762ebf52527383023b70fe4dec1fdae47bdc",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-authenticated-info-continuation.json": "6864cb53a9e3915491eb0f53bd464836eff52ff49bad3d593c9580e165c82d84",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-authenticated-info-continuation.json": "77e623fa6feaaf9f80f8ea25292d18f7ac087971058f475bffae55f721439421"
+  },
+  "composition_receipt_sha256": "7e20f4f6f1a0effdcf2ff26d60b88dab8c8a958621c98e6edfdf4698eaba929d",
+  "signed_artifacts": {
+    "healthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 1,
+        "issued": 1791606770,
+        "expires": 1791693230,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.2",
+        "release_revision": 2,
+        "bundle": "healthy.raucb",
+        "bytes": 488425518,
+        "sha256": "6eb53b9b445861d104972f6a7072966a15c97d6b78b2011deb4759df5792872f"
+      },
+      "index_sha256": "fd65d6ecea43cfb213b075240bc4f32f5c4d195eb215c53d88933ae5207e563d",
+      "signature_sha256": "fafcde9c9be3d2cae83989779dfd5bd218f0452026f2b1608e11c73fcfdb2392"
+    },
+    "unhealthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 2,
+        "issued": 1791606771,
+        "expires": 1791693231,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.3",
+        "release_revision": 3,
+        "bundle": "unhealthy.raucb",
+        "bytes": 488413230,
+        "sha256": "b501eddf862b1ab6fd5fbe8c369e99ca23c97c1e6a2ac11781ca0a964231f6bb"
+      },
+      "index_sha256": "46ea89aa59f5362481fea5395a492539e2c21f963c35e049f2f25b60c4a1bb45",
+      "signature_sha256": "ea30a19222d774b4e40a26584487762ebf52527383023b70fe4dec1fdae47bdc"
+    }
+  },
+  "measured_checks": [
+    "All final continuation file bindings matched independently",
+    "New healthy/unhealthy raw root images independently streamed and matched a62283c48a60a2c80c29a8c47df3a00bd533f905e12ff7bed285eefe31169435 and 359d99f908909111494d9f50036efb25b0fdf19edf8a879a23ce916db47766ed; paired boot hash692cb38bc0ff3cfb73b7296a2aea4a6cda9e97917606d41c73a4afef970fcdcd unchanged from prior independent check",
+    "Actual raw-image restart.py extracted read-only through debugfs and hashed f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae in both images",
+    "Both newly served signed bundles independently streamed; exact byte counts/hash6eb53b9b445861d104972f6a7072966a15c97d6b78b2011deb4759df5792872f and b501eddf862b1ab6fd5fbe8c369e99ca23c97c1e6a2ac11781ca0a964231f6bb matched",
+    "Both changed index CMS signatures independently verified with openssl using the public configured certificate",
+    "Actual bound healthy/unhealthy authenticated-info-continuation records match the new raw image dimensions/hashes and have no hooks",
+    "Read complete runtime diff, exact repair caller, source monitor and checkpoint; actual fsck repair logs reviewed"
+  ],
+  "coordinator_measured_evidence_reviewed": [
+    "bootstrap-stopped-state.json",
+    "bootstrap-execution.log tail",
+    "bootstrap-preservation.json",
+    "bootstrap-preservation-comparison.json alltrue",
+    "source-repair-dry-run.json pass",
+    "continuation.json exact whole logical environment/original boot-A hashes"
+  ],
+  "documented": [
+    "Persistent-mask helper admits only exact managed/legacy Klipper names, traverses parent directories O_NOFOLLOW and requires exact /dev/null leaf for masked-runtime; unchanged inactive/active quiescence and dispatch rules retained.",
+    "Source warm reboot uses unchanged physical boot-A pair and newly provisioned five-mask console arguments.",
+    "Independent tested SD boot/SSH is documented in coordinated-human-tasks.md."
+  ],
+  "reported": [
+    "Current rescue SD availability is owner-reported in the packet.",
+    "Owner goal authorization, source commit/remote receipt and 30 passing affected tests are coordinator records/claims; reviewer performed no Git or hardware commands.",
+    "Configured fixed Sol/high reviewer role verified; actual sampling telemetry remains unavailable."
+  ],
+  "inferred": [
+    "The earlier equality failure did not indicate loss of the recovery route; observed source remains usable and protected data compares unchanged.",
+    "The bounded new mask evidence recognizes actual persistent masks without accepting a volatile-only idle proof.",
+    "One source reboot naturally regenerates five masks and allows RAUC/health to load; that resulting physical state must still be measured before feed activation."
+  ],
+  "conditions": [
+    "Coordinator immediately revalidates final packet/staged script/config/runtime/image/index/CMS bindings, fresh target/CID/root/GPT/partition identity, A3/B0 and exact reviewed logical environment, original source boot-A payload hashes, all 118 installed bootstrap preimages, local account-bind equality without exposing contents, .2 RAUC identity, absent pending journals/barriers/network rollback, idle jobs, PSU status OFF and all five output masks/inactive services/no printer serial writers. Changed safety-relevant inputs stop action.",
+    "Execute the exact repair-and-source-reboot.py --execute once only. Coverage is one restart.py replacement with original mode and public beforeimage, source rw-to-ro restoration, then one production controlled source-A warm reboot under Store/service admission. Its boot-bound runtime shutdown intent and normal boot preparation/health counter confirmation are expected; no manual counter adjustment, generator deletion, bootstrap rerun, extra reboot or relay cycle is covered. Unknown acknowledgment or timeout stops dependent actions without replay.",
+    "SOURCE_READY from monitor-source.py is preliminary only. Before enabling any feed, coordinator observes a distinct A source boot with the original source release/generation and exact root/boot/data identities, immutable root/data read-write, unchanged local account binding, only the five output kernel mask tokens plus exact five persistent masks/inactive services/closed serial ports, effective unmasked real RAUC .2 service identity and current boot-health readiness, auto_update false/pending none and normal A3/B0 replenishment. Compare full source-checkpoint application/public identity/loader/GPT/p5 hashes and retain source A root/boot hashes as the fallback baseline.",
+    "Activate only the newly bound healthy revision2/sequence1 bundle/index/CMS after current trusted-time/signature/feed admission. Before permitting unhealthy A overwrite, observe exact B revision2 root/boot devices and immutable root, complete healthy transaction/pending none/current readiness, B good/primary with replenished attempts, matched authenticated target readback, unchanged source A pair and source generation, all protected-data/public identity/GPT/p5 comparisons and fresh output/backend/admission checks.",
+    "Activate only the newly bound unhealthy revision3/sequence2 artifact. Require exactly three distinct A/revision3 trial boot IDs with matching retained HostHealth failures, closed readiness gate, real production reboot requests and actual U-Boot UART/environment attempt-exhaustion/fallback observations. No fabricated fallback marker/manual counter consumption/new health injection or arbitrary artifact is covered.",
+    "After fallback observe exact healthy revision2 B, readiness/pending none, failed-trial reconciliation and target disarm with B good/primary. Immediately disable automatic policy, stop the feed timer and stop serving the feed; compare config/database/UI/gcodes/timelapse, machine/public identity, loader reservations, both GPT regions and p5 hashes. Missing acceptance evidence remains incomplete. Preserve installed account seed/runtime/generations during local bulk-artifact retirement.",
+    "Keep owner-confirmed previously tested rescue SD available. Any mismatch, unknown outcome, refused provenance, unexpected write boundary, preservation failure or exhausted monitoring stops dependent actions. Further recovery/media/relay actions require their own applicable exact review and authority; this passing assessment supplies neither authority nor observed success."
+  ],
+  "authority_and_limits": "One input to coordinator only. Not owner authority or observed physical completion. No heating/motion/printing/MCU flashing/relay cycle/release distribution, physical power-loss reliability or arbitrary replacement artifacts covered.",
+  "reviewer_actions": "Local public source/receipt/artifact/hash/signature reads and these untracked records only; no hardware or remote commands, implementation, tracked edits, private backup/credential contents, Git or agents.",
+  "remaining_allowance": "Primary900s/128MiB: conservative cumulative local checking process runtime under120s; cumulative generated review files under64KiB. No incidental exploratory/device experiments."
+}
