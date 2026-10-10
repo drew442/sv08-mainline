@@ -445,17 +445,61 @@ def run_boot(slot, number, attempts_before=None):
     if not passed:raise RuntimeError('Actual installed boot journey did not pass: '+str(log_path))
     return result
 
+def resume_checkpoint(reference):
+    """Reuse accepted boots only on the exact retained disk, with hashed history."""
+    def artifact(entry):
+        path=SCRATCH/entry['filename']
+        if path.is_symlink() or not path.is_file() or SCRATCH not in path.resolve().parents or digest(path)!=entry['sha256']:
+            raise ValueError('Resume artifact changed or outside assigned scratch')
+        return path
+    checkpoint=json.loads(artifact(reference).read_text())
+    count=checkpoint['after_boot']
+    if checkpoint.get('format_version')!=1 or not isinstance(count,int) or not 0<count<int(CONFIG.get('max_boots',12)):
+        raise ValueError('Invalid resume boundary')
+    disk=SCRATCH/'guest.img';identity=checkpoint['disk']
+    info=disk.stat()
+    if disk.is_symlink() or not stat.S_ISREG(info.st_mode) or (info.st_dev,info.st_ino,info.st_size)!=(identity['device'],identity['inode'],identity['logical_bytes']) or digest(disk)!=identity['sha256']:
+        raise ValueError('Resume requires the exact retained media')
+    source=json.loads(artifact(checkpoint['source_freeze']).read_text())
+    for name,value in source['files'].items():
+        if digest(Path(CONFIG['candidate']['path'])/name)!=value:
+            raise ValueError('Runtime/image inputs changed; cannot reuse installed boots')
+    previous_execution=json.loads(artifact(checkpoint['previous_execution']).read_text())
+    if len(previous_execution)!=4 or sorted(previous_execution.values())!=sorted(entry['sha256'] for entry in checkpoint['previous_fixture_files']):
+        raise ValueError('Previous executed fixture byte hashes differ')
+    for entry in checkpoint['previous_fixture_files']:artifact(entry)
+    before=json.loads(artifact(checkpoint['preservation_before']).read_text())
+    results=[]
+    for number,entry in enumerate(checkpoint['accepted_boots'],1):
+        result=json.loads(artifact(entry['receipt']).read_text());log=artifact(entry['log']);output=log.read_text(errors='replace')
+        if result['number']!=number or not result['passed'] or result['exit_status']!=0 or result['reason'] not in ('guest-eof','guest-exited') or digest(log)!=result['log_sha256'] or not any(marker in output for marker in ('RELIABILITY_PHASE_RESULT ','RELIABILITY_FAILED_TARGET_RESULT ','RELIABILITY_JOURNEY_PASS')) or 'RELIABILITY_FAILURE' in output or 'CONSTRUCTION_FAILURE' in output:
+            raise ValueError('Resume predecessor was not an accepted actual boot')
+        results.append(result)
+    if len(results)!=count:raise ValueError('Missing accepted predecessor boots')
+    failed=json.loads(artifact(checkpoint['failed_boot']['receipt']).read_text());failed_log=artifact(checkpoint['failed_boot']['log'])
+    if failed['number']!=count+1 or failed['passed'] or digest(failed_log)!=failed['log_sha256']:
+        raise ValueError('Resume failure history differs')
+    output=subprocess.check_output(['fw_printenv','-c',str(SCRATCH/'fw_env.config'),'sv08_env_layout','BOOT_ORDER','BOOT_A_LEFT','BOOT_B_LEFT'],text=True)
+    if dict(line.split('=',1) for line in output.splitlines())!=checkpoint['environment']:
+        raise ValueError('Resume boot environment changed')
+    return checkpoint,before,results
+
 def journey():
     lock=(SCRATCH/'resource.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     if subprocess.run(['pgrep','-f','^qemu-system-aarch64'],stdout=subprocess.DEVNULL).returncode==0:raise RuntimeError('Shared QEMU resource occupied')
-    if any((SCRATCH/name).exists() for name in ('executed-fixture-hashes.json','preservation-before.json','result.json')):raise ValueError('Retain/archive canonical journey evidence before another attempt')
+    resume=CONFIG.get('resume')
+    if any((SCRATCH/name).exists() for name in ('executed-fixture-hashes.json','result.json')) or (not resume and (SCRATCH/'preservation-before.json').exists()):raise ValueError('Retain/archive canonical journey evidence before another attempt')
+    checkpoint,before,results=resume_checkpoint(resume) if resume else (None,None,[])
     executed={str(path):digest(path) for path in [Path(__file__),SCRATCH/'input/guest.py',SCRATCH/'input/setup.sh',SCRATCH/'input/slot_driver.py']}
     (SCRATCH/'executed-fixture-hashes.json').write_text(json.dumps(executed,indent=2)+'\n')
     host_preflight();guard();disk=SCRATCH/'guest.img';env=SCRATCH/'fw_env.config'
-    before={'primary_header':hash_region(disk,0,34*512),'primary_table':hash_region(disk,4096*512,32*512),'backup_gpt':hash_region(disk,disk.stat().st_size-33*512,33*512),'recovery':hash_region(disk,4714397696,536870912)}
-    (SCRATCH/'preservation-before.json').write_text(json.dumps(before,indent=2)+'\n')
-    results=[]
-    for number in range(1,int(CONFIG.get('max_boots',12))+1):
+    current={'primary_header':hash_region(disk,0,34*512),'primary_table':hash_region(disk,4096*512,32*512),'backup_gpt':hash_region(disk,disk.stat().st_size-33*512,33*512),'recovery':hash_region(disk,4714397696,536870912)}
+    if resume:
+        if current!=before:raise ValueError('Preserved regions changed before continuation')
+    else:
+        before=current
+        (SCRATCH/'preservation-before.json').write_text(json.dumps(before,indent=2)+'\n')
+    for number in range(len(results)+1,int(CONFIG.get('max_boots',12))+1):
         output=subprocess.check_output(['fw_printenv','-c',str(env),'sv08_env_layout','BOOT_ORDER','BOOT_A_LEFT','BOOT_B_LEFT'],text=True)
         values=dict(line.split('=',1) for line in output.splitlines())
         if number==CONFIG.get('counter_decrease_boot'):
@@ -476,6 +520,7 @@ def journey():
     after={'primary_header':hash_region(disk,0,34*512),'primary_table':hash_region(disk,4096*512,32*512),'backup_gpt':hash_region(disk,disk.stat().st_size-33*512,33*512),'recovery':hash_region(disk,4714397696,536870912)}
     if after!=before or digest(BASE)!=BASE_HASH:raise RuntimeError('Preserved region/base changed')
     receipt={'status':'PASS','source':json.loads((SCRATCH/'source-freeze.json').read_text()),'boots':results,'preserved_regions':after,'base_sha256_after':digest(BASE),'actual_signed_rauc_installation':True,'actual_production_prepare_and_health':True,'printer':'simulated service and idle ACK','boot_selection':'host model consumes real redundant environment, no U-Boot execution','physical_hardware':False,'allocation':guard()}
+    receipt['execution']={'revision':CONFIG['candidate']['revision'],'fixture_files':executed,'manifest_sha256':CONFIG['candidate']['hash_manifest_sha256'],'resume':resume,'accepted_previous_boots':checkpoint['after_boot'] if checkpoint else 0}
     (SCRATCH/'result.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps({'status':'PASS','boots':len(results),'allocation':receipt['allocation']}))
 
 def construction():

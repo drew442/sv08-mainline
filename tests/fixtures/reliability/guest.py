@@ -224,7 +224,7 @@ def main():
         if healthy_boots>1:
             require(Path('/etc/reliability-owner-custom.conf').read_text()=='owner-root-customization\n' and (generation/'config/custom.cfg').read_text()=='owner-application-customization\n','Repeated writable boot lost customization')
         before_package=digest(store.root/'state.json')
-        with Admission():
+        with Admission()():
             result=subprocess.run(['/usr/bin/python3','/usr/lib/sv08/sv08_package.py','--execute','check'],capture_output=True,text=True,timeout=15)
         require(result.returncode!=0 and 'Resource temporarily unavailable' in result.stderr and not (RUNTIME/'package-lease.json').exists() and digest(store.root/'state.json')==before_package,'Actual package CLI bypassed admission or changed state')
         print('RELIABILITY_ACTUAL_PACKAGE_EXCLUSION_RESULT '+json.dumps({'exit_status':result.returncode,'stderr':result.stderr.strip(),'state_sha256_preserved':before_package,'package_lease':False}),flush=True)
