@@ -1,0 +1,7 @@
+# Automatic update policy and activation — owner request, 2026-10-10
+
+The owner requests implementation, agents, and completion of automatic update policy and activation after the installed H616 comparison. Automatic metadata and bundles require trusted signatures. Manual updates may explicitly bypass provenance for one reviewed update. Provide individual advanced version/downgrade, compatibility-label and customization checks for manual requests and automatic policy, rather than a bypass-everything switch. Preserve image integrity/readback, physical device/layout/capacity, immutable root, recovery, source preservation and idle admission.
+
+Automatic discovery must proceed through staging, arming, controlled reboot and existing health confirmation or rollback. This supersedes ADR 0017's stage/arm-only and unconditional customization-refusal clauses only to the extent expressly described here. Validate using disposable ARM systems; inspect Codex/Beelink storage before allocating images and remove goal-owned bulky artifacts afterward. This request does not authorize installing a new image on the physical printer or activating outputs.
+
+Release identifiers have no implied ordering; add explicit signed release revision metadata and refuse unknown ordering when the ordering check is enabled. A manual provenance exception accepts a valid CMS signature without trusted signer-chain validation, retaining verity and mathematical signature verification; missing/malformed CMS is not a supported RAUC verity container.

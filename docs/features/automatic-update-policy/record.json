@@ -1,0 +1,130 @@
+{
+  "format_version": 2,
+  "id": "automatic-update-policy",
+  "kind": "feature",
+  "title": "Automatic update policy and activation",
+  "author": "root/coordinator",
+  "created": "2026-10-10",
+  "priority": 2,
+  "proposal": "docs/features/automatic-update-policy/proposal.md",
+  "requirements": [
+    "docs/features/automatic-update-policy/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "policy",
+      "description": "Strict defaults, named exceptions, review and recovery policy binding.",
+      "environment": "offline"
+    },
+    {
+      "id": "rauc",
+      "description": "Real patched RAUC signer-trust bypass retains signature/payload verification and source preservation.",
+      "environment": "offline"
+    },
+    {
+      "id": "activation",
+      "description": "Autonomous activation concurrency, durable reboot uncertainty and disposable ARM healthy/fallback journey.",
+      "environment": "offline"
+    },
+    {
+      "id": "integration",
+      "description": "UI, packaging, documentation and storage cleanup agreement.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement, review and validate policy and activation",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "policy",
+        "rauc",
+        "activation",
+        "integration"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "targeted",
+      "review_reason": "Independent assessment of trust-chain-only bypass and durable automatic reboot crash/concurrency semantics; offline disposable execution only.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_update_policy.py",
+        "runtime/sv08_auto_reboot.py",
+        "runtime/sv08_bundle.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_transaction.py",
+        "runtime/sv08_rauc.py",
+        "runtime/sv08_feed.py",
+        "runtime/sv08_restart.py",
+        "runtime/sv08_network.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_admin_images.py",
+        "runtime/sv08_admin_upload.py",
+        "runtime/sv08_admin_jobs.py",
+        "runtime/sv08_admin_history.py",
+        "runtime/sv08_rauc_service.py",
+        "ui/host/app.js",
+        "ui/host/index.html",
+        "ui/host/upload.js",
+        "configs/host-os/rauc-package.json",
+        "configs/host-os/sv08-feed.service",
+        "scripts/package_rauc.py",
+        "scripts/integrate_host_os.py",
+        "scripts/build_host_image.py",
+        "scripts/stage_admin_ui.py",
+        "patches/rauc/0001-per-request-signer-trust.patch",
+        "patches/rauc/README.md",
+        "tests/test_update_policy.py",
+        "tests/test_auto_reboot.py",
+        "tests/test_transaction.py",
+        "tests/test_staged_transaction.py",
+        "tests/test_rauc_backend.py",
+        "tests/test_rauc_service.py",
+        "tests/test_bundle_policy.py",
+        "tests/test_host_state.py",
+        "tests/test_sv08_feed.py",
+        "tests/test_restart.py",
+        "tests/test_network_admin.py",
+        "tests/test_admin.py",
+        "tests/test_admin_images.py",
+        "tests/test_admin_upload.py",
+        "tests/test_admin_jobs.py",
+        "tests/test_admin_history.py",
+        "tests/test_admin_history_upload.py",
+        "tests/test_package_rauc.py",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_build_host_image.py",
+        "tests/rauc_file_install.py",
+        "tests/rauc_provenance.py",
+        "tests/host_qemu_reliability.py",
+        "tests/host_qemu_auto_policy.py",
+        "tests/auto_policy_browser.mjs",
+        "docs/development/automatic-update-policy.md",
+        "docs/features/automatic-update-policy/evidence.md",
+        "docs/features/automatic-update-policy/results.json"
+      ],
+      "input_paths": [
+        "runtime/sv08_admission.py",
+        "runtime/sv08_boot_health.py",
+        "runtime/sv08_staging.py",
+        "configs/images/host-ab.json",
+        "configs/host-os/rauc-system.conf.in",
+        "configs/host-os/update-policy.json"
+      ]
+    }
+  ]
+}
