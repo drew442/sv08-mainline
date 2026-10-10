@@ -116,10 +116,12 @@ enumeration were re-established on 2026-09-12; see the
 - [x] Check state-copy blocks/inodes at staging and trial preparation, including
   sparse expansion, the full late-copy allowance and refusal before installation.
   See [capacity admission](host-transactions.md#state-copy-capacity-admission).
-- [ ] Exercise update/mode/package races, late state writes before reboot,
+- [x] Exercise update/mode/package races, late state writes before reboot,
   migration failures, no space, rollback and customized-image update refusal
-  across the assembled system. Library failure tests and actual RAUC malformed
-  bundle rejection now pass; live admission and power-cut tests remain open.
+  across disposable assembled ARM systems. 258 native checks and twelve accepted
+  ARM boots pass; see [assembled reliability evidence](host-reliability.md).
+- [ ] Qualify live printer admission, electrical power-cut behavior and physical
+  fallback/recovery. Disposable ARM evidence does not complete these hardware checks.
 - [x] Review Mainsail dependency reachability and pin compatible js-yaml/nanoid
   fixes; two fresh patched package builds match. See [audit evidence](host-mainsail-audit.md).
 - [x] Browser startup, real packaged Moonraker initialization and configuration

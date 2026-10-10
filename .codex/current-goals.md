@@ -1,5 +1,28 @@
 # Current delivery goals
 
+## Completed goal — Assembled update and reboot reliability, 2026-10-10
+
+Controlled reboot now closes service-start and mutation admission before systemd
+acknowledgement; lost acknowledgements retain the gate. Healthy ordinary boots
+restore only the running slot's attempt counter while preserving order and the
+other slot. SQLite snapshots open private copies and reserve backup workspace,
+preserving the live database and its sidecars.
+
+258 native checks and twelve accepted disposable ARM boots across fourteen attempts
+passed signed updates, failed-trial exhaustion/fallback, writable/customized
+preservation, interrupted snapshot retry and actual no-space refusal. Both discarded
+fixture failures remain in the evidence. Agent integration and independent targeted
+source/evidence review passed against clean reviewed commit `8811ac2452b15f6a6bef106f50cac24471b5731f`.
+See [acceptance evidence](../docs/hardware/host-reliability.md).
+
+Codex and Beelink storage were checked before image construction. One live GPT disk
+at a time, bounded allocation/runtime and exact artifact retirement avoided keeping
+historic disposable copies. Cleanup reclaimed 6,025,523,200 allocated bytes and left
+34,067,333,120 free bytes on Codex; shared bases and unrelated historic images remain.
+Source is merged and published. No live printer operation or deployment occurred;
+physical power-cut, board boot execution, printer admission and printing/release
+qualification remain separate requirements.
+
 ## Completed goal — Cockpit software management, 2026-10-09
 
 Dedicated **Software** controls are implemented and installed: Nano/htop/tmux/vnStat

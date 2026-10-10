@@ -433,7 +433,7 @@
       "resumption": "Continue same guarded normal confirmation with service identity immutability option defaulting strict for all image paths",
       "review_policy": "targeted",
       "review_reason": "Independent targeted assessment of shutdown acknowledgment/concurrency and demonstrated healthy normal-boot counter exhaustion; guarded normal confirmation must preserve writable/customized modes, failed-trial exhaustion, boot order and other-slot counters.",
-      "status": "review",
+      "status": "done",
       "title": "Implement and validate assembled reliability",
       "validation": {
         "actor": "root/coordinator",
