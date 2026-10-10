@@ -47,7 +47,29 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "artifacts",
+          "document": "docs/features/physical-automatic-update-validation/preparation.json",
+          "document_sha256": "1b4ee4346eabc1408f9ce14c875853fe14f6f72364efdd65dcb2527b0591e84d",
+          "environment": "offline",
+          "limitations": "Offline named-test profile only; no physical operation, printing release, independent execution approval or bit-identical reproducibility claim.",
+          "method": "Inspected full four-file candidate. python3 -m unittest discover -s tests -p test_prepare_physical_update_qualification.py: 10 pass. Actual offline composition, FAT/ext4 checks and two diagnosed root-only rebuilds passed. Exact final receipt and public payload inspected; git diff --check passed.",
+          "profile": "test-sv08-01",
+          "source_commit": "6d334e45b73c2b8bfffd22d141318ebf9da1a21d",
+          "source_sha256": {
+            "configs/host-os/recovery-test-sv08-01.json": "1047d7cd5c2d823aae4b6f5bd590d289d9fc0465a0b056533fdc49bfd3926751",
+            "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+            "runtime/sv08_rauc_bootloader.py": "b7ab5d71b944259c91ec42152d1557846a131a752c4501bab23f56c4dcd84753",
+            "scripts/integrate_host_os.py": "b0efd12f6e1fc2e8b5d49880aad1c9af64c49ebb7108465cf9c96e79e89d4329",
+            "scripts/prepare_physical_update_qualification.py": "29f2ad1693043631b6fe5750eb6f21714b6ff48b3d91ae305869e62314f64ddf",
+            "scripts/stage_admin_ui.py": "1596b5dd943ba54b300372ce1057b84287e5b851ffc3fdb81d18035071a310ec",
+            "scripts/stage_printer_ui.py": "f08cc663291c93448f76d4bd34865dc3aefe9b28d7572f42a13a18d682664397",
+            "tests/test_prepare_physical_update_qualification.py": "42da7beeeedc8ede86a942ff8c44be210a43c0d069ad34d0d8d4b97b41a17405"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "prepare",
@@ -74,9 +96,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Offline regular-file preparation with no physical writes or identity imports is reversible and self-validated.",
-      "status": "running",
+      "status": "validated",
       "title": "Prepare exact named-hardware test artifacts",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "1c6d3f65216f1f9ab997026fe43451aa4786686e0f24d23fc1a83944ca5ef8e1",
+        "evidence_sha256": "8717e98d2a75fee93bd4a73bdae3e9a8ed0383477180a018bcfc81c05a29b841",
+        "outcome": "passed",
+        "rationale": "Ten focused tests and actual filesystem composition checks passed; full candidate and exact artifact receipt inspected. Physical operation remains H13, separately gated.",
+        "session": "physical-auto-20261010",
+        "source_commit": "6d334e45b73c2b8bfffd22d141318ebf9da1a21d"
+      },
       "verification": null
     }
   ],
