@@ -1,5 +1,12 @@
 # Current delivery goals
 
+## Completed goal — PR #6 branch maintenance, 2026-10-10
+
+Fast-forwarded main to PR #6; verified archive tags preserve all obsolete branch
+tips before removing their branch names. Main is the sole remaining active branch
+and includes PR #6. Historical worktree files remain. See
+[maintenance evidence](../docs/development/branch-maintenance-20261010.md).
+
 ## Completed goal — Physical automatic-update validation, 2026-10-10
 
 Owner authorized agents and completion of a harmless trusted automatic update,

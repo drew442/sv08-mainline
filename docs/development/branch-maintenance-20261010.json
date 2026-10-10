@@ -1,0 +1,457 @@
+{
+  "pr": 6,
+  "merge_commit": "df149714feaf669a9002ae6e154a1de44183e63a",
+  "archives": [
+    {
+      "tag": "archive/20261010-pr6/local/feature/assembled-update-reboot-reliability",
+      "ref": "refs/heads/feature/assembled-update-reboot-reliability",
+      "sha": "64af3953ee67d6b0f068d4a09ab96eb7545611a8",
+      "merged": false,
+      "unique_commits": 2
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/assembled-update-reboot-reliability-delivery",
+      "ref": "refs/heads/feature/assembled-update-reboot-reliability-delivery",
+      "sha": "efb829f314de3dc397094ad32a9eff526cac336f",
+      "merged": false,
+      "unique_commits": 2
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/assembled-update-reboot-reliability-final",
+      "ref": "refs/heads/feature/assembled-update-reboot-reliability-final",
+      "sha": "42dd89ec03379e1c321f3f379571cab52997c644",
+      "merged": false,
+      "unique_commits": 1
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/assembled-update-reboot-reliability-normal",
+      "ref": "refs/heads/feature/assembled-update-reboot-reliability-normal",
+      "sha": "45b9f330ebfea8bd1c515934e4e12b70360e82d2",
+      "merged": false,
+      "unique_commits": 1
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/assembled-update-reboot-reliability-normal-v2",
+      "ref": "refs/heads/feature/assembled-update-reboot-reliability-normal-v2",
+      "sha": "8811ac2452b15f6a6bef106f50cac24471b5731f",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/automatic-update-policy-implement",
+      "ref": "refs/heads/feature/automatic-update-policy-implement",
+      "sha": "1a958824b3b4938fcc84949b26e33ff0d4ea213e",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/cockpit-network-administration",
+      "ref": "refs/heads/feature/cockpit-network-administration",
+      "sha": "c550987c1ff6a56e907eeb444f74dc517e533db6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/cockpit-software-management",
+      "ref": "refs/heads/feature/cockpit-software-management",
+      "sha": "883fbdbda16e270c4ee421d65b916a6a0fa674dd",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/compact-printer-definitions",
+      "ref": "refs/heads/feature/compact-printer-definitions",
+      "sha": "db0d10656d61a14b8e5a0ab3e5358b342a871969",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/complete-printer-configuration",
+      "ref": "refs/heads/feature/complete-printer-configuration",
+      "sha": "7b1b1ad852fc80daeddddd8ddf4c0637d65f8ff6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/definition-repository-starter",
+      "ref": "refs/heads/feature/definition-repository-starter",
+      "sha": "77021bbe0e9d7ee20bcfeaaf9b28d4dbd7e3f79d",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/definition-schema-reference",
+      "ref": "refs/heads/feature/definition-schema-reference",
+      "sha": "309e8caf6873ac1c960c17197f035aa0cad0673b",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/factory-sv08-definitions",
+      "ref": "refs/heads/feature/factory-sv08-definitions",
+      "sha": "80c1a52f660daf72837f4ac3fe7f19ddef8c9142",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/h616-crypto-offload-comparison",
+      "ref": "refs/heads/feature/h616-crypto-offload-comparison",
+      "sha": "869b7dbc5db43e65fef94f4a40926bc9fcc820a6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/mainsail-access",
+      "ref": "refs/heads/feature/mainsail-access",
+      "sha": "38542ec452daf24810ec5ed8fdff23b04ab4cb86",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/mainsail-access-isolation",
+      "ref": "refs/heads/feature/mainsail-access-isolation",
+      "sha": "10756bac41b07aeaf23eba8aa745224c0e861271",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/persistent-printer-identity",
+      "ref": "refs/heads/feature/persistent-printer-identity",
+      "sha": "b36420229ddebdc27038e270b8f64650377a62f6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/persistent-printer-stack",
+      "ref": "refs/heads/feature/persistent-printer-stack",
+      "sha": "1c4d6dc91f6f0cad1bcd52e7e3300fdc30cacace",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/physical-automatic-update-validation-prepare",
+      "ref": "refs/heads/feature/physical-automatic-update-validation-prepare",
+      "sha": "6d334e45b73c2b8bfffd22d141318ebf9da1a21d",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/printer-connections-graph",
+      "ref": "refs/heads/feature/printer-connections-graph",
+      "sha": "113bb70639f20cd5db366bdb8dfbca9e5a7450c6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/printer-definition-redesign",
+      "ref": "refs/heads/feature/printer-definition-redesign",
+      "sha": "b44a6e8994d2ceb6b206cb13871601b0180ac84b",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/printer-definitions-browser",
+      "ref": "refs/heads/feature/printer-definitions-browser",
+      "sha": "c8d7b57ac25792bf5f444ec69426e3e0ea5d6e60",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/feature/printer-upgrade-profiles",
+      "ref": "refs/heads/feature/printer-upgrade-profiles",
+      "sha": "5f418ce411035d07fb2fc6e0291ac8a8c67d1f0f",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/fix/mainsail-access-loading",
+      "ref": "refs/heads/fix/mainsail-access-loading",
+      "sha": "a470a4c3e3023f0cd4e34d04ad11b1b26031dc5d",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/local/wip/host-image-job-resolution",
+      "ref": "refs/heads/wip/host-image-job-resolution",
+      "sha": "7423621210832efb1c4cb6dc023a9b7f00a27f69",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/codex/task-scoped-ui-ux-workflow",
+      "ref": "refs/remotes/origin/codex/task-scoped-ui-ux-workflow",
+      "sha": "49341973e56665b143916a3f897cca2e1e8998da",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/assembled-update-reboot-reliability",
+      "ref": "refs/remotes/origin/feature/assembled-update-reboot-reliability",
+      "sha": "59fa1fed70578abab8f7f1d687295e77c90e3b0c",
+      "merged": false,
+      "unique_commits": 1
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/assembled-update-reboot-reliability-delivery",
+      "ref": "refs/remotes/origin/feature/assembled-update-reboot-reliability-delivery",
+      "sha": "efb829f314de3dc397094ad32a9eff526cac336f",
+      "merged": false,
+      "unique_commits": 2
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/assembled-update-reboot-reliability-final",
+      "ref": "refs/remotes/origin/feature/assembled-update-reboot-reliability-final",
+      "sha": "42dd89ec03379e1c321f3f379571cab52997c644",
+      "merged": false,
+      "unique_commits": 1
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/assembled-update-reboot-reliability-normal",
+      "ref": "refs/remotes/origin/feature/assembled-update-reboot-reliability-normal",
+      "sha": "45b9f330ebfea8bd1c515934e4e12b70360e82d2",
+      "merged": false,
+      "unique_commits": 1
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/assembled-update-reboot-reliability-normal-v2",
+      "ref": "refs/remotes/origin/feature/assembled-update-reboot-reliability-normal-v2",
+      "sha": "8811ac2452b15f6a6bef106f50cac24471b5731f",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/automatic-update-policy-implement",
+      "ref": "refs/remotes/origin/feature/automatic-update-policy-implement",
+      "sha": "1a958824b3b4938fcc84949b26e33ff0d4ea213e",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/cockpit-network-administration",
+      "ref": "refs/remotes/origin/feature/cockpit-network-administration",
+      "sha": "c550987c1ff6a56e907eeb444f74dc517e533db6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/cockpit-software-management",
+      "ref": "refs/remotes/origin/feature/cockpit-software-management",
+      "sha": "883fbdbda16e270c4ee421d65b916a6a0fa674dd",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/compact-printer-definitions",
+      "ref": "refs/remotes/origin/feature/compact-printer-definitions",
+      "sha": "db0d10656d61a14b8e5a0ab3e5358b342a871969",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/complete-printer-configuration",
+      "ref": "refs/remotes/origin/feature/complete-printer-configuration",
+      "sha": "7b1b1ad852fc80daeddddd8ddf4c0637d65f8ff6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/definition-repository-starter",
+      "ref": "refs/remotes/origin/feature/definition-repository-starter",
+      "sha": "77021bbe0e9d7ee20bcfeaaf9b28d4dbd7e3f79d",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/definition-schema-reference",
+      "ref": "refs/remotes/origin/feature/definition-schema-reference",
+      "sha": "309e8caf6873ac1c960c17197f035aa0cad0673b",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/factory-sv08-definitions",
+      "ref": "refs/remotes/origin/feature/factory-sv08-definitions",
+      "sha": "80c1a52f660daf72837f4ac3fe7f19ddef8c9142",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/h616-crypto-offload-comparison",
+      "ref": "refs/remotes/origin/feature/h616-crypto-offload-comparison",
+      "sha": "869b7dbc5db43e65fef94f4a40926bc9fcc820a6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/mainsail-access",
+      "ref": "refs/remotes/origin/feature/mainsail-access",
+      "sha": "38542ec452daf24810ec5ed8fdff23b04ab4cb86",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/mainsail-access-isolation",
+      "ref": "refs/remotes/origin/feature/mainsail-access-isolation",
+      "sha": "10756bac41b07aeaf23eba8aa745224c0e861271",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/persistent-printer-identity",
+      "ref": "refs/remotes/origin/feature/persistent-printer-identity",
+      "sha": "b36420229ddebdc27038e270b8f64650377a62f6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/persistent-printer-stack",
+      "ref": "refs/remotes/origin/feature/persistent-printer-stack",
+      "sha": "1c4d6dc91f6f0cad1bcd52e7e3300fdc30cacace",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/physical-automatic-update-validation-prepare",
+      "ref": "refs/remotes/origin/feature/physical-automatic-update-validation-prepare",
+      "sha": "6d334e45b73c2b8bfffd22d141318ebf9da1a21d",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/printer-connections-graph",
+      "ref": "refs/remotes/origin/feature/printer-connections-graph",
+      "sha": "113bb70639f20cd5db366bdb8dfbca9e5a7450c6",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/printer-definition-redesign",
+      "ref": "refs/remotes/origin/feature/printer-definition-redesign",
+      "sha": "b44a6e8994d2ceb6b206cb13871601b0180ac84b",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/printer-definitions-browser",
+      "ref": "refs/remotes/origin/feature/printer-definitions-browser",
+      "sha": "c8d7b57ac25792bf5f444ec69426e3e0ea5d6e60",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/feature/printer-upgrade-profiles",
+      "ref": "refs/remotes/origin/feature/printer-upgrade-profiles",
+      "sha": "290a248a4e9266e4067b800ba8b44c52ae4ab515",
+      "merged": false,
+      "unique_commits": 1
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/fix/mainsail-access-loading",
+      "ref": "refs/remotes/origin/fix/mainsail-access-loading",
+      "sha": "a470a4c3e3023f0cd4e34d04ad11b1b26031dc5d",
+      "merged": true,
+      "unique_commits": 0
+    },
+    {
+      "tag": "archive/20261010-pr6/origin/wip/host-image-job-resolution",
+      "ref": "refs/remotes/origin/wip/host-image-job-resolution",
+      "sha": "b88b525f17f26c5291e380d811d80b45a2e81ba1",
+      "merged": false,
+      "unique_commits": 1
+    }
+  ],
+  "cleanup": {
+    "detached_worktrees_preserved": [
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/assembled-update-reboot-reliability",
+        "sha": "8811ac2452b15f6a6bef106f50cac24471b5731f"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/automatic-update-policy-implement",
+        "sha": "1a958824b3b4938fcc84949b26e33ff0d4ea213e"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-network-administration",
+        "sha": "c550987c1ff6a56e907eeb444f74dc517e533db6"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-software-management",
+        "sha": "883fbdbda16e270c4ee421d65b916a6a0fa674dd"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/compact-printer-definitions-20261007",
+        "sha": "db0d10656d61a14b8e5a0ab3e5358b342a871969"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/complete-printer-configuration-20261007",
+        "sha": "7b1b1ad852fc80daeddddd8ddf4c0637d65f8ff6"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/definition-repository-starter-20261007",
+        "sha": "77021bbe0e9d7ee20bcfeaaf9b28d4dbd7e3f79d"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/definition-schema-reference-20261007",
+        "sha": "309e8caf6873ac1c960c17197f035aa0cad0673b"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/factory-sv08-definitions-20261006",
+        "sha": "80c1a52f660daf72837f4ac3fe7f19ddef8c9142"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/h616-crypto-offload-comparison",
+        "sha": "869b7dbc5db43e65fef94f4a40926bc9fcc820a6"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/host-image-job-resolution",
+        "sha": "7423621210832efb1c4cb6dc023a9b7f00a27f69"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/mainsail-access",
+        "sha": "38542ec452daf24810ec5ed8fdff23b04ab4cb86"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/mainsail-access-isolation",
+        "sha": "10756bac41b07aeaf23eba8aa745224c0e861271"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/mainsail-access-loading",
+        "sha": "a470a4c3e3023f0cd4e34d04ad11b1b26031dc5d"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/persistent-printer-identity-20261008",
+        "sha": "b36420229ddebdc27038e270b8f64650377a62f6"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/persistent-printer-stack",
+        "sha": "1c4d6dc91f6f0cad1bcd52e7e3300fdc30cacace"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/physical-automatic-update-validation-prepare",
+        "sha": "6d334e45b73c2b8bfffd22d141318ebf9da1a21d"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/printer-connections-graph-20261006",
+        "sha": "113bb70639f20cd5db366bdb8dfbca9e5a7450c6"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/printer-definition-redesign-20261006",
+        "sha": "b44a6e8994d2ceb6b206cb13871601b0180ac84b"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/printer-definitions-browser-20261006",
+        "sha": "c8d7b57ac25792bf5f444ec69426e3e0ea5d6e60"
+      },
+      {
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/printer-upgrade-profiles-20261005",
+        "sha": "5f418ce411035d07fb2fc6e0291ac8a8c67d1f0f"
+      }
+    ],
+    "local_branches_removed": 25,
+    "remote_branches_removed": 26,
+    "archive_tags_verified_before_deletion": true
+  },
+  "remaining_branches": [
+    "main"
+  ]
+}
