@@ -290,6 +290,26 @@ class BootHealthTests(unittest.TestCase):
         self.assertEqual(len(failures), 1)
         self.assertEqual(json.loads(failures[0].read_text())['generation'], target['generation'])
 
+    def test_validated_trial_fallback_can_follow_startup_diagnostic_once(self):
+        target=self.trial();gate=self.root/'trial';gate.touch()
+        unknown=dict(boot_id=target['boot_id'],slot='unknown',release='unknown',generation='unvalidated')
+        record_failure(self.store,unknown,FileNotFoundError('old canonical node'))
+        directory=self.store.root/'shared/logs/journal/boot-health'
+        original=directory/(target['boot_id']+'.json');before=original.read_bytes()
+        fallback=Mock()
+        self.assertEqual(run(target,self.tx,Mock(side_effect=HealthFailure('not stable')),admitted,
+                             fallback,ready=self.ready,trial_marker=gate,
+                             validate=lambda:self.validate(target)),'needs-health')
+        fallback.assert_called_once()
+        self.assertEqual(original.read_bytes(),before)
+        self.assertTrue((directory/(target['boot_id']+'-host-health.json')).is_file())
+        self.assertTrue(gate.exists());self.assertFalse(self.ready.exists())
+        self.assertEqual(self.tx.load()['phase'],'armed')
+        with self.assertRaisesRegex(ValueError,'already recorded'):
+            run(target,self.tx,Mock(side_effect=HealthFailure('repeat')),admitted,fallback,
+                ready=self.ready,trial_marker=gate,validate=lambda:self.validate(target))
+        fallback.assert_called_once()
+
     def test_unknown_backend_confirmation_does_not_fallback(self):
         target = self.trial(); gate = self.root / 'trial'; gate.touch()
         fallback = Mock()
@@ -548,6 +568,46 @@ class BootHealthTests(unittest.TestCase):
         self.assertEqual(observed_rauc_slot(lambda *_args, **_kwargs: '{"booted":"A"}'), 'A')
         with self.assertRaises(ValueError):
             observed_rauc_slot(lambda *_args, **_kwargs: '{"booted":"B"}' + ' ' * (32 * 1024))
+
+    def test_startup_diagnostic_preserved_with_exactly_one_validated_health_failure(self):
+        unknown=dict(boot_id=self.boot['boot_id'],slot='unknown',release='unknown',generation='unvalidated')
+        record_failure(self.store,unknown,FileNotFoundError('missing prior device'))
+        directory=self.store.root/'shared/logs/journal/boot-health'
+        original=directory/(self.boot['boot_id']+'.json');before=original.read_bytes()
+        record_failure(self.store,self.boot,HealthFailure('full health window expired'))
+        health=directory/(self.boot['boot_id']+'-host-health.json')
+        self.assertEqual(original.read_bytes(),before)
+        self.assertEqual(json.loads(health.read_text())['slot'],'A')
+        self.assertEqual(json.loads(health.read_text())['generation'],self.boot['generation'])
+        with self.assertRaisesRegex(ValueError,'already recorded'):
+            record_failure(self.store,self.boot,HealthFailure('duplicate'))
+        with self.assertRaises(ValueError):record_failure(self.store,unknown,ValueError('unknown duplicate'))
+        self.assertEqual(original.read_bytes(),before)
+
+    def test_supplement_rejects_malformed_mismatched_linked_and_validated_originals(self):
+        directory=self.store.root/'shared/logs/journal/boot-health';directory.mkdir()
+        original=directory/(self.boot['boot_id']+'.json')
+        unknown=dict(boot_id=self.boot['boot_id'],slot='unknown',release='unknown',generation='unvalidated',reason='startup')
+        cases=['{',json.dumps(dict(unknown,boot_id=str(uuid.uuid4()))),
+               json.dumps(dict(unknown,slot='A')),json.dumps(dict(unknown,release='release-1')),
+               json.dumps(dict(unknown,generation=self.boot['generation'])),json.dumps(dict(unknown,reason={} ))]
+        for raw in cases:
+            with self.subTest(raw=raw):
+                original.write_text(raw);before=original.read_bytes()
+                with self.assertRaises(ValueError):record_failure(self.store,self.boot,HealthFailure('failed'))
+                self.assertEqual(original.read_bytes(),before)
+        original.unlink();target=directory/'target';target.write_text(json.dumps(unknown));original.symlink_to(target)
+        with self.assertRaises(ValueError):record_failure(self.store,self.boot,HealthFailure('failed'))
+        self.assertTrue(original.is_symlink())
+
+    def test_unknown_exception_and_secondary_symlink_cannot_count_as_health_failure(self):
+        unknown=dict(boot_id=self.boot['boot_id'],slot='unknown',release='unknown',generation='unvalidated')
+        record_failure(self.store,unknown,'startup')
+        with self.assertRaises(ValueError):record_failure(self.store,self.boot,ValueError('not HostHealth'))
+        directory=self.store.root/'shared/logs/journal/boot-health'
+        secondary=directory/(self.boot['boot_id']+'-host-health.json');secondary.symlink_to(directory/'absent')
+        with self.assertRaises(ValueError):record_failure(self.store,self.boot,HealthFailure('failed'))
+        self.assertTrue(secondary.is_symlink())
 
     def test_service_orders_health_before_klipper_and_enables_on_host(self):
         repo = Path(__file__).resolve().parents[1]

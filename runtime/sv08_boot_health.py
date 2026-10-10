@@ -235,9 +235,29 @@ def record_failure(store, boot, reason):
     if directory.is_symlink():
         raise ValueError('Diagnostic directory must not be linked')
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
-    path = directory / (boot['boot_id'] + '.json')
+    boot_id = boot['boot_id']
+    if str(uuid.UUID(boot_id)) != boot_id:
+        raise ValueError('Invalid boot diagnostic identity')
+    path = directory / (boot_id + '.json')
+    host_path = directory / (boot_id + '-host-health.json')
+    if isinstance(reason, HealthFailure) and (host_path.exists() or host_path.is_symlink()):
+        raise ValueError('Host health failure already recorded; refusing silent retry')
     if path.exists() or path.is_symlink():
-        raise ValueError('Boot failure already recorded; refusing silent retry')
+        previous = bounded_json(path)
+        known = (isinstance(reason, HealthFailure) and boot['slot'] in ('A', 'B') and
+                 boot['release'] != 'unknown' and identifier(boot['release']) == boot['release'] and
+                 isinstance(boot['generation'], str) and
+                 Path(boot['generation']).parent == store.root / 'generations' and
+                 Path(boot['generation']).is_dir() and not Path(boot['generation']).is_symlink())
+        if (not known or not isinstance(previous, dict) or
+                set(previous) != {'boot_id', 'slot', 'release', 'generation', 'reason'} or
+                previous['boot_id'] != boot_id or previous['slot'] != 'unknown' or
+                previous['release'] != 'unknown' or previous['generation'] != 'unvalidated' or
+                not isinstance(previous['reason'], str)):
+            raise ValueError('Boot failure already recorded; refusing silent retry')
+        # Only the validated HealthFailure branch in run() may supplement an
+        # earlier startup exception. Keep the original diagnostic byte-for-byte.
+        path = host_path
     payload = dict(boot_id=boot['boot_id'], slot=boot['slot'], release=boot['release'],
                    generation=boot['generation'], reason=str(reason)[:2048])
     encoded = json.dumps(payload, sort_keys=True).encode()
