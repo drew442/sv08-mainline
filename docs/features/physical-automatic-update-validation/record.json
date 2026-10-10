@@ -96,7 +96,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Offline regular-file preparation with no physical writes or identity imports is reversible and self-validated.",
-      "status": "validated",
+      "status": "done",
       "title": "Prepare exact named-hardware test artifacts",
       "validation": {
         "actor": "root/coordinator",
