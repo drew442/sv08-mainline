@@ -77,8 +77,9 @@ def profile_check(profile):
     if (profile.get('format_version') != 1 or profile.get('context') != CONTEXT or
             profile.get('hardware_profile') != 'test-sv08-01' or
             profile.get('board_mmc_device_index') != 1 or type(profile.get('board_mmc_device_index')) is not int or
-            profile.get('environment_device') != '/dev/mmcblk2' or
+            not re.fullmatch(r'/dev/mmcblk[0-9]+', profile.get('environment_device', '')) or
             profile.get('environment_by_path') != '/dev/disk/by-path/platform-4022000.mmc' or
+            not re.fullmatch('[0-9a-f]{64}', profile.get('expected_cid_sha256', '')) or
             profile.get('devices') != devices or
             profile.get('kernel_release') != board['kernel_release'] or
             profile.get('layout') != 'ab-8gb-v1' or
@@ -101,6 +102,11 @@ def configure(root, profile, release, revision, feed, unhealthy):
                   image_bytes=SIZES)
     environment = json.loads((REPO / 'configs/host-os/environment-layout.json').read_text())
     environment['board_mmc_device_index'] = profile['board_mmc_device_index']
+    identity = dict(format_version=1, identity_path=profile['environment_by_path'],
+                    expected_cid_sha256=profile['expected_cid_sha256'])
+    put(root, 'usr/lib/sv08/environment-device.json', json.dumps(identity, indent=2)+'\n')
+    put(root, 'usr/lib/sv08/sv08_environment_device.py',
+        (REPO/'runtime/sv08_environment_device.py').read_text(), 0o755)
     for name, value in [('release.json', manifest), ('update-policy.json', policy),
                         ('environment.json', environment), ('feed.json', feed),
                         ('layout.json', json.loads((REPO / 'configs/images/host-ab.json').read_text()))]:

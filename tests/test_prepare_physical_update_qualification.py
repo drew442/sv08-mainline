@@ -21,7 +21,7 @@ def identity():
     board=json.loads((REPO/'configs/host-os/recovery-test-sv08-01.json').read_text())
     layout=json.loads((REPO/'configs/images/host-ab.json').read_text())
     return dict(format_version=1, context=composer.CONTEXT, hardware_profile='test-sv08-01',
-                board_mmc_device_index=1, environment_device='/dev/mmcblk2', environment_by_path='/dev/disk/by-path/platform-4022000.mmc', kernel_release=board['kernel_release'],
+                expected_cid_sha256='d95fdc00fd925e9bd9bd2a90119f9b0b1c9e11b5df67d075ad22afcc0ec04141', board_mmc_device_index=1, environment_device='/dev/mmcblk2', environment_by_path='/dev/disk/by-path/platform-4022000.mmc', kernel_release=board['kernel_release'],
                 devices={p['role']:'/dev/disk/by-partuuid/'+p['partuuid'] for p in board['partitions']},
                 compatible='sv08-test-sv08-01', klipper_commit='f0892d82b0f1c1228454f09eb508eddde2250f4b',
                 layout='ab-8gb-v1', image_bytes=layout['image_bytes'],
@@ -32,8 +32,11 @@ class PhysicalComposerTests(unittest.TestCase):
     def test_explicit_identity_and_geometry(self):
         profile=identity()
         composer.profile_check(profile)
+        for node in ('/dev/mmcblk0', '/dev/mmcblk2'):
+            observed=copy.deepcopy(profile);observed['environment_device']=node
+            composer.profile_check(observed)
         for field, value in [('board_mmc_device_index', None), ('board_mmc_device_index', True),
-                             ('environment_device','/dev/mmcblk1'), ('environment_device','/dev/disk/by-path/platform-4022000.mmc'),
+                             ('expected_cid_sha256',''), ('expected_cid_sha256','0'*63), ('environment_device','/dev/mmcblk0p1'), ('environment_device','/dev/sda'), ('environment_device','/dev/disk/by-path/platform-4022000.mmc'),
                              ('environment_by_path',None), ('kernel_release','unknown'), ('context','qemu'),
                              ('image_bytes',8*1024**3), ('compatible','sv08-offline-test-only')]:
             with self.subTest(field=field,value=value), self.assertRaises(ValueError):

@@ -174,6 +174,9 @@ def main():
         return
     if os.geteuid() != 0:
         parser.error('Early-boot execution requires root')
+    if config.get('deployable') is True:
+        from sv08_environment_device import prepare
+        prepare()
     data = Path('/data/sv08')
     store = Store(data)
     store.initialize()

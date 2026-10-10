@@ -59,6 +59,10 @@ def parse_values(output):
 
 
 def verify_environment_copies(config=ENV_CONFIG):
+    if Path(config) == ENV_CONFIG:
+        from sv08_environment_device import METADATA, recheck
+        if METADATA.exists():
+            recheck(config)
     entries = [line.split() for line in Path(config).read_text().splitlines()
                if line.strip() and not line.lstrip().startswith('#')]
     if (len(entries) != 2 or entries[0][0] != entries[1][0] or

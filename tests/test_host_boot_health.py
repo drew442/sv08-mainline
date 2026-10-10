@@ -57,7 +57,7 @@ class BootHealthTests(unittest.TestCase):
         self.root = Path(temporary.name)
         self.store = Store(self.root / 'data', reserve_bytes=0)
         self.store.initialize()
-        self.boot = self.store.prepare_boot('A', 'release-1')
+        self.boot = self.store.prepare_boot('A', 'release-1', release_revision=1)
         self.boot['boot_id'] = str(uuid.uuid4())
         self.backend = Backend()
         self.tx = Transaction(self.store, self.backend, admitted)
@@ -90,14 +90,15 @@ class BootHealthTests(unittest.TestCase):
 
     def test_nontrial_writable_boot_releases_only_host_marker(self):
         self.store.policy(mode='writable')
-        self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = str(uuid.uuid4())
+        self.boot = self.store.prepare_boot('A', 'release-1', release_revision=1); self.boot['boot_id'] = str(uuid.uuid4())
         self.assertEqual(run(self.boot, self.tx, Mock(return_value=True),
                              admitted, Mock(side_effect=AssertionError('reboot')),
                              ready=self.ready, validate=self.validate), 'idle')
         self.assertTrue(self.ready.is_file())
 
     def test_staged_source_boot_can_publish_health_marker(self):
-        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
+        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64,
+                 'signer_trusted': True, 'release_revision': 2}
         self.tx.stage('bundle', proof, self.boot)
         self.assertEqual(run(self.boot, self.tx, Mock(return_value=True),
                              admitted, Mock(side_effect=AssertionError('reboot')),
@@ -105,7 +106,8 @@ class BootHealthTests(unittest.TestCase):
         self.assertTrue(self.ready.is_file())
 
     def test_interrupted_arming_repair_keeps_validated_source_usable(self):
-        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
+        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64,
+                 'signer_trusted': True, 'release_revision': 2}
         self.tx.stage('bundle', proof, self.boot)
         original = self.backend.mark_active
         def interrupted(slot):
@@ -197,7 +199,7 @@ class BootHealthTests(unittest.TestCase):
         run(self.boot, self.tx, assert_locks, admission, Mock(), ready=self.ready, validate=self.validate)
 
     def test_armed_source_refill_preserves_pending_trial_and_target_attempts(self):
-        self.tx.stage('bundle', {'release': 'release-2', 'bundle_sha256': 'a'*64}, self.boot)
+        self.tx.stage('bundle', {'release': 'release-2', 'bundle_sha256': 'a'*64, 'signer_trusted': True, 'release_revision': 2}, self.boot)
         self.tx.arm(self.boot)
         self.backend.policy.update(BOOT_ORDER='B A', BOOT_A_LEFT='0', BOOT_B_LEFT='1')
         state, journal = self.store.load(), self.tx.load()
@@ -220,7 +222,7 @@ class BootHealthTests(unittest.TestCase):
 
     def test_writable_customized_normal_health_keeps_image_operations_blocked(self):
         self.store.policy(mode='writable')
-        self.boot = self.store.prepare_boot('A', 'release-1'); self.boot['boot_id'] = str(uuid.uuid4())
+        self.boot = self.store.prepare_boot('A', 'release-1', release_revision=1); self.boot['boot_id'] = str(uuid.uuid4())
         self.assertTrue(self.boot['customized'])
         self.manifest['devices'] = {'data': '/data-device'}
         clock = [0.0]
@@ -231,13 +233,14 @@ class BootHealthTests(unittest.TestCase):
             validate=self.validate, normal_health=health.normal)
         self.assertIn('normal-validate', self.backend.calls)
         self.assertIn('normal-good', self.backend.calls)
-        with self.assertRaisesRegex(ValueError, 'reconciliation'):
-            self.tx.stage('bundle', {'release': 'release-2', 'bundle_sha256': 'a'*64}, self.boot)
+        with self.assertRaisesRegex(ValueError, 'immutable mode'):
+            self.tx.stage('bundle', {'release': 'release-2', 'bundle_sha256': 'a'*64, 'signer_trusted': True, 'release_revision': 2}, self.boot)
         with self.assertRaisesRegex(HealthFailure, 'immutable'):
             health(self.boot)
 
     def trial(self):
-        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
+        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64,
+                 'signer_trusted': True, 'release_revision': 2}
         self.tx.stage('bundle', proof, self.boot)
         self.tx.arm(self.boot)
         target = self.store.prepare_boot('B', 'release-2')
@@ -334,7 +337,8 @@ class BootHealthTests(unittest.TestCase):
         self.assertEqual(self.tx.load()['phase'], 'complete')
 
     def test_interrupted_generation_copy_preserves_source_and_retries_handoff(self):
-        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64}
+        proof = {'release': 'release-2', 'bundle_sha256': 'a' * 64,
+                 'signer_trusted': True, 'release_revision': 2}
         self.tx.stage('bundle', proof, self.boot)
         self.tx.arm(self.boot)
         source = self.store.load()['slots']['A']['generation']
