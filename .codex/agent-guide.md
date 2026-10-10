@@ -1,6 +1,6 @@
 # Coordinator guide: route work, not whole documents
 
-Use this guide when dispatching, escalating or resolving an execution rule.
+Use for dispatch, escalation or execution rules.
 Workers normally need AGENTS.md, their profile and a bounded handoff, not this
 entire guide. [The context map](../docs/context-map.md) is an optional source index,
 not another mandatory read. [The benchmark assessment](../docs/development/codex-model-routing.md)
@@ -184,7 +184,7 @@ are not runtime aliases. Reload cached clients without losing worktrees or histo
 Only the coordinator writes records/Git under AGENTS.md publication authority. Use [detailed observations](templates/agent-task-observation.md) only
 for failures/escalations; routine handoffs suffice.
 
-Official configuration references: [subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+References: [subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)
 and [config](https://learn.chatgpt.com/docs/config-file/config-reference).
-The [context audit](../docs/development/gpt6-context-audit.md) records earlier measurements,
-not per-task reading.
+Optional [context audit](../docs/development/gpt6-context-audit.md);
+[UI stage routing](../docs/development/ui-ux-workflow.md) for UI dispatch only.
