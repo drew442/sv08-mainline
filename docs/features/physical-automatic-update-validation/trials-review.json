@@ -1,0 +1,124 @@
+{
+  "format_version": 1,
+  "decision": "PASS WITH CONDITIONS",
+  "scope": "Exact final automatic trials only: healthy B revision2/sequence1, then unhealthy A revision3/sequence2 with three production failed health boots and finite-counter fallback to confirmed B. Completed source warm reboot and uploads repair are historical; no additional source writes/reboots or output activation covered.",
+  "reviewer": {
+    "role": "high_consequence_reviewer_high",
+    "configured_model": "gpt-6.1-sol",
+    "configured_reasoning_effort": "high",
+    "actual_sampling_telemetry": "unknown/not exposed",
+    "implementation_authorship": false,
+    "hardware_access_performed": false
+  },
+  "packet": {
+    "path": "/home/drew/.sv08-physical-update-coordinator-20261010/final-trials-operation-packet.json",
+    "sha256": "f39f4fbc07d77689422fb65b7467ff890790397cdaf8024067af5e322c878bc3",
+    "source_commit": "55343bcdeb61f0bae0b86487ccc3a7ad972dfaf8"
+  },
+  "bound_files": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/continuation.json": "fda9570a4e72cd0328f6d73057ef3234a1d6d58d5336d2856237a1c9cc04e448",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-stopped-state.json": "46715028fb728081dc53a4fa6c6c9b6947c6f59717e9b0f79f0bdfd6c81229d3",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-preservation.json": "6e2b42b97469b56b9d474cb2e00900e123cd5880fe0612aa1694ae1dde5f696e",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/bootstrap-preservation-comparison.json": "5971597f05cac84dc1b830fa940105a4f10f967189010aeaebcd24fa6d79e0ee",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-source.py": "4541b12996fa99e325b44351f953bd40e121c1819776dd67f6ae9022a6baea24",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/monitor-printer.py": "22d4ec84d924ff75f83eb44ebdb35f08cedfc68f8d86e2173221e0b2fec7556c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart.py": "2e26abff9de20e960092c928e4bcde711135d9d179881ae1b17fde2acf4d5c30",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/serve-feed.py": "61dec93848ee0d96dcdfa6cc0de4d83ac5d6669665a3bb335042659775c12221",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/check-preservation.py": "09cb934dbea877fc49f5e2452b4c6aecfb3d02464d9f866c3ff1af2e121d2aa2",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-checkpoint.py": "4109fee00bc7855c1971a4eace2d4cbaf4172f5eaa56bb56de73d11c1b24a6c8",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/preserved-data-before.json": "daf7bf4aeba2c3e008e8872a1532d509ff9f9659462c6b3b87adc1b9c396b596",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/backup-gpt-before.json": "19a85019330eaceb829c72d7dfacec8c9aaa0fb97c541c56ae2b082150a8e2d8",
+    "/home/drew/sv08-mainline/runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+    "/home/drew/sv08-mainline/tests/test_restart.py": "844bfc1ba9a72f72a57bc96aa77ec46caf07488d70602ce300e47d39c2193e76",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uploads-repair-dry-run.log": "4461481cdb27dcb91d30c847e60eedbb56a076d9fee7c121d6f0625e81bb0c8b",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/signed-artifacts-uploads.json": "88160b4571e11f01a3261a84ac2625075cb87338eb9d4e64f40f371182356143",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-uploads-index.json": "a29c2a6e7bbdae74004a5c001e629dac0f4260d180080bae44e0c729f4563d19",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-uploads-index.json.p7s": "bb1f7d98a2708fc7ef05550e6399850940eaf9efadcb7a1cc9e8ed5604a8f77b",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-uploads-index.json": "4e37907b799a6855fe012060fe9a4f8ce3a95f86c5a31019349080b3591f43f6",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-uploads-index.json.p7s": "879af6a7e24e992aad4132f7af9f2e4a47613eecde7b48a1e030ce129efc4cfa",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/healthy-authenticated-info-uploads.json": "aaf93c281240acaadd257c6e6c58b55bb02daa4be0049bcf92bbc8a75ef93eae",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/unhealthy-authenticated-info-uploads.json": "cdd01f5f7df1915a2dd44294ce11a29836de246bb9bc7b1582bb50acc2c4e1d4",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-preservation.json": "213b7c1a5fdf25e3169ece477d0ad3c701970a3e06542a6981bc3305c2175509",
+    "/home/drew/sv08-mainline/runtime/sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/repair-uploads-preserve-mode.py": "ccbe9613c55b993ce214e2792df02f745ffb7757257cedb7ce00565925033393",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uploads-repair-execution.log": "d1fdf5430dc4b67d006b4484dcab38763fb5e287b5a00de2c223733d07da711c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uploads-repair-preserve-mode-execution.log": "66c2f8bfe1ed4a6f07c184c60443cd5b1f0d09851cdef972a50b10248a314a77",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-boundary.py": "f11576562242afc8ccfb65aecfac46392ab8590e745cc802996a3055d77b3a4f",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-boundary-after-uploads.json": "b6891fba6ed159b5cc34c1dbd07bd76d0fc7e1e77790c00da837f6db9dfbdd06",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-preservation-disposition.json": "673dbfb885986ad653cf8a4b30cf907ab7eabcdffe99e1525051eb09c6d207bb",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/database-preservation.py": "2950596bc120a731dbdb7500437ba1f37baa6bd1427ea0804390498f0d889088",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-before-automatic.json": "af5c78e47e059dfb808351e0bd15d6062430d69f18a0ae3fbf429a5610a9c918",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-before-automatic-comparison.json": "e769fbfda041ca8ceb9b34783786c82a7a991c9b8a5d97c87889b6bd65c5b414",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart-trials.py": "30ad2d30bda91c9912bba5aab77b28a78de438715fb6c75f9868586f4a654fd4",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uart-source-retirement.log": "3e853826121e8c66785e0849fced78e5f444bcdac6d9563e8a36c38c74604664"
+  },
+  "additional_measured_hashes": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-before-automatic.json": "af5c78e47e059dfb808351e0bd15d6062430d69f18a0ae3fbf429a5610a9c918",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-before-automatic-comparison.json": "e769fbfda041ca8ceb9b34783786c82a7a991c9b8a5d97c87889b6bd65c5b414",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart-trials.py": "30ad2d30bda91c9912bba5aab77b28a78de438715fb6c75f9868586f4a654fd4"
+  },
+  "composition_receipt_sha256": "85c1d9dd9e3c4672ebebbdf6a51f6943ecd6c56b79c0ef6dad3f20af7662a137",
+  "bundles": {
+    "healthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 1,
+        "issued": 1791607642,
+        "expires": 1791694042,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.2",
+        "release_revision": 2,
+        "bundle": "healthy.raucb",
+        "bytes": 488425518,
+        "sha256": "4b7ab2834b94e6d59b76f3824da0ee05cf331fe771aa7d67032881b986fcb517"
+      },
+      "index_sha256": "a29c2a6e7bbdae74004a5c001e629dac0f4260d180080bae44e0c729f4563d19",
+      "signature_sha256": "bb1f7d98a2708fc7ef05550e6399850940eaf9efadcb7a1cc9e8ed5604a8f77b"
+    },
+    "unhealthy": {
+      "index": {
+        "format_version": 1,
+        "channel": "physical-qualification",
+        "sequence": 2,
+        "issued": 1791607642,
+        "expires": 1791694042,
+        "compatible": "sv08-test-sv08-01-ab-8gb",
+        "release": "0.1.0-physical-update.3",
+        "release_revision": 3,
+        "bundle": "unhealthy.raucb",
+        "bytes": 488413230,
+        "sha256": "0866fca172601db3db6008fb2e453d9f013da7d1e1b62a9cb4b3a00aca40a541"
+      },
+      "index_sha256": "4e37907b799a6855fe012060fe9a4f8ce3a95f86c5a31019349080b3591f43f6",
+      "signature_sha256": "879af6a7e24e992aad4132f7af9f2e4a47613eecde7b48a1e030ce129efc4cfa"
+    }
+  },
+  "measured_local_evidence": [
+    "All35 packet bound-file SHA256 values match current local bytes.",
+    "Both full served bundle hashes/sizes match indexes. Both detached CMS index signatures verified successfully with exact public trust certificate.",
+    "Composition receipt hash matches; both raw roots independently hashed to authenticated native RAUC metadata: healthy5d7fdc6e09fcff29ad62c09a9c03692e6811d958f3df928f28ee2756378636da; unhealthy7d37233ef1372531c2a28844a1f32c75ed3d17be3e768794397f8a0cce4613a9. Both public candidate roots contain exact reviewed state/restart modules and real health unit.",
+    "Source-boundary-after-uploads records actual installed_controller/backend validation, sourceA/boot4e55, rootro, autoFalse/pendingNone and trusted time. Fresh source-before-automatic comparison records all stated protected categories unchanged during directory repair and exact new sourceA root/boot baseline."
+  ],
+  "source_grounded_assessment": [
+    "RAUC/backend and H616 selector contracts reviewed in this lineage confine healthy write to inactive B pair and unhealthy write to inactive A pair after B confirmation, with redundant environment admission and finite A attempts. Deliberate host-health failure is recoverable; credible serious loss transition is overwriting source A before trustworthy B confirmation or corrupting protected recovery/data. The staged healthy gate and current checks address those transitions.",
+    "The reviewed runtime mask proof retains inactive physical masks while allowing legitimate masked-runtime status only with exact persistent /dev/null filesystem evidence. State initialization repair adds private uploads and rejects unsafe existing directory; both repairs are reflected in final candidates.",
+    "SQL comparator opens both actual generation databases mode=ro and compares schema/integrity and symmetric full-row set equality for all five uniquely keyed tables, including authorized_users, returning booleans only. It does not display or export credentials/private rows. The sole exception is exact namespace database/key unsafe_shutdowns, which pinned Moonraker source manages at startup/clean stop. Counter existence/type/value preservation is explicitly not claimed; this mutable metadata exception is not a demonstrated irreplaceable-data-loss path.",
+    "Independent SD boot/login is documented historical evidence; current availability is owner-reported, not newly physically tested. p5 payload hashes are measured preservation evidence, not a claim of current usable p5 login."
+  ],
+  "limitations": [
+    "No actual automatic-update trial has been observed by this assessment; success requires coordinator execution evidence.",
+    "Original prewarm database logical preservation remains unproven; plausible documented startup writes cannot establish every original row stayed equal. This review neither waives that gap nor certifies overall/bootstrap database preservation. Actual automatic trials are gated against the current naturally frozen source generation.",
+    "Database comparison proves point-in-time equality of specified data, excluding the named boot-managed counter; public identity bytes normalize generation-path rotation.",
+    "Existing tests/fsck are coordinator/producer evidence at stated hashes; local reviewer directly verified bindings, signatures, public runtime leaves and raw-root hashes."
+  ],
+  "conditions": [
+    "Before enabling healthy feed, coordinator rechecks exact target CID, by-path/canonical root device and full geometry, current source A boot 4e55fcc3-9939-4839-ad42-8ca99d7bd6a4, immutable readonly root, ready/real RAUC and health, complete actual installed_controller/backend context, source registry auto false/pending null, no jobs/uncertain transactions, environment copies CRC/order A with A3/B0, trusted time and fixed feed route; exact current public installed payload and bundle/index/CMS bindings must match. No further source repair or source warm reboot is covered.",
+    "Rescue SD remains available as owner confirmed. Preserve original loader/GPT and p5, filesystem/kernel five physical masks and inactive services, account seed/installed identity generations, and PSU OFF. Recheck no serial writers or active heater/motion path. Review grants no hardware authority.",
+    "Use one healthy revision2 sequence1 update to inactive B only. Before publishing unhealthy feed, observe verified B root/boot pair, admitted raw readback, completed transaction/pending null, production readiness/confirmation and B3 good primary. Hash source A root/boot against fresh source-before-automatic baseline; compare config/calibration/UI/shared/public identity and machine values, loader/GPT/p5, and run the exact local boolean-only database comparer successfully against naturally frozen source A and the verified selected B generation. Any failed check stops dependent actions.",
+    "Only after all healthy gates pass, use one unhealthy revision3 sequence2 update to inactive A. Observe exactly three distinct revision3/A production HostHealth failure boot IDs with ready closed and actual UART A3,A2,A1,B3 countdown/fallback evidence. Do not consume attempts manually or manufacture confirmation/fallback markers. Final B must be the verified healthy release, immutable/ready, reconciled failed trial with pending null and A0/B3; repeat final preservation and database comparisons.",
+    "UART collector must be the exact stable device/revision/path and receive-only script with exclusive ownership and bounds. Prior collector must have ended before the current collector. Actual countdown evidence must cover all trials; elapsed/size expiration or missing observations means no success claim and stops dependent action, not an extra install/reboot allowance.",
+    "Immediately after final healthy fallback observations, disable automatic policy, stop timer/feed/server and verify opt-out to prevent deliberate unhealthy replay. Keep installed account seed and generations; clean only explicitly goal-owned local bulk. On preflight drift, refusal, unknown outcome, unexpected boundary or preservation failure, stop dependent operations and preserve current usable fallback/recovery. No undiagnosed repeated physical attempt is covered."
+  ],
+  "remaining_allowance": "No incidental experiments used. Bounded local reads/hashes/signature checks remain within assigned primary and 300s/16MiB continuation; no remote or device commands executed."
+}

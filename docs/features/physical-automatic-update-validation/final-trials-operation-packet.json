@@ -68,10 +68,14 @@
     "/home/drew/.sv08-physical-update-coordinator-20261010/source-boundary.py": "f11576562242afc8ccfb65aecfac46392ab8590e745cc802996a3055d77b3a4f",
     "/home/drew/.sv08-physical-update-coordinator-20261010/source-boundary-after-uploads.json": "b6891fba6ed159b5cc34c1dbd07bd76d0fc7e1e77790c00da837f6db9dfbdd06",
     "/home/drew/.sv08-physical-update-coordinator-20261010/source-preservation-disposition.json": "673dbfb885986ad653cf8a4b30cf907ab7eabcdffe99e1525051eb09c6d207bb",
-    "/home/drew/.sv08-physical-update-coordinator-20261010/database-preservation.py": "2950596bc120a731dbdb7500437ba1f37baa6bd1427ea0804390498f0d889088"
+    "/home/drew/.sv08-physical-update-coordinator-20261010/database-preservation.py": "2950596bc120a731dbdb7500437ba1f37baa6bd1427ea0804390498f0d889088",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-before-automatic.json": "af5c78e47e059dfb808351e0bd15d6062430d69f18a0ae3fbf429a5610a9c918",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/source-before-automatic-comparison.json": "e769fbfda041ca8ceb9b34783786c82a7a991c9b8a5d97c87889b6bd65c5b414",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/capture-uart-trials.py": "30ad2d30bda91c9912bba5aab77b28a78de438715fb6c75f9868586f4a654fd4",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/uart-source-retirement.log": "3e853826121e8c66785e0849fced78e5f444bcdac6d9563e8a36c38c74604664"
   },
   "exact_sequence": [
-    "One exact repair-uploads.py --execute after review/fresh full preflight+PSUoff; no reboot. Full actual installed_controller boundary and semantic preservation verified before feed.",
+    "Fresh read-only actual source-boundary/backend/context/store/jobs/restart/ready/time/envCRC and outputmasks/serial checks, PSUOFF, exactsourcepayload/latestbundle/index/CMS hashes and source-before-automatic preserved baseline. Source repair is completed; NO additional source repair/reboot permitted. Only afterallpass enableexacthealthyfeed.",
     "Only aftersource readiness publish newlytrustedhealthyrev2seq1 and startproductionfeed withpolicyTRUE. ObservecompletedconfirmedhealthyB withpendingnone/readiness andmatchingadmittedreadback. ChecksourceAroot/bootpairunchanged andall application/identity/GPT/recovery.",
     "Only afterBconfirmation publish exactunhealthyrev3seq2 andstartproductionfeed. Observe3distinctAfailedHostHealthbootIDs,readyclosed andrealUBootfinitecounterexhaustion/fallbackB.",
     "OnexacthealthyBready/pendingnone/reconciledfailedtarget immediatelydisableautomaticpolicy/stopfeedtimer/server, verifyallprotecteddata/identity/GPT/p5 andcleanuponlygoal-ownedlocalbulk; neverdeleteinstalledaccountseed/generations."
@@ -114,5 +118,6 @@
       "signature_sha256": "879af6a7e24e992aad4132f7af9f2e4a47613eecde7b48a1e030ce129efc4cfa"
     }
   },
-  "preservation_status": "Source warmboot config/calibration/shared/machine/longtermpublicCA+SSHkeys/loader/GPT/P5 preserved. InitialrawDBbytechange originalprewarmlogicalproof unavailable; documented sourceMoonrakerstartupwrites. Actualautomaticupdates gated by exactSQLboolean-only sourcegeneration\u2192newgeneration equality comparator, excludesonlydocumented database.unsafe_shutdowns. No rows/secrets/hashes exported. Originalsourcegeneration naturallyfrozen afterhealthyrestart."
+  "preservation_status": "Source warmboot config/calibration/shared/machine/longtermpublicCA+SSHkeys/loader/GPT/P5 preserved. InitialrawDBbytechange originalprewarmlogicalproof unavailable; documented sourceMoonrakerstartupwrites. Actualautomaticupdates gated by exactSQLboolean-only sourcegeneration\u2192newgeneration equality comparator, excludesonlydocumented database.unsafe_shutdowns. No rows/secrets/hashes exported. Originalsourcegeneration naturallyfrozen afterhealthyrestart.",
+  "database_comparison_exception": "database.unsafe_shutdowns excluded by exactnamespace+key, justified upstreamstartup/cleanstop managedwrite. Counter value/type/existence preservation is not claimed; all other rows, tables and schema must compare equal via boolean-only SQL."
 }
