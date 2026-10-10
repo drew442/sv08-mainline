@@ -247,3 +247,30 @@ class BackendPolicyTests(unittest.TestCase):
                 backend.restore_pre_disarm(previous, 'B', 'A')
         self.assertEqual(write.call_count, 1)
         self.assertEqual(verify.call_count, 2)
+
+
+class InstallAdmissionOptionTests(unittest.TestCase):
+    def test_install_flags_follow_exact_manual_proof_and_manifest_hash(self):
+        from sv08_update_policy import effective
+        backend = object.__new__(Backend)
+        backend.boot = {'slot': 'A'}
+        backend.writer = nullcontext
+        backend.validate_context = Mock()
+        backend.validate_bundle = Mock()
+        backend.operation = lambda *_: nullcontext()
+        backend.command = Mock()
+        backend.policy = {'image_bytes': {'boot': 1, 'rootfs': 1}}
+        backend.manifest = {'devices': {'boot-a': 'boot-a', 'root-a': 'root-a', 'boot-b': 'boot-b', 'root-b': 'root-b'}}
+        for options, trusted, expected in [({}, True, []),
+                ({'check_compatibility': False}, True, ['--ignore-compatible']),
+                ({'allow_untrusted_provenance': True}, False, ['--ignore-signer-trust'])]:
+            with self.subTest(options=options):
+                proof = dict(update_policy=effective(options), signer_trusted=trusted,
+                             manifest_hash='c'*64, image_hashes={'boot': 'a'*64, 'rootfs': 'a'*64})
+                backend.command.reset_mock()
+                with patch('sv08_rauc.digest_device', return_value='a'*64):
+                    backend.install('bundle', proof, 'B')
+                backend.command.assert_called_once_with('install', *expected, '--require-manifest-hash='+'c'*64, 'bundle')
+        proof['signer_trusted'] = True
+        with patch('sv08_rauc.digest_device', return_value='a'*64):
+            with self.assertRaisesRegex(ValueError, 'exact manual'): backend.install('bundle', proof, 'B')

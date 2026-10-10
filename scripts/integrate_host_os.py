@@ -21,6 +21,8 @@ def validate(manifest):
         raise ValueError('Invalid release identifier')
     if manifest['state_schema'] != 1:
         raise ValueError('Unsupported state schema')
+    if 'release_revision' in manifest and (type(manifest['release_revision']) is not int or manifest['release_revision'] < 1):
+        raise ValueError('Release revision must be an explicit positive integer')
     devices = manifest['devices']
     if set(devices) != {'boot-a','root-a','boot-b','root-b','data','recovery'}:
         raise ValueError('Manifest needs all six explicit GPT partitions')

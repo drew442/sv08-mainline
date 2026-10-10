@@ -224,3 +224,19 @@ class StageUITests(unittest.TestCase):
         path.unlink()
         with self.assertRaisesRegex(ValueError, 'sv08_restart.py'): stage(self.work, 'recovery', True)
         self.assertFalse((self.work/'rootfs/usr/share/xsessions').exists())
+
+
+class PatchedPackagePolicyTests(unittest.TestCase):
+    setUp=StageUITests.setUp
+    def test_built_package_policy_binds_actual_binary_and_source(self):
+        import hashlib,json
+        from stage_admin_ui import package_service_policy
+        root=self.work/'rootfs'
+        provenance=root/'usr/share/doc/rauc/sv08-source.json';provenance.parent.mkdir(parents=True)
+        config=json.loads((REPO/'configs/host-os/rauc-package.json').read_text());provenance.write_text(json.dumps(config))
+        executable=root/'usr/bin/rauc';executable.parent.mkdir(parents=True);executable.write_bytes(b'disposable ARM executable fixture')
+        status=root/'var/lib/dpkg/status';status.parent.mkdir(parents=True);status.write_text('Package: rauc\nStatus: install ok installed\nArchitecture: arm64\nVersion: '+config['version']+'\n')
+        policy=package_service_policy(root)
+        self.assertEqual(policy['version'],config['version']);self.assertEqual(policy['executable_sha256'],hashlib.sha256(executable.read_bytes()).hexdigest())
+        config['patches'][0]['sha256']='0'*64;provenance.write_text(json.dumps(config))
+        with self.assertRaisesRegex(ValueError,'provenance'):package_service_policy(root)

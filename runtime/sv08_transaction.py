@@ -10,6 +10,7 @@ import json
 import re
 import uuid
 from sv08_state import atomic_json, identifier
+from sv08_update_policy import effective, admit, check_source, policy_revision
 
 
 class Transaction:
@@ -33,25 +34,33 @@ class Transaction:
             identifier(tx[name])
         if not re.fullmatch('[0-9a-f]{64}', tx['bundle_sha256']):
             raise ValueError('Invalid bundle identity')
+        if tx.get('release_revision') is not None:
+            from sv08_update_policy import release_revision
+            release_revision(tx['release_revision'])
+        if 'update_policy' in tx:
+            if not isinstance(tx['update_policy'], dict): raise ValueError('Invalid journal update policy')
+            options = effective(tx['update_policy'], automatic=tx.get('automatic', False))
+            if tx.get('policy_revision') != policy_revision(options):
+                raise ValueError('Invalid journal policy revision')
+            proof = tx.get('admission_proof', {})
+            if (proof.get('update_policy', effective()) != options or
+                    proof.get('bundle_sha256') != tx['bundle_sha256'] or proof.get('release') != tx['release'] or
+                    proof.get('release_revision') != tx.get('release_revision')):
+                raise ValueError('Journal admission proof and policy disagree')
+            if tx.get('automatic') and proof.get('signer_trusted') is not True:
+                raise ValueError('Automatic journal requires trusted provenance')
         return tx
 
     def save(self, tx, phase):
         tx['phase'] = phase
         atomic_json(self.path, tx)
 
-    def require_source(self, state, boot):
-        record = state['slots'].get(boot['slot'])
-        if not record or record['release'] != boot['release']:
-            raise ValueError('Running release differs from state registry')
-        if (boot['mode'] != 'immutable' or state['requested_mode'] != 'immutable' or
-                any(record['customized'] for record in state['slots'].values())):
-            raise ValueError('Customized/writable slots require reconciliation before image replacement')
+    def require_source(self, state, boot, policy=None):
+        check_source(state, boot, policy)
         self.backend.validate_context(boot)
-        # Must obtain a shared admission lease and inspect service/print state;
-        # the callback's context manager keeps the lease through the operation.
 
     @contextmanager
-    def source_admitted(self, boot, automatic, lease=nullcontext):
+    def source_admitted(self, boot, automatic, lease=nullcontext, options=None):
         """Serialize policy changes with writes; opt-out precedes service stops."""
         if not isinstance(automatic, bool):
             raise ValueError('Automatic operation must be a boolean')
@@ -60,35 +69,40 @@ class Transaction:
             state = self.store.load()
             if automatic and not state['auto_update']:
                 raise ValueError('Automatic updates are disabled')
+            policy = effective(state.get('update_policy') if automatic else options, automatic=automatic)
+            if automatic:
+                from sv08_restart import require_jobs_idle
+                require_jobs_idle(self.store)
             # Fixed ordering: state -> optional upload lease -> service barrier.
             # Authenticate the upload before asking Klipper to quiesce.
             with lease() as leased, self.admission(), self.writer():
-                self.require_source(state, boot)
+                self.require_source(state, boot, policy)
                 yield state, leased
 
-    def stage(self, bundle, proof, boot, *, automatic=False):
+    def stage(self, bundle, proof, boot, *, automatic=False, options=None):
         identifier(proof['release'])
         if not re.fullmatch('[0-9a-f]{64}', proof['bundle_sha256']):
             raise ValueError('Missing authenticated bundle identity')
-        with self.source_admitted(boot, automatic) as (state, _):
-            return self._stage_admitted(bundle, proof, boot, state)
+        with self.source_admitted(boot, automatic, options=options) as (state, _):
+            return self._stage_admitted(bundle, proof, boot, state, automatic=automatic, options=options)
 
-    def stage_upload(self, staging, digest, verify, boot, *, automatic=False):
+    def stage_upload(self, staging, digest, verify, boot, *, automatic=False, options=None):
         """Authenticate and lease a private upload through all inactive writes.
 
         The caller supplies the reviewed keyring verifier and authenticated
         request policy; this method does not expose an upload endpoint.
         """
         lease = lambda: staging.lease(digest, verify)
-        with self.source_admitted(boot, automatic, lease) as (state, uploaded):
+        with self.source_admitted(boot, automatic, lease, options) as (state, uploaded):
             bundle, proof = uploaded
-            return self._stage_admitted(bundle, proof, boot, state)
+            return self._stage_admitted(bundle, proof, boot, state, automatic=automatic, options=options)
 
-    def _stage_admitted(self, bundle, proof, boot, state):
+    def _stage_admitted(self, bundle, proof, boot, state, *, automatic=False, options=None):
         """Internal operation; caller holds state, upload (if any), admission."""
         identifier(proof['release'])
         if not re.fullmatch('[0-9a-f]{64}', proof['bundle_sha256']):
             raise ValueError('Missing authenticated bundle identity')
+        policy = admit(proof, state, boot, state.get('update_policy') if automatic else options, automatic=automatic)
         previous = self.load()
         if state['pending'] or previous and previous['phase'] not in ('complete', 'cancelled', 'failed'):
             raise ValueError('Resolve the outstanding transaction before staging')
@@ -99,11 +113,14 @@ class Transaction:
         if self.backend.primary() != boot['slot']:
             raise ValueError('Boot selection differs from the running source')
         self.backend.validate_bundle(bundle, proof, target)
-        policy = self.backend.boot_policy()
+        boot_policy = self.backend.boot_policy()
         tx = dict(format_version=1, id=uuid.uuid4().hex, phase='preparing',
                   slot=target, previous_slot=boot['slot'], previous_release=boot['release'],
                   release=proof['release'], bundle_sha256=proof['bundle_sha256'],
-                  boot_id=identifier(boot['boot_id']), previous_boot_policy=policy)
+                  boot_id=identifier(boot['boot_id']), previous_boot_policy=boot_policy,
+                  automatic=automatic, update_policy=policy,
+                  admission_proof=proof, release_revision=proof.get('release_revision'))
+        tx['policy_revision'] = policy_revision(tx['update_policy'])
         # This durable record precedes the deliberate boot-policy write. A
         # crash in "preparing" can restore the untouched target's old policy.
         self.save(tx, 'preparing')
@@ -120,12 +137,21 @@ class Transaction:
         return tx
 
     def arm(self, boot, *, automatic=False):
-        with self.source_admitted(boot, automatic) as (state, _):
+        staged = self.load()
+        options = staged.get('update_policy') if staged else None
+        with self.source_admitted(boot, automatic, options=options) as (state, _):
             tx = self.load()
             if (not tx or tx['phase'] not in ('staged', 'arming', 'armed') or
                     boot['slot'] != tx['previous_slot'] or boot['release'] != tx['previous_release'] or
                     boot['boot_id'] != tx['boot_id']):
                 raise ValueError('Activation requires the original staging boot; reconcile after a reboot')
+            if automatic and tx.get('automatic', False) is not True:
+                raise ValueError('Activation origin differs from the admitted transaction')
+            policy = effective(state.get('update_policy') if automatic else tx.get('update_policy'), automatic=automatic)
+            if policy != tx.get('update_policy', effective()):
+                raise ValueError('Update policy changed after staging; cancel and review again')
+            self.require_source(state, boot, policy)
+            admit(tx.get('admission_proof', {}), state, boot, policy, automatic=automatic)
             if state['pending'] and (state['pending']['id'] != tx['id'] or
                     state['pending']['phase'] != 'armed' or state['pending']['slot'] != tx['slot'] or
                     state['pending']['release'] != tx['release']):
@@ -182,7 +208,7 @@ class Transaction:
                 if pending:
                     raise ValueError('Pending trial has no live transaction')
                 return 'idle'
-            self.require_source(state, boot)
+            self.require_source(state, boot, tx.get('update_policy'))
             if pending and (pending['id'] != tx['id'] or pending['slot'] != tx['slot'] or
                     pending['release'] != tx['release'] or pending['previous_slot'] != tx['previous_slot']):
                 raise ValueError('Pending trial and transaction disagree')
@@ -231,7 +257,7 @@ class Transaction:
             if (not tx or tx['phase'] not in ('armed', 'confirming') or
                     boot['slot'] != tx['slot'] or boot['release'] != tx['release']):
                 raise ValueError('No matching running trial')
-            self.require_source(state, boot)
+            self.require_source(state, boot, tx.get('update_policy'))
             pending = state['pending']
             if pending is not None and (pending['id'] != tx['id'] or pending['phase'] != 'trial'):
                 raise ValueError('Trial state has not been prepared')

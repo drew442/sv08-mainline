@@ -19,11 +19,13 @@ import time
 import sys
 
 
-def validate(info, policy, bundle_size):
+def validate(info, policy, bundle_size, options=None, *, automatic=False):
     """Validate authenticated RAUC json-2 output, not arbitrary uploaded JSON."""
     if type(bundle_size) is not int or not 0 < bundle_size <= policy['max_bundle_bytes']:
         raise ValueError('Bundle exceeds the staging budget')
-    if info['update']['compatible'] != policy['compatible']:
+    from sv08_update_policy import effective
+    options = effective(options, automatic=automatic)
+    if options['check_compatibility'] and info['update']['compatible'] != policy['compatible']:
         raise ValueError('Bundle targets a different hardware profile')
     if info['bundle']['format'] != 'verity':
         raise ValueError('Only signed verity bundles are supported')
@@ -33,7 +35,12 @@ def validate(info, policy, bundle_size):
     metadata = info.get('meta', {}).get('sv08', {})
     expected = {'layout': policy['layout'], 'state-schema': str(policy['state_schema']),
                 'klipper-commit': policy['klipper_commit']}
-    if metadata != expected:
+    revision = metadata.get('release-revision')
+    if revision is not None:
+        if not isinstance(revision, str) or not re.fullmatch(r'[1-9][0-9]{0,19}', revision):
+            raise ValueError('Signed release revision must be a positive decimal integer')
+        revision = int(revision)
+    if {key: value for key, value in metadata.items() if key != 'release-revision'} != expected:
         raise ValueError('Signed layout/state/Klipper metadata does not match this system')
     if policy['state_schema'] != 1 or not re.fullmatch('[0-9a-f]{40}', policy['klipper_commit']):
         raise ValueError('Unsupported state schema or incomplete Klipper pin')
@@ -50,7 +57,8 @@ def validate(info, policy, bundle_size):
             raise ValueError('Image variants/hooks/adaptive updates are not admitted by this policy')
     if info.get('hooks') or info.get('handler'):
         raise ValueError('Bundle hooks are not admitted by this policy')
-    return dict(release=release, compatible=policy['compatible'], metadata=metadata,
+    return dict(release=release, release_revision=revision,
+                compatible=info['update']['compatible'], metadata=metadata, update_policy=options,
                 image_hashes={image['slot-class']: image['checksum'] for image in images})
 
 
@@ -121,15 +129,24 @@ def manifest_output(command, lease_fd=None, seconds=None):
 
 
 
-def inspect(bundle, policy, keyring, rauc='/usr/bin/rauc', lease_fd=None):
+def inspect(bundle, policy, keyring, rauc='/usr/bin/rauc', lease_fd=None, options=None, *, automatic=False):
+    from sv08_update_policy import effective
+    options = effective(options, automatic=automatic)
     if bundle.is_symlink() or not stat.S_ISREG(bundle.stat().st_mode):
         raise ValueError('Inspect a locally staged regular bundle file')
     before = bundle.stat()
     if not 0 < before.st_size <= policy['max_bundle_bytes']:
         raise ValueError('Bundle exceeds the staging budget')
-    info = json.loads(manifest_output([str(rauc), 'info', '--output-format=json-2',
-                      '--keyring='+str(keyring), str(bundle)], lease_fd=lease_fd))
-    result = validate(info, policy, before.st_size)
+    command = [str(rauc), 'info', '--output-format=json-2', '--keyring='+str(keyring)]
+    if options['allow_untrusted_provenance']: command.append('--ignore-signer-trust')
+    info = json.loads(manifest_output([*command, str(bundle)], lease_fd=lease_fd))
+    result = validate(info, policy, before.st_size, options, automatic=automatic)
+    result['signer_trusted'] = not options['allow_untrusted_provenance']
+    manifest_hash = info.get('manifest-hash')
+    if manifest_hash is not None:
+        if not isinstance(manifest_hash, str) or not re.fullmatch('[0-9a-f]{64}', manifest_hash):
+            raise ValueError('Invalid authenticated manifest hash')
+        result['manifest_hash'] = manifest_hash
     with bundle.open('rb') as stream:
         result['bundle_sha256'] = hashlib.file_digest(stream, 'sha256').hexdigest()
     after = bundle.stat()

@@ -1,0 +1,4035 @@
+{
+  "arm_fixture": {
+    "allocation": {
+      "cumulative_generated_allocated_bytes": 24352382976,
+      "files": {
+        "64512:3407884": {
+          "paths": [
+            "package-execution.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407895": {
+          "paths": [
+            "compiler-sources.list"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407896": {
+          "paths": [
+            "source-hashes.superseded-c1afe95.json"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3407898": {
+          "paths": [
+            "compiler-retirement.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407906": {
+          "paths": [
+            "source-hashes.json"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3407909": {
+          "paths": [
+            "manifest.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407911": {
+          "paths": [
+            "resource.lock"
+          ],
+          "peak_allocated_bytes": 0,
+          "retired": false
+        },
+        "64512:3407946": {
+          "paths": [
+            "input/guest.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3407953": {
+          "paths": [
+            "input/setup.sh"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407954": {
+          "paths": [
+            "input/slot_driver.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407957": {
+          "paths": [
+            "input/reliability_helpers.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3407958": {
+          "paths": [
+            "input/liblzo2-2.deb"
+          ],
+          "peak_allocated_bytes": 53248,
+          "retired": false
+        },
+        "64512:3407959": {
+          "paths": [
+            "input/squashfs-tools.deb"
+          ],
+          "peak_allocated_bytes": 184320,
+          "retired": false
+        },
+        "64512:3407960": {
+          "paths": [
+            "input/rauc.deb"
+          ],
+          "peak_allocated_bytes": 192512,
+          "retired": false
+        },
+        "64512:3407961": {
+          "paths": [
+            "input/klipper.deb"
+          ],
+          "peak_allocated_bytes": 5705728,
+          "retired": false
+        },
+        "64512:3407975": {
+          "paths": [
+            "input/packages.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3407998": {
+          "paths": [
+            "runtime-ledger.json"
+          ],
+          "peak_allocated_bytes": 16384,
+          "retired": false
+        },
+        "64512:3408000": {
+          "paths": [
+            "construct-exec.log",
+            "attempt1/construct-exec.log"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408001": {
+          "paths": [
+            "host-preflight.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408002": {
+          "paths": [
+            "construction.qcow2"
+          ],
+          "peak_allocated_bytes": 60362752,
+          "retired": true
+        },
+        "64512:3408002:1791599240565229881": {
+          "paths": [
+            "media-exec.log",
+            "attempt1/media-exec.log"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408003": {
+          "paths": [
+            "construction.pid",
+            "attempt1/construction.pid"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408004": {
+          "paths": [
+            "construction.log",
+            "attempt1/construction.log"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408005": {
+          "paths": [
+            "construction-result.json",
+            "attempt1/construction-result.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408112": {
+          "paths": [
+            "export-exec.log",
+            "attempt1/export-exec.log"
+          ],
+          "peak_allocated_bytes": 0,
+          "retired": false
+        },
+        "64512:3408113": {
+          "paths": [
+            "source-template.ext4",
+            "good-bundle-exec.log"
+          ],
+          "peak_allocated_bytes": 1393459200,
+          "retired": false
+        },
+        "64512:3408114": {
+          "paths": [
+            "source-template.json",
+            "attempt1/source-template.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408115": {
+          "paths": [
+            "source-freeze.json",
+            "attempt1/source-freeze.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408159": {
+          "paths": [
+            "input/runtime/sv08_data_budget.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408160": {
+          "paths": [
+            "input/runtime/sv08_rauc.py"
+          ],
+          "peak_allocated_bytes": 28672,
+          "retired": false
+        },
+        "64512:3408162": {
+          "paths": [
+            "input/runtime/sv08_restart.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408167": {
+          "paths": [
+            "input/runtime/sv08_printer_stack.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408168": {
+          "paths": [
+            "input/runtime/sv08_printer_compact.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3408169": {
+          "paths": [
+            "input/runtime/sv08_recovery_boot_report.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3408171": {
+          "paths": [
+            "input/runtime/sv08_admin_resolution.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408172": {
+          "paths": [
+            "input/runtime/sv08_rauc_bootloader.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408173": {
+          "paths": [
+            "input/runtime/sv08_recovery.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408194": {
+          "paths": [
+            "input/runtime/sv08_mainsail_access.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3408195": {
+          "paths": [
+            "input/runtime/sv08_printer_publish.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408196": {
+          "paths": [
+            "input/runtime/sv08_printer_compose.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408247": {
+          "paths": [
+            "input/runtime/sv08_printer_generate.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408250": {
+          "paths": [
+            "input/runtime/sv08_gpt.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408570": {
+          "paths": [
+            "input/runtime/sv08_staging.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408573": {
+          "paths": [
+            "input/runtime/sv08_admin_history.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408577": {
+          "paths": [
+            "input/runtime/sv08_state.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3408578": {
+          "paths": [
+            "input/runtime/sv08_rauc_service.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408579": {
+          "paths": [
+            "input/runtime/sv08_sd_reimage.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408580": {
+          "paths": [
+            "input/runtime/sv08_recovery_prepare.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408581": {
+          "paths": [
+            "input/runtime/sv08_printer_store.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3408582": {
+          "paths": [
+            "input/runtime/sv08_mounts.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3408631": {
+          "paths": [
+            "input/runtime/sv08_printer_fields.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408633": {
+          "paths": [
+            "input/runtime/sv08_recovery_ui.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408715": {
+          "paths": [
+            "input/runtime/sv08_printer_sources.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3408716": {
+          "paths": [
+            "input/runtime/sv08_commissioning_health.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3408717": {
+          "paths": [
+            "input/runtime/sv08_transaction.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3408718": {
+          "paths": [
+            "input/runtime/sv08_package.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3409076": {
+          "paths": [
+            "input/runtime/sv08_identity.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3409226": {
+          "paths": [
+            "input/runtime/sv08_software.py"
+          ],
+          "peak_allocated_bytes": 40960,
+          "retired": false
+        },
+        "64512:3409231": {
+          "paths": [
+            "input/runtime/sv08_printer_helper.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3409268": {
+          "paths": [
+            "input/runtime/sv08_admin_images.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3409274": {
+          "paths": [
+            "input/runtime/sv08_auto_reboot.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3409278": {
+          "paths": [
+            "input/runtime/sv08_printer_definitions.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3409804": {
+          "paths": [
+            "input/runtime/sv08_admin.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3410278": {
+          "paths": [
+            "input/runtime/sv08_admin_upload.py"
+          ],
+          "peak_allocated_bytes": 16384,
+          "retired": false
+        },
+        "64512:3410862": {
+          "paths": [
+            "input/runtime/sv08_admin_jobs.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3410864": {
+          "paths": [
+            "input/runtime/sv08_update_policy.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3410872": {
+          "paths": [
+            "input/runtime/sv08_recovery_media.py"
+          ],
+          "peak_allocated_bytes": 49152,
+          "retired": false
+        },
+        "64512:3410873": {
+          "paths": [
+            "input/runtime/sv08_boot.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3410918": {
+          "paths": [
+            "input/runtime/sv08_bundle.py"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3410919": {
+          "paths": [
+            "input/runtime/sv08_sd_reimage_ui.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3410920": {
+          "paths": [
+            "input/runtime/sv08_web.py"
+          ],
+          "peak_allocated_bytes": 16384,
+          "retired": false
+        },
+        "64512:3410921": {
+          "paths": [
+            "input/runtime/sv08_printer_catalog.py"
+          ],
+          "peak_allocated_bytes": 28672,
+          "retired": false
+        },
+        "64512:3410923": {
+          "paths": [
+            "input/runtime/sv08_admission.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3410924": {
+          "paths": [
+            "input/runtime/sv08_boot_health.py"
+          ],
+          "peak_allocated_bytes": 24576,
+          "retired": false
+        },
+        "64512:3410925": {
+          "paths": [
+            "input/runtime/sv08_network.py"
+          ],
+          "peak_allocated_bytes": 32768,
+          "retired": false
+        },
+        "64512:3410926": {
+          "paths": [
+            "input/runtime/sv08_feed.py"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3410928": {
+          "paths": [
+            "input/runtime/sv08_export.py"
+          ],
+          "peak_allocated_bytes": 32768,
+          "retired": false
+        },
+        "64512:3410929": {
+          "paths": [
+            "guest.img"
+          ],
+          "peak_allocated_bytes": 5286227968,
+          "retired": true
+        },
+        "64512:3410929:1791600203951810645": {
+          "paths": [
+            "repair.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3410932": {
+          "paths": [
+            "fixture-key.pem"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3410933": {
+          "paths": [
+            "fixture-cert.pem"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3410936": {
+          "paths": [
+            "fixture-owner"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3410937": {
+          "paths": [
+            "fixture-owner.pub"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3411004": {
+          "paths": [
+            "fw_env.config"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411005": {
+          "paths": [
+            "fw-seed"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411006": {
+          "paths": [
+            "media-build.json",
+            "attempt1/media-build.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411007": {
+          "paths": [
+            "target-root.ext4",
+            "bundle-content/rootfs.img",
+            "bundle-content/.rauc-workdir/rootfs.img",
+            "bad-bundle-exec.log"
+          ],
+          "peak_allocated_bytes": 1456058368,
+          "retired": false
+        },
+        "64512:3411063": {
+          "paths": [
+            "target-root.ext4",
+            "bundle-content/rootfs.img",
+            "bundle-content/.rauc-workdir/rootfs.img",
+            "input/automatic-good-index.json"
+          ],
+          "peak_allocated_bytes": 1456091136,
+          "retired": false
+        },
+        "64512:3411084": {
+          "paths": [
+            "bundle-content/boot.img",
+            "bundle-content/.rauc-workdir/boot.img"
+          ],
+          "peak_allocated_bytes": 74420224,
+          "retired": true
+        },
+        "64512:3411084:1791599397187628900": {
+          "paths": [
+            "input/automatic-good-index.json.p7s"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411147": {
+          "paths": [
+            "bundle-content/manifest.raucm",
+            "bundle-content/.rauc-workdir/manifest.raucm"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3411147:1791599353529789811": {
+          "paths": [
+            "bundle-content/boot.img",
+            "bundle-content/.rauc-workdir/boot.img",
+            "input/automatic-bad-index.json"
+          ],
+          "peak_allocated_bytes": 74420224,
+          "retired": false
+        },
+        "64512:3411148": {
+          "paths": [
+            "automatic-good-bundle.log"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411154": {
+          "paths": [
+            "automatic-good-bundle.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411157": {
+          "paths": [
+            "bundle-content/.rauc-workdir/manifest.raucm"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3411157:1791599353554466719": {
+          "paths": [
+            "bundle-content/manifest.raucm",
+            "bundle-content/.rauc-workdir/manifest.raucm",
+            "input/automatic-bad-index.json.p7s"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411158": {
+          "paths": [
+            "input/automatic-good.raucb"
+          ],
+          "peak_allocated_bytes": 620572672,
+          "retired": true
+        },
+        "64512:3411163": {
+          "paths": [
+            "automatic-bad-bundle.log"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411168": {
+          "paths": [
+            "automatic-bad-bundle.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411181": {
+          "paths": [
+            "bundle-content/.rauc-workdir/manifest.raucm"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": true
+        },
+        "64512:3411181:1791599397498750270": {
+          "paths": [
+            "input/fixture-signers.pem"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411182": {
+          "paths": [
+            "input/automatic-bad.raucb"
+          ],
+          "peak_allocated_bytes": 620474368,
+          "retired": true
+        },
+        "64512:3411183": {
+          "paths": [
+            "journey-exec.log",
+            "attempt1/journey-exec.log"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3411609": {
+          "paths": [
+            "executed-fixture-hashes.json",
+            "attempt1/executed-fixture-hashes.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411611": {
+          "paths": [
+            "preservation-before.json",
+            "attempt1/preservation-before.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411612": {
+          "paths": [
+            "active-vm.pid",
+            "attempt1/active-vm.pid"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411614": {
+          "paths": [
+            "boot-1-A.log",
+            "attempt1/boot-1-A.log"
+          ],
+          "peak_allocated_bytes": 49152,
+          "retired": false
+        },
+        "64512:3411615": {
+          "paths": [
+            "boot-1-A.json",
+            "attempt1/boot-1-A.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411654": {
+          "paths": [
+            "boot-2-B.log",
+            "attempt1/boot-2-B.log"
+          ],
+          "peak_allocated_bytes": 36864,
+          "retired": false
+        },
+        "64512:3411655": {
+          "paths": [
+            "resource-failure.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3411656": {
+          "paths": [
+            "executed-commands.txt"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411657": {
+          "paths": [
+            "repair-archive.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411671": {
+          "paths": [
+            "attempt1/manifest.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411673": {
+          "paths": [
+            "attempt1/source-hashes.json"
+          ],
+          "peak_allocated_bytes": 12288,
+          "retired": false
+        },
+        "64512:3411725": {
+          "paths": [
+            "attempt1/resource-failure.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3411726": {
+          "paths": [
+            "attempt1/runtime-ledger.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3411743": {
+          "paths": [
+            "attempt1/allocation-ledger.json"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3411846": {
+          "paths": [
+            "attempt1/executed-commands.txt"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411847": {
+          "paths": [
+            "attempt1/partial-disk-retirement.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411862": {
+          "paths": [
+            "rebuild-media-wrapper.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411863": {
+          "paths": [
+            "construct-exec.log"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3411866": {
+          "paths": [
+            "construction.qcow2"
+          ],
+          "peak_allocated_bytes": 60366848,
+          "retired": true
+        },
+        "64512:3411866:1791600298149928899": {
+          "paths": [
+            "media-exec.log"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3411867": {
+          "paths": [
+            "construction.pid"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413031": {
+          "paths": [
+            "setup.sh"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413032": {
+          "paths": [
+            "construction.log"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3413034": {
+          "paths": [
+            "construction-result.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413036": {
+          "paths": [
+            "export-exec.log"
+          ],
+          "peak_allocated_bytes": 0,
+          "retired": false
+        },
+        "64512:3413037": {
+          "paths": [
+            "source-template.ext4",
+            "wrapper-execution.json"
+          ],
+          "peak_allocated_bytes": 1393459200,
+          "retired": false
+        },
+        "64512:3413038": {
+          "paths": [
+            "source-template.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413039": {
+          "paths": [
+            "source-freeze.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3413040": {
+          "paths": [
+            "guest.img"
+          ],
+          "peak_allocated_bytes": 5405118464,
+          "retired": true
+        },
+        "64512:3413041": {
+          "paths": [
+            "media-build.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413042": {
+          "paths": [
+            "journey-exec.log"
+          ],
+          "peak_allocated_bytes": 40960,
+          "retired": false
+        },
+        "64512:3413043": {
+          "paths": [
+            "executed-fixture-hashes.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413044": {
+          "paths": [
+            "preservation-before.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413045": {
+          "paths": [
+            "active-vm.pid"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413046": {
+          "paths": [
+            "boot-1-A.log"
+          ],
+          "peak_allocated_bytes": 49152,
+          "retired": false
+        },
+        "64512:3413047": {
+          "paths": [
+            "boot-1-A.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413048": {
+          "paths": [
+            "boot-2-B.log"
+          ],
+          "peak_allocated_bytes": 49152,
+          "retired": false
+        },
+        "64512:3413049": {
+          "paths": [
+            "boot-2-B.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413050": {
+          "paths": [
+            "boot-3-A.log"
+          ],
+          "peak_allocated_bytes": 45056,
+          "retired": false
+        },
+        "64512:3413051": {
+          "paths": [
+            "boot-3-A.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413052": {
+          "paths": [
+            "boot-4-A.log"
+          ],
+          "peak_allocated_bytes": 45056,
+          "retired": false
+        },
+        "64512:3413053": {
+          "paths": [
+            "boot-4-A.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413054": {
+          "paths": [
+            "boot-5-A.log"
+          ],
+          "peak_allocated_bytes": 45056,
+          "retired": false
+        },
+        "64512:3413055": {
+          "paths": [
+            "boot-5-A.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413056": {
+          "paths": [
+            "boot-6-B.log"
+          ],
+          "peak_allocated_bytes": 45056,
+          "retired": false
+        },
+        "64512:3413057": {
+          "paths": [
+            "boot-6-B.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413058": {
+          "paths": [
+            "result.json"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3413059": {
+          "paths": [
+            "finalize-evidence.py"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3413060": {
+          "paths": [
+            "retirement-input-hashes.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413061": {
+          "paths": [
+            "final-command-receipt.txt"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3413062": {
+          "paths": [
+            "final-execution.json"
+          ],
+          "peak_allocated_bytes": 8192,
+          "retired": false
+        },
+        "64512:3413063": {
+          "paths": [
+            "retire-bulk.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3438184": {
+          "paths": [
+            "revision-before.txt"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3438185": {
+          "paths": [
+            "dirty-before.txt"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3438200": {
+          "paths": [
+            "compiler-dependency-archives.json"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3438205": {
+          "paths": [
+            "compiler-toolchain.tsv"
+          ],
+          "peak_allocated_bytes": 20480,
+          "retired": false
+        },
+        "64512:3440453": {
+          "paths": [
+            "package-exec.log"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3440582": {
+          "paths": [
+            "install-deps.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3440583": {
+          "paths": [
+            "compiler-setup.log"
+          ],
+          "peak_allocated_bytes": 53248,
+          "retired": false
+        },
+        "64512:3440584": {
+          "paths": [
+            "hash-resources.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3440585": {
+          "paths": [
+            "prepared-resources.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3440588": {
+          "paths": [
+            "compiler-setup-result.json"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3440589": {
+          "paths": [
+            "build-package.py"
+          ],
+          "peak_allocated_bytes": 4096,
+          "retired": false
+        },
+        "64512:3543264": {
+          "paths": [
+            "arm-package/build.log"
+          ],
+          "peak_allocated_bytes": 16384,
+          "retired": false
+        },
+        "64512:3543667": {
+          "paths": [
+            "arm-package/rauc_1.15.2-0sv08.2_arm64.deb"
+          ],
+          "peak_allocated_bytes": 192512,
+          "retired": false
+        },
+        "64512:3543668": {
+          "paths": [
+            "arm-package/result.json"
+          ],
+          "peak_allocated_bytes": 28672,
+          "retired": false
+        },
+        "64512:3543683": {
+          "paths": [
+            "arm-package/rauc"
+          ],
+          "peak_allocated_bytes": 651264,
+          "retired": false
+        }
+      },
+      "retired_before_ledger_bytes": 6442450944
+    },
+    "bundles": [
+      {
+        "allocated": {
+          "cumulative_generated_allocated_bytes": 11814010880,
+          "free_bytes": 30086553600,
+          "generated_allocated_bytes": 3917754368
+        },
+        "boot_sha256": "a445d3f4355bb417475bab36f5cae10f6d929bab2e4b8ede339bcda9fff57ea8",
+        "builder_sha256": "c4cca3b8e5674504d954fb0b0d5b8552eca800a8fd576be97f11585bd33e5c96",
+        "builder_version": "1.15.2",
+        "bundle_bytes": 620566470,
+        "bundle_sha256": "4ebe78f4511ec9288f885fd0dd1b489becff07e104872eddbe442bcaa3f86ce0",
+        "elapsed_seconds": 41.836999704129994,
+        "release": "automatic-good",
+        "root_sha256": "9f594b7e744973952ae2a65b4eaf4544a23e9f671713d2b10590d26db58a90eb"
+      },
+      {
+        "allocated": {
+          "cumulative_generated_allocated_bytes": 13965008896,
+          "free_bytes": 29465862144,
+          "generated_allocated_bytes": 4538269696
+        },
+        "boot_sha256": "179008ec675c8afc6a002c3a5d51f63202b22a8854c17e9041e4da88a413a5ac",
+        "builder_sha256": "c4cca3b8e5674504d954fb0b0d5b8552eca800a8fd576be97f11585bd33e5c96",
+        "builder_version": "1.15.2",
+        "bundle_bytes": 620468165,
+        "bundle_sha256": "c470b72dd3f83616782fa2740ff8222c26ede0b15fd2880252f8791cd00afc74",
+        "elapsed_seconds": 39.70078888605349,
+        "release": "automatic-bad",
+        "root_sha256": "d97a15edaec5f3c063c48cbff9c996d4a73294cc0c226cb8869513dcc1e38f77"
+      }
+    ],
+    "construction": {
+      "base_sha256_after": "86ba63ee4dd06eb8116f540acc3129d9ba4b39a8d070c98d19afe691251452a5",
+      "command": [
+        "qemu-system-aarch64",
+        "-machine",
+        "virt",
+        "-cpu",
+        "cortex-a57",
+        "-smp",
+        "2",
+        "-m",
+        "1536",
+        "-nographic",
+        "-monitor",
+        "none",
+        "-no-reboot",
+        "-nic",
+        "none",
+        "-kernel",
+        "/home/drew/.sv08-network-fixture-20261009/kernel",
+        "-initrd",
+        "/home/drew/.sv08-network-fixture-20261009/initrd",
+        "-append",
+        "root=/dev/vda rw console=ttyAMA0 init=/bin/bash panic=-1",
+        "-drive",
+        "file=/home/drew/.sv08-auto-arm-20261010/construction.qcow2,format=qcow2,if=virtio",
+        "-virtfs",
+        "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+      ],
+      "elapsed_seconds": 19.182698458898813,
+      "exit_status": 0,
+      "log_sha256": "05843fd306047a9bc697b8b19cd5998a2a047af9b17011319c46db11720ca6ac",
+      "overlay_sha256": "e106c895c5a4cd8abaa84af135efd5323b658c47ad408c5cfa9440fa1484c066",
+      "pass_marker": true,
+      "postflight": {
+        "cumulative_generated_allocated_bytes": 17553354752,
+        "free_bytes": 32691576832,
+        "generated_allocated_bytes": 1309892608
+      },
+      "preflight": {
+        "allocation": {
+          "cumulative_generated_allocated_bytes": 17492963328,
+          "free_bytes": 32751984640,
+          "generated_allocated_bytes": 1249501184
+        },
+        "memory": {
+          "MemAvailable": 12649447424,
+          "SwapFree": 118784
+        },
+        "network": "QEMU -nic none; no forwarding or physical passthrough",
+        "ports": [],
+        "versions": {
+          "qemu-img": "qemu-img version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "qemu-system-aarch64": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+        }
+      },
+      "reason": "guest-eof"
+    },
+    "failed_predecessor": {
+      "boot1": {
+        "allocation": {
+          "cumulative_generated_allocated_bytes": 16792281088,
+          "free_bytes": 28167503872,
+          "generated_allocated_bytes": 5835042816
+        },
+        "command": [
+          "qemu-system-aarch64",
+          "-machine",
+          "virt",
+          "-accel",
+          "tcg,thread=multi",
+          "-cpu",
+          "cortex-a57",
+          "-smp",
+          "4",
+          "-m",
+          "1536",
+          "-nographic",
+          "-monitor",
+          "none",
+          "-no-reboot",
+          "-nic",
+          "none",
+          "-kernel",
+          "/home/drew/.sv08-network-fixture-20261009/kernel",
+          "-initrd",
+          "/home/drew/.sv08-network-fixture-20261009/initrd",
+          "-append",
+          "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=1",
+          "-drive",
+          "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+          "-device",
+          "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+          "-virtfs",
+          "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+        ],
+        "elapsed_seconds": 345.97482245089486,
+        "environment_before_attempt": {
+          "BOOT_A_LEFT": "3",
+          "BOOT_B_LEFT": "0",
+          "BOOT_ORDER": "A",
+          "sv08_env_layout": "ab-8gb-v1"
+        },
+        "exit_status": 0,
+        "log_sha256": "789362b2b42358ea54d5bfca95a5ef4ce802f940140a488193fb944559b0f466",
+        "markers": [
+          "RELIABILITY_PHASE_RESULT {\"phase\": 0, \"slot\": \"A\", \"transaction\": \"57eef0c548c44074bfe065b26c5d5aae\", \"actual_signed_feed\": true, \"automatic\": true, \"release_revision\": 2}"
+        ],
+        "number": 1,
+        "passed": true,
+        "reason": "guest-eof",
+        "slot": "A"
+      },
+      "boot2": {
+        "healthy_confirmation": true,
+        "identity_and_owner_settings_assertions_passed": true,
+        "installation_interrupted": true,
+        "log_sha256": "4cc2150b06acc29db511a5669ee607821bdfb82db071ed48d8ef6a81b14c49a0",
+        "receipt_not_written": "guard exception occurred before run_boot receipt creation",
+        "slot": "B",
+        "source_customization_preserved": true
+      },
+      "candidate_revision": "af70d6d2bda5913dda16f77bfc31d2df08c32a22",
+      "cleanup_proposal_after_root_authorization": [
+        "/home/drew/.sv08-auto-arm-20261010/guest.img",
+        "/home/drew/.sv08-auto-arm-20261010/input/automatic-good.raucb",
+        "/home/drew/.sv08-auto-arm-20261010/input/automatic-bad.raucb",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-owner",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-owner.pub"
+      ],
+      "evidence_hashes": {
+        "arm-package/result.json": "25cd0a28f4fd661ce964329090cec6d9992f7c63de13ca6a5e309d7677b1209c",
+        "compiler-retirement.json": "315f6eb1ebeff64075cf74a3901dba8257ae4ed96ecb15159c26d3d044325e87",
+        "executed-fixture-hashes.json": "f03ce426d7457a28e577c229b52812548c61763c408221a1a1e7fe54fcde51ea",
+        "journey-exec.log": "7138d545721576ae99b08ae4211cf6d07482876174c4f1f60d0a62d907ea4484",
+        "manifest.json": "ef269a098923cb7f28203797e2f2a7e2efadae23a80f6d7a3a535a70e9582bb2",
+        "package-execution.json": "07737150c80c94e9a77d7c3e5487f51e2955039c3778001f9d3d506949ad11a1",
+        "source-hashes.json": "a15da81ffc8cc03e8a748886c24f434672c84b1ebff2a3456b4b40aa12a57308"
+      },
+      "failed_attempts": 1,
+      "failure": "guard raised Assigned disk allowance/reserve exhausted during boot2; current live allocated scratch exceeded6GiB; runtime and cumulative/free-floor bounds not exceeded",
+      "journey_exit_status": 1,
+      "limitations": [
+        "no independent acceptance",
+        "journey incomplete after resource guard",
+        "boot2 install state unknown pending scoped inspection",
+        "no physicalhardware orrelease evidence"
+      ],
+      "process_handle": 50635,
+      "runtime": {
+        "accounted_seconds": 1422.1467416002415,
+        "remaining_seconds": 2177.8532583997585
+      },
+      "status": "INCOMPLETE_RESOURCE_LIMIT",
+      "storage": {
+        "cumulative_accounted_bytes": 17492869120,
+        "free_bytes": 27466260480,
+        "live_allocated_bytes": 6535647232,
+        "measurement": "sudo full assigned scratch traversal"
+      },
+      "unchanged_retries": 0
+    },
+    "fixture_repair": {
+      "attempt1_archive_byte_identity_rechecked": true,
+      "attempt1_archive_hashes": {
+        "active-vm.pid": "c3674fec7f2f7e29fbc3549e2d94606e1395d843f77619f254776f4f4bf06dc6",
+        "allocation-ledger.json": "142e57548d5fbd512b2a3e73361127aaa3194ee960e3fb13758fe78941f8b209",
+        "boot-1-A.json": "3e0c44e16236d16f32c7ac56b862104ff3059f67c2dea3b52fd65e2886bd1fe5",
+        "boot-1-A.log": "789362b2b42358ea54d5bfca95a5ef4ce802f940140a488193fb944559b0f466",
+        "boot-2-B.log": "4cc2150b06acc29db511a5669ee607821bdfb82db071ed48d8ef6a81b14c49a0",
+        "construct-exec.log": "941b992d4c8ca9290ebb0a6ec26ccc662491da08db46f8410f9a1ad7cea8cdfd",
+        "construction-result.json": "1e36b35c35d6d86b22500e05d5968cd7bbe073c0d2894f842e6b2d6254221461",
+        "construction.log": "54843e1eb7e5e775d282f8368344ec61562c83e3b5bb5a787a861581da7379b2",
+        "construction.pid": "54e81aa68ad9bb2c9dbecedec9460c8ce231329545d1f7436d62197b31b8312a",
+        "executed-commands.txt": "6e4d3ea8344d68cb180306e277293fce29e64545ba5a70473fd8205cde2dde0f",
+        "executed-fixture-hashes.json": "f03ce426d7457a28e577c229b52812548c61763c408221a1a1e7fe54fcde51ea",
+        "export-exec.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "journey-exec.log": "7138d545721576ae99b08ae4211cf6d07482876174c4f1f60d0a62d907ea4484",
+        "manifest.json": "ef269a098923cb7f28203797e2f2a7e2efadae23a80f6d7a3a535a70e9582bb2",
+        "media-build.json": "61f3cebdaacbf023f0f2b4adfbea4f2b63011ad4e0a9722edb787991a00de189",
+        "media-exec.log": "428f93d8e34a3799e866c128446e905e9e8ac33f28ad2eb74cdb572bf275f1b1",
+        "preservation-before.json": "3e4dcc20eb2a8d212ef4c5d5fb697751ed360b0290dde02433c47e69ff7b611f",
+        "resource-failure.json": "5a8ad9d84ce541168410a67e03f2c352e7dfa02895a705a212afa596401c9109",
+        "runtime-ledger.json": "24848b0f12595722810c318145b2dc03a4e0e458f025b3b1db9bf71b86e04b66",
+        "source-freeze.json": "d3bc01b5aabaccf883e041a7d706b631d36aafb8de50cdcafde45a0b21098df1",
+        "source-hashes.json": "a15da81ffc8cc03e8a748886c24f434672c84b1ebff2a3456b4b40aa12a57308",
+        "source-template.json": "2ebfb9fc253c43b5564fdaf17ee5340fc0d5e408382792d550c2f70b5a78aff7"
+      },
+      "authorization": "coordinator approved one fresh diagnosed fixture repair; live10GiB only, cumulative32GiB/runtime3600s/freefloor16GiB unchanged",
+      "carried_cumulative_bytes": 17492869120,
+      "carried_runtime_seconds": 1422.1467416002415,
+      "final_command_receipt_sha256": "9f261b9704d88896e322066dcb0f33c0dbea4af413d737837c89dc5615b55180",
+      "fresh_attempt_not_resume": true,
+      "fresh_execution_exit_status": 0,
+      "fresh_execution_result_sha256": "b691cdce5fa1cd98de9d5bcf7d0ee88df49e259f395b326f73801123b3c7c215",
+      "fresh_reconstruction_commands": [
+        "sudo -n unshare --mount --propagation private python3 tests/host_qemu_reliability.py --manifest /home/drew/.sv08-auto-arm-20261010/manifest.json construct",
+        "sudo -n unshare --mount --propagation private python3 tests/host_qemu_reliability.py --manifest /home/drew/.sv08-auto-arm-20261010/manifest.json export-template",
+        "sudo -n unshare --mount --propagation private python3 /home/drew/.sv08-auto-arm-20261010/rebuild-media-wrapper.py"
+      ],
+      "fresh_reconstruction_exit_statuses": [
+        0,
+        0,
+        0
+      ],
+      "identities_and_signed_bundles": "preserved existing inputs unchanged",
+      "manifest_after_sha256": "1e98c185602e102ba6a657bff46d54119528e3e351475e58cbbe75fc4f5c2176",
+      "manifest_before_sha256": "ef269a098923cb7f28203797e2f2a7e2efadae23a80f6d7a3a535a70e9582bb2",
+      "partial_disk_absent": true,
+      "partial_disk_retirement": {
+        "allocated_bytes": 5286227968,
+        "elapsed_hash_seconds": 4.390406724996865,
+        "logical_bytes": 7818182656,
+        "path": "/home/drew/.sv08-auto-arm-20261010/guest.img",
+        "sha256": "754a075ef92692205afe749c774c354285a6fc7f9601105a25b993d36b31717a"
+      },
+      "post_retirement_allocation": {
+        "cumulative_generated_allocated_bytes": 17492955136,
+        "free_bytes": 32752164864,
+        "generated_allocated_bytes": 1249492992
+      },
+      "retirement_receipt_sha256": "1d41f7a80ba40e7abc207ebbd76054f800fd20cdf28f71cb614ebacbd78e935e",
+      "wrapper": {
+        "elapsed_seconds": 12.48775249090977,
+        "exit_status": 0,
+        "intercepted_argv": [
+          [
+            "openssl",
+            "req",
+            "-x509",
+            "-newkey",
+            "rsa:2048",
+            "-nodes",
+            "-keyout",
+            "/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+            "-out",
+            "/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+            "-days",
+            "2",
+            "-subj",
+            "/CN=SV08 disposable reliability"
+          ],
+          [
+            "ssh-keygen",
+            "-q",
+            "-t",
+            "ed25519",
+            "-N",
+            "",
+            "-f",
+            "/home/drew/.sv08-auto-arm-20261010/fixture-owner"
+          ]
+        ],
+        "public_identity_after": {
+          "fixture-cert.pem": "86271e81dea97351984165870f3606fda1a56c16fff3f8b6350d7735982e1449",
+          "fixture-owner.pub": "3559a754c26ab57041642420a234758c8f55ebf3b322262dca18d9eb8f938a8f"
+        },
+        "public_identity_before": {
+          "fixture-cert.pem": "86271e81dea97351984165870f3606fda1a56c16fff3f8b6350d7735982e1449",
+          "fixture-owner.pub": "3559a754c26ab57041642420a234758c8f55ebf3b322262dca18d9eb8f938a8f"
+        },
+        "public_identity_unchanged": true,
+        "wrapper_path": "/home/drew/.sv08-auto-arm-20261010/rebuild-media-wrapper.py",
+        "wrapper_sha256": "8ff16127c053fad8866ece8cc53c8f01564388a261fd8f1fadeb54a0818d5f9d"
+      }
+    },
+    "journey": {
+      "actual_production_prepare_and_health": true,
+      "actual_signed_rauc_installation": true,
+      "allocation": {
+        "cumulative_generated_allocated_bytes": 24352333824,
+        "free_bytes": 27366854656,
+        "generated_allocated_bytes": 6655053824
+      },
+      "base_sha256_after": "86ba63ee4dd06eb8116f540acc3129d9ba4b39a8d070c98d19afe691251452a5",
+      "boot_selection": "host model consumes real redundant environment, no U-Boot execution",
+      "boots": [
+        {
+          "allocation": {
+            "cumulative_generated_allocated_bytes": 23532601344,
+            "free_bytes": 28187697152,
+            "generated_allocated_bytes": 5835321344
+          },
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=1",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "elapsed_seconds": 342.7605282198638,
+          "environment_before_attempt": {
+            "BOOT_A_LEFT": "3",
+            "BOOT_B_LEFT": "0",
+            "BOOT_ORDER": "A",
+            "sv08_env_layout": "ab-8gb-v1"
+          },
+          "exit_status": 0,
+          "log_sha256": "e3494a38071e57ef51bf22be0d92274817635bef324c6d7673b42d1832d9f3d2",
+          "markers": [
+            "RELIABILITY_PHASE_RESULT {\"phase\": 0, \"slot\": \"A\", \"transaction\": \"91df92c500f94065bff65838d3f82e40\", \"actual_signed_feed\": true, \"automatic\": true, \"release_revision\": 2}"
+          ],
+          "number": 1,
+          "passed": true,
+          "reason": "guest-eof",
+          "slot": "A"
+        },
+        {
+          "allocation": {
+            "cumulative_generated_allocated_bytes": 24351997952,
+            "free_bytes": 27368030208,
+            "generated_allocated_bytes": 6654717952
+          },
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda4 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=B sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=2",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "elapsed_seconds": 359.641027597012,
+          "environment_before_attempt": {
+            "BOOT_A_LEFT": "3",
+            "BOOT_B_LEFT": "3",
+            "BOOT_ORDER": "B A",
+            "sv08_env_layout": "ab-8gb-v1"
+          },
+          "exit_status": 0,
+          "log_sha256": "cd9bb82c34a50b0e04980c520d3850bec9f1ae61996e389f6d66a14617ebde7e",
+          "markers": [
+            "RELIABILITY_PHASE_RESULT {\"phase\": 1, \"slot\": \"B\", \"transaction\": \"b13d695d92ef48f09910e738c907dab9\", \"actual_signed_feed\": true, \"automatic\": true, \"release_revision\": 3}"
+          ],
+          "number": 2,
+          "passed": true,
+          "reason": "guest-eof",
+          "slot": "B"
+        },
+        {
+          "allocation": {
+            "cumulative_generated_allocated_bytes": 24352129024,
+            "free_bytes": 27367538688,
+            "generated_allocated_bytes": 6654849024
+          },
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=3",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "elapsed_seconds": 169.8781171310693,
+          "environment_before_attempt": {
+            "BOOT_A_LEFT": "3",
+            "BOOT_B_LEFT": "3",
+            "BOOT_ORDER": "A B",
+            "sv08_env_layout": "ab-8gb-v1"
+          },
+          "exit_status": 0,
+          "log_sha256": "d4b6ab793679892e032ef3886dce86151415ed5ae6c20c2264dad43f3b104a7c",
+          "markers": [
+            "RELIABILITY_FAILED_TARGET_RESULT {\"slot\": \"A\", \"boot_id\": \"c01caa0b-0c36-4ebb-a311-4dcd3c0e1ce8\", \"failed_boots\": 1, \"actual_health\": true}"
+          ],
+          "number": 3,
+          "passed": true,
+          "reason": "guest-eof",
+          "slot": "A"
+        },
+        {
+          "allocation": {
+            "cumulative_generated_allocated_bytes": 24352178176,
+            "free_bytes": 27367391232,
+            "generated_allocated_bytes": 6654898176
+          },
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=2 sv08.fixture.boot_number=4",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "elapsed_seconds": 169.35604830621742,
+          "environment_before_attempt": {
+            "BOOT_A_LEFT": "2",
+            "BOOT_B_LEFT": "3",
+            "BOOT_ORDER": "A B",
+            "sv08_env_layout": "ab-8gb-v1"
+          },
+          "exit_status": 0,
+          "log_sha256": "58f973dab6947ffb449410f208b8ce02ad42072e98d4cd1dc405d6a5e8553cab",
+          "markers": [
+            "RELIABILITY_FAILED_TARGET_RESULT {\"slot\": \"A\", \"boot_id\": \"d725b9c9-747b-403d-b1d8-2646894f6ffc\", \"failed_boots\": 2, \"actual_health\": true}"
+          ],
+          "number": 4,
+          "passed": true,
+          "reason": "guest-eof",
+          "slot": "A"
+        },
+        {
+          "allocation": {
+            "cumulative_generated_allocated_bytes": 24352243712,
+            "free_bytes": 27367165952,
+            "generated_allocated_bytes": 6654963712
+          },
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=1 sv08.fixture.boot_number=5",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "elapsed_seconds": 169.56772529915906,
+          "environment_before_attempt": {
+            "BOOT_A_LEFT": "1",
+            "BOOT_B_LEFT": "3",
+            "BOOT_ORDER": "A B",
+            "sv08_env_layout": "ab-8gb-v1"
+          },
+          "exit_status": 0,
+          "log_sha256": "1c0b1ac6c2c997d91b67e30447ae3524a57cf92246cc6a2b9229b7f97cc10f59",
+          "markers": [
+            "RELIABILITY_FAILED_TARGET_RESULT {\"slot\": \"A\", \"boot_id\": \"fbea1f49-8c87-44fd-98eb-dcfd82c4889c\", \"failed_boots\": 3, \"actual_health\": true}"
+          ],
+          "number": 5,
+          "passed": true,
+          "reason": "guest-eof",
+          "slot": "A"
+        },
+        {
+          "allocation": {
+            "cumulative_generated_allocated_bytes": 24352317440,
+            "free_bytes": 27366871040,
+            "generated_allocated_bytes": 6655037440
+          },
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda4 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=B sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=6",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "elapsed_seconds": 85.9297561799176,
+          "environment_before_attempt": {
+            "BOOT_A_LEFT": "0",
+            "BOOT_B_LEFT": "3",
+            "BOOT_ORDER": "A B",
+            "sv08_env_layout": "ab-8gb-v1"
+          },
+          "exit_status": 0,
+          "log_sha256": "15ef3934327d1b47f2c6916bdb1792a5a471695fd340cba94ad0f6b4f39afb79",
+          "markers": [
+            "RELIABILITY_JOURNEY_PASS"
+          ],
+          "number": 6,
+          "passed": true,
+          "reason": "guest-eof",
+          "slot": "B"
+        }
+      ],
+      "execution": {
+        "accepted_previous_boots": 0,
+        "fixture_files": {
+          "/home/drew/.sv08-auto-arm-20261010/input/guest.py": "9ef4ba5c4a80b3c2367f87805ffbd2a0349078418489f0c54b7305519a3cf233",
+          "/home/drew/.sv08-auto-arm-20261010/input/setup.sh": "18cabba5828be60fb239d336af3f2fc928b2ed42e2cc50023ef44d594191c131",
+          "/home/drew/.sv08-auto-arm-20261010/input/slot_driver.py": "2ba4df2fa32650ef561003a87b19ac6753f6c99eabb935118333dff7ded89e1e",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/automatic-update-policy-implement/tests/host_qemu_reliability.py": "468d2d066c19befa81a53538edbd42dead8848e145d59202281c6f13d4afce43"
+        },
+        "manifest_sha256": "a15da81ffc8cc03e8a748886c24f434672c84b1ebff2a3456b4b40aa12a57308",
+        "resume": null,
+        "revision": "af70d6d2bda5913dda16f77bfc31d2df08c32a22"
+      },
+      "physical_hardware": false,
+      "preserved_regions": {
+        "backup_gpt": "00e8ff19342f4ac3f3bda645929b4a781649f15dc8eff68ca109c564206931b3",
+        "primary_header": "fea2440649af387036159494c1bc2275101dc9ae17773a9616a604409a7cf938",
+        "primary_table": "84616a4e908c9acd9b476a35db6349b3cb192ce2413b001693147fe545873912",
+        "recovery": "ede46af89fcf109d9c2c75e0a8bd87e353b029ca772d604ca837479f0b185446"
+      },
+      "printer": "simulated service and idle ACK",
+      "source": {
+        "dirty": false,
+        "files": {
+          "configs/host-os/environment-layout.json": "b693b19eca6f01177180efc3a9239bc287b19955a4987a826bb31abc89178093",
+          "configs/host-os/rauc-service-policy.json": "5b532261b8d63bbfb1b0654d5b4c6fd1dc7dd80649a077655d8506c5c63fadb5",
+          "configs/host-os/rauc-system.conf.in": "b128bc83c37073540aac481b7335cb5b78a48a3eca9b42f19717552b098d11e2",
+          "configs/host-os/sv08-rauc-policy.conf": "173d1b749b1e7f90edca5f633f1834ee9a5300abac6d1aa0c2014c30821ab29a",
+          "configs/host-os/sv08-rauc-service.conf": "bb9c18b657242e0e8e4a33981b346278796052216528b31da09319a99ec1a47d",
+          "configs/host-os/systemd/sv08-boot-health.service": "3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3",
+          "configs/host-os/systemd/sv08-klipper.service": "58f7e5efe32e869640e3b5e173eca35f6522d4a36595f69cb141dbe2d08bfe3d",
+          "configs/host-os/systemd/sv08-mainsail.service": "bd5f0458c2e5140a9fb7deff80619b8f145c913dd00bb7cdf09b714fa9556a00",
+          "configs/host-os/systemd/sv08-moonraker.service": "9c9fa4b17c785411ee5d9520372febb868c2d651427ab9d59161dd2cf58e80bb",
+          "configs/host-os/systemd/sv08-network-rollback.service": "df46853f86b8d0b402cc1ee26527ea4f1faed3724b67dea9c84153d7ac36293e",
+          "configs/host-os/systemd/sv08-prepare.service": "d14a8a94eccc9a84958fe25c8aa7e4f0299324c9bb834d97050f0e264168a4f9",
+          "configs/host-os/systemd/sv08-printer-api.service": "e08d96b1484fee22a1c05adef7663e064af01e05e99a0ba4b24648994061b9c4",
+          "configs/host-os/systemd/sv08-software-worker@.service": "9602a59fa35f40e6950c288072178c1ece2df207551d330b7959fdc862cab038",
+          "configs/host-os/systemd/sv08-web-auth.service": "b90121afb3548281bdf49ae5cab48d6fde599f2abf05f2d079643cb9638636f9",
+          "configs/host-os/systemd/sv08-web-prepare.service": "215d27dbe1d95c5c5cf2e2e8c9c54055824df1a03bc3e474055a16e6b1b00f91",
+          "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+          "runtime/sv08_admin.py": "b760ca55890be4c3ec5beb09ac29763b051bbcdc1f8526821ced136c13c51758",
+          "runtime/sv08_admin_history.py": "a660fe8e94df4b604e3949716205f5753fc14048e3624ee9b7223e924705d10b",
+          "runtime/sv08_admin_images.py": "9d34b7189c5001d7e3d7aa722a8c8ee3e27ad2b5bfd84f481bfe40ab3586123c",
+          "runtime/sv08_admin_jobs.py": "cc5d83140fe9617dcfa5b802ecbf270e28f93191aa9c284c90300fa8a0c0e0b5",
+          "runtime/sv08_admin_resolution.py": "f12d66e0620d2560b38c788a3cf646086bc642a25e24c4b55b71de1f72cd117b",
+          "runtime/sv08_admin_upload.py": "a773000b2e79120e875c2470b35e0c836d4738bcfe5e63e8c02778ec895cc502",
+          "runtime/sv08_admission.py": "32e683d28f6b3004b4b9bf7ec8562f0d0cae58ab34d1df677a387972598b9b1b",
+          "runtime/sv08_auto_reboot.py": "91f778ab14df667c5745c2d550357eec969a33f948564d55b7c0d678cfb50e11",
+          "runtime/sv08_boot.py": "fdf2fa13c4a40d67e8e9bbf6ef77842b76f35d053198b3ef6f60c9baf34862cd",
+          "runtime/sv08_boot_health.py": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f",
+          "runtime/sv08_bundle.py": "c9fb80348ce154651fce5b8003456a4e1ec5bef7acf1b86ccfecef4e4be48d64",
+          "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+          "runtime/sv08_data_budget.py": "88e42b2af5be1a6c94d2e5d96702fca0a3fa3d3ce19968f3bf63e7d36f082757",
+          "runtime/sv08_export.py": "a61e13d82ffd731f52c92cd2608f9a8e8b59258a861650a8d5fad8bf2472269e",
+          "runtime/sv08_feed.py": "b70282b57a006291a3f2d71ff5fd3f9206a5f1fa8a4f75c6fc2b734bbefede50",
+          "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+          "runtime/sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+          "runtime/sv08_mainsail_access.py": "e5ffae4b73b54e917df352bf212551d5901d315e4cf65f4d7dbbe612e6ef76a5",
+          "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+          "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+          "runtime/sv08_package.py": "2a93ac0c0b7a20e2870e0006b2bb8e7e2f337cbf5d54a2c6032c02ca9f4aae58",
+          "runtime/sv08_printer_catalog.py": "b788f50763872c61db6dd6ce47f3f31cde79a9ae424d44348d5589d2cb11f321",
+          "runtime/sv08_printer_compact.py": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+          "runtime/sv08_printer_compose.py": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+          "runtime/sv08_printer_definitions.py": "63153d3f0b68e3631808a9a9f57e0cd728374989a1b4afd4c90152bda593e4e7",
+          "runtime/sv08_printer_fields.py": "09a5e2d3e46f9098b03900114d46c94bd3a790ebe2f5b75630b4b87c221a4198",
+          "runtime/sv08_printer_generate.py": "447fa31abae308db9f170f7cecd173481f199f872b29706acd0a208842628862",
+          "runtime/sv08_printer_helper.py": "4bcc59abae514b90965260f1e1199ce0bde8218e25f3af59cd4db8b34c340ba3",
+          "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+          "runtime/sv08_printer_sources.py": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+          "runtime/sv08_printer_stack.py": "500cf615eda235afc162a5f51a6c0645ff6a179314ced27f0b05a55ede1115ea",
+          "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+          "runtime/sv08_rauc.py": "586e33e09d2e01c7be06d8e448953287a828a98702d8a44dd8240dcffa0baf9d",
+          "runtime/sv08_rauc_bootloader.py": "b7ab5d71b944259c91ec42152d1557846a131a752c4501bab23f56c4dcd84753",
+          "runtime/sv08_rauc_service.py": "68470e12ea15790152481a1ca05ea112772f3074000f3d3926b26a982a09e614",
+          "runtime/sv08_recovery.py": "04f1877666d57122ecf73b8e4cdbc038c59c6173b8eaa29e9be6ac58cbc1d1aa",
+          "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+          "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+          "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+          "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+          "runtime/sv08_restart.py": "af23dd8538bc955934768815cef2744955568ca1efc2ce95a5f577bd06c1b0fd",
+          "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+          "runtime/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4",
+          "runtime/sv08_software.py": "13a64a14981c73adba9e1f93857bbb8c880d41a7d8904e8cc53e583ea0c37d6d",
+          "runtime/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+          "runtime/sv08_state.py": "b632137305aa2976c6fdf82e2c9a9bf8a47eac451ce213f0eac2028a6ccb0771",
+          "runtime/sv08_transaction.py": "347e3ec520f11a66d422c6f7f75758f2cb2f5b6ff0ca5ce5362532125bbd22c2",
+          "runtime/sv08_update_policy.py": "23e796044eea543a964434888a47e0cd8cc59a6bdb32c9187c46384c3734b082",
+          "runtime/sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d",
+          "tests/host_qemu_auto_policy.py": "9ef4ba5c4a80b3c2367f87805ffbd2a0349078418489f0c54b7305519a3cf233",
+          "tests/host_qemu_rauc_composed.py": "f33c14014e3a05e26c320800aef745847e548f12fbbcc8cee7198794223b0858",
+          "tests/host_qemu_unattended_update.py": "5c4a400b87533ac83476072411ad5a0ec83741848183f9963008db209b68eddb"
+        },
+        "preflight": {
+          "cumulative_generated_allocated_bytes": 18946830336,
+          "free_bytes": 31358414848,
+          "generated_allocated_bytes": 2643001344
+        },
+        "revision": "af70d6d2bda5913dda16f77bfc31d2df08c32a22"
+      },
+      "status": "PASS"
+    },
+    "journey_result_sha256": "b691cdce5fa1cd98de9d5bcf7d0ee88df49e259f395b326f73801123b3c7c215",
+    "limitations": [
+      "Local injected transport, real CMS verification; not real HTTPS download performance",
+      "Simulated printer services/idle ACK; real production preparation, health, RAUC and systemd",
+      "Failed-health fixture replaces the production fallback reboot callback with a marker; guest assertions then request actual systemd reboot",
+      "Host consumes real redundant environment counters; no H616 SPL/U-Boot execution",
+      "Disposable nondeployable media; no physical printer operation"
+    ],
+    "manifest": {
+      "arm_rauc_sha256": "2d4a14c0371a28e0a81255a3a9a9de901a5fa4b6c24b6530ab2aef37e0ba40ba",
+      "automatic_policy_fixture": true,
+      "base": {
+        "path": "/home/drew/sv08-mainline/local/cockpit-proof-8c6f24/guest.ext4",
+        "sha256": "86ba63ee4dd06eb8116f540acc3129d9ba4b39a8d070c98d19afe691251452a5"
+      },
+      "candidate": {
+        "hash_manifest": "/home/drew/.sv08-auto-arm-20261010/source-hashes.json",
+        "hash_manifest_sha256": "a15da81ffc8cc03e8a748886c24f434672c84b1ebff2a3456b4b40aa12a57308",
+        "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/automatic-update-policy-implement",
+        "revision": "af70d6d2bda5913dda16f77bfc31d2df08c32a22"
+      },
+      "construction_seconds": 300,
+      "format_version": 1,
+      "health_boot_seconds": 300,
+      "initrd": {
+        "path": "/home/drew/.sv08-network-fixture-20261009/initrd",
+        "sha256": "470d669587382bdf662fceaff09efd0fee8cd5aa58ac69a87bf1ea7744903142"
+      },
+      "install_boot_seconds": 600,
+      "kernel": {
+        "path": "/home/drew/.sv08-network-fixture-20261009/kernel",
+        "sha256": "9c37ace54ef7e1919411fd912e9f34d6982ddd7f4c8ef3c8aee56f4c4d70db67"
+      },
+      "limits": {
+        "cumulative_bytes": 34359738368,
+        "free_floor_bytes": 17179869184,
+        "live_bytes": 10737418240,
+        "log_bytes": 4194304,
+        "runtime_seconds": 3600
+      },
+      "max_boots": 6,
+      "native_rauc": {
+        "path": "/home/drew/sv08-mainline/build/rauc-native-v2/rauc",
+        "sha256": "c4cca3b8e5674504d954fb0b0d5b8552eca800a8fd576be97f11585bd33e5c96"
+      },
+      "packages": [
+        {
+          "filename": "liblzo2-2.deb",
+          "path": "/home/drew/.sv08-reliability-integration-20261009/input/liblzo2-2.deb",
+          "sha256": "ee0f990bef6693c8249d7a3de4b17f65d549beae84b6d1413421618ac6427914"
+        },
+        {
+          "filename": "squashfs-tools.deb",
+          "path": "/home/drew/.sv08-reliability-integration-20261009/input/squashfs-tools.deb",
+          "sha256": "c074f409b735b80ca5dbbf415436aef49a162e2daf148de007ffceabf0332304"
+        },
+        {
+          "filename": "rauc.deb",
+          "path": "/home/drew/.sv08-auto-arm-20261010/arm-package/rauc_1.15.2-0sv08.2_arm64.deb",
+          "sha256": "fc1d757cbe91b39d59f1e4f6634d77016748929ac17849f2047935a4f620f0ec"
+        },
+        {
+          "filename": "klipper.deb",
+          "path": "/home/drew/.sv08-reliability-integration-20261009/input/klipper.deb",
+          "sha256": "a418eeddfbb95b0b1d228ce19961ae1fde0d6879e9784c51d5f63c0c4c6608cf"
+        }
+      ],
+      "prior_runtime_seconds": 700,
+      "release_revisions": {
+        "automatic-bad": 3,
+        "automatic-good": 2,
+        "reliability-source": 1
+      },
+      "retired_before_ledger_bytes": 6442450944,
+      "scratch": "/home/drew/.sv08-auto-arm-20261010"
+    },
+    "manifest_sha256": "1e98c185602e102ba6a657bff46d54119528e3e351475e58cbbe75fc4f5c2176",
+    "media": {
+      "allocated_bytes": 1758494720,
+      "disk_sha256": "186c643994f24d7149fd423762321a7ab69d4a8fcc7a8245061de930d34fc71c",
+      "physical_hardware": false,
+      "postflight": {
+        "cumulative_generated_allocated_bytes": 20705337344,
+        "free_bytes": 29599891456,
+        "generated_allocated_bytes": 4401508352
+      },
+      "source_revision": "af70d6d2bda5913dda16f77bfc31d2df08c32a22",
+      "source_template_sha256_after_fsck": "86c5725f430fddf00234244a3d042591d12ff03ca1a3f55770b650e9109bbf25"
+    },
+    "retirement": {
+      "absent_paths": [
+        "/home/drew/.sv08-auto-arm-20261010/guest.img",
+        "/home/drew/.sv08-auto-arm-20261010/source-template.ext4",
+        "/home/drew/.sv08-auto-arm-20261010/input/automatic-good.raucb",
+        "/home/drew/.sv08-auto-arm-20261010/input/automatic-bad.raucb",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-owner",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+        "/home/drew/.sv08-auto-arm-20261010/fixture-owner.pub",
+        "/home/drew/.sv08-auto-arm-20261010/construction.qcow2",
+        "/home/drew/.sv08-auto-arm-20261010/bundle-content"
+      ],
+      "after": {
+        "cumulative_generated_allocated_bytes": 24352382976,
+        "free_bytes": 34012852224,
+        "generated_allocated_bytes": 8921088
+      },
+      "already_absent": [
+        "/home/drew/.sv08-auto-arm-20261010/source-template.ext4",
+        "/home/drew/.sv08-auto-arm-20261010/construction.qcow2",
+        "/home/drew/.sv08-auto-arm-20261010/bundle-content"
+      ],
+      "authorization": "coordinator exact listed goal-owned bulk retirement after successful fresh6boot journey; preserve public evidence and ARMpackage",
+      "before": {
+        "cumulative_generated_allocated_bytes": 24352382976,
+        "free_bytes": 27366670336,
+        "generated_allocated_bytes": 6655102976
+      },
+      "charges_not_reset": true,
+      "consumer_check_argv": [
+        "pgrep",
+        "-f",
+        "^qemu-system-aarch64"
+      ],
+      "consumer_check_exit_status": 1,
+      "full_carried_runtime_ledger": {
+        "prior_seconds": 700.0,
+        "runs": [
+          {
+            "command": [
+              "fixture-cli",
+              "prepare-inputs",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 0.017067128093913198
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "2",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda rw console=ttyAMA0 init=/bin/bash panic=-1",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/construction.qcow2,format=qcow2,if=virtio",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 18.478775830939412
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "construct",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 2.2355840380769223
+          },
+          {
+            "command": [
+              "qemu-img",
+              "convert",
+              "-f",
+              "qcow2",
+              "-O",
+              "raw",
+              "/home/drew/.sv08-auto-arm-20261010/construction.qcow2",
+              "/home/drew/.sv08-auto-arm-20261010/source-template.ext4"
+            ],
+            "seconds": 0.41457160795107484
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "export-template",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 1.127517102053389
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "build-media",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 12.389646664028987
+          },
+          {
+            "command": [
+              "/home/drew/sv08-mainline/build/rauc-native-v2/rauc",
+              "bundle",
+              "--cert=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+              "--key=/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+              "--signing-keyring=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+              "/home/drew/.sv08-auto-arm-20261010/bundle-content",
+              "/home/drew/.sv08-auto-arm-20261010/input/automatic-good.raucb"
+            ],
+            "seconds": 40.31854807189666
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "bundle",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 5.713223204249516
+          },
+          {
+            "command": [
+              "/home/drew/sv08-mainline/build/rauc-native-v2/rauc",
+              "bundle",
+              "--cert=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+              "--key=/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+              "--signing-keyring=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+              "/home/drew/.sv08-auto-arm-20261010/bundle-content",
+              "/home/drew/.sv08-auto-arm-20261010/input/automatic-bad.raucb"
+            ],
+            "seconds": 38.24834157899022
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "bundle",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 5.582148950081319
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=1",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 345.9708521629218
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "journey",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 251.6504652609583
+          },
+          {
+            "command": [
+              "approved-fixture-repair",
+              "archive-hash-retire-partial-media"
+            ],
+            "seconds": 5.970932387979701
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "2",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda rw console=ttyAMA0 init=/bin/bash panic=-1",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/construction.qcow2,format=qcow2,if=virtio",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 19.18242835998535
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "construct",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 2.2419483340345323
+          },
+          {
+            "command": [
+              "qemu-img",
+              "convert",
+              "-f",
+              "qcow2",
+              "-O",
+              "raw",
+              "/home/drew/.sv08-auto-arm-20261010/construction.qcow2",
+              "/home/drew/.sv08-auto-arm-20261010/source-template.ext4"
+            ],
+            "seconds": 0.3644646368920803
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "export-template",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 1.167629114119336
+          },
+          {
+            "command": [
+              "approved-rebuild-media-wrapper"
+            ],
+            "seconds": 12.487845689989626
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=1",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 342.75915282196365
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda4 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=B sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=2",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 359.63995549897663
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=3",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 169.87731153215282
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=2 sv08.fixture.boot_number=4",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 169.35525860707276
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=1 sv08.fixture.boot_number=5",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 169.5667437009979
+          },
+          {
+            "command": [
+              "qemu-system-aarch64",
+              "-machine",
+              "virt",
+              "-accel",
+              "tcg,thread=multi",
+              "-cpu",
+              "cortex-a57",
+              "-smp",
+              "4",
+              "-m",
+              "1536",
+              "-nographic",
+              "-monitor",
+              "none",
+              "-no-reboot",
+              "-nic",
+              "none",
+              "-kernel",
+              "/home/drew/.sv08-network-fixture-20261009/kernel",
+              "-initrd",
+              "/home/drew/.sv08-network-fixture-20261009/initrd",
+              "-append",
+              "root=/dev/vda4 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=B sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=6",
+              "-drive",
+              "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+              "-device",
+              "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+              "-virtfs",
+              "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+            ],
+            "seconds": 85.92882808181457
+          },
+          {
+            "command": [
+              "fixture-cli",
+              "journey",
+              "preparation-and-cleanup"
+            ],
+            "seconds": 2.934824018040672
+          },
+          {
+            "command": [
+              "final-public-artifact-hash-receipts"
+            ],
+            "seconds": 6.6154692398849875
+          },
+          {
+            "command": [
+              "authorized-exact-goal-bulk-retirement"
+            ],
+            "seconds": 1.7865454929415137
+          }
+        ],
+        "total_seconds": 2772.0260791170876
+      },
+      "no_active_qemu": true,
+      "reclaimed_allocated_bytes": 6646181888,
+      "removed": [
+        {
+          "allocated_bytes": 5405118464,
+          "path": "/home/drew/.sv08-auto-arm-20261010/guest.img"
+        },
+        {
+          "allocated_bytes": 620572672,
+          "path": "/home/drew/.sv08-auto-arm-20261010/input/automatic-good.raucb"
+        },
+        {
+          "allocated_bytes": 620474368,
+          "path": "/home/drew/.sv08-auto-arm-20261010/input/automatic-bad.raucb"
+        },
+        {
+          "allocated_bytes": 4096,
+          "path": "/home/drew/.sv08-auto-arm-20261010/fixture-key.pem"
+        },
+        {
+          "allocated_bytes": 4096,
+          "path": "/home/drew/.sv08-auto-arm-20261010/fixture-owner"
+        },
+        {
+          "allocated_bytes": 4096,
+          "path": "/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem"
+        },
+        {
+          "allocated_bytes": 4096,
+          "path": "/home/drew/.sv08-auto-arm-20261010/fixture-owner.pub"
+        }
+      ],
+      "resource_lock_acquired": true
+    },
+    "runtime": {
+      "prior_seconds": 700.0,
+      "runs": [
+        {
+          "command": [
+            "fixture-cli",
+            "prepare-inputs",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 0.017067128093913198
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "2",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda rw console=ttyAMA0 init=/bin/bash panic=-1",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/construction.qcow2,format=qcow2,if=virtio",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 18.478775830939412
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "construct",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 2.2355840380769223
+        },
+        {
+          "command": [
+            "qemu-img",
+            "convert",
+            "-f",
+            "qcow2",
+            "-O",
+            "raw",
+            "/home/drew/.sv08-auto-arm-20261010/construction.qcow2",
+            "/home/drew/.sv08-auto-arm-20261010/source-template.ext4"
+          ],
+          "seconds": 0.41457160795107484
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "export-template",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 1.127517102053389
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "build-media",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 12.389646664028987
+        },
+        {
+          "command": [
+            "/home/drew/sv08-mainline/build/rauc-native-v2/rauc",
+            "bundle",
+            "--cert=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+            "--key=/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+            "--signing-keyring=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+            "/home/drew/.sv08-auto-arm-20261010/bundle-content",
+            "/home/drew/.sv08-auto-arm-20261010/input/automatic-good.raucb"
+          ],
+          "seconds": 40.31854807189666
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "bundle",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 5.713223204249516
+        },
+        {
+          "command": [
+            "/home/drew/sv08-mainline/build/rauc-native-v2/rauc",
+            "bundle",
+            "--cert=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+            "--key=/home/drew/.sv08-auto-arm-20261010/fixture-key.pem",
+            "--signing-keyring=/home/drew/.sv08-auto-arm-20261010/fixture-cert.pem",
+            "/home/drew/.sv08-auto-arm-20261010/bundle-content",
+            "/home/drew/.sv08-auto-arm-20261010/input/automatic-bad.raucb"
+          ],
+          "seconds": 38.24834157899022
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "bundle",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 5.582148950081319
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=1",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 345.9708521629218
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "journey",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 251.6504652609583
+        },
+        {
+          "command": [
+            "approved-fixture-repair",
+            "archive-hash-retire-partial-media"
+          ],
+          "seconds": 5.970932387979701
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "2",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda rw console=ttyAMA0 init=/bin/bash panic=-1",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/construction.qcow2,format=qcow2,if=virtio",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 19.18242835998535
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "construct",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 2.2419483340345323
+        },
+        {
+          "command": [
+            "qemu-img",
+            "convert",
+            "-f",
+            "qcow2",
+            "-O",
+            "raw",
+            "/home/drew/.sv08-auto-arm-20261010/construction.qcow2",
+            "/home/drew/.sv08-auto-arm-20261010/source-template.ext4"
+          ],
+          "seconds": 0.3644646368920803
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "export-template",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 1.167629114119336
+        },
+        {
+          "command": [
+            "approved-rebuild-media-wrapper"
+          ],
+          "seconds": 12.487845689989626
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=1",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 342.75915282196365
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda4 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=B sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=2",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 359.63995549897663
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=3",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 169.87731153215282
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=2 sv08.fixture.boot_number=4",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 169.35525860707276
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda2 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=A sv08.test=rauc-backend sv08.fixture.attempts_before=1 sv08.fixture.boot_number=5",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 169.5667437009979
+        },
+        {
+          "command": [
+            "qemu-system-aarch64",
+            "-machine",
+            "virt",
+            "-accel",
+            "tcg,thread=multi",
+            "-cpu",
+            "cortex-a57",
+            "-smp",
+            "4",
+            "-m",
+            "1536",
+            "-nographic",
+            "-monitor",
+            "none",
+            "-no-reboot",
+            "-nic",
+            "none",
+            "-kernel",
+            "/home/drew/.sv08-network-fixture-20261009/kernel",
+            "-initrd",
+            "/home/drew/.sv08-network-fixture-20261009/initrd",
+            "-append",
+            "root=/dev/vda4 ro rootwait console=ttyAMA0 init=/bin/bash panic=-1 rauc.slot=B sv08.test=rauc-backend sv08.fixture.attempts_before=3 sv08.fixture.boot_number=6",
+            "-drive",
+            "file=/home/drew/.sv08-auto-arm-20261010/guest.img,format=raw,if=none,id=disk",
+            "-device",
+            "virtio-blk-device,drive=disk,serial=SV08-QEMU-DISPOSABLE",
+            "-virtfs",
+            "local,path=/home/drew/.sv08-auto-arm-20261010/input,mount_tag=input,security_model=none,readonly=on"
+          ],
+          "seconds": 85.92882808181457
+        },
+        {
+          "command": [
+            "fixture-cli",
+            "journey",
+            "preparation-and-cleanup"
+          ],
+          "seconds": 2.934824018040672
+        },
+        {
+          "command": [
+            "final-public-artifact-hash-receipts"
+          ],
+          "seconds": 6.6154692398849875
+        },
+        {
+          "command": [
+            "authorized-exact-goal-bulk-retirement"
+          ],
+          "seconds": 1.7865454929415137
+        }
+      ],
+      "total_seconds": 2772.0260791170876
+    }
+  },
+  "arm_package": {
+    "binary_sha256": "2d4a14c0371a28e0a81255a3a9a9de901a5fa4b6c24b6530ab2aef37e0ba40ba",
+    "config": {
+      "architecture": "arm64",
+      "build_dependencies": [
+        "build-essential",
+        "pkg-config",
+        "dpkg-dev",
+        "meson",
+        "ninja-build",
+        "libglib2.0-dev",
+        "libjson-glib-dev",
+        "libssl-dev",
+        "libcurl4-openssl-dev",
+        "libdbus-1-dev",
+        "libnl-3-dev",
+        "libnl-genl-3-dev",
+        "libfdisk-dev",
+        "patch"
+      ],
+      "name": "rauc",
+      "patches": [
+        {
+          "path": "patches/rauc/0001-per-request-signer-trust.patch",
+          "purpose": "Owner-authorized manual per-request signer trust exception; strict defaults unchanged",
+          "sha256": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258"
+        }
+      ],
+      "reason": "Pinned dm-verity compatibility plus explicit per-request signer-chain trust exception; CMS mathematics and payload verification remain mandatory",
+      "source": {
+        "archive_sha256": "35acab5be04ddd0b96ba6b5d4c31f5f356769972a188b096254a3014faa8ed38",
+        "archive_url": "https://api.github.com/repos/rauc/rauc/tarball/4fb7c798d6ae412344fb8f8d310d773046af3441",
+        "commit": "4fb7c798d6ae412344fb8f8d310d773046af3441",
+        "purpose": "Replacement offline installer after 1.13 rejected Linux 7.0 dm-verity status",
+        "repository": "https://github.com/rauc/rauc",
+        "tag": "v1.15.2"
+      },
+      "source_date_epoch": 1774607834,
+      "status": "build-candidate-not-runtime-validated",
+      "version": "1.15.2-0sv08.2"
+    },
+    "hardware_validated": false,
+    "package": "rauc_1.15.2-0sv08.2_arm64.deb",
+    "patches": [
+      {
+        "path": "patches/rauc/0001-per-request-signer-trust.patch",
+        "purpose": "Owner-authorized manual per-request signer trust exception; strict defaults unchanged",
+        "sha256": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258"
+      }
+    ],
+    "sha256": "fc1d757cbe91b39d59f1e4f6634d77016748929ac17849f2047935a4f620f0ec",
+    "version": "rauc 1.15.2"
+  },
+  "baseline": "43a104d59e7b373f8684751ef41a67c05db5f8df",
+  "browser": {
+    "automatic_policy": {
+      "allow_downgrade": true,
+      "allow_untrusted_provenance": false,
+      "check_compatibility": false,
+      "check_customization": false,
+      "check_version": true
+    },
+    "command": [
+      "node",
+      "tests/auto_policy_browser.mjs",
+      "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+      "/home/drew/.sv08-auto-coordinator-20261010/browser-fixture-v2",
+      "/home/drew/.sv08-auto-coordinator-20261010/browser-result-v2"
+    ],
+    "draft_survives_poll": true,
+    "limitations": [
+      "Cockpit shim and localhost fixture; actual Controller persists automatic policy",
+      "manual staging/upload review responses instrumented; no authenticated install claim"
+    ],
+    "manual_review_options_bound": true,
+    "printer": false,
+    "result_sha256": "88e261a2064fbfa5a3986eda7797ce39f42a65d3040f62e5a74b157cc34e7a73",
+    "status": "PASS",
+    "upload_review_options_bound": true
+  },
+  "compiler": {
+    "build": {
+      "builder": "public base image copied ro,noload; only assigned disposable compiler modified",
+      "elapsed_seconds": 200.0985895411577,
+      "exit_status": 0,
+      "invocation": "sudo -n python3 assigned disposable build-package.py; package_rauc.verify then package_rauc.build(config, pinned archive, scratch/compiler, scratch/arm-package)",
+      "source_after": {
+        "configs/host-os/rauc-package.json": "055bdae1d2a501bc81f8b2fc5bdb10580a094ec0d5a63102f546013e6ea1d52d",
+        "patches/rauc/0001-per-request-signer-trust.patch": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258",
+        "scripts/package_rauc.py": "4a99d0e7473687a434a75c44180506965ca7bcfd123d33b0e25297428d75b1ef"
+      },
+      "source_before": {
+        "configs/host-os/rauc-package.json": "055bdae1d2a501bc81f8b2fc5bdb10580a094ec0d5a63102f546013e6ea1d52d",
+        "patches/rauc/0001-per-request-signer-trust.patch": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258",
+        "scripts/package_rauc.py": "4a99d0e7473687a434a75c44180506965ca7bcfd123d33b0e25297428d75b1ef"
+      },
+      "source_unchanged": true
+    },
+    "dependencies": [
+      {
+        "bytes": 305432,
+        "filename": "libldap-dev_2.6.10+dfsg-1_arm64.deb",
+        "sha256": "eb997ad6e35e2dc2812151b7154a286725fb464c2eae0179ab8fd0f7537c369f"
+      },
+      {
+        "bytes": 49588,
+        "filename": "libsysprof-capture-4-dev_48.0-2_arm64.deb",
+        "sha256": "73f30f2a5ff7b378f8d47f1a3e1fcfac74043a4612bf0661c3ea4b96e6e27f98"
+      },
+      {
+        "bytes": 89408,
+        "filename": "libnghttp3-dev_1.8.0-1_arm64.deb",
+        "sha256": "d8a0f1398d67279edb181485ac7e6c9ef67871cdf4585338846e1c8bbde1e91c"
+      },
+      {
+        "bytes": 170024,
+        "filename": "libevent-2.1-7t64_2.1.12-stable-10+b1_arm64.deb",
+        "sha256": "f575eebfdfac806695a717bcde514940161227fd136fe5aa5cea3bb5db37c4f7"
+      },
+      {
+        "bytes": 91636,
+        "filename": "libjson-glib-dev_1.10.6+ds-2_arm64.deb",
+        "sha256": "06a4b40afe50f131aac76751f9880c7f3348fd94c8d443a48127bbffb1950c0d"
+      },
+      {
+        "bytes": 24192,
+        "filename": "libitm1_14.2.0-19_arm64.deb",
+        "sha256": "d6f0255b498af876ab7bf4420672e43cbe58dcd577f0711131cbfbcbee283cdb"
+      },
+      {
+        "bytes": 126404,
+        "filename": "krb5-multidev_1.21.3-5+deb13u1_arm64.deb",
+        "sha256": "9f5d65a069269b0960418f9d5a3110158234a1efbe9a9feb3650c57422fe41ef"
+      },
+      {
+        "bytes": 2294728,
+        "filename": "libstdc++-14-dev_14.2.0-19_arm64.deb",
+        "sha256": "8760122d044cd8eb8c69426311d6b5ce7bb8f0f76e9cda1944d153ae878138f8"
+      },
+      {
+        "bytes": 224360,
+        "filename": "python3-pkg-resources_78.1.1-0.1_all.deb",
+        "sha256": "cf8749251172abc945216cf878367f614cf91d3d9a1043ba3bacc5a74e8cc1a8"
+      },
+      {
+        "bytes": 29636,
+        "filename": "pkgconf-bin_1.8.1-4_arm64.deb",
+        "sha256": "bce0638102650b61224901da320c2f867a91cfc133532a5fb526d2ce05465fe6"
+      },
+      {
+        "bytes": 916612,
+        "filename": "zlib1g-dev_1%3a1.3.dfsg+really1.3.1-1+b1_arm64.deb",
+        "sha256": "745ebcf1fa115e230af76216355d7290a24f1790fe3780249b519c0e4d30534f"
+      },
+      {
+        "bytes": 1325420,
+        "filename": "nettle-dev_3.10.1-1_arm64.deb",
+        "sha256": "4786f95ed545c9e69ad54268f41e0c4c57524f2ef6c0df9c39041d7efe4899f7"
+      },
+      {
+        "bytes": 529264,
+        "filename": "gcc-14_14.2.0-19_arm64.deb",
+        "sha256": "f4ba77903d7efc3c64c69a8a98c7efa8ea1ae4331521bb74abd76bcc43f1b576"
+      },
+      {
+        "bytes": 77772,
+        "filename": "libsframe1_2.44-3_arm64.deb",
+        "sha256": "d4a90764fa79858347aaa3197bc4489404f005d9cdbea9b2ec75a607ea5ff518"
+      },
+      {
+        "bytes": 267336,
+        "filename": "perl_5.40.1-6_arm64.deb",
+        "sha256": "68e82fa4deba7c9dc6b58c73f79b514f77521435b379e5680b8b8adfcd1d2b33"
+      },
+      {
+        "bytes": 452396,
+        "filename": "make_4.4.1-2_arm64.deb",
+        "sha256": "043219839669c431def9bb410c4a827f115ee5bf377469d55c4ed905f81f73be"
+      },
+      {
+        "bytes": 639072,
+        "filename": "meson_1.7.0-1_all.deb",
+        "sha256": "e92d04e60e784336883d537755d09b7dcb856809fa318a0931df3898e84ded95"
+      },
+      {
+        "bytes": 2919204,
+        "filename": "linux-libc-dev_6.12.107-1_all.deb",
+        "sha256": "dc68dd53c7356598d005866da0d19d7bd33af2a62971aced624cdf04492902b4"
+      },
+      {
+        "bytes": 49696,
+        "filename": "uuid-dev_2.41.5-0+deb13u1_arm64.deb",
+        "sha256": "eca5896d42fcc5daaf3f875a11a8766ef6673191d236d233b92d33f6b5fc0341"
+      },
+      {
+        "bytes": 738228,
+        "filename": "python3-setuptools_78.1.1-0.1_all.deb",
+        "sha256": "90c4bc8e311873e5b571b407ce6b1fd38195dff77f9de056301a0f950e6df5a5"
+      },
+      {
+        "bytes": 820124,
+        "filename": "binutils-aarch64-linux-gnu_2.44-3_arm64.deb",
+        "sha256": "79cbf1459118bce3535133ffbf1fd2adbd57af65271f95c829af5cfa7f474168"
+      },
+      {
+        "bytes": 621188,
+        "filename": "libgmp-dev_2%3a6.3.0+dfsg-3_arm64.deb",
+        "sha256": "903664ffe628948ffdcb0d7036d24437e477d7b02fc0c4f04a22f4b67447efae"
+      },
+      {
+        "bytes": 1372824,
+        "filename": "libsystemd-dev_257.13-1~deb13u1_arm64.deb",
+        "sha256": "06239173236c0cfee4ee4310ddeb428b094d3b4e34a80b173587da277d9a1199"
+      },
+      {
+        "bytes": 26148,
+        "filename": "pkgconf_1.8.1-4_arm64.deb",
+        "sha256": "aaf89947e9a5a6d980d14f43dfde8d0ad4e869b5cd33567321ca8baeb7ee7740"
+      },
+      {
+        "bytes": 30736,
+        "filename": "libmount-dev_2.41.5-0+deb13u1_arm64.deb",
+        "sha256": "3407555e8f12a76904df25829d8d83d7681823370b48cd3bb6f1c40448d4dc31"
+      },
+      {
+        "bytes": 1200,
+        "filename": "g++-aarch64-linux-gnu_4%3a14.2.0-1_arm64.deb",
+        "sha256": "655d9a7cb70b0342f5f1bf4f2a7b0241df15d49ab9a2567445c785b7592122f9"
+      },
+      {
+        "bytes": 10059100,
+        "filename": "g++-14-aarch64-linux-gnu_14.2.0-19_arm64.deb",
+        "sha256": "411dac8f1c1d0293e58deddeb170c641ad82c56d51a95f056ee12ba02c24288b"
+      },
+      {
+        "bytes": 55552,
+        "filename": "libglib2.0-dev-bin_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "ef8978233501cd152d6007f88bf7f14fd563ca4e38a2b18634b63d17b4983f56"
+      },
+      {
+        "bytes": 11432,
+        "filename": "python3-jaraco.text_4.0.0-1_all.deb",
+        "sha256": "d5e060c9ba9d5206b53670cf2473681b45030cc6a55d18a8c6d87419a924e502"
+      },
+      {
+        "bytes": 215912,
+        "filename": "libdbus-1-dev_1.16.2-2_arm64.deb",
+        "sha256": "305788b468ae2daba9074e59906a26df34d3f6f347d3191f13043f5a9224f90b"
+      },
+      {
+        "bytes": 166012,
+        "filename": "libgio-2.0-dev-bin_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "e592f6e203bc85a40a89c204b1395dbe865b4d92f3a9a8b4e8c2485c7933c4ec"
+      },
+      {
+        "bytes": 1161132,
+        "filename": "liblsan0_14.2.0-19_arm64.deb",
+        "sha256": "488a54a5fe01a926ae16d73dc7ea9f530f1bf63fae73640f741695eec2541a38"
+      },
+      {
+        "bytes": 42164,
+        "filename": "libcc1-0_14.2.0-19_arm64.deb",
+        "sha256": "f5e390b5fd65432b820afa403a61ab4d6286948fc07ca3aacb4d230a81f5c9a5"
+      },
+      {
+        "bytes": 1440,
+        "filename": "gcc-aarch64-linux-gnu_4%3a14.2.0-1_arm64.deb",
+        "sha256": "c8390408ed90cc96d4fead68e313ed5ce147f1654807c23235818d535d2d7d7e"
+      },
+      {
+        "bytes": 171664,
+        "filename": "libselinux1-dev_3.8.1-1_arm64.deb",
+        "sha256": "32b994441e6a445365fd99711e9c2c25aaa492a3ff9729ba3b881fe4e8901ef4"
+      },
+      {
+        "bytes": 667648,
+        "filename": "libgprofng0_2.44-3_arm64.deb",
+        "sha256": "4642014c84f3d070d889725900fbd23165189597d45deddc7bdcf9928de9e32e"
+      },
+      {
+        "bytes": 8492,
+        "filename": "python3-jaraco.context_6.0.1-1+deb13u1_all.deb",
+        "sha256": "f909ec7b00dd96a1905322acba7cdd2df09747ceddeef6e426a97b33ab227f80"
+      },
+      {
+        "bytes": 67416,
+        "filename": "python3-more-itertools_10.7.0-1_all.deb",
+        "sha256": "385d785fa84261838732ec97627b4e95ec7399fc449d8a2aaaef66fb5f961c25"
+      },
+      {
+        "bytes": 53308,
+        "filename": "libkadm5srv-mit12_1.21.3-5+deb13u1_arm64.deb",
+        "sha256": "9e25c202e883de84c2c37d8cc10cadc8fd5538cd4227a1b9f4f160ece94756d6"
+      },
+      {
+        "bytes": 41296,
+        "filename": "libkadm5clnt-mit12_1.21.3-5+deb13u1_arm64.deb",
+        "sha256": "96da21fca7d97b42d6be881e22648f842ecbe481ee9051d21279696f02170e31"
+      },
+      {
+        "bytes": 17686496,
+        "filename": "gcc-14-aarch64-linux-gnu_14.2.0-19_arm64.deb",
+        "sha256": "5ff736a332ba5d60ad463355ed25c8c39da1281acf9155cc2f8a55fc1d478be8"
+      },
+      {
+        "bytes": 335104,
+        "filename": "libzstd-dev_1.5.7+dfsg-1_arm64.deb",
+        "sha256": "05cf42de5c9fdf17f49f663b47bfe736f10fbc7080fcc3a86ac43d5d670de149"
+      },
+      {
+        "bytes": 56568,
+        "filename": "python3-packaging_25.0-1_all.deb",
+        "sha256": "d70c8469f6e9c6105e1ebcd3ebdc963f11dadbeddd89d2d1a2a3cb1c97d2ecbc"
+      },
+      {
+        "bytes": 128220,
+        "filename": "patch_2.8-2_arm64.deb",
+        "sha256": "182ad723623dcd02dfe5054f3515a26d8bf4a9cce717f03e3e514c02cb9e59e8"
+      },
+      {
+        "bytes": 17968,
+        "filename": "libnl-genl-3-dev_3.7.0-2_arm64.deb",
+        "sha256": "ecccc90dc207a901c6a655e8315d11901b70ee05e7b3cecde97714110fae8bb4"
+      },
+      {
+        "bytes": 74028,
+        "filename": "libgdbm6t64_1.24-2_arm64.deb",
+        "sha256": "329efe726e24a413b9933e298ce24d255973ec111eea0ca721157968fd24156a"
+      },
+      {
+        "bytes": 246860,
+        "filename": "libpcre2-16-0_10.46-1~deb13u1_arm64.deb",
+        "sha256": "c1935859e4fdac3306ee577f98dbcee8aec50b8e2ff0892ca2f0fa05ee5f9008"
+      },
+      {
+        "bytes": 1286720,
+        "filename": "libglib2.0-data_2.84.4-3~deb13u3_all.deb",
+        "sha256": "bb9c50614316ccb8533d65f2f995e25d1275e0d83dcd2b675c2b6da8d620e55b"
+      },
+      {
+        "bytes": 1708844,
+        "filename": "libgio-2.0-dev_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "a1c9f8f81aa7ec75501ddefe3ed8fcf3835154810662ce216bc517dd9ea3f44d"
+      },
+      {
+        "bytes": 123160,
+        "filename": "libcrypt-dev_1%3a4.4.38-1_arm64.deb",
+        "sha256": "eec6d4658495cdb8ce505cad91e0918edb8086677f280f3851c07ccd70543054"
+      },
+      {
+        "bytes": 90500,
+        "filename": "python3-typing-extensions_4.13.2-1_all.deb",
+        "sha256": "b67662f211c35c17c74a0725bc7c8ffc3b126c650e2a2525593adee06f2bbf69"
+      },
+      {
+        "bytes": 916892,
+        "filename": "gir1.2-glib-2.0-dev_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "b0cfab8b96f8204a847a849830c08b864472dcd84fc5f98ec21f3f125554fdce"
+      },
+      {
+        "bytes": 453276,
+        "filename": "libgnutls-dane0t64_3.8.9-3+deb13u4_arm64.deb",
+        "sha256": "33773a36329f94ffa78a40a0c6bca887747be84771765d3af40455e7c7be1fc4"
+      },
+      {
+        "bytes": 660392,
+        "filename": "libbinutils_2.44-3_arm64.deb",
+        "sha256": "c51c0cc0272202d00fc3e6da8b96bfed2a428c239b689363abddd3bac6bd7a02"
+      },
+      {
+        "bytes": 495984,
+        "filename": "libcurl4-openssl-dev_8.14.1-2+deb13u4_arm64.deb",
+        "sha256": "054fa85e1491b9da2638e83112d11d8cc22936a15da2b7d0d151a8a520b92292"
+      },
+      {
+        "bytes": 12132,
+        "filename": "gir1.2-json-1.0_1.10.6+ds-2_arm64.deb",
+        "sha256": "2d1e9936741ea1188dca8900d905bcffea3f3c41b4c8112745101c16d29c8888"
+      },
+      {
+        "bytes": 2508772,
+        "filename": "binutils-common_2.44-3_arm64.deb",
+        "sha256": "f2d6b7d0b5521c4c90fc105e32819cd5268c1aa69104173b3fb856595f898249"
+      },
+      {
+        "bytes": 39492,
+        "filename": "bzip2_1.0.8-6_arm64.deb",
+        "sha256": "9fa8514c3fb3f363e7fa8bc85f699aaf15e747afaf220c57b978e9b74fd568bc"
+      },
+      {
+        "bytes": 60468,
+        "filename": "rpcsvc-proto_1.4.3-1+b1_arm64.deb",
+        "sha256": "6ae3c216e6c7d8e042ad3f122b8aa89aff56b2b5174b1c5780a7841b3becd61c"
+      },
+      {
+        "bytes": 20088,
+        "filename": "xml-core_0.19_all.deb",
+        "sha256": "079ec5e10b1c49aa23a6c53ae8e55e33aec121d1c87a131d2172bdabc3f4030e"
+      },
+      {
+        "bytes": 750500,
+        "filename": "libpcre2-dev_10.46-1~deb13u1_arm64.deb",
+        "sha256": "cf70657d734060bad45def0c67208e2afb1e165a5640d53b3bfe2264a3ada932"
+      },
+      {
+        "bytes": 2264,
+        "filename": "native-architecture_0.2.6_all.deb",
+        "sha256": "cb065efb2dd0ad8de45ace298bdb959e4d66478ca8599312bde4fa543d8b7532"
+      },
+      {
+        "bytes": 2577836,
+        "filename": "libasan8_14.2.0-19_arm64.deb",
+        "sha256": "5621bd583a3390b45726a8eebe23601f7fad86a25193e5349976cbf17e2bc9ad"
+      },
+      {
+        "bytes": 1442000,
+        "filename": "libhwasan0_14.2.0-19_arm64.deb",
+        "sha256": "5a758db399fafd354b6488c4f250b7670fb1f61c31b4e4f329d0fbb750a17084"
+      },
+      {
+        "bytes": 57192,
+        "filename": "libffi-dev_3.4.8-2_arm64.deb",
+        "sha256": "55f6d389cc954407cdba6e4ba5e7039dd2042d2ca8929d6f5eb49d6b97ba92de"
+      },
+      {
+        "bytes": 355868,
+        "filename": "libsepol-dev_3.8.1-1_arm64.deb",
+        "sha256": "83c6a0333dd9eb04db23a98817a8df09e4c5d2a88c012f900dc809f63c8ad6b8"
+      },
+      {
+        "bytes": 11984,
+        "filename": "python3-jaraco.functools_4.1.0-1_all.deb",
+        "sha256": "f5ac3e5f79b6394191d76ea7cde9255d8bae98f639886cb981444128f6545796"
+      },
+      {
+        "bytes": 127100,
+        "filename": "libglib2.0-bin_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "8bb0a5f9315828a10dc2f69778f7e9d0ab854dd1b826ed13bfc9b34acadd240b"
+      },
+      {
+        "bytes": 237848,
+        "filename": "libpcre2-32-0_10.46-1~deb13u1_arm64.deb",
+        "sha256": "8dd0bda429e5ddd25d73865d944a2f3f4f04a2605acaecee73d1fe5630b22c7f"
+      },
+      {
+        "bytes": 35324,
+        "filename": "libpkgconf3_1.8.1-4_arm64.deb",
+        "sha256": "8a9477ed7af47d7ddefa1fe02bf9f87d6778e8cc59062064f1b076880a7a14a5"
+      },
+      {
+        "bytes": 1625604,
+        "filename": "libc6-dev_2.41-12+deb13u3_arm64.deb",
+        "sha256": "b2d2660900bd0bfe110b485532367774589d86d2e57b4ed74d8f06e3208a6959"
+      },
+      {
+        "bytes": 2383440,
+        "filename": "libtsan2_14.2.0-19_arm64.deb",
+        "sha256": "c767c05f3dade13b5780478366029f2ff32e44bea852c6a4d7a1f93f1363d3e3"
+      },
+      {
+        "bytes": 101256,
+        "filename": "libidn2-dev_2.3.8-2_arm64.deb",
+        "sha256": "c15483eaf07bdb7d1b84a263d5fce7cf27e4476b3c9fc74cb40ce4b388d3ed10"
+      },
+      {
+        "bytes": 10868,
+        "filename": "sgml-base_1.31+nmu1_all.deb",
+        "sha256": "a355b832d9f0f4dc9eca1a661080db5dc118e6c435f107a5c4dd201d7af59ba8"
+      },
+      {
+        "bytes": 3019100,
+        "filename": "perl-modules-5.40_5.40.1-6_all.deb",
+        "sha256": "dfd42c1bf0c45858488ad666b90de17f81b55e6f9c0d8ca530c27b4a66c08b0b"
+      },
+      {
+        "bytes": 77868,
+        "filename": "libpsl-dev_0.21.2-1.1+b1_arm64.deb",
+        "sha256": "ae29329028b9663b78640ea28143be61b6729727c25c6deb0b7c010595f1858f"
+      },
+      {
+        "bytes": 22540,
+        "filename": "g++-14_14.2.0-19_arm64.deb",
+        "sha256": "f4813643994aa96c527e687c9c7d01855aa5fdd86e63cc8bd05c63ecc9373796"
+      },
+      {
+        "bytes": 388768,
+        "filename": "libssh2-1-dev_1.11.1-1+deb13u1_arm64.deb",
+        "sha256": "0f17ffcc4b38816722c1330d96e848f47255d4bde24585966167d4b79d7989ba"
+      },
+      {
+        "bytes": 3393972,
+        "filename": "libssl-dev_3.5.7-1~deb13u2_arm64.deb",
+        "sha256": "b81910e8728fab596158c8384d6aa101c8249c1769eb2d33c73643b2be7a0bcf"
+      },
+      {
+        "bytes": 29612,
+        "filename": "libfdisk-dev_2.41.5-0+deb13u1_arm64.deb",
+        "sha256": "d423dabacc09c87bb5b78c16e40af516879e3170e73634bff0746dcd877935af"
+      },
+      {
+        "bytes": 657732,
+        "filename": "xz-utils_5.8.1-1+deb13u1_arm64.deb",
+        "sha256": "07b6145c6c934d744c712c252b293ce506d427ea127c7f77b711c518aead54b3"
+      },
+      {
+        "bytes": 1421852,
+        "filename": "libgnutls28-dev_3.8.9-3+deb13u4_arm64.deb",
+        "sha256": "409dc73f83c024bccf85e4b1a754bd90a5bd7e10a0aa08e328f9051997523776"
+      },
+      {
+        "bytes": 1337268,
+        "filename": "dpkg-dev_1.22.22_all.deb",
+        "sha256": "6d4020421740a70e1fb9c41b07f8bb8306d93aef6fea1a8ce11a1f839921f414"
+      },
+      {
+        "bytes": 112428,
+        "filename": "libnghttp2-dev_1.64.0-1.1+deb13u1_arm64.deb",
+        "sha256": "361de4929817975feff6363a896734ac32de74418a5a75c32b05b3d7e81d74a8"
+      },
+      {
+        "bytes": 470800,
+        "filename": "libcap-dev_1%3a2.75-10+deb13u1+b1_arm64.deb",
+        "sha256": "f1c0687bb0f6ad192b9cbe64429fc76029ce2a11939b155051139caf1683b447"
+      },
+      {
+        "bytes": 37300,
+        "filename": "python3-typeguard_4.4.2-1_all.deb",
+        "sha256": "81e512101d7ab94e73646b9a8e4fb9b948836e3172dc5719ad3acbcde65bca01"
+      },
+      {
+        "bytes": 453236,
+        "filename": "libgnutls-openssl27t64_3.8.9-3+deb13u4_arm64.deb",
+        "sha256": "0022777e39fa7eb0998518fe90a783ed88e9a330f54fdb60f5fd9abc4b98cc00"
+      },
+      {
+        "bytes": 212256,
+        "filename": "libblkid-dev_2.41.5-0+deb13u1_arm64.deb",
+        "sha256": "18fc2da74bbbe194cabb96e8870512627434c5d5b2f25f082cc5ede36f502913"
+      },
+      {
+        "bytes": 84232,
+        "filename": "libctf0_2.44-3_arm64.deb",
+        "sha256": "12cb7df9eafd965c00c38a8720c5b78e7b0106390f69fe180a3b3589f407d550"
+      },
+      {
+        "bytes": 1038924,
+        "filename": "libubsan1_14.2.0-19_arm64.deb",
+        "sha256": "b5539003465ea1e60f66b9e3a1019da182e826c82d480944f3656b12351c74c8"
+      },
+      {
+        "bytes": 13968,
+        "filename": "pkg-config_1.8.1-4_arm64.deb",
+        "sha256": "fef9662964fa4ff2ebbeefe076adffad79374f744274085c8ce931d5feb462a1"
+      },
+      {
+        "bytes": 13608,
+        "filename": "python3-autocommand_2.2.2-3_all.deb",
+        "sha256": "1e62ac22ff83466228c051c6c2402a40f521646e15b5aa54cf2391206a848bad"
+      },
+      {
+        "bytes": 134640,
+        "filename": "libgirepository-2.0-0_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "43bf2bd7e888ecd3f0227a3ecff5f1d1a3915db5e38a0199bab514e7a1760e01"
+      },
+      {
+        "bytes": 130056,
+        "filename": "ninja-build_1.12.1-1+b1_arm64.deb",
+        "sha256": "4afc3194ca4d4f051893f169daa48ba9eac769d76f3f13839e5ad0a9688b5fe6"
+      },
+      {
+        "bytes": 5136,
+        "filename": "gcc_4%3a14.2.0-1_arm64.deb",
+        "sha256": "f543b52e29a6780a78c73cf08e551e8e524d623c1092c477cfd8beb5285a86f5"
+      },
+      {
+        "bytes": 56944,
+        "filename": "comerr-dev_2.1-1.47.2-3+b11_arm64.deb",
+        "sha256": "490511f32afe59303e1fa2b4c54fd174de0d98f5f3cf9702e0f2784b834792e4"
+      },
+      {
+        "bytes": 152088,
+        "filename": "libctf-nobfd0_2.44-3_arm64.deb",
+        "sha256": "7b1894cbd09bd59507af259ba680a1f5d3b68c6ba9e5d69508ea2d75b3f01be6"
+      },
+      {
+        "bytes": 56364,
+        "filename": "libglib2.0-dev_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "913883aa6452ddcfff3fd401459e1eb5f66353a0d30e50d16b1d3db87c4d9a1a"
+      },
+      {
+        "bytes": 556128,
+        "filename": "libunbound8_1.22.0-2+deb13u3_arm64.deb",
+        "sha256": "8b173b9fceffe7195084dc6d9eb93d8efb0866f8cfd565f0c5f376896ebc84fa"
+      },
+      {
+        "bytes": 650808,
+        "filename": "libdpkg-perl_1.22.22_all.deb",
+        "sha256": "b41eaeb4879091023f8c1a058510844a244d3d0bd0f437e0e05d58213e36fd9f"
+      },
+      {
+        "bytes": 32396,
+        "filename": "python3-inflect_7.3.1-2_all.deb",
+        "sha256": "6c10dca4d4aa0eb0b4e16e8b62b74a073a8d22be8809c3f61c56b06fdd1451f8"
+      },
+      {
+        "bytes": 207728,
+        "filename": "libp11-kit-dev_0.25.5-3_arm64.deb",
+        "sha256": "dfa60658ea83b7e558bf019152ddd9563d96e2fce24d2385158fe10987be38e7"
+      },
+      {
+        "bytes": 64080,
+        "filename": "libpcre2-posix3_10.46-1~deb13u1_arm64.deb",
+        "sha256": "6cec057b7490c87332f619286d76a349b3394c1a932b24732f7f1d3d8342acd3"
+      },
+      {
+        "bytes": 4142100,
+        "filename": "libperl5.40_5.40.1-6_arm64.deb",
+        "sha256": "3ae323c6210a7844fb96aedec078b11a9d52405d77ef3adc4e5d4b55bce235e2"
+      },
+      {
+        "bytes": 16192,
+        "filename": "libkrb5-dev_1.21.3-5+deb13u1_arm64.deb",
+        "sha256": "c7923bdb8babd38ab443b7e7aac56e5f094c8a9031dd4f392716a563510f676e"
+      },
+      {
+        "bytes": 307912,
+        "filename": "libbrotli-dev_1.1.0-2+b7_arm64.deb",
+        "sha256": "6c1fb26205d7241406511b0b3e9b05d87d25c2288ac4dcc9d5d2ab3af5bd9116"
+      },
+      {
+        "bytes": 329052,
+        "filename": "libgmpxx4ldbl_2%3a6.3.0+dfsg-3_arm64.deb",
+        "sha256": "485ab0e3fcf5b5e7f65dff510640b10c666d0ed4e695edb19eb1d64646367e7b"
+      },
+      {
+        "bytes": 50320,
+        "filename": "libgdbm-compat4t64_1.24-2_arm64.deb",
+        "sha256": "266b9a9e8d1ecc4393ebd29bec7e7c0fe1505b1d8755033af9e15df161316627"
+      },
+      {
+        "bytes": 59004,
+        "filename": "libc-dev-bin_2.41-12+deb13u3_arm64.deb",
+        "sha256": "abe73702b06627e16b95b7928200f67385a14ad1f1c6edd9af135dd26092a485"
+      },
+      {
+        "bytes": 96748,
+        "filename": "libtasn1-6-dev_4.20.0-2+deb13u1_arm64.deb",
+        "sha256": "d83948124f19b06583d7d6deb8c059c120967148c486b16f49cfec074d35f94c"
+      },
+      {
+        "bytes": 101636,
+        "filename": "libnl-3-dev_3.7.0-2_arm64.deb",
+        "sha256": "6832cb3cd490d166e4d07e24b11850148b02f25cdb6a1607dd20790657bbf8f3"
+      },
+      {
+        "bytes": 41432,
+        "filename": "libkdb5-10t64_1.21.3-5+deb13u1_arm64.deb",
+        "sha256": "169c3d2264a37097003051022e9596a6c2dc906fc8302ac0d95b566fcc00d9c3"
+      },
+      {
+        "bytes": 57192,
+        "filename": "libgssrpc4t64_1.21.3-5+deb13u1_arm64.deb",
+        "sha256": "a25bfe3625a9f238d86945d12eca58c6e5201ff7cde596aac700dd12ac208bec"
+      },
+      {
+        "bytes": 139768,
+        "filename": "girepository-tools_2.84.4-3~deb13u3_arm64.deb",
+        "sha256": "bd197a47174ec6b8588ace15e1e1fb67d97229b21982a8e9320cb1263d3d601e"
+      },
+      {
+        "bytes": 67484,
+        "filename": "librtmp-dev_2.4+20151223.gitfa8646d.1-2+b5_arm64.deb",
+        "sha256": "c069718790422ca59e2b11a8d0e13ab4976ec795c616547058e3a417965a9bc8"
+      },
+      {
+        "bytes": 4624,
+        "filename": "build-essential_12.12_arm64.deb",
+        "sha256": "3278c93c699f9c12b6f7fe8e03393aa50d1c6b1c4b35da8f15b1c7bae67dc961"
+      },
+      {
+        "bytes": 10584,
+        "filename": "python3-zipp_3.21.0-1_all.deb",
+        "sha256": "6cd0f768a5e5c574c7ae4b9d56603f8399b31de732167007e42fc17decc5cc6a"
+      },
+      {
+        "bytes": 261580,
+        "filename": "binutils_2.44-3_arm64.deb",
+        "sha256": "7228716cad15e78d1571f1cd4ec7141f64608790d0fbcba23a07f2eda6298272"
+      },
+      {
+        "bytes": 2358568,
+        "filename": "libgcc-14-dev_14.2.0-19_arm64.deb",
+        "sha256": "64b8ebc7182a69aa9525df6eab5e7eb849b947e350d821549f8a8a3e9b19e5ba"
+      },
+      {
+        "bytes": 1332,
+        "filename": "g++_4%3a14.2.0-1_arm64.deb",
+        "sha256": "e4b8f8fae7c838c40b9db29251b152c9af03a4d4463388d69efdda66c4e97e79"
+      }
+    ],
+    "package_receipt_sha256": "25cd0a28f4fd661ce964329090cec6d9992f7c63de13ca6a5e309d7677b1209c",
+    "retirement": {
+      "arm_binary_sha256": "2d4a14c0371a28e0a81255a3a9a9de901a5fa4b6c24b6530ab2aef37e0ba40ba",
+      "charge_basis": "conservative full allocated setup allowance; final live compiler bytes measured, setup deleted/replaced writes not individually logged",
+      "compiler_final_allocated_bytes": 1866432512,
+      "compiler_retired": true,
+      "compiler_setup_cumulative_charge_upper_bound_bytes": 6442450944,
+      "dependency_download_bytes": 86433604,
+      "dependency_download_count": 120,
+      "free_bytes_after_retirement": 34003873792,
+      "limits_remaining_runtime_seconds_lower_bound": 2900,
+      "primary_elapsed_seconds_accounted_upper_bound": 700
+    },
+    "setup": [
+      {
+        "command": [
+          "chroot",
+          "/home/drew/.sv08-auto-arm-20261010/compiler/rootfs",
+          "env",
+          "DEBIAN_FRONTEND=noninteractive",
+          "apt-get",
+          "update"
+        ],
+        "elapsed_total_seconds": 30.394,
+        "exit_status": 0
+      },
+      {
+        "command": [
+          "chroot",
+          "/home/drew/.sv08-auto-arm-20261010/compiler/rootfs",
+          "env",
+          "DEBIAN_FRONTEND=noninteractive",
+          "apt-get",
+          "install",
+          "-y",
+          "--no-install-recommends",
+          "build-essential",
+          "pkg-config",
+          "dpkg-dev",
+          "meson",
+          "ninja-build",
+          "libglib2.0-dev",
+          "libjson-glib-dev",
+          "libssl-dev",
+          "libcurl4-openssl-dev",
+          "libdbus-1-dev",
+          "libnl-3-dev",
+          "libnl-genl-3-dev",
+          "libfdisk-dev",
+          "patch"
+        ],
+        "elapsed_total_seconds": 466.609,
+        "exit_status": 0
+      }
+    ],
+    "toolchain": [
+      "dpkg-dev\t1.22.22\tall",
+      "gcc\t4:14.2.0-1\tarm64",
+      "libssl-dev\t3.5.7-1~deb13u2\tarm64",
+      "meson\t1.7.0-1\tall",
+      "ninja-build\t1.12.1-1+b1\tarm64",
+      "openssl\t3.5.7-1~deb13u2\tarm64"
+    ]
+  },
+  "date": "2026-10-10",
+  "executed_source_commit": "af70d6d2bda5913dda16f77bfc31d2df08c32a22",
+  "executed_source_sha256": {
+    "configs/host-os/environment-layout.json": "b693b19eca6f01177180efc3a9239bc287b19955a4987a826bb31abc89178093",
+    "configs/host-os/rauc-package.json": "055bdae1d2a501bc81f8b2fc5bdb10580a094ec0d5a63102f546013e6ea1d52d",
+    "configs/host-os/rauc-service-policy.json": "5b532261b8d63bbfb1b0654d5b4c6fd1dc7dd80649a077655d8506c5c63fadb5",
+    "configs/host-os/rauc-system.conf.in": "b128bc83c37073540aac481b7335cb5b78a48a3eca9b42f19717552b098d11e2",
+    "configs/host-os/sv08-rauc-policy.conf": "173d1b749b1e7f90edca5f633f1834ee9a5300abac6d1aa0c2014c30821ab29a",
+    "configs/host-os/sv08-rauc-service.conf": "bb9c18b657242e0e8e4a33981b346278796052216528b31da09319a99ec1a47d",
+    "configs/host-os/systemd/sv08-boot-health.service": "3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3",
+    "configs/host-os/systemd/sv08-klipper.service": "58f7e5efe32e869640e3b5e173eca35f6522d4a36595f69cb141dbe2d08bfe3d",
+    "configs/host-os/systemd/sv08-mainsail.service": "bd5f0458c2e5140a9fb7deff80619b8f145c913dd00bb7cdf09b714fa9556a00",
+    "configs/host-os/systemd/sv08-moonraker.service": "9c9fa4b17c785411ee5d9520372febb868c2d651427ab9d59161dd2cf58e80bb",
+    "configs/host-os/systemd/sv08-network-rollback.service": "df46853f86b8d0b402cc1ee26527ea4f1faed3724b67dea9c84153d7ac36293e",
+    "configs/host-os/systemd/sv08-prepare.service": "d14a8a94eccc9a84958fe25c8aa7e4f0299324c9bb834d97050f0e264168a4f9",
+    "configs/host-os/systemd/sv08-printer-api.service": "e08d96b1484fee22a1c05adef7663e064af01e05e99a0ba4b24648994061b9c4",
+    "configs/host-os/systemd/sv08-software-worker@.service": "9602a59fa35f40e6950c288072178c1ece2df207551d330b7959fdc862cab038",
+    "configs/host-os/systemd/sv08-web-auth.service": "b90121afb3548281bdf49ae5cab48d6fde599f2abf05f2d079643cb9638636f9",
+    "configs/host-os/systemd/sv08-web-prepare.service": "215d27dbe1d95c5c5cf2e2e8c9c54055824df1a03bc3e474055a16e6b1b00f91",
+    "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+    "patches/rauc/0001-per-request-signer-trust.patch": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258",
+    "runtime/sv08_admin.py": "b760ca55890be4c3ec5beb09ac29763b051bbcdc1f8526821ced136c13c51758",
+    "runtime/sv08_admin_history.py": "a660fe8e94df4b604e3949716205f5753fc14048e3624ee9b7223e924705d10b",
+    "runtime/sv08_admin_images.py": "9d34b7189c5001d7e3d7aa722a8c8ee3e27ad2b5bfd84f481bfe40ab3586123c",
+    "runtime/sv08_admin_jobs.py": "cc5d83140fe9617dcfa5b802ecbf270e28f93191aa9c284c90300fa8a0c0e0b5",
+    "runtime/sv08_admin_resolution.py": "f12d66e0620d2560b38c788a3cf646086bc642a25e24c4b55b71de1f72cd117b",
+    "runtime/sv08_admin_upload.py": "a773000b2e79120e875c2470b35e0c836d4738bcfe5e63e8c02778ec895cc502",
+    "runtime/sv08_admission.py": "32e683d28f6b3004b4b9bf7ec8562f0d0cae58ab34d1df677a387972598b9b1b",
+    "runtime/sv08_auto_reboot.py": "91f778ab14df667c5745c2d550357eec969a33f948564d55b7c0d678cfb50e11",
+    "runtime/sv08_boot.py": "fdf2fa13c4a40d67e8e9bbf6ef77842b76f35d053198b3ef6f60c9baf34862cd",
+    "runtime/sv08_boot_health.py": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f",
+    "runtime/sv08_bundle.py": "c9fb80348ce154651fce5b8003456a4e1ec5bef7acf1b86ccfecef4e4be48d64",
+    "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+    "runtime/sv08_data_budget.py": "88e42b2af5be1a6c94d2e5d96702fca0a3fa3d3ce19968f3bf63e7d36f082757",
+    "runtime/sv08_export.py": "a61e13d82ffd731f52c92cd2608f9a8e8b59258a861650a8d5fad8bf2472269e",
+    "runtime/sv08_feed.py": "b70282b57a006291a3f2d71ff5fd3f9206a5f1fa8a4f75c6fc2b734bbefede50",
+    "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+    "runtime/sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+    "runtime/sv08_mainsail_access.py": "e5ffae4b73b54e917df352bf212551d5901d315e4cf65f4d7dbbe612e6ef76a5",
+    "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+    "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+    "runtime/sv08_package.py": "2a93ac0c0b7a20e2870e0006b2bb8e7e2f337cbf5d54a2c6032c02ca9f4aae58",
+    "runtime/sv08_printer_catalog.py": "b788f50763872c61db6dd6ce47f3f31cde79a9ae424d44348d5589d2cb11f321",
+    "runtime/sv08_printer_compact.py": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+    "runtime/sv08_printer_compose.py": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+    "runtime/sv08_printer_definitions.py": "63153d3f0b68e3631808a9a9f57e0cd728374989a1b4afd4c90152bda593e4e7",
+    "runtime/sv08_printer_fields.py": "09a5e2d3e46f9098b03900114d46c94bd3a790ebe2f5b75630b4b87c221a4198",
+    "runtime/sv08_printer_generate.py": "447fa31abae308db9f170f7cecd173481f199f872b29706acd0a208842628862",
+    "runtime/sv08_printer_helper.py": "4bcc59abae514b90965260f1e1199ce0bde8218e25f3af59cd4db8b34c340ba3",
+    "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+    "runtime/sv08_printer_sources.py": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+    "runtime/sv08_printer_stack.py": "500cf615eda235afc162a5f51a6c0645ff6a179314ced27f0b05a55ede1115ea",
+    "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+    "runtime/sv08_rauc.py": "586e33e09d2e01c7be06d8e448953287a828a98702d8a44dd8240dcffa0baf9d",
+    "runtime/sv08_rauc_bootloader.py": "b7ab5d71b944259c91ec42152d1557846a131a752c4501bab23f56c4dcd84753",
+    "runtime/sv08_rauc_service.py": "68470e12ea15790152481a1ca05ea112772f3074000f3d3926b26a982a09e614",
+    "runtime/sv08_recovery.py": "04f1877666d57122ecf73b8e4cdbc038c59c6173b8eaa29e9be6ac58cbc1d1aa",
+    "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+    "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+    "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+    "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+    "runtime/sv08_restart.py": "af23dd8538bc955934768815cef2744955568ca1efc2ce95a5f577bd06c1b0fd",
+    "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+    "runtime/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4",
+    "runtime/sv08_software.py": "13a64a14981c73adba9e1f93857bbb8c880d41a7d8904e8cc53e583ea0c37d6d",
+    "runtime/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+    "runtime/sv08_state.py": "b632137305aa2976c6fdf82e2c9a9bf8a47eac451ce213f0eac2028a6ccb0771",
+    "runtime/sv08_transaction.py": "347e3ec520f11a66d422c6f7f75758f2cb2f5b6ff0ca5ce5362532125bbd22c2",
+    "runtime/sv08_update_policy.py": "23e796044eea543a964434888a47e0cd8cc59a6bdb32c9187c46384c3734b082",
+    "runtime/sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d",
+    "scripts/package_rauc.py": "4a99d0e7473687a434a75c44180506965ca7bcfd123d33b0e25297428d75b1ef",
+    "scripts/stage_admin_ui.py": "1596b5dd943ba54b300372ce1057b84287e5b851ffc3fdb81d18035071a310ec",
+    "tests/fixtures/reliability/guest.py": "758ca534e89667c39f2b38b05bb3c962c3b8b42a698cd257355407734e230444",
+    "tests/fixtures/reliability/setup.sh": "18cabba5828be60fb239d336af3f2fc928b2ed42e2cc50023ef44d594191c131",
+    "tests/fixtures/reliability/slot_driver.py": "763e0ba7e423e11bbe0ab4e1263b831a198e08903d803953f1a1c17dd7e0e739",
+    "tests/host_qemu_auto_policy.py": "9ef4ba5c4a80b3c2367f87805ffbd2a0349078418489f0c54b7305519a3cf233",
+    "tests/host_qemu_rauc_composed.py": "f33c14014e3a05e26c320800aef745847e548f12fbbcc8cee7198794223b0858",
+    "tests/host_qemu_reliability.py": "468d2d066c19befa81a53538edbd42dead8848e145d59202281c6f13d4afce43",
+    "tests/host_qemu_unattended_update.py": "5c4a400b87533ac83476072411ad5a0ec83741848183f9963008db209b68eddb"
+  },
+  "format_version": 1,
+  "known_unchanged_baseline_failure": {
+    "exact_baseline": "43a104d59e7b373f8684751ef41a67c05db5f8df",
+    "log_sha256": "b27aa54d028ef270607a6a1fd6a841366e1a11fffad8b621981536aeab86bbd7",
+    "missing_store_mock_errors": 5,
+    "production_and_test_unchanged": true,
+    "seconds": 0.549,
+    "suite": "test_admin_history_repairs",
+    "tests": 7
+  },
+  "limitations": [
+    "offline native and disposable ARM only",
+    "QEMU uses Debian virt kernel, not H616 SPL/U-Boot",
+    "no physical update/reboot, outputs or printing/release qualification",
+    "unit suites overlap; totals are not unique test counts"
+  ],
+  "native_rauc": {
+    "commands": [
+      "meson setup /home/drew/.sv08-auto-rauc-20261010/native /home/drew/.sv08-auto-rauc-20261010/source -Dtests=false -Dnetwork=true -Dstreaming=true -Dsystemdunitdir=/usr/lib/systemd/system -Dsystemdcatalogdir=/usr/lib/systemd/catalog",
+      "ninja -C /home/drew/.sv08-auto-rauc-20261010/native -j2",
+      "sudo -n unshare --mount --propagation private python3 tests/rauc_provenance.py --rauc /home/drew/.sv08-auto-rauc-20261010/native/rauc --work /home/drew/.sv08-auto-rauc-20261010/provenance-v3 --execute",
+      "python3 -m unittest discover -s tests -p test_package_rauc.py"
+    ],
+    "limitations": [
+      "native x86_64, no ARM package build",
+      "private namespace and regular-file raw slots, no printer",
+      "upstream OpenSSL/CURL deprecation warnings",
+      "initial fixture compressed to unsupported 4096-byte squashfs; corrected to 64KiB random raw image data; preserved initial bundle.log"
+    ],
+    "patches": [
+      {
+        "path": "patches/rauc/0001-per-request-signer-trust.patch",
+        "purpose": "Owner-authorized manual per-request signer trust exception; strict defaults unchanged",
+        "sha256": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258"
+      }
+    ],
+    "result": {
+      "active_pair_unchanged": true,
+      "binary_sha256": "ca52fcfb2a8e5a38f5e3868bc62e3aa14af8cff5bfec3b649ec0c7189036b85b",
+      "bundle_sha256": "ce227f32c70d6477f353d4517d14c2de8fa10f69c750adec263c8df4a1909217",
+      "checks": {
+        "default-trusted-signer": {
+          "returncode": 0
+        },
+        "default-unknown-signer": {
+          "returncode": 1
+        },
+        "exception-damaged-payload-info": {
+          "returncode": 0
+        },
+        "exception-damaged-signature": {
+          "returncode": 1
+        },
+        "exception-malformed-cms": {
+          "returncode": 1
+        },
+        "exception-missing-cms": {
+          "returncode": 1
+        },
+        "exception-unknown-signer": {
+          "returncode": 0
+        },
+        "install-default-after-exception": {
+          "returncode": 1
+        },
+        "install-default-unknown-signer": {
+          "returncode": 1,
+          "slot_writes": false
+        },
+        "install-exception-damaged-payload": {
+          "returncode": 1,
+          "slot_writes": false
+        },
+        "install-exception-damaged-signature": {
+          "returncode": 1,
+          "slot_writes": false
+        },
+        "install-exception-malformed-cms": {
+          "returncode": 1,
+          "slot_writes": false
+        },
+        "install-exception-missing-cms": {
+          "returncode": 1,
+          "slot_writes": false
+        },
+        "install-exception-unknown-signer": {
+          "returncode": 0,
+          "slot_writes": true
+        },
+        "install-exception-wrong-manifest": {
+          "returncode": 1,
+          "slot_writes": false
+        },
+        "no-verify-combination": {
+          "returncode": 1
+        }
+      },
+      "inactive_pair_matches": true,
+      "manifest_hash": "8faa8858c436f625ade9f27a1757e3573d992db1714ef9dfbf5b4cd7e5a465ab",
+      "physical_hardware": false,
+      "primary_unchanged": true,
+      "untrusted_hook_spki_empty": true
+    },
+    "result_sha256": "aadf6649f472f7fd513595a41640c6e57ef1a3fd13f3f71aeb48b9beb8a817eb",
+    "source": {
+      "archive_sha256": "35acab5be04ddd0b96ba6b5d4c31f5f356769972a188b096254a3014faa8ed38",
+      "archive_url": "https://api.github.com/repos/rauc/rauc/tarball/4fb7c798d6ae412344fb8f8d310d773046af3441",
+      "commit": "4fb7c798d6ae412344fb8f8d310d773046af3441",
+      "purpose": "Replacement offline installer after 1.13 rejected Linux 7.0 dm-verity status",
+      "repository": "https://github.com/rauc/rauc",
+      "tag": "v1.15.2"
+    },
+    "toolchain": {
+      "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      "meson": "1.3.2",
+      "ninja": "1.11.1",
+      "openssl": "OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)"
+    }
+  },
+  "physical_printer_operations": false,
+  "storage_preflight": {
+    "beelink_free_bytes": 26768838656,
+    "codex_free_bytes": 34038423552,
+    "images_created_on": "Codex only",
+    "limitations": "initial measurements, final free space is recorded separately in retirement receipt",
+    "measurement": "coordinator free-space checks before goal image construction"
+  },
+  "unit_checks": [
+    {
+      "log_sha256": "da052810cc71b4e04222ca7f4019b22a4d99039ac6fa3fc9990a1f8d6d8f139f",
+      "method": "Focused unittest run: update_policy, auto_reboot, transaction, staged_transaction, bundle_policy, admin, admin_images, admin_upload, admin_jobs, admin_history, admin_history_upload, admin_history_validation, admin_history_compatibility, admin_resolution, rauc_backend, rauc_service, host_state, sv08_feed, restart, network_admin, stage_admin_ui, package_rauc.",
+      "result": "passed",
+      "seconds": 73.744,
+      "source_commit": "c1afe9584e5d2e187312646b6a3394972b62ae99",
+      "suite": "focused core",
+      "tests": 307
+    },
+    {
+      "log_sha256": "58f2328f9033ceff9974148a7f7a4dab1037ef9b8b50e14b13a24eba7fa96da5",
+      "method": "Focused unittest rerun of test_auto_reboot, test_sv08_feed and test_transaction after four-file correction.",
+      "result": "passed",
+      "seconds": 13.09,
+      "source_commit": "af70d6d2bda5913dda16f77bfc31d2df08c32a22",
+      "suite": "final affected automatic reboot/feed/transaction",
+      "tests": 66
+    }
+  ]
+}

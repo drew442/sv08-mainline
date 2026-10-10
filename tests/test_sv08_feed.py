@@ -51,7 +51,7 @@ class Transaction:
         self.fail_stage = False
         self.fail_arm = False
 
-    def require_source(self, state, boot):
+    def require_source(self, state, boot, policy=None):
         if boot['mode'] != 'immutable' or state.get('customized'):
             raise ValueError('Customized/writable source')
 
@@ -298,3 +298,40 @@ class FeedTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class AutomaticActivationFeedTests(unittest.TestCase):
+    setUp=FeedTests.setUp
+    tearDown=FeedTests.tearDown
+    verify=FeedTests.verify
+    publish=FeedTests.publish
+    def test_authenticated_update_requests_restart_after_arm(self):
+        calls=[]
+        def restart():
+            self.assertEqual(self.tx.journal['phase'],'armed')
+            calls.append('restart')
+            return 'reboot-queued'
+        self.feed.restart=restart
+        self.assertEqual(self.feed.run(),'reboot-queued')
+        self.assertEqual(calls,['restart'])
+        self.assertEqual(json.loads(self.feed.status_path.read_text())['result'],'reboot-queued')
+
+    def test_armed_retry_observes_receipt_without_refetching_or_reinstalling(self):
+        self.tx.journal=dict(phase='armed',automatic=True,release='release-2',bundle_sha256='a'*64)
+        self.feed.restart=lambda:'reboot-uncertain'
+        self.objects.clear()
+        self.assertEqual(self.feed.run(),'reboot-uncertain')
+        self.assertEqual((self.tx.stages,self.tx.arms),(0,0))
+
+    def test_signed_release_revision_and_bundle_must_agree(self):
+        self.publish(release_revision=3)
+        with self.assertRaisesRegex(ValueError,'disagree'):self.feed.run()
+        self.assertEqual(self.tx.stages,0)
+
+    def test_compatibility_label_override_keeps_trusted_index_required(self):
+        self.store.state['update_policy']={'check_compatibility':False}
+        self.publish(compatible='other-printer')
+        index,_=self.feed.index()
+        self.assertEqual(index['compatible'],'other-printer')
+        self.objects['/index.json.p7s']=b'invalid CMS'
+        with self.assertRaisesRegex(ValueError,'signature'):self.feed.index()

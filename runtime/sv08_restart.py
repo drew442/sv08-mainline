@@ -119,7 +119,7 @@ def require_restart(store):
                 raise ValueError('Running boot and image transaction disagree; reconcile before restarting')
     if tx and tx['phase'] == 'armed':
         expected = dict(slot=tx['slot'], release=tx['release'], previous_slot=tx['previous_slot'], phase='armed', id=tx['id'])
-        if pending != expected or state['requested_mode'] != 'immutable' or any(r['customized'] for r in state['slots'].values()):
+        if pending != expected or state['requested_mode'] != 'immutable' or (tx.get('update_policy', {}).get('check_customization', True) and any(r['customized'] for r in state['slots'].values())):
             raise ValueError('Armed image state requires reconciliation before restarting')
     elif pending or tx and tx['phase'] not in ('staged', 'complete', 'cancelled', 'failed'):
         raise ValueError('Image transaction is transitional or uncertain; reconcile before restarting')
@@ -135,3 +135,58 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def controlled_restart(command, runtime, boot_id=BOOT_ID, admission=None, *,
+                       before_dispatch=None, acknowledged=None, launch_failed=None, uncertain=None):
+    """Shared admitted restart; callbacks persist dispatch, not health completion.
+
+    Caller holds persistent state and any operation locks. No callback may
+    reopen admission after the command can have reached systemd.
+    """
+    from sv08_admission import Admission, KLIPPER
+    class RestartSystemd:
+        rebooting=False
+        def state(self,name):
+            state=command('systemctl','show',name,'-p','ActiveState','--value')
+            if name==KLIPPER:
+                legacy=command('systemctl','show','klipper.service','-p','ActiveState','--value')
+                if legacy not in ('inactive','failed'): raise ValueError('Legacy Klipper prevents controlled restart')
+                if state!='active':
+                    modes=[command('systemctl','show',unit,'-p','UnitFileState','--value') for unit in (KLIPPER,'klipper.service')]
+                    if state!='inactive' or legacy!='inactive' or modes!=['masked','masked']:
+                        raise ValueError('Printer idle cannot be proven; restart refused')
+            return state
+        def stop(self,name):
+            command('systemctl','stop',name)
+            if command('systemctl','show',name,'-p','ActiveState','--value') not in ('inactive','failed'):
+                raise ValueError('Printer service did not stop')
+        def start(self,name):
+            if not self.rebooting: command('systemctl','start',name)
+    systemd=RestartSystemd()
+    admission=admission or Admission(runtime,systemd=systemd,boot_id=boot_id)
+    with admission() as lease:
+        if command('systemctl','show','klipper.service','-p','ActiveState','--value') not in ('inactive','failed'):
+            raise ValueError('Legacy Klipper prevents controlled restart')
+        expected=publish(runtime,boot_id)
+        # Once the request can reach systemd, a lost acknowledgement cannot
+        # prove that shutdown was refused. Keep the barrier through that
+        # uncertainty, including interrupted callers.
+        if before_dispatch: before_dispatch(expected)
+        systemd.rebooting=True
+        if lease is not None: lease.keep_stopped=True
+        try:
+            command('systemctl','--no-block','reboot')
+        except (FileNotFoundError, PermissionError):
+            # The subprocess could not launch. Clear only our exact intent
+            # before allowing the admitted services to be restored.
+            clear(runtime,expected,boot_id)
+            if launch_failed: launch_failed(expected)
+            systemd.rebooting=False
+            if lease is not None: lease.keep_stopped=False
+            raise
+        except Exception:
+            if uncertain: uncertain(expected)
+            raise ValueError('Restart acknowledgment is uncertain; admission remains closed until the next boot') from None
+        if acknowledged: acknowledged(expected)
+    return dict(restarting=True)

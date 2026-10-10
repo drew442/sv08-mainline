@@ -414,48 +414,8 @@ class Network:
 
     def restart(self):
         if self.pending(): raise ValueError('Confirm or roll back network changes before restarting')
-        network=self
-        class RestartSystemd:
-            rebooting=False
-            def state(self,name):
-                state=network.command('systemctl','show',name,'-p','ActiveState','--value')
-                if name==KLIPPER:
-                    legacy=network.command('systemctl','show','klipper.service','-p','ActiveState','--value')
-                    if legacy not in ('inactive','failed'): raise ValueError('Legacy Klipper prevents controlled restart')
-                    if state!='active':
-                        modes=[network.command('systemctl','show',unit,'-p','UnitFileState','--value') for unit in (KLIPPER,'klipper.service')]
-                        if state!='inactive' or legacy!='inactive' or modes!=['masked','masked']:
-                            raise ValueError('Printer idle cannot be proven; restart refused')
-                return state
-            def stop(self,name):
-                network.command('systemctl','stop',name)
-                if network.command('systemctl','show',name,'-p','ActiveState','--value') not in ('inactive','failed'):
-                    raise ValueError('Printer service did not stop')
-            def start(self,name):
-                if not self.rebooting: network.command('systemctl','start',name)
-        systemd=RestartSystemd()
-        admission=self.admission or Admission(self.runtime,systemd=systemd,boot_id=self.boot_id)
-        with admission() as lease:
-            if network.command('systemctl','show','klipper.service','-p','ActiveState','--value') not in ('inactive','failed'):
-                raise ValueError('Legacy Klipper prevents controlled restart')
-            expected=publish(self.runtime,self.boot_id)
-            # Once the request can reach systemd, a lost acknowledgement cannot
-            # prove that shutdown was refused. Keep the barrier through that
-            # uncertainty, including interrupted callers.
-            systemd.rebooting=True
-            if lease is not None: lease.keep_stopped=True
-            try:
-                network.command('systemctl','--no-block','reboot')
-            except (FileNotFoundError, PermissionError):
-                # The subprocess could not launch. Clear only our exact intent
-                # before allowing the admitted services to be restored.
-                clear(self.runtime,expected,self.boot_id)
-                systemd.rebooting=False
-                if lease is not None: lease.keep_stopped=False
-                raise
-            except Exception:
-                raise ValueError('Restart acknowledgment is uncertain; admission remains closed until the next boot') from None
-        return dict(restarting=True)
+        from sv08_restart import controlled_restart
+        return controlled_restart(self.command, self.runtime, self.boot_id, self.admission)
 
     def request(self,r):
         if not isinstance(r,dict): raise ValueError('Invalid network request')

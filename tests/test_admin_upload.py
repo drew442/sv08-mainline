@@ -29,13 +29,13 @@ class UploadTests(unittest.TestCase):
     def setUp(self):
         temp = tempfile.TemporaryDirectory(dir=Path(fixture_root()),prefix='.sv08-upload-'); self.addCleanup(temp.cleanup)
         self.root=Path(temp.name); self.store=Store(self.root/'state',reserve_bytes=0, budget=fixture_budget()); self.store.initialize()
-        self.boot=self.store.prepare_boot('A','release-1'); self.boot['boot_id']='boot-1'
+        self.boot=self.store.prepare_boot('A','release-1',release_revision=1); self.boot['boot_id']='boot-1'
         self.stage=self.root/'uploads'; self.stage.mkdir(mode=0o700)
         self.staging=Staging(self.stage,max_bytes=1024*1024,reserve_bytes=0,owner_uid=os.getuid(), budget=fixture_budget())
         self.jobs=Jobs(self.root/'jobs','boot-1',launcher=lambda identity:None, budget=fixture_budget())
         self.backend=Backend(); self.backend.manifest={'deployable':True}
         self.backend.cleanup_observation=lambda boot,lease:dict(primary=self.backend.primary(),good=dict(self.backend.states))
-        self.verify=lambda p:dict(bundle_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),release='release-2',full_payload_verified=False)
+        self.verify=lambda p:dict(bundle_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),release='release-2',release_revision=2,signer_trusted=True,full_payload_verified=False)
         self.adapter=HostImages(self.store,self.boot,self.backend,self.staging,admitted,self.verify)
         self.c=Controller(self.store,self.boot,adapter=self.adapter,jobs=self.jobs)
         key=self.root/'key'; key.write_text('transport-only test verifier')
@@ -139,7 +139,7 @@ class UploadTests(unittest.TestCase):
         self.u.cleanup(self.u.cleanup_plan(result['name']))
         self.assertEqual(history,self.jobs.load());self.assertEqual(journal,tx.path.read_bytes())
         self.data=b'distinct subsequent release fixture'; self.digest=hashlib.sha256(self.data).hexdigest()
-        self.verify=lambda p:dict(bundle_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),release='release-3',full_payload_verified=False)
+        self.verify=lambda p:dict(bundle_sha256=hashlib.sha256(p.read_bytes()).hexdigest(),release='release-3',release_revision=3,signer_trusted=True,full_payload_verified=False)
         self.u.verify=self.verify;self.adapter.verify=self.verify
         again=self.receive();self.assertNotEqual(again['name'],result['name'])
         second=self.c.plan('image.stage',{'digest':self.digest})
@@ -172,6 +172,21 @@ class UploadTests(unittest.TestCase):
         self.adapter.admission=printing
         with self.assertRaisesRegex(ValueError,'printer busy'):self.adapter.apply(review)
         self.assertEqual(self.backend.calls,[])
+
+
+    def test_upload_review_carries_exact_manual_options_to_verifier(self):
+        from sv08_update_policy import effective
+        options = effective({'allow_untrusted_provenance': True, 'check_compatibility': False})
+        plan = self.u.plan('manual.raucb', len(self.data), options)
+        self.assertEqual(plan['options'], options)
+        self.u.verify = None
+        proof = dict(bundle_sha256=self.digest, release='manual', signer_trusted=False, update_policy=options)
+        with patch('sv08_admin_upload.inspect_bundle', return_value=proof) as verifier:
+            result = self.u.receive(plan, io.BytesIO(self.data))
+        self.assertEqual(verifier.call_args.kwargs['options'], options)
+        self.assertEqual(result['proof'], proof)
+        for value in (True, 1, 'true'):
+            with self.assertRaises(ValueError): self.u.plan('x', 1, value)
 
 
 class ProtocolTests(unittest.TestCase):

@@ -130,14 +130,14 @@ class NetworkTests(unittest.TestCase):
         self.command.legacy='inactive'
         from sv08_admission import Admission
         quiesced=[]
-        with patch('sv08_network.Admission',side_effect=lambda *args,**kwargs: Admission(*args,request=lambda path:quiesced.append(path),**kwargs)):
+        with patch('sv08_admission.Admission',side_effect=lambda *args,**kwargs: Admission(*args,request=lambda path:quiesced.append(path),**kwargs)):
             self.assertTrue(self.network.request(dict(method='restart',confirm=True))['restarting'])
         self.assertEqual(len(quiesced),1)
         self.assertFalse(any(c[:2]==('systemctl','start') for c in self.command.calls))
         (self.runtime/'shutdown.json').unlink()
         self.command.state='active'; self.command.calls.clear()
         def refuse(path): raise ValueError('Printer busy')
-        with patch('sv08_network.Admission',side_effect=lambda *args,**kwargs: Admission(*args,request=refuse,**kwargs)):
+        with patch('sv08_admission.Admission',side_effect=lambda *args,**kwargs: Admission(*args,request=refuse,**kwargs)):
             with self.assertRaises(ValueError): self.network.request(dict(method='restart',confirm=True))
         self.assertFalse(any('reboot' in c or 'stop' in c for c in self.command.calls))
 

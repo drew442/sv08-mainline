@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build the pinned RAUC replacement in a disposable Debian ARM64 compiler root.
 
-Gap: tested distro RAUC predates the newer dm-verity status format. Use unmodified
-upstream Meson/Ninja and dpkg, no upstream installer on the printer. Retire when
+Gap: tested distro RAUC predates the newer dm-verity status format. Apply
+hash-pinned project patches to pristine source and use upstream Meson/Ninja and dpkg, no upstream installer on the printer. Retire when
 the selected Debian package provides and passes the required behavior. This only
 creates a package; it does not install/activate it. Default inspection.
 """
@@ -22,15 +22,37 @@ def digest(path):
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+def verify_patches(config):
+    patches = config.get('patches', [])
+    if [p.get('path') for p in patches] != ['patches/rauc/0001-per-request-signer-trust.patch']:
+        raise ValueError('Unreviewed package patch identity')
+    for patch in patches:
+        path = REPO / patch['path']
+        if path.is_symlink() or not path.is_file() or digest(path) != patch['sha256']:
+            raise ValueError('Package patch differs from the recorded hash')
+    return patches
+
+
+def apply_patches(config, source, log):
+    """Apply only hash-verified patches, without fuzzy context matching."""
+    patches = verify_patches(config)
+    for patch in patches:
+        subprocess.run(['patch', '--batch', '--fuzz=0', '-p1', '-d', str(source),
+                        '-i', str(REPO / patch['path'])], stdout=log, stderr=log, check=True)
+    return patches
+
+
 def verify(config, archive):
     sources = json.loads((REPO / 'configs/host-os/offline-tool-sources.json').read_text())['sources']
     if config['source'] not in sources or config['architecture'] != 'arm64' or config['name'] != 'rauc':
         raise ValueError('Unreviewed package/source identity')
     if archive.is_symlink() or not archive.is_file() or digest(archive) != config['source']['archive_sha256']:
         raise ValueError('Source archive differs from the recorded hash')
+    verify_patches(config)
 
 
 def build(config, archive, builder, work):
+    verify_patches(config)
     root = builder / 'rootfs'
     if root.is_symlink() or not (root / 'usr/bin/gcc').exists():
         raise ValueError('Use the isolated compiler root with documented build dependencies')
@@ -52,6 +74,8 @@ def build(config, archive, builder, work):
             member.name = member.name[len(prefix):]
             if member.name:
                 tar.extract(member, source, filter='data')
+    with (work / 'build.log').open('a') as log:
+        patches = apply_patches(config, source, log)
     (source / '.tarball-version').write_text(config['source']['tag'].removeprefix('v')+'\n')
     env = ['env', 'SOURCE_DATE_EPOCH='+str(config['source_date_epoch']),
            'GIT_CEILING_DIRECTORIES='+inside]
@@ -90,7 +114,7 @@ def build(config, archive, builder, work):
     meta = package / 'DEBIAN'
     meta.mkdir()
     size = sum(p.stat().st_size for p in package.rglob('*') if p.is_file() and not p.is_symlink())
-    (meta / 'control').write_text(f"Package: rauc\nVersion: {config['version']}\nArchitecture: arm64\nMaintainer: SV08 Mainline contributors\nSection: admin\nPriority: optional\nInstalled-Size: {(size+1023)//1024}\nDepends: {dependencies}\nDescription: Pinned RAUC candidate for SV08 transactional host updates\n Unmodified upstream build; activation and hardware validation are separate.\n")
+    (meta / 'control').write_text(f"Package: rauc\nVersion: {config['version']}\nArchitecture: arm64\nMaintainer: SV08 Mainline contributors\nSection: admin\nPriority: optional\nInstalled-Size: {(size+1023)//1024}\nDepends: {dependencies}\nDescription: Pinned RAUC candidate for SV08 transactional host updates\n Hash-pinned project patch on upstream; activation and hardware validation are separate.\n")
     for path in sorted(package.rglob('*'), reverse=True):
         os.utime(path, (config['source_date_epoch'],)*2, follow_symlinks=False)
     os.utime(package, (config['source_date_epoch'],)*2)
@@ -98,7 +122,7 @@ def build(config, archive, builder, work):
     run('dpkg-deb', '--root-owner-group', '--build', inside+'/package', inside+'/'+filename)
     shutil.copyfile(base / filename, work / filename)
     report = dict(package=filename, sha256=digest(work / filename), version=version,
-                  binary_sha256=digest(package / 'usr/bin/rauc'), config=config,
+                  patches=patches, binary_sha256=digest(package / 'usr/bin/rauc'), config=config,
                   installed=False, hardware_validated=False,
                   toolchain=run('dpkg-query', '-W', '-f=${Package}\t${Version}\t${Architecture}\n', output=True).splitlines())
     (work / 'result.json').write_text(json.dumps(report, indent=2)+'\n')

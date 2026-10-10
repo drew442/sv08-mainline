@@ -94,6 +94,7 @@ def source_inputs(candidate):
     names=('environment-layout.json','rauc-service-policy.json','rauc-system.conf.in','sv08-rauc-policy.conf','sv08-rauc-service.conf')
     files += [candidate/'configs/host-os'/name for name in names]
     files += [candidate/'configs/images/host-ab.json',candidate/'tests/host_qemu_rauc_composed.py',candidate/'tests/host_qemu_unattended_update.py']
+    if CONFIG.get('automatic_policy_fixture'): files.append(candidate/'tests/host_qemu_auto_policy.py')
     return files
 
 
@@ -226,11 +227,21 @@ def configure_root(root, candidate, release):
     config=candidate/'configs/host-os'
     uuids={'boot-a':'ba55a9b4-7969-423b-a739-db62e231b7a1','root-a':'26c68198-9248-47af-bbd3-643f1b604ef5','boot-b':'7b6e5211-6c5f-432f-9afc-2ac7e4f80b04','root-b':'d8d04a9a-f51f-41b3-a474-e079efe97186','recovery':'b28438ed-f895-4b93-9bad-d27d3890ccd3','data':'4773f966-0678-4cf5-bb83-8ee6fb11d8eb'}
     manifest={'release':release,'state_schema':1,'deployable':False,'devices':{name:'/dev/disk/by-partuuid/'+value for name,value in uuids.items()}}
+    if release in CONFIG.get('release_revisions',{}): manifest['release_revision']=CONFIG['release_revisions'][release]
     policy={'compatible':'sv08-offline-test-only','layout':'ab-8gb-v1','state_schema':1,'klipper_commit':'f0892d82b0f1c1228454f09eb508eddde2250f4b','max_bundle_bytes':1073741824,'image_bytes':{'boot':201326592,'rootfs':2147483648}}
     environment=json.loads((config/'environment-layout.json').read_text());environment['board_mmc_device_index']=10
     for name,value in {'release.json':manifest,'update-policy.json':policy,'environment.json':environment,'layout.json':json.loads((candidate/'configs/images/host-ab.json').read_text())}.items():
         (runtime/name).write_text(json.dumps(value)+'\n')
     shutil.copy2(config/'rauc-service-policy.json',runtime/'rauc-service-policy.json')
+    if CONFIG.get('automatic_policy_fixture'):
+        sys_path = str(candidate/'scripts')
+        import sys
+        sys.path.insert(0,sys_path)
+        from stage_admin_ui import package_service_policy
+        value=package_service_policy(root)
+        if value['version'] != '1.15.2-0sv08.2' or value['executable_sha256'] != CONFIG['arm_rauc_sha256']:
+            raise ValueError('Patched fixture RAUC identity differs')
+        (runtime/'rauc-service-policy.json').write_text(json.dumps(value)+'\n')
     text=(config/'rauc-system.conf.in').read_text().replace('@COMPATIBLE@',policy['compatible'])
     for role in ('root-a','root-b','boot-a','boot-b'): text=text.replace('@'+role.upper().replace('-','_')+'@',manifest['devices'][role])
     (root/'etc/rauc').mkdir(parents=True,exist_ok=True);(root/'etc/rauc/system.conf').write_text(text)
@@ -361,6 +372,8 @@ def build_bundle(candidate, release, source_slot, fail_health=False):
     subprocess.run(['mkfs.vfat','-F','16',str(boot)],check=True,capture_output=True,timeout=30)
     subprocess.run(['mcopy','-i',str(boot),str(KERNEL),str(INITRD),'::/'],check=True,timeout=30)
     (content/'manifest.raucm').write_text(f'[update]\ncompatible=sv08-offline-test-only\nversion={release}\n[bundle]\nformat=verity\n[image.rootfs]\nfilename=rootfs.img\n[image.boot]\nfilename=boot.img\n[meta.sv08]\nlayout=ab-8gb-v1\nstate-schema=1\nklipper-commit=f0892d82b0f1c1228454f09eb508eddde2250f4b\n')
+    if release in CONFIG.get('release_revisions',{}):
+        with (content/'manifest.raucm').open('a') as output: output.write('release-revision='+str(CONFIG['release_revisions'][release])+'\n')
     builder=BUILDER
     if digest(builder)!=BUILDER_HASH:raise ValueError('Native RAUC builder changed')
     bundle=SCRATCH/'input'/f'{release}.raucb'
@@ -589,6 +602,12 @@ def install_inputs():
     fixtures=Path(__file__).parent/'fixtures/reliability'
     for name in ('guest.py','setup.sh','slot_driver.py'):
         shutil.copy2(fixtures/name,destination/name)
+    if CONFIG.get('automatic_policy_fixture'):
+        shutil.copy2(destination/'guest.py',destination/'reliability_helpers.py')
+        candidate=Path(CONFIG['candidate']['path'])
+        shutil.copy2(candidate/'tests/host_qemu_auto_policy.py',destination/'guest.py')
+        driver=destination/'slot_driver.py'
+        driver.write_text(driver.read_text().replace('rauc 1.15.2-0sv08.1 ii','rauc 1.15.2-0sv08.2 ii'))
     packages=[]
     for entry in CONFIG['packages']:
         source=Path(entry['path'])

@@ -109,6 +109,15 @@ class AdministrationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'journal'): self.controller.status()
 
 
+    def test_advanced_automatic_policy_is_reviewed_persistent_and_trust_mandatory(self):
+        from sv08_update_policy import effective
+        plan = self.controller.plan('policy.update', {'options': {'check_customization': False, 'allow_downgrade': True}})
+        self.assertNotIn('update_policy', self.store.load())
+        self.controller.apply(plan)
+        self.assertEqual(self.controller.status()['update_policy'], effective({'check_customization': False, 'allow_downgrade': True}))
+        with self.assertRaisesRegex(ValueError, 'trusted provenance'):
+            self.controller.plan('policy.update', {'options': {'allow_untrusted_provenance': True}})
+
 class RecoveryIndependenceTests(unittest.TestCase):
     def test_missing_data_can_be_inspected_without_creating_it(self):
         with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:

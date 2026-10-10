@@ -1,6 +1,6 @@
 {
   "name": "rauc",
-  "version": "1.15.2-0sv08.1",
+  "version": "1.15.2-0sv08.2",
   "architecture": "arm64",
   "source": {
     "repository": "https://github.com/rauc/rauc",
@@ -11,7 +11,7 @@
     "purpose": "Replacement offline installer after 1.13 rejected Linux 7.0 dm-verity status"
   },
   "source_date_epoch": 1774607834,
-  "reason": "Candidate upstream replacement for dm-verity status compatibility; retire when the selected Debian package includes the fix",
+  "reason": "Pinned dm-verity compatibility plus explicit per-request signer-chain trust exception; CMS mathematics and payload verification remain mandatory",
   "build_dependencies": [
     "build-essential",
     "pkg-config",
@@ -25,7 +25,15 @@
     "libdbus-1-dev",
     "libnl-3-dev",
     "libnl-genl-3-dev",
-    "libfdisk-dev"
+    "libfdisk-dev",
+    "patch"
   ],
-  "status": "build-candidate-not-runtime-validated"
+  "status": "build-candidate-not-runtime-validated",
+  "patches": [
+    {
+      "path": "patches/rauc/0001-per-request-signer-trust.patch",
+      "sha256": "75b465c83ad9e40e5d32b9bc79a42232ecf2a2edca61c2a05fadee1fdcf49258",
+      "purpose": "Owner-authorized manual per-request signer trust exception; strict defaults unchanged"
+    }
+  ]
 }

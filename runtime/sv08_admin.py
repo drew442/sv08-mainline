@@ -12,8 +12,10 @@ import sys
 import uuid
 from sv08_state import fsync_dir
 from sv08_state import Store
+from sv08_update_policy import effective
 
 ACTIONS = {
+    'policy.update': ('Advanced automatic update checks', 'Save individual checks for future automatic updates. Trusted signatures and physical safety checks remain required.'),
     'policy.auto': ('Automatic updates', 'Change the policy for future automatic staging and activation. An already armed update remains armed.'),
     'policy.mode': ('Operating mode', 'Apply this mode at the next normal boot. Existing files and customizations are preserved.'),
     'image.stage': ('Stage image', 'Verify and install the uploaded release into the inactive OS slot. Keep the running slot and user data.'),
@@ -85,6 +87,15 @@ def snapshot(store, boot, context):
 def validate_arguments(action, arguments):
     if action not in ACTIONS or not isinstance(arguments, dict):
         raise ValueError('Unknown administration operation')
+    if action == 'policy.update':
+        if set(arguments) != {'options'}: raise ValueError('Unexpected operation fields')
+        if not isinstance(arguments['options'], dict): raise ValueError('Update options must be an object')
+        effective(arguments['options'], automatic=True)
+        return
+    if action == 'image.stage' and 'options' in arguments:
+        if not isinstance(arguments['options'], dict): raise ValueError('Update options must be an object')
+        effective(arguments['options'])
+        arguments = {key: value for key, value in arguments.items() if key != 'options'}
     field = {'policy.auto': 'enabled', 'policy.mode': 'mode', 'image.stage': 'digest',
              'software.install': 'package', 'software.remove': 'package',
              'config.hostname': 'hostname', 'recovery.boot': 'slot',
@@ -141,7 +152,7 @@ class Controller:
                 available = False
                 if action not in allowed:
                     reason = 'Available in the recovery screen.' if action.startswith('recovery.') else 'Available in the running host.'
-                elif action in ('policy.auto', 'policy.mode', 'config.hostname'):
+                elif action in ('policy.auto', 'policy.update', 'policy.mode', 'config.hostname'):
                     available, reason = True, ''
                     if action == 'policy.mode':
                         try: require_mode_change(self.store, state)
@@ -157,7 +168,7 @@ class Controller:
                     if feed_path.stat().st_size <= 2048:
                         candidate = json.loads(feed_path.read_text())
                         if (isinstance(candidate, dict) and candidate.get('format_version') == 1 and
-                                candidate.get('result') in ('blocked', 'already-considered', 'armed-next-boot') and
+                                candidate.get('result') in ('blocked', 'already-considered', 'armed-next-boot', 'reboot-queued', 'reboot-uncertain', 'reboot-suppressed', 'reboot-observed', 'awaiting-health-reconciliation') and
                                 isinstance(candidate.get('reason'), str) and len(candidate['reason']) <= 240 and
                                 type(candidate.get('checked_at')) is int):
                             feed_status = candidate
@@ -165,6 +176,7 @@ class Controller:
                     pass  # Advisory status cannot take down host administration.
             return dict(context=self.context, revision=revision(view), boot=self.boot,
                         requested_mode=state['requested_mode'], auto_update=state['auto_update'],
+                        update_policy=effective(state.get('update_policy'), automatic=True),
                         slots=state['slots'], pending=state['pending'], transaction=transaction,
                         free_bytes=capacities.f_bavail * capacities.f_frsize,
                         capabilities=capabilities,
@@ -175,10 +187,15 @@ class Controller:
 
     def plan(self, action, arguments):
         validate_arguments(action, arguments)
+        if action in ('policy.update', 'image.stage'):
+            arguments = dict(arguments, options=effective(arguments.get('options'), automatic=action == 'policy.update'))
         status = self.status()
         capability = status['capabilities'][action]
         if not capability['available']:
             raise ValueError(capability['reason'])
+        if action == 'image.stage':
+            from sv08_update_policy import check_source
+            check_source(status, self.boot, arguments['options'])
         title, effect = ACTIONS[action]
         return dict(action=action, arguments=arguments, revision=status['revision'],
                     title=title, effect=effect, preserves_user_data=True)
@@ -190,7 +207,7 @@ class Controller:
         if plan != current:
             raise ValueError('System state changed. Refresh and review the operation again.')
         action, args = plan['action'], plan['arguments']
-        if action in ('policy.auto', 'policy.mode', 'config.hostname'):
+        if action in ('policy.auto', 'policy.update', 'policy.mode', 'config.hostname'):
             # Recheck under the same lock as publication; do not nest Store.policy.
             with self.store.locked():
                 self.store.require_running()
@@ -210,6 +227,9 @@ class Controller:
                     hosts = hosts_with_name(view['hosts'], args['hostname'], view['hostname'])
                     atomic_text(parent / 'hosts', hosts)
                     atomic_text(parent / 'hostname', args['hostname']+'\n')
+                elif action == 'policy.update':
+                    state['update_policy'] = effective(args['options'], automatic=True)
+                    self.store.save(state)
                 else:
                     state['auto_update' if action == 'policy.auto' else 'requested_mode'] = args['enabled' if action == 'policy.auto' else 'mode']
                     self.store.save(state)
@@ -226,9 +246,10 @@ class Controller:
             upload = getattr(self, 'uploads', None) or installed_uploads(self)
             fields = {'upload.list': {'method'}, 'upload.plan': {'method', 'name', 'size'},
                       'upload.cleanup-plan': {'method', 'name'}, 'upload.cleanup': {'method', 'plan'}}
+            if method == 'upload.plan' and 'options' in request: fields[method].add('options')
             if set(request) != fields[method]: raise ValueError('Unexpected upload request fields')
             if method == 'upload.list': return upload.listing()
-            if method == 'upload.plan': return upload.plan(request['name'], request['size'])
+            if method == 'upload.plan': return upload.plan(request['name'], request['size'], request.get('options'))
             if method == 'upload.cleanup-plan': return upload.cleanup_plan(request['name'])
             return upload.cleanup(request['plan'])
         expected = {'status': {'method'}, 'plan': {'method', 'action', 'arguments'},

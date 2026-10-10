@@ -1,0 +1,255 @@
+--- a/include/bundle.h
++++ b/include/bundle.h
+@@ -57,6 +57,7 @@
+ } RaucBundle;
+ 
+ typedef enum {
++	CHECK_BUNDLE_IGNORE_SIGNER_TRUST = BIT(4), // Verify CMS mathematics, not signer chain.
+ 	CHECK_BUNDLE_DEFAULT       = 0,
+ 	/* skip BIT(0) for now to avoid interpreting a TRUE as NO_VERIFY by mistake */
+ 	CHECK_BUNDLE_NO_VERIFY     = BIT(1),      // If not set the bundle signature
+--- a/include/install.h
++++ b/include/install.h
+@@ -31,6 +31,7 @@
+ 	gint status_result;
+ 
+ 	/* install options */
++	gboolean ignore_signer_trust;
+ 	gboolean ignore_compatible;
+ 	gboolean ignore_version_limit;
+ 	gchar *require_manifest_hash;
+--- a/include/signature.h
++++ b/include/signature.h
+@@ -218,6 +218,10 @@
+  *
+  * @return TRUE if succeeded, FALSE if failed
+  */
++/* Per-request trust exception; CMS signature/content verification remains enabled. */
++gboolean cms_verify_sig_untrusted(GBytes *sig, X509_STORE *store, CMS_ContentInfo **cms, GBytes **manifest, GError **error)
++G_GNUC_WARN_UNUSED_RESULT;
++
+ gboolean cms_verify_sig(GBytes *sig, X509_STORE *store, CMS_ContentInfo **cms, GBytes **manifest, GError **error)
+ G_GNUC_WARN_UNUSED_RESULT;
+ 
+--- a/src/bundle.c
++++ b/src/bundle.c
+@@ -2297,6 +2297,7 @@
+ 	GError *ierror = NULL;
+ 	gboolean res = FALSE;
+ 	gboolean verify = !(params & CHECK_BUNDLE_NO_VERIFY);
++	gboolean ignore_signer_trust = (params & CHECK_BUNDLE_IGNORE_SIGNER_TRUST);
+ 	g_autoptr(RaucBundle) ibundle = g_new0(RaucBundle, 1);
+ 	g_autoptr(GBytes) manifest_bytes = NULL;
+ 	g_autofree gchar *bundlescheme = NULL;
+@@ -2309,12 +2310,17 @@
+ 
+ 	r_context_begin_step("check_bundle", "Checking bundle", verify);
+ 
+-	if (verify && !r_context()->config->keyring_path && !r_context()->config->keyring_directory) {
++	if (verify && !ignore_signer_trust && !r_context()->config->keyring_path && !r_context()->config->keyring_directory) {
+ 		g_set_error(error, R_BUNDLE_ERROR, R_BUNDLE_ERROR_KEYRING, "No keyring file or directory provided");
+ 		res = FALSE;
+ 		goto out;
+ 	}
+ 
++	if (ignore_signer_trust && !verify) {
++		g_set_error(error, R_BUNDLE_ERROR, R_BUNDLE_ERROR_SIGNATURE,
++				"Signer trust exception cannot disable signature verification");
++		goto out;
++	}
+ 	ibundle->verification_disabled = !verify;
+ 
+ 	/* Download Bundle to temporary location if remote URI is given */
+@@ -2412,6 +2418,13 @@
+ 
+ 	g_debug("Found valid CMS data");
+ 
++	if (ignore_signer_trust && detached) {
++		g_set_error(error, R_BUNDLE_ERROR, R_BUNDLE_ERROR_FORMAT,
++				"Signer trust exception requires a verity or crypt bundle");
++		res = FALSE;
++		goto out;
++	}
++
+ 	if (detached && ibundle->nbd_srv) {
+ 		g_set_error(error, R_BUNDLE_ERROR, R_BUNDLE_ERROR_FORMAT,
+ 				"Bundle format 'plain' not supported in streaming mode");
+@@ -2452,7 +2465,7 @@
+ 
+ 	if (verify) {
+ 		g_autoptr(CMS_ContentInfo) cms = NULL;
+-		g_autoptr(X509_STORE) store = setup_x509_store(NULL, NULL, &ierror);
++		g_autoptr(X509_STORE) store = ignore_signer_trust ? X509_STORE_new() : setup_x509_store(NULL, NULL, &ierror);
+ 		X509_VERIFY_PARAM *param = NULL;
+ 		gboolean trust_env = (params & CHECK_BUNDLE_TRUST_ENV);
+ 		if (!store) {
+@@ -2498,7 +2511,10 @@
+ 				}
+ 			}
+ 
+-			res = cms_verify_sig(ibundle->sigdata, store, &cms, &manifest_bytes, &ierror);
++			if (ignore_signer_trust)
++				res = cms_verify_sig_untrusted(ibundle->sigdata, store, &cms, &manifest_bytes, &ierror);
++			else
++				res = cms_verify_sig(ibundle->sigdata, store, &cms, &manifest_bytes, &ierror);
+ 			if (!res) {
+ 				g_propagate_error(error, ierror);
+ 				goto out;
+@@ -2507,7 +2523,12 @@
+ 			ibundle->payload_verified = FALSE;
+ 		}
+ 
+-		res = cms_get_cert_chain(cms, store, &ibundle->verified_chain, &ierror);
++		/* No verified trust chain exists when the caller waived signer trust. */
++		if (ignore_signer_trust) {
++			g_message("CMS signature verified; signer trust explicitly waived for this request");
++			res = TRUE;
++		} else
++			res = cms_get_cert_chain(cms, store, &ibundle->verified_chain, &ierror);
+ 		if (!res) {
+ 			g_propagate_error(error, ierror);
+ 			goto out;
+--- a/src/install.c
++++ b/src/install.c
+@@ -1566,7 +1566,7 @@
+ 
+ 	args->access_args.http_info_headers = assemble_info_headers(args->transaction);
+ 
+-	res = check_bundle(bundlefile, &bundle, CHECK_BUNDLE_DEFAULT, &args->access_args, &ierror);
++	res = check_bundle(bundlefile, &bundle, args->ignore_signer_trust ? CHECK_BUNDLE_IGNORE_SIGNER_TRUST : CHECK_BUNDLE_DEFAULT, &args->access_args, &ierror);
+ 	if (!res) {
+ 		g_propagate_error(error, ierror);
+ 		goto out;
+--- a/src/main.c
++++ b/src/main.c
+@@ -36,6 +36,7 @@
+ gboolean install_ignore_compatible, install_ignore_version_limit, install_progressbar = FALSE;
+ gboolean trust_environment = FALSE;
+ gboolean verification_disabled = FALSE;
++static gboolean ignore_signer_trust = FALSE;
+ gboolean no_check_time = FALSE;
+ gboolean resign_append = FALSE;
+ gboolean info_dumpcert = FALSE;
+@@ -280,6 +281,7 @@
+ 	args->cleanup = install_cleanup;
+ 	args->status_result = 2;
+ 
++	args->ignore_signer_trust = ignore_signer_trust;
+ 	args->ignore_compatible = install_ignore_compatible;
+ 	args->ignore_version_limit = install_ignore_version_limit;
+ 	args->transaction = installation_txn;
+@@ -301,6 +303,7 @@
+ 
+ 		g_unix_signal_add(SIGINT, on_sigint, args);
+ 
++		g_variant_dict_insert(&dict, "ignore-signer-trust", "b", args->ignore_signer_trust);
+ 		g_variant_dict_insert(&dict, "ignore-compatible", "b", args->ignore_compatible);
+ 		g_variant_dict_insert(&dict, "ignore-version-limit", "b", args->ignore_version_limit);
+ 		if (args->transaction)
+@@ -1350,6 +1353,8 @@
+ 		goto out;
+ 	g_debug("input bundle: %s", bundlelocation);
+ 
++	if (ignore_signer_trust)
++		check_bundle_params |= CHECK_BUNDLE_IGNORE_SIGNER_TRUST;
+ 	if (verification_disabled)
+ 		check_bundle_params |= CHECK_BUNDLE_NO_VERIFY;
+ 	if (no_check_time)
+@@ -1398,7 +1403,7 @@
+ 
+ 	if (!output_format || g_strcmp0(output_format, "readable") == 0) {
+ 		if (!bundle->verified_chain) {
+-			g_print("Signature unverified\n");
++			g_print(bundle->signature_verified ? "CMS signature verified; signer trust not verified\n" : "Signature unverified\n");
+ 			goto out;
+ 		}
+ 
+@@ -2569,6 +2574,7 @@
+ } RaucCommand;
+ 
+ static GOptionEntry entries_install[] = {
++	{"ignore-signer-trust", '\0', 0, G_OPTION_ARG_NONE, &ignore_signer_trust, "waive signer chain trust for this request; retain signature and payload verification", NULL},
+ 	{"ignore-compatible", '\0', 0, G_OPTION_ARG_NONE, &install_ignore_compatible, "disable compatible check", NULL},
+ 	{"ignore-version-limit", '\0', 0, G_OPTION_ARG_NONE, &install_ignore_version_limit, "disable version check", NULL},
+ 	{"transaction-id", '\0', 0, G_OPTION_ARG_STRING, &installation_txn, "custom transaction id", "UUID"},
+@@ -2629,6 +2635,7 @@
+ };
+ 
+ static GOptionEntry entries_info[] = {
++	{"ignore-signer-trust", '\0', 0, G_OPTION_ARG_NONE, &ignore_signer_trust, "waive signer chain trust for this request; retain signature and payload verification", NULL},
+ 	{"keyring", '\0', G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_FILENAME, &keyring, "keyring file", "PEMFILE"},
+ 	{"no-verify", '\0', 0, G_OPTION_ARG_NONE, &verification_disabled, "disable bundle verification", NULL},
+ 	{"no-check-time", '\0', 0, G_OPTION_ARG_NONE, &no_check_time, "don't check validity period of certificates against current time", NULL},
+--- a/src/service.c
++++ b/src/service.c
+@@ -103,6 +103,9 @@
+ 	args->name = g_strdup(source);
+ 	args->notify = service_install_notify;
+ 	args->cleanup = service_install_cleanup;
++
++	if (g_variant_dict_lookup(&dict, "ignore-signer-trust", "b", &args->ignore_signer_trust))
++		g_variant_dict_remove(&dict, "ignore-signer-trust");
+ 
+ 	if (g_variant_dict_lookup(&dict, "ignore-compatible", "b", &args->ignore_compatible))
+ 		g_variant_dict_remove(&dict, "ignore-compatible");
+--- a/src/signature.c
++++ b/src/signature.c
+@@ -1427,7 +1427,7 @@
+ 	return res;
+ }
+ 
+-gboolean cms_verify_bytes(GBytes *content, GBytes *sig, X509_STORE *store, CMS_ContentInfo **cms, GBytes **manifest, GError **error)
++static gboolean cms_verify_bytes_internal(GBytes *content, GBytes *sig, X509_STORE *store, CMS_ContentInfo **cms, GBytes **manifest, gboolean ignore_signer_trust, GError **error)
+ {
+ 	GError *ierror = NULL;
+ 	g_autoptr(CMS_ContentInfo) icms = NULL;
+@@ -1440,6 +1440,10 @@
+ 	gboolean detached;
+ 	unsigned int verify_flags = CMS_BINARY;
+ 
++	/* Never use CMS_NO_CONTENT_VERIFY or CMS_NO_ATTR_VERIFY here. */
++	if (ignore_signer_trust)
++		verify_flags |= CMS_NO_SIGNER_CERT_VERIFY;
++
+ 	g_return_val_if_fail(sig != NULL, FALSE);
+ 	g_return_val_if_fail(store != NULL, FALSE);
+ 	g_return_val_if_fail(cms == NULL || *cms == NULL, FALSE);
+@@ -1502,7 +1506,7 @@
+ 	}
+ 
+ 	/* Optionally use certificate signing timestamp for verification */
+-	if (r_context()->config->use_bundle_signing_time) {
++	if (!ignore_signer_trust && r_context()->config->use_bundle_signing_time) {
+ 		STACK_OF(CMS_SignerInfo) *sinfos;
+ 		CMS_SignerInfo *si;
+ 		X509_ATTRIBUTE *xa;
+@@ -1583,6 +1587,16 @@
+ 	return res;
+ }
+ 
++gboolean cms_verify_bytes(GBytes *content, GBytes *sig, X509_STORE *store, CMS_ContentInfo **cms, GBytes **manifest, GError **error)
++{
++	return cms_verify_bytes_internal(content, sig, store, cms, manifest, FALSE, error);
++}
++
++gboolean cms_verify_sig_untrusted(GBytes *sig, X509_STORE *store, CMS_ContentInfo **cms, GBytes **manifest, GError **error)
++{
++	return cms_verify_bytes_internal(NULL, sig, store, cms, manifest, TRUE, error);
++}
++
+ GBytes *cms_sign_file(const gchar *filename, const gchar *certfile, const gchar *keyfile, gchar **interfiles, GError **error)
+ {
+ 	GError *ierror = NULL;
+--- a/src/update_handler.c
++++ b/src/update_handler.c
+@@ -1434,8 +1434,8 @@
+ 
+ 	bundle = r_context()->install_info->mounted_bundle;
+ 	if (bundle) {
+-		g_auto(GStrv) hashes = get_pubkey_hashes(bundle->verified_chain);
+-		g_autofree gchar *string = g_strjoinv(" ", hashes);
++		g_auto(GStrv) hashes = bundle->verified_chain ? get_pubkey_hashes(bundle->verified_chain) : NULL;
++		g_autofree gchar *string = hashes ? g_strjoinv(" ", hashes) : g_strdup("");
+ 
+ 		g_subprocess_launcher_setenv(launcher, "RAUC_BUNDLE_SPKI_HASHES", string, TRUE);
+ 
