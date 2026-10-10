@@ -17,9 +17,9 @@
   "requirement_rechecks": [],
   "checks": [
     {
-      "id": "installed-offload",
-      "description": "Measure only CE/offload requests, prove hardware versus fallback, check digests and preserved installed state.",
-      "environment": "hardware"
+      "id": "offload-evidence",
+      "description": "Analyze coordinator-authorized installed CE measurements: driver/fallback counters, digests, request limits and preserved state; retain hardware provenance separately.",
+      "environment": "offline"
     },
     {
       "id": "timing-model",
@@ -35,7 +35,7 @@
       "environment": "offline",
       "depends_on": [],
       "checks": [
-        "installed-offload",
+        "offload-evidence",
         "timing-model"
       ],
       "human_task": null,
