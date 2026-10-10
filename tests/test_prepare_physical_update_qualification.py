@@ -70,6 +70,18 @@ class PhysicalComposerTests(unittest.TestCase):
                             Path('/etc/rauc/release-keyring.pem'))
             self.assertFalse((root/'usr/lib/sv08/qualification-bin').exists())
 
+    def test_fresh_diagnostic_health_mask_becomes_current_enabled_unit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=self.root(temp)
+            wants=root/'etc/systemd/system/multi-user.target.wants';wants.mkdir()
+            link=wants/'sv08-boot-health.service';link.symlink_to('../sv08-boot-health.service')
+            composer.configure(root,identity(),'qualification-healthy',2,{},False)
+            unit=root/'etc/systemd/system/sv08-boot-health.service'
+            self.assertTrue(unit.is_file());self.assertFalse(unit.is_symlink())
+            self.assertEqual(link.resolve(),unit)
+            self.assertEqual(unit.read_bytes(),(REPO/'configs/host-os/systemd/sv08-boot-health.service').read_bytes())
+            self.assertIn('WantedBy=multi-user.target',unit.read_text())
+
     def test_environment_backend_refuses_identity_symlink_without_weakening_guard(self):
         sys.path.insert(0,str(REPO/'runtime'))
         from sv08_rauc_bootloader import verify_environment_copies

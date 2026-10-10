@@ -121,6 +121,11 @@ def configure(root, profile, release, revision, feed, unhealthy):
     for name in ('rauc', 'sv08-boot-health'):
         path = root / 'etc/systemd/system' / (name + '.service')
         if path.is_symlink() and os.readlink(path) == '/dev/null': path.unlink()
+    # Integration may have followed the diagnostic baseline health mask into
+    # /dev/null. Restore the current real unit after unmasking so its existing
+    # relative multi-user wants link resolves to the reviewed implementation.
+    put(root, 'etc/systemd/system/sv08-boot-health.service',
+        (REPO / 'configs/host-os/systemd/sv08-boot-health.service').read_text())
     # Reviewed test-only account binding: absent server-local seed fails closed.
     put(root, 'etc/systemd/system/sv08-qualification-account.service',
         '[Unit]\nDescription=Bind qualification account authentication\n'
