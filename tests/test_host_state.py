@@ -23,6 +23,29 @@ class PersistentStateTests(unittest.TestCase):
         self.config = Path(self.a['generation']) / 'config/printer.cfg'
         self.config.write_text('before staging')
 
+    def test_initialize_provisions_actual_staging_for_fresh_and_existing_registry(self):
+        from sv08_staging import Staging
+        uploads = self.store.root / 'uploads'
+        Staging(uploads, owner_uid=os.geteuid(), budget=fixture_budget())
+        before = (self.store.root / 'state.json').read_bytes()
+        uploads.rmdir()
+        self.store.initialize()
+        Staging(uploads, owner_uid=os.geteuid(), budget=fixture_budget())
+        self.assertEqual(uploads.stat().st_mode & 0o777, 0o700)
+        self.assertEqual((self.store.root / 'state.json').read_bytes(), before)
+
+    def test_initialize_rejects_existing_unsafe_uploads_without_repair(self):
+        uploads = self.store.root / 'uploads'
+        uploads.chmod(0o755)
+        with self.assertRaisesRegex(ValueError, 'Uploads directory'):
+            self.store.initialize()
+        self.assertEqual(uploads.stat().st_mode & 0o777, 0o755)
+        uploads.rmdir()
+        uploads.symlink_to(self.store.root / 'feed-bundles', target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, 'directory link'):
+            self.store.initialize()
+        self.assertTrue(uploads.is_symlink())
+
     def test_default_mode_and_both_switch_directions_preserve_customization(self):
         self.assertEqual(self.a['mode'], 'immutable')
         self.store.policy(mode='writable')

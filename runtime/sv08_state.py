@@ -200,11 +200,16 @@ class Store:
             for name in ('generations', 'shared/gcodes', 'shared/timelapse', 'shared/logs', 'shared/logs/journal',
                          'system/ssh', 'system/network-connections', 'system/network-state',
                          'system/rauc', 'system/timesync', 'system/rfkill', 'system/linger',
-                         'system/cockpit/ws-certs.d', 'users/sv08', 'feed-bundles'):
+                         'system/cockpit/ws-certs.d', 'users/sv08', 'feed-bundles', 'uploads'):
                 path = self.root / name
                 if any(p.is_symlink() for p in (path, *path.parents)):
                     raise ValueError('Unexpected persistent directory link')
                 path.mkdir(parents=True, exist_ok=True, mode=0o700)
+                if name == 'uploads':
+                    entry = path.lstat()
+                    if (not stat.S_ISDIR(entry.st_mode) or entry.st_uid != os.geteuid() or
+                            stat.S_IMODE(entry.st_mode) != 0o700):
+                        raise ValueError('Uploads directory must be private and owned by the coordinator')
             if state is None:
                 state = dict(format_version=1, requested_mode='immutable', auto_update=True,
                              slots={}, pending=None)
