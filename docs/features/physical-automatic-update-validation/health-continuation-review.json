@@ -1,0 +1,76 @@
+{
+  "format_version": 1,
+  "decision": "PASS WITH CONDITIONS",
+  "scope": "Exact three-public-leaf health repair per currentA and inactive confirmedB, RAUC restart and ONE production health restart on current847721f2, then two remaining natural A failed-health boots and finite-counter fallback B. No additional image installation/manual reboot/source prepare rerun.",
+  "packet_path": "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair-packet.json",
+  "packet_sha256": "b54a9d6db376a565447350e770e628938e0fe251479dd391c794cbc97b36e370",
+  "revision": "c41187f82e079cc4fe393adf8ab3ad7195738c6a",
+  "script_sha256": "4c3593ab84cfee4dc1ee4a7edfdc91f076f15564ae0c0ae40894920d8faebd43",
+  "profile": {
+    "role": "high_consequence_reviewer_high",
+    "configured_model": "gpt-6.1-sol",
+    "configured_reasoning_effort": "high",
+    "actual_sampling_telemetry": "unknown/not exposed"
+  },
+  "bindings": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair-packet.json": "b54a9d6db376a565447350e770e628938e0fe251479dd391c794cbc97b36e370",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair/repair-health-continuation-slots.py": "4c3593ab84cfee4dc1ee4a7edfdc91f076f15564ae0c0ae40894920d8faebd43",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair/payload.json": "7de1cd583968669de54b8dbdfa15e368a4dbaed05fac9a77ac4334ee52998732",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair-preflight.log": "8b894521be86c1b34839673a488c5f068e36f04178df4551b39dc1ec31fcbb0a",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair/sv08_boot_health.py": "735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-continuation-repair/sv08-boot-health.service": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+    "/home/drew/sv08-mainline/runtime/sv08_boot_health.py": "735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9",
+    "/home/drew/sv08-mainline/configs/host-os/systemd/sv08-boot-health.service": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+    "/home/drew/sv08-mainline/tests/test_host_boot_health.py": "d880643321148765250dea9187e6b49798a4cdbdd97b683b8da59659082d5349"
+  },
+  "leaves": [
+    {
+      "file": "sv08_boot_health.py",
+      "path": "usr/lib/sv08/sv08_boot_health.py",
+      "before": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f",
+      "after": "735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "usr/lib/systemd/system/sv08-boot-health.service",
+      "before": "3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3",
+      "after": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "etc/systemd/system/sv08-boot-health.service",
+      "before": "3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3",
+      "after": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "mode": 420
+    }
+  ],
+  "resolved_previous_fail_findings": [
+    "Exact source735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9 preserves originalstartup record byte-for-byte and permits a single distinct host-health record only for actual HealthFailure and exact canonical sameboot unknown/unvalidated prior, known A/B release and direct real generation. Existing validated, malformed, linked or duplicate cases fail closed and retained budgets remain enforced.",
+    "Three-leaf manifest explicitly includes actual effective/etc health unit and packaged/usr copy. Script asserts effective/etc FragmentPath,95s timeout and sole qualification drop-in after reload before continuation. Original two-leaf packet was not executed."
+  ],
+  "measured_evidence": [
+    "All packet/script/payload/main-source hashes checked and agree; complete exact deployer and stable health source changes inspected.",
+    "Actual extendedpreflight receipt8b894521be86c1b34839673a488c5f068e36f04178df4551b39dc1ec31fcbb0a records current8477, A B/A2/B3, three exact leaf preimages/modes in both roots, armed transaction and selected writer/idle gate.",
+    "Producer boot-health-diagnostic-tests.log reports35tests/0.736s/OK. Inspected added causal run/fallback after retained startup, originalbytes-preserved/duplicate-refused and malformed/mismatched/link/unknownexception cases plus earlier deadline-budget cases. No independent hardware tests performed."
+  ],
+  "source_assessment": "Health polling remains40s; derived coordinator70s with physical90s ceiling and effectiveunit95s provides bounded validation/finalization allowance. Fixture180 policy and no production timerreset remain. Validated backend/transaction/admission and HostHealth callback paths are unchanged; only classified diagnostic supplementation is added. Named fallbackB receives the same reviewed health repair and previous exact resolver repair while boot route/protected data stay outside writes.",
+  "conditions": [
+    "Reverify frozen packet b54a9d6db376a565447350e770e628938e0fe251479dd391c794cbc97b36e370, script4c3593ab84cfee4dc1ee4a7edfdc91f076f15564ae0c0ae40894920d8faebd43 and exact three staged payload rows. Fresh checks must match currentA847721f2/revision3, platform4022000 stable alias /dev/mmcblk0 and exactCID/GPT/all six partition geometry, immutable root/data pair, A B/A2/B3, original matching armed trial/pending and priorB queued automatic-reboot marker. Require the original unknown/unvalidated startup record intact and no validated HostHealth record yet for this boot.",
+    "PSU OFF, five kernel/filesystem physical masks active and services inactive, no USB serial writers/hardware output path, accountseed local equality and binding intact, feed timer/server stopped, no conflicting jobs/markers. Owner-confirmed tested rescue SD remains available. Script Store lock, selected immutable RAUC identity/idle/same-owner, writer exclusion and admission checks must pass before stopping idle RAUC and writes.",
+    "Execute only healthmodule plus effective/etc and packaged/usr healthunit in each slot, all root-owned0644 with exact pre/after hashes. Preserve both boot partitions, loader/GPT/p5, resolver and existing canonicalmap, all configuration/application/shared/identity/privateaccount state and original startup diagnostic. No prepare rerun/rebind/image install/raw env write or manual reboot/counter/slot operation is covered.",
+    "Before health continuation, exact script must PASS all six leaf afterimages, A readonly/B unmounted, byte-identical state/update/queued marker/original8477startup diagnostic, existingcanonicalmap readonly/recheck and both CRCs valid, unchanged A B/A2/B3, actual installed backendcontext valid and unchanged output/account checks. Require daemonreload effectiveFragmentPath=/etc/systemd/system/sv08-boot-health.service, TimeoutStartUSec95s and sole existingqualificationPATHdropin; B effective unit must have the reviewed95s contents with no unreviewed timeout override. Recheck protected boot/loader/GPT/p5 and all relevant application preservation before health.",
+    "Only after repair/post-preservation passes, start existing production sv08-boot-health.service ONCE on current847721f2. Prior metadata and CoordinatorDeadline failures count as zero expected HostHealth failures. New source must retain old startup record and produce one actual revision3/A HostHealth record in the distinct host-health suffix, hold ready closed, validate backend/state and request normal production callback reboot. Then observe two remaining natural A boots/failures and finite-counter fallback B. No manual loop or undiagnosed retry is covered.",
+    "Exclusive exact receive-only UART and bounded readonly monitor must cover continuation; retain actual initial A3 UART evidence and subsequent A2,A1,B3 sequence. Require exactly three distinct revision3/A HostHealth failure boot IDs, including current8477 supplement. Unknown exception, deadline, record refusal, callback uncertainty, precondition drift, write/preservation mismatch or evidence timeout stops further manual action and requires reassessment; do not infer success or create extra boots.",
+    "Final B must be verified healthy revision2/immutable/readonly/ready, reconciled failed trial with pending null and A0/B3. Immediately disable automatic policy and stop timer/server. Verify final configuration/calibration/UI/shared/machine/publicidentity values, protected loader/GPT/p5/boot pair and all five logical DB tables/schema/integrity through the exact local boolean-only comparer excluding solely documented unsafe_shutdowns. Keep installed account seed and generations. Patched roots are continuation artifacts, not unchanged originally signed images; original prewarm logical DB preservation remains unproven."
+  ],
+  "hazard_assessment": "Repair touches confirmed fallbackB runtime, so wrong target/artifact/leaf/unit handling can damage the fallback; exact current identities, bounded public writes/modes, effective-unit verification and independent available tested rescue SD address that transition. Deliberate three failed-health boots alone remain recoverable and do not constitute loss of the recovery route.",
+  "limitations": [
+    "Passing review is input to coordinator and does not replace owner authority or observed execution evidence.",
+    "Original signed unhealthy trial stopped on integration defects; final patched continuation success cannot certify original unpatched artifact.",
+    "Original prewarm logicalDB preservation remains unproven and unwaived. Exact comparison excludes only boot-managed unsafe_shutdowns and makes no existence/type/value preservation claim for that counter.",
+    "Actual sampling telemetry unavailable; configured role fixed Sol/high verified by coordinator. No implementation authored, tracked files edited, hardware accessed, or privatecredential/DB rows inspected."
+  ],
+  "allowance": "Carried lineage charges; this continuation used only bounded local reads/hashes and small reviewer records, below300 processseconds/16MiB; no experiments/hardware/remote operations."
+}

@@ -1,0 +1,43 @@
+{
+  "format_version": 1,
+  "decision": "FAIL",
+  "packet_sha256": "3ae3f93863d277e5a80760d4f6e2b53996aeac62f29032902cd4b594ab36c088",
+  "scope": "Two-leaf deadline repair plus one production health restart on current847721f2 and natural remaining trials/fallback.",
+  "profile": {
+    "role": "high_consequence_reviewer_high",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "actual_sampling_telemetry": "unknown/not exposed"
+  },
+  "bindings": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-deadline-repair-packet.json": "3ae3f93863d277e5a80760d4f6e2b53996aeac62f29032902cd4b594ab36c088",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-deadline-repair/repair-health-deadline-slots.py": "2d2970f464f07177d85b98fc5b8c4c85a0229c60b7845e2485c46dc7fd0c9b57",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-deadline-repair/payload.json": "ec87b5b56cda1895eba61e4253e6f3dbb083120010fa6f70ea01ee9b5d3a7669",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-deadline-repair-preflight.log": "f3fe73143e8cc91fcdc6f30181a088e1b1a0ddc6b2b1d9df565d317c0292f9d0",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/health-deadline-installed-intake.log": "d0fc2902a786d3a887f1517d338e5f9902a6ef0efd19fa7c2ebb66380a194ced",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/device-renumbering-intake.json": "e7b9d28d848340e0a9a8bfab42723acd459f091fde6b4bfadd43d2e3cd68e469",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/repaired-trial-preservation.json": "43852c49dc9d5e5354d05482f17f83df1827eebff683297d6eaea8f139720ac6",
+    "/home/drew/sv08-mainline/runtime/sv08_boot_health.py": "d6b392a00851d73e94a5602cbfd2faba54c560b3d642fedeea1a2ef108ef08cd",
+    "/home/drew/sv08-mainline/configs/host-os/systemd/sv08-boot-health.service": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+    "/home/drew/sv08-mainline/tests/test_host_boot_health.py": "843b0bebe533efb0334dd0125657879bf9f875ba36ac176d005b848fae9edfc4"
+  },
+  "findings": [
+    {
+      "severity": "blocking demonstrated continuation defect",
+      "source": "runtime/sv08_boot_health.py record_failure and main",
+      "measured": "device-renumbering-intake.json.failures and repaired-trial-preservation.json.failure_records both show current847721f2 startup unknown/unvalidated record for FileNotFound mmcblk2.",
+      "consequence": "main earlier startup exception occupies <boot_id>.json. Intended HostHealth failure on same boot calls record_failure, which refuses the existing filename before invoking validated fallback. Deadline-only repair cannot produce first intended failure/reboot; no manual counter consumption or repeated start can fix it.",
+      "action": "Diagnose/correct distinct startup and validated host-failure recording while preserving original evidence and refusing duplicate actual health failures. Review exact changed source, tests and write/continuation packet before any retry."
+    },
+    {
+      "severity": "blocking effective unit evidence gap with conflicting source artifact",
+      "source": "composer configure explicitly puts etc/systemd/system/sv08-boot-health.service; packet writes usr/lib/systemd/system counterpart only",
+      "measured": "Original copied healthy and unhealthy public roots each have regular0644 /etc health unit SHA3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3. Current installed intake displays only /usr health unit bytes, not effective FragmentPath or /etc type.",
+      "consequence": "If actual slots retain that /etc file, patching /usr cannot change effective TimeoutStartSec60; intended95 ceiling is not established on current A or future B.",
+      "action": "Coordinator measure actual A effective FragmentPath/TimeoutStartUSec and both A/B /etc unit type/link/hash, select exact controlling leaf(s) in packet, verify effective95 after repair before health. Do not remove the observed criterion or assume /usr controls the service."
+    }
+  ],
+  "nonblocking_source_assessment": "Deadline constants are a narrow bounded correction: unchanged40s polling,70s default coordinator,90s physical cap,95s unit, fixture180 unchanged and no extra production reset. Full source changes/tests inspected; producer31-test log passes. This does not overcome the two concrete delivery/continuation findings.",
+  "limitations": "No hardware/remote operation or tracked edit performed; originalprewarm logicalDB preservation remains unproven. Prior continuation assessment missed same-boot duplicate-record interaction; corrected now using source and durable measured failure metadata.",
+  "allowance": "Assigned local reads/hashes only; records below16MiB and process runtime below300s continuation; no experiments or physical action."
+}

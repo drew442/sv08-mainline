@@ -1,0 +1,25 @@
+PASS WITH CONDITIONS — corrected health repair and continuation
+
+Packet SHA256: b54a9d6db376a565447350e770e628938e0fe251479dd391c794cbc97b36e370
+Script SHA256: 4c3593ab84cfee4dc1ee4a7edfdc91f076f15564ae0c0ae40894920d8faebd43
+Revision: c41187f82e079cc4fe393adf8ab3ad7195738c6a
+
+Coverage is three public leaves per current A and inactive confirmed B: healthmodule and both effective/etc and packaged/usr healthunit, all0644. After postchecks, one production health restart on current847721f2, then two remaining natural failed A boots/fallbackB. No install/manualreboot/counter action or prepare rerun.
+
+Both prior FAIL findings are addressed: original startuprecord preserved with one strictly classified distinct HostHealth supplement; both healthunits repaired and effective/etc95s timeout asserted. Exact source/payload/script bindings and measured extended preflight agree. Producer35-test log passes and added preservation/refusal/fallback tests inspected.40s polling is unchanged; coordinator70/hardcap90/unit95 are bounded; fixture180 unchanged.
+
+1. Reverify frozen packet b54a9d6db376a565447350e770e628938e0fe251479dd391c794cbc97b36e370, script4c3593ab84cfee4dc1ee4a7edfdc91f076f15564ae0c0ae40894920d8faebd43 and exact three staged payload rows. Fresh checks must match currentA847721f2/revision3, platform4022000 stable alias /dev/mmcblk0 and exactCID/GPT/all six partition geometry, immutable root/data pair, A B/A2/B3, original matching armed trial/pending and priorB queued automatic-reboot marker. Require the original unknown/unvalidated startup record intact and no validated HostHealth record yet for this boot.
+
+2. PSU OFF, five kernel/filesystem physical masks active and services inactive, no USB serial writers/hardware output path, accountseed local equality and binding intact, feed timer/server stopped, no conflicting jobs/markers. Owner-confirmed tested rescue SD remains available. Script Store lock, selected immutable RAUC identity/idle/same-owner, writer exclusion and admission checks must pass before stopping idle RAUC and writes.
+
+3. Execute only healthmodule plus effective/etc and packaged/usr healthunit in each slot, all root-owned0644 with exact pre/after hashes. Preserve both boot partitions, loader/GPT/p5, resolver and existing canonicalmap, all configuration/application/shared/identity/privateaccount state and original startup diagnostic. No prepare rerun/rebind/image install/raw env write or manual reboot/counter/slot operation is covered.
+
+4. Before health continuation, exact script must PASS all six leaf afterimages, A readonly/B unmounted, byte-identical state/update/queued marker/original8477startup diagnostic, existingcanonicalmap readonly/recheck and both CRCs valid, unchanged A B/A2/B3, actual installed backendcontext valid and unchanged output/account checks. Require daemonreload effectiveFragmentPath=/etc/systemd/system/sv08-boot-health.service, TimeoutStartUSec95s and sole existingqualificationPATHdropin; B effective unit must have the reviewed95s contents with no unreviewed timeout override. Recheck protected boot/loader/GPT/p5 and all relevant application preservation before health.
+
+5. Only after repair/post-preservation passes, start existing production sv08-boot-health.service ONCE on current847721f2. Prior metadata and CoordinatorDeadline failures count as zero expected HostHealth failures. New source must retain old startup record and produce one actual revision3/A HostHealth record in the distinct host-health suffix, hold ready closed, validate backend/state and request normal production callback reboot. Then observe two remaining natural A boots/failures and finite-counter fallback B. No manual loop or undiagnosed retry is covered.
+
+6. Exclusive exact receive-only UART and bounded readonly monitor must cover continuation; retain actual initial A3 UART evidence and subsequent A2,A1,B3 sequence. Require exactly three distinct revision3/A HostHealth failure boot IDs, including current8477 supplement. Unknown exception, deadline, record refusal, callback uncertainty, precondition drift, write/preservation mismatch or evidence timeout stops further manual action and requires reassessment; do not infer success or create extra boots.
+
+7. Final B must be verified healthy revision2/immutable/readonly/ready, reconciled failed trial with pending null and A0/B3. Immediately disable automatic policy and stop timer/server. Verify final configuration/calibration/UI/shared/machine/publicidentity values, protected loader/GPT/p5/boot pair and all five logical DB tables/schema/integrity through the exact local boolean-only comparer excluding solely documented unsafe_shutdowns. Keep installed account seed and generations. Patched roots are continuation artifacts, not unchanged originally signed images; original prewarm logical DB preservation remains unproven.
+
+Patched continuation artifacts do not certify original signed unhealthy image. Originalprewarm logicalDB preservation remains unproven and is not waived. This assessment grants no hardware authority and claims no execution result. Configured reviewer Sol/high; actualsamplingtelemetryunknown.

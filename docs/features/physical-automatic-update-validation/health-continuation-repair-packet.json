@@ -1,0 +1,50 @@
+{
+  "format_version": 1,
+  "revision": "c41187f82e079cc4fe393adf8ab3ad7195738c6a",
+  "target": "sv08@192.168.1.141",
+  "boot_id": "847721f2-5618-450b-9a9a-901f841cffe5",
+  "canonical": "/dev/mmcblk0",
+  "stable_alias": "/dev/disk/by-path/platform-4022000.mmc",
+  "cid_sha256": "d95fdc00fd925e9bd9bd2a90119f9b0b1c9e11b5df67d075ad22afcc0ec04141",
+  "environment_before": {
+    "BOOT_ORDER": "A B",
+    "BOOT_A_LEFT": "2",
+    "BOOT_B_LEFT": "3"
+  },
+  "owner_recovery": "Owner confirmed previously tested rescue SD remains available",
+  "power": "PSU OFF observed via Beelink normal-user sv08-power status immediately before packet",
+  "leaves": [
+    {
+      "file": "sv08_boot_health.py",
+      "path": "usr/lib/sv08/sv08_boot_health.py",
+      "before": "853fd448e841d52b1203d8a75f847b10da2ffb1decdfa14030c4b9a64eb3857f",
+      "after": "735f53ecf39930f64c4c05a95f209183117b12fad7eae48d6d390ea2efc103d9",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "usr/lib/systemd/system/sv08-boot-health.service",
+      "before": "3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3",
+      "after": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "mode": 420
+    },
+    {
+      "file": "sv08-boot-health.service",
+      "path": "etc/systemd/system/sv08-boot-health.service",
+      "before": "3acf520b56c9e55c45d8b00d23fe7933da5bc66c454e826784c25bafb24742b3",
+      "after": "c8ac393f2dede61d3e67ae77677fefb6d948c442f54729c92ea1a4632ec7d461",
+      "mode": 420
+    }
+  ],
+  "script_sha256": "4c3593ab84cfee4dc1ee4a7edfdc91f076f15564ae0c0ae40894920d8faebd43",
+  "preflight": "health-continuation-repair-preflight.log PASS currentA8477/envA2B3/armed/idlewriter and3exactpreimages/modesbothslots; originaldeadline-onlypacketFAILneverexecuted; priorunknownfailurepreserved.",
+  "write_boundary": "Threepublicleaves perroot: healthmodule +both effective/etc andpackaged/usr healthunit,0644each. Sameboundedrootmounts/locks/RAUCidle. No environmentmapchange(recheckonly). Preservebothboot/loader/GPT/P5/data/privateaccount/oldstartupdiagnostic.",
+  "postconditions": "All3afterimagehashes/modesbothslots; rootAro/Bunmounted; registry/update/queuedrebootmarker/original8477unknownrecordbyteidentical; existingcanonicalmapro/actualcontext/CRCgood/envA2B3; effectiveFragment/etc andTimeoutStartUSec95 withsolequalificationPATHdropin afterdaemonreload; outputs/accountunchanged.",
+  "continuation": "AfternewPASS/exact3leafrepair andpreservation, ONE existingproductionhealthstart again oncurrentA8477. Prior metadataerror andCoordinatorDeadline both zeroexpectedHostHealthfailures. Currentbootmustrecord40sHostHealthfailure andnormalcallback, thennaturalA2A1failures/actualBfallback. No manualreboot/counter/slot/install/feedpublication.",
+  "preservation": "Actual signed bundle and prepatch healthy preservation evidence retained. Patched roots are explicitly continuation artifacts, not byte-identical signed original payload. Boot partitions and protected loader/P5/GPTtail unchanged; final logicalDB comparison includes all tables/authorized_users except documented unsafe_shutdowns key; config/calibration/publicidentity/UI/shared/machine unchanged. Disable automatic opt-in and stop timer on confirmed goodB and three distinct failure boot IDs; server stays stopped.",
+  "checks": "35health/rearmtests pass; fullstable2filefollowupdiff inspected,diffcheckclean,sourcecommitpushedremoteverified. Prior31deadlinechecksretained (overlapping).",
+  "budget": "Carry all prior charges. Additional bounded continuation 1800 local/remote process seconds and 16MiB cumulative generated data covers readonly1500s UART plus SSHmonitor/repair/final checks; no builds/imagecopies.",
+  "writer_exclusion": "Store lock plus existing selected RAUC writer lock; service immutable process/package/unit identity and DBus Operation idle/same owner checked before stop. GetSlotStatus before repair would invoke invalid old map; full backend context after readonlycanonicalbinding remains required.",
+  "diagnosis": "Measured installed productionpoll40seconds (60-20), outer50/unit60. Extra prevalidationcausedCoordinatorDeadlinebeforeHostHealthfailure; noexpectedfailure/reboot. Fix keeps40poll, derived70outer/90hardmax/unit95. Fixture180unchanged; allguards preserved.",
+  "additional_diagnosis": "Independent FAIL ofpreviousnonexecuted2leafpacket: measured/etc regularunit shadows/usr; existing8477unknown startupdiagnostic blocks duplicate filename. NewHealthFailureonly sameboot validatedAB/generation supplement preservesoriginaldiagnosticbyteforbyte; duplicatevalidated/malformed/symlink failclosed. ActualFragment/etc; onlyqualificationPATHdropin, noTimeoutoverride."
+}
