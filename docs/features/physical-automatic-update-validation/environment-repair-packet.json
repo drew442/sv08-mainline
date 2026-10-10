@@ -1,0 +1,62 @@
+{
+  "format_version": 1,
+  "revision": "fec9278fbbbc21c560bf23f1992a983bb51aaec7",
+  "target": "sv08@192.168.1.141",
+  "boot_id": "847721f2-5618-450b-9a9a-901f841cffe5",
+  "canonical": "/dev/mmcblk0",
+  "stable_alias": "/dev/disk/by-path/platform-4022000.mmc",
+  "cid_sha256": "d95fdc00fd925e9bd9bd2a90119f9b0b1c9e11b5df67d075ad22afcc0ec04141",
+  "environment_before": {
+    "BOOT_ORDER": "A B",
+    "BOOT_A_LEFT": "2",
+    "BOOT_B_LEFT": "3"
+  },
+  "owner_recovery": "Owner confirmed previously tested rescue SD remains available",
+  "power": "PSU OFF observed via Beelink normal-user sv08-power status immediately before packet",
+  "leaves": [
+    {
+      "file": "sv08_boot.py",
+      "path": "usr/lib/sv08/sv08_boot.py",
+      "before": "fdf2fa13c4a40d67e8e9bbf6ef77842b76f35d053198b3ef6f60c9baf34862cd",
+      "after": "a4995277b623ba32af671a675d3c9e34e735da4730d215d31c1a288e6849058c",
+      "mode": 420
+    },
+    {
+      "file": "sv08_rauc_bootloader.py",
+      "path": "usr/lib/sv08/sv08_rauc_bootloader.py",
+      "before": "b7ab5d71b944259c91ec42152d1557846a131a752c4501bab23f56c4dcd84753",
+      "after": "8af3ce328994ab0715ad18ccfdbbc9312d1f4dc45fb34ac2c349f3850ee73170",
+      "mode": 493
+    },
+    {
+      "file": "sv08_environment_device.py",
+      "path": "usr/lib/sv08/sv08_environment_device.py",
+      "before": null,
+      "after": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+      "mode": 493
+    },
+    {
+      "file": "sv08.conf",
+      "path": "etc/systemd/system/rauc.service.d/sv08.conf",
+      "before": "bb9c18b657242e0e8e4a33981b346278796052216528b31da09319a99ec1a47d",
+      "after": "296fad5627eb153affa0a1f2b43ec3148856534e42c3724a6097f561f9dbcd66",
+      "mode": 420
+    },
+    {
+      "file": "environment-device.json",
+      "path": "usr/lib/sv08/environment-device.json",
+      "before": null,
+      "after": "825cab795eff80e15a9bb292933186d6d2da134c0570dcbaa41a9cdfc0744402",
+      "mode": 420
+    }
+  ],
+  "script_sha256": "9ca74d3ea767e559dea99216543db21d84b8d7508dea3ca14e859ec64d74d7b3",
+  "preflight": "environment-repair-preflight-final.log pass; preceding attempt stopped on expected queued automatic-reboot marker before root writes, corrected by exact sourceboot/target/id check and snapshot preservation",
+  "write_boundary": "Five public root leaves per slot only. Inactive B mount rw, then unmount; current A remount rw, then ro. Preserve original leaf modes. Stop idle RAUC before writes. No boot partition/kernel/SPL/U-Boot/GPT/raw environment/recovery/data/private-account write.",
+  "postconditions": "State, transaction, queued automatic reboot marker byte-identical; current root ro; inactiveB unmounted; canonical environment bound ro after CID/GPT/root-parent/bothCRC validation; restart RAUC with prepare already active; actual installed backend context pass; env counters/order unchanged; outputs remain masked/inactive/account seed bound.",
+  "continuation": "After PASS/exact repair, capture readonlyUART and readonlySSHmonitor. Start existing production sv08-boot-health.service once on current A without rerunning prepare. Expect currentA HostHealth failure then normal health rebootcallback; subsequent A2,A1 failures; actual U-Boot fallback B3. No manual counters/slot selection/reboot. Current metadata traceback counted as zero HostHealth failures.",
+  "preservation": "Actual signed bundle and prepatch healthy preservation evidence retained. Patched roots are explicitly continuation artifacts, not byte-identical signed original payload. Boot partitions and protected loader/P5/GPTtail unchanged; final logicalDB comparison includes all tables/authorized_users except documented unsafe_shutdowns key; config/calibration/publicidentity/UI/shared/machine unchanged. Disable automatic opt-in and stop timer on confirmed goodB and three distinct failure boot IDs; server stays stopped.",
+  "checks": "64 focused tests +26 HostHealth tests pass. Source complete diff inspected; diff-check clean; source commit/push remote receipt verified. No repeated physical installation or rebuilt image authorized.",
+  "budget": "Carry all prior charges. Additional bounded continuation 1800 local/remote process seconds and 16MiB cumulative generated data covers readonly1500s UART plus SSHmonitor/repair/final checks; no builds/imagecopies.",
+  "writer_exclusion": "Store lock plus existing selected RAUC writer lock; service immutable process/package/unit identity and DBus Operation idle/same owner checked before stop. GetSlotStatus before repair would invoke invalid old map; full backend context after readonlycanonicalbinding remains required."
+}

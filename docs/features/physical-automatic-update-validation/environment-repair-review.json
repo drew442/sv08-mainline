@@ -1,0 +1,97 @@
+{
+  "format_version": 1,
+  "decision": "PASS WITH CONDITIONS",
+  "scope": "Exact five-leaf resolver repair to current unhealthy A and inactive confirmed B, read-only canonical environment binding, RAUC restart and one production HostHealth continuation on current A followed by the two remaining natural A boots and fallback B. No extra installation/manual reboot or source prepare rerun.",
+  "packet_sha256": "d424058152eabed82df5bfab8241e4d8cbd6ab72f3343fbfd360141d136b41d0",
+  "packet_path": "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair-packet.json",
+  "revision": "fec9278fbbbc21c560bf23f1992a983bb51aaec7",
+  "script_sha256": "9ca74d3ea767e559dea99216543db21d84b8d7508dea3ca14e859ec64d74d7b3",
+  "bindings": {
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair-packet.json": "d424058152eabed82df5bfab8241e4d8cbd6ab72f3343fbfd360141d136b41d0",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/repair-environment-slots.py": "9ca74d3ea767e559dea99216543db21d84b8d7508dea3ca14e859ec64d74d7b3",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/payload.json": "52a9b44fcee40c80ef342a7e3207157efbf17c2338da9690b4995e89dc1eed83",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair-preflight-with-writer.log": "28482220d7a522d2b75baeb404f65502d52507c094fcdc9033250b8a094eb535",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/sv08_boot.py": "a4995277b623ba32af671a675d3c9e34e735da4730d215d31c1a288e6849058c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/sv08_rauc_bootloader.py": "8af3ce328994ab0715ad18ccfdbbc9312d1f4dc45fb34ac2c349f3850ee73170",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/sv08_environment_device.py": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/sv08.conf": "296fad5627eb153affa0a1f2b43ec3148856534e42c3724a6097f561f9dbcd66",
+    "/home/drew/.sv08-physical-update-coordinator-20261010/environment-repair/environment-device.json": "825cab795eff80e15a9bb292933186d6d2da134c0570dcbaa41a9cdfc0744402"
+  },
+  "leaves": [
+    {
+      "file": "sv08_boot.py",
+      "path": "usr/lib/sv08/sv08_boot.py",
+      "before": "fdf2fa13c4a40d67e8e9bbf6ef77842b76f35d053198b3ef6f60c9baf34862cd",
+      "after": "a4995277b623ba32af671a675d3c9e34e735da4730d215d31c1a288e6849058c",
+      "mode": 420
+    },
+    {
+      "file": "sv08_rauc_bootloader.py",
+      "path": "usr/lib/sv08/sv08_rauc_bootloader.py",
+      "before": "b7ab5d71b944259c91ec42152d1557846a131a752c4501bab23f56c4dcd84753",
+      "after": "8af3ce328994ab0715ad18ccfdbbc9312d1f4dc45fb34ac2c349f3850ee73170",
+      "mode": 493
+    },
+    {
+      "file": "sv08_environment_device.py",
+      "path": "usr/lib/sv08/sv08_environment_device.py",
+      "before": null,
+      "after": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+      "mode": 493
+    },
+    {
+      "file": "sv08.conf",
+      "path": "etc/systemd/system/rauc.service.d/sv08.conf",
+      "before": "bb9c18b657242e0e8e4a33981b346278796052216528b31da09319a99ec1a47d",
+      "after": "296fad5627eb153affa0a1f2b43ec3148856534e42c3724a6097f561f9dbcd66",
+      "mode": 420
+    },
+    {
+      "file": "environment-device.json",
+      "path": "usr/lib/sv08/environment-device.json",
+      "before": null,
+      "after": "825cab795eff80e15a9bb292933186d6d2da134c0570dcbaa41a9cdfc0744402",
+      "mode": 420
+    }
+  ],
+  "configured_profile": {
+    "role": "high_consequence_reviewer_high",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "actual_sampling_telemetry": "unknown/not exposed"
+  },
+  "evidence": {
+    "measured_local": [
+      "Packet, script, payload manifest and all five payload hashes agree. Full exact script and named source changes inspected.",
+      "Extended actual preflight log records pass on boot847721f2 with env A B/A2/B3, five exact leaves in both roots and armed transaction.",
+      "Source resolver metadata binds exact observed newline-inclusive CID hash and stable physical alias; staged source hashes equal inspected main source."
+    ],
+    "documented_source": [
+      "Resolver verifies root/data identities, canonical whole-root medium, stable physical alias/CID, six-partition geometry/PARTUUIDs/GPT before config generation; validates both environment CRCs before publishing a runtime file and readonly /etc/fw_env.config bind.",
+      "Backend default environment check revalidates current physical binding; O_NOFOLLOW raw-device opening and redundant environment offsets remain unchanged. Early boot invokes resolver before persistent trial preparation; sole RAUC drop-in Requires/After prepare.",
+      "Script takes Store and selected RAUC writer exclusion, verifies immutable executable/package/unit identity and DBus idle/same owner, then admission lock before idle RAUC stop and exact bounded root writes. Verifies afterimages, readonly/unmounted state and unchanged control records before canonical binding/service/backend checks.",
+      "Boot-health production HostHealth failure path records failure and validates backend/state under admission before orderly callback reboot. No new callback or U-Boot selector change is included."
+    ],
+    "reported_not_independently_executed": [
+      "64 focused and26 HostHealth tests pass; source committed/pushedfec9278fbbbc21c560bf23f1992a983bb51aaec7 remote-verified by coordinator.",
+      "Owner confirms previously tested rescue SD remains available; coordinator freshly observed PSU OFF and prior UART consumer termination."
+    ]
+  },
+  "hazard_assessment": "Changing confirmed B runtime could damage the usable fallback if artifacts/writes are wrong; exact source/target/hash/mode gates, bounded public leaves and postchecks address that transition while independent tested rescue SD remains available. Recoverable failed trial is not itself loss of recovery. No hardware outputs/boot loader/GPT/recovery/private account writes are included.",
+  "conditions": [
+    "Execute only packet d424058152eabed82df5bfab8241e4d8cbd6ab72f3343fbfd360141d136b41d0 / script9ca74d3ea767e559dea99216543db21d84b8d7508dea3ca14e859ec64d74d7b3 and its exact five payload rows. Reverify staged script/manifest/leaf hashes and frozen root-owned modes/preimages in both slots. Recheck current A boot847721f2, exact physical platform4022000 eMMC /dev/mmcblk0/CID/GPT/full partition map, root/data pairing, A B/A2/B3, armed matching revision3/A transaction/pending and exact prior-B queued reboot marker. No changed target/artifact or undiagnosed rerun is covered.",
+    "Before writes, current root is read-only and B unmounted; PSU remains OFF, all five filesystem/kernel physical masks remain effective/inactive, no USB serial writers or active hardware output path, account seed locally matches/binds without content disclosure, feed timer/server stopped and no conflicting jobs/markers. Rescue SD remains available as owner confirmed. Script Store lock, selected immutable RAUC identity/idle/same-owner and writer exclusion must pass; stopping RAUC and admission exclusion precede both root writes.",
+    "Write only the five listed public leaves to B then A, preserving specified ownership/modes. Preserve boot partitions/kernel/initrd/loader/GPT/p5 and all application/shared/identity/account data. On any copy/mount/readback failure, stop; restore readonly/unmounted state where the exact script does so, preserve logs and working recovery, and independently reassess partial outcome before further writes or health continuation.",
+    "Before starting health, require exact script repair PASS: both sets of afterimage hashes/modes match, current A root read-only/B unmounted, registry/update/queued reboot marker byte-identical, canonical environment map bound read-only after current CID/GPT/root-parent and both-copy CRC validation, RAUC restarted with real prepare already active, actual installed backend context valid, env still A B/A2/B3 and output/account checks pass. Verify protected boot/loader/GPT/p5 and application data against the retained baseline. Do not rerun sv08-prepare on the running A boot.",
+    "Only after all repair postconditions pass, start existing production sv08-boot-health.service once on current A. No manual reboot, counter reset/consumption, slot selection, additional image installation or feed publication. The old FileNotFound traceback counts as zero HostHealth failures. Current847721f2 must now produce actual revision3/A HostHealth failure; two subsequent distinct A boot IDs must fail through the same production callback, followed by actual finite-counter fallback to B. Unknown/new failure stops further manual action and requires reassessment.",
+    "Keep exact receive-only exclusive UART capture and bounded read-only monitor active through continuation. Retain original UART evidence of initial A3 selection; combine with continuation A2,A1,B3 evidence and exactly three distinct revision3/A HostHealth failure records. If evidence is absent or collectors expire, do not claim success or launch extra trials.",
+    "Final B must be verified healthy revision2, immutable/read-only, OS-ready with reconciled failed trial/pending null and A0/B3. Immediately opt out of automatic updates and stop timer/server to avoid deliberate release replay. Require final protected boot/loader/GPT/p5/config/calibration/UI/shared/machine/public identity preservation and exact boolean-only logical DB equality against frozen source excluding solely documented unsafe_shutdowns. Keep installed account seed/generations. Explicitly report patched roots as reviewed continuation artifacts, not byte-identical original signed payloads; original prewarm logical DB preservation remains unproven."
+  ],
+  "limitations": [
+    "Review does not grant owner/hardware authority or assert repair/continuation execution success.",
+    "Original unhealthy image did not reach HostHealth due enumeration defect. Patched continuation evidence cannot qualify the original signed artifact as independently handling enumeration drift.",
+    "Original prewarm logical DB preservation remains unproven and is not waived; exact comparator excludes only the known mutable startup counter without claiming its existence/type/value preservation.",
+    "No credential material or private DB rows inspected; local comparison may internally compare protected fields but returns equality booleans only."
+  ],
+  "allowance": "Carry prior lineage. New source/script reads/hashes generated only these small reviewer records, no tests/experiments/devices/remote operations; within assigned300s/16MiB review continuation."
+}
