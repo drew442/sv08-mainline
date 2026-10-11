@@ -211,7 +211,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and disposable fixture changes; existing backend protections retained; no physical or production mutation.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate complete Cockpit UX journey",
       "validation": {
         "actor": "root/cockpit_ux_implementation",
