@@ -1,0 +1,38 @@
+{
+  "before_error": "Feature directory must be private and owned",
+  "repair": {
+    "ownership_restored": true,
+    "saved_bytes_unchanged": true,
+    "state_sha256": "3141fd19d4b4ad03af96c23fe2d3bd78efd01335191225baf9c6556a94078a39"
+  },
+  "recovered_status": {
+    "revision": 13,
+    "devices": 24,
+    "definitions": 26,
+    "sources": 1,
+    "current": true,
+    "previous": true
+  },
+  "regression": {
+    "command": "python3 -m unittest discover -s tests -p test_host_boot.py -v",
+    "passed": 10,
+    "elapsed_seconds": 0.126,
+    "ownership_test": "Mocks chown calls; checks root/app assignment, current/copied generation, fallback untouched and unchanged bytes/modes."
+  },
+  "deployment": {
+    "installed_sha256": "9c0efcc266585a674f09bf5580e968ebf8b8fb6122033b867f8c07741ddc5909",
+    "previous_sha256": "a4995277b623ba32af671a675d3c9e34e735da4730d215d31c1a288e6849058c",
+    "root": "/dev/mmcblk1p4 ro,relatime",
+    "executed_boot_module": false,
+    "backup": "/data/sv08/system/ui-deployments/20261011-85ec06c/sv08_boot.before.py"
+  },
+  "source_sha256": {
+    "runtime/sv08_boot.py": "9c0efcc266585a674f09bf5580e968ebf8b8fb6122033b867f8c07741ddc5909",
+    "tests/test_host_boot.py": "8413670627f5a0d2306c2e12869031d945309df385159ae6144edfd6acb0c59c"
+  },
+  "limitations": [
+    "No physical reboot; deployed module not executed.",
+    "Current installed root fixed; inactive slot not modified.",
+    "Physical status helper is measured; authenticated physical browser rendering not observed."
+  ]
+}
