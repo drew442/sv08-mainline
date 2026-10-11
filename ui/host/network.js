@@ -1,7 +1,7 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById('network-'+id);
-    const active = () => location.hash === '#network' && window.sv08Session?.elevated;
+    const active = () => location.hash === '#network' && window.sv08Session?.available;
     let state = null, epoch = 0, refreshId = 0, busy = false, review = null, networks = [], draftValues=null, observedPending=null, refreshing=false, targetUnavailable=false;
     const draftFields=['device','connection','ssid','security','method','addresses','gateway','dns','hostname','fqdn'];
     function captureDraft(){draftValues=Object.fromEntries(draftFields.map(id=>[id,$(id).value]));}
@@ -30,7 +30,9 @@
         return 'unsupported';
     };
     function controls() {
-        document.querySelectorAll('#network input, #network select, #network button').forEach(e => {e.disabled = busy || !active() || !state;});
+        document.querySelectorAll('#network input, #network select, #network button').forEach(e => {e.disabled = busy || !active() || !window.sv08Session?.elevated || !state;});
+        $('device').disabled = busy || !active() || !state;
+        $('connection').disabled = busy || !active() || !state;
         $('refresh').disabled = busy || !active();
         const wifi = state?.devices.find(d => d.device === $('device').value)?.type === 'wifi';
         $('wifi').hidden = !wifi;
@@ -43,7 +45,8 @@
         for(const id of ['addresses','gateway']) $(id).disabled ||= $('method').value === 'auto';
     }
     async function call(request) {
-        if(!active()) throw Error('Administrator access is required.');
+        if(request.method === 'status') return sv08View('network');
+        if(!active() || !window.sv08Session?.elevated) throw Error('Administrator access is required.');
         if(request.password && location.protocol !== 'https:') throw Error('Use HTTPS to submit a WiFi password.');
         const generation = epoch;
         const raw = await cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_network.py'],{superuser:'require',err:'message'}).input(JSON.stringify(request));
@@ -105,7 +108,7 @@
         } catch(error) {if(generation === epoch && attempt === refreshId) {if(!state?.pending) state=null;controls();countdown();report(error.message+' Reconnect and reload Network; unconfirmed changes automatically roll back.');}} finally{refreshing=false;}
     }
     function openReview(request,title) {
-        if(busy || !active() || !state) return;
+        if(busy || !active() || !window.sv08Session?.elevated || !state) return;
         eraseReview();review={request,epoch};
         const detail = request.method === 'restart' ? 'The printer will restart and this session will disconnect.' : request.kind === 'name' ? 'Printer name: '+request.hostname+'\nFully qualified name: '+(request.fqdn || 'None') : 'Interface: '+request.device+'\nConnection: '+($('connection').selectedOptions[0]?.textContent || 'New connection')+(request.kind === 'wifi' ? '\nWiFi: '+request.ssid+'\nSecurity: '+request.security : '')+'\nIPv4: '+(request.ipv4.method === 'auto' ? 'Automatic (DHCP)' : request.ipv4.addresses.join(', '))+'\nGateway: '+(request.ipv4.gateway || 'Automatic')+'\nDNS: '+(request.ipv4.dns.join(', ') || 'Automatic')+'\nPrinter name: '+request.hostname+'\nFully qualified name: '+(request.fqdn || 'None');
         $('review-title').textContent=title;$('review-detail').textContent=detail+(request.method==='apply'?'\nConnection changes may disconnect you. Confirm the resulting change before the rollback deadline shown after submission; otherwise the backend restores previous settings.':'');
@@ -158,7 +161,7 @@
         else if(action) action.request.password='';
     });
     function invalidate() {
-        ++epoch;++refreshId;busy=false;state=null;eraseReview();clearSecrets();$('review').close('cancel');$('devices').replaceChildren();$('links').replaceChildren();$('pending').hidden=true;controls();report(window.sv08Session?.elevated ? 'Loading network settings…' : 'Administrator access is required.');
+        ++epoch;++refreshId;busy=false;state=null;eraseReview();clearSecrets();$('review').close('cancel');$('devices').replaceChildren();$('links').replaceChildren();$('pending').hidden=true;controls();report(window.sv08Session?.available ? 'Loading network settings…' : 'Administrator access is required.');
     }
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'network') void refresh();});

@@ -2,6 +2,7 @@
 (() => {
     const $ = id => document.getElementById('printer-' + id);
     let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
+    let reloadAfterAuthority=false;
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { const target={'#definition-sources':'source-notice','#printer-connections':'connection-notice','#definitions':'definitions-notice'}[location.hash]??'notice';$(target).textContent=text;$(target).dataset.kind=text.startsWith('Saved configuration loaded.')?'loaded':'task'; if(reconcile)$('notice').textContent=text; };
     const invalidate = (status = true) => { review = null; publicationReview=null; pendingDefinition=null; ++epoch; if (status) ++statusEpoch; if ($('candidate-review').open) $('candidate-review').close(); if ($('board-change').open) $('board-change').close(); for(const id of ['definition-review','publication-dialog'])if($(id).open)$(id).close(); };
@@ -11,6 +12,7 @@
         for (const id of ['save','review','restore','add','add-preset','apply','import']) $(id).disabled = busy || reconcile || diagnostic || !authority() || (!draft && id !== 'import');
         for (const field of document.querySelectorAll('#printer-components input, #printer-components select, #printer-components button, #printer-sensors select, #printer-boards input, #printer-boards select, #printer-boards button, #printer-devices input, #printer-devices select, #printer-devices button, #printer-calibration input, #printer-geometry-fields input, #printer-device-board, #printer-device-kind, #printer-device-name, #printer-device-preset, #printer-mode, #printer-cancel-import')) field.disabled = busy || reconcile || diagnostic || !authority();
         for(const id of ['use-factory','custom-save','source-preview','source-import','migration-preview','publication-review','publication-reconcile','publication-restore-review','publication-apply','definition-confirm'])$(id).disabled=busy||reconcile||diagnostic||!authority();
+        $('export').disabled=$('export-config').disabled=busy||!authority();
         $('source-confirm').disabled=busy||reconcile||diagnostic||!authority()||!sourcePreview;
         $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= !draft;
@@ -23,6 +25,11 @@
         $('reconcile').disabled = $('discard').disabled = busy || !authority();
     }
     async function rpc(request) {
+        if (request.action === 'status') {
+            const attempt=statusEpoch; const result=await sv08View('printer');
+            if (!window.sv08Session?.available || attempt!==statusEpoch) throw new Error('Session or selections changed. Reload configuration before continuing.');
+            return result;
+        }
         if (!authority()) throw new Error('Administrator access is required.');
         if (request.action !== 'status') request = {...request, expected_identity: loadedIdentity};
         const status = request.action === 'status', attempt = status ? statusEpoch : epoch;
@@ -39,7 +46,9 @@
         if (busy) return; busy = true; controls();
         try { await fn(); }
         catch (e) { invalidate(); notice(e.message + (reconcile ? ' Reload to reconcile before retrying.' : '')); }
-        finally { busy = false; controls(); if(catalog&&draft&&!diagnostic){renderDefinitionChoices();renderSources();renderDefinitionsBrowser();} }
+        finally { busy = false; controls(); if(catalog&&draft&&!diagnostic){renderDefinitionChoices();renderSources();renderDefinitionsBrowser();}
+            if(reloadAfterAuthority){reloadAfterAuthority=false;if(window.sv08Session?.available&&!changed&&!reconcile)queueMicrotask(()=>operation(load));}
+        }
     }
     function el(tag,text) { const e=document.createElement(tag); if (text !== undefined) e.textContent=text; return e; }
     function select(options,value,onchange) {
@@ -272,6 +281,8 @@
     function render() {
         renderBoards();renderComponents();renderSensors();renderDevices();renderPresets();renderCalibration();$('geometry-fields').replaceChildren();
         for(const key of ['max_velocity','max_accel','max_z_velocity','max_z_accel'])$('geometry-fields').append(field(key.replaceAll('_',' '),'positive',draft.geometry[key],v=>{if(v===undefined)delete draft.geometry[key];else draft.geometry[key]=v;edit();}));
+        $('saved-current').textContent=saved.current?.text ?? 'No saved candidate.';
+        $('saved-previous').textContent=saved.previous?.text ?? 'No previous candidate.';
         $('current').textContent=appliedText && saved.current?.text===appliedText ? 'Application confirmed in this session. Printer remains stopped; commission changed components separately.' : saved.current?'Candidate saved ('+saved.current.mode+'). Application state has not been checked in this session. Review exact managed files before applying; commissioning remains separate.':'No saved candidate.';
         controls();renderDesign();
     }
@@ -632,9 +643,9 @@ renderChanges();renderDefinitionChoices();
     }
     $('cancel-import').onclick=()=>{invalidate();draft=saved.draft===undefined?null:copy(saved.draft);changed=false;$('import-diff').hidden=true;render();notice('Imported changes discarded. Saved draft preserved.');};
     $('import').onchange=()=>operation(async()=>{invalidate();$('import-diff').hidden=true;const file=$('import').files[0];if(!file)return;$('import').value='';if(file.size>131072)throw new Error('Import exceeds 128 KiB.');const incoming=JSON.parse(await file.text());const result=await rpc({action:'import',draft:incoming,expected_revision:revision});draft=result.draft;changed=true;render();showImportDiff(saved.draft,draft);notice(result.changed?'Imported selections differ from saved draft. Inspect board/device fields, then save explicitly.':'Imported selections match saved draft.');});
-    window.addEventListener('sv08-authority-changed',()=>{invalidate();controls();if(!authority())notice('Administrator access ended. Pending review cancelled. Authorize and reload before editing.');else if (changed || reconcile) { reconcile=true; controls(); notice('Administrator access restored. Reconcile saved state explicitly; local selections retained.'); } else operation(()=>load());});
+    window.addEventListener('sv08-authority-changed',()=>{if(busy&&loading)reloadAfterAuthority=true;invalidate();controls();if(!authority())notice(window.sv08Session?.available ? 'View configuration. Administrator access is required to edit. Pending reviews cancelled.' : 'Session disconnected. Log in again to view configuration.');else if (changed || reconcile) { reconcile=true; controls(); notice('Administrator access restored. Reconcile saved state explicitly; local selections retained.'); } else operation(()=>load());});
     window.addEventListener('sv08-navigation-changed',event=>{ if(busy && !loading) reconcile=true; invalidate(false); controls(); cancelGraphDrag(); if(event.detail.to==='printer-connections')queueMicrotask(renderConnections); if(event.detail.to==='definitions')queueMicrotask(renderDefinitionsBrowser); });
     window.addEventListener('beforeunload',event=>{if(changed){event.preventDefault();event.returnValue='';}});
     window.addEventListener('pagehide',()=>invalidate());
-    window.sv08Session.ready.then(()=>{controls();if(authority())operation(load);else notice('Authorize to load private printer configuration.');});
+    window.sv08Session.ready.then(()=>{controls();if(window.sv08Session.available)operation(load);else notice('Log in to view printer configuration.');});
 })();

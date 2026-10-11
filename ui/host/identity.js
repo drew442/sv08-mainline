@@ -12,11 +12,16 @@
     $('identity-keys').addEventListener('input',()=>{keysDirty=true;});
     const report = text => { $('identity-status').textContent = text; };
     function controls() {
+        $('identity-keys').readOnly = !window.sv08Session?.elevated;
+        $('identity-refresh').disabled = busy || !window.sv08Session?.available;
         document.querySelectorAll('[data-identity-action]').forEach(button => {
             button.disabled = busy || !window.sv08Session?.elevated || !state || (state.healthy === false && button.id !== 'identity-import');
         });
+        $('identity-refresh').disabled = busy || !window.sv08Session?.available;
+        $('identity-download-ca').disabled = busy || !window.sv08Session?.available || !state?.healthy;
     }
     async function call(request) {
+        if (['status','ca.download'].includes(request.method)) return sv08View('identity',request.method);
         if (!window.sv08Session?.elevated) throw new Error('Administrator access is required.');
         if (request.method === 'bundle.export' && location.protocol !== 'https:' && !['localhost','127.0.0.1','::1'].includes(location.hostname)) throw new Error('Use HTTPS to download a private identity backup.');
         const generation = epoch;
@@ -27,11 +32,11 @@
         return response.result;
     }
     async function refresh() {
-        if (!window.sv08Session?.elevated) { state = null; controls(); return; }
+        if (!window.sv08Session?.available) { state = null; controls(); return; }
         const attempt=++refreshId, generation=epoch;
         try {
             const next = await call({method:'status'});
-            if(attempt!==refreshId||generation!==epoch||!window.sv08Session?.elevated)return;state=next;
+            if(attempt!==refreshId||generation!==epoch||!window.sv08Session?.available)return;state=next;
             $('identity-ca-fingerprint').textContent = state.ca_fingerprint;
             $('identity-ssh-fingerprint').textContent = state.ssh_fingerprint;
             if(paintedKeys!==undefined&&$('identity-keys').value!==paintedKeys)keysDirty=true;
@@ -60,10 +65,14 @@
         finally { busy = false; controls(); }
     }
     $('identity-refresh').addEventListener('click',() => { void refresh(); });
-    $('identity-download-ca').addEventListener('click',() => { void operation(async () => {
-        const result = await call({method:'ca.download'}); download(result.filename,result.content,'application/x-x509-ca-cert');
+    $('identity-download-ca').addEventListener('click',() => { void (async () => {
+        if (busy || !state?.healthy || !window.sv08Session?.available) return;
+        const generation=epoch;
+        try {
+        const result = await call({method:'ca.download'}); if(generation!==epoch)return; download(result.filename,result.content,'application/x-x509-ca-cert');
         report('CA certificate downloaded. Import it into your trusted certificate authorities.');
-    }); });
+        } catch(error) {if(generation===epoch)report(error.message);}
+    })(); });
     $('identity-export').addEventListener('click',() => review('Download printer identity backup',
         'This backup contains the private CA and SSH host keys, plus trusted user public keys. Keep it private. It does not contain account passwords, network settings or printer calibration.',{method:'bundle.export'}));
     $('identity-save-keys').addEventListener('click',() => review('Replace trusted SSH user keys',
@@ -99,7 +108,7 @@
     window.addEventListener('sv08-authority-changed',() => {
         ++epoch; state = null; pending = null; $('identity-review').close('cancel');
         $('identity-bundle-file').value = ''; $('identity-key-file').value = '';
-        controls(); if (window.sv08Session?.elevated && location.hash==='#identity') void refresh();
+        controls(); if (window.sv08Session?.available && location.hash==='#identity') void refresh();
     });
     window.addEventListener('sv08-navigation-changed',event => {
         if (event.detail.to === 'identity') void refresh();

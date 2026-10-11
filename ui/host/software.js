@@ -1,13 +1,14 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById('software-'+id);
-    const active = () => location.hash === '#software' && window.sv08Session?.elevated;
+    const active = () => location.hash === '#software' && window.sv08Session?.available;
     let state=null, epoch=0, sequence=0, busy=false, review=null, timer=null, serviceDraft=null, unknownJob=null, missingChoice=null;
     const report = text => { $('status').textContent=text; };
     const bytes = value => Number.isFinite(Number(value)) ? (Number(value)/1048576).toFixed(1)+' MiB' : 'Unavailable';
     const selected = () => state?.catalog?.find(item => (item.id || item.package) === $('choice').value);
     async function call(request) {
-        if(!active()) throw Error('Administrator access is required.');
+        if(['status','inspect'].includes(request.method)) return sv08View('software',request.method,request.id?{id:request.id}:{});
+        if(!active() || !window.sv08Session?.elevated) throw Error('Administrator access is required.');
         const generation=epoch;
         const raw=await cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_software.py'],{superuser:'require',err:'message'}).input(JSON.stringify(request));
         if(generation !== epoch || !active()) throw Error('Access changed. Refresh software.');
@@ -16,7 +17,8 @@
         return response.result;
     }
     function controls() {
-        document.querySelectorAll('#software button:not([data-open]),#software select,#software input').forEach(control => {control.disabled=busy || !active() || !state;});
+        document.querySelectorAll('#software button:not([data-open]),#software select,#software input').forEach(control => {control.disabled=busy || !active() || !window.sv08Session?.elevated || !state;});
+        $('choice').disabled = busy || !active() || !state;
         $('refresh').disabled=busy || !active();
         const item=selected();
         $('install').disabled ||= !item || !!item.installed || state?.capabilities?.install?.available===false;
@@ -25,7 +27,7 @@
         $('service-enabled').disabled ||= !item?.service || !item.installed;
         $('reconcile').disabled ||= !state?.capabilities?.reconcile?.available;
         $('export').disabled ||= !state?.reconciliation?.exports?.length;
-        $('inspect').disabled ||= !unknownJob;
+        $('inspect').disabled = busy || !active() || !unknownJob;
         $('confirm').disabled=busy || !active() || !review || review.available === false;
     }
     function detail() {
@@ -74,7 +76,7 @@
         finally {if(generation === epoch) poll();}
     }
     async function plan(action,args={}) {
-        if(!active() || busy || !state) return;
+        if(!active() || !window.sv08Session?.elevated || busy || !state) return;
         const generation=epoch;++sequence;busy=true;controls();
         try {
             const inspection=action === 'acknowledge' ? await call({method:'inspect',id:args.id}) : null;
@@ -104,7 +106,15 @@
     $('refresh').addEventListener('click',() => {review=null;$('review').close('cancel');void refresh();});
     for(const action of ['install','remove']) $(action).addEventListener('click',() => {const item=selected();if(item) void plan(action,{package:item.package || item.id});});
     $('service').addEventListener('click',() => {const item=selected();if(item) void plan('service',{package:item.package || item.id,enabled:$('service-enabled').checked});});
-    $('inspect').addEventListener('click',() => {if(unknownJob) void plan('acknowledge',{id:unknownJob});});
+    $('inspect').addEventListener('click',() => {
+        if(!unknownJob)return;
+        if(window.sv08Session?.elevated){void plan('acknowledge',{id:unknownJob});return;}
+        const generation=epoch;
+        void (async()=>{try{const result=await call({method:'inspect',id:unknownJob});if(generation!==epoch)return;
+            $('review-title').textContent='Inspect interrupted operation';$('review-detail').textContent=result.warning+'\nPackage check: '+(result.dpkg_audit||'No unfinished package configuration reported.')+'\nInstalled packages:\n'+(result.evidence?.inventory||[]).map(row=>row.slice(0,3).join(' ')).join('\n')+'\nAdministrator access is required to acknowledge this result.';
+            review=null;controls();$('review').returnValue='';$('review').showModal();
+        }catch(error){if(generation===epoch)report(error.message);}})();
+    });
     $('reconcile').addEventListener('click',() => void plan('reconcile'));
     $('review').addEventListener('close',() => {const action=review;review=null;controls();if($('review').returnValue === 'confirm' && action?.epoch === epoch && action.available !== false && active() && !busy) void apply(action);});
     $('export').addEventListener('click',async () => {
@@ -113,7 +123,7 @@
         catch(error) {if(generation === epoch) report(error.message);}
         finally {if(generation === epoch) {busy=false;controls();}}
     });
-    function invalidate() {++epoch;++sequence;clearTimeout(timer);busy=false;state=null;review=null;unknownJob=null;$('inspect').hidden=true;$('review').close('cancel');$('detail').textContent='';$('dependencies').textContent='';$('job').hidden=true;$('customization').textContent='';$('reconciliation').textContent='';controls();report(window.sv08Session?.elevated ? 'Loading software…' : 'Administrator access is required.');}
+    function invalidate() {++epoch;++sequence;clearTimeout(timer);busy=false;state=null;review=null;unknownJob=null;$('inspect').hidden=true;$('review').close('cancel');$('detail').textContent='';$('dependencies').textContent='';$('job').hidden=true;$('customization').textContent='';$('reconciliation').textContent='';controls();report(window.sv08Session?.available ? 'Loading software…' : 'Administrator access is required.');}
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'software') void refresh();});
     controls();if(location.hash === '#software') void window.sv08Session.ready.then(refresh);

@@ -73,6 +73,7 @@ def _stage(work, context, execute=False, refresh=False):
             raise ValueError('Existing host UI target is not a regular directory')
     extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
     if context == 'host':
+        extra.extend([root / 'usr/lib/sv08/sv08_view.py', root / 'etc/sudoers.d/sv08-view'])
         extra.extend([root / 'usr/lib/sv08/software-catalog.json', root / 'usr/lib/systemd/system/sv08-software-worker@.service'])
         extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json', root / 'usr/lib/sv08/rauc-service-policy.json', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf', root / 'etc/systemd/system/rauc.service.d/sv08.conf'])
         extra.extend(root / name for name in ('usr/lib/systemd/system/sv08-feed.service',
@@ -123,7 +124,10 @@ def _stage(work, context, execute=False, refresh=False):
             allowed_refresh_output = refresh and (
                 path == target or (not path.is_symlink() and path.is_file()))
             allowed_branding_output = path in branding and not path.is_symlink() and path.is_file()
-            if not (allowed_refresh_output or allowed_branding_output):
+            matching_view = (context == 'host' and path == root/'usr/lib/sv08/sv08_view.py'
+                             and not path.is_symlink() and path.is_file()
+                             and path.read_bytes() == (REPO/'runtime/sv08_view.py').read_bytes())
+            if not (allowed_refresh_output or allowed_branding_output or matching_view):
                 raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
     if context == 'host' and (root/'usr/share/cockpit/sv08-printer').exists():
         for name in ('app.js','style.css','panel.html'):
@@ -132,6 +136,16 @@ def _stage(work, context, execute=False, refresh=False):
     service_policy = package_service_policy(root) if context == 'host' else None
     if not execute: return dict(execute=False, context=context, root=str(root))
     if context == 'host':
+        view = root/'usr/lib/sv08/sv08_view.py'
+        shutil.copyfile(REPO/'runtime/sv08_view.py', view)
+        view.chmod(0o644)
+        if os.geteuid() == 0: os.chown(view, 0, 0)
+        sudoers = root/'etc/sudoers.d/sv08-view'
+        sudoers.parent.mkdir(parents=True, exist_ok=True)
+        if sudoers.exists(): sudoers.chmod(0o640)
+        shutil.copyfile(REPO/'configs/host-os/sv08-view-sudoers', sudoers)
+        sudoers.chmod(0o440)
+        if os.geteuid() == 0: os.chown(sudoers, 0, 0)
         if target_exists:
             shutil.rmtree(target)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -196,6 +210,7 @@ def _stage(work, context, execute=False, refresh=False):
                      ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_auto_reboot.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
+    if context == 'host': files.extend([root/'usr/lib/sv08/sv08_view.py', root/'etc/sudoers.d/sv08-view'])
     hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     if context == 'host':
         hashes['etc/cockpit/ws-certs.d'] = hashlib.sha256(
@@ -203,7 +218,8 @@ def _stage(work, context, execute=False, refresh=False):
         hashes['etc/systemd/system/timers.target.wants/sv08-feed.timer'] = hashlib.sha256(
             os.readlink(root / 'etc/systemd/system/timers.target.wants/sv08-feed.timer').encode()).hexdigest()
     return dict(execute=True, context=context, activated=False,
-                payload_bytes=sum(p.stat().st_size for p in files), hashes=hashes)
+                payload_bytes=sum(p.stat().st_size for p in files), hashes=hashes,
+                required_ownership=({name: dict(uid=0,gid=0,mode=mode,verified=(root/name).stat().st_uid==0 and (root/name).stat().st_gid==0) for name,mode in [('usr/lib/sv08/sv08_view.py','0644'),('etc/sudoers.d/sv08-view','0440')]} if context == 'host' else {}))
 
 
 if __name__ == '__main__':

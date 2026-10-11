@@ -17,14 +17,14 @@ async function uploadListing() {
             const row = document.createElement('p');
             row.textContent = `${item.name} · ${item.state}${item.bytes === undefined ? '' : ' · '+item.bytes+' bytes'} `;
             const button = document.createElement('button'); button.textContent = 'Review removal';
-            button.disabled = result.busy || uploadActive || item.bytes === undefined;
+            button.disabled = !sv08Session.elevated || result.busy || uploadActive || item.bytes === undefined;
             button.addEventListener('click', () => reviewRemoval(item.name));
             row.append(button); $('upload-list').append(row);
         }
         if (hadFocus) { $('upload-storage').tabIndex = -1; $('upload-storage').focus(); }
         }
         $('upload-storage').textContent = result.message;
-        $('review-upload').disabled = uploadActive || result.busy;
+        $('review-upload').disabled = !sv08Session.elevated || uploadActive || result.busy;
     } catch (error) { if (generation !== authorityGeneration) return; $('upload-storage').textContent = error.message; $('review-upload').disabled = true; }
 }
 async function reviewRemoval(name) {
@@ -122,6 +122,6 @@ window.addEventListener('sv08-authority-changed', () => {
     uploadReview = null;
     if ($('upload-review').open) $('upload-review').close('cancel');
     if (!sv08Session.elevated) uploadProcess?.close('terminated');
-    else void uploadListing();
+    if (sv08Session.available) void uploadListing();
 });
-setInterval(() => { if (window.sv08Session?.elevated && (uploadActive || (!document.hidden && location.hash === '#images'))) void uploadListing(); }, 2000);
+setInterval(() => { if (window.sv08Session?.available && (uploadActive || (!document.hidden && location.hash === '#images'))) void uploadListing(); }, 2000);

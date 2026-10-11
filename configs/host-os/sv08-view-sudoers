@@ -1,0 +1,2 @@
+# Ordinary appliance login may run only the finite, isolated read entry.
+sv08 ALL=(root) NOPASSWD: /usr/bin/python3 -I /usr/lib/sv08/sv08_view.py

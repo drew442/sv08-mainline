@@ -44,13 +44,13 @@ def serve(work):
             if self.path=='/base1/cockpit.js':
                 return self.response("window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({valid:true,Current:'root',Bridges:['sudo'],Start:()=>{},Answer:()=>{},Stop:()=>{},addEventListener:()=>{},wait:cb=>cb()})}),spawn:()=>({input:async data=>(await fetch('/request',{method:'POST',body:data})).text()})};",'text/javascript')
             name='index.html' if self.path=='/' else self.path[1:]
-            if name not in ('index.html','app.js','style.css','session.js','upload.js','navigation.js','network.js','identity.js','software.js','mainsail-access.js'):self.send_error(404);return
+            if name not in ('index.html','app.js','style.css','session.js','upload.js','navigation.js','network.js','identity.js','software.js','mainsail-access.js','view.js'):self.send_error(404);return
             return self.response((ui/name).read_bytes(), 'text/html' if name.endswith('.html') else 'text/css' if name.endswith('.css') else 'text/javascript')
         def do_POST(self):
             try:
                 size=int(self.headers['Content-Length'])
                 if not 0<size<=16384:raise ValueError('Invalid fixture request bound')
-                request=json.loads(self.rfile.read(size));result=controller.request(request)
+                request=json.loads(self.rfile.read(size));request.pop('area',None);result=controller.request(request)
                 if 'capabilities' in result:result['fixture']=True
                 response=dict(ok=True,result=result)
             except (ValueError,OSError,KeyError,TypeError) as error:response=dict(ok=False,error=str(error))
