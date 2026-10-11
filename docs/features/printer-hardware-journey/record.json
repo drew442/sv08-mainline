@@ -828,7 +828,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI presentation and fixture tests only; backend operations/protections unchanged, no printer access or consequential operation.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and assess bounded hardware journey",
       "validation": {
         "actor": "project_implementer",
