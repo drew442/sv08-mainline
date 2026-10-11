@@ -43,11 +43,36 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ownership-and-status",
+          "document": "docs/features/printer-hardware-boot-ownership/evidence.md",
+          "document_sha256": "3c00236084fd8a6d717177c836218d6a94f5078bb47e15c4a202381232d2e578",
+          "environment": "offline",
+          "limitations": "Offline ownership test mocks chown; physical helper recovery distinct. Installed boot module not executed, no reboot or printing readiness claim.",
+          "method": "Coordinator inspected complete diff and ten passing boot tests; separately measured physical metadata-only restoration and successful status, with unchanged saved file hash.",
+          "profile": null,
+          "source_commit": "299c0d1138df731f66d00218f5ca30e34d9a0a63",
+          "source_sha256": {
+            "docs/features/printer-hardware-boot-ownership/evidence.json": "b37fb2db3e4990e2bd3e8590cd093ee9871b71df568ee9fb57e1030e143d6980",
+            "docs/features/printer-hardware-boot-ownership/evidence.md": "3c00236084fd8a6d717177c836218d6a94f5078bb47e15c4a202381232d2e578",
+            "runtime/sv08_boot.py": "9c0efcc266585a674f09bf5580e968ebf8b8fb6122033b867f8c07741ddc5909",
+            "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+            "runtime/sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+            "tests/test_data_budget.py": "ffff266e4ef6f0da21ad106a2c309b7f388b5fa0d912a99cbd9691a6fed575f5",
+            "tests/test_host_boot.py": "8413670627f5a0d2306c2e12869031d945309df385159ae6144edfd6acb0c59c"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "d9aaeadac3434c1b94973f1e4ff045b7",
+        "session": "hardware-ownership-20261011"
+      },
       "input_paths": [
         "runtime/sv08_printer_store.py",
         "runtime/sv08_state.py",
@@ -63,9 +88,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
-      "status": "pending",
+      "status": "validated",
       "title": "Fix boot ownership and recover installed hardware loading",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "5d9e3e21ded60b8f4753ad4b1657566e84ff4612fb09c1e8f243e47799f64511",
+        "evidence_sha256": "af44caf7b339d6d34d2a1e9bea1d95a94d117a3d2c92ac9429a3c7591ae71165",
+        "outcome": "passed",
+        "rationale": "Targeted regression passed and installed helper loads unchanged saved state after exact ownership repair.",
+        "session": "hardware-ownership-20261011",
+        "source_commit": "299c0d1138df731f66d00218f5ca30e34d9a0a63"
+      },
       "verification": null
     }
   ],
