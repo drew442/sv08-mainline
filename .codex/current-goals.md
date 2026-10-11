@@ -1,5 +1,12 @@
 # Current delivery goals
 
+## Active goal — Complete Cockpit UI/UX workplan, 2026-10-11
+
+Owner authorized full W0–W8 implementation with agents. All prior UI design
+directives are open to skilled revision; core functionality and protections remain.
+Delivery scope and architecture: [proposal](../docs/features/cockpit-ui-ux-implementation/proposal.md).
+Source/disposable validation is authorized; no printer deployment is implied.
+
 ## Completed goal — PR #6 branch maintenance, 2026-10-10
 
 Fast-forwarded main to PR #6; verified archive tags preserve all obsolete branch

@@ -1,0 +1,92 @@
+{
+  "format_version": 2,
+  "id": "cockpit-ui-ux-implementation",
+  "kind": "feature",
+  "title": "Complete task-focused Cockpit UX workplan",
+  "author": "root/coordinator",
+  "created": "2026-10-11",
+  "priority": 2,
+  "proposal": "docs/features/cockpit-ui-ux-implementation/proposal.md",
+  "requirements": [
+    "docs/features/cockpit-ui-ux-implementation/owner-request.md",
+    "docs/development/cockpit-ui-ux-workplan.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": true,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "ux-delivery",
+      "description": "Relevant source/controller/browser checks and rendered W0-W8 outcomes with truthful environment limits.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate complete Cockpit UX journey",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "ux-delivery"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable fixture changes; existing backend protections retained; no physical or production mutation.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/host/app.js",
+        "ui/host/identity.js",
+        "ui/host/index.html",
+        "ui/host/mainsail-access.js",
+        "ui/host/manifest.json",
+        "ui/host/navigation.js",
+        "ui/host/network.js",
+        "ui/host/session.js",
+        "ui/host/software.js",
+        "ui/host/style.css",
+        "ui/host/upload.js",
+        "ui/printer/app.js",
+        "ui/printer/index.html",
+        "ui/printer/manifest.json",
+        "ui/printer/panel.html",
+        "ui/printer/redirect.js",
+        "ui/printer/session.js",
+        "ui/printer/style.css",
+        "scripts/stage_printer_ui.py",
+        "scripts/preview_admin_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "tests/printer_browser.mjs",
+        "tests/admin_browser.mjs",
+        "tests/admin_drafts_browser.mjs",
+        "tests/auto_policy_browser.mjs",
+        "tests/cockpit_composed_browser.mjs",
+        "tests/identity_browser.mjs",
+        "tests/test_network_ui.py",
+        "tests/test_mainsail_access_ui.py",
+        "tests/test_software_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "tests/test_stage_admin_ui.py",
+        "docs/features/cockpit-ui-ux-implementation/evidence.md",
+        "docs/features/cockpit-ui-ux-implementation/evidence.json"
+      ],
+      "input_paths": [
+        "runtime/",
+        "catalog/printer/",
+        "scripts/stage_admin_ui.py",
+        "scripts/check_ui.py",
+        ".agents/skills/sv08-ui-ux/"
+      ]
+    }
+  ]
+}
