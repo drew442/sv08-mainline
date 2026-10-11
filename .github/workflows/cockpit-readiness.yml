@@ -1,0 +1,62 @@
+name: Cockpit installed contracts
+
+# Disposable workstation ownership tests. No printer, deployment or secrets.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/cockpit-readiness.yml'
+      - 'runtime/**'
+      - 'catalog/printer/**'
+      - 'scripts/check_installed_cockpit.py'
+      - 'tests/test_host_boot.py'
+      - 'tests/test_installed_cockpit.py'
+      - 'tests/test_data_budget.py'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cockpit-readiness.yml'
+      - 'runtime/**'
+      - 'catalog/printer/**'
+      - 'scripts/check_installed_cockpit.py'
+      - 'tests/test_host_boot.py'
+      - 'tests/test_installed_cockpit.py'
+      - 'tests/test_data_budget.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cockpit-contracts-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  real-ownership:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Existing Python schema dependency
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends python3-jsonschema
+      - name: Actual ownership and functional contract tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo mkdir -m 700 /root/sv08-cockpit-contracts
+          trap 'sudo rmdir /root/sv08-cockpit-contracts' EXIT
+          sudo env TMPDIR=/root/sv08-cockpit-contracts PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 - <<'PY'
+          import os, unittest
+          assert os.geteuid() == 0, 'Real ownership acceptance requires root'
+          loader = unittest.TestLoader()
+          suites = [loader.discover('tests', pattern=name) for name in ('test_host_boot.py', 'test_installed_cockpit.py')]
+          result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(suites))
+          if not result.wasSuccessful() or result.skipped:
+              raise SystemExit('Ownership tests failed or were skipped')
+          PY
