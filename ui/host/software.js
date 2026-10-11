@@ -20,6 +20,7 @@
         document.querySelectorAll('#software button:not([data-open]),#software select,#software input').forEach(control => {control.disabled=busy || !active() || !window.sv08Session?.elevated || !state;});
         $('choice').disabled = busy || !active() || !state;
         $('refresh').disabled=busy || !active();
+        $('access-help').textContent = window.sv08Session?.elevated ? 'Package and service changes require an idle printer. Installation and removal also require the running OS to be writable.' : 'You can browse software without administrator access. Authorize to review package or service changes.';
         const item=selected();
         $('install').disabled ||= !item || !!item.installed || state?.capabilities?.install?.available===false;
         $('remove').disabled ||= !item || !item.installed || state?.capabilities?.remove?.available===false;
@@ -35,7 +36,11 @@
         $('title').textContent=item?.title || item?.label || item?.name || item?.package || item?.id || 'Choose software';
         $('detail').textContent=item ? (item.description || '')+' · '+(item.installed ? 'Installed' : 'Not installed') : (missingChoice ? 'Previous selection is no longer available. Choose software to review another package.' : 'No reviewed software is available.');
         $('dependencies').textContent='Packages: '+(item?.packages || [item?.package || item?.id].filter(Boolean)).join(', ')+' · '+(item?.dependencies?.length ? 'Dependencies: '+item.dependencies.join(', ') : 'Dependencies are resolved in review.');
-        $('reason').textContent=(state?.capabilities?.install?.reason || '')+(state?.storage ? ' Root available: '+bytes(state.storage.root_free_bytes)+' · Data available: '+bytes(state.storage.data_free_bytes)+' · Data reserve: '+bytes(state.storage.data_reserve_bytes) : '');
+        $('reason').textContent=state?.capabilities?.[item?.installed ? 'remove' : 'install']?.reason || '';
+        const storage=$('storage'); storage.replaceChildren();
+        if(state?.storage) for(const [label,value] of [['OS space available',state.storage.root_free_bytes],['User-data space available',state.storage.data_free_bytes],['User-data reserve protected',state.storage.data_reserve_bytes]]) {
+            const row=document.createElement('div'),term=document.createElement('dt'),amount=document.createElement('dd');term.textContent=label;amount.textContent=bytes(value);row.append(term,amount);storage.append(row);
+        }
         $('service-detail').textContent=item?.service ? 'Service: '+(item.service.unit || item.service)+' · '+(item.service_state?.ActiveState || item.service.active || 'Status unavailable') : 'This software has no configurable service.';
         $('service-enabled').checked=serviceDraft?.package === $('choice').value ? serviceDraft.enabled : item?.service_state?.UnitFileState === 'enabled' || !!item?.service?.enabled;
         controls();
@@ -85,7 +90,8 @@
             review={...result,epoch};
             const preview=result.preview || {};
             const list=items => (items || []).map(item => typeof item === 'string' ? item : item.package+' '+(item.version || '')).join(', ') || 'None';
-            $('review-title').textContent=action === 'reconcile' ? 'Review compatibility report' : 'Review '+action;
+            $('review-title').textContent=({reconcile:'Review compatibility report',install:'Install software',remove:'Remove software',service:'Change software service',acknowledge:'Review interrupted operation'})[action] || 'Review software change';
+            $('review-summary').textContent=action === 'install' ? 'Install '+($('title').textContent)+'. Check dependencies and space below. The running OS must be writable and the printer idle.' : action === 'remove' ? 'Remove '+($('title').textContent)+'. User files and package configuration are preserved.' : action === 'service' ? (args.enabled ? 'Start the service now and at future boots.' : 'Stop the service now and prevent automatic startup.') : 'Review the report before acknowledging it. This does not repeat a package operation.';
             $('review-detail').textContent='Install: '+list(preview.install)+'\nRemove: '+list(preview.remove)+'\nDownload: '+bytes(preview.download_bytes)+'\nInstalled size change: '+bytes(preview.installed_delta_bytes)+'\nRoot space required: '+bytes(preview.required_bytes)+'\nRoot space available: '+bytes(preview.root_free_bytes)+'\nData reserve: '+bytes(preview.data_reserve_bytes)+'\nData space available: '+bytes(preview.data_free_bytes)+(preview.service_effect ? '\n'+preview.service_effect : '')+((result.reason || preview.reason) ? '\n'+(result.reason || preview.reason) : '')+(action === 'service' ? '\nService: '+(args.enabled ? 'Start now and enable automatic start' : 'Stop now and disable automatic start') : '');
             if(inspection) {
                 $('review-title').textContent='Review interrupted operation';
@@ -111,19 +117,19 @@
         if(window.sv08Session?.elevated){void plan('acknowledge',{id:unknownJob});return;}
         const generation=epoch;
         void (async()=>{try{const result=await call({method:'inspect',id:unknownJob});if(generation!==epoch)return;
-            $('review-title').textContent='Inspect interrupted operation';$('review-detail').textContent=result.warning+'\nPackage check: '+(result.dpkg_audit||'No unfinished package configuration reported.')+'\nInstalled packages:\n'+(result.evidence?.inventory||[]).map(row=>row.slice(0,3).join(' ')).join('\n')+'\nAdministrator access is required to acknowledge this result.';
+            $('review-title').textContent='Inspect interrupted operation';$('review-summary').textContent='Inspect the saved outcome. Administrator access is required to acknowledge it; the package operation will not be repeated.';$('review-detail').textContent=result.warning+'\nPackage check: '+(result.dpkg_audit||'No unfinished package configuration reported.')+'\nInstalled packages:\n'+(result.evidence?.inventory||[]).map(row=>row.slice(0,3).join(' ')).join('\n')+'\nAdministrator access is required to acknowledge this result.';
             review=null;controls();$('review').returnValue='';$('review').showModal();
         }catch(error){if(generation===epoch)report(error.message);}})();
     });
     $('reconcile').addEventListener('click',() => void plan('reconcile'));
-    $('review').addEventListener('close',() => {const action=review;review=null;controls();if($('review').returnValue === 'confirm' && action?.epoch === epoch && action.available !== false && active() && !busy) void apply(action);});
+    $('review').addEventListener('close',() => {const action=review;review=null;controls();if($('review').returnValue !== 'confirm' && action?.epoch === epoch && active())report('Review cancelled. No software or service change was submitted.');if($('review').returnValue === 'confirm' && action?.epoch === epoch && action.available !== false && active() && !busy) void apply(action);});
     $('export').addEventListener('click',async () => {
         const generation=epoch;busy=true;controls();
         try {const result=await call({method:'reconciliation-export',id:state.reconciliation.exports.at(-1)});if(generation !== epoch) return;const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)+'\n'],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='sv08-customization.json';link.click();setTimeout(() => URL.revokeObjectURL(url),1000);report('Customization report downloaded.');}
         catch(error) {if(generation === epoch) report(error.message);}
         finally {if(generation === epoch) {busy=false;controls();}}
     });
-    function invalidate() {++epoch;++sequence;clearTimeout(timer);busy=false;state=null;review=null;unknownJob=null;$('inspect').hidden=true;$('review').close('cancel');$('detail').textContent='';$('dependencies').textContent='';$('job').hidden=true;$('customization').textContent='';$('reconciliation').textContent='';controls();report(window.sv08Session?.available ? 'Loading software…' : 'Administrator access is required.');}
+    function invalidate() {++epoch;++sequence;clearTimeout(timer);busy=false;state=null;review=null;unknownJob=null;$('inspect').hidden=true;$('review').close('cancel');$('detail').textContent='';$('dependencies').textContent='';$('storage').replaceChildren();$('reason').textContent='';$('job').hidden=true;$('customization').textContent='';$('reconciliation').textContent='';controls();report(window.sv08Session?.available ? 'Loading software…' : 'Administrator access is required.');}
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'software') void refresh();});
     controls();if(location.hash === '#software') void window.sv08Session.ready.then(refresh);

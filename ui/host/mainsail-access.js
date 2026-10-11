@@ -14,6 +14,7 @@
             element.disabled = busy || !active() || !window.sv08Session?.elevated || !state;
         });
         $('access-refresh').disabled = busy || !active();
+        $('access-admin-help').textContent = window.sv08Session?.elevated ? 'Changes affect Mainsail control only. Cockpit and SSH administrator access stay separate.' : 'You can inspect the login method and issued certificates. Authorize to change login or issue and revoke certificates.';
         const mode = selected();
         $('access-password-fields').hidden = mode !== 'password';
         $('access-none-detail').hidden = mode !== 'none';
@@ -38,6 +39,7 @@
     }
     function renderCertificates() {
         $('access-certificates').replaceChildren();
+        if (!(state.certificates || []).length) {const empty=document.createElement('p');empty.textContent='No client certificates have been issued. Generate and import one before choosing Client certificate login.';$('access-certificates').append(empty);}
         for (const certificate of state.certificates || []) {
             const row = document.createElement('article');
             const heading = document.createElement('h3'); heading.textContent = certificate.label;
@@ -102,7 +104,7 @@
     });
     $('access-review').addEventListener('close',() => {
         const action = pending; pending = null; clearSecrets();
-        if ($('access-review').returnValue !== 'confirm' || !action || action.epoch !== epoch || !active() || busy) return;
+        if ($('access-review').returnValue !== 'confirm' || !action || action.epoch !== epoch || !active() || busy) {if(action?.epoch === epoch && active()){report('Review cancelled. Mainsail login and issued certificates are unchanged.');if(action.request.method === 'settings' && selected() === 'password')setTimeout(()=>{if(active()&&!$('access-review').open)$('access-password').focus();},0);}return;}
         const generation = epoch;
         busy = true; controls();
         void (async () => {

@@ -14,6 +14,9 @@
         for(const id of ['use-factory','custom-save','source-preview','source-import','migration-preview','publication-review','publication-reconcile','publication-restore-review','publication-apply','definition-confirm'])$(id).disabled=busy||reconcile||diagnostic||!authority();
         $('export').disabled=$('export-config').disabled=busy||!authority();
         $('source-confirm').disabled=busy||reconcile||diagnostic||!authority()||!sourcePreview;
+        $('source-confirm').hidden=$('source-cancel').hidden=!sourcePreview;
+        $('source-cancel').disabled=busy;
+        $('source-access-help').textContent=authority()?'Preview the source and its pinned revision before adding or updating it.':'You can inspect available sources. Administrator access is required to preview, import or change them.';
         $('add-preset').disabled ||= !$('device-preset').value;
         $('review').disabled ||= !draft;
         $('configuration-export').disabled=busy||reconcile||diagnostic||!authority()||changed||!draft||$('mode').value==='sensors';
@@ -457,12 +460,14 @@ renderChanges();renderDefinitionChoices();renderJourney();
         cancelGraphDrag();const filter=$('connection-filter').value.trim().toLowerCase();graph.rows=connectionRows();
         if(selectedConnection)selectedConnection=graph.rows.find(r=>r.key===selectedConnection.key)??null;
         const rows=graph.rows.filter(row=>!filter||connectionText(row).join(' ').toLowerCase().includes(filter));
+        $('connection-count').textContent=rows.length+' of '+graph.rows.length+' connections'+(filter?' match your filter.':' in current selections.');
+        $('connection-clear').hidden=!filter;
         $('connection-map').hidden=!mapMode;$('connection-table').hidden=mapMode;$('graph-controls').hidden=!mapMode;$('graph-help').hidden=!mapMode;
         $('map-toggle').setAttribute('aria-pressed',String(mapMode));$('table-toggle').setAttribute('aria-pressed',String(!mapMode));
         const root=$('connection-table');root.replaceChildren();const table=el('table'),caption=el('caption','Connections in current selections'),head=el('tr');table.append(caption);
         for(const text of ['Board','Header / function','Contact','Signal / connection','Device']){const th=el('th',text);th.scope='col';head.append(th);}const thead=el('thead');thead.append(head);table.append(thead);const body=el('tbody');table.append(body);
         for(const row of rows){const tr=el('tr');tr.dataset.connection=row.key;for(const text of connectionText(row).slice(0,4))tr.append(el('td',text));const td=el('td'),button=el('button',connectionText(row)[4]);button.onclick=()=>chooseConnection(row,true);td.append(button);tr.append(td);body.append(tr);}root.append(table);
-        if(!rows.length)root.append(el('p','No matching connections.'));
+        if(!rows.length)root.append(el('p',filter?'No matching connections. Clear the filter or try a device, board or signal name.':'No connections in these selections. Return to Hardware to inspect fitted parts.'));
         if(mapMode)buildGraph(rows);
         renderConnectionInspector();controls();
     }
@@ -470,7 +475,7 @@ renderChanges();renderDefinitionChoices();renderJourney();
     function renderConnectionInspector(){
         const root=$('connection-inspector');root.replaceChildren();root.tabIndex=-1;
         const row=selectedConnection;if(!row){root.append(el('p','Select a connection to see its details.'));return;}
-        root.append(el('h2',pretty(row.d.name)+' · '+pretty(row.field)));const details=el('dl');for(const [i,text] of connectionText(row).entries()){details.append(el('dt',['Board','Function','Contact','Signal','Device'][i]),el('dd',text));}root.append(details);
+        root.append(el('h2',pretty(row.d.name)+' · '+pretty(row.field)),el('p','Inspecting this connection does not change settings. Any reassignment below changes only your unsaved draft; save and review it in Hardware.'));const details=el('dl');for(const [i,text] of connectionText(row).entries()){details.append(el('dt',['Board','Function','Contact','Signal','Device'][i]),el('dd',text));}root.append(details);
         if(row.motor){const pins=el('p');pins.textContent='Motor signals: '+Object.entries(row.motor).map(([key,value])=>pretty(key)+': '+value).join(' · ');root.append(pins);}
         if(!electrical.has(row.type))return;
         const d=draft.devices.find(x=>x.name===row.d.name);if(!d)return;
@@ -564,7 +569,9 @@ renderChanges();renderDefinitionChoices();renderJourney();
         const rows=all.filter(row=>!$('definitions-search').value.trim()||[row.record.name,row.record.id,...row.record.aliases??[],definitionSource(row),definitionCategory(row)].join(' ').toLowerCase().includes($('definitions-search').value.trim().toLowerCase()));
         const trail=definitionsTrail.at(-1);let row=trail?all.find(r=>definitionKey(r)===trail.key):null;if(trail&&!row){definitionsTrail=[];row=null;}
         const back=$('definitions-back');back.hidden=!definitionsGroup&&!definitionsTrail.length;back.onclick=definitionsBack;
-        $('definitions-count').textContent=all.length+' definitions · '+all.filter(r=>r.reference.source==='builtin').length+' built-in';
+        const search=$('definitions-search').value.trim();
+        $('definitions-clear').hidden=!search;
+        $('definitions-count').textContent=(search?rows.length+' matching of ':'')+all.length+' definitions · '+all.filter(r=>r.reference.source==='builtin').length+' built-in';
         $('definitions-by-source').setAttribute('aria-pressed',String(definitionsView==='source'));$('definitions-by-category').setAttribute('aria-pressed',String(definitionsView==='category'));
         const home=el('button','All '+(definitionsView==='source'?'sources':'categories'));home.onclick=()=>{definitionsGroup=null;definitionsTrail=[];renderDefinitionsBrowser(true);};breadcrumb.append(home);
         if(definitionsGroup){const group=el('button',definitionsGroup.label);group.onclick=()=>{definitionsTrail=[];renderDefinitionsBrowser(true);};breadcrumb.append(el('span',' / '),group);}
@@ -573,12 +580,12 @@ renderChanges();renderDefinitionChoices();renderJourney();
             root.append(el('h2',definitionsGroup.label));const list=el('div');list.className='printer-definitions-grid';root.append(list);
             const matches=rows.filter(row=>(definitionsView==='source'?row.reference.source:row.record.category)===definitionsGroup.id);
             for(const item of matches.sort((a,b)=>a.record.name.localeCompare(b.record.name))){const button=definitionButton(item.record.name,[pretty(item.record.kind),item.record.version,definitionSource(item),definitionStatus(item)].join(' · '),()=>{definitionsTrail.push({key:definitionKey(item)});renderDefinitionsBrowser(true);},item.record.category);button.dataset.definitionId=item.record.id;button.dataset.definitionSource=item.reference.source;list.append(button);}
-            if(!matches.length)root.append(el('p','No matching definitions.'));
+            if(!matches.length)root.append(el('p','No matching definitions. Clear the search or try a name, source or category.'));
         } else {
             const groups=new Map();for(const item of rows){const id=definitionsView==='source'?item.reference.source:item.record.category;const label=definitionsView==='source'?definitionSource(item):definitionCategory(item);if(!groups.has(id))groups.set(id,{id,label,count:0});groups.get(id).count++;}
             const grid=el('div');grid.className='printer-definitions-grid';root.append(grid);
             for(const group of [...groups.values()].sort((a,b)=>a.label.localeCompare(b.label))){const button=definitionButton(group.label,group.count+' definition'+(group.count===1?'':'s')+(definitionsView==='source'&&sourceRows[group.id]?.enabled===false?' · Source disabled':''),()=>{definitionsGroup=group;definitionsTrail=[];renderDefinitionsBrowser(true);},definitionsView==='category'?group.id:'boards');button.dataset.definitionGroup=group.id;grid.append(button);}
-            if(!groups.size)root.append(el('p',catalog?'No matching definitions.':'Authorize to load the definitions catalogue.'));
+            if(!groups.size)root.append(el('p',catalog?'No matching definitions. Clear the search or try a name, source or category.':'Definitions have not loaded. Check the session or reload configuration.'));
         }
         if(focus){const target=root.querySelector('h2')??root;target.tabIndex=-1;target.focus();}
     }
@@ -593,6 +600,7 @@ renderChanges();renderDefinitionChoices();renderJourney();
             definitionDisclosure(root,'Component record',component);return;
         }
         root.append(el('p',definitionSource(row)+' · '+d.version+' · '+definitionStatus(row)),el('p',d.description??''));
+        root.append(el('p',row.enabled&&!row.unavailable?'Previewing this definition changes nothing. Using it opens a replacement review before changing your unsaved hardware draft.':'This definition cannot be selected while its source or record is unavailable. Manage its source to inspect the reason.'));
         if(row.unavailable){root.append(el('p','This import entry has no supported component record. View its source to manage availability.'));return;}
         if(componentIndex===undefined){const use=el('button','Use this definition in hardware');use.disabled=!row.enabled||!authority()||busy||reconcile;use.onclick=()=>{selectedCategory=d.category;hardwareReturn();void previewDefinition(row);};root.append(use);}
         definitionValues(root,{product:d.hardware?.product,hardware_revision:d.hardware?.revision,definition_type:pretty(d.kind),category:definitionCategory(row),license:d.license});
@@ -607,8 +615,34 @@ renderChanges();renderDefinitionChoices();renderJourney();
     }
     for(const mode of ['source','category'])$('definitions-by-'+mode).onclick=()=>{definitionsView=mode;definitionsGroup=null;definitionsTrail=[];renderDefinitionsBrowser();};
     $('definitions-search').oninput=()=>{definitionsTrail=[];renderDefinitionsBrowser();};
-    function renderSources(){const root=$('source-list');root.replaceChildren();const table=el('table'),body=el('tbody');table.append(body);const builtin=el('tr');for(const text of ['SV08 Mainline','Built-in','Available'])builtin.append(el('td',text));body.append(builtin);for(const source of Object.values(sourceRows)){const tr=el('tr');for(const text of [source.manifest.name,source.repository??'Local bundle',source.enabled?'Available':'Disabled'])tr.append(el('td',text));const td=el('td');for(const [label,action] of [['Check for updates','source_check'],[source.enabled?'Disable':'Enable',source.enabled?'source_disable':'source_enable'],['Remove','source_remove']]){const b=el('button',label);b.disabled=!authority()||busy||reconcile||action==='source_check'&&(!source.enabled||source.origin!=='github');b.onclick=()=>operation(async()=>{const r=await rpc({action,source_id:source.id,expected_revision:revision});if(action==='source_check'){sourcePreview=r;showSourcePreview();}else{await load(true);renderSources();notice('Subscription updated; selected locked definitions retained.');}});td.append(b);}tr.append(td);body.append(tr);}root.append(table);}
-    function showSourcePreview(){const root=$('source-preview-detail');root.replaceChildren();if(!sourcePreview)return;$('source-confirm').textContent=Object.values(sourceRows).some(source=>source.id===(sourcePreview.source_id??sourcePreview.id)||source.repository&&source.repository===sourcePreview.repository)?'Update source':'Add source';root.append(el('h3',sourcePreview.manifest.name),el('p',(sourcePreview.repository??'Local bundle')+' · '+sourcePreview.commit),el('p','Publisher declaration: '+JSON.stringify(sourcePreview.manifest.publisher)+' · '+sourcePreview.manifest.license),el('p',sourcePreview.records.length+' supported · '+sourcePreview.unavailable.length+' unavailable'));if(!sourcePreview.records.length)root.append(el('p',sourcePreview.unavailable.length?'No supported definitions in this revision. Inspect the compatibility / validation reasons below, then correct the repository or choose another source.':'This revision contains no definitions. Check the repository URL, ref and catalogue path, or ask the publisher to add definitions.'));for(const x of sourcePreview.records)root.append(el('p',x.name+' · '+x.id+' · '+x.version));for(const x of sourcePreview.unavailable)root.append(el('p',x.id+': '+x.reason));$('source-confirm').disabled=!authority();}
+    function renderSources(){
+        const root=$('source-list');root.replaceChildren();
+        const builtin=el('article');builtin.className='card printer-source-card';builtin.append(el('h3','SV08 Mainline'),el('p','Built-in · Available'),el('p','Included with this OS. No repository subscription is needed.'));root.append(builtin);
+        for(const source of Object.values(sourceRows)){
+            const card=el('article');card.className='card printer-source-card';card.dataset.sourceId=source.id;
+            card.append(el('h3',source.manifest.name),el('p',source.enabled?'Available for new selections':'Disabled for new selections'),el('p',source.repository??'Imported local bundle'));
+            const details=el('details');details.append(el('summary','Pinned revision & source details'),el('p','Revision: '+(source.commit??'Recorded in imported bundle')),el('p',Array.isArray(source.records)&&Array.isArray(source.unavailable)?source.records.length+' supported · '+source.unavailable.length+' unavailable':'Definition counts unavailable in this saved source'));card.append(details);
+            const actions=el('div');actions.className='actions';
+            for(const [label,action] of [['Check for updates','source_check'],[source.enabled?'Disable':'Enable',source.enabled?'source_disable':'source_enable'],['Remove','source_remove']]){
+                const button=el('button',label);button.disabled=!authority()||busy||reconcile||action==='source_check'&&(!source.enabled||source.origin!=='github');
+                button.onclick=()=>operation(async()=>{const result=await rpc({action,source_id:source.id,expected_revision:revision});if(action==='source_check'){sourcePreview=result;showSourcePreview();}else{await load(true);renderSources();notice('Subscription updated; selected locked definitions retained.');}});actions.append(button);
+            }
+            card.append(actions);root.append(card);
+        }
+    }
+    function showSourcePreview(){
+        const root=$('source-preview-detail');root.replaceChildren();
+        $('source-confirm').hidden=$('source-cancel').hidden=!sourcePreview;
+        if(!sourcePreview)return;
+        const updating=Object.values(sourceRows).some(source=>source.id===(sourcePreview.source_id??sourcePreview.id)||source.repository&&source.repository===sourcePreview.repository);
+        $('source-confirm').textContent=updating?'Update source':'Add source';
+        root.append(el('h3',(updating?'Update preview: ':'Source preview: ')+sourcePreview.manifest.name),el('p',sourcePreview.records.length+' supported · '+sourcePreview.unavailable.length+' unavailable'),el('p','Adding or updating makes definitions available. Hardware selections and applied configuration stay unchanged.'));
+        if(!sourcePreview.records.length)root.append(el('p',sourcePreview.unavailable.length?'No supported definitions in this revision. Inspect the compatibility / validation reasons below, then correct the repository or choose another source.':'This revision contains no definitions. Check the repository URL, ref and catalogue path, or ask the publisher to add definitions.'));
+        const provenance=el('details');provenance.append(el('summary','Repository, pinned revision & publisher'),el('p',sourcePreview.repository??'Local bundle'),el('p','Pinned revision: '+sourcePreview.commit),el('p','Publisher declaration: '+JSON.stringify(sourcePreview.manifest.publisher)+' · '+sourcePreview.manifest.license));root.append(provenance);
+        const supported=el('details');supported.append(el('summary','Supported definitions ('+sourcePreview.records.length+')'));for(const record of sourcePreview.records)supported.append(el('p',record.name+' · '+record.id+' · '+record.version));root.append(supported);
+        if(sourcePreview.unavailable.length){const unavailable=el('details');unavailable.open=true;unavailable.append(el('summary','Unavailable definitions & reasons'));for(const entry of sourcePreview.unavailable)unavailable.append(el('p',entry.id+': '+entry.reason));root.append(unavailable);}
+        $('source-confirm').disabled=!authority();
+    }
     for(const b of document.querySelectorAll('[data-printer-view]'))b.onclick=()=>setView(b.dataset.printerView);
     $('custom-save').onclick=()=>{if(!authority()||busy||reconcile)return;const value=$('custom-config').value;if(value)draft.custom_config=value;else delete draft.custom_config;edit();render();};
     $('detail-back').onclick=()=>{const key=selectedCategory;selectedCategory=null;renderDesign();$('cards').querySelector('[data-category='+key+']')?.focus();};
@@ -621,6 +655,9 @@ renderChanges();renderDefinitionChoices();renderJourney();
     $('add-source').onclick=()=>window.sv08Navigation.go('definition-sources');
     $('browse-catalogue').onclick=()=>window.sv08Navigation.go('definitions');
     $('source-return').onclick=$('catalogue-return').onclick=hardwareReturn;
+    $('source-cancel').onclick=()=>{sourcePreview=null;showSourcePreview();notice('Preview discarded. Sources, hardware selections and applied configuration are unchanged.');$('source-preview').focus();};
+    $('definitions-clear').onclick=()=>{$('definitions-search').value='';definitionsTrail=[];renderDefinitionsBrowser();$('definitions-search').focus();};
+    $('connection-clear').onclick=()=>{$('connection-filter').value='';renderConnections();$('connection-filter').focus();};
     $('source-preview').onclick=()=>operation(async()=>{sourcePreview=null;showSourcePreview();notice('Previewing repository…');try{sourcePreview=await rpc({action:'source_preview',url:$('source-url').value,ref:$('source-ref').value||null,path:$('source-path').value||null,expected_revision:revision});}catch(error){throw new Error('Could not preview this repository. Check the URL, ref and catalogue path, or retry when online. '+error.message);}showSourcePreview();notice(sourcePreview.records.length?'Repository preview ready. Inspect supported and unavailable definitions before adding.':'No supported definitions in this revision. Inspect the preview reasons and correct the URL, ref or catalogue path.');});
     $('source-import').onchange=()=>operation(async()=>{const file=$('source-import').files[0];if(!file)return;if(file.size>524288)throw Error('Bundle exceeds limit');sourcePreview=null;showSourcePreview();notice('Previewing bundle…');sourcePreview=await rpc({action:'bundle_preview',bundle:JSON.parse(await file.text()),expected_revision:revision});showSourcePreview();});
     $('source-confirm').onclick=()=>operation(async()=>{if(!sourcePreview)return;await rpc({action:'source_add',source:sourcePreview,expected_revision:revision});sourcePreview=null;showSourcePreview();await load(true);renderSources();notice('Catalogue available. Selected definition snapshots and local selections unchanged.');});

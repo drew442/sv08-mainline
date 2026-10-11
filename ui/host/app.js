@@ -46,7 +46,7 @@ function page(name, focus = true) {
 function capability(action, button, reason) {
     const cap = state.capabilities[action] || {available:false, reason:'This host does not support this operation.'};
     $(button).disabled = busy || jobsBusy || !sv08Session.elevated || !cap.available;
-    if (reason) $(reason).textContent = cap.available ? '' : cap.reason;
+    if (reason) $(reason).textContent = [!cap.available ? cap.reason : '', !sv08Session.elevated ? 'Administrator access is required to review this change.' : ''].filter(Boolean).join(' ');
 }
 const updateChecks = ['check_compatibility', 'check_customization', 'check_version', 'allow_downgrade', 'allow_untrusted_provenance'];
 function updateOptions(prefix) {
@@ -108,6 +108,11 @@ function render() {
     $('slot').textContent = `Running from slot ${state.boot.slot}`;
     $('mode').textContent = state.boot.mode === 'immutable' ? 'Immutable' : 'Writable';
     $('customized').textContent = state.boot.customized ? 'Local customizations preserved' : 'Standard release';
+    const modeName = value => value === 'writable' ? 'Writable' : value === 'immutable' ? 'Immutable' : 'Unavailable';
+    $('settings-current-mode').textContent = modeName(state.boot.mode);
+    $('settings-next-mode').textContent = modeName(state.requested_mode)+(state.requested_mode === state.boot.mode ? ' · same as running now' : ' · takes effect after restart');
+    $('overview-next-mode').textContent = state.requested_mode === state.boot.mode ? '' : 'Next boot: '+modeName(state.requested_mode);
+    $('mode-reason').textContent = !sv08Session.elevated ? 'Administrator access is required to save a mode change. You can inspect the current mode.' : '';
     $('space').textContent = `${(state.free_bytes / 1024 ** 3).toFixed(2)} GiB`;
     $('update-title').textContent = state.transaction ? `Update: ${state.transaction.phase}` : 'No update waiting';
     $('update-detail').textContent = state.pending ? `Slot ${state.pending.slot} · ${state.pending.release}. State is copied when the new release boots.` : 'The running system stays active until you select a verified release for the next boot.';
@@ -191,7 +196,7 @@ async function refresh() {
         state = next; render();
         document.querySelectorAll('#settings input, #images input').forEach(control => {control.disabled=!sv08Session.elevated;});
         if (!sv08Session.elevated) document.querySelectorAll('#images button:not([data-open]), #settings button:not([data-open]), #recovery button:not([data-open])').forEach(control => {control.disabled=true;});
-    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'System status unavailable'; notice(error.message, error.noticeKind || 'connectivity'); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; }); }
+    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'System status unavailable'; $('settings-current-mode').textContent = 'Unavailable · refresh to check'; $('settings-next-mode').textContent = 'Unavailable · refresh to check'; notice(error.message, error.noticeKind || 'connectivity'); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function inspectJob(id) {

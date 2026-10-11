@@ -12,7 +12,10 @@
     $('identity-keys').addEventListener('input',()=>{keysDirty=true;});
     const report = text => { $('identity-status').textContent = text; };
     function controls() {
-        $('identity-keys').readOnly = !window.sv08Session?.elevated;
+        $('identity-keys').readOnly = busy || !state || !window.sv08Session?.elevated;
+        $('identity-key-file').disabled = busy || !state || !window.sv08Session?.elevated;
+        $('identity-bundle-file').disabled = busy || !state || !window.sv08Session?.elevated;
+        $('identity-access-help').textContent = window.sv08Session?.elevated ? 'Public trust downloads contain no private keys. Private backup, restore and trusted-key changes require administrator access.' : 'You can inspect public identity and download the public printer CA. Authorize to edit SSH keys or manage private identity backups.';
         $('identity-refresh').disabled = busy || !window.sv08Session?.available;
         document.querySelectorAll('[data-identity-action]').forEach(button => {
             button.disabled = busy || !window.sv08Session?.elevated || !state || (state.healthy === false && button.id !== 'identity-import');
@@ -33,7 +36,7 @@
     }
     async function refresh() {
         if (!window.sv08Session?.available) { state = null; controls(); return; }
-        const attempt=++refreshId, generation=epoch;
+        const attempt=++refreshId, generation=epoch; report('Loading printer identity…');
         try {
             const next = await call({method:'status'});
             if(attempt!==refreshId||generation!==epoch||!window.sv08Session?.available)return;state=next;
@@ -42,7 +45,7 @@
             if(paintedKeys!==undefined&&$('identity-keys').value!==paintedKeys)keysDirty=true;
             if(!keysDirty){$('identity-keys').value = state.authorized_keys;paintedKeys=state.authorized_keys;}
             controls(); report(state.healthy === false ? 'Printer identity is damaged. Restore a verified identity backup.' : 'Printer identity is ready.');
-        } catch (error) {if(attempt!==refreshId||generation!==epoch)return;state = null; controls(); report(error.message); }
+        } catch (error) {if(attempt!==refreshId||generation!==epoch)return;state = null; controls(); report('Identity status unavailable. Any details still shown are from the previous read. Refresh to check. '+error.message); }
     }
     function download(name, bytes, type) {
         const url = URL.createObjectURL(new Blob([bytes],{type}));
@@ -53,8 +56,8 @@
         let raw = ''; for (let offset=0;offset<bytes.length;offset+=8192) raw += String.fromCharCode(...bytes.subarray(offset,offset+8192));
         return btoa(raw);
     }
-    function review(title, detail, request) {
-        pending = request; $('identity-review-title').textContent = title;
+    function review(title, detail, request, evidence = '') {
+        pending = request; $('identity-review-title').textContent = title; $('identity-review-evidence').hidden = !evidence; $('identity-review-fingerprints').textContent = evidence; $('identity-review').returnValue = 'cancel';
         $('identity-review-detail').textContent = detail; $('identity-review').showModal();
     }
     async function operation(callback) {
@@ -88,12 +91,11 @@
         if (file.size>1024*1024) throw new Error('Identity backup is limited to 1 MiB.');
         const bundle = base64(new Uint8Array(await file.arrayBuffer()));
         const result = await call({method:'bundle.preview',bundle});
-        review('Restore printer identity', 'CA fingerprint: '+result.ca_fingerprint+'\nSSH fingerprint: '+result.ssh_fingerprint+
-            '\n\nThis replaces the printer CA, SSH host identity and trusted user keys. Web and SSH services will reload. Trust the restored CA before reconnecting; this page may disconnect.',{method:'bundle.restore',bundle,revision:state.revision});
+        review('Restore printer identity', 'This replaces the printer CA, SSH host identity and trusted user keys. Web and SSH services will reload. Trust the restored CA before reconnecting; this page may disconnect.',{method:'bundle.restore',bundle,revision:state.revision}, 'CA fingerprint: '+result.ca_fingerprint+'\nSSH fingerprint: '+result.ssh_fingerprint);
     }); });
     $('identity-review').addEventListener('close',() => {
         const request = pending; pending = null;
-        if ($('identity-review').returnValue !== 'confirm' || !request) return;
+        if ($('identity-review').returnValue !== 'confirm' || !request) {if(request && window.sv08Session?.available)report('Review cancelled. Printer identity and trusted keys are unchanged.');return;}
         void operation(async () => {
             const result = await call(request);
             if (request.method === 'bundle.export') {

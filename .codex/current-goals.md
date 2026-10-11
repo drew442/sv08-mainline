@@ -352,3 +352,7 @@ by its existing requirements and [remaining-work plan](../docs/remaining-work-pl
 ## Network journey delivery — 2026-10-11
 
 Network delivery implementation and NJ1–7 acceptance complete; source task self-validated for review publication, owner integration pending. Source task and acceptance criteria: [network-journey](../docs/features/network-journey/proposal.md). Publish a tested review PR, without merge/deployment/printer access. Prior Hardware task is integrated after owner merge of PR #7. Native Hardware delivery goal remains complete; no unrelated native goal replaced.
+
+## Remaining Cockpit pages —2026-10-11
+
+Remaining-page implementation and RP1–11 acceptance complete for owner review. [Scope](../docs/features/remaining-pages/proposal.md) and [source-bound results, screenshots and limitations](../docs/features/remaining-pages/evidence.md). Source task self-validated; owner integration pending. No deployment or printer operation. Native prior Hardware goal remains complete; no unrelated goal replaced. Network task integrated following owner merge of PR8.
