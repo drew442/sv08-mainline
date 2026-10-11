@@ -389,3 +389,103 @@ with offline versus installed evidence explicitly separated. Changes to physical
 outputs, identity restoration, network reachability or recovery retain existing
 authorization and consequential-operation gates. The workplan itself is a reviewed
 proposal, not evidence that these improvements have shipped.
+
+
+## PR9 follow-up — 2026-10-11
+
+Owner merged PR9 at `600720fa3160498f90f4c6440542bb2afde92e53`.
+Its deterministic CI passed in52 seconds. This does not erase the limits in
+[the original delivery evidence](../features/remaining-pages/evidence.md).
+Preserve that historical record; attach new source-bound evidence to subsequent
+existing feature tasks. This section is the follow-up plan, not implementation
+or deployment evidence and not a second task queue.
+
+### What remains and what it means
+
+| Item | Current evidence and implication | Disposition |
+|---|---|---|
+| History regression errors |62 tests reported7 errors; the same errors were reproduced on the unchanged base. Two fixtures create an uploads directory already prepared by the current boot path. Submission mocks omit the current controller/store admission contract. They fail before reaching their intended fault/concurrency assertions; the protection is therefore insufficiently tested. This is evidence of stale tests, not proof the backend is correct. | Repair first; diagnose any substantive failure exposed afterwards. |
+| History pressure browser |The browser test expects a small bounded filesystem and the real768MiB reserve floor. The32GiB-free workstation disk would require unsafe/excessive filler to reach that floor; the test correctly refused. Disk space itself was not exhausted. | Run in an assigned size-limited disposable guest filesystem. |
+| Automatic-policy dependency |Tracked test imports undici, absent from the installedNode22 environment. A scratch copy using native WebSocket passed, so the exact repository invocation remains unreproducible there. | Make the tracked test use the supported installed runtime consistently, then execute it unchanged. |
+| Installed Cockpit and upload coverage |Composed fixtures test page/controller behavior, with simulated Cockpit transport and some mocked services. Upload review rendering used a mocked plan;20 upload controller tests passed. PR9 did not prove the merged assets, real login/elevation, signed transfer and service integration together. | Targeted real-Cockpit acceptance on an existing disposable system. |
+|200% zoom |Equivalent512CSS-pixel viewport with scale2 tested reflow; CSS body zoom was distinguished from browser zoom. The native browser zoom interaction was not tested. | Exercise actual browser zoom and keyboard journeys; retain reflow coverage too. |
+| Browser startup reliability |Long-path capture launches died before DevTools; a shorter assigned path succeeded. The precise cause was not established. | Preserve stderr/exit/PID and compare bounded paths before asserting a cause; improve existing runner diagnostics. |
+| Update indicator |The global indicator opens Updates; history is now lower on that page. A direct jump was deferred. | Small accessibility/usability improvement after correctness coverage. |
+| Agent/skill unknowns |Named Sol/medium routing and explicit child skill-file reading were observed. Native discovery/activation and hidden-context completeness were not established. | No product blocker. Keep explicit-read fallback; separate tooling task only if needed. |
+| Recovery and hardware limits |Recovery page truthfully provides guidance and does not enable recovery entry/storage repair. No physical outputs or real-printer qualification were attempted. | Preserve safety boundaries; recoverability capability belongs to its existing board/recovery requirements, not a UI patch. |
+
+Already corrected in PR9: synthetic zoom test methodology, native dialog-close
+synchronization, Identity fixtureUTF-8 and capability-reason coverage. The private
+scratch invocation fixed the writable-ancestor preview problem without changing
+production checks. These need regression retention, not another product redesign.
+
+### Execution order and acceptance
+
+1. **Restore trustworthy deterministic tests.** Own
+   `tests/test_admin_history_allocation.py`, `tests/test_admin_history_repairs.py`
+   and the tracked automatic-policy browser entry. Check prepared upload directory
+   ownership/mode instead of blindly recreating it. Build controller inputs from
+   the real current store/boot/snapshot contract, or narrowly model the required
+   contract without bypassing admission, state locks or revision checks. Preserve
+   fault points, same-identity retries, unchanged receipts and concurrency timing
+   assertions. Run all history and upload units and the exact tracked automatic
+   policy journey. Acceptance: no errors/skips hiding these cases; injected faults
+   are actually reached; refused operations leave state/receipts unchanged. If
+   repairs expose a backend defect, diagnose it and expand the bounded task
+   explicitly rather than deleting the check.
+
+2. **Close the history pressure gap.** Reuse the existing history fixture/browser
+   in a disposable guest with a dedicated filesystem sized from the actual floor,
+   fixture/browser overhead and test limits. Prefer a guest-only bounded filesystem
+   over pressure on a shared host mount. Preflight free RAM/disk and existing VM
+   artifacts on the chosen development host; do not rebuild unchanged OS images.
+   Record a bounded primary allowance before provisioning: target at most one guest,
+  20 minutes process runtime,2GiB guest filesystem and1GiB generated logs/caches;
+   adjust explicitly if the existing recipe demonstrably requires more. Acceptance:
+   real low-space refusal, recovery after filler removal, no receipt/state loss,
+   reviewed maintenance, Escape/authority cancellation and lost-ack reconciliation;
+   cleanup the owned filler and stop the owned guest even on failure. Keep the
+   production reserve floor unchanged.
+
+3. **Run installed acceptance of the merged pages.** Stage the current candidate
+   into the smallest existing disposable Cockpit/QEMU or installed ARM recipe.
+   Reuse `tests/cockpit_fixture.py`, `tests/cockpit_composed_browser.mjs`,
+   `tests/cockpit_browser.mjs`, `tests/cockpit_upload_cases.mjs` and
+   `scripts/check_installed_cockpit.py` according to their actual current contracts;
+   fixture success alone does not meet this step. Verify installed asset/source
+   hashes and all ten route reads before elevation. Test actual elevation/end-access,
+   denied ordinary writes, review cancellation, stale/lost replies, draft retention
+   and secret clearing. Exercise a disposable signed bundle with real verification,
+   transfer/progress/private storage and cancel/reconcile paths, using the existing
+   test signer only in the guest. Separate mocked slot/service adapters from real
+   authentication/verification evidence. Acceptance: each required journey passes
+   on source-matched installed assets, with sanitized screenshots and explicit
+   remaining adapter limits. No printer access/deployment/output activation.
+
+4. **Close rendered/runner usability gaps.** On that same disposable target test
+   real browser200% zoom at the supported viewport, Tab/Shift-Tab/Enter/Escape,
+   readable modal controls and focus return. Capture actual screenshots and have
+   a task-scoped skilled implementer inspect them. Add a history jump that moves
+   focus to the relevant operation/history without triggering an update; test from
+   another route and with keyboard/back navigation. Improve the existing browser
+   launcher to retain startup stderr/exit status, a timeout handle and assigned
+   short scratch path; if startup remains unreproducible, report it rather than
+   looping. Acceptance: no hidden action or horizontal document overflow, meaningful
+   focus and zero configuration mutation from navigation; failure diagnostics are
+   retained and owned processes are cleaned up.
+
+5. **Publish closure evidence.** Reuse existing project task/goal records. Update
+   test selection or CI only where needed so stale history fixtures and the exact
+   automatic-policy entry are exercised routinely; identify which installed/pressure
+   checks remain separately run instead of suggesting CI covers them. Commit/push
+   source and source-bound results for owner review. Do not rewrite PR9 evidence,
+   silently refresh historical hashes or call fixture evidence installed/hardware
+   acceptance. Report each item as resolved, still blocked, or deliberately deferred.
+
+Use direct tools for defined checks and provisioning. Use the existing low
+implementer for settled test repairs; use explicit medium and task-scoped UX skill
+only for unresolved user interaction/rendered judgment. Keep at most two children
+and one active implementation. No standing verification team or model/global
+configuration change is needed. This plan authorizes no live printer operation;
+physical qualification or enabling recovery retains existing owner authorization
+and consequential-operation gates.
