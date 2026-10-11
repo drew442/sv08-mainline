@@ -107,7 +107,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "2a1054452dfa48289f2ef99ac3a5b517",
+        "session": "01a12b29-e0a4-7610-8074-1f71093e25aa"
+      },
       "input_paths": [
         "ui/host/network.js",
         "ui/host/navigation.js",
@@ -155,7 +159,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible presentation and disposable tests; backend protections remain intact; no live printer or consequential operation.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and assess remaining page journeys",
       "validation": null,
       "verification": null
