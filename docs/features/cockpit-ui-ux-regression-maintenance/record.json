@@ -51,7 +51,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "422517026b0241b59058bd62092156e8",
+        "session": "cockpit-ux-regression-20261011"
+      },
       "input_paths": [
         "ui/host/",
         "runtime/",
@@ -72,7 +76,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Only reversible test fixture/assertion and preview-fixture metadata maintenance. No production runtime or protocol changes, printer operations, real image installs, identity restores or service changes.",
-      "status": "pending",
+      "status": "running",
       "title": "Preserve and validate reusable Cockpit regression coverage",
       "validation": null,
       "verification": null
