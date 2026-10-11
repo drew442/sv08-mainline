@@ -92,7 +92,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
-      "status": "validated",
+      "status": "done",
       "title": "Correct managed ownership and enforce functional deployment checks",
       "validation": {
         "actor": "root/coordinator",
