@@ -49,7 +49,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/cockpit_ux_implementation",
+        "run": "dac46ccf661349328d73911bc49496af",
+        "session": "cockpit-ux-implement-20261011"
+      },
       "input_paths": [
         "runtime/",
         "catalog/printer/",
@@ -97,7 +101,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and disposable fixture changes; existing backend protections retained; no physical or production mutation.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate complete Cockpit UX journey",
       "validation": null,
       "verification": null
