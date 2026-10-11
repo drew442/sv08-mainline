@@ -83,7 +83,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "ba383334e05441008619cdc99d2cb2ac",
+        "session": "01a12a89-23a1-7491-beb9-8774825ead36"
+      },
       "input_paths": [
         "tests/test_printer_browser_fixture.py",
         "ui/host/",
@@ -109,7 +113,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI presentation and fixture tests only; backend operations/protections unchanged, no printer access or consequential operation.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and assess bounded hardware journey",
       "validation": null,
       "verification": null
