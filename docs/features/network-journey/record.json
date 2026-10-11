@@ -319,7 +319,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI and fixture tests; unchanged backend protections; no live printer or network operations.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and assess Network journey",
       "validation": {
         "actor": "project_implementer",
