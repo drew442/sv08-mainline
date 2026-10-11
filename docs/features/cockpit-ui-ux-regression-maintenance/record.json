@@ -1,51 +1,63 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "37f081260322ffb0cf3eee041dc99433de081263ee23bcdb06231c791a849423",
+    "rationale": "Necessary reusable regression maintenance within full UX workplan goal; original live task ownership preserved.",
+    "reference": "docs/features/cockpit-ui-ux-implementation/owner-request.md",
+    "reference_sha256": "da20a86af257f81f71a9ad337d9f6f8876fd19488c7c878e3d8dbabf77d97b21",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/cockpit-ui-ux-workplan.md": "92b14a78eeb500c43baa8c1d1c472c74ee18e041f12b5470eb1ce5180a2a0a18",
+      "docs/features/cockpit-ui-ux-implementation/owner-request.md": "da20a86af257f81f71a9ad337d9f6f8876fd19488c7c878e3d8dbabf77d97b21"
+    },
+    "scope_sha256": "f6814c2c44512fd860f1b3c708514b162dab507faeafbdbdda7de015fe76a024",
+    "session": "cockpit-ux-20261011",
+    "source_commit": "366f6340be1c72ed5685bea9e81f30f67a640d58"
+  },
+  "checks": [
+    {
+      "description": "Preserve navigation, jobs, unknown receipt and history maintenance/pressure checks with current synthetic authenticated metadata and supported routes.",
+      "environment": "offline",
+      "id": "regression-journeys"
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
   "format_version": 2,
   "id": "cockpit-ui-ux-regression-maintenance",
   "kind": "feature",
-  "title": "Maintain operation and navigation regression fixtures for the Cockpit UX delivery",
-  "author": "root/coordinator",
-  "created": "2026-10-11",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/cockpit-ui-ux-regression-maintenance/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/cockpit-ui-ux-implementation/owner-request.md",
     "docs/development/cockpit-ui-ux-workplan.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "regression-journeys",
-      "description": "Preserve navigation, jobs, unknown receipt and history maintenance/pressure checks with current synthetic authenticated metadata and supported routes.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Preserve and validate reusable Cockpit regression coverage",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [
-        "cockpit-ui-ux-implementation:implement"
-      ],
+      "blocker": null,
       "checks": [
         "regression-journeys"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [
+        "cockpit-ui-ux-implementation:implement"
+      ],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Only reversible test fixture/assertion and preview-fixture metadata maintenance. No production runtime or protocol changes, printer operations, real image installs, identity restores or service changes.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "ui/host/",
+        "runtime/",
+        "tests/admin_jobs_browser.mjs",
+        "tests/test_data_budget.py"
+      ],
       "owned_paths": [
         "tests/printer_navigation.mjs",
         "tests/admin_jobs_fixture.py",
@@ -56,12 +68,15 @@
         "docs/features/cockpit-ui-ux-regression-maintenance/evidence.md",
         "docs/features/cockpit-ui-ux-regression-maintenance/evidence.json"
       ],
-      "input_paths": [
-        "ui/host/",
-        "runtime/",
-        "tests/admin_jobs_browser.mjs",
-        "tests/test_data_budget.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Only reversible test fixture/assertion and preview-fixture metadata maintenance. No production runtime or protocol changes, printer operations, real image installs, identity restores or service changes.",
+      "status": "pending",
+      "title": "Preserve and validate reusable Cockpit regression coverage",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Maintain operation and navigation regression fixtures for the Cockpit UX delivery"
 }
