@@ -1,11 +1,25 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "e46b84a032633a1729cdc9a6e764b5eb2bc0629b0f9f6717fd6528f711942383",
+    "rationale": "Make recurrence prevention reproducible and automatically exercise real ownership tests.",
+    "reference": "docs/features/cockpit-installed-readiness/owner-request.md",
+    "reference_sha256": "a0efc20f6a240a43e430f9534fc4e35efac4eb734bea3cbc485ac81c8a03e693",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-installed-readiness/owner-request.md": "a0efc20f6a240a43e430f9534fc4e35efac4eb734bea3cbc485ac81c8a03e693"
+    },
+    "scope_sha256": "65fd66af8b23a24ba52a6971e9de4c971c798117f467efb7b39a1e94e3fd7a35",
+    "session": "cockpit-readiness-ci-20261011",
+    "source_commit": "6d22d06570989b741b10a899285047691d5c313f"
+  },
   "checks": [
     {
-      "id": "ci-root-tests",
+      "description": "Exact hosted CI shell recipe runs real ownership tests without skips; YAML and documentation links valid.",
       "environment": "offline",
-      "description": "Exact hosted CI shell recipe runs real ownership tests without skips; YAML and documentation links valid."
+      "id": "ci-root-tests"
     }
   ],
   "created": "2026-10-11",
