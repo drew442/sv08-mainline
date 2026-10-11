@@ -1,0 +1,151 @@
+{
+  "format_version": 2,
+  "id": "remaining-pages",
+  "kind": "feature",
+  "title": "Complete remaining Cockpit page journeys",
+  "author": "root/coordinator",
+  "created": "2026-10-11",
+  "priority": 1,
+  "proposal": "docs/features/remaining-pages/proposal.md",
+  "requirements": [
+    "docs/features/remaining-pages/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "rp-1",
+      "description": "Overview current status, next steps and truthful availability",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-2",
+      "description": "Updates hierarchy, reviewed manual flow and meaningful policy/storage consequences",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-3",
+      "description": "System current versus next-boot mode and no unintended restart",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-4",
+      "description": "Software prerequisites, structured reviews and unknown-operation recovery",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-5",
+      "description": "Identity public trust, SSH and private backup distinguished; truthful review/stale status",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-6",
+      "description": "Mainsail current versus selected login method, certificate guidance and secret-safe cancellation",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-7",
+      "description": "Recovery capability limits and safe preparation links without invented procedures",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-8",
+      "description": "Definitions search/group/drill-down with counts, recovery and no mutation",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-9",
+      "description": "Source preview/management consequences and retained selection/error context",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-10",
+      "description": "Connections filter/results/inspector semantics with documented versus unknown contacts",
+      "environment": "offline"
+    },
+    {
+      "id": "rp-11",
+      "description": "Cross-route ordinary reads, elevated writes, drafts, keyboard/cancellation and supported reflow",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and assess remaining page journeys",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "rp-1",
+        "rp-2",
+        "rp-3",
+        "rp-4",
+        "rp-5",
+        "rp-6",
+        "rp-7",
+        "rp-8",
+        "rp-9",
+        "rp-10",
+        "rp-11"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible presentation and disposable tests; backend protections remain intact; no live printer or consequential operation.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/host/index.html",
+        "ui/host/app.js",
+        "ui/host/upload.js",
+        "ui/host/software.js",
+        "ui/host/identity.js",
+        "ui/host/mainsail-access.js",
+        "ui/host/style.css",
+        "ui/printer/panel.html",
+        "ui/printer/app.js",
+        "ui/printer/style.css",
+        "tests/admin_browser.mjs",
+        "tests/config_view_browser.mjs",
+        "tests/printer_browser.mjs",
+        "tests/identity_browser.mjs",
+        "tests/test_identity.py",
+        "tests/test_mainsail_access_ui.py",
+        "tests/test_software_ui.py",
+        "docs/features/remaining-pages/evidence.md",
+        "docs/features/remaining-pages/evidence.json",
+        "docs/features/remaining-pages/visuals/before-updates.png",
+        "docs/features/remaining-pages/visuals/after-updates.png",
+        "docs/features/remaining-pages/visuals/overview.png",
+        "docs/features/remaining-pages/visuals/system.png",
+        "docs/features/remaining-pages/visuals/software.png",
+        "docs/features/remaining-pages/visuals/identity.png",
+        "docs/features/remaining-pages/visuals/access.png",
+        "docs/features/remaining-pages/visuals/recovery.png",
+        "docs/features/remaining-pages/visuals/definitions.png",
+        "docs/features/remaining-pages/visuals/sources.png",
+        "docs/features/remaining-pages/visuals/connections.png"
+      ],
+      "input_paths": [
+        "ui/host/network.js",
+        "ui/host/navigation.js",
+        "ui/host/session.js",
+        "ui/host/view.js",
+        "tests/test_printer_browser_fixture.py",
+        "runtime/sv08_network.py",
+        "runtime/sv08_identity.py",
+        "runtime/sv08_mainsail_access.py",
+        "runtime/sv08_software.py"
+      ]
+    }
+  ]
+}
