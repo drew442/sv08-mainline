@@ -1,5 +1,9 @@
 # Current delivery goals
 
+## Active goal — bounded Printer Hardware journey, 2026-10-11
+
+Deliver a coherent tested improvement to configuration state, known attention, component selection and review/save feedback. Publish a PR for owner review; no merge, deployment or printer access. Scope and PHJ-1–7 acceptance: [feature proposal](../docs/features/printer-hardware-journey/proposal.md). Native Codex goal is active; existing project task is the source-workflow record.
+
 ## Completed goal — Cockpit UI/UX workplan, 2026-10-11
 
 W0–W8 delivered using named implementation, research and integration agents.

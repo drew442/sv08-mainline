@@ -1,0 +1,105 @@
+{
+  "format_version": 2,
+  "id": "printer-hardware-journey",
+  "kind": "feature",
+  "title": "Resume and complete the Printer Hardware journey",
+  "author": "root/coordinator",
+  "created": "2026-10-11",
+  "priority": 1,
+  "proposal": "docs/features/printer-hardware-journey/proposal.md",
+  "requirements": [
+    "docs/features/printer-hardware-journey/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "phj-1",
+      "description": "Visible saved/unsaved selection state, changed-component count, prepared candidate mode and honest application status; reload does not imply active hardware.",
+      "environment": "offline"
+    },
+    {
+      "id": "phj-2",
+      "description": "Distinct known attention findings for missing sensor, required definition inputs and author gaps, linked to components; backend remains completeness authority.",
+      "environment": "offline"
+    },
+    {
+      "id": "phj-3",
+      "description": "Selected definition and essential questions precede supported replacements; ordinary viewing works and writes retain administrator gating.",
+      "environment": "offline"
+    },
+    {
+      "id": "phj-4",
+      "description": "Reviews preserve replacement effects, calibration/override consequences and exact application service action; selection does not apply.",
+      "environment": "offline"
+    },
+    {
+      "id": "phj-5",
+      "description": "Visible incomplete draft saving, truthful review/application cancellation, Escape and useful focus restoration.",
+      "environment": "offline"
+    },
+    {
+      "id": "phj-6",
+      "description": "Busy/failure/stale/uncertain outcomes preserve existing reconciliation and never invent confirmed application.",
+      "environment": "offline"
+    },
+    {
+      "id": "phj-7",
+      "description": "Keyboard usability at 1440x900, 1024x600, 390x844 and 200% zoom without document overflow.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and assess bounded hardware journey",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "phj-1",
+        "phj-2",
+        "phj-3",
+        "phj-4",
+        "phj-5",
+        "phj-6",
+        "phj-7"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible UI presentation and fixture tests only; backend operations/protections unchanged, no printer access or consequential operation.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "ui/printer/style.css",
+        "tests/printer_browser.mjs",
+        "tests/config_view_browser.mjs",
+        "docs/development/printer-hardware-page-design.md",
+        "docs/features/printer-hardware-journey/evidence.md",
+        "docs/features/printer-hardware-journey/evidence.json",
+        "docs/features/printer-hardware-journey/visuals/before.png",
+        "docs/features/printer-hardware-journey/visuals/after-desktop.png",
+        "docs/features/printer-hardware-journey/visuals/after-mobile.png"
+      ],
+      "input_paths": [
+        "tests/test_printer_browser_fixture.py",
+        "ui/host/",
+        "runtime/sv08_printer_helper.py",
+        "runtime/sv08_printer_store.py",
+        "docs/development/printer-cockpit-panel.md",
+        "docs/development/printer-definition-sources-design.md"
+      ]
+    }
+  ]
+}
