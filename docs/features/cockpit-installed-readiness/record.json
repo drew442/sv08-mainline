@@ -1,11 +1,25 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "00c8368e23a7fa125ed29681f1a88a7a628f9366e3e27a018d8a785a2c773190",
+    "rationale": "Investigate and prevent owner-reported installed interaction defects with narrow fixes and functional checks.",
+    "reference": "docs/features/cockpit-installed-readiness/owner-request.md",
+    "reference_sha256": "a0efc20f6a240a43e430f9534fc4e35efac4eb734bea3cbc485ac81c8a03e693",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-installed-readiness/owner-request.md": "a0efc20f6a240a43e430f9534fc4e35efac4eb734bea3cbc485ac81c8a03e693"
+    },
+    "scope_sha256": "6960e1d7b73bfaee9468d822ed33ae1a27fccb3643ea7c9d753a5b3377f1e013",
+    "session": "cockpit-readiness-20261011",
+    "source_commit": "1781f9fbb5e15a6b3b625fa1f7d0bbef28b42034"
+  },
   "checks": [
     {
-      "id": "installed-readiness",
+      "description": "Real ownership boot/copy regression, fail-closed readiness tests and distinct physical status checks.",
       "environment": "offline",
-      "description": "Real ownership boot/copy regression, fail-closed readiness tests and distinct physical status checks."
+      "id": "installed-readiness"
     }
   ],
   "created": "2026-10-11",
