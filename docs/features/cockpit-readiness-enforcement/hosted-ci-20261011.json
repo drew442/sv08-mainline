@@ -1,0 +1,56 @@
+{
+  "conclusion": "success",
+  "headSha": "e642883e99d997e2ba0d4b2272fd3f68ca8663e0",
+  "jobs": [
+    {
+      "completedAt": "2026-10-11T03:38:26Z",
+      "conclusion": "success",
+      "databaseId": 114380500321,
+      "name": "real-ownership",
+      "startedAt": "2026-10-11T03:38:12Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Existing Python schema dependency",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Actual ownership and functional contract tests",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 9,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/drew442/sv08-mainline/actions/runs/38109021958/job/114380500321"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/drew442/sv08-mainline/actions/runs/38109021958",
+  "note": "Post-delivery hosted execution supplements frozen local recipe evidence; no prior evidence hash refreshed."
+}
