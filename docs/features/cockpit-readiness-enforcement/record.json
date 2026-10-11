@@ -45,11 +45,38 @@
         "cockpit-installed-readiness:implement"
       ],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ci-root-tests",
+          "document": "docs/features/cockpit-readiness-enforcement/evidence.md",
+          "document_sha256": "fb7e871a820d0dc1eb873a78b29a9173a8a66c4d8e2a5c6f923cd1ac0b873a20",
+          "environment": "offline",
+          "limitations": "Local execution of CI shell; hosted runner provisioning not yet observed. No physical operation or deployment in this follow-up.",
+          "method": "Coordinator inspected complete new workflow/docs, parsed YAML and links, extracted exact CI root-test recipe and ran14tests without skips.",
+          "profile": null,
+          "source_commit": "6e8d31a5a3df335771166fe0b76994ba68179b0a",
+          "source_sha256": {
+            ".github/workflows/agent-workflow.yml": "4685896f074d91ac3fbe25c648dd99e11d70f7a5d1d3e1dd9f57adb95307a03a",
+            ".github/workflows/cockpit-readiness.yml": "734db5fe133c50938772ddbee01f68cce94666411d5a7162a5656dcba5ed64f9",
+            "docs/development/cockpit-deployment-checks.md": "0ee141467c8270547a0a6ea0b81078448e1210c738c96eab3963413c02b43630",
+            "docs/features/cockpit-readiness-enforcement/evidence.json": "ff00c80318c43cddc7eb1cb685963a38d78ce4d771811139c4705aecbf8a11cf",
+            "docs/features/cockpit-readiness-enforcement/evidence.md": "fb7e871a820d0dc1eb873a78b29a9173a8a66c4d8e2a5c6f923cd1ac0b873a20",
+            "runtime/sv08_boot.py": "6425981c642b54e5179154acaea182eb8f4e7497b25a4557e3c5c1a25f805c53",
+            "scripts/check_installed_cockpit.py": "f0506ddb2739a1ecf397d76c45e5de844929e3921afdbe79276f69ac3f60abc1",
+            "tests/test_host_boot.py": "c3e14edb44a2fa5989fec2d0726ab9f399575302e584a446a7495557a1495a44",
+            "tests/test_installed_cockpit.py": "77943aa3fc3d4573461b7d9206e8d73396f6afba202aaa7ca3a633e1816f6671"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "102bead3f5054b718ad91e12d610da4b",
+        "session": "cockpit-readiness-ci-20261011"
+      },
       "input_paths": [
         "runtime/sv08_boot.py",
         "scripts/check_installed_cockpit.py",
@@ -67,9 +94,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Hosted disposable deterministic tests and documentation only; no hardware, private data, deployment or paid model calls.",
-      "status": "pending",
+      "status": "validated",
       "title": "Wire real ownership tests into CI and record deployment acceptance",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "5e26cfc80498552b147f6f4e184f03a5743aefd80667d716b3f3db7d9206185e",
+        "evidence_sha256": "f40303398871914ea150519525230e18a4bef9837d8029bb45c7dae4b90ba812",
+        "outcome": "passed",
+        "rationale": "Exact CI root-test recipe passed14tests without skips; workflow YAML, documentation links and complete stable diff checked.",
+        "session": "cockpit-readiness-ci-20261011",
+        "source_commit": "6e8d31a5a3df335771166fe0b76994ba68179b0a"
+      },
       "verification": null
     }
   ],
