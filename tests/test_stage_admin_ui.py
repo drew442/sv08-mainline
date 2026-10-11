@@ -155,7 +155,7 @@ class StageUITests(unittest.TestCase):
         (parent / 'cockpit').unlink(); (parent / 'cockpit/shell').mkdir(parents=True)
         with self.assertRaisesRegex(ValueError, 'Unexpected Cockpit'): stage(self.work, 'host', True)
 
-    def test_manifest_shell_modes_and_no_sudo_grant(self):
+    def test_manifest_shell_modes_and_exact_read_sudo_grant(self):
         import json
         result = stage(self.work, 'host', True)
         root = self.work / 'rootfs'
@@ -166,7 +166,16 @@ class StageUITests(unittest.TestCase):
         self.assertEqual((root / 'etc/cockpit/cockpit.conf').read_text(), '[WebService]\nShell=/sv08-host/index.html\n')
         self.assertIn('etc/cockpit/cockpit.conf', result['hashes'])
         self.assertIn('etc/cockpit/ws-certs.d', result['hashes'])
-        self.assertFalse((root / 'etc/sudoers.d').exists())
+        sudoers=root/'etc/sudoers.d/sv08-view'
+        self.assertEqual(sudoers.read_bytes(),(REPO/'configs/host-os/sv08-view-sudoers').read_bytes())
+        self.assertEqual(sudoers.stat().st_mode & 0o777,0o440)
+        self.assertEqual(result['required_ownership']['etc/sudoers.d/sv08-view']['uid'],0)
+        self.assertEqual(result['required_ownership']['etc/sudoers.d/sv08-view']['mode'],'0440')
+        helper=root/'usr/lib/sv08/sv08_view.py'
+        self.assertEqual(helper.read_bytes(),(REPO/'runtime/sv08_view.py').read_bytes())
+        self.assertEqual(result['required_ownership']['usr/lib/sv08/sv08_view.py']['gid'],0)
+        if __import__('os').geteuid()==0:self.assertEqual((helper.stat().st_uid,helper.stat().st_gid),(0,0))
+        for name in ('etc/sudoers.d/sv08-view','usr/lib/sv08/sv08_view.py','usr/share/cockpit/sv08-host/view.js'):self.assertIn(name,result['hashes'])
         self.assertEqual((root / 'usr/share/cockpit/sv08-host').stat().st_mode & 0o777, 0o755)
         for path in (root / 'usr/share/cockpit/sv08-host').iterdir():
             self.assertEqual(path.stat().st_mode & 0o777, 0o644)

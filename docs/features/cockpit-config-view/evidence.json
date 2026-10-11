@@ -1,0 +1,133 @@
+{
+  "format_version": 1,
+  "base_commit": "71f70d714497d13c2910d9a5da2969c18a58392e",
+  "execution": {
+    "role": "project_implementer",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "thread": "01a12937-a8c6-7430-80a8-b2ae9dcdf9d6",
+    "independent_review": false
+  },
+  "environment": "offline disposable fixtures; Cockpit session/RPC shim, Chromium; no installed/printer access",
+  "check_id": "view-and-write-boundary",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_config_view.py -q",
+      "exit_code": 0,
+      "tests": 11
+    },
+    {
+      "command": "SV08_TEST_ROOT=/home/drew/.sv08-config-view-implement-20261011/unit PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_stage_admin_ui.py -q",
+      "exit_code": 0,
+      "tests": 20
+    },
+    {
+      "command": "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node tests/admin_browser.mjs /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/.sv08-config-view-implement-20261011/admin-fixture-2 /home/drew/.sv08-config-view-implement-20261011/admin-browser-3",
+      "exit_code": 0,
+      "result": "/home/drew/.sv08-config-view-implement-20261011/admin-browser-3/result.json",
+      "result_sha256": "0b4ffd7cbf2094045d27f69de5ce2698a1c47b598b4a4d58ad376e09158c2a91"
+    },
+    {
+      "command": "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node tests/admin_drafts_browser.mjs /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/.sv08-config-view-implement-20261011/admin-fixture-2 /home/drew/.sv08-config-view-implement-20261011/admin-drafts-browser",
+      "exit_code": 0,
+      "result": "/home/drew/.sv08-config-view-implement-20261011/admin-drafts-browser/result.json",
+      "result_sha256": "bbc7523bd1864b3801d9254e0020b88b8c54b6fed5e5e940f6cd683d814cd97a"
+    },
+    {
+      "command": "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node tests/config_view_browser.mjs /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/.sv08-config-view-implement-20261011/view-fixture-2 /home/drew/.sv08-config-view-implement-20261011/view-browser-final",
+      "exit_code": 0,
+      "result": "/home/drew/.sv08-config-view-implement-20261011/view-browser-final/result.json",
+      "result_sha256": "913a1907d90c51c45cd593074a7873b57bd2115cfe33fe901362173e78fa4c26"
+    },
+    {
+      "command": "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node tests/printer_browser.mjs /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/.sv08-config-view-implement-20261011/printer-fixture-final /home/drew/.sv08-config-view-implement-20261011/printer-browser-final",
+      "exit_code": 0,
+      "result": "/home/drew/.sv08-config-view-implement-20261011/printer-browser-final/result.json",
+      "result_sha256": "5ed60f5f49b559b4a39d928ddc3fa9e201769c92a174611ae110070e742f5f6c"
+    }
+  ],
+  "source_sha256": {
+    "configs/host-os/sv08-view-sudoers": "e448eee78cc206d0e6241cb030f3ba15760da84b6e9224563faa34d45346c1df",
+    "runtime/sv08_view.py": "d78ae85a34ca8a47c383c570a7de76368900e0235d99611cc6877782f714d911",
+    "scripts/preview_admin_ui.py": "c305e3aee57739a6266109b7b44783f8c6e64fcbea2e44bfbc543756f83f7d84",
+    "scripts/stage_admin_ui.py": "7d11d838bb100b4ee88db59f877215196ba407fafde5e185810dde10819c0269",
+    "tests/config_view_browser.mjs": "714c7709ddd83e7c97cb81d7bff02541710dac341e27103483488d5a295c4472",
+    "tests/printer_browser.mjs": "b9a270b7c920f25b630b27ab042351915c8b0428b3ddb8d24f3442c062c9a13d",
+    "tests/test_admin_history_browser_fixture.py": "dbe14475a269d74beeff63347b6e30c0afe628b6864246ed3295cba45a15d509",
+    "tests/test_config_view.py": "13ee322506c9ac998bb32e7d7c5ae1be895411d10b13ac841d1b5e445e2f6896",
+    "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+    "tests/test_stage_admin_ui.py": "f0e4c7b4b03be1c36406769df325e294a845eb46630393c212c134ed0b212ecd",
+    "ui/host/app.js": "d3dd5acf0a81e3faafeff5c7310b04cc3236739814195a2010e87f93eb2db254",
+    "ui/host/identity.js": "93465e79ff07b4f5f9145d79bb771e0644556f3141ff7344f23aea17b3b88de1",
+    "ui/host/index.html": "d60b774d3f6ac430c0f0db808d12eab436b0df24686508311c3deaf09a514048",
+    "ui/host/mainsail-access.js": "9442f055a9a3a970634155f7049e716b6559d7b9d75b10016d8d35ad2142ebbe",
+    "ui/host/network.js": "1019df074cf3aed46bfdaaedfc592e9b72211998e6cf89ed9e8691d7bfb749a2",
+    "ui/host/software.js": "9996d3c5f9d656b782ba9711d71f4035218f85af282652a3f91f9583defd84cf",
+    "ui/host/upload.js": "387d7d65e4309914e78aa73c029962346472911bb9c9ccbb0ac864b6c7123c2d",
+    "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+    "ui/printer/app.js": "d6b3aec410b207ea0733ad5ce04a5996ba48b73b1d75d32fe6c34cef46dbc580",
+    "ui/printer/panel.html": "4bbb61020ac847680f09734fde559d800eb693095d870d6898eb7ff5c74ee432"
+  },
+  "scratch": "/home/drew/.sv08-config-view-implement-20261011",
+  "limits": {
+    "primary_runtime_seconds": 2400,
+    "primary_generated_bytes": 536870912,
+    "incidental_experiments": 0,
+    "runtime_accounting": "Retained tool session lifetimes and fixture/browser file timestamps. Reconstructed conservative aggregate below 1800 seconds; exact per-command elapsed accounting not captured for terminated asynchronous servers. +600 second continuation retained, no reset. All owned servers/browser groups stopped.",
+    "generated_retained_bytes": 60274068,
+    "deleted_printer_profile_bytes": 82796093,
+    "generated_cumulative_upper_bound_bytes": 402653184,
+    "generated_accounting": "Retained scratch and deleted printer profiles are measured; conservative384MiB bound also includes automatically removed staging/unit fixtures. Exact cumulative generated-byte telemetry was not captured."
+  },
+  "prior_failed_attempts": [
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/view-browser-1",
+      "reason": "Premature session lookup before document initialized; fixed optional window session guard."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/view-browser-2",
+      "reason": "Behavior passed but cleanup referenced missing ownedGroup. Fixed group cleanup and stopped retained child groups."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/admin-browser",
+      "reason": "Settings inputs stayed disabled after initial ordinary read; repaired authority-dependent rendering."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/admin-browser-2",
+      "reason": "Reused mutated disposable input did not meet suite initial auto-update=true precondition. Fresh fixture used."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/printer-browser-1",
+      "reason": "Administrator diagnostic draft export accidentally disabled; restored existing admin-only diagnostic export."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/printer-browser-2",
+      "reason": "Authority change racing an initial status could leave second tab unloaded; added read retry after stale in-flight load."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/printer-browser-3",
+      "reason": "Retry changed delayed-read expected request count; preserved stale-read rejection and already-readable state assertions with explicit retry count."
+    },
+    {
+      "path": "/home/drew/.sv08-config-view-implement-20261011/printer-browser-4",
+      "exit_code": 1,
+      "reason": "All behavior passed; cleanup profile25236439 bytes exceeded unchanged25165824byte limit by70615. Fixture responses lacked no-store; added Cache-Control:no-store and profile directory totals before cleanup. Final profile7766192bytes."
+    }
+  ],
+  "limitations": [
+    "Production root entry assessment and installation belong to coordinator. No PAM/browser/installed authentication or physical release claim.",
+    "Existing sv08 account broader sudo authority is unchanged; new endpoint and UI path are the bounded mutation-denial claims.",
+    "Public CA PEM and software-inspect schema have unit coverage; new browser suite exercises status/view controls but does not download public CA or show a populated unknown-software inspection modal.",
+    "No shared heavy integration rerun; existing admin history fixture transport updated but full history suite remains its owner's acceptance."
+  ],
+  "rendered_inspection": {
+    "paths": [
+      "/home/drew/.sv08-config-view-implement-20261011/view-browser-final/hardware-view.png",
+      "/home/drew/.sv08-config-view-implement-20261011/view-browser-final/definitions-view.png",
+      "/home/drew/.sv08-config-view-implement-20261011/view-browser-final/software-view.png",
+      "/home/drew/.sv08-config-view-implement-20261011/view-browser-final/network-mobile-view.png"
+    ],
+    "findings": "Ordinary session populated views and contextual navigation remain legible; administration controls are visually disabled, network device context stays usable, mobile network has no horizontal overflow. Saved/previous contents are inside labeled disclosure controls; expanded output screenshot not inspected.",
+    "human_usability_measured": false
+  }
+}

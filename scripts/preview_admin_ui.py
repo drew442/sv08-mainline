@@ -45,11 +45,12 @@ def serve(work, image_jobs=False, image_resolution=False):
                 return self.respond(403, b'{}')
             if self.path == '/base1/cockpit.js':
                 script = '''// Test-only transport: no authentication coverage. Production uses packaged Cockpit.
-window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({valid:true,Current:'root',Bridges:['sudo'],Start:()=>{},Answer:()=>{},Stop:()=>{},addEventListener:()=>{},wait:callback=>callback()})}),spawn:()=>({input:async data=>{
+window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({valid:true,Current:'root',Bridges:['sudo'],Start:()=>{},Answer:()=>{},Stop:()=>{},addEventListener:()=>{},wait:callback=>callback()})}),spawn:(argv,options)=>({input:async data=>{
+if(argv[0]==='/usr/bin/sudo'){if(JSON.stringify(argv)!==JSON.stringify(['/usr/bin/sudo','-n','/usr/bin/python3','-I','/usr/lib/sv08/sv08_view.py']) || options.superuser!==undefined && options.superuser!==false)throw Error('Invalid read bridge');const read=JSON.parse(data);if(read.area!=='host'||!['status','jobs','upload.list'].includes(read.method)||Object.keys(read).length!==2)throw Error('Invalid fixture view');data=JSON.stringify({method:read.method});}
 const r=await fetch('/request',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Token':TOKEN},body:data});
 return await r.text();}})};'''.replace('TOKEN', json.dumps(token))
                 return self.respond(200, script, 'text/javascript')
-            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/upload.js': 'upload.js', '/session.js': 'session.js', '/style.css': 'style.css', '/navigation.js':'navigation.js', '/identity.js':'identity.js', '/mainsail-access.js':'mainsail-access.js', '/network.js':'network.js', '/software.js':'software.js'}
+            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/view.js': 'view.js', '/upload.js': 'upload.js', '/session.js': 'session.js', '/style.css': 'style.css', '/navigation.js':'navigation.js', '/identity.js':'identity.js', '/mainsail-access.js':'mainsail-access.js', '/network.js':'network.js', '/software.js':'software.js'}
             if self.path not in paths: return self.respond(404, b'{}')
             name = paths[self.path]
             self.respond(200, (root / name).read_bytes(), {'html':'text/html','js':'text/javascript','css':'text/css'}[name.split('.')[-1]])

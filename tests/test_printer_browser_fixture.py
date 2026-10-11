@@ -24,12 +24,14 @@ SHIM=r'''
  const client=new EventTarget(),proxy=new EventTarget();
  Object.assign(proxy,{valid:true,Current:'none',Bridges:['sudo'],wait:cb=>cb()});
  const change=async current=>{await fetch('/authority',{method:'POST',body:JSON.stringify({elevated:current==='sudo'})});proxy.Current=current;proxy.dispatchEvent(new Event('changed'));};
- Object.assign(proxy,{Start:()=>change('sudo'),Answer:()=>{},Stop:()=>change('none')});
+ window.fixtureStarts=0;
+ Object.assign(proxy,{Start:()=>{window.fixtureStarts++;return change('sudo');},Answer:()=>{},Stop:()=>change('none')});
  client.proxy=()=>proxy;
  window.fixtureDisconnect=async()=>{await change('none');client.dispatchEvent(new Event('close'));};
  window.fixtureUnsupported=null;window.fixtureLoseAck=false;window.fixtureHoldApply=false;window.fixtureApplyWaiting=false;
  window.fixtureHoldStatus=false;window.fixtureStatusWaiting=false;
  window.fixtureHoldReview=false;window.fixtureReviewWaiting=false;window.fixtureHostFailure=false;window.fixtureHostCalls=[];window.fixtureHostHold=null;
+ window.fixtureSettings={network:{hostname:'fixture',fqdn:'fixture.local',devices:[{device:'eth0',type:'ethernet',state:'connected',connection:'Wired',uuid:'wired',addresses:['192.0.2.2/24'],gateway:'192.0.2.1',dns:['192.0.2.1']}],connections:[{uuid:'wired',name:'Wired',type:'ethernet',device:'eth0',ipv4:{method:'auto',addresses:['192.0.2.2/24'],gateway:'192.0.2.1',dns:['192.0.2.1']}}],pending:null},software:{catalog:[{id:'vnstat',package:'vnstat',title:'Network usage',installed:true,description:'Network usage accounting',service:{unit:'vnstat.service'},service_state:{ActiveState:'active',UnitFileState:'enabled'}}],capabilities:{install:{available:true},remove:{available:true},reconcile:{available:true}},jobs:[],reconciliation:{exports:[],reason:'No local changes'}},identity:{revision:'public',healthy:true,ca_fingerprint:'public-ca',ssh_fingerprint:'public-ssh',authorized_keys:'ssh-ed25519 AAAA fixture'},'mainsail-access':{mode:'password',username:'sv08',warning:'',certificates:[{id:'public-browser',label:'Owner browser',expires:9999999999,fingerprint:'public-client',revoked:false}]}};
  const hostState={fixture:true,boot:{release:'offline',slot:'A',mode:'immutable',customized:false},free_bytes:1073741824,slots:{A:{release:'offline',customized:false},B:null},auto_update:false,requested_mode:'immutable',hostname:'fixture',images:[],catalog:[],capabilities:Object.fromEntries(['policy.auto','policy.mode','image.stage','image.arm','image.cancel','config.hostname','software.install','software.remove'].map(k=>[k,{available:true}]))};
  function hostReply(message){
   window.fixtureHostCalls.push(message);
@@ -43,10 +45,13 @@ SHIM=r'''
  }
  window.fixtureRequests=[];window.fixtureLoadedIdentity=null;
  window.cockpit={dbus:()=>client,logout:()=>{void change('none');document.body.dataset.loggedOut='true';},spawn:(argv,options)=>{
+   const viewing=argv[0]==='/usr/bin/sudo';
+   if(viewing && (JSON.stringify(argv)!==JSON.stringify(['/usr/bin/sudo','-n','/usr/bin/python3','-I','/usr/lib/sv08/sv08_view.py']) || options.superuser!==undefined && options.superuser!==false))throw Error('Invalid ordinary read bridge');
+   let area=null;
    const host=argv[1]==='/usr/lib/sv08/sv08_admin.py';
-   if(!host && argv[1]!=='/usr/lib/sv08/sv08_printer_helper.py')throw Error('Unexpected fixture helper invocation');
+   if(!viewing && !host && argv[1]!=='/usr/lib/sv08/sv08_printer_helper.py')throw Error('Unexpected fixture helper invocation');
    let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});
-   promise.input=data=>{if(host){try{const message=JSON.parse(data),result=hostReply(message),raw=JSON.stringify({ok:true,result});if(window.fixtureHostHold===message.method){window.fixtureHostWaiting=true;window.fixtureHostRelease=()=>{window.fixtureHostWaiting=false;window.fixtureHostHold=null;resolve(raw);};}else resolve(raw);}catch(error){reject(error);}return promise;}window.fixtureRequests.push({request:JSON.parse(data),loaded:window.fixtureLoadedIdentity});fetch('/request',{method:'POST',body:data}).then(r=>r.text()).then(raw=>{const reply=JSON.parse(raw);if(JSON.parse(data).action==='status'&&reply.ok&&window.fixtureUnsupported){if(window.fixtureUnsupported==='catalog')reply.result.catalog_supported=false;else if(window.fixtureUnsupported==='state')reply.result.state.format_version=99;else reply.result.state.draft.format_version=99;raw=JSON.stringify(reply);}if(JSON.parse(data).action==='status'&&reply.ok)window.fixtureLoadedIdentity=reply.result.loaded_identity;if(window.fixtureHoldStatus&&JSON.parse(data).action==='status'){window.fixtureStatusWaiting=true;window.fixtureReleaseStatus=()=>{window.fixtureHoldStatus=false;window.fixtureStatusWaiting=false;resolve(raw);};return;}if(window.fixtureHoldReview&&JSON.parse(data).action==='review'){window.fixtureReviewWaiting=true;window.fixtureReleaseReview=()=>{window.fixtureHoldReview=false;window.fixtureReviewWaiting=false;resolve(raw);};return;}if(window.fixtureHoldApply&&JSON.parse(data).action==='apply'){window.fixtureApplyWaiting=true;window.fixtureReleaseApply=()=>{window.fixtureHoldApply=false;window.fixtureApplyWaiting=false;reject(Error('Injected lost acknowledgment after submitted apply'));};return;}if(window.fixtureLoseAck&&JSON.parse(data).action==='apply'){window.fixtureLoseAck=false;reject(Error('Injected lost acknowledgment'));}else resolve(raw);},reject);return promise;};return promise;
+   promise.input=data=>{if(viewing){const read=JSON.parse(data);if(Object.keys(read).length!==2||!['status','jobs','upload.list','ca.download','inspect'].includes(read.method))throw Error('Invalid view request');area=read.area;if(area==='identity' && read.method==='ca.download'){resolve(JSON.stringify({ok:true,result:{filename:'sv08-printer-ca.crt',content:'-----BEGIN CERTIFICATE-----\nQUFB\n-----END CERTIFICATE-----\n'}}));return promise;}if(!['host','printer'].includes(area)){resolve(JSON.stringify({ok:true,result:window.fixtureSettings[area]}));return promise;}data=JSON.stringify(area==='printer'?{action:'status'}:{method:read.method});}if(host||area==='host'){try{const message=JSON.parse(data),result=hostReply(message),raw=JSON.stringify({ok:true,result});if(window.fixtureHostHold===message.method){window.fixtureHostWaiting=true;window.fixtureHostRelease=()=>{window.fixtureHostWaiting=false;window.fixtureHostHold=null;resolve(raw);};}else resolve(raw);}catch(error){reject(error);}return promise;}window.fixtureRequests.push({request:JSON.parse(data),loaded:window.fixtureLoadedIdentity});fetch(viewing?'/view':'/request',{method:'POST',body:data}).then(r=>r.text()).then(raw=>{const reply=JSON.parse(raw);if(JSON.parse(data).action==='status'&&reply.ok&&window.fixtureUnsupported){if(window.fixtureUnsupported==='catalog')reply.result.catalog_supported=false;else if(window.fixtureUnsupported==='state')reply.result.state.format_version=99;else reply.result.state.draft.format_version=99;raw=JSON.stringify(reply);}if(JSON.parse(data).action==='status'&&reply.ok)window.fixtureLoadedIdentity=reply.result.loaded_identity;if(window.fixtureHoldStatus&&JSON.parse(data).action==='status'){window.fixtureStatusWaiting=true;window.fixtureReleaseStatus=()=>{window.fixtureHoldStatus=false;window.fixtureStatusWaiting=false;resolve(raw);};return;}if(window.fixtureHoldReview&&JSON.parse(data).action==='review'){window.fixtureReviewWaiting=true;window.fixtureReleaseReview=()=>{window.fixtureHoldReview=false;window.fixtureReviewWaiting=false;resolve(raw);};return;}if(window.fixtureHoldApply&&JSON.parse(data).action==='apply'){window.fixtureApplyWaiting=true;window.fixtureReleaseApply=()=>{window.fixtureHoldApply=false;window.fixtureApplyWaiting=false;reject(Error('Injected lost acknowledgment after submitted apply'));};return;}if(window.fixtureLoseAck&&JSON.parse(data).action==='apply'){window.fixtureLoseAck=false;reject(Error('Injected lost acknowledgment'));}else resolve(raw);},reject);return promise;};return promise;
  }};
 })();
 '''
@@ -74,6 +79,21 @@ def serve(work):
     source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
     validator=partial(validate_output,python=os.environ.get('SV08_PRINTER_VALIDATION_PYTHON',str(source/'build/printer-interface-prep-20260918/venv/bin/python')),klippy=str(source/'upstream/klipper/klippy/klippy.py'),dictionary=str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'))
     service=PrinterStore(store,bootfile,view,Catalog(ROOT/'catalog/printer/catalog.json'),privileged=lambda:authority['elevated'],source_fetch=source_fetch,publication_validate=validator)
+    view_service=PrinterStore(store,bootfile,view,Catalog(ROOT/'catalog/printer/catalog.json'),privileged=lambda:True)
+    if os.environ.get('SV08_CONFIG_VIEW_FIXTURE')=='1':
+        from sv08_printer_catalog import digest
+        from sv08_printer_compose import select_definition
+        with view_service.locked():
+            initial=view_service.load(False)
+            rows=view_service.definitions(initial)
+            factory=next(row for row in rows if row['record']['id']=='sv08.factory')
+            snapshots={r['reference']['source']+'::'+r['record']['id']+'@'+r['record']['version']:r['record'] for r in rows}
+            initial['draft']=select_definition(view_service.catalog,initial['draft'],factory['reference'],snapshots)
+            initial['sources']={'fixture-source':dict(id='fixture-source',manifest={'name':'Fixture definitions'},repository='https://github.com/fixture/compact-mods',enabled=False,records=[],origin='github',unavailable=[])}
+            candidate=dict(draft=initial['draft'],mode='setup',text='# Current saved configuration\n',catalog=view_service.catalog.revision,generator='fixture')
+            initial['current']={**candidate,'id':digest(candidate)}
+            prior={**candidate,'text':'# Previous saved configuration\n'};initial['previous']={**prior,'id':digest(prior)}
+            (view_service.directory/'state.json').write_text(json.dumps(initial));(view_service.directory/'state.json').chmod(0o600)
     # Guards demonstrate that browser save/apply never change unrelated files.
     live=Path(boot['generation'])/'config/printer.cfg';live.write_text('# Existing manual live config, untouched\n')
     (work/'original-live.txt').write_bytes(live.read_bytes())
@@ -82,14 +102,14 @@ def serve(work):
         def log_message(self,*args):pass
         def response(self,body,kind='application/json'):
             if isinstance(body,str):body=body.encode()
-            self.send_response(200);self.send_header('Content-Type',kind);self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
+            self.send_response(200);self.send_header('Content-Type',kind);self.send_header('Cache-Control','no-store');self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
         def do_GET(self):
             if self.path.endswith('/base1/cockpit.js'):return self.response(SHIM,'text/javascript')
             package='sv08-host' if '/sv08-host/' in self.path else 'sv08-printer'
             name=self.path.rsplit('/',1)[-1]
             if package=='sv08-printer' and name==SCHEMA_FILENAME:return self.response(schema_archive(ROOT),'application/zip')
             if package=='sv08-printer' and name==FILENAME:return self.response(archive(ROOT),'application/zip')
-            if name not in ('index.html','app.js','style.css','session.js','manifest.json','upload.js','navigation.js','redirect.js'):return self.send_error(404)
+            if name not in ('index.html','app.js','style.css','session.js','manifest.json','upload.js','navigation.js','redirect.js','view.js','identity.js','mainsail-access.js','network.js','software.js'):return self.send_error(404)
             path=ROOT/'ui'/('host' if package=='sv08-host' else 'printer')/name
             raw=path.read_bytes()
             if package=='sv08-host' and name=='index.html':
@@ -109,6 +129,9 @@ def serve(work):
                     bootfile.write_text(json.dumps(copied));view.unlink();view.symlink_to(Path(copied['generation'])/'config')
                     result=dict(generation=copied['generation'],state=str(Path(copied['generation'])/'config/printer-hardware/state.json'))
                     (work/'fixture.json').write_text(json.dumps(result))
+                elif self.path=='/view':
+                    if request!={'action':'status'}:raise ValueError('Only printer status is readable')
+                    result=view_service.request(request)
                 elif self.path=='/request':result=service.request(request)
                 else:raise ValueError('Unknown fixture route')
                 self.response(json.dumps(dict(ok=True,result=result)))

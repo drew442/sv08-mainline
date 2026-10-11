@@ -32,7 +32,8 @@ try {
  const reload=async()=>{await click('#printer-reload');if(await evaluate("!document.querySelector('#printer-reconciliation').hidden")){await send('Page.handleJavaScriptDialog',{accept:true}).catch(()=>{});await click('#printer-reconcile');}await ready();};
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html'});await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
- await evaluate('window.documentIdentity=document; window.sessionIdentity=sv08Session');
+ await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+ await evaluate('window.fixtureRequests=[];window.documentIdentity=document; window.sessionIdentity=sv08Session');
  // Elevation starts background status at Overview; route changes must not lose it.
  const initialBytes=fs.existsSync(statepath)?fs.readFileSync(statepath):null;
  for(const from of ['overview','printer']) {
@@ -47,23 +48,26 @@ try {
   if(initialBytes)assert.deepEqual(fs.readFileSync(statepath),initialBytes);else assert.equal(fs.existsSync(statepath),false);
   if(from==='overview') {
    await reloadDocument();
-   await evaluate('window.documentIdentity=document; window.sessionIdentity=sv08Session');
+   await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+ await evaluate('window.fixtureRequests=[];window.documentIdentity=document; window.sessionIdentity=sv08Session');
   }
  }
  // Stop/logout/disconnect invalidate delayed status even if authority is later restored.
  for(const transition of ['stop','logout','disconnect']) {
   await reloadDocument();
-  await evaluate('window.fixtureHoldStatus=true');await click('#authorize');await until('window.fixtureStatusWaiting');
+  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+  await evaluate('window.fixtureRequests=[];window.fixtureHoldStatus=true');await click('#authorize');await until('window.fixtureStatusWaiting');
   if(transition==='stop')await click('#stop-authorization');else if(transition==='logout')await click('#logout');else await evaluate('window.fixtureDisconnect()');
   await until('!sv08Session.elevated');
   if(transition==='stop'){await until(`!document.querySelector('#authorize').disabled`);await click('#authorize');await until('sv08Session.elevated');}
   await evaluate('window.fixtureReleaseStatus()');
   await until(`document.querySelector('#printer-notice').textContent.includes('Session or selections changed')`);
-  assert.equal(await evaluate(`document.querySelectorAll('#printer-boards fieldset').length`),0);
-  assert.deepEqual(await evaluate('window.fixtureRequests.map(r=>r.request.action)'),['status']);
+  assert.ok(await evaluate(`document.querySelectorAll('#printer-boards fieldset').length>0`)); // Already loaded read state survives an invalidated later read.
+  assert.deepEqual(await evaluate('window.fixtureRequests.map(r=>r.request.action)'),transition==='stop'?['status','status']:['status']); // Restored authority retries the invalidated read.
  }
  await reloadDocument();
- await evaluate('window.documentIdentity=document; window.sessionIdentity=sv08Session');
+ await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+ await evaluate('window.fixtureRequests=[];window.documentIdentity=document; window.sessionIdentity=sv08Session');
  await click('[data-page=printer]');await click('#authorize');await ready();
  assert.equal(await evaluate('new Set([...document.querySelectorAll("[id]")].map(e=>e.id)).size===document.querySelectorAll("[id]").length'),true);
  assert.match(await evaluate('location.pathname'),/sv08-host\/index.html$/);
@@ -468,4 +472,4 @@ try {
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
-} finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}
+} finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes,entries:fs.readdirSync(profile,{withFileTypes:true}).map(e=>({name:e.name,bytes:e.isDirectory()?bytes(profile+'/'+e.name):e.isFile()?fs.statSync(profile+'/'+e.name).size:0})).sort((a,b)=>b.bytes-a.bytes)}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

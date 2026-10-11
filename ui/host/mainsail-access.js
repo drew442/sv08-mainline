@@ -3,7 +3,7 @@
     const $ = id => document.getElementById(id);
     const names = {password:'Password',none:'No login',certificate:'Client certificate'};
     let state = null, pending = null, busy = false, epoch = 0, refreshId = 0, methodDraft=null;
-    const active = () => location.hash === '#mainsail-access' && window.sv08Session?.elevated;
+    const active = () => location.hash === '#mainsail-access' && window.sv08Session?.available;
     const report = message => { $('access-status').textContent = message; };
     const selected = () => document.querySelector('input[name="access-mode"]:checked')?.value;
     function clearSecrets() {
@@ -11,7 +11,7 @@
     }
     function controls() {
         document.querySelectorAll('#mainsail-access input, #mainsail-access [data-access-action]').forEach(element => {
-            element.disabled = busy || !active() || !state;
+            element.disabled = busy || !active() || !window.sv08Session?.elevated || !state;
         });
         $('access-refresh').disabled = busy || !active();
         const mode = selected();
@@ -26,7 +26,8 @@
         }
     }
     async function call(request) {
-        if (!active()) throw new Error('Administrator access is required.');
+        if (request.method === 'status') return sv08View('mainsail-access');
+        if (!active() || !window.sv08Session?.elevated) throw new Error('Administrator access is required.');
         if (request.method === 'certificate.create') privateTransport();
         const generation = epoch;
         const raw = await cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_mainsail_access.py'],{superuser:'require',err:'message'}).input(JSON.stringify(request));
@@ -67,7 +68,7 @@
         }
     }
     function review(title, detail, request) {
-        if (busy || !active() || !state) return;
+        if (busy || !active() || !window.sv08Session?.elevated || !state) return;
         pending = {request,epoch}; $('access-review-title').textContent = title;
         $('access-review-detail').textContent = detail; $('access-review').returnValue = ''; $('access-review').showModal();
     }
@@ -124,7 +125,7 @@
     function invalidate() {
         ++epoch; ++refreshId; state = null; pending = null; clearSecrets();
         $('access-review').close('cancel'); $('access-current').textContent = '—'; $('access-certificates').replaceChildren();
-        controls(); report(window.sv08Session?.elevated ? 'Loading Mainsail access settings…' : 'Administrator access is required.');
+        controls(); report(window.sv08Session?.available ? 'Loading Mainsail access settings…' : 'Administrator access is required.');
     }
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'mainsail-access') void refresh();});

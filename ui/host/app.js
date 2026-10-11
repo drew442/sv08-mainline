@@ -5,6 +5,7 @@ let state, plan, busy = false, jobsBusy = false, refreshing = false;
 // Production has only Cockpit's authenticated bridge. The test harness supplies
 // that same interface; there is no unauthenticated HTTP fallback in this page.
 async function request(message) {
+    if (['status', 'jobs', 'upload.list'].includes(message.method)) return sv08View('host', message.method);
     if (!window.cockpit) throw new Error('Open this page through the host’s authenticated administration console.');
     if (!window.sv08Session || !await sv08Session.ready || !sv08Session.elevated) throw Object.assign(new Error('Administrator access is required. Use Administrator access to continue.'), {noticeKind:'authorization'});
     const process = cockpit.spawn(['/usr/bin/python3', '/usr/lib/sv08/sv08_admin.py'], {superuser: 'require', err: 'message'});
@@ -44,7 +45,7 @@ function page(name, focus = true) {
 }
 function capability(action, button, reason) {
     const cap = state.capabilities[action] || {available:false, reason:'This host does not support this operation.'};
-    $(button).disabled = busy || jobsBusy || !cap.available;
+    $(button).disabled = busy || jobsBusy || !sv08Session.elevated || !cap.available;
     if (reason) $(reason).textContent = cap.available ? '' : cap.reason;
 }
 const updateChecks = ['check_compatibility', 'check_customization', 'check_version', 'allow_downgrade', 'allow_untrusted_provenance'];
@@ -145,7 +146,7 @@ function renderJobs(result) {
     const unresolved = !!localStorage.getItem('sv08-image-submission');
     if(!unresolved){noticeSlots.delete('uncertain');paintNotices();}
     $('submission-pending').hidden = !unresolved; $('retry-submission').hidden = !unresolved;
-    $('retry-submission').disabled = busy;
+    $('retry-submission').disabled = !sv08Session.elevated || busy;
     const previousJobsBusy=jobsBusy;
     jobsBusy = result.blocked || unresolved;
     if(jobsBusy!==previousJobsBusy)scheduleRefresh();
@@ -154,9 +155,9 @@ function renderJobs(result) {
 
     $('jobs-summary').textContent = result.blocked ? 'An image operation is pending or needs outcome review. You can close this page safely.' : 'No image operation is running.';
     $('history-capacity').textContent = `Active ${result.active ?? (result.capacity-result.remaining)}/${result.capacity}; archives ${result.archives ?? 0}/8; retained ${result.total ?? result.jobs.length}/${result.total_capacity ?? 1152}. ${result.maintenance_reason || ''}`;
-    $('history-maintenance').disabled = busy || !result.maintenance_available;
+    $('history-maintenance').disabled = !sv08Session.elevated || busy || !result.maintenance_available;
     $('history-retry').hidden = !localStorage.getItem('sv08-history-maintenance');
-    $('history-retry').disabled = busy;
+    $('history-retry').disabled = !sv08Session.elevated || busy;
     $('jobs').replaceChildren();
     for (const job of result.jobs) {
         const item = document.createElement('p'); item.dataset.jobId = job.id; item.dataset.phase = job.phase;
@@ -164,7 +165,7 @@ function renderJobs(result) {
         if (job.phase === 'interrupted' && !job.disposition) {
             const button = document.createElement('button');
             button.textContent = 'Inspect unknown outcome'; button.dataset.inspectJob = job.id;
-            button.disabled = busy;
+            button.disabled = !sv08Session.elevated || busy;
             button.addEventListener('click', () => inspectJob(job.id));
             item.append(button);
         }
@@ -188,6 +189,8 @@ async function refresh() {
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
+        document.querySelectorAll('#settings input, #images input').forEach(control => {control.disabled=!sv08Session.elevated;});
+        if (!sv08Session.elevated) document.querySelectorAll('#images button:not([data-open]), #settings button:not([data-open]), #recovery button:not([data-open])').forEach(control => {control.disabled=true;});
     } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'System status unavailable'; notice(error.message, error.noticeKind || 'connectivity'); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
@@ -290,7 +293,7 @@ window.addEventListener('sv08-authority-changed', () => {
     ++authorityGeneration;
     plan = null;
     if ($('review').open) $('review').close('cancel');
-    if (sv08Session.elevated) void refresh();
+    if (sv08Session.available) void refresh();
     else { $('connection').textContent = 'Administrator access required'; notice('Administrator access is required. Authorize to continue.', 'authorization'); document.querySelectorAll('main button:not([data-open]):not([data-page])').forEach(b=>{if(!b.closest('#printer, #definition-sources, #printer-connections, #definitions, #identity, #mainsail-access, #network, #software'))b.disabled=true;}); }
 });
 let refreshTimer;
@@ -299,7 +302,7 @@ function scheduleRefresh(immediate=false) {
     const urgent=jobsBusy || busy || !!localStorage.getItem('sv08-image-submission') || !!localStorage.getItem('sv08-history-maintenance');
     const hostPage=['overview','images','settings','recovery'].includes(window.sv08Navigation?.current || location.hash.slice(1));
     const interval=urgent ? 1500 : document.hidden ? 30000 : hostPage ? 5000 : 15000;
-    refreshTimer=setTimeout(async()=>{if(window.sv08Session?.elevated)await refresh();scheduleRefresh();},immediate?0:interval);
+    refreshTimer=setTimeout(async()=>{if(window.sv08Session?.available)await refresh();scheduleRefresh();},immediate?0:interval);
 }
 window.addEventListener('sv08-navigation-changed',()=>scheduleRefresh(true));
 window.addEventListener('sv08-authority-changed',()=>scheduleRefresh());
