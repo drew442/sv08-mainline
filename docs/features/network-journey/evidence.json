@@ -1,0 +1,995 @@
+{
+  "source_commit": "031c4668efcaac0e1a6d4a4a064e59cdf9951f79",
+  "baseline_commit": "3501340b14a91dc489aae4681a2f3c3076bd7de2",
+  "source_sha256": {
+    "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+    "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+    "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+    "tests/test_network_ui.py": "a4a754432fada958a6cc6b5a76c1ea6581e60ae6044e3dc97bfc7c6ab4dff482",
+    "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+    "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+    "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+    "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+    "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+    "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+    "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+    "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+    "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+    "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+    "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+    "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+    "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+  },
+  "receipts": {
+    "default-network": {
+      "label": "default-network",
+      "source_before": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "a4a754432fada958a6cc6b5a76c1ea6581e60ae6044e3dc97bfc7c6ab4dff482",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_network_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 1.2663242761045694,
+          "log": "/home/drew/.sv08-network-journey-20261011/default-network/network-ui-default.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 1.2663784760516137,
+      "source_after": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "a4a754432fada958a6cc6b5a76c1ea6581e60ae6044e3dc97bfc7c6ab4dff482",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 440
+    },
+    "first-network": {
+      "label": "first-network",
+      "source_before": {
+        "ui/host/network.js": "e5483e19f8f06af8aa310dc990ff7f48bee8c140d2058755159187ead721fbde",
+        "ui/host/index.html": "69bf831c36a39bf56874e53e157c9f3428dac1993926b6dec10f20f015ff96bf",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "23aed7bee78db37fc3ec4fcda9806489a86b3c73a32515fe846e2498fcf36e7e",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_network_ui.py",
+            "-v"
+          ],
+          "exit_status": 1,
+          "elapsed_seconds": 3.7744074629154056,
+          "log": "/home/drew/.sv08-network-journey-20261011/first-network/network-ui.log"
+        }
+      ],
+      "passed": false,
+      "error": "network-ui failed",
+      "elapsed_seconds": 3.7744664622005075,
+      "source_after": {
+        "ui/host/network.js": "e5483e19f8f06af8aa310dc990ff7f48bee8c140d2058755159187ead721fbde",
+        "ui/host/index.html": "69bf831c36a39bf56874e53e157c9f3428dac1993926b6dec10f20f015ff96bf",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "23aed7bee78db37fc3ec4fcda9806489a86b3c73a32515fe846e2498fcf36e7e",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4161832
+    },
+    "final-printer": {
+      "label": "final-printer",
+      "source_before": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.sv08-network-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-network-journey-20261011/final-printer/fixture",
+            "/home/drew/.sv08-network-journey-20261011/final-printer/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 23.857521600089967,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4058603,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-network-journey-20261011/final-printer/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 24.01175098004751,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 24.011798979947343,
+      "source_after": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 3147886
+    },
+    "final-network": {
+      "label": "final-network",
+      "source_before": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_network_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 5.091796454973519,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-network/network-ui.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 5.091850555036217,
+      "source_after": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 5163744
+    },
+    "accepted-network": {
+      "label": "accepted-network",
+      "source_before": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "48ba88afc9db4b9b9a707d04ee88ff759577e4580f8f969a9c39ea2ffd712e25",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_network_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 4.9312231740914285,
+          "log": "/home/drew/.sv08-network-journey-20261011/accepted-network/network-ui.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 4.931275574024767,
+      "source_after": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "48ba88afc9db4b9b9a707d04ee88ff759577e4580f8f969a9c39ea2ffd712e25",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 5171019
+    },
+    "final-standard": {
+      "label": "final-standard",
+      "source_before": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "ui/host/network.js"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.033540165051817894,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-standard/network-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/config_view_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.032877268036827445,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-standard/config_view_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_printer_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 25.8965945111122,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-standard/test_stage_printer_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_admin_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.3144692371133715,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-standard/test_stage_admin_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_network_admin.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 3.2188640730455518,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-standard/test_network_admin.py.log"
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.007852867944166064,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-standard/diff-check.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 29.504560820991173,
+      "source_after": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 7895
+    },
+    "final-view": {
+      "label": "final-view",
+      "source_before": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/config_view_browser.mjs",
+            "/home/drew/.sv08-network-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-network-journey-20261011/final-view/fixture",
+            "/home/drew/.sv08-network-journey-20261011/final-view/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 2.068247494986281,
+          "log": "/home/drew/.sv08-network-journey-20261011/final-view/view-browser.log"
+        }
+      ],
+      "fixture_pid": 4058974,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-network-journey-20261011/final-view/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 2.322566474089399,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 2.3226129738613963,
+      "source_after": {
+        "ui/host/network.js": "4806265b921a68fe0742d7dadede627aa9a91f7183b8b52317d7d6dc927ac9df",
+        "ui/host/index.html": "6e8c9409f25b1d436fd2af0204c37b8ef45010d857eeefaea5c721f3b8f1faf2",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "3d747f561fcc00c2ea1fca07b9ad4567c094fa8bf3c2526eaa0a5c207449e3e1",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4179126
+    },
+    "accepted-markup": {
+      "label": "accepted-markup",
+      "source_before": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "48ba88afc9db4b9b9a707d04ee88ff759577e4580f8f969a9c39ea2ffd712e25",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "ui/host/network.js"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03303191903978586,
+          "log": "/home/drew/.sv08-network-journey-20261011/accepted-markup/network-syntax.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_printer_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 22.561672801850364,
+          "log": "/home/drew/.sv08-network-journey-20261011/accepted-markup/test_stage_printer_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_admin_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.31437274091877043,
+          "log": "/home/drew/.sv08-network-journey-20261011/accepted-markup/test_stage_admin_ui.py.log"
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.007831125985831022,
+          "log": "/home/drew/.sv08-network-journey-20261011/accepted-markup/diff-check.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 22.91708858893253,
+      "source_after": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "48ba88afc9db4b9b9a707d04ee88ff759577e4580f8f969a9c39ea2ffd712e25",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4760
+    },
+    "accepted-view": {
+      "label": "accepted-view",
+      "source_before": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "48ba88afc9db4b9b9a707d04ee88ff759577e4580f8f969a9c39ea2ffd712e25",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/config_view_browser.mjs",
+            "/home/drew/.sv08-network-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-network-journey-20261011/accepted-view/fixture",
+            "/home/drew/.sv08-network-journey-20261011/accepted-view/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 2.017979932948947,
+          "log": "/home/drew/.sv08-network-journey-20261011/accepted-view/view-browser.log"
+        }
+      ],
+      "fixture_pid": 4059810,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-network-journey-20261011/accepted-view/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 2.2746129578445107,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 2.2746574580669403,
+      "source_after": {
+        "ui/host/network.js": "fa04f90471078b02cfa87b0034e5b4e33603c5c1860d3fb78b45ef7c2a7db5a7",
+        "ui/host/index.html": "e2c05c0e32cc8746134c030c0cfa3f5e09324773f7029c0615dcf1cc10aec641",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "48ba88afc9db4b9b9a707d04ee88ff759577e4580f8f969a9c39ea2ffd712e25",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4179345
+    },
+    "first-view": {
+      "label": "first-view",
+      "source_before": {
+        "ui/host/network.js": "e5483e19f8f06af8aa310dc990ff7f48bee8c140d2058755159187ead721fbde",
+        "ui/host/index.html": "69bf831c36a39bf56874e53e157c9f3428dac1993926b6dec10f20f015ff96bf",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "23aed7bee78db37fc3ec4fcda9806489a86b3c73a32515fe846e2498fcf36e7e",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/config_view_browser.mjs",
+            "/home/drew/.sv08-network-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-network-journey-20261011/first-view/fixture",
+            "/home/drew/.sv08-network-journey-20261011/first-view/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 1.8179391091689467,
+          "log": "/home/drew/.sv08-network-journey-20261011/first-view/view-browser.log"
+        }
+      ],
+      "fixture_pid": 4058024,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-network-journey-20261011/first-view/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 2.0220126900821924,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 2.022059990093112,
+      "source_after": {
+        "ui/host/network.js": "e5483e19f8f06af8aa310dc990ff7f48bee8c140d2058755159187ead721fbde",
+        "ui/host/index.html": "69bf831c36a39bf56874e53e157c9f3428dac1993926b6dec10f20f015ff96bf",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "23aed7bee78db37fc3ec4fcda9806489a86b3c73a32515fe846e2498fcf36e7e",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4179103
+    },
+    "standard": {
+      "label": "standard",
+      "source_before": {
+        "ui/host/network.js": "e5483e19f8f06af8aa310dc990ff7f48bee8c140d2058755159187ead721fbde",
+        "ui/host/index.html": "69bf831c36a39bf56874e53e157c9f3428dac1993926b6dec10f20f015ff96bf",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "23aed7bee78db37fc3ec4fcda9806489a86b3c73a32515fe846e2498fcf36e7e",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "ui/host/network.js"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03168987296521664,
+          "log": "/home/drew/.sv08-network-journey-20261011/standard/network-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/config_view_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.031862772069871426,
+          "log": "/home/drew/.sv08-network-journey-20261011/standard/config_view_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_printer_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 22.257008620072156,
+          "log": "/home/drew/.sv08-network-journey-20261011/standard/test_stage_printer_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_admin_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.31446623895317316,
+          "log": "/home/drew/.sv08-network-journey-20261011/standard/test_stage_admin_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_network_admin.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 2.8185006929561496,
+          "log": "/home/drew/.sv08-network-journey-20261011/standard/test_network_admin.py.log"
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.0078095688950270414,
+          "log": "/home/drew/.sv08-network-journey-20261011/standard/diff-check.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 25.46165526402183,
+      "source_after": {
+        "ui/host/network.js": "e5483e19f8f06af8aa310dc990ff7f48bee8c140d2058755159187ead721fbde",
+        "ui/host/index.html": "69bf831c36a39bf56874e53e157c9f3428dac1993926b6dec10f20f015ff96bf",
+        "ui/host/style.css": "b9906f89792635d8ad1437ab7fcfbf22fc92f32911730f552977ac9ad28b86be",
+        "tests/test_network_ui.py": "23aed7bee78db37fc3ec4fcda9806489a86b3c73a32515fe846e2498fcf36e7e",
+        "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 7895
+    }
+  },
+  "reuse_assessment": {
+    "accepted-network": {
+      "changed_inputs": [
+        "tests/test_network_ui.py"
+      ],
+      "source_unchanged_during_execution": true
+    },
+    "accepted-view": {
+      "changed_inputs": [
+        "tests/test_network_ui.py"
+      ],
+      "source_unchanged_during_execution": true
+    },
+    "accepted-markup": {
+      "changed_inputs": [
+        "tests/test_network_ui.py"
+      ],
+      "source_unchanged_during_execution": true
+    },
+    "final-standard": {
+      "changed_inputs": [
+        "ui/host/network.js",
+        "ui/host/index.html",
+        "tests/test_network_ui.py"
+      ],
+      "source_unchanged_during_execution": true
+    },
+    "final-printer": {
+      "changed_inputs": [
+        "ui/host/network.js",
+        "ui/host/index.html",
+        "tests/test_network_ui.py"
+      ],
+      "source_unchanged_during_execution": true
+    }
+  },
+  "agent": {
+    "thread_id": "01a12add-ec80-71c2-897a-83e6edaad2c8",
+    "requested_role": "project_implementer",
+    "requested_effort": "medium",
+    "fork_turns": "none",
+    "observable_model": "gpt-6.1-sol",
+    "observable_effort": "medium",
+    "runtime_metadata": "/home/drew/.sv08-network-journey-20261011/runtime.json",
+    "skill": "explicit child-only read of repository SKILL.md and cockpit/evaluation references"
+  },
+  "accounting": {
+    "allowance_process_seconds": 1800,
+    "allowance_generated_bytes": 536870912,
+    "receipt_elapsed_plus_fixture_seconds": 154.20934824529104,
+    "retained_bytes_at_receipts": 30203045,
+    "limitations": "Receipts count test driver and fixture lifetimes, not independent CPU time; transient profile/staging bytes were not comprehensively instrumented. No images built, profiles cleaned by focused test; outputs remain small. No savings claim."
+  },
+  "acceptance_results": {
+    "passed": true,
+    "ordinary_reads": true,
+    "elevated_writes": true,
+    "readable_connections": true,
+    "wifi_unsupported_empty_https": true,
+    "structured_review": true,
+    "cancel_escape_focus": true,
+    "pending_deadline_reconnect_rollback": true,
+    "unknown_outcome": true,
+    "draft_selection_focus_retained": true,
+    "secrets_cleared": true,
+    "viewports": [
+      390,
+      1024,
+      1440
+    ],
+    "zoom": "200%",
+    "physical_hardware": false
+  },
+  "limitations": [
+    "NetworkManager and authentication mocked; no installed or physical network qualification",
+    "200% equivalent CSS viewport512x300/deviceScaleFactor2 for1024x600 window, not native browser zoom control",
+    "Modal actions reachable via actual CDP Tab assertions; screenshots show title-first state",
+    "No native skill activation or hidden-context completeness proof; no measured agent savings"
+  ],
+  "publication_record_correction": {
+    "failed_submission": "Owned paths must name files or gitlinks",
+    "action": "Preserved visuals in assigned artifact directory; removed image paths from final candidate diff; original authorization not changed",
+    "visual_evidence": "/home/drew/.sv08-network-journey-20261011/published-visual-evidence"
+  }
+}
