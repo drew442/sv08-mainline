@@ -1,0 +1,61 @@
+{
+  "author": "root/coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "id": "installed-readiness",
+      "environment": "offline",
+      "description": "Real ownership boot/copy regression, fail-closed readiness tests and distinct physical status checks."
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
+  "format_version": 2,
+  "id": "cockpit-installed-readiness",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/cockpit-installed-readiness/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/cockpit-installed-readiness/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "installed-readiness"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_printer_publish.py",
+        "tests/test_data_budget.py"
+      ],
+      "owned_paths": [
+        "runtime/sv08_boot.py",
+        "tests/test_host_boot.py",
+        "scripts/check_installed_cockpit.py",
+        "tests/test_installed_cockpit.py",
+        "docs/features/cockpit-installed-readiness/evidence.md",
+        "docs/features/cockpit-installed-readiness/evidence.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
+      "status": "pending",
+      "title": "Correct managed ownership and enforce functional deployment checks",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "Check installed Cockpit functionality and preserve managed ownership"
+}
