@@ -1,49 +1,62 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "b43e5f1719d855d17338a1889cc30629af20e74af10cfe3c2bcf1e025b124723",
+    "rationale": "Owner explicitly requested full workplan implementation; all UI design choices open, core protections retained.",
+    "reference": "docs/features/cockpit-ui-ux-implementation/owner-request.md",
+    "reference_sha256": "da20a86af257f81f71a9ad337d9f6f8876fd19488c7c878e3d8dbabf77d97b21",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/cockpit-ui-ux-workplan.md": "92b14a78eeb500c43baa8c1d1c472c74ee18e041f12b5470eb1ce5180a2a0a18",
+      "docs/features/cockpit-ui-ux-implementation/owner-request.md": "da20a86af257f81f71a9ad337d9f6f8876fd19488c7c878e3d8dbabf77d97b21"
+    },
+    "scope_sha256": "422cb361f9474c29492c281471084ab9e22086a9cf02f23f29562e5cdd33b615",
+    "session": "cockpit-ux-20261011",
+    "source_commit": "0790b3113426a40be451c7b5a73c20b0abd25cb3"
+  },
+  "checks": [
+    {
+      "description": "Relevant source/controller/browser checks and rendered W0-W8 outcomes with truthful environment limits.",
+      "environment": "offline",
+      "id": "ux-delivery"
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
   "format_version": 2,
   "id": "cockpit-ui-ux-implementation",
   "kind": "feature",
-  "title": "Complete task-focused Cockpit UX workplan",
-  "author": "root/coordinator",
-  "created": "2026-10-11",
+  "owner_decision_required": true,
   "priority": 2,
   "proposal": "docs/features/cockpit-ui-ux-implementation/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/cockpit-ui-ux-implementation/owner-request.md",
     "docs/development/cockpit-ui-ux-workplan.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": true,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "ux-delivery",
-      "description": "Relevant source/controller/browser checks and rendered W0-W8 outcomes with truthful environment limits.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate complete Cockpit UX journey",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "ux-delivery"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source and disposable fixture changes; existing backend protections retained; no physical or production mutation.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "catalog/printer/",
+        "scripts/stage_admin_ui.py",
+        "scripts/check_ui.py",
+        ".agents/skills/sv08-ui-ux/"
+      ],
       "owned_paths": [
         "ui/host/app.js",
         "ui/host/identity.js",
@@ -80,13 +93,15 @@
         "docs/features/cockpit-ui-ux-implementation/evidence.md",
         "docs/features/cockpit-ui-ux-implementation/evidence.json"
       ],
-      "input_paths": [
-        "runtime/",
-        "catalog/printer/",
-        "scripts/stage_admin_ui.py",
-        "scripts/check_ui.py",
-        ".agents/skills/sv08-ui-ux/"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable fixture changes; existing backend protections retained; no physical or production mutation.",
+      "status": "pending",
+      "title": "Implement and validate complete Cockpit UX journey",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Complete task-focused Cockpit UX workplan"
 }
