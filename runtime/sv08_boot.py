@@ -155,7 +155,10 @@ def prepare_permissions(data, generation, uid=1000, gid=1000):
             # store, not Klipper/Moonraker application state. Copies lose uid.
             hardware = directory / 'printer-hardware'
             private_hardware = name == 'config' and (path == hardware or hardware in path.parents)
-            os.chown(path, 0 if private_hardware else uid, 0 if private_hardware else gid)
+            managed = directory / 'printer-managed'
+            managed_configuration = name == 'config' and (path == managed or managed in path.parents)
+            os.chown(path, 0 if private_hardware or managed_configuration else uid,
+                     0 if private_hardware else gid)
     for path in [Path(generation) / n for n in ('config', 'database', 'ui')] + [data / 'shared' / n for n in ('gcodes', 'timelapse')] + [data / 'users/sv08']:
         os.chown(path, uid, gid)
         os.chmod(path, 0o750)

@@ -1,0 +1,156 @@
+{
+  "source_sha256": {
+    "runtime/sv08_boot.py": "6425981c642b54e5179154acaea182eb8f4e7497b25a4557e3c5c1a25f805c53",
+    "tests/test_host_boot.py": "c3e14edb44a2fa5989fec2d0726ab9f399575302e584a446a7495557a1495a44",
+    "scripts/check_installed_cockpit.py": "f0506ddb2739a1ecf397d76c45e5de844929e3921afdbe79276f69ac3f60abc1",
+    "tests/test_installed_cockpit.py": "77943aa3fc3d4573461b7d9206e8d73396f6afba202aaa7ca3a633e1816f6671"
+  },
+  "tests": {
+    "root_boot": {
+      "passed": 11,
+      "skipped": 0,
+      "seconds": 0.305
+    },
+    "root_readiness": {
+      "passed": 3,
+      "skipped": 0,
+      "seconds": 0.003
+    },
+    "counterfactual": "Same real-ownership regression fails with previous df02a06 boot source at managed uid 1000 != 0; repaired source passes."
+  },
+  "physical_before": {
+    "passed": false,
+    "assets": {
+      "usr/share/cockpit/sv08-host/upload.js": true,
+      "usr/share/cockpit/sv08-host/software.js": true,
+      "usr/share/cockpit/sv08-host/mainsail-access.js": true,
+      "usr/share/cockpit/sv08-host/index.html": true,
+      "usr/share/cockpit/sv08-host/manifest.json": true,
+      "usr/share/cockpit/sv08-host/app.js": true,
+      "usr/share/cockpit/sv08-host/network.js": true,
+      "usr/share/cockpit/sv08-host/session.js": true,
+      "usr/share/cockpit/sv08-host/navigation.js": true,
+      "usr/share/cockpit/sv08-host/style.css": true,
+      "usr/share/cockpit/sv08-host/identity.js": true,
+      "usr/share/cockpit/sv08-printer/app.js": true,
+      "usr/share/cockpit/sv08-printer/style.css": true,
+      "usr/share/cockpit/sv08-printer/panel.html": true
+    },
+    "helpers": {
+      "hardware": true,
+      "updates": true,
+      "software": true,
+      "network": true,
+      "identity": true,
+      "mainsail": true
+    },
+    "storage": {
+      "printer-hardware": true,
+      "printer-managed": false
+    },
+    "hardware": {
+      "revision": 13,
+      "devices": 24,
+      "definitions": 26,
+      "sources": 1,
+      "current": true,
+      "previous": true
+    }
+  },
+  "physical_final": {
+    "passed": true,
+    "assets": {
+      "usr/share/cockpit/sv08-host/upload.js": true,
+      "usr/share/cockpit/sv08-host/software.js": true,
+      "usr/share/cockpit/sv08-host/mainsail-access.js": true,
+      "usr/share/cockpit/sv08-host/index.html": true,
+      "usr/share/cockpit/sv08-host/manifest.json": true,
+      "usr/share/cockpit/sv08-host/app.js": true,
+      "usr/share/cockpit/sv08-host/network.js": true,
+      "usr/share/cockpit/sv08-host/session.js": true,
+      "usr/share/cockpit/sv08-host/navigation.js": true,
+      "usr/share/cockpit/sv08-host/style.css": true,
+      "usr/share/cockpit/sv08-host/identity.js": true,
+      "usr/share/cockpit/sv08-printer/app.js": true,
+      "usr/share/cockpit/sv08-printer/style.css": true,
+      "usr/share/cockpit/sv08-printer/panel.html": true
+    },
+    "helpers": {
+      "hardware": true,
+      "updates": true,
+      "software": true,
+      "network": true,
+      "identity": true,
+      "mainsail": true
+    },
+    "storage": {
+      "printer-hardware": true,
+      "printer-managed": true
+    },
+    "hardware": {
+      "revision": 13,
+      "devices": 24,
+      "definitions": 26,
+      "sources": 1,
+      "current": true,
+      "previous": true
+    },
+    "preserved_hardware_summary": true
+  },
+  "physical_repair": [
+    {
+      "managed_ownership_restored": true,
+      "all_managed_bytes_unchanged": true,
+      "metadata_before": {
+        ".": {
+          "mode": 488,
+          "uid": 1000,
+          "gid": 1000,
+          "sha256": null
+        },
+        "receipt.json": {
+          "mode": 384,
+          "uid": 1000,
+          "gid": 1000,
+          "sha256": "692eca0f08d8c4d792b8c81de476486bef70ff65c3ca088fcb8c6e2ac8bddfb3"
+        },
+        "024fb9699ff2bf268f19bdb64fa24ae55659045c4ae7b289d1f8620c848814a6": {
+          "mode": 488,
+          "uid": 1000,
+          "gid": 1000,
+          "sha256": null
+        },
+        "024fb9699ff2bf268f19bdb64fa24ae55659045c4ae7b289d1f8620c848814a6/hardware.cfg": {
+          "mode": 416,
+          "uid": 1000,
+          "gid": 1000,
+          "sha256": "e0ea5a31fd03a5752f15cf98d9b0ccd4fc34b0a259dfa40839842f91dea51027"
+        },
+        "024fb9699ff2bf268f19bdb64fa24ae55659045c4ae7b289d1f8620c848814a6/bundle.cfg": {
+          "mode": 416,
+          "uid": 1000,
+          "gid": 1000,
+          "sha256": "ab84efe255f1e84b99cae786a3d36f8e5bb48c387351126ac3ee55fbd2a81b94"
+        }
+      }
+    },
+    {
+      "installed_boot_sha256": "6425981c642b54e5179154acaea182eb8f4e7497b25a4557e3c5c1a25f805c53",
+      "previous_sha256": "9c0efcc266585a674f09bf5580e968ebf8b8fb6122033b867f8c07741ddc5909",
+      "root": "/dev/mmcblk1p4 ro,relatime",
+      "reboot": false
+    }
+  ],
+  "diagnoses": [
+    "Initial root test fixture under Drew-owned ancestry correctly refused allocation. Moved disposable root fixture under /root without weakening production checks.",
+    "Fixture host lacks sv08 group; set fixture publisher reader gid to installed value1000.",
+    "Copied slot was still trial; used real Store.confirm and prepare_boot before querying configurable status, preserving trial rejection.",
+    "First broad admin probe used action instead of supported method; corrected invocation. No admin failure remains."
+  ],
+  "limitations": [
+    "Physical functional status/hash/metadata checks, not authenticated browser rendering or printing qualification.",
+    "No physical reboot; corrected installed boot module not executed. Copied-generation lifecycle exercised in local root fixture.",
+    "Configuration validator is synthetic in ownership regression; no physical configuration application.",
+    "Current root only; inactive slot and recovery retain their previous payloads."
+  ]
+}
