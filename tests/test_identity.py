@@ -298,9 +298,11 @@ def browser_fixture_server():
         host=(REPO/'ui/host/index.html').read_text()
         section=re.search(r'<section id="identity".*?</section>',host,re.S).group().replace('class="page" hidden','class="page"')
         dialog=re.search(r'<dialog id="identity-review".*?</dialog>',host,re.S).group()
-        html='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body><button id="fixture-authorize">Authorize fixture</button><main>'+section+'</main>'+dialog+'''<script>
-window.sv08Session={elevated:false,ready:Promise.resolve()};
-window.cockpit={spawn(){return {input(body){return fetch('/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Authorized':String(sv08Session.elevated)},body}).then(r=>r.text())}}}};
+        html='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body><button id="fixture-authorize">Authorize fixture</button><main>'+section+'</main>'+dialog+'''<script>
+window.sv08Session={available:true,elevated:false,ready:Promise.resolve()};
+window.readRequests=[];window.writeRequests=[];
+window.sv08View=async(service,method="status")=>{if(service!=="identity"||!["status","ca.download"].includes(method))throw Error("Invalid read request");readRequests.push(method);const response=await fetch("/view",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({method})});if(!response.ok)throw Error("Read denied");const value=await response.json();if(!value.ok)throw Error(value.error);return value.result;};
+window.cockpit={spawn(args,options){if(args.join(' ')!='/usr/bin/python3 /usr/lib/sv08/sv08_identity.py'||options.superuser!=='require'||!sv08Session.elevated)throw Error('Invalid privileged transport');return {input(body){writeRequests.push(JSON.parse(body).method);return fetch('/rpc',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Authorized':String(sv08Session.elevated)},body}).then(r=>r.text())}}}};
 document.getElementById('fixture-authorize').onclick=()=>{sv08Session.elevated=!sv08Session.elevated;window.dispatchEvent(new Event('sv08-authority-changed'));};
 </script><script src="/identity.js"></script></body></html>'''
         class Handler(BaseHTTPRequestHandler):
@@ -313,9 +315,12 @@ document.getElementById('fixture-authorize').onclick=()=>{sv08Session.elevated=!
                 self.send_response(200);self.send_header('Content-Type',kind);self.send_header('Content-Security-Policy',"style-src 'self'");self.end_headers();self.wfile.write(raw)
             def do_POST(self):
                 size=int(self.headers.get('Content-Length','0'))
-                if self.path!='/rpc' or size>2*1024**2:self.send_error(413);return
-                if self.headers.get('X-Fixture-Authorized')!='true':self.send_error(403);return
-                try:result=dict(ok=True,result=identity.request(json.loads(self.rfile.read(size))))
+                if self.path not in ['/rpc','/view'] or size>2*1024**2:self.send_error(413);return
+                request=json.loads(self.rfile.read(size))
+                if self.path=='/view':
+                    if set(request)!={'method'} or request['method'] not in ['status','ca.download']:self.send_error(403);return
+                elif self.headers.get('X-Fixture-Authorized')!='true':self.send_error(403);return
+                try:result=dict(ok=True,result=identity.request(request))
                 except Exception:result=dict(ok=False,error='Identity operation failed. Reload before retrying.')
                 raw=json.dumps(result).encode();self.send_response(200);self.end_headers();self.wfile.write(raw)
         server=HTTPServer(('127.0.0.1',0),Handler)

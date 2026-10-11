@@ -109,8 +109,24 @@ try {
   } else if(route==='images') {
    assert.equal(await evaluate(`document.querySelector('#auto-update').checked`),false);
    assert.equal(await evaluate(`document.querySelector('#save-auto').disabled`),true);
+   assert.match(await evaluate(`document.querySelector('#stage-reason').textContent`),/Administrator access/);
+   await evaluate(`(()=>{const original=state.capabilities['image.stage'];try{state.capabilities['image.stage']={available:false,reason:'Fixture staging is unavailable.'};capability('image.stage','stage-image','stage-reason');}finally{window.fixtureOriginalStageCapability=original;}})()`);
+   assert.match(await evaluate(`document.querySelector('#stage-reason').textContent`),/Fixture staging is unavailable\..*Administrator access/);
+   assert.equal(await evaluate(`document.querySelector('#stage-image').disabled`),true);
+   await evaluate(`state.capabilities['image.stage']=window.fixtureOriginalStageCapability;delete window.fixtureOriginalStageCapability;capability('image.stage','stage-image','stage-reason');`);
+   assert.equal(await evaluate(`document.querySelector('#stage-image').disabled`),true);
   }
   await screenshot(route+'-view');
+ }
+ // RP1–11: every remaining route stays usable and non-mutating in ordinary view.
+ for(const route of ['overview','images','settings','software','identity','mainsail-access','recovery','definitions','definition-sources','printer-connections']) {
+  await navigate(route);assert.equal(await evaluate(`document.activeElement.closest('.page')?.id`),route);
+  if(route==='images')assert.equal(await evaluate(`document.querySelector('#image-history').closest('.page').id`),'images');
+  if(route==='settings')assert.match(await evaluate(`document.querySelector('#settings-current-mode').textContent`),/Immutable/);
+  if(route==='recovery')assert.equal(await evaluate(`document.querySelector('#recovery .card h2').textContent`),'Recovery boot entry is not enabled here');
+  for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true,route+' at '+width);}
+  // Equivalent to browser 200% at 1024×600: halve CSS viewport, retain physical pixels. CSS body zoom does not change media queries.
+  await send('Emulation.setDeviceMetricsOverride',{width:512,height:300,deviceScaleFactor:2,mobile:false});assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true,route+' at equivalent 200%');
  }
  assert.equal(await evaluate('window.fixtureStarts'),0);
  // Elevation ends without deleting readable views, while reviews/secrets expire.
@@ -126,6 +142,6 @@ try {
  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  assert.deepEqual(fs.readFileSync(statepath),snapshot);
  assert.equal(errors.length,0);
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,ordinary_read_without_start:true,hardware_journey_read_only_state_attention:true,populated_hardware:true,saved_previous_view:true,definitions_sources_connections:true,settings:['images','settings','network','software','mainsail-access','identity','recovery'],writes_disabled:true,end_access_retains_view:true,secrets_cleared:true,unchanged_state:true,uncaught_exceptions:0,physical_hardware:false},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,ordinary_read_without_start:true,hardware_journey_read_only_state_attention:true,populated_hardware:true,saved_previous_view:true,definitions_sources_connections:true,remaining_pages_read_only_heading_focus_reflow_zoom:true,settings:['images','settings','network','software','mainsail-access','identity','recovery'],writes_disabled:true,end_access_retains_view:true,secrets_cleared:true,unchanged_state:true,uncaught_exceptions:0,physical_hardware:false},null,2)+'\n');
  console.log('Configuration view browser tests PASS');
 } finally {socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}

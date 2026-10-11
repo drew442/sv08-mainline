@@ -3,6 +3,15 @@
 // promise; server acknowledgements, not input() return values, advance the file.
 let uploadReview = null, uploadProcess = null, uploadActive = false;
 const uploadText = text => { $('upload-status').textContent = text; };
+function uploadCheckSummary(options) {
+    const root = $('upload-review-checks'); root.replaceChildren();
+    const labels = {check_version:'Known release revision required', allow_downgrade:'Older release allowed', check_compatibility:'Declared printer compatibility required', check_customization:'Customized images protected', allow_untrusted_provenance:'Bundle without a trusted signer accepted'};
+    for (const [key, label] of Object.entries(labels)) {
+        const row=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
+        term.textContent=label; value.textContent=options?.[key] ? 'Yes' : 'No'; row.append(term,value); root.append(row);
+    }
+    root.closest('details').hidden = !options;
+}
 async function uploadListing() {
     const generation = authorityGeneration;
     try {
@@ -32,7 +41,7 @@ async function reviewRemoval(name) {
     try {
         const reviewed = await request({method:'upload.cleanup-plan', name});
         if (generation !== authorityGeneration) return;
-        uploadReview = {kind:'cleanup', plan:reviewed};
+        uploadReview = {kind:'cleanup', plan:reviewed}; uploadCheckSummary(null);
         $('upload-review-title').textContent = 'Remove this managed upload?';
         $('upload-review-detail').textContent = `${name}\n${reviewed.object.bytes} bytes\nRemove only this reviewed object. No OS transaction is cancelled.`;
         $('upload-review').returnValue = 'cancel'; $('upload-review').showModal();
@@ -44,9 +53,9 @@ $('review-upload').addEventListener('click', async () => {
     try {
         const reviewed = await request({method:'upload.plan', name:file.name, size:file.size, options:updateOptions('manual')});
         if (generation !== authorityGeneration) return;
-        uploadReview = {kind:'upload', plan:reviewed, file};
+        uploadReview = {kind:'upload', plan:reviewed, file}; uploadCheckSummary(reviewed.options);
         $('upload-review-title').textContent = 'Upload this OS bundle?';
-        $('upload-review-detail').textContent = `${file.name}\n${file.size} bytes\nCheck its signed manifest using the reviewed options and store it privately. Image staging requires a separate review.\n${JSON.stringify(reviewed.options, null, 2)}`;
+        $('upload-review-detail').textContent = `${file.name}\n${file.size} bytes\nCheck its signed manifest using the reviewed options and store it privately. Full payload verification and image installation require a separate review. Nothing is installed by this upload.`;
         $('upload-review').returnValue = 'cancel'; $('upload-review').showModal();
     } catch(error) { uploadText(error.message); }
 });

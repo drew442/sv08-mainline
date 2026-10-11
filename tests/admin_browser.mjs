@@ -31,11 +31,16 @@ try {
  await send('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url});await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
  assert.equal(await evaluate(`document.querySelector('#fixture').hidden`),false);
+ assert.match(await evaluate(`document.querySelector('#overview').textContent`),/Recovery boot entry is not enabled/);
+ assert.equal(await evaluate(`document.querySelector('#overview [data-open=printer]').textContent`),'Open Hardware');
  await screenshot('overview');
  // Navigate with keyboard; native button Enter semantics must activate a page.
  await evaluate(`document.querySelector('[data-page="overview"]').focus()`);
  await key('Tab');await key('Tab');assert.equal(await evaluate(`document.activeElement.dataset.page`),'images');await key('Enter');
  await until(`!document.querySelector('#images').hidden`);
+ assert.equal(await evaluate(`document.querySelector('#image-history').closest('.page').id`),'images');
+ assert.equal(await evaluate(`document.querySelector('#images h1').compareDocumentPosition(document.querySelector('#image-history')) & Node.DOCUMENT_POSITION_FOLLOWING`),4);
+ assert.match(await evaluate(`document.querySelector('#images').textContent`),/full payload.*separate reviewed action/s);
  // Cancel with Escape does not publish a policy change.
  await click('#auto-update');await click('#save-auto');await until(`document.querySelector('#review').open`);await key('Escape');
  assert.equal(JSON.parse(fs.readFileSync(fixture+'/state/state.json')).auto_update,true);
@@ -48,6 +53,9 @@ try {
  await until(`document.querySelector('#notice').textContent.startsWith('Saved.') && !document.querySelector('#review').open`);
  for(let i=0;i<50 && JSON.parse(fs.readFileSync(fixture+'/state/state.json')).requested_mode!=='writable';i++)await delay(100);
  assert.equal(JSON.parse(fs.readFileSync(fixture+'/state/state.json')).requested_mode,'writable');
+ assert.equal(await evaluate(`document.querySelector('#settings-current-mode').textContent`),'Immutable');
+ assert.match(await evaluate(`document.querySelector('#settings-next-mode').textContent`),/Writable.*after restart/);
+ assert.equal(await evaluate(`document.querySelector('#overview-next-mode').textContent`),'Next boot: Writable');
  assert.equal(await evaluate(`document.querySelector('#mode').textContent`),'Immutable'); // Request does not remount root.
  await click('[data-page="images"]');assert.equal(await evaluate(`document.querySelector('#stage-image').disabled`),true);await screenshot('images');
  await send('Emulation.setDeviceMetricsOverride',{width:480,height:800,deviceScaleFactor:1,mobile:true});
@@ -55,7 +63,7 @@ try {
  await click('#navigation-toggle');await click('#task-navigation [data-page="settings"]');await evaluate(`document.querySelector('#task-context [data-page="recovery"]').scrollIntoView()`);
  const rect=await evaluate(`(()=>{const r=document.querySelector('#task-context [data-page="recovery"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`);
  await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[rect]});await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- await until(`!document.querySelector('#recovery').hidden`);await screenshot('touch-recovery');
+ await until(`!document.querySelector('#recovery').hidden`);assert.equal(await evaluate(`document.querySelector('#recovery .card h2').textContent`),'Recovery boot entry is not enabled here');assert.match(await evaluate(`document.querySelector('#recovery').textContent`),/cannot start recovery or restore an OS/);await screenshot('touch-recovery');
  assert.equal(await evaluate(`document.documentElement.scrollWidth<=window.innerWidth`),true);
  assert.equal(errors.length,0);
  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,physical_hardware:false,transport:'test Cockpit bridge shim; real disposable Controller',keyboard_navigation:true,escape_cancels:true,policy_persistence:true,mode_applies_only_on_boot:true,touch_navigation:true,unavailable_installer_disabled:true,uncaught_exceptions:0},null,2)+'\n');
