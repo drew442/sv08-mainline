@@ -1,0 +1,63 @@
+{
+  "author": "root/coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "id": "ci-root-tests",
+      "environment": "offline",
+      "description": "Exact hosted CI shell recipe runs real ownership tests without skips; YAML and documentation links valid."
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
+  "format_version": 2,
+  "id": "cockpit-readiness-enforcement",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/cockpit-readiness-enforcement/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/cockpit-installed-readiness/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "ci-root-tests"
+      ],
+      "depends_on": [
+        "cockpit-installed-readiness:implement"
+      ],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_boot.py",
+        "scripts/check_installed_cockpit.py",
+        "tests/test_host_boot.py",
+        "tests/test_installed_cockpit.py",
+        ".github/workflows/agent-workflow.yml"
+      ],
+      "owned_paths": [
+        ".github/workflows/cockpit-readiness.yml",
+        "docs/development/cockpit-deployment-checks.md",
+        "docs/features/cockpit-readiness-enforcement/evidence.md",
+        "docs/features/cockpit-readiness-enforcement/evidence.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Hosted disposable deterministic tests and documentation only; no hardware, private data, deployment or paid model calls.",
+      "status": "pending",
+      "title": "Wire real ownership tests into CI and record deployment acceptance",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "Enforce Cockpit real ownership tests and deployment checks"
+}

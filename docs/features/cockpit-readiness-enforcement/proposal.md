@@ -1,0 +1,3 @@
+# Enforce Cockpit ownership regression execution
+
+Follow the owner-requested recurrence prevention. Add a small hosted CI job triggered by changes to ownership/status runtime, tests and checker; execute the two suites as root in private root-owned disposable storage without skips. No devices, services, secrets, deployment, scheduling or model calls. Add operational guidance requiring both functional installed checks and authenticated rendered evidence appropriate to changed interactions; distinguish output/hash/login checks from user-visible functionality. Acceptance: exact CI shell recipe passes fourteen tests without skips, YAML parses, paths/links and complete diff checked.
