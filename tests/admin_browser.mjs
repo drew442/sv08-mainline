@@ -34,7 +34,7 @@ try {
  await screenshot('overview');
  // Navigate with keyboard; native button Enter semantics must activate a page.
  await evaluate(`document.querySelector('[data-page="overview"]').focus()`);
- await key('Tab');assert.equal(await evaluate(`document.activeElement.dataset.page`),'images');await key('Enter');
+ await key('Tab');await key('Tab');assert.equal(await evaluate(`document.activeElement.dataset.page`),'images');await key('Enter');
  await until(`!document.querySelector('#images').hidden`);
  // Cancel with Escape does not publish a policy change.
  await click('#auto-update');await click('#save-auto');await until(`document.querySelector('#review').open`);await key('Escape');
@@ -52,8 +52,8 @@ try {
  await click('[data-page="images"]');assert.equal(await evaluate(`document.querySelector('#stage-image').disabled`),true);await screenshot('images');
  await send('Emulation.setDeviceMetricsOverride',{width:480,height:800,deviceScaleFactor:1,mobile:true});
  await send('Emulation.setTouchEmulationEnabled',{enabled:true});
- await evaluate(`document.querySelector('[data-page="recovery"]').scrollIntoView()`);
- const rect=await evaluate(`(()=>{const r=document.querySelector('[data-page="recovery"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`);
+ await click('#navigation-toggle');await click('#task-navigation [data-page="settings"]');await evaluate(`document.querySelector('#task-context [data-page="recovery"]').scrollIntoView()`);
+ const rect=await evaluate(`(()=>{const r=document.querySelector('#task-context [data-page="recovery"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};})()`);
  await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[rect]});await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  await until(`!document.querySelector('#recovery').hidden`);await screenshot('touch-recovery');
  assert.equal(await evaluate(`document.documentElement.scrollWidth<=window.innerWidth`),true);

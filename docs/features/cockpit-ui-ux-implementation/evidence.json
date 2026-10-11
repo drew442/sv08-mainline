@@ -1,0 +1,1270 @@
+{
+  "product_source_commit": "0d16b6259486904ac07dd8c4a00f59df3eb87cc0",
+  "product_source_sha256": {
+    "scripts/preview_admin_ui.py": "20a831550a675664b804abc5915d00d8a6e17229b2498c0ad222dbf3e4aa4865",
+    "scripts/stage_printer_ui.py": "0e1c9782a8f91913cc0d1a6c7b0f7d4c6c5150baf5d1b419765baea457e490c9",
+    "ui/host/upload.js": "f9a0e331b389be5c16f1c53adcba8d1d580eee6afb9cb7e88537daed14734c71",
+    "ui/host/software.js": "45cb828d2b14a4d8369c7bf4e83f52821e394b1383bb1091e57006a06841a1a7",
+    "ui/host/mainsail-access.js": "5883f6a27469c3e8d7b0bed9bdf10833ad6565eda6d06fff5ee2c94d878aea93",
+    "ui/host/index.html": "5184275f76823fbeda2d3406164cb1725f5ae430c3a56f0e0df0897e2142e285",
+    "ui/host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+    "ui/host/app.js": "c4cda04fe96022fee81bd621e3c4818b330e51f2b9a5c614a89c666fbb2d2a2e",
+    "ui/host/network.js": "a29b3e397b8569cd98fed69fc32d597972f2157a4f68c9910f69d935c9cc027d",
+    "ui/host/session.js": "b2b7f676f14f87857f90a93f90ffa4aa078c4dc6056d0860607d5161b1d454d4",
+    "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+    "ui/host/style.css": "bc3ecc71c0903e3e840893791a824ca7286b7e52f177ee3d376fc1bb011eb2b6",
+    "ui/host/identity.js": "b644b670fb6b382cec5b7a4d28a77d4a62b68e4312573193ea42851f244d67a0",
+    "ui/printer/index.html": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+    "ui/printer/panel.html": "b40eb61de05cd7224a5a1cbb1818b6046eada2830a4ad5f62462b11b962076e9",
+    "ui/printer/manifest.json": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+    "ui/printer/app.js": "2e27254b1064c20c8a16e3334c168ec88cd246a9664a6a5f46c35626360a9332",
+    "ui/printer/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+    "ui/printer/redirect.js": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+    "ui/printer/style.css": "10f0629448a39a21cc26c7200e82348b17d0546f2e7745848110ea9759aff72d"
+  },
+  "acceptance": [
+    {
+      "package": "W0 \u2014 Task architecture and interaction sketches",
+      "checks": [
+        {
+          "id": "W0-1",
+          "criterion": "A capability-to-destination map accounts for all current operations, including   uncommon expert functions, downloads, imports, history and reconciliation.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Capability map and interaction sketches in evidence.md; coordinator source/rendered expert assessment"
+          ]
+        },
+        {
+          "id": "W0-2",
+          "criterion": "The bed/source task and connection task have explicit entry points and return   paths, without requiring users to understand the definition storage model.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Capability map and interaction sketches in evidence.md; coordinator source/rendered expert assessment"
+          ]
+        },
+        {
+          "id": "W0-3",
+          "criterion": "Primary actions are distinct from safe exploration, draft saving and expert   inspection. Required consequences remain visible before commitment.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Capability map and interaction sketches in evidence.md; coordinator source/rendered expert assessment"
+          ]
+        },
+        {
+          "id": "W0-4",
+          "criterion": "Sketches are assessed at desktop, printer-screen and phone sizes. Record expert   assessment separately from human task observations; do not invent user evidence.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Capability map and interaction sketches in evidence.md; coordinator source/rendered expert assessment"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W1 \u2014 Trustworthy status and recovery",
+      "checks": [
+        {
+          "id": "W1-1",
+          "criterion": "Elevating from a read-only session removes an obsolete authorization notice when   successful status confirms access; the header and page agree. Revocation or   disconnect promptly disables mutations without discarding non-secret drafts.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: authority/failure isolation/late review/lost acknowledgement; admin-drafts-browser-v5; service UI tests; native installed result recorded separately"
+          ]
+        },
+        {
+          "id": "W1-2",
+          "criterion": "An unrelated host failure does not imply that the hardware catalogue or Mainsail   access is unavailable if its own backend still works.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: authority/failure isolation/late review/lost acknowledgement; admin-drafts-browser-v5; service UI tests; native installed result recorded separately"
+          ]
+        },
+        {
+          "id": "W1-3",
+          "criterion": "A lost acknowledgment offers receipt/reconciliation checking instead of inviting   duplicate application. Loading/retry/completion messages describe the active   task and do not announce success before the operation is confirmed.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: authority/failure isolation/late review/lost acknowledgement; admin-drafts-browser-v5; service UI tests; native installed result recorded separately"
+          ]
+        },
+        {
+          "id": "W1-4",
+          "criterion": "Background refresh cannot erase a still-valid warning or user-entered draft.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: authority/failure isolation/late review/lost acknowledgement; admin-drafts-browser-v5; service UI tests; native installed result recorded separately"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W2 \u2014 Shared shell and responsive navigation",
+      "checks": [
+        {
+          "id": "W2-1",
+          "criterion": "On an idle 1024\u00d7600 production-equivalent shell, hardware's title and at least   one component choice are visible without scrolling. At 390\u00d7844 its purpose and   first useful action are visible without first passing unrelated history.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/task-shell-{1440,1024,390}.png and route/history/keyboard/touch assertions; admin-browser; operation-resolution indicator journey; native installed shell result separately"
+          ]
+        },
+        {
+          "id": "W2-2",
+          "criterion": "Active or uncertain update work remains discoverable from every route through a   concise indicator; opening it leads to the correct operation and recovery action.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/task-shell-{1440,1024,390}.png and route/history/keyboard/touch assertions; admin-browser; operation-resolution indicator journey; native installed shell result separately"
+          ]
+        },
+        {
+          "id": "W2-3",
+          "criterion": "All supported tasks remain accessible by keyboard and touch. Menu opening/closing,   Escape and focus return work; navigation preserves unfinished selections.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/task-shell-{1440,1024,390}.png and route/history/keyboard/touch assertions; admin-browser; operation-resolution indicator journey; native installed shell result separately"
+          ]
+        },
+        {
+          "id": "W2-4",
+          "criterion": "Browser back/forward and supported deep links reach the correct task. Moving   between tasks preserves authorization semantics and draft continuity; exact   document structure and legacy route names are not acceptance requirements.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/task-shell-{1440,1024,390}.png and route/history/keyboard/touch assertions; admin-browser; operation-resolution indicator journey; native installed shell result separately"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W3 \u2014 Hardware selection-to-application journey",
+      "checks": [
+        {
+          "id": "W3-1",
+          "criterion": "Selecting a known bed definition shows its name and meaningful setting changes   (for example a supported maximum-temperature difference), rather than requiring   manual pin or sensor editing. Test definitions supply evidence, not guessed   third-party hardware facts.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json, guided reviews, real disposable PrinterStore/Budget; semantic replacement/calibration effects source assessment; exact service_action none reviewed; live config unchanged"
+          ]
+        },
+        {
+          "id": "W3-2",
+          "criterion": "Replacement review identifies affected components, retained overrides and   calibration consequences. Cancel changes no draft; confirming changes only the   draft until explicitly saved. Unrelated calibration remains intact.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json, guided reviews, real disposable PrinterStore/Budget; semantic replacement/calibration effects source assessment; exact service_action none reviewed; live config unchanged"
+          ]
+        },
+        {
+          "id": "W3-3",
+          "criterion": "A first-time owner can select hardware, review meaningful effects and apply   through a coherent journey without learning the save/generate backend sequence.   Saving a draft and exporting a candidate remain discoverable. The current applied   state and uncommitted changes are clear; inactive output is never labelled   applied or ready to print.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json, guided reviews, real disposable PrinterStore/Budget; semantic replacement/calibration effects source assessment; exact service_action none reviewed; live config unchanged"
+          ]
+        },
+        {
+          "id": "W3-4",
+          "criterion": "Incomplete or conflicting input points to the affected component and a useful   correction; stale reviews require reconciliation. Advanced sensor bias/curves   remain available without cluttering the normal path.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json, guided reviews, real disposable PrinterStore/Budget; semantic replacement/calibration effects source assessment; exact service_action none reviewed; live config unchanged"
+          ]
+        },
+        {
+          "id": "W3-5",
+          "criterion": "Application reviews retain the backend's exact service/restart consequences and   admission checks. UI tests use disposable state; live application is a separate,   authorized installed check.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json, guided reviews, real disposable PrinterStore/Budget; semantic replacement/calibration effects source assessment; exact service_action none reviewed; live config unchanged"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W4 \u2014 Integrated catalogue and source management",
+      "checks": [
+        {
+          "id": "W4-1",
+          "criterion": "A user can paste a repository URL, inspect useful preview counts/details and add   the source without encountering author tooling first.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: preview/add/use/nonmutation/provenance/search/downloads; targeted-final.json: empty repository rejection with URL retained; offline and executable-mode errors"
+          ]
+        },
+        {
+          "id": "W4-2",
+          "criterion": "Empty, invalid, offline and incompatible previews explain why no definitions   are available and retain the entered URL for correction.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: preview/add/use/nonmutation/provenance/search/downloads; targeted-final.json: empty repository rejection with URL retained; offline and executable-mode errors"
+          ]
+        },
+        {
+          "id": "W4-3",
+          "criterion": "Adding/updating a source does not select hardware or apply configuration.   Browsing remains non-mutating and searchable by source/category. Users can   inspect details and deliberately use a definition in hardware selections; icon   choice, detail presentation and catalogue page boundaries may change.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: preview/add/use/nonmutation/provenance/search/downloads; targeted-final.json: empty repository rejection with URL retained; offline and executable-mode errors"
+          ]
+        },
+        {
+          "id": "W4-4",
+          "criterion": "Imported definitions become discoverable from the relevant hardware selector;   pinned revision/provenance remain available. Both downloads still work.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "browser-receipt/result.json: preview/add/use/nonmutation/provenance/search/downloads; targeted-final.json: empty repository rejection with URL retained; offline and executable-mode errors"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W5 \u2014 Updates and software task hierarchy",
+      "checks": [
+        {
+          "id": "W5-1",
+          "criterion": "Opt-in review explains restart and health checking; cancel preserves saved policy   and useful draft input, confirm persists the reviewed preference across reload.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "auto-policy-final/result.json, admin-drafts-browser-v5; jobs/resolution/history receipts; UI update-stage source assessment; software UI loading/admission/lost-response tests"
+          ]
+        },
+        {
+          "id": "W5-2",
+          "criterion": "A manual update clearly shows which step is complete and the next allowed action;   users can distinguish upload authentication from full installation verification.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "auto-policy-final/result.json, admin-drafts-browser-v5; jobs/resolution/history receipts; UI update-stage source assessment; software UI loading/admission/lost-response tests"
+          ]
+        },
+        {
+          "id": "W5-3",
+          "criterion": "Opt-out, queued restart, uncertain acknowledgment and fallback produce distinct,   understandable statuses. No automatic retry is implied when reconciliation is   required, and no unsafe \u201cbypass everything\u201d action is added.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "auto-policy-final/result.json, admin-drafts-browser-v5; jobs/resolution/history receipts; UI update-stage source assessment; software UI loading/admission/lost-response tests"
+          ]
+        },
+        {
+          "id": "W5-4",
+          "criterion": "Software availability explains writable-mode/idle/storage prerequisites and   provides the appropriate next step without silently changing operating mode.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "auto-policy-final/result.json, admin-drafts-browser-v5; jobs/resolution/history receipts; UI update-stage source assessment; software UI loading/admission/lost-response tests"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W6 \u2014 Access, identity and network clarity",
+      "checks": [
+        {
+          "id": "W6-1",
+          "criterion": "Mainsail clearly shows the current method and only the selected method's inputs;   no-login consequences and client-certificate provisioning order are explicit.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Network/Mainsail mock-service browser tests; real disposable Identity browser; explicit trust/client/private-backup source/rendered assessment; rollback mock deadline/links/freshness/HTTPS checks; production network mutation untested"
+          ]
+        },
+        {
+          "id": "W6-2",
+          "criterion": "CA download, client-certificate download and private identity backup have distinct   names and explanations. Secret material is not copied into UI diagnostics.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Network/Mainsail mock-service browser tests; real disposable Identity browser; explicit trust/client/private-backup source/rendered assessment; rollback mock deadline/links/freshness/HTTPS checks; production network mutation untested"
+          ]
+        },
+        {
+          "id": "W6-3",
+          "criterion": "Network leads with current connectivity and the selected interface. Scan/select   WiFi, missing prerequisites and unavailable operations have clear explanations.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Network/Mainsail mock-service browser tests; real disposable Identity browser; explicit trust/client/private-backup source/rendered assessment; rollback mock deadline/links/freshness/HTTPS checks; production network mutation untested"
+          ]
+        },
+        {
+          "id": "W6-4",
+          "criterion": "Connection-change confirmation exposes the rollback deadline and reconnect links;   disconnect does not falsely indicate failure or success. Preserve backend rollback,   HTTPS requirements and review freshness. Installed tests require an authorized   disposable system or specifically approved printer operation.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Network/Mainsail mock-service browser tests; real disposable Identity browser; explicit trust/client/private-backup source/rendered assessment; rollback mock deadline/links/freshness/HTTPS checks; production network mutation untested"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W7 \u2014 Cross-page accessibility and consistency",
+      "checks": [
+        {
+          "id": "W7-1",
+          "criterion": "useful heading/focus on route changes; labelled dialogs; keyboard\nactivation and Escape; focus returned to the trigger; associated field errors;\nnon-color status cues; no obscured save/review controls or document overflow;\nlong names, errors and fingerprints wrap safely. Do not claim full accessibility\ncertification from automated checks.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "Keyboard/touch/history/dialog tests, final-reflow-fixed captures, service captures and coordinator rendered assessment; native installed shell separately; no WCAG certification"
+          ]
+        }
+      ]
+    },
+    {
+      "package": "W8 \u2014 Refresh efficiency",
+      "checks": [
+        {
+          "id": "W8-1",
+          "criterion": "passive pages avoid unnecessary repeated rendering; focused selects\nand drafts survive refresh; operation progress and uncertain results remain timely;\nreturning to a page refreshes stale data. Any performance claim needs actual\nmeasurements. This package does not authorize new hardware benchmarks.",
+          "status": "passed-with-stated-environment-limits",
+          "evidence": [
+            "source-receipt.json: 13 baseline vs 0 candidate RPCs over 6500ms idle Hardware; focused image/package/interface selections and drafts retained; urgent poll/source assessment; no CPU/host throughput claim"
+          ]
+        }
+      ]
+    }
+  ],
+  "rendered_assessment": [
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/browser-receipt/task-shell-1024.png",
+      "sha256": "89e84c2fd4b1ba3c65fce4ca68762fe53f23471aa615d6e466badbbd40d94d6d",
+      "assessment": "Hardware title and first full component row visible without unrelated idle history."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/browser-receipt/task-shell-390.png",
+      "sha256": "534a9a3f1d39718b1e1fa070cc1f484fa6b595c503ae6333be1874e2cbcccb1a",
+      "assessment": "Hardware purpose and first component action visible in idle phone shell."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/browser-receipt/factory-table-390.png",
+      "sha256": "6165cf857f3d4b69b9b710a80941196582133c7ba90d48398f0dfbd38aa0eaaa",
+      "assessment": "Long board/header names and explicit unknown contacts wrap into readable mapping cards."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/browser-receipt/guided-configuration-review.png",
+      "sha256": "05986e5573972fb6d2219ace65b9ed1a71332788927b9c5bd7d10102e7b537e1",
+      "assessment": "Dialog begins at meaningful title, explains inactive preparation and no output activation; semantic changes precede detailed checks."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/browser-receipt/guided-application-review.png",
+      "sha256": "192e0f2a09a6b21f59a61238574eaf7c306047aeae0cb28f760916c7c4bad405",
+      "assessment": "Separate application dialog exposes exact no-restart/stopped-printer consequence with readable cancel/apply controls."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/service-final2/network-pending-390.png",
+      "sha256": "6f2aa7e10a50ab4896014dae340b62c8ab73bafa57707b3e4d189d6b5c26e4f6",
+      "assessment": "Current connection precedes edits; pending-change indicator remains discoverable; mobile form and advanced IPv4 disclosure wrap."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/service-final2/software-blocked-review-1024.png",
+      "sha256": "11de25c97ba77dd34cf62091be518e882cbf0047aeaace75934385010e2d3437",
+      "assessment": "Writable prerequisite visible in review; confirm disabled; mode guidance available without automatically changing mode."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/service-final2/mainsail-certificate-390.png",
+      "sha256": "56e491d8d382332ac18ec34f471d574d79a1d30997d7651e9d640273bf0c281d",
+      "assessment": "Current no-login state distinct from unsaved client-certificate choice; provisioning instructions and private download-password inputs separate from trust."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/final-reflow-fixed-reflow-controls.png",
+      "sha256": "b1098b75fa4fc1d8287e9f6fd895b3be4ed9b137b5c3d0c65d7f5f8c11f48118",
+      "assessment": "At 512x300 CSS with deviceScaleFactor2, enlarged primary review/inspection buttons remain readable and unobscured."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/final-reflow-fixed-reflow-menu.png",
+      "sha256": "81d5d04fa59c20ec0756f092f710a9770e2a7da7417fffe44116ae292474d4bd",
+      "assessment": "Equivalent enlarged-text reflow wraps six menu items without horizontal overflow; active route uses text plus highlight."
+    }
+  ],
+  "receipts": {
+    "printer": {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/browser-receipt/result.json",
+      "sha256": "8bf96575eaa01eefa32d318efac428daebd682d8e617a2b20cff7b9151ca6b57",
+      "result": {
+        "passed": true,
+        "authenticated": false,
+        "hardware": false,
+        "transport": "Cockpit session/RPC shim; actual Store/Budget",
+        "viewport_sizes": [
+          [
+            1024,
+            600
+          ],
+          [
+            1440,
+            900
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "unsupported_status_draft_export_recovery": true,
+        "shared_panel": true,
+        "initial_status_navigation": true,
+        "stale_status_authority_rejected": true,
+        "printer_review_late_response_ignored": true,
+        "host_refresh_failure_isolation": true,
+        "incomplete_save_reopen": true,
+        "connector_pin_form": true,
+        "factory_default": true,
+        "simple_assembly_selectors": true,
+        "factory_only_choices": true,
+        "complete_factory_select_cancel_save_reload": true,
+        "definition_preview_cancel_select": true,
+        "source_bundle_disable_remove_preserves_selected_snapshot": true,
+        "definition_sources_sidebar_route_reload": true,
+        "complete_setup_bundle_download_and_real_parser": true,
+        "factory_start_full_complete_calibration_pending": true,
+        "schema_reference_download": true,
+        "repository_starter_download": true,
+        "repository_starter_static_no_rpc": true,
+        "compact_github_preview_selection_save_retention": true,
+        "source_executable_file_error_visible": true,
+        "definitions_sidebar_route_history_reload": true,
+        "definitions_source_category_grouping": true,
+        "definitions_builtin_external_disabled_unsupported": true,
+        "definitions_dependency_component_drilldown": true,
+        "definitions_read_only_no_rpc": true,
+        "definitions_search_empty_keyboard_responsive": true,
+        "logical_connection_table": true,
+        "blueprint_graph": true,
+        "connections_sidebar_history_reload": true,
+        "complete_factory_graph": true,
+        "graph_pan_zoom_drag_filter_highlight": true,
+        "graph_idle_dom_mutations": 0,
+        "graph_idle_rpc_calls": 0,
+        "graph_idle_task_seconds": 0.002273,
+        "connection_inspector_authority_gated": true,
+        "external_selection_offline_retention": true,
+        "zoom_200_percent": true,
+        "one_click_enclosure_fan": true,
+        "ntc_ptc_defaults": true,
+        "hardware_save_before_pid": true,
+        "advanced_fields_collapsed": true,
+        "sensor_reference_journey": true,
+        "motor_reference_journey": true,
+        "preset_collision_refused": true,
+        "two_real_tab_stale_import_refused": true,
+        "generation_swap_refused": true,
+        "last_status_identity_carried": true,
+        "refresh_generation_edit_apply": true,
+        "refresh_exact_import_diff": true,
+        "keyboard_escape": true,
+        "touch_reload": true,
+        "import_diff_cancel_save": true,
+        "review_cancel_apply": true,
+        "previous_restore": true,
+        "lost_ack_reconciled": true,
+        "lost_ack_stop_logout_disconnect": true,
+        "upload_review_navigation_cancelled": true,
+        "host_review_late_response_ignored": true,
+        "legacy_deeplink_reload": true,
+        "skip_retains_route": true,
+        "board_remap_preserves_unresolved_devices": true,
+        "stop_disconnect_logout": true,
+        "live_config_unchanged": true,
+        "uncaught_exceptions": 0
+      }
+    },
+    "admin": {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/admin-browser/result.json",
+      "sha256": "0b4ffd7cbf2094045d27f69de5ce2698a1c47b598b4a4d58ad376e09158c2a91",
+      "result": {
+        "passed": true,
+        "physical_hardware": false,
+        "transport": "test Cockpit bridge shim; real disposable Controller",
+        "keyboard_navigation": true,
+        "escape_cancels": true,
+        "policy_persistence": true,
+        "mode_applies_only_on_boot": true,
+        "touch_navigation": true,
+        "unavailable_installer_disabled": true,
+        "uncaught_exceptions": 0
+      }
+    },
+    "drafts": {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/admin-drafts-browser-v5/result.json",
+      "sha256": "bbc7523bd1864b3801d9254e0020b88b8c54b6fed5e5e940f6cd683d814cd97a",
+      "result": {
+        "passed": true,
+        "before": {
+          "mode": "immutable",
+          "auto": true
+        },
+        "after": {
+          "mode": "immutable",
+          "auto": true
+        },
+        "external_changes_preserve_drafts": true,
+        "untouched_controls_follow_server": true,
+        "cancel_and_stale_review_preserve_drafts": true,
+        "applying_one_preserves_other_drafts": true,
+        "reviewed_arguments_match_drafts": true,
+        "newer_edits_during_apply_preserved": true,
+        "keyboard_selection_and_option_nodes_survive_poll": true,
+        "removed_selections_remain_explicitly_invalid": true,
+        "transport": "real disposable Controller; image-list projection only",
+        "physical_hardware": false
+      }
+    },
+    "automatic-policy": {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/auto-policy-final/result.json",
+      "sha256": "88e261a2064fbfa5a3986eda7797ce39f42a65d3040f62e5a74b157cc34e7a73",
+      "result": {
+        "status": "PASS",
+        "automatic_policy": {
+          "check_compatibility": false,
+          "check_customization": false,
+          "check_version": true,
+          "allow_downgrade": true,
+          "allow_untrusted_provenance": false
+        },
+        "manual_review_options_bound": true,
+        "upload_review_options_bound": true,
+        "draft_survives_poll": true,
+        "printer": false
+      }
+    },
+    "final-targeted": {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/targeted-final.json",
+      "sha256": "cb572bc2964ff54eaaa4f0c2d968cbfa20017c5b2be455d6d3438ce3c3b6881f",
+      "result": {
+        "history_toggle": true,
+        "empty_repository_retains_url": true,
+        "notice": "Could not preview this repository. Check the URL, ref and catalogue path, or retry when online. Definition count must be 1\u201332"
+      }
+    },
+    "final-reflow": {
+      "path": "/home/drew/.sv08-cockpit-ux-implement-20261011/final-reflow-fixed.json",
+      "sha256": "30a059b6da1a45556ce7b39f48b90c7c6e6659a5529381f0eea59d62f83170e0",
+      "result": {
+        "route": "printer",
+        "duration_ms": 6500,
+        "calls": []
+      }
+    },
+    "jobs": {
+      "path": "/home/drew/.sv08-cockpit-ux-coordinator-20261011/operation-jobs-provenance-browser/result.json",
+      "sha256": "5c631b7bba9bb0fc4c38dbb48a9e2adef01863cf92884e5afee8f80546791b7d",
+      "result": {
+        "passed": true,
+        "reconnect_ms": 128,
+        "stage_installations": 1,
+        "lost_acknowledgement_retry_same_identity": true,
+        "closed_and_reopened_browser_target": true,
+        "real_systemd_user_worker": true,
+        "unit_state": "MainPID=3756109\nExecStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /home/drew/.sv08-cockpit-ux-coordinator-20261011/operation-support/admin_jobs_fixture.py /home/drew/.sv08-cockpit-ux-coordinator-20261011/operation-jobs-provenance-fixture 03c5f30729c946109265b5193c306f00 ; ignore_errors=no ; start_time=[Sun 2026-10-11 01:43:28 UTC] ; stop_time=[n/a] ; pid=3756109 ; code=(null) ; status=0/0 }\nActiveState=active\n",
+        "transport": "test Cockpit bridge shim",
+        "real_controller_staging_transaction": true,
+        "backend": "disposable disk double, fixture signature verifier",
+        "authenticated_cockpit": false,
+        "physical_hardware": false,
+        "jobs": [
+          {
+            "id": "03c5f30729c946109265b5193c306f00",
+            "phase": "succeeded",
+            "action": "image.stage"
+          },
+          {
+            "id": "4c0bedbbb5db44ce98ba9882eb653ba1",
+            "phase": "succeeded",
+            "action": "image.arm"
+          },
+          {
+            "id": "368b353615664828898d18b81ff0f6e5",
+            "phase": "succeeded",
+            "action": "image.cancel"
+          }
+        ]
+      }
+    },
+    "resolution": {
+      "path": "/home/drew/.sv08-cockpit-ux-coordinator-20261011/operation-resolution-browser/result.json",
+      "sha256": "7b628a338ebf96b2b1a5acd63a633294f1416672d1a582efece8af4c09cea38b",
+      "result": {
+        "passed": true,
+        "interrupted_receipt_inspected": true,
+        "unknown_disposition_retained_after_reload": true,
+        "separately_reviewed_cancelled": true,
+        "source_selected": "A",
+        "pending_cleared_after_disarm": true,
+        "new_installations": 0,
+        "physical_hardware": false
+      }
+    },
+    "history": {
+      "path": "/home/drew/.sv08-cockpit-ux-coordinator-20261011/operation-history-final-browser/result.json",
+      "sha256": "679832a0e9e3fe71770752827ec4470db2a9caf7299a36e8b4aaada2512cf516",
+      "result": {
+        "browser_shim": true,
+        "separate_worker": true,
+        "post_boot_shared_mode": 457,
+        "preserved_originals": 128,
+        "maintenance_cancel": true,
+        "lost_ack_retry": true,
+        "archived_pending_recovered": true,
+        "pending_retained_on_durability_failure": true,
+        "cancel_once": true,
+        "real_tmpfs_no_space": true,
+        "pressure_peak_allocated_bytes": 328994816,
+        "worker_barrier_reconnect_ms": 115,
+        "authority_changed_review_cancelled": true,
+        "maintenance_state_unchanged": true,
+        "backend_calls": [
+          "bad"
+        ],
+        "authenticated": false,
+        "hardware": false
+      }
+    }
+  },
+  "refresh_comparison": {
+    "baseline": {
+      "route": "printer",
+      "duration_ms": 6500,
+      "calls": [
+        "jobs",
+        "status",
+        "upload.list",
+        "jobs",
+        "status",
+        "upload.list",
+        "jobs",
+        "status",
+        "jobs",
+        "status",
+        "upload.list",
+        "jobs",
+        "status"
+      ]
+    },
+    "final": {
+      "route": "printer",
+      "duration_ms": 6500,
+      "calls": []
+    }
+  },
+  "installed_status": "passed native Cockpit/PAM/session and route/input boundaries; fixture/hardware limits retained",
+  "limitations": [
+    "Cockpit authentication transport simulated in browser fixtures; Identity/Printer backend real disposable implementations.",
+    "No hardware/printing/installed release evidence from this worker.",
+    "Body style zoom supplementary only; reflow captured separately.",
+    "No human usability observations, native browser zoom or full accessibility certification.",
+    "Operation checks use disposable disk double and test-only verifier, not signed production updates.",
+    "Operation fixtures needed authenticated metadata and UI-route maintenance, preserved in a separate coordinator followup.",
+    "Full browser receipt precedes footer/history corrections; final focused checks cover deltas.",
+    "Native screenshots followed reauthorization without awaiting settled host/printer status. They show stale authority wording and empty legacy hardware/reconcile state; not evidence of settled status coherence or populated factory layout. Those outcomes use composed disposable browser evidence.",
+    "Installed fixture uses strict legacy RAUC policy, inert identity prerequisite and synthetic Mainsail status-only files; no production trust, update or network mutation claim."
+  ],
+  "commands": [
+    {
+      "command": "python3 -m unittest discover -s tests -p test_stage_printer_ui.py -v",
+      "tests": 12,
+      "result": "passed",
+      "source_timing": "before footer/history-only corrections; staging/backend inputs unchanged"
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_printer_controls.py -v",
+      "tests": 5,
+      "result": "passed",
+      "source_timing": "printer control backend unchanged"
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_stage_admin_ui.py -v",
+      "tests": 20,
+      "result": "passed",
+      "source_timing": "final frozen product source"
+    },
+    {
+      "command": "SV08_UI_SCRATCH=<assigned> SV08_UI_EVIDENCE=<assigned>/service-final2 python3 -m unittest discover -s tests -p test_network_ui.py -v",
+      "result": "passed",
+      "source_timing": "Network module unchanged after this run"
+    },
+    {
+      "command": "SV08_UI_SCRATCH=<assigned> SV08_UI_EVIDENCE=<assigned>/service-final2 python3 -m unittest discover -s tests -p test_software_ui.py -v",
+      "result": "passed",
+      "source_timing": "Software module unchanged after this run"
+    },
+    {
+      "command": "SV08_UI_SCRATCH=<assigned> SV08_UI_EVIDENCE=<assigned>/service-receipt python3 -m unittest discover -s tests -p test_mainsail_access_ui.py -v",
+      "result": "passed",
+      "source_timing": "Mainsail module unchanged after this run"
+    },
+    {
+      "command": "SV08_UI_SCRATCH=<assigned> SV08_UI_EVIDENCE=<assigned>/service-final <Node22> tests/identity_browser.mjs",
+      "result": "passed",
+      "source_timing": "Identity module unchanged after this run; header capture predates wrapping adjustment"
+    },
+    {
+      "command": "<Node22> tests/printer_browser.mjs <Chromium> <assigned>/fixture-receipt <assigned>/browser-receipt",
+      "result": "passed",
+      "source_timing": "final frozen source except two footer/history corrections; focused checks cover those deltas"
+    },
+    {
+      "command": "<Node22> <assigned>/count-final.mjs <assigned>/fixture-final <assigned>/final-reflow-fixed",
+      "result": "passed",
+      "source_timing": "footer correction covered, before history-only removal"
+    },
+    {
+      "command": "<Node22> <assigned>/targeted.mjs <assigned>/fixture-empty <assigned>/targeted-final",
+      "result": "passed",
+      "source_timing": "final frozen product source"
+    },
+    {
+      "command": "python3 <coordinator>/operation-fixed.py",
+      "result": "passed",
+      "source_timing": "frozen UI and diagnosed legacy fixture metadata/invocation corrections; real user systemd worker"
+    },
+    {
+      "command": "<Node22> <coordinator>/admin_resolution_browser.mjs <Chromium> <assigned>/operation-resolution-fixture <assigned>/operation-resolution-browser",
+      "result": "passed",
+      "source_timing": "frozen UI; supported indicator route"
+    },
+    {
+      "command": "sudo -n unshare --mount --pid --fork --mount-proc python3 -B <coordinator>/history-check.py",
+      "result": "passed",
+      "source_timing": "frozen UI; explicit private1088MiB tmpfs; reusable fixture maintenance separately allocated"
+    }
+  ],
+  "tools": {
+    "Node22": "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+    "Chromium": "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+    "assigned": "/home/drew/.sv08-cockpit-ux-implement-20261011",
+    "coordinator": "/home/drew/.sv08-cockpit-ux-coordinator-20261011"
+  },
+  "authentication_requirement_assessment": {
+    "worker": "project_researcher, gpt-6.1-sol/low",
+    "thread": "01a128aa-7a12-7262-b0c2-5119b63911b1",
+    "method": "Targeted read-only source requirement assessment, not independent execution",
+    "requirement_paths": [
+      "docs/decisions/0010-host-administration-and-recovery-ui.md",
+      "docs/decisions/0012-cockpit-session-integration.md",
+      "docs/features/host-admin-cockpit-integration/proposal.md"
+    ],
+    "existing_test": "tests/cockpit_browser.mjs:19 accepts retained explicitly elevated shell; post-Stop and fresh-login denials are separate assertions",
+    "conclusion": "No requirement mandates Stop on same-session reload. Native Cockpit retained authority is distinct from automatic Start/grant in a fresh/ended session. Disconnect must clear local flags and disable mutations promptly. Product session behavior unchanged."
+  },
+  "installed_receipts": {
+    "native-boundary-result.json": {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/native-boundary-result.json",
+      "sha256": "0ce8c2caac751f0ebdd794db565379573248e3443c54828c524602665612493c",
+      "result": {
+        "scope": "Actual Cockpit 337/PAM/sudo in disposable ARM64 QEMU; HTTPS on private namespace loopback",
+        "physical_hardware": false,
+        "production_tls": false,
+        "bad_login_rejected": true,
+        "uid_proof": {
+          "ordinary_account": "1002",
+          "administrator_unelevated": "1001",
+          "elevated": "0"
+        },
+        "ordinary_mutation_denied": true,
+        "ordinary_denial": true,
+        "wrong_password_and_cancel": true,
+        "privileged_status": true,
+        "source_manifest_sha256": "395d2128f42b360da1396410400efb97528409116e0e66035fcda20dc8bf5717",
+        "input_continuity_scope": "Unfinished nonsecret UI input only; hardware model continuity covered separately",
+        "routes": [
+          "overview",
+          "printer",
+          "images",
+          "network",
+          "mainsail-access",
+          "settings",
+          "definitions",
+          "definition-sources",
+          "printer-connections",
+          "identity",
+          "software",
+          "recovery"
+        ],
+        "back_and_unfinished_input": true,
+        "end_access": true,
+        "screenshots": [
+          [
+            1440,
+            900
+          ],
+          [
+            1024,
+            600
+          ],
+          [
+            390,
+            844
+          ]
+        ],
+        "end_access_then_reload_denied": true,
+        "fresh_administrator_login_denied": true,
+        "transport_ui_authority_cleared": true,
+        "same_elevated_login_reconnect_uid": "0",
+        "same_elevated_login_reconnect_ui": true,
+        "limitations": [
+          "Original reload-no-grant assertion remains recorded as pending requirement assessment; retained explicit native login grant measured separately"
+        ],
+        "passed": true
+      }
+    },
+    "requirement-assessment.json": {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/requirement-assessment.json",
+      "sha256": "183acffd1b6771e73f2f65ab3eb749daaaf52f587ad6927622302224a4e80197",
+      "result": {
+        "source_commit": "0d16b6259486904ac07dd8c4a00f59df3eb87cc0",
+        "source_manifest_sha256": "395d2128f42b360da1396410400efb97528409116e0e66035fcda20dc8bf5717",
+        "assessment": "Coordinator source assessment: decision0012 delegates native session authority to Cockpit; retained explicitly elevated login is permitted across transport reload. Stop/logout/fresh login boundaries remain required and measured. Original failed assumption retained.",
+        "executed_browser_recipe_sha256": "7641c4d596db8747885c7ed81f79641ff3434115e7d7602a22ebe0ca7655c6d6",
+        "executed_recipe_note": "Reconstructed exact loaded recipe by removing two edits made while Node was already running; output confirms original fields/text. No product changes.",
+        "result_sha256": "0ce8c2caac751f0ebdd794db565379573248e3443c54828c524602665612493c",
+        "guest_initialization_sha256": "c0af886c0e671d56e1d73e55b149a4066e4f8ff5cadd82e2532bf6e03e2f0dc9"
+      }
+    },
+    "final-cleanup.json": {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/final-cleanup.json",
+      "sha256": "f7fcc440db750a784cd6cb8e03271b2a3a1e1ed3430fe5dee30724b6851b9ea9",
+      "result": {
+        "physical_hardware": false,
+        "credential_scan_passed": true,
+        "owned_processes_stopped": true,
+        "removed_owned_paths": [
+          "credentials.json",
+          "payload/credentials.json",
+          "payload.ext4",
+          "guest.qcow2",
+          "ux-initrd.img",
+          "owned-process.json",
+          "browser/"
+        ],
+        "tool_versions": {
+          "python": "Python 3.12.3",
+          "qemu": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "qemu-img": "qemu-img version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "debugfs": "debugfs 1.47.0 (5-Feb-2023)",
+          "node": "v22.23.2",
+          "chromium": "Google Chrome for Testing 145.0.7632.6 "
+        },
+        "artifact_sha256": {
+          "execute-fixture.py": "112f0cc7cdd5a278621c6a59d1e7911cb591f48314b3b1df490b1a74f3e054b3",
+          "execution-receipt-attempt4.json": "ccf2c342a9562cc8f0086aa1390050f41d959d6451823e918ace0fed395934dd",
+          "native-boundary-result.json": "0ce8c2caac751f0ebdd794db565379573248e3443c54828c524602665612493c",
+          "execution-receipt-attempt8.json": "5a33fd5a011e6c80c8b0608541bfff156dd84f0543131464c10242fee56f82b5",
+          "execution-receipt-attempt10.json": "7f1e240911fbd81b9b884ec083e340dbdfbb2abca8dd7ecfade8e428ab6cbf20",
+          "guest-initialization.json": "c0af886c0e671d56e1d73e55b149a4066e4f8ff5cadd82e2532bf6e03e2f0dc9",
+          "native-boundary-browser.mjs": "3972c9f0ceded3b2748ffbaee4a17ee591d5d7dfa34218b994eaad73089c866b",
+          "execution-receipt.json": "2c802db0e22fba43c859c3ad56b3712937399146d3b66d11862ec60d4bec03d7",
+          "execution-receipt-attempt5.json": "b21d58d2c297d5fcf31c72cd823854570157a08c6987adaeb0e3f7d2980d7f8d",
+          "shell-1440.png": "df5394ed4a5a6760f87408a931e2fe1ee50aaf845802c54f06e00b2855381353",
+          "installed-ux-browser.mjs": "de96a841c955cf38e93f3b88e56b517cbc8a5b67abfaff0d98f052471bdf6227",
+          "bootstrap.py": "faa18ac3153338a3cb516e8d60d90217fc2c301e2c0783d138280ebd481b465b",
+          "execution-receipt-attempt11.json": "94a3e48beb88b0348d0aa75a7d62fa9c246de261856b452adbe6099be7035b0b",
+          "shell-390.png": "9f0ff1ce52077e52586a0aac6af8b49d208912684f7b79be3a98eb83849b9da1",
+          "extract-public.py": "df03aeda116b7be18c984efac9230087d26a24758965200e04ca3c142acc8346",
+          "execution-receipt-attempt2.json": "0f5e984b1805f6045a7bac94b4db7d74e11290ee58392e5e091de8e9aef4b5aa",
+          "failure-attempt11.json": "a771a8a4f81f1368bb65fcb45075e147d29886e03d7b8fa2488461e9a4a2b462",
+          "failure-attempt6.json": "947b9d67bdce731e128a08b17460749886d7ee3b9072ef9a5097d27880a31d77",
+          "execution-receipt-attempt6.json": "225af304b8841864dcd7c0b27b7025eadb899e3f958352c3df02570c499425ae",
+          "execution-receipt-attempt1.json": "efdaeb4a7ae887c7c7de752862c83f8790221fca1c4a44b5fb025104dbd1d5e1",
+          "execution-receipt-attempt3.json": "ea1315022054a29ee0b9e8e3b950f73f933085b0ec66aee24fa84cef8d91a04e",
+          "owned-process.json": "119de1c74cb2fe9dd36c2951c2ab2559a4b947e31a1b56ecd410490a2eda9b1a",
+          "extraction-receipt.json": "bf5a9e022ff0fcecd078384e9057171399cb175c203912f519c028e71f4d3225",
+          "execution-receipt-attempt9.json": "af3d6b724880ae390658f223158cadae856a2c2f086a6d3b8aad7db45b0874ec",
+          "journey-inputs.json": "7e41459ed21c90ee1194a406bec255e4ce0ac2c1edb9e919cfb470552c733474",
+          "installed-ux-failure.json": "a771a8a4f81f1368bb65fcb45075e147d29886e03d7b8fa2488461e9a4a2b462",
+          "execution-receipt-attempt7.json": "5de5cba774e9dceea1b625d4d0a5a59aea32985fe98c88ae7f93a607266524da",
+          "shell-1024.png": "4f4f7e4023d5416c532c98ec386ef4a329eff4586f85c77dc3e9e1ed3906a405",
+          "failure-attempt9.json": "fccf4114ee09efc8fbf241cefc81d1f212f5fa22038ef5b12c84d8d58f07e20a"
+        },
+        "completed_primary_process_seconds": 924.720543835545,
+        "allocated_cumulative_upper_bound_bytes": 2346471424,
+        "allocated_live_after_cleanup_bytes": 82178048,
+        "allowance_seconds": 1800,
+        "allowance_cumulative_bytes": 4294967296,
+        "limitations": [
+          "Bounded process receipts plus read-only planning runtime; no independent acceptance",
+          "Production identity generation/trust and update backend untested",
+          "Unfinished UI field continuity is not hardware-model continuity",
+          "200 percent browser zoom not executed; no extra passing-case rerun"
+        ]
+      }
+    },
+    "guest-initialization.json": {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/guest-initialization.json",
+      "sha256": "c0af886c0e671d56e1d73e55b149a4066e4f8ff5cadd82e2532bf6e03e2f0dc9",
+      "sanitized": true,
+      "source_manifest_sha256": "395d2128f42b360da1396410400efb97528409116e0e66035fcda20dc8bf5717",
+      "source": {
+        "files_sha256": {
+          "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d",
+          "catalog/printer/catalog.schema.json": "202b04b31fe06f5cde819dbfb82a482f2b37d12d2a2c47ded63e4b11f09b8fc5",
+          "catalog/printer/definitions/builtin.json": "6ef9b81cae328cf946614193a3465641c4618cad50557f1d711ea8575355a2ac",
+          "catalog/printer/draft.schema.json": "96b9db837ed9b7e9d06134d8e68f7498a44dd80ac4f880e7deebae79d2f231a1",
+          "catalog/printer/sources/sovol-sv08-max/chamber-reference.cfg": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+          "catalog/printer/sources/sovol-sv08-max/provenance.json": "1604705151a4d816f045b76abebf3696dfe842e6c7202c14ba0bd37614f69385",
+          "configs/apps/klipper.json": "08f935133f1c8af4dcd998c350bab40947ad0205656f155401de281d60775a14",
+          "configs/apps/klipperscreen.json": "0d46343172a3a5da761ad2b3237ae8937606a89a1a51308595c0b3ea22356c51",
+          "configs/apps/mainsail.json": "140a03fd88bb45519293eea40e2cb61438dabd7d06c0805d34e7a24b47684ca1",
+          "configs/apps/moonraker.json": "3a5296f6f0959b7032a46632e82a05a2498813e147ed687a8ec823d62ba28628",
+          "configs/apps/update-admission.json": "499e3e076ec4c162d0ec92c407aa561888e392025af4ccf8b83614de5244a360",
+          "configs/commissioning/test-sv08-01-inputs.cfg": "e49abb864d7d64298858f36126cbd977d1e6edd948ddbb9bbd37980fa8705a6e",
+          "configs/commissioning/test-sv08-01-no-outputs.cfg": "2594376fe028e70fc479d4b3a33de7f7c701fdfe14ff33b19b5741a3bcc5f32f",
+          "configs/commissioning/test-sv08-01-print-controls.cfg": "eab50d74e277951ea1678072d9b0c547675ce5f56779e78ae5a996cf0062e206",
+          "configs/commissioning/test-sv08-01-sensors.cfg": "09f559caf5793047b2138765c661169b6cd695ab7c3ceaac21278be2521adb7d",
+          "configs/host-os/admin-ui.json": "6b0262d3592ef824352f4a633167cc4a563405c2d4524ce69de68c31f7efdc25",
+          "configs/host-os/apt-policy.conf": "42dbe24162d9529795bb712799837869310f8024ed2114cfe24db8e7b81b1f6c",
+          "configs/host-os/board-support/control": "dec1b9e30389bc9dbed5931874eb1f4145febf22debeaa45e72851243da2d2f4",
+          "configs/host-os/board-support/copyright": "8f9f84c6ae5fc46fa9932213b94af08396563be349700a0332a1dd312bf7c989",
+          "configs/host-os/board-support/postinst": "efe10187d6fa891f46c83d874e34c22ff21d9521ee12cf1063a8a8271edfd7b5",
+          "configs/host-os/board-support/postrm": "61e9a4e9410b24fddec70e8e800eb81a6d7cc3e4a606c025e2e8a35a301cbbf4",
+          "configs/host-os/boot-dispatch.cmd": "cbd2601af2843e50665b70bb96f420ea6a4ec9d046666b6beadc3a74d223ec79",
+          "configs/host-os/cb1-boot-compile-candidate.json": "8afa76de798d2ba7fe2553bbb945ecd9e7506effdaa2e3b76d32a572392bf6a5",
+          "configs/host-os/cockpit-branding/badge.svg": "4beb2b783491867352df93bcfb3073452552dbac1168c94e6c0cd98a3385f92c",
+          "configs/host-os/cockpit-branding/branding.css": "76a614e5131b94ddd337b5c20b24c9bea123e8f37e252553a2d47093f4bdfdc4",
+          "configs/host-os/cockpit-packages.json": "5a61091e88e9409ab3cd6a2890634d5e3d6c459dff3579e82213cc71715b4229",
+          "configs/host-os/commissioning/sv08-commissioning-health.service": "bd65ba16c41e05424630d4c622944ee4f635d683154c924d61f7bcdccfd4b2a6",
+          "configs/host-os/diagnostic-boot.cmd.in": "ef7bda6dc77fb67b3f8b76896a61f45425da7ba4da0dd016a2b3f3e8cab35d10",
+          "configs/host-os/environment-layout.json": "b693b19eca6f01177180efc3a9239bc287b19955a4987a826bb31abc89178093",
+          "configs/host-os/initramfs/sv08-data": "ea830b57b55e03735dbe0272b1035161ef44827b7697897dc509f9b14085f2f7",
+          "configs/host-os/initramfs/sv08-tools": "12ff721217ed587cb1bc34a2ea98ce1830892bda54c82d086003b3dbcfa4f887",
+          "configs/host-os/kernel-61851-compile-candidate.json": "09fc0e682b7082a19741b5178722e43899abc5d02b46b0291e81457251117bcd",
+          "configs/host-os/moonraker.conf": "4e9e48598f63ad34ffd2c5d34df7e4dfeda107ad790346034f1a6ae1a8f53705",
+          "configs/host-os/nginx-mainsail-service.conf": "a3251c7102c5d89f3b9c3711ceb510116d6d30277e4ca8c1530dfa3a5f2c6484",
+          "configs/host-os/offline-tool-sources.json": "26aad94270a7ce99b369313efabf0585b68e05dfcfd93c9545204436a60e5710",
+          "configs/host-os/policy-rc.d": "9e2e01f709db74b0e1f4b57728393e66fe00e4dfc96de8ee27ce9c20c30234b1",
+          "configs/host-os/rauc-package.json": "055bdae1d2a501bc81f8b2fc5bdb10580a094ec0d5a63102f546013e6ea1d52d",
+          "configs/host-os/rauc-service-policy.json": "5b532261b8d63bbfb1b0654d5b4c6fd1dc7dd80649a077655d8506c5c63fadb5",
+          "configs/host-os/rauc-system.conf.in": "b128bc83c37073540aac481b7335cb5b78a48a3eca9b42f19717552b098d11e2",
+          "configs/host-os/recovery-board-root": "6658fcbc1ca22602c8116e9626bf2775cdb959174aa276a5e2ab3548f0ac08d7",
+          "configs/host-os/recovery-copyrights.json": "ba59fc722f22c2ec91a8b0afa1b818e6dc168f025b2acc7fb799c3fd5a7bcb28",
+          "configs/host-os/recovery-evidence.json": "d8f60b8473815392fcaab17dc38dfc0ea0255e276ba946ab9828202c83bc13eb",
+          "configs/host-os/recovery-init": "e190aaa4774826091992e1e324e9067ba14b8b3d76f6ececec9af32f12bae37f",
+          "configs/host-os/recovery-license-references.json": "1a2951f8b9fc3af623dc91d32aa29c0a54ff23afb62b2c33992df95e4a9e4e2e",
+          "configs/host-os/recovery-packages.json": "166c410341c360ef0e5f6e07887d783fcef8750472760ed12f4dc146694cb01b",
+          "configs/host-os/recovery-password.json": "14f1eff3eefc185d519055027b8b64a549b07c00f7f4b27d402c8373224fa5e5",
+          "configs/host-os/recovery-resolution.json": "24d4ed1089b24b34e4840c62a9bf2ce28d1d08fbe13ee5dc55c7d4ccb6185950",
+          "configs/host-os/recovery-session.desktop": "599bcd059add2036ca891bb89e46e364e02ef582220c6d2cfb5bbdc856d90da4",
+          "configs/host-os/recovery-sources.json": "d151a6bcc92853fb98ec5f16b9df453cef634376662b1f3ace67d9e52a4dfc4f",
+          "configs/host-os/recovery-systemd-logind.conf": "bbd516bc283d955dd21b21c53d4af7d532eafd41fa12bf935523c72d3fc7fa40",
+          "configs/host-os/recovery-systemd-udevd.conf": "daea4a722a7620a6cafd083bc4ceb62242c83b783dd88f7f84b7eb08543a57c0",
+          "configs/host-os/recovery-test-sv08-01.json": "1047d7cd5c2d823aae4b6f5bd590d289d9fc0465a0b056533fdc49bfd3926751",
+          "configs/host-os/sd-recovery-host/20-wired.network": "50fc15fd5dfe79b7fee81322ecb2b00587c668cac1b7d9296a5fc8cca7bb81bf",
+          "configs/host-os/sd-recovery-host/sd-host-keys.service": "ad5191aefb89e565857ee47f92fe37e2c9db1494a6a8c9ef2b359e12508cbca5",
+          "configs/host-os/sd-recovery-host/sd-host-ssh.service": "615ebc4ae04d7687dac9f8df3cc2602982b68d61749dca0f5f5fb982780460d4",
+          "configs/host-os/sd-recovery-host/sshd_config": "00a2aa0d29e78ba509c5e11ee019ada4cd6752a728c8c6c681704e830cdff3e7",
+          "configs/host-os/sd-recovery-host/sv08-recovery-display.service.d/reimage.conf": "2ed09579c29c57556be89e44774547de0e3d2e473c7f0003594421285f69ea08",
+          "configs/host-os/slot-boot.cmd": "de9774b5f249e99ee61b64c5c00d37c0e5d13873fa9bbee238ee8fc340f01391",
+          "configs/host-os/software-catalog.json": "cbb92d57f17fca9081ab52d2e4b8364c714de493d7f9cd5fd2124275a39aa239",
+          "configs/host-os/sshd.conf": "ff1800d853d84050eaa009c4970d54591210dfc9813bb408afffb1ddf52566c6",
+          "configs/host-os/sv08-admin-image-worker@.service": "446d16ae76c4f65c6f05195d0d188cd3bfa63e74fb89b912edbeb239fc456414",
+          "configs/host-os/sv08-boot-compile-candidate.json": "170776058948fdaf37831b289a17c7e46df422b21a619e7f5c85af487ddc0267",
+          "configs/host-os/sv08-boot-dram-diagnostic.json": "b20da935fc04d1f967bd43da23ab00d5eb73aa4a6ac299f9563d522b205e51a3",
+          "configs/host-os/sv08-default.env": "7b09c2d72a8cb60402187e4ac8904f79fc5b11d552a04d11ce416504561f08bf",
+          "configs/host-os/sv08-feed.service": "5e6e1ed4898e0f47152dbb794c79716361c158d89058e404df200b3b81bada99",
+          "configs/host-os/sv08-feed.timer": "4ccd0b030f42aa0d842e7d8f24cf529ac3ddccf3d23884d2a554cc4c88c894ec",
+          "configs/host-os/sv08-identity.service": "0a0a6e9aa2f26d73160219606ae9349516152749f4eb325c74cf3d45d43e7084",
+          "configs/host-os/sv08-identity.timer": "38b7875f9909ddb2884b71fcea6efacba7baff35e2bf3fcc4d5cd466f954970b",
+          "configs/host-os/sv08-managed-boot.fragment": "38d47ae70835e737c605be7f8d218af170c0c1b7f663b93afd5f001d2739482c",
+          "configs/host-os/sv08-rauc-policy.conf": "173d1b749b1e7f90edca5f633f1834ee9a5300abac6d1aa0c2014c30821ab29a",
+          "configs/host-os/sv08-rauc-service.conf": "296fad5627eb153affa0a1f2b43ec3148856534e42c3724a6097f561f9dbcd66",
+          "configs/host-os/sv08-recovery-display.service": "8b5818aa5428bcccb1f09cd5c18f24a0a143f6abfd047ff5d3b966d6209a9e9b",
+          "configs/host-os/sv08-recovery-prepare.service": "c1235b463a89bfbd55a34e972c2fa3176d8d3e0ca014f509942c47c42de03095",
+          "configs/host-os/sv08-recovery-private-mounts.service": "f4032c5383fe4a8327bdeb34b0a10d9c971f1173d9d5122dca41b1884d461a14",
+          "configs/host-os/sv08-sd-network-inputs.json": "9fe9d28a99953eba9585af27332777a14781dcb422f2fbe359f566e018133f69",
+          "configs/host-os/sv08-sd-network.fragment": "f9c09f447c2db19c78ed7a2af2659c5ebf24b23d40e17e1663b1f7d9c52f2c67",
+          "configs/host-os/sv08-uboot-ab.fragment": "57f47d83ee5af3ef21f4ea7a4f89d7ae98e74168f95ae68f0a6a641d873781be",
+          "configs/host-os/systemd/dpkg-db-backup.service.d/20-sv08-readonly.conf": "3a35f496901c9093d7315172842d94d99ac4dbbc1584d68cdf9d7469e244ab8d",
+          "configs/host-os/systemd/sv08-boot-health.service": "e54c0c1a28dcdbc39726fb26ecb5d2aae3f10fdd804408ed66403717ef06c321",
+          "configs/host-os/systemd/sv08-klipper.service": "58f7e5efe32e869640e3b5e173eca35f6522d4a36595f69cb141dbe2d08bfe3d",
+          "configs/host-os/systemd/sv08-mainsail.service": "bd5f0458c2e5140a9fb7deff80619b8f145c913dd00bb7cdf09b714fa9556a00",
+          "configs/host-os/systemd/sv08-moonraker.service": "9c9fa4b17c785411ee5d9520372febb868c2d651427ab9d59161dd2cf58e80bb",
+          "configs/host-os/systemd/sv08-network-rollback.service": "df46853f86b8d0b402cc1ee26527ea4f1faed3724b67dea9c84153d7ac36293e",
+          "configs/host-os/systemd/sv08-network-rollback.timer": "9f64f7c244ad1f837c04c931a2a484c8bb087e7dd18e006b8a9d41a078d84ab8",
+          "configs/host-os/systemd/sv08-prepare.service": "d14a8a94eccc9a84958fe25c8aa7e4f0299324c9bb834d97050f0e264168a4f9",
+          "configs/host-os/systemd/sv08-printer-api.service": "e08d96b1484fee22a1c05adef7663e064af01e05e99a0ba4b24648994061b9c4",
+          "configs/host-os/systemd/sv08-software-worker@.service": "9602a59fa35f40e6950c288072178c1ece2df207551d330b7959fdc862cab038",
+          "configs/host-os/systemd/sv08-web-auth.service": "b90121afb3548281bdf49ae5cab48d6fde599f2abf05f2d079643cb9638636f9",
+          "configs/host-os/systemd/sv08-web-prepare.service": "215d27dbe1d95c5c5cf2e2e8c9c54055824df1a03bc3e474055a16e6b1b00f91",
+          "configs/host-os/test-sv08-01-diagnostic.dts": "9ae4c97e3738dd61efeee7710f769a2a041f3c491ec944828ab0e883ecc646e9",
+          "configs/host/cairo-build-wheels.json": "d0b4b3c3802e868e2c98186985382e6482d7754f4890b2f34da6cfdba4fff78a",
+          "configs/host/compiled-source-wheels.json": "3e8549c5a81ffb0f0476968b5a079e897b98b2544ca13946e64cf88a97ab6c99",
+          "configs/host/klipperscreen-python313-arm64.lock": "e9be2dbccbd7085d97145d721066b5bf3a3ffb4b3a4e58dd870107e1d7e85f7b",
+          "configs/host/moonraker-inputs-arm64.json": "cf2baa2ee02457f48dd30ad0b8059eddd4a218957bfebb74b92219d237ea468a",
+          "configs/host/moonraker-python313-arm64.lock": "fbbd448bd5bccd566283a70536897853686e4abb2ec082792eb5450c04f49193",
+          "configs/host/test-sv08-01-python313-arm64.lock": "d075f11693e2fb940363a22018f3ac5c79eb7c80a31bbadeb4d22b1049cce1c8",
+          "configs/images/host-ab.json": "cb3a4844d03a3d8c7ae14aa0bd11daa0561a8cd9d34a3f4af0f5e7c7b401a599",
+          "configs/images/test-sv08-01-host.json": "1335b4a9abcda6899d6a1175b2af625234e1db48e19fb335e053e2da73e8813f",
+          "configs/mcu/test-sv08-01/katapult-usb-8mhz.config": "29a62b27968de8890907ece1764d1f30103da93f89d5aa681f90bdbf26ce7510",
+          "configs/mcu/test-sv08-01/klipper-usb-8mhz-8k.config": "41e7e14559eb94ebff88e178f4502308c2d11ad10bed983a38b8dbb09f38102f",
+          "docs/development/agent-execution.md": "4a83be8e1859af5412149d4aec9077001ad99590b9fec1d8fe7feac08a8e6fc3",
+          "docs/development/agent-followups.md": "451bafbeaba508b0cb39441b7369909aa2493ce272dff0ba60441e5a309d39d9",
+          "docs/development/artifact-preservation-20261001.md": "59a4104ddc26ee1c92eed82640c25696b650c0e031556ca0c3fa774f9df01fb6",
+          "docs/development/automatic-update-policy.md": "b97b774fb11bb341c5a97fc6dfb2a4f27f6896dbdfd2c5c47f3e4d3062d4b217",
+          "docs/development/beelink-storage-20261001.md": "5a688fa545487283bec76d142826e2b57793cd8dc627cf75749dc5358efbd978",
+          "docs/development/branch-archive-20261002.md": "fc388394ab3c891e2523a3b972eb361902ada78694ace74e5876e60fcad1f865",
+          "docs/development/branch-maintenance-20261010.json": "d38df101da0e91f4bb1d4e5505bb675cea46826e8417c24b5b488068d326f791",
+          "docs/development/branch-maintenance-20261010.md": "d528be4f1b8ee3ae82d0e073f9a21b4185cf0e20cd9d6c2b17d52a53367f263a",
+          "docs/development/cockpit-ui-ux-review-evidence.json": "8f502a6cd3916fe245e39ff72663b66baf18bf2adb895e5e422b05c8c17b9b56",
+          "docs/development/cockpit-ui-ux-workplan.md": "92b14a78eeb500c43baa8c1d1c472c74ee18e041f12b5470eb1ce5180a2a0a18",
+          "docs/development/codex-model-routing.md": "f3f32158bcfe185c3dbb320503fdcd46587dbaf12f770d315dc85e38d46c43fb",
+          "docs/development/feature-workflow-pilot.md": "a3d3ed528467881eebebfd0d23b6ac4a9ff72eade1247af447b27680b3351a66",
+          "docs/development/feature-workflow-review-cases-20260912.json": "98e7585fca4bae5bfa0dc45775b17345fc7d7388e0f00a93ab97a097a0d6d6d6",
+          "docs/development/feature-workflow-validation.md": "bd516847d7a86680bf0b6ce2d44303827791d83b5fb4ee96b64aed95a92dd487",
+          "docs/development/feature-workflow.md": "a1c5a62c99d9c971a95de6dca7e8fd7d6bd129482cf3c5d8be6ccb1bbe07fcd1",
+          "docs/development/goals-reset-20261001.md": "606e6dedb1c9e6c1a443a505d5fe0c9e6794f2b0070d4f2843b702ebe6a10397",
+          "docs/development/gpt6-context-audit.md": "4d7d3766e162b4d160c9dc37635d37d7e1128a78449b152db0d288fa4340e8dd",
+          "docs/development/h12-sd-delivery-plan-20261003.md": "6607231f22a4e5a5e8a52067ae6566d3dbb76b6dcdc1d0c0c7536ffd831de62e",
+          "docs/development/h616-claim-entropy-acquisition-20261002.md": "7acde518df6f3ee1d562b9d0f52d19ed15d8880873827dd30221084ff481ac8e",
+          "docs/development/h616-claim-startup-readiness-20261001.md": "f12af8ae85c6c7fee89fec8023f7c9313c5963793f26f90f695f5c6564b4574b",
+          "docs/development/host-boot-health-intake.md": "723733e4d86425dbce5b9da95b88c067d1f85c5e7571a92ec775740357e690b1",
+          "docs/development/parallel-host-work.md": "f52d2d4e2594e8e006bc84e4766d40fd1df398dae5a0ec1c29750184a2664caa",
+          "docs/development/parallel-printer-work.md": "2fefe87bebcaa752d4743c7e4157053eda41eed6cc4b67de0849b549134ead6e",
+          "docs/development/parallel-recovery-work.md": "df381cb1b62d862658ff49cb9ba67e8943f3bde7414d81bd3394562596c99028",
+          "docs/development/parallel-work.md": "148838fd99ef8fcfec3e280a695cf1c2cba9a00f7cc41263bf14cb0197a4bb48",
+          "docs/development/printer-candidate-sections.md": "4f84d2e7e1e06c339d8fbedc2eb1ab2586be074d4a62150e489a317afab7d76c",
+          "docs/development/printer-cockpit-panel.md": "4444f721eac4c4ca29baf876dec17f5b7a732b91fe632caf47a90f76d48a6f95",
+          "docs/development/printer-configuration-intake.md": "7524cb4c6b8e9f32f0851185f3926c17d0641152dc30f3794bda3fdc701e16a3",
+          "docs/development/printer-controls-proposal.md": "d33c52b76a05845f881d1abc6db94e4c1ebf692fb1769b5026c91f39b88c1f2e",
+          "docs/development/printer-definition-sources-design.md": "e411e1cbfb05fdb937ead0e60386e0717882b44edecfc50f7d58e10806dca279",
+          "docs/development/printer-hardware-catalog.md": "f90bf86c96d233ef1c0fd3171fdcb5caf776e08409f08862b382d53778191bd1",
+          "docs/development/printer-hardware-page-design.md": "2ba0bfdcc43a7266e806ecf87dfba56f328462dff2347192371b189d4e97d692",
+          "docs/development/printer-hardware-page-design/01-components.png": "44af4442a936693a5afa23c38bb3c59d0da2d65a87e62b655f5cd539f10a0124",
+          "docs/development/printer-hardware-page-design/02-bed-preset.png": "3ad4fa812274b3f0eab2e8d1d254d73ef5e9745f426c8181335ab9a195d20900",
+          "docs/development/printer-hardware-page-design/03-connections.png": "e8f1f81bec943460fc0e1600551979f50dd1f0fe4e9da4ac520608cdc12abb41",
+          "docs/development/printer-hardware-page-design/04-review-changes.png": "177ea885d6f89ce96cb17a28afdc6611f206bd08f6bb45f6a5caaec8dfea41b0",
+          "docs/development/printer-hardware-page-design/05-components-1024x600.png": "429ec422771dd05836fe4f276b9bd38c2b3288ff4759cfa4930556a23332bbbe",
+          "docs/development/printer-hardware-page-design/06-components-mobile.png": "c8234affaa3a7bbfccaec439c920e30e15d838682990363e341c967362c0c1d6",
+          "docs/development/printer-hardware-page-design/07-ready-to-apply.png": "646ff2b8407953b5d2c35a961f04d6d7652dab99976bb387ac5949fdedfeac7f",
+          "docs/development/printer-hardware-page-design/prototype.html": "5a680f49d2951e79afc7d30bf0a897f13dfbc8b808b5c293647bec6efb73fca5",
+          "docs/development/printer-hardware-page-design/render-checks.json": "e3b7adb8795c2b771c64ec2ddffd7a8875e03c1f47c4e53244e3e03a0478e7c3",
+          "docs/development/printer-public-format.md": "9645d795e50d1759313082aec245ca965687b0cabac0a0d4890ea36a8bd2a2ee",
+          "docs/development/recovery-intake-receipt-binding-20261001.md": "58e7a64ac24fd7e3d084f21e3e8c914da17d5d1d9a1bd71fa81d6596a79a2ce0",
+          "docs/development/terminalbench-20260929.csv": "afb0781b1ba1fa45c516c6864ab32a49e2320eaba18b762bb146890bca34a89a",
+          "docs/development/ui-ux-workflow.md": "cf2b186ee16573e8ff4d11e043348f7090335d402bb4779fefbb3f0be57d9544",
+          "examples/printer-definitions/LICENSE": "f5eab8a9f2526b211526f14eedd9b224ec26ec3833ff6423ae8bb8e8c6d6ec1f",
+          "examples/printer-definitions/README.md": "5cc9cb95540922465bbef98860142494718c078d2e0b15d6f772cc07d6bc74d0",
+          "examples/printer-definitions/catalog.json": "b08fb7765066534a59f82303c4b57be63e4e3b494703db28f0088cfec23bdd28",
+          "examples/printer-definitions/definitions/assembly.json": "e1a508adeb7b357ce66a7e6d9d20f6f5d0a5e780a0b504fe8406f1666ec3d9bc",
+          "examples/printer-definitions/definitions/bed.json": "481c1b5a6596d4e73cc277bfd4cd2512a957419b8c3898603282554c9a11ea84",
+          "examples/printer-definitions/definitions/behaviour.json": "3772825888447793ee9e1d7609ac0c0fbe2790b12b1c01b2d16e854931e75e8e",
+          "examples/printer-definitions/definitions/board.json": "113fa42c2048b9e88c782615759da8baa197121cddd199ae1be52e8b96f58104",
+          "examples/printer-definitions/fixtures/installation.json": "f707e7b448218f5319970174526149b384fefc13bef1cf2e9a502ba538094e75",
+          "runtime/sv08_admin.py": "b760ca55890be4c3ec5beb09ac29763b051bbcdc1f8526821ced136c13c51758",
+          "runtime/sv08_admin_history.py": "a660fe8e94df4b604e3949716205f5753fc14048e3624ee9b7223e924705d10b",
+          "runtime/sv08_admin_images.py": "9d34b7189c5001d7e3d7aa722a8c8ee3e27ad2b5bfd84f481bfe40ab3586123c",
+          "runtime/sv08_admin_jobs.py": "cc5d83140fe9617dcfa5b802ecbf270e28f93191aa9c284c90300fa8a0c0e0b5",
+          "runtime/sv08_admin_resolution.py": "f12d66e0620d2560b38c788a3cf646086bc642a25e24c4b55b71de1f72cd117b",
+          "runtime/sv08_admin_upload.py": "a773000b2e79120e875c2470b35e0c836d4738bcfe5e63e8c02778ec895cc502",
+          "runtime/sv08_admission.py": "32e683d28f6b3004b4b9bf7ec8562f0d0cae58ab34d1df677a387972598b9b1b",
+          "runtime/sv08_auto_reboot.py": "91f778ab14df667c5745c2d550357eec969a33f948564d55b7c0d678cfb50e11",
+          "runtime/sv08_boot.py": "a4995277b623ba32af671a675d3c9e34e735da4730d215d31c1a288e6849058c",
+          "runtime/sv08_boot_health.py": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+          "runtime/sv08_bundle.py": "c9fb80348ce154651fce5b8003456a4e1ec5bef7acf1b86ccfecef4e4be48d64",
+          "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+          "runtime/sv08_data_budget.py": "88e42b2af5be1a6c94d2e5d96702fca0a3fa3d3ce19968f3bf63e7d36f082757",
+          "runtime/sv08_environment_device.py": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+          "runtime/sv08_export.py": "a61e13d82ffd731f52c92cd2608f9a8e8b59258a861650a8d5fad8bf2472269e",
+          "runtime/sv08_feed.py": "b70282b57a006291a3f2d71ff5fd3f9206a5f1fa8a4f75c6fc2b734bbefede50",
+          "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+          "runtime/sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+          "runtime/sv08_mainsail_access.py": "e5ffae4b73b54e917df352bf212551d5901d315e4cf65f4d7dbbe612e6ef76a5",
+          "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+          "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+          "runtime/sv08_package.py": "2a93ac0c0b7a20e2870e0006b2bb8e7e2f337cbf5d54a2c6032c02ca9f4aae58",
+          "runtime/sv08_printer_catalog.py": "b788f50763872c61db6dd6ce47f3f31cde79a9ae424d44348d5589d2cb11f321",
+          "runtime/sv08_printer_compact.py": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+          "runtime/sv08_printer_compose.py": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+          "runtime/sv08_printer_definitions.py": "63153d3f0b68e3631808a9a9f57e0cd728374989a1b4afd4c90152bda593e4e7",
+          "runtime/sv08_printer_fields.py": "09a5e2d3e46f9098b03900114d46c94bd3a790ebe2f5b75630b4b87c221a4198",
+          "runtime/sv08_printer_generate.py": "447fa31abae308db9f170f7cecd173481f199f872b29706acd0a208842628862",
+          "runtime/sv08_printer_helper.py": "4bcc59abae514b90965260f1e1199ce0bde8218e25f3af59cd4db8b34c340ba3",
+          "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+          "runtime/sv08_printer_sources.py": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+          "runtime/sv08_printer_stack.py": "500cf615eda235afc162a5f51a6c0645ff6a179314ced27f0b05a55ede1115ea",
+          "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+          "runtime/sv08_rauc.py": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+          "runtime/sv08_rauc_bootloader.py": "8af3ce328994ab0715ad18ccfdbbc9312d1f4dc45fb34ac2c349f3850ee73170",
+          "runtime/sv08_rauc_service.py": "68470e12ea15790152481a1ca05ea112772f3074000f3d3926b26a982a09e614",
+          "runtime/sv08_recovery.py": "04f1877666d57122ecf73b8e4cdbc038c59c6173b8eaa29e9be6ac58cbc1d1aa",
+          "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+          "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+          "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+          "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+          "runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+          "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+          "runtime/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4",
+          "runtime/sv08_software.py": "13a64a14981c73adba9e1f93857bbb8c880d41a7d8904e8cc53e583ea0c37d6d",
+          "runtime/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+          "runtime/sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+          "runtime/sv08_transaction.py": "347e3ec520f11a66d422c6f7f75758f2cb2f5b6ff0ca5ce5362532125bbd22c2",
+          "runtime/sv08_update_policy.py": "23e796044eea543a964434888a47e0cd8cc59a6bdb32c9187c46384c3734b082",
+          "runtime/sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d",
+          "schemas/printer-definitions/v1/assembly.schema.json": "c9417aa5a1c0f5a104508f9fd8297bed671ef60aa39e2467dd508532e0074bac",
+          "schemas/printer-definitions/v1/behaviour.schema.json": "1cc861ec502f2098526a5e50293d411930149add9d5d195d698fbbd64ec49cf2",
+          "schemas/printer-definitions/v1/board.schema.json": "5e75fd598a2206a4ab1d05e5a107741d02c54eaeb89aaf74c7717bdb24dd9bc3",
+          "schemas/printer-definitions/v1/catalog.schema.json": "94c6c5260154f99ea12bf0b39ebcef1096c39f5a52cde1cbca25ad5088c9de27",
+          "schemas/printer-definitions/v1/compact.schema.json": "badd7a45e6fbcc023644537b74f811a5bed346760c79278973b6c10b26665982",
+          "schemas/printer-definitions/v1/component.schema.json": "cae37b3b72cae68b39e906414dd4866c905fd63d3ae4de0f0fee011c18c27cc2",
+          "schemas/printer-definitions/v1/connection.schema.json": "0303c5163c56c560cbce5f53bbcc28362dfc7394b5eae8fb9bfb2711c1691eb5",
+          "schemas/printer-definitions/v1/definition.schema.json": "322e56d6aa0f5d2c7697186eaa224f7c12459b9ab4336c2acbcf81f7f23b95d8",
+          "scripts/assemble_board_diagnostic.py": "7c1a67f7aefe671dc1b6da1737f433da330ee5bea896d9d658bd7ad44f769533",
+          "scripts/build_cb1_boot_candidate.py": "fa23f096fd1934586f60680133ee8f7c21c0d193ed152c8d7df312d805505a21",
+          "scripts/build_h616_recovery_handoff.py": "eefc700b63dd69eacd75d2d92d1165e96548ac6ef112598b5a0ab36522c3af3f",
+          "scripts/build_h616_reimage_candidate.py": "ba9ec247df77e94c1f5481c400a8d03905cb3a330cb4e8285e35f425506ef5bd",
+          "scripts/build_host_image.py": "20f48ee745897ca7311e950e0c7619758acddc15713aab3905f65fcae85c662c",
+          "scripts/build_qemu_reimage_mode.py": "dcb858c5d1480ccb4ffe3f90b43955a3de6657e509484265dca7be2f6d3cf784",
+          "scripts/build_sd_network_image.py": "db5cc1c44c3af1305274238481498160369f152230adf542800274a85a88f679",
+          "scripts/build_sd_recovery_host.py": "183ed110cec8a5f6157cf5388226271867674067190a71fee8a94153bd3d0e9c",
+          "scripts/build_streaming_wheel.py": "16cde47dcd8d304dde571dba5fe321c29f82813e7a7469e135392e9f7a0c6534",
+          "scripts/check_gpt_layout.py": "76538da8445f020141a87c4532f2beed5f884968b62c75e090693e4331438159",
+          "scripts/check_ui.py": "654e764413f2c9df8c9855f8c2c726cdecc7495fc57e518a2554ab244fa7362e",
+          "scripts/collect_hardware.py": "cd9b2534c6b84e38cc86562c3227aa37deceb2a2a3f590dd052a5e52bedd66ff",
+          "scripts/definition_repository_template.py": "9338095b9b758905173d86f4cf5b0d3067619956515012c40c9b6564835659d4",
+          "scripts/definition_repository_template/AGENTS.md": "f85c960708e67dc67d6857d907bdaaa8ce28eea951be2757e1d65ab9c35fb1b7",
+          "scripts/definition_repository_template/README.md": "ebb9d43a1aa92012c087493cb521ed78567699cc2308acb964eb87a2a5692ff9",
+          "scripts/definition_repository_template/gitignore": "9125804abf0173a0abdbdafe02106ddfb47da6b65c784823b46a5c3d7f58a5d9",
+          "scripts/definition_repository_template/schema-reference.md": "64590ff89bd62c9851ab8e44fed4cb4ea34935875609f64250c50eaf7b18dadc",
+          "scripts/definition_repository_template/update_catalog.py": "29b6d4893b8ae71d8f5b6ce161b4893bd94f9e9b92689eeea839aae1125dbc09",
+          "scripts/ed25519_build.py": "bbf877cff8d8a24b5ef60e7b6faa986bd3090e03ee7897d7ac71caa1323e3bc3",
+          "scripts/export_moonraker_lock.py": "60f4fb50a66d698b07eb263d292bb44b1bf1e3c2c29be5c705dd866e4ed241f1",
+          "scripts/feature_workflow.py": "db5b04dd8014922b51cef06134f1922aa37cb73d4d242e911efc8ab1affe2eea",
+          "scripts/finalize_diagnostic_host.py": "a042e6cc1de40258beeae25c6c8bfc9aba1e60a72c1e544405fc085a5231b811",
+          "scripts/integrate_host_os.py": "b0efd12f6e1fc2e8b5d49880aad1c9af64c49ebb7108465cf9c96e79e89d4329",
+          "scripts/live_h616_recovery_stage.py": "9516bd1c54b24baa955065f34cc0c0feffae3b628dd04370f0b505748e3d3c4b",
+          "scripts/measure_host_slot.py": "c793eb1d967ceefd70628481f5535ea2288093f6ffa909a7c9bcb83edd3bf367",
+          "scripts/package_klipper.py": "6fe764af352e4a04ad9c2d3c1780bce11cca48daf66de0f65f1ba0f4494094bb",
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/package_python_app.py": "6de8aca6ce95117ee0f9455872a1f5ef3cff74fe0a4c183431243f7b89d1378f",
+          "scripts/package_rauc.py": "4a99d0e7473687a434a75c44180506965ca7bcfd123d33b0e25297428d75b1ef",
+          "scripts/package_update_admission.py": "fa71c262cef68a6fd420ac2c4b7e416cfc3b93a127029244ce578a8f8c751c6f",
+          "scripts/prepare_boot_rearm.py": "65d04e589dd032e9ffcf149c14c185e6d5b526a3e6dbbc0f049db0ad6ed5b7b4",
+          "scripts/prepare_h616_reimage_job.py": "b32b3e357fea542c34e6c06a167b31e28ae412db94bfca7896c943ad91745b5b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "scripts/prepare_physical_update_qualification.py": "c7c276a4b588c3c1433a976629cbffc358b4527efa619f63dc77c12dd42dd47e",
+          "scripts/preview_admin_ui.py": "20a831550a675664b804abc5915d00d8a6e17229b2498c0ad222dbf3e4aa4865",
+          "scripts/printer_definitions.py": "d89327cb719c2024031ee2b478fc77b21a58564b6c404e8d855f5871638f9169",
+          "scripts/recovery_image.py": "9c5f8b6862014ec972b0307bc6b2d62e81cbfdf10bff003b15a08b51e717f93e",
+          "scripts/sd_boot_route.py": "21541c018215887b6329ba09a2acbc8280adb702a415d262e4b0a3f92613207d",
+          "scripts/serve_h616_reimage_job.py": "74e887386b4375c15492ee9f90178cce23ac7255e19c2e39a80b165447fb6e58",
+          "scripts/stage_admin_ui.py": "8e156f5e203b47ac2fa968068de8851e711c00ac0b21a0faba9fc088ca708290",
+          "scripts/stage_commissioning_host.py": "247a344c01c1ee24d3bf063ed417197bf7b09cee3ff60998979a5dc92950ec97",
+          "scripts/stage_h616_recovery_handoff.py": "3c8e5dd5860df80b9a810df6ed539aeb147d94cc9d2a53334a9fe23b6f003946",
+          "scripts/stage_printer_ui.py": "0e1c9782a8f91913cc0d1a6c7b0f7d4c6c5150baf5d1b419765baea457e490c9",
+          "scripts/sv08_recovery_boot_guard.py": "6ad655a7009ceb1b24482e3d01095e90c88006f81409d55965f5f4ae4a448e0f",
+          "scripts/sv08_serial_boot_route.py": "c38854a8bc46cc1696abb3a576b83149e8f761260267898ce2e477b3e9b9de90",
+          "scripts/update_factory_definitions.py": "d59669f2046d20a039b1270176da370bed628982a052bce3772599ce443cc37e",
+          "scripts/workflow_inventory.py": "3c58875fadcc2cca73354f9e73c87eb2d12aa2f7751848ab8a4ef2ce24ac654d",
+          "ui/host/app.js": "c4cda04fe96022fee81bd621e3c4818b330e51f2b9a5c614a89c666fbb2d2a2e",
+          "ui/host/identity.js": "b644b670fb6b382cec5b7a4d28a77d4a62b68e4312573193ea42851f244d67a0",
+          "ui/host/index.html": "5184275f76823fbeda2d3406164cb1725f5ae430c3a56f0e0df0897e2142e285",
+          "ui/host/mainsail-access.js": "5883f6a27469c3e8d7b0bed9bdf10833ad6565eda6d06fff5ee2c94d878aea93",
+          "ui/host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+          "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+          "ui/host/network.js": "a29b3e397b8569cd98fed69fc32d597972f2157a4f68c9910f69d935c9cc027d",
+          "ui/host/session.js": "b2b7f676f14f87857f90a93f90ffa4aa078c4dc6056d0860607d5161b1d454d4",
+          "ui/host/software.js": "45cb828d2b14a4d8369c7bf4e83f52821e394b1383bb1091e57006a06841a1a7",
+          "ui/host/style.css": "bc3ecc71c0903e3e840893791a824ca7286b7e52f177ee3d376fc1bb011eb2b6",
+          "ui/host/upload.js": "f9a0e331b389be5c16f1c53adcba8d1d580eee6afb9cb7e88537daed14734c71",
+          "ui/printer/app.js": "2e27254b1064c20c8a16e3334c168ec88cd246a9664a6a5f46c35626360a9332",
+          "ui/printer/index.html": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+          "ui/printer/manifest.json": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+          "ui/printer/panel.html": "b40eb61de05cd7224a5a1cbb1818b6046eada2830a4ad5f62462b11b962076e9",
+          "ui/printer/redirect.js": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+          "ui/printer/session.js": "a5e70c69b2093ea1439b0ffc93fbf566130744ab51290603be0747c24629e3ef",
+          "ui/printer/style.css": "10f0629448a39a21cc26c7200e82348b17d0546f2e7745848110ea9759aff72d"
+        },
+        "physical_hardware": false,
+        "scope": "Tracked public staging source only",
+        "source_commit": "0d16b6259486904ac07dd8c4a00f59df3eb87cc0"
+      },
+      "staged_sha256": {
+        "/usr/share/cockpit/sv08-host/network.js": "a29b3e397b8569cd98fed69fc32d597972f2157a4f68c9910f69d935c9cc027d",
+        "/usr/share/cockpit/sv08-host/session.js": "b2b7f676f14f87857f90a93f90ffa4aa078c4dc6056d0860607d5161b1d454d4",
+        "/usr/share/cockpit/sv08-host/style.css": "bc3ecc71c0903e3e840893791a824ca7286b7e52f177ee3d376fc1bb011eb2b6",
+        "/usr/share/cockpit/sv08-host/upload.js": "f9a0e331b389be5c16f1c53adcba8d1d580eee6afb9cb7e88537daed14734c71",
+        "/usr/share/cockpit/sv08-host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "/usr/share/cockpit/sv08-host/software.js": "45cb828d2b14a4d8369c7bf4e83f52821e394b1383bb1091e57006a06841a1a7",
+        "/usr/share/cockpit/sv08-host/identity.js": "b644b670fb6b382cec5b7a4d28a77d4a62b68e4312573193ea42851f244d67a0",
+        "/usr/share/cockpit/sv08-host/app.js": "c4cda04fe96022fee81bd621e3c4818b330e51f2b9a5c614a89c666fbb2d2a2e",
+        "/usr/share/cockpit/sv08-host/mainsail-access.js": "5883f6a27469c3e8d7b0bed9bdf10833ad6565eda6d06fff5ee2c94d878aea93",
+        "/usr/share/cockpit/sv08-host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+        "/usr/share/cockpit/sv08-host/index.html": "be3f5e7cc98316e956af88367bc5f0698347043d6d821a2f05ee7685a72f16b0",
+        "/usr/share/cockpit/sv08-printer/panel.html": "b40eb61de05cd7224a5a1cbb1818b6046eada2830a4ad5f62462b11b962076e9",
+        "/usr/share/cockpit/sv08-printer/style.css": "10f0629448a39a21cc26c7200e82348b17d0546f2e7745848110ea9759aff72d",
+        "/usr/share/cockpit/sv08-printer/definition-repository-starter.zip": "fe4df2dafaf5360343c7afb2e6c9bf987fc08ff468d8f6836a94c37f5b84ca19",
+        "/usr/share/cockpit/sv08-printer/app.js": "2e27254b1064c20c8a16e3334c168ec88cd246a9664a6a5f46c35626360a9332",
+        "/usr/share/cockpit/sv08-printer/redirect.js": "536e851662ba2b2db54296b76665f7699dd8140bc7bbd6dc852a4ed569fff14c",
+        "/usr/share/cockpit/sv08-printer/definition-schema-reference.zip": "c3ee1b0f443c6eb31e84e39052b45c8dda6d376a0d585d3064fd2bec71864b69",
+        "/usr/share/cockpit/sv08-printer/manifest.json": "acde271ee7268e45f8c08f5cc267041b6f40913c3537fc533d91382c69df639e",
+        "/usr/share/cockpit/sv08-printer/index.html": "b4eb04ebc6f12c2c438fbad0ed27bb1e393d6a0a9fbdc394ef9cb02c29444b0e",
+        "/usr/lib/sv08/sv08_package.py": "2a93ac0c0b7a20e2870e0006b2bb8e7e2f337cbf5d54a2c6032c02ca9f4aae58",
+        "/usr/lib/sv08/sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d",
+        "/usr/lib/sv08/sv08_boot.py": "a4995277b623ba32af671a675d3c9e34e735da4730d215d31c1a288e6849058c",
+        "/usr/lib/sv08/sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+        "/usr/lib/sv08/sv08_printer_compact.py": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+        "/usr/lib/sv08/sv08_printer_compose.py": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+        "/usr/lib/sv08/sv08_admission.py": "32e683d28f6b3004b4b9bf7ec8562f0d0cae58ab34d1df677a387972598b9b1b",
+        "/usr/lib/sv08/sv08_transaction.py": "347e3ec520f11a66d422c6f7f75758f2cb2f5b6ff0ca5ce5362532125bbd22c2",
+        "/usr/lib/sv08/sv08_bundle.py": "c9fb80348ce154651fce5b8003456a4e1ec5bef7acf1b86ccfecef4e4be48d64",
+        "/usr/lib/sv08/sv08_feed.py": "b70282b57a006291a3f2d71ff5fd3f9206a5f1fa8a4f75c6fc2b734bbefede50",
+        "/usr/lib/sv08/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+        "/usr/lib/sv08/sv08_rauc_bootloader.py": "8af3ce328994ab0715ad18ccfdbbc9312d1f4dc45fb34ac2c349f3850ee73170",
+        "/usr/lib/sv08/sv08_mainsail_access.py": "e5ffae4b73b54e917df352bf212551d5901d315e4cf65f4d7dbbe612e6ef76a5",
+        "/usr/lib/sv08/sv08_auto_reboot.py": "91f778ab14df667c5745c2d550357eec969a33f948564d55b7c0d678cfb50e11",
+        "/usr/lib/sv08/sv08_printer_stack.py": "500cf615eda235afc162a5f51a6c0645ff6a179314ced27f0b05a55ede1115ea",
+        "/usr/lib/sv08/sv08_update_policy.py": "23e796044eea543a964434888a47e0cd8cc59a6bdb32c9187c46384c3734b082",
+        "/usr/lib/sv08/sv08_rauc_service.py": "68470e12ea15790152481a1ca05ea112772f3074000f3d3926b26a982a09e614",
+        "/usr/lib/sv08/qemu-rauc.py": "7e3fc91703ed3487d36b70da4359383270566a023bc5242163e6d39c01f7f17e",
+        "/usr/lib/sv08/sv08_printer_generate.py": "447fa31abae308db9f170f7cecd173481f199f872b29706acd0a208842628862",
+        "/usr/lib/sv08/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "/usr/lib/sv08/sv08_admin_jobs.py": "cc5d83140fe9617dcfa5b802ecbf270e28f93191aa9c284c90300fa8a0c0e0b5",
+        "/usr/lib/sv08/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+        "/usr/lib/sv08/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "/usr/lib/sv08/sv08_printer_catalog.py": "b788f50763872c61db6dd6ce47f3f31cde79a9ae424d44348d5589d2cb11f321",
+        "/usr/lib/sv08/sv08_printer_definitions.py": "63153d3f0b68e3631808a9a9f57e0cd728374989a1b4afd4c90152bda593e4e7",
+        "/usr/lib/sv08/ux-access-seed.py": "0265457d3165af58e80959901072bc300d1407bd26dafb929048c0bbc089c9c4",
+        "/usr/lib/sv08/sv08_printer_fields.py": "09a5e2d3e46f9098b03900114d46c94bd3a790ebe2f5b75630b4b87c221a4198",
+        "/usr/lib/sv08/sv08_boot_health.py": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+        "/usr/lib/sv08/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+        "/usr/lib/sv08/sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+        "/usr/lib/sv08/composed-fixture.py": "8c9adbdec1870128373be3057c799c9dfe3a2501da6787904e7b58393e4fca17",
+        "/usr/lib/sv08/sv08_admin_upload.py": "a773000b2e79120e875c2470b35e0c836d4738bcfe5e63e8c02778ec895cc502",
+        "/usr/lib/sv08/sv08_software.py": "13a64a14981c73adba9e1f93857bbb8c880d41a7d8904e8cc53e583ea0c37d6d",
+        "/usr/lib/sv08/sv08_export.py": "a61e13d82ffd731f52c92cd2608f9a8e8b59258a861650a8d5fad8bf2472269e",
+        "/usr/lib/sv08/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+        "/usr/lib/sv08/sv08_admin_images.py": "9d34b7189c5001d7e3d7aa722a8c8ee3e27ad2b5bfd84f481bfe40ab3586123c",
+        "/usr/lib/sv08/sv08_recovery.py": "04f1877666d57122ecf73b8e4cdbc038c59c6173b8eaa29e9be6ac58cbc1d1aa",
+        "/usr/lib/sv08/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+        "/usr/lib/sv08/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+        "/usr/lib/sv08/qemu-probe.py": "e1b016ed87616e452f097d8f677f1f2203dcfde35a30d03eb9e15de642f51b0d",
+        "/usr/lib/sv08/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+        "/usr/lib/sv08/sv08_environment_device.py": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+        "/usr/lib/sv08/sv08_printer_helper.py": "4bcc59abae514b90965260f1e1199ce0bde8218e25f3af59cd4db8b34c340ba3",
+        "/usr/lib/sv08/sv08_admin_resolution.py": "f12d66e0620d2560b38c788a3cf646086bc642a25e24c4b55b71de1f72cd117b",
+        "/usr/lib/sv08/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+        "/usr/lib/sv08/sv08_printer_sources.py": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+        "/usr/lib/sv08/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4",
+        "/usr/lib/sv08/sv08_data_budget.py": "88e42b2af5be1a6c94d2e5d96702fca0a3fa3d3ce19968f3bf63e7d36f082757",
+        "/usr/lib/sv08/sv08_rauc.py": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+        "/usr/lib/sv08/sv08_admin_history.py": "a660fe8e94df4b604e3949716205f5753fc14048e3624ee9b7223e924705d10b",
+        "/usr/lib/sv08/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "/usr/lib/sv08/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+        "/usr/lib/sv08/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+        "/usr/lib/sv08/sv08_admin.py": "b760ca55890be4c3ec5beb09ac29763b051bbcdc1f8526821ced136c13c51758"
+      },
+      "fixture_limitations": [
+        "Mainsail managed access uses fresh synthetic status-only policy and ephemeral config; no apply",
+        "Production identity generation and trust untested; inert fixture prerequisite",
+        "Legacy synthetic RAUC; child package provenance removed to use documented strict legacy staging branch; no update operations"
+      ]
+    }
+  },
+  "installed_screenshots": [
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/shell-1440.png",
+      "sha256": "df5394ed4a5a6760f87408a931e2fe1ee50aaf845802c54f06e00b2855381353",
+      "assessment": "Native shell wraps without overflow and idle history is hidden; empty hardware/transitional status does not establish populated factory-layout or settled authority wording."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/shell-1024.png",
+      "sha256": "4f4f7e4023d5416c532c98ec386ef4a329eff4586f85c77dc3e9e1ed3906a405",
+      "assessment": "Native shell wraps without overflow and idle history is hidden; empty hardware/transitional status does not establish populated factory-layout or settled authority wording."
+    },
+    {
+      "path": "/home/drew/.sv08-cockpit-ux-installed-20261011/shell-390.png",
+      "sha256": "9f0ff1ce52077e52586a0aac6af8b49d208912684f7b79be3a98eb83849b9da1",
+      "assessment": "Native shell wraps without overflow and idle history is hidden; empty hardware/transitional status does not establish populated factory-layout or settled authority wording."
+    }
+  ]
+}
