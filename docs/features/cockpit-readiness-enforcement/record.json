@@ -94,7 +94,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Hosted disposable deterministic tests and documentation only; no hardware, private data, deployment or paid model calls.",
-      "status": "validated",
+      "status": "done",
       "title": "Wire real ownership tests into CI and record deployment acceptance",
       "validation": {
         "actor": "root/coordinator",
