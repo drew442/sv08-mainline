@@ -88,7 +88,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
-      "status": "validated",
+      "status": "done",
       "title": "Fix boot ownership and recover installed hardware loading",
       "validation": {
         "actor": "root/coordinator",
