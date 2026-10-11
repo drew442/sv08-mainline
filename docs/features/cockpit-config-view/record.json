@@ -47,11 +47,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "491ab27d455e471daa3605a97275a1e8",
-        "session": "cockpit-view-20261011"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_admin.py",
         "runtime/sv08_printer_helper.py",
@@ -87,13 +83,19 @@
         "tests/admin_drafts_browser.mjs",
         "tests/printer_browser.mjs",
         "docs/features/cockpit-config-view/evidence.md",
-        "docs/features/cockpit-config-view/evidence.json"
+        "docs/features/cockpit-config-view/evidence.json",
+        "scripts/preview_admin_ui.py",
+        "tests/test_admin_history_browser_fixture.py",
+        "docs/features/cockpit-config-view/scope-extension.md",
+        "docs/features/cockpit-config-view/deployment.md",
+        "docs/features/cockpit-config-view/deployment.json",
+        "docs/features/cockpit-config-view/root-entry-review.json"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Coordinator grants exact fixture transport files and deployment evidence paths; source and acceptance unchanged; prior run and cumulative allowances preserved; renew recorded ownership before restoring completed patch.",
       "review_policy": "self",
       "review_reason": "Offline implementation self-validated. Independent consequential-operation review separately required before installing new limited sudo entry; owner-authorized viewing excludes private credentials.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and validate read-only configuration access",
       "validation": null,
       "verification": null
