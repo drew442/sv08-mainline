@@ -1,0 +1,100 @@
+{
+  "format_version": 2,
+  "id": "network-journey",
+  "kind": "feature",
+  "title": "Readable and recoverable Network journey",
+  "author": "root/coordinator",
+  "created": "2026-10-11",
+  "priority": 1,
+  "proposal": "docs/features/network-journey/proposal.md",
+  "requirements": [
+    "docs/features/network-journey/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "nj-1",
+      "description": "Ordinary reads and administrator-gated writes",
+      "environment": "offline"
+    },
+    {
+      "id": "nj-2",
+      "description": "Readable Ethernet/Wi-Fi state, addresses and interface",
+      "environment": "offline"
+    },
+    {
+      "id": "nj-3",
+      "description": "Supported Wi-Fi guidance and prerequisites",
+      "environment": "offline"
+    },
+    {
+      "id": "nj-4",
+      "description": "Structured reviews; cancel/Escape no mutation and focus restored",
+      "environment": "offline"
+    },
+    {
+      "id": "nj-5",
+      "description": "Prominent deadline/reconnect/rollback and truthful uncertain outcomes",
+      "environment": "offline"
+    },
+    {
+      "id": "nj-6",
+      "description": "Nonsecret drafts/focus retained; secrets cleared; unavailable targets invalid",
+      "environment": "offline"
+    },
+    {
+      "id": "nj-7",
+      "description": "Keyboard and 390/1024/1440/200% reflow without overflow",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and assess Network journey",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "nj-1",
+        "nj-2",
+        "nj-3",
+        "nj-4",
+        "nj-5",
+        "nj-6",
+        "nj-7"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible UI and fixture tests; unchanged backend protections; no live printer or network operations.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/host/network.js",
+        "ui/host/index.html",
+        "ui/host/style.css",
+        "tests/test_network_ui.py",
+        "tests/config_view_browser.mjs",
+        "docs/features/network-journey/evidence.md",
+        "docs/features/network-journey/evidence.json",
+        "docs/features/network-journey/visuals"
+      ],
+      "input_paths": [
+        "runtime/sv08_network.py",
+        "ui/host/view.js",
+        "ui/host/session.js",
+        "tests/test_printer_browser_fixture.py"
+      ]
+    }
+  ]
+}

@@ -348,3 +348,7 @@ power cycles unnecessarily because diagnostic boot attempts are finite. Use
 HW-667 for authorized resets and hold relay power off for future media changes.
 No further owner action is needed for H12. Broader project work remains governed
 by its existing requirements and [remaining-work plan](../docs/remaining-work-plan.md).
+
+## Network journey delivery — 2026-10-11
+
+Owner-requested bounded Network UI improvement; source task and acceptance criteria: [network-journey](../docs/features/network-journey/proposal.md). Publish a tested review PR, without merge/deployment/printer access. Prior Hardware task is integrated after owner merge of PR #7. Native Hardware delivery goal remains complete; no unrelated native goal replaced.
