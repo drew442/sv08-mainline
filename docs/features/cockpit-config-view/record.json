@@ -1,0 +1,85 @@
+{
+  "author": "root/coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "id": "view-and-write-boundary",
+      "environment": "offline",
+      "description": "Authenticated non-elevated views work across all sections; bounded root read entry cannot mutate/export secrets; existing mutation guards remain."
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
+  "format_version": 2,
+  "id": "cockpit-config-view",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/cockpit-config-view/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/cockpit-config-view/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "view-and-write-boundary"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_admin.py",
+        "runtime/sv08_printer_helper.py",
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_network.py",
+        "runtime/sv08_identity.py",
+        "runtime/sv08_mainsail_access.py",
+        "runtime/sv08_software.py",
+        "ui/host/session.js",
+        "ui/host/navigation.js",
+        "scripts/check_installed_cockpit.py",
+        "tests/cockpit_browser.mjs"
+      ],
+      "owned_paths": [
+        "runtime/sv08_view.py",
+        "configs/host-os/sv08-view-sudoers",
+        "scripts/stage_admin_ui.py",
+        "ui/host/view.js",
+        "ui/host/index.html",
+        "ui/host/app.js",
+        "ui/host/upload.js",
+        "ui/host/network.js",
+        "ui/host/software.js",
+        "ui/host/identity.js",
+        "ui/host/mainsail-access.js",
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "tests/test_config_view.py",
+        "tests/config_view_browser.mjs",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "tests/admin_browser.mjs",
+        "tests/admin_drafts_browser.mjs",
+        "tests/printer_browser.mjs",
+        "docs/features/cockpit-config-view/evidence.md",
+        "docs/features/cockpit-config-view/evidence.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Offline implementation self-validated. Independent consequential-operation review separately required before installing new limited sudo entry; owner-authorized viewing excludes private credentials.",
+      "status": "pending",
+      "title": "Implement and validate read-only configuration access",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "View Cockpit configuration without administrator elevation"
+}
