@@ -351,4 +351,4 @@ by its existing requirements and [remaining-work plan](../docs/remaining-work-pl
 
 ## Network journey delivery — 2026-10-11
 
-Owner-requested bounded Network UI improvement; source task and acceptance criteria: [network-journey](../docs/features/network-journey/proposal.md). Publish a tested review PR, without merge/deployment/printer access. Prior Hardware task is integrated after owner merge of PR #7. Native Hardware delivery goal remains complete; no unrelated native goal replaced.
+Network delivery implementation and NJ1–7 acceptance complete; source task self-validated for review publication, owner integration pending. Source task and acceptance criteria: [network-journey](../docs/features/network-journey/proposal.md). Publish a tested review PR, without merge/deployment/printer access. Prior Hardware task is integrated after owner merge of PR #7. Native Hardware delivery goal remains complete; no unrelated native goal replaced.
