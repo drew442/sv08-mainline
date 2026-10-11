@@ -23,6 +23,8 @@
         $('reconciliation').hidden = !(reconcile || diagnostic);
         for(const control of $('connection-inspector').querySelectorAll('select'))control.disabled=busy||reconcile||diagnostic||!authority();
         $('reconcile').disabled = $('discard').disabled = busy || !authority();
+        for(const control of $('selected-definitions').querySelectorAll('input,select,button'))control.disabled=busy||reconcile||diagnostic||!authority();
+        renderJourney();
     }
     async function rpc(request) {
         if (request.action === 'status') {
@@ -36,8 +38,8 @@
         const proc = cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_printer_helper.py'], {superuser:'require',err:'message'});
         proc.input(JSON.stringify(request));
         let raw;
-        try { raw = await proc; } catch (error) { if (['save','apply','restore','publication_apply','publication_reconcile','source_add','source_disable','source_enable','source_remove','publication_restore'].includes(request.action)) reconcile = true; throw error; }
-        if (!authority() || attempt !== (status ? statusEpoch : epoch)) { if (['save','apply','restore','publication_apply','publication_reconcile','source_add','source_disable','source_enable','source_remove','publication_restore'].includes(request.action)) reconcile = true; throw new Error('Session or selections changed. Reconcile saved configuration; submitted operations may have completed.'); }
+        try { raw = await proc; } catch (error) { if (['save','apply','restore','publication_apply','publication_reconcile','source_add','source_disable','source_enable','source_remove','publication_restore'].includes(request.action)) { reconcile = true; appliedText=null; } throw error; }
+        if (!authority() || attempt !== (status ? statusEpoch : epoch)) { if (['save','apply','restore','publication_apply','publication_reconcile','source_add','source_disable','source_enable','source_remove','publication_restore'].includes(request.action)) { reconcile = true; appliedText=null; } throw new Error('Session or selections changed. Reconcile saved configuration; submitted operations may have completed.'); }
         const reply = JSON.parse(raw);
         if (!reply.ok) throw new Error(reply.error);
         return reply.result;
@@ -304,6 +306,46 @@
     function categoryIcon(category){const path=(categories.find(c=>c[0]===category)??categories.find(c=>c[0]==='boards'))[2];const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 32 32');svg.setAttribute('aria-hidden','true');const p=document.createElementNS(svg.namespaceURI,'path');p.setAttribute('d',path);svg.append(p);return svg;}
     function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(['probe','pressure_switch'].includes(device.kind))return 'probe';if(['extruder','accelerometer'].includes(device.kind)||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber','heater_fan'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
     function setView(view){localView=view;for(const name of ['components','changes'])$(name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='changes')renderChanges();}
+    function selectedDefinitions(state=draft){return (state?.definition_plan?.selections??[]).map(ref=>({ref,definition:state.definition_plan.snapshots[ref.source+'::'+ref.id+'@'+ref.version]})).filter(row=>row.definition);}
+    function inputValue(input,state=draft){const [name,key]=input.target.split('.');return state.definition_plan?.instance_values?.[input.target]??input.default??state.devices.find(d=>d.name===name)?.settings[key]??state.boards[name]?.[key];}
+    function componentChanges(){
+        if(!draft||!saved?.draft?.devices)return 0;
+        const affected=new Set(categories.filter(([key])=>JSON.stringify(draft.devices.filter(d=>categoryFor(d)===key))!==JSON.stringify(saved.draft.devices.filter(d=>categoryFor(d)===key))||JSON.stringify(selectedDefinitions().filter(r=>r.definition.category===key).map(r=>r.ref))!==JSON.stringify(selectedDefinitions(saved.draft).filter(r=>r.definition.category===key).map(r=>r.ref))).map(([key])=>key));
+        if(JSON.stringify(draft.boards)!==JSON.stringify(saved.draft.boards))affected.add('boards');
+        for(const {definition} of selectedDefinitions())if(Object.values(definition.inputs??{}).some(input=>JSON.stringify(inputValue(input))!==JSON.stringify(inputValue(input,saved.draft))))affected.add(definition.category);
+        return affected.size;
+    }
+    function knownAttention(){
+        const findings=[];
+        if(!draft?.devices)return findings;
+        for(const device of draft.devices)if(device.kind==='sensor'&&!device.settings.curve)findings.push({category:categoryFor(device),text:'Needs your input: identify the fitted '+pretty(device.name),target:'sensor:'+device.name});
+        for(const {definition} of selectedDefinitions()){
+            const category=categories.some(([key])=>key===definition.category)?definition.category:'boards';
+            for(const input of Object.values(definition.inputs??{}))if(input.required&&inputValue(input)===undefined)findings.push({category,text:'Needs your input: '+input.label,target:input.type==='curve'?'sensor:'+input.target.split('.')[0]:input.target});
+            for(const gap of definition.unresolved??[])findings.push({category,text:'Definition incomplete: '+definition.name+' — '+gap});
+        }
+        return findings;
+    }
+    function openComponent(category,target){
+        selectedCategory=category;setView('components');renderDesign();
+        const control=target?.startsWith('sensor:')?Array.from($('sensors').querySelectorAll('[data-sensor]')).find(e=>e.dataset.sensor===target.slice(7)):Array.from($('selected-definitions').querySelectorAll('[data-input-target]')).find(e=>e.dataset.inputTarget===target);
+        (control&&!control.disabled?control:$('detail-title')).focus();$('detail-panel').scrollIntoView({block:'nearest'});
+    }
+    function renderJourney(){
+        if(diagnostic||!draft?.devices||!saved){$('draft-state').textContent=diagnostic?'Stored configuration unavailable for editing':'Loading selections…';$('candidate-state').textContent=diagnostic?'Not assessed':'Loading…';$('application-state').textContent='Not checked in this session';$('attention').hidden=true;$('attention-list').replaceChildren();$('access-state').textContent=diagnostic?'Export retained configuration for diagnosis.':!window.sv08Session?.available?'Log in to view configuration.':'';return;}
+        const count=componentChanges(),candidate=saved.current;
+        $('draft-state').textContent=changed?'Unsaved selections · '+count+' changed component'+(count===1?'':'s'):'Saved draft · no changes';
+        $('candidate-state').textContent=candidate?'Saved inactive candidate · '+({sensors:'Sensors only',setup:'Setup (printing blocked)',full:'Full SV08'}[candidate.mode]??candidate.mode)+(JSON.stringify(candidate.draft)!==JSON.stringify(draft)?' · differs from these selections':''):'No prepared configuration';
+        $('application-state').textContent=reconcile?'Outcome unknown · check saved state before retrying':appliedText&&candidate?.text===appliedText?'Confirmed in this session · printer remains stopped':'Not checked · active configuration unknown';
+        $('access-state').textContent=busy?'Working… wait for the result before continuing.':reconcile?'Your local selections are retained. Reconcile or discard them below.':diagnostic?'Editing disabled: export the retained configuration for diagnosis.':!authority()?'Administrator access is required to save or apply.':'Draft only. Calibration and commissioning are separate.';
+        const findings=knownAttention(),list=$('attention-list');list.replaceChildren();$('attention').hidden=!findings.length;$('attention-title').textContent=findings.length+' known item'+(findings.length===1?'':'s')+' need attention';
+        for(const finding of findings){const item=el('li'),button=el('button',finding.text+' · '+(categories.find(c=>c[0]===finding.category)?.[1]??'Hardware'));button.dataset.attentionCategory=finding.category;button.onclick=()=>openComponent(finding.category,finding.target);item.append(button);list.append(item);}
+        $('change-count').textContent=String(count);
+        const prepared=!changed&&candidate?.mode==='full'&&JSON.stringify(candidate.draft)===JSON.stringify(draft);
+        $('selection-status').textContent=changed?'Unsaved component selections':appliedText&&candidate?.text===appliedText?'Application confirmed · printer remains stopped':candidate?'Draft saved · candidate prepared; application not checked this session':'Draft saved · no prepared configuration';
+        $('next').textContent=prepared?'Review application':'Review configuration';
+        $('next-detail').textContent=prepared?'Review exact managed files and stopped-printer admission before applying.':'Review settings first. Nothing is applied when you select a part.';
+    }
     function renderDesign(){
         $('board-summary').textContent=Object.entries(draft.boards).map(([role])=>boardData(role)?.label??'Unknown '+role).join(' · ')||'Boards not selected';
         const root=$('cards');root.replaceChildren();
@@ -312,7 +354,7 @@
             const b=el('button');b.className='printer-card';b.dataset.category=key;b.setAttribute('aria-current',String(key===selectedCategory));
             const svg=categoryIcon(key);
             const text=el('span');text.append(el('strong',title),el('small',refs.map(r=>draft.definition_plan.snapshots[r.source+'::'+r.id+'@'+r.version].name).join(', ')||devices.map(d=>d.name.replaceAll('_',' ')).join(', ')||(key==='boards'?'Configure controller references':'Not specified')));
-            const missing=devices.some(d=>d.kind==='sensor'&&!d.settings.curve),status=el('span',missing?'Needs sensor':devices.length?'Selections available':'Not specified');status.className='printer-status'+(missing?' needs':'');text.append(status);b.append(svg,text);b.onclick=()=>{selectedCategory=key;renderDesign();renderDefinitionChoices();$('detail-title').focus();};root.append(b);
+            const missing=knownAttention().some(f=>f.category===key),status=el('span',missing?'Needs attention':devices.length||refs.length?'Selected in draft':'Not specified');status.className='printer-status'+(missing?' needs':'');text.append(status);b.append(svg,text);b.onclick=()=>{selectedCategory=key;renderDesign();renderDefinitionChoices();$('detail-title').focus();};root.append(b);
         }
         $('detail-panel').hidden=!selectedCategory;$('detail-title').textContent=categories.find(c=>c[0]===selectedCategory)?.[1]??'';$('detail-title').tabIndex=-1;
         $('boards').hidden=selectedCategory!=='boards';$('advanced').hidden=!advancedMode;$('advanced').open=advancedMode;
@@ -325,7 +367,7 @@
         const prepared=!changed&&saved.current?.mode==='full'&&JSON.stringify(saved.current.draft)===JSON.stringify(draft);
         $('next').textContent=prepared?'Review application':'Review configuration';
         $('next-detail').textContent=prepared?'Review exact managed files and stopped-printer admission before applying.':'Review settings first. Nothing is applied when you select a part.';
-renderChanges();renderDefinitionChoices();
+renderChanges();renderDefinitionChoices();renderJourney();
         if(location.hash==='#printer-connections')renderConnections();
     }
     function definitionEffects(before,after,name,description=''){
@@ -353,19 +395,30 @@ renderChanges();renderDefinitionChoices();
             const compatible=d.kind==='board'||(d.compatibility.boards??[]).every(id=>Object.values(draft.boards).some(b=>b.id===id));
             const b=el('button');b.className='printer-choice';b.dataset.definitionReference=definitionKey(row);b.append(el('strong',d.name),el('small',row.origin+' · '+d.version),el('small',compatible?'Documented defaults; instance details remain local':'Choose a compatible board first'));b.disabled=!compatible||!authority()||busy||diagnostic||reconcile;b.onclick=()=>previewDefinition(row);root.append(b);
         }
-        for(const ref of draft.definition_plan?.selections??[]){const d=draft.definition_plan.snapshots[ref.source+'::'+ref.id+'@'+ref.version];if(d.category!==selectedCategory)continue;for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=draft.definition_plan.instance_values?.[inp.target];root.append(field(inp.label,inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{draft.definition_plan.instance_values??={};if(v===undefined)delete draft.definition_plan.instance_values[inp.target];else draft.definition_plan.instance_values[inp.target]=v;edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined));}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
+        const selected=$('selected-definitions');selected.replaceChildren();
+        const selectedRows=selectedDefinitions().filter(row=>row.definition.category===selectedCategory).sort((a,b)=>Number(Object.values(b.definition.inputs??{}).some(input=>input.required&&inputValue(input)===undefined))-Number(Object.values(a.definition.inputs??{}).some(input=>input.required&&inputValue(input)===undefined)));
+        for(const {ref,definition:d} of selectedRows){const root=el('div');root.className='printer-selected-definition';root.append(el('h3',d.name),el('p','Selected in draft · '+ref.version+' · '+ref.source));selected.append(root);for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=inputValue(inp);const inputField=field(inp.label+(inp.required&&value===undefined?' · needs your input':''),inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{draft.definition_plan.instance_values??={};if(v===undefined||v==='')delete draft.definition_plan.instance_values[inp.target];else draft.definition_plan.instance_values[inp.target]=v;inputField.firstChild.textContent=inp.label+(inp.required&&inputValue(inp)===undefined?' · needs your input':'');edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined);inputField.querySelector('input,select').dataset.inputTarget=inp.target;root.append(inputField);}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
             const guide=el('details');guide.append(el('summary','Defaults, overrides and sources'));
             for(const c of d.components??[]){const actual=draft.devices.find(x=>x.name===c.name&&x.board===c.board);if(!actual)continue;for(const [key,value] of Object.entries(c.settings)){const row=el('p',c.name+' · '+key.replaceAll('_',' ')+': '+JSON.stringify(actual.settings[key])+' · '+(JSON.stringify(value)===JSON.stringify(actual.settings[key])?'Definition default':'Local override'));if(JSON.stringify(value)!==JSON.stringify(actual.settings[key])){const reset=el('button','Reset to definition default');reset.disabled=!authority()||busy||reconcile;reset.onclick=()=>{actual.settings[key]=copy(value);for(const gain of ['pid_kp','pid_ki','pid_kd'])delete actual.settings[gain];edit();render();};row.append(reset);}guide.append(row);}}
             for(const source of d.sources){if(source.url){const a=el('a',source.id+' · '+source.locator);a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';guide.append(a);}else guide.append(el('p',source.revision+' · '+source.locator));}root.append(guide);
             const remove=el('button','Remove definition and owned contributions');remove.disabled=!authority()||busy||reconcile;remove.onclick=()=>operation(async()=>{const result=await rpc({action:'definition_remove',draft,reference:ref,expected_revision:revision});pendingDefinition=result.draft;$('definition-effects').textContent='Remove '+d.name+' and contributions not shared by retained definitions. Other configuration remains. Review: '+JSON.stringify(result.draft.devices.map(c=>c.name));$('definition-review').showModal();});root.append(remove);}
+        for(const control of selected.querySelectorAll('input,select,button'))control.disabled=!authority()||busy||diagnostic||reconcile;
+        if(!selected.children.length)selected.append(el('p','No definition selected for this section. Inspect existing settings or preview a supported choice.'));
         if(!root.children.length)root.append(el('p','No matching supported definitions. Choose a board, add a source or use explicit structured settings in Advanced.'));
     }
     function renderChanges(){
         const root=$('semantic-changes');root.replaceChildren();let count=0;
         for(const [key,title] of categories){const before=saved.draft.devices.filter(d=>categoryFor(d)===key),after=draft.devices.filter(d=>categoryFor(d)===key);const refsFor=state=>(state.definition_plan?.selections??[]).filter(r=>state.definition_plan.snapshots[r.source+'::'+r.id+'@'+r.version]?.category===key);const beforeRefs=refsFor(saved.draft),afterRefs=refsFor(draft);if(JSON.stringify(before)===JSON.stringify(after)&&JSON.stringify(beforeRefs)===JSON.stringify(afterRefs))continue;count++;const box=el('div');box.className='printer-change';box.append(el('h3',title),el('p',(before.map(d=>d.name).join(', ')||'Unspecified')+' → '+(after.map(d=>d.name).join(', ')||'Removed')));for(const d of after){const prior=before.find(x=>x.name===d.name);for(const field of new Set([...Object.keys(prior?.settings??{}),...Object.keys(d.settings)])){const value=d.settings[field];if(JSON.stringify(prior?.settings[field])!==JSON.stringify(value))box.append(el('p',d.name+' · '+field.replaceAll('_',' ')+': '+(prior?.settings[field]??'Unknown')+' → '+(value===undefined?'Cleared / needs input':JSON.stringify(value))+' · effective instance value'));}if(d.kind==='sensor'&&!d.settings.curve)box.append(el('p','Needs your input: identify the fitted sensor.'));}if(JSON.stringify(beforeRefs)!==JSON.stringify(afterRefs))box.append(el('p','Definition: '+(beforeRefs.map(r=>r.source+' · '+r.id+' @ '+r.version).join(', ')||'Unassigned')+' → '+(afterRefs.map(r=>r.source+' · '+r.id+' @ '+r.version).join(', ')||'Removed')));for(const ref of afterRefs){const definition=draft.definition_plan.snapshots[ref.source+'::'+ref.id+'@'+ref.version];for(const gap of definition.unresolved??[])box.append(el('p','Definition incomplete: '+gap));for(const inp of Object.values(definition.inputs??{})){const [name,field]=inp.target.split('.');const actual=draft.devices.find(d=>d.name===name)?.settings[field]??draft.boards[name]?.[field]??draft.definition_plan.instance_values?.[inp.target]??inp.default;if(inp.required&&actual===undefined)box.append(el('p','Needs your input: '+inp.label));}}root.append(box);}
         if(JSON.stringify(draft.boards)!==JSON.stringify(saved.draft.boards)){count++;root.append(el('p','Controller references / connection identities changed.'))}
+        for(const {definition} of selectedDefinitions()){
+            const inputs=Object.values(definition.inputs??{}).filter(input=>JSON.stringify(inputValue(input))!==JSON.stringify(inputValue(input,saved.draft)));
+            if(!inputs.length)continue;
+            const box=el('div');box.className='printer-change';box.append(el('h3',definition.name+' · your answers'));
+            for(const input of inputs){const value=inputValue(input),before=inputValue(input,saved.draft),display=v=>v===undefined?'Not set':input.type==='identity'?'Provided (private)':JSON.stringify(v);box.append(el('p',input.label+': '+display(before)+' → '+display(value)));}
+            root.append(box);
+        }
         if(!root.children.length)root.append(el('p','No pending component changes.'));
-        $('change-count').textContent=String(count);
+        $('change-count').textContent=String(componentChanges());
     }
     // View-only geometry. No timers, animation loop, layout simulation or RPC.
     const graph={x:0,y:0,scale:1,width:1000,height:600,positions:new Map(),nodes:new Map(),edges:[],rows:[],signature:null,drag:null};
@@ -579,7 +632,8 @@ renderChanges();renderDefinitionChoices();
         $('publication-dialog').showModal();$('publication-title').tabIndex=-1;$('publication-title').focus({preventScroll:true});$('publication-dialog').scrollTop=0;
     }
     $('publication-review').onclick=()=>operation(publicationPreview);
-    $('publication-cancel').onclick=()=>{$('publication-dialog').close();publicationReview=null;};$('publication-restore-review').onclick=()=>operation(async()=>{publicationReview=await rpc({action:'publication_restore_review',expected_revision:revision});publicationReview.restoration=true;$('publication-summary').textContent=publicationReview.service_action;$('publication-detail').textContent='Restore with printer stopped:\n'+publicationReview.before+'\n→\n'+(publicationReview.after??'No previous live configuration');$('publication-dialog').showModal();});
+    const cancelPublication=()=>{const restoring=publicationReview?.restoration;publicationReview=null;$('publication-dialog').close();notice(restoring?'Restoration cancelled. Printer configuration unchanged.':'Application cancelled. The prepared inactive candidate is saved; printer configuration unchanged.');renderJourney();};
+    $('publication-cancel').onclick=cancelPublication;$('publication-dialog').oncancel=cancelPublication;$('publication-restore-review').onclick=()=>operation(async()=>{publicationReview=await rpc({action:'publication_restore_review',expected_revision:revision});publicationReview.restoration=true;$('publication-summary').textContent=publicationReview.service_action;$('publication-detail').textContent='Restore with printer stopped:\n'+publicationReview.before+'\n→\n'+(publicationReview.after??'No previous live configuration');$('publication-dialog').showModal();});
     $('publication-apply').onclick=()=>operation(async()=>{if(!publicationReview)return;const result=await rpc({action:publicationReview.restoration?'publication_restore':'publication_apply',expected_revision:revision,review:publicationReview.review});$('publication-dialog').close();appliedText=publicationReview.restoration?null:saved.current?.text;publicationReview=null;await load();notice(result.message??'Prior configuration restored. Printer remains stopped; review against fitted hardware.');});$('publication-reconcile').onclick=()=>operation(async()=>{await rpc({action:'publication_reconcile',expected_revision:revision});await load();notice('Interrupted publication restored; review against fitted hardware before continuing.');});
     $('reload').onclick=()=>{ if (changed || reconcile) { reconcile=true; controls(); notice('Choose reconciliation to retain local selections, or explicitly discard them.'); } else operation(()=>load()); };
     $('reconcile').onclick=()=>operation(()=>load(true));
@@ -611,7 +665,8 @@ renderChanges();renderDefinitionChoices();
     }
     $('next').onclick=()=>{setView('changes');operation(async()=>{if(!changed&&saved.current?.mode==='full'&&JSON.stringify(saved.current.draft)===JSON.stringify(draft))await publicationPreview();else{$('mode').value='full';await candidatePreview(true);}});};
     $('review').onclick=()=>operation(()=>candidatePreview(false));
-    $('cancel-review').onclick=()=>{guidedReview=false;invalidate();controls();};$('candidate-review').oncancel=()=>{guidedReview=false;invalidate();controls();};
+    const cancelCandidate=()=>{guidedReview=false;invalidate();controls();notice('Configuration review cancelled. Your draft selections are retained; nothing was prepared or applied by this review.');};
+    $('cancel-review').onclick=cancelCandidate;$('candidate-review').oncancel=cancelCandidate;
     $('apply').onclick=()=>operation(async()=>{
         const guided=guidedReview,acceptedText=review?.text,mode=$('mode').value;
         if(!review?.complete)return;

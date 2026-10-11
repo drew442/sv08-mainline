@@ -133,6 +133,16 @@ Cockpit supports custom modules, and PatternFly documents cards and inline drawe
 
 The default view answers three questions immediately: what is selected, what changed, and what still needs attention.
 
+The visible configuration summary separates saved/unsaved selections, the prepared
+inactive candidate and application to the printer. Application is unknown after a
+document reload; a successful response confirms application only in that session,
+never active printing readiness. Known missing sensor choices, required definition
+inputs and author gaps link to their component. This summary supplements the
+backend configuration review; it is not a complete validator. Selected definition
+questions precede available replacements, and incomplete draft saving remains
+visible. Cancelling application retains any already prepared inactive candidate
+and explicitly reports that the printer configuration was unchanged.
+
 A normal complete configuration should not show a permanent warning banner. When needed, use one concise summary such as **“2 components need details”**, with links into the affected components. Distinguish:
 
 - **Needs your input:** for example, which supplied thermistor was fitted.

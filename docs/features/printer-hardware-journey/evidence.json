@@ -1,0 +1,1240 @@
+{
+  "baseline_revision": "6d6e2a6ce12e944567c8209194c50bc8c3cf811a",
+  "assignment_base": "8795747",
+  "source_sha256": {
+    "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d",
+    "catalog/printer/catalog.schema.json": "202b04b31fe06f5cde819dbfb82a482f2b37d12d2a2c47ded63e4b11f09b8fc5",
+    "catalog/printer/definitions/builtin.json": "6ef9b81cae328cf946614193a3465641c4618cad50557f1d711ea8575355a2ac",
+    "catalog/printer/draft.schema.json": "96b9db837ed9b7e9d06134d8e68f7498a44dd80ac4f880e7deebae79d2f231a1",
+    "catalog/printer/sources/sovol-sv08-max/chamber-reference.cfg": "f06050fb8d0182c61591ca16fc06651abd10c95a9698753a53ada8da4c700300",
+    "catalog/printer/sources/sovol-sv08-max/provenance.json": "1604705151a4d816f045b76abebf3696dfe842e6c7202c14ba0bd37614f69385",
+    "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+    "runtime/sv08_admin.py": "b760ca55890be4c3ec5beb09ac29763b051bbcdc1f8526821ced136c13c51758",
+    "runtime/sv08_admin_history.py": "a660fe8e94df4b604e3949716205f5753fc14048e3624ee9b7223e924705d10b",
+    "runtime/sv08_admin_images.py": "9d34b7189c5001d7e3d7aa722a8c8ee3e27ad2b5bfd84f481bfe40ab3586123c",
+    "runtime/sv08_admin_jobs.py": "cc5d83140fe9617dcfa5b802ecbf270e28f93191aa9c284c90300fa8a0c0e0b5",
+    "runtime/sv08_admin_resolution.py": "f12d66e0620d2560b38c788a3cf646086bc642a25e24c4b55b71de1f72cd117b",
+    "runtime/sv08_admin_upload.py": "a773000b2e79120e875c2470b35e0c836d4738bcfe5e63e8c02778ec895cc502",
+    "runtime/sv08_admission.py": "32e683d28f6b3004b4b9bf7ec8562f0d0cae58ab34d1df677a387972598b9b1b",
+    "runtime/sv08_auto_reboot.py": "91f778ab14df667c5745c2d550357eec969a33f948564d55b7c0d678cfb50e11",
+    "runtime/sv08_boot.py": "6425981c642b54e5179154acaea182eb8f4e7497b25a4557e3c5c1a25f805c53",
+    "runtime/sv08_boot_health.py": "9914f7d42e98cab64247dd5f8e073988abff86962cf7680ee1c49b1b009d9d1a",
+    "runtime/sv08_bundle.py": "c9fb80348ce154651fce5b8003456a4e1ec5bef7acf1b86ccfecef4e4be48d64",
+    "runtime/sv08_commissioning_health.py": "88df3b93b932b1f6e973a8492a21e7067ca0c96fe02815b053d822e1cd38ffc8",
+    "runtime/sv08_data_budget.py": "88e42b2af5be1a6c94d2e5d96702fca0a3fa3d3ce19968f3bf63e7d36f082757",
+    "runtime/sv08_environment_device.py": "176d0704fd8dce38482abcc45cda9383bd2abca94852ad6bdf0c74879969cf3c",
+    "runtime/sv08_export.py": "a61e13d82ffd731f52c92cd2608f9a8e8b59258a861650a8d5fad8bf2472269e",
+    "runtime/sv08_feed.py": "b70282b57a006291a3f2d71ff5fd3f9206a5f1fa8a4f75c6fc2b734bbefede50",
+    "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+    "runtime/sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+    "runtime/sv08_mainsail_access.py": "e5ffae4b73b54e917df352bf212551d5901d315e4cf65f4d7dbbe612e6ef76a5",
+    "runtime/sv08_mounts.py": "7f270e29b52c56ce0f9afdc19102ee5e94b75a5133b3a0b059d5e9e475fb89e1",
+    "runtime/sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+    "runtime/sv08_package.py": "2a93ac0c0b7a20e2870e0006b2bb8e7e2f337cbf5d54a2c6032c02ca9f4aae58",
+    "runtime/sv08_printer_catalog.py": "b788f50763872c61db6dd6ce47f3f31cde79a9ae424d44348d5589d2cb11f321",
+    "runtime/sv08_printer_compact.py": "708e2552dd80551cd1ef0cc9e01cf6a772d9e1a4cb68e57ec9f6307bd81bf3b5",
+    "runtime/sv08_printer_compose.py": "a59593e0ad79c14e622d5a67614bc2d47aa7a9a07959c4daa1f9caed3cf26cd0",
+    "runtime/sv08_printer_definitions.py": "63153d3f0b68e3631808a9a9f57e0cd728374989a1b4afd4c90152bda593e4e7",
+    "runtime/sv08_printer_fields.py": "09a5e2d3e46f9098b03900114d46c94bd3a790ebe2f5b75630b4b87c221a4198",
+    "runtime/sv08_printer_generate.py": "447fa31abae308db9f170f7cecd173481f199f872b29706acd0a208842628862",
+    "runtime/sv08_printer_helper.py": "4bcc59abae514b90965260f1e1199ce0bde8218e25f3af59cd4db8b34c340ba3",
+    "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+    "runtime/sv08_printer_sources.py": "aa5e434a467a94c3e0858d1295dd90e9ed4c0fe1ed6591354f666566fe396901",
+    "runtime/sv08_printer_stack.py": "500cf615eda235afc162a5f51a6c0645ff6a179314ced27f0b05a55ede1115ea",
+    "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+    "runtime/sv08_rauc.py": "b30f7b70d5f8cff7e13822e4b7b3059e99fd2f468768640fcf101847c2f1664a",
+    "runtime/sv08_rauc_bootloader.py": "8af3ce328994ab0715ad18ccfdbbc9312d1f4dc45fb34ac2c349f3850ee73170",
+    "runtime/sv08_rauc_service.py": "68470e12ea15790152481a1ca05ea112772f3074000f3d3926b26a982a09e614",
+    "runtime/sv08_recovery.py": "04f1877666d57122ecf73b8e4cdbc038c59c6173b8eaa29e9be6ac58cbc1d1aa",
+    "runtime/sv08_recovery_boot_report.py": "21a771f130292170c8fceaad2088f72416def5584336c59fed8dddcc30fc5e15",
+    "runtime/sv08_recovery_media.py": "19dc7ac9ca6c1304b92f6b2e37f52a9fa9eaa2a6f5aacf1a1b82ec13d8c664f3",
+    "runtime/sv08_recovery_prepare.py": "7a15b186078d2f2722b09d6c68e3082c4cb6e3e12e64436cec19b5b88706ab82",
+    "runtime/sv08_recovery_ui.py": "acd8f444ce86c4cf75e2698e659fb9c9c084dfe2fad3ca471648f83d68022b7d",
+    "runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+    "runtime/sv08_sd_reimage.py": "a75aad51d6bc01aa2cf527cfa4f1f600ee61189a265d13ef0979eeeab448b304",
+    "runtime/sv08_sd_reimage_ui.py": "b34e6010b3de50ff8cd82b662eef815c35ad39eb6ce6664940543defcf811ae4",
+    "runtime/sv08_software.py": "13a64a14981c73adba9e1f93857bbb8c880d41a7d8904e8cc53e583ea0c37d6d",
+    "runtime/sv08_staging.py": "ee938f4bc2f1de000c2f9ad171c5840d0db6aefae15b47bf3b083d5dcc0ed1dc",
+    "runtime/sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+    "runtime/sv08_transaction.py": "347e3ec520f11a66d422c6f7f75758f2cb2f5b6ff0ca5ce5362532125bbd22c2",
+    "runtime/sv08_update_policy.py": "23e796044eea543a964434888a47e0cd8cc59a6bdb32c9187c46384c3734b082",
+    "runtime/sv08_view.py": "d78ae85a34ca8a47c383c570a7de76368900e0235d99611cc6877782f714d911",
+    "runtime/sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d",
+    "scripts/stage_admin_ui.py": "7d11d838bb100b4ee88db59f877215196ba407fafde5e185810dde10819c0269",
+    "scripts/stage_printer_ui.py": "0e1c9782a8f91913cc0d1a6c7b0f7d4c6c5150baf5d1b419765baea457e490c9",
+    "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+    "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+    "tests/printer_navigation.mjs": "38cade5966f7eed71d8e032f20337d85c539026667c2e9b0549fb12b1115540f",
+    "tests/test_config_view.py": "13ee322506c9ac998bb32e7d7c5ae1be895411d10b13ac841d1b5e445e2f6896",
+    "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+    "tests/test_stage_admin_ui.py": "f0e4c7b4b03be1c36406769df325e294a845eb46630393c212c134ed0b212ecd",
+    "tests/test_stage_printer_ui.py": "50f3355a4bca9f64d301551f249601b7d8cc68717ccdd29b9b7937671634a94e",
+    "ui/host/app.js": "d3dd5acf0a81e3faafeff5c7310b04cc3236739814195a2010e87f93eb2db254",
+    "ui/host/identity.js": "93465e79ff07b4f5f9145d79bb771e0644556f3141ff7344f23aea17b3b88de1",
+    "ui/host/index.html": "d60b774d3f6ac430c0f0db808d12eab436b0df24686508311c3deaf09a514048",
+    "ui/host/mainsail-access.js": "9442f055a9a3a970634155f7049e716b6559d7b9d75b10016d8d35ad2142ebbe",
+    "ui/host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+    "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+    "ui/host/network.js": "1019df074cf3aed46bfdaaedfc592e9b72211998e6cf89ed9e8691d7bfb749a2",
+    "ui/host/session.js": "b2b7f676f14f87857f90a93f90ffa4aa078c4dc6056d0860607d5161b1d454d4",
+    "ui/host/software.js": "9996d3c5f9d656b782ba9711d71f4035218f85af282652a3f91f9583defd84cf",
+    "ui/host/style.css": "bc3ecc71c0903e3e840893791a824ca7286b7e52f177ee3d376fc1bb011eb2b6",
+    "ui/host/upload.js": "387d7d65e4309914e78aa73c029962346472911bb9c9ccbb0ac864b6c7123c2d",
+    "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+    "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+    "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+    "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0"
+  },
+  "baseline_browser": {
+    "passed": true,
+    "ordinary_read_without_start": true,
+    "populated_hardware": true,
+    "saved_previous_view": true,
+    "definitions_sources_connections": true,
+    "settings": [
+      "images",
+      "settings",
+      "network",
+      "software",
+      "mainsail-access",
+      "identity",
+      "recovery"
+    ],
+    "writes_disabled": true,
+    "end_access_retains_view": true,
+    "secrets_cleared": true,
+    "unchanged_state": true,
+    "uncaught_exceptions": 0,
+    "physical_hardware": false
+  },
+  "final_printer_browser": {
+    "passed": true,
+    "authenticated": false,
+    "hardware": false,
+    "transport": "Cockpit session/RPC shim; actual Store/Budget",
+    "viewport_sizes": [
+      [
+        1024,
+        600
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "unsupported_status_draft_export_recovery": true,
+    "shared_panel": true,
+    "initial_status_navigation": true,
+    "stale_status_authority_rejected": true,
+    "printer_review_late_response_ignored": true,
+    "host_refresh_failure_isolation": true,
+    "incomplete_save_reopen": true,
+    "hardware_journey_state_attention_save_cancel": true,
+    "definition_author_gap_distinct": true,
+    "required_answer_label_tracks_edit_without_focus_loss": true,
+    "publication_refusal_no_confirmation": true,
+    "publication_escape_retains_bytes_focus": true,
+    "connector_pin_form": true,
+    "factory_default": true,
+    "simple_assembly_selectors": true,
+    "factory_only_choices": true,
+    "complete_factory_select_cancel_save_reload": true,
+    "definition_preview_cancel_select": true,
+    "source_bundle_disable_remove_preserves_selected_snapshot": true,
+    "definition_sources_sidebar_route_reload": true,
+    "complete_setup_bundle_download_and_real_parser": true,
+    "factory_start_full_complete_calibration_pending": true,
+    "schema_reference_download": true,
+    "repository_starter_download": true,
+    "repository_starter_static_no_rpc": true,
+    "compact_github_preview_selection_save_retention": true,
+    "source_executable_file_error_visible": true,
+    "definitions_sidebar_route_history_reload": true,
+    "definitions_source_category_grouping": true,
+    "definitions_builtin_external_disabled_unsupported": true,
+    "definitions_dependency_component_drilldown": true,
+    "definitions_read_only_no_rpc": true,
+    "definitions_search_empty_keyboard_responsive": true,
+    "logical_connection_table": true,
+    "blueprint_graph": true,
+    "connections_sidebar_history_reload": true,
+    "complete_factory_graph": true,
+    "graph_pan_zoom_drag_filter_highlight": true,
+    "graph_idle_dom_mutations": 0,
+    "graph_idle_rpc_calls": 0,
+    "graph_idle_task_seconds": 0.002354,
+    "connection_inspector_authority_gated": true,
+    "external_selection_offline_retention": true,
+    "zoom_200_percent": true,
+    "one_click_enclosure_fan": true,
+    "ntc_ptc_defaults": true,
+    "hardware_save_before_pid": true,
+    "advanced_fields_collapsed": true,
+    "sensor_reference_journey": true,
+    "motor_reference_journey": true,
+    "preset_collision_refused": true,
+    "two_real_tab_stale_import_refused": true,
+    "generation_swap_refused": true,
+    "last_status_identity_carried": true,
+    "refresh_generation_edit_apply": true,
+    "refresh_exact_import_diff": true,
+    "keyboard_escape": true,
+    "touch_reload": true,
+    "import_diff_cancel_save": true,
+    "review_cancel_apply": true,
+    "previous_restore": true,
+    "lost_ack_reconciled": true,
+    "lost_ack_stop_logout_disconnect": true,
+    "upload_review_navigation_cancelled": true,
+    "host_review_late_response_ignored": true,
+    "legacy_deeplink_reload": true,
+    "skip_retains_route": true,
+    "board_remap_preserves_unresolved_devices": true,
+    "stop_disconnect_logout": true,
+    "live_config_unchanged": true,
+    "uncaught_exceptions": 0
+  },
+  "final_configuration_view_browser": {
+    "passed": true,
+    "ordinary_read_without_start": true,
+    "hardware_journey_read_only_state_attention": true,
+    "populated_hardware": true,
+    "saved_previous_view": true,
+    "definitions_sources_connections": true,
+    "settings": [
+      "images",
+      "settings",
+      "network",
+      "software",
+      "mainsail-access",
+      "identity",
+      "recovery"
+    ],
+    "writes_disabled": true,
+    "end_access_retains_view": true,
+    "secrets_cleared": true,
+    "unchanged_state": true,
+    "uncaught_exceptions": 0,
+    "physical_hardware": false
+  },
+  "execution_receipts": {
+    "candidate-printer": {
+      "label": "candidate-printer",
+      "source_before": {
+        "ui/printer/app.js": "d382b136eaff0e1d0d99791740270a0131a3bb8fbab62801eb6ce02b55ea8c80",
+        "ui/printer/panel.html": "cb1dc7d5171680caa3f83e2b3f005613200fbe9308e233e44617a265bff95e79",
+        "ui/printer/style.css": "efb2470d48d88fd17b5a4348089f4bd8dfcc101a5d350b6e06fb065405e8acbf",
+        "tests/printer_browser.mjs": "714e1a451131f5ef6bbdb65e9c29e2103137d9f822c45ffc144a30033b70b2f0",
+        "tests/config_view_browser.mjs": "d24e65d6dcb4f5ade53f57f2bd1533744f0c989e22f73dab1988d0fca1db69f9",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/.sv08-printer-journey-20261011/candidate-printer/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/candidate-printer/browser"
+          ],
+          "exit_status": 1,
+          "elapsed_seconds": 2.931515828007832,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4011379,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/candidate-printer/fixture"
+      ],
+      "passed": false,
+      "error": "printer-browser failed",
+      "fixture_elapsed_seconds": 3.089645978063345,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 3.0896895781625062,
+      "source_after": {
+        "ui/printer/app.js": "d382b136eaff0e1d0d99791740270a0131a3bb8fbab62801eb6ce02b55ea8c80",
+        "ui/printer/panel.html": "cb1dc7d5171680caa3f83e2b3f005613200fbe9308e233e44617a265bff95e79",
+        "ui/printer/style.css": "efb2470d48d88fd17b5a4348089f4bd8dfcc101a5d350b6e06fb065405e8acbf",
+        "tests/printer_browser.mjs": "714e1a451131f5ef6bbdb65e9c29e2103137d9f822c45ffc144a30033b70b2f0",
+        "tests/config_view_browser.mjs": "d24e65d6dcb4f5ade53f57f2bd1533744f0c989e22f73dab1988d0fca1db69f9",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 200808
+    },
+    "candidate-standard": {
+      "label": "candidate-standard",
+      "source_before": {
+        "ui/printer/app.js": "d382b136eaff0e1d0d99791740270a0131a3bb8fbab62801eb6ce02b55ea8c80",
+        "ui/printer/panel.html": "cb1dc7d5171680caa3f83e2b3f005613200fbe9308e233e44617a265bff95e79",
+        "ui/printer/style.css": "efb2470d48d88fd17b5a4348089f4bd8dfcc101a5d350b6e06fb065405e8acbf",
+        "tests/printer_browser.mjs": "714e1a451131f5ef6bbdb65e9c29e2103137d9f822c45ffc144a30033b70b2f0",
+        "tests/config_view_browser.mjs": "d24e65d6dcb4f5ade53f57f2bd1533744f0c989e22f73dab1988d0fca1db69f9",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "ui/printer/app.js"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.031646749936044216,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/app-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/printer_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03167044906876981,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/printer_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/config_view_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03172564902342856,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/config_view_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_navigation.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03169235005043447,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/navigation.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_printer_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 22.92105231503956,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/test_stage_printer_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_admin_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.31453095306642354,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/test_stage_admin_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_config_view.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.3645306220278144,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/test_config_view.py.log"
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.00778786395676434,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-standard/diff-check.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 23.73501575202681,
+      "source_after": {
+        "ui/printer/app.js": "d382b136eaff0e1d0d99791740270a0131a3bb8fbab62801eb6ce02b55ea8c80",
+        "ui/printer/panel.html": "cb1dc7d5171680caa3f83e2b3f005613200fbe9308e233e44617a265bff95e79",
+        "ui/printer/style.css": "efb2470d48d88fd17b5a4348089f4bd8dfcc101a5d350b6e06fb065405e8acbf",
+        "tests/printer_browser.mjs": "714e1a451131f5ef6bbdb65e9c29e2103137d9f822c45ffc144a30033b70b2f0",
+        "tests/config_view_browser.mjs": "d24e65d6dcb4f5ade53f57f2bd1533744f0c989e22f73dab1988d0fca1db69f9",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 6409
+    },
+    "candidate-view": {
+      "label": "candidate-view",
+      "source_before": {
+        "ui/printer/app.js": "d382b136eaff0e1d0d99791740270a0131a3bb8fbab62801eb6ce02b55ea8c80",
+        "ui/printer/panel.html": "cb1dc7d5171680caa3f83e2b3f005613200fbe9308e233e44617a265bff95e79",
+        "ui/printer/style.css": "efb2470d48d88fd17b5a4348089f4bd8dfcc101a5d350b6e06fb065405e8acbf",
+        "tests/printer_browser.mjs": "714e1a451131f5ef6bbdb65e9c29e2103137d9f822c45ffc144a30033b70b2f0",
+        "tests/config_view_browser.mjs": "d24e65d6dcb4f5ade53f57f2bd1533744f0c989e22f73dab1988d0fca1db69f9",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/config_view_browser.mjs",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/.sv08-printer-journey-20261011/candidate-view/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/candidate-view/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 1.9753205629531294,
+          "log": "/home/drew/.sv08-printer-journey-20261011/candidate-view/view-browser.log"
+        }
+      ],
+      "fixture_pid": 4011548,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/candidate-view/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 2.2352766320109367,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 2.235336432000622,
+      "source_after": {
+        "ui/printer/app.js": "d382b136eaff0e1d0d99791740270a0131a3bb8fbab62801eb6ce02b55ea8c80",
+        "ui/printer/panel.html": "cb1dc7d5171680caa3f83e2b3f005613200fbe9308e233e44617a265bff95e79",
+        "ui/printer/style.css": "efb2470d48d88fd17b5a4348089f4bd8dfcc101a5d350b6e06fb065405e8acbf",
+        "tests/printer_browser.mjs": "714e1a451131f5ef6bbdb65e9c29e2103137d9f822c45ffc144a30033b70b2f0",
+        "tests/config_view_browser.mjs": "d24e65d6dcb4f5ade53f57f2bd1533744f0c989e22f73dab1988d0fca1db69f9",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4082228
+    },
+    "file-backed-printer": {
+      "label": "file-backed-printer",
+      "source_before": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "86a5251ca9de05abce39621ea4bd5d5eb8ead8051f1f2ecbcc372147b60c9009",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.sv08-printer-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-printer-journey-20261011/file-backed-printer/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/file-backed-printer/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 22.125925411935896,
+          "log": "/home/drew/.sv08-printer-journey-20261011/file-backed-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4013033,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/file-backed-printer/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 22.22972289309837,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 22.22976539307274,
+      "source_after": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "86a5251ca9de05abce39621ea4bd5d5eb8ead8051f1f2ecbcc372147b60c9009",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 3003842
+    },
+    "final-printer": {
+      "label": "final-printer",
+      "source_before": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "702834d0c268abc01d10d493b14a7d111b4df41c0c8d295d2817169788457339",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.sv08-printer-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-printer-journey-20261011/final-printer/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/final-printer/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 21.859134396072477,
+          "log": "/home/drew/.sv08-printer-journey-20261011/final-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4013773,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/final-printer/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 22.01322527998127,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 22.013304078951478,
+      "source_after": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "702834d0c268abc01d10d493b14a7d111b4df41c0c8d295d2817169788457339",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 3147738
+    },
+    "fixture-repair-printer": {
+      "label": "fixture-repair-printer",
+      "source_before": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "86a5251ca9de05abce39621ea4bd5d5eb8ead8051f1f2ecbcc372147b60c9009",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/.sv08-printer-journey-20261011/fixture-repair-printer/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/fixture-repair-printer/browser"
+          ],
+          "exit_status": 1,
+          "elapsed_seconds": 10.38742343778722,
+          "log": "/home/drew/.sv08-printer-journey-20261011/fixture-repair-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4012957,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/fixture-repair-printer/fixture"
+      ],
+      "passed": false,
+      "error": "printer-browser failed",
+      "fixture_elapsed_seconds": 10.54134303308092,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 10.54138603177853,
+      "source_after": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "86a5251ca9de05abce39621ea4bd5d5eb8ead8051f1f2ecbcc372147b60c9009",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 1939
+    },
+    "label-printer": {
+      "label": "label-printer",
+      "source_before": {
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.sv08-printer-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-printer-journey-20261011/label-printer/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/label-printer/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 23.697656620992348,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4014558,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/label-printer/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 23.855849446961656,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 23.855908546131104,
+      "source_after": {
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 3147908
+    },
+    "label-standard": {
+      "label": "label-standard",
+      "source_before": {
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "ui/printer/app.js"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.031771325040608644,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-standard/app-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/printer_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.06502994592301548,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-standard/printer_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_printer_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 25.74848885415122,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-standard/test_stage_printer_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_admin_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.3145345700904727,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-standard/test_stage_admin_ui.py.log"
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.009193079080432653,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-standard/diff-check.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 26.16927817207761,
+      "source_after": {
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4760
+    },
+    "label-view": {
+      "label": "label-view",
+      "source_before": {
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/config_view_browser.mjs",
+            "/home/drew/.sv08-printer-journey-20261011/chromium-file-backed",
+            "/home/drew/.sv08-printer-journey-20261011/label-view/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/label-view/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 2.2248838401865214,
+          "log": "/home/drew/.sv08-printer-journey-20261011/label-view/view-browser.log"
+        }
+      ],
+      "fixture_pid": 4014556,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/label-view/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 2.4797018370591104,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 2.4797503370791674,
+      "source_after": {
+        "ui/printer/app.js": "f9fe9869dd5b5dcb243853211d30281bb933ab9831f9cfd08cdf6c195071346e",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "cd69e349612a3cefe2d4a029c85170474394715750667fdfd4bf58dae57d7298",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4172692
+    },
+    "repair-printer": {
+      "label": "repair-printer",
+      "source_before": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "33c44454067bb13a257afb3a00e8686ad546842efd416bd869a00a10a0092b11",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_browser.mjs",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/.sv08-printer-journey-20261011/repair-printer/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/repair-printer/browser"
+          ],
+          "exit_status": 1,
+          "elapsed_seconds": 15.658621169859543,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-printer/printer-browser.log"
+        }
+      ],
+      "fixture_pid": 4012054,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/repair-printer/fixture"
+      ],
+      "passed": false,
+      "error": "printer-browser failed",
+      "fixture_elapsed_seconds": 15.81264738412574,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 15.81269858404994,
+      "source_after": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "33c44454067bb13a257afb3a00e8686ad546842efd416bd869a00a10a0092b11",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 1153459
+    },
+    "repair-standard": {
+      "label": "repair-standard",
+      "source_before": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "33c44454067bb13a257afb3a00e8686ad546842efd416bd869a00a10a0092b11",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "ui/printer/app.js"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03170157899148762,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/app-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/printer_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.06554775102995336,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/printer_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "--check",
+            "tests/config_view_browser.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.031770779052749276,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/config_view_browser-syntax.log"
+        },
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/printer_navigation.mjs"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.03212727792561054,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/navigation.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_printer_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 24.778065600199625,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/test_stage_printer_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_stage_admin_ui.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.31433713901787996,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/test_stage_admin_ui.py.log"
+        },
+        {
+          "argv": [
+            "python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_config_view.py",
+            "-v"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.3645242538768798,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/test_config_view.py.log"
+        },
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 0.0077637720387429,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-standard/diff-check.log"
+        }
+      ],
+      "passed": true,
+      "elapsed_seconds": 25.62624634988606,
+      "source_after": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "33c44454067bb13a257afb3a00e8686ad546842efd416bd869a00a10a0092b11",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 6409
+    },
+    "repair-view": {
+      "label": "repair-view",
+      "source_before": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "33c44454067bb13a257afb3a00e8686ad546842efd416bd869a00a10a0092b11",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "commands": [
+        {
+          "argv": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+            "tests/config_view_browser.mjs",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/.sv08-printer-journey-20261011/repair-view/fixture",
+            "/home/drew/.sv08-printer-journey-20261011/repair-view/browser"
+          ],
+          "exit_status": 0,
+          "elapsed_seconds": 2.1361186830326915,
+          "log": "/home/drew/.sv08-printer-journey-20261011/repair-view/view-browser.log"
+        }
+      ],
+      "fixture_pid": 4012053,
+      "fixture_command": [
+        "python3",
+        "-B",
+        "tests/test_printer_browser_fixture.py",
+        "/home/drew/.sv08-printer-journey-20261011/repair-view/fixture"
+      ],
+      "passed": true,
+      "fixture_elapsed_seconds": 2.395210596965626,
+      "fixture_exit_status": -15,
+      "elapsed_seconds": 2.39526979601942,
+      "source_after": {
+        "ui/printer/app.js": "66d159ee0c90bd4de1cf3e62cc03f8168acc36b9c010ad3173f0a376c2768de2",
+        "ui/printer/panel.html": "30e6a1efad1d78b73eeabf72059304f154c4b6d5405209a56abcd708f00652a1",
+        "ui/printer/style.css": "9cc6b48d13a6b79ea1e0033cb4e0aa3a4b146ad774b81077b13ebf11a6cd85d0",
+        "tests/printer_browser.mjs": "33c44454067bb13a257afb3a00e8686ad546842efd416bd869a00a10a0092b11",
+        "tests/config_view_browser.mjs": "d0e811e94f268c88c5fe0f6454e4db28dccde57af6b20acd363409056ce2a595",
+        "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+        "tests/test_printer_browser_fixture.py": "886ad50cfc6ae009ab859f5b8ec0f9ba49879fa46d4b8725640bb44c24c534a7",
+        "ui/host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+        "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+        "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+        "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+        "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d"
+      },
+      "source_unchanged": true,
+      "retained_bytes": 4172689
+    }
+  },
+  "final_checks": {
+    "stage_printer": 12,
+    "stage_admin": 20,
+    "finite_read_endpoint": 11,
+    "finite_read_endpoint_evidence": "repair-standard/test_config_view.py.log; unchanged runtime/test inputs",
+    "navigation": "repair-standard/navigation.log; unchanged ui/host/navigation.js and tests/printer_navigation.mjs",
+    "syntax": "label-standard; unchanged config-view syntax reused",
+    "diff_check": "label-standard"
+  },
+  "agents": [
+    {
+      "id": "01a12a89-23a1-7491-beb9-8774825ead36",
+      "agent_role": "project_implementer",
+      "agent_path": "/root/printer_journey_ux",
+      "model": "gpt-6.1-sol",
+      "reasoning_effort": "medium",
+      "cli_version": "0.162.1"
+    }
+  ],
+  "skill": {
+    "method": "child-only explicit file read",
+    "body": ".agents/skills/sv08-ui-ux/SKILL.md",
+    "references": [
+      "references/cockpit.md",
+      "references/evaluation.md"
+    ],
+    "native_activation": "not observable",
+    "hidden_context_completeness": "not observable",
+    "rendered_assessment": "same named medium implementer inspected actual baseline, final targeted questions/gap/sensor/cancellation/review/viewport/zoom captures; identified and corrected stale label from rendered evidence",
+    "worker_process_seconds_upper_bound": 2,
+    "worker_incidental_experiments": 0
+  },
+  "adoption_reuse": {
+    "report": "/home/drew/.sv08-codex-adoption-20261010/report.md",
+    "input_matches": {
+      ".codex/config.toml": true,
+      ".codex/agent-guide.md": true,
+      "docs/development/ui-ux-workflow.md": true,
+      "docs/development/agent-execution.md": true,
+      ".agents/skills/sv08-ui-ux/SKILL.md": true,
+      ".agents/skills/sv08-ui-ux/agents/openai.yaml": true,
+      ".agents/skills/sv08-ui-ux/references/evaluation.md": true,
+      "tests/test_codex_agent_policy.py": true,
+      "tests/test_agent_context.py": true,
+      "tests/test_ui_workflow.py": true,
+      ".codex/agents/feature-verifier.toml": true,
+      ".codex/agents/high-consequence-reviewer.toml": true,
+      ".codex/agents/project-lookup.toml": true,
+      ".codex/agents/high-consequence-reviewer-high.toml": true,
+      ".codex/agents/project-implementer.toml": true,
+      ".codex/agents/feature-approver.toml": true,
+      ".codex/agents/project-researcher.toml": true,
+      ".codex/agents/feature-verifier-high.toml": true,
+      ".codex/agents/project-narrow-implementer.toml": true,
+      ".codex/agents/project-planner.toml": true,
+      ".codex/agents/project-integration.toml": true
+    },
+    "limitations": [
+      "Native skill activation and hidden context completeness unverified; other profiles not exercised; no quality/savings benchmark"
+    ]
+  },
+  "infrastructure": {
+    "failure": "Chromium exited before DevToolsActivePort; no product checks executed",
+    "evidence": "fixture-repair-printer/browser/browser.log",
+    "shared_memory_used_gib": 6.5,
+    "shared_memory_free_gib": 1.4,
+    "change": "Disposable Chromium wrapper adds --disable-dev-shm-usage; preserve unrelated shared memory and processes",
+    "incidental_experiments": 1,
+    "no_installs": true
+  },
+  "allowance": {
+    "coordinator_process_seconds": 1800,
+    "coordinator_generated_mib": 512,
+    "implementer_process_seconds": 1800,
+    "implementer_generated_mib": 128,
+    "incidental_experiments": 2,
+    "incidental_process_seconds": 300,
+    "incidental_generated_mib": 128,
+    "notes": "Primary lineage cumulative; no OS builds/install/printer/remote calls. Fixture/browser processes coordinator-owned. Existing Node22 and Chromium. Initialfree32GiB; preserve failed receipts.",
+    "continuations": [
+      {
+        "at": "2026-10-11T10:59:53.784920+00:00",
+        "actor": "root/coordinator",
+        "reason": "Source-based conservative accounting includes temporary staging fixtures removed by unittest cleanup. Multiple distinct demonstrated defects changed UI inputs, requiring composition reruns. Raise cumulative primary generated-output ceiling from256to512MiB under existing safe-development bounded-continuation authority; preserve all original receipts/attempts, no reset.",
+        "initial_mib": 256,
+        "cumulative_total_mib": 512,
+        "remaining_scope": "Final affected browser/staging checks, sanitized evidence and PR records only; no OS images or installs.",
+        "storage_free_gib": 32,
+        "incidental_allowance_unchanged": true
+      }
+    ]
+  },
+  "accounting": {
+    "instrumented_process_seconds": 283.17871591076255,
+    "unstrumented_runtime_reserved_seconds": 600,
+    "known_deleted_browser_profile_bytes": 33896664,
+    "retained_scratch_bytes": 26936343,
+    "temporary_unit_fixture_cumulative_bytes": "not fully byte-instrumented; conservative output continuation covers removed fixture data; no measured savings claim",
+    "initial_free_gib": 32,
+    "remaining_runtime_allowance": "1800 less conservative600 reservation and instrumented totals; publication/records within remaining allowance"
+  },
+  "visuals": {
+    "docs/features/printer-hardware-journey/visuals/after-mobile.png": "82ef5938e1fba78ad8af50b12d632ecb9ae1d1adddb2769aeec662574d4446b4",
+    "docs/features/printer-hardware-journey/visuals/after-desktop.png": "21598beaa63123e258ae8c8589569c7de63acd484054151bac54194d6444801e",
+    "docs/features/printer-hardware-journey/visuals/before.png": "499c346a8c01f3860c492fe826245c57c36de91b6e335a4d15f535f41c6545c4"
+  },
+  "raw_evidence_root": "/home/drew/.sv08-printer-journey-20261011",
+  "limitations": [
+    "Offline Chromium with Cockpit transport/session shim and real generation-local Store/Budget. No installed Cockpit/PAM, physical hardware, printing release or human usability evidence.",
+    "Fixture refuses publication admission; successful-publication confirmation branch source-reviewed only.",
+    "Known attention supplements backend completeness/conflict validation. Applied/active status unknown after document reload.",
+    "Native skill activation and hidden context completeness remain unobserved; unexercised agent profiles remain untested. No token/cost/CPU savings measured.",
+    "Populated phone views use vertical scrolling. Browser startup failure cause unproven; file-backed shared-memory invocation subsequently passed."
+  ]
+}
