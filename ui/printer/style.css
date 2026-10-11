@@ -75,3 +75,20 @@
 #printer .printer-title .eyebrow{display:none}#printer #printer-notice[data-kind=loaded]{display:none}#printer .printer-secondary{margin:8px 0}#printer .printer-secondary .printer-tabs{margin:8px 0}#printer .printer-title p{font-size:14px}#printer-review-effects section{margin:8px 0;padding:10px 0;border:0;border-top:1px solid #cbd5e1;background:transparent}#printer-review-effects section p{margin:4px 0;font-size:14px}#printer-review-effects h3{margin:6px 0;font-size:16px}#printer-review-effects>p{margin:8px 0}#printer-review-title:focus,#printer-publication-title:focus{outline:none}
 
 @media(max-width:800px){#printer .printer-footer>div{flex-basis:100%}#printer .printer-footer button{flex:1 1 180px;min-width:180px;overflow-wrap:normal}}
+
+/* State and known attention stay visible while technical controls are disclosed. */
+#printer .printer-state{padding:16px 20px;margin:14px 0;background:#fff}
+#printer .printer-state dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0}
+#printer .printer-state dt{font-size:13px;font-weight:650;color:#52677e;margin-bottom:6px}
+#printer .printer-state dd{margin:0;font-size:14px;line-height:1.5}
+#printer #printer-access-state{margin:12px 0 0;font-size:13px;color:#52677e}
+#printer .printer-attention{padding:14px 20px;background:#fff0db;border-radius:8px;color:#713716;margin:14px 0}
+#printer .printer-attention summary{font-size:15px;margin:0}
+#printer .printer-attention ul{list-style:none;margin:0;padding:0}
+#printer .printer-attention button{background:transparent;border:0;color:#713716;text-align:left;text-decoration:underline;padding:6px 0;margin:0;min-height:40px;white-space:normal}
+#printer .printer-attention p{font-size:13px;margin:8px 0 0}
+#printer .printer-selected-definition{border-left:3px solid #087e83;padding:0 0 0 14px;margin:16px 0}
+#printer .printer-selected-definition h3{font-size:17px;margin:8px 0}
+#printer .printer-selected-definition p{font-size:14px;margin:8px 0}
+#printer :focus-visible{outline:3px solid #087e83;outline-offset:3px}
+@media(max-width:800px){#printer .printer-state dl{grid-template-columns:1fr;gap:6px}#printer .printer-state dl>div{display:grid;grid-template-columns:85px minmax(0,1fr);gap:8px}#printer .printer-state dt{margin:0}#printer .printer-state{padding:14px}#printer .printer-attention{padding:10px 14px}}

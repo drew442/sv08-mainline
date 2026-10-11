@@ -35,7 +35,28 @@ try {
  assert.equal(await evaluate('sv08Session.elevated'),false);
  assert.equal(await evaluate('window.fixtureStarts'),0);
  const navigate=async route=>{await evaluate(`sv08Navigation.go(${JSON.stringify(route)})`);await until(`!document.querySelector('#${route}').hidden`);};
- await navigate('printer');await click('[data-category="bed"]');
+ await navigate('printer');
+ assert.match(await evaluate(`document.querySelector('#printer-draft-state').textContent`),/Saved draft/);
+ assert.match(await evaluate(`document.querySelector('#printer-candidate-state').textContent`),/inactive candidate.*Setup/);
+ assert.match(await evaluate(`document.querySelector('#printer-application-state').textContent`),/Not checked.*unknown/);
+ assert.match(await evaluate(`document.querySelector('#printer-access-state').textContent`),/Administrator access/);
+ assert.equal(await evaluate(`document.querySelector('#printer-save').closest('details')`),null);
+ await screenshot('hardware-overview-state');
+ await click('#printer-attention summary');
+ const viewCalls=await evaluate('fixtureRequests.length');
+ await evaluate(`document.querySelector('[data-attention-category="boards"]').focus()`);await key('Enter');
+ assert.equal(await evaluate(`document.activeElement.id`),'printer-detail-title');
+ assert.match(await evaluate(`document.querySelector('#printer-selected-definitions').textContent`),/Selected in draft.*Mainboard MCU identity/s);
+ assert.equal(await evaluate(`Array.from(document.querySelectorAll('#printer-selected-definitions input, #printer-selected-definitions select, #printer-selected-definitions button')).every(e=>e.disabled)`),true);
+ assert.equal(await evaluate(`document.querySelector('#printer-selected-definitions').compareDocumentPosition(document.querySelector('#printer-definition-choices')) & Node.DOCUMENT_POSITION_FOLLOWING`),4);
+ assert.equal(await evaluate('fixtureRequests.length'),viewCalls);
+ for(const [width,height] of [[1440,900],[1024,600],[390,844]]){
+  await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
+  await screenshot('hardware-attention-view-'+width);
+ }
+ await send('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
+ await click('[data-category="bed"]');
  assert.match(await evaluate(`document.querySelector('#printer-detail-title').textContent`),/Bed/);
  assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);
  assert.equal(await evaluate(`document.querySelector('#printer-devices input').disabled`),true);
@@ -105,6 +126,6 @@ try {
  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  assert.deepEqual(fs.readFileSync(statepath),snapshot);
  assert.equal(errors.length,0);
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,ordinary_read_without_start:true,populated_hardware:true,saved_previous_view:true,definitions_sources_connections:true,settings:['images','settings','network','software','mainsail-access','identity','recovery'],writes_disabled:true,end_access_retains_view:true,secrets_cleared:true,unchanged_state:true,uncaught_exceptions:0,physical_hardware:false},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,ordinary_read_without_start:true,hardware_journey_read_only_state_attention:true,populated_hardware:true,saved_previous_view:true,definitions_sources_connections:true,settings:['images','settings','network','software','mainsail-access','identity','recovery'],writes_disabled:true,end_access_retains_view:true,secrets_cleared:true,unchanged_state:true,uncaught_exceptions:0,physical_hardware:false},null,2)+'\n');
  console.log('Configuration view browser tests PASS');
 } finally {socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}

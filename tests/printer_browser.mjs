@@ -27,6 +27,17 @@ try {
  let statepath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).state;
  const state=()=>JSON.parse(fs.readFileSync(statepath));
  const screenshot=async name=>{await evaluate('scrollTo(0,0)');const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name+'.png',Buffer.from(r.data,'base64'));};
+ const screenshotAt=async(name,selector)=>{
+  await evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'start'})`);
+  const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name+'.png',Buffer.from(r.data,'base64'));
+ };
+ const followAttention=async category=>{
+  if(!await evaluate(`document.querySelector('#printer-attention').open`))await click('#printer-attention summary');
+  const selector='[data-attention-category="'+category+'"]';
+  await evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center'})`);
+  assert.equal(await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect();return e.getClientRects().length>0&&r.top>=0&&r.bottom<=innerHeight;})()`),true,'Attention link is visible before keyboard activation');
+  await evaluate(`document.querySelector(${JSON.stringify(selector)}).focus()`);await key('Enter');
+ };
  const ready=()=>until(`document.querySelector('#printer-boards fieldset') && !document.querySelector('#printer-save').disabled && !document.querySelector('#printer-candidate-review').open`);
  const reloadDocument=async()=>{const origin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${origin} && window.sv08Session?.available===true && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);};
  const reload=async()=>{await click('#printer-reload');if(await evaluate("!document.querySelector('#printer-reconciliation').hidden")){await send('Page.handleJavaScriptDialog',{accept:true}).catch(()=>{});await click('#printer-reconcile');}await ready();};
@@ -252,6 +263,8 @@ try {
  await evaluate('window.fixtureReleaseApply()');await until(`document.querySelector('#printer-notice').textContent.includes('reconcile')`);
  await until(`!document.querySelector('#authorize').disabled`);await click('#authorize');await until('sv08Session.elevated');await click('[data-page=printer]');
  await until(`!document.querySelector('#printer-reconciliation').hidden && !document.querySelector('#printer-reconcile').disabled`);
+ assert.match(await evaluate(`document.querySelector('#printer-application-state').textContent`),/Outcome unknown/);
+ assert.match(await evaluate(`document.querySelector('#printer-access-state').textContent`),/Reconcile/);
  assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);await click('#printer-reconcile');await ready();
  assert.equal(state().revision,ackRevision);
  assert.equal(await evaluate(`(()=>{const b=document.querySelector('#printer-devices fieldset');return [...b.querySelectorAll('label')].find(e=>e.firstChild.textContent==='max temp').querySelector('input').value;})()`),'103');
@@ -379,6 +392,12 @@ try {
  const beforeRichImport=JSON.stringify(state().draft);
  const example=JSON.parse(fs.readFileSync('examples/printer-definitions/catalog.json'));
  const bundle={manifest:example,files:Object.fromEntries(example.definitions.map(r=>[r.path,fs.readFileSync('examples/printer-definitions/'+r.path).toString('base64')]))};
+ // Fixture-only author gap: a catalogue problem must not become an invented owner setting.
+ const gapRecord=JSON.parse(Buffer.from(bundle.files['definitions/bed.json'],'base64').toString());
+ gapRecord.id='fixture-gap-bed';gapRecord.name='Fixture guide gap bed';
+ gapRecord.unresolved=['Fixture guide does not specify the mounting variant'];
+ const gapBytes=Buffer.from(JSON.stringify(gapRecord)),gapPath='definitions/fixture-gap-bed.json';
+ bundle.files[gapPath]=gapBytes.toString('base64');example.definitions.push({id:gapRecord.id,version:gapRecord.version,path:gapPath,sha256:createHash('sha256').update(gapBytes).digest('hex')});
  const future=Buffer.from(JSON.stringify({format_version:'9.0',id:'future-entry',version:'1.0.0'}));example.definitions.push({id:'future-entry',version:'1.0.0',path:'definitions/future.json',sha256:createHash('sha256').update(future).digest('hex')});bundle.files['definitions/future.json']=future.toString('base64');
  const bundlePath=output+'/creator-bundle.json';fs.writeFileSync(bundlePath,JSON.stringify(bundle));
  const doc=await send('DOM.getDocument');const node=await send('DOM.querySelector',{nodeId:doc.root.nodeId,selector:'#printer-source-import'});
@@ -388,12 +407,22 @@ try {
  const externalSource=Object.keys(state().sources)[0];
  const beforeCatalogue=JSON.stringify(state().draft),beforeCatalogueRequests=await evaluate('fixtureRequests.length');
  await click('[data-page=definitions]');await click('#printer-definitions-by-source');await click(`[data-definition-group="${externalSource}"]`);
- assert.equal(await evaluate(`document.querySelectorAll('#printer-definitions-content [data-definition-id]').length`),5);
+ assert.equal(await evaluate(`document.querySelectorAll('#printer-definitions-content [data-definition-id]').length`),6);assert.equal(await evaluate(`!!document.querySelector('[data-definition-id=fixture-gap-bed]') && !!document.querySelector('[data-definition-id=sv08-bed]')`),true);
  await click('[data-definition-id="sv08-bed-bundle"]');await click('[data-definition-dependency="sv08-bed"]');await click('[data-definition-component="bed_sensor"]');assert.match(await evaluate(`document.querySelector('#printer-definitions-content').textContent`),/4700/);
  await click('#printer-definitions-by-category');await click('[data-definition-group="unavailable"]');await click('[data-definition-id="future-entry"]');assert.match(await evaluate(`document.querySelector('#printer-definitions-content').textContent`),/Unsupported|supported component/);
  assert.equal(await evaluate('fixtureRequests.length'),beforeCatalogueRequests);assert.equal(JSON.stringify(state().draft),beforeCatalogue);
  await click('[data-page=printer]');await click('[data-category=bed]');await set('#printer-definition-filter',externalSource);await set('#printer-definition-search','Bed heater');await evaluate(`document.querySelector('#printer-definition-search').dispatchEvent(new Event('input',{bubbles:true}))`);
  await click('#printer-definition-choices .printer-choice');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ await set('#printer-definition-search','Fixture guide gap bed');await evaluate(`document.querySelector('#printer-definition-search').dispatchEvent(new Event('input',{bubbles:true}))`);
+ await click('#printer-definition-choices .printer-choice');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');
+ assert.match(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/Definition incomplete:.*Fixture guide does not specify/);
+ await followAttention('bed');assert.match(await evaluate(`document.querySelector('#printer-selected-definitions').textContent`),/Definition incomplete: Fixture guide/);
+ await screenshotAt('journey-definition-gap','#printer-selected-definitions');
+ // Restore the original supported choice; its dependency content/hash remains unchanged.
+ await set('#printer-definition-search','Bed heater');await evaluate(`document.querySelector('#printer-definition-search').dispatchEvent(new Event('input',{bubbles:true}))`);
+ await click('#printer-definition-choices .printer-choice');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.doesNotMatch(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/Fixture guide does not specify/);
+
  assert(state().draft.definition_plan.selections.some(r=>r.source===externalSource));await click('[data-page=definition-sources]');
  await evaluate(`[...document.querySelectorAll('#printer-source-list button')].find(b=>b.textContent==='Disable').click()`);await until(`document.querySelector('#printer-source-list').textContent.includes('Disabled') && !document.querySelector('#printer-save').disabled`);
  await click('[data-page=definitions]');await click('#printer-definitions-by-source');await click(`[data-definition-group="${externalSource}"]`);assert.match(await evaluate(`document.querySelector('#printer-definitions-content').textContent`),/Source disabled/);
@@ -407,6 +436,30 @@ try {
  await click('#printer-use-factory');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
  assert.equal(state().draft.devices.length,24);assert(state().draft.definition_plan.selections.some(r=>r.id==='sv08.factory'));assert.equal(state().draft.devices.find(d=>d.name==='probe').settings.z_offset,undefined);
  await reloadDocument();await click('#authorize');await ready();assert.equal(state().draft.devices.length,24);await screenshot('factory-components');
+ assert.match(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/Needs your input:.*MCU identity/);
+ await followAttention('boards');
+ assert.equal(await evaluate(`document.activeElement.dataset.inputTarget`),'main.identity');
+ assert.match(await evaluate(`document.querySelector('#printer-selected-definitions').textContent`),/Selected in draft/);
+ assert.equal(await evaluate(`document.querySelector('#printer-selected-definitions').compareDocumentPosition(document.querySelector('#printer-definition-choices')) & Node.DOCUMENT_POSITION_FOLLOWING`),4);
+ const answerSavedBytes=fs.readFileSync(statepath),answerLivePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg',answerLiveBytes=fs.readFileSync(answerLivePath);
+ await set('[data-input-target="tool.identity"]','/dev/fixture-tool-draft');
+ await set('[data-input-target="main.identity"]','/dev/null');
+ assert.equal(await evaluate(`document.querySelector('[data-input-target="main.identity"]').parentElement.firstChild.textContent`),'Mainboard MCU identity');
+ assert.equal(await evaluate(`document.activeElement.dataset.inputTarget`),'main.identity');
+ await set('[data-input-target="main.identity"]','');
+ assert.match(await evaluate(`document.querySelector('[data-input-target="main.identity"]').parentElement.firstChild.textContent`),/needs your input/);
+ assert.equal(await evaluate(`document.querySelector('[data-input-target="tool.identity"]').value`),'/dev/fixture-tool-draft');
+ assert.equal(await evaluate(`document.activeElement.dataset.inputTarget`),'main.identity');
+ await set('[data-input-target="tool.identity"]','');await set('[data-input-target="main.identity"]','/dev/null');
+ assert.deepEqual(fs.readFileSync(statepath),answerSavedBytes);assert.deepEqual(fs.readFileSync(answerLivePath),answerLiveBytes);
+ assert.match(await evaluate(`document.querySelector('#printer-draft-state').textContent`),/Unsaved selections.*1 changed component/);
+ assert.doesNotMatch(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/Needs your input: Mainboard MCU identity/);
+ await click('[data-printer-view=changes]');assert.match(await evaluate(`document.querySelector('#printer-semantic-changes').textContent`),/Mainboard MCU identity: Not set → Provided \(private\)/);assert.equal(await evaluate(`document.querySelector('#printer-change-count').textContent`),'1');await click('[data-printer-view=components]');
+ await screenshotAt('journey-selected-questions','#printer-selected-definitions');
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(state().draft.definition_plan.instance_values['main.identity'],'/dev/null');
+ assert.match(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/Toolhead MCU identity/);
+
  await evaluate(`for(const input of document.querySelectorAll('#printer-boards input')){if(input.parentElement.textContent.includes('Private MCU identity')){input.value='/dev/null';input.dispatchEvent(new Event('change',{bubbles:true}));}}`);
  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
  const beforeBundle=JSON.stringify(state());
@@ -419,11 +472,34 @@ try {
  // Guided preparation uses existing staged reviews and never applies on selection.
  const beforeGuided=JSON.stringify(state());await evaluate(`document.querySelector('#printer-next').focus()`);await click('#printer-next');await until(`document.querySelector('#printer-candidate-review').open`);
  assert.match(await evaluate(`document.querySelector('#printer-review-step').textContent`),/saves your selections and an inactive candidate/);
- await screenshot('guided-configuration-review');await key('Escape');assert.equal(JSON.stringify(state()),beforeGuided);await until(`document.activeElement.id==='printer-next'`);
+ await screenshot('guided-configuration-review');await key('Escape');assert.equal(JSON.stringify(state()),beforeGuided);await until(`document.activeElement.id==='printer-next'`);assert.match(await evaluate(`document.querySelector('#printer-notice').textContent`),/review cancelled.*nothing was prepared or applied/);
  await click('#printer-next');await until(`document.querySelector('#printer-candidate-review').open`);await click('#printer-apply');await until(`document.querySelector('#printer-publication-dialog').open`);
  assert.equal(state().current.mode,'full');assert.match(await evaluate(`document.querySelector('#printer-publication-summary').textContent`),/none; printer stays stopped/);
  await screenshot('guided-application-review');await click('#printer-publication-cancel');assert.equal(fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.match(await evaluate(`document.querySelector('#printer-selection-status').textContent`),/application not checked/);
+ assert.match(await evaluate(`document.querySelector('#printer-notice').textContent`),/Application cancelled.*inactive candidate is saved.*unchanged/);
+ assert.match(await evaluate(`document.querySelector('#printer-candidate-state').textContent`),/inactive candidate.*Full SV08/);
+ assert.match(await evaluate(`document.querySelector('#printer-application-state').textContent`),/Not checked.*unknown/);
+ await screenshotAt('journey-application-cancelled','#printer-notice');
+ // Application Escape cancels only the review, retaining saved/live bytes and focus.
+ const escapeSaved=fs.readFileSync(statepath),escapeLivePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg',escapeLive=fs.readFileSync(escapeLivePath);
+ await evaluate(`document.querySelector('#printer-next').focus()`);await click('#printer-next');await until(`document.querySelector('#printer-publication-dialog').open`);
+ await key('Escape');await until(`!document.querySelector('#printer-publication-dialog').open && document.activeElement.id==='printer-next'`);
+ assert.deepEqual(fs.readFileSync(statepath),escapeSaved);assert.deepEqual(fs.readFileSync(escapeLivePath),escapeLive);
+ assert.match(await evaluate(`document.querySelector('#printer-notice').textContent`),/Application cancelled.*inactive candidate is saved.*unchanged/);
+ assert.match(await evaluate(`document.querySelector('#printer-candidate-state').textContent`),/inactive candidate.*Full SV08/);
+ await screenshotAt('journey-application-escape','#printer-notice');
+ // A plain field edit must change the next step before a full rerender.
+ await click('[data-printer-view=components]');await click('[data-category=boards]');
+ await set('[data-input-target="main.identity"]','/dev/fixture-adjusted');
+ assert.equal(await evaluate(`document.querySelector('#printer-next').textContent`),'Review configuration');
+ assert.match(await evaluate(`document.querySelector('#printer-selection-status').textContent`),/Unsaved/);
+ await set('[data-input-target="main.identity"]','/dev/null');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(await evaluate(`document.querySelector('#printer-next').textContent`),'Review application');
+ const beforeRefusal=JSON.stringify(state());await click('#printer-next');await until(`document.querySelector('#printer-publication-dialog').open`);
+ await click('#printer-publication-apply');await until(`document.querySelector('#printer-notice').textContent.includes('Printer must be stopped') && !document.querySelector('#printer-save').disabled`);
+ assert.equal(JSON.stringify(state()),beforeRefusal);assert.doesNotMatch(await evaluate(`document.querySelector('#printer-application-state').textContent`),/Confirmed/);
+
  await set('#printer-mode','sensors');
  // Full factory graph, independent route and event-driven interaction acceptance.
  const graphSaved=JSON.stringify(state().draft);await click('[data-page=printer-connections]');
@@ -462,6 +538,21 @@ try {
  await click('#printer-table-toggle');await click('#printer-connection-table button');await click('#stop-authorization');assert.equal(await evaluate(`document.querySelector('#printer-connection-inspector select')?.disabled`),true);await click('#authorize');await ready();
  await click('[data-page=printer]');
 
+ // Resume a real incomplete draft: missing sensor links to the supported adjustment.
+ const incompleteDraft=structuredClone(state().draft);delete incompleteDraft.devices.find(d=>d.name==='bed_sensor').settings.curve;
+ await injectFile(incompleteDraft);await until(`!document.querySelector('#printer-import-diff').hidden && !document.querySelector('#printer-save').disabled`);
+ assert.match(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/Needs your input: identify the fitted bed sensor/);
+ await followAttention('bed');assert.equal(await evaluate(`document.activeElement.dataset.sensor`),'bed_sensor');
+ assert.equal(await evaluate(`document.querySelector('#printer-save').closest('details')`),null);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(state().draft.devices.find(d=>d.name==='bed_sensor').settings.curve,undefined);
+ await reloadDocument();await click('#authorize');await ready();
+ assert.match(await evaluate(`document.querySelector('#printer-draft-state').textContent`),/Saved draft/);
+ assert.match(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/identify the fitted bed sensor/);
+ for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await screenshot('journey-missing-sensor-'+width);}
+ await followAttention('bed');await screenshotAt('journey-sensor-adjustment','#printer-sensors');await set('[data-sensor="bed_sensor"]','sovol-bed');
+ assert.doesNotMatch(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/identify the fitted bed sensor/);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});await evaluate(`document.body.style.zoom='200%'`);await screenshot('components-200-percent');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await evaluate(`document.body.style.zoom=''`);
  // Emulate 200% reflow: a 1024×600 display represented as a 512×300 CSS viewport.
  await send('Emulation.setDeviceMetricsOverride',{width:512,height:300,deviceScaleFactor:2,mobile:false});await evaluate(`document.querySelector('.printer-footer').scrollIntoView({block:'end'})`);assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);const reflow=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/reflow-primary-controls.png',Buffer.from(reflow.data,'base64'));await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');await key('Escape');assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
@@ -470,6 +561,6 @@ try {
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,hardware_journey_state_attention_save_cancel:true,definition_author_gap_distinct:true,required_answer_label_tracks_edit_without_focus_loss:true,publication_refusal_no_confirmation:true,publication_escape_retains_bytes_focus:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
 } finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes,entries:fs.readdirSync(profile,{withFileTypes:true}).map(e=>({name:e.name,bytes:e.isDirectory()?bytes(profile+'/'+e.name):e.isFile()?fs.statSync(profile+'/'+e.name).size:0})).sort((a,b)=>b.bytes-a.bytes)}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

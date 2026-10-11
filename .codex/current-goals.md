@@ -1,5 +1,21 @@
 # Current delivery goals
 
+## Completed PR-delivery goal — Printer Hardware journey, 2026-10-11
+
+Published [PR #7](https://github.com/drew442/sv08-mainline/pull/7) for owner review.
+Visible saved/draft/prepared/application state, linked known attention, selected
+questions, incomplete draft saving and truthful cancellation are delivered.
+PHJ-1–7 pass: two composed browser journeys,43applicable standard tests,
+syntax/navigation/diff checks and actual rendered assessment.
+See [source-bound evidence](../docs/features/printer-hardware-journey/evidence.md).
+
+The native goal ends at this review PR. The existing feature task remains
+**validated awaiting owner integration**, preserving reviewed commit79b2568.
+Main is unchanged; no merge, deployment or printer access occurred.
+Successful application remains source-reviewed only; browser evidence uses a
+session/transport shim and real Store/Budget. Small deferred scope is recorded
+in the [proposal](../docs/features/printer-hardware-journey/proposal.md).
+
 ## Completed goal — Cockpit UI/UX workplan, 2026-10-11
 
 W0–W8 delivered using named implementation, research and integration agents.
