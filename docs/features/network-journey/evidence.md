@@ -26,13 +26,13 @@ Named worker `project_implementer`, explicit medium, fresh context; observed SQL
 
 ## Visual evidence
 
-Visuals are preserved in the assigned task artifacts, not in this source candidate: coordinator allocation mistakenly named a directory instead of exact owned files; the workflow rejected submission and original authorization is preserved unchanged. All visuals show disposable fixture data; passwords/private keys are absent. Before and ordinary-view after captures use480px width; focused review/pending/unknown captures use390px.
+Visuals are preserved in assigned task artifacts and the already-pushed evidence commit linked below, not the final candidate tree: coordinator allocation mistakenly named a directory instead of exact owned files; the workflow rejected submission and original authorization is preserved unchanged. All visuals show disposable fixture data; passwords/private keys are absent. Before and ordinary-view after captures use480px width; focused review/pending/unknown captures use390px.
 
-- [Before](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/before-mobile.png)
-- [After ordinary viewing](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/after-mobile.png)
-- [Review](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/review-mobile.png)
-- [Pending confirmation](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/pending-mobile.png)
-- [Unknown result](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/unknown-mobile.png)
+- [Before](https://github.com/drew442/sv08-mainline/blob/e406b9dc1c07e161dc9e1aa4d29fe0a07db30e2c/docs/features/network-journey/visuals/before-mobile.png)
+- [After ordinary viewing](https://github.com/drew442/sv08-mainline/blob/e406b9dc1c07e161dc9e1aa4d29fe0a07db30e2c/docs/features/network-journey/visuals/after-mobile.png)
+- [Review](https://github.com/drew442/sv08-mainline/blob/e406b9dc1c07e161dc9e1aa4d29fe0a07db30e2c/docs/features/network-journey/visuals/review-mobile.png)
+- [Pending confirmation](https://github.com/drew442/sv08-mainline/blob/e406b9dc1c07e161dc9e1aa4d29fe0a07db30e2c/docs/features/network-journey/visuals/pending-mobile.png)
+- [Unknown result](https://github.com/drew442/sv08-mainline/blob/e406b9dc1c07e161dc9e1aa4d29fe0a07db30e2c/docs/features/network-journey/visuals/unknown-mobile.png)
 
 ## Boundaries and deferred work
 
