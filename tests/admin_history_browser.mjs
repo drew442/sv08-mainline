@@ -28,7 +28,7 @@ try {
  const screenshot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/'+name+'.png',Buffer.from(r.data,'base64'));};
  await send('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url});await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
- const stateBefore=fs.readFileSync(fixture+'/state/state.json','utf8'); const transactionBefore=fs.readFileSync(fixture+'/state/update.json','utf8');
+ await click('[data-page=images]'); await until(`!document.querySelector('#image-history').hidden`); await click('#image-history details > summary'); const stateBefore=fs.readFileSync(fixture+'/state/state.json','utf8'); const transactionBefore=fs.readFileSync(fixture+'/state/update.json','utf8');
  assert.equal(fs.statSync(fixture+'/state').mode & 0o777,0o711);
  const originals=JSON.parse(fs.readFileSync(fixture+'/originals.json'));
  const rows=()=>{const m=JSON.parse(fs.readFileSync(fixture+'/state/admin-image-jobs/jobs.json'));return Array.isArray(m)?m:[...m.archives,m.active].flatMap(d=>JSON.parse(fs.readFileSync(fixture+'/state/admin-image-jobs/'+d.name)));};
@@ -49,7 +49,7 @@ try {
    assert.deepEqual(rows(),originals);
  } finally {fs.unlinkSync(pressure);}
  await evaluate(`refresh()`);await until(`!refreshing && !document.querySelector('#history-maintenance').disabled`);
- await evaluate(`document.querySelector('#hostname').value='unsaved-history-draft';document.querySelector('#hostname').dispatchEvent(new Event('input'))`);
+ await evaluate(`document.querySelector('[name=mode][value=writable]').click()`);
  await click('#history-maintenance');await until(`document.querySelector('#review').open`);
  await evaluate(`window.dispatchEvent(new Event('sv08-authority-changed'))`);await until(`!document.querySelector('#review').open && !refreshing`);
  assert(!fs.existsSync(fixture+'/state/admin-image-jobs/history-format-v2.lock'));
@@ -62,12 +62,12 @@ try {
  await until(`!document.querySelector('#review').open && !document.querySelector('#history-retry').hidden`);
  assert.deepEqual(rows(),originals);assert.deepEqual(JSON.parse(fs.readFileSync(fixture+'/backend.json')).calls,[]);
  assert.equal(fs.readFileSync(fixture+'/state/state.json','utf8'),stateBefore);assert.equal(fs.readFileSync(fixture+'/state/update.json','utf8'),transactionBefore);
- assert.equal(await evaluate(`document.querySelector('#hostname').value`),'unsaved-history-draft');
+ assert.equal(await evaluate(`document.querySelector('[name=mode]:checked').value`),'writable');
  await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
- await click('#history-retry');await until(`document.querySelector('#history-retry').hidden`);
+ await click('[data-page=images]'); await click('#image-history details > summary'); await click('#history-retry');await until(`document.querySelector('#history-retry').hidden`);
  await evaluate(`localStorage.setItem('sv08-image-submission',JSON.stringify({method:'image.submit',id:'00000000000000000000000000000000',plan:{}}))`);
  fs.writeFileSync(fixture+'/history-recovery-failure','injected observer durability failure');
- await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='Host unavailable'`);
+ await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='System status unavailable'`);
  assert.notEqual(await evaluate(`localStorage.getItem('sv08-image-submission')`),null);
  fs.unlinkSync(fixture+'/history-recovery-failure');
  await send('Page.reload');await until(`document.querySelector('#connection')?.textContent==='Host connected'`);

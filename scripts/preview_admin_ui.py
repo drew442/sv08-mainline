@@ -16,7 +16,7 @@ def serve(work, image_jobs=False, image_resolution=False):
     if work.exists(): raise ValueError('Use a fresh disposable build directory')
     work.mkdir(mode=0o700, parents=True)
     store = Store(work / 'state', reserve_bytes=0)
-    store.initialize(); boot = store.prepare_boot('A', '0.1.0-ui-fixture')
+    store.initialize(); boot = store.prepare_boot('A', '0.1.0-ui-fixture', release_revision=1)
     # Resolution binds its observation to a real current-boot identity.  The
     # ordinary jobs fixture intentionally keeps its historical fixed value.
     boot['boot_id'] = Path('/proc/sys/kernel/random/boot_id').read_text().strip() if image_resolution else 'ui-fixture'

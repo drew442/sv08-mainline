@@ -26,7 +26,7 @@ from test_transaction import Backend, admitted
 
 
 def verify(path):
-    return dict(release='release-2', bundle_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+    return dict(release='release-2', release_revision=2, signer_trusted=True, bundle_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
 
 
 def initialize(work, boot, budget_root=None):
