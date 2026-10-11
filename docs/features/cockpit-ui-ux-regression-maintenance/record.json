@@ -1,0 +1,67 @@
+{
+  "format_version": 2,
+  "id": "cockpit-ui-ux-regression-maintenance",
+  "kind": "feature",
+  "title": "Maintain operation and navigation regression fixtures for the Cockpit UX delivery",
+  "author": "root/coordinator",
+  "created": "2026-10-11",
+  "priority": 2,
+  "proposal": "docs/features/cockpit-ui-ux-regression-maintenance/proposal.md",
+  "requirements": [
+    "docs/features/cockpit-ui-ux-implementation/owner-request.md",
+    "docs/development/cockpit-ui-ux-workplan.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "regression-journeys",
+      "description": "Preserve navigation, jobs, unknown receipt and history maintenance/pressure checks with current synthetic authenticated metadata and supported routes.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Preserve and validate reusable Cockpit regression coverage",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [
+        "cockpit-ui-ux-implementation:implement"
+      ],
+      "checks": [
+        "regression-journeys"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Only reversible test fixture/assertion and preview-fixture metadata maintenance. No production runtime or protocol changes, printer operations, real image installs, identity restores or service changes.",
+      "hazards": [],
+      "owned_paths": [
+        "tests/printer_navigation.mjs",
+        "tests/admin_jobs_fixture.py",
+        "tests/admin_resolution_browser.mjs",
+        "tests/admin_history_browser.mjs",
+        "tests/test_admin_history_browser_fixture.py",
+        "scripts/preview_admin_ui.py",
+        "docs/features/cockpit-ui-ux-regression-maintenance/evidence.md",
+        "docs/features/cockpit-ui-ux-regression-maintenance/evidence.json"
+      ],
+      "input_paths": [
+        "ui/host/",
+        "runtime/",
+        "tests/admin_jobs_browser.mjs",
+        "tests/test_data_budget.py"
+      ]
+    }
+  ]
+}
