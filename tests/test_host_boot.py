@@ -80,6 +80,56 @@ class BootIdentityTests(unittest.TestCase):
                     self.assertFalse(any(call.args[0] == source or source in call.args[0].parents for call in chown.call_args_list))
             self.assertEqual({p.name: (p.read_bytes(), p.stat().st_mode & 0o777) for p in source.iterdir()}, original)
 
+    @unittest.skipUnless(os.geteuid() == 0, 'requires real root/application ownership; run with sudo')
+    def test_real_ownership_keeps_hardware_status_and_managed_republication_working(self):
+        import json
+        from sv08_printer_catalog import Catalog, empty_draft
+        from sv08_printer_store import PrinterStore
+        from sv08_printer_publish import Publisher
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            root = Path(temporary)
+            store = Store(root / 'data', reserve_bytes=0, budget=fixture_budget())
+            store.initialize()
+            boot = store.prepare_boot('A', 'release-1')
+            config = Path(boot['generation']) / 'config'
+            hardware = config / 'printer-hardware'
+            hardware.mkdir(mode=0o700)
+            raw = json.dumps(dict(format_version=1, revision=7, draft=empty_draft(), current=None, previous=None, sources={})).encode()
+            (hardware / 'state.json').write_bytes(raw)
+            (hardware / 'state.json').chmod(0o600)
+            publisher = Publisher(config, admit=lambda: True, validate=lambda *_: {'validated': True})
+            publisher.reader_gid = 1000  # Installed sv08 group; fixture host may lack it.
+            files = {'hardware.cfg': '[printer]\nkinematics: none\n'}
+            plan = publisher.preview(files, {}, 'first')
+            publisher.apply(plan['review'], files, {}, 'first')
+            source_config = config
+            originals = {p.relative_to(config): p.read_bytes() for p in config.rglob('*') if p.is_file()}
+            for slot, release in (('A', 'release-1'), ('B', 'release-2')):
+                if slot == 'B': store.expect_trial(slot, release, 'A')
+                boot = store.prepare_boot(slot, release)
+                if boot['trial']:
+                    store.confirm(slot, release)
+                    boot = store.prepare_boot(slot, release)
+                config = Path(boot['generation']) / 'config'
+                prepare_permissions(store.root, boot['generation'])
+                self.assertEqual((config / 'printer-hardware').stat().st_uid, 0)
+                self.assertEqual((config / 'printer-managed').stat().st_uid, 0)
+                self.assertEqual((config / 'printer-managed').stat().st_gid, 1000)
+                self.assertEqual(config.stat().st_uid, 1000)
+                self.assertEqual({p: (config / p).read_bytes() for p in originals}, originals)
+                bootfile = root / ('boot-' + slot + '.json'); bootfile.write_text(json.dumps(boot))
+                view = root / ('view-' + slot); view.symlink_to(config)
+                service = PrinterStore(store, bootfile, view, Catalog(Path(__file__).resolve().parents[1] / 'catalog/printer/catalog.json'))
+                self.assertEqual(service.request({'action': 'status'})['state']['revision'], 7)
+                publisher = Publisher(config, admit=lambda: True, validate=lambda *_: {'validated': True})
+                publisher.reader_gid = 1000
+                next_plan = publisher.preview(files, {}, 'after-' + slot)
+                publisher.apply(next_plan['review'], files, {}, 'after-' + slot)
+                self.assertEqual(publisher.receipt()['plan'], 'after-' + slot)
+                if slot == 'A':
+                    originals = {p.relative_to(config): p.read_bytes() for p in config.rglob('*') if p.is_file()}
+            self.assertEqual({p: (source_config / p).read_bytes() for p in originals}, originals)
+
     def test_cockpit_certificate_store_is_private_root_owned_persistent_state(self):
         with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
             store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
