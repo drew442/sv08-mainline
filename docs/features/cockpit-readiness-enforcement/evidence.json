@@ -1,0 +1,13 @@
+{
+  "returncode": 0,
+  "tests": 14,
+  "skipped": 0,
+  "yaml_parsed": true,
+  "local_links_valid": true,
+  "hosted_execution": "not yet observed",
+  "source_sha256": {
+    ".github/workflows/cockpit-readiness.yml": "734db5fe133c50938772ddbee01f68cce94666411d5a7162a5656dcba5ed64f9",
+    "docs/development/cockpit-deployment-checks.md": "0ee141467c8270547a0a6ea0b81078448e1210c738c96eab3963413c02b43630"
+  },
+  "recipe_sha256": "2837d38f255aea2c28cb0de67b09423df20f457eab1b7341c4eaadcf2795c72c"
+}
