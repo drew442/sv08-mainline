@@ -153,7 +153,7 @@
       "resumption": "Coordinator grants exact fixture transport files and deployment evidence paths; source and acceptance unchanged; prior run and cumulative allowances preserved; renew recorded ownership before restoring completed patch.",
       "review_policy": "self",
       "review_reason": "Offline implementation self-validated. Independent consequential-operation review separately required before installing new limited sudo entry; owner-authorized viewing excludes private credentials.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate read-only configuration access",
       "validation": {
         "actor": "root/coordinator",
