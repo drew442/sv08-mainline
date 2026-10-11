@@ -1,64 +1,73 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "806e308ef7074d7edc41257c3f4fa0fbb96cf2223e8b79a13b8ac33725717042",
+    "rationale": "Owner requests Network improvement and review publication under existing bounded workflow",
+    "reference": "docs/features/network-journey/owner-request.md",
+    "reference_sha256": "c5dfc601ddd86284d5f06547b88410d8341a1b40f5bd38040bdbb0bcbc2fab93",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/network-journey/owner-request.md": "c5dfc601ddd86284d5f06547b88410d8341a1b40f5bd38040bdbb0bcbc2fab93"
+    },
+    "scope_sha256": "8ba50305711901ca64d0d185890ed09111471724fd7119bb57e5686210010a17",
+    "session": "network-journey-20261011",
+    "source_commit": "332c66e15acab6d156407b80352f19aff3a76808"
+  },
+  "checks": [
+    {
+      "description": "Ordinary reads and administrator-gated writes",
+      "environment": "offline",
+      "id": "nj-1"
+    },
+    {
+      "description": "Readable Ethernet/Wi-Fi state, addresses and interface",
+      "environment": "offline",
+      "id": "nj-2"
+    },
+    {
+      "description": "Supported Wi-Fi guidance and prerequisites",
+      "environment": "offline",
+      "id": "nj-3"
+    },
+    {
+      "description": "Structured reviews; cancel/Escape no mutation and focus restored",
+      "environment": "offline",
+      "id": "nj-4"
+    },
+    {
+      "description": "Prominent deadline/reconnect/rollback and truthful uncertain outcomes",
+      "environment": "offline",
+      "id": "nj-5"
+    },
+    {
+      "description": "Nonsecret drafts/focus retained; secrets cleared; unavailable targets invalid",
+      "environment": "offline",
+      "id": "nj-6"
+    },
+    {
+      "description": "Keyboard and 390/1024/1440/200% reflow without overflow",
+      "environment": "offline",
+      "id": "nj-7"
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
   "format_version": 2,
   "id": "network-journey",
   "kind": "feature",
-  "title": "Readable and recoverable Network journey",
-  "author": "root/coordinator",
-  "created": "2026-10-11",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/network-journey/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/network-journey/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "nj-1",
-      "description": "Ordinary reads and administrator-gated writes",
-      "environment": "offline"
-    },
-    {
-      "id": "nj-2",
-      "description": "Readable Ethernet/Wi-Fi state, addresses and interface",
-      "environment": "offline"
-    },
-    {
-      "id": "nj-3",
-      "description": "Supported Wi-Fi guidance and prerequisites",
-      "environment": "offline"
-    },
-    {
-      "id": "nj-4",
-      "description": "Structured reviews; cancel/Escape no mutation and focus restored",
-      "environment": "offline"
-    },
-    {
-      "id": "nj-5",
-      "description": "Prominent deadline/reconnect/rollback and truthful uncertain outcomes",
-      "environment": "offline"
-    },
-    {
-      "id": "nj-6",
-      "description": "Nonsecret drafts/focus retained; secrets cleared; unavailable targets invalid",
-      "environment": "offline"
-    },
-    {
-      "id": "nj-7",
-      "description": "Keyboard and 390/1024/1440/200% reflow without overflow",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and assess Network journey",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "nj-1",
         "nj-2",
@@ -68,17 +77,19 @@
         "nj-6",
         "nj-7"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible UI and fixture tests; unchanged backend protections; no live printer or network operations.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_network.py",
+        "ui/host/view.js",
+        "ui/host/session.js",
+        "tests/test_printer_browser_fixture.py"
+      ],
       "owned_paths": [
         "ui/host/network.js",
         "ui/host/index.html",
@@ -89,12 +100,15 @@
         "docs/features/network-journey/evidence.json",
         "docs/features/network-journey/visuals"
       ],
-      "input_paths": [
-        "runtime/sv08_network.py",
-        "ui/host/view.js",
-        "ui/host/session.js",
-        "tests/test_printer_browser_fixture.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible UI and fixture tests; unchanged backend protections; no live printer or network operations.",
+      "status": "pending",
+      "title": "Implement and assess Network journey",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Readable and recoverable Network journey"
 }
