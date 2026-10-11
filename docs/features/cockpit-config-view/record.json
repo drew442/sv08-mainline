@@ -47,7 +47,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "8e57e47ec2b5488ea611950136455808",
+        "session": "cockpit-view-20261011"
+      },
       "input_paths": [
         "runtime/sv08_admin.py",
         "runtime/sv08_printer_helper.py",
@@ -95,7 +99,7 @@
       "resumption": "Coordinator grants exact fixture transport files and deployment evidence paths; source and acceptance unchanged; prior run and cumulative allowances preserved; renew recorded ownership before restoring completed patch.",
       "review_policy": "self",
       "review_reason": "Offline implementation self-validated. Independent consequential-operation review separately required before installing new limited sudo entry; owner-authorized viewing excludes private credentials.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate read-only configuration access",
       "validation": null,
       "verification": null
