@@ -8,7 +8,7 @@ const [chrome,fixture,output]=process.argv.slice(2);
 const {url}=JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url,/^http:\/\/127\.0\.0\.1:\d+$/);
 fs.mkdirSync(output);const profile=fs.mkdtempSync((process.env.SV08_BROWSER_PROFILE_ROOT??output)+'/profile-');fs.chmodSync(profile,0o700);const log=fs.openSync(output+'/browser.log','w');
-const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
+const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--disable-gpu-shader-disk-cache','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
 let socket,secondSocket,secondTarget;
 try {
  let port;
@@ -67,12 +67,36 @@ try {
  await click('[data-page=printer]');await click('#authorize');await ready();
  assert.equal(await evaluate('new Set([...document.querySelectorAll("[id]")].map(e=>e.id)).size===document.querySelectorAll("[id]").length'),true);
  assert.match(await evaluate('location.pathname'),/sv08-host\/index.html$/);
+ // Task shell: successful authority clears only obsolete status notices.
+ assert.equal(await evaluate(`document.querySelector('#notice').dataset.kind==='authorization'`),false);
+ assert.equal(await evaluate(`document.querySelector('#image-history').hidden`),true);
+ assert.equal(await evaluate(`document.querySelector('#task-navigation').querySelectorAll('[data-page]').length`),6);
+ await evaluate(`notice('Check the previous receipt before another application.', 'operation');refresh()`);
+ await until(`document.querySelector('#connection').textContent==='Host connected'`);
+ assert.match(await evaluate(`document.querySelector('#notice').textContent`),/previous receipt/);
+ await evaluate(`window.fixtureHostFailure=true;refresh()`);await until(`document.querySelector('#connection').textContent==='System status unavailable'`);
+ assert.match(await evaluate(`document.querySelector('#notice').textContent`),/previous receipt/);
+ await evaluate(`window.fixtureHostFailure=false;refresh()`);await until(`document.querySelector('#connection').textContent==='Host connected'`);
+ assert.match(await evaluate(`document.querySelector('#notice').textContent`),/previous receipt/);
+
+ for(const [width,height] of [[1440,900],[1024,600],[390,844]]){
+  await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+  await evaluate(`document.querySelector('#fixture').hidden=true;scrollTo(0,0)`);
+  assert.equal(await evaluate(`document.querySelector('#printer h1').getBoundingClientRect().bottom<innerHeight`),true);
+  assert.equal(await evaluate(`document.querySelector('.printer-card').getBoundingClientRect().top<innerHeight`),true,'First component is visible');
+  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
+  await screenshot('task-shell-'+width);
+ }
+ await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');
+ await key('Escape');assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');
+ assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'false');
+ await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  // Catalogue browsing is read-only, with compact groups and component drill-down.
  const definitionsState=fs.existsSync(statepath)?fs.readFileSync(statepath):null;
  const browseRequests=await evaluate('fixtureRequests.length');await click('[data-page=definitions]');
  await until(`document.querySelector('[data-definition-group="builtin"]')`);
  assert.equal(await evaluate('location.hash'),'#definitions');assert.equal(await evaluate(`document.querySelector('#printer').hidden`),true);
- assert.equal(await evaluate(`document.querySelector('[data-page=definitions]').getAttribute('aria-current')`),'page');
+ assert.equal(await evaluate(`document.querySelector('#task-context [data-page=definitions]').getAttribute('aria-current')`),'page');
  assert.equal(await evaluate(`!!document.querySelector('#printer-definitions-content dl')`),false);
  await click('[data-definition-group="builtin"]');await until(`document.querySelectorAll('#printer-definitions-content [data-definition-id]').length===25`);
  await click('[data-definition-id="sv08.factory"]');assert.match(await evaluate(`document.querySelector('#printer-definitions-content h2').textContent`),/complete factory/);
@@ -87,7 +111,7 @@ try {
  await evaluate(`document.querySelector('#printer-definitions-search').value='';document.querySelector('#printer-definitions-search').dispatchEvent(new Event('input'))`);await click('#printer-definitions-by-source');
  await evaluate(`document.querySelector('[data-definition-group="builtin"]').focus()`);await key('Enter');await until(`!!document.querySelector('[data-definition-id="sv08.factory"]')`);
  await evaluate(`document.querySelector('[data-definition-id="sv08.factory"]').focus()`);await key('Enter');assert.match(await evaluate(`document.querySelector('#printer-definitions-content h2').textContent`),/complete factory/);
- await evaluate('window.fixtureHostFailure=true;refresh()');await until(`document.querySelector('#connection').textContent==='Host unavailable'`);assert.equal(await evaluate(`document.querySelector('#printer-definitions-back').disabled`),false);await evaluate('window.fixtureHostFailure=false;refresh()');
+ await evaluate('window.fixtureHostFailure=true;refresh()');await until(`document.querySelector('#connection').textContent==='System status unavailable'`);assert.equal(await evaluate(`document.querySelector('#printer-definitions-back').disabled`),false);await evaluate('window.fixtureHostFailure=false;refresh()');
  for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await screenshot('definitions-detail-'+width);}
  assert.equal(await evaluate('fixtureRequests.length'),browseRequests);
  if(definitionsState)assert.deepEqual(fs.readFileSync(statepath),definitionsState);else assert.equal(fs.existsSync(statepath),false);
@@ -96,14 +120,14 @@ try {
  await click('[data-page=printer]');await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
 
  // Shared document/history and editable host values survive route changes.
- await set('#hostname','retained-host-draft');
+ await evaluate(`document.querySelector('#auto-update').checked=true;document.querySelector('#auto-update').dispatchEvent(new Event('input'))`);
  await click('[data-page=settings]');await click('[data-page=printer]');
  await evaluate('history.back()');await until(`location.hash==='#settings'`);
  await evaluate('history.forward()');await until(`location.hash==='#printer'`);
- assert.equal(await evaluate(`document.querySelector('#hostname').value`),'retained-host-draft');
+ assert.equal(await evaluate(`document.querySelector('#auto-update').checked`),true);
  assert.equal(await evaluate('document===window.documentIdentity && sv08Session===window.sessionIdentity'),true);
  assert.equal(await evaluate(`document.querySelector('[data-host-status]').hidden`),true);
- await evaluate('window.fixtureHostFailure=true; refresh()');await until(`document.querySelector('#connection').textContent==='Host unavailable'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),false);
+ await evaluate('window.fixtureHostFailure=true; refresh()');await until(`document.querySelector('#connection').textContent==='System status unavailable'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),false);
  // Host upload review opens on successful plan, navigation invalidates late plans.
  await evaluate('window.fixtureHostFailure=false; refresh()');await click('[data-page=images]');await evaluate('uploadListing()');
  await evaluate(`(()=>{const dt=new DataTransfer();dt.items.add(new File(['fixture'],'fixture.raucb'));document.querySelector('#bundle-file').files=dt.files;})()`);
@@ -113,7 +137,7 @@ try {
  await click('[data-page=printer]');await evaluate('window.fixtureHostRelease()');await until('!window.fixtureHostWaiting');
  assert.equal(await evaluate(`document.querySelector('#upload-review').open`),false);
  assert.equal(await evaluate(`document.querySelector('#bundle-file').files[0].name`),'fixture.raucb');
- await click('[data-page=settings]');await evaluate('window.fixtureHostHold="plan"');await click('#save-hostname');await until('window.fixtureHostWaiting');
+ await click('[data-page=settings]');await evaluate('window.fixtureHostHold="plan"');await click('#save-mode');await until('window.fixtureHostWaiting');
  await click('[data-page=printer]');await evaluate('window.fixtureHostRelease()');await until('!window.fixtureHostWaiting');assert.equal(await evaluate(`document.querySelector('#review').open`),false);
  await evaluate(`document.querySelector('.skip').click()`);assert.equal(await evaluate('location.hash'),'#printer');assert.equal(await evaluate('document.activeElement.id'),'main');
  // Select board and incomplete device through native forms, without JSON editor.
@@ -144,7 +168,7 @@ try {
  await screenshot('sensor-1024x600');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  // Default focus and real Escape cancellation; no state publication.
  let before=state().revision;await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
- assert.equal(await evaluate(`document.activeElement.id`),'printer-cancel-review');await key('Escape');assert.equal(state().revision,before);
+ assert.equal(await evaluate(`document.activeElement.id`),'printer-review-title');await key('Escape');assert.equal(state().revision,before);
  await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);await click('#printer-apply');await until(`document.querySelector('#printer-notice').textContent.includes('commissioning handoff') && !document.querySelector('#printer-save').disabled`);assert.equal(state().current.mode,'sensors');assert.match(state().current.text,/\[temperature_sensor bed_sensor\]/);
  // A pending printer review response cannot reopen a dialog after navigation.
  before=state().revision;await evaluate('window.fixtureHoldReview=true');await click('#printer-review');await until('window.fixtureReviewWaiting');
@@ -280,7 +304,7 @@ try {
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});await screenshot('boards-narrow');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  const legacyOrigin=await evaluate('performance.timeOrigin');await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-printer/index.html'});await until(`performance.timeOrigin!==${legacyOrigin} && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled && location.pathname.endsWith('/sv08-host/index.html') && location.hash==='#printer' && document.querySelector('#printer') && !document.querySelector('#printer').hidden`);
  const beforeReloadOrigin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${beforeReloadOrigin} && location.hash==='#printer' && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();
- await click('[data-printer-view=changes]');await evaluate(`document.querySelector('#printer-save').focus()`);await key('Tab');assert.equal(await evaluate(`document.activeElement.id`),'printer-show-changes');
+ await click('[data-printer-view=changes]');await evaluate(`document.querySelector('#printer-next').focus()`);await key('Tab');assert.equal(await evaluate(`document.activeElement.id`),'printer-show-changes');
  await click('[data-printer-view=components]');await click('[data-category=boards]');
  // Everyday hardware choices do not require entering pins or calibration.
  await set('#printer-boards fieldset:nth-child(1) select','sv08-main');await click('#printer-confirm-board');await until(`!document.querySelector('#printer-board-change').open && !document.querySelector('#printer-save').disabled`);
@@ -319,7 +343,7 @@ try {
  await click('[data-page=printer-connections]');await click('#printer-table-toggle');assert.match(await evaluate(`document.querySelector('#printer-connection-table').textContent`),/PC5/);await screenshot('connections');
  await click('[data-page=definition-sources]');assert.match(await evaluate(`document.querySelector('#printer-source-list').textContent`),/Built-in/);
  assert.equal(await evaluate(`location.hash`),'#definition-sources');assert.equal(await evaluate(`document.querySelector('#printer').hidden`),true);assert.equal(await evaluate(`document.querySelector('#definition-sources').hidden`),false);
- assert.equal(await evaluate(`document.querySelector('[data-page=definition-sources]').getAttribute('aria-current')`),'page');
+ assert.equal(await evaluate(`document.querySelector('#task-context [data-page=definition-sources]').getAttribute('aria-current')`),'page');
  await evaluate('history.back()');await until(`location.hash==='#printer-connections'`);await evaluate('history.forward()');await until(`location.hash==='#definition-sources'`);
  await send('Page.reload');await until(`window.sv08Session?.available && !document.querySelector('#authorize').disabled`);await click('#authorize');await ready();assert.equal(await evaluate(`location.hash`),'#definition-sources');assert.equal(await evaluate(`document.querySelector('#definition-sources').hidden`),false);
  const starterState=state(),starterRequests=await evaluate('window.fixtureRequests.length');
@@ -335,11 +359,14 @@ try {
  await set('#printer-source-url','https://github.com/fixture/bad-mode');await click('#printer-source-preview');
  await until(`document.querySelector('#printer-source-notice').textContent.includes('git update-index --chmod=-x catalog.json') && !document.querySelector('#printer-source-preview').disabled`);
  assert.equal(await evaluate(`document.querySelector('#printer-source-preview-detail').textContent`),'');
+ assert.equal(await evaluate(`document.querySelector('#printer-source-url').value`),'https://github.com/fixture/bad-mode');
+ await set('#printer-source-url','https://github.com/fixture/offline');await click('#printer-source-preview');await until(`document.querySelector('#printer-source-notice').textContent.includes('retry when online') && !document.querySelector('#printer-source-preview').disabled`);assert.equal(await evaluate(`document.querySelector('#printer-source-url').value`),'https://github.com/fixture/offline');assert.deepEqual(state(),starterState);
+ await set('#printer-source-url','https://github.com/fixture/empty');await click('#printer-source-preview');await until(`document.querySelector('#printer-source-notice').textContent.includes('Definition count must be') && !document.querySelector('#printer-source-preview').disabled`);assert.equal(await evaluate(`document.querySelector('#printer-source-url').value`),'https://github.com/fixture/empty');assert.deepEqual(state(),starterState);
  await set('#printer-source-url','https://github.com/fixture/compact-mods');await click('#printer-source-preview');
  await until(`document.querySelector('#printer-source-preview-detail').textContent.includes('1 supported') && !document.querySelector('#printer-source-preview').disabled`);
  assert.match(await evaluate(`document.querySelector('#printer-source-preview-detail').textContent`),/Funssor CN3D heated bed/);assert.deepEqual(state(),starterState);
  await click('#printer-source-confirm');await until(`document.querySelector('#printer-source-list').textContent.includes('Compact modder fixture') && !document.querySelector('#printer-save').disabled`);
- await click('[data-page=printer]');await click('[data-category=bed]');await set('#printer-definition-filter','github:18:.');
+ await click('#printer-source-return');assert.equal(await evaluate(`location.hash`),'#printer');await click('[data-category=bed]');await set('#printer-definition-filter','github:18:.');
  await click('#printer-definition-choices .printer-choice');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');
  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
  assert.equal(state().draft.devices.find(d=>d.name==='bed_sensor').settings.max_temp,120);assert.equal(state().draft.devices.filter(d=>d.name==='heater_bed').length,1);
@@ -385,10 +412,18 @@ try {
  execFileSync('python3',['-c',`from zipfile import ZipFile;import json;z=ZipFile(${JSON.stringify(output+'/sv08-printer-configuration.zip')});p='sv08-printer-configuration/';assert z.read(p+'moonraker.conf');assert '[virtual_sdcard]' in z.read(p+'mainsail.cfg').decode();assert not json.loads(z.read(p+'configuration-manifest.json'))['printing_enabled']`]);
  await until(`document.querySelector('#printer-notice').textContent.includes('Klipper software validation passed') && !document.querySelector('#printer-save').disabled`);
  await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/sourced factory starting value 0 mm/);assert.equal(await evaluate(`document.querySelector('#printer-apply').disabled`),false);await click('#printer-cancel-review');
+ // Guided preparation uses existing staged reviews and never applies on selection.
+ const beforeGuided=JSON.stringify(state());await evaluate(`document.querySelector('#printer-next').focus()`);await click('#printer-next');await until(`document.querySelector('#printer-candidate-review').open`);
+ assert.match(await evaluate(`document.querySelector('#printer-review-step').textContent`),/saves your selections and an inactive candidate/);
+ await screenshot('guided-configuration-review');await key('Escape');assert.equal(JSON.stringify(state()),beforeGuided);await until(`document.activeElement.id==='printer-next'`);
+ await click('#printer-next');await until(`document.querySelector('#printer-candidate-review').open`);await click('#printer-apply');await until(`document.querySelector('#printer-publication-dialog').open`);
+ assert.equal(state().current.mode,'full');assert.match(await evaluate(`document.querySelector('#printer-publication-summary').textContent`),/none; printer stays stopped/);
+ await screenshot('guided-application-review');await click('#printer-publication-cancel');assert.equal(fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
+ assert.match(await evaluate(`document.querySelector('#printer-selection-status').textContent`),/application not checked/);
  await set('#printer-mode','sensors');
  // Full factory graph, independent route and event-driven interaction acceptance.
  const graphSaved=JSON.stringify(state().draft);await click('[data-page=printer-connections]');
- await until(`document.querySelectorAll('.printer-graph-node').length===27`);
+ await click('#printer-map-toggle');await until(`document.querySelectorAll('.printer-graph-node').length===27`);
  assert.equal(await evaluate(`location.hash`),'#printer-connections');assert.equal(await evaluate(`document.querySelector('#printer').hidden`),true);
  assert.equal(await evaluate(`!!document.querySelector('[data-printer-view=connections]')`),false);
  const expectedPins=state().draft.devices.reduce((count,d)=>count+Object.keys(d.settings).filter(f=>['pin','connector','endstop_pin','tachometer_pin','cs_pin','a0_pin','rst_pin','encoder_a','encoder_b','click_pin','miso_pin','mosi_pin','sclk_pin'].includes(f)).length,0);
@@ -416,14 +451,16 @@ try {
  await evaluate(`window.graphMutations=0;window.graphObserver=new MutationObserver(m=>graphMutations+=m.length);graphObserver.observe(document.querySelector('#printer-connection-map'),{subtree:true,attributes:true,childList:true})`);
  const idleRequests=await evaluate('fixtureRequests.length');await send('Performance.enable');const cpuStart=(await send('Performance.getMetrics')).metrics.find(m=>m.name==='TaskDuration').value;await delay(2000);const cpuEnd=(await send('Performance.getMetrics')).metrics.find(m=>m.name==='TaskDuration').value;
  assert.equal(await evaluate('graphMutations'),0);assert.equal(await evaluate('fixtureRequests.length'),idleRequests);await evaluate('graphObserver.disconnect()');const graphIdleTaskSeconds=cpuEnd-cpuStart;await click('#printer-graph-reset');
- for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await screenshot('factory-graph-'+width);}
+ for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await screenshot('factory-graph-'+width);await click('#printer-table-toggle');await evaluate(`document.querySelector('#printer-connection-table').scrollIntoView({block:'start'})`);const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/factory-table-'+width+'.png',Buffer.from(shot.data,'base64'));await click('#printer-map-toggle');}
  assert.equal(JSON.stringify(state().draft),graphSaved);
  await evaluate('history.back()');await until(`location.hash==='#printer'`);await evaluate('history.forward()');await until(`location.hash==='#printer-connections'`);
- await reloadDocument();await click('#authorize');await ready();await until(`document.querySelectorAll('.printer-graph-node').length===27`);assert.equal(await evaluate(`location.hash`),'#printer-connections');assert.equal(JSON.stringify(state().draft),graphSaved);
+ await reloadDocument();await click('#authorize');await ready();await click('#printer-map-toggle');await until(`document.querySelectorAll('.printer-graph-node').length===27`);assert.equal(await evaluate(`location.hash`),'#printer-connections');assert.equal(JSON.stringify(state().draft),graphSaved);
  await click('#printer-table-toggle');await click('#printer-connection-table button');await click('#stop-authorization');assert.equal(await evaluate(`document.querySelector('#printer-connection-inspector select')?.disabled`),true);await click('#authorize');await ready();
  await click('[data-page=printer]');
 
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});await evaluate(`document.body.style.zoom='200%'`);await screenshot('components-200-percent');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await evaluate(`document.body.style.zoom=''`);
+ // Emulate 200% reflow: a 1024×600 display represented as a 512×300 CSS viewport.
+ await send('Emulation.setDeviceMetricsOverride',{width:512,height:300,deviceScaleFactor:2,mobile:false});await evaluate(`document.querySelector('.printer-footer').scrollIntoView({block:'end'})`);assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);const reflow=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/reflow-primary-controls.png',Buffer.from(reflow.data,'base64'));await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');await key('Escape');assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  await evaluate('window.fixtureDisconnect()');await until(`document.querySelector('#printer-save').disabled`);assert.match(await evaluate(`document.querySelector('#session-status').textContent`),/disconnected/);
  await reloadDocument();await click('#authorize');await ready();await click('#logout');await until(`document.body.dataset.loggedOut==='true'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;

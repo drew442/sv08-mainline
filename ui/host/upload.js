@@ -124,4 +124,4 @@ window.addEventListener('sv08-authority-changed', () => {
     if (!sv08Session.elevated) uploadProcess?.close('terminated');
     else void uploadListing();
 });
-setInterval(() => { if (window.sv08Session?.elevated) void uploadListing(); }, 2000);
+setInterval(() => { if (window.sv08Session?.elevated && (uploadActive || (!document.hidden && location.hash === '#images'))) void uploadListing(); }, 2000);

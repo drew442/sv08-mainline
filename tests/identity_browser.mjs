@@ -5,19 +5,21 @@ let config;let buffer='';server.stdout.on('data',chunk=>{buffer+=chunk;if(buffer
 let child,socket,profile;
 try{
  for(let n=0;n<100&&!config;n++)await delay(100);assert(config,'Fixture startup failed');
- profile=fs.mkdtempSync('/dev/shm/sv08-identity-browser-');const downloads=path.join(profile,'downloads');fs.mkdirSync(downloads);
+ profile=fs.mkdtempSync((process.env.SV08_UI_SCRATCH || '/dev/shm')+'/sv08-identity-browser-');const downloads=path.join(profile,'downloads');fs.mkdirSync(downloads);
  child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore',detached:true});
  let port;for(let n=0;n<80;n++){try{port=fs.readFileSync(profile+'/DevToolsActivePort','utf8').split('\n')[0];break}catch{await delay(100)}}assert(port);
  const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j});
  let id=0;const pending=new Map();const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>reject(Error('Browser command timeout')),15000);pending.set(n,{resolve,reject,timer});socket.send(JSON.stringify({id:n,method,params}))});
  socket.onmessage=({data})=>{const e=JSON.parse(data);if(e.id&&pending.has(e.id)){const p=pending.get(e.id);pending.delete(e.id);clearTimeout(p.timer);e.error?p.reject(Error('Browser command failed')):p.resolve(e.result)}};
  const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error('Browser evaluation failed');return r.result.value};
+ const capture=async()=>{const output=process.env.SV08_UI_EVIDENCE;if(!output)return;fs.mkdirSync(output,{recursive:true,mode:0o700});for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await ev('scrollTo(0,0)');assert(await ev('document.documentElement.scrollWidth<=innerWidth'));const image=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width,height:Math.min(2200,await ev('document.documentElement.scrollHeight')),scale:1}});fs.writeFileSync(output+'/identity-ready-'+width+'.png',Buffer.from(image.data,'base64'));}};
  const until=async expression=>{for(let n=0;n<100;n++){if(await ev(expression))return;await delay(100)}throw Error('Browser condition timeout')};
  const click=selector=>ev(`document.querySelector(${JSON.stringify(selector)}).click()`);
  const rpc=request=>ev(`cockpit.spawn([]).input(${JSON.stringify(JSON.stringify(request))}).then(x=>JSON.parse(x))`);
  await send('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:downloads});await send('Page.navigate',{url:config.url});
  await until('!!document.querySelector("#identity-export")');assert(await ev('document.querySelector("#identity-export").disabled'));
  await click('#fixture-authorize');await until('!document.querySelector("#identity-export").disabled');
+ await capture();
  const original=(await rpc({method:'status'})).result;
  await click('#identity-download-ca');for(let n=0;n<100&&!fs.existsSync(downloads+'/sv08-printer-ca.crt');n++)await delay(100);
  const ca=fs.readFileSync(downloads+'/sv08-printer-ca.crt','utf8');assert(ca.includes('BEGIN CERTIFICATE')&&!ca.includes('PRIVATE KEY'));

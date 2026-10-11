@@ -14,7 +14,7 @@ from prepare_host_os import REPO, work_path
 
 def serve(work, image_jobs=False, image_resolution=False):
     if work.exists(): raise ValueError('Use a fresh disposable build directory')
-    work.mkdir(parents=True)
+    work.mkdir(mode=0o700, parents=True)
     store = Store(work / 'state', reserve_bytes=0)
     store.initialize(); boot = store.prepare_boot('A', '0.1.0-ui-fixture')
     # Resolution binds its observation to a real current-boot identity.  The
@@ -49,7 +49,7 @@ window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({val
 const r=await fetch('/request',{method:'POST',headers:{'Content-Type':'application/json','X-Fixture-Token':TOKEN},body:data});
 return await r.text();}})};'''.replace('TOKEN', json.dumps(token))
                 return self.respond(200, script, 'text/javascript')
-            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/upload.js': 'upload.js', '/session.js': 'session.js', '/style.css': 'style.css'}
+            paths = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/upload.js': 'upload.js', '/session.js': 'session.js', '/style.css': 'style.css', '/navigation.js':'navigation.js', '/identity.js':'identity.js', '/mainsail-access.js':'mainsail-access.js', '/network.js':'network.js', '/software.js':'software.js'}
             if self.path not in paths: return self.respond(404, b'{}')
             name = paths[self.path]
             self.respond(200, (root / name).read_bytes(), {'html':'text/html','js':'text/javascript','css':'text/css'}[name.split('.')[-1]])
