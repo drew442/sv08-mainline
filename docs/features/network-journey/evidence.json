@@ -986,5 +986,10 @@
     "200% equivalent CSS viewport512x300/deviceScaleFactor2 for1024x600 window, not native browser zoom control",
     "Modal actions reachable via actual CDP Tab assertions; screenshots show title-first state",
     "No native skill activation or hidden-context completeness proof; no measured agent savings"
-  ]
+  ],
+  "publication_record_correction": {
+    "failed_submission": "Owned paths must name files or gitlinks",
+    "action": "Preserved visuals in assigned artifact directory; removed image paths from final candidate diff; original authorization not changed",
+    "visual_evidence": "/home/drew/.sv08-network-journey-20261011/published-visual-evidence"
+  }
 }

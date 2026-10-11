@@ -26,13 +26,13 @@ Named worker `project_implementer`, explicit medium, fresh context; observed SQL
 
 ## Visual evidence
 
-All visuals show disposable fixture data; passwords/private keys are absent. Before and ordinary-view after captures use480px width; focused review/pending/unknown captures use390px.
+Visuals are preserved in the assigned task artifacts, not in this source candidate: coordinator allocation mistakenly named a directory instead of exact owned files; the workflow rejected submission and original authorization is preserved unchanged. All visuals show disposable fixture data; passwords/private keys are absent. Before and ordinary-view after captures use480px width; focused review/pending/unknown captures use390px.
 
-- [Before](visuals/before-mobile.png)
-- [After ordinary viewing](visuals/after-mobile.png)
-- [Review](visuals/review-mobile.png)
-- [Pending confirmation](visuals/pending-mobile.png)
-- [Unknown result](visuals/unknown-mobile.png)
+- [Before](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/before-mobile.png)
+- [After ordinary viewing](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/after-mobile.png)
+- [Review](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/review-mobile.png)
+- [Pending confirmation](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/pending-mobile.png)
+- [Unknown result](/home/drew/.sv08-network-journey-20261011/published-visual-evidence/unknown-mobile.png)
 
 ## Boundaries and deferred work
 
