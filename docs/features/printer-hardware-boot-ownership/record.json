@@ -1,59 +1,73 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "93d692070a98f342365250a42cea09a8d37a8ea279e501d6ded843102fd8bf04",
+    "rationale": "Resolve owner-reported demonstrated hardware loading refusal without altering saved content.",
+    "reference": "docs/features/printer-hardware-boot-ownership/owner-request.md",
+    "reference_sha256": "e70592ffd151542d38dae9cdac12a5c9eef09dcb7be4c260a4887479f81b3e14",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/printer-hardware-boot-ownership/owner-request.md": "e70592ffd151542d38dae9cdac12a5c9eef09dcb7be4c260a4887479f81b3e14"
+    },
+    "scope_sha256": "9623ba9658f4e6ad7fa29a6032d595819c3b060feb841619b55304db67a7a441",
+    "session": "hardware-ownership-20261011",
+    "source_commit": "b31b5df8b3da7fa1a7ad642943e36c4dca13d21c"
+  },
+  "checks": [
+    {
+      "description": "Targeted ownership/byte-preservation regression and distinct installed status recovery.",
+      "environment": "offline",
+      "id": "ownership-and-status"
+    }
+  ],
+  "created": "2026-10-11",
+  "decision": null,
   "format_version": 2,
   "id": "printer-hardware-boot-ownership",
-  "title": "Preserve hardware state ownership during boot preparation",
   "kind": "feature",
-  "created": "2026-10-11",
-  "author": "root/coordinator",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/printer-hardware-boot-ownership/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/printer-hardware-boot-ownership/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "ownership-and-status",
-      "environment": "offline",
-      "description": "Targeted ownership/byte-preservation regression and distinct installed status recovery."
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Fix boot ownership and recover installed hardware loading",
-      "status": "pending",
+      "blocker": null,
+      "checks": [
+        "ownership-and-status"
+      ],
       "depends_on": [],
       "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_state.py",
+        "tests/test_data_budget.py"
+      ],
       "owned_paths": [
         "runtime/sv08_boot.py",
         "tests/test_host_boot.py",
         "docs/features/printer-hardware-boot-ownership/evidence.md",
         "docs/features/printer-hardware-boot-ownership/evidence.json"
       ],
-      "input_paths": [
-        "runtime/sv08_printer_store.py",
-        "runtime/sv08_state.py",
-        "tests/test_data_budget.py"
-      ],
-      "checks": [
-        "ownership-and-status"
-      ],
-      "hazards": [],
-      "human_task": null,
+      "repeats": 0,
+      "resumption": null,
       "review_policy": "self",
       "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
-      "implementation": null,
+      "status": "pending",
+      "title": "Fix boot ownership and recover installed hardware loading",
       "validation": null,
-      "verification": null,
-      "evidence": [],
-      "blocker": null,
-      "repeats": 0,
-      "resumption": null
+      "verification": null
     }
-  ]
+  ],
+  "title": "Preserve hardware state ownership during boot preparation"
 }
