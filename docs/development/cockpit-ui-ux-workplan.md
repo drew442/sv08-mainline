@@ -3,7 +3,11 @@
 Reviewed 2026-10-10 at `b4bfb437a3f3e4fe000e08768102855ea871d416`.
 Reconsidered 2026-10-11 following owner clarification: all UI/UX choices are open
 to skilled revision; core functionality is preserved.
-Status: proposed workplan; implementation and installed acceptance are outstanding.
+Status: W0–W8 delivered 2026-10-11. Implementation and disposable native ARM64
+Cockpit acceptance are complete; no physical printer deployment was performed.
+See [source-bound delivery and assessment](../features/cockpit-ui-ux-implementation/evidence.md)
+and [reusable regression checks](../features/cockpit-ui-ux-regression-maintenance/evidence.md).
+The review and planning rationale below are retained as historical context.
 
 ## Recommendation
 

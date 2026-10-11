@@ -1,11 +1,20 @@
 # Current delivery goals
 
-## Active goal — Complete Cockpit UI/UX workplan, 2026-10-11
+## Completed goal — Cockpit UI/UX workplan, 2026-10-11
 
-Owner authorized full W0–W8 implementation with agents. All prior UI design
-directives are open to skilled revision; core functionality and protections remain.
-Delivery scope and architecture: [proposal](../docs/features/cockpit-ui-ux-implementation/proposal.md).
-Source/disposable validation is authorized; no printer deployment is implied.
+W0–W8 delivered using named implementation, research and integration agents.
+Six task sections, contextual hardware routes, guided configuration review and
+application, clearer operation/status ownership, preserved drafts, accessible
+connection tables and responsive keyboard/touch navigation are integrated on main.
+Core functionality, authorization and backend safety checks are preserved.
+
+Source, rendered browser and disposable native ARM64 Cockpit/PAM/sudo acceptance
+passed; reusable navigation/jobs/unknown-receipt/history-pressure checks passed.
+See [delivery evidence](../docs/features/cockpit-ui-ux-implementation/evidence.md)
+and [regression evidence](../docs/features/cockpit-ui-ux-regression-maintenance/evidence.md).
+Both feature records are done. Evidence distinguishes native and simulated
+transport, transitional captures and reflow checks; no human usability study,
+accessibility certification, CPU savings or printer deployment is claimed.
 
 ## Completed goal — PR #6 branch maintenance, 2026-10-10
 

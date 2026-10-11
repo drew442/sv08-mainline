@@ -161,7 +161,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Only reversible test fixture/assertion and preview-fixture metadata maintenance. No production runtime or protocol changes, printer operations, real image installs, identity restores or service changes.",
-      "status": "validated",
+      "status": "done",
       "title": "Preserve and validate reusable Cockpit regression coverage",
       "validation": {
         "actor": "root/coordinator",
