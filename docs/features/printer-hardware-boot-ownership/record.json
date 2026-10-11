@@ -26,7 +26,7 @@
     {
       "id": "implement",
       "title": "Fix boot ownership and recover installed hardware loading",
-      "status": "proposed",
+      "status": "pending",
       "depends_on": [],
       "environment": "offline",
       "owned_paths": [
