@@ -43,11 +43,38 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "installed-readiness",
+          "document": "docs/features/cockpit-installed-readiness/evidence.md",
+          "document_sha256": "ac1e4f5908056a46d817598d2f0b6692371daafa55b23e3b5d10bd7b877b695a",
+          "environment": "offline",
+          "limitations": "Local real ownership/copy test uses synthetic configuration validator. Physical status/metadata checks separate; no authenticated browser, reboot or printing qualification.",
+          "method": "Coordinator inspected complete diff, 14 root tests, negative previous-source regression and physical before/after functional checker with baseline preservation.",
+          "profile": null,
+          "source_commit": "d48db8674e1552cb1f66016726b7ba9d3e171205",
+          "source_sha256": {
+            "docs/features/cockpit-installed-readiness/evidence.json": "3c464271278d8035eeef4a6765fca9e71e94ef0330c0a182df9043e1e8148714",
+            "docs/features/cockpit-installed-readiness/evidence.md": "ac1e4f5908056a46d817598d2f0b6692371daafa55b23e3b5d10bd7b877b695a",
+            "runtime/sv08_boot.py": "6425981c642b54e5179154acaea182eb8f4e7497b25a4557e3c5c1a25f805c53",
+            "runtime/sv08_printer_publish.py": "3c22d156b8fa50bb47f936154fea53d46f3c8021b29796c0433bd352cabeee36",
+            "runtime/sv08_printer_store.py": "41f66f90ae9a3b9593b5301df3fd7ac3e766c57bb6b95b9f05f4bb2e392651b6",
+            "scripts/check_installed_cockpit.py": "f0506ddb2739a1ecf397d76c45e5de844929e3921afdbe79276f69ac3f60abc1",
+            "tests/test_data_budget.py": "ffff266e4ef6f0da21ad106a2c309b7f388b5fa0d912a99cbd9691a6fed575f5",
+            "tests/test_host_boot.py": "c3e14edb44a2fa5989fec2d0726ab9f399575302e584a446a7495557a1495a44",
+            "tests/test_installed_cockpit.py": "77943aa3fc3d4573461b7d9206e8d73396f6afba202aaa7ca3a633e1816f6671"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "0a04906812c54c5bb4e343aeb084333c",
+        "session": "cockpit-readiness-20261011"
+      },
       "input_paths": [
         "runtime/sv08_printer_store.py",
         "runtime/sv08_printer_publish.py",
@@ -65,9 +92,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
-      "status": "pending",
+      "status": "validated",
       "title": "Correct managed ownership and enforce functional deployment checks",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "de722db081f5be12b0eaf1561c652cdd979067bb6efee4a8e2ca7cf6710352c6",
+        "evidence_sha256": "c898e81dd0c45c0b2c9ede1620618b77d454e1b35a316548cd9d78b0d075cebd",
+        "outcome": "passed",
+        "rationale": "Real ownership and negative regressions passed; installed checker detects prior managed defect and passes after byte-preserving correction.",
+        "session": "cockpit-readiness-20261011",
+        "source_commit": "d48db8674e1552cb1f66016726b7ba9d3e171205"
+      },
       "verification": null
     }
   ],
