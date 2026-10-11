@@ -1,0 +1,46 @@
+{
+  "revision": "85ec06cf2b4d696dda61ffa8ed0d8ee55667ca5d",
+  "files": {
+    "usr/share/cockpit/sv08-host/upload.js": "f9a0e331b389be5c16f1c53adcba8d1d580eee6afb9cb7e88537daed14734c71",
+    "usr/share/cockpit/sv08-host/software.js": "45cb828d2b14a4d8369c7bf4e83f52821e394b1383bb1091e57006a06841a1a7",
+    "usr/share/cockpit/sv08-host/mainsail-access.js": "5883f6a27469c3e8d7b0bed9bdf10833ad6565eda6d06fff5ee2c94d878aea93",
+    "usr/share/cockpit/sv08-host/index.html": "be3f5e7cc98316e956af88367bc5f0698347043d6d821a2f05ee7685a72f16b0",
+    "usr/share/cockpit/sv08-host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+    "usr/share/cockpit/sv08-host/app.js": "c4cda04fe96022fee81bd621e3c4818b330e51f2b9a5c614a89c666fbb2d2a2e",
+    "usr/share/cockpit/sv08-host/network.js": "a29b3e397b8569cd98fed69fc32d597972f2157a4f68c9910f69d935c9cc027d",
+    "usr/share/cockpit/sv08-host/session.js": "b2b7f676f14f87857f90a93f90ffa4aa078c4dc6056d0860607d5161b1d454d4",
+    "usr/share/cockpit/sv08-host/navigation.js": "f90e8ba90db8fba32011f0078446610f27c5e77d0719d0e7b2d79b2b160030df",
+    "usr/share/cockpit/sv08-host/style.css": "bc3ecc71c0903e3e840893791a824ca7286b7e52f177ee3d376fc1bb011eb2b6",
+    "usr/share/cockpit/sv08-host/identity.js": "b644b670fb6b382cec5b7a4d28a77d4a62b68e4312573193ea42851f244d67a0",
+    "usr/share/cockpit/sv08-printer/app.js": "2e27254b1064c20c8a16e3334c168ec88cd246a9664a6a5f46c35626360a9332",
+    "usr/share/cockpit/sv08-printer/style.css": "10f0629448a39a21cc26c7200e82348b17d0546f2e7745848110ea9759aff72d",
+    "usr/share/cockpit/sv08-printer/panel.html": "b40eb61de05cd7224a5a1cbb1818b6046eada2830a4ad5f62462b11b962076e9"
+  },
+  "root": "/dev/mmcblk1p4 ro,relatime",
+  "rollback": "/data/sv08/system/ui-deployments/20261011-85ec06c/before.tar",
+  "boot_id": "54350b61-1d93-46aa-b3a4-96426cf7a419",
+  "payload_bytes": 247034,
+  "final_check": {
+    "all_installed_hashes_match": true,
+    "root": "/dev/mmcblk1p4 ro,relatime",
+    "same_boot": true,
+    "cockpit_socket": "active",
+    "printer_services": {
+      "sv08-klipper": "inactive",
+      "sv08-moonraker": "inactive",
+      "nginx": "inactive"
+    }
+  },
+  "https_check": {
+    "address": "https://192.168.1.141:9090",
+    "status": 200,
+    "response": "Cockpit login/loading page",
+    "tls": "Connectivity test used unverified TLS; certificate validation not assessed.",
+    "authenticated_ui": "Not exercised on physical printer; protected asset requests correctly returned 401 without a login."
+  },
+  "limitations": [
+    "Static UI deployment to currently running root only; inactive slot and recovery not modified.",
+    "No reboot, backend update, configuration application, heater/motion operation or printer-service activation.",
+    "Optional package-list probe returned non-JSON; parser failed. No package metadata proof claimed."
+  ]
+}
