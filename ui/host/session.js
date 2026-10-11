@@ -16,8 +16,11 @@ window.sv08Session.ready = (async () => {
         if (window.sv08Session.elevated !== elevated) { window.sv08Session.elevated = elevated; changed(); }
         element('authorize').disabled = stopping || !window.sv08Session.available || current !== 'none';
         element('stop-authorization').disabled = !elevated || current === 'root';
+        element('authorize').hidden = elevated;
+        element('stop-authorization').hidden = !elevated || current === 'root';
+        if (elevated) failure = '';
         if (failure) diagnostic(failure);
-        else if (window.sv08Session.available) diagnostic(elevated ? 'Administrator access' : current === 'init' ? 'Authorizing…' : 'Limited access — authorize to administer this host.');
+        else if (window.sv08Session.available) diagnostic(elevated ? 'Administrator' : current === 'init' ? 'Authorizing…' : 'Limited access — authorize to administer this host.');
     }
     async function stop() {
         ++generation; stopping = true; close(); render(); changed();

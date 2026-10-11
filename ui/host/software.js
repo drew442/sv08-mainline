@@ -2,7 +2,7 @@
 (() => {
     const $ = id => document.getElementById('software-'+id);
     const active = () => location.hash === '#software' && window.sv08Session?.elevated;
-    let state=null, epoch=0, sequence=0, busy=false, review=null, timer=null, serviceDraft=null, unknownJob=null;
+    let state=null, epoch=0, sequence=0, busy=false, review=null, timer=null, serviceDraft=null, unknownJob=null, missingChoice=null;
     const report = text => { $('status').textContent=text; };
     const bytes = value => Number.isFinite(Number(value)) ? (Number(value)/1048576).toFixed(1)+' MiB' : 'Unavailable';
     const selected = () => state?.catalog?.find(item => (item.id || item.package) === $('choice').value);
@@ -16,11 +16,11 @@
         return response.result;
     }
     function controls() {
-        document.querySelectorAll('#software button,#software select,#software input').forEach(control => {control.disabled=busy || !active() || !state;});
+        document.querySelectorAll('#software button:not([data-open]),#software select,#software input').forEach(control => {control.disabled=busy || !active() || !state;});
         $('refresh').disabled=busy || !active();
         const item=selected();
-        $('install').disabled ||= !item || !!item.installed;
-        $('remove').disabled ||= !item || !item.installed;
+        $('install').disabled ||= !item || !!item.installed || state?.capabilities?.install?.available===false;
+        $('remove').disabled ||= !item || !item.installed || state?.capabilities?.remove?.available===false;
         $('service').disabled ||= !item?.service || !item.installed;
         $('service-enabled').disabled ||= !item?.service || !item.installed;
         $('reconcile').disabled ||= !state?.capabilities?.reconcile?.available;
@@ -31,7 +31,7 @@
     function detail() {
         const item=selected();
         $('title').textContent=item?.title || item?.label || item?.name || item?.package || item?.id || 'Choose software';
-        $('detail').textContent=item ? (item.description || '')+' · '+(item.installed ? 'Installed' : 'Not installed') : 'No reviewed software is available.';
+        $('detail').textContent=item ? (item.description || '')+' · '+(item.installed ? 'Installed' : 'Not installed') : (missingChoice ? 'Previous selection is no longer available. Choose software to review another package.' : 'No reviewed software is available.');
         $('dependencies').textContent='Packages: '+(item?.packages || [item?.package || item?.id].filter(Boolean)).join(', ')+' · '+(item?.dependencies?.length ? 'Dependencies: '+item.dependencies.join(', ') : 'Dependencies are resolved in review.');
         $('reason').textContent=(state?.capabilities?.install?.reason || '')+(state?.storage ? ' Root available: '+bytes(state.storage.root_free_bytes)+' · Data available: '+bytes(state.storage.data_free_bytes)+' · Data reserve: '+bytes(state.storage.data_reserve_bytes) : '');
         $('service-detail').textContent=item?.service ? 'Service: '+(item.service.unit || item.service)+' · '+(item.service_state?.ActiveState || item.service.active || 'Status unavailable') : 'This software has no configurable service.';
@@ -39,9 +39,11 @@
         controls();
     }
     function paint() {
-        const choice=$('choice').value;
-        $('choice').replaceChildren(...(state.catalog || []).map(item => {const option=document.createElement('option');option.value=item.id || item.package;option.textContent=item.title || item.label || item.name || option.value;return option;}));
-        if([...$('choice').options].some(option => option.value === choice)) $('choice').value=choice;
+        const choice=missingChoice || $('choice').value;
+        const rows=(state.catalog || []).map(item=>[item.id||item.package,item.title||item.label||item.name||item.id||item.package]);
+        if(choice && !rows.some(([value])=>value===choice)){missingChoice=choice;rows.unshift(['','Previous selection unavailable — choose software']);}else missingChoice=null;
+        if($('choice').options.length!==rows.length||rows.some(([value,label],index)=>$('choice').options[index]?.value!==value||$('choice').options[index]?.textContent!==label))$('choice').replaceChildren(...rows.map(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;return option;}));
+        if([...$('choice').options].some(option => option.value === choice)) $('choice').value=choice;else if(missingChoice)$('choice').value='';
         detail();
         $('customization').textContent=state.customization?.reason || (state.customized || state.customization?.customized ? 'This image has local changes and is protected from automatic replacement.' : 'Customization status is shown in the exported report.');
         $('reconciliation').textContent=state.reconciliation?.reason || 'Reconciliation availability is checked by the host.';
@@ -97,7 +99,7 @@
         catch(error) {if(generation === epoch) report(error.message+' Refresh to check whether the operation was accepted.');}
         finally {if(generation === epoch) {busy=false;controls();void refresh(false);}}
     }
-    $('choice').addEventListener('change',() => {serviceDraft=null;detail();});
+    $('choice').addEventListener('change',() => {missingChoice=null;serviceDraft=null;detail();});
     $('service-enabled').addEventListener('change',() => {serviceDraft={package:$('choice').value,enabled:$('service-enabled').checked};});
     $('refresh').addEventListener('click',() => {review=null;$('review').close('cancel');void refresh();});
     for(const action of ['install','remove']) $(action).addEventListener('click',() => {const item=selected();if(item) void plan(action,{package:item.package || item.id});});
@@ -111,7 +113,7 @@
         catch(error) {if(generation === epoch) report(error.message);}
         finally {if(generation === epoch) {busy=false;controls();}}
     });
-    function invalidate() {++epoch;++sequence;clearTimeout(timer);busy=false;state=null;review=null;serviceDraft=null;unknownJob=null;$('inspect').hidden=true;$('review').close('cancel');$('choice').replaceChildren();$('detail').textContent='';$('dependencies').textContent='';$('job').hidden=true;$('customization').textContent='';$('reconciliation').textContent='';controls();report(window.sv08Session?.elevated ? 'Loading software…' : 'Administrator access is required.');}
+    function invalidate() {++epoch;++sequence;clearTimeout(timer);busy=false;state=null;review=null;unknownJob=null;$('inspect').hidden=true;$('review').close('cancel');$('detail').textContent='';$('dependencies').textContent='';$('job').hidden=true;$('customization').textContent='';$('reconciliation').textContent='';controls();report(window.sv08Session?.elevated ? 'Loading software…' : 'Administrator access is required.');}
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'software') void refresh();});
     controls();if(location.hash === '#software') void window.sv08Session.ready.then(refresh);

@@ -6,7 +6,7 @@ let state, plan, busy = false, jobsBusy = false, refreshing = false;
 // that same interface; there is no unauthenticated HTTP fallback in this page.
 async function request(message) {
     if (!window.cockpit) throw new Error('Open this page through the host’s authenticated administration console.');
-    if (!window.sv08Session || !await sv08Session.ready || !sv08Session.elevated) throw new Error('Administrator access is required. Use Administrator access to continue.');
+    if (!window.sv08Session || !await sv08Session.ready || !sv08Session.elevated) throw Object.assign(new Error('Administrator access is required. Use Administrator access to continue.'), {noticeKind:'authorization'});
     const process = cockpit.spawn(['/usr/bin/python3', '/usr/lib/sv08/sv08_admin.py'], {superuser: 'require', err: 'message'});
     const raw = await process.input(JSON.stringify(message));
     const response = JSON.parse(raw);
@@ -19,9 +19,20 @@ async function submissionError(error) {
     if (error.acknowledged && localStorage.getItem('sv08-image-submission')) {
         try { await request({method: 'jobs'}); localStorage.removeItem('sv08-image-submission'); } catch (_) { /* retain receipt */ }
     }
-    notice(error.message);
+    notice(error.message, localStorage.getItem('sv08-image-submission') ? 'uncertain' : 'operation');
 }
-function notice(message) { $('notice').textContent = message; }
+// Only the owner of a transient notice can clear it. Operation outcomes and
+// uncertain receipts survive successful background status reads.
+const noticeSlots = new Map();
+function paintNotices() {
+    const active=['uncertain','operation','authorization','connectivity'].filter(kind=>noticeSlots.get(kind));
+    $('notice').textContent=active.map(kind=>noticeSlots.get(kind)).join('\n');
+    $('notice').dataset.kind=active[0] || 'status';
+}
+function notice(message, kind = 'operation') { noticeSlots.set(kind,message);paintNotices(); }
+function clearStatusNotice() {noticeSlots.delete('authorization');noticeSlots.delete('connectivity');paintNotices();}
+
+
 function page(name, focus = true) {
     if (window.sv08Navigation) { sv08Navigation.go(name); return; }
     document.querySelectorAll('.page').forEach(p => { p.hidden = p.id !== name; });
@@ -90,6 +101,7 @@ function options(id, values, empty) {
 }
 function render() {
     $('connection').textContent = 'Host connected';
+    clearStatusNotice();
     $('fixture').hidden = !state.fixture;
     $('release').textContent = state.boot.release;
     $('slot').textContent = `Running from slot ${state.boot.slot}`;
@@ -114,10 +126,12 @@ function render() {
     $('slots').replaceChildren();
     for (const name of ['A', 'B']) {
         const record = state.slots[name], card = document.createElement('article'); card.className = 'card';
-        const title = document.createElement('h2'); title.textContent = `Slot ${name}${name === state.boot.slot ? ' · Running' : ''}`;
+        const title = document.createElement('h2'); title.textContent = name === state.boot.slot ? 'Running release' : 'Fallback / update target';
+        const details = document.createElement('details'), label=document.createElement('summary'); label.textContent='Storage slot '+name;details.append(label);
         const text = document.createElement('p'); text.textContent = record ? `${record.release} · ${record.customized ? 'Customized — protected from replacement' : 'Standard release'}` : 'No registered state generation. Image availability must be verified before booting.';
-        card.append(title, text); $('slots').append(card);
+        card.append(title, text, details); $('slots').append(card);
     }
+    if ($('manual-update-step')) $('manual-update-step').textContent = state.pending ? 'Next boot selected: '+state.pending.release+'. Restart remains a separate reviewed operation.' : state.transaction ? 'Installation status: '+state.transaction.phase+'. Wait for confirmation before choosing the next boot.' : state.images.length ? 'Upload authenticated. Review installation to verify the full payload and prepare the inactive image.' : 'Start by uploading a signed OS bundle.';
     renderDrafts();
     options('image-choice', state.images, 'No verified uploaded image available');
     capability('policy.update', 'save-update-policy'); capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
@@ -129,9 +143,15 @@ function renderJobs(result) {
     const pending = JSON.parse(localStorage.getItem('sv08-image-submission') || 'null');
     if (pending && result.jobs.some(job => job.id === pending.id)) localStorage.removeItem('sv08-image-submission');
     const unresolved = !!localStorage.getItem('sv08-image-submission');
+    if(!unresolved){noticeSlots.delete('uncertain');paintNotices();}
     $('submission-pending').hidden = !unresolved; $('retry-submission').hidden = !unresolved;
     $('retry-submission').disabled = busy;
+    const previousJobsBusy=jobsBusy;
     jobsBusy = result.blocked || unresolved;
+    if(jobsBusy!==previousJobsBusy)scheduleRefresh();
+    const indicator=$('operation-indicator');
+    if(indicator){indicator.hidden=!(jobsBusy || localStorage.getItem('sv08-history-maintenance'));indicator.textContent=unresolved ? 'Update acknowledgment uncertain — check its receipt' : result.blocked ? 'Update operation needs attention — view progress / outcome' : 'History maintenance acknowledgment uncertain — check its receipt';}
+
     $('jobs-summary').textContent = result.blocked ? 'An image operation is pending or needs outcome review. You can close this page safely.' : 'No image operation is running.';
     $('history-capacity').textContent = `Active ${result.active ?? (result.capacity-result.remaining)}/${result.capacity}; archives ${result.archives ?? 0}/8; retained ${result.total ?? result.jobs.length}/${result.total_capacity ?? 1152}. ${result.maintenance_reason || ''}`;
     $('history-maintenance').disabled = busy || !result.maintenance_available;
@@ -161,14 +181,14 @@ async function refresh() {
         if (generation !== authorityGeneration) return;
         renderJobs(result);
         if (result.blocked) {
-            $('connection').textContent = 'Image worker status connected';
+            $('connection').textContent = 'Image worker status connected'; clearStatusNotice();
             document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; });
             return;
         }
         const next = await request({method: 'status'});
         if (generation !== authorityGeneration) return;
         state = next; render();
-    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'Host unavailable'; notice(error.message); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; }); }
+    } catch (error) { if (generation !== authorityGeneration) return; $('connection').textContent = 'System status unavailable'; notice(error.message, error.noticeKind || 'connectivity'); document.querySelectorAll('main button:not([data-open]):not(#retry-submission):not([data-inspect-job]):not(#printer button):not(#definition-sources button):not(#printer-connections button):not(#definitions button):not(#identity button):not(#mainsail-access button):not(#network button):not(#software button)').forEach(b => { b.disabled = true; }); }
     finally { refreshing = false; }
 }
 async function inspectJob(id) {
@@ -271,8 +291,17 @@ window.addEventListener('sv08-authority-changed', () => {
     plan = null;
     if ($('review').open) $('review').close('cancel');
     if (sv08Session.elevated) void refresh();
-    else $('connection').textContent = 'Administrator access required';
+    else { $('connection').textContent = 'Administrator access required'; notice('Administrator access is required. Authorize to continue.', 'authorization'); document.querySelectorAll('main button:not([data-open]):not([data-page])').forEach(b=>{if(!b.closest('#printer, #definition-sources, #printer-connections, #definitions, #identity, #mainsail-access, #network, #software'))b.disabled=true;}); }
 });
-refresh();
-
-setInterval(refresh, 1500);
+let refreshTimer;
+function scheduleRefresh(immediate=false) {
+    clearTimeout(refreshTimer);
+    const urgent=jobsBusy || busy || !!localStorage.getItem('sv08-image-submission') || !!localStorage.getItem('sv08-history-maintenance');
+    const hostPage=['overview','images','settings','recovery'].includes(window.sv08Navigation?.current || location.hash.slice(1));
+    const interval=urgent ? 1500 : document.hidden ? 30000 : hostPage ? 5000 : 15000;
+    refreshTimer=setTimeout(async()=>{if(window.sv08Session?.elevated)await refresh();scheduleRefresh();},immediate?0:interval);
+}
+window.addEventListener('sv08-navigation-changed',()=>scheduleRefresh(true));
+window.addEventListener('sv08-authority-changed',()=>scheduleRefresh());
+document.addEventListener('visibilitychange',()=>scheduleRefresh(!document.hidden));
+void refresh().finally(()=>scheduleRefresh());

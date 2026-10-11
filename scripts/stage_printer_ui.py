@@ -118,9 +118,10 @@ def replace_once(raw, before, after):
 def compose_host(raw, panel=None):
     """Compile the persistent panel; never fetch markup in the browser."""
     if panel is None: panel=(REPO/'ui/printer/panel.html').read_bytes()
-    raw=replace_once(raw,NAV,b'<button data-page="printer">Printer hardware</button><button data-page="printer-connections">Connections</button><button data-page="definitions">Definitions</button><button data-page="definition-sources">Definition sources</button>')
+    raw=replace_once(raw,NAV,b'<button data-page="printer">Hardware</button>')
     raw=replace_once(raw,b'<div id="notice"',b'<div data-host-status id="notice"')
-    raw=replace_once(raw,b'<article class="card" aria-live="polite">',b'<article data-host-status class="card" aria-live="polite">')
+    history_anchor=b'<article id="image-history" class="card" aria-live="polite">' if b'<article id="image-history"' in raw else b'<article class="card" aria-live="polite">'
+    raw=replace_once(raw,history_anchor,history_anchor.replace(b'<article ',b'<article data-host-status ',1))
     raw=replace_once(raw,b'</main>',b'<!-- printer panel -->'+panel+b'<!-- /printer panel -->\n</main>')
     if b'src="navigation.js"' not in raw:raw=replace_once(raw,b'<script defer src="app.js"></script>',b'<script defer src="navigation.js"></script><script defer src="app.js"></script>')
     return replace_once(raw,b'</head>',b'<link rel="stylesheet" href="../sv08-printer/style.css"><script defer src="../sv08-printer/app.js"></script></head>')

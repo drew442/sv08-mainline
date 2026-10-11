@@ -2,7 +2,21 @@
 (() => {
     const $ = id => document.getElementById('network-'+id);
     const active = () => location.hash === '#network' && window.sv08Session?.elevated;
-    let state = null, epoch = 0, refreshId = 0, busy = false, review = null, networks = [];
+    let state = null, epoch = 0, refreshId = 0, busy = false, review = null, networks = [], draftValues=null, observedPending=null, refreshing=false, targetUnavailable=false;
+    const draftFields=['device','connection','ssid','security','method','addresses','gateway','dns','hostname','fqdn'];
+    function captureDraft(){draftValues=Object.fromEntries(draftFields.map(id=>[id,$(id).value]));}
+    for(const id of draftFields)$(id).addEventListener('input',captureDraft);
+    function restoreDraft(){
+        if(!draftValues)return;
+        const retained={...draftValues};targetUnavailable=false;
+        if(!Array.from($('device').options).some(o=>o.value===retained.device)){const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Previous interface unavailable — choose an interface';$('device').prepend(placeholder);$('device').value='';targetUnavailable=true;controls();return;}
+        if(Array.from($('device').options).some(o=>o.value===retained.device)){$('device').value=retained.device;device();}
+        if(Array.from($('connection').options).some(o=>o.value===retained.connection)){$('connection').value=retained.connection;connection();}
+        if(!Array.from($('connection').options).some(o=>o.value===retained.connection)){const placeholder=document.createElement('option');placeholder.value='unavailable';placeholder.textContent='Previous connection unavailable — choose a connection';$('connection').prepend(placeholder);$('connection').value='unavailable';targetUnavailable=true;controls();return;}
+        for(const id of draftFields.filter(id=>!['device','connection'].includes(id))){const control=$(id);if(control.tagName==='SELECT'&&!Array.from(control.options).some(o=>o.value===retained[id]))continue;control.value=retained[id];}
+        controls();
+    }
+
     const report = text => { $('status').textContent = text; };
     const clearSecrets = () => { $('password').value = ''; };
     const eraseReview = () => { if(review?.request) review.request.password = ''; review = null; };
@@ -20,6 +34,8 @@
         $('refresh').disabled = busy || !active();
         const wifi = state?.devices.find(d => d.device === $('device').value)?.type === 'wifi';
         $('wifi').hidden = !wifi;
+        $('apply').disabled ||= targetUnavailable || !state?.devices.some(d=>d.device===$('device').value);
+        $('scan').disabled ||= targetUnavailable || !wifi;
         $('apply').disabled ||= wifi && !['open','wpa-psk','sae'].includes($('security').value);
         for (const id of ['apply','name','restart']) $(id).disabled ||= !!state?.pending;
         for (const id of ['confirm','rollback']) $(id).disabled ||= !state?.pending;
@@ -40,7 +56,7 @@
         $(id).replaceChildren(...rows.map(([value,label]) => {const o = document.createElement('option');o.value=value;o.textContent=label;return o;}));
     }
     function connection() {
-        clearSecrets();
+        targetUnavailable=false;clearSecrets();
         const saved = state?.connections.find(c => c.uuid === $('connection').value);
         const ip = saved?.ipv4 || {method:'auto',addresses:[],gateway:'',dns:[]};
         for(const key of ['method','gateway']) $(key).value = ip[key] || (key === 'method' ? 'auto' : '');
@@ -49,7 +65,7 @@
         $('ssid').value = saved?.ssid || ''; $('security').value = saved?.security || 'wpa-psk'; controls();
     }
     function device() {
-        networks = []; options('networks', [['','Scan to choose a network']]);
+        targetUnavailable=false;networks = []; options('networks', [['','Scan to choose a network']]);
         options('connection',[['','Create a new connection'],...state.connections.filter(c => c.device === $('device').value || (!c.device && c.type === state.devices.find(d => d.device === $('device').value)?.type)).map(c => [c.uuid,c.name])]);
         const current = state.devices.find(d => d.device === $('device').value)?.uuid;
         if(state.connections.some(c => c.uuid === current)) $('connection').value = current;
@@ -66,36 +82,40 @@
         }
     }
     function countdown() {
-        const pending = state?.pending; $('pending').hidden = !pending;
+        const pending = state?.pending || observedPending; $('pending').hidden = !state?.pending;
+        const indicator=document.getElementById('network-operation-indicator');
+        if(indicator){indicator.hidden=!pending;indicator.textContent='Network change awaiting confirmation — reconnect or review rollback';}
+
         if(!pending) return;
         const remaining = Math.max(0,Math.ceil(Number(pending.expires)-Date.now()/1000));
         $('countdown').textContent = Number.isFinite(remaining) && remaining > 0 ? 'Confirm within '+remaining+' seconds, or previous settings will be restored.' : 'Rollback deadline reached. Refresh to check restored settings.';
-        if(!Number.isFinite(remaining) || remaining <= 0) { $('confirm').disabled = true; }
+        if(!Number.isFinite(remaining) || remaining <= 0) { $('confirm').disabled = true;if(indicator)indicator.textContent='Network rollback deadline reached — check current connections'; }
     }
     async function refresh() {
         if(!active()) return;
+        refreshing=true;
         const generation = epoch, attempt = ++refreshId;report('Loading network settings…');
         try {
             const result = await call({method:'status'});
             if(generation !== epoch || attempt !== refreshId) return;
-            state=result;
+            state=result;observedPending=result.pending??null;
             $('devices').replaceChildren(...state.devices.map(d => {const p=document.createElement('p');p.textContent=[d.device,d.state,d.connection,(d.addresses || []).join(', '),'Gateway: '+(d.gateway || '—'),'DNS: '+(d.dns || []).join(', ')].filter(Boolean).join(' · ');return p;}));
             options('device',state.devices.filter(d => ['wifi','ethernet'].includes(d.type)).map(d => [d.device,d.device+' ('+d.type+')']));device();
-            $('hostname').value=state.hostname; $('fqdn').value=state.fqdn || '';links();controls();countdown();report('Network settings are ready.');
-        } catch(error) {if(generation === epoch && attempt === refreshId) {if(!state?.pending) state=null;controls();countdown();report(error.message+' Reconnect and reload Network; unconfirmed changes automatically roll back.');}}
+            $('hostname').value=state.hostname; $('fqdn').value=state.fqdn || '';restoreDraft();links();controls();countdown();report(targetUnavailable ? 'Previous network target is unavailable. Choose an interface and connection before reviewing changes.' : 'Network settings are ready.');
+        } catch(error) {if(generation === epoch && attempt === refreshId) {if(!state?.pending) state=null;controls();countdown();report(error.message+' Reconnect and reload Network; unconfirmed changes automatically roll back.');}} finally{refreshing=false;}
     }
     function openReview(request,title) {
         if(busy || !active() || !state) return;
         eraseReview();review={request,epoch};
         const detail = request.method === 'restart' ? 'The printer will restart and this session will disconnect.' : request.kind === 'name' ? 'Printer name: '+request.hostname+'\nFully qualified name: '+(request.fqdn || 'None') : 'Interface: '+request.device+'\nConnection: '+($('connection').selectedOptions[0]?.textContent || 'New connection')+(request.kind === 'wifi' ? '\nWiFi: '+request.ssid+'\nSecurity: '+request.security : '')+'\nIPv4: '+(request.ipv4.method === 'auto' ? 'Automatic (DHCP)' : request.ipv4.addresses.join(', '))+'\nGateway: '+(request.ipv4.gateway || 'Automatic')+'\nDNS: '+(request.ipv4.dns.join(', ') || 'Automatic')+'\nPrinter name: '+request.hostname+'\nFully qualified name: '+(request.fqdn || 'None');
-        $('review-title').textContent=title;$('review-detail').textContent=detail;
+        $('review-title').textContent=title;$('review-detail').textContent=detail+(request.method==='apply'?'\nConnection changes may disconnect you. Confirm the resulting change before the rollback deadline shown after submission; otherwise the backend restores previous settings.':'');
         clearSecrets();$('review').returnValue='';$('review').showModal();
     }
     async function execute(request) {
         const generation=epoch;busy=true;controls();
         try {
-            const result=await call(request);
-            if(result?.confirm_required) {state.pending={token:result.token,expires:result.expires};controls();countdown();}
+            const result=await call(request);draftValues=null;
+            if(result?.confirm_required) {state.pending={token:result.token,expires:result.expires};observedPending=state.pending;controls();countdown();}
             if(request.method === 'restart') report('Restart requested. Reconnect and reload after the printer restarts.');
             else await refresh();
         } catch(error) {
@@ -142,5 +162,5 @@
     }
     window.addEventListener('sv08-authority-changed',() => {invalidate();if(active()) void refresh();});
     window.addEventListener('sv08-navigation-changed',event => {invalidate();if(event.detail.to === 'network') void refresh();});
-    setInterval(countdown,1000);controls();if(location.hash === '#network') void window.sv08Session.ready.then(refresh);
+    for(const id of draftFields)$(id).addEventListener('change',captureDraft);setInterval(countdown,1000);setInterval(()=>{if(active()&&state?.pending&&!busy&&!refreshing&&!document.hidden)void refresh();},3000);controls();if(location.hash === '#network') void window.sv08Session.ready.then(refresh);
 })();

@@ -8,7 +8,8 @@
     }
     Object.assign($('identity-keys').style,{width:'100%',maxWidth:'100%',minHeight:'8rem',boxSizing:'border-box'});
     Object.assign($('identity-review-detail').style,{whiteSpace:'pre-wrap',overflowWrap:'anywhere'});
-    let state, pending, busy = false, epoch = 0;
+    let state, pending, busy = false, epoch = 0, keysDirty=false, paintedKeys, refreshId=0;
+    $('identity-keys').addEventListener('input',()=>{keysDirty=true;});
     const report = text => { $('identity-status').textContent = text; };
     function controls() {
         document.querySelectorAll('[data-identity-action]').forEach(button => {
@@ -27,13 +28,16 @@
     }
     async function refresh() {
         if (!window.sv08Session?.elevated) { state = null; controls(); return; }
+        const attempt=++refreshId, generation=epoch;
         try {
-            state = await call({method:'status'});
+            const next = await call({method:'status'});
+            if(attempt!==refreshId||generation!==epoch||!window.sv08Session?.elevated)return;state=next;
             $('identity-ca-fingerprint').textContent = state.ca_fingerprint;
             $('identity-ssh-fingerprint').textContent = state.ssh_fingerprint;
-            $('identity-keys').value = state.authorized_keys;
+            if(paintedKeys!==undefined&&$('identity-keys').value!==paintedKeys)keysDirty=true;
+            if(!keysDirty){$('identity-keys').value = state.authorized_keys;paintedKeys=state.authorized_keys;}
             controls(); report(state.healthy === false ? 'Printer identity is damaged. Restore a verified identity backup.' : 'Printer identity is ready.');
-        } catch (error) { state = null; controls(); report(error.message); }
+        } catch (error) {if(attempt!==refreshId||generation!==epoch)return;state = null; controls(); report(error.message); }
     }
     function download(name, bytes, type) {
         const url = URL.createObjectURL(new Blob([bytes],{type}));
@@ -68,7 +72,7 @@
         const file = $('identity-key-file').files[0]; if (!file) return;
         if (file.size>65536) throw new Error('SSH public-key upload is limited to 64 KiB.');
         const text = await file.text(); $('identity-keys').value = $('identity-keys').value.trimEnd()+'\n'+text;
-        $('identity-key-file').value = ''; report('Public keys added to the editor. Review and save to trust them.');
+        keysDirty=true;$('identity-key-file').value = ''; report('Public keys added to the editor. Review and save to trust them.');
     }); });
     $('identity-import').addEventListener('click',() => { void operation(async () => {
         const file = $('identity-bundle-file').files[0]; if (!file) throw new Error('Choose an identity backup.');
@@ -89,17 +93,17 @@
             } else if (request.method === 'bundle.restore') {
                 $('identity-bundle-file').value = ''; state = null; controls();
                 report('Identity restored. Services are reloading; reconnect using the restored CA and SSH identity.');
-            } else { await refresh(); report('Trusted SSH public keys saved.'); }
+            } else { keysDirty=false;paintedKeys=$('identity-keys').value;await refresh(); report('Trusted SSH public keys saved.'); }
         });
     });
     window.addEventListener('sv08-authority-changed',() => {
         ++epoch; state = null; pending = null; $('identity-review').close('cancel');
-        $('identity-bundle-file').value = ''; $('identity-key-file').value = ''; $('identity-keys').value = '';
+        $('identity-bundle-file').value = ''; $('identity-key-file').value = '';
         controls(); if (window.sv08Session?.elevated && location.hash==='#identity') void refresh();
     });
     window.addEventListener('sv08-navigation-changed',event => {
         if (event.detail.to === 'identity') void refresh();
-        else { pending = null; $('identity-review').close('cancel'); }
+        else { ++epoch;++refreshId;pending = null; $('identity-review').close('cancel'); }
     });
     controls(); if (location.hash==='#identity') void window.sv08Session.ready.then(refresh);
 })();

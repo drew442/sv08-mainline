@@ -2,7 +2,7 @@
 (() => {
     const $ = id => document.getElementById(id);
     const names = {password:'Password',none:'No login',certificate:'Client certificate'};
-    let state = null, pending = null, busy = false, epoch = 0, refreshId = 0;
+    let state = null, pending = null, busy = false, epoch = 0, refreshId = 0, methodDraft=null;
     const active = () => location.hash === '#mainsail-access' && window.sv08Session?.elevated;
     const report = message => { $('access-status').textContent = message; };
     const selected = () => document.querySelector('input[name="access-mode"]:checked')?.value;
@@ -59,7 +59,7 @@
             const result = await call({method:'status'});
             if (generation !== epoch || attempt !== refreshId) return;
             state = result; $('access-current').textContent = names[state.mode] || state.mode;
-            document.querySelectorAll('input[name="access-mode"]').forEach(input => {input.checked = input.value === state.mode;});
+            document.querySelectorAll('input[name="access-mode"]').forEach(input => {input.checked = input.value === (methodDraft??state.mode);});
             renderCertificates(); controls(); report(state.warning ? state.warning : 'Mainsail access settings are ready.');
         } catch (error) {
             if (generation !== epoch || attempt !== refreshId) return;
@@ -78,7 +78,7 @@
         return password;
     }
     $('access-refresh').addEventListener('click',() => {clearSecrets(); pending = null; $('access-review').close('cancel'); void refresh();});
-    document.querySelectorAll('input[name="access-mode"]').forEach(input => input.addEventListener('change',() => {clearSecrets();controls();}));
+    document.querySelectorAll('input[name="access-mode"]').forEach(input => input.addEventListener('change',() => {clearSecrets();methodDraft=selected();controls();}));
     $('access-password').addEventListener('input',controls);
     $('access-apply').addEventListener('click',() => {
         try {
@@ -87,7 +87,7 @@
             if (mode === state.mode && mode !== 'password') return;
             review('Change Mainsail access',mode === 'none' ? 'Anyone who can reach Mainsail can control the printer. Confirm to remove login protection.' :
                 mode === 'certificate' ? 'Confirm that you have imported a valid client certificate into your browser. Mainsail will require it for access.' : 'Mainsail will require the username sv08 and this password.',request);
-            clearSecrets(); controls();
+            clearSecrets(); methodDraft=selected(); controls();
         } catch (error) {report(error.message);}
     });
     $('access-create').addEventListener('click',() => {
@@ -114,6 +114,7 @@
                     const link = document.createElement('a'); link.href = url; link.download = result.filename; link.click();
                     setTimeout(() => URL.revokeObjectURL(url),1000);
                 }
+                if(action.request.method==='settings')methodDraft=null;
                 await refresh();
                 if (generation === epoch) report(action.request.method === 'certificate.create' ? 'Certificate downloaded once. Import it into your browser, then separately apply Client certificate access.' : 'Mainsail access updated.');
             } catch (error) {if (generation === epoch) report(error.message);}
@@ -121,7 +122,7 @@
         })();
     });
     function invalidate() {
-        ++epoch; ++refreshId; state = null; pending = null; clearSecrets(); $('access-label').value = '';
+        ++epoch; ++refreshId; state = null; pending = null; clearSecrets();
         $('access-review').close('cancel'); $('access-current').textContent = '—'; $('access-certificates').replaceChildren();
         controls(); report(window.sv08Session?.elevated ? 'Loading Mainsail access settings…' : 'Administrator access is required.');
     }
