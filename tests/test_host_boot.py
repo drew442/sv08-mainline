@@ -49,6 +49,37 @@ class BootIdentityTests(unittest.TestCase):
             self.assertIn(unittest.mock.call(copied, 1000, 1000), chown.call_args_list)
             self.assertNotIn(unittest.mock.call(config, 1000, 1000), chown.call_args_list)
 
+    def test_hardware_store_keeps_privileged_ownership_in_current_and_copied_generation(self):
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
+            store.initialize()
+            boot = store.prepare_boot('A', 'release-1')
+            source = Path(boot['generation']) / 'config/printer-hardware'
+            source.mkdir(mode=0o700)
+            for name, raw in (('state.json', b'preserved hardware selections'), ('.lock', b'')):
+                file = source / name
+                file.write_bytes(raw)
+                file.chmod(0o600)
+            ordinary = source.parent / 'printer.cfg'
+            ordinary.write_text('preserved ordinary config')
+            original = {p.name: (p.read_bytes(), p.stat().st_mode & 0o777) for p in source.iterdir()}
+            for slot, release in (('A', 'release-1'), ('B', 'release-2')):
+                if slot == 'B':
+                    store.expect_trial('B', release, 'A')
+                current = store.prepare_boot(slot, release)
+                hardware = Path(current['generation']) / 'config/printer-hardware'
+                with patch('sv08_boot.os.chown') as chown:
+                    prepare_permissions(store.root, current['generation'])
+                for p in (hardware, *hardware.iterdir()):
+                    self.assertIn(unittest.mock.call(p, 0, 0), chown.call_args_list)
+                    self.assertNotIn(unittest.mock.call(p, 1000, 1000), chown.call_args_list)
+                self.assertEqual(hardware.stat().st_mode & 0o777, 0o700)
+                self.assertEqual({p.name: (p.read_bytes(), p.stat().st_mode & 0o777) for p in hardware.iterdir()}, original)
+                self.assertIn(unittest.mock.call(hardware.parent / 'printer.cfg', 1000, 1000), chown.call_args_list)
+                if slot == 'B':
+                    self.assertFalse(any(call.args[0] == source or source in call.args[0].parents for call in chown.call_args_list))
+            self.assertEqual({p.name: (p.read_bytes(), p.stat().st_mode & 0o777) for p in source.iterdir()}, original)
+
     def test_cockpit_certificate_store_is_private_root_owned_persistent_state(self):
         with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
             store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())
