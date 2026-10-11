@@ -16,7 +16,7 @@ from unittest.mock import patch
 def serve(work):
     work.mkdir(mode=0o700)
     store=Store(work/'state',reserve_bytes=0,budget=fixture_budget(work/'state'));store.initialize()
-    boot=store.prepare_boot('A','0.1.0-ui-fixture');boot['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
+    boot=store.prepare_boot('A','0.1.0-ui-fixture',release_revision=1);boot['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
     (work/'ui-fixture.json').write_text(json.dumps(boot));initialize_resolution(work,boot,budget_root=work/'state')
     with patch('sv08_boot.os.chown'):
         prepare_permissions(store.root,boot['generation'])
@@ -44,7 +44,7 @@ def serve(work):
             if self.path=='/base1/cockpit.js':
                 return self.response("window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>({valid:true,Current:'root',Bridges:['sudo'],Start:()=>{},Answer:()=>{},Stop:()=>{},addEventListener:()=>{},wait:cb=>cb()})}),spawn:()=>({input:async data=>(await fetch('/request',{method:'POST',body:data})).text()})};",'text/javascript')
             name='index.html' if self.path=='/' else self.path[1:]
-            if name not in ('index.html','app.js','style.css','session.js','upload.js'):self.send_error(404);return
+            if name not in ('index.html','app.js','style.css','session.js','upload.js','navigation.js','network.js','identity.js','software.js','mainsail-access.js'):self.send_error(404);return
             return self.response((ui/name).read_bytes(), 'text/html' if name.endswith('.html') else 'text/css' if name.endswith('.css') else 'text/javascript')
         def do_POST(self):
             try:

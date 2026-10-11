@@ -1,0 +1,137 @@
+{
+  "check": "regression-journeys",
+  "source_sha256": {
+    "scripts/preview_admin_ui.py": "8fcb4c5db6378e15b783c4e1f611994ef606c8c5440d5a5e39f092534a73daa4",
+    "tests/admin_history_browser.mjs": "9294213d939cd483e83d3ab87d15fddcabe0cf604ed336ebdf7d83a9ed7d30b8",
+    "tests/admin_jobs_fixture.py": "360810070b7a8fafaea29474892e2838d10713f2fc156535fb42bbf427e8e98e",
+    "tests/admin_resolution_browser.mjs": "24b53fcf17ad5579ddb138f3628fda061700ef212ac0d3aec1cab5b518252fbf",
+    "tests/printer_navigation.mjs": "38cade5966f7eed71d8e032f20337d85c539026667c2e9b0549fb12b1115540f",
+    "tests/test_admin_history_browser_fixture.py": "488189c4e2601f13aaef7764a98a8d6ca636bce38c9571f0ba05e70d183f84f9"
+  },
+  "navigation": {
+    "passed": true,
+    "command": "build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node tests/printer_navigation.mjs",
+    "result": "Task routes, contextual history, status ownership and menu focus PASS"
+  },
+  "journeys": {
+    "jobs": {
+      "command_receipt": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-ui-ux-regression-maintenance/tests/admin_jobs_browser.mjs",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/.sv08-cockpit-ux-coordinator-20261011/persisted-jobs-fixture",
+          "/home/drew/.sv08-cockpit-ux-coordinator-20261011/persisted-jobs-browser"
+        ],
+        "returncode": 0,
+        "stdout": "Browser image jobs PASS; reconnect 121 ms\n",
+        "stderr": "",
+        "elapsed_seconds": 4.754474751185626
+      },
+      "result": {
+        "passed": true,
+        "reconnect_ms": 121,
+        "stage_installations": 1,
+        "lost_acknowledgement_retry_same_identity": true,
+        "closed_and_reopened_browser_target": true,
+        "real_systemd_user_worker": true,
+        "unit_state": "MainPID=3792701\nExecStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-ui-ux-regression-maintenance/tests/admin_jobs_fixture.py /home/drew/.sv08-cockpit-ux-coordinator-20261011/persisted-jobs-fixture 8aebc77336244660ab2d7782a5010617 ; ignore_errors=no ; start_time=[Sun 2026-10-11 02:01:52 UTC] ; stop_time=[n/a] ; pid=3792701 ; code=(null) ; status=0/0 }\nActiveState=active\n",
+        "transport": "test Cockpit bridge shim",
+        "real_controller_staging_transaction": true,
+        "backend": "disposable disk double, fixture signature verifier",
+        "authenticated_cockpit": false,
+        "physical_hardware": false,
+        "jobs": [
+          {
+            "id": "8aebc77336244660ab2d7782a5010617",
+            "phase": "succeeded",
+            "action": "image.stage"
+          },
+          {
+            "id": "a93deb8417c645e2af5605029088c0fc",
+            "phase": "succeeded",
+            "action": "image.arm"
+          },
+          {
+            "id": "cedd9b9671ad4262879360a9d9d1f23e",
+            "phase": "succeeded",
+            "action": "image.cancel"
+          }
+        ]
+      }
+    },
+    "resolution": {
+      "command_receipt": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-ui-ux-regression-maintenance/tests/admin_resolution_browser.mjs",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/.sv08-cockpit-ux-coordinator-20261011/persisted-resolution-fixture",
+          "/home/drew/.sv08-cockpit-ux-coordinator-20261011/persisted-resolution-browser"
+        ],
+        "returncode": 0,
+        "stdout": "Browser image resolution PASS\n",
+        "stderr": "",
+        "elapsed_seconds": 1.1583929939661175
+      },
+      "result": {
+        "passed": true,
+        "interrupted_receipt_inspected": true,
+        "unknown_disposition_retained_after_reload": true,
+        "separately_reviewed_cancelled": true,
+        "source_selected": "A",
+        "pending_cleared_after_disarm": true,
+        "new_installations": 0,
+        "physical_hardware": false
+      }
+    },
+    "history": {
+      "command_receipt": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-ui-ux-regression-maintenance/tests/admin_history_browser.mjs",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/.sv08-cockpit-ux-coordinator-20261011/history-tmpfs/fixture",
+          "/home/drew/.sv08-cockpit-ux-coordinator-20261011/persisted-history-browser"
+        ],
+        "returncode": 0,
+        "stdout": "Native browser history journey completed (shim transport).\n",
+        "stderr": "",
+        "elapsed_seconds": 4.213877442991361
+      },
+      "result": {
+        "browser_shim": true,
+        "separate_worker": true,
+        "post_boot_shared_mode": 457,
+        "preserved_originals": 128,
+        "maintenance_cancel": true,
+        "lost_ack_retry": true,
+        "archived_pending_recovered": true,
+        "pending_retained_on_durability_failure": true,
+        "cancel_once": true,
+        "real_tmpfs_no_space": true,
+        "pressure_peak_allocated_bytes": 328994816,
+        "worker_barrier_reconnect_ms": 133,
+        "authority_changed_review_cancelled": true,
+        "maintenance_state_unchanged": true,
+        "backend_calls": [
+          "bad"
+        ],
+        "authenticated": false,
+        "hardware": false
+      }
+    }
+  },
+  "limitations": [
+    "Chromium operation journeys use a test Cockpit transport shim and disposable controller fixtures, not authenticated Cockpit or physical hardware.",
+    "Signature verifier and disk writes are synthetic; trusted-signer/revision fixture metadata preserves current admission requirements without proving cryptographic verification.",
+    "Native authenticated ARM64 Cockpit evidence is recorded separately in the main delivery.",
+    "No production runtime or UI source changes in this follow-up."
+  ],
+  "history_environment": {
+    "private_tmpfs_mib": 1088,
+    "production_reserve_mib": 768,
+    "full_copy_reserve_retained": true
+  },
+  "prior_diagnoses": "Earlier scratch attempts corrected missing synthetic release/signer metadata, fixture module search paths, runner UID/HOME, current selectors and insufficient private tmpfs capacity. Failed logs retained; no admission checks removed or unchanged attempts repeated."
+}

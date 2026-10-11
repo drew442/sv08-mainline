@@ -21,7 +21,7 @@ try {
  const until=async expression=>{for(let i=0;i<100;i++){if(await evaluate(expression))return;await delay(100);}throw new Error('Timeout: '+expression);};
  const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
  await send('Page.navigate',{url}); await until(`document.querySelector('#connection')?.textContent==='Image worker status connected'`);
- const receipt='d'.repeat(32); await until(`document.querySelector('[data-inspect-job="${receipt}"]')`);
+ await click('#operation-indicator'); await until(`!document.querySelector('#images').hidden`); assert.equal(await evaluate(`document.querySelector('#image-history').hidden`),false); const receipt='d'.repeat(32); await until(`document.querySelector('[data-inspect-job="${receipt}"]')`);
  await click(`[data-inspect-job="${receipt}"]`); await until(`document.querySelector('#review').open`);
  assert.equal(await evaluate(`document.querySelector('#review-title').textContent`),'Retain unknown outcome');
  assert.match(await evaluate(`document.querySelector('#review-arguments').textContent`),/GetSlotStatus/);
