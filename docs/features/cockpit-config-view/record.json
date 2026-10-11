@@ -1,11 +1,25 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "635268f2978e1563da0c0d35589c57f7a3598ce9ec7233977bb09295afd6fdf5",
+    "rationale": "Owner explicitly requests configuration visibility without elevation; retain privileged write and private credential boundaries.",
+    "reference": "docs/features/cockpit-config-view/owner-request.md",
+    "reference_sha256": "ea2e941225040415ca86a498abe8be2935a337547e59df3243be7ca254c5179f",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-config-view/owner-request.md": "ea2e941225040415ca86a498abe8be2935a337547e59df3243be7ca254c5179f"
+    },
+    "scope_sha256": "c9e8ab60b949a22c140a9e96e88ba48b56a17b87d29ce380cc41c7084c4e9fa2",
+    "session": "cockpit-view-20261011",
+    "source_commit": "4235ff538d98c534e97f03274942c745686b0ac2"
+  },
   "checks": [
     {
-      "id": "view-and-write-boundary",
+      "description": "Authenticated non-elevated views work across all sections; bounded root read entry cannot mutate/export secrets; existing mutation guards remain.",
       "environment": "offline",
-      "description": "Authenticated non-elevated views work across all sections; bounded root read entry cannot mutate/export secrets; existing mutation guards remain."
+      "id": "view-and-write-boundary"
     }
   ],
   "created": "2026-10-11",
