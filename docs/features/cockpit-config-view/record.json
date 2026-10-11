@@ -47,7 +47,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "491ab27d455e471daa3605a97275a1e8",
+        "session": "cockpit-view-20261011"
+      },
       "input_paths": [
         "runtime/sv08_admin.py",
         "runtime/sv08_printer_helper.py",
@@ -89,7 +93,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Offline implementation self-validated. Independent consequential-operation review separately required before installing new limited sudo entry; owner-authorized viewing excludes private credentials.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate read-only configuration access",
       "validation": null,
       "verification": null
