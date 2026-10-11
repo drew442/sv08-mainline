@@ -1,0 +1,59 @@
+{
+  "format_version": 2,
+  "id": "printer-hardware-boot-ownership",
+  "title": "Preserve hardware state ownership during boot preparation",
+  "kind": "feature",
+  "created": "2026-10-11",
+  "author": "root/coordinator",
+  "priority": 1,
+  "proposal": "docs/features/printer-hardware-boot-ownership/proposal.md",
+  "requirements": [
+    "docs/features/printer-hardware-boot-ownership/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "ownership-and-status",
+      "environment": "offline",
+      "description": "Targeted ownership/byte-preservation regression and distinct installed status recovery."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Fix boot ownership and recover installed hardware loading",
+      "status": "proposed",
+      "depends_on": [],
+      "environment": "offline",
+      "owned_paths": [
+        "runtime/sv08_boot.py",
+        "tests/test_host_boot.py",
+        "docs/features/printer-hardware-boot-ownership/evidence.md",
+        "docs/features/printer-hardware-boot-ownership/evidence.json"
+      ],
+      "input_paths": [
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_state.py",
+        "tests/test_data_budget.py"
+      ],
+      "checks": [
+        "ownership-and-status"
+      ],
+      "hazards": [],
+      "human_task": null,
+      "review_policy": "self",
+      "review_reason": "Narrow ownership correction; no device, boot policy, reboot, credential or configuration-content mutation.",
+      "implementation": null,
+      "validation": null,
+      "verification": null,
+      "evidence": [],
+      "blocker": null,
+      "repeats": 0,
+      "resumption": null
+    }
+  ]
+}
