@@ -83,7 +83,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "d3ba746feac84bb6bb5e376f2cd019a2",
+        "session": "01a12add-ec80-71c2-897a-83e6edaad2c8"
+      },
       "input_paths": [
         "runtime/sv08_network.py",
         "ui/host/view.js",
@@ -104,7 +108,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI and fixture tests; unchanged backend protections; no live printer or network operations.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and assess Network journey",
       "validation": null,
       "verification": null
