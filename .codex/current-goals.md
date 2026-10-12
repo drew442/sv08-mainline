@@ -377,6 +377,8 @@ Published [PR12](https://github.com/drew442/sv08-mainline/pull/12), candidate435
 
 Owner merged PR12; dark-theme deployment completed2026-10-12 from68cf588d8a9db574b25adb6f9f91eae7029c497c. [Installed evidence](../docs/features/cockpit-dark-theme/deployment-20261012.md):15 assets/six helpers pass, configuration/backends/services preserved, root restored read-only. No restart or printer outputs. Project task integrated following owner merge.
 
-## Active goal — recovery data restore,2026-10-12
+## Completed PR-delivery goal — recovery data restore,2026-10-12
 
 Owner selected full exported-data restore and explicit fresh-state initialization, disposable tests and review PR; no printer operations. [Scope and acceptance](../docs/features/recovery-data-restore/proposal.md). Native goal aligned; one implementation/two-child cap,3600second/512MiB execution allowance. Existing recovery export read-only protections remain intact; no formatting or silent replacement.
+
+Published [PR13](https://github.com/drew442/sv08-mainline/pull/13), candidate6aee2da6789e2548c7b5fadba0e3013d9e60ca17. All five acceptance checks self-validated:148 unit/regression checks and actual GTK chooser/review/cancel/restore/refusal/fresh apply pass with no source drift; actual final renders inspected. Supplemental independent source reassessment confirmed the correction to a reproduced fresh-state corrupt-success defect. [Evidence](../docs/features/recovery-data-restore/evidence.md) binds final source, results, representative visual and retained failures/limits. Project task validated awaiting owner integration. CI in progress at publication; no printer access, merge or deployment. Production target preparation/normal-boot activation and physical recovery-media qualification remain separate. V1 directory integrity and unsupported metadata fidelity explicitly disclosed.
