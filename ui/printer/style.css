@@ -96,3 +96,22 @@
 /* Catalogue, source and connection tasks keep exploration ahead of expert data. */
 #definition-sources .intro,#definitions .printer-definitions-title p,#printer-connections .printer-title p{max-width:760px;font-size:15px;margin:8px 0 16px}#definition-sources .card{margin:20px 0;padding:20px}#definition-sources .card h2{margin:0 0 16px}#definition-sources .card label{max-width:650px}#definition-sources .printer-source-card h3{margin:0 0 8px;font-size:18px}#definition-sources .printer-source-card p{margin:8px 0}#definition-sources .printer-source-card details{margin:12px 0}#definition-sources #printer-source-preview-detail:not(:empty){border-top:1px solid var(--border);padding-top:16px;margin-top:16px}#definition-sources #printer-source-preview-detail details{margin:12px 0}#definition-sources #printer-source-list{overflow:visible}#definitions .printer-definitions-toolbar{justify-content:flex-start;align-items:end;gap:12px;margin:16px 0}#definitions .printer-definitions-toolbar label{flex:1;min-width:min(100%,240px);margin:0}#definitions .printer-definitions-toolbar input{width:100%}#definitions .printer-definitions-title{align-items:flex-start}#printer-definitions-count,#printer-connection-count{font-size:14px;font-weight:650;margin:12px 0}#printer-connections .printer-toolbar{justify-content:flex-start;align-items:end}#printer-connections .printer-toolbar label{flex:1;min-width:min(100%,240px);margin:0}#printer-connections .printer-toolbar input{width:100%}#printer-connection-table.card{padding:12px;margin:16px 0}#printer-connection-table th{text-align:left;padding:12px 8px;background:#f1f5f9}#printer-connection-table td{padding:8px;vertical-align:top;border-top:1px solid var(--border)}#printer-connection-inspector>p{font-size:14px}#printer-connection-inspector dt{font-weight:650}
 @media(max-width:500px){#definition-sources .card{padding:16px}#definition-sources .actions button{width:100%}#definitions .printer-definitions-toolbar label,#printer-connections .printer-toolbar label{flex-basis:100%}#printer-connection-table.card{padding:0;background:transparent;border:0}#printer-connection-table tr{background:white}#printer-connection-table td{padding:6px 0;border:0}}
+
+/* Adjacent connection controls and ports keep a visible gap at every width. */
+#printer-connections [role=group]{display:flex;flex-wrap:wrap;gap:12px}#printer-connections [role=group] button+button{margin-inline-start:0}
+#printer-connections .printer-graph-port+button{margin-inline-start:0;margin-top:8px}
+#printer .printer-tabs{gap:12px}.printer-status[data-tone=neutral]{background:#edf0f3!important}.printer-status .outline-icon{width:18px!important;height:18px!important;stroke:currentColor!important;margin-right:6px}
+.printer-graph-heading .outline-icon{width:20px;height:20px}
+/* Compact labelled hardware tabs; retain full controls and visible separation. */
+#printer .printer-tabs button{display:flex;align-items:center;gap:8px;padding:8px 12px}
+#printer .printer-tabs button+button{margin-inline-start:0}
+#printer .printer-tabs button>.outline-icon{width:20px;height:20px;margin:0}
+#printer .printer-tabs .printer-advanced-toggle{margin:0;min-height:44px}
+@media(max-width:600px){#printer .printer-tabs{margin:8px 0}}
+/* Preserve the state distinctions while exposing component labels on phones. */
+@media(max-width:600px){
+    #printer .printer-state{padding:10px;margin:8px 0}
+    #printer #printer-access-state{margin-top:6px}
+    #printer .printer-title p{margin:4px 0}
+    #task-context{margin-bottom:6px}
+}

@@ -1,0 +1,834 @@
+{
+  "base_commit": "ba3914258f8f011490947a98c1721e530e8a9cb9",
+  "sources": {
+    "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+    "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+    "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+    "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+    "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+    "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+    "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+    "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+    "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+    "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+    "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+    "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+    "ui/printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d"
+  },
+  "checks": [
+    {
+      "attempt": "base-admin-1",
+      "exit_status": 2,
+      "elapsed_seconds": 0.042530898936092854,
+      "command": [
+        "python3",
+        "scripts/check_ui.py",
+        "--work",
+        "/home/drew/.sv08-ui-notes-20261012/base-admin-1",
+        "--node",
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "--chromium",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "--execute"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "1f7ed0e1b0e3462e6fc46b44970a5db574e37503a1598cf789ba23395c43e8af",
+      "changed_during": [],
+      "log_sha256": "1218e571eebe4f477992a67d4bd874d569f9bb49ae958cc6fe4df110b4018167"
+    },
+    {
+      "attempt": "base-admin-2",
+      "exit_status": 1,
+      "elapsed_seconds": 0.1481662029400468,
+      "command": [
+        "python3",
+        "scripts/check_ui.py",
+        "--work",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/cockpit-owner-notes/build/ui-notes-base",
+        "--node",
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "--chromium",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "--timeout",
+        "180",
+        "--max-output-mib",
+        "32",
+        "--execute"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "cb62dbe0b1bb7b23f83e915d9b14e2daee5e1362e114c5b10a62ed6cc05de7c0",
+      "changed_during": [],
+      "log_sha256": "b75a6afa4452d527f227f1606de7decd1116284f79b5b009e08349402c167cb1"
+    },
+    {
+      "attempt": "base-admin-3",
+      "exit_status": 0,
+      "elapsed_seconds": 4.7897773429285735,
+      "command": [
+        "python3",
+        "/home/drew/.sv08-ui-notes-20261012/private-repo/scripts/check_ui.py",
+        "--work",
+        "/home/drew/.sv08-ui-notes-20261012/private-repo/build/base-1",
+        "--node",
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "--chromium",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "--timeout",
+        "180",
+        "--max-output-mib",
+        "32",
+        "--execute"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "8b1bb8ce9033cf24044749caaec135b7ba0d9c49f476c0d22d063a9b2a798af0",
+      "changed_during": [],
+      "log_sha256": "38886b2f91930f6b3e2ca422a1c37ddce42b21fabeb36fac0c5cd53d5c7943ed"
+    },
+    {
+      "attempt": "config-final-2",
+      "exit_status": 0,
+      "elapsed_seconds": 2.874249470885843,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/config_view_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/config-final-2"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d"
+      },
+      "full_manifest_sha256": "9ee4f6464f7089fad9b14bcdf4a5cfcd864183f7e65db1c2cb4ccf9fb552e333",
+      "changed_during": [],
+      "log_sha256": "4052002b4173df5e69264afb9658d0765ba8f6fbeacaf232fc2c7602cdabafa8"
+    },
+    {
+      "attempt": "config-view-1",
+      "exit_status": 0,
+      "elapsed_seconds": 3.0173803179059178,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/config_view_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/config-view-1"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "613d27670a273871c8ca959e1c0992e4066372b78863c3028fe36ce890f3875f",
+      "changed_during": [],
+      "log_sha256": "4052002b4173df5e69264afb9658d0765ba8f6fbeacaf232fc2c7602cdabafa8"
+    },
+    {
+      "attempt": "final-units",
+      "exit_status": 0,
+      "elapsed_seconds": 28.286437288857996,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ui_notes",
+        "test_network_ui",
+        "test_stage_admin_ui",
+        "test_stage_printer_ui"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "f2e5df1d9312a7b7ef5411aadcd6f2288af8a99a31a96cfe8959df34eddac2ce",
+      "changed_during": [],
+      "log_sha256": "32f48cad681024914f544ba5974c112ad029ad2a33d85de062eea867933503ba"
+    },
+    {
+      "attempt": "focused-2",
+      "exit_status": 0,
+      "elapsed_seconds": 4.840231079142541,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ui_notes",
+        "test_network_ui"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "c70fcf36ab6becea9a73755798e5fafef4b41e3ad22b68d12a760b3a4f0ce4ff",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "4aa72866f5b8b15d1266ac7e1c36cec9b1127a51ee6a677a7c91e577dfb6f3bf",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "53854df95df81b54f542831f7ba023e675fe4bf70169f29c4abb514f1e50de2a",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "27ab8f6199bb8b735e8312baa53c75c5f6d8077b1adccdd73b29994eb5002785",
+      "changed_during": [],
+      "log_sha256": "0fab25800f7b97317304b9ea775565505e5e6a66ca2e719c8286d91353791c07"
+    },
+    {
+      "attempt": "notes-final-3",
+      "exit_status": 0,
+      "elapsed_seconds": 2.9908430429641157,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/notes-final-3"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "9ebf0492476c478de9fdd20a74f6ee7f9561198f90aed5c6d421d7b9ae060312",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "notes-final-4",
+      "exit_status": 0,
+      "elapsed_seconds": 1.8813730338588357,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/notes-final-4"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "20674ffc79318b46fa750cdb635ffb859ee8b66d1aa6ebf8b8de2a675ff2faae"
+      },
+      "full_manifest_sha256": "bb536883fa22d275ba132bc0a34f70dcd22b0868c243ae84e318fad8ffe5dc8a",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "notes-final-5",
+      "exit_status": 0,
+      "elapsed_seconds": 2.6992547588888556,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/notes-final-5"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d"
+      },
+      "full_manifest_sha256": "05ff180df5fdf1771b8ed6ef3e18dec658a4cc3dc35dad58e82bcc03a14f6273",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "notes-normal-1",
+      "exit_status": 1,
+      "elapsed_seconds": 11.08815088798292,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/fixture",
+        "/home/drew/.sv08-ui-notes-20261012/notes-normal-1"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "4a2de45c7809fdc6f89a7c8f5ee0d36beda8fbc44dc4ed18a182101d96b8c67a",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "53854df95df81b54f542831f7ba023e675fe4bf70169f29c4abb514f1e50de2a",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "ce2c8bfd2d5af92c22436e6847db8b00bdb2e934f2c6428f7fd79294e62bf928",
+      "changed_during": [],
+      "log_sha256": "0d6733fefb60783a922fb2e0768a9495f2b33c56c7f6c3f1a514c6ece6afc6fa"
+    },
+    {
+      "attempt": "notes-normal-2",
+      "exit_status": 0,
+      "elapsed_seconds": 2.2272108187898993,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/notes-normal-2"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "329bb7049411193268b497e3434120373c22387c9f6965ca979493c9936dcda8",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "notes-zoom-1",
+      "exit_status": 0,
+      "elapsed_seconds": 1.7105840870644897,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/notes-zoom-1"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "282436561e846a892e70d64717d8310123941b3652c68d004f6fa749fb93b3d0",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "printer-final-1",
+      "exit_status": 1,
+      "elapsed_seconds": 4.641852410975844,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/printer_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/fixture",
+        "/home/drew/.sv08-ui-notes-20261012/printer-final-1"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "282affa67bbf2893c232e66c742fad58161c8af7ef8492e31910ec1bb1e50e5d",
+        "tests/ui_notes_browser.mjs": "e2f4b7f28b52e81cc0a03b79006583dc50715d013b69dc60b675ea230dd8a1ad",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "46fd488899cde24e688fa8447b6787f8550e89888a7be02a01699e84eeecbb57",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "265c71af9b4b490077ed5a750d1c7a2cdd0d7d9c83a66fca92e94f5092842f2e",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "23921160e0a4adbc8de8e58fd464ca2cd381f6007e6846a989c6086a3af99dcd",
+      "changed_during": [],
+      "log_sha256": "fff93664df3f2b631fd4f7b82079b1ce0227909fd3e9c5793ba434ea14a67f4d"
+    },
+    {
+      "attempt": "printer-final-2",
+      "exit_status": 1,
+      "elapsed_seconds": 7.8631350989453495,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/printer_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/fixture",
+        "/home/drew/.sv08-ui-notes-20261012/printer-final-2"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "40d5311b49bb452d141ddea8746fea82ff5bcc4181b73f4bad710e37ccadfd7b",
+      "changed_during": [],
+      "log_sha256": "fff93664df3f2b631fd4f7b82079b1ce0227909fd3e9c5793ba434ea14a67f4d"
+    },
+    {
+      "attempt": "printer-final-4",
+      "exit_status": 1,
+      "elapsed_seconds": 4.50405053794384,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/printer_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/fixture",
+        "/home/drew/.sv08-ui-notes-20261012/printer-final-4"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "20674ffc79318b46fa750cdb635ffb859ee8b66d1aa6ebf8b8de2a675ff2faae"
+      },
+      "full_manifest_sha256": "d599787d19ee788d6f9cb44c375285665b52eccafb37f1d4a920d14de2d863e0",
+      "changed_during": [],
+      "log_sha256": "8973b86954f1304905c86665823ee8eb2dd28afd2637be13071183b4c1e46d9f"
+    },
+    {
+      "attempt": "printer-final-5",
+      "exit_status": 0,
+      "elapsed_seconds": 24.560980866197497,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/printer_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/fixture",
+        "/home/drew/.sv08-ui-notes-20261012/printer-final-5"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d"
+      },
+      "full_manifest_sha256": "f62a43e66baec6c92223eb394684f7e67c1e8d236864c52fe27e81b61bccdfee",
+      "changed_during": [],
+      "log_sha256": "5d1f5ee97bd58bbf6d2a0032252880d31663fa41a36bed9b361fde2768bc9c57"
+    },
+    {
+      "attempt": "printer-measured-3",
+      "exit_status": 1,
+      "elapsed_seconds": 6.82182143884711,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/printer_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/fixture",
+        "/home/drew/.sv08-ui-notes-20261012/printer-measured-3"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "888f06626aafa8ed5816c47560006f46e423c2c5b0b779b75edcc3b5976ecf1e",
+      "changed_during": [],
+      "log_sha256": "e7cf9398379abe1b7666365ddeed36527f2c9ea0b3947523b412d4c1faa7edff"
+    },
+    {
+      "attempt": "pure-final-1",
+      "exit_status": 0,
+      "elapsed_seconds": 0.07026630616746843,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ui_notes"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "5e55400a8d33f175022fb510551746cbbdec9f5acf4bc07e59d2ff1cb002e31e",
+      "changed_during": [],
+      "log_sha256": "d9b01b881578a0bb11120ac37cc56723b84cf52d0cc34c6e053f53178e407cb7"
+    },
+    {
+      "attempt": "stage-printer-final-3",
+      "exit_status": 0,
+      "elapsed_seconds": 21.540978983044624,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_stage_printer_ui"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d"
+      },
+      "full_manifest_sha256": "7563733ab892761216a755a3a7469c1c79c4979d3860c1d55e7cdd20ed28604c",
+      "changed_during": [],
+      "log_sha256": "54bd9f5a18110c5c1c52be7edb55a034c6aec032554d348781fb6576604bffab"
+    },
+    {
+      "attempt": "standard-1",
+      "exit_status": 1,
+      "elapsed_seconds": 33.192510172957554,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ui_notes",
+        "test_stage_admin_ui",
+        "test_stage_printer_ui",
+        "test_network_ui",
+        "test_software_ui",
+        "test_mainsail_access_ui"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "a4a754432fada958a6cc6b5a76c1ea6581e60ae6044e3dc97bfc7c6ab4dff482",
+        "tests/test_ui_notes.py": "5600acbd7ed60e733c553c946b5b2ab9a2526c57ab90cfa046d9e3492422f709",
+        "tests/ui_notes_browser.mjs": "6cd4744afed9d18aef44400ebb2fe079e84269a1dbeb73a0ab1a845a18021a0c",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "492b3671a636c85b1b9e81054966f12d70b8c8ac52adcb18ddc2d9653963a2a8",
+        "ui/host/navigation.js": "203db4aeef21344d0f49148a7a72c1f37507542e55498b08a32d1abd8b510cfb",
+        "ui/host/network.js": "534cded7ea58b73edef8160223bc683284c269e5ed77aa62b8fd40ac13630a58",
+        "ui/host/style.css": "53854df95df81b54f542831f7ba023e675fe4bf70169f29c4abb514f1e50de2a",
+        "ui/printer/app.js": "e9053848638cbb918b73de681d648ff5c7d54b2eed9cdec1be34d43128b4862b",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "dbed1f9c83c3b0075ac1e838c55386b13a89b9f8250f4e0edd2cf169f0ce2874",
+      "changed_during": [],
+      "log_sha256": "1a4e96ba56f495fd68b32c5806c9dc7813fd1ac24046371c44403813286ee7ee"
+    },
+    {
+      "attempt": "standard-final-2",
+      "exit_status": 0,
+      "elapsed_seconds": 30.987932424992323,
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_ui_notes",
+        "test_stage_admin_ui",
+        "test_stage_printer_ui",
+        "test_network_ui",
+        "test_software_ui",
+        "test_mainsail_access_ui"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "20674ffc79318b46fa750cdb635ffb859ee8b66d1aa6ebf8b8de2a675ff2faae"
+      },
+      "full_manifest_sha256": "9502d1c973d91a86d54994087818078f79ef1fe9423d4536e5319621b46bcfef",
+      "changed_during": [],
+      "log_sha256": "9e8bfaf9ed788577dcd73d48ab5c79f0f6ec6c540eab4f4033b88c6f0dca22f2"
+    },
+    {
+      "attempt": "zoom-final-2",
+      "exit_status": 0,
+      "elapsed_seconds": 2.229204551083967,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/zoom-final-2"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "ad8884563c7e831f2fc42f2c3b63d7bac39d7272facff8ec1992424e65b725ea",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "e5b824fc0dbc5ad2d990a30d42b6bc41bcf00808fc8d7bfa54e871733e616a3e"
+      },
+      "full_manifest_sha256": "014a92799456805710f808cb9c64d42bb89ee799ffbb3c5e5dab1f11dbc27171",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "zoom-final-3",
+      "exit_status": 0,
+      "elapsed_seconds": 1.4779557520523667,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/zoom-final-3"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "20674ffc79318b46fa750cdb635ffb859ee8b66d1aa6ebf8b8de2a675ff2faae"
+      },
+      "full_manifest_sha256": "336a8cde37f2b3ae0f88e21eae496ad28cba39037a74a9265fdcbcf6e5819305",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "attempt": "zoom-final-4",
+      "exit_status": 0,
+      "elapsed_seconds": 1.9240289339795709,
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v6/node-v22.23.2-linux-x64/bin/node",
+        "tests/ui_notes_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-ui-notes-20261012/notes-fixture",
+        "/home/drew/.sv08-ui-notes-20261012/zoom-final-4"
+      ],
+      "source_before": {
+        "tests/config_view_browser.mjs": "efe8e2468aebad69462760e8f5c23f7c14cf2c46ca43696659cd337a5bd98908",
+        "tests/printer_browser.mjs": "89907185b4d4aed2ef7e0806fa733416d7ce53f5cfc7043ee2fbcb83f20544ba",
+        "tests/test_network_ui.py": "ec1868f90f01360a3d231cd98b548815e7a869574861e805f358a3b1e1b0f167",
+        "tests/test_ui_notes.py": "07747f2653cb627663281df5efc9cac722673ab4729574db9f72010c16e044a3",
+        "tests/ui_notes_browser.mjs": "997db9f8a1da63f51358967937349102eca8b4c67f4b96a2c36478b23677a9aa",
+        "ui/host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+        "ui/host/index.html": "40f5a342131c1f013fb5ca0af24c8450a6b0d9b5a281676924b299996b5f1e97",
+        "ui/host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+        "ui/host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+        "ui/host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+        "ui/printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+        "ui/printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf",
+        "ui/printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d"
+      },
+      "full_manifest_sha256": "cc18ef1dc6e89cba3c24f2997ec1c853bccf3ec64d65b8fec04dbaabe91411e3",
+      "changed_during": [],
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "visuals": {
+    "network.png": "109bf841a7084f09e53683a4016970a5eb99400c6866d9c1791f2b2d2cfb137c",
+    "connections.png": "5d4ab7bc5089d5939583850a68fd294b66124ff07cbc8505ce6085f62524f72d",
+    "update-status.png": "0c35c041da4b083104f3673f05974b28ad46f3277b35d8dc57eb221dcf843e51"
+  },
+  "primary_allowance": {
+    "seconds": 2400,
+    "generated_bytes": 268435456
+  },
+  "measured_check_seconds": 206.41090670833364,
+  "private_artifacts": "/home/drew/.sv08-ui-notes-20261012",
+  "physical_hardware": false,
+  "deployed": false,
+  "agent_assignments": [
+    {
+      "role": "project_researcher",
+      "agent": "/root/ui_notes_status_trace",
+      "effort": "omitted/default low",
+      "fork": "none",
+      "effective_settings": "not independently observed"
+    },
+    {
+      "role": "project_implementer",
+      "agent": "/root/ui_notes_implement",
+      "effort": "explicit medium",
+      "fork": "none",
+      "effective_settings": "not independently observed",
+      "skill": "explicit task-scoped read of .agents/skills/sv08-ui-ux/SKILL.md"
+    }
+  ]
+}

@@ -114,20 +114,16 @@ function render() {
     $('overview-next-mode').textContent = state.requested_mode === state.boot.mode ? '' : 'Next boot: '+modeName(state.requested_mode);
     $('mode-reason').textContent = !sv08Session.elevated ? 'Administrator access is required to save a mode change. You can inspect the current mode.' : '';
     $('space').textContent = `${(state.free_bytes / 1024 ** 3).toFixed(2)} GiB`;
-    $('update-title').textContent = state.transaction ? `Update: ${state.transaction.phase}` : 'No update waiting';
-    $('update-detail').textContent = state.pending ? `Slot ${state.pending.slot} · ${state.pending.release}. State is copied when the new release boots.` : 'The running system stays active until you select a verified release for the next boot.';
-    if (state.feed_status && !state.pending) {
-        const feed = state.feed_status;
-        $('update-detail').textContent = feed.result === 'blocked'
-            ? `Last automatic check was blocked: ${feed.reason}`
-            : feed.result === 'reboot-queued' ? 'Automatic update restart requested. The new release must still pass its health checks.'
-            : feed.result === 'reboot-uncertain' ? 'Restart acknowledgment is uncertain. Inspect the update state; no automatic retry will be sent.'
-            : feed.result === 'reboot-suppressed' ? 'Automatic restart was suppressed by opting out. The armed update remains selected for the next boot.'
-            : feed.result === 'awaiting-health-reconciliation' ? 'Waiting for boot health to reconcile the previous update.'
-            : feed.result === 'reboot-observed' ? 'The update restart was observed. Check the current release and transaction result.'
-            : feed.result === 'armed-next-boot'
-                ? `Last automatic check armed ${feed.release} for a normal boot. Current selection is shown in the update state.`
-                : `Last automatic check already considered ${feed.release}. Current selection is shown in the update state.`;
+    const update=sv08Presentation.update(state);
+    $('update-title').textContent=update.title;
+    $('update-detail').textContent=update.detail;
+    $('update-status-panel').dataset.tone=update.tone;
+    sv08Presentation.status($('update-status'),{error:'Failed',success:'Completed',warning:'Pending / action required',neutral:'Current state'}[update.tone],update.tone,update.icon);
+    const feed=state.feed_status;
+    $('update-feed').hidden=!feed;
+    if(feed){
+        const messages={'reboot-queued':'A restart was requested; this does not establish boot health.','reboot-observed':'A restart was observed; this does not establish update success.','reboot-uncertain':'Restart acknowledgment was uncertain. No automatic retry will be sent.','reboot-suppressed':'Automatic restart was suppressed. Check the current boot selection.','awaiting-health-reconciliation':'The previous check awaited boot health reconciliation.','armed-next-boot':'An update was selected for a normal boot. Check the current boot selection.',blocked:'Blocked: '+(feed.reason || 'reason unavailable')};
+        $('update-feed').textContent='Last automatic check: '+(messages[feed.result] || 'Reported '+(feed.result || 'unknown result')+'. Check the current transaction above.');
     }
     $('slots').replaceChildren();
     for (const name of ['A', 'B']) {
@@ -137,7 +133,7 @@ function render() {
         const text = document.createElement('p'); text.textContent = record ? `${record.release} · ${record.customized ? 'Customized — protected from replacement' : 'Standard release'}` : 'No registered state generation. Image availability must be verified before booting.';
         card.append(title, text, details); $('slots').append(card);
     }
-    if ($('manual-update-step')) $('manual-update-step').textContent = state.pending ? 'Next boot selected: '+state.pending.release+'. Restart remains a separate reviewed operation.' : state.transaction ? 'Installation status: '+state.transaction.phase+'. Wait for confirmation before choosing the next boot.' : state.images.length ? 'Upload authenticated. Review installation to verify the full payload and prepare the inactive image.' : 'Start by uploading a signed OS bundle.';
+    if ($('manual-update-step')) sv08Presentation.status($('manual-update-step'),state.transaction || state.pending ? update.title+'. '+update.detail : state.images.length ? 'Upload authenticated. Review installation to verify the full payload and prepare the inactive image.' : 'Start by uploading a signed OS bundle.',update.tone,update.icon);
     renderDrafts();
     options('image-choice', state.images, 'No verified uploaded image available');
     capability('policy.update', 'save-update-policy'); capability('policy.auto', 'save-auto'); capability('policy.mode', 'save-mode', 'mode-reason');
@@ -168,6 +164,7 @@ function renderJobs(result) {
     for (const job of result.jobs) {
         const item = document.createElement('p'); item.dataset.jobId = job.id; item.dataset.phase = job.phase; item.tabIndex = -1;
         item.textContent = `${job.action} · ${job.phase} · ${job.id} — ${job.message}`;
+        sv08Presentation.status(item,item.textContent,job.phase==='failed'?'error':job.phase==='succeeded'?'success':['interrupted','refused'].includes(job.phase)?'warning':'neutral',job.phase==='failed'?'error':job.phase==='succeeded'?'check':['interrupted','refused'].includes(job.phase)?'clock':'info');
         if (job.phase === 'interrupted' && !job.disposition) {
             const button = document.createElement('button');
             button.textContent = 'Inspect unknown outcome'; button.dataset.inspectJob = job.id;
