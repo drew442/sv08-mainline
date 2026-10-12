@@ -14,7 +14,7 @@ import unittest
 from unittest.mock import patch
 from test_data_budget import fixture_root, fixture_budget
 from test_admin_history import receipt, disposed
-from sv08_admin import revision
+from sv08_admin import revision, snapshot
 from sv08_admin_jobs import Jobs
 from sv08_admin_history import History
 from sv08_admin_resolution import KIND
@@ -43,7 +43,9 @@ class Repairs(unittest.TestCase):
         History(jobs).apply(History(jobs).review());History(jobs).apply(History(jobs).review())
         self.assertEqual(jobs.load(),rows)
         payload=b'bounded post-boot upload';sha=hashlib.sha256(payload).hexdigest()
-        (root/'uploads').mkdir(mode=0o700)
+        info=(root/'uploads').lstat()
+        self.assertTrue(stat.S_ISDIR(info.st_mode))
+        self.assertEqual((stat.S_IMODE(info.st_mode),info.st_uid),(0o700,os.geteuid()))
         staging=Staging(root/'uploads',owner_uid=os.geteuid(),budget=budget)
         staging.receive(BytesIO(payload),len(payload),sha,lambda p:dict(bundle_sha256=sha))
         store.expect_trial('B','release-2','A');trial=store.prepare_boot('B','release-2')
@@ -72,21 +74,36 @@ class Repairs(unittest.TestCase):
         if v2:History(jobs).apply(History(jobs).review())
         return jobs
 
+    def submission_controller(self, name):
+        # Model only the reviewed image action; use real state, boot, admission
+        # and revision inputs rather than bypassing Jobs.submit's current gates.
+        root=self.base/name
+        store=Store(root,budget=fixture_budget(root),runtime=root/'runtime')
+        store.initialize();boot=store.prepare_boot('A','release-1')
+        class Current:
+            context='host'
+            def plan(inner,action,arguments):
+                plan=receipt(1)['plan']
+                self.assertEqual((action,arguments),(plan['action'],plan['arguments']))
+                with inner.store.locked():
+                    inner.store.require_running()
+                    plan['revision']=revision(snapshot(inner.store,inner.boot,inner.context))
+                return plan
+        current=Current();current.store=store;current.boot=boot
+        return current,current.plan('image.cancel',{})
+
     def test_public_submit_retry_and_jobs_observation_settle_or_refuse(self):
         for v2 in (False,True):
             for point in ('manifest-directory-fsync','manifest-parent-fsync'):
                 with self.subTest(v2=v2,point=point):
                     root=self.base/('submit-'+str(v2)+point);jobs=self.jobs(root,v2=v2)
-                    plan=receipt(1)['plan'];hit=[];failed=[False]
+                    current,plan=self.submission_controller('state-'+str(v2)+point);hit=[];failed=[False]
                     def fault(boundary):
                         if boundary==point:failed[0]=True;hit.append(boundary);raise OSError(errno.EIO,'post-replace durability')
                         if failed[0] and boundary in ('recovery-directory-fsync','recovery-parent-fsync'):
                             hit.append(boundary);raise OSError(errno.EIO,'persistent recovery failure')
                     jobs.history_fault=fault
-                    class Current:
-                        context='host'
-                        def plan(self,*args):return plan
-                    with self.assertRaises(OSError):jobs.submit('1'*32,plan,Current())
+                    with self.assertRaises(OSError):jobs.submit('1'*32,plan,current)
                     self.assertIn(point,hit);raw=(root/'jobs.json').read_bytes();names=set(os.listdir(root))
                     class NoCurrent:
                         @property
@@ -105,19 +122,19 @@ class Repairs(unittest.TestCase):
                     self.assertEqual((root/'jobs.json').read_bytes(),raw);self.assertEqual(set(os.listdir(root)),names)
 
     def test_submit_second_acquisition_refuses_concurrent_uncertain_receipt(self):
-        jobs=self.jobs(self.base/'second-submit',v2=True);plan=receipt(1)['plan'];failed=[False]
+        jobs=self.jobs(self.base/'second-submit',v2=True)
+        current,plan=self.submission_controller('second-state');failed=[False]
         def fault(point):
             if point=='manifest-directory-fsync':failed[0]=True;raise OSError(errno.EIO,'post-replace durability')
             if failed[0] and point=='recovery-directory-fsync':raise OSError(errno.EIO,'persistent recovery failure')
         jobs.history_fault=fault
-        class Inner:
-            context='host'
-            def plan(self,*args):return plan
         class Outer:
             context='host'
+            store=current.store
+            boot=current.boot
             def plan(inner,*args):
                 # Another supported writer commits between the two ledger locks.
-                with self.assertRaises(OSError):jobs.submit('1'*32,plan,Inner())
+                with self.assertRaises(OSError):jobs.submit('1'*32,plan,current)
                 return plan
         with self.assertRaises(OSError):jobs.submit('1'*32,plan,Outer())
         self.assertTrue(failed[0]);raw=(jobs.root/'jobs.json').read_bytes()

@@ -50,6 +50,8 @@ def source_snapshot(repo):
     # Include untracked source files as well as tracked files. Never read personal
     # configuration, credentials, build output or the complete conversation.
     names = {FIXTURE, BROWSER, 'scripts/prepare_host_os.py', 'scripts/check_ui.py'}
+    if (repo / 'tests/browser_runtime.mjs').exists():
+        names.add('tests/browser_runtime.mjs')
     for directory, pattern in [('ui/host', '*'), ('runtime', '*.py')]:
         root = repo / directory
         require(root.is_dir() and not root.is_symlink(), f'Missing source directory: {directory}')
@@ -187,7 +189,8 @@ def run_checks(repo, settings):
             stream.close()
         # Publish compact references, not a browser profile or long raw logs.
         paths = [work / 'source.json', work / 'source-after.json', work / 'fixture.log',
-                 work / 'runner.log', work / 'browser/result.json', work / 'browser/browser.log']
+                 work / 'runner.log', work / 'browser/result.json', work / 'browser/browser.log',
+                 work / 'browser/browser-startup.json']
         paths += sorted((work / 'browser').glob('*.png'))
         for path in paths:
             if path.is_file() and not path.is_symlink() and path.stat().st_size <= 32 * MIB:

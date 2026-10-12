@@ -1,19 +1,20 @@
 // Actual Chromium + real generation-local Python Store. Cockpit session/RPC shim.
 import fs from 'node:fs';
-import {spawn,execFileSync} from 'node:child_process';
+import {execFileSync} from 'node:child_process';
+import {startBrowser} from './browser_runtime.mjs';
 import {setTimeout as delay} from 'node:timers/promises';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 const [chrome,fixture,output]=process.argv.slice(2);
 const {url}=JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url,/^http:\/\/127\.0\.0\.1:\d+$/);
-fs.mkdirSync(output);const profile=fs.mkdtempSync((process.env.SV08_BROWSER_PROFILE_ROOT??output)+'/profile-');fs.chmodSync(profile,0o700);const log=fs.openSync(output+'/browser.log','w');
-const child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--disable-gpu-shader-disk-cache','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost','--no-first-run','--disk-cache-size=1','--media-cache-size=1','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
+fs.mkdirSync(output);
+const browser=startBrowser({chrome,output,args:['--disable-component-update','--disable-sync','--disable-default-apps','--disable-quic','--disable-gpu-shader-disk-cache','--proxy-server=http://127.0.0.1:9','--proxy-bypass-list=127.0.0.1;localhost']});
+const profile=browser.profile;
 let socket,secondSocket,secondTarget;
 try {
- let port;
- for(let i=0;i<100;i++){try{port=fs.readFileSync(profile+'/DevToolsActivePort','utf8').split('\n')[0];break;}catch{await delay(100);}}
- assert(port);const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);
+ const port=await browser.ready;
+ const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=reject;});
  let dirtyReloadDialogs=0;let id=0;const pending=new Map(),errors=[];
  function send(method,params={}){return new Promise((resolve,reject)=>{const key=++id,timer=setTimeout(()=>reject(Error('CDP timeout '+method)),10000);pending.set(key,{resolve,reject,timer});socket.send(JSON.stringify({id:key,method,params}));});}
@@ -144,4 +145,4 @@ try {
  assert.equal(errors.length,0);
  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,ordinary_read_without_start:true,hardware_journey_read_only_state_attention:true,populated_hardware:true,saved_previous_view:true,definitions_sources_connections:true,remaining_pages_read_only_heading_focus_reflow_zoom:true,settings:['images','settings','network','software','mainsail-access','identity','recovery'],writes_disabled:true,end_access_retains_view:true,secrets_cleared:true,unchanged_state:true,uncaught_exceptions:0,physical_hardware:false},null,2)+'\n');
  console.log('Configuration view browser tests PASS');
-} finally {socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}
+} finally {socket?.close();secondSocket?.close();await browser.stop();}

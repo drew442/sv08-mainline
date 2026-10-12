@@ -1,18 +1,20 @@
+import {startBrowser} from './browser_runtime.mjs';
 import fs from 'node:fs';import path from 'node:path';import {spawn} from 'node:child_process';import {setTimeout as delay} from 'node:timers/promises';import assert from 'node:assert/strict';
 const repo=path.resolve(new URL('..',import.meta.url).pathname);const chrome=process.env.SV08_CHROMIUM || '/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome';
 const server=spawn('python3',['-c',`import sys;sys.path[:0]=${JSON.stringify([repo+'/tests',repo+'/runtime'])};from test_identity import browser_fixture_server;browser_fixture_server()`],{stdio:['ignore','pipe','inherit']});
 let config;let buffer='';server.stdout.on('data',chunk=>{buffer+=chunk;if(buffer.includes('\n')){try{config=JSON.parse(buffer.split('\n')[0])}catch{}}});
-let child,socket,profile;
+let browser,socket,profile;
 try{
  for(let n=0;n<100&&!config;n++)await delay(100);assert(config,'Fixture startup failed');
- profile=fs.mkdtempSync((process.env.SV08_UI_SCRATCH || '/dev/shm')+'/sv08-identity-browser-');const downloads=path.join(profile,'downloads');fs.mkdirSync(downloads);
- child=spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore',detached:true});
- let port;for(let n=0;n<80;n++){try{port=fs.readFileSync(profile+'/DevToolsActivePort','utf8').split('\n')[0];break}catch{await delay(100)}}assert(port);
+ const output=process.env.SV08_UI_EVIDENCE || process.env.SV08_UI_SCRATCH;
+ assert(output,'Assign SV08_UI_SCRATCH or SV08_UI_EVIDENCE for retained browser diagnostics');
+ browser=startBrowser({chrome,output});profile=browser.profile;const downloads=path.join(profile,'downloads');fs.mkdirSync(downloads);
+ const port=await browser.ready;
  const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j});
  let id=0;const pending=new Map();const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>reject(Error('Browser command timeout')),15000);pending.set(n,{resolve,reject,timer});socket.send(JSON.stringify({id:n,method,params}))});
  socket.onmessage=({data})=>{const e=JSON.parse(data);if(e.id&&pending.has(e.id)){const p=pending.get(e.id);pending.delete(e.id);clearTimeout(p.timer);e.error?p.reject(Error('Browser command failed')):p.resolve(e.result)}};
  const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error('Browser evaluation failed');return r.result.value};
- const capture=async()=>{const output=process.env.SV08_UI_EVIDENCE;if(output)fs.mkdirSync(output,{recursive:true,mode:0o700});for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await ev('scrollTo(0,0)');assert(await ev('document.documentElement.scrollWidth<=innerWidth'));if(output){const image=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width,height:Math.min(2200,await ev('document.documentElement.scrollHeight')),scale:1}});fs.writeFileSync(output+'/identity-ready-'+width+'.png',Buffer.from(image.data,'base64'));}}await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});await ev("document.body.style.zoom='200%'");assert(await ev('document.documentElement.scrollWidth<=innerWidth'));await ev("document.body.style.zoom=''");};
+ const capture=async()=>{const output=process.env.SV08_UI_EVIDENCE;if(output)fs.mkdirSync(output,{recursive:true,mode:0o700});for(const [width,height] of [[1440,900],[1024,600],[390,844]]){await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await ev('scrollTo(0,0)');assert(await ev('document.documentElement.scrollWidth<=innerWidth'));if(output){const image=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width,height:Math.min(2200,await ev('document.documentElement.scrollHeight')),scale:1}});fs.writeFileSync(output+'/identity-ready-'+width+'.png',Buffer.from(image.data,'base64'));}}await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});await send('Emulation.setDeviceMetricsOverride',{width:512,height:300,deviceScaleFactor:2,mobile:false});assert(await ev('document.documentElement.scrollWidth<=innerWidth'));/* Reflow equivalence only; actual browser zoom is asserted in the installed journey. */};
  const until=async expression=>{for(let n=0;n<100;n++){if(await ev(expression))return;await delay(100)}throw Error('Browser condition timeout')};
  const click=selector=>ev(`document.querySelector(${JSON.stringify(selector)}).click()`);
  const rpc=request=>ev(`sv08View('identity',${JSON.stringify(request.method)}).then(result=>({ok:true,result}))`);
@@ -45,7 +47,7 @@ try{
  console.log(JSON.stringify({ca_download:true,public_key_upload_review_cancel_apply:true,identity_backup_download:true,invalid_restore_refused:true,restore_preview_cancel_apply:true,authority_loss_closes_pending_review:true,viewports:[390,1024,1440],backend:'real Identity class',cockpit_transport:'simulated fixture',physical_hardware:false}));
 }finally{
  socket?.close();server.kill('SIGTERM');
- if(child){try{process.kill(-child.pid,'SIGTERM')}catch{}if(child.exitCode===null)await new Promise(r=>{child.once('exit',r);setTimeout(r,3000)});try{process.kill(-child.pid,'SIGKILL')}catch{}}
+ if(browser)await browser.stop();
  if(server.exitCode===null)await new Promise(r=>{server.once('exit',r);setTimeout(r,2000)});
- await delay(100);if(profile)fs.rmSync(profile,{recursive:true,force:true,maxRetries:10,retryDelay:200});
+
 }

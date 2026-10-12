@@ -25,6 +25,7 @@
     menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('menu-open',open);if(open)nav.querySelector('[aria-current="page"]')?.focus();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menu?.getAttribute('aria-expanded')==='true'){event.preventDefault();closeMenu(true);}});
     document.querySelector('.skip')?.addEventListener('click',event=>{event.preventDefault();document.getElementById('main').focus();});
+    function focusPage() {const heading=document.querySelector('#'+current+' h1');if(heading){heading.tabIndex=-1;heading.focus();}else document.getElementById('main').focus();}
     function paint(focus = true) {
         const requested = location.hash.slice(1), route=aliases[requested]??requested;
         const name = routes.has(route) && document.getElementById(route) ? route : 'overview', parent=routes.get(name);
@@ -41,9 +42,19 @@
         document.getElementById('jobs-summary').closest('article').hidden=name!=='images';
         closeMenu();
         if(changed)window.dispatchEvent(new CustomEvent('sv08-navigation-changed',{detail:{from:previous,to:name}}));
-        if (focus && changed) {const heading=document.querySelector('#'+name+' h1');if(heading){heading.tabIndex=-1;heading.focus();}else document.getElementById('main').focus();}
+        if (focus && changed) focusPage();
     }
     window.sv08Navigation = {get current(){return current;},go(name){name=aliases[name]??name;if(!routes.has(name))name='overview';if(location.hash!=='#'+name)history.pushState(null,'','#'+name);paint();}};
     document.querySelectorAll('[data-page],[data-open]').forEach(b=>b.addEventListener('click',()=>window.sv08Navigation.go(b.dataset.page||b.dataset.open)));
-    window.addEventListener('hashchange',()=>paint());window.addEventListener('popstate',()=>paint());paint(false);
+    window.addEventListener('hashchange',()=>paint());
+    window.addEventListener('popstate', () => {
+        paint(false);
+        const destination=current;
+        // Native history may restore the previous focused control after popstate.
+        // Finish route focus after that restoration, without changing history.
+        setTimeout(() => {
+            if(current===destination&&!document.querySelector('dialog[open]'))focusPage();
+        },0);
+    });
+    paint(false);
 })();
