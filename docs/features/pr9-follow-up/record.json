@@ -79,7 +79,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "829b5221e0774a30a24f284f73a7e618",
+        "session": "pr9-follow-up-20261012"
+      },
       "input_paths": [
         "runtime/",
         "ui/host/navigation.js",
@@ -122,7 +126,7 @@
       "resumption": "Preserve run 16349aff5fa146f584aa417983a5a4b3 and all cumulative evidence; source repair within accepted Back keyboard outcome requires navigation owner.",
       "review_policy": "self",
       "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify PR9 follow-up",
       "validation": null,
       "verification": null
