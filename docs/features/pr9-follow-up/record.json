@@ -64,7 +64,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Installed acceptance remains unresolved: attempt25 exposed queued-close cleanup test race; repaired test retained outcomes, attempt26 times out opening initial signed-upload review at cockpit_upload_cases.mjs:42. Browser exit1; readonly backing preserved. Stop diagnostic lineage, preserve source-bound partial results and publish draft review. Next check: bounded upload action readiness/dialog/status and actual helper plan error; no unchanged retry, no printer or deployment.",
+      "blocker": null,
       "checks": [
         "history-tests",
         "automatic-policy",
@@ -81,7 +81,7 @@
       "id": "implement",
       "implementation": {
         "actor": "root/coordinator",
-        "run": "829b5221e0774a30a24f284f73a7e618",
+        "run": "7500112db8c643c49c957c6e21c2ee59",
         "session": "pr9-follow-up-20261012"
       },
       "input_paths": [
@@ -123,10 +123,10 @@
         "ui/host/navigation.js"
       ],
       "repeats": 0,
-      "resumption": "Preserve run 16349aff5fa146f584aa417983a5a4b3 and all cumulative evidence; source repair within accepted Back keyboard outcome requires navigation owner.",
+      "resumption": "Native goal continuation: preserve all26 attempts and draftPR10; bounded diagnostic at actual initial-upload review failure, no unchanged retry. Existing outcome unchanged; record one1200second cumulative continuation to12000 for instrumented installed acceptance and closure, no pressure fill/install/printer.",
       "review_policy": "self",
       "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
-      "status": "blocked",
+      "status": "running",
       "title": "Implement and verify PR9 follow-up",
       "validation": null,
       "verification": null
