@@ -1,0 +1,7 @@
+# PR11 printer UI deployment —2026-10-12
+
+Owner requested deployment after merging PR11. Main was fast-forwarded to merged source `9fd8de5411edc26d49b41e0e943581b86e7efe6d`; both PR CI checks passed. The15 source-matched public UI assets were compiled using the existing composed-panel procedure and deployed to `sv08@192.168.1.141`. [Installed hashes and results](deployment-20261012.json) bind the deployment.
+
+Exact installed preimages matched PR10. Rechecked trusted ownership, root/boot identity, sufficient storage, protected configuration hashes/modes, runtime backends, status helpers and service states. Atomic replacement placed the host entry page last; rollback remains at `/data/sv08/system/ui-deployments/20261012-pr11-9fd8de5/before.tar`. Installed checker passes all15 assets and all six status areas. Hardware remains revision13,24 devices,26 definitions,1 source; current and previous configurations remain available. Protected configuration and backend bytes/metadata are preserved.
+
+Root `/dev/mmcblk1p4` is restored read-only, boot identity unchanged. Cockpit socket remains active; Klipper, Moonraker and nginx remain inactive. No service restart, reboot, boot-slot change, printer configuration application or heater/motion activation occurred. HTTPS returned200 with certificate trust verification disabled. Authenticated physical browser rendering was not observed; the source-bound disposable browser evidence remains separate. Reload Cockpit to retrieve the new assets.

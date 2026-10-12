@@ -222,7 +222,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate owner notes",
       "validation": {
         "actor": "root/coordinator",

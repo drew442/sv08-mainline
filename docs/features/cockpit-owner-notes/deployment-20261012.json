@@ -1,0 +1,81 @@
+{
+  "revision": "9fd8de5411edc26d49b41e0e943581b86e7efe6d",
+  "rollback": "/data/sv08/system/ui-deployments/20261012-pr11-9fd8de5/before.tar",
+  "passed": true,
+  "restored": false,
+  "installed_check": {
+    "passed": true,
+    "assets": {
+      "usr/share/cockpit/sv08-host/upload.js": true,
+      "usr/share/cockpit/sv08-host/software.js": true,
+      "usr/share/cockpit/sv08-host/mainsail-access.js": true,
+      "usr/share/cockpit/sv08-host/index.html": true,
+      "usr/share/cockpit/sv08-host/manifest.json": true,
+      "usr/share/cockpit/sv08-host/view.js": true,
+      "usr/share/cockpit/sv08-host/app.js": true,
+      "usr/share/cockpit/sv08-host/network.js": true,
+      "usr/share/cockpit/sv08-host/session.js": true,
+      "usr/share/cockpit/sv08-host/navigation.js": true,
+      "usr/share/cockpit/sv08-host/style.css": true,
+      "usr/share/cockpit/sv08-host/identity.js": true,
+      "usr/share/cockpit/sv08-printer/app.js": true,
+      "usr/share/cockpit/sv08-printer/style.css": true,
+      "usr/share/cockpit/sv08-printer/panel.html": true
+    },
+    "helpers": {
+      "hardware": true,
+      "updates": true,
+      "software": true,
+      "network": true,
+      "identity": true,
+      "mainsail": true
+    },
+    "storage": {
+      "printer-hardware": true,
+      "printer-managed": true
+    },
+    "hardware": {
+      "revision": 13,
+      "devices": 24,
+      "definitions": 26,
+      "sources": 1,
+      "current": true,
+      "previous": true
+    },
+    "preserved_hardware_summary": true
+  },
+  "protected_preserved": true,
+  "runtime_preserved": true,
+  "services": {
+    "cockpit.socket": "active",
+    "sv08-klipper": "inactive",
+    "sv08-moonraker": "inactive",
+    "nginx": "inactive"
+  },
+  "same_boot": true,
+  "root": "/dev/mmcblk1p4 ro,relatime",
+  "target": "sv08@192.168.1.141",
+  "asset_sha256": {
+    "usr/share/cockpit/sv08-host/upload.js": "ad030cb10ddcfd11eb41a8eee6f4d87e66144a052a0eef078eb2ddd4c6cdffff",
+    "usr/share/cockpit/sv08-host/software.js": "46a1ffd0746d6e4e5af8a67bbf0e8c72fe36690d56f23ff4e8a5082e91c32781",
+    "usr/share/cockpit/sv08-host/mainsail-access.js": "a215ec547b111a8303cd4414188b2831b53e29fbae5c6788132d2d54226e111d",
+    "usr/share/cockpit/sv08-host/index.html": "b81ec077b3011910b4300d2defe56a9acd220bf2d16c9420ec9595237dfa161f",
+    "usr/share/cockpit/sv08-host/manifest.json": "9a2d28d0458e4ee7b70d5e6b8389553f50cc7dd51e40342d05c0111d63fc8a77",
+    "usr/share/cockpit/sv08-host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521",
+    "usr/share/cockpit/sv08-host/app.js": "e0727c8e48bf28ec821c08acd1d19afa1fedbf30cfbb289232701ef044153329",
+    "usr/share/cockpit/sv08-host/network.js": "5aca5aca9d73c02e4dcbbcccbb8c4ca590a80e7eca80b352f594b97365dde1ec",
+    "usr/share/cockpit/sv08-host/session.js": "b2b7f676f14f87857f90a93f90ffa4aa078c4dc6056d0860607d5161b1d454d4",
+    "usr/share/cockpit/sv08-host/navigation.js": "56615ccbd2b78233af251f92036856de95fcc71b9d95052f8e057e8c6bbc423e",
+    "usr/share/cockpit/sv08-host/style.css": "c4704226320f6e8e89b36725c184bd83695d4c99cc00243bec45865dfee57353",
+    "usr/share/cockpit/sv08-host/identity.js": "fa9902b13fd977be196321a65eba4ed5b88bb623a87bceb68fa4758ffa7a004e",
+    "usr/share/cockpit/sv08-printer/app.js": "8969bfb9fb80149e718f75d895368b1aaa9208687119529ee41135b59600862d",
+    "usr/share/cockpit/sv08-printer/style.css": "3cfea7f9b4421250b2154a00d5d615cc2802554b71b5e7ac15e0cc301b54b72d",
+    "usr/share/cockpit/sv08-printer/panel.html": "02b53d99bfc034e04f038cb9478a94cd244b7c584691354223220b8b84734bcf"
+  },
+  "https": {
+    "status": 200,
+    "certificate_trust_verified": false
+  },
+  "authenticated_rendering": "not_observed",
+  "physical_hardware_qualification": false
+}
