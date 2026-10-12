@@ -32,6 +32,40 @@ window.sv08Presentation = {
     }
 };
 
+// Appearance is ordinary-access presentation state, independent of the session.
+(() => {
+    const key = 'sv08.appearance';
+    const choice = document.getElementById('appearance-theme');
+    const status = document.getElementById('appearance-status');
+    if (!choice || !status) return;
+    function apply(theme) {
+        document.documentElement.dataset.theme = theme;
+        choice.value = theme;
+    }
+    let theme = 'light';
+    let storageReadable = true;
+    try {
+        const saved = localStorage.getItem(key);
+        if (saved === 'light' || saved === 'dark') theme = saved;
+        if (saved === theme) status.textContent = 'Saved in this browser. Other browsers keep their own appearance.';
+    } catch {
+        storageReadable = false;
+        status.textContent = 'Browser storage is unavailable. Your choice applies to this page only and may reset when you reload.';
+    }
+    apply(theme);
+    choice.addEventListener('change', () => {
+        apply(choice.value);
+        try {
+            localStorage.setItem(key, choice.value);
+            status.textContent = storageReadable
+                ? 'Saved in this browser. Other browsers keep their own appearance.'
+                : 'Theme changed for this page. Browser storage could not be read; your choice may reset when you reload.';
+        } catch {
+            status.textContent = 'Theme changed for this page. Browser storage is unavailable; your choice may reset when you reload.';
+        }
+    });
+})();
+
 (() => {
     const groups = {
         overview: [['overview','Overview']],
