@@ -79,11 +79,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "16349aff5fa146f584aa417983a5a4b3",
-        "session": "pr9-follow-up-20261012"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/",
         "ui/host/navigation.js",
@@ -119,13 +115,14 @@
         "docs/features/pr9-follow-up/visuals/history-jump.png",
         "docs/features/pr9-follow-up/visuals/zoom-review.png",
         "docs/features/pr9-follow-up/visuals/installed-view.png",
-        "tests/test_ui_workflow.py"
+        "tests/test_ui_workflow.py",
+        "ui/host/navigation.js"
       ],
       "repeats": 0,
-      "resumption": "Same delivery and cumulative allowances; add extracted-launcher regression contract ownership. Prior run cc8555566dd846028e1c540ddaa4e6a8 evidence retained in assigned scratch.",
+      "resumption": "Preserve run 16349aff5fa146f584aa417983a5a4b3 and all cumulative evidence; source repair within accepted Back keyboard outcome requires navigation owner.",
       "review_policy": "self",
       "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and verify PR9 follow-up",
       "validation": null,
       "verification": null
