@@ -359,4 +359,4 @@ Remaining-page implementation and RP1–11 acceptance complete for owner review.
 
 ## PR9 follow-up —2026-10-12
 
-Native goal active: implement [PR9 follow-up](../docs/features/pr9-follow-up/proposal.md), repair tests, bounded pressure/installed acceptance, actual zoom and history jump/runner feedback, publish review PR. No printer operation or deployment. PR9 owner merged; remaining-pages task complete, historical evidence preserved.
+Native goal unfinished; [PR9 follow-up](../docs/features/pr9-follow-up/proposal.md) implementation and partial validation preserved for draft review. Project task blocked on installed signed-upload review opening in attempt26; full acceptance not submitted. History, automatic-policy, pressure and focused navigation checks pass; later installed/session checks remain unresolved. Next diagnostic: bounded upload readiness/dialog/status and actual helper plan error, within recorded continuation. No printer operation, merge or deployment. PR9 historical evidence preserved.
