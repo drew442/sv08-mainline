@@ -363,6 +363,8 @@ Published [PR10](https://github.com/drew442/sv08-mainline/pull/10), ready for ow
 
 The project task remains **validated awaiting owner integration**. Native PR-delivery goal is complete when this publication record is pushed; main remains unchanged. No printer operation, merge, deployment or physical qualification. Busy-review recovery is source-reviewed and supported by refusal evidence, but not exercised in the final passing run. Deferred UI scope remains small:200% header height and concurrent finite-read coordination. Effective agent telemetry and savings are not claimed. PR9 historical evidence is preserved.
 
-## Active goal — Cockpit owner notes,2026-10-12
+## Completed PR-delivery goal — Cockpit owner notes,2026-10-12
 
 Implement [owner notes](../docs/features/cockpit-owner-notes/proposal.md) with named task-scoped agents: network device filtering, outline object/navigation icons without heading decoration, default connection graph, button spacing and truthful traffic-light update statuses. Acceptance and2400second/256MiB primary allowance recorded before source edits. Offline browser fixtures only; no printer deployment or operations. Finish with tested review PR and source-bound evidence.
+
+Published [PR11](https://github.com/drew442/sv08-mainline/pull/11). Immutable candidate a08a6bcbfb3465f50a7c413afd250826eee967a7 passes all four acceptance checks:36 standard checks, complete composed printer and ordinary configuration journeys, base administrator fixture, source-bound notes at supported viewports/genuine200% zoom, and final12 printer staging checks. Actual final renders inspected; failed evidence retained in [delivery evidence](../docs/features/cockpit-owner-notes/evidence.md). Project task validated awaiting owner integration. CI running at publication; no printer operations, merge or deployment. Effective agent telemetry and hardware qualification are not claimed.
