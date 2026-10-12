@@ -1,66 +1,80 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "995d533d77d642d8c06fe3012467e6fc984538a3e5f590c9a41f3f420b5a051e",
+    "rationale": "Owner explicitly requests bounded UI fixes, goal and agents; offline implementation and review PR.",
+    "reference": "docs/features/cockpit-owner-notes/owner-request.md",
+    "reference_sha256": "e6c4df682c46761130af2b337548ec38eeeb8c901a8979063da21b99e89aa4d3",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-owner-notes/owner-request.md": "e6c4df682c46761130af2b337548ec38eeeb8c901a8979063da21b99e89aa4d3"
+    },
+    "scope_sha256": "1a9f0d9d2f212a655f09cc165ef70af84b040db66cb838878beb3e66def20027",
+    "session": "cockpit-owner-notes-20261012",
+    "source_commit": "81295faefcf7bf1f47ee1c107e87e1a652ca2826"
+  },
+  "checks": [
+    {
+      "description": "Hide only loopback and unused P2P devices without losing active connections or safe draft handling.",
+      "environment": "offline",
+      "id": "network-filter"
+    },
+    {
+      "description": "Terminal failure and pending/unknown states have truthful precedence, text, icons and tone.",
+      "environment": "offline",
+      "id": "update-status"
+    },
+    {
+      "description": "Object/navigation icons, plain headings, default graph and separated buttons at supported widths.",
+      "environment": "offline",
+      "id": "presentation"
+    },
+    {
+      "description": "Source-bound fixture/browser/staging checks and actual rendered assessment, then publish PR.",
+      "environment": "offline",
+      "id": "regression"
+    }
+  ],
+  "created": "2026-10-12",
+  "decision": null,
   "format_version": 2,
   "id": "cockpit-owner-notes",
   "kind": "feature",
-  "title": "Fix owner-reported Cockpit presentation and status issues",
-  "author": "root/coordinator",
-  "created": "2026-10-12",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/cockpit-owner-notes/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/cockpit-owner-notes/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "network-filter",
-      "description": "Hide only loopback and unused P2P devices without losing active connections or safe draft handling.",
-      "environment": "offline"
-    },
-    {
-      "id": "update-status",
-      "description": "Terminal failure and pending/unknown states have truthful precedence, text, icons and tone.",
-      "environment": "offline"
-    },
-    {
-      "id": "presentation",
-      "description": "Object/navigation icons, plain headings, default graph and separated buttons at supported widths.",
-      "environment": "offline"
-    },
-    {
-      "id": "regression",
-      "description": "Source-bound fixture/browser/staging checks and actual rendered assessment, then publish PR.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate owner notes",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "network-filter",
         "update-status",
         "presentation",
         "regression"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "scripts/stage_printer_ui.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/check_ui.py",
+        "tests/browser_runtime.mjs",
+        "tests/test_printer_browser_fixture.py",
+        "tests/test_network_browser_fixture.py"
+      ],
       "owned_paths": [
         "ui/host/app.js",
         "ui/host/index.html",
@@ -96,15 +110,15 @@
         "docs/features/cockpit-owner-notes/visuals/connections.png",
         "docs/features/cockpit-owner-notes/visuals/update-status.png"
       ],
-      "input_paths": [
-        "runtime/",
-        "scripts/stage_printer_ui.py",
-        "scripts/stage_admin_ui.py",
-        "scripts/check_ui.py",
-        "tests/browser_runtime.mjs",
-        "tests/test_printer_browser_fixture.py",
-        "tests/test_network_browser_fixture.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
+      "status": "pending",
+      "title": "Implement and validate owner notes",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Fix owner-reported Cockpit presentation and status issues"
 }
