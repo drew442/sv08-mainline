@@ -1,0 +1,100 @@
+{
+  "format_version": 2,
+  "id": "recovery-data-restore",
+  "kind": "feature",
+  "title": "Recovery exported-data restore and explicit fresh state",
+  "author": "root/coordinator",
+  "created": "2026-10-12",
+  "priority": 2,
+  "proposal": "docs/features/recovery-data-restore/proposal.md",
+  "requirements": [
+    "docs/features/recovery-data-restore/owner-request.md",
+    "docs/decisions/0010-host-administration-and-recovery-ui.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "roundtrip",
+      "description": "roundtrip acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "admission",
+      "description": "admission acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "failure",
+      "description": "failure acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "fresh-state",
+      "description": "fresh-state acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "journey",
+      "description": "journey acceptance in proposal",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate recovery data restore",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "roundtrip",
+        "admission",
+        "failure",
+        "fresh-state",
+        "journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable fixtures only; no live recovery transition. Source uncertainty gets targeted assessment, no hardware qualification.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_restore.py",
+        "runtime/sv08_recovery_restore_media.py",
+        "runtime/sv08_recovery.py",
+        "runtime/sv08_recovery_ui.py",
+        "runtime/sv08_admin.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/recovery_image.py",
+        "tests/test_restore.py",
+        "tests/test_recovery_restore_media.py",
+        "tests/recovery_restore_gtk.py",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_recovery_image.py",
+        "docs/features/recovery-data-restore/evidence.md",
+        "docs/features/recovery-data-restore/evidence.json",
+        "docs/features/recovery-data-restore/visuals/restore-review.png"
+      ],
+      "input_paths": [
+        "runtime/sv08_export.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_recovery_media.py",
+        "runtime/sv08_recovery_prepare.py",
+        "tests/test_export.py",
+        "tests/test_admin.py",
+        "tests/test_host_state.py",
+        "tests/test_recovery_media.py"
+      ]
+    }
+  ]
+}

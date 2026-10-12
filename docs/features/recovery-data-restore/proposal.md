@@ -1,0 +1,14 @@
+# Recovery data restore and explicit fresh state
+
+Deliver a recovery controller/GTK path for full exported user-data archives and explicit initialization of fresh state. Existing verified export remains supported; existing OS-image restore remains a separate unavailable operation. Use independently prepared identity-bound writable ext4 target admission, separate from running recovery/archive media, shared media exclusion, revalidation and no-replace publication. No raw device/path input from widgets, mount/remount/format inside restore, overwrites, automatic repair, service activation or live-device use.
+
+Restore the complete exported tree to a configured absent data root; report the exact restored root and whether its registry is readable, without silently repairing damaged bytes or selecting boot slots. First-boot initialization explicitly creates a fresh absent sv08 root with existing immutable defaults; ordinary inspection and review never initialize. Production target provisioning/normal-boot activation and physical qualification remain separate from this offline delivery; target paths are reviewed policy, never inferred. Do not limit restore to image-job history.
+
+Acceptance before edits:
+- **roundtrip**: complete archive files/directories/private configuration/database artifacts/modes and permitted history fence restored with checksum/manifest validation, preserving archive and existing target siblings. Unsupported metadata fidelity disclosed.
+- **admission**: wrong/stale identity, recovery/archive overlap, symlinks/unsafe paths, changed archive/target, contention and existing destination refused; existing export protections retained.
+- **failure**: corrupt/truncated/duplicate/missing/extra/oversized/special-link inputs, space/inode refusal and interrupted staging cannot produce a successful/active completed root or lose existing data; interrupted residue identifiable and retries honest.
+- **fresh-state**: status/review/cancel do not mutate; explicit apply creates fresh defaults only on absent root, existing/damaged state refuses unchanged; restoration does not repair archived state.
+- **journey**: real GTK chooser/review/cancel/apply/failure and refresh feedback through actual controller, sensible keyboard use; deterministic regression/staging/import checks and actual rendered assessment; published review PR.
+
+Primary allowance3600 cumulative process-seconds and512MiB generated data, including retained failed attempts; no OS image rebuild unless concrete acceptance requires it and storage/allowance rechecked. Existing installed tools only. One implementation, two children maximum. Source work is reversible/self-validated; consequential live restoration requires separate exact-operation review and authorization. Concrete archive/publication uncertainty will receive a targeted independent source assessment before review publication, recorded without inventing hardware proof.
