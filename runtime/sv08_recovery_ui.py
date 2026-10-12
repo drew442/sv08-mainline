@@ -38,7 +38,9 @@ class RecoveryWindow(Gtk.Window):
                  ('_Restore an OS image', 'recovery.restore', None),
                  ('_Save user data', 'recovery.export', None),
                  ('_Check storage', 'recovery.check', {}),
-                 ('_Refresh', None, {})]
+                 ('_Refresh', None, {}),
+                 ('Restore _user data', 'recovery.data-restore', None),
+                 ('Create _fresh state', 'recovery.initialize', None)]
         for index, (label, action, arguments) in enumerate(items):
             button = Gtk.Button.new_with_mnemonic(label)
             button.connect('clicked', self.clicked, action, arguments)
@@ -84,17 +86,28 @@ class RecoveryWindow(Gtk.Window):
     def clicked(self, button, action, arguments):
         if action is None: self.refresh(); return
         if arguments is None:
-            field, choices = ('image', self.status['images']) if action == 'recovery.restore' else ('destination', self.status['destinations'])
-            dialog = Gtk.Dialog(title='Choose '+field, transient_for=self, modal=True)
+            selections = ([('archive', self.status['archives']), ('target', self.status['restore_targets'])]
+                          if action == 'recovery.data-restore' else
+                          [('target', self.status['restore_targets'])] if action == 'recovery.initialize' else
+                          [('image', self.status['images'])] if action == 'recovery.restore' else
+                          [('destination', self.status['destinations'])])
+            dialog = Gtk.Dialog(title='Choose recovery items', transient_for=self, modal=True)
             dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
             choose = dialog.add_button('Review', Gtk.ResponseType.OK)
-            combo = Gtk.ComboBoxText()
-            for item in choices: combo.append(item['id'], item['label'])
-            combo.set_active(0); choose.set_sensitive(bool(choices))
-            dialog.get_content_area().add(combo); dialog.show_all()
-            response = dialog.run(); selected = combo.get_active_id(); dialog.destroy()
+            combos = {}
+            box = dialog.get_content_area(); box.set_spacing(12); box.set_border_width(16)
+            for field, choices in selections:
+                label = Gtk.Label(label={'archive': '_Exported archive', 'target': '_Restore target',
+                                        'image': '_OS image', 'destination': '_Save destination'}[field], use_underline=True, xalign=0)
+                combo = Gtk.ComboBoxText(); label.set_mnemonic_widget(combo)
+                for item in choices: combo.append(item['id'], item['label'])
+                combo.set_active(0); combos[field] = combo
+                box.add(label); box.add(combo)
+            choose.set_sensitive(all(choices for _, choices in selections))
+            dialog.set_default_response(Gtk.ResponseType.CANCEL)
+            dialog.show_all()
+            response = dialog.run(); arguments = {field: combo.get_active_id() for field, combo in combos.items()}; dialog.destroy()
             if response != Gtk.ResponseType.OK: return
-            arguments = {field: selected}
         self.work(lambda: self.controller.plan(action, arguments), self.review)
 
     def review(self, plan, error):
@@ -105,6 +118,9 @@ class RecoveryWindow(Gtk.Window):
         dialog = Gtk.MessageDialog(transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE, text=plan['title'])
         details = '\n'.join(f'{key}: {value}' for key, value in plan['arguments'].items())
         dialog.format_secondary_text(plan['effect']+'\n\n'+details+'\n\nConfiguration and user files are preserved.')
+        for label in dialog.get_message_area().get_children():
+            if isinstance(label, Gtk.Label):
+                label.set_line_wrap(True); label.set_max_width_chars(56)
         dialog.add_button('Cancel', Gtk.ResponseType.CANCEL)
         dialog.add_button('Apply change', Gtk.ResponseType.OK)
         dialog.set_default_response(Gtk.ResponseType.CANCEL)

@@ -27,6 +27,8 @@ ACTIONS = {
     'recovery.boot': ('Boot a preserved system', 'Select the reviewed preserved OS slot. Keep configuration and user files.'),
     'recovery.restore': ('Restore an OS image', 'Verify a signed image and replace only the selected OS slot. Preserve user data and the other slot.'),
     'recovery.export': ('Save user data', 'Copy readable configuration and user files to the selected removable destination.'),
+    'recovery.data-restore': ('Restore user data', 'Verify an exported archive and restore to an absent configured data root. No automatic activation.'),
+    'recovery.initialize': ('Create fresh state', 'Create immutable defaults in an absent configured state root. Existing or damaged state is refused.'),
     'recovery.check': ('Check storage', 'Inspect storage without repairing, formatting or changing files.'),
     'system.reboot': ('Restart when idle', 'Restart only after the printer accepts idle admission. Never interrupt a print.'),
 }
@@ -87,6 +89,11 @@ def snapshot(store, boot, context):
 def validate_arguments(action, arguments):
     if action not in ACTIONS or not isinstance(arguments, dict):
         raise ValueError('Unknown administration operation')
+    if action == 'recovery.data-restore':
+        if set(arguments) != {'archive', 'target'}: raise ValueError('Choose an archive and target')
+        for key in arguments:
+            validate_arguments('recovery.initialize', {'target': arguments[key]})
+        return
     if action == 'policy.update':
         if set(arguments) != {'options'}: raise ValueError('Unexpected operation fields')
         if not isinstance(arguments['options'], dict): raise ValueError('Update options must be an object')
@@ -99,7 +106,7 @@ def validate_arguments(action, arguments):
     field = {'policy.auto': 'enabled', 'policy.mode': 'mode', 'image.stage': 'digest',
              'software.install': 'package', 'software.remove': 'package',
              'config.hostname': 'hostname', 'recovery.boot': 'slot',
-             'recovery.restore': 'image', 'recovery.export': 'destination'}.get(action)
+             'recovery.restore': 'image', 'recovery.export': 'destination', 'recovery.initialize': 'target'}.get(action)
     if set(arguments) != ({field} if field else set()):
         raise ValueError('Unexpected operation fields')
     if field == 'enabled' and type(arguments[field]) is not bool:
