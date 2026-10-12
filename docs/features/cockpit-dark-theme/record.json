@@ -1,21 +1,35 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "44a605b6311d68f698deae71e0a43c190379bb61130920b7e09cb384489b2dd9",
+    "rationale": "Owner requested dark theme; local browser preference, reversible UI, disposable tests and PR only.",
+    "reference": "docs/features/cockpit-dark-theme/owner-request.md",
+    "reference_sha256": "502ccfb86e7a393545b339fa74104454339a463cda99ea1507f874d2b6ec4b55",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-dark-theme/owner-request.md": "502ccfb86e7a393545b339fa74104454339a463cda99ea1507f874d2b6ec4b55"
+    },
+    "scope_sha256": "6de2da64c2d1d907570f99dd389ca795774f108644ecef3b23c203ae4dceb44e",
+    "session": "cockpit-dark-theme-20261012",
+    "source_commit": "578f137b1d90d7017675b5668128d3a1613077cf"
+  },
   "checks": [
     {
-      "id": "preference",
       "description": "Ordinary keyboard-accessible browser theme preference and persistence/failure handling.",
-      "environment": "offline"
+      "environment": "offline",
+      "id": "preference"
     },
     {
-      "id": "readability",
       "description": "Host/printer dark and light surfaces, states and supported viewports/zoom remain readable.",
-      "environment": "offline"
+      "environment": "offline",
+      "id": "readability"
     },
     {
-      "id": "regression",
       "description": "Nonmutating preference preserves drafts and authority; composed browser/staging and source-bound rendered evidence.",
-      "environment": "offline"
+      "environment": "offline",
+      "id": "regression"
     }
   ],
   "created": "2026-10-12",
