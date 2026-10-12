@@ -356,3 +356,9 @@ Network delivery implementation and NJ1–7 acceptance complete; source task sel
 ## Remaining Cockpit pages —2026-10-11
 
 Remaining-page implementation and RP1–11 acceptance complete for owner review. [Scope](../docs/features/remaining-pages/proposal.md) and [source-bound results, screenshots and limitations](../docs/features/remaining-pages/evidence.md). Source task self-validated; owner integration pending. No deployment or printer operation. Native prior Hardware goal remains complete; no unrelated goal replaced. Network task integrated following owner merge of PR8.
+
+## Completed PR-delivery goal — PR9 follow-up,2026-10-12
+
+Published [PR10](https://github.com/drew442/sv08-mainline/pull/10), ready for owner review. All six bounded acceptance checks pass; tested immutable candidate42e1935fb489a8576a13f225b10972043a3c38e7. Final installed disposable ARM64 Cockpit/PAM journey passes12 ordinary routes, authentication/session behavior, actual200% zoom/keyboard and real signed-upload fault/reconciliation checks, browser exit0 in455.366seconds, backing unchanged. History/upload, real reserve-pressure, exact automatic-policy, staging and relevant regression checks pass. Actual rendered evidence inspected; failed attempts and fixture limitations retained in [source-bound evidence](../docs/features/pr9-follow-up/evidence.md).
+
+The project task remains **validated awaiting owner integration**. Native PR-delivery goal is complete when this publication record is pushed; main remains unchanged. No printer operation, merge, deployment or physical qualification. Busy-review recovery is source-reviewed and supported by refusal evidence, but not exercised in the final passing run. Deferred UI scope remains small:200% header height and concurrent finite-read coordination. Effective agent telemetry and savings are not claimed. PR9 historical evidence is preserved.

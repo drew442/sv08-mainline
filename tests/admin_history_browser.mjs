@@ -1,19 +1,16 @@
 // Actual browser + disposable Python controller. No printer or network service.
 import fs from 'node:fs';
-import {spawn} from 'node:child_process';
+import {startBrowser} from './browser_runtime.mjs';
 import {setTimeout as delay} from 'node:timers/promises';
 import assert from 'node:assert/strict';
 const [chrome, fixture, output] = process.argv.slice(2);
 const {url} = JSON.parse(fs.readFileSync(fixture+'/server.json'));
 assert.match(url, /^http:\/\/127\.0\.0\.1:\d+$/);
-fs.mkdirSync(output); const profile = output+'/profile';
-const log = fs.openSync(output+'/browser.log','w');
-const child = spawn(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore',log,log]});
+fs.mkdirSync(output);
+const browser=startBrowser({chrome,output});
 let socket;
 try {
- let port;
- for(let i=0;i<100;i++){try{port=fs.readFileSync(profile+'/DevToolsActivePort','utf8').split('\n')[0];break;}catch{await delay(100);}}
- assert(port);
+ const port=await browser.ready;
  const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();
  socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);
  await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=reject;});
@@ -95,4 +92,4 @@ try {
 
  fs.writeFileSync(output+'/result.json',JSON.stringify({browser_shim:true,separate_worker:true,post_boot_shared_mode:0o711,preserved_originals:128,maintenance_cancel:true,lost_ack_retry:true,archived_pending_recovered:true,pending_retained_on_durability_failure:true,cancel_once:true,real_tmpfs_no_space:true,pressure_peak_allocated_bytes:pressurePeak,worker_barrier_reconnect_ms:reconnectMs,authority_changed_review_cancelled:true,maintenance_state_unchanged:true,backend_calls:backend.calls,authenticated:false,hardware:false},null,2));
  console.log('Native browser history journey completed (shim transport).');
-}finally{socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);}
+}finally{socket?.close();await browser.stop();}

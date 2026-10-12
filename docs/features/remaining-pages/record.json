@@ -633,7 +633,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible presentation and disposable tests; backend protections remain intact; no live printer or consequential operation.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and assess remaining page journeys",
       "validation": {
         "actor": "project_implementer",

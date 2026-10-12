@@ -1,0 +1,118 @@
+name: Cockpit follow-up deterministic checks
+
+# Fixture/controller evidence only. Installed Cockpit and bounded history pressure
+# are separately assigned guest checks; this job neither boots images nor deploys.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/cockpit-follow-up.yml'
+      - 'runtime/**'
+      - 'ui/**'
+      - 'scripts/check_ui.py'
+      - 'scripts/preview_admin_ui.py'
+      - 'scripts/stage_printer_ui.py'
+      - 'scripts/stage_admin_ui.py'
+      - 'tests/*browser*'
+      - 'tests/test_admin_history*.py'
+      - 'tests/test_admin_upload.py'
+      - 'tests/test_pr9_follow_up.py'
+      - 'tests/admin_jobs_fixture.py'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cockpit-follow-up.yml'
+      - 'runtime/**'
+      - 'ui/**'
+      - 'scripts/check_ui.py'
+      - 'scripts/preview_admin_ui.py'
+      - 'scripts/stage_printer_ui.py'
+      - 'scripts/stage_admin_ui.py'
+      - 'tests/*browser*'
+      - 'tests/test_admin_history*.py'
+      - 'tests/test_admin_upload.py'
+      - 'tests/test_pr9_follow_up.py'
+      - 'tests/admin_jobs_fixture.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cockpit-follow-up-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          fetch-depth: 0
+      - name: Existing Python test dependency on disposable CI runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends python3-jsonschema
+      - name: Select already installed Node 22 and Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          for candidate in "$RUNNER_TOOL_CACHE"/node/22.*/x64/bin/node "$(command -v node)"; do
+            if [ -x "$candidate" ] && "$candidate" -e 'if(Number(process.versions.node.split(".")[0])<22 || typeof WebSocket!=="function")process.exit(1)'; then
+              echo "SV08_NODE=$candidate" >> "$GITHUB_ENV"
+              dirname "$candidate" >> "$GITHUB_PATH"
+              break
+            fi
+          done
+          chrome="$(command -v google-chrome || command -v chromium)"
+          test -n "$chrome"
+          echo "SV08_CHROMIUM=$chrome" >> "$GITHUB_ENV"
+          "$chrome" --version
+      - name: History and upload units with actual root ownership
+        run: |
+          sudo mkdir -m 700 /root/sv08-follow-up
+          trap 'sudo rm -rf -- /root/sv08-follow-up' EXIT
+          sudo tee /root/sv08-follow-up/checks.py >/dev/null <<'PY'
+          import unittest
+          if __name__ == '__main__':
+              loader = unittest.TestLoader()
+              suites = [loader.discover('tests', pattern=pattern) for pattern in ('test_admin_history*.py', 'test_admin_upload.py')]
+              result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(suites))
+              if not result.wasSuccessful() or result.skipped:
+                  raise SystemExit('History/upload failed or skipped')
+          PY
+          sudo env TMPDIR=/root/sv08-follow-up PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 /root/sv08-follow-up/checks.py
+      - name: Launcher failure and focused navigation checks
+        run: |
+          test -n "$SV08_NODE"
+          /usr/bin/python3 -m unittest discover -s tests -p test_browser_runtime.py -v
+          /usr/bin/python3 -m unittest discover -s tests -p test_pr9_follow_up.py -v
+      - name: Exact tracked automatic-policy browser entry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SV08_NODE"
+          mkdir -m 700 -p build/ci-auto
+          profile_root="$(mktemp -d /tmp/sv08-auto.XXXXXX)"
+          fixture_pid=''
+          cleanup() {
+            if [ -n "$fixture_pid" ]; then kill "$fixture_pid" 2>/dev/null || true; wait "$fixture_pid" 2>/dev/null || true; fi
+            rm -rf -- "$profile_root"
+          }
+          trap cleanup EXIT
+          /usr/bin/python3 scripts/preview_admin_ui.py --work build/ci-auto/fixture --execute >build/ci-auto/fixture.log 2>&1 &
+          fixture_pid=$!
+          for attempt in {1..100}; do
+            if [ -f build/ci-auto/fixture/server.json ]; then break; fi
+            kill -0 "$fixture_pid"
+            sleep .1
+          done
+          test -f build/ci-auto/fixture/server.json
+          "$SV08_NODE" tests/auto_policy_browser.mjs "$SV08_CHROMIUM" build/ci-auto/fixture "$profile_root/result"
+          /usr/bin/python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["status"] == "PASS"' "$profile_root/result/result.json"

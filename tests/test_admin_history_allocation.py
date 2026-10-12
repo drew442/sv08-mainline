@@ -4,6 +4,7 @@ from io import BytesIO
 import hashlib
 import multiprocessing
 import os
+import stat
 from pathlib import Path
 import tempfile
 import time
@@ -43,7 +44,9 @@ class AllocationTests(unittest.TestCase):
             root=Path(tmp)/'sv08';store=Store(root);store.initialize();boot=store.prepare_boot('A','release-1')
             with patch('sv08_boot.os.chown'):prepare_permissions(root,boot['generation'])
             self.assertEqual(root.stat().st_mode & 0o777,0o711)
-            uploads=root/'uploads';uploads.mkdir(mode=0o700)
+            uploads=root/'uploads';info=uploads.lstat()
+            self.assertTrue(stat.S_ISDIR(info.st_mode))
+            self.assertEqual((stat.S_IMODE(info.st_mode),info.st_uid),(0o700,os.geteuid()))
             jobs=Jobs(root/'admin-image-jobs','fixture',lambda i:None,budget=store.budget);jobs.root.mkdir(mode=0o700)
             rows=[receipt(i) for i in range(128)];atomic_json(jobs.root/'jobs.json',rows)
             # Stage only the state-copy announcement, no RAUC/backend/device operation.
