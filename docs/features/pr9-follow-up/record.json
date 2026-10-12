@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "2200034a16a2c5339d22aacee3e604d91fc89fd6386aa372563eee33ec6fee70",
-    "rationale": "Owner explicitly requests implementation of accepted PR9 plan, disposable checks and review publication only",
+    "rationale": "Same owner-authorized follow-up, adding tests/test_ui_workflow.py extracted-launcher contract; prior authorization and run retained in Git and cumulative scratch evidence.",
     "reference": "docs/features/pr9-follow-up/owner-request.md",
     "reference_sha256": "2499d7660eb97a926aa1135b4a66939153c9db37e74ef19819bce4e0222546a6",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/development/cockpit-ui-ux-workplan.md": "0fc11dae505f02c4e5795a10ed0cfd076c08170ac24148df3282da64003c947c",
       "docs/features/pr9-follow-up/owner-request.md": "2499d7660eb97a926aa1135b4a66939153c9db37e74ef19819bce4e0222546a6"
     },
-    "scope_sha256": "7580538816e4c11af794503b3989f11c6735310f705e018a6c16a071da86fbb4",
+    "scope_sha256": "dc927e600370535549fe56fbad407aa816bb5a7f269c7335c26642fd0a01be57",
     "session": "pr9-follow-up-20261012",
-    "source_commit": "0dc03dfa6a90a0c08673a4869bbba3da7fa1068b"
+    "source_commit": "e37ef14bf9097cabc3d3aa988f91b8a06e6cb922"
   },
   "checks": [
     {
