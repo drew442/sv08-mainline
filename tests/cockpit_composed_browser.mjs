@@ -21,7 +21,19 @@ try{
  let id=0;const pending=new Map(), browserEvents=[];function send(method,params={}){return new Promise((resolve,reject)=>{const key=++id;const timer=setTimeout(()=>reject(Error('CDP timeout '+method)),60000);pending.set(key,{resolve,reject,timer});socket.send(JSON.stringify({id:key,method,params}))})}
  socket.onmessage=({data})=>{const e=JSON.parse(data);if(['Runtime.consoleAPICalled','Runtime.exceptionThrown','Log.entryAdded'].includes(e.method))browserEvents.push(e);if(e.id){const p=pending.get(e.id);if(p){clearTimeout(p.timer);pending.delete(e.id);e.error?p.reject(Error('CDP error')):p.resolve(e.result)}}};
  const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error('Browser evaluation failed: '+r.exceptionDetails.text);return r.result.value};
- const until=async expression=>{for(let i=0;i<200;i++){if(await ev(expression))return;await delay(200)}throw Error('Timeout '+expression)};
+ const until=async expression=>{
+  for(let i=0;i<200;i++){if(await ev(expression))return;await delay(200)}
+  const failure=Error('Timeout '+expression);
+  try{
+   // Public feedback and boolean guards only: no inputs, plans, bodies or DOM.
+   const snapshot=await ev(`({texts:Object.fromEntries(['notice','upload-status','upload-storage','connection','session-status'].map(id=>[id,document.getElementById(id)?.textContent?.slice(0,2048)??''])),flags:{busy:typeof busy==='boolean'?busy:null,jobs_busy:typeof jobsBusy==='boolean'?jobsBusy:null,refreshing:typeof refreshing==='boolean'?refreshing:null,state_present:typeof state!=='undefined'&&!!state,elevated:window.sv08Session?.elevated===true,review_open:document.getElementById('review')?.open===true,upload_review_open:document.getElementById('upload-review')?.open===true,upload_active:typeof uploadActive==='boolean'?uploadActive:null},disabled:Object.fromEntries(['save-auto','stage-image','review-upload','confirm-upload','cancel-upload','authorize','stop-authorization'].map(id=>[id,document.getElementById(id)?.disabled??null]))})`);
+   const secrets=Object.entries(creds).flatMap(([account,password])=>[password,Buffer.from(account+':'+password).toString('base64')]);
+   secrets.push('ephemeral-draft-secret');
+   const diagnostic={texts:Object.fromEntries(Object.entries(snapshot.texts).map(([id,value])=>[id,finiteStatusDiagnostic('host',{message:value},secrets).message])),flags:snapshot.flags,disabled:snapshot.disabled};
+   fs.writeFileSync(W+'/journey-timeout.json',JSON.stringify(diagnostic,null,2)+'\n',{mode:0o600});
+  }catch{/* Preserve the original timeout if diagnostic capture itself fails. */}
+  throw failure;
+ };
  const click = async selector => { await until(`!!document.querySelector(${JSON.stringify(selector)}) && !document.querySelector(${JSON.stringify(selector)}).disabled`); return ev(`document.querySelector(${JSON.stringify(selector)}).click()`); };
  const text = selector => ev(`document.querySelector(${JSON.stringify(selector)}).textContent`);
  const field = (selector,value) => ev(`(()=>{const p=document.querySelector(${JSON.stringify(selector)});p.value=${JSON.stringify(value)};p.dispatchEvent(new Event('input',{bubbles:true}));})()`);
@@ -235,7 +247,38 @@ try{
  results.indicator_ordinary_end_access_navigation=true;
  await ev(`localStorage.removeItem('sv08-history-maintenance');refresh()`);results.indicator_keyboard_back_no_mutation=true;
  await route('images');await until(`!document.querySelector('#save-auto').disabled`);
- const reviewBefore=await stateHash();await click('#save-auto');await until(`document.querySelector('#review').open`);
+ const reviewBefore=await stateHash();
+ // Observe the existing policy-plan request and guard state without another RPC.
+ const policyMessages=new Set(['Review the change before applying.']);
+ for(const source of ['../ui/host/app.js','../runtime/sv08_admin.py','../runtime/sv08_state.py','../runtime/sv08_data_budget.py']){
+  const body=fs.readFileSync(new URL(source,import.meta.url),'utf8');
+  for(const match of body.matchAll(/(?:Error|ValueError|BusyError)\('([^'\n]+)'\)/g))policyMessages.add(match[1]);
+ }
+ const installPolicyProbe=messages=>{
+  const original=request,allowed=new Set(messages),records=[];
+  const sanitize=value=>typeof value==='string'&&allowed.has(value)?value.slice(0,512):value?'Unrecognized public message withheld.':'';
+  const snapshot=()=>({busy,jobs_busy:jobsBusy,state_present:!!state,refreshing,elevated:sv08Session.elevated===true,authority_generation:authorityGeneration,button_disabled:document.querySelector('#save-auto').disabled,review_open:document.querySelector('#review').open,notice:sanitize(document.querySelector('#notice').textContent)});
+  const before=snapshot();
+  const wrapped=function(...args){
+   const promise=original.apply(this,args);
+   if(args[0]?.method==='plan'){
+    const record={method:'plan',completed:false,authority_generation:authorityGeneration};records.push(record);
+    promise.then(()=>{record.completed=true;record.ok=true;},error=>{record.completed=true;record.ok=false;record.error={message:sanitize(error?.message),acknowledged:error?.acknowledged===true,exit_status:Number.isInteger(error?.exit_status)?error.exit_status:null,problem:['access-denied','disconnected','terminated','timeout','not-found'].includes(error?.problem)?error.problem:null};});
+   }
+   return promise;
+  };
+  request=wrapped;
+  window.pr9PolicyReviewProbe={snapshot:()=>({before,after:snapshot(),plan_reads:records.slice(-4)}),restore:()=>{if(request!==wrapped)throw Error('Policy observer ownership changed');request=original;delete window.pr9PolicyReviewProbe;}};
+ };
+ await ev(`(${installPolicyProbe.toString()})(${JSON.stringify([...policyMessages])})`);
+ try{await click('#save-auto');await until(`document.querySelector('#review').open`);}
+ finally{
+  const diagnostic=await ev('window.pr9PolicyReviewProbe.snapshot()');
+  fs.writeFileSync(W+'/policy-review-boundary.json',JSON.stringify(diagnostic,null,2)+'\n',{mode:0o600});
+  results.policy_review_boundary=diagnostic;
+  await ev('window.pr9PolicyReviewProbe.restore()');
+ }
+
  await ev(`document.querySelector('#review button[value="cancel"]').focus()`);await key('Tab');
  assert.equal(await ev('document.activeElement.id'),'confirm');await key('Tab',true);
  assert.equal(await ev('document.activeElement.value'),'cancel');
