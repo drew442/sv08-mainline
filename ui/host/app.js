@@ -163,9 +163,10 @@ function renderJobs(result) {
     $('history-maintenance').disabled = !sv08Session.elevated || busy || !result.maintenance_available;
     $('history-retry').hidden = !localStorage.getItem('sv08-history-maintenance');
     $('history-retry').disabled = !sv08Session.elevated || busy;
+    const focusedJob = $('jobs').contains(document.activeElement) ? document.activeElement.closest('[data-job-id]')?.dataset.jobId : null;
     $('jobs').replaceChildren();
     for (const job of result.jobs) {
-        const item = document.createElement('p'); item.dataset.jobId = job.id; item.dataset.phase = job.phase;
+        const item = document.createElement('p'); item.dataset.jobId = job.id; item.dataset.phase = job.phase; item.tabIndex = -1;
         item.textContent = `${job.action} · ${job.phase} · ${job.id} — ${job.message}`;
         if (job.phase === 'interrupted' && !job.disposition) {
             const button = document.createElement('button');
@@ -175,7 +176,9 @@ function renderJobs(result) {
             item.append(button);
         }
         $('jobs').append(item);
+        if (focusedJob === job.id) item.focus({preventScroll:true});
     }
+    if (focusedJob && !result.jobs.some(job => job.id === focusedJob)) $('image-history-title').focus({preventScroll:true});
 }
 async function refresh() {
     if (refreshing) return;
@@ -249,6 +252,18 @@ $('review').addEventListener('close', async () => {
 });
 document.querySelectorAll('[data-page]').forEach(b => b.addEventListener('click', () => page(b.dataset.page)));
 document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => page(b.dataset.open)));
+$('operation-indicator').addEventListener('click', () => {
+    // Navigation only: receipt reconciliation and all mutations stay explicit.
+    page('images');
+    const pending = JSON.parse(localStorage.getItem('sv08-image-submission') || 'null');
+    const operations = Array.from($('jobs').querySelectorAll('[data-job-id]'));
+    const relevant = operations.find(item => item.dataset.jobId === pending?.id)
+        || operations.find(item => !['succeeded', 'failed'].includes(item.dataset.phase));
+    const target = relevant || $('image-history-title');
+    target.focus({preventScroll:true});
+    target.scrollIntoView({block:'center'});
+});
+
 $('refresh').addEventListener('click', refresh);
 $('history-retry').addEventListener('click', async () => {
     if (busy) return;

@@ -277,9 +277,15 @@ class UiContextTests(unittest.TestCase):
 
     def test_browser_can_share_only_the_wrapper_owned_process_group(self):
         browser = (ROOT / ui.BROWSER).read_text()
-        self.assertIn("process.env.SV08_UI_OWNED_PROCESS_GROUP === '1'", browser)
-        self.assertIn('detached:!ownedGroup', browser)
-        self.assertIn("ownedGroup?child.kill('SIGTERM'):process.kill(-child.pid,'SIGTERM')", browser)
+        self.assertIn("import {startBrowser} from './browser_runtime.mjs'", browser)
+        self.assertIn('await browser.stop()', browser)
+        runtime = (ROOT / 'tests/browser_runtime.mjs').read_text()
+        self.assertIn("process.env.SV08_UI_OWNED_PROCESS_GROUP !== '1'", runtime)
+        self.assertIn('spawn(chrome, command, {detached,', runtime)
+        self.assertIn('if (detached && child.pid) process.kill(-child.pid, value)', runtime)
+        self.assertIn('else child.kill(value)', runtime)
+        # test_browser_runtime exercises actual failure/timeout cleanup behavior;
+        # this check also guards the wrapper's shared-group routing contract.
 
     def test_workflow_reuses_roles_and_preserves_authority(self):
         guide = (ROOT / 'docs/development/ui-ux-workflow.md').read_text()

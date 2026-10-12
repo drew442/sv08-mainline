@@ -1,7 +1,7 @@
 // Actual browser + disposable Python controller. No printer or network service.
 import fs from 'node:fs';
-import {createRequire} from 'node:module';
-const WebSocket=createRequire(import.meta.url)('undici').WebSocket;
+const {WebSocket} = globalThis;
+if (typeof WebSocket !== 'function') throw new Error('Automatic policy browser requires Node.js 22 or newer with native WebSocket support.');
 import {spawn} from 'node:child_process';
 import {setTimeout as delay} from 'node:timers/promises';
 import assert from 'node:assert/strict';

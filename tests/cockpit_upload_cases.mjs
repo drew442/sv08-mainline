@@ -19,8 +19,20 @@ export async function uploadCases({W,ev,send,until,click,helper,stateHash,loadSh
  const remove=async()=>{
   await ev('uploadListing()');await until('document.querySelector("#upload-list button") && !document.querySelector("#upload-list button").disabled');
   await click('#upload-list button');await until('document.querySelector("#upload-review").open');
-  await click('#confirm-upload');await until('!uploadActive');
-  assert.equal((await helper({method:'upload.list'})).result.objects.length,0);
+  // close() dispatches its handler asynchronously; inactive alone can precede
+  // cleanup. Discard stale feedback, then require this removal's acknowledgement
+  // and the refreshed empty listing before inspecting the actual helper outcome.
+  await ev('document.querySelector("#upload-status").textContent=""');
+  await click('#confirm-upload');
+  try{
+   await until('!uploadActive && document.querySelector("#upload-status").textContent==="Reviewed managed upload removed. No transaction was cancelled." && document.querySelector("#upload-list").children.length===0');
+  }catch{
+   const diagnostic=await ev('({active:uploadActive,review_open:document.querySelector("#upload-review").open,rendered_objects:document.querySelector("#upload-list").children.length,status:document.querySelector("#upload-status").textContent.replace(/[\\u0000-\\u001f\\u007f]/g," ").slice(0,512)})');
+   fs.writeFileSync(W+'/upload-cleanup-error.json',JSON.stringify(diagnostic,null,2)+'\n',{mode:0o600});
+   throw Error('Reviewed upload cleanup did not reach acknowledged removal and an empty rendered listing; inspect upload-cleanup-error.json');
+  }
+  const removed=await helper({method:'upload.list'});assert.equal(removed.ok,true,'Post-cleanup managed listing must succeed');
+  assert.equal(removed.result.objects.length,0);
  };
  const prior=(await helper({method:'upload.list'})).result.objects;
  if(prior.length){await remove();results.prior_fixture_object_removed_by_explicit_review=true;}
