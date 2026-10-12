@@ -65,7 +65,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "3b32863ebe9a468fada177b3064fb43a",
+        "session": "cockpit-owner-notes-20261012"
+      },
       "input_paths": [
         "runtime/",
         "scripts/stage_printer_ui.py",
@@ -113,7 +117,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate owner notes",
       "validation": null,
       "verification": null
