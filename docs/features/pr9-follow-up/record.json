@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "2200034a16a2c5339d22aacee3e604d91fc89fd6386aa372563eee33ec6fee70",
-    "rationale": "Same owner-authorized follow-up, adding tests/test_ui_workflow.py extracted-launcher contract; prior authorization and run retained in Git and cumulative scratch evidence.",
+    "rationale": "Same follow-up and keyboard acceptance; actual browser demonstrates native Back focus restoration outside selected page. Add existing navigation.js owner. Preserve prior authorization/run/evidence in Git and scratch.",
     "reference": "docs/features/pr9-follow-up/owner-request.md",
     "reference_sha256": "2499d7660eb97a926aa1135b4a66939153c9db37e74ef19819bce4e0222546a6",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/development/cockpit-ui-ux-workplan.md": "0fc11dae505f02c4e5795a10ed0cfd076c08170ac24148df3282da64003c947c",
       "docs/features/pr9-follow-up/owner-request.md": "2499d7660eb97a926aa1135b4a66939153c9db37e74ef19819bce4e0222546a6"
     },
-    "scope_sha256": "dc927e600370535549fe56fbad407aa816bb5a7f269c7335c26642fd0a01be57",
+    "scope_sha256": "d7ea0090e997637f3691da1a68a5a890e2218835abab1e41900cfcbe88a8059c",
     "session": "pr9-follow-up-20261012",
-    "source_commit": "e37ef14bf9097cabc3d3aa988f91b8a06e6cb922"
+    "source_commit": "a35fe8fe5772eafc6e2b8822ab742f9f76901048"
   },
   "checks": [
     {
