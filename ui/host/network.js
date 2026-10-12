@@ -113,10 +113,10 @@
         try {
             const result = await call({method:'status'});
             if(generation !== epoch || attempt !== refreshId) return;
-            state=result;observedPending=result.pending??null;outcomeUnknown=false;readFailed=false;$('connections-title').textContent='Current connections';
+            state={...result,devices:result.devices.filter(sv08Presentation.visibleDevice)};observedPending=result.pending??null;outcomeUnknown=false;readFailed=false;$('connections-title').textContent='Current connections';
             const cards=new Map(Array.from($('devices').children).map(card=>[card.dataset.device,card]));
             const currentCards=state.devices.map(d => {
-                const card=cards.get(d.device)||document.createElement('article');card.className='network-connection';card.dataset.device=d.device;
+                const card=cards.get(d.device)||document.createElement('article');card.className='network-connection';card.dataset.device=d.device;card.dataset.type=d.type;
                 if(card.children.length){card.querySelector('h3').textContent=d.type==='wifi'?'WiFi':d.type==='ethernet'?'Ethernet':'Network';card.querySelector('strong').textContent=(d.state || 'State unavailable')+(d.connection?' · '+d.connection:'');card.querySelector('.network-address').textContent='Printer address: '+((d.addresses || []).map(a=>a.split('/')[0]).join(', ') || 'No address assigned');card.querySelector('details p').textContent='Interface: '+d.device+' · Addresses: '+((d.addresses || []).join(', ') || 'None')+' · Router: '+(d.gateway || 'None')+' · Name servers: '+((d.dns || []).join(', ') || 'None');return card;}
                 const title=document.createElement('h3');title.textContent=d.type==='wifi'?'WiFi':d.type==='ethernet'?'Ethernet':'Network';card.append(title);
                 const status=document.createElement('p');const strong=document.createElement('strong');strong.textContent=(d.state || 'State unavailable')+(d.connection?' · '+d.connection:'');status.append(strong);card.append(status);
@@ -124,6 +124,7 @@
                 const details=document.createElement('details'),summary=document.createElement('summary'),technical=document.createElement('p');summary.textContent='Connection details';technical.textContent='Interface: '+d.device+' · Addresses: '+((d.addresses || []).join(', ') || 'None')+' · Router: '+(d.gateway || 'None')+' · Name servers: '+((d.dns || []).join(', ') || 'None');details.append(summary,technical);card.append(details);return card;
             });
             for(const card of Array.from($('devices').children))if(!currentCards.includes(card))card.remove();
+            currentCards.forEach(card=>{const connected=/^connected/.test(state.devices.find(d=>d.device===card.dataset.device)?.state??'');sv08Presentation.status(card.querySelector('strong'),card.querySelector('strong').textContent,connected?'success':'neutral',connected?'check':'info');});
             currentCards.forEach((card,i)=>{if($('devices').children[i]!==card)$('devices').insertBefore(card,$('devices').children[i]||null);});
             if(!state.devices.length){const p=document.createElement('p');p.textContent='No network connections were reported. Check the cable or WiFi adapter, then refresh.';$('devices').append(p);}
             const previous=$('device').value;

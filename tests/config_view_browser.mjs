@@ -74,6 +74,7 @@ try {
  assert.match(await evaluate(`document.querySelector('#printer-source-list').textContent`),/Fixture definitions/);
  assert.equal(await evaluate(`document.querySelector('#printer-source-list button').disabled`),true);
  await navigate('printer-connections');
+ await click('#printer-table-toggle');
  await until(`document.querySelector('#printer-connection-table tbody')?.children.length>0`);
  await evaluate(`document.querySelector('#printer-connection-filter').value='bed';document.querySelector('#printer-connection-filter').dispatchEvent(new Event('input'));`);
  assert.match(await evaluate(`document.querySelector('#printer-connection-table').textContent`),/bed/i);

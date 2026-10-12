@@ -98,9 +98,10 @@ try {
   await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
   await evaluate(`document.querySelector('#fixture').hidden=true;scrollTo(0,0)`);
   assert.equal(await evaluate(`document.querySelector('#printer h1').getBoundingClientRect().bottom<innerHeight`),true);
-  assert.equal(await evaluate(`document.querySelector('.printer-card').getBoundingClientRect().top<innerHeight`),true,'First component is visible');
-  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
   await screenshot('task-shell-'+width);
+  const layout=await evaluate(`Object.fromEntries([['viewport',{width:innerWidth,height:innerHeight}],...['header','.session','#task-context','#printer .printer-title','#printer .printer-state','#printer .printer-tabs','#printer .printer-secondary','.printer-card'].map(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return [selector,{top:r.top,bottom:r.bottom,height:r.height,width:r.width}];})])`);
+  assert.equal(await evaluate(`document.querySelector('.printer-card').getBoundingClientRect().top<innerHeight`),true,'First component is visible: '+JSON.stringify(layout));
+  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  }
  await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');
  await key('Escape');assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');

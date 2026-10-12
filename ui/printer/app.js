@@ -304,7 +304,7 @@
     }
     // Component-first presentation over the same instance state and RPC authority.
     let guidedReview=false, appliedText=null;
-    let localView='components', selectedCategory=null, advancedMode=false, definitionRows=[], sourceRows={}, sourcePreview=null, pendingDefinition=null, publicationReview=null, mapMode=false, selectedConnection=null;
+    let localView='components', selectedCategory=null, advancedMode=false, definitionRows=[], sourceRows={}, sourcePreview=null, pendingDefinition=null, publicationReview=null, mapMode=true, selectedConnection=null;
     const categories=[['bed','Bed & build surface','M4 17h20M5 13l11-5 11 5-11 5zM8 5V2m8 3V2m8 3V2'],['probe','Probe & levelling','M12 3h8v15l-4 5-4-5zM5 28h22'],['toolhead','Toolhead & extrusion','M8 4h16v10H8zM11 14h10v7l-5 7-5-7zM4 9h4m16 0h4'],['filament','Filament & multi-colour','M4 4h10v24H4zM18 4h10v24H18zM9 10h0m14 0h0M9 20h14'],['boards','Boards & connections','M6 6h20v20H6zM11 11h10v10H11zM2 10h4m20 0h4M2 22h4m20 0h4'],['cooling','Cooling & enclosure','M16 13c-13-15-13 9 0 3m3 0c15-13-9-13-3 0m0 3c13 15 13-9 0-3m-3 0c-15 13 9 13 3 0'],['motion','Motion & endstops','M3 25L25 3M3 8V3h5M24 29h5v-5']];
     function categoryIcon(category){const path=(categories.find(c=>c[0]===category)??categories.find(c=>c[0]==='boards'))[2];const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 32 32');svg.setAttribute('aria-hidden','true');const p=document.createElementNS(svg.namespaceURI,'path');p.setAttribute('d',path);svg.append(p);return svg;}
     function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(['probe','pressure_switch'].includes(device.kind))return 'probe';if(['extruder','accelerometer'].includes(device.kind)||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber','heater_fan'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
@@ -357,7 +357,7 @@
             const b=el('button');b.className='printer-card';b.dataset.category=key;b.setAttribute('aria-current',String(key===selectedCategory));
             const svg=categoryIcon(key);
             const text=el('span');text.append(el('strong',title),el('small',refs.map(r=>draft.definition_plan.snapshots[r.source+'::'+r.id+'@'+r.version].name).join(', ')||devices.map(d=>d.name.replaceAll('_',' ')).join(', ')||(key==='boards'?'Configure controller references':'Not specified')));
-            const missing=knownAttention().some(f=>f.category===key),status=el('span',missing?'Needs attention':devices.length||refs.length?'Selected in draft':'Not specified');status.className='printer-status'+(missing?' needs':'');text.append(status);b.append(svg,text);b.onclick=()=>{selectedCategory=key;renderDesign();renderDefinitionChoices();$('detail-title').focus();};root.append(b);
+            const missing=knownAttention().some(f=>f.category===key),status=el('span',missing?'Needs attention':devices.length||refs.length?'Selected in draft':'Not specified');status.className='printer-status'+(missing?' needs':'');sv08Presentation.status(status,status.textContent,missing?'warning':'neutral',missing?'clock':'info');text.append(status);b.append(svg,text);b.onclick=()=>{selectedCategory=key;renderDesign();renderDefinitionChoices();$('detail-title').focus();};root.append(b);
         }
         $('detail-panel').hidden=!selectedCategory;$('detail-title').textContent=categories.find(c=>c[0]===selectedCategory)?.[1]??'';$('detail-title').tabIndex=-1;
         $('boards').hidden=selectedCategory!=='boards';$('advanced').hidden=!advancedMode;$('advanced').open=advancedMode;
@@ -508,13 +508,14 @@ renderChanges();renderDefinitionChoices();renderJourney();
                 const connections=roleRows.filter(r=>r.d.name===d.name);const refs=rows.filter(r=>r.type==='reference'&&(r.d.name===d.name||r.target.name===d.name));if(!connections.length&&!refs.length)continue;
                 const n=node('device:'+d.name,pretty(d.name),pretty(d.kind),900,deviceY);
                 for(const row of connections){const label=row.type==='internal'?'Internal temperature':(row.connector?.label??'Unresolved')+' · '+row.value;edge(row,port(b,row,'right',label),port(n,row,'left',pretty(row.field)));}
-                deviceY+=Math.max(110,80+connections.length*28)+24;
+                const referencePorts=refs.reduce((count,r)=>count+Number(r.d.name===d.name)+Number(r.target.name===d.name),0);
+                deviceY+=Math.max(110,80+(connections.length+referencePorts)*36)+24;
             }
-            groupY=Math.max(deviceY,groupY+80+b.ports.length*28)+70;
+            groupY=Math.max(deviceY,groupY+80+b.ports.length*36)+70;
         }
         for(const row of rows.filter(r=>r.type==='reference')){const from=graph.nodes.get('device:'+row.target.name),to=graph.nodes.get('device:'+row.d.name);if(from&&to)edge(row,port(from,row,'right','Used by '+pretty(row.d.name)),port(to,row,'left',pretty(row.field)+' reference'));}
         graph.width=1250;graph.height=200;
-        for(const n of graph.nodes.values()){graph.width=Math.max(graph.width,n.position.x+310);graph.height=Math.max(graph.height,n.position.y+80+n.ports.length*28);}
+        for(const n of graph.nodes.values()){graph.width=Math.max(graph.width,n.position.x+310);graph.height=Math.max(graph.height,n.position.y+80+n.ports.length*36);}
         // Positions are session-local UI state, never persisted in hardware definitions.
         for(const id of graph.positions.keys())if(!graph.nodes.has(id))graph.positions.delete(id);
         wires.setAttribute('width',graph.width);wires.setAttribute('height',graph.height);$('graph-scene').style.width=graph.width+'px';$('graph-scene').style.height=graph.height+'px';drawWires();highlightGraph();
@@ -522,7 +523,7 @@ renderChanges();renderDefinitionChoices();renderJourney();
         if(!rows.length){const message=el('p','No matching connections.');message.className='printer-graph-empty';nodes.append(message);}
     }
     function placeNode(n){n.box.style.left=n.position.x+'px';n.box.style.top=n.position.y+'px';}
-    function endpoint(port){return {x:port.node.position.x+(port.side==='right'?290:0),y:port.node.position.y+83+port.index*28};}
+    function endpoint(port){return {x:port.node.position.x+(port.side==='right'?290:0),y:port.node.position.y+83+port.index*36};}
     function drawWires(){for(const {from,to,path} of graph.edges){const a=endpoint(from),b=endpoint(to),curve=Math.max(70,Math.abs(b.x-a.x)*.45);path.setAttribute('d',`M ${a.x} ${a.y} C ${a.x+(from.side==='right'?curve:-curve)} ${a.y}, ${b.x+(to.side==='left'?-curve:curve)} ${b.y}, ${b.x} ${b.y}`);}}
     function highlightGraph(){
         const active=selectedConnection;for(const e of graph.edges){const selected=!!active&&(e.row.key===active.key||e.row.d.name===active.d.name||e.row.target?.name===active.d.name);e.path.classList.toggle('selected',selected);}
@@ -531,7 +532,7 @@ renderChanges();renderDefinitionChoices();renderJourney();
     }
     function transformGraph(){ $('graph-scene').style.transform=`translate(${graph.x}px,${graph.y}px) scale(${graph.scale})`;$('graph-scale').textContent=Math.round(graph.scale*100)+'%'; }
     function openGraph(){const rect=$('connection-map').getBoundingClientRect();if(!rect.width)return;graph.scale=Math.max(.6,Math.min(1,(rect.width-40)/1250));graph.x=20;graph.y=20;transformGraph();}
-    function fitGraph(){for(const n of graph.nodes.values()){graph.width=Math.max(graph.width,n.position.x+310);graph.height=Math.max(graph.height,n.position.y+80+n.ports.length*28);}const rect=$('connection-map').getBoundingClientRect();if(!rect.width)return;graph.scale=Math.max(.15,Math.min(1,(rect.width-40)/graph.width,(rect.height-40)/graph.height));graph.x=(rect.width-graph.width*graph.scale)/2;graph.y=20;transformGraph();}
+    function fitGraph(){for(const n of graph.nodes.values()){graph.width=Math.max(graph.width,n.position.x+310);graph.height=Math.max(graph.height,n.position.y+80+n.ports.length*36);}const rect=$('connection-map').getBoundingClientRect();if(!rect.width)return;graph.scale=Math.max(.15,Math.min(1,(rect.width-40)/graph.width,(rect.height-40)/graph.height));graph.x=(rect.width-graph.width*graph.scale)/2;graph.y=20;transformGraph();}
     function zoomGraph(factor){const rect=$('connection-map').getBoundingClientRect(),old=graph.scale;graph.scale=Math.max(.15,Math.min(2.5,old*factor));graph.x=rect.width/2-(rect.width/2-graph.x)*graph.scale/old;graph.y=rect.height/2-(rect.height/2-graph.y)*graph.scale/old;transformGraph();}
     function cancelGraphDrag(){if(graph.drag){const root=$('connection-map');if(root.hasPointerCapture(graph.drag.pointer))root.releasePointerCapture(graph.drag.pointer);graph.drag=null;}}
     $('connection-map').addEventListener('pointerdown',event=>{
