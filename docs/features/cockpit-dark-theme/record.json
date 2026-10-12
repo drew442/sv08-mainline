@@ -55,7 +55,65 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "preference",
+          "document": "docs/features/cockpit-dark-theme/evidence.md",
+          "document_sha256": "104fd21b24c2877c5785edc967fcf1aa8dcee1818df7024620eeb3c626c9b67c",
+          "environment": "offline",
+          "limitations": "Disposable session/RPC shims; sampled contrast, not full accessibility or installed hardware qualification. Whole Cockpit global storage denial not qualified; existing receipt/scheduler reads deferred. Effective agent settings not independently observed. Earlier printer/config checks precede final narrow feedback repair.",
+          "method": "Source-bound unit/staging and actual composed Chromium keyboard/draft/review/palette checks at normal and genuine200% zoom; actual author/coordinator rendered assessment.",
+          "profile": null,
+          "source_commit": "4350f17a2a5adce73d8e51fb5d1b1d0f6d57f3b2",
+          "source_sha256": {
+            "tests/test_theme_ui.py": "aecb7c0d610bc235482f30e51aee774fd3d24d401605fc00832d6910e7ea4ead",
+            "tests/theme_browser.mjs": "3e94993a28e7095fc22736531862439a189d44f4e2707eca94f6f55506c4f97d",
+            "ui/host/index.html": "bc66a22a88fcbeee77e7ace2ae58ca01ffa582a0aec5dbd786d4d952e27f7485",
+            "ui/host/navigation.js": "dec55443ceb9f4caf49b36ee10dcae947935f6c29dd358b3fa4f396ae617a094",
+            "ui/host/style.css": "0bb757eeed7e662a196fd7e9897191cf614d4f3f1ef3b1facafda6cd6e729a13",
+            "ui/printer/style.css": "670d2079a9db5256dd1fce076c16e4725a655bedfec5d9f17a41876269b22e30"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "readability",
+          "document": "docs/features/cockpit-dark-theme/evidence.md",
+          "document_sha256": "104fd21b24c2877c5785edc967fcf1aa8dcee1818df7024620eeb3c626c9b67c",
+          "environment": "offline",
+          "limitations": "Disposable session/RPC shims; sampled contrast, not full accessibility or installed hardware qualification. Whole Cockpit global storage denial not qualified; existing receipt/scheduler reads deferred. Effective agent settings not independently observed. Earlier printer/config checks precede final narrow feedback repair.",
+          "method": "Source-bound unit/staging and actual composed Chromium keyboard/draft/review/palette checks at normal and genuine200% zoom; actual author/coordinator rendered assessment.",
+          "profile": null,
+          "source_commit": "4350f17a2a5adce73d8e51fb5d1b1d0f6d57f3b2",
+          "source_sha256": {
+            "tests/test_theme_ui.py": "aecb7c0d610bc235482f30e51aee774fd3d24d401605fc00832d6910e7ea4ead",
+            "tests/theme_browser.mjs": "3e94993a28e7095fc22736531862439a189d44f4e2707eca94f6f55506c4f97d",
+            "ui/host/index.html": "bc66a22a88fcbeee77e7ace2ae58ca01ffa582a0aec5dbd786d4d952e27f7485",
+            "ui/host/navigation.js": "dec55443ceb9f4caf49b36ee10dcae947935f6c29dd358b3fa4f396ae617a094",
+            "ui/host/style.css": "0bb757eeed7e662a196fd7e9897191cf614d4f3f1ef3b1facafda6cd6e729a13",
+            "ui/printer/style.css": "670d2079a9db5256dd1fce076c16e4725a655bedfec5d9f17a41876269b22e30"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "regression",
+          "document": "docs/features/cockpit-dark-theme/evidence.md",
+          "document_sha256": "104fd21b24c2877c5785edc967fcf1aa8dcee1818df7024620eeb3c626c9b67c",
+          "environment": "offline",
+          "limitations": "Disposable session/RPC shims; sampled contrast, not full accessibility or installed hardware qualification. Whole Cockpit global storage denial not qualified; existing receipt/scheduler reads deferred. Effective agent settings not independently observed. Earlier printer/config checks precede final narrow feedback repair.",
+          "method": "Source-bound unit/staging and actual composed Chromium keyboard/draft/review/palette checks at normal and genuine200% zoom; actual author/coordinator rendered assessment.",
+          "profile": null,
+          "source_commit": "4350f17a2a5adce73d8e51fb5d1b1d0f6d57f3b2",
+          "source_sha256": {
+            "tests/test_theme_ui.py": "aecb7c0d610bc235482f30e51aee774fd3d24d401605fc00832d6910e7ea4ead",
+            "tests/theme_browser.mjs": "3e94993a28e7095fc22736531862439a189d44f4e2707eca94f6f55506c4f97d",
+            "ui/host/index.html": "bc66a22a88fcbeee77e7ace2ae58ca01ffa582a0aec5dbd786d4d952e27f7485",
+            "ui/host/navigation.js": "dec55443ceb9f4caf49b36ee10dcae947935f6c29dd358b3fa4f396ae617a094",
+            "ui/host/style.css": "0bb757eeed7e662a196fd7e9897191cf614d4f3f1ef3b1facafda6cd6e729a13",
+            "ui/printer/style.css": "670d2079a9db5256dd1fce076c16e4725a655bedfec5d9f17a41876269b22e30"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
@@ -88,9 +146,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
-      "status": "running",
+      "status": "validated",
       "title": "Implement and validate dark theme",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "7663cb3c80d4f0355590227d551aae0e283306df8bafe7f26f3e9bd16eec9b41",
+        "evidence_sha256": "d7fec370afc021ead726fe0a493d3676250ff361f8f924105fd0626a16a67f1d",
+        "outcome": "passed",
+        "rationale": "All three declared acceptance checks passed with source-bound evidence and actual rendered author/coordinator assessment; complete stable diff inspected; no deployment.",
+        "session": "cockpit-dark-theme-20261012",
+        "source_commit": "4350f17a2a5adce73d8e51fb5d1b1d0f6d57f3b2"
+      },
       "verification": null
     }
   ],
