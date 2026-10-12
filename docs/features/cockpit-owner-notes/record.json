@@ -1,20 +1,6 @@
 {
   "author": "root/coordinator",
-  "authorization": {
-    "actor": "root/coordinator",
-    "basis": "owner-request",
-    "proposal_sha256": "995d533d77d642d8c06fe3012467e6fc984538a3e5f590c9a41f3f420b5a051e",
-    "rationale": "Owner explicitly requests bounded UI fixes, goal and agents; offline implementation and review PR.",
-    "reference": "docs/features/cockpit-owner-notes/owner-request.md",
-    "reference_sha256": "e6c4df682c46761130af2b337548ec38eeeb8c901a8979063da21b99e89aa4d3",
-    "requirements_sha256": {
-      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
-      "docs/features/cockpit-owner-notes/owner-request.md": "e6c4df682c46761130af2b337548ec38eeeb8c901a8979063da21b99e89aa4d3"
-    },
-    "scope_sha256": "1a9f0d9d2f212a655f09cc165ef70af84b040db66cb838878beb3e66def20027",
-    "session": "cockpit-owner-notes-20261012",
-    "source_commit": "81295faefcf7bf1f47ee1c107e87e1a652ca2826"
-  },
+  "authorization": null,
   "checks": [
     {
       "description": "Hide only loopback and unused P2P devices without losing active connections or safe draft handling.",
@@ -72,8 +58,7 @@
         "scripts/stage_admin_ui.py",
         "scripts/check_ui.py",
         "tests/browser_runtime.mjs",
-        "tests/test_printer_browser_fixture.py",
-        "tests/test_network_browser_fixture.py"
+        "tests/test_printer_browser_fixture.py"
       ],
       "owned_paths": [
         "ui/host/app.js",
