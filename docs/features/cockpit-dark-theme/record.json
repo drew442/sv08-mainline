@@ -1,0 +1,80 @@
+{
+  "author": "root/coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "id": "preference",
+      "description": "Ordinary keyboard-accessible browser theme preference and persistence/failure handling.",
+      "environment": "offline"
+    },
+    {
+      "id": "readability",
+      "description": "Host/printer dark and light surfaces, states and supported viewports/zoom remain readable.",
+      "environment": "offline"
+    },
+    {
+      "id": "regression",
+      "description": "Nonmutating preference preserves drafts and authority; composed browser/staging and source-bound rendered evidence.",
+      "environment": "offline"
+    }
+  ],
+  "created": "2026-10-12",
+  "decision": null,
+  "format_version": 2,
+  "id": "cockpit-dark-theme",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 1,
+  "proposal": "docs/features/cockpit-dark-theme/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/cockpit-dark-theme/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "preference",
+        "readability",
+        "regression"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "scripts/stage_printer_ui.py",
+        "scripts/stage_admin_ui.py",
+        "tests/browser_runtime.mjs",
+        "tests/test_printer_browser_fixture.py"
+      ],
+      "owned_paths": [
+        "ui/host/index.html",
+        "ui/host/navigation.js",
+        "ui/host/style.css",
+        "ui/printer/style.css",
+        "tests/theme_browser.mjs",
+        "tests/test_theme_ui.py",
+        "docs/features/cockpit-dark-theme/evidence.md",
+        "docs/features/cockpit-dark-theme/evidence.json",
+        "docs/features/cockpit-dark-theme/visuals/dark-hardware.png",
+        "docs/features/cockpit-dark-theme/visuals/dark-network.png",
+        "docs/features/cockpit-dark-theme/visuals/dark-update.png"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
+      "status": "pending",
+      "title": "Implement and validate dark theme",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "Add browser-local Cockpit dark theme"
+}
