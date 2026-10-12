@@ -79,7 +79,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "cc8555566dd846028e1c540ddaa4e6a8",
+        "session": "pr9-follow-up-20261012"
+      },
       "input_paths": [
         "runtime/",
         "ui/host/navigation.js",
@@ -120,7 +124,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and verify PR9 follow-up",
       "validation": null,
       "verification": null
