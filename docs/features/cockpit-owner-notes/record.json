@@ -1,6 +1,20 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "995d533d77d642d8c06fe3012467e6fc984538a3e5f590c9a41f3f420b5a051e",
+    "rationale": "Same owner fixes; remove nonexistent fixture path, retain original unused authorization in Git; actual network fixture is test_network_ui.py.",
+    "reference": "docs/features/cockpit-owner-notes/owner-request.md",
+    "reference_sha256": "e6c4df682c46761130af2b337548ec38eeeb8c901a8979063da21b99e89aa4d3",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/cockpit-owner-notes/owner-request.md": "e6c4df682c46761130af2b337548ec38eeeb8c901a8979063da21b99e89aa4d3"
+    },
+    "scope_sha256": "3745656874155a7635cda53ad15fc332e74bcf4ba03e70b6d32cf9c40672920b",
+    "session": "cockpit-owner-notes-20261012",
+    "source_commit": "795359dac1a48ba7dd169b1cd7dca135ef909df1"
+  },
   "checks": [
     {
       "description": "Hide only loopback and unused P2P devices without losing active connections or safe draft handling.",
