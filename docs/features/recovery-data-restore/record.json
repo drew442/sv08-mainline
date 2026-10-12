@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "85532f2227e44f27869fdc9fb20db21f",
+        "session": "recovery-data-restore-20261012"
+      },
       "input_paths": [
         "runtime/sv08_export.py",
         "runtime/sv08_state.py",
@@ -105,7 +109,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and disposable fixtures only; no live recovery transition. Source uncertainty gets targeted assessment, no hardware qualification.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate recovery data restore",
       "validation": null,
       "verification": null
