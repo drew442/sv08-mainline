@@ -1,0 +1,110 @@
+{
+  "format_version": 2,
+  "id": "cockpit-owner-notes",
+  "kind": "feature",
+  "title": "Fix owner-reported Cockpit presentation and status issues",
+  "author": "root/coordinator",
+  "created": "2026-10-12",
+  "priority": 1,
+  "proposal": "docs/features/cockpit-owner-notes/proposal.md",
+  "requirements": [
+    "docs/features/cockpit-owner-notes/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "network-filter",
+      "description": "Hide only loopback and unused P2P devices without losing active connections or safe draft handling.",
+      "environment": "offline"
+    },
+    {
+      "id": "update-status",
+      "description": "Terminal failure and pending/unknown states have truthful precedence, text, icons and tone.",
+      "environment": "offline"
+    },
+    {
+      "id": "presentation",
+      "description": "Object/navigation icons, plain headings, default graph and separated buttons at supported widths.",
+      "environment": "offline"
+    },
+    {
+      "id": "regression",
+      "description": "Source-bound fixture/browser/staging checks and actual rendered assessment, then publish PR.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate owner notes",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "network-filter",
+        "update-status",
+        "presentation",
+        "regression"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible UI and test changes, no backend actions or live printer; author self-validation.",
+      "hazards": [],
+      "owned_paths": [
+        "ui/host/app.js",
+        "ui/host/index.html",
+        "ui/host/style.css",
+        "ui/host/navigation.js",
+        "ui/host/network.js",
+        "ui/host/identity.js",
+        "ui/host/mainsail-access.js",
+        "ui/host/software.js",
+        "ui/host/upload.js",
+        "ui/host/session.js",
+        "ui/host/view.js",
+        "ui/host/presentation.js",
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "ui/printer/style.css",
+        "tests/ui_notes_browser.mjs",
+        "tests/test_ui_notes.py",
+        "tests/printer_browser.mjs",
+        "tests/admin_browser.mjs",
+        "tests/network_browser.mjs",
+        "tests/config_view_browser.mjs",
+        "tests/test_network_ui.py",
+        "tests/test_software_ui.py",
+        "tests/test_mainsail_access_ui.py",
+        "tests/test_identity.py",
+        "tests/test_pr9_follow_up.py",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "docs/features/cockpit-owner-notes/evidence.md",
+        "docs/features/cockpit-owner-notes/evidence.json",
+        "docs/features/cockpit-owner-notes/visuals/network.png",
+        "docs/features/cockpit-owner-notes/visuals/connections.png",
+        "docs/features/cockpit-owner-notes/visuals/update-status.png"
+      ],
+      "input_paths": [
+        "runtime/",
+        "scripts/stage_printer_ui.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/check_ui.py",
+        "tests/browser_runtime.mjs",
+        "tests/test_printer_browser_fixture.py",
+        "tests/test_network_browser_fixture.py"
+      ]
+    }
+  ]
+}

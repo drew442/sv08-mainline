@@ -319,7 +319,7 @@
       "resumption": "Native goal continuation: preserve all26 attempts and draftPR10; bounded diagnostic at actual initial-upload review failure, no unchanged retry. Existing outcome unchanged; record one1200second cumulative continuation to12000 for instrumented installed acceptance and closure, no pressure fill/install/printer.",
       "review_policy": "self",
       "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and verify PR9 follow-up",
       "validation": {
         "actor": "root/coordinator",
