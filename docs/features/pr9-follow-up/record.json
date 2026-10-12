@@ -1,60 +1,70 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "2200034a16a2c5339d22aacee3e604d91fc89fd6386aa372563eee33ec6fee70",
+    "rationale": "Owner explicitly requests implementation of accepted PR9 plan, disposable checks and review publication only",
+    "reference": "docs/features/pr9-follow-up/owner-request.md",
+    "reference_sha256": "2499d7660eb97a926aa1135b4a66939153c9db37e74ef19819bce4e0222546a6",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/cockpit-ui-ux-workplan.md": "0fc11dae505f02c4e5795a10ed0cfd076c08170ac24148df3282da64003c947c",
+      "docs/features/pr9-follow-up/owner-request.md": "2499d7660eb97a926aa1135b4a66939153c9db37e74ef19819bce4e0222546a6"
+    },
+    "scope_sha256": "7580538816e4c11af794503b3989f11c6735310f705e018a6c16a071da86fbb4",
+    "session": "pr9-follow-up-20261012",
+    "source_commit": "0dc03dfa6a90a0c08673a4869bbba3da7fa1068b"
+  },
+  "checks": [
+    {
+      "description": "Repair history fixtures and pass all history/upload units without weakening fault, reserve or concurrency checks.",
+      "environment": "offline",
+      "id": "history-tests"
+    },
+    {
+      "description": "Execute exact tracked browser entry using supported installed Node runtime.",
+      "environment": "offline",
+      "id": "automatic-policy"
+    },
+    {
+      "description": "Real bounded filesystem pressure refusal/recovery, reviewed maintenance/cancel/lost-ack with no receipt loss.",
+      "environment": "offline",
+      "id": "pressure"
+    },
+    {
+      "description": "Source-matched installed Cockpit ten-route reads, authentication/elevation/private write protection and signed upload journeys.",
+      "environment": "offline",
+      "id": "installed"
+    },
+    {
+      "description": "Actual browser200% zoom/keyboard/rendered assessment; nonmutating history jump; retained startup failures and owned cleanup.",
+      "environment": "offline",
+      "id": "ux-runner"
+    },
+    {
+      "description": "Publish source-bound results and routine regression selection; retain historical limits and no printer/deployment claim.",
+      "environment": "offline",
+      "id": "closure"
+    }
+  ],
+  "created": "2026-10-12",
+  "decision": null,
   "format_version": 2,
   "id": "pr9-follow-up",
   "kind": "feature",
-  "title": "Close PR9 validation and usability gaps",
-  "author": "root/coordinator",
-  "created": "2026-10-12",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/pr9-follow-up/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/pr9-follow-up/owner-request.md",
     "docs/development/cockpit-ui-ux-workplan.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "history-tests",
-      "description": "Repair history fixtures and pass all history/upload units without weakening fault, reserve or concurrency checks.",
-      "environment": "offline"
-    },
-    {
-      "id": "automatic-policy",
-      "description": "Execute exact tracked browser entry using supported installed Node runtime.",
-      "environment": "offline"
-    },
-    {
-      "id": "pressure",
-      "description": "Real bounded filesystem pressure refusal/recovery, reviewed maintenance/cancel/lost-ack with no receipt loss.",
-      "environment": "offline"
-    },
-    {
-      "id": "installed",
-      "description": "Source-matched installed Cockpit ten-route reads, authentication/elevation/private write protection and signed upload journeys.",
-      "environment": "offline"
-    },
-    {
-      "id": "ux-runner",
-      "description": "Actual browser200% zoom/keyboard/rendered assessment; nonmutating history jump; retained startup failures and owned cleanup.",
-      "environment": "offline"
-    },
-    {
-      "id": "closure",
-      "description": "Publish source-bound results and routine regression selection; retain historical limits and no printer/deployment claim.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and verify PR9 follow-up",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "history-tests",
         "automatic-policy",
@@ -63,17 +73,25 @@
         "ux-runner",
         "closure"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "ui/host/navigation.js",
+        "ui/host/style.css",
+        "ui/printer/",
+        "tests/cockpit_browser.mjs",
+        "tests/test_admin_history_browser_fixture.py",
+        "tests/test_data_budget.py",
+        "tests/test_admin_history.py",
+        "scripts/check_installed_cockpit.py",
+        "catalog/printer/"
+      ],
       "owned_paths": [
         "tests/test_admin_history_allocation.py",
         "tests/test_admin_history_repairs.py",
@@ -98,18 +116,15 @@
         "docs/features/pr9-follow-up/visuals/zoom-review.png",
         "docs/features/pr9-follow-up/visuals/installed-view.png"
       ],
-      "input_paths": [
-        "runtime/",
-        "ui/host/navigation.js",
-        "ui/host/style.css",
-        "ui/printer/",
-        "tests/cockpit_browser.mjs",
-        "tests/test_admin_history_browser_fixture.py",
-        "tests/test_data_budget.py",
-        "tests/test_admin_history.py",
-        "scripts/check_installed_cockpit.py",
-        "catalog/printer/"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/test changes and owned disposable guest; self-validation, no real printer or deployment.",
+      "status": "pending",
+      "title": "Implement and verify PR9 follow-up",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Close PR9 validation and usability gaps"
 }
