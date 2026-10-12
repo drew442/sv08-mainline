@@ -77,7 +77,7 @@ jobs:
       - name: History and upload units with actual root ownership
         run: |
           sudo mkdir -m 700 /root/sv08-follow-up
-          trap 'sudo rm -f /root/sv08-follow-up/checks.py; sudo rmdir /root/sv08-follow-up' EXIT
+          trap 'sudo rm -rf -- /root/sv08-follow-up' EXIT
           sudo tee /root/sv08-follow-up/checks.py >/dev/null <<'PY'
           import unittest
           if __name__ == '__main__':
