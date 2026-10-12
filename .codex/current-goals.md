@@ -356,3 +356,7 @@ Network delivery implementation and NJ1–7 acceptance complete; source task sel
 ## Remaining Cockpit pages —2026-10-11
 
 Remaining-page implementation and RP1–11 acceptance complete for owner review. [Scope](../docs/features/remaining-pages/proposal.md) and [source-bound results, screenshots and limitations](../docs/features/remaining-pages/evidence.md). Source task self-validated; owner integration pending. No deployment or printer operation. Native prior Hardware goal remains complete; no unrelated goal replaced. Network task integrated following owner merge of PR8.
+
+## PR9 follow-up —2026-10-12
+
+Native goal active: implement [PR9 follow-up](../docs/features/pr9-follow-up/proposal.md), repair tests, bounded pressure/installed acceptance, actual zoom and history jump/runner feedback, publish review PR. No printer operation or deployment. PR9 owner merged; remaining-pages task complete, historical evidence preserved.
