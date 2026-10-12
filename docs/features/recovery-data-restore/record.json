@@ -1,55 +1,65 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "95e20997ef0111579e79eadb387b48f0f68b881e2144da2acf6fc829fff6b422",
+    "rationale": "Direct owner recovery restore goal; reversible source/disposable evidence and review PR, no printer operation.",
+    "reference": "docs/features/recovery-data-restore/owner-request.md",
+    "reference_sha256": "07b32537cd0fba6bbc4fc550b6cf7f9011750315f949c639105312fe5a0b2098",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/recovery-data-restore/owner-request.md": "07b32537cd0fba6bbc4fc550b6cf7f9011750315f949c639105312fe5a0b2098"
+    },
+    "scope_sha256": "daa00a96ff93c8b149b0d98261fcfe2728aaf0fdc3c8269797a6559e61e3aff5",
+    "session": "recovery-data-restore-20261012",
+    "source_commit": "2e756fb42dae7a1da34d2ef9febfa365170575d6"
+  },
+  "checks": [
+    {
+      "description": "roundtrip acceptance in proposal",
+      "environment": "offline",
+      "id": "roundtrip"
+    },
+    {
+      "description": "admission acceptance in proposal",
+      "environment": "offline",
+      "id": "admission"
+    },
+    {
+      "description": "failure acceptance in proposal",
+      "environment": "offline",
+      "id": "failure"
+    },
+    {
+      "description": "fresh-state acceptance in proposal",
+      "environment": "offline",
+      "id": "fresh-state"
+    },
+    {
+      "description": "journey acceptance in proposal",
+      "environment": "offline",
+      "id": "journey"
+    }
+  ],
+  "created": "2026-10-12",
+  "decision": null,
   "format_version": 2,
   "id": "recovery-data-restore",
   "kind": "feature",
-  "title": "Recovery exported-data restore and explicit fresh state",
-  "author": "root/coordinator",
-  "created": "2026-10-12",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/recovery-data-restore/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/recovery-data-restore/owner-request.md",
     "docs/decisions/0010-host-administration-and-recovery-ui.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "roundtrip",
-      "description": "roundtrip acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "admission",
-      "description": "admission acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "failure",
-      "description": "failure acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "fresh-state",
-      "description": "fresh-state acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "journey",
-      "description": "journey acceptance in proposal",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate recovery data restore",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "roundtrip",
         "admission",
@@ -57,17 +67,23 @@
         "fresh-state",
         "journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source and disposable fixtures only; no live recovery transition. Source uncertainty gets targeted assessment, no hardware qualification.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_export.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_recovery_media.py",
+        "runtime/sv08_recovery_prepare.py",
+        "tests/test_export.py",
+        "tests/test_admin.py",
+        "tests/test_host_state.py",
+        "tests/test_recovery_media.py"
+      ],
       "owned_paths": [
         "runtime/sv08_restore.py",
         "runtime/sv08_recovery_restore_media.py",
@@ -85,16 +101,15 @@
         "docs/features/recovery-data-restore/evidence.json",
         "docs/features/recovery-data-restore/visuals/restore-review.png"
       ],
-      "input_paths": [
-        "runtime/sv08_export.py",
-        "runtime/sv08_state.py",
-        "runtime/sv08_recovery_media.py",
-        "runtime/sv08_recovery_prepare.py",
-        "tests/test_export.py",
-        "tests/test_admin.py",
-        "tests/test_host_state.py",
-        "tests/test_recovery_media.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable fixtures only; no live recovery transition. Source uncertainty gets targeted assessment, no hardware qualification.",
+      "status": "pending",
+      "title": "Implement and validate recovery data restore",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Recovery exported-data restore and explicit fresh state"
 }
