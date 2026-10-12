@@ -54,6 +54,7 @@ jobs:
           persist-credentials: false
           submodules: false
           lfs: false
+          fetch-depth: 0
       - name: Existing Python test dependency on disposable CI runner
         run: |
           sudo apt-get update -qq
@@ -76,15 +77,17 @@ jobs:
       - name: History and upload units with actual root ownership
         run: |
           sudo mkdir -m 700 /root/sv08-follow-up
-          trap 'sudo rmdir /root/sv08-follow-up' EXIT
-          sudo env TMPDIR=/root/sv08-follow-up PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 - <<'PY'
+          trap 'sudo rm -f /root/sv08-follow-up/checks.py; sudo rmdir /root/sv08-follow-up' EXIT
+          sudo tee /root/sv08-follow-up/checks.py >/dev/null <<'PY'
           import unittest
-          loader = unittest.TestLoader()
-          suites = [loader.discover('tests', pattern=pattern) for pattern in ('test_admin_history*.py', 'test_admin_upload.py')]
-          result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(suites))
-          if not result.wasSuccessful() or result.skipped:
-              raise SystemExit('History/upload failed or skipped')
+          if __name__ == '__main__':
+              loader = unittest.TestLoader()
+              suites = [loader.discover('tests', pattern=pattern) for pattern in ('test_admin_history*.py', 'test_admin_upload.py')]
+              result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(suites))
+              if not result.wasSuccessful() or result.skipped:
+                  raise SystemExit('History/upload failed or skipped')
           PY
+          sudo env TMPDIR=/root/sv08-follow-up PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 /root/sv08-follow-up/checks.py
       - name: Launcher failure and focused navigation checks
         run: |
           test -n "$SV08_NODE"
