@@ -1,0 +1,114 @@
+{
+  "format_version": 2,
+  "id": "build-license-closure",
+  "kind": "feature",
+  "title": "Reproducible project builds and source/license inventory",
+  "author": "root/coordinator",
+  "created": "2026-10-13",
+  "priority": 2,
+  "proposal": "docs/features/build-license-closure/proposal.md",
+  "requirements": [
+    "docs/features/build-license-closure/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "inputs",
+      "description": "inputs acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "rebuilds",
+      "description": "rebuilds acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "licenses",
+      "description": "licenses acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "validation",
+      "description": "validation acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "publication",
+      "description": "publication acceptance in proposal",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Close reproducibility and license inventory gaps",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "inputs",
+        "rebuilds",
+        "licenses",
+        "validation",
+        "publication"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/disposable builds and inventory; no production operation or legal compliance claim.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/build_klipper_inputs.py",
+        "scripts/license_inventory.py",
+        "scripts/package_klipper.py",
+        "configs/apps/klipper.json",
+        "configs/host/test-sv08-01-python313-arm64.lock",
+        "configs/host/klipper-build-inputs.json",
+        "configs/host/source-license-inventory.json",
+        "tests/test_klipper_build_inputs.py",
+        "tests/test_license_inventory.py",
+        "docs/development/reproducible-builds.md",
+        "docs/features/build-license-closure/evidence.md",
+        "docs/features/build-license-closure/evidence.json"
+      ],
+      "input_paths": [
+        "upstream-lock.json",
+        "upstream/klipper/",
+        "upstream/moonraker/",
+        "upstream/klipperscreen/",
+        "upstream/mainsail/",
+        "scripts/package_python_app.py",
+        "scripts/package_mainsail.py",
+        "scripts/package_rauc.py",
+        "scripts/build_streaming_wheel.py",
+        "configs/host-os/rauc-package.json",
+        "configs/apps/moonraker.json",
+        "configs/apps/klipperscreen.json",
+        "configs/apps/mainsail.json",
+        "configs/apps/update-admission.json",
+        "configs/host/compiled-source-wheels.json",
+        "configs/host/cairo-build-wheels.json",
+        "configs/host/moonraker-python313-arm64.lock",
+        "configs/host/klipperscreen-python313-arm64.lock",
+        "configs/host-os/recovery-packages.json",
+        "configs/host-os/recovery-copyrights.json",
+        "configs/host-os/recovery-sources.json",
+        "configs/host-os/recovery-license-references.json",
+        "docs/hardware/host-compiled-wheels-20260910.json",
+        "docs/hardware/host-mainsail-audit-20260910.json",
+        "docs/hardware/host-update-admission-20260910.json",
+        "docs/features/automatic-update-policy/results.json"
+      ]
+    }
+  ]
+}
