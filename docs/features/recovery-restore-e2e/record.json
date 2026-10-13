@@ -1,55 +1,65 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "91d5ffcfd1ef4ea48b1737bbb87da0b0747c5999f8eb9d858d8929109916bb88",
+    "rationale": "Direct owner goal: preparation, explicit activation/rollback and disposable boot validation with review PR; no printer operation.",
+    "reference": "docs/features/recovery-restore-e2e/owner-request.md",
+    "reference_sha256": "3c5b819e2ee7bd50fe7b4bab2aed5051d99414e84ebcc4297fc5c7371815b995",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/recovery-restore-e2e/owner-request.md": "3c5b819e2ee7bd50fe7b4bab2aed5051d99414e84ebcc4297fc5c7371815b995"
+    },
+    "scope_sha256": "6b25007ab5880ee69888c05f36fc57787e455a9dfc2d38d66f16528143326702",
+    "session": "recovery-restore-e2e-20261013",
+    "source_commit": "5237cd6cbc1c61f84cc0893ff59b9f2fdcc52971"
+  },
+  "checks": [
+    {
+      "description": "preparation acceptance in proposal",
+      "environment": "offline",
+      "id": "preparation"
+    },
+    {
+      "description": "activation acceptance in proposal",
+      "environment": "offline",
+      "id": "activation"
+    },
+    {
+      "description": "interruption acceptance in proposal",
+      "environment": "offline",
+      "id": "interruption"
+    },
+    {
+      "description": "boot-journey acceptance in proposal",
+      "environment": "offline",
+      "id": "boot-journey"
+    },
+    {
+      "description": "regression acceptance in proposal",
+      "environment": "offline",
+      "id": "regression"
+    }
+  ],
+  "created": "2026-10-13",
+  "decision": null,
   "format_version": 2,
   "id": "recovery-restore-e2e",
   "kind": "feature",
-  "title": "Recovery restore preparation, explicit activation and disposable boot",
-  "author": "root/coordinator",
-  "created": "2026-10-13",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/recovery-restore-e2e/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/recovery-restore-e2e/owner-request.md",
     "docs/decisions/0010-host-administration-and-recovery-ui.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "preparation",
-      "description": "preparation acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "activation",
-      "description": "activation acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "interruption",
-      "description": "interruption acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "boot-journey",
-      "description": "boot-journey acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "regression",
-      "description": "regression acceptance in proposal",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate end-to-end recovery restore",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "preparation",
         "activation",
@@ -57,17 +67,24 @@
         "boot-journey",
         "regression"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Authorized reversible source/disposable systems; no live printer or physical-media transition. Concrete activation interruption uncertainty may receive supplemental source assessment.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_recovery_prepare.py",
+        "runtime/sv08_recovery_media.py",
+        "runtime/sv08_export.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_mounts.py",
+        "tests/recovery_export_vm.py",
+        "tests/test_recovery_prepare.py",
+        "tests/test_export.py",
+        "tests/test_admin.py"
+      ],
       "owned_paths": [
         "runtime/sv08_recovery_restore_prepare.py",
         "runtime/sv08_recovery_activation.py",
@@ -96,17 +113,15 @@
         "docs/features/recovery-restore-e2e/evidence.json",
         "docs/features/recovery-restore-e2e/visuals/activation-review.png"
       ],
-      "input_paths": [
-        "runtime/sv08_recovery_prepare.py",
-        "runtime/sv08_recovery_media.py",
-        "runtime/sv08_export.py",
-        "runtime/sv08_state.py",
-        "runtime/sv08_mounts.py",
-        "tests/recovery_export_vm.py",
-        "tests/test_recovery_prepare.py",
-        "tests/test_export.py",
-        "tests/test_admin.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Authorized reversible source/disposable systems; no live printer or physical-media transition. Concrete activation interruption uncertainty may receive supplemental source assessment.",
+      "status": "pending",
+      "title": "Implement and validate end-to-end recovery restore",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Recovery restore preparation, explicit activation and disposable boot"
 }
