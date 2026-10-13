@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "b37ea60eb3c546569d3e88e2a2ecbec6",
+        "session": "recovery-printer-stack-20261013"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -138,7 +142,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
