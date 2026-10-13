@@ -1,0 +1,405 @@
+{
+  "format_version": 1,
+  "baseline_commit": "904fc0f7ceff0386f41c35ad4875685619eb572f",
+  "candidate_base": "0e55eb232ddb17015aaf2f252086b65864fec96e",
+  "sources": {
+    "runtime/sv08_restore.py": "fe4770e9a56655b6e32f63b1a334de765b0c488dd9fd0a1cdf50811d0d218bfd",
+    "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+    "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+    "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+    "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+    "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+    "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+    "tests/test_restore.py": "a55ac417178d0b67467a53dcfc8dbc1128300e2396f2fbb753e983976506240f",
+    "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+    "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+    "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+    "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+  },
+  "checks": [
+    {
+      "attempt": "final-standard",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_restore",
+        "test_recovery_restore_media",
+        "test_stage_admin_ui",
+        "test_recovery_image",
+        "test_export",
+        "test_admin",
+        "test_host_state",
+        "test_recovery_media",
+        "test_admin_history",
+        "test_admin_history_repairs"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 14.451749557163566,
+      "changed_during": [],
+      "source_sha256": {
+        "runtime/sv08_restore.py": "5b6f7422bc8d1051e5119ee45ddfdf89ef3e87e051f6b796ce40c2d85fe649da",
+        "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+        "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+        "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+        "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+        "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+        "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+        "tests/test_restore.py": "79ace00089172b8f704e384a4698c9ee867f55dd06bd0d7e1a75ad8e03b0eb76",
+        "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+        "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+        "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+        "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+      },
+      "receipt_sha256": "f21a7983ed5a97c4733e343945e6df4343fdf501255c80b8489774c97f0d99c3",
+      "log_sha256": "4f287a71511643d172a3ceca77ed24448742ce5566febe455d16dddd79e1c5dc",
+      "log": "test_archive_and_target_links_refused_and_raw_paths_rejected (test_restore.RestoreTests.test_archive_and_target_links_refused_and_raw_paths_rejected) ... ok\ntest_complete_roundtrip_preserves_modes_private_bytes_damaged_registry_and_siblings (test_restore.RestoreTests.test_complete_roundtrip_preserves_modes_private_bytes_damaged_registry_and_siblings) ... ok\ntest_exact_committed_history_fence_roundtrip_and_wrong_binding_refused (test_restore.RestoreTests.test_exact_committed_history_fence_roundtrip_and_wrong_binding_refused) ... ok\ntest_fresh_layout_matches_existing_store_initialize (test_restore.RestoreTests.test_fresh_layout_matches_existing_store_initialize) ... ok\ntest_inspect_review_cancel_fresh_do_not_write_apply_creates_immutable_defaults (test_restore.RestoreTests.test_inspect_review_cancel_fresh_do_not_write_apply_creates_immutable_defaults) ... ok\ntest_interruption_write_failure_and_publication_failure_leave_private_residue_only (test_restore.RestoreTests.test_interruption_write_failure_and_publication_failure_leave_private_residue_only) ... ok\ntest_manifest_corruption_and_missing_duplicate_extra_members (test_restore.RestoreTests.test_manifest_corruption_and_missing_duplicate_extra_members) ... ok\ntest_parent_substitution_at_publication_never_reports_replacement_root_or_touches_it (test_restore.RestoreTests.test_parent_substitution_at_publication_never_reports_replacement_root_or_touches_it) ... ok\ntest_payload_entry_space_and_inode_limits (test_restore.RestoreTests.test_payload_entry_space_and_inode_limits) ... ok\ntest_postpublication_guard_failure_withdraws_only_own_root (test_restore.RestoreTests.test_postpublication_guard_failure_withdraws_only_own_root) ... ok\ntest_silent_storage_corruption_is_detected_from_destination_readback (test_restore.RestoreTests.test_silent_storage_corruption_is_detected_from_destination_readback) ... ok\ntest_stale_archive_parent_identity_and_existing_no_replace (test_restore.RestoreTests.test_stale_archive_parent_identity_and_existing_no_replace) ... ok\ntest_traversal_symlink_special_and_illegal_hardlink_or_mode_refused (test_restore.RestoreTests.test_traversal_symlink_special_and_illegal_hardlink_or_mode_refused) ... ok\ntest_truncated_missing_terminators_trailing_garbage (test_restore.RestoreTests.test_truncated_missing_terminators_trailing_garbage) ... ok\ntest_complete_snapshot_recovery_archive_target_and_runtime_binding (test_recovery_restore_media.ProviderTests.test_complete_snapshot_recovery_archive_target_and_runtime_binding) ... ok\ntest_expected_snapshot_stale_and_recheck_changes_refuse_under_shared_lease (test_recovery_restore_media.ProviderTests.test_expected_snapshot_stale_and_recheck_changes_refuse_under_shared_lease) ... ok\ntest_fixed_production_inputs_fail_closed (test_recovery_restore_media.ProviderTests.test_fixed_production_inputs_fail_closed) ... ok\ntest_kernel_wrong_identity_or_rw_archive_refused_before_any_write (test_recovery_restore_media.ProviderTests.test_kernel_wrong_identity_or_rw_archive_refused_before_any_write) ... ok\ntest_policy_refuses_ids_paths_overlap_aliases_and_unbound_context (test_recovery_restore_media.ProviderTests.test_policy_refuses_ids_paths_overlap_aliases_and_unbound_context) ... ok\ntest_shared_media_lock_contention_blocks_restore (test_recovery_restore_media.ProviderTests.test_shared_media_lock_contention_blocks_restore) ... ok\ntest_built_package_policy_binds_actual_binary_and_source (test_stage_admin_ui.PatchedPackagePolicyTests.test_built_package_policy_binds_actual_binary_and_source) ... ok\ntest_certificate_directory_must_be_empty_and_unlinked_before_first_stage (test_stage_admin_ui.StageUITests.test_certificate_directory_must_be_empty_and_unlinked_before_first_stage) ... ok\ntest_current_image_branding_replaces_only_regular_supported_assets (test_stage_admin_ui.StageUITests.test_current_image_branding_replaces_only_regular_supported_assets) ... ok\ntest_dry_run_and_explicit_host_staging (test_stage_admin_ui.StageUITests.test_dry_run_and_explicit_host_staging) ... ok\ntest_history_runtime_modules_are_strict_dependencies (test_stage_admin_ui.StageUITests.test_history_runtime_modules_are_strict_dependencies) ... ok\ntest_host_only_navigation_has_no_dead_printer_references (test_stage_admin_ui.StageUITests.test_host_only_navigation_has_no_dead_printer_references) ... ok\ntest_host_refresh_replaces_only_reviewed_ui_outputs (test_stage_admin_ui.StageUITests.test_host_refresh_replaces_only_reviewed_ui_outputs) ... ok\ntest_manifest_shell_modes_and_exact_read_sudo_grant (test_stage_admin_ui.StageUITests.test_manifest_shell_modes_and_exact_read_sudo_grant) ... ok\ntest_matching_printer_package_composes_before_host_refresh (test_stage_admin_ui.StageUITests.test_matching_printer_package_composes_before_host_refresh) ... ok\ntest_mismatched_runtime_is_refused (test_stage_admin_ui.StageUITests.test_mismatched_runtime_is_refused) ... ok\ntest_provider_missing_or_mismatched_is_refused_before_staging (test_stage_admin_ui.StageUITests.test_provider_missing_or_mismatched_is_refused_before_staging) ... ok\ntest_recovery_does_not_stage_cockpit_or_enable_service (test_stage_admin_ui.StageUITests.test_recovery_does_not_stage_cockpit_or_enable_service) ... ok\ntest_recovery_refresh_is_refused (test_stage_admin_ui.StageUITests.test_recovery_refresh_is_refused) ... ok\ntest_restart_helper_is_a_strict_recovery_dependency_too (test_stage_admin_ui.StageUITests.test_restart_helper_is_a_strict_recovery_dependency_too) ... ok\ntest_shared_root_lock_refuses_stage_and_refresh (test_stage_admin_ui.StageUITests.test_shared_root_lock_refuses_stage_and_refresh) ... ok\ntest_shell_config_conflict_is_rejected_without_overwrite (test_stage_admin_ui.StageUITests.test_shell_config_conflict_is_rejected_without_overwrite) ... ok\ntest_symlink_parent_and_stock_package_are_rejected (test_stage_admin_ui.StageUITests.test_symlink_parent_and_stock_package_are_rejected) ... ok\ntest_unexpected_certificate_directory_link_is_rejected (test_stage_admin_ui.StageUITests.test_unexpected_certificate_directory_link_is_rejected) ... ok\ntest_upload_dependency_mismatch_refuses_before_staging (test_stage_admin_ui.StageUITests.test_upload_dependency_mismatch_refuses_before_staging) ... ok\ntest_worker_missing_is_refused_before_host_ui_staging (test_stage_admin_ui.StageUITests.test_worker_missing_is_refused_before_host_ui_staging) ... ok\ntest_deleted_completion_lock_refuses (test_recovery_image.IntakeTests.test_deleted_completion_lock_refuses) ... ok\ntest_inspection_has_no_output_or_network (test_recovery_image.IntakeTests.test_inspection_has_no_output_or_network) ... ok\ntest_intake_path_refusals_precede_network (test_recovery_image.IntakeTests.test_intake_path_refusals_precede_network) ... ok\ntest_invalid_identity_refused_without_download (test_recovery_image.IntakeTests.test_invalid_identity_refused_without_download) ... ok\ntest_replacement_after_comparison_reports_captured_digest (test_recovery_image.IntakeTests.test_replacement_after_comparison_reports_captured_digest) ... ok\ntest_replacement_after_initial_read_refuses (test_recovery_image.IntakeTests.test_replacement_after_initial_read_refuses) ... ok\ntest_replacement_during_download_refuses_completion (test_recovery_image.IntakeTests.test_replacement_during_download_refuses_completion) ... ok\ntest_root_and_existing_output_refused (test_recovery_image.IntakeTests.test_root_and_existing_output_refused) ... ok\ntest_same_byte_replacement_passes (test_recovery_image.IntakeTests.test_same_byte_replacement_passes) ... ok\ntest_size_hash_and_network_failures_exhaust_retries (test_recovery_image.IntakeTests.test_size_hash_and_network_failures_exhaust_retries) ... ok\ntest_stable_exact_byte_receipt (test_recovery_image.IntakeTests.test_stable_exact_byte_receipt) ... ok\ntest_unreadable_completion_lock_refuses (test_recovery_image.IntakeTests.test_unreadable_completion_lock_refuses) ... ok\ntest_builder_rejects_stale_assembly_integration_inputs (test_recovery_image.RecoveryImageTests.test_builder_rejects_stale_assembly_integration_inputs) ... ok\ntest_existing_output_refused_before_work (test_recovery_image.RecoveryImageTests.test_existing_output_refused_before_work) ... ok\ntest_inspection_never_creates_output (test_recovery_image.RecoveryImageTests.test_inspection_never_creates_output) ... ok\ntest_inventory_binds_root_xattrs_and_hardlinks (test_recovery_image.RecoveryImageTests.test_inventory_binds_root_xattrs_and_hardlinks) ... ok\ntest_recovery_masks_unused_binfmt_service_and_automount (test_recovery_image.RecoveryImageTests.test_recovery_masks_unused_binfmt_service_and_automount) ... ok\ntest_recovery_stages_post_pid1_private_mount_gate (test_recovery_image.RecoveryImageTests.test_recovery_stages_post_pid1_private_mount_gate) ... ok\ntest_rejects_nonbuild_output (test_recovery_image.RecoveryImageTests.test_rejects_nonbuild_output) ... ok\ntest_rejects_overlap (test_recovery_image.RecoveryImageTests.test_rejects_overlap) ... ok\ntest_rejects_symlink_and_raw_target (test_recovery_image.RecoveryImageTests.test_rejects_symlink_and_raw_target) ... ok\ntest_vm_adds_provider_binding_only_for_complete_composition_receipt (test_recovery_image.RecoveryImageTests.test_vm_adds_provider_binding_only_for_complete_composition_receipt) ... ok\ntest_vm_refuses_writable_candidate_aliases_and_invalid_duration (test_recovery_image.RecoveryImageTests.test_vm_refuses_writable_candidate_aliases_and_invalid_duration) ... ok\ntest_admission_fingerprint_and_final_rechecks_prevent_publication (test_export.ExportTests.test_admission_fingerprint_and_final_rechecks_prevent_publication) ... ok\ntest_controller_review_and_apply_creates_a_real_archive (test_export.ExportTests.test_controller_review_and_apply_creates_a_real_archive) ... ok\ntest_fat_without_inode_accounting_and_counted_inode_exhaustion (test_export.ExportTests.test_fat_without_inode_accounting_and_counted_inode_exhaustion) ... ok\ntest_links_special_files_and_overlapping_destination_refused (test_export.ExportTests.test_links_special_files_and_overlapping_destination_refused) ... ok\ntest_no_replace_publication_preserves_existing_output (test_export.ExportTests.test_no_replace_publication_preserves_existing_output) ... ok\ntest_partial_path_replacement_never_publishes_replacement_inode (test_export.ExportTests.test_partial_path_replacement_never_publishes_replacement_inode) ... ok\ntest_preexisting_partial_is_not_removed_after_creation_collision (test_export.ExportTests.test_preexisting_partial_is_not_removed_after_creation_collision) ... ok\ntest_readback_failure_never_publishes_complete_archive (test_export.ExportTests.test_readback_failure_never_publishes_complete_archive) ... ok\ntest_real_archive_readback_and_corrupt_registry_preserved (test_export.ExportTests.test_real_archive_readback_and_corrupt_registry_preserved) ... ok\ntest_short_space_and_size_limit_refused_before_writing (test_export.ExportTests.test_short_space_and_size_limit_refused_before_writing) ... ok\ntest_snapshot_keeps_sqlite_database_and_committed_wal (test_export.ExportTests.test_snapshot_keeps_sqlite_database_and_committed_wal) ... ok\ntest_source_change_and_destination_replacement_refused (test_export.ExportTests.test_source_change_and_destination_replacement_refused) ... ok\ntest_source_mutation_during_copy_never_publishes (test_export.ExportTests.test_source_mutation_during_copy_never_publishes) ... ok\ntest_sparse_file_expansion_and_long_unicode_paths_are_budgeted (test_export.ExportTests.test_sparse_file_expansion_and_long_unicode_paths_are_budgeted) ... ok\ntest_advanced_automatic_policy_is_reviewed_persistent_and_trust_mandatory (test_admin.AdministrationTests.test_advanced_automatic_policy_is_reviewed_persistent_and_trust_mandatory) ... ok\ntest_hostname_is_saved_without_changing_runtime_or_other_state (test_admin.AdministrationTests.test_hostname_is_saved_without_changing_runtime_or_other_state) ... ok\ntest_interrupted_name_change_keeps_old_and_new_aliases (test_admin.AdministrationTests.test_interrupted_name_change_keeps_old_and_new_aliases) ... ok\ntest_missing_backend_never_claims_recovery_or_installation (test_admin.AdministrationTests.test_missing_backend_never_claims_recovery_or_installation) ... ok\ntest_pending_or_staged_update_blocks_mode_change (test_admin.AdministrationTests.test_pending_or_staged_update_blocks_mode_change) ... ok\ntest_recovery_cannot_change_host_policy (test_admin.AdministrationTests.test_recovery_cannot_change_host_policy) ... ok\ntest_review_does_not_write_and_apply_preserves_generation (test_admin.AdministrationTests.test_review_does_not_write_and_apply_preserves_generation) ... ok\ntest_shutdown_blocks_capabilities_and_previously_reviewed_policy (test_admin.AdministrationTests.test_shutdown_blocks_capabilities_and_previously_reviewed_policy) ... ok\ntest_stale_or_edited_review_is_rejected (test_admin.AdministrationTests.test_stale_or_edited_review_is_rejected) ... ok\ntest_symlink_journal_refused (test_admin.AdministrationTests.test_symlink_journal_refused) ... ok\ntest_unknown_fields_and_command_paths_are_rejected (test_admin.AdministrationTests.test_unknown_fields_and_command_paths_are_rejected) ... ok\ntest_only_non_deployable_manifest_with_exact_marker_selects_fixture (test_admin.DisposableBackendSelectionTests.test_only_non_deployable_manifest_with_exact_marker_selects_fixture) ... ok\ntest_corrupt_registry_stays_corrupt (test_admin.RecoveryIndependenceTests.test_corrupt_registry_stays_corrupt) ... ok\ntest_missing_data_can_be_inspected_without_creating_it (test_admin.RecoveryIndependenceTests.test_missing_data_can_be_inspected_without_creating_it) ... ok\ntest_closed_wal_database_snapshot_leaves_source_files_unchanged (test_host_state.PersistentStateTests.test_closed_wal_database_snapshot_leaves_source_files_unchanged) ... ok\ntest_committed_sqlite_wal_is_included (test_host_state.PersistentStateTests.test_committed_sqlite_wal_is_included) ... ok\ntest_copy_budget_counts_blocks_and_sparse_expansion (test_host_state.PersistentStateTests.test_copy_budget_counts_blocks_and_sparse_expansion) ... ok\ntest_copy_failure_never_publishes_b (test_host_state.PersistentStateTests.test_copy_failure_never_publishes_b) ... ok\ntest_corrupt_pending_transaction_fails_closed (test_host_state.PersistentStateTests.test_corrupt_pending_transaction_fails_closed) ... ok\ntest_corrupt_policy_not_silently_reset (test_host_state.PersistentStateTests.test_corrupt_policy_not_silently_reset) ... ok\ntest_default_mode_and_both_switch_directions_preserve_customization (test_host_state.PersistentStateTests.test_default_mode_and_both_switch_directions_preserve_customization) ... ok\ntest_delayed_boot_copies_latest_state_and_rollback_preserves_generations (test_host_state.PersistentStateTests.test_delayed_boot_copies_latest_state_and_rollback_preserves_generations) ... ok\ntest_full_disk_and_unsupported_schema_preserve_original (test_host_state.PersistentStateTests.test_full_disk_and_unsupported_schema_preserve_original) ... ok\ntest_initialize_provisions_actual_staging_for_fresh_and_existing_registry (test_host_state.PersistentStateTests.test_initialize_provisions_actual_staging_for_fresh_and_existing_registry) ... ok\ntest_initialize_rejects_existing_unsafe_uploads_without_repair (test_host_state.PersistentStateTests.test_initialize_rejects_existing_unsafe_uploads_without_repair) ... ok\ntest_mode_change_and_transaction_conflict (test_host_state.PersistentStateTests.test_mode_change_and_transaction_conflict) ... ok\ntest_policy_rejects_non_boolean_without_publishing_other_changes (test_host_state.PersistentStateTests.test_policy_rejects_non_boolean_without_publishing_other_changes) ... ok\ntest_private_sqlite_peak_fits_copy_admission_without_shm (test_host_state.PersistentStateTests.test_private_sqlite_peak_fits_copy_admission_without_shm) ... ok\ntest_snapshot_still_rejects_real_source_changes (test_host_state.PersistentStateTests.test_snapshot_still_rejects_real_source_changes) ... ok\ntest_space_and_inode_exhaustion_preserve_trial_source (test_host_state.PersistentStateTests.test_space_and_inode_exhaustion_preserve_trial_source) ... ok\ntest_sqlite_backup_workspace_is_reserved_before_copy (test_host_state.PersistentStateTests.test_sqlite_backup_workspace_is_reserved_before_copy) ... ok\ntest_staging_reserves_full_late_copy_allowance (test_host_state.PersistentStateTests.test_staging_reserves_full_late_copy_allowance) ... ok\ntest_symlink_config_cannot_escape_state_copy (test_host_state.PersistentStateTests.test_symlink_config_cannot_escape_state_copy) ... ok\ntest_trial_reboot_reuses_generation (test_host_state.PersistentStateTests.test_trial_reboot_reuses_generation) ... ok\ntest_absent_and_malformed_production_contexts_are_diagnostic_only (test_recovery_media.RecoveryMediaTests.test_absent_and_malformed_production_contexts_are_diagnostic_only) ... ok\ntest_ambiguous_mounts_and_nonblock_topology_refused (test_recovery_media.RecoveryMediaTests.test_ambiguous_mounts_and_nonblock_topology_refused) ... ok\ntest_compressed_chain_binds_file_loop_extent_and_squashfs_mount (test_recovery_media.RecoveryMediaTests.test_compressed_chain_binds_file_loop_extent_and_squashfs_mount) ... ok\ntest_envelope_manifest_parser_is_fixed_and_unambiguous (test_recovery_media.RecoveryMediaTests.test_envelope_manifest_parser_is_fixed_and_unambiguous) ... ok\ntest_fixture_policy_cannot_enable_production (test_recovery_media.RecoveryMediaTests.test_fixture_policy_cannot_enable_production) ... ok\ntest_identity_matching_supports_disposable_file_identity_lists (test_recovery_media.RecoveryMediaTests.test_identity_matching_supports_disposable_file_identity_lists) ... ok\ntest_injected_recovery_adapter_is_stable_across_status (test_recovery_media.RecoveryMediaTests.test_injected_recovery_adapter_is_stable_across_status) ... ok\ntest_installed_controller_keeps_invalid_context_diagnostic_without_writes (test_recovery_media.RecoveryMediaTests.test_installed_controller_keeps_invalid_context_diagnostic_without_writes) ... ok\ntest_installed_controller_refresh_retries_trust_and_uses_configured_source (test_recovery_media.RecoveryMediaTests.test_installed_controller_refresh_retries_trust_and_uses_configured_source) ... ok\ntest_mount_parser_distinguishes_vfs_from_superblock_and_decodes_paths (test_recovery_media.RecoveryMediaTests.test_mount_parser_distinguishes_vfs_from_superblock_and_decodes_paths) ... ok\ntest_namespace_census_refuses_live_errors_malformed_stat_and_mismatch (test_recovery_media.RecoveryMediaTests.test_namespace_census_refuses_live_errors_malformed_stat_and_mismatch) ... ok\ntest_namespace_census_skips_only_pinned_disappearing_entries (test_recovery_media.RecoveryMediaTests.test_namespace_census_skips_only_pinned_disappearing_entries) ... ok\ntest_only_exact_selected_kernel_api_mounts_are_admitted (test_recovery_media.RecoveryMediaTests.test_only_exact_selected_kernel_api_mounts_are_admitted) ... ok\ntest_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export (test_recovery_media.RecoveryMediaTests.test_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export) ... ok\ntest_pinned_process_cannot_redirect_to_reused_pid_path (test_recovery_media.RecoveryMediaTests.test_pinned_process_cannot_redirect_to_reused_pid_path) ... ok\ntest_readonly_ordinary_root_marker_cannot_replace_reviewed_image_or_boot_identity (test_recovery_media.RecoveryMediaTests.test_readonly_ordinary_root_marker_cannot_replace_reviewed_image_or_boot_identity) ... ok\ntest_untrusted_or_symlinked_context_is_refused (test_recovery_media.RecoveryMediaTests.test_untrusted_or_symlinked_context_is_refused) ... ok\ntest_v2_complete_inventory_rechecks_unmounted_media_and_active_loops (test_recovery_media.RecoveryMediaTests.test_v2_complete_inventory_rechecks_unmounted_media_and_active_loops) ... ok\ntest_v2_policy_derives_protected_system_media_without_trusting_context (test_recovery_media.RecoveryMediaTests.test_v2_policy_derives_protected_system_media_without_trusting_context) ... ok\ntest_read_only_source_alias_change_and_restore_destination_bound (test_admin_history.ExportStabilityTests.test_read_only_source_alias_change_and_restore_destination_bound) ... ok\ntest_eligibility_no_inference_from_boot_or_time (test_admin_history.HistoryTests.test_eligibility_no_inference_from_boot_or_time) ... ok\ntest_export_relationship_and_isolated_restore (test_admin_history.HistoryTests.test_export_relationship_and_isolated_restore) ... ok\ntest_final_finite_capacity_and_measurement (test_admin_history.HistoryTests.test_final_finite_capacity_and_measurement) ... ok\ntest_full_baseline_migration_rollover_retry_and_late_worker (test_admin_history.HistoryTests.test_full_baseline_migration_rollover_retry_and_late_worker) ... ok\ntest_missing_corrupt_references_and_damaged_fence_refuse (test_admin_history.HistoryTests.test_missing_corrupt_references_and_damaged_fence_refuse) ... ok\ntest_public_old_gate_and_truthful_bare_missing_counterexample (test_admin_history.HistoryTests.test_public_old_gate_and_truthful_bare_missing_counterexample) ... ok\ntest_publication_fault_matrix_and_bounded_restart (test_admin_history.HistoryTests.test_publication_fault_matrix_and_bounded_restart) ... ok\ntest_real_process_contention_persistent_inode (test_admin_history.HistoryTests.test_real_process_contention_persistent_inode) ... ok\ntest_old_admitted_waiter_same_inode_and_resume_revision (test_admin_history.OldWaiterTests.test_old_admitted_waiter_same_inode_and_resume_revision) ... ok\ntest_export_missing_legacy_manifest_refuses_without_source_repair (test_admin_history_repairs.Repairs.test_export_missing_legacy_manifest_refuses_without_source_repair) ... ok\ntest_post_boot_history_upload_and_new_generation_use_shared_private_lock (test_admin_history_repairs.Repairs.test_post_boot_history_upload_and_new_generation_use_shared_private_lock) ... ok\ntest_public_disposition_ack_and_inspect_settle_before_current_gates (test_admin_history_repairs.Repairs.test_public_disposition_ack_and_inspect_settle_before_current_gates) ... ok\ntest_public_submit_retry_and_jobs_observation_settle_or_refuse (test_admin_history_repairs.Repairs.test_public_submit_retry_and_jobs_observation_settle_or_refuse) ... ok\ntest_restore_predecode_pax_global_nested_gnu_and_sparse_are_bounded (test_admin_history_repairs.Repairs.test_restore_predecode_pax_global_nested_gnu_and_sparse_are_bounded) ... ok\ntest_restore_requires_exact_legacy_and_fenced_inventory (test_admin_history_repairs.Repairs.test_restore_requires_exact_legacy_and_fenced_inventory) ... ok\ntest_submit_second_acquisition_refuses_concurrent_uncertain_receipt (test_admin_history_repairs.Repairs.test_submit_second_acquisition_refuses_concurrent_uncertain_receipt) ... ok\n\n----------------------------------------------------------------------\nRan 147 tests in 14.288s\n\nOK\n"
+    },
+    {
+      "attempt": "final-gtk",
+      "command": [
+        "xvfb-run",
+        "-a",
+        "/usr/bin/python3",
+        "tests/recovery_restore_gtk.py"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 1.571953465929255,
+      "changed_during": [],
+      "source_sha256": {
+        "runtime/sv08_restore.py": "5b6f7422bc8d1051e5119ee45ddfdf89ef3e87e051f6b796ce40c2d85fe649da",
+        "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+        "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+        "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+        "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+        "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+        "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+        "tests/test_restore.py": "79ace00089172b8f704e384a4698c9ee867f55dd06bd0d7e1a75ad8e03b0eb76",
+        "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+        "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+        "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+        "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+      },
+      "receipt_sha256": "5bd14c9e6136bf2db4683b20c95b04cea881b645d46f55a62106a0cfb0dc4fe8",
+      "log_sha256": "22a2984246a11b16161aecf882e9d793d43acce2dc84c832f71fd331da4ea2a1",
+      "log": "\n(recovery_restore_gtk.py:263085): dbind-WARNING **: 21:40:49.756: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files\nGTK chooser/review/cancel/full restore/refusal/fresh apply PASS; disposable files only\n"
+    },
+    {
+      "attempt": "final-standard-2",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_restore",
+        "test_recovery_restore_media",
+        "test_stage_admin_ui",
+        "test_recovery_image",
+        "test_export",
+        "test_admin",
+        "test_host_state",
+        "test_recovery_media",
+        "test_admin_history",
+        "test_admin_history_repairs"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 14.61429202184081,
+      "changed_during": [],
+      "source_sha256": {
+        "runtime/sv08_restore.py": "fe4770e9a56655b6e32f63b1a334de765b0c488dd9fd0a1cdf50811d0d218bfd",
+        "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+        "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+        "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+        "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+        "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+        "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+        "tests/test_restore.py": "a55ac417178d0b67467a53dcfc8dbc1128300e2396f2fbb753e983976506240f",
+        "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+        "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+        "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+        "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+      },
+      "receipt_sha256": "20eab3da4c80f73fde28fae9153b88ed66a3c22066c5a49659b1cde0f5b2e150",
+      "log_sha256": "eb849c0d557d4635d3cf3149552d6666a09856f4503864cd2d385fc705ed8ac0",
+      "log": "test_archive_and_target_links_refused_and_raw_paths_rejected (test_restore.RestoreTests.test_archive_and_target_links_refused_and_raw_paths_rejected) ... ok\ntest_complete_roundtrip_preserves_modes_private_bytes_damaged_registry_and_siblings (test_restore.RestoreTests.test_complete_roundtrip_preserves_modes_private_bytes_damaged_registry_and_siblings) ... ok\ntest_exact_committed_history_fence_roundtrip_and_wrong_binding_refused (test_restore.RestoreTests.test_exact_committed_history_fence_roundtrip_and_wrong_binding_refused) ... ok\ntest_fresh_layout_matches_existing_store_initialize (test_restore.RestoreTests.test_fresh_layout_matches_existing_store_initialize) ... ok\ntest_fresh_silent_write_corruption_and_metadata_failure_refuse_publication (test_restore.RestoreTests.test_fresh_silent_write_corruption_and_metadata_failure_refuse_publication) ... ok\ntest_inspect_review_cancel_fresh_do_not_write_apply_creates_immutable_defaults (test_restore.RestoreTests.test_inspect_review_cancel_fresh_do_not_write_apply_creates_immutable_defaults) ... ok\ntest_interruption_write_failure_and_publication_failure_leave_private_residue_only (test_restore.RestoreTests.test_interruption_write_failure_and_publication_failure_leave_private_residue_only) ... ok\ntest_manifest_corruption_and_missing_duplicate_extra_members (test_restore.RestoreTests.test_manifest_corruption_and_missing_duplicate_extra_members) ... ok\ntest_parent_substitution_at_publication_never_reports_replacement_root_or_touches_it (test_restore.RestoreTests.test_parent_substitution_at_publication_never_reports_replacement_root_or_touches_it) ... ok\ntest_payload_entry_space_and_inode_limits (test_restore.RestoreTests.test_payload_entry_space_and_inode_limits) ... ok\ntest_postpublication_guard_failure_withdraws_only_own_root (test_restore.RestoreTests.test_postpublication_guard_failure_withdraws_only_own_root) ... ok\ntest_silent_storage_corruption_is_detected_from_destination_readback (test_restore.RestoreTests.test_silent_storage_corruption_is_detected_from_destination_readback) ... ok\ntest_stale_archive_parent_identity_and_existing_no_replace (test_restore.RestoreTests.test_stale_archive_parent_identity_and_existing_no_replace) ... ok\ntest_traversal_symlink_special_and_illegal_hardlink_or_mode_refused (test_restore.RestoreTests.test_traversal_symlink_special_and_illegal_hardlink_or_mode_refused) ... ok\ntest_truncated_missing_terminators_trailing_garbage (test_restore.RestoreTests.test_truncated_missing_terminators_trailing_garbage) ... ok\ntest_complete_snapshot_recovery_archive_target_and_runtime_binding (test_recovery_restore_media.ProviderTests.test_complete_snapshot_recovery_archive_target_and_runtime_binding) ... ok\ntest_expected_snapshot_stale_and_recheck_changes_refuse_under_shared_lease (test_recovery_restore_media.ProviderTests.test_expected_snapshot_stale_and_recheck_changes_refuse_under_shared_lease) ... ok\ntest_fixed_production_inputs_fail_closed (test_recovery_restore_media.ProviderTests.test_fixed_production_inputs_fail_closed) ... ok\ntest_kernel_wrong_identity_or_rw_archive_refused_before_any_write (test_recovery_restore_media.ProviderTests.test_kernel_wrong_identity_or_rw_archive_refused_before_any_write) ... ok\ntest_policy_refuses_ids_paths_overlap_aliases_and_unbound_context (test_recovery_restore_media.ProviderTests.test_policy_refuses_ids_paths_overlap_aliases_and_unbound_context) ... ok\ntest_shared_media_lock_contention_blocks_restore (test_recovery_restore_media.ProviderTests.test_shared_media_lock_contention_blocks_restore) ... ok\ntest_built_package_policy_binds_actual_binary_and_source (test_stage_admin_ui.PatchedPackagePolicyTests.test_built_package_policy_binds_actual_binary_and_source) ... ok\ntest_certificate_directory_must_be_empty_and_unlinked_before_first_stage (test_stage_admin_ui.StageUITests.test_certificate_directory_must_be_empty_and_unlinked_before_first_stage) ... ok\ntest_current_image_branding_replaces_only_regular_supported_assets (test_stage_admin_ui.StageUITests.test_current_image_branding_replaces_only_regular_supported_assets) ... ok\ntest_dry_run_and_explicit_host_staging (test_stage_admin_ui.StageUITests.test_dry_run_and_explicit_host_staging) ... ok\ntest_history_runtime_modules_are_strict_dependencies (test_stage_admin_ui.StageUITests.test_history_runtime_modules_are_strict_dependencies) ... ok\ntest_host_only_navigation_has_no_dead_printer_references (test_stage_admin_ui.StageUITests.test_host_only_navigation_has_no_dead_printer_references) ... ok\ntest_host_refresh_replaces_only_reviewed_ui_outputs (test_stage_admin_ui.StageUITests.test_host_refresh_replaces_only_reviewed_ui_outputs) ... ok\ntest_manifest_shell_modes_and_exact_read_sudo_grant (test_stage_admin_ui.StageUITests.test_manifest_shell_modes_and_exact_read_sudo_grant) ... ok\ntest_matching_printer_package_composes_before_host_refresh (test_stage_admin_ui.StageUITests.test_matching_printer_package_composes_before_host_refresh) ... ok\ntest_mismatched_runtime_is_refused (test_stage_admin_ui.StageUITests.test_mismatched_runtime_is_refused) ... ok\ntest_provider_missing_or_mismatched_is_refused_before_staging (test_stage_admin_ui.StageUITests.test_provider_missing_or_mismatched_is_refused_before_staging) ... ok\ntest_recovery_does_not_stage_cockpit_or_enable_service (test_stage_admin_ui.StageUITests.test_recovery_does_not_stage_cockpit_or_enable_service) ... ok\ntest_recovery_refresh_is_refused (test_stage_admin_ui.StageUITests.test_recovery_refresh_is_refused) ... ok\ntest_restart_helper_is_a_strict_recovery_dependency_too (test_stage_admin_ui.StageUITests.test_restart_helper_is_a_strict_recovery_dependency_too) ... ok\ntest_shared_root_lock_refuses_stage_and_refresh (test_stage_admin_ui.StageUITests.test_shared_root_lock_refuses_stage_and_refresh) ... ok\ntest_shell_config_conflict_is_rejected_without_overwrite (test_stage_admin_ui.StageUITests.test_shell_config_conflict_is_rejected_without_overwrite) ... ok\ntest_symlink_parent_and_stock_package_are_rejected (test_stage_admin_ui.StageUITests.test_symlink_parent_and_stock_package_are_rejected) ... ok\ntest_unexpected_certificate_directory_link_is_rejected (test_stage_admin_ui.StageUITests.test_unexpected_certificate_directory_link_is_rejected) ... ok\ntest_upload_dependency_mismatch_refuses_before_staging (test_stage_admin_ui.StageUITests.test_upload_dependency_mismatch_refuses_before_staging) ... ok\ntest_worker_missing_is_refused_before_host_ui_staging (test_stage_admin_ui.StageUITests.test_worker_missing_is_refused_before_host_ui_staging) ... ok\ntest_deleted_completion_lock_refuses (test_recovery_image.IntakeTests.test_deleted_completion_lock_refuses) ... ok\ntest_inspection_has_no_output_or_network (test_recovery_image.IntakeTests.test_inspection_has_no_output_or_network) ... ok\ntest_intake_path_refusals_precede_network (test_recovery_image.IntakeTests.test_intake_path_refusals_precede_network) ... ok\ntest_invalid_identity_refused_without_download (test_recovery_image.IntakeTests.test_invalid_identity_refused_without_download) ... ok\ntest_replacement_after_comparison_reports_captured_digest (test_recovery_image.IntakeTests.test_replacement_after_comparison_reports_captured_digest) ... ok\ntest_replacement_after_initial_read_refuses (test_recovery_image.IntakeTests.test_replacement_after_initial_read_refuses) ... ok\ntest_replacement_during_download_refuses_completion (test_recovery_image.IntakeTests.test_replacement_during_download_refuses_completion) ... ok\ntest_root_and_existing_output_refused (test_recovery_image.IntakeTests.test_root_and_existing_output_refused) ... ok\ntest_same_byte_replacement_passes (test_recovery_image.IntakeTests.test_same_byte_replacement_passes) ... ok\ntest_size_hash_and_network_failures_exhaust_retries (test_recovery_image.IntakeTests.test_size_hash_and_network_failures_exhaust_retries) ... ok\ntest_stable_exact_byte_receipt (test_recovery_image.IntakeTests.test_stable_exact_byte_receipt) ... ok\ntest_unreadable_completion_lock_refuses (test_recovery_image.IntakeTests.test_unreadable_completion_lock_refuses) ... ok\ntest_builder_rejects_stale_assembly_integration_inputs (test_recovery_image.RecoveryImageTests.test_builder_rejects_stale_assembly_integration_inputs) ... ok\ntest_existing_output_refused_before_work (test_recovery_image.RecoveryImageTests.test_existing_output_refused_before_work) ... ok\ntest_inspection_never_creates_output (test_recovery_image.RecoveryImageTests.test_inspection_never_creates_output) ... ok\ntest_inventory_binds_root_xattrs_and_hardlinks (test_recovery_image.RecoveryImageTests.test_inventory_binds_root_xattrs_and_hardlinks) ... ok\ntest_recovery_masks_unused_binfmt_service_and_automount (test_recovery_image.RecoveryImageTests.test_recovery_masks_unused_binfmt_service_and_automount) ... ok\ntest_recovery_stages_post_pid1_private_mount_gate (test_recovery_image.RecoveryImageTests.test_recovery_stages_post_pid1_private_mount_gate) ... ok\ntest_rejects_nonbuild_output (test_recovery_image.RecoveryImageTests.test_rejects_nonbuild_output) ... ok\ntest_rejects_overlap (test_recovery_image.RecoveryImageTests.test_rejects_overlap) ... ok\ntest_rejects_symlink_and_raw_target (test_recovery_image.RecoveryImageTests.test_rejects_symlink_and_raw_target) ... ok\ntest_vm_adds_provider_binding_only_for_complete_composition_receipt (test_recovery_image.RecoveryImageTests.test_vm_adds_provider_binding_only_for_complete_composition_receipt) ... ok\ntest_vm_refuses_writable_candidate_aliases_and_invalid_duration (test_recovery_image.RecoveryImageTests.test_vm_refuses_writable_candidate_aliases_and_invalid_duration) ... ok\ntest_admission_fingerprint_and_final_rechecks_prevent_publication (test_export.ExportTests.test_admission_fingerprint_and_final_rechecks_prevent_publication) ... ok\ntest_controller_review_and_apply_creates_a_real_archive (test_export.ExportTests.test_controller_review_and_apply_creates_a_real_archive) ... ok\ntest_fat_without_inode_accounting_and_counted_inode_exhaustion (test_export.ExportTests.test_fat_without_inode_accounting_and_counted_inode_exhaustion) ... ok\ntest_links_special_files_and_overlapping_destination_refused (test_export.ExportTests.test_links_special_files_and_overlapping_destination_refused) ... ok\ntest_no_replace_publication_preserves_existing_output (test_export.ExportTests.test_no_replace_publication_preserves_existing_output) ... ok\ntest_partial_path_replacement_never_publishes_replacement_inode (test_export.ExportTests.test_partial_path_replacement_never_publishes_replacement_inode) ... ok\ntest_preexisting_partial_is_not_removed_after_creation_collision (test_export.ExportTests.test_preexisting_partial_is_not_removed_after_creation_collision) ... ok\ntest_readback_failure_never_publishes_complete_archive (test_export.ExportTests.test_readback_failure_never_publishes_complete_archive) ... ok\ntest_real_archive_readback_and_corrupt_registry_preserved (test_export.ExportTests.test_real_archive_readback_and_corrupt_registry_preserved) ... ok\ntest_short_space_and_size_limit_refused_before_writing (test_export.ExportTests.test_short_space_and_size_limit_refused_before_writing) ... ok\ntest_snapshot_keeps_sqlite_database_and_committed_wal (test_export.ExportTests.test_snapshot_keeps_sqlite_database_and_committed_wal) ... ok\ntest_source_change_and_destination_replacement_refused (test_export.ExportTests.test_source_change_and_destination_replacement_refused) ... ok\ntest_source_mutation_during_copy_never_publishes (test_export.ExportTests.test_source_mutation_during_copy_never_publishes) ... ok\ntest_sparse_file_expansion_and_long_unicode_paths_are_budgeted (test_export.ExportTests.test_sparse_file_expansion_and_long_unicode_paths_are_budgeted) ... ok\ntest_advanced_automatic_policy_is_reviewed_persistent_and_trust_mandatory (test_admin.AdministrationTests.test_advanced_automatic_policy_is_reviewed_persistent_and_trust_mandatory) ... ok\ntest_hostname_is_saved_without_changing_runtime_or_other_state (test_admin.AdministrationTests.test_hostname_is_saved_without_changing_runtime_or_other_state) ... ok\ntest_interrupted_name_change_keeps_old_and_new_aliases (test_admin.AdministrationTests.test_interrupted_name_change_keeps_old_and_new_aliases) ... ok\ntest_missing_backend_never_claims_recovery_or_installation (test_admin.AdministrationTests.test_missing_backend_never_claims_recovery_or_installation) ... ok\ntest_pending_or_staged_update_blocks_mode_change (test_admin.AdministrationTests.test_pending_or_staged_update_blocks_mode_change) ... ok\ntest_recovery_cannot_change_host_policy (test_admin.AdministrationTests.test_recovery_cannot_change_host_policy) ... ok\ntest_review_does_not_write_and_apply_preserves_generation (test_admin.AdministrationTests.test_review_does_not_write_and_apply_preserves_generation) ... ok\ntest_shutdown_blocks_capabilities_and_previously_reviewed_policy (test_admin.AdministrationTests.test_shutdown_blocks_capabilities_and_previously_reviewed_policy) ... ok\ntest_stale_or_edited_review_is_rejected (test_admin.AdministrationTests.test_stale_or_edited_review_is_rejected) ... ok\ntest_symlink_journal_refused (test_admin.AdministrationTests.test_symlink_journal_refused) ... ok\ntest_unknown_fields_and_command_paths_are_rejected (test_admin.AdministrationTests.test_unknown_fields_and_command_paths_are_rejected) ... ok\ntest_only_non_deployable_manifest_with_exact_marker_selects_fixture (test_admin.DisposableBackendSelectionTests.test_only_non_deployable_manifest_with_exact_marker_selects_fixture) ... ok\ntest_corrupt_registry_stays_corrupt (test_admin.RecoveryIndependenceTests.test_corrupt_registry_stays_corrupt) ... ok\ntest_missing_data_can_be_inspected_without_creating_it (test_admin.RecoveryIndependenceTests.test_missing_data_can_be_inspected_without_creating_it) ... ok\ntest_closed_wal_database_snapshot_leaves_source_files_unchanged (test_host_state.PersistentStateTests.test_closed_wal_database_snapshot_leaves_source_files_unchanged) ... ok\ntest_committed_sqlite_wal_is_included (test_host_state.PersistentStateTests.test_committed_sqlite_wal_is_included) ... ok\ntest_copy_budget_counts_blocks_and_sparse_expansion (test_host_state.PersistentStateTests.test_copy_budget_counts_blocks_and_sparse_expansion) ... ok\ntest_copy_failure_never_publishes_b (test_host_state.PersistentStateTests.test_copy_failure_never_publishes_b) ... ok\ntest_corrupt_pending_transaction_fails_closed (test_host_state.PersistentStateTests.test_corrupt_pending_transaction_fails_closed) ... ok\ntest_corrupt_policy_not_silently_reset (test_host_state.PersistentStateTests.test_corrupt_policy_not_silently_reset) ... ok\ntest_default_mode_and_both_switch_directions_preserve_customization (test_host_state.PersistentStateTests.test_default_mode_and_both_switch_directions_preserve_customization) ... ok\ntest_delayed_boot_copies_latest_state_and_rollback_preserves_generations (test_host_state.PersistentStateTests.test_delayed_boot_copies_latest_state_and_rollback_preserves_generations) ... ok\ntest_full_disk_and_unsupported_schema_preserve_original (test_host_state.PersistentStateTests.test_full_disk_and_unsupported_schema_preserve_original) ... ok\ntest_initialize_provisions_actual_staging_for_fresh_and_existing_registry (test_host_state.PersistentStateTests.test_initialize_provisions_actual_staging_for_fresh_and_existing_registry) ... ok\ntest_initialize_rejects_existing_unsafe_uploads_without_repair (test_host_state.PersistentStateTests.test_initialize_rejects_existing_unsafe_uploads_without_repair) ... ok\ntest_mode_change_and_transaction_conflict (test_host_state.PersistentStateTests.test_mode_change_and_transaction_conflict) ... ok\ntest_policy_rejects_non_boolean_without_publishing_other_changes (test_host_state.PersistentStateTests.test_policy_rejects_non_boolean_without_publishing_other_changes) ... ok\ntest_private_sqlite_peak_fits_copy_admission_without_shm (test_host_state.PersistentStateTests.test_private_sqlite_peak_fits_copy_admission_without_shm) ... ok\ntest_snapshot_still_rejects_real_source_changes (test_host_state.PersistentStateTests.test_snapshot_still_rejects_real_source_changes) ... ok\ntest_space_and_inode_exhaustion_preserve_trial_source (test_host_state.PersistentStateTests.test_space_and_inode_exhaustion_preserve_trial_source) ... ok\ntest_sqlite_backup_workspace_is_reserved_before_copy (test_host_state.PersistentStateTests.test_sqlite_backup_workspace_is_reserved_before_copy) ... ok\ntest_staging_reserves_full_late_copy_allowance (test_host_state.PersistentStateTests.test_staging_reserves_full_late_copy_allowance) ... ok\ntest_symlink_config_cannot_escape_state_copy (test_host_state.PersistentStateTests.test_symlink_config_cannot_escape_state_copy) ... ok\ntest_trial_reboot_reuses_generation (test_host_state.PersistentStateTests.test_trial_reboot_reuses_generation) ... ok\ntest_absent_and_malformed_production_contexts_are_diagnostic_only (test_recovery_media.RecoveryMediaTests.test_absent_and_malformed_production_contexts_are_diagnostic_only) ... ok\ntest_ambiguous_mounts_and_nonblock_topology_refused (test_recovery_media.RecoveryMediaTests.test_ambiguous_mounts_and_nonblock_topology_refused) ... ok\ntest_compressed_chain_binds_file_loop_extent_and_squashfs_mount (test_recovery_media.RecoveryMediaTests.test_compressed_chain_binds_file_loop_extent_and_squashfs_mount) ... ok\ntest_envelope_manifest_parser_is_fixed_and_unambiguous (test_recovery_media.RecoveryMediaTests.test_envelope_manifest_parser_is_fixed_and_unambiguous) ... ok\ntest_fixture_policy_cannot_enable_production (test_recovery_media.RecoveryMediaTests.test_fixture_policy_cannot_enable_production) ... ok\ntest_identity_matching_supports_disposable_file_identity_lists (test_recovery_media.RecoveryMediaTests.test_identity_matching_supports_disposable_file_identity_lists) ... ok\ntest_injected_recovery_adapter_is_stable_across_status (test_recovery_media.RecoveryMediaTests.test_injected_recovery_adapter_is_stable_across_status) ... ok\ntest_installed_controller_keeps_invalid_context_diagnostic_without_writes (test_recovery_media.RecoveryMediaTests.test_installed_controller_keeps_invalid_context_diagnostic_without_writes) ... ok\ntest_installed_controller_refresh_retries_trust_and_uses_configured_source (test_recovery_media.RecoveryMediaTests.test_installed_controller_refresh_retries_trust_and_uses_configured_source) ... ok\ntest_mount_parser_distinguishes_vfs_from_superblock_and_decodes_paths (test_recovery_media.RecoveryMediaTests.test_mount_parser_distinguishes_vfs_from_superblock_and_decodes_paths) ... ok\ntest_namespace_census_refuses_live_errors_malformed_stat_and_mismatch (test_recovery_media.RecoveryMediaTests.test_namespace_census_refuses_live_errors_malformed_stat_and_mismatch) ... ok\ntest_namespace_census_skips_only_pinned_disappearing_entries (test_recovery_media.RecoveryMediaTests.test_namespace_census_skips_only_pinned_disappearing_entries) ... ok\ntest_only_exact_selected_kernel_api_mounts_are_admitted (test_recovery_media.RecoveryMediaTests.test_only_exact_selected_kernel_api_mounts_are_admitted) ... ok\ntest_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export (test_recovery_media.RecoveryMediaTests.test_ordinary_ab_or_workstation_root_with_marker_cannot_enable_export) ... ok\ntest_pinned_process_cannot_redirect_to_reused_pid_path (test_recovery_media.RecoveryMediaTests.test_pinned_process_cannot_redirect_to_reused_pid_path) ... ok\ntest_readonly_ordinary_root_marker_cannot_replace_reviewed_image_or_boot_identity (test_recovery_media.RecoveryMediaTests.test_readonly_ordinary_root_marker_cannot_replace_reviewed_image_or_boot_identity) ... ok\ntest_untrusted_or_symlinked_context_is_refused (test_recovery_media.RecoveryMediaTests.test_untrusted_or_symlinked_context_is_refused) ... ok\ntest_v2_complete_inventory_rechecks_unmounted_media_and_active_loops (test_recovery_media.RecoveryMediaTests.test_v2_complete_inventory_rechecks_unmounted_media_and_active_loops) ... ok\ntest_v2_policy_derives_protected_system_media_without_trusting_context (test_recovery_media.RecoveryMediaTests.test_v2_policy_derives_protected_system_media_without_trusting_context) ... ok\ntest_read_only_source_alias_change_and_restore_destination_bound (test_admin_history.ExportStabilityTests.test_read_only_source_alias_change_and_restore_destination_bound) ... ok\ntest_eligibility_no_inference_from_boot_or_time (test_admin_history.HistoryTests.test_eligibility_no_inference_from_boot_or_time) ... ok\ntest_export_relationship_and_isolated_restore (test_admin_history.HistoryTests.test_export_relationship_and_isolated_restore) ... ok\ntest_final_finite_capacity_and_measurement (test_admin_history.HistoryTests.test_final_finite_capacity_and_measurement) ... ok\ntest_full_baseline_migration_rollover_retry_and_late_worker (test_admin_history.HistoryTests.test_full_baseline_migration_rollover_retry_and_late_worker) ... ok\ntest_missing_corrupt_references_and_damaged_fence_refuse (test_admin_history.HistoryTests.test_missing_corrupt_references_and_damaged_fence_refuse) ... ok\ntest_public_old_gate_and_truthful_bare_missing_counterexample (test_admin_history.HistoryTests.test_public_old_gate_and_truthful_bare_missing_counterexample) ... ok\ntest_publication_fault_matrix_and_bounded_restart (test_admin_history.HistoryTests.test_publication_fault_matrix_and_bounded_restart) ... ok\ntest_real_process_contention_persistent_inode (test_admin_history.HistoryTests.test_real_process_contention_persistent_inode) ... ok\ntest_old_admitted_waiter_same_inode_and_resume_revision (test_admin_history.OldWaiterTests.test_old_admitted_waiter_same_inode_and_resume_revision) ... ok\ntest_export_missing_legacy_manifest_refuses_without_source_repair (test_admin_history_repairs.Repairs.test_export_missing_legacy_manifest_refuses_without_source_repair) ... ok\ntest_post_boot_history_upload_and_new_generation_use_shared_private_lock (test_admin_history_repairs.Repairs.test_post_boot_history_upload_and_new_generation_use_shared_private_lock) ... ok\ntest_public_disposition_ack_and_inspect_settle_before_current_gates (test_admin_history_repairs.Repairs.test_public_disposition_ack_and_inspect_settle_before_current_gates) ... ok\ntest_public_submit_retry_and_jobs_observation_settle_or_refuse (test_admin_history_repairs.Repairs.test_public_submit_retry_and_jobs_observation_settle_or_refuse) ... ok\ntest_restore_predecode_pax_global_nested_gnu_and_sparse_are_bounded (test_admin_history_repairs.Repairs.test_restore_predecode_pax_global_nested_gnu_and_sparse_are_bounded) ... ok\ntest_restore_requires_exact_legacy_and_fenced_inventory (test_admin_history_repairs.Repairs.test_restore_requires_exact_legacy_and_fenced_inventory) ... ok\ntest_submit_second_acquisition_refuses_concurrent_uncertain_receipt (test_admin_history_repairs.Repairs.test_submit_second_acquisition_refuses_concurrent_uncertain_receipt) ... ok\n\n----------------------------------------------------------------------\nRan 148 tests in 14.428s\n\nOK\n"
+    },
+    {
+      "attempt": "final-gtk-2",
+      "command": [
+        "xvfb-run",
+        "-a",
+        "/usr/bin/python3",
+        "tests/recovery_restore_gtk.py"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 1.5376857582014054,
+      "changed_during": [],
+      "source_sha256": {
+        "runtime/sv08_restore.py": "fe4770e9a56655b6e32f63b1a334de765b0c488dd9fd0a1cdf50811d0d218bfd",
+        "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+        "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+        "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+        "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+        "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+        "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+        "tests/test_restore.py": "a55ac417178d0b67467a53dcfc8dbc1128300e2396f2fbb753e983976506240f",
+        "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+        "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+        "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+        "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+      },
+      "receipt_sha256": "b96006a42825f6823fbcd9d275ec034e0d07f0c4bd752399083bc45c1505e60e",
+      "log_sha256": "56fe5cc00aaf5e39f951eeffe3ed6f817845d721ee2ee06214b47b761ef2ed95",
+      "log": "\n(recovery_restore_gtk.py:263591): dbind-WARNING **: 21:46:43.642: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files\nGTK chooser/review/cancel/full restore/refusal/fresh apply PASS; disposable files only\n"
+    }
+  ],
+  "supplemental_assessment": {
+    "kind": "bounded source correction reassessment; not formal delivery verification",
+    "outcome": "passed",
+    "reviewer": "/root/restore_source_assessment",
+    "session": "recovery-data-restore-20261012-source-assessment-correction",
+    "historical_report": "/home/drew/.sv08-recovery-restore-20261012/assessment/source-assessment.json",
+    "source_sha256": {
+      "runtime/sv08_restore.py": "fe4770e9a56655b6e32f63b1a334de765b0c488dd9fd0a1cdf50811d0d218bfd",
+      "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+      "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+      "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+      "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+      "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+      "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+      "tests/test_restore.py": "a55ac417178d0b67467a53dcfc8dbc1128300e2396f2fbb753e983976506240f",
+      "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+      "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+      "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+      "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+    },
+    "finding": "fresh-corrupt-success",
+    "resolution": "verify_fresh called by fresh_state after fsync and before return to execute/publication. It traverses held directory descriptors, rejects unknown/missing entries, requires ownership/modes, checks regular single-link file size, reads exact expected bytes, verifies unchanged file identity, and parses state defaults. Successful failure injection refusals leave private partials and preserve siblings; honest retry remains.",
+    "validation": {
+      "receipt": "/home/drew/.sv08-recovery-restore-20261012/implement/fresh-readback-final.json",
+      "log": "/home/drew/.sv08-recovery-restore-20261012/implement/fresh-readback-final.log",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_restore.py"
+      ],
+      "exit": 0,
+      "elapsed_seconds": 0.7876158929429948,
+      "inspected_log": "Ran 15 tests; OK",
+      "current_hash_mismatches": []
+    },
+    "remaining_findings": [
+      "Non-blocking v1 limitation: empty directory member additions/omissions before review are not detectable from file/history-only manifest. Restore copies current archive directory entries; no original-tree authenticity claim."
+    ],
+    "scope_result": "No demonstrated corrupt-success, wrong-target or old-data-loss blocker remains under stated reviewed media-writer model. Fresh defaults and restore dependency closure are bound via provider manifest plus checked complete immutable usr SquashFS/envelope digest. No format expansion or archive-state repair.",
+    "limits": [
+      "Candidate remains dirty at base HEAD; this is hash-bound supplemental source assessment, not formal clean-HEAD delivery verification. Coordinator completion must bind final evidence to committed source.",
+      "Author supplied focused validation assessed; coordinator broad/GTK reruns pending at assessment time. No extra experiments run after correction.",
+      "No physical hardware, production target preparation, installed recovery operation, OS restore or printing/release support assessed."
+    ],
+    "incidental": {
+      "experiments": 2,
+      "process_seconds_upper_bound": 1,
+      "generated_bytes_upper_bound": 2097152,
+      "remaining_experiments": 0
+    }
+  },
+  "historical_assessment": {
+    "kind": "bounded supplemental source assessment; not formal delivery verification",
+    "reviewer": "/root/restore_source_assessment",
+    "session": "recovery-data-restore-20261012-source-assessment",
+    "outcome": "failed",
+    "base_commit": "0e55eb232ddb17015aaf2f252086b65864fec96e",
+    "worktree_status": [
+      " M runtime/sv08_admin.py",
+      " M runtime/sv08_recovery.py",
+      " M runtime/sv08_recovery_ui.py",
+      " M scripts/recovery_image.py",
+      " M scripts/stage_admin_ui.py",
+      " M tests/test_recovery_image.py",
+      " M tests/test_stage_admin_ui.py",
+      "?? runtime/sv08_recovery_restore_media.py",
+      "?? runtime/sv08_restore.py",
+      "?? tests/recovery_restore_gtk.py",
+      "?? tests/test_recovery_restore_media.py",
+      "?? tests/test_restore.py"
+    ],
+    "source_sha256": {
+      "runtime/sv08_restore.py": "5b6f7422bc8d1051e5119ee45ddfdf89ef3e87e051f6b796ce40c2d85fe649da",
+      "runtime/sv08_recovery_restore_media.py": "8818ffff1263cb84efc32a16e6b21028f05047505053844cd3e428011e6d8238",
+      "runtime/sv08_recovery.py": "e4a2271618054e15025c232f8bc33ccabb23ce5d2ada5142bb399997b584f315",
+      "runtime/sv08_recovery_ui.py": "adfe5789bd776bdb4b9465b88734b39be6fb3dabe47416d58bef650a4c6398d8",
+      "runtime/sv08_admin.py": "5284d47fecbd3bcc33959b14a45fb74b5e28a716a3214a81d4ef27f343c8f351",
+      "scripts/stage_admin_ui.py": "baf67238b5fadac9738657ca75622ef269a3eed93c6ad06295ed8e76e0183661",
+      "scripts/recovery_image.py": "e42b0ef5f43dc2a6acd9ace2e22113e859528fc8772bf2c0b38485d7dc6495a2",
+      "tests/test_restore.py": "79ace00089172b8f704e384a4698c9ee867f55dd06bd0d7e1a75ad8e03b0eb76",
+      "tests/test_recovery_restore_media.py": "d9565339ca4ba2285136b3e8b62ddd0e806949d9fe51fd972329bbdca4fc9960",
+      "tests/recovery_restore_gtk.py": "ac55cd9a987d073617981a3cc199976467a561f596f06aa0f0aedeeb1945c1d5",
+      "tests/test_stage_admin_ui.py": "d4a55204ccb8db7e0481df33d381b3aa986554a3c1327e4ba319255b562a1ce1",
+      "tests/test_recovery_image.py": "a48981c35f7539d964c4fb8f9819aa7d295f1405a09a9977494ff9ea65f2350d"
+    },
+    "requirement_hashes": {
+      "docs/features/recovery-data-restore/proposal.md": {
+        "actual_sha256": "95e20997ef0111579e79eadb387b48f0f68b881e2144da2acf6fc829fff6b422",
+        "recorded_sha256": "95e20997ef0111579e79eadb387b48f0f68b881e2144da2acf6fc829fff6b422"
+      },
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": {
+        "actual_sha256": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+        "recorded_sha256": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884"
+      },
+      "docs/decisions/20261005-proportionate-development-review.md": {
+        "actual_sha256": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+        "recorded_sha256": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005"
+      },
+      "docs/features/recovery-data-restore/owner-request.md": {
+        "actual_sha256": "07b32537cd0fba6bbc4fc550b6cf7f9011750315f949c639105312fe5a0b2098",
+        "recorded_sha256": "07b32537cd0fba6bbc4fc550b6cf7f9011750315f949c639105312fe5a0b2098"
+      }
+    },
+    "execution_evidence": {
+      "final-standard": {
+        "checkout_commit": "0e55eb232ddb17015aaf2f252086b65864fec96e",
+        "argv": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_restore",
+          "test_recovery_restore_media",
+          "test_stage_admin_ui",
+          "test_recovery_image",
+          "test_export",
+          "test_admin",
+          "test_host_state",
+          "test_recovery_media",
+          "test_admin_history",
+          "test_admin_history_repairs"
+        ],
+        "exit_status": 0,
+        "elapsed_seconds": 14.451749557163566,
+        "changed_during": [],
+        "retained_bytes": 23032,
+        "candidate_mismatches": []
+      },
+      "final-gtk": {
+        "checkout_commit": "0e55eb232ddb17015aaf2f252086b65864fec96e",
+        "argv": [
+          "xvfb-run",
+          "-a",
+          "/usr/bin/python3",
+          "tests/recovery_restore_gtk.py"
+        ],
+        "exit_status": 0,
+        "elapsed_seconds": 1.571953465929255,
+        "changed_during": [],
+        "retained_bytes": 233315,
+        "candidate_mismatches": []
+      }
+    },
+    "findings": [
+      {
+        "id": "directory-inventory",
+        "blocking": false,
+        "requirement": "Version-1 format limitation relevant to complete tree fidelity; directory metadata not represented in manifest.",
+        "location": "runtime/sv08_restore.py:87-90,121-135; runtime/sv08_export.py:312",
+        "defect": "Directory members are stored in members but skipped from files. The export manifest inventories files/hardlinks only. Missing or extra empty directories therefore do not fail manifest validation. A whole-archive hash is calculated from the already changed input at review, not compared against an export-time bound hash.",
+        "reproduction": "Create source empty-dir; export using real Export; rewrite tar excluding only data/empty-dir with all other entries and manifest unchanged; call real Restore.prepare and Restore.execute.",
+        "actual": "source empty-dir exists; restored empty-dir absent; result message reports User data restored and root is published.",
+        "minimal_correction": "Disclose that v1 cannot detect addition/omission of directory entries before review. It restores current directory entries and checks represented files/history; no original-tree authenticity or complete directory checksum claim. Format expansion would require separate scope/requirement decision."
+      },
+      {
+        "id": "fresh-corrupt-success",
+        "blocking": true,
+        "requirement": "fresh-state: explicit apply creates fresh defaults",
+        "location": "runtime/sv08_restore.py:fresh_state and Restore.execute original frozen hash 5b6f7422bc8d1051e5119ee45ddfdf89ef3e87e051f6b796ce40c2d85fe649da",
+        "defect": "Fresh defaults are written/fsynced but not readback-validated before publication. Postpublication Store.load failure becomes a damaged-registry diagnostic while the operation still returns Fresh state created.",
+        "reproduction": "Patch only os.fdopen writer output in fresh_state to write X bytes with identical length and successful flush/fsync; real prepare/execute publishes root and returns success-like Fresh state created with damaged registry.",
+        "actual": {
+          "result": {
+            "root": "/home/drew/.sv08-recovery-restore-20261012/assessment/tmpg187dbau/target/sv08",
+            "registry": "unavailable or damaged; bytes preserved without repair",
+            "message": "Fresh state created at /home/drew/.sv08-recovery-restore-20261012/assessment/tmpg187dbau/target/sv08. Registry: unavailable or damaged; bytes preserved without repair. No automatic boot selection or service activation."
+          },
+          "state_prefix": "XXXXXXXX",
+          "published": true,
+          "elapsed_seconds": 0.042491341941058636
+        },
+        "minimal_correction": "Validate actual staged fresh defaults/layout/modes before publication, refuse corrupted/missing/extra defaults, and retain only private partial residue. Do not repair archived registry bytes. Author correction pending."
+      }
+    ],
+    "assessment": {
+      "roundtrip": "Ordinary valid current-archive tree/modes/private bytes/history tests pass; v1 does not bind original directory inventory.",
+      "admission": "no demonstrated wrong-target path under fixed reviewed trust inputs and all-media-mutators-use-MediaLease model; provider kernel checks are mocked offline",
+      "failure": "Archive payload readback, no-replace publication, own-inode withdrawal, residue/retry paths inspected and supplied tests pass. Directory insertion/omission before review is undetectable v1 format limitation. Fresh corrupt-success reproduced.",
+      "fresh_state": "Explicit absent-root apply and Store.initialize parity inspected/tested; staged fresh write corruption can publish damaged defaults and return Fresh state created. Correction pending.",
+      "journey": "supplied actual GTK chooser/review/cancel/apply/refusal/fresh tests passed; restore-review/fresh-review screenshots inspected; PR publication not assessed"
+    },
+    "limits": [
+      "Frozen candidate remains dirty with 7 tracked modifications and 5 untracked additions at base HEAD; source hashes rather than a clean committed evidence source bind this assessment. Formal verification/completion requires coordinator clean committed evidence binding.",
+      "No named hardware, installed production mount preparation, OS restore, physical media, recovery-size build or activation assessed.",
+      "No code/record edits, printer access, remote mutation, unchanged test reruns or broad reruns."
+    ],
+    "incidental": {
+      "experiments": 2,
+      "process_seconds_upper_bound": 1,
+      "generated_bytes_upper_bound": 2097152,
+      "remaining_experiments": 0,
+      "remaining_process_seconds_at_least": 299,
+      "remaining_generated_bytes_at_least": 266338304
+    }
+  },
+  "fresh_corruption_reproduction": {
+    "result": {
+      "root": "/home/drew/.sv08-recovery-restore-20261012/assessment/tmpg187dbau/target/sv08",
+      "registry": "unavailable or damaged; bytes preserved without repair",
+      "message": "Fresh state created at /home/drew/.sv08-recovery-restore-20261012/assessment/tmpg187dbau/target/sv08. Registry: unavailable or damaged; bytes preserved without repair. No automatic boot selection or service activation."
+    },
+    "state_prefix": "XXXXXXXX",
+    "published": true,
+    "elapsed_seconds": 0.042491341941058636
+  },
+  "observed_failures": "Observed tool results retained from this task; initial source hashes were not captured. No independent review claimed.\n\nPYTHONPATH=runtime python3 -m unittest discover -s tests -p test_restore.py\nInitial run: exit1, tool wall_time_seconds0.090213687; Ran10 tests0.148s,9pass/1error.\nError: Store.initialize rejected held /proc/self/fd staging: ValueError Unexpected persistent directory link. Corrected with descriptor-relative fresh defaults and parity test.\n\nParity run: exit1, tool wall_time_seconds0.168978589; Ran11 tests0.210s,10pass/1fail. AssertionError509!=448. Upstream intermediate mkdir(parents=True) directories use defaultmode0777 masked by umask; corrected matching intermediate modes, private root retained.\n\nHistory run: exit1, tool wall_time_seconds0.18256741; Ran12 tests0.228s,11pass/1error. ValueError Unsafe history ancestry. Disposable fixture ancestry/roots created groupwritable under host umask; corrected only owned scratch/fixture modes. Production history guard unchanged.\n\nProvider initial run: exit1, tool wall_time_seconds0.010591804; Ran5 tests0.005s,3pass/1error/1skip. KeyError device: synthetic proc/sys fixture omitted mandatory kernel mount field. Corrected fixture. Actual sharedflock tested with explicitly simulated root ownership on local fixture rather than skipped; no privilege escalation.\n",
+  "visual_sha256": "cb172b95e28a3cd078b79f6a415d5f2cee6623402e3c2f8ea7668bfc5c2b87e2",
+  "agents": [
+    {
+      "agent": "/root/restore_trace",
+      "role": "project_researcher",
+      "effort": "omitted; repository default low",
+      "effective": "not independently observable"
+    },
+    {
+      "agent": "/root/restore_implement",
+      "role": "project_implementer",
+      "effort": "explicit medium",
+      "effective": "not independently observable",
+      "skill": "child-only explicit repository sv08-ui-ux SKILL.md read"
+    },
+    {
+      "agent": "/root/restore_source_assessment",
+      "role": "feature_verifier",
+      "effort": "profile-pinned medium",
+      "effective": "not independently observable"
+    }
+  ],
+  "allowance": {
+    "process_seconds": 3600,
+    "generated_bytes": 536870912,
+    "storage_free_before": "31 GiB",
+    "usage": "No OS images/installations. Coordinator four final checks total <33 process seconds; author selfchecks conservatively <18 seconds; assessor two experiments <1 second/<2 MiB. Total known execution, including earlier fixture attempts, conservatively <120 seconds. Retained scratch approximately 1.7 MiB before evidence assembly; total generated-data accounting is a conservative <32 MiB bound, not a retained-size measurement of cumulative data."
+  },
+  "limitations": [
+    "No physical/installed recovery qualification, printer access, target provisioning or boot/service activation.",
+    "V1 file/history manifest does not authenticate empty-directory additions/omissions/metadata before review; no original-tree authenticity claim.",
+    "ACLs/xattrs/sparse allocation/subsecond timestamps unsupported; special permission bits refused.",
+    "Real local filesystem and GTK/controller; kernel/provider inventory validation uses mocked kernel facts.",
+    "Archived damaged registry preserved without repair; fresh defaults read back and valid.",
+    "No complete accessibility/owner usability measurement. AT-SPI unavailable under Xvfb.",
+    "Earlier bad fresh-review raster overwritten before retention request; actual inspection output and prior source-bound receipts retained, not that raster."
+  ]
+}

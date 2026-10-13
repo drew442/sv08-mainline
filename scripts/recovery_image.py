@@ -164,6 +164,8 @@ def require_recorded_integration_inputs(recorded, current, stage):
 
 def installed_provider_inputs(root):
     paths = {
+        'runtime/sv08_restore.py': root/'usr/lib/sv08/sv08_restore.py',
+        'runtime/sv08_recovery_restore_media.py': root/'usr/lib/sv08/sv08_recovery_restore_media.py',
         'runtime/sv08_recovery_media.py': root/'usr/lib/sv08/sv08_recovery_media.py',
         'runtime/sv08_recovery_prepare.py': root/'usr/lib/sv08/sv08_recovery_prepare.py',
         'configs/host-os/sv08-recovery-prepare.service':
@@ -175,6 +177,9 @@ def installed_provider_inputs(root):
         'configs/host-os/recovery-systemd-logind.conf':
             root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
     }
+    for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py',
+                 'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
+        paths['runtime/'+name] = root/'usr/lib/sv08'/name
     if not all(path.is_file() for path in paths.values()):
         raise ValueError('Installed recovery provider input is missing')
     return {name:sha(path) for name,path in paths.items()}

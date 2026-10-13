@@ -35,7 +35,9 @@ class RecoveryImageTests(unittest.TestCase):
             udev=(units/'systemd-udevd.service.d/recovery-namespace.conf').read_text()
             logind=(units/'systemd-logind.service.d/recovery-namespace.conf').read_text()
             runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
-            for name in ('sv08_recovery_media.py', 'sv08_recovery_prepare.py'):
+            for name in ('sv08_restore.py', 'sv08_recovery_restore_media.py', 'sv08_recovery_media.py', 'sv08_recovery_prepare.py',
+                         'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_state.py',
+                         'sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
                 (runtime/name).write_text(name)
             bound=m.installed_provider_inputs(root)
             destination_hashes = {

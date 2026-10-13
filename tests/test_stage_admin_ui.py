@@ -186,7 +186,9 @@ class StageUITests(unittest.TestCase):
         self.assertTrue((self.work / 'rootfs/usr/share/xsessions/sv08-recovery.desktop').is_file())
         self.assertFalse((self.work / 'rootfs/usr/share/cockpit').exists())
         self.assertFalse((self.work / 'rootfs/etc/sv08-recovery-image').exists())
-        self.assertIn('usr/lib/sv08/sv08_recovery_media.py', result['hashes'])
+        for name in ('sv08_recovery_media.py', 'sv08_restore.py', 'sv08_recovery_restore_media.py'):
+            self.assertIn('usr/lib/sv08/'+name, result['hashes'])
+        self.assertFalse((self.work / 'rootfs/etc/sv08/recovery-restore-policy.json').exists())
         self.assertFalse((self.work / 'rootfs/etc/sv08/recovery-media-policy.json').exists())
         self.assertFalse((self.work / 'rootfs/run/sv08-recovery/media-context.json').exists())
         self.assertFalse((self.work / 'rootfs/etc/systemd/system/multi-user.target.wants').exists())

@@ -12,13 +12,14 @@ from sv08_admin import ACTIONS, RECOVERY_ACTIONS, Controller, revision
 
 def installed_controller():
     from sv08_recovery_media import MediaProvider, production_adapter
+    from sv08_recovery_restore_media import Composite, production_adapter as restore_adapter
     from sv08_state import Store
     def refresh():
         adapter = production_adapter()
         # A successful trust refresh also selects the configured data source for
         # diagnostics. A failed refresh never invents a source path.
         store = Store(adapter.source / 'sv08') if isinstance(adapter, MediaProvider) else None
-        return adapter, store
+        return Composite(adapter, restore_adapter()), store
     return RecoveryController(Store('/data/sv08'), adapter_factory=refresh)
 
 
@@ -62,7 +63,9 @@ class RecoveryController(Controller):
                     free_bytes=None, capabilities=capabilities, diagnostic=diagnostic,
                     catalog=[], hostname='Recovery',
                     images=self.adapter.images() if self.adapter else [],
-                    destinations=self.adapter.destinations() if self.adapter else [])
+                    destinations=self.adapter.destinations() if self.adapter else [],
+                    archives=self.adapter.archives() if self.adapter and hasattr(self.adapter, 'archives') else [],
+                    restore_targets=self.adapter.restore_targets() if self.adapter and hasattr(self.adapter, 'restore_targets') else [])
 
     def plan(self, action, arguments):
         with self._adapter_lock:
@@ -76,6 +79,18 @@ class RecoveryController(Controller):
                                   f"{detail['required_bytes'] / 1024**2:.1f} MiB for {detail['entries']} entries. "
                                   'The archive includes private configuration and credentials. Keep the destination private. '
                                   'The source and existing destination files are preserved.')
+            if action in ('recovery.data-restore', 'recovery.initialize'):
+                plan['restore'] = self.adapter.review_restore(action, arguments)
+                detail = plan['restore']
+                if detail['fresh']:
+                    plan['effect'] = ('Create fresh immutable state at '+detail['root']+
+                        '. The state root must be absent. Existing or damaged state will not be overwritten or repaired. '
+                        'Existing user data is preserved. No boot selection or service activation.')
+                else:
+                    plan['effect'] = ('Restore the complete exported user data, including private configuration and credentials at '+
+                        detail['root']+'. The destination must be absent. Existing data and the archive are preserved. '+
+                        'Damaged archived state is preserved without repair. No boot selection or service activation. '+
+                        'Special permission bits, ACLs, xattrs, sparse allocation and subsecond timestamps are unsupported.')
             return plan
 
     def apply(self, plan):
