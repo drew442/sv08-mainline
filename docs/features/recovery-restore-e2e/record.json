@@ -332,7 +332,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Authorized reversible source/disposable systems; no live printer or physical-media transition. Concrete activation interruption uncertainty may receive supplemental source assessment.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate end-to-end recovery restore",
       "validation": {
         "actor": "root/coordinator",

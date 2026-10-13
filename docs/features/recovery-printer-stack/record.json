@@ -1,0 +1,132 @@
+{
+  "format_version": 2,
+  "id": "recovery-printer-stack",
+  "kind": "feature",
+  "title": "Recovery restore with the complete installed printer software stack",
+  "author": "root/coordinator",
+  "created": "2026-10-13",
+  "priority": 2,
+  "proposal": "docs/features/recovery-printer-stack/proposal.md",
+  "requirements": [
+    "docs/features/recovery-printer-stack/owner-request.md",
+    "docs/decisions/0010-host-administration-and-recovery-ui.md",
+    "docs/features/persistent-printer-stack/proposal.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "archive",
+      "description": "archive acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "configuration",
+      "description": "configuration acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "services",
+      "description": "services acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "persistence",
+      "description": "persistence acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "rollback",
+      "description": "rollback acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "regression",
+      "description": "regression acceptance in proposal",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement compatibility and qualify installed-stack recovery",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "archive",
+        "configuration",
+        "services",
+        "persistence",
+        "rollback",
+        "regression"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_recovery_links.py",
+        "runtime/sv08_export.py",
+        "runtime/sv08_restore.py",
+        "runtime/sv08_recovery_activation.py",
+        "runtime/sv08_recovery.py",
+        "runtime/sv08_web.py",
+        "runtime/sv08_boot.py",
+        "scripts/recovery_image.py",
+        "scripts/stage_admin_ui.py",
+        "tests/test_recovery_links.py",
+        "tests/test_export.py",
+        "tests/test_restore.py",
+        "tests/test_recovery_activation.py",
+        "tests/test_recovery_image.py",
+        "tests/test_recovery_restore_stack.py",
+        "tests/recovery_restore_stack.py",
+        "tests/recovery_restore_stack_vm.py",
+        "docs/features/recovery-printer-stack/evidence.md",
+        "docs/features/recovery-printer-stack/evidence.json",
+        "docs/features/recovery-printer-stack/visuals/restored-stack.png",
+        "tests/recovery_restore_stack_browser.mjs"
+      ],
+      "input_paths": [
+        "runtime/sv08_identity.py",
+        "runtime/sv08_network.py",
+        "runtime/sv08_state.py",
+        "runtime/sv08_mounts.py",
+        "runtime/sv08_recovery_restore_prepare.py",
+        "runtime/sv08_recovery_restore_media.py",
+        "runtime/sv08_recovery_media.py",
+        "runtime/sv08_recovery_prepare.py",
+        "runtime/sv08_printer_generate.py",
+        "runtime/sv08_printer_publish.py",
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_printer_stack.py",
+        "runtime/sv08_printer_catalog.py",
+        "runtime/sv08_printer_definitions.py",
+        "scripts/integrate_host_os.py",
+        "scripts/stage_printer_ui.py",
+        "configs/host-os/systemd/",
+        "tests/recovery_restore_e2e.py",
+        "tests/recovery_restore_e2e_vm.py",
+        "tests/cockpit_fixture.py",
+        "tests/test_printer_stack.py",
+        "catalog/printer/",
+        "runtime/sv08_printer_compose.py",
+        "runtime/sv08_printer_sources.py",
+        "runtime/sv08_printer_fields.py",
+        "tests/cockpit_browser.mjs",
+        "tests/browser_runtime.mjs"
+      ]
+    }
+  ]
+}
