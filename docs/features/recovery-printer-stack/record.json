@@ -1,61 +1,72 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "1c0e52a2470eae0c1129418d18ce47f6af7632d4913d9441c41925857ee55fcd",
+    "rationale": "Owner explicitly selected complete software-stack recovery qualification with agents; source/disposable repairs and review PR, no printer operations.",
+    "reference": "docs/features/recovery-printer-stack/owner-request.md",
+    "reference_sha256": "afc634438afcef3bfbdbe5ec2306da79befd3d083b5112272a3922c47763aa81",
+    "requirements_sha256": {
+      "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/persistent-printer-stack/proposal.md": "96ca8c05b073d423d5fb11dbb7b070117055deca02d826c2f4103c8e33700a92",
+      "docs/features/recovery-printer-stack/owner-request.md": "afc634438afcef3bfbdbe5ec2306da79befd3d083b5112272a3922c47763aa81"
+    },
+    "scope_sha256": "42e98dbecb561b1845564d7aefcac20d54d86ba07577f454637c0067c8c2dd3f",
+    "session": "recovery-printer-stack-20261013",
+    "source_commit": "afdb529ef6ab44769636bc5e36edc1db4ebbd248"
+  },
+  "checks": [
+    {
+      "description": "archive acceptance in proposal",
+      "environment": "offline",
+      "id": "archive"
+    },
+    {
+      "description": "configuration acceptance in proposal",
+      "environment": "offline",
+      "id": "configuration"
+    },
+    {
+      "description": "services acceptance in proposal",
+      "environment": "offline",
+      "id": "services"
+    },
+    {
+      "description": "persistence acceptance in proposal",
+      "environment": "offline",
+      "id": "persistence"
+    },
+    {
+      "description": "rollback acceptance in proposal",
+      "environment": "offline",
+      "id": "rollback"
+    },
+    {
+      "description": "regression acceptance in proposal",
+      "environment": "offline",
+      "id": "regression"
+    }
+  ],
+  "created": "2026-10-13",
+  "decision": null,
   "format_version": 2,
   "id": "recovery-printer-stack",
   "kind": "feature",
-  "title": "Recovery restore with the complete installed printer software stack",
-  "author": "root/coordinator",
-  "created": "2026-10-13",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/recovery-printer-stack/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/recovery-printer-stack/owner-request.md",
     "docs/decisions/0010-host-administration-and-recovery-ui.md",
     "docs/features/persistent-printer-stack/proposal.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "archive",
-      "description": "archive acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "configuration",
-      "description": "configuration acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "services",
-      "description": "services acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "persistence",
-      "description": "persistence acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "rollback",
-      "description": "rollback acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "regression",
-      "description": "regression acceptance in proposal",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement compatibility and qualify installed-stack recovery",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "archive",
         "configuration",
@@ -64,40 +75,13 @@
         "rollback",
         "regression"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
       "hazards": [],
-      "owned_paths": [
-        "runtime/sv08_recovery_links.py",
-        "runtime/sv08_export.py",
-        "runtime/sv08_restore.py",
-        "runtime/sv08_recovery_activation.py",
-        "runtime/sv08_recovery.py",
-        "runtime/sv08_web.py",
-        "runtime/sv08_boot.py",
-        "scripts/recovery_image.py",
-        "scripts/stage_admin_ui.py",
-        "tests/test_recovery_links.py",
-        "tests/test_export.py",
-        "tests/test_restore.py",
-        "tests/test_recovery_activation.py",
-        "tests/test_recovery_image.py",
-        "tests/test_recovery_restore_stack.py",
-        "tests/recovery_restore_stack.py",
-        "tests/recovery_restore_stack_vm.py",
-        "docs/features/recovery-printer-stack/evidence.md",
-        "docs/features/recovery-printer-stack/evidence.json",
-        "docs/features/recovery-printer-stack/visuals/restored-stack.png",
-        "tests/recovery_restore_stack_browser.mjs"
-      ],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -126,7 +110,39 @@
         "runtime/sv08_printer_fields.py",
         "tests/cockpit_browser.mjs",
         "tests/browser_runtime.mjs"
-      ]
+      ],
+      "owned_paths": [
+        "runtime/sv08_recovery_links.py",
+        "runtime/sv08_export.py",
+        "runtime/sv08_restore.py",
+        "runtime/sv08_recovery_activation.py",
+        "runtime/sv08_recovery.py",
+        "runtime/sv08_web.py",
+        "runtime/sv08_boot.py",
+        "scripts/recovery_image.py",
+        "scripts/stage_admin_ui.py",
+        "tests/test_recovery_links.py",
+        "tests/test_export.py",
+        "tests/test_restore.py",
+        "tests/test_recovery_activation.py",
+        "tests/test_recovery_image.py",
+        "tests/test_recovery_restore_stack.py",
+        "tests/recovery_restore_stack.py",
+        "tests/recovery_restore_stack_vm.py",
+        "docs/features/recovery-printer-stack/evidence.md",
+        "docs/features/recovery-printer-stack/evidence.json",
+        "docs/features/recovery-printer-stack/visuals/restored-stack.png",
+        "tests/recovery_restore_stack_browser.mjs"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
+      "status": "pending",
+      "title": "Implement compatibility and qualify installed-stack recovery",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Recovery restore with the complete installed printer software stack"
 }
