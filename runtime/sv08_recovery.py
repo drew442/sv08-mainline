@@ -19,7 +19,7 @@ def installed_controller():
         # A successful trust refresh also selects the configured data source for
         # diagnostics. A failed refresh never invents a source path.
         store = Store(adapter.source / 'sv08') if isinstance(adapter, MediaProvider) else None
-        return Composite(adapter, restore_adapter()), store
+        return Composite(adapter, restore_adapter(validate=False)), store
     return RecoveryController(Store('/data/sv08'), adapter_factory=refresh)
 
 
@@ -47,9 +47,12 @@ class RecoveryController(Controller):
             diagnostic = 'The state registry is unavailable or damaged. No initialization or repair was attempted: '+str(error)
         view = dict(context='recovery', state=state, diagnostic=diagnostic)
         capabilities = {}
+        batched = self.adapter.status_capabilities(view) if self.adapter and hasattr(self.adapter,'status_capabilities') else {}
         for action in ACTIONS:
             if action == 'recovery.check':
                 available, reason = True, ''
+            elif action in batched:
+                available, reason = batched[action]
             elif action in RECOVERY_ACTIONS and self.adapter:
                 available, reason = self.adapter.capability(action, view)
             else:
@@ -91,6 +94,11 @@ class RecoveryController(Controller):
                         detail['root']+'. The destination must be absent. Existing data and the archive are preserved. '+
                         'Damaged archived state is preserved without repair. No boot selection or service activation. '+
                         'Special permission bits, ACLs, xattrs, sparse allocation and subsecond timestamps are unsupported.')
+            if action in ('recovery.activate','recovery.activate-fresh','recovery.rollback'):
+                plan['restore'] = self.adapter.review_restore(action,arguments)
+                plan['effect'] = ('Return to the previous configuration at the next normal boot. Restored bytes remain available.' if action == 'recovery.rollback' else
+                    'Use '+('fresh immutable state' if action == 'recovery.activate-fresh' else 'the restored configuration and machine identity')+
+                    ' at the next normal boot. Previous canonical state is retained for explicit rollback. No OS slot or heater changes.')
             return plan
 
     def apply(self, plan):

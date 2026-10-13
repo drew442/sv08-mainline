@@ -25,7 +25,7 @@ class RecoveryWindow(Gtk.Window):
         style = Gtk.CssProvider()
         style.load_from_data(b'window {background: #f4f6f3; color: #21332e;} button {min-height: 48px; padding: 8px 16px; font-size: 17px;} button:focus {outline: 3px solid #ca6b21;} label {font-size: 17px;} .title {font-size: 28px; font-weight: bold;}')
         Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), style, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        scroll = Gtk.ScrolledWindow(); self.add(scroll)
+        scroll = Gtk.ScrolledWindow(); self.scroll = scroll; self.add(scroll)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, margin=20); scroll.add(box)
         title = Gtk.Label(label='SV08 · Recovery', xalign=0); title.get_style_context().add_class('title'); box.pack_start(title, False, False, 0)
         self.message = Gtk.Label(label='Reading recovery status…', xalign=0, wrap=True)
@@ -40,7 +40,10 @@ class RecoveryWindow(Gtk.Window):
                  ('_Check storage', 'recovery.check', {}),
                  ('_Refresh', None, {}),
                  ('Restore _user data', 'recovery.data-restore', None),
-                 ('Create _fresh state', 'recovery.initialize', None)]
+                 ('Create _fresh state', 'recovery.initialize', None),
+                 ('_Use restored state', 'recovery.activate', None),
+                 ('Use fresh _state', 'recovery.activate-fresh', None),
+                 ('Return to _previous state', 'recovery.rollback', None)]
         for index, (label, action, arguments) in enumerate(items):
             button = Gtk.Button.new_with_mnemonic(label)
             button.connect('clicked', self.clicked, action, arguments)
@@ -50,6 +53,9 @@ class RecoveryWindow(Gtk.Window):
         help_text = Gtk.Label(label='Touch a button, or use Tab / Shift+Tab and Enter.\nEscape cancels a review. A mouse works too.\nOS recovery preserves user data; export readable files before restoring.', xalign=0, wrap=True)
         box.pack_start(help_text, False, False, 0)
         self.refresh()
+
+    def show_status(self):
+        self.scroll.get_vadjustment().set_value(self.scroll.get_vadjustment().get_lower())
 
     def work(self, operation, complete):
         if self.busy: return
@@ -88,7 +94,7 @@ class RecoveryWindow(Gtk.Window):
         if arguments is None:
             selections = ([('archive', self.status['archives']), ('target', self.status['restore_targets'])]
                           if action == 'recovery.data-restore' else
-                          [('target', self.status['restore_targets'])] if action == 'recovery.initialize' else
+                          [('target', self.status['restore_targets'])] if action in ('recovery.initialize','recovery.activate','recovery.activate-fresh','recovery.rollback') else
                           [('image', self.status['images'])] if action == 'recovery.restore' else
                           [('destination', self.status['destinations'])])
             dialog = Gtk.Dialog(title='Choose recovery items', transient_for=self, modal=True)
@@ -113,10 +119,17 @@ class RecoveryWindow(Gtk.Window):
     def review(self, plan, error):
         if error:
             self.message.set_text(error)
+            self.show_status()
             for button, action in self.buttons: button.set_sensitive(action is None)
             return
         dialog = Gtk.MessageDialog(transient_for=self, modal=True, message_type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.NONE, text=plan['title'])
-        details = '\n'.join(f'{key}: {value}' for key, value in plan['arguments'].items())
+        labels = {'target': ('Storage', 'restore_targets'), 'archive': ('Archive', 'archives'),
+                  'image': ('OS image', 'images'), 'destination': ('Save destination', 'destinations')}
+        def display(key, value):
+            title, choices = labels.get(key, (key.title(), ''))
+            label = next((item['label'] for item in (self.status or {}).get(choices, []) if item['id'] == value), value)
+            return f'{title}: {label}'
+        details = '\n'.join(display(key, value) for key, value in plan['arguments'].items())
         dialog.format_secondary_text(plan['effect']+'\n\n'+details+'\n\nConfiguration and user files are preserved.')
         for label in dialog.get_message_area().get_children():
             if isinstance(label, Gtk.Label):
@@ -128,6 +141,7 @@ class RecoveryWindow(Gtk.Window):
         if response != Gtk.ResponseType.OK: self.refresh(); return
         def applied(result, error):
             self.message.set_text(error or result.get('message', 'Completed. Refresh to inspect the system.'))
+            self.show_status()
             # Explicit refresh keeps the result visible and prevents double apply.
             for button, action in self.buttons: button.set_sensitive(action is None)
         self.work(lambda: self.controller.apply(plan), applied)

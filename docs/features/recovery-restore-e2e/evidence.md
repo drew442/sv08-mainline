@@ -1,0 +1,41 @@
+# Recovery restore delivery evidence
+
+PR13 restored exported user data into a separate directory but did not prepare the installed media or make that state usable at normal boot. This change provisions reviewed restore media through the recovery builder and a boot service, then offers separate **Use restored state**, **Use fresh state** and **Return to previous state** actions. Review and cancellation do not activate anything. Activation retains previous bytes; interrupted activation blocks normal initialization until explicit recovery rollback.
+
+The owner journey is: boot the prepared recovery environment, choose the reviewed archive and storage, restore user data, separately review **Use restored state**, then boot the paired normal installation. The existing normal boot contract checks the restored registry, release and identity. **Return to previous state** restores the retained canonical state for the next normal boot. Fresh initialization and fresh activation remain separate deliberate actions. No formatting, boot-slot selection or live printer operation is added.
+
+The builder accepts `--restore-profile` as an alternative to `--media-profile`. Its profile explicitly supplies recovery identity/path, complete media inventory, archives, distinct ext4 targets, and the normal boot slot/release/schema/revision binding. These identities must be reviewed for the actual media; the disposable identifiers in the tests are not production defaults. The service authenticates the immutable image and normalized policy, admits complete inventory under the shared lease, mounts the archive read-only (ext4 without replay) and the target read-write, then publishes revalidated context. Review and mutation retain fresh admission; status batching is read-only and does not export a reusable mutation guard.
+
+The canonical activation uses a durable pending sentinel, journal and inode-bound directory renames. Previous canonical state and archive/container siblings remain intact. Filesystem inodes are bound across boot; transient kernel device numbers are not treated as durable identities. Normal initramfs checks the pending sentinel before creating data or setting identity. Log symlinks created by normal systemd startup are admitted only as opaque objects in existing-state/rollback log subtrees, with target/metadata/race checks; restored candidates, configuration/identity links and special objects remain refused.
+
+## Validation boundaries
+
+Installed acceptance uses ARM64 QEMU TCG with no network, actual installed production recovery preparer/controller/provider/GTK, and a minimal paired normal-role fixture. Its initramfs executes the exact production data/identity hook before PID1; systemd executes the actual production normal preparation unit. It observes restored configuration and machine identity, real boot IDs, generation reuse, read-only root/userspace, writable data and read-only boot. Synthetic fixture release/UUIDs and dummy non-authenticating owner data are explicit test inputs. This is not a full printing OS, application-service startup, physical power-cut, rescue-SD, H616 storage or printer qualification. No printer was accessed or deployed.
+
+Failure injection raises at the saved publication boundary and then reboots the durable disk. It demonstrates interrupted activation handling, not loss of power at every device cache boundary. Unit fault checks cover additional durable publication and fsync boundaries. V1 archive integrity and existing metadata-fidelity limits remain those of PR13; activation does not repair an incompatible or damaged archive.
+
+## Evidence retained and deferred work
+
+Private source-bound receipts, sanitized test logs, serial logs, actual QEMU argument lists, process handles, failed assessments and representative renders are retained under `/home/drew/.sv08-recovery-e2e-20261013` and `/root/.sv08-recovery-e2e-20261013`. Published evidence contains hashes and outcome summaries; no archive, secret key, filesystem image or private dump is published. Historical records remain at their original hashes.
+
+Deferred outside this delivery: physical rescue-media and full normal printer-service qualification, larger archives/storage performance, and clearer recovery startup diagnostic/busy presentation. The review/cancel/activation modal assessment does not claim a broad recovery-UI audit.
+
+## Final acceptance results
+
+| Check | Observed result |
+|---|---|
+| preparation | PASS: serialized builder/runtime policy authentication, full inventory/alias/partial failure regression, actual installed RO archive and distinct RW target preparation; changed target WWN refused before context and both disks unchanged. |
+| activation | PASS: full archive restore, review/cancel without publication, separate installed GTK activation, retained previous state and container/target siblings; incompatible/damaged/changed input refuses in regression. |
+| interruption | PASS: durable publication/fsync boundary regressions, actual installed fresh activation cut at saved boundary, real next normal initramfs refuses before identity/PID1 completion, explicit recovery rollback then normal boot previous. |
+| boot-journey | PASS: two restored normal boots with distinct boot IDs/same generation/configuration/machine identity; installed GTK rollback and normal boot previous; interrupted activation recovery and another normal boot previous. |
+| regression | PASS: 180 root regression tests plus 23 installed/state contract tests, no skips; actual GTK review/cancel/apply/stale-error check, final rendered pixels inspected, clean diff check. |
+
+[Machine-readable evidence](evidence.json) binds the 18 source paths, commands/exits, installed guest arguments/results, final image/normal fixture hashes, failed attempts and assessment hashes. [Representative actual installed review](visuals/activation-review.png) uses synthetic disposable labels; the original installed recovery window remains visible behind the test-driven production window, so background overlap/busy diagnostics are fixture-visible limitations rather than an assertion of a polished whole-screen journey.
+
+Named native roles were dispatched with `fork_turns=none`: source researcher with omitted effort, skilled implementer explicitly medium (repository UX skill and only relevant references read by that child), and a supplemental pinned-medium source assessor for concrete interruption/status/rollback defects. Runtime effective model/effort telemetry was not independently verified in this delivery; no measured token or model savings are claimed. No additional generic or permanent team was created. Self-validation remains the delivery policy; supplemental assessments are not physical-operation approval.
+
+Failures were preserved and diagnosed, including private fixture ancestry/mount namespace, missing existing submodule checkout, installed staging/masks, builder normalized policy hash disagreement, concurrent startup admission, repeated status hashing, normal systemd log-symlink rollback refusal, and the test-only injection callback lost on controller refresh. Repairs retain strict production mutation admission. The final real interruption test uses the corrected factory wrapper; prior failed source assessment remains unchanged.
+
+The primary 7,200 process-second / 6GiB allowance received bounded generated-output continuations of 2 + 4 + 4 + 2GiB for demonstrated rebuild needs (18GiB total), never reset by cleanup. Cumulative receipted process runtime plus conservative 100-second worker/300-second inspection-retirement bounds remains below 7,200 seconds; generated-output accounting uses a conservative 17GiB upper estimate including failed/superseded sparse images and temporary filesystem copies, not an exact I/O measurement. Local storage was 31GiB free at intake and 29GiB after superseded-image retirement. Only the final recovery/normal candidate and assigned fixture/receipt evidence remain; historic project inputs are untouched.
+
+The final archive and paired boot disk hashes match their initial fixture hashes after all ten guest runs. The published activation visual is an actual QMP screen capture; the rollback capture was transient and is retained privately rather than used as proof of modal appearance.

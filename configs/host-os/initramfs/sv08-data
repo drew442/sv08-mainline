@@ -18,6 +18,9 @@ fsck.ext4 -p "$DATA_DEVICE"
 result=$?
 [ "$result" -le 1 ] || fatal 'SV08 persistent filesystem needs offline recovery'
 mount -t ext4 -o rw,nodev,nosuid "$DATA_DEVICE" "${rootmnt}/data" || fatal 'SV08 data mount failed'
+# Sentinel is created and directory-synced before any activation journal/rename.
+# Refuse any object at this name, including a damaged sentinel or dangling link.
+[ ! -e "${rootmnt}/data/.sv08-activation-pending" ] && [ ! -L "${rootmnt}/data/.sv08-activation-pending" ] || fatal 'SV08 interrupted activation requires recovery rollback'
 base="${rootmnt}/data/sv08"
 for directory in "$base" "$base/system"; do
     [ ! -L "$directory" ] || fatal 'SV08 identity path contains a link'
