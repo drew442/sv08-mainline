@@ -1,54 +1,63 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "33dd4249db23e06fc65bca0f824e6912afc376db79e3273dd536027c067fe741",
+    "rationale": "Owner selected reproducible build and license inventory closure; bounded source/disposable work and review publication, preserving paused recovery.",
+    "reference": "docs/features/build-license-closure/owner-request.md",
+    "reference_sha256": "6d195e4cd471299d679645d8e708cdf05b681c83ac26831b858744cae6bec2e6",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/build-license-closure/owner-request.md": "6d195e4cd471299d679645d8e708cdf05b681c83ac26831b858744cae6bec2e6"
+    },
+    "scope_sha256": "e3eb4d9191aa9a8030ef274f483382b44e94d99b91c0045ecc8bf197d5a3370a",
+    "session": "build-license-closure-20261013",
+    "source_commit": "c72a41347b00abad620aeda4d9434447e2f6d8dc"
+  },
+  "checks": [
+    {
+      "description": "inputs acceptance in proposal",
+      "environment": "offline",
+      "id": "inputs"
+    },
+    {
+      "description": "rebuilds acceptance in proposal",
+      "environment": "offline",
+      "id": "rebuilds"
+    },
+    {
+      "description": "licenses acceptance in proposal",
+      "environment": "offline",
+      "id": "licenses"
+    },
+    {
+      "description": "validation acceptance in proposal",
+      "environment": "offline",
+      "id": "validation"
+    },
+    {
+      "description": "publication acceptance in proposal",
+      "environment": "offline",
+      "id": "publication"
+    }
+  ],
+  "created": "2026-10-13",
+  "decision": null,
   "format_version": 2,
   "id": "build-license-closure",
   "kind": "feature",
-  "title": "Reproducible project builds and source/license inventory",
-  "author": "root/coordinator",
-  "created": "2026-10-13",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/build-license-closure/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/build-license-closure/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "inputs",
-      "description": "inputs acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "rebuilds",
-      "description": "rebuilds acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "licenses",
-      "description": "licenses acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "validation",
-      "description": "validation acceptance in proposal",
-      "environment": "offline"
-    },
-    {
-      "id": "publication",
-      "description": "publication acceptance in proposal",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Close reproducibility and license inventory gaps",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "inputs",
         "rebuilds",
@@ -56,31 +65,13 @@
         "validation",
         "publication"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source/disposable builds and inventory; no production operation or legal compliance claim.",
       "hazards": [],
-      "owned_paths": [
-        "scripts/build_klipper_inputs.py",
-        "scripts/license_inventory.py",
-        "scripts/package_klipper.py",
-        "configs/apps/klipper.json",
-        "configs/host/test-sv08-01-python313-arm64.lock",
-        "configs/host/klipper-build-inputs.json",
-        "configs/host/source-license-inventory.json",
-        "tests/test_klipper_build_inputs.py",
-        "tests/test_license_inventory.py",
-        "docs/development/reproducible-builds.md",
-        "docs/features/build-license-closure/evidence.md",
-        "docs/features/build-license-closure/evidence.json"
-      ],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "input_paths": [
         "upstream-lock.json",
         "upstream/klipper/",
@@ -108,7 +99,30 @@
         "docs/hardware/host-mainsail-audit-20260910.json",
         "docs/hardware/host-update-admission-20260910.json",
         "docs/features/automatic-update-policy/results.json"
-      ]
+      ],
+      "owned_paths": [
+        "scripts/build_klipper_inputs.py",
+        "scripts/license_inventory.py",
+        "scripts/package_klipper.py",
+        "configs/apps/klipper.json",
+        "configs/host/test-sv08-01-python313-arm64.lock",
+        "configs/host/klipper-build-inputs.json",
+        "configs/host/source-license-inventory.json",
+        "tests/test_klipper_build_inputs.py",
+        "tests/test_license_inventory.py",
+        "docs/development/reproducible-builds.md",
+        "docs/features/build-license-closure/evidence.md",
+        "docs/features/build-license-closure/evidence.json"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/disposable builds and inventory; no production operation or legal compliance claim.",
+      "status": "pending",
+      "title": "Close reproducibility and license inventory gaps",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Reproducible project builds and source/license inventory"
 }
