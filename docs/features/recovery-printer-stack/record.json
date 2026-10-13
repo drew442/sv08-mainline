@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Disposable full-stack preparation cannot reliably pass unchanged pinned Klipper production validator (8 CPU seconds / 10-second readiness). Aligned clock SIGKILL and previously successful unaligned clock readiness-timeout are preserved. Complete restore/auth/reboot/rollback qualification remains unproven; source fixes and draft PR preserved. Next useful action: actual native ARM64 execution within approved disposable authority, or a justified QEMU diagnosis; do not loosen gates.",
       "checks": [
         "archive",
         "configuration",
@@ -142,7 +142,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
