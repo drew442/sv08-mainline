@@ -409,8 +409,18 @@ def restore_history(archive_path, destination, exclusive):
     from sv08_admin_jobs import Jobs
     from sv08_admin_history import OBJECT, TEMP, ENTRIES, ALLOCATED, BATCH_BYTES, METADATA_BYTES, strict_json
     from sv08_state import fsync_dir
+    from sv08_restore import pinned_archive, scan
     import re
     import shutil
+    @contextmanager
+    def validated_archive():
+        # Validate the complete inventory, including v2 node metadata and opaque
+        # links, without extracting it. Keep the same inode pinned while selecting
+        # history bytes; only the history-specific gate below can publish them.
+        with pinned_archive(archive_path) as (fd, _):
+            scan(fd)
+            with restore_archive('/proc/self/fd/'+str(fd)) as archive:
+                yield archive
     destination = Path(destination)
     if destination.exists() or destination.is_symlink(): raise ValueError('Restore requires a new isolated destination')
     with exclusive():
@@ -426,7 +436,7 @@ def restore_history(archive_path, destination, exclusive):
         temporary.mkdir(mode=0o700)
         try:
             count, total, aliases, prefixes, export = 0, 0, [], set(), None
-            with restore_archive(archive_path) as (archive, archive_size):
+            with validated_archive() as (archive, archive_size):
                 seen = set()
                 for item in archive:
                     if item.name in seen: raise ValueError('Duplicate archive member')
@@ -464,8 +474,8 @@ def restore_history(archive_path, destination, exclusive):
                             output.write(block); checksum.update(block); remaining -= len(block)
                         output.flush(); os.fsync(output.fileno())
             if len(prefixes) != 1 or export is None: raise ValueError('Restore needs one complete history and export manifest')
-            if (not isinstance(export, dict) or set(export) != {'format_version', 'kind', 'files', 'history'} or
-                    type(export['format_version']) is not int or export['format_version'] != 1 or
+            if (not isinstance(export, dict) or set(export) != ({'format_version', 'kind', 'files', 'history', 'nodes'} if export.get('format_version') == 2 else {'format_version', 'kind', 'files', 'history'}) or
+                    type(export['format_version']) is not int or export['format_version'] not in (1, 2) or
                     export['kind'] != 'user-data-export-not-os-image' or not isinstance(export['files'], list) or
                     len(export['files']) > 100000 or not isinstance(export['history'], list)):
                 raise ValueError('Invalid complete restore inventory')

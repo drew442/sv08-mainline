@@ -7,9 +7,10 @@ import stat
 import tarfile
 import tempfile
 import unittest
+from contextlib import nullcontext
 from unittest.mock import patch
 
-from sv08_export import Export, inventory
+from sv08_export import Export, inventory, restore_history
 from sv08_restore import Restore
 from test_restore import admission
 from test_data_budget import fixture_root
@@ -44,6 +45,40 @@ class RecoveryLinksTests(unittest.TestCase):
         return self.usb/result['filename']
     def restorer(self, archive):
         return Restore({'backup':dict(path=archive)}, {'target':dict(root=self.parent/'restored')}, admission, reserve_bytes=0)
+    def test_isolated_history_restore_validates_v2_nodes_and_preserves_v1(self):
+        from sv08_admin_history import encode
+        from sv08_admin_jobs import Jobs
+        self.source.chmod(0o700); (self.source/'sv08').chmod(0o700); self.parent.chmod(0o700)
+        history = self.source/'sv08/admin-image-jobs'; history.mkdir(mode=0o700)
+        (history/'jobs.json').write_bytes(encode([])); (history/'jobs.json').chmod(0o600)
+        (history/'ledger.lock').touch(mode=0o600)
+        archive = self.export()
+        destination = self.parent/'history'
+        self.assertEqual(restore_history(archive, destination, nullcontext)['count'], 0)
+        self.assertEqual(Jobs(destination, '').load(), [])
+        self.assertEqual(set(os.listdir(destination)), {'jobs.json', 'ledger.lock'})
+        def change_manifest(entries, mutate):
+            for index, (item, raw) in enumerate(entries):
+                if item.name == 'export-manifest.json':
+                    value = json.loads(raw); mutate(value)
+                    raw = json.dumps(value).encode(); item.size = len(raw)
+                    entries[index] = item, raw
+        # Even unrelated opaque node metadata is bound to the actual archive.
+        self.rewrite(archive, lambda entries: change_manifest(entries, lambda value:
+            value['nodes']['data/sv08/system/identity/current'].update(target='generations/'+'f'*32)))
+        with patch('sv08_export.publish') as publish:
+            with self.assertRaisesRegex(ValueError, 'node metadata mismatch'):
+                restore_history(archive, self.parent/'refused', nullcontext)
+            publish.assert_not_called()
+        self.assertFalse(list(self.parent.glob('.history-restore-*')))
+        # Legacy v1 has no opaque link representation. Produce a real-node-only
+        # export, then use its unchanged legacy file/history inventory.
+        for path in self.source.rglob('*'):
+            if path.is_symlink(): path.unlink()
+        legacy = self.export()
+        def version_one(value): value.pop('nodes'); value['format_version'] = 1
+        self.rewrite(legacy, lambda entries: change_manifest(entries, version_one))
+        self.assertEqual(restore_history(legacy, self.parent/'legacy', nullcontext)['count'], 0)
     def rewrite(self, archive, change):
         with tarfile.open(archive) as reader:
             entries = [(item, reader.extractfile(item).read() if item.isfile() else None) for item in reader]

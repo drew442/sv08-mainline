@@ -2,9 +2,9 @@
   "format_version": 1,
   "status": "blocked",
   "complete": false,
-  "source_base": "ed9b2fa0e43d9f0681126778a90a9635c1d8f47e",
+  "source_base": "970adc9b64fafbb6ea5b6ad27d3e328d9d0bffb5",
   "source_sha256": {
-    "runtime/sv08_export.py": "d03749e2ce82689c965a770f3be21707dc74fd40eead41e3053e2bf7cf82a3cd",
+    "runtime/sv08_export.py": "9c60c2515f4dd5df706cc41553d898f0a1cfd3fc3bb487ffea2124ea1e22f89b",
     "runtime/sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
     "runtime/sv08_recovery_links.py": "7c2498346824e2c2b6fcc72ef316c66a17f0c61b2f92568bb28acfa8ba44d576",
     "runtime/sv08_restore.py": "8b6e3dafd7c66e41be13cce0d97532109362eec8e5c4d0c721da4184bb5835e6",
@@ -14,7 +14,7 @@
     "tests/recovery_restore_stack_browser.mjs": "29a17100bb9c9badbad88bc6b875902ebd3ff8974b4f155fd75845a7c69dcc65",
     "tests/recovery_restore_stack_vm.py": "7f906d72064bd63f784009930069920922db41407821e71ba324c34abe8ac3cd",
     "tests/test_recovery_image.py": "4180aed9fa6b90e52db3d7157677ba8d997a32ce3bcc1a742287ffd1b38c40b8",
-    "tests/test_recovery_links.py": "3d54bc3cc8f0cd391bc6ec1636b09d9c972a76b43ab2e37ad769340191362101",
+    "tests/test_recovery_links.py": "ac5b63dde22663489187ae353bd84426bd34d9b64d5e134023cd43f8781fdd06",
     "tests/test_recovery_restore_stack.py": "16e06ae015d2acaf5dba8bcba4f234cd8ec19168f1854ad84fbca7997d2b595c"
   },
   "checks": {
@@ -66,6 +66,20 @@
       "log_sha256": "123516a146a3c1bcde7ae5040e54acabee063a6a9205270daeb6c5e4f02ded75",
       "changed_during": [],
       "receipt": "/home/drew/.sv08-recovery-stack-20261013/checks/build-recovery-ordering/receipt.json"
+    },
+    "final-compatibility-root": {
+      "exit_status": 0,
+      "elapsed_seconds": 41.90354605298489,
+      "log_sha256": "2eb1e5ffee5abdcda7d39431c2a9902b302e14b7c83bd5292e1463bf5b427b01",
+      "changed_during": [],
+      "receipt": "/home/drew/.sv08-recovery-stack-20261013/checks/final-compatibility-root/receipt.json"
+    },
+    "history-ci-root-guarded": {
+      "exit_status": 0,
+      "elapsed_seconds": 52.09074196103029,
+      "log_sha256": "ced27fa103b6a5ef82946e29963f0f3bb0ecac54a8b3a00d4a12c687af8e9bb9",
+      "changed_during": [],
+      "receipt": "/home/drew/.sv08-recovery-stack-20261013/checks/history-ci-root-guarded/receipt.json"
     }
   },
   "vm_receipts": {
@@ -134,5 +148,30 @@
     "PAM password is paired immutable synthetic OS, not portable user-data backup",
     "Archive v2 requires matching recovery reader; existing rescue SD not updated",
     "Historical cached full-root mismatch retained; observed package-verified derivative only"
-  ]
+  ],
+  "source_before_ci_repair": {
+    "runtime/sv08_export.py": "d03749e2ce82689c965a770f3be21707dc74fd40eead41e3053e2bf7cf82a3cd",
+    "runtime/sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
+    "runtime/sv08_recovery_links.py": "7c2498346824e2c2b6fcc72ef316c66a17f0c61b2f92568bb28acfa8ba44d576",
+    "runtime/sv08_restore.py": "8b6e3dafd7c66e41be13cce0d97532109362eec8e5c4d0c721da4184bb5835e6",
+    "scripts/recovery_image.py": "8182575922132c1e5f693a1131b00698814ddfe08c85556481ec376e9b91d4b3",
+    "scripts/stage_admin_ui.py": "1449c4c96cbdaf296b8780e78886bb97e6f5d0f54b6efa4e65803447e3cceb46",
+    "tests/recovery_restore_stack.py": "2b5905fa89188759fcad88fce03b698b4cc9a7b9b35f08fd2453a58fd5c5385b",
+    "tests/recovery_restore_stack_browser.mjs": "29a17100bb9c9badbad88bc6b875902ebd3ff8974b4f155fd75845a7c69dcc65",
+    "tests/recovery_restore_stack_vm.py": "7f906d72064bd63f784009930069920922db41407821e71ba324c34abe8ac3cd",
+    "tests/test_recovery_image.py": "4180aed9fa6b90e52db3d7157677ba8d997a32ce3bcc1a742287ffd1b38c40b8",
+    "tests/test_recovery_links.py": "3d54bc3cc8f0cd391bc6ec1636b09d9c972a76b43ab2e37ad769340191362101",
+    "tests/test_recovery_restore_stack.py": "16e06ae015d2acaf5dba8bcba4f234cd8ec19168f1854ad84fbca7997d2b595c"
+  },
+  "failed_ci": {
+    "candidate": "970adc9b64fafbb6ea5b6ad27d3e328d9d0bffb5",
+    "run": "https://github.com/drew442/sv08-mainline/actions/runs/38371799143",
+    "reason": "isolated history helper rejected new v2 inventory; repaired by pinned full scan and retained history-specific gate",
+    "log_sha256": "77dc5304ebd91a560abb1cf26d694a089a6ee14641f1675b5b9b5f9cba34e213"
+  },
+  "failed_local_invocation": {
+    "receipt": "/home/drew/.sv08-recovery-stack-20261013/checks/history-ci-root/receipt.json",
+    "reason": "Coordinator test driver omitted __main__ guard, causing recursive multiprocessing suite execution; assigned descendants terminated; guarded invocation passed"
+  },
+  "image_evidence_limit": "Both successful image builds precede isolated-history CI repair; not final-candidate installed qualification"
 }
