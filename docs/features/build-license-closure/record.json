@@ -71,7 +71,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "87feb98ff4494bc982ed5e1041660de4",
+        "session": "build-license-closure-20261013"
+      },
       "input_paths": [
         "upstream-lock.json",
         "upstream/klipper/",
@@ -120,7 +124,7 @@
       "resumption": "Continue same owner-selected closure after preserving run f67429c429cf44a2aab0ae45d5bdaff2, worktree patch, receipts and cumulative allowance; renew ownership for exact admission package dependency metadata.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable builds and inventory; no production operation or legal compliance claim.",
-      "status": "pending",
+      "status": "running",
       "title": "Close reproducibility and license inventory gaps",
       "validation": null,
       "verification": null
