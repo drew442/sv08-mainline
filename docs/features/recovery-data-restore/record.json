@@ -245,7 +245,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and disposable fixtures only; no live recovery transition. Source uncertainty gets targeted assessment, no hardware qualification.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate recovery data restore",
       "validation": {
         "actor": "root/coordinator",
