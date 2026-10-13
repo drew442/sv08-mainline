@@ -71,11 +71,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "f67429c429cf44a2aab0ae45d5bdaff2",
-        "session": "build-license-closure-20261013"
-      },
+      "implementation": null,
       "input_paths": [
         "upstream-lock.json",
         "upstream/klipper/",
@@ -90,7 +86,6 @@
         "configs/apps/moonraker.json",
         "configs/apps/klipperscreen.json",
         "configs/apps/mainsail.json",
-        "configs/apps/update-admission.json",
         "configs/host/compiled-source-wheels.json",
         "configs/host/cairo-build-wheels.json",
         "configs/host/moonraker-python313-arm64.lock",
@@ -102,7 +97,9 @@
         "docs/hardware/host-compiled-wheels-20260910.json",
         "docs/hardware/host-mainsail-audit-20260910.json",
         "docs/hardware/host-update-admission-20260910.json",
-        "docs/features/automatic-update-policy/results.json"
+        "docs/features/automatic-update-policy/results.json",
+        "scripts/package_update_admission.py",
+        "patches/rauc/0001-per-request-signer-trust.patch"
       ],
       "owned_paths": [
         "scripts/build_klipper_inputs.py",
@@ -116,13 +113,14 @@
         "tests/test_license_inventory.py",
         "docs/development/reproducible-builds.md",
         "docs/features/build-license-closure/evidence.md",
-        "docs/features/build-license-closure/evidence.json"
+        "docs/features/build-license-closure/evidence.json",
+        "configs/apps/update-admission.json"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Continue same owner-selected closure after preserving run f67429c429cf44a2aab0ae45d5bdaff2, worktree patch, receipts and cumulative allowance; renew ownership for exact admission package dependency metadata.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable builds and inventory; no production operation or legal compliance claim.",
-      "status": "running",
+      "status": "pending",
       "title": "Close reproducibility and license inventory gaps",
       "validation": null,
       "verification": null

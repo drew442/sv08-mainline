@@ -14,3 +14,5 @@ Acceptance before implementation:
 Primary allowance:7,200 cumulative process-seconds /8GiB cumulative generated output including copied roots, caches, failures and retired data. Codex has25GiB free and Beelink25GiB; default local use only. Use existing tools and a single assigned disposable compiler/OverlayFS base; no OS image rebuilds or copies of historical images. Coordinator grants recorded bounded continuations when justified, without resetting usage. One implementation/two-child cap.
 
 Native tracker cannot replace the unfinished paused recovery goal. This project goal/task records this owner-selected delivery; preserve that native goal rather than falsely marking recovery complete.
+
+Necessary package consistency: when Klipper advances to -2 for reproducibly built inputs, advance admission package metadata to 0.1.0-2 with its exact Klipper dependency -2, preserving extension source/behavior. Rebuild this small package independently twice; prior -1 source behavior evidence remains historical, not proof of the new package bytes. Renew ownership under the same owner request, preserving original run/patch/receipts and cumulative allowance.
