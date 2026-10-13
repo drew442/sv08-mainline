@@ -185,6 +185,8 @@ def main():
         from sv08_environment_device import prepare
         prepare()
     data = Path('/data/sv08')
+    from sv08_recovery_activation import boot_guard
+    boot_guard(data.parent)
     store = Store(data)
     store.initialize()
     initialize_identity(data)

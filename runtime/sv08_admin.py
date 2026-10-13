@@ -29,6 +29,9 @@ ACTIONS = {
     'recovery.export': ('Save user data', 'Copy readable configuration and user files to the selected removable destination.'),
     'recovery.data-restore': ('Restore user data', 'Verify an exported archive and restore to an absent configured data root. No automatic activation.'),
     'recovery.initialize': ('Create fresh state', 'Create immutable defaults in an absent configured state root. Existing or damaged state is refused.'),
+    'recovery.activate': ('Use restored state', 'Activate restored configuration for normal boot. Preserve previous state for rollback.'),
+    'recovery.activate-fresh': ('Use fresh state', 'Activate fresh immutable state for normal boot. Preserve previous configuration for rollback.'),
+    'recovery.rollback': ('Return to previous state', 'Restore the retained configuration for normal boot. Preserve restored bytes.'),
     'recovery.check': ('Check storage', 'Inspect storage without repairing, formatting or changing files.'),
     'system.reboot': ('Restart when idle', 'Restart only after the printer accepts idle admission. Never interrupt a print.'),
 }
@@ -106,7 +109,7 @@ def validate_arguments(action, arguments):
     field = {'policy.auto': 'enabled', 'policy.mode': 'mode', 'image.stage': 'digest',
              'software.install': 'package', 'software.remove': 'package',
              'config.hostname': 'hostname', 'recovery.boot': 'slot',
-             'recovery.restore': 'image', 'recovery.export': 'destination', 'recovery.initialize': 'target'}.get(action)
+             'recovery.restore': 'image', 'recovery.export': 'destination', 'recovery.initialize': 'target', 'recovery.activate': 'target', 'recovery.activate-fresh': 'target', 'recovery.rollback': 'target'}.get(action)
     if set(arguments) != ({field} if field else set()):
         raise ValueError('Unexpected operation fields')
     if field == 'enabled' and type(arguments[field]) is not bool:

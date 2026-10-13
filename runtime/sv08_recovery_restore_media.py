@@ -19,6 +19,10 @@ from sv08_recovery_media import (Kernel, MediaLease, LOCK, WRITER_MODEL, trusted
     same_identity, admitted_system_mount, PROVIDER_MANIFEST, ENVELOPE_MANIFEST,
     strict_envelope_manifest, reviewed_inventory, validate_usr_loop_inventory, MediaProvider)
 from sv08_restore import Restore
+from sv08_recovery_activation import Activation
+
+ACTIVATION_ACTIONS = ('recovery.activate', 'recovery.activate-fresh', 'recovery.rollback')
+RESTORE_ACTIONS = ('recovery.data-restore', 'recovery.initialize', *ACTIVATION_ACTIONS)
 
 POLICY = Path('/etc/sv08/recovery-restore-policy.json')
 CONTEXT = Path('/run/sv08-recovery/restore-context.json')
@@ -27,12 +31,21 @@ ID = r'[a-zA-Z0-9][a-zA-Z0-9._+-]{0,79}'
 
 
 class RestoreAdapter:
-    def __init__(self, restorer): self.restorer = restorer
+    def __init__(self, restorer, boot=None):
+        self.restorer = restorer
+        self.activation = Activation(restorer.targets,restorer.admission,boot) if boot else None
     def images(self): return []
     def destinations(self): return []
     def archives(self): return [dict(id=k, label=v['label']) for k,v in self.restorer.archives.items()]
     def restore_targets(self): return [dict(id=k, label=v['label']) for k,v in self.restorer.targets.items()]
     def capability(self, action, view):
+        if action in ACTIVATION_ACTIONS:
+            if not self.activation: return False, 'Reviewed normal boot binding is unavailable.'
+            try:
+                self.activation.prepare(next(iter(self.restorer.targets)),action == 'recovery.activate-fresh', action == 'recovery.rollback')
+                return True, ''
+            except (OSError,ValueError,KeyError,TypeError,StopIteration) as error:
+                return False, str(error)
         if action not in ('recovery.data-restore', 'recovery.initialize'):
             return False, 'No verified backend is available for this operation.'
         try:
@@ -41,16 +54,19 @@ class RestoreAdapter:
         except (OSError, ValueError, KeyError, TypeError, StopIteration, subprocess.SubprocessError) as error:
             return False, 'Data recovery unavailable: '+str(error)
     def review_restore(self, action, args):
+        if action in ACTIVATION_ACTIONS:
+            require(self.activation is not None, 'Reviewed activation is unavailable')
+            return self.activation.prepare(args['target'],action == 'recovery.activate-fresh',action == 'recovery.rollback')
         return self.restorer.prepare(args['target'], args.get('archive'), action == 'recovery.initialize')
     def apply(self, plan):
         prepared = self.review_restore(plan['action'], plan['arguments'])
         require(prepared == plan['restore'], 'Archive or target changed; review again')
-        return self.restorer.execute(prepared)
+        return self.activation.execute(prepared) if plan['action'] in ACTIVATION_ACTIONS else self.restorer.execute(prepared)
 
 
 class RestoreMediaProvider(RestoreAdapter):
     def __init__(self, policy, context):
-        require(type(policy) is dict and set(policy) == {'format_version','protocol','writer_model','recovery','recovery_path',
+        require(type(policy) is dict and set(policy) - {'boot'} == {'format_version','protocol','writer_model','recovery','recovery_path',
                 'image_manifest_sha256','envelope_manifest_sha256','media','archives','targets'} and
                 type(policy['format_version']) is int and policy['format_version'] == 1 and
                 policy['protocol'] == PROTOCOL and policy['writer_model'] == WRITER_MODEL, 'Invalid restore policy')
@@ -83,9 +99,9 @@ class RestoreMediaProvider(RestoreAdapter):
                         not Path(target['mount']).is_relative_to(archive['mount']) and
                         not Path(archive['mount']).is_relative_to(target['mount']) for archive in archives.values()),
                     'Restore target overlaps archive medium')
-        super().__init__(Restore(archives, targets, self.admission))
+        super().__init__(Restore(archives, targets, self.admission),policy.get('boot'))
 
-    def snapshot(self):
+    def snapshot(self, preparation=False):
         mounts = self.kernel.mounts()
         require(not any(m['optional'] for m in mounts), 'Recovery mounts must be private')
         require(any(m['path'] == '/proc' and m['filesystem'] == 'proc' and m['root'] == '/' and
@@ -121,8 +137,8 @@ class RestoreMediaProvider(RestoreAdapter):
                     'Selected block differs from inventory')
             return dict(mount=mount, block=block, directory=[info.st_dev, info.st_ino])
         recovery = selected(self.root, self.policy['recovery'], False)
-        archive_media = {v['mount']: selected(v['mount'],v['identity'],False) for v in self.restorer.archives.values()}
-        targets = {k: selected(v['mount'],v['identity'],True) for k,v in self.restorer.targets.items()}
+        archive_media = {} if preparation else {v['mount']: selected(v['mount'],v['identity'],False) for v in self.restorer.archives.values()}
+        targets = {} if preparation else {k: selected(v['mount'],v['identity'],True) for k,v in self.restorer.targets.items()}
         protected = [recovery, *archive_media.values()]
         require(all(not same_identity(t['block']['stable'], p['block']['stable']) and t['block']['disk'] != p['block']['disk']
                     for t in targets.values() for p in protected) and
@@ -135,13 +151,23 @@ class RestoreMediaProvider(RestoreAdapter):
         require(set(manifest) == {'format_version','kind','protocol','policy_sha256','inputs'} and
                 manifest['format_version'] == 2 and manifest['protocol'] == 'sv08-recovery-media-v1' and
                 type(manifest['inputs']) is dict, 'Invalid immutable provider manifest')
-        for name in ('sv08_restore.py','sv08_recovery_restore_media.py','sv08_recovery.py','sv08_recovery_ui.py',
+        from sv08_recovery_restore_prepare import policy_binding
+        require(manifest['inputs'].get('restore_policy') == policy_binding(self.policy), 'Restore policy differs from immutable manifest')
+        for name in ('sv08_restore.py','sv08_recovery_prepare.py','sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_recovery_restore_media.py','sv08_recovery.py','sv08_recovery_ui.py',
                      'sv08_admin.py','sv08_export.py','sv08_recovery_media.py','sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py',
                      'sv08_data_budget.py','sv08_update_policy.py'):
             installed = Path('/usr/lib/sv08') / name
             data = trusted_file(installed)
             require(manifest['inputs'].get('runtime/'+name) == hashlib.sha256(data).hexdigest(),
                     'Restore runtime differs from immutable manifest: '+name)
+        for name, installed in (
+                ('sv08-recovery-prepare.service','/etc/systemd/system/sv08-recovery-prepare.service'),
+                ('sv08-recovery-restore-prepare.service','/etc/systemd/system/sv08-recovery-restore-prepare.service'),
+                ('sv08-recovery-private-mounts.service','/etc/systemd/system/sv08-recovery-private-mounts.service'),
+                ('recovery-systemd-udevd.conf','/etc/systemd/system/systemd-udevd.service.d/recovery-namespace.conf'),
+                ('recovery-systemd-logind.conf','/etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf')):
+            require(manifest['inputs'].get('configs/host-os/'+name) == hashlib.sha256(trusted_file(Path(installed))).hexdigest(),
+                    'Restore service differs from immutable manifest: '+name)
         args = Path('/proc/cmdline').read_text().split()
         require([a for a in args if a.startswith('sv08.recovery=')] == ['sv08.recovery='+self.policy['image_manifest_sha256']], 'Recovery boot binding changed')
         envelope_data = trusted_file(ENVELOPE_MANIFEST)
@@ -160,6 +186,36 @@ class RestoreMediaProvider(RestoreAdapter):
             with opened(path, flags=os.O_RDONLY | os.O_NOFOLLOW) as fd:
                 require(os.fstat(fd).st_dev == recovery['directory'][0], 'Trust input outside immutable recovery')
         return dict(session=session, mounts=mounts, media=inventory, recovery=recovery, archives=archive_media, targets=targets, compressed=compressed)
+
+    def status_capabilities(self, view):
+        """One leased read-only refresh, verified before and after all local checks.
+
+        The borrowed admission exists only in this local diagnostic adapter.
+        Production review/apply retain their original full admission/rechecks.
+        No guard, plan or trust cache escapes this method.
+        """
+        try:
+            with MediaLease(self.lock) as lease:
+                initial = self.snapshot()
+                require(initial == self.context['expected'], 'Prepared restore context changed')
+                provider = self
+                class ReadOnlyGuard:
+                    fingerprint = fingerprint(initial)
+                    def recheck(self): lease.check()
+                @contextmanager
+                def diagnostic_admission(target):
+                    require(target in provider.restorer.targets, 'Choose a configured restore target')
+                    lease.check()
+                    yield ReadOnlyGuard()
+                source = self.restorer
+                diagnostic = RestoreAdapter(Restore(source.archives, source.targets, diagnostic_admission,
+                    source.reserve_bytes, source.max_bytes, source.max_entries), self.policy.get('boot'))
+                result = {action: diagnostic.capability(action, view) for action in RESTORE_ACTIONS}
+                lease.check()
+                require(self.snapshot() == initial, 'Restore media changed during status refresh')
+                return result
+        except (OSError, ValueError, KeyError, TypeError, StopIteration, subprocess.SubprocessError) as error:
+            return {action: (False, 'Data recovery unavailable: '+str(error)) for action in RESTORE_ACTIONS}
 
     @contextmanager
     def admission(self, target):
@@ -182,20 +238,25 @@ class Composite:
     def destinations(self): return self.export.destinations()
     def archives(self): return self.restore.archives() if hasattr(self.restore,'archives') else []
     def restore_targets(self): return self.restore.restore_targets() if hasattr(self.restore,'restore_targets') else []
-    def selected(self, action): return self.restore if action in ('recovery.data-restore','recovery.initialize') else self.export
+    def selected(self, action): return self.restore if action in ('recovery.data-restore','recovery.initialize',*ACTIVATION_ACTIONS) else self.export
     def capability(self, action, view): return self.selected(action).capability(action,view)
+    def status_capabilities(self, view):
+        return self.restore.status_capabilities(view) if hasattr(self.restore,'status_capabilities') else {}
     def review_export(self, target): return self.export.review_export(target)
     def review_restore(self, action,args): return self.restore.review_restore(action,args)
     def apply(self, plan): return self.selected(plan['action']).apply(plan)
 
 
-def production_adapter():
+def production_adapter(*, validate=True):
     from sv08_recovery_media import Unavailable
     try:
         data = trusted_file(POLICY); policy = json.loads(data)
         require(data == canonical_json(policy), 'Restore policy is not canonical reviewed input')
         provider = RestoreMediaProvider(policy,json.loads(trusted_file(CONTEXT)))
-        with provider.admission(next(iter(provider.restorer.targets))) as guard: guard.recheck()
+        # Status performs one complete batched admission instead of validating twice.
+        # Other callers keep eager validation; every operation admits independently.
+        if validate:
+            with provider.admission(next(iter(provider.restorer.targets))) as guard: guard.recheck()
         return provider
     except (OSError, ValueError, KeyError, TypeError, StopIteration, subprocess.SubprocessError) as error:
         return Unavailable('Data recovery unavailable: '+str(error))

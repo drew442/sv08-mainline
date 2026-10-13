@@ -58,6 +58,76 @@ class ProviderTests(unittest.TestCase):
         self.assertIn('check',events)
         with self.assertRaises(ValueError):
             with provider.admission('/dev/sda'):pass
+    def test_one_controller_status_verifies_two_snapshots_without_mutation_or_nested_lease(self):
+        from sv08_recovery import RecoveryController
+        from sv08_recovery_restore_media import Composite
+        from sv08_recovery_media import Unavailable
+        from sv08_state import Store
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);p=policy();p['boot']=dict(slot='A',release='fixture-release',state_schema=1,release_revision=7)
+            p['targets']['target'].update(mount=str(root),root=str(root/'restored'),fresh_root=str(root/'fresh'))
+            provider=self.provider(p);events=[];held=[]
+            @contextmanager
+            def lease(path):
+                self.assertFalse(held,'Status attempted a nested media lease')
+                held.append(True);events.append('enter')
+                class Guard:
+                    def check(self):events.append('check')
+                try:yield Guard()
+                finally:held.pop();events.append('exit')
+            controller=RecoveryController(Store(root/'missing-registry'),Composite(Unavailable('No export policy'),provider))
+            before=list(root.iterdir())
+            with patch('sv08_recovery_restore_media.MediaLease',lease),patch.object(provider,'snapshot',return_value={'fixture':'expected'}) as snapshots:
+                status=controller.status()
+                self.assertEqual(snapshots.call_count,2)
+                self.assertEqual(events.count('enter'),1)
+                self.assertEqual(events.count('exit'),1)
+                self.assertTrue(status['capabilities']['recovery.initialize']['available'])
+                self.assertFalse(status['capabilities']['recovery.activate']['available'])
+                self.assertEqual(list(root.iterdir()),before)
+                # A second refresh verifies again; there is no persistent trusted result.
+                controller.status();self.assertEqual(snapshots.call_count,4)
+                snapshots.reset_mock()
+                plan=provider.review_restore('recovery.initialize',dict(target='target'))
+                self.assertEqual(snapshots.call_count,2,'Review must retain full admission/recheck')
+                self.assertEqual(list(root.iterdir()),before)
+            with patch('sv08_recovery_restore_media.MediaLease',lease),patch.object(provider,'snapshot',return_value={'changed':True}):
+                with self.assertRaisesRegex(ValueError,'context changed'):
+                    provider.review_restore('recovery.initialize',dict(target='target'))
+                with self.assertRaisesRegex(ValueError,'context changed'):
+                    provider.apply(dict(action='recovery.initialize',arguments=dict(target='target'),restore=plan))
+            self.assertEqual(list(root.iterdir()),before)
+
+    def test_status_changed_media_at_exit_withholds_all_available_actions(self):
+        provider=self.provider()
+        @contextmanager
+        def lease(path):
+            class Guard:
+                def check(self):pass
+            yield Guard()
+        with patch('sv08_recovery_restore_media.MediaLease',lease),patch.object(provider,'snapshot',side_effect=[{'fixture':'expected'},{'changed':True}]) as snapshots:
+            result=provider.status_capabilities({})
+        self.assertEqual(snapshots.call_count,2)
+        self.assertTrue(all(not available and 'changed during status' in reason for available,reason in result.values()))
+
+    def test_installed_status_defers_eager_validation_only_to_its_batched_refresh(self):
+        from sv08_recovery import installed_controller
+        from sv08_recovery_media import canonical_json, Unavailable
+        p=policy();context=dict(format_version=1,protocol=PROTOCOL,policy_sha256=fingerprint(p),expected={'fixture':'expected'})
+        @contextmanager
+        def lease(path):
+            class Guard:
+                def check(self):pass
+            yield Guard()
+        def trusted(path):return canonical_json(p if str(path).endswith('policy.json') else context)
+        with patch('sv08_recovery_restore_media.trusted_file',side_effect=trusted), \
+             patch('sv08_recovery_media.production_adapter',return_value=Unavailable('No export policy')), \
+             patch('sv08_recovery_restore_media.MediaLease',lease), \
+             patch.object(RestoreMediaProvider,'snapshot',return_value={'fixture':'expected'}) as snapshots:
+            controller=installed_controller();self.assertEqual(snapshots.call_count,0)
+            controller.status();self.assertEqual(snapshots.call_count,2)
+            production_adapter();self.assertEqual(snapshots.call_count,4,'Standalone production adapter keeps eager validation')
+
     def test_shared_media_lock_contention_blocks_restore(self):
         provider=self.provider()
         with tempfile.TemporaryDirectory() as d:
@@ -87,10 +157,15 @@ class ProviderTests(unittest.TestCase):
                 filesystem='ext4',partuuid='part-'+path,partitions=[],removable=False)
         inventory=list(blocks.values())
         source=b'fixture runtime bytes'
-        names=('sv08_restore.py','sv08_recovery_restore_media.py','sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py',
+        names=('sv08_recovery_prepare.py','sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_restore.py','sv08_recovery_restore_media.py','sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py',
                'sv08_export.py','sv08_recovery_media.py','sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py')
         manifest=dict(format_version=2,kind='sv08-independent-recovery-provider',protocol='sv08-recovery-media-v1',policy_sha256='c'*64,
                       inputs={'runtime/'+name:hashlib.sha256(source).hexdigest() for name in names})
+        for name in ('sv08-recovery-prepare.service','sv08-recovery-restore-prepare.service','sv08-recovery-private-mounts.service','recovery-systemd-udevd.conf','recovery-systemd-logind.conf'):
+            manifest['inputs']['configs/host-os/'+name]=hashlib.sha256(source).hexdigest()
+        from sv08_recovery_restore_prepare import policy_binding
+        provider.policy['envelope_manifest_sha256']=hashlib.sha256(b'fixture envelope bytes').hexdigest()
+        manifest['inputs']['restore_policy']=policy_binding(provider.policy)
         manifest_data=canonical_json(manifest)
         provider.policy['image_manifest_sha256']=hashlib.sha256(manifest_data).hexdigest()
         envelope=b'fixture envelope bytes'; provider.policy['envelope_manifest_sha256']=hashlib.sha256(envelope).hexdigest()

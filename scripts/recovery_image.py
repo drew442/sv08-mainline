@@ -125,7 +125,7 @@ def run(args, **kw):
 
 
 def integration_inputs():
-    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-systemd-udevd.conf',REPO/'configs/host-os/recovery-systemd-logind.conf',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
+    paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-restore-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-systemd-udevd.conf',REPO/'configs/host-os/recovery-systemd-logind.conf',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
     paths.extend([REPO/'configs/host-os/recovery-board-root',REPO/'configs/host-os/recovery-password.json'])
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
@@ -157,6 +157,15 @@ def compose_provider_manifest(policy_sha256, inputs):
                 inputs=inputs)
 
 
+def compose_restore_provider_manifest(policy, inputs):
+    """Use the runtime's normalized binding, excluding the final image digest."""
+    import sys
+    sys.path.insert(0, str(REPO / 'runtime'))
+    from sv08_recovery_restore_prepare import policy_binding
+    binding = policy_binding(policy)
+    return compose_provider_manifest(binding, dict(inputs, restore_policy=binding))
+
+
 def require_recorded_integration_inputs(recorded, current, stage):
     if recorded.get('integration_inputs') != current:
         raise ValueError('Stale '+stage+' integration inputs; create a fresh assembly')
@@ -164,6 +173,9 @@ def require_recorded_integration_inputs(recorded, current, stage):
 
 def installed_provider_inputs(root):
     paths = {
+        'runtime/sv08_recovery_activation.py': root/'usr/lib/sv08/sv08_recovery_activation.py',
+        'runtime/sv08_recovery_restore_prepare.py': root/'usr/lib/sv08/sv08_recovery_restore_prepare.py',
+        'configs/host-os/sv08-recovery-restore-prepare.service': root/'etc/systemd/system/sv08-recovery-restore-prepare.service',
         'runtime/sv08_restore.py': root/'usr/lib/sv08/sv08_restore.py',
         'runtime/sv08_recovery_restore_media.py': root/'usr/lib/sv08/sv08_recovery_restore_media.py',
         'runtime/sv08_recovery_media.py': root/'usr/lib/sv08/sv08_recovery_media.py',
@@ -211,7 +223,7 @@ def configure_recovery_password(root):
 
 def stage_recovery_units(units):
     for name in ('sv08-recovery-private-mounts.service',
-                 'sv08-recovery-prepare.service'):
+                 'sv08-recovery-prepare.service', 'sv08-recovery-restore-prepare.service'):
         shutil.copyfile(REPO/'configs/host-os'/name, units/name)
     for unit, source in (('systemd-udevd.service', 'recovery-systemd-udevd.conf'),
                          ('systemd-logind.service', 'recovery-systemd-logind.conf')):
@@ -219,7 +231,7 @@ def stage_recovery_units(units):
         dropin.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO/'configs/host-os'/source, dropin)
     write(units/'sv08-recovery-display.service.d/independent.conf','[Unit]\nWants=systemd-udev-settle.service sv08-recovery-private-mounts.service\nAfter=sv08-recovery-private-mounts.service\nConditionPathExists=/run/sv08/recovery-verified\n[Service]\nEnvironment=HOME=/run/recovery-home\nEnvironment=LANG=C.UTF-8\nEnvironment=PYTHONDONTWRITEBYTECODE=1\nEnvironment=LIBGL_ALWAYS_SOFTWARE=1\nEnvironment=XDG_CACHE_HOME=/run/recovery-home/cache\nEnvironment=XDG_RUNTIME_DIR=/run/recovery-home\n')
-    write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-private-mounts.service sv08-recovery-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-private-mounts.service sv08-recovery-prepare.service\nAllowIsolate=yes\n')
+    write(units/'sv08-recovery.target','[Unit]\nDescription=Independent recovery diagnostic target\nRequires=sysinit.target basic.target dbus.service sv08-recovery-display.service\nWants=sv08-recovery-private-mounts.service sv08-recovery-prepare.service sv08-recovery-restore-prepare.service sv08-recovery-report.service\nAfter=sysinit.target basic.target sv08-recovery-private-mounts.service sv08-recovery-prepare.service sv08-recovery-restore-prepare.service\nAllowIsolate=yes\n')
     write(units/'sv08-recovery-report.service','[Unit]\nDescription=Read-only recovery startup report\nAfter=sv08-recovery-display.service\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/sv08_recovery_boot_report.py\nStandardOutput=journal+console\nTimeoutStartSec=45\n')
 
 
@@ -636,18 +648,29 @@ def build(a):
     write(envelope/'etc/sv08/recovery-envelope.manifest',manifest)
     media_profile = getattr(a, 'media_profile', None)
     media_profile_hash = None
-    if media_profile:
-        profile_path = clean_path(media_profile); separate(work, profile_path)
+    restore_profile = getattr(a,'restore_profile',None)
+    if restore_profile and media_profile: raise ValueError('Export and restore preparation require distinct reviewed topologies')
+    if media_profile or restore_profile:
+        profile_path = clean_path(media_profile or restore_profile); separate(work, profile_path)
         profile_value = json.loads(profile_path.read_text())
         media_profile_hash = sha(profile_path)
-        policy = compose_media_policy(profile_value, hashlib.sha256(manifest.encode()).hexdigest())
+        if restore_profile:
+            required = {'recovery','recovery_path','media','archives','targets','boot'}
+            if set(profile_value) != required: raise ValueError('Invalid restore profile schema')
+            policy = dict(format_version=1,protocol='sv08-recovery-data-restore-v1',
+                          writer_model='reviewed-recovery-only; all-media-mutators-use-MediaLease',
+                          image_manifest_sha256='',envelope_manifest_sha256=hashlib.sha256(manifest.encode()).hexdigest(),**profile_value)
+        else: policy = compose_media_policy(profile_value, hashlib.sha256(manifest.encode()).hexdigest())
         policy_text = json.dumps(policy, sort_keys=True, separators=(',', ':'))+'\n'
-        write(envelope/'etc/sv08/recovery-media-policy.json', policy_text)
+        if not restore_profile: write(envelope/'etc/sv08/recovery-media-policy.json', policy_text)
         provider_inputs = installed_provider_inputs(root)
-        provider = compose_provider_manifest(hashlib.sha256(policy_text.encode()).hexdigest(),
-                                             provider_inputs)
+        provider = (compose_restore_provider_manifest(policy, provider_inputs) if restore_profile else
+                    compose_provider_manifest(hashlib.sha256(policy_text.encode()).hexdigest(), provider_inputs))
         write(envelope/'etc/sv08/recovery-image.json',
               json.dumps(provider, sort_keys=True, separators=(',', ':'))+'\n')
+        if restore_profile:
+            policy['image_manifest_sha256'] = sha(envelope/'etc/sv08/recovery-image.json')
+            write(envelope/'etc/sv08/recovery-restore-policy.json',json.dumps(policy,sort_keys=True,separators=(',', ':'))+'\n')
     for p in [envelope,*envelope.rglob('*')]:os.utime(p,(EPOCH,EPOCH),follow_symlinks=False)
     disk=work/'recovery.ext4'
     with disk.open('xb') as f:f.truncate(SIZE)
@@ -661,8 +684,8 @@ def build(a):
     if before!=after:raise ValueError('Assembly source changed during build')
     result=dict(format_version=1,status='offline-vm-candidate',image_bytes=SIZE,image_sha256=sha(disk),allocated_bytes=disk.stat().st_blocks*512,manifest_sha256=hashlib.sha256(manifest.encode()).hexdigest(),usr_bytes=usr.stat().st_size,usr_sha256=sha(usr),source=before,source_preserved=before==after,kernel_sha256=sha(work/'vmlinuz'),initrd_sha256=sha(work/'initrd.img'),envelope=inventory(envelope),boot_gate_sha256=sha(REPO/'configs/host-os/recovery-init'),builder_sha256=sha(Path(__file__)),assembly_record_sha256=sha(source/'assembly.json'))
     if media_profile_hash:
-        result['media_profile_sha256'] = media_profile_hash
-        result['policy_sha256'] = sha(envelope/'etc/sv08/recovery-media-policy.json')
+        result['restore_profile_sha256' if restore_profile else 'media_profile_sha256'] = media_profile_hash
+        result['policy_sha256'] = sha(envelope/'etc/sv08'/('recovery-restore-policy.json' if restore_profile else 'recovery-media-policy.json'))
         result['provider_manifest_sha256'] = sha(envelope/'etc/sv08/recovery-image.json')
     if integration_inputs()!=inputs:raise ValueError('Integration inputs changed during build')
     result['integration_inputs']=inputs
@@ -678,5 +701,6 @@ def main():
     p.add_argument('--intake',type=Path);p.add_argument('--lock',type=Path,default=REPO/'configs/host-os/recovery-packages.json');p.add_argument('--assembly',type=Path);p.add_argument('--reuse-usr',type=Path)
     p.add_argument('--board-profile',type=Path);p.add_argument('--packages',type=Path)
     p.add_argument('--media-profile',type=Path)
+    p.add_argument('--restore-profile',type=Path)
     a=p.parse_args();print(json.dumps(globals()[a.stage](a),indent=2))
 if __name__=='__main__':main()

@@ -24,6 +24,34 @@ class RecoveryImageTests(unittest.TestCase):
                 with tempfile.TemporaryDirectory(dir=root/'build') as work:
                     yield work
 
+    def test_builder_restore_binding_roundtrips_through_runtime_authentication(self):
+        from test_recovery_restore_media import policy as restore_policy
+        from sv08_recovery_media import canonical_json, PROVIDER_MANIFEST, ENVELOPE_MANIFEST
+        from sv08_recovery_restore_prepare import RestorePreparer, policy_binding
+        policy=restore_policy()
+        policy['boot']=dict(slot='A',release='fixture-release',state_schema=1,release_revision=7)
+        envelope=b'fixture immutable envelope\n'
+        policy['envelope_manifest_sha256']=hashlib.sha256(envelope).hexdigest()
+        policy['image_manifest_sha256']=''
+        original_inputs={'runtime/example.py':'c'*64}
+        provider=m.compose_restore_provider_manifest(policy,original_inputs)
+        self.assertNotIn('restore_policy',original_inputs)
+        self.assertEqual(provider['inputs']['restore_policy'],policy_binding(policy))
+        # The on-disk serialization includes a newline; that is not the normalized protocol hash.
+        self.assertNotEqual(provider['inputs']['restore_policy'],hashlib.sha256(canonical_json(policy)).hexdigest())
+        provider_data=canonical_json(provider)
+        policy['image_manifest_sha256']=hashlib.sha256(provider_data).hexdigest()
+        # Deserialize both real serialized artifacts, including the final image digest.
+        preparer=RestorePreparer(json.loads(canonical_json(policy)))
+        files={PROVIDER_MANIFEST:provider_data,ENVELOPE_MANIFEST:envelope}
+        cmdline='sv08.recovery='+policy['image_manifest_sha256']+' sv08.envelope='+policy['envelope_manifest_sha256']
+        with patch('sv08_recovery_restore_prepare.trusted_file',side_effect=files.__getitem__), \
+             patch('sv08_recovery_restore_prepare.os.stat',return_value=SimpleNamespace(st_dev=1)), \
+             patch('sv08_recovery_restore_prepare.Path.read_text',return_value=cmdline):
+            preparer.authenticate()
+            preparer.policy['boot']['release_revision']=8
+            with self.assertRaisesRegex(ValueError,'Unreviewed restore policy'):preparer.authenticate()
+
     def test_recovery_stages_post_pid1_private_mount_gate(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);units=root/'etc/systemd/system';units.mkdir(parents=True)
@@ -35,7 +63,7 @@ class RecoveryImageTests(unittest.TestCase):
             udev=(units/'systemd-udevd.service.d/recovery-namespace.conf').read_text()
             logind=(units/'systemd-logind.service.d/recovery-namespace.conf').read_text()
             runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
-            for name in ('sv08_restore.py', 'sv08_recovery_restore_media.py', 'sv08_recovery_media.py', 'sv08_recovery_prepare.py',
+            for name in ('sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_restore.py', 'sv08_recovery_restore_media.py', 'sv08_recovery_media.py', 'sv08_recovery_prepare.py',
                          'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_state.py',
                          'sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
                 (runtime/name).write_text(name)
