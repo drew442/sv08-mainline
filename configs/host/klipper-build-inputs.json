@@ -1,0 +1,38 @@
+{
+  "format_version": 1,
+  "status": "offline-reproducible-input-recipe-no-hardware-qualification",
+  "helper": {
+    "source_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+    "compiler": "aarch64-linux-gnu-gcc",
+    "compiler_version": "13.3.0",
+    "packages": {
+      "gcc-13-aarch64-linux-gnu": "13.3.0-6ubuntu2~24.04.1cross1",
+      "binutils-aarch64-linux-gnu": "2.42-4ubuntu2.10",
+      "libc6-dev-arm64-cross": "2.39-0ubuntu8cross1"
+    },
+    "source_date_epoch": 1787876725,
+    "epoch_basis": "Pinned Klipper commit committer timestamp",
+    "flags": ["-Wall", "-g", "-O2", "-shared", "-fPIC", "-flto", "-fwhole-program", "-fno-use-linker-plugin"],
+    "sources": ["pyhelper.c", "serialqueue.c", "stepcompress.c", "steppersync.c", "itersolve.c", "trapq.c", "pollreactor.c", "msgblock.c", "trdispatch.c", "kin_cartesian.c", "kin_corexy.c", "kin_corexz.c", "kin_delta.c", "kin_deltesian.c", "kin_polar.c", "kin_rotary_delta.c", "kin_winch.c", "kin_extruder.c", "kin_shaper.c", "kin_idex.c", "kin_generic.c"],
+    "historical_sha256": "3bb1a213c83bbd627ae931c789b1f14c4f466d9e5ba6224bf285fc648c0509ad",
+    "selected_sha256": "d8cad1e9601bfca7a0c50dd3783d99809284eadc6561d80072f84e7694742835"
+  },
+  "markupsafe": {
+    "version": "1.1.1",
+    "source_url": "https://files.pythonhosted.org/packages/b9/2e/64db92e53b86efccfaea71321f597fa2e1b2bd3853d8ce658568f7a13094/MarkupSafe-1.1.1.tar.gz",
+    "source_sha256": "29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b",
+    "source_directory": "MarkupSafe-1.1.1",
+    "source_date_epoch": 1550970332,
+    "epoch_basis": "Official PyPI sdist upload UTC timestamp, truncated to whole seconds",
+    "python": [3, 13, 5],
+    "packages": {"gcc-14": "14.2.0-19"},
+    "python_cflags": "-fno-strict-overflow -Wsign-compare -DNDEBUG -g -O2 -Wall",
+    "additional_cflags": ["-ffile-prefix-map={work}=/usr/src/sv08-wheel-build", "-fdebug-prefix-map={venv}=/usr/src/sv08-build-venv"],
+    "backends": {
+      "setuptools": {"version": "78.1.1", "filename": "setuptools-78.1.1-py3-none-any.whl", "sha256": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561"}
+    },
+    "filename": "markupsafe-1.1.1-cp313-cp313-linux_aarch64.whl",
+    "historical_sha256": "6d1244ddb75f94a2197b5a11df94b484ccf7e3a14b28fe43bf334df525a2f627",
+    "selected_sha256": "f7d4bb143ff52a492af33af7e89051c480c8424f3083fb5b98f52729b140c8fa"
+  }
+}

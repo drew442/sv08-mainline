@@ -4,6 +4,9 @@
 Integration gap: upstream has no project release package combining our matched
 host revision, runtime lock and prebuilt helper. No source patches or installers.
 Retire when an upstream/distro package provides this exact release composition.
+The selected -2 package needs explicit --helper and --wheelhouse paths containing
+the rebuilt inputs from build_klipper_inputs.py. Historical default artifacts are
+preserved and fail the selected hashes rather than being silently substituted.
 """
 import argparse
 import hashlib
@@ -34,7 +37,7 @@ def verified_inputs(c, wheelhouse, helper):
         raise ValueError('Wheelhouse must contain exactly the locked runtime wheels')
     if c['source_prefix'] != '/opt/sv08-mainline/klipper' or c['venv_prefix'] != '/opt/sv08-mainline/venvs/klipper-f0892d8':
         raise ValueError('Unreviewed installation prefix')
-    if c['name'] != 'sv08-klipper' or c['version'] != '0.0+gitf0892d82-1' or c['architecture'] != 'arm64':
+    if c['name'] != 'sv08-klipper' or c['version'] != '0.0+gitf0892d82-2' or c['architecture'] != 'arm64':
         raise ValueError('Unreviewed package identity')
     selected = next(x for x in json.loads((REPO / 'upstream-lock.json').read_text())['submodules']
                     if x['path'] == c['source_path'])
