@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "8b62e699f95d42cda9cb0f498dced355",
+        "session": "recovery-restore-e2e-20261013"
+      },
       "input_paths": [
         "runtime/sv08_recovery_prepare.py",
         "runtime/sv08_recovery_media.py",
@@ -117,7 +121,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Authorized reversible source/disposable systems; no live printer or physical-media transition. Concrete activation interruption uncertainty may receive supplemental source assessment.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate end-to-end recovery restore",
       "validation": null,
       "verification": null
