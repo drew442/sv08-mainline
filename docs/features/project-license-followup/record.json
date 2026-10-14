@@ -3,17 +3,17 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "e320a03d5987d49105a2338dba6407d081cca917aceba0564047fe0a85b8adf3",
-    "rationale": "Owner explicitly authorized only PR19 licensing gap resolution; scope excludes unrelated project qualification and preserves frozen PR18/19 candidates. Execution waits for required owner integration.",
+    "proposal_sha256": "168dc8fc2057eeb83e419d6e94c92a1a5bccbced927bf9bb67e23a94ba1f68f5",
+    "rationale": "Owner explicitly selected source-policy enforcement after integrated licensing repair; scoped reversible staging/source-link/qualification work with tested review PR, no deployment or overall-release claim.",
     "reference": "docs/features/project-license-followup/owner-request.md",
-    "reference_sha256": "96734d2f29a2f4d851b567f1c8cc9788cb64d89061e832e05f10b12b2132a43a",
+    "reference_sha256": "597d6e8c5e2b54a74f2e424a5170587c907c71f30d266a58b12aad870b59c825",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
-      "docs/features/project-license-followup/owner-request.md": "96734d2f29a2f4d851b567f1c8cc9788cb64d89061e832e05f10b12b2132a43a"
+      "docs/features/project-license-followup/owner-request.md": "597d6e8c5e2b54a74f2e424a5170587c907c71f30d266a58b12aad870b59c825"
     },
-    "scope_sha256": "941862903e3d49ddda8d8a1e5fd9f0f989ed6c7aaf83f4e7a219103f7c29fa96",
-    "session": "project-license-followup-20261014",
-    "source_commit": "5d754c6531a721d2aeef9099c7b67e88bb111124"
+    "scope_sha256": "9935e6d4c960293305fe8f27703385df4046675b7411a12f70723819190f795b",
+    "session": "source-policy-20261014",
+    "source_commit": "dd6362e78c01c5271acd282442279ded8b8259c6"
   },
   "checks": [
     {
