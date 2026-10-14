@@ -3,17 +3,17 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "46dd4040b0d759f18af769e7288eba5ba436325f513363f018d942940ff5c904",
-    "rationale": "Necessary exact-version admission dependency metadata follows the authorized Klipper input/package update; no added functionality/authority. Prior authorization/run/patch/receipts preserved in Git and local evidence; cumulative allowance unchanged.",
+    "proposal_sha256": "395b388507ebf92332e60c703cee912da2519f3472720d2550066b6404e1904c",
+    "rationale": "Owner explicitly approved repairing PR18 before merge under selected AGPL grant. Preserve original validation in Git/evidence, reopen exact ownership, reuse unchanged proof and carry cumulative allowance; no additional project qualification or deployment.",
     "reference": "docs/features/build-license-closure/owner-request.md",
-    "reference_sha256": "6d195e4cd471299d679645d8e708cdf05b681c83ac26831b858744cae6bec2e6",
+    "reference_sha256": "cd9a126256af8dfda4013edf8c5eb8612da8667aac489054a47be10974e13a93",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
-      "docs/features/build-license-closure/owner-request.md": "6d195e4cd471299d679645d8e708cdf05b681c83ac26831b858744cae6bec2e6"
+      "docs/features/build-license-closure/owner-request.md": "cd9a126256af8dfda4013edf8c5eb8612da8667aac489054a47be10974e13a93"
     },
-    "scope_sha256": "3a8149867e152a82e7a8e8ee64b91cb2eb3b6b664c854def77927d0ee3b2f36e",
-    "session": "build-license-closure-20261013",
-    "source_commit": "ec62ea6ff9dd224b277e3e9328f310d5a0e2cdb2"
+    "scope_sha256": "fe06d989afbe8c140cec4239540ff01e039a77f33d2d34305d53cfd6b27931b8",
+    "session": "build-license-repair-20261014",
+    "source_commit": "d38d0a5d4af19d03cbc252958e8ffc321e426f33"
   },
   "checks": [
     {
