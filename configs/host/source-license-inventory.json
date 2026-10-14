@@ -179,51 +179,90 @@
     },
     {
       "artifact": {
-        "bytes": 3790,
-        "path": "sv08-update-admission_0.1.0-2_all.deb",
-        "sha256": "60fd46c0c994d368d3c0db729ad1fc6bbcae923eed912a19101b279ba7fba188"
+        "bytes": 16646,
+        "path": "sv08-update-admission_0.1.0-3_all.deb",
+        "sha256": "304622a04870cb13a95ef3ffc8b67c30320ca682081383f75d9fe3d8e932ea62"
       },
       "classification": "project-source-build",
       "config": "configs/apps/update-admission.json",
-      "config_sha256": "40edddc2eb6c0524f502483f843ace82b56c518c93835b32c7f79582e2178823",
-      "inspection_scope": "named source and recorded license candidates; no source-license or repository compliance conclusion",
-      "license_inspection": {
-        "bytes": 549,
-        "inspected_paths": [
-          "extensions/klipper/sv08_update.py",
-          "<tracked repository root license/notice candidates>"
-        ],
-        "path": "admission-license-inspection.json",
-        "sha256": "4c6c0f11f4d5dc4e6302291caa920cea6664f6659d2f05e7af697b33b6428c22"
-      },
-      "license_status": "not-declared-in-inspected-source",
-      "notices": [],
+      "config_sha256": "33c8059697fffbd970109850c006cbe2840894d659dafc32e03176243db06b8c",
+      "license_status": "source-bound-notice-text-inventoried",
+      "notices": [
+        {
+          "bytes": 226,
+          "path": "copyright",
+          "sha256": "4934baf24c4b9a5fe898abc8f1b5cd03cf218bb0f5e3c8d446317b3b50a30c42",
+          "source": {
+            "file": {
+              "bytes": 8423,
+              "path": "extensions/klipper/sv08_update.py",
+              "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522"
+            },
+            "identity": "extensions/klipper/sv08_update.py",
+            "kind": "source-file",
+            "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522",
+            "version": "0.1.0-3"
+          }
+        },
+        {
+          "bytes": 34523,
+          "path": "LICENSE",
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+          "source": {
+            "file": {
+              "bytes": 8423,
+              "path": "extensions/klipper/sv08_update.py",
+              "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522"
+            },
+            "identity": "extensions/klipper/sv08_update.py",
+            "kind": "source-file",
+            "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522",
+            "version": "0.1.0-3"
+          }
+        },
+        {
+          "bytes": 4484,
+          "path": "LICENSING.md",
+          "sha256": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+          "source": {
+            "file": {
+              "bytes": 8423,
+              "path": "extensions/klipper/sv08_update.py",
+              "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522"
+            },
+            "identity": "extensions/klipper/sv08_update.py",
+            "kind": "source-file",
+            "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522",
+            "version": "0.1.0-3"
+          }
+        }
+      ],
       "patches": [],
       "rebuild_evidence": [
         {
-          "bytes": 676,
+          "bytes": 1004,
           "path": "result.json",
-          "sha256": "3c15339fde344d32c837394a179b2a62e583a7cefae96c949daf49274d3fcd54"
+          "sha256": "0f741543da4115d34c8c3b6018b04e6f3153afd57b09fc709714bd32302fc828"
+        },
+        {
+          "bytes": 1004,
+          "path": "result.json",
+          "sha256": "0f741543da4115d34c8c3b6018b04e6f3153afd57b09fc709714bd32302fc828"
         }
       ],
       "source": {
         "file": {
           "bytes": 8423,
-          "path": "sv08_update.py",
+          "path": "extensions/klipper/sv08_update.py",
           "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522"
         },
         "identity": "extensions/klipper/sv08_update.py",
         "kind": "source-file",
         "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522",
-        "version": "0.1.0-2"
+        "version": "0.1.0-3"
       },
-      "source_artifact": {
-        "bytes": 8423,
-        "path": "extensions/klipper/sv08_update.py",
-        "sha256": "ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522"
-      },
-      "unresolved_license_declaration": true,
-      "version": "0.1.0-2"
+      "unresolved_license_declaration": false,
+      "version": "0.1.0-3"
     },
     {
       "artifact": {

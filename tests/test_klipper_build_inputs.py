@@ -127,7 +127,7 @@ class BuildInputsTests(unittest.TestCase):
         klipper = json.loads((REPO / 'configs/apps/klipper.json').read_text())
         self.assertEqual(admission['klipper_commit'], klipper['source_commit'])
         self.assertEqual(admission['klipper_package_version'], klipper['version'])
-        self.assertEqual(admission['version'], '0.1.0-2')
+        self.assertEqual(admission['version'], '0.1.0-3')
         expected = 'ea67e7a0afce39754c6c691bbfd0ead399a2dfe57fbe3fd7e837d639bb190522'
         self.assertEqual(admission['source_sha256'], expected)
         self.assertEqual(m.sha(REPO / admission['source']), expected)
