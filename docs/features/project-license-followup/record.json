@@ -1,6 +1,20 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "e320a03d5987d49105a2338dba6407d081cca917aceba0564047fe0a85b8adf3",
+    "rationale": "Owner explicitly authorized only PR19 licensing gap resolution; scope excludes unrelated project qualification and preserves frozen PR18/19 candidates. Execution waits for required owner integration.",
+    "reference": "docs/features/project-license-followup/owner-request.md",
+    "reference_sha256": "96734d2f29a2f4d851b567f1c8cc9788cb64d89061e832e05f10b12b2132a43a",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/project-license-followup/owner-request.md": "96734d2f29a2f4d851b567f1c8cc9788cb64d89061e832e05f10b12b2132a43a"
+    },
+    "scope_sha256": "941862903e3d49ddda8d8a1e5fd9f0f989ed6c7aaf83f4e7a219103f7c29fa96",
+    "session": "project-license-followup-20261014",
+    "source_commit": "5d754c6531a721d2aeef9099c7b67e88bb111124"
+  },
   "checks": [
     {
       "description": "Actual affected package/staged output carries selected license and scope, unchanged behavior/dependencies.",
@@ -33,7 +47,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Await owner integration of open PR18 and PR19. PR18 validated ownership reserves package/inventory files needed by this follow-up under docs/development/feature-workflow.md. Prepared dependent worktree/branch only; no production follow-up edits or overlapping claim. After integration, complete prior task as applicable, refresh base and claim this authorized scope. No new license decision needed.",
       "checks": [
         "notices",
         "inventory",
@@ -71,7 +85,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible scoped licensing source/disposable work under owner-selected grant; no merge/deployment, printer access or blanket compliance claim.",
-      "status": "pending",
+      "status": "blocked",
       "title": "Implement scoped PR19 license notices/inventory/source-access checks",
       "validation": null,
       "verification": null
