@@ -24,6 +24,33 @@ class RecoveryImageTests(unittest.TestCase):
                 with tempfile.TemporaryDirectory(dir=root/'build') as work:
                     yield work
 
+    def test_cockpit_socket_identity_admission_avoids_basic_target_cycle(self):
+        import configparser
+        import shutil
+        import sys
+        from test_data_budget import fixture_root
+        sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+        from stage_admin_ui import stage, REPO
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:
+            work=Path(directory);runtime=work/'rootfs/usr/lib/sv08';runtime.mkdir(parents=True)
+            for path in (REPO/'runtime').glob('*.py'):shutil.copyfile(path,runtime/path.name)
+            (runtime/'sv08_rauc_bootloader.py').chmod(0o755)
+            relative='etc/systemd/system/cockpit.socket.d/sv08-identity.conf'
+            for refresh in (False,True):
+                result=stage(work,'host',True,refresh=refresh)
+                path=work/'rootfs'/relative;unit=configparser.ConfigParser();unit.read(path)
+                settings=unit['Unit']
+                # Disables the implicit socket-before-sockets.target edge and
+                # target's automatic ordering, while retaining failure gates.
+                self.assertEqual(settings['DefaultDependencies'],'no')
+                self.assertEqual(set(settings['Requires'].split()),{'sysinit.target','sv08-identity.service'})
+                self.assertEqual(set(settings['After'].split()),{'sysinit.target','sv08-identity.service'})
+                self.assertEqual(settings['Before'],'shutdown.target')
+                self.assertEqual(settings['Conflicts'],'shutdown.target')
+                self.assertEqual(result['hashes'][relative],hashlib.sha256(path.read_bytes()).hexdigest())
+                self.assertFalse(result['activated'])
+                self.assertFalse((work/'rootfs/etc/systemd/system/sockets.target.wants').exists())
+
     def test_builder_restore_binding_roundtrips_through_runtime_authentication(self):
         from test_recovery_restore_media import policy as restore_policy
         from sv08_recovery_media import canonical_json, PROVIDER_MANIFEST, ENVELOPE_MANIFEST
@@ -64,7 +91,7 @@ class RecoveryImageTests(unittest.TestCase):
             logind=(units/'systemd-logind.service.d/recovery-namespace.conf').read_text()
             runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
             for name in ('sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_restore.py', 'sv08_recovery_restore_media.py', 'sv08_recovery_media.py', 'sv08_recovery_prepare.py',
-                         'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_state.py',
+                         'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_recovery_links.py','sv08_state.py',
                          'sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
                 (runtime/name).write_text(name)
             bound=m.installed_provider_inputs(root)

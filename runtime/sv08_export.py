@@ -15,10 +15,12 @@ from pathlib import Path
 import stat
 import tarfile
 import uuid
+from sv08_recovery_links import read_link, validate_links
 
 DIRECTORY = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
 CHUNK = 1024 * 1024
 TAR_BUFFER = 10240
+MAX_MANIFEST = 16 * 1024**2
 
 
 def publish(directory_fd, partial, name):
@@ -40,9 +42,9 @@ def identity(st):
 @contextmanager
 def opened(root, relative=(), flags=DIRECTORY):
     """Open every component relative to held directories, never through links."""
-    fd = os.open('/', DIRECTORY)
+    fd = os.dup(root) if type(root) is int else os.open('/', DIRECTORY)
     try:
-        parts = (*Path(root).absolute().parts[1:], *relative)
+        parts = tuple(relative) if type(root) is int else (*Path(root).absolute().parts[1:], *relative)
         for index, part in enumerate(parts):
             if part in ('', '.', '..') or '/' in part: raise ValueError('Invalid export path')
             new = os.open(part, flags if index == len(parts)-1 else DIRECTORY, dir_fd=fd)
@@ -61,10 +63,13 @@ def inventory(root, limit=100000):
                 names = sorted(entry.name for entry in entries)
             for name in names:
                 entry = os.stat(name, dir_fd=fd, follow_symlinks=False)
-                if entry.st_dev != device or not (stat.S_ISREG(entry.st_mode) or stat.S_ISDIR(entry.st_mode)):
+                if entry.st_dev != device or not (stat.S_ISREG(entry.st_mode) or stat.S_ISDIR(entry.st_mode) or stat.S_ISLNK(entry.st_mode)):
                     raise ValueError('Export requires regular files/directories on the source filesystem; links and special files are not followed')
                 relative = (*parts, name)
-                result.append((relative, identity(entry)))
+                stamp = identity(entry)
+                if stat.S_ISLNK(entry.st_mode):
+                    stamp = (*stamp, read_link(fd, name, stamp, identity))
+                result.append((relative, stamp))
                 if len(result) > limit: raise ValueError('Export contains too many entries')
                 if stat.S_ISDIR(entry.st_mode):
                     child = os.open(name, DIRECTORY, dir_fd=fd)
@@ -73,6 +78,8 @@ def inventory(root, limit=100000):
                         visit(child, relative)
                     finally: os.close(child)
         visit(root_fd, ())
+    validate_links({p: ('directory' if stat.S_ISDIR(s[2]) else ('symlink' if stat.S_ISLNK(s[2]) else 'file'),
+                        s[9] if stat.S_ISLNK(s[2]) else None) for p, s in result})
     # Read-only validation does not create or repair source lock bookkeeping.
     paths = {relative for relative, _ in result}
     for relative, stamp in result:
@@ -106,7 +113,9 @@ def member(relative, stamp):
     info = tarfile.TarInfo('data/'+'/'.join(relative))
     info.mode, info.uid, info.gid, info.mtime = stat.S_IMODE(stamp[2]), stamp[6], stamp[7], stamp[4]//10**9
     info.type = tarfile.DIRTYPE if stat.S_ISDIR(stamp[2]) else tarfile.REGTYPE
-    info.size = 0 if info.isdir() else stamp[3]
+    if stat.S_ISLNK(stamp[2]):
+        info.type = tarfile.SYMTYPE; info.linkname = stamp[9]
+    info.size = 0 if info.isdir() or info.issym() else stamp[3]
     if len(stamp) > 8 and stamp[8] == 2 and relative[-1] == 'history-format-v2.lock':
         info.type = tarfile.LNKTYPE
         info.linkname = 'data/'+'/'.join((*relative[:-1], 'ledger.lock'))
@@ -204,9 +213,9 @@ def verify_stream(stream, expected, size, checksum, header_bytes):
             if item.isdir():
                 found[item.name] = None
                 continue
-            if item.islnk():
+            if item.islnk() or item.issym():
                 relation = expected[item.name]
-                if not isinstance(relation, dict) or relation != {'hardlink': item.linkname} or item.size != 0:
+                if not isinstance(relation, dict) or relation != {'symlink' if item.issym() else 'hardlink': item.linkname} or item.size != 0:
                     raise ValueError('Unexpected archive link relationship')
                 found[item.name] = relation
                 continue
@@ -255,7 +264,7 @@ class Export:
             entries = inventory(self.source)
             # Tar record padding plus an upper bound for the checksummed manifest.
             size = 10240 + sum(len(member(p, s).tobuf(format=tarfile.PAX_FORMAT)) + ((member(p, s).size+511)//512)*512 for p,s in entries)
-            size += 10240 + sum(len(json.dumps('/'.join(p)).encode())+256 for p,s in entries)
+            size += 10240 + sum(2*len(json.dumps('/'.join(p)).encode())+1024 for p,s in entries)
             self.space(target, size)
             if guard is not None: guard.recheck()
             return dict(destination=target_id, source_identity=source_identity,
@@ -283,7 +292,7 @@ class Export:
                 if guard is not None: guard.recheck()
                 name = 'sv08-user-data-'+uuid.uuid4().hex+'.tar'
                 partial = '.'+name+'.partial'
-                expected = {}; records = []; created = False; published = False; completed = False
+                expected = {}; records = []; nodes = {}; created = False; published = False; completed = False
                 try:
                     fd = os.open(partial, os.O_CREAT | os.O_EXCL | os.O_RDWR | os.O_NOFOLLOW, 0o600, dir_fd=target_fd)
                     created = True
@@ -295,6 +304,16 @@ class Export:
                                 info = member(relative, stamp)
                                 header_bytes = max(header_bytes, len(info.tobuf(format=archive.format,
                                     encoding=archive.encoding, errors=archive.errors)))
+                                nodes[info.name] = dict(type='directory' if info.isdir() else ('symlink' if info.issym() else ('hardlink' if info.islnk() else 'file')),
+                                    mode=info.mode, uid=info.uid, gid=info.gid, mtime=info.mtime, bytes=info.size)
+                                if info.issym():
+                                    nodes[info.name]['target'] = info.linkname
+                                    with opened(self.source, relative[:-1]) as directory:
+                                        if read_link(directory, relative[-1], stamp[:9], identity) != info.linkname:
+                                            raise ValueError('Source link changed')
+                                    archive.addfile(info); expected[info.name] = {'symlink': info.linkname}
+                                    records.append(dict(path=info.name, symlink=info.linkname))
+                                    continue
                                 if info.isdir():
                                     archive.addfile(info); expected[info.name] = None; continue
                                 if info.islnk():
@@ -309,7 +328,8 @@ class Export:
                                     checksum = reader.hash.hexdigest()
                                     expected[info.name] = checksum
                                     records.append(dict(path=info.name, bytes=info.size, sha256=checksum))
-                            manifest = json.dumps(dict(format_version=1, kind='user-data-export-not-os-image', files=records, history=plan.get('history', [])), sort_keys=True).encode()
+                            manifest = json.dumps(dict(format_version=2, kind='user-data-export-not-os-image', files=records, history=plan.get('history', []), nodes=nodes), sort_keys=True).encode()
+                            if len(manifest) > MAX_MANIFEST: raise ValueError('Export manifest exceeds its restore metadata bound')
                             info = tarfile.TarInfo('export-manifest.json'); info.size=len(manifest); info.mode=0o600
                             header_bytes = max(header_bytes, len(info.tobuf(format=archive.format,
                                 encoding=archive.encoding, errors=archive.errors)))
@@ -389,8 +409,18 @@ def restore_history(archive_path, destination, exclusive):
     from sv08_admin_jobs import Jobs
     from sv08_admin_history import OBJECT, TEMP, ENTRIES, ALLOCATED, BATCH_BYTES, METADATA_BYTES, strict_json
     from sv08_state import fsync_dir
+    from sv08_restore import pinned_archive, scan
     import re
     import shutil
+    @contextmanager
+    def validated_archive():
+        # Validate the complete inventory, including v2 node metadata and opaque
+        # links, without extracting it. Keep the same inode pinned while selecting
+        # history bytes; only the history-specific gate below can publish them.
+        with pinned_archive(archive_path) as (fd, _):
+            scan(fd)
+            with restore_archive('/proc/self/fd/'+str(fd)) as archive:
+                yield archive
     destination = Path(destination)
     if destination.exists() or destination.is_symlink(): raise ValueError('Restore requires a new isolated destination')
     with exclusive():
@@ -406,7 +436,7 @@ def restore_history(archive_path, destination, exclusive):
         temporary.mkdir(mode=0o700)
         try:
             count, total, aliases, prefixes, export = 0, 0, [], set(), None
-            with restore_archive(archive_path) as (archive, archive_size):
+            with validated_archive() as (archive, archive_size):
                 seen = set()
                 for item in archive:
                     if item.name in seen: raise ValueError('Duplicate archive member')
@@ -444,8 +474,8 @@ def restore_history(archive_path, destination, exclusive):
                             output.write(block); checksum.update(block); remaining -= len(block)
                         output.flush(); os.fsync(output.fileno())
             if len(prefixes) != 1 or export is None: raise ValueError('Restore needs one complete history and export manifest')
-            if (not isinstance(export, dict) or set(export) != {'format_version', 'kind', 'files', 'history'} or
-                    type(export['format_version']) is not int or export['format_version'] != 1 or
+            if (not isinstance(export, dict) or set(export) != ({'format_version', 'kind', 'files', 'history', 'nodes'} if export.get('format_version') == 2 else {'format_version', 'kind', 'files', 'history'}) or
+                    type(export['format_version']) is not int or export['format_version'] not in (1, 2) or
                     export['kind'] != 'user-data-export-not-os-image' or not isinstance(export['files'], list) or
                     len(export['files']) > 100000 or not isinstance(export['history'], list)):
                 raise ValueError('Invalid complete restore inventory')

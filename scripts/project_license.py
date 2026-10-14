@@ -123,8 +123,10 @@ def generated_recipe(root, name, raw, repo):
         except (ValueError,OSError,UnicodeError): return None
     elif name == 'etc/cockpit/cockpit.conf' and raw == b'[WebService]\nShell=/sv08-host/index.html\n':
         return 'generated', recipes
-    elif name == 'etc/systemd/system/cockpit.socket.d/sv08-identity.conf' and raw == b'[Unit]\nRequires=sv08-identity.service\nAfter=sv08-identity.service\n':
-        return 'generated', recipes
+    elif name == 'etc/systemd/system/cockpit.socket.d/sv08-identity.conf':
+        from stage_admin_ui import IDENTITY_SOCKET
+        if raw == IDENTITY_SOCKET:
+            return 'generated', recipes
     elif name.startswith('usr/share/cockpit/sv08-printer/'):
         from definition_repository_template import archive, FILENAME, schema_archive, SCHEMA_FILENAME
         filename = Path(name).name

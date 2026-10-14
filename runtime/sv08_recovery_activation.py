@@ -15,6 +15,7 @@ import uuid
 from sv08_export import opened, publish, identity
 from sv08_state import Store, atomic_json, fsync_dir
 from sv08_restore import require
+from sv08_recovery_links import link_target, read_link
 
 JOURNAL = '.sv08-activation.json'
 PENDING = '.sv08-activation-pending'
@@ -40,17 +41,30 @@ def optional_inode(path):
 def tree_digest(root, logs_links=False):
     """Bind reviewed bytes; retained log links are opaque, never traversed.
 
-    Normal systemd startup creates shared/logs/README. Only existing state
-    and rollback admit links within that log subtree; candidates stay strict.
-    Store, generation and identity paths still cannot be symlink-backed.
+    Normal systemd startup creates shared/logs/README. Existing state and
+    rollback retain PR16's opaque log subtree exception.
+    Validated provisioned identity selectors and the exact systemd README
+    are also admitted in candidates. Their targets are never traversed here.
     """
     digest = hashlib.sha256()
     for path in [root, *sorted(root.rglob('*'))]:
         info = path.lstat()
         relative = path.relative_to(root)
         link = stat.S_ISLNK(info.st_mode)
+        allowed = False
+        if link:
+            with opened(path.parent) as directory:
+                target_text = read_link(directory, path.name, identity(info), identity)
+            if logs_links and relative.parts[:2] == ('shared', 'logs') and len(relative.parts) > 2:
+                allowed = True
+            else:
+                generation = link_target(relative.parts, target_text)
+                if generation is not None:
+                    with opened(root, generation) as directory:
+                        require(os.fstat(directory).st_dev == root.lstat().st_dev, 'Identity generation changed filesystem')
+                allowed = True
         require(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode) or
-                (link and logs_links and relative.parts[:2] == ('shared','logs') and len(relative.parts) > 2),
+                (link and allowed),
                 'Unsupported activation object')
         digest.update(json.dumps([str(relative), info.st_mode, info.st_uid,
                                  info.st_gid, info.st_size if stat.S_ISREG(info.st_mode) or link else 0,
