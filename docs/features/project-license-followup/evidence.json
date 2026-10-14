@@ -1,0 +1,304 @@
+{
+  "format_version": 1,
+  "code_commit": "63d7fc32787447b7f2a28f13a0d39b0e32ebdb06",
+  "base_commit": "9de5f158632dd5da1b860923366fdb491bfef608",
+  "sources": {
+    "README.md": "d3ecc5f9c7a113254e7820f256612f75640bad85f2ff4416c0b2d2bee2835dfc",
+    "docs/licensing.md": "fc4931fe87948e802ee7316342cd616c24f3531a5567a6140f5a5b94e63dc3dc",
+    "scripts/build_host_image.py": "bf7df403b87e947a7442077f1191f71fcfec74de63d63b810091e755a5608ccd",
+    "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+    "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
+    "scripts/stage_admin_ui.py": "9146887d96ab758b650c738ca48944ff975462b8314eb8fa11bc4d582c456dd3",
+    "scripts/stage_printer_ui.py": "0d925000f1cd0005eb834b96500031ab9277339da64ce41c6fd8b9dc2eff24d9",
+    "tests/source_policy_browser.mjs": "e6607e75a2b803dc4c9d09d40e26cb2997cde25ab12ed7446d713f5629e7d931",
+    "tests/test_build_host_image.py": "019dfec8ffb41c14a8f2008199978cf923ebc518b416857cb040f1485f8e4ecd",
+    "tests/test_project_license.py": "e06e4f2cfecc4758d056eb3e93acd56feb3b21dd05cef46858761f356896c7dd",
+    "tests/test_source_policy_ui.py": "0a06d1f4092b0c1d796ea93e5383dbae0ab5610d5d0eef52e04656f4c660411f",
+    "tests/test_stage_admin_ui.py": "c4ceecfbdc684ee781cd915c1fdfcd1d6c9f7df618e372fe9b1c9a3273f893d6",
+    "tests/test_stage_printer_ui.py": "70013dc92756657d2f6f1679bae1fe7bdd798a60fb19089c2ab19519be91b034",
+    "ui/host/index.html": "d9c7b430e7db0d3b4ffe9be8e4849df584e105946a0bbd78a309772d02f29f61",
+    "ui/host/source.js": "11b833e0d88a840ec0780b54d2322e1eda1753bf3f07fcb8bdd28758b23baa94",
+    "ui/host/style.css": "b755f0bc130e30168fc8c0d16bf250af1dc9e5a8a936fdea627496a5ae64866f",
+    "ui/printer/index.html": "77cc6a461833ee87c2c8f6fd1ff998f6fd7fe1d1cab916da2636b3b2ccd0f471",
+    "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "LICENSING.md": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+    "configs/apps/klipper.json": "fa06e78d1fe59f346894f16192ae367817f42ac1158f44cadef4df7874775ec8",
+    "configs/apps/update-admission.json": "33c8059697fffbd970109850c006cbe2840894d659dafc32e03176243db06b8c",
+    "configs/host/source-license-inventory.json": "6d8011a9da17b46fcf5cb275c9278c14e1600293fe3d82d126b93fa0b4729d41",
+    "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440",
+    "runtime/sv08_admin.py": "3c40cc674631eb33b2405d32d7f2455844e489204e99e8e689a3786e87b0d774",
+    "runtime/sv08_view.py": "d78ae85a34ca8a47c383c570a7de76368900e0235d99611cc6877782f714d911"
+  },
+  "acceptance": {
+    "notices": "passed",
+    "inventory": "passed",
+    "source-access": "passed"
+  },
+  "distinct_relevant_tests": 56,
+  "final_targeted_after_bytecode_fix": 14,
+  "source_ui_after_session_fix": 2,
+  "unit_results": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_project_license.py",
+        "-v"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.1954710530117154,
+      "log": "/home/drew/.sv08-source-policy-20261014/test_project_license.py-gate-final.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_stage_admin_ui.py",
+        "-v"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 1.6848009610548615,
+      "log": "/home/drew/.sv08-source-policy-20261014/test_stage_admin_ui.py-gate-final.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_stage_printer_ui.py",
+        "-v"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 39.83765351609327,
+      "log": "/home/drew/.sv08-source-policy-20261014/test_stage_printer_ui.py-gate-final.log"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_build_host_image.py",
+        "-v"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.2096281989943236,
+      "log": "/home/drew/.sv08-source-policy-20261014/test_build_host_image.py-gate-final.log"
+    }
+  ],
+  "targeted_final": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "-v",
+      "test_project_license",
+      "test_stage_admin_ui.StageUITests.test_project_notices_bind_actual_stage_and_stale_release",
+      "test_stage_printer_ui.StageTests.test_notices_composition_accounting_and_restore",
+      "test_build_host_image.ImageBuilderTests.test_builder_stages_exact_notices_and_unqualified_identity"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 3.50159480702132,
+    "log": "/home/drew/.sv08-source-policy-20261014/cache-binding-final.log"
+  },
+  "browser_results": [
+    {
+      "attempt": "host-session",
+      "exit_status": 0,
+      "elapsed_seconds": 2.7209993810392916,
+      "command": [
+        "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64/bin/node",
+        "tests/source_policy_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-source-policy-20261014/browser-host-session",
+        "/home/drew/.sv08-source-policy-20261014/render-host-session"
+      ],
+      "server_command": [
+        "python3",
+        "tests/test_source_policy_ui.py",
+        "--serve",
+        "/home/drew/.sv08-source-policy-20261014/browser-host-session"
+      ],
+      "fixture": "/home/drew/.sv08-source-policy-20261014/browser-host-session",
+      "output": "/home/drew/.sv08-source-policy-20261014/render-host-session"
+    },
+    {
+      "attempt": "composed-session",
+      "exit_status": 0,
+      "elapsed_seconds": 2.619125470984727,
+      "command": [
+        "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64/bin/node",
+        "tests/source_policy_browser.mjs",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/.sv08-source-policy-20261014/browser-composed-session",
+        "/home/drew/.sv08-source-policy-20261014/render-composed-session"
+      ],
+      "server_command": [
+        "python3",
+        "tests/test_source_policy_ui.py",
+        "--serve",
+        "/home/drew/.sv08-source-policy-20261014/browser-composed-session",
+        "--composed"
+      ],
+      "fixture": "/home/drew/.sv08-source-policy-20261014/browser-composed-session",
+      "output": "/home/drew/.sv08-source-policy-20261014/render-composed-session"
+    }
+  ],
+  "public_verification": {
+    "command": [
+      "python3",
+      "scripts/qualify_project_source.py",
+      "--root",
+      "/home/drew/.sv08-source-policy-20261014/public-session-root/rootfs",
+      "--public-source",
+      "/home/drew/.sv08-source-policy-20261014/public-session-manifest.json"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 3.6179806438740343,
+    "source_commit": "63d7fc32787447b7f2a28f13a0d39b0e32ebdb06",
+    "archive_url": "https://codeload.github.com/drew442/sv08-mainline/tar.gz/63d7fc32787447b7f2a28f13a0d39b0e32ebdb06",
+    "archive_sha256": "ea6003904095bc83e29d1940a724bc7f0877cfcec39d1fd45e2143e574abb722",
+    "archive_bytes": 9167923,
+    "source_files": 566,
+    "staged_files": 89,
+    "build_id": "7f7ecdf150e5b2e44ad8c4240dfeda6bda0d80560f55f98a04aafcc0877cdf86",
+    "root_unchanged": true,
+    "authenticated_transport": false,
+    "scope": "project-source-only",
+    "overall_release_qualified": false,
+    "root": "/home/drew/.sv08-source-policy-20261014/public-session-root/rootfs"
+  },
+  "reused_inventory_proof": {
+    "admission_version": "0.1.0-3",
+    "hashes": {
+      "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "LICENSING.md": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+      "configs/apps/update-admission.json": "33c8059697fffbd970109850c006cbe2840894d659dafc32e03176243db06b8c",
+      "configs/host/source-license-inventory.json": "6d8011a9da17b46fcf5cb275c9278c14e1600293fe3d82d126b93fa0b4729d41",
+      "docs/features/build-license-closure/licensing-repair.json": "4e7f01d9af5574c3df5039282d17ad4a22fb998d8d7d336ba8689c5c262bcce3",
+      "docs/features/build-license-closure/licensing-repair.md": "b36e82c48598319b304000598b576bf2ede9e3f651bfcf761b12d4d8de75ec86"
+    },
+    "license_declaration_resolved": true,
+    "source_revision": "d8564c9450203d53980d6ae3be8e476117ff2036"
+  },
+  "artifact_root": "/home/drew/.sv08-source-policy-20261014",
+  "artifact_sha256": {
+    "cache-binding-final.log": "9414bbdf9dd46fcbce019d690a2c5e056db99d46f680916e34cb911c5f26fcb8",
+    "ui-session-final.log": "3b8f85226d6488a86a37d9d8f217e8fc08f5bffae68904a8f87cad425548c5da",
+    "test_stage_admin_ui.py-gate-final.log": "de9bfd6a9a46747e8892deb72ab5b6c0a128f2296a443f490f5a52760dd247dc",
+    "test_stage_printer_ui.py-gate-final.log": "338ac34701209a4b1405f3157d86a1979f93da067f7f78d82d6c7d9ac905b4f9",
+    "test_build_host_image.py-gate-final.log": "7f7f985e3657ffb64a44ad0c0beb6b676b71a73f5b88614c9efc372b1d768d2b",
+    "test_ui_notes.py-final.log": "435aa7e20508934c22a9ab5ae0cd9a271759aade371f2ce2363f6c4c6129e9e7",
+    "test_theme_ui.py-final.log": "1b8d8eb481ba2258a4511bba6fb5871b08999814139b7aee15665341f00da984",
+    "browser-session-results.json": "04a3f82209f1a7e0c84e2a6e7fd9e4ff7d2718c844846f64464884c75fbf12a0",
+    "public-session-manifest.json": "108a72700e43891ca1d4a72d090d65ef89a4338762fe8a5789f1d4ee39ab42ce",
+    "public-session-staging.json": "62287cfaccd55ecae7c3042213456b940ab4cc7625747128ac128b4808e56368",
+    "public-session-qualification.json": "a684527235271260a065e5ad87b502b9ddabd3f6d894f7a2aaf3f98a5ca82642",
+    "public-session-summary.json": "65cdc811a6842f087565d09011511db15f890ffc521c575fcc4ab24b765e2845",
+    "cache-binding-final.json": "6d3e70524c0743eac5e7d4a55b78bfb6d4d8be771141fba618f82657e642ff49",
+    "gate-final-results.json": "42711e99ae514e8934b9ff064a4b99129d956f745fa017ddf34ac054dfd1d144",
+    "regression-results.json": "422712acd71aa501797bb619d5d4862be19c4b58815177bc077abe99e7507628",
+    "focused-results.json": "000adb0abd3e647f618d46b2a9bfee69f178d287859d08d1bae35fd38d6417e5",
+    "browser-results.json": "9ba2b6c8c9c50973a9f6bcaee05d08ec4795e5af675162931ba909e935309c64",
+    "browser-results-2.json": "132763e7550be01056374b8f8b77ce4426f3dd540390a802332033f6e531c03e",
+    "implement/frozen-paths.json": "af0fc004871885367e107687168d58cc13d238ddbb5717e6f9a930ac4761be12",
+    "reused-proof.json": "53f20ca279283b074278fa4c14526391961f649622f43360e78fd58f9d3a15db",
+    "baseline-copy.json": "ade8a28e368effac604105db01fbe06c7a22f79db6b0c5bea1a02107e1e60200",
+    "render-host-session/source-checked-display.png": "7ab833c7d5393d42b113f128ffdbb8b1b4e5325b8ee2d22c5b940796eb5c854c",
+    "render-host-session/source-unavailable.png": "9de7ce52c83d160003e7a6a4681b4a81f958e4a875fc058b921a754a05561303",
+    "render-host-session/source-overview.png": "c675e43b24658581345b565aff7d530f588beb0145f89d20b9dda166dca851b3",
+    "render-host-session/source-narrow.png": "146962c6be5230a91ade352c6dcb84d131f2348145a2b11c1a53af7c27f1d6e7",
+    "render-host-session/source-unqualified.png": "874dda45a46bfd9607db55db2448e040afb53377417f860ec295f382c017a1de",
+    "render-host-session/summary.json": "e865d5ffc815cd4cb8f52bcde4af89ac0231413bc6f1d10770735e95383e354c",
+    "render-composed-session/source-checked-display.png": "7ab833c7d5393d42b113f128ffdbb8b1b4e5325b8ee2d22c5b940796eb5c854c",
+    "render-composed-session/source-unavailable.png": "9de7ce52c83d160003e7a6a4681b4a81f958e4a875fc058b921a754a05561303",
+    "render-composed-session/source-overview.png": "59883ba8f7b7afff89633b406f3220c2c8ff1b711fa9b9eb2346b2691dfc1e79",
+    "render-composed-session/source-narrow.png": "146962c6be5230a91ade352c6dcb84d131f2348145a2b11c1a53af7c27f1d6e7",
+    "render-composed-session/source-unqualified.png": "7d908f9da940d096a2fe292bac99b5fbcdf9dde74ec2e891c3c96fb5779bd46c",
+    "render-composed-session/summary.json": "08fab17ff3b0b5781a1fc9720261374a88e673706bcde2795f469481def4b30b"
+  },
+  "agents": [
+    {
+      "name": "/root/source_policy_paths",
+      "role": "project_researcher",
+      "requested_effort": "omitted/default low",
+      "fork_turns": "none",
+      "effective_model": "not observable",
+      "effective_effort": "not observable",
+      "scope": "source-only trace"
+    },
+    {
+      "name": "/root/source_policy_implement",
+      "role": "project_implementer",
+      "requested_effort": "medium",
+      "fork_turns": "none",
+      "effective_model": "not observable",
+      "effective_effort": "not observable",
+      "scope": "task-scoped UX skill, implementation, focused tests and actual render assessment"
+    }
+  ],
+  "allowance": {
+    "primary_seconds": 1800,
+    "initial_output_bytes": 268435456,
+    "output_continuation_bytes": 268435456,
+    "total_output_bytes": 536870912,
+    "measured_worker_seconds_approx": 13,
+    "worker_output_conservative_bytes": 25165824,
+    "coordinator_unmetered_runtime_conservative_reserve_seconds": 1200,
+    "all_test_public_browser_measured_seconds_conservative_charge": 200,
+    "cumulative_runtime_conservative_charge_seconds": 1413,
+    "cumulative_output_conservative_charge_bytes": 503316480,
+    "remaining_disk_gib": 24,
+    "images_built": 0
+  },
+  "failed_attempts": [
+    "Two baseline private-ancestor permission failures; corrected only assigned private fixture modes.",
+    "Initial source browser fixture lacked required Answer; corrected finite session stub.",
+    "Build test import harness omitted scripts search path; repaired harness, not product import behavior.",
+    "Two controlled-display CDP syntax failures; async IIFE correction with unchanged outcome assertions.",
+    "Actual root-copy failed on dangling disposable absolute links; fresh symlink-preserving copy passed.",
+    "Review found unmatched installed-byte/source-binding gap; explicit recipes and unknown/bytecode regression fixed it.",
+    "Review found omitted ordinary Cockpit metadata session; cookie-aware fixture now proves omission401/same-origin200 without elevation."
+  ],
+  "limitations": [
+    "Fixture automation and inspected rendering, not installed Cockpit/printer hardware qualification.",
+    "Controlled browser source offers prove rendering only; separate real anonymous archive verification covers exact code commit above.",
+    "Subsequent evidence/record-only commits do not change tested code hashes; real staged fixture binds the published code commit, not the final PR metadata revision.",
+    "Project source only; third-party/vendor-source and overall redistribution/readiness remain separate.",
+    "No unified supported-release entrypoint exists; final-root source gate must be explicitly invoked and receipt retained before source qualification.",
+    "Long narrow dialogs require vertical scrolling.",
+    "Native recovery goal remains paused; native creation refused unfinished predecessor; existing project records track this delivery.",
+    "Effective model/effort, native skill activation and hidden context completeness were not independently observed; no measured savings or independent-review claim.",
+    "Original tested/published branch retained. Strict task scope excludes coordinator-only metadata that entered its old base comparison; fresh current-main claim replays only owned commits. Original code source hashes and actual public receipt remain unchanged; no force push, source correction or budget reset."
+  ],
+  "deferred": [
+    "69 NPM declaration-only notice cases",
+    "Full third-party/vendor matching-source and complete-image qualification",
+    "Paused installed recovery-stack qualification"
+  ],
+  "review_base_commit": "99e286f6e56f813d2561b996d907620b6f3059ec",
+  "review_run": {
+    "actor": "root/coordinator",
+    "run": "64238396520349e8b45716f15af14a5f",
+    "session": "source-policy-20261014-review"
+  },
+  "preserved_original_run": "4621972ea5f9419f8ddd04ef9140fddd"
+}

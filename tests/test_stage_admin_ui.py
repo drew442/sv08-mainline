@@ -16,6 +16,24 @@ class StageUITests(unittest.TestCase):
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, target / path.name)
         (target / 'sv08_rauc_bootloader.py').chmod(0o755)
 
+    def test_project_notices_bind_actual_stage_and_stale_release(self):
+        from project_license import validate, DOC
+        root=self.work/'rootfs'
+        release=root/'usr/lib/sv08/release.json';release.write_text('{"release":"fixture"}')
+        before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
+        plan=stage(self.work,'host')
+        self.assertEqual({str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()},before)
+        report=stage(self.work,'host',True)
+        record=validate(root)
+        self.assertEqual(record['build_id'],report['project_source']['build_id'])
+        for base in (DOC,'usr/share/cockpit/sv08-host/'):
+            self.assertEqual((root/(base+'project-LICENSE.txt')).read_bytes(),(REPO/'LICENSE').read_bytes())
+            self.assertEqual((root/(base+'project-NOTICE.txt')).read_bytes(),(REPO/'LICENSING.md').read_bytes())
+            self.assertIn(base+'project-source.json',report['hashes'])
+        self.assertFalse(record['public_source']['qualified'])
+        release.write_text('{"release":"later"}')
+        with self.assertRaisesRegex(ValueError,'Stale'):validate(root)
+
     def test_shared_root_lock_refuses_stage_and_refresh(self):
         from stage_printer_ui import root_lock
         root=self.work/'rootfs'
