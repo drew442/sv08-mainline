@@ -25,6 +25,10 @@ try {
  await send('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url});await until(`document.querySelector('#connection')?.textContent==='Host connected'`);
  assert.equal(await evaluate(`sv08Session.elevated`),false);
+ // Cockpit package metadata needs the ordinary login cookie, never elevation.
+ assert.equal((await fetch(url+'/project-source.json')).status,401);
+ assert.equal(await evaluate(`fetch('project-source.json',{credentials:'omit'}).then(response=>response.status)`),401);
+ assert.equal(await evaluate(`fetch('project-source.json',{credentials:'same-origin'}).then(response=>response.status)`),200);
  assert.equal(await evaluate(`Boolean(document.querySelector('#printer'))`),Boolean(composed));
  const beforeState=fs.readFileSync(fixture+'/state/state.json');
  const beforeConfig=fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg');
@@ -67,5 +71,5 @@ try {
  assert.equal(await evaluate(`window.fixtureRequests.length`),beforeRequests);
  assert.deepEqual(fs.readFileSync(fixture+'/state/state.json'),beforeState);
  assert.deepEqual(fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg'),beforeConfig);
- fs.writeFileSync(output+'/summary.json',JSON.stringify({passed:true,composed,widths:[1280,390],controller_mutations:0,administrator_starts:0,unsaved_input_preserved:true,controlled_offer_rendering_only:true},null,2)+'\n');
+ fs.writeFileSync(output+'/summary.json',JSON.stringify({passed:true,composed,widths:[1280,390],controller_mutations:0,administrator_starts:0,metadata_requires_ordinary_session_cookie:true,unsaved_input_preserved:true,controlled_offer_rendering_only:true},null,2)+'\n');
 } finally {socket?.close();await browser.stop();}

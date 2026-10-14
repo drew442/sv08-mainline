@@ -6,6 +6,7 @@ WORK must be fresh beneath a private assigned ancestor. No hardware is accessed.
 """
 import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.cookies import SimpleCookie, CookieError
 import json
 import os
 from pathlib import Path
@@ -39,7 +40,7 @@ class SourcePolicyUITests(unittest.TestCase):
         self.assertIn("fetch('project-source.json'",script)
         for forbidden in ('cockpit.spawn','sv08View','superuser','sv08Session','location.href ='):
             self.assertNotIn(forbidden,script)
-        self.assertIn("credentials:'omit'",script)
+        self.assertIn("credentials:'same-origin'",script)
         self.assertIn('overall_release_qualified === false',script)
 
 
@@ -65,21 +66,29 @@ def serve(work, composed=False):
     requests=[]
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args):pass
-        def respond(self,status,raw,kind='application/json'):
+        def respond(self,status,raw,kind='application/json',login=False):
             if isinstance(raw,str):raw=raw.encode()
-            self.send_response(status);self.send_header('Content-Type',kind);self.send_header('Cache-Control','no-store');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
+            self.send_response(status)
+            if login:self.send_header('Set-Cookie','sv08-source-fixture=ordinary-session; Path=/; HttpOnly; SameSite=Strict')
+            self.send_header('Content-Type',kind);self.send_header('Cache-Control','no-store');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
         def do_GET(self):
             if self.headers.get('Host')!=f'127.0.0.1:{self.server.server_port}':return self.respond(403,b'{}')
             if self.path.endswith('/base1/cockpit.js'):
                 return self.respond(200,"""(()=>{const proxy=new EventTarget();Object.assign(proxy,{valid:true,Current:'none',Bridges:['sudo'],wait:cb=>cb(),Start:()=>{window.fixtureStarts++;},Answer:()=>{},Stop:()=>{}});window.fixtureStarts=0;window.fixtureRequests=[];window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>proxy}),spawn:(argv,options)=>({input:async data=>{const request=JSON.parse(data);window.fixtureRequests.push(request);const response=await fetch('/request',{method:'POST',body:JSON.stringify(request)});return response.text();}})};})();""",'text/javascript')
             if self.path=='/source-off':authority['source_off']=True;return self.respond(200,b'{}')
             name=self.path.split('?')[0].rsplit('/',1)[-1] or 'index.html'
+            if name=='project-source.json':
+                cookie=SimpleCookie()
+                try:cookie.load(self.headers.get('Cookie',''))
+                except CookieError:return self.respond(401,b'{}')
+                session=cookie.get('sv08-source-fixture')
+                if session is None or session.value!='ordinary-session':return self.respond(401,b'{}')
             if name=='project-source.json' and authority.get('source_off'):return self.respond(404,b'{}')
             if '/sv08-printer/' in self.path:base=work/'rootfs/usr/share/cockpit/sv08-printer'
             else:base=work/'rootfs/usr/share/cockpit/sv08-host'
             if name not in {p.name for p in base.iterdir() if p.is_file()}:return self.respond(404,b'{}')
             raw=(base/name).read_bytes()
-            self.respond(200,raw,{'html':'text/html','js':'text/javascript','css':'text/css','json':'application/json','txt':'text/plain'}.get(name.rsplit('.',1)[-1],'application/octet-stream'))
+            self.respond(200,raw,{'html':'text/html','js':'text/javascript','css':'text/css','json':'application/json','txt':'text/plain'}.get(name.rsplit('.',1)[-1],'application/octet-stream'),login=name=='index.html')
         def do_POST(self):
             try:
                 size=int(self.headers.get('Content-Length',0))

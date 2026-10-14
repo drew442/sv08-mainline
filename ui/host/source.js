@@ -11,7 +11,7 @@
         document.getElementById('source-downloads').replaceChildren();
         document.getElementById('source-public-help').textContent = 'Matching public source has not been qualified for this build.';
         try {
-            const response = await fetch('project-source.json', {cache:'no-store', credentials:'omit'});
+            const response = await fetch('project-source.json', {cache:'no-store', credentials:'same-origin'});
             if (!response.ok) throw Error('unavailable');
             const data = await response.json();
             if (current !== request) return;
