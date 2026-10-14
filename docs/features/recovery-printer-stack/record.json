@@ -96,7 +96,6 @@
         "runtime/sv08_recovery_media.py",
         "runtime/sv08_recovery_prepare.py",
         "runtime/sv08_printer_generate.py",
-        "runtime/sv08_printer_publish.py",
         "runtime/sv08_printer_store.py",
         "runtime/sv08_printer_stack.py",
         "runtime/sv08_printer_catalog.py",
@@ -136,7 +135,14 @@
         "docs/features/recovery-printer-stack/evidence.md",
         "docs/features/recovery-printer-stack/evidence.json",
         "docs/features/recovery-printer-stack/visuals/restored-stack.png",
-        "tests/recovery_restore_stack_browser.mjs"
+        "tests/recovery_restore_stack_browser.mjs",
+        "runtime/sv08_printer_publish.py",
+        "tests/test_printer_validation.py",
+        "tests/test_printer_publication.py",
+        "tests/printer_validator_probe.py",
+        "docs/features/recovery-printer-stack/review-plan.md",
+        "docs/features/recovery-printer-stack/review-evidence.md",
+        "docs/features/recovery-printer-stack/review-evidence.json"
       ],
       "repeats": 0,
       "resumption": null,
