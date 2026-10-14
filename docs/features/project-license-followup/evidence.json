@@ -262,10 +262,10 @@
     "total_output_bytes": 536870912,
     "measured_worker_seconds_approx": 13,
     "worker_output_conservative_bytes": 25165824,
-    "coordinator_unmetered_runtime_conservative_reserve_seconds": 900,
+    "coordinator_unmetered_runtime_conservative_reserve_seconds": 1200,
     "all_test_public_browser_measured_seconds_conservative_charge": 200,
-    "cumulative_runtime_conservative_charge_seconds": 1113,
-    "cumulative_output_conservative_charge_bytes": 436207616,
+    "cumulative_runtime_conservative_charge_seconds": 1413,
+    "cumulative_output_conservative_charge_bytes": 503316480,
     "remaining_disk_gib": 24,
     "images_built": 0
   },
@@ -286,11 +286,19 @@
     "No unified supported-release entrypoint exists; final-root source gate must be explicitly invoked and receipt retained before source qualification.",
     "Long narrow dialogs require vertical scrolling.",
     "Native recovery goal remains paused; native creation refused unfinished predecessor; existing project records track this delivery.",
-    "Effective model/effort, native skill activation and hidden context completeness were not independently observed; no measured savings or independent-review claim."
+    "Effective model/effort, native skill activation and hidden context completeness were not independently observed; no measured savings or independent-review claim.",
+    "Original tested/published branch retained. Strict task scope excludes coordinator-only metadata that entered its old base comparison; fresh current-main claim replays only owned commits. Original code source hashes and actual public receipt remain unchanged; no force push, source correction or budget reset."
   ],
   "deferred": [
     "69 NPM declaration-only notice cases",
     "Full third-party/vendor matching-source and complete-image qualification",
     "Paused installed recovery-stack qualification"
-  ]
+  ],
+  "review_base_commit": "99e286f6e56f813d2561b996d907620b6f3059ec",
+  "review_run": {
+    "actor": "root/coordinator",
+    "run": "64238396520349e8b45716f15af14a5f",
+    "session": "source-policy-20261014-review"
+  },
+  "preserved_original_run": "4621972ea5f9419f8ddd04ef9140fddd"
 }
