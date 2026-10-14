@@ -285,7 +285,7 @@
       "resumption": "Owner-authorized pre-merge admission licensing repair; preserve original commit/evidence and cumulative allowance, renew exact ownership then reclaim fresh current-base worktree and reuse unchanged proof.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable builds and inventory; no production operation or legal compliance claim.",
-      "status": "validated",
+      "status": "done",
       "title": "Close reproducibility and license inventory gaps",
       "validation": {
         "actor": "root/coordinator",
