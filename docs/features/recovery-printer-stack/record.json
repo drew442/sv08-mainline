@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "PR17 review fixes implemented and tested; isolated production validator under TCG was SIGKILLed before cleanup at 7.987973 seconds child CPU with observed hard CPU limit 8 seconds. No allocated native Linux ARM64/KVM host identified; full restore/reboot/rollback qualification remains unproven. Sanitized evidence: docs/features/recovery-printer-stack/review-evidence.md.",
       "checks": [
         "archive",
         "configuration",
@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "cac94dc187474baca86f95eb36e4a62d",
+        "session": "recovery-review-20261014"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -147,7 +151,7 @@
       "resumption": "Preserved merged candidated0ca421; current-main shared source provenance ownership added before edits. Same review task/worker allowance and cumulative attempts, exact socket recipe compatibility; unchanged six acceptance checks.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "pending",
+      "status": "blocked",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
