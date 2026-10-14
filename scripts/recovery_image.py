@@ -189,7 +189,7 @@ def installed_provider_inputs(root):
         'configs/host-os/recovery-systemd-logind.conf':
             root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
     }
-    for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py',
+    for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py', 'sv08_recovery_links.py',
                  'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
         paths['runtime/'+name] = root/'usr/lib/sv08'/name
     if not all(path.is_file() for path in paths.values()):
