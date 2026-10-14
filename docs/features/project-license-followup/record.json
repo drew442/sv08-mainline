@@ -232,7 +232,7 @@
       "resumption": "Reclaim same completed delivery in fresh current-main worktree, replay only owned implementation/evidence commits, preserve original run and public source revisions, all failed evidence and cumulative1800sec/512MiB allowance. No new implementation worker or test reset.",
       "review_policy": "self",
       "review_reason": "Reversible scoped licensing source/disposable work under owner-selected grant; no merge/deployment, printer access or blanket compliance claim.",
-      "status": "validated",
+      "status": "done",
       "title": "Stage notices and exact-build source access; enforce source qualification",
       "validation": {
         "actor": "root/coordinator",
