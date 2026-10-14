@@ -3,19 +3,19 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "1c0e52a2470eae0c1129418d18ce47f6af7632d4913d9441c41925857ee55fcd",
-    "rationale": "Owner explicitly selected complete software-stack recovery qualification with agents; source/disposable repairs and review PR, no printer operations.",
+    "proposal_sha256": "fee47be71e770d131154665fba433e28b04cbbafc79db0de5d0d8c0f8ead8df8",
+    "rationale": "Owner explicitly asked implementing PR17 review fixes; renewed bounded validator/host/backend ownership preserves all six qualification checks, production limits, historical evidence and cumulative allowances.",
     "reference": "docs/features/recovery-printer-stack/owner-request.md",
-    "reference_sha256": "afc634438afcef3bfbdbe5ec2306da79befd3d083b5112272a3922c47763aa81",
+    "reference_sha256": "34a82c41f7c810a9c0b51e13ee85850ace5672c37861fc673ba93ad445c3cb27",
     "requirements_sha256": {
       "docs/decisions/0010-host-administration-and-recovery-ui.md": "585886fdb5456af033e8abab5458594cdeab3a3840bf52d7b88df12285ae5884",
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/features/persistent-printer-stack/proposal.md": "96ca8c05b073d423d5fb11dbb7b070117055deca02d826c2f4103c8e33700a92",
-      "docs/features/recovery-printer-stack/owner-request.md": "afc634438afcef3bfbdbe5ec2306da79befd3d083b5112272a3922c47763aa81"
+      "docs/features/recovery-printer-stack/owner-request.md": "34a82c41f7c810a9c0b51e13ee85850ace5672c37861fc673ba93ad445c3cb27"
     },
-    "scope_sha256": "42e98dbecb561b1845564d7aefcac20d54d86ba07577f454637c0067c8c2dd3f",
-    "session": "recovery-printer-stack-20261013",
-    "source_commit": "afdb529ef6ab44769636bc5e36edc1db4ebbd248"
+    "scope_sha256": "ba0cbf5d01547a4e7dea163d74d3a08d2dd4218421a3e4572efa5a6bdefc0f43",
+    "session": "recovery-review-20261014",
+    "source_commit": "3cf1f0e16b6c7b2244df4d791daa7b075c195962"
   },
   "checks": [
     {
@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Disposable full-stack preparation cannot reliably pass unchanged pinned Klipper production validator (8 CPU seconds / 10-second readiness). Aligned clock SIGKILL and previously successful unaligned clock readiness-timeout are preserved. Complete restore/auth/reboot/rollback qualification remains unproven; source fixes and draft PR preserved. Next useful action: actual native ARM64 execution within approved disposable authority, or a justified QEMU diagnosis; do not loosen gates.",
+      "blocker": null,
       "checks": [
         "archive",
         "configuration",
@@ -81,11 +81,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "b37ea60eb3c546569d3e88e2a2ecbec6",
-        "session": "recovery-printer-stack-20261013"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -145,10 +141,10 @@
         "docs/features/recovery-printer-stack/review-evidence.json"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Owner review5525165502 provides two concrete fixes and a bounded diagnostic/native-backend approach. Preserve old run/candidate/evidence and cumulative10800sec/48GiB, add recorded3600sec/8GiB review continuation, renew current-base ownership without relaxing any qualification checks.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
