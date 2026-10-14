@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import stat
+from project_license import prepare as prepare_license
 from definition_repository_template import archive as repository_archive, FILENAME as REPOSITORY_ARCHIVE, schema_archive, SCHEMA_FILENAME
 
 REPO=Path(__file__).resolve().parents[1]
@@ -156,12 +157,12 @@ def integrate_style(raw):
     return raw+STYLE_EXTENSION
 
 
-def stage(root, expected, execute=False, fresh=False, validation_dictionary=None):
+def stage(root, expected, execute=False, fresh=False, validation_dictionary=None, public_source=None):
     with root_lock(root):
-        return _stage(root, expected, execute, fresh,validation_dictionary)
+        return _stage(root, expected, execute, fresh,validation_dictionary, public_source)
 
 
-def _stage(root, expected, execute=False, fresh=False,validation_dictionary=None):
+def _stage(root, expected, execute=False, fresh=False,validation_dictionary=None, public_source=None):
     root=Path(root).absolute()
     if not root.is_dir() or root.is_symlink():raise ValueError('Expected disposable root')
     check_snapshot(root,expected)
@@ -202,6 +203,12 @@ def _stage(root, expected, execute=False, fresh=False,validation_dictionary=None
         else:
             if name!='style.css' and sha(original) not in KNOWN_HOST[name]: raise ValueError('Unknown host '+name+' preimage')
             files[host+name]=transform(original)
+    notices, provenance = prepare_license(root, files, public_source=public_source)
+    files.update(notices)
+    for name in files:
+        for parent in Path(name).parents:
+            if str(parent) != '.' and safe(root,str(parent)).exists() and str(parent) not in expected:
+                raise ValueError('Missing reviewed payload-parent directory preimage: '+str(parent))
     owner=safe(root,'usr/lib/sv08/sv08_state.py').stat()
     originals={};after={};directories={}
     for name,raw in files.items():
@@ -209,8 +216,8 @@ def _stage(root, expected, execute=False, fresh=False,validation_dictionary=None
         if path.exists():
             if name not in expected:raise ValueError('Missing reviewed payload preimage: '+name)
             # Backend/catalog are unchanged closure, never refreshed in an overlay.
-            if not name.startswith('usr/share/cockpit/') and path.read_bytes()!=raw:raise ValueError('Backend/catalog mismatch')
-            if name.startswith('usr/share/cockpit/sv08-printer/') and path.read_bytes()!=raw and sha(path.read_bytes())!=KNOWN_PRINTER.get(path.name):raise ValueError('Unknown printer asset preimage')
+            if not name.startswith(('usr/share/cockpit/','usr/share/doc/sv08-mainline/')) and path.read_bytes()!=raw:raise ValueError('Backend/catalog mismatch')
+            if name.startswith('usr/share/cockpit/sv08-printer/') and path.name not in ('project-source.json','project-LICENSE.txt','project-NOTICE.txt') and path.read_bytes()!=raw and sha(path.read_bytes())!=KNOWN_PRINTER.get(path.name):raise ValueError('Unknown printer asset preimage')
             originals[name]=path.read_bytes().hex()
             after[name]=dict(expected[name],sha256=sha(raw))
         else:
@@ -218,7 +225,7 @@ def _stage(root, expected, execute=False, fresh=False,validation_dictionary=None
         parent=Path(name).parent
         while str(parent)!='.' and not safe(root,str(parent)).exists():
             directories[str(parent)]=dict(kind='directory',mode=0o755,uid=owner.st_uid,gid=owner.st_gid);parent=parent.parent
-    report=dict(format_version=3,activated=False,before=expected,after=after,originals=originals,new_directories=directories,dependency_closure=closure,
+    report=dict(format_version=3,activated=False,project_source=provenance,before=expected,after=after,originals=originals,new_directories=directories,dependency_closure=closure,
                 payload_bytes=sum(map(len,files.values())),feature_storage_limit=4*1024*1024,
                 peak_blocks_4096=sum((len(raw)+4095)//4096 for raw in files.values())+sum((len(bytes.fromhex(raw))+4095)//4096 for raw in originals.values()),
                 root_delta_bytes=sum(len(raw)-(len(bytes.fromhex(originals[name])) if name in originals else 0) for name,raw in files.items()),
@@ -318,5 +325,6 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root',type=Path,required=True);parser.add_argument('--preimages',type=Path,required=True)
     parser.add_argument('--validation-dictionary',type=Path)
+    parser.add_argument('--public-source',type=Path)
     parser.add_argument('--execute',action='store_true');parser.add_argument('--fresh',action='store_true');args=parser.parse_args()
-    print(json.dumps(stage(args.root,json.loads(args.preimages.read_text()),args.execute,args.fresh,args.validation_dictionary),indent=2))
+    print(json.dumps(stage(args.root,json.loads(args.preimages.read_text()),args.execute,args.fresh,args.validation_dictionary,args.public_source),indent=2))

@@ -21,6 +21,24 @@ class StageTests(unittest.TestCase):
         for name,raw in [('etc/cockpit/cockpit.conf','[WebService]\nShell=/sv08-host/index.html\n'),('usr/lib/sv08/admin-context.json','{"format_version":1,"context":"host"}')]:
             path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text(raw)
         return stage.inventory(root,[str(p.relative_to(root)) for p in root.rglob('*')])
+    def test_notices_composition_accounting_and_restore(self):
+        from project_license import validate, DOC
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);expected=self.fixture(root)
+            before=stage.inventory(root,[str(p.relative_to(root)) for p in root.rglob('*')])
+            plan=stage.stage(root,expected)
+            self.assertEqual(stage.inventory(root,before),before)
+            report=stage.stage(root,expected,True)
+            record=validate(root)
+            self.assertEqual(record['build_id'],report['project_source']['build_id'])
+            for base in (DOC,'usr/share/cockpit/sv08-host/','usr/share/cockpit/sv08-printer/'):
+                self.assertEqual((root/(base+'project-NOTICE.txt')).read_bytes(),(ROOT/'LICENSING.md').read_bytes())
+                self.assertIn(base+'project-source.json',report['after'])
+            self.assertLess(report['payload_bytes'],report['feature_storage_limit'])
+            stage.restore(root,report)
+            self.assertEqual(stage.inventory(root,expected),expected)
+            self.assertFalse((root/DOC).exists())
+
     def test_fresh_restore_guards(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);expected=self.fixture(root)

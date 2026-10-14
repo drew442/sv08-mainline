@@ -10,12 +10,26 @@ import tempfile
 import unittest
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO/'scripts'))
 spec = importlib.util.spec_from_file_location('image_builder', REPO / 'scripts/build_host_image.py')
 builder = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(builder)
 
 
 class ImageBuilderTests(unittest.TestCase):
+    def test_builder_stages_exact_notices_and_unqualified_identity(self):
+        from project_license import validate, DOC
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            result=builder.stage_project_source(root)
+            record=validate(root)
+            self.assertEqual((root/(DOC+'project-LICENSE.txt')).read_bytes(),(REPO/'LICENSE').read_bytes())
+            self.assertEqual((root/(DOC+'project-NOTICE.txt')).read_bytes(),(REPO/'LICENSING.md').read_bytes())
+            self.assertEqual(result['project_source_build_id'],record['build_id'])
+            self.assertFalse(result['project_source_qualified'])
+            self.assertFalse(result['overall_release_qualified'])
+            self.assertFalse(record['public_source']['qualified'])
+
     def test_package_baseline_includes_wireless_and_locale_runtime(self):
         self.assertIn('wpasupplicant', builder.PACKAGES)
         self.assertIn('locales', builder.PACKAGES)
