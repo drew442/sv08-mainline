@@ -17,17 +17,17 @@
   },
   "checks": [
     {
-      "description": "Actual affected package/staged output carries selected license and scope, unchanged behavior/dependencies.",
+      "description": "Exact staged license/grant/source provenance, nonmutating refusal and shared composition/restore contracts.",
       "environment": "offline",
       "id": "notices"
     },
     {
-      "description": "Actual current inventory binds new package/notices and regenerates identically without historical rewrites.",
+      "description": "Reuse integrated notice/inventory proof; bind actual staged files to exact current release/source, reject stale/missing provenance.",
       "environment": "offline",
       "id": "inventory"
     },
     {
-      "description": "Check exact-source access for affected releases and publish actual source-bound results/review PR.",
+      "description": "Actual rendered accessible exact-source/license journey and fail-closed anonymous matching public-source qualification; published source-bound PR.",
       "environment": "offline",
       "id": "source-access"
     }
@@ -47,7 +47,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Await owner integration of open PR18 and PR19. PR18 validated ownership reserves package/inventory files needed by this follow-up under docs/development/feature-workflow.md. Prepared dependent worktree/branch only; no production follow-up edits or overlapping claim. After integration, complete prior task as applicable, refresh base and claim this authorized scope. No new license decision needed.",
+      "blocker": null,
       "checks": [
         "notices",
         "inventory",
@@ -63,33 +63,53 @@
       "id": "implement",
       "implementation": null,
       "input_paths": [
+        "LICENSE",
+        "LICENSING.md",
         "scripts/license_inventory.py",
         "configs/apps/klipper.json",
-        "upstream-lock.json",
-        "scripts/build_host_image.py"
-      ],
-      "owned_paths": [
-        "scripts/package_update_admission.py",
         "configs/apps/update-admission.json",
         "configs/host/source-license-inventory.json",
+        "upstream-lock.json",
+        "scripts/integrate_host_os.py",
+        "scripts/prepare_physical_update_qualification.py",
+        "scripts/prepare_host_os.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_view.py",
+        "scripts/check_ui.py",
+        "tests/test_printer_browser_fixture.py",
+        "tests/printer_browser.mjs",
+        "ui/printer/panel.html",
+        "ui/host/navigation.js"
+      ],
+      "owned_paths": [
         "scripts/stage_admin_ui.py",
         "scripts/stage_printer_ui.py",
         "scripts/project_license.py",
+        "scripts/qualify_project_source.py",
+        "scripts/build_host_image.py",
         "tests/test_project_license.py",
+        "tests/test_source_policy_ui.py",
+        "tests/source_policy_browser.mjs",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "tests/test_build_host_image.py",
         "ui/host/index.html",
+        "ui/host/source.js",
+        "ui/host/style.css",
         "ui/printer/index.html",
+        "docs/development/public-source-releases.md",
         "docs/features/project-license-followup/evidence.md",
         "docs/features/project-license-followup/evidence.json"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Owner explicitly selected public-source release enforcement goal; PR18 is integrated/task done, PR19 closed as superseded and exact grant already on main. Prior package/inventory gaps are resolved and proof reusable; renew bounded remaining scope before claim.",
       "review_policy": "self",
       "review_reason": "Reversible scoped licensing source/disposable work under owner-selected grant; no merge/deployment, printer access or blanket compliance claim.",
-      "status": "blocked",
-      "title": "Implement scoped PR19 license notices/inventory/source-access checks",
+      "status": "pending",
+      "title": "Stage notices and exact-build source access; enforce source qualification",
       "validation": null,
       "verification": null
     }
   ],
-  "title": "Resolve PR19 licensing delivery gaps"
+  "title": "Enforce public-source release policy"
 }
