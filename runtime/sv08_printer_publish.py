@@ -207,12 +207,14 @@ def put(path,raw,mode,owner=None):
         if os.path.exists(name):os.unlink(name)
 
 
-def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d8/bin/python',klippy='/opt/sv08-mainline/klipper/klippy/klippy.py',dictionary='/usr/share/sv08/printer/validation/klipper.dict'):
+def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d8/bin/python',klippy='/opt/sv08-mainline/klipper/klippy/klippy.py',dictionary='/usr/share/sv08/printer/validation/klipper.dict',*,private_diagnostics=None,isolated_children=False):
     """Validate the complete explicit include closure using simulated MCU output.
 
     Never submit G-code, connect a serial device or evaluate a publisher installer.
     The fixed pinned upstream process must reach ready through its private API.
     Unsupported startup/host-hardware extras refuse publication before invocation.
+    private_diagnostics is an opt-in private callback, never a public API field.
+    isolated_children asserts this caller has no unrelated reaped children.
     """
     import socket
     import subprocess
@@ -244,31 +246,131 @@ def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d
         _,names=inventory(work)
         for name in sorted(names):
             if name.startswith('mcu '):args+=['-d',name[4:]+'='+str(dictionary)]
+        # Private diagnostic consumers must own an isolated invocation before
+        # interpreting RUSAGE_CHILDREN deltas. Popen remains the sole reaper.
+        import resource
+        usage_before=resource.getrusage(resource.RUSAGE_CHILDREN) if private_diagnostics and isolated_children else None
+        started=time.monotonic();deadline=started+10
+        diagnostic=dict(pid=None,effective_limits=None,vm_kib={},socket_observed=False,last_state=None,
+                        returncode_before_cleanup=None,cleanup_signals=[],cgroup=None,argv=args,last_operation=None,progress_samples=[])
+        def remaining():
+            budget=deadline-time.monotonic()
+            if budget<=0:raise ValueError('Complete-output validation did not reach ready within budget')
+            return budget
+        def sample(final=False):
+            if private_diagnostics is None:return
+            proc=Path('/proc')/str(process.pid)
+            progress=diagnostic['progress_samples'];elapsed=time.monotonic()-started
+            # Reserve one final observation. Regular observations are spaced
+            # across the existing deadline, with at most 32 records total.
+            if final or (len(progress)<31 and (not progress or elapsed-progress[-1]['guest_elapsed']>=10/31)):
+                row=dict(guest_elapsed=elapsed,child_state=None,kernel_accounted_cpu_ticks=None,
+                         clock_ticks_per_second=os.sysconf('SC_CLK_TCK'),wchan=None,io=None)
+                try:
+                    # comm may contain spaces or ')'; fields after its final
+                    # delimiter start at state (field 3), utime/stime are 14/15.
+                    fields=(proc/'stat').read_text()[:4096].rpartition(')')[2].split()
+                    row['child_state']=fields[0]
+                    row['kernel_accounted_cpu_ticks']=dict(user=int(fields[11]),system=int(fields[12]))
+                except (OSError,ValueError,IndexError):pass
+                try:row['wchan']=(proc/'wchan').read_text()[:256].strip() or None
+                except OSError:pass
+                try:
+                    counters={}
+                    for line in (proc/'io').read_text()[:4096].splitlines():
+                        key,_,value=line.partition(':')
+                        if key in ('rchar','wchar','syscr','syscw','read_bytes','write_bytes','cancelled_write_bytes'):
+                            counters[key]=int(value)
+                    row['io']=counters or None
+                except (OSError,ValueError):pass
+                if len(progress)<32:progress.append(row)
+                else:progress[-1]=row
+            # /proc can disappear at any instant. Missing observations are not
+            # evidence of zero usage or of a particular termination cause.
+            try:
+                limits=(proc/'limits').read_text()[:8192]
+                expected_limits={'Max cpu time':['8','8'],'Max address space':['268435456','268435456'],'Max file size':['4194304','4194304']}
+                if all(any(line.startswith(name) and line.split()[3:5]==values for line in limits.splitlines()) for name,values in expected_limits.items()):
+                    diagnostic['effective_limits']=limits
+                status=(proc/'status').read_text()[:16384]
+                for line in status.splitlines():
+                    key,_,value=line.partition(':')
+                    if key in ('VmSize','VmPeak','VmRSS','VmHWM'):
+                        diagnostic['vm_kib'][key]=max(diagnostic['vm_kib'].get(key,0),int(value.split()[0]))
+                membership=(proc/'cgroup').read_text()[:4096]
+                unified=next((line[3:] for line in membership.splitlines() if line.startswith('0::')),None)
+                if unified is not None and '..' not in Path(unified).parts:
+                    base=Path('/sys/fs/cgroup')/unified.lstrip('/')
+                    events={}
+                    for leaf in ('memory.events','memory.events.local'):
+                        try:events[leaf]={key:int(value) for key,value in (line.split() for line in (base/leaf).read_text()[:4096].splitlines())}
+                        except (OSError,ValueError):pass
+                    if diagnostic['cgroup'] is None:
+                        diagnostic['cgroup']=dict(path=unified,baseline=events,last=events)
+                    elif diagnostic['cgroup']['path']==unified:diagnostic['cgroup']['last']=events
+            except (OSError,ValueError):pass
+            diagnostic['socket_observed'] |= (work/'api').exists()
         with (work/'stdout.log').open('wb') as log:
             process=subprocess.Popen(args,stdin=subprocess.DEVNULL,stdout=log,stderr=log,start_new_session=True,env={**os.environ,'MALLOC_ARENA_MAX':'1','PYTHONDONTWRITEBYTECODE':'1'})
+            diagnostic['pid']=process.pid
             try:
-                deadline=time.monotonic()+10
-                while time.monotonic()<deadline:
+                while True:
+                    remaining();sample()
                     if process.poll() is not None:
-                        details=(work/'stdout.log').read_text(errors='replace').splitlines()
-                        summary=details[-1] if details else 'no diagnostic output'
-                        raise ValueError('Complete-output validation process stopped before ready ('+str(process.returncode)+'): '+summary[:300])
+                        raise ValueError('Complete-output validation process stopped before ready ('+str(process.returncode)+')')
                     if (work/'api').exists():
                         try:
                             with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as api:
-                                api.settimeout(1);api.connect(str(work/'api'));api.sendall(b'{"id":1,"method":"info","params":{}}\x03')
+                                diagnostic['last_operation']='connect'
+                                api.settimeout(min(1,remaining()));api.connect(str(work/'api'))
+                                diagnostic['last_operation']='send'
+                                api.settimeout(min(1,remaining()));api.sendall(b'{"id":1,"method":"info","params":{}}\x03')
                                 reply=b''
                                 while b'\x03' not in reply and len(reply)<32768:
-                                    chunk=api.recv(4096)
+                                    diagnostic['last_operation']='recv'
+                                    api.settimeout(min(1,remaining()));chunk=api.recv(min(4096,32768-len(reply)))
                                     if not chunk:raise ValueError('Validation API ended before response')
                                     reply+=chunk
                             message=json.loads(reply.split(b'\x03',1)[0]);state=message.get('result',{}).get('state')
-                            if state=='ready':return dict(validated=True,klipper_revision='f0892d82b0f1c1228454f09eb508eddde2250f4b',dictionary_sha256=expected,physical_hardware=False)
-                            if state in ('error','shutdown'):raise ValueError('Complete-output validation failed: '+str(message.get('result',{}).get('state_message','inspect configuration before publication'))[:1024])
+                            diagnostic['last_state']=state
+                            if state=='ready':
+                                remaining()
+                                return dict(validated=True,klipper_revision='f0892d82b0f1c1228454f09eb508eddde2250f4b',dictionary_sha256=expected,physical_hardware=False)
+                            if state in ('error','shutdown'):raise ValueError('Complete-output validation failed; inspect configuration before publication')
                         except (OSError,json.JSONDecodeError):pass
-                    time.sleep(.05)
-                raise ValueError('Complete-output validation did not reach ready within budget')
+                    time.sleep(min(.05,remaining()))
             finally:
-                if process.poll() is None:process.terminate()
+                sample(final=True)
+                diagnostic['guest_elapsed_before_cleanup']=time.monotonic()-started
+                diagnostic['returncode_before_cleanup']=process.poll()
+                if diagnostic['returncode_before_cleanup'] is None:
+                    try:process.terminate();diagnostic['cleanup_signals'].append('TERM')
+                    except ProcessLookupError:pass
                 try:process.wait(timeout=2)
-                except subprocess.TimeoutExpired:process.kill();process.wait()
+                except subprocess.TimeoutExpired:
+                    try:process.kill();diagnostic['cleanup_signals'].append('KILL')
+                    except ProcessLookupError:pass
+                    process.wait()
+                if private_diagnostics is not None:
+                    diagnostic['returncode_after_cleanup']=process.returncode
+                    if usage_before is not None:
+                        usage=resource.getrusage(resource.RUSAGE_CHILDREN)
+                        diagnostic['isolated_child_cpu_seconds']=dict(user=usage.ru_utime-usage_before.ru_utime,system=usage.ru_stime-usage_before.ru_stime)
+                    cgroup=diagnostic['cgroup']
+                    if cgroup:
+                        # Re-read the same actual child membership after reaping.
+                        for leaf,baseline in cgroup['baseline'].items():
+                            try:cgroup['last'][leaf]={key:int(value) for key,value in (line.split() for line in (Path('/sys/fs/cgroup')/cgroup['path'].lstrip('/')/leaf).read_text()[:4096].splitlines())}
+                            except (OSError,ValueError):pass
+                        cgroup['delta']={leaf:{key:cgroup['last'].get(leaf,{}).get(key,value)-value for key,value in values.items()} for leaf,values in cgroup['baseline'].items()}
+                    diagnostic['private_log_excerpts']={}
+                    for leaf in ('stdout.log','klippy.log'):
+                        try:
+                            with (work/leaf).open('rb') as stream:
+                                stream.seek(0,2);size=stream.tell();stream.seek(max(0,size-8192))
+                                diagnostic['private_log_excerpts'][leaf]=stream.read(8192).decode(errors='replace')
+                        except OSError:pass
+                    # A broken private sink cannot mask a validation failure or
+                    # affect acceptance/cleanup. The probe checks capture itself.
+                    try:private_diagnostics(diagnostic)
+                    except Exception:pass

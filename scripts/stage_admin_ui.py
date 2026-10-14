@@ -15,6 +15,8 @@ from stage_printer_ui import compose_host, NAV, root_lock
 from project_license import prepare as prepare_license, publish as publish_license
 
 
+IDENTITY_SOCKET = b'[Unit]\nDefaultDependencies=no\nRequires=sysinit.target sv08-identity.service\nAfter=sysinit.target sv08-identity.service\nBefore=shutdown.target\nConflicts=shutdown.target\n'
+
 def package_service_policy(root):
     """Bind the built RAUC package to this image's service identity policy."""
     policy = json.loads((REPO/'configs/host-os/rauc-service-policy.json').read_text())
@@ -159,7 +161,7 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
                 else (REPO/'configs/host-os'/source).read_bytes())
         for destination in branding:
             prospective[destination.relative_to(root).as_posix()] = (REPO/'configs/host-os/cockpit-branding'/destination.name).read_bytes()
-        prospective['etc/systemd/system/cockpit.socket.d/sv08-identity.conf'] = b'[Unit]\nRequires=sv08-identity.service\nAfter=sv08-identity.service\n'
+        prospective['etc/systemd/system/cockpit.socket.d/sv08-identity.conf'] = IDENTITY_SOCKET
     else:
         prospective['usr/share/xsessions/sv08-recovery.desktop'] = (REPO/'configs/host-os/recovery-session.desktop').read_bytes()
         prospective['usr/lib/systemd/system/sv08-recovery-display.service'] = (REPO/'configs/host-os/sv08-recovery-display.service').read_bytes()
@@ -222,7 +224,7 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
             # Identity is a normal oneshot after basic.target. A socket's
             # default Before=sockets.target would create a startup cycle.
             # Preserve initialization, identity admission and shutdown explicitly.
-            (directory/'sv08-identity.conf').write_text('[Unit]\nDefaultDependencies=no\nRequires=sysinit.target sv08-identity.service\nAfter=sysinit.target sv08-identity.service\nBefore=shutdown.target\nConflicts=shutdown.target\n')
+            (directory/'sv08-identity.conf').write_bytes(IDENTITY_SOCKET)
         shutil.copyfile(REPO / 'configs/host-os/software-catalog.json', root / 'usr/lib/sv08/software-catalog.json')
         (root / 'usr/lib/sv08/admin-context.json').write_text(json.dumps(dict(format_version=1, context='host'))+'\n')
     else:

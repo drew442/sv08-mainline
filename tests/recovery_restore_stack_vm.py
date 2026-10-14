@@ -316,7 +316,44 @@ def build_normal(fixture,rootfs,candidate,work):
     return receipt
 
 
-def command(candidate,fixture,qmp,normal=None,expected='restored',bootstrap=False,functional_clock=False):
+def verify_backend(client, execution_backend, argv):
+    """Observe active QMP state, never infer activation from generated argv."""
+    require(execution_backend in ('tcg','arm64-kvm'),'Known execution backend required')
+    version=client.call('query-version')
+    try:
+        observed=client.call('query-accelerators'); query='query-accelerators'
+        require(isinstance(observed,dict) and observed.get('enabled')==('kvm' if execution_backend=='arm64-kvm' else 'tcg'),
+                'Active accelerator differs from requested backend')
+    except RuntimeError as error:
+        payload=error.args[0] if error.args else None
+        require(isinstance(payload,dict) and payload.get('error',{}).get('class')=='CommandNotFound',
+                'Accelerator query failed; fallback refused')
+        observed=client.call('query-kvm');query='query-kvm'
+        require(isinstance(observed,dict) and observed.get('enabled') is (execution_backend=='arm64-kvm') and
+                (execution_backend!='arm64-kvm' or observed.get('present') is True),'Active accelerator differs from requested backend')
+    return dict(execution_backend=execution_backend,active_backend_verified=True,qmp_command=query,
+                qmp_observation=observed,qemu_version=version,argv=argv,physical_hardware=False,printing_ready=False)
+
+
+def kvm_preflight():
+    """Initialize the requested native machine with no media or networking."""
+    import platform
+    require(platform.system()=='Linux' and platform.machine().lower() in ('aarch64','arm64'),
+            'arm64-kvm requires a native Linux ARM64 host')
+    argv=['qemu-system-aarch64','-machine','virt,gic-version=host','-accel','kvm','-cpu','host',
+          '-smp','2','-m','1024','-S','-nodefaults','-nic','none','-display','none','-qmp','stdio']
+    request=''.join(json.dumps(dict(execute=cmd))+'\n' for cmd in ('qmp_capabilities','query-status','quit'))
+    result=subprocess.run(argv,input=request,text=True,capture_output=True,timeout=15)
+    require(result.returncode==0,'Native KVM initialization failed; no TCG fallback')
+    responses=[json.loads(line) for line in result.stdout.splitlines() if line.startswith('{')]
+    require(not any('error' in row for row in responses) and any(row.get('return',{}).get('status') in ('prelaunch','paused') for row in responses if isinstance(row.get('return'),dict)),
+            'Native KVM initialization was not observed')
+    return dict(initialization_verified=True,argv=argv)
+
+
+def command(candidate,fixture,qmp,normal=None,expected='restored',bootstrap=False,functional_clock=False,execution_backend='tcg'):
+    require(execution_backend in ('tcg','arm64-kvm'),'Known execution backend required')
+    require(execution_backend!='arm64-kvm' or not functional_clock,'KVM cannot use functional clock/icount')
     fixture=private_fixture(fixture); candidate=Path(candidate).absolute(); qmp=Path(qmp).absolute()
     require(expected in ('previous','restored') and not qmp.exists(),'Valid role and fresh owned QMP endpoint required')
     require(not bootstrap or normal is not None,'Bootstrap requires the complete installed normal image')
@@ -335,7 +372,8 @@ def command(candidate,fixture,qmp,normal=None,expected='restored',bootstrap=Fals
     # Opt-in instruction-count time supports bounded software semantics under
     # emulation. It is not H616 timing/performance/CPU-budget qualification.
     accelerator='tcg,thread=single' if functional_clock else 'tcg,thread=multi'
-    result=['qemu-system-aarch64','-machine','virt','-cpu','cortex-a53','-accel',accelerator,'-smp','2','-m','1024','-kernel',str(kernel),'-initrd',str(initrd),'-append',append,
+    if execution_backend=='arm64-kvm':accelerator='kvm'
+    result=['qemu-system-aarch64','-machine','virt,gic-version=host' if execution_backend=='arm64-kvm' else 'virt','-cpu','host' if execution_backend=='arm64-kvm' else 'cortex-a53','-accel',accelerator,'-smp','2','-m','1024','-kernel',str(kernel),'-initrd',str(initrd),'-append',append,
         '-drive',f'if=none,id=recovery,format=raw,file={root},readonly=on','-device','virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY',
         '-device','virtio-scsi-pci,id=scsi0']
     if functional_clock: result+=['-icount','shift=0,align=off,sleep=off']
@@ -348,6 +386,7 @@ def command(candidate,fixture,qmp,normal=None,expected='restored',bootstrap=Fals
                  '-device','virtio-net-pci,netdev=net0,mac='+MAC]
     else: result+=['-nic','none']
     result+=['-display','none','-serial','mon:stdio','-qmp','unix:'+str(qmp)+',server=on,wait=off','-no-reboot']
+    if execution_backend=='arm64-kvm':kvm_preflight()
     return result
 
 
@@ -361,12 +400,25 @@ def main():
         if action=='build-data':q.add_argument('--state',choices=('previous','restored','bootstrap'),required=True)
     q=sub.add_parser('export-source');q.add_argument('--fixture',type=Path,required=True);q.add_argument('--source-mount',type=Path,required=True)
     q=sub.add_parser('command');q.add_argument('--fixture',type=Path,required=True);q.add_argument('--candidate',type=Path,required=True);q.add_argument('--qmp',type=Path,required=True);q.add_argument('--normal',type=Path);q.add_argument('--expected',choices=('previous','restored'),default='restored');q.add_argument('--bootstrap',action='store_true');q.add_argument('--functional-clock',action='store_true',help='Instruction-count virtual time for semantic/software tests only; no H616 timing/performance/CPU-budget qualification')
+    q.add_argument('--execution-backend',choices=('tcg','arm64-kvm'),default='tcg')
+    q=sub.add_parser('verify-backend');q.add_argument('--qmp',type=Path,required=True);q.add_argument('--fixture',type=Path,required=True);q.add_argument('--execution-backend',choices=('tcg','arm64-kvm'),required=True);q.add_argument('--argv-json',type=Path,required=True);q.add_argument('--output',type=Path,required=True)
     a=p.parse_args()
     if a.action=='prepare': result=prepare(a.work,a.release)
     elif a.action=='stage':result=stage(a.rootfs,a.fixture)
     elif a.action=='build-normal':result=build_normal(a.fixture,a.rootfs,a.candidate,a.work)
     elif a.action=='export-source':result=export_source(a.fixture,a.source_mount)
-    elif a.action=='command':result=command(a.candidate,a.fixture,a.qmp,a.normal,a.expected,a.bootstrap,a.functional_clock)
+    elif a.action=='command':result=command(a.candidate,a.fixture,a.qmp,a.normal,a.expected,a.bootstrap,a.functional_clock,a.execution_backend)
+    elif a.action=='verify-backend':
+        from recovery_export_vm import QMP
+        fixture=private_fixture(a.fixture);require(a.qmp.absolute().parent.is_relative_to(fixture),'Owned QMP endpoint required')
+        require(a.output.absolute().parent.is_relative_to(fixture),'Private receipt destination required')
+        require(a.argv_json.absolute().is_relative_to(fixture),'Assigned command receipt required')
+        for path in (a.qmp.absolute(),a.output.absolute(),a.argv_json.absolute()):
+            require(all(not item.is_symlink() for item in (path,*path.parents)),'Real owned QMP/receipt paths required')
+        client=QMP(a.qmp)
+        try:result=verify_backend(client,a.execution_backend,json.loads(regular(a.argv_json).read_text()))
+        finally:client.file.close();client.socket.close()
+        write_json(a.output,result)
     else:
         if a.action=='build-data':
             if a.state=='bootstrap':

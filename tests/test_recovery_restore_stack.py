@@ -122,6 +122,9 @@ class StackHarnessTests(unittest.TestCase):
         self.assertIn('virtio-net-pci,netdev=net0,mac='+guest.MAC,command)
         self.assertIn('127.0.0.1:12222-:22',network)
         self.assertNotIn('-icount',command)
+        with patch.object(vm,'kvm_preflight'):
+            native=vm.command(candidate,self.fixture,self.fixture/'native-normal.qmp',normal,execution_backend='arm64-kvm')
+            self.assertEqual(native[native.index('-netdev')+1],network);self.assertEqual(native[native.index('-accel')+1],'kvm');self.assertNotIn('-icount',native)
         functional=vm.command(candidate,self.fixture,self.fixture/'functional.qmp',normal,functional_clock=True)
         self.assertEqual(functional[functional.index('-accel')+1],'tcg,thread=single')
         self.assertEqual(functional[functional.index('-icount')+1],'shift=0,align=off,sleep=off')
@@ -135,6 +138,88 @@ class StackHarnessTests(unittest.TestCase):
             vm.command(candidate,self.fixture,self.fixture/'bootstrap.qmp',bootstrap=True)
         (normal/'normal-initrd.img').write_bytes(b'changed')
         with self.assertRaisesRegex(ValueError,'hashes changed'):vm.command(candidate,self.fixture,self.fixture/'normal.qmp',normal)
+    def test_host_assert_full_success_uses_real_key_stat_and_preserves_api_receipt(self):
+        import base64
+        import ssl
+        from types import SimpleNamespace
+        credentials={'restored':dict(username='restored-user',password='synthetic-restored'),
+                     'previous':dict(username='previous-user',password='synthetic-previous'),
+                     'owner':dict(username='sv08',password='synthetic-owner')}
+        (self.fixture/'credentials.json').write_text(json.dumps(credentials))
+        public=self.fixture/'restored-ssh-host.pub';public.write_text('ssh-ed25519 synthetic-public-key fixture\n')
+        (self.fixture/'stack-expectations.json').write_text(json.dumps({'states':{'restored':{'ssh_public_sha256':guest.sha(public)}}}))
+        (self.fixture/'owner-key').touch(mode=0o600)
+        def auth(name):return 'Basic '+base64.b64encode((credentials[name]['username']+':'+credentials[name]['password']).encode()).decode()
+        requests=[];contexts=[];certificate=b'public synthetic DER'
+        class Connection:
+            def __init__(inner,host,port,context,timeout):
+                self.assertEqual(host,'127.0.0.1');self.assertEqual(timeout,15)
+                inner.port=port;inner.context=context;inner.sock=SimpleNamespace(getpeercert=lambda binary_form:certificate)
+            def connect(inner):pass
+            def request(inner,method,path,body=None,headers=None):
+                if inner.context.endswith('previous-ca.crt'):raise ssl.SSLCertVerificationError('synthetic wrong CA')
+                inner.path=path;inner.headers=headers or {};inner.body=body;requests.append((inner.port,path,inner.headers,body))
+            def getresponse(inner):
+                authorization=inner.headers.get('Authorization');status=401;body=b''
+                if inner.port==19090 and authorization==auth('owner'):status=200
+                if inner.port==18443 and authorization==auth('restored'):
+                    status=200
+                    if inner.path=='/':body=b'<html>actual synthetic assets</html>'
+                    elif inner.path=='/server/info':body=json.dumps({'result':{'moonraker_version':'v-pinned-test','klippy_state':'disconnected'}}).encode()
+                    elif inner.path=='/access/login':
+                        if json.loads(inner.body)==credentials['restored']:body=b'{"result":{"token":"synthetic-private-token"}}'
+                        else:status=401
+                return SimpleNamespace(status=status,read=lambda bound:body)
+            def close(inner):pass
+        def context(cafile):contexts.append(cafile);return cafile
+        def ssh(argv,**kwargs):
+            for option in ('StrictHostKeyChecking=yes','IdentityAgent=none','IdentitiesOnly=yes','PasswordAuthentication=no','GlobalKnownHostsFile=/dev/null'):
+                self.assertIn(option,argv)
+            self.assertEqual(argv[argv.index('-i')+1],str(self.fixture/'owner-key'))
+            return SimpleNamespace(returncode=0,stdout='1000\n')
+        output=self.fixture/'host-output'
+        with patch('http.client.HTTPSConnection',Connection),patch('ssl.create_default_context',context),patch('ssl.DER_cert_to_PEM_cert',return_value='synthetic public PEM'),patch.object(guest.subprocess,'run',side_effect=ssh):
+            result=guest.host_assert(self.fixture,'restored',output)
+        self.assertEqual(result['result'],'PASS');self.assertEqual(result['actual_moonraker_version'],'v-pinned-test');self.assertEqual(result['klippy_state'],'disconnected')
+        self.assertEqual(json.loads((output/'host-assert.json').read_text()),result)
+        self.assertEqual(len(contexts),2);self.assertEqual(len(requests),14)
+        self.assertNotIn('synthetic-private-token',(output/'host-assert.json').read_text())
+        self.assertEqual((output/'known_hosts').stat().st_mode & 0o777,0o600)
+
+    def test_kvm_native_preflight_and_no_fallback(self):
+        from types import SimpleNamespace
+        with patch('platform.system',return_value='Linux'),patch('platform.machine',return_value='x86_64'),patch.object(vm.subprocess,'run') as run:
+            with self.assertRaisesRegex(ValueError,'native Linux ARM64'):vm.kvm_preflight()
+            run.assert_not_called()
+        with patch('platform.system',return_value='Linux'),patch('platform.machine',return_value='aarch64'),patch.object(vm.subprocess,'run',return_value=SimpleNamespace(returncode=1,stdout='')):
+            with self.assertRaisesRegex(ValueError,'initialization failed'):vm.kvm_preflight()
+        response='{"return":{}}\n{"return":{"status":"prelaunch"}}\n{"return":{}}\n'
+        with patch('platform.system',return_value='Linux'),patch('platform.machine',return_value='aarch64'),patch.object(vm.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout=response)) as run:
+            self.assertTrue(vm.kvm_preflight()['initialization_verified']);self.assertIn('-nodefaults',run.call_args.args[0]);self.assertIn('query-status',run.call_args.kwargs['input'])
+        candidate=self.candidate()
+        with patch.object(vm,'kvm_preflight') as preflight:
+            command=vm.command(candidate,self.fixture,self.fixture/'native.qmp',execution_backend='arm64-kvm')
+            preflight.assert_called_once();self.assertEqual(command[command.index('-machine')+1],'virt,gic-version=host');self.assertEqual(command[command.index('-cpu')+1],'host');self.assertEqual(command[command.index('-accel')+1],'kvm')
+            self.assertNotIn('-icount',command);self.assertEqual(command[command.index('-nic')+1],'none')
+            drives=[command[n+1] for n,value in enumerate(command) if value=='-drive'];self.assertEqual(sum('readonly=on' not in row for row in drives),1)
+        with patch.object(vm,'kvm_preflight') as preflight:
+            with self.assertRaisesRegex(ValueError,'cannot use functional clock'):vm.command(candidate,self.fixture,self.fixture/'bad.qmp',functional_clock=True,execution_backend='arm64-kvm')
+            preflight.assert_not_called()
+
+    def test_qmp_active_backend_modern_and_unsupported_only_fallback(self):
+        from unittest.mock import Mock
+        modern=Mock();modern.call.side_effect=[{'qemu':{'major':11}}, {'enabled':'kvm','present':['tcg','kvm']}]
+        receipt=vm.verify_backend(modern,'arm64-kvm',['qemu','-accel','kvm'])
+        self.assertTrue(receipt['active_backend_verified']);self.assertEqual(receipt['qmp_command'],'query-accelerators');self.assertEqual(receipt['argv'],['qemu','-accel','kvm'])
+        old=Mock();old.call.side_effect=[{'qemu':{'major':10}}, RuntimeError({'error':{'class':'CommandNotFound'}}),{'enabled':True,'present':True}]
+        self.assertEqual(vm.verify_backend(old,'arm64-kvm',[])['qmp_command'],'query-kvm')
+        for response in ({'enabled':'tcg','present':['kvm','tcg']},{'enabled':True},RuntimeError({'error':{'class':'GenericError'}})):
+            client=Mock();client.call.side_effect=[{},response]
+            with self.assertRaises(ValueError):vm.verify_backend(client,'arm64-kvm',[])
+            self.assertEqual(client.call.call_count,2)
+        old=Mock();old.call.side_effect=[{},RuntimeError({'error':{'class':'CommandNotFound'}}),{'enabled':False,'present':True}]
+        with self.assertRaisesRegex(ValueError,'differs'):vm.verify_backend(old,'arm64-kvm',[])
+
     def test_image_replacement_and_block_input_refused_before_mutation(self):
         (self.fixture/'target.raw').write_bytes(b'preserved evidence')
         with patch.object(vm,'partition_image') as make:

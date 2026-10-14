@@ -31,6 +31,12 @@ class StageUITests(unittest.TestCase):
             self.assertEqual((root/(base+'project-NOTICE.txt')).read_bytes(),(REPO/'LICENSING.md').read_bytes())
             self.assertIn(base+'project-source.json',report['hashes'])
         self.assertFalse(record['public_source']['qualified'])
+        from stage_admin_ui import IDENTITY_SOCKET
+        socket='etc/systemd/system/cockpit.socket.d/sv08-identity.conf'
+        self.assertEqual((root/socket).read_bytes(),IDENTITY_SOCKET)
+        self.assertEqual(plan['project_source']['staged_files'][socket],record['staged_files'][socket])
+        self.assertEqual(record['staged_files'][socket]['origin'],'generated')
+        self.assertFalse(record['overall_release_qualified'])
         release.write_text('{"release":"later"}')
         with self.assertRaisesRegex(ValueError,'Stale'):validate(root)
 

@@ -373,7 +373,7 @@ def host_assert(fixture, expected, output):
     require(request(18443,'/',other_auth)[0]==401,'Other generation gateway password accepted')
     status,body,cert=request(18443,'/',auth); require(status==200 and b'<html' in body.lower(),'Actual Mainsail assets unavailable')
     status,body,_=request(18443,'/server/info',auth); require(status==200,'Authenticated actual Moonraker API unavailable')
-    info=json.loads(body)['result']; require(info.get('moonraker_version') and info.get('klippy_state') in ('disconnected','startup','error','shutdown'),'Actual API observation missing')
+    moonraker_info=json.loads(body)['result']; require(moonraker_info.get('moonraker_version') and moonraker_info.get('klippy_state') in ('disconnected','startup','error','shutdown'),'Actual API observation missing')
     status,body,_=request(18443,'/access/login',auth,login)
     require(status==200 and json.loads(body).get('result',{}).get('token'),'Actual restored native Moonraker owner login failed')
     require(request(18443,'/access/login',auth,other_login)[0] in (400,401),'Other generation native password accepted')
@@ -401,9 +401,9 @@ def host_assert(fixture, expected, output):
     known_hosts=output/'known_hosts'
     with known_hosts.open('x') as stream:
         os.fchmod(stream.fileno(),0o600); stream.write('[127.0.0.1]:12222 '+fields[0]+' '+fields[1]+'\n')
-    identity=fixture/'owner-key'; info=identity.lstat()
-    require(stat.S_ISREG(info.st_mode) and info.st_nlink==1 and info.st_uid==os.geteuid() and
-            not info.st_mode & 0o077,'Private generated owner key required')
+    identity=fixture/'owner-key'; key_stat=identity.lstat()
+    require(stat.S_ISREG(key_stat.st_mode) and key_stat.st_nlink==1 and key_stat.st_uid==os.geteuid() and
+            not key_stat.st_mode & 0o077,'Private generated owner key required')
     command=['ssh','-F','/dev/null','-p','12222','-i',str(identity),'-o','IdentityAgent=none',
         '-o','IdentitiesOnly=yes','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+str(known_hosts),
         '-o','GlobalKnownHostsFile=/dev/null','-o','BatchMode=yes','-o','PasswordAuthentication=no',
@@ -415,7 +415,7 @@ def host_assert(fixture, expected, output):
     result=dict(result='PASS',expected=expected,strict_ca_and_hostname=True,wrong_ca_rejected=True,
         anonymous_rejected=True,wrong_password_rejected=True,other_state_password_rejected=True,
         native_owner_login=True,ssh_host_key_verified=True,ssh_owner_authenticated=True,ssh_owner_uid=1000,paired_os_pam_login=True,pam_password_portable=False,
-        actual_moonraker_version=info['moonraker_version'],klippy_state=info['klippy_state'],physical_hardware=False,printing_ready=False)
+        actual_moonraker_version=moonraker_info['moonraker_version'],klippy_state=moonraker_info['klippy_state'],physical_hardware=False,printing_ready=False)
     write_json(output/'host-assert.json',result);return result
 
 
