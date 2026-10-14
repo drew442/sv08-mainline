@@ -61,11 +61,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "4621972ea5f9419f8ddd04ef9140fddd",
-        "session": "source-policy-20261014"
-      },
+      "implementation": null,
       "input_paths": [
         "LICENSE",
         "LICENSING.md",
@@ -108,10 +104,10 @@
         "docs/licensing.md"
       ],
       "repeats": 0,
-      "resumption": "Continue same owner goal after preserving run6656473b10634487aa8c26626406e145 and UI patch; renew ownership for stale README/docs licensing correction, same worker and cumulative allowance.",
+      "resumption": "Reclaim same completed delivery in fresh current-main worktree, replay only owned implementation/evidence commits, preserve original run and public source revisions, all failed evidence and cumulative1800sec/512MiB allowance. No new implementation worker or test reset.",
       "review_policy": "self",
       "review_reason": "Reversible scoped licensing source/disposable work under owner-selected grant; no merge/deployment, printer access or blanket compliance claim.",
-      "status": "running",
+      "status": "pending",
       "title": "Stage notices and exact-build source access; enforce source qualification",
       "validation": null,
       "verification": null
