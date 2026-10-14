@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Current-main merge establishes necessary project source provenance adaptation for the preserved Cockpit socket ordering fix. Preserve merged candidate and broaden exact staging-helper/test ownership before source edits; no acceptance change.",
       "checks": [
         "archive",
         "configuration",
@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "2021c59688c64bb387af05db496b5ca7",
+        "session": "recovery-review-20261014"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -138,13 +142,16 @@
         "tests/printer_validator_probe.py",
         "docs/features/recovery-printer-stack/review-plan.md",
         "docs/features/recovery-printer-stack/review-evidence.md",
-        "docs/features/recovery-printer-stack/review-evidence.json"
+        "docs/features/recovery-printer-stack/review-evidence.json",
+        "scripts/project_license.py",
+        "tests/test_project_license.py",
+        "tests/test_stage_admin_ui.py"
       ],
       "repeats": 0,
       "resumption": "Owner review5525165502 provides two concrete fixes and a bounded diagnostic/native-backend approach. Preserve old run/candidate/evidence and cumulative10800sec/48GiB, add recorded3600sec/8GiB review continuation, renew current-base ownership without relaxing any qualification checks.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "pending",
+      "status": "blocked",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
