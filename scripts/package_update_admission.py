@@ -14,6 +14,21 @@ import subprocess
 from prepare_host_os import REPO, work_path
 
 
+def verified_license_files(config):
+    if config.get('license') != 'AGPL-3.0-or-later':
+        raise ValueError('Admission package requires the selected project license')
+    pins = config.get('license_files', [])
+    if [pin.get('path') for pin in pins] != ['LICENSE', 'LICENSING.md']:
+        raise ValueError('Admission package requires exact license and project grant notices')
+    files = []
+    for pin in pins:
+        path = REPO / pin['path']
+        if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != pin['sha256']:
+            raise ValueError('Project license/grant differs from selected hash')
+        files.append(path)
+    return files
+
+
 def build(work, execute=False):
     config = json.loads((REPO / 'configs/apps/update-admission.json').read_text())
     source = REPO / config['source']
@@ -23,6 +38,7 @@ def build(work, execute=False):
     if (config['klipper_commit'] != klipper['source_commit'] or
             config['klipper_package_version'] != klipper['version']):
         raise ValueError('Extension requires a matching reviewed Klipper package')
+    licenses = verified_license_files(config)
     if work.exists():
         raise ValueError('Use a new disposable build directory')
     if not execute:
@@ -34,6 +50,13 @@ def build(work, execute=False):
     link = root / 'opt/sv08-mainline/klipper/klippy/extras/sv08_update.py'
     link.parent.mkdir(parents=True); link.symlink_to('/usr/lib/sv08/klipper-extras/sv08_update.py')
     doc = root / 'usr/share/doc/sv08-update-admission'; doc.mkdir(parents=True)
+    for license_file in licenses:
+        shutil.copyfile(license_file, doc / license_file.name)
+    (doc / 'copyright').write_text(
+        'SV08 Mainline original admission extension\n'
+        'License: AGPL-3.0-or-later\n'
+        'The project grant is in LICENSING.md; complete license text is in LICENSE.\n'
+        'Upstream Klipper retains its own GPLv3 terms; this notice does not relicense it.\n')
     (doc / 'release.json').write_text(json.dumps(config, indent=2)+'\n')
     (doc / 'README').write_text('Offline candidate. Enabling [sv08_update] requires reviewed host integration.\n'
         'No configuration, service activation or MCU firmware is installed.\n')
