@@ -12,6 +12,7 @@ import shutil
 import stat
 import subprocess
 import tarfile
+from project_license import prepare as prepare_license, publish as publish_license
 
 REPO = Path(__file__).resolve().parents[1]
 PACKAGES = ('systemd-sysv', 'systemd-resolved', 'systemd-timesyncd', 'dbus', 'udev', 'openssh-server',
@@ -190,6 +191,16 @@ def finalize(work):
     (work / 'configured').write_text('complete\n')
 
 
+def stage_project_source(root):
+    """Original project notices are build inputs; this private bring-up stays unqualified."""
+    notices, record = prepare_license(root)
+    publish_license(root, notices)
+    return dict(project_source_revision=record['source_revision'],
+                project_source_build_id=record['build_id'], project_source_qualified=False,
+                overall_release_qualified=False,
+                source_qualification_required='scripts/qualify_project_source.py --root ROOT --public-source MANIFEST')
+
+
 def assemble(c, work, prefix, output):
     for candidate in (output, output.with_suffix('.json'), output.with_suffix('.sha256'),
                       output.with_suffix('.packages.tsv')):
@@ -199,6 +210,7 @@ def assemble(c, work, prefix, output):
         raise ValueError('Configure rootfs first')
     boot_offset, root_offset, root_bytes = layout(c)
     root = work / 'rootfs'
+    project_source = stage_project_source(root)
     fat = work / 'boot.fat'
     ext = work / 'root.ext4'
     for p, size in ((fat, c['boot_sectors'] * 512), (ext, root_bytes)):
@@ -260,7 +272,7 @@ def assemble(c, work, prefix, output):
     }.items():
         r = subprocess.run(command, capture_output=True, text=True, check=True)
         tools[name] = (r.stdout + r.stderr).strip()
-    result = dict(profile=c, tools=tools, recipe_sha256=sha(Path(__file__)),
+    result = dict(profile=c, tools=tools, **project_source, recipe_sha256=sha(Path(__file__)),
                   source_klipper_commit=(root / 'opt/sv08-mainline/SOURCE_COMMIT').read_text().strip(),
                   kernel_sha256=sha(root / 'boot/Image'),
                   dtb_sha256=sha(root / f"boot/dtb/allwinner/{c['dtb']}.dtb"),

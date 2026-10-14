@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 from prepare_host_os import REPO, work_path
 from stage_printer_ui import compose_host, NAV, root_lock
+from project_license import prepare as prepare_license, publish as publish_license
 
 
 def package_service_policy(root):
@@ -38,12 +39,12 @@ def package_service_policy(root):
     return policy
 
 
-def stage(work, context, execute=False, refresh=False):
+def stage(work, context, execute=False, refresh=False, public_source=None):
     with root_lock(work / 'rootfs'):
-        return _stage(work, context, execute, refresh)
+        return _stage(work, context, execute, refresh, public_source)
 
 
-def _stage(work, context, execute=False, refresh=False):
+def _stage(work, context, execute=False, refresh=False, public_source=None):
     if context not in ('host', 'recovery'): raise ValueError('Unknown UI context')
     if refresh and context != 'host':
         raise ValueError('UI refresh is only supported for the host context')
@@ -134,7 +135,38 @@ def _stage(work, context, execute=False, refresh=False):
             path=root/'usr/share/cockpit/sv08-printer'/name
             if not path.is_file() or path.read_bytes()!=(REPO/'ui/printer'/name).read_bytes():raise ValueError('Stage matching printer assets before integrated host refresh')
     service_policy = package_service_policy(root) if context == 'host' else None
-    if not execute: return dict(execute=False, context=context, root=str(root))
+    prospective = {}
+    if context == 'host':
+        prospective = {'usr/share/cockpit/sv08-host/'+p.name:p.read_bytes()
+                       for p in (REPO/'ui/host').iterdir() if p.is_file()}
+        name = 'usr/share/cockpit/sv08-host/index.html'
+        prospective[name] = (compose_host(prospective[name]) if (root/'usr/share/cockpit/sv08-printer').exists()
+                             else prospective[name].replace(NAV,b''))
+        prospective['usr/lib/sv08/sv08_view.py'] = (REPO/'runtime/sv08_view.py').read_bytes()
+        prospective['usr/lib/sv08/software-catalog.json'] = (REPO/'configs/host-os/software-catalog.json').read_bytes()
+        prospective['usr/lib/sv08/admin-context.json'] = (json.dumps(dict(format_version=1,context='host'))+'\n').encode()
+        prospective['etc/cockpit/cockpit.conf'] = b'[WebService]\nShell=/sv08-host/index.html\n'
+        prospective['etc/sudoers.d/sv08-view'] = (REPO/'configs/host-os/sv08-view-sudoers').read_bytes()
+        for source, destination in [('rauc-service-policy.json','usr/lib/sv08/rauc-service-policy.json'),
+                ('sv08-rauc-policy.conf','etc/dbus-1/system.d/zz-sv08-rauc.conf'),
+                ('sv08-rauc-service.conf','etc/systemd/system/rauc.service.d/sv08.conf'),
+                ('sv08-admin-image-worker@.service','usr/lib/systemd/system/sv08-admin-image-worker@.service'),
+                ('systemd/sv08-software-worker@.service','usr/lib/systemd/system/sv08-software-worker@.service'),
+                ('sv08-feed.service','usr/lib/systemd/system/sv08-feed.service'),
+                ('sv08-feed.timer','usr/lib/systemd/system/sv08-feed.timer')]:
+            prospective[destination] = ((json.dumps(service_policy,indent=2)+'\n').encode()
+                if source == 'rauc-service-policy.json' and (root/'usr/share/doc/rauc/sv08-source.json').exists()
+                else (REPO/'configs/host-os'/source).read_bytes())
+        for destination in branding:
+            prospective[destination.relative_to(root).as_posix()] = (REPO/'configs/host-os/cockpit-branding'/destination.name).read_bytes()
+        prospective['etc/systemd/system/cockpit.socket.d/sv08-identity.conf'] = b'[Unit]\nRequires=sv08-identity.service\nAfter=sv08-identity.service\n'
+    else:
+        prospective['usr/share/xsessions/sv08-recovery.desktop'] = (REPO/'configs/host-os/recovery-session.desktop').read_bytes()
+        prospective['usr/lib/systemd/system/sv08-recovery-display.service'] = (REPO/'configs/host-os/sv08-recovery-display.service').read_bytes()
+    notices, provenance = prepare_license(root, prospective,
+        replaced=('usr/share/cockpit/sv08-host/',) if context == 'host' else (), public_source=public_source)
+    if not execute: return dict(execute=False, context=context, root=str(root),
+                                project_source=provenance, notice_hashes={n:hashlib.sha256(v).hexdigest() for n,v in notices.items()})
     if context == 'host':
         view = root/'usr/lib/sv08/sv08_view.py'
         shutil.copyfile(REPO/'runtime/sv08_view.py', view)
@@ -195,8 +227,10 @@ def _stage(work, context, execute=False, refresh=False):
         shutil.copyfile(REPO / 'configs/host-os/recovery-session.desktop', target)
         units = root / 'usr/lib/systemd/system'; units.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REPO / 'configs/host-os/sv08-recovery-display.service', units / 'sv08-recovery-display.service')
+    publish_license(root, notices)
     files = [p for p in (target.rglob('*') if target.is_dir() else [target]) if p.is_file()]
     if context == 'host': files.extend(root / name for name in ('etc/cockpit/cockpit.conf', 'usr/lib/sv08/rauc-service-policy.json', 'etc/dbus-1/system.d/zz-sv08-rauc.conf', 'etc/systemd/system/rauc.service.d/sv08.conf', 'usr/lib/systemd/system/sv08-feed.service', 'usr/lib/systemd/system/sv08-feed.timer'))
+    files.extend(root/name for name in notices if not name.startswith('usr/share/cockpit/sv08-host/'))
     files.extend(branding)
     for path in files: path.chmod(0o644)
     files.extend(root / 'usr/lib/sv08' / name for name in
@@ -218,7 +252,7 @@ def _stage(work, context, execute=False, refresh=False):
         hashes['etc/systemd/system/timers.target.wants/sv08-feed.timer'] = hashlib.sha256(
             os.readlink(root / 'etc/systemd/system/timers.target.wants/sv08-feed.timer').encode()).hexdigest()
     return dict(execute=True, context=context, activated=False,
-                payload_bytes=sum(p.stat().st_size for p in files), hashes=hashes,
+                payload_bytes=sum(p.stat().st_size for p in files), hashes=hashes, project_source=provenance,
                 required_ownership=({name: dict(uid=0,gid=0,mode=mode,verified=(root/name).stat().st_uid==0 and (root/name).stat().st_gid==0) for name,mode in [('usr/lib/sv08/sv08_view.py','0644'),('etc/sudoers.d/sv08-view','0440')]} if context == 'host' else {}))
 
 
@@ -229,5 +263,6 @@ if __name__ == '__main__':
     parser.add_argument('--execute', action='store_true')
     parser.add_argument('--refresh', action='store_true',
                         help='Replace reviewed host UI files in a copied image root')
+    parser.add_argument('--public-source', type=Path, help='Verify immutable public corresponding-source manifest before publication')
     args = parser.parse_args()
-    print(json.dumps(stage(work_path(args.work), args.context, args.execute, args.refresh), indent=2))
+    print(json.dumps(stage(work_path(args.work), args.context, args.execute, args.refresh, args.public_source), indent=2))

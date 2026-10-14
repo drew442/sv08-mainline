@@ -123,5 +123,5 @@ install software or change a printer.
 stack. Initial pins are research candidates, not a supported release. Mainline
 Klipper and mainline Linux are separate milestones.
 
-Third-party material retains its own license. The license for original project
-work remains to be selected; see [licensing](docs/licensing.md).
+Third-party material retains its own license. Original project work uses
+AGPL-3.0-or-later; see the [project grant](LICENSING.md) and [licensing](docs/licensing.md).
