@@ -325,6 +325,15 @@ def npm_archive_notices(lock_path, package, pin, root):
                 classification=classification)
 
 
+def npm_supplemental(pin, texts, package, archive_path=None):
+    if not pin: return []
+    from resolve_npm_notices import validate_record
+    record = validate_record(pin, texts['name'], package['version'], package['integrity'], texts['archive']['sha256'], archive_path)
+    return [dict(url=p['url'], sha256=p['sha256'], bytes=len(p['text'].encode('utf-8')),
+                 source_revision=record['source_revision'], source_repository=record['source_repository'],source_mapping=record['source_mapping'])
+            for p in record['notices']]
+
+
 def npm_inventory(pin):
     record = file_pin(pin)
     selected = json.loads((REPO / 'configs/apps/mainsail.json').read_text())
@@ -333,6 +342,15 @@ def npm_inventory(pin):
     lock = json.loads(checked_path(pin['root'], pin['path']).read_text())
     if set(pin['dependency_notices']) != set(lock['packages']) - {''}:
         raise ValueError('NPM source notices must exactly cover all selected production/build dependencies')
+    supplements = {}
+    if pin.get('supplemental_notices'):
+        supplemental_pin = pin['supplemental_notices']
+        file_pin(supplemental_pin)
+        supplemental = json.loads(checked_path(supplemental_pin['root'], supplemental_pin['path']).read_text())
+        for item in supplemental['records']:
+            if item['path'] in supplements: raise ValueError('Duplicate supplemental dependency')
+            supplements[item['path']] = item
+        if set(supplements) - set(lock['packages']): raise ValueError('Extraneous supplemental dependency')
     packages = []
     for path, package in sorted(lock['packages'].items()):
         if not path:
@@ -340,14 +358,18 @@ def npm_inventory(pin):
         if not package.get('version') or not package.get('integrity') or not package.get('resolved'):
             raise ValueError('NPM dependency lacks exact version/integrity/supplier reference')
         texts = npm_archive_notices(path, package, pin['dependency_notices'][path], pin['archive_notice_root'])
+        texts['supplemental_notices'] = npm_supplemental(supplements.get(path), texts, package,
+            checked_path(pin['archive_notice_root'],pin['dependency_notices'][path]['archive']['path']))
+        if texts['supplemental_notices'] and not texts['notices']:
+            texts['classification'] = 'supplier-declaration-and-exact-version-upstream-supplemental-text'
         packages.append(dict(path=path, version=package['version'], integrity=package['integrity'],
                              supplier_url=package['resolved'], declared_license=package.get('license'),
                              dependency_scope='build' if package.get('dev') else 'production',
                              optional=bool(package.get('optional')), **texts))
     return dict(lock=record, packages=packages,
                 notice_coverage=dict(inspected_supplier_archives=len(packages),
-                                     dependencies_with_notice_text=sum(bool(p['notices']) for p in packages),
-                                     declaration_only_dependencies=sum(not p['notices'] for p in packages)))
+                                     dependencies_with_notice_text=sum(bool(p['notices'] or p['supplemental_notices']) for p in packages),
+                                     declaration_only_dependencies=sum(not (p['notices'] or p['supplemental_notices']) for p in packages)))
 
 
 def debian_inventory(root):

@@ -303,6 +303,28 @@ class InventoryTests(unittest.TestCase):
                 m.npm_archive_notices('node_modules/fixture', lock['packages']['node_modules/fixture'],
                                      pin['dependency_notices']['node_modules/fixture'], self.base)
 
+    def test_exact_supplemental_npm_notice_resolves_only_matching_archive_and_lock(self):
+        pin,lock=self.npm_fixture(include_notice=False)
+        package=lock['packages']['node_modules/fixture'];archive=pin['dependency_notices']['node_modules/fixture']['archive']
+        revision='a'*40
+        def response(url,value):
+            text=value if isinstance(value,str) else json.dumps(value)
+            return dict(url=url,text=text,sha256=m.digest(text.encode()))
+        record=dict(path='node_modules/fixture',name='fixture',version='1.0',integrity=package['integrity'],
+            archive_sha256=archive['sha256'],source_revision=revision,source_repository='owner/repo',
+            registry_metadata=response('https://registry.npmjs.org/fixture/1.0',dict(name='fixture',version='1.0',
+                gitHead=revision,dist={'integrity':package['integrity']},repository='https://github.com/owner/repo')),
+            notices=[response('https://raw.githubusercontent.com/owner/repo/'+revision+'/LICENSE','Actual upstream grant')])
+        pin['supplemental_notices']=self.pin('supplemental.json',json.dumps({'records':[record]}).encode())
+        with patch.object(m,'REPO',self.base):
+            result=m.npm_inventory(pin)
+            self.assertEqual(result['notice_coverage']['declaration_only_dependencies'],0)
+            self.assertEqual(result['notice_coverage']['dependencies_with_notice_text'],1)
+            self.assertEqual(result['packages'][0]['supplemental_notices'][0]['source_mapping'],'registry-gitHead')
+            record['archive_sha256']='b'*64
+            pin['supplemental_notices']=self.pin('supplemental.json',json.dumps({'records':[record]}).encode())
+            with self.assertRaises(ValueError):m.npm_inventory(pin)
+
     def test_npm_declaration_does_not_allow_omitting_present_notice(self):
         pin, lock = self.npm_fixture(declared_license='MIT')
         entry = pin['dependency_notices']['node_modules/fixture']
