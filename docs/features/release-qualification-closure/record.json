@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "9b40c7805db89f3f5fcf9ac1a1c84751fb3d65d7456c09f9e82bd019295e1cfa",
-    "rationale": "Continue full owner goal with explicit fourth root patch ownership and upstream-supported diagnostics compatibility acceptance; preserve notices and cumulative allowance.",
+    "proposal_sha256": "bba4e6e63c43537f37e9d59db667e85e9a6b683a839dd9059b1ba971aab269f2",
+    "rationale": "Continue full notice goal with exact licensed SDK and independent adapter; explicit provenance, behavior checks, source ownership and cumulative allowance continuation.",
     "reference": "docs/features/release-qualification-closure/owner-request.md",
     "reference_sha256": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
       "docs/features/release-qualification-closure/owner-request.md": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf"
     },
-    "scope_sha256": "4818bee9ce4dbf8aeb1374d07fd14f8ba2ab5f027d71a967668c4ceed2280cd4",
-    "session": "release-vitest-20261015",
-    "source_commit": "c3a1b62209a42deab8c4a8089779269b27ac54fd"
+    "scope_sha256": "5711de2aae23edda9b38ffe5bf14d473db7d9a8dd24120a2079b01295cfe2195",
+    "session": "release-janus-20261015",
+    "source_commit": "b4b6ce8355e3d431ab91b571a9978e1345d93c32"
   },
   "checks": [
     {
@@ -96,10 +96,14 @@
         "tests/test_mainsail_notice_dependencies.py",
         "configs/host/release-source-license-inventory.json",
         "configs/host/npm-notice-resolution.json",
-        "patches/mainsail/0004-vitest-notice-closure.patch"
+        "patches/mainsail/0004-vitest-notice-closure.patch",
+        "patches/mainsail/0005-janus-sdk-replacement.patch",
+        "configs/host/mainsail-janus-sdk.json",
+        "tests/test_mainsail_janus.py",
+        "tests/mainsail_janus_browser.mjs"
       ],
       "repeats": 0,
-      "resumption": "Upstream Vitest5 has native ESM diagnostics and compatible Node/Vite ranges; evaluate bounded manifest/lock change with actual unit and hanging-process coverage, no builder patch or license changes.",
+      "resumption": "Measured complete SDK file has explicit Meetecho MIT grant; one actual consumer permits independent feature-preserving adapter and removal of wrapper/aigle notice gaps without changing upstream licenses.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
       "status": "pending",

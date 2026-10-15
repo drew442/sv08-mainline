@@ -3,9 +3,9 @@
     "historical_notice_resolved": 60,
     "historical_notice_unresolved": 9,
     "historical_records": 69,
-    "measured_selection_remediations": 3,
-    "remaining_selected_notice_gaps": 6,
-    "selected_dependencies": 921
+    "measured_selection_remediations": 6,
+    "remaining_selected_notice_gaps": 4,
+    "selected_dependencies": 898
   },
   "format_version": 1,
   "historical_inventory_sha256": "6d8011a9da17b46fcf5cb275c9278c14e1600293fe3d82d126b93fa0b4729d41",
@@ -593,6 +593,7 @@
       "selection_status": "retained"
     },
     {
+      "equivalent_paths": [],
       "historical_notice_status": "verified-exact-version-supplemental-notice",
       "name": "aigle",
       "original_archive_sha256": "b97bffe2fd0bc67befcb3a1f0ceff017e333d9638ea0ffd0e291c856948ef77b",
@@ -601,10 +602,11 @@
       "path": "node_modules/aigle",
       "replacement_notices": [],
       "selected_notice_gap": false,
-      "selected_version": "1.14.1",
-      "selection_status": "retained"
+      "selected_version": null,
+      "selection_status": "removed-from-selected-lock"
     },
     {
+      "equivalent_paths": [],
       "historical_notice_status": "unresolved-author-notice",
       "name": "aigle-core",
       "original_archive_sha256": "f3e044096da95065d4622f1dfe590c9ad6390e4942c177254265bf57aecdcaa6",
@@ -612,9 +614,9 @@
       "original_version": "1.0.0",
       "path": "node_modules/aigle-core",
       "replacement_notices": [],
-      "selected_notice_gap": true,
-      "selected_version": "1.0.0",
-      "selection_status": "retained"
+      "selected_notice_gap": false,
+      "selected_version": null,
+      "selection_status": "removed-from-selected-lock"
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -834,6 +836,7 @@
       "selection_status": "replaced-by-notice-bearing-supplier-release"
     },
     {
+      "equivalent_paths": [],
       "historical_notice_status": "unresolved-author-notice",
       "name": "typed_janus_js",
       "original_archive_sha256": "0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e",
@@ -841,9 +844,9 @@
       "original_version": "1.2.1",
       "path": "node_modules/typed_janus_js",
       "replacement_notices": [],
-      "selected_notice_gap": true,
-      "selected_version": "1.2.1",
-      "selection_status": "retained"
+      "selected_notice_gap": false,
+      "selected_version": null,
+      "selection_status": "removed-from-selected-lock"
     },
     {
       "historical_notice_status": "unresolved-author-notice",
@@ -860,9 +863,9 @@
   ],
   "scope": "historical-notice-facts-and-current-selection",
   "selected_lock": {
-    "bytes": 550107,
+    "bytes": 538819,
     "path": "package-lock.json",
-    "sha256": "302ec0772499c7be16d51f53488e7ed2cdaad936fd9bb959cddbde1eb4378932"
+    "sha256": "0e32ccdb698a6097ac335a8eaaf33498acd6120f23c27e153fb8443a7c28595d"
   },
   "source_patches": [
     {
@@ -880,6 +883,10 @@
     {
       "path": "patches/mainsail/0004-vitest-notice-closure.patch",
       "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+    },
+    {
+      "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+      "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
     }
   ],
   "supplemental_notices_sha256": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"
