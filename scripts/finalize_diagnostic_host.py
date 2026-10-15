@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a receipt for a copied, non-deployable diagnostic host root.
+"""Create a receipt for a fresh or copied non-deployable diagnostic host root.
 
 This does not install packages, generate credentials, alter a printer, or make
 an image deployable. It binds a refreshed host runtime seed to the separately
@@ -12,7 +12,7 @@ from pathlib import Path
 import subprocess
 
 from integrate_host_os import validate
-from prepare_host_os import work_path
+from prepare_host_os import REPO, digest, layout, work_path
 from recovery_image import inventory, sha
 
 MASKS = ('sv08-klipper', 'sv08-moonraker', 'klipper', 'moonraker', 'KlipperScreen', 'rauc', 'sv08-boot-health')
@@ -63,7 +63,42 @@ def checks(root, data):
                 qemu_fixture_absent=True)
 
 
-def finalize(work, data, source_receipt, execute=False):
+def fresh_provenance(work, root, profile):
+    paths = {'profile': work / 'profile.json',
+             **{stage: work / stage for stage in
+                ('bootstrap-complete', 'packages-complete', 'refresh-complete')}}
+    for path in (profile, *paths.values()):
+        if path.is_symlink() or not path.is_file():
+            raise ValueError('Fresh finalization requires regular profile/stage files: ' + str(path))
+    reviewed = json.loads(profile.read_text())
+    layout(reviewed)
+    profile_digest = digest(reviewed)
+    if digest(json.loads(paths['profile'].read_text())) != profile_digest:
+        raise ValueError('Fresh staged profile differs from reviewed profile')
+    for stage, path in paths.items():
+        if stage != 'profile' and path.read_text().strip() != profile_digest:
+            raise ValueError('Fresh stage/profile mismatch: ' + stage)
+    package_checks = {}
+    for name, command in (('dpkg_audit', ['dpkg', '--audit']),
+                          ('apt_dependency_check', ['apt-get', 'check'])):
+        result = subprocess.run(['chroot', str(root), *command], check=True,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, timeout=120)
+        if name == 'dpkg_audit' and (result.stdout.strip() or result.stderr.strip()):
+            raise ValueError('Fresh root dpkg audit is not clean')
+        package_checks[name] = True
+    return dict(mode='fresh', profile_digest=profile_digest,
+                reviewed_profile_sha256=sha(profile),
+                staged_profile_sha256=sha(paths['profile']),
+                stage_marker_sha256={name: sha(path) for name, path in paths.items()
+                                     if name != 'profile'},
+                package_checks=package_checks)
+
+
+def finalize(work, data, source_receipt=None, execute=False, *, fresh=False,
+             profile=None):
+    if fresh == (source_receipt is not None):
+        raise ValueError('Choose exactly one of fresh or source receipt')
     root = work / 'rootfs'
     receipt = work / 'finalized.json'
     if root.is_symlink() or not root.is_dir() or not (work / 'refresh-complete').is_file():
@@ -72,11 +107,15 @@ def finalize(work, data, source_receipt, execute=False):
         raise ValueError('A finalization receipt already exists; use a fresh copied work directory')
     if data.is_symlink() or not data.is_dir():
         raise ValueError('Expected an isolated preserved data tree')
-    source = json.loads(source_receipt.read_text())
-    if not isinstance(source.get('root'), dict) or source['root'].get('schema') != 2:
-        raise ValueError('Source finalization receipt is invalid')
-    result = dict(schema=3, root=inventory(root), checks=checks(root, data),
-                  source_finalization_sha256=sha(source_receipt))
+    if fresh:
+        provenance = fresh_provenance(work, root, profile or REPO / 'configs/images/host-ab.json')
+        origin = dict(provenance=provenance)
+    else:
+        source = json.loads(source_receipt.read_text())
+        if not isinstance(source.get('root'), dict) or source['root'].get('schema') != 2:
+            raise ValueError('Source finalization receipt is invalid')
+        origin = dict(source_finalization_sha256=sha(source_receipt))
+    result = dict(schema=3, root=inventory(root), checks=checks(root, data), **origin)
     if execute:
         receipt.write_text(json.dumps(result, indent=2) + '\n')
     return result
@@ -86,10 +125,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--work', type=Path, required=True)
     parser.add_argument('--data', type=Path, required=True)
-    parser.add_argument('--source-receipt', type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--source-receipt', type=Path)
+    mode.add_argument('--fresh', action='store_true')
+    parser.add_argument('--profile', type=Path, default=REPO / 'configs/images/host-ab.json',
+                        help='Reviewed baseline profile for --fresh')
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
-    print(json.dumps(finalize(work_path(args.work), work_path(args.data), args.source_receipt, args.execute), indent=2))
+    print(json.dumps(finalize(work_path(args.work), work_path(args.data), args.source_receipt, args.execute,
+                              fresh=args.fresh, profile=args.profile), indent=2))
 
 
 if __name__ == '__main__':
