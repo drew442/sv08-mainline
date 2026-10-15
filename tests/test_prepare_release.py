@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -91,6 +92,59 @@ class ReleaseTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'configuration differs'):m.prepare(self.image,self.public,inventory_inputs=path)
             root['packages']=[]
             with self.assertRaisesRegex(ValueError,'package databases'):m.prepare(self.image,self.public,inventory_inputs=path)
+
+
+    @unittest.skipUnless(os.environ.get('SV08_GCODEVIEWER_ARCHIVE'),'requires retained exact supplier archive')
+    def test_standard_terms_export_exact_bytes_manifest_and_reject_stale_missing_corrupt(self):
+        inv=m.license_inventory;approved=inv.APPROVED_STANDARD_LICENSE;dependency=approved['path']
+        archive=Path(os.environ['SV08_GCODEVIEWER_ARCHIVE'])
+        package={k:approved[k] for k in ('name','version','integrity','license')}
+        verified=inv.verify_npm_standard_license(approved,package,archive)
+        inputs,root=self.deb_fixture();record=dict(self.record,roots=[root])
+        config=inv.REPO/'configs/host/npm-standard-license-texts.json'
+        pin=dict(root=str(config.parent),path=config.name,sha256=inv.sha(config))
+        lock=self.base/'lock.json';lock.write_text(json.dumps({'packages':{dependency:package}}))
+        inputs['mainsail']=dict(root=str(self.base),path=lock.name,sha256=inv.sha(lock),standard_license_texts=pin)
+        path=self.base/'inventory.json'
+        inventory={'applications':[],'mainsail_dependencies':{'packages':[{'path':dependency,'standard_license_texts':[verified]}],
+            'notice_coverage':{'declaration_only_dependencies':0}}}
+        def run():
+            path.write_text(json.dumps(inputs))
+            return m.prepare(self.image,self.public,inventory_inputs=path)
+        with patch.object(m,'inspect_artifact',return_value=record),patch.object(inv,'generate',return_value=inventory):
+            result=run();text=inv.REPO/approved['license_text']['path']
+            self.assertEqual(result[text.name],text.read_bytes())
+            self.assertEqual(result['npm-standard-license-texts.json'],config.read_bytes())
+            output=self.base/'standard-package';m.write_package(output,result)
+            manifest=json.loads((output/'release-manifest.json').read_bytes())
+            for name in (text.name,'npm-standard-license-texts.json'):
+                self.assertEqual(inv.sha(output/name),manifest['files'][name])
+                self.assertEqual((output/name).read_bytes(),result[name])
+            inventory['mainsail_dependencies']['packages'][0]['standard_license_texts']=[]
+            with self.assertRaisesRegex(ValueError,'qualified inventory'):run()
+            inventory['mainsail_dependencies']['packages'][0]['standard_license_texts']=[verified]
+            pin['sha256']='0'*64
+            with self.assertRaisesRegex(ValueError,'hash mismatch'):run()
+            pin['sha256']=inv.sha(config);pin['path']='missing.json'
+            with self.assertRaises(ValueError):run()
+            pin.update(root=str(config.parent),path=config.name,sha256=inv.sha(config))
+            # Exercise the actual repository text reads and exporter, including a
+            # valid copy, altered full text and a missing standard document.
+            repository=self.base/'repository'
+            relative='configs/apps/mainsail.json'
+            copied_config=repository/relative;copied_config.parent.mkdir(parents=True)
+            copied_config.write_bytes((inv.REPO/relative).read_bytes())
+            copied_text=repository/approved['license_text']['path'];copied_text.parent.mkdir(parents=True)
+            copied_text.write_bytes(text.read_bytes())
+            with patch.object(inv,'REPO',repository):
+                self.assertEqual(run()[text.name],text.read_bytes())
+                copied_text.write_bytes(text.read_bytes()+b'altered')
+                with self.assertRaisesRegex(ValueError,'text bytes'):run()
+                copied_text.unlink()
+                with self.assertRaises(ValueError):run()
+            fake=self.base/'fake.json';value=json.loads(config.read_bytes());value['records'][0]['source']['source_revision']='a'*40
+            fake.write_text(json.dumps(value));pin.update(root=str(self.base),path=fake.name,sha256=inv.sha(fake))
+            with self.assertRaisesRegex(ValueError,'Unapproved'):run()
 
     def test_profiles_require_all_applicable_inputs(self):
         with self.assertRaisesRegex(ValueError,'requires inventory'):m.prepare(self.image,self.public)

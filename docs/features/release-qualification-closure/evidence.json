@@ -1,71 +1,10 @@
 {
-  "format_version": 1,
-  "status": "in-progress-nine-notice-gaps-remain",
-  "code_commit": "6b0cdc6342861be2ab3c5fc5622fc6b8f1f2b297",
-  "source_sha256": {
-    "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-    "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-    "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
-    "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-    "tests/test_prepare_release.py": "a7718e72c6d88b604a5d084947ba402d78ef44b1a6f0fd2e0aa2bb405bc3e5a8",
-    "tests/test_image_license_inventory.py": "5fd0ea117f889f1a30fd67a804a8b77b6018b4704d3c70f57fde856314e37d6a",
-    "tests/test_resolve_npm_notices.py": "3bc487bf793126aa0a23baec6556b29bef73e5c1ee9c4fd8bc5627caee56cf78",
-    "tests/test_license_inventory.py": "997d6a1c30011b6db59380c442f4cd800e4cc7bb11ef522628348dbf31112dcd",
-    "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
-    "docs/licensing/npm-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
-    "docs/development/release-packaging.md": "cfcd3689ac2a6ae101105dc75a7da518114af79b47cedad20b336c12d88131a8"
-  },
-  "tests": {
-    "initial": {
-      "command": [
-        "python3",
-        "-m",
-        "unittest",
-        "-v",
-        "test_image_license_inventory",
-        "test_prepare_release",
-        "test_resolve_npm_notices",
-        "test_license_inventory",
-        "test_project_license"
-      ],
-      "exit_code": 0,
-      "elapsed_seconds": 0.41445466107688844,
-      "source_before": {
-        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd",
-        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3"
-      },
-      "source_after": {
-        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd",
-        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3"
-      }
-    },
-    "initial_passed": 55,
-    "latest_resolver": {
-      "command": [
-        "python3",
-        "-m",
-        "unittest",
-        "-v",
-        "test_resolve_npm_notices"
-      ],
-      "exit_code": 0,
-      "elapsed_seconds": 0.11407755897380412,
-      "source_sha256": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
-    },
-    "latest_resolver_passed": 12,
-    "distinct_passed": 56,
-    "skips": 0,
-    "note": "55 initial checks; stricter repository identity handling added and all12 resolver checks passed, including one additional test. Other production code changes since initial tests are module docstring only."
-  },
   "actual_image": {
     "image": {
       "bytes": 7818182656,
       "sha256": "b08c18e3f39e7096c4faeb047f1e26fb5db593dc3d0ff451658eb4b528a8ad43"
     },
+    "overall_release_qualified": false,
     "partitions": [
       {
         "coverage": "opaque-partition-hash-only",
@@ -122,9 +61,11 @@
         "size_bytes": 2565865472
       }
     ],
+    "raw_inventory_sha256": "d31496a22b2d48b37fece7d5e9544f7b52c2f97ea7240273870c7723cfa010b8",
     "roots": [
       {
-        "partition": 2,
+        "files_count": 23761,
+        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
         "filesystem": {
           "bytes": 2147483648,
           "format": "ext4",
@@ -5772,9 +5713,7 @@
             "version": "1:1.3.dfsg+really1.3.1-1+b1"
           }
         ],
-        "files_count": 23761,
-        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
-        "usr_payload": null,
+        "partition": 2,
         "unknowns": [
           "missing-project-source-provenance",
           "missing-package-notice:sv08-update-admission",
@@ -5782,10 +5721,12 @@
           "Vendor kernel/bootloader source reproduction is not established.",
           "Non-dpkg application license coverage requires separate source inventory.",
           "Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded."
-        ]
+        ],
+        "usr_payload": null
       },
       {
-        "partition": 4,
+        "files_count": 23761,
+        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
         "filesystem": {
           "bytes": 2147483648,
           "format": "ext4",
@@ -11433,9 +11374,7 @@
             "version": "1:1.3.dfsg+really1.3.1-1+b1"
           }
         ],
-        "files_count": 23761,
-        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
-        "usr_payload": null,
+        "partition": 4,
         "unknowns": [
           "missing-project-source-provenance",
           "missing-package-notice:sv08-update-admission",
@@ -11443,19 +11382,19 @@
           "Vendor kernel/bootloader source reproduction is not established.",
           "Non-dpkg application license coverage requires separate source inventory.",
           "Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded."
-        ]
+        ],
+        "usr_payload": null
       },
       {
-        "partition": 5,
+        "files_count": 0,
+        "files_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
         "filesystem": {
           "bytes": 134217728,
           "format": "ext4",
           "sha256": "772ceecac8f891da4f4807678d5528c1d0b2ced35ca958e373bfe6ce6e357fa3"
         },
         "packages": [],
-        "files_count": 0,
-        "files_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
-        "usr_payload": null,
+        "partition": 5,
         "unknowns": [
           "missing-project-source-provenance",
           "missing-installed-dpkg-database",
@@ -11463,11 +11402,10 @@
           "Vendor kernel/bootloader source reproduction is not established.",
           "Non-dpkg application license coverage requires separate source inventory.",
           "Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded."
-        ]
+        ],
+        "usr_payload": null
       }
-    ],
-    "raw_inventory_sha256": "d31496a22b2d48b37fece7d5e9544f7b52c2f97ea7240273870c7723cfa010b8",
-    "overall_release_qualified": false
+    ]
   },
   "actual_image_receipt": {
     "command": [
@@ -11478,29 +11416,23 @@
       "--scratch",
       "/root/.sv08-release-closure-20261015"
     ],
+    "elapsed_seconds": 37.39236290915869,
     "exit_code": 0,
     "expected_exit_code": 0,
-    "elapsed_seconds": 37.39236290915869,
-    "source_before": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-      "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
-    },
     "source_after": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
       "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
       "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    },
+    "source_before": {
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+      "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
     }
-  },
-  "image_docstring_compatibility": {
-    "measured_sha256": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-    "final_sha256": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-    "only_change": "module docstring accurately describes managed read-only mounts",
-    "executable_AST_unchanged": true
   },
   "actual_project_source_package": {
     "command": [
@@ -11517,22 +11449,148 @@
       "--scratch",
       "/root/.sv08-release-closure-20261015"
     ],
+    "elapsed_seconds": 1.165902622975409,
     "exit_code": 0,
     "expected_exit_code": 0,
-    "elapsed_seconds": 1.165902622975409,
-    "source_before": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-      "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
-    },
     "source_after": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
       "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
       "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    },
+    "source_before": {
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+      "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    }
+  },
+  "agents": [
+    {
+      "effective_settings": "not independently observable",
+      "requested_effort": "default low",
+      "role": "project_researcher",
+      "task": "release_inventory_trace"
+    },
+    {
+      "effective_settings": "not independently observable",
+      "requested_effort": "medium",
+      "role": "project_implementer",
+      "task": "release_closure_implement"
+    },
+    {
+      "effective_settings": "not independently observable",
+      "requested_effort": "medium",
+      "role": "project_researcher",
+      "task": "npm_notice_gaps"
+    }
+  ],
+  "allowance": {
+    "additional_research_running": true,
+    "conservative_charge_generated_bytes": 536870912,
+    "conservative_charge_seconds": 1200,
+    "includes_agents_and_failed_attempts": true,
+    "primary_generated_bytes": 8589934592,
+    "primary_process_seconds": 7200
+  },
+  "artifact_roots": {
+    "coordinator": "/home/drew/.sv08-release-closure-20261015",
+    "privileged": "/root/.sv08-release-closure-20261015"
+  },
+  "code_commit": "6b0cdc6342861be2ab3c5fc5622fc6b8f1f2b297",
+  "completion_audit_after_humanfs_types": {
+    "actual_final_image_inventory": {
+      "evidence_field": "actual_image",
+      "inspector_source_unchanged": true,
+      "limitations": "A/B513 package observations, recovery metadata gaps and actual image hashes remain preserved at measured revision",
+      "result": "measured actual historical assembled final image, read-only, not a current release claim"
+    },
+    "all_69_notice_closure": {
+      "addressed_original_gaps_for_selected_build": 68,
+      "exact_original_author_notices": 60,
+      "original_unresolved_archives_selected_away_or_replaced": 8,
+      "release_refusal_expected": true,
+      "remaining": [
+        {
+          "historical_status": "unresolved-author-notice",
+          "name": "@sindarius/gcodeviewer",
+          "version": "3.7.18"
+        }
+      ],
+      "result": "incomplete"
+    },
+    "next_dependency": "Explicit owner approval to post prepared maintainer notice request; subsequently author response or compatible notice-bearing distribution. No message sent, no consent inferred.",
+    "preserve_upstream_licenses": {
+      "legal_compliance_assessed": false,
+      "mainsail_gitlink": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+      "result": "verified original60 notice set and upstream gitlink unchanged; own replacements explicitly identified and source-bound"
+    },
+    "publication": {
+      "checks_at_publication": "none reported",
+      "current_pr": "https://github.com/drew442/sv08-mainline/pull/26",
+      "result": "draft PR21 throughPR26 published; no merge/deployment"
+    },
+    "release_packaging": {
+      "core_source_hashes_unchanged": {
+        "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684"
+      },
+      "limitation": "No current full-stack release or legal/hardware qualification inferred",
+      "result": "implemented and tested; source-bound positive project-source profile and negative historical full-image refusal reused"
+    },
+    "scope": "Full original owner objective retained, not marked complete"
+  },
+  "completion_audit_after_standard_lgpl": {
+    "image": "Actual historical assembled final image inspected read-only; hashes and coverage/missing metadata retained in actual_image. Inspector hash unchanged. No current release claim.",
+    "npm": "All69 historical entries accounted individually:60 author notices,8 originally unresolved removed/replaced,1 owner-approved standard terms. Nine measured selection remediations overlap60 by one; do not sum disjointly. Zero selected gaps.",
+    "outcome": "Authorized development objective satisfied and published for owner review as draft PR27 atop PR26. Task self-validation awaits owner integration; no merge/deployment.",
+    "packaging": "Implemented exact-artifact fail-closed gate; historical actual-image refusal, current project-source positive and standard-text export/tamper tests passed. Full current stack remains separately unqualified.",
+    "publication": {
+      "ci": "No checks reported on stacked PR at publication",
+      "remote_receipt": "38d29f107c8cea21e23703a5e4056f4aee312ddc verified before final bookkeeping commit",
+      "url": "https://github.com/drew442/sv08-mainline/pull/27"
+    },
+    "upstream": "No upstream archive/license/gitlink modified; original60 supplemental notice hash unchanged."
+  },
+  "failed_attempts": [
+    "Initial actual image run stopped at missing later-slot dpkg metadata; now reports unknown coverage per slot. Original failed inputs/logs retained.",
+    "Initial six source notice pins captured empty in-progress shared URL cache; rejected by hash checks. Fresh exact-commit public responses were separately retained; original research unchanged.",
+    "Verbatim text whitespace failed Git diff check; full original text remains in canonicalJSON, plain-text bundle generated on export. No license text normalized."
+  ],
+  "format_version": 1,
+  "full_inventory": {
+    "application_count": 6,
+    "coverage": {
+      "declaration_only_dependencies": 9,
+      "dependencies_with_notice_text": 925,
+      "inspected_supplier_archives": 934
+    },
+    "debian_baseline_packages": 284,
+    "inventory_sha256": "35482fa9ea4d71cf0ff6ac40702379d2f6366e02b31657ea941504716c79cd8a"
+  },
+  "full_inventory_receipt": {
+    "command": [
+      "python3",
+      "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-qualification-closure/scripts/license_inventory.py",
+      "--inputs",
+      "/root/.sv08-release-closure-20261015/inventory-inputs.json",
+      "--output",
+      "/root/.sv08-release-closure-20261015/full-software-inventory.json"
+    ],
+    "elapsed_seconds": 14.99561673682183,
+    "exit_code": 0,
+    "source_after": {
+      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
+    },
+    "source_before": {
+      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
     }
   },
   "historical_artifact_refusal": {
@@ -11550,161 +11608,1922 @@
       "--scratch",
       "/root/.sv08-release-closure-20261015"
     ],
+    "elapsed_seconds": 17.3041996199172,
     "exit_code": 1,
     "expected_exit_code": 1,
     "output_exists": false,
-    "elapsed_seconds": 17.3041996199172,
-    "source_sha256_before": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-      "scripts/image_license_inventory.py": "a465298d324c092d9de6d9f183aab2b54d305ab0b1fc928415814e98069aef8f",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612"
-    },
     "source_sha256_after": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
       "scripts/image_license_inventory.py": "a465298d324c092d9de6d9f183aab2b54d305ab0b1fc928415814e98069aef8f",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612"
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    },
+    "source_sha256_before": {
+      "scripts/image_license_inventory.py": "a465298d324c092d9de6d9f183aab2b54d305ab0b1fc928415814e98069aef8f",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
     }
   },
-  "full_inventory": {
-    "coverage": {
-      "declaration_only_dependencies": 9,
-      "dependencies_with_notice_text": 925,
-      "inspected_supplier_archives": 934
+  "humanfs_types_continuation": {
+    "accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 9,
+      "remaining_selected_notice_gaps": 1,
+      "selected_dependencies": 897
     },
-    "inventory_sha256": "35482fa9ea4d71cf0ff6ac40702379d2f6366e02b31657ea941504716c79cd8a",
-    "application_count": 6,
-    "debian_baseline_packages": 284
-  },
-  "full_inventory_receipt": {
-    "command": [
-      "python3",
-      "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-qualification-closure/scripts/license_inventory.py",
-      "--inputs",
-      "/root/.sv08-release-closure-20261015/inventory-inputs.json",
-      "--output",
-      "/root/.sv08-release-closure-20261015/full-software-inventory.json"
+    "agents": [
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "thread": "/root/humanfs_types_implement"
+      }
     ],
-    "exit_code": 0,
-    "elapsed_seconds": 14.99561673682183,
-    "source_before": {
-      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
-      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"
+    "allowance": {
+      "continuation": "Additional1200seconds/2GiB for inert fixture regression and final fresh pair; prior usage retained, cleanup does not reset charge",
+      "cumulative_conservative_charge_bytes": 20937965568,
+      "cumulative_conservative_charge_process_seconds": 8500,
+      "limit_bytes": 21474836480,
+      "limit_process_seconds": 15600
     },
-    "source_after": {
-      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
-      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"
-    }
+    "code_commit": "71b8c8a86e69c9cbb4a5c8184d4005961e6e1752",
+    "failed_or_superseded_attempts": [
+      "Initial source test incorrectly compared preserved upstream GPL LICENSE with project AGPL; fixed test to separately require original upstream and authored-package notices, changing no upstream grant",
+      "Accidental broad test discovery selected unrelated access/UI suites:15 ancestry setup errors and one browser debug-readiness assertion; retained, not acceptance. Scratch group-writable mode diagnosed and corrected; browser cause not established, no pass claimed",
+      "Initial successful revision9 pair superseded before publication; both had already completed when stop was attempted, no signal delivered; revision10 used thereafter",
+      "First revision10 pair superseded for compile-only fixture safety guard and mocked backend regression; no fixture filesystem operations were executed",
+      "Native TypeScript file invocation hit TS5112 beside project config; corrected --ignoreConfig while preserving strict and skipLibCheck=false",
+      "Intermediate patch hash origin9e986 to1afc not observable; reconciliation proves only intended fixture sections changed, all other sections byte-identical"
+    ],
+    "focused_source_checks": {
+      "log_sha256": {
+        "humanfs-types-implementation/dependency-tests.log": "126bb480b24619fe8c0a69756cafcea256d5ab6c55db7199bb5f372e286850d2",
+        "humanfs-types-implementation/ospath-tests.log": "b691a883f37bf88b2d1ed915b0d87e67ba8ee5182d7744051b27f0be27c23e7f",
+        "humanfs-types-implementation/resolver-tests.log": "a07985cb2440260564bf05563ca9310599b9e9c07fa903ab8112338c080f30b7",
+        "humanfs-types-implementation/source-tests-final.log": "12f798d582de35280538556e02f41ea450d9f14a33b75d817e9d6c042d72f967",
+        "humanfs-types-implementation/visibility-tests.log": "bcd6b90c93744c050314f3a5a06dad015de71ab3e4c49664135d60bb35c2101b"
+      },
+      "passed": 39,
+      "scope": "20 resolver,4 humanfs,6 ospath,6 notice,3 visibility; changed checks repeated after edits",
+      "unchanged_janus_supplier_evidence": "reused from exact unchanged patch5 and PR25; broad accidental discovery skipped that check without its optional environment"
+    },
+    "limitations": [
+      "One remaining selected gap: @sindarius/gcodeviewer3.7.18, declared LGPL-3.0-or-later; no author notice invented",
+      "Maintainer issue draft prepared; external posting approval pending, no upstream message sent",
+      "Interactive Cypress evidence reused from PR25, no new interactive click journey",
+      "No printer, deployment, full current-stack release or legal compliance qualification"
+    ],
+    "private_artifact_root": "/home/drew/.sv08-release-closure-20261015",
+    "receipts": {
+      "cypress-humanfs-types-candidate/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-final-a/source/node_modules/cypress/bin/cypress",
+          "run",
+          "--browser",
+          "electron",
+          "--headless",
+          "--spec",
+          "cypress/e2e/dashboard.cy.ts",
+          "--config",
+          "baseUrl=http://localhost:4173,video=false,screenshotsFolder=/home/drew/.sv08-release-closure-20261015/cypress-humanfs-types-candidate/screenshots,downloadsFolder=/home/drew/.sv08-release-closure-20261015/cypress-humanfs-types-candidate/downloads"
+        ],
+        "elapsed_seconds": 8.270264608087018,
+        "exit": 0,
+        "scope": "unchanged existing Cypress dashboard assertion against built app; isolated loopback namespace"
+      },
+      "humanfs-runtime-preservation.json": {
+        "baseline": {
+          "eslintVersion": "10.6.0",
+          "results": [
+            {
+              "errorCount": 0,
+              "file": "good.js",
+              "messages": [],
+              "warningCount": 0
+            },
+            {
+              "errorCount": 1,
+              "file": "nested/bad.js",
+              "messages": [
+                {
+                  "column": 7,
+                  "line": 1,
+                  "message": "'unused' is assigned a value but never used.",
+                  "ruleId": "no-unused-vars"
+                }
+              ],
+              "warningCount": 0
+            }
+          ],
+          "unmatched": {
+            "message": "No files matching 'missing/**/*.js' were found.",
+            "name": "Error"
+          }
+        },
+        "candidate_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+        "eslint_behavior_identical": true,
+        "parent_files_byte_identical": 20
+      },
+      "humanfs-types-browser-evidence-reuse.json": {
+        "production_asset_files_byte_identical": 195,
+        "reused_cypress_receipt": "cypress-humanfs-types-candidate/receipt.json",
+        "source_changes": "compile-only fixture guard and unit safety test only; no package/lock/archive/runtime changes",
+        "tree_sha256": "1967aa3a1af3cf13a834691ecde39abce85e4d77c758416b69d1f44d0c05ae88"
+      },
+      "humanfs-types-final-evidence-reuse.json": {
+        "current_parent_files_identical_to_original": 20,
+        "prior_install_receipt": "humanfs-types-relocated-install-receipt.json",
+        "prior_runtime_receipt": "humanfs-runtime-preservation.json",
+        "relocated_install_inputs_byte_identical": {
+          "package-lock.json": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+          "package.json": "91a12276c2eab0d1affda4539dd1ea92316fef95b92ffa3dc88698fab19e56b9",
+          "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+          "vendor/sv08-mainline-ospath-compat-1.0.0.tgz": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2"
+        },
+        "strict_current_guarded_contract": "humanfs-types-safe-runtime-results.json"
+      },
+      "humanfs-types-implementation/inert-guard-source-receipt.json": {
+        "executed_fixture": false,
+        "guard": "never-invoked function; all previous assertions and calls preserved verbatim after removing indentation",
+        "guarded_fixture_sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+        "original_fixture_sha256": "ecd81c06183a32a60cbcc089a84481128c7885f1e924058919bff17fe7056240",
+        "patch_sha256": "9e986702794333dd962aebc577833409c77956855f45d3afab0189b454c48c59"
+      },
+      "humanfs-types-implementation/inert-probe-result.json": {
+        "fixture_sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+        "inert_backend_uses": 0,
+        "negative_control_backend_uses": 1,
+        "real_backend_loaded": false,
+        "status": "passed"
+      },
+      "humanfs-types-implementation/inert-test-source-receipt.json": {
+        "fixture_unchanged_sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+        "manifest_lock_archive_unchanged": true,
+        "new_test_sha256": "d24ee7c1e237e51e3d4ef58dd971b664f29ad49c321317f13473ba70acd78dec",
+        "patch_sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7",
+        "prior_patch_sha256": "1afcd642cd56f3f9d7ffbd7b9c5c9ac232352e68c161fcbaf7a71390f003568e"
+      },
+      "humanfs-types-implementation/strict-type-guarded-receipt.json": {
+        "executed_fixture": false,
+        "fixture": {
+          "bytes": 9015,
+          "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/contract-guarded.mts",
+          "sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21"
+        },
+        "only_patch_fixture_changed": true,
+        "patch": {
+          "bytes": 49246,
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/patches/mainsail/0008-humanfs-types-compat.patch",
+          "sha256": "9e986702794333dd962aebc577833409c77956855f45d3afab0189b454c48c59"
+        },
+        "prior_receipt": {
+          "bytes": 10668,
+          "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/strict-type-receipt.json",
+          "sha256": "ad2f0d026e5ecdd1c3be29ce151d29c049c7847fcbb9c5ee19e64c0d003d11bd"
+        },
+        "profile": {
+          "bytes": 3403,
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/configs/apps/mainsail.json",
+          "sha256": "e49f6f481dcb7a65628eda1c26ae3183763fe658e2b148561f7e26382c21e02b"
+        },
+        "runs": [
+          {
+            "command": [
+              "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+              "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/typescript/bin/tsc",
+              "-p",
+              "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/baseline-guarded.json"
+            ],
+            "configuration": {
+              "bytes": 983,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/baseline-guarded.json",
+              "sha256": "650090ecc3bea80e47eacdf2aeb7b595934866ea2d084ceb8a8d144b1460845f"
+            },
+            "declaration": {
+              "bytes": 6682,
+              "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/@humanfs/types/src/hfs-types.ts",
+              "sha256": "a3befb11eea960f9285e5122e7df6c428c7b5bf0f0e73713bbbe085c17c2916e"
+            },
+            "elapsed_seconds": 1.9146806970238686,
+            "exit_code": 0,
+            "label": "baseline",
+            "log": {
+              "bytes": 0,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/baseline-guarded.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "command": [
+              "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+              "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/typescript/bin/tsc",
+              "-p",
+              "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/candidate-guarded.json"
+            ],
+            "configuration": {
+              "bytes": 943,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/candidate-guarded.json",
+              "sha256": "11c1453f6ffe662c9f7f5f05de54e6d6c49c9d85bd874d8c362c4455c25e77dc"
+            },
+            "declaration": {
+              "bytes": 1359,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-lock-source/vendor/humanfs-types-compat/index.d.ts",
+              "sha256": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424"
+            },
+            "elapsed_seconds": 1.9430188869591802,
+            "exit_code": 0,
+            "label": "candidate",
+            "log": {
+              "bytes": 0,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/candidate-guarded.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ],
+        "source_guard": {
+          "bytes": 429,
+          "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/inert-guard-source-receipt.json",
+          "sha256": "2ace18e4b87799aac067b4ff2fe17e4887388b021cae70e0d6c3680f8af987f1"
+        }
+      },
+      "humanfs-types-lock-generation-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "install",
+          "--package-lock-only",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsed_seconds": 0.6650605399627239,
+        "empty_cache": true,
+        "exit": 0
+      },
+      "humanfs-types-lock-idempotence.json": {
+        "changed_records": [
+          "",
+          "node_modules/@humanfs/types"
+        ],
+        "elapsed_seconds": 0.6716835999395698,
+        "exit": 0,
+        "fresh_cache": true,
+        "raw_byte_identical": true,
+        "unrelated_metadata_preserved": {
+          "node_modules/@parcel/watcher-linux-arm-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-musleabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/argparse": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lodash": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs/node_modules/tslib": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/yaml": {
+            "dev": {
+              "after": true,
+              "before": null
+            },
+            "optional": {
+              "after": true,
+              "before": null
+            },
+            "peer": {
+              "after": true,
+              "before": null
+            }
+          }
+        }
+      },
+      "humanfs-types-patch-reconciliation.json": {
+        "added_sections": [
+          "+++ b/tests/humanfs-types-contract.spec.ts"
+        ],
+        "base_sha": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762",
+        "changed_sections": [
+          "+++ b/tests/humanfs-types-contract.mts"
+        ],
+        "current_sha": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7",
+        "duplicate_section_keys": false
+      },
+      "humanfs-types-relocated-install-receipt.json": {
+        "authored_cache_content": [
+          {
+            "cached_content_removed": true,
+            "name": "@sv08-mainline/ospath-compat"
+          },
+          {
+            "cached_content_removed": true,
+            "name": "@sv08-mainline/humanfs-types-compat"
+          }
+        ],
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "ci",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "copied_inputs": "root manifest/lock, two local archives and strict contract only",
+        "elapsed_seconds": 7.584199110046029,
+        "exit": 0,
+        "original_cache_not_used": true,
+        "strict_contract_command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--strict",
+          "--noEmit",
+          "--skipLibCheck",
+          "false",
+          "--module",
+          "NodeNext",
+          "--moduleResolution",
+          "NodeNext",
+          "--target",
+          "ES2022",
+          "--types",
+          "node",
+          "contract.mts"
+        ],
+        "strict_contract_exit": 0
+      },
+      "humanfs-types-restored-ospath-checks.json": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_mainsail_ospath.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.16436642897315323,
+        "exit": 0,
+        "reason": "Final diff restored existing final-lock hash assertion after earlier stage-snapshot edit"
+      },
+      "humanfs-types-safe-inventory-delta-payload.json": {
+        "actual_final_payload_notices": [
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/janus-sdk.txt",
+            "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c"
+          },
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/sv08-janus-adapter-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ],
+        "base_revision": "3e1e70a",
+        "changed_dependencies": [
+          "node_modules/@humanfs/types"
+        ],
+        "coverage": {
+          "declaration_only_dependencies": 1,
+          "dependencies_with_notice_text": 896,
+          "inspected_supplier_archives": 897
+        },
+        "other_applications_unchanged": true,
+        "unchanged_dependency_records": 896,
+        "unchanged_sections": [
+          "build_tools",
+          "debian",
+          "format_version",
+          "hardware_release_qualified",
+          "legal_compliance_assessed",
+          "scope",
+          "wheels"
+        ]
+      },
+      "humanfs-types-safe-inventory-receipt.json": {
+        "command": [
+          "python3",
+          "scripts/license_inventory.py",
+          "--inputs",
+          "/home/drew/.sv08-release-closure-20261015/humanfs-types-safe-inventory-inputs.json",
+          "--output",
+          "configs/host/release-source-license-inventory.json"
+        ],
+        "elapsed_seconds": 14.016167989932,
+        "exit": 0
+      },
+      "humanfs-types-safe-package-repro.json": {
+        "builds": [
+          {
+            "elapsed_seconds": 26.96873917710036,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.58269395097159,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "identical_packages": true,
+        "identical_reports": true,
+        "package_bytes": 2493762,
+        "package_sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50",
+        "superseded_revision9_pair": [
+          {
+            "elapsed_seconds": 25.762879862915725,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.614593118894845,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "superseded_unguarded_fixture_pair": [
+          {
+            "elapsed_seconds": 27.449475159170106,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.184401206905022,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "version": "2.19.0+git32f99e1c-10"
+      },
+      "humanfs-types-safe-runtime-results.json": [
+        {
+          "check": "unit",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run"
+          ],
+          "elapsed_seconds": 1.775445566046983,
+          "exit": 0
+        },
+        {
+          "check": "types",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "elapsed_seconds": 2.983962901867926,
+          "exit": 0
+        },
+        {
+          "check": "native-contract",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--ignoreConfig",
+            "--strict",
+            "--noEmit",
+            "--skipLibCheck",
+            "false",
+            "--module",
+            "NodeNext",
+            "--moduleResolution",
+            "NodeNext",
+            "--target",
+            "ES2022",
+            "--types",
+            "node",
+            "tests/humanfs-types-contract.mts"
+          ],
+          "elapsed_seconds": 2.0827453199308366,
+          "exit": 0
+        }
+      ],
+      "humanfs-types-safe-source-checks.json": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_mainsail_humanfs_types.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.11394670885056257,
+        "exit": 0,
+        "reason": "changed patch touched-file expectation for inertness regression"
+      },
+      "humanfs-types-superseded-cleanup.json": [
+        {
+          "cumulative_usage_not_reset": true,
+          "removed_disposable_paths": [
+            "source/node_modules",
+            "node-v22.23.2-linux-x64",
+            "source.tar",
+            "package"
+          ],
+          "report": {
+            "activation_included": false,
+            "bytes": 2493526,
+            "package": "sv08-mainsail_2.19.0+git32f99e1c-9_all.deb",
+            "payload_bytes": 9934694,
+            "profile": {
+              "authored_npm_replacements": {
+                "node_modules/@humanfs/types": {
+                  "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                  "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                    "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                    "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                  },
+                  "format": "types-only",
+                  "name": "@sv08-mainline/humanfs-types-compat",
+                  "source_directory": "vendor/humanfs-types-compat",
+                  "version": "1.0.0"
+                },
+                "node_modules/ospath": {
+                  "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                  "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                    "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                    "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                  },
+                  "name": "@sv08-mainline/ospath-compat",
+                  "source_directory": "vendor/ospath-compat",
+                  "version": "1.0.0"
+                }
+              },
+              "format_version": 1,
+              "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+              "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+              "node_version": "22.23.2",
+              "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+              "package_version": "2.19.0+git32f99e1c-9",
+              "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+              "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+              "source_patches": [
+                {
+                  "path": "patches/mainsail/0001-stable-precache-order.patch",
+                  "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+                },
+                {
+                  "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                  "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+                },
+                {
+                  "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                  "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+                },
+                {
+                  "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                  "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+                },
+                {
+                  "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                  "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+                },
+                {
+                  "path": "patches/mainsail/0006-native-visibility.patch",
+                  "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+                },
+                {
+                  "path": "patches/mainsail/0007-ospath-compat.patch",
+                  "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+                },
+                {
+                  "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                  "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+                }
+              ],
+              "source_path": "upstream/mainsail",
+              "status": "offline-build-no-browser-validation"
+            },
+            "sha256": "39335abc4c87a8b0e2d1309eae692a3012d5b89f3de23ae66d35bd9342ef961a",
+            "source_date_epoch": 1788551235,
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ]
+          },
+          "retained": "report, deb, patched sources/lock/vendor/dist; all failed/superseded receipts",
+          "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-a"
+        },
+        {
+          "cumulative_usage_not_reset": true,
+          "removed_disposable_paths": [
+            "source/node_modules",
+            "node-v22.23.2-linux-x64",
+            "source.tar",
+            "package"
+          ],
+          "report": {
+            "activation_included": false,
+            "bytes": 2493526,
+            "package": "sv08-mainsail_2.19.0+git32f99e1c-9_all.deb",
+            "payload_bytes": 9934694,
+            "profile": {
+              "authored_npm_replacements": {
+                "node_modules/@humanfs/types": {
+                  "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                  "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                    "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                    "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                  },
+                  "format": "types-only",
+                  "name": "@sv08-mainline/humanfs-types-compat",
+                  "source_directory": "vendor/humanfs-types-compat",
+                  "version": "1.0.0"
+                },
+                "node_modules/ospath": {
+                  "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                  "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                    "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                    "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                  },
+                  "name": "@sv08-mainline/ospath-compat",
+                  "source_directory": "vendor/ospath-compat",
+                  "version": "1.0.0"
+                }
+              },
+              "format_version": 1,
+              "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+              "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+              "node_version": "22.23.2",
+              "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+              "package_version": "2.19.0+git32f99e1c-9",
+              "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+              "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+              "source_patches": [
+                {
+                  "path": "patches/mainsail/0001-stable-precache-order.patch",
+                  "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+                },
+                {
+                  "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                  "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+                },
+                {
+                  "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                  "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+                },
+                {
+                  "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                  "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+                },
+                {
+                  "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                  "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+                },
+                {
+                  "path": "patches/mainsail/0006-native-visibility.patch",
+                  "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+                },
+                {
+                  "path": "patches/mainsail/0007-ospath-compat.patch",
+                  "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+                },
+                {
+                  "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                  "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+                }
+              ],
+              "source_path": "upstream/mainsail",
+              "status": "offline-build-no-browser-validation"
+            },
+            "sha256": "39335abc4c87a8b0e2d1309eae692a3012d5b89f3de23ae66d35bd9342ef961a",
+            "source_date_epoch": 1788551235,
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ]
+          },
+          "retained": "report, deb, patched sources/lock/vendor/dist; all failed/superseded receipts",
+          "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-b"
+        }
+      ],
+      "humanfs-types-unrelated-discovery-diagnosis.json": {
+        "affected_product_runtime_and_ui_files_changed": false,
+        "broad_discovery_was_not_acceptance": true,
+        "browser_failure": "assert(debug) before product journey; cause not established; no passing claim or retry",
+        "owned_leaked_processes_observed": false,
+        "persistent_ancestry_failure_cause": {
+          "assigned_scratch_mode_before": "0o775",
+          "mode_after": "0o700",
+          "policy": "runtime/sv08_web.py roots rejects group/other writable ancestors",
+          "production_guard_unchanged": true
+        },
+        "relevant_scope_results": "39 focused checks passed; changed humanfs and ospath checks repeated after their edits"
+      },
+      "humanfs-types-version-correction.json": {
+        "active_build": {
+          "command": [
+            "python3",
+            "scripts/package_mainsail.py",
+            "--work",
+            "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-b",
+            "--node-archive",
+            "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64.tar.xz",
+            "--execute"
+          ],
+          "pgid": 1117563,
+          "pid": 1117563
+        },
+        "actual_outcome": "Both revision9 builds had already completed exit0 before stop attempt; process group was missing and no signal was delivered. Both were superseded and revision10 fresh pair passed.",
+        "prior_charge_retained": true,
+        "reason": "New candidate retained prior package revision9; first build successful but superseded, active second build stopped before publication. Correct revision10 then fresh pair required.",
+        "root_limit_bytes": 19327352832,
+        "slice_reservation_bytes": 4294967296
+      }
+    },
+    "source_sha256": {
+      "configs/apps/mainsail.json": "8999ed248a3f0a31b65e344d59eb9283d62e4d032768d3880fc1044d28a89df3",
+      "configs/host/npm-notice-resolution.json": "134021b257171c7892851c3015138cba994778941d9a8ed0f5d27344d7bdecd7",
+      "configs/host/release-source-license-inventory.json": "e4253afe3a988963254e22d4b588d824e0c7466013f66475b62b6fa1ec8a6adc",
+      "patches/mainsail/0008-humanfs-types-compat.patch": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7",
+      "scripts/package_mainsail.py": "105acdf8368b67f89a86c3721638ae7b7b5a1402ba0ad79478370405817be164",
+      "scripts/resolve_npm_notices.py": "e0db02c4fa5b4765e81236df9fbd408ba817e9500a3b4182f1c7e79909cd51b3",
+      "tests/mainsail_humanfs_types_contract.ts": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+      "tests/test_mainsail_humanfs_types.py": "a75b62c5a7c0052c64f869026fcb91393e558063031e8847b3344f4271f72283",
+      "tests/test_resolve_npm_notices.py": "710c59008ab2d796ba0a3409e48426f5cf97f0732bbea754a059c89b44333d91"
+    },
+    "status": "slice validated; full goal incomplete with one selected notice gap"
   },
-  "remaining_notice_gaps": [
-    {
-      "name": "@humanfs/types",
-      "version": "0.15.0",
-      "supplier_url": "https://registry.npmjs.org/@humanfs/types/-/types-0.15.0.tgz",
-      "source_revision": "85069f193cbacc371c3beb649ce746f8c5a493be",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Exact typesREADME/metadata declareApache2.0; rootREADME describes humanfs monorepo and declaresApache2.0 without pointing to any siblinglicense text. No root/typesLICENSE in fetchedhistory. Publicissue171 specifically requests missingtypeslicense; no comments."
+  "humanfs_types_final_disposable_cleanup": {
+    "available_storage_after": "9.7GiB observed",
+    "budgets_not_reset": true,
+    "current_safe_a_installation_retained": true,
+    "receipt": [
+      {
+        "cumulative_usage_not_reset": true,
+        "removed_disposable_paths": [
+          "source/node_modules",
+          "node-v22.23.2-linux-x64",
+          "source.tar",
+          "package"
+        ],
+        "report": {
+          "activation_included": false,
+          "bytes": 2493692,
+          "package": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+          "payload_bytes": 9934695,
+          "profile": {
+            "authored_npm_replacements": {
+              "node_modules/@humanfs/types": {
+                "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                  "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                  "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                },
+                "format": "types-only",
+                "name": "@sv08-mainline/humanfs-types-compat",
+                "source_directory": "vendor/humanfs-types-compat",
+                "version": "1.0.0"
+              },
+              "node_modules/ospath": {
+                "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                  "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                  "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                },
+                "name": "@sv08-mainline/ospath-compat",
+                "source_directory": "vendor/ospath-compat",
+                "version": "1.0.0"
+              }
+            },
+            "format_version": 1,
+            "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+            "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+            "node_version": "22.23.2",
+            "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+            "package_version": "2.19.0+git32f99e1c-10",
+            "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+            "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ],
+            "source_path": "upstream/mainsail",
+            "status": "offline-build-no-browser-validation"
+          },
+          "sha256": "71e65c2b0e9b98256dc0213c503d351b748cd96e7421d085a73137f11a02e80b",
+          "source_date_epoch": 1788551235,
+          "source_patches": [
+            {
+              "path": "patches/mainsail/0001-stable-precache-order.patch",
+              "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+            },
+            {
+              "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+              "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+            },
+            {
+              "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+              "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+            },
+            {
+              "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+              "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+            },
+            {
+              "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+              "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+            },
+            {
+              "path": "patches/mainsail/0006-native-visibility.patch",
+              "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+            },
+            {
+              "path": "patches/mainsail/0007-ospath-compat.patch",
+              "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+            },
+            {
+              "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+              "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+            }
+          ]
+        },
+        "retained": "source/dist/vendor/manifest/lock, report and deb",
+        "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-final-a"
+      },
+      {
+        "cumulative_usage_not_reset": true,
+        "removed_disposable_paths": [
+          "source/node_modules",
+          "node-v22.23.2-linux-x64",
+          "source.tar",
+          "package"
+        ],
+        "report": {
+          "activation_included": false,
+          "bytes": 2493692,
+          "package": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+          "payload_bytes": 9934695,
+          "profile": {
+            "authored_npm_replacements": {
+              "node_modules/@humanfs/types": {
+                "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                  "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                  "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                },
+                "format": "types-only",
+                "name": "@sv08-mainline/humanfs-types-compat",
+                "source_directory": "vendor/humanfs-types-compat",
+                "version": "1.0.0"
+              },
+              "node_modules/ospath": {
+                "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                  "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                  "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                },
+                "name": "@sv08-mainline/ospath-compat",
+                "source_directory": "vendor/ospath-compat",
+                "version": "1.0.0"
+              }
+            },
+            "format_version": 1,
+            "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+            "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+            "node_version": "22.23.2",
+            "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+            "package_version": "2.19.0+git32f99e1c-10",
+            "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+            "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ],
+            "source_path": "upstream/mainsail",
+            "status": "offline-build-no-browser-validation"
+          },
+          "sha256": "71e65c2b0e9b98256dc0213c503d351b748cd96e7421d085a73137f11a02e80b",
+          "source_date_epoch": 1788551235,
+          "source_patches": [
+            {
+              "path": "patches/mainsail/0001-stable-precache-order.patch",
+              "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+            },
+            {
+              "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+              "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+            },
+            {
+              "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+              "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+            },
+            {
+              "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+              "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+            },
+            {
+              "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+              "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+            },
+            {
+              "path": "patches/mainsail/0006-native-visibility.patch",
+              "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+            },
+            {
+              "path": "patches/mainsail/0007-ospath-compat.patch",
+              "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+            },
+            {
+              "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+              "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+            }
+          ]
+        },
+        "retained": "source/dist/vendor/manifest/lock, report and deb",
+        "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-final-b"
+      },
+      {
+        "cumulative_usage_not_reset": true,
+        "removed_disposable_paths": [
+          "source/node_modules",
+          "node-v22.23.2-linux-x64",
+          "source.tar",
+          "package"
+        ],
+        "report": {
+          "activation_included": false,
+          "bytes": 2493762,
+          "package": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+          "payload_bytes": 9934695,
+          "profile": {
+            "authored_npm_replacements": {
+              "node_modules/@humanfs/types": {
+                "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                  "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                  "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                },
+                "format": "types-only",
+                "name": "@sv08-mainline/humanfs-types-compat",
+                "source_directory": "vendor/humanfs-types-compat",
+                "version": "1.0.0"
+              },
+              "node_modules/ospath": {
+                "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                  "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                  "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                },
+                "name": "@sv08-mainline/ospath-compat",
+                "source_directory": "vendor/ospath-compat",
+                "version": "1.0.0"
+              }
+            },
+            "format_version": 1,
+            "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+            "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+            "node_version": "22.23.2",
+            "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+            "package_version": "2.19.0+git32f99e1c-10",
+            "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+            "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
+              }
+            ],
+            "source_path": "upstream/mainsail",
+            "status": "offline-build-no-browser-validation"
+          },
+          "sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50",
+          "source_date_epoch": 1788551235,
+          "source_patches": [
+            {
+              "path": "patches/mainsail/0001-stable-precache-order.patch",
+              "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+            },
+            {
+              "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+              "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+            },
+            {
+              "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+              "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+            },
+            {
+              "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+              "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+            },
+            {
+              "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+              "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+            },
+            {
+              "path": "patches/mainsail/0006-native-visibility.patch",
+              "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+            },
+            {
+              "path": "patches/mainsail/0007-ospath-compat.patch",
+              "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+            },
+            {
+              "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+              "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
+            }
+          ]
+        },
+        "retained": "source/dist/vendor/manifest/lock, report and deb",
+        "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-safe-b"
+      }
+    ]
+  },
+  "image_docstring_compatibility": {
+    "executable_AST_unchanged": true,
+    "final_sha256": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+    "measured_sha256": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+    "only_change": "module docstring accurately describes managed read-only mounts"
+  },
+  "initial_delivery_note": "Original code_commit/source/test/image/remaining_notice_gaps fields are the preserved initial delivery snapshot; current continuation is below.",
+  "janus_continuation": {
+    "actual_playback": {
+      "receipt": {
+        "command": [
+          "sudo",
+          "-n",
+          "nsenter",
+          "--target",
+          "1012525",
+          "--net",
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_janus_browser.mjs",
+          "--execute",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source",
+          "/home/drew/.sv08-release-closure-20261015/janus-browser-final-b",
+          "ws://127.0.0.1:44253",
+          "1",
+          "48884"
+        ],
+        "elapsed_seconds": 1.9172616510186344,
+        "exit": 0,
+        "test_sha256": "076b4e09ba19768239bd377306d96e858fae924d75e60b5541269388ea53e25b"
+      },
+      "result": {
+        "actual_janus_webrtc_playback": true,
+        "encoded_keyframe_bytes": 293,
+        "first": {
+          "attached": true,
+          "frames": 3,
+          "height": 240,
+          "status": [
+            "connecting",
+            "preparing",
+            "starting",
+            "started"
+          ],
+          "width": 320
+        },
+        "passed": true,
+        "physical_hardware": false,
+        "production_component_mounted": false,
+        "rtp_packets": 10,
+        "second": {
+          "attached": true,
+          "frames": 6,
+          "height": 240,
+          "status": [
+            "connecting",
+            "preparing",
+            "starting",
+            "started",
+            "connecting",
+            "preparing",
+            "starting",
+            "started"
+          ],
+          "width": 320
+        },
+        "stopped": true,
+        "uncaught_exceptions": []
+      }
     },
-    {
-      "name": "@sindarius/gcodeviewer",
-      "version": "3.7.18",
-      "supplier_url": "https://registry.npmjs.org/@sindarius/gcodeviewer/-/gcodeviewer-3.7.18.tgz",
-      "source_revision": "c0dad3b80f39cb3e30f7d3b08c48c9470ac3c8c7",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "No licensefilename in fetchednpm_gcodeviewer history; exact source map contains21 sourcefiles with no authorlicense text or authority link. Related pluginGPL license excluded without applicable scope/code grant."
+    "agents": [
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "default-low",
+        "role": "project_researcher",
+        "task": "janus_notice_remediation_design"
+      },
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "task": "janus_sdk_implement"
+      }
+    ],
+    "fixture": {
+      "all_owned_server_processes_observed_stopped": true,
+      "config": {
+        "config_sha256": {
+          "janus.jcfg": "d69d112300f9ccc11696195becbea8b263dd8ca2247a181c58d4552fe34696a2",
+          "janus.plugin.streaming.jcfg": "4937e0c3278f33098d455cab408697f6ac97a8366f937ef8ed80d5569c55522d",
+          "janus.transport.websockets.jcfg": "3418ddef487fec0979c748c6349e6c93f1d194dc862286268dc5a82e62e6b16b"
+        },
+        "ice_device": "sv08test0",
+        "ice_interface": "192.0.2.1",
+        "janus_version": "1.1.2-1build5",
+        "namespace": "isolated lo + dummy sv08test0/192.0.2.1/32; no external route",
+        "packages": {
+          "janus_1.1.2-1build5_amd64.deb": "baafd8111f7bac3e19cd8c4b8ae277bf1b61e2f8d2e37e34497ab79a8dca0a40",
+          "libconfig9_1.5-0.4build2_amd64.deb": "6f2ac35372eeadfd61bc7ff48c1add32378dd69db08720202daaf2fa19aa119a",
+          "libgssdp-1.6-0_1.6.3-1build3_amd64.deb": "49aa7c3eb2e75f55da069f5f18d3babc0376e4bf8f3bcbbf22a76d60d9f40f9e",
+          "libgupnp-1.6-0_1.6.6-1build3_amd64.deb": "491670df1732d15ced827446e26bcea76326d3c9cfc4856b5806e9911dc4264f",
+          "libgupnp-igd-1.6-0_1.6.0-3build3_amd64.deb": "e71897a39779ffc327b704ca7baef4fe079cfc6a5e1bd56819ac2ad05f8f9b86",
+          "libnice10_0.1.21-2build3_amd64.deb": "fd24e18e0d9d9ead31e192d46df04473fab2d51390ccb2a4a62cf3b90bf6f311",
+          "libsrtp2-1_2.5.0-3build1_amd64.deb": "c2e7ee0ae64597f046fbfb197b8f36dfc9a5159b02d27e850f3a4d14a4603d77",
+          "libusrsctp2_0.9.5.0-2build1_amd64.deb": "1e64a5abf09a91f17237a65204735a2acaec601de924d0be9d5e042de099657c",
+          "libwebsockets19t64_4.3.3-1.1build3_amd64.deb": "31a0ac48e4f81092c7272e8bc7e6ef38dd78daf403f96baa232667aa999c5eea"
+        },
+        "rtp_port": 48884,
+        "scope": "extracted disposable packages only; no host install/config/service change",
+        "stream_id": 1,
+        "ws_url": "ws://127.0.0.1:44253"
+      },
+      "final_exit": {
+        "elapsed_seconds": 101.75695266202092,
+        "exit": 0,
+        "ready": true
+      },
+      "host_install": false,
+      "loopback_attempt_exit": {
+        "elapsed_seconds": 127.86228388198651,
+        "exit": 0,
+        "ready": true
+      },
+      "preflight_exit": {
+        "elapsed_seconds": 421.82715279608965,
+        "exit": 0,
+        "ready": true
+      },
+      "printer_access": false
     },
-    {
-      "name": "aigle-core",
-      "version": "1.0.0",
-      "supplier_url": "https://registry.npmjs.org/aigle-core/-/aigle-core-1.0.0.tgz",
-      "source_revision": "9c25f2e88a5e3ae37e9c042618688a549a462791",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Exactpackage metadata links only sameauthor aigle-core repository and declaresMIT. README/index.js lack authorfulltext or externalgrant link. No licensefilename in fetchedhistory; repositorylicenseissue search0. RelatedAigle rootlicense not borrowed without explicitcore scopegrant."
+    "inventory_delta": {
+      "changed_applications": [
+        "configs/apps/mainsail.json"
+      ],
+      "changed_top_fields": [
+        "applications",
+        "mainsail_dependencies"
+      ],
+      "count_note": "Six measured selection changes include already-notice-resolved aigle; five of nine originally unresolved notices are selected away. Do not add overlapping counts as disjoint categories.",
+      "current_inventory_sha256": "e15d0e037ababcaa8ef1ac990bfd53191d4b9cd7900e80eb9c248394f5200b47",
+      "historical_accounting": {
+        "historical_notice_resolved": 60,
+        "historical_notice_unresolved": 9,
+        "historical_records": 69,
+        "measured_selection_remediations": 6,
+        "remaining_selected_notice_gaps": 4,
+        "selected_dependencies": 898
+      },
+      "historically_unresolved_selection_remediations": 5,
+      "notice_coverage": {
+        "declaration_only_dependencies": 4,
+        "dependencies_with_notice_text": 894,
+        "inspected_supplier_archives": 898
+      },
+      "previous_inventory_sha256": "f8b5bb856bbce02e9a07870eff9f7d4305eac0c77862152f5180ba1fd9873b2a",
+      "remaining_selected_gaps": [
+        {
+          "name": "@humanfs/types",
+          "version": "0.15.0"
+        },
+        {
+          "name": "@sindarius/gcodeviewer",
+          "version": "3.7.18"
+        },
+        {
+          "name": "ospath",
+          "version": "1.2.2"
+        },
+        {
+          "name": "vue-observe-visibility",
+          "version": "1.0.0"
+        }
+      ],
+      "removed_dependency_paths": [
+        "node_modules/@gerrit0/mini-shiki",
+        "node_modules/@shikijs/engine-oniguruma",
+        "node_modules/@shikijs/langs",
+        "node_modules/@shikijs/themes",
+        "node_modules/@shikijs/types",
+        "node_modules/@shikijs/vscode-textmate",
+        "node_modules/@types/hast",
+        "node_modules/@types/unist",
+        "node_modules/aigle",
+        "node_modules/aigle-core",
+        "node_modules/entities",
+        "node_modules/linkify-it",
+        "node_modules/lunr",
+        "node_modules/markdown-it",
+        "node_modules/mdurl",
+        "node_modules/punycode.js",
+        "node_modules/typed_janus_js",
+        "node_modules/typed_janus_js/node_modules/balanced-match",
+        "node_modules/typed_janus_js/node_modules/brace-expansion",
+        "node_modules/typed_janus_js/node_modules/minimatch",
+        "node_modules/typed_janus_js/node_modules/typedoc",
+        "node_modules/typed_janus_js/node_modules/typescript",
+        "node_modules/uc.micro"
+      ],
+      "surviving_supplier_records_identical": true
     },
-    {
-      "name": "de-indent",
-      "version": "1.0.2",
-      "supplier_url": "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz",
-      "source_revision": "5861bd7a39c09f0056fd361d82e570e56bd2c275",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Exactpackage source/metadata contain MIT identifier only; no author-controlled fulltext link or noticefilename in fetchedhistory. Publicissue1 requests licensefile; PR2 proposed one but closed/unmerged, no reviews and no author grant in issuecomments."
+    "inventory_receipt": {
+      "command": [
+        "python3",
+        "scripts/license_inventory.py",
+        "--inputs",
+        "/home/drew/.sv08-release-closure-20261015/janus-inventory-inputs.json",
+        "--output",
+        "configs/host/release-source-license-inventory.json"
+      ],
+      "elapsed_seconds": 13.592600882053375,
+      "exit": 0,
+      "historical_notices_unchanged": true,
+      "omitted_unselected_paths": [
+        "node_modules/aigle"
+      ],
+      "selected_supplemental_records": 59
     },
-    {
-      "name": "ospath",
-      "version": "1.2.2",
-      "supplier_url": "https://registry.npmjs.org/ospath/-/ospath-1.2.2.tgz",
-      "source_revision": "de6829c163decd984c87976deb7a754003681d52",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "ExactREADME License section saysMIT only; metadata links sameospathrepo. No authorfulltext URL, no licensefilename in fetchedhistory, no licensingissue searchresults. Source has no package-author notice."
+    "limits": [
+      "Four current selected notice gaps remain; full goal incomplete.",
+      "Actual playback used production SDK/adapter against disposableJanus1.1.2 and syntheticVP8, not production Vue component or physical camera/printer.",
+      "Static application startup and source presentation contract checked separately.",
+      "Earlier core tests and same-lock dependency checks reused with unchanged relevant inputs.",
+      "SDK grant does not grant wrapper rights; no upstream license changed.",
+      "No merge/deployment/host install/upstream message/spending or overall legal/hardware/recovery qualification."
+    ],
+    "offline_skips": 0,
+    "offline_tests": 10,
+    "production_startup": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-janus"
+      ],
+      "elapsed_seconds": 1.8200976850930601,
+      "exit": 0,
+      "scope": "actual production app startup only; separate adapter playback fixture does not mount Vue component",
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
     },
-    {
-      "name": "stackback",
-      "version": "0.0.2",
-      "supplier_url": "https://registry.npmjs.org/stackback/-/stackback-0.0.2.tgz",
-      "source_revision": "2963095372abf7b75ba55f01cef08ab1e62c2ff4",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Originalrepo redirects to public defunctzombie/node-stackback. Existingissue1 LICENSE missing: maintainer defunctzombie states project untouched since2013 and will make no furtherchanges. No package-author fullnotice in fetchedhistory."
+    "rationale": "Retain exact explicitly MIT-licensed embedded Meetecho SDK and independently authored AGPL adapter; remove wrapper and unused dependency subtree without changing any upstream grant.",
+    "reproducibility": {
+      "builds": [
+        {
+          "elapsed_seconds": 26.60829787584953,
+          "exit": 0,
+          "limit": null,
+          "suffix": "a"
+        },
+        {
+          "elapsed_seconds": 27.39719686517492,
+          "exit": 0,
+          "limit": null,
+          "suffix": "b"
+        }
+      ],
+      "distributed_notice_sha256": {
+        "licenses/janus-sdk.txt": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+        "licenses/sv08-janus-adapter-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+      },
+      "identical_packages": true,
+      "identical_reports": true,
+      "old_supplier_license_unmodified": true,
+      "package_sha256": "fe87dfa3f5936249dd09d17b71f3482b62616bbccabd5f83eab2f9ffff87d610",
+      "report_sha256": "d67a3f8637591edf7bc344c5b5942e2c16d6c670f5e52634448f8b289ec86df2"
     },
-    {
-      "name": "throttleit",
-      "version": "1.0.1",
-      "supplier_url": "https://registry.npmjs.org/throttleit/-/throttleit-1.0.1.tgz",
-      "source_revision": "afb7848a9b231e90fe3b44f7d18d59821452367f",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Authorlicense text introduced at5556901e7af69e8db88d46b82e788ef72ef2a92d with source/metadata changes. Maintainer issue6 states fix is v2.0.0; issue9 request for oldversion notice receives advice to upgrade, not explicit grant for oldcode."
+    "resource_accounting": {
+      "conservative_charge_output_bytes": 9663676416,
+      "conservative_charge_process_seconds": 4000,
+      "continuation_added_output_bytes": 4294967296,
+      "continuation_added_process_seconds": 3600,
+      "cumulative_allowance_output_bytes": 12884901888,
+      "cumulative_allowance_process_seconds": 10800,
+      "no_reset": true
     },
-    {
-      "name": "typed_janus_js",
-      "version": "1.2.1",
-      "supplier_url": "https://registry.npmjs.org/typed_janus_js/-/typed_janus_js-1.2.1.tgz",
-      "source_revision": "ab43e143ea6ff9e9b103819cadb474cc4a169756",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "ExactgitHead tree has no license/copying file. All14 exact src/*.ts files scanned: no license/copyright/fullgrant or external URLs. No licensefilename in fetchedsourcehistory. Canonical public issue search license returned0. CurrentREADME adds no authornotice."
+    "retained_attempts": [
+      {
+        "correction": "Await actual SDK destruction completion before successor startup; add delayed completion/error/throw/rapid restart coverage; include full project grant in assets.",
+        "initial_patch_sha256": "07f167f45ef5248592f09f751b89c9741b50bfb62d7a138087871d82fc927b25",
+        "initial_results": {
+          "builds": [
+            {
+              "elapsed_seconds": 25.893058208050206,
+              "exit": 0,
+              "limit": null,
+              "suffix": "a"
+            },
+            {
+              "elapsed_seconds": 26.82695581507869,
+              "exit": 0,
+              "limit": null,
+              "suffix": "b"
+            }
+          ],
+          "initial_patch_sha256": "07f167f45ef5248592f09f751b89c9741b50bfb62d7a138087871d82fc927b25",
+          "package_sha256": "36e19a2d38c4872f80acca74e827b956be9f70c209fb6887432f9e8f685b8379",
+          "qualification": "pre-repair evidence; not final accepted candidate",
+          "review_defect": "stop invoked asynchronous SDK destroy without awaiting completion before restart; first unit fixture proved call ordering only",
+          "runtime": [
+            {
+              "check": "unit",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "node_modules/vitest/vitest.mjs",
+                "run"
+              ],
+              "elapsed_seconds": 1.3677432101685554,
+              "exit": 0
+            },
+            {
+              "check": "types",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "node_modules/typescript/bin/tsc",
+                "--noEmit"
+              ],
+              "elapsed_seconds": 2.980134473880753,
+              "exit": 0
+            },
+            {
+              "check": "notice",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_notice_dependencies.cjs",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-a/source/node_modules"
+              ],
+              "elapsed_seconds": 1.1220564360264689,
+              "exit": 0
+            },
+            {
+              "check": "fixed",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_fixed_dependencies.cjs",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-a/source/node_modules"
+              ],
+              "elapsed_seconds": 0.06385039002634585,
+              "exit": 0
+            }
+          ]
+        },
+        "kind": "semantic-repair"
+      },
+      {
+        "correction": "Isolated namespace with dummy192.0.2.1/32 and no external route; retain identical decoded-video assertions.",
+        "error": "libnice cannot gather candidates on loopback-only namespace; no offer delivered",
+        "kind": "fixture-repair",
+        "receipt": {
+          "command": [
+            "sudo",
+            "-n",
+            "nsenter",
+            "--target",
+            "1012273",
+            "--net",
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_janus_browser.mjs",
+            "--execute",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source",
+            "/home/drew/.sv08-release-closure-20261015/janus-browser-final-a",
+            "ws://127.0.0.1:44253",
+            "1",
+            "48884"
+          ],
+          "elapsed_seconds": 16.398624062072486,
+          "exit": 1
+        }
+      },
+      {
+        "correction": "Use59-record selected subset; preserve original60-record historical set and original69 facts; gate unchanged.",
+        "error": "Extraneous supplemental dependency: removed aigle retained in current selected inputs",
+        "kind": "inventory-input-repair"
+      }
+    ],
+    "runtime_results": [
+      {
+        "check": "unit",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run"
+        ],
+        "elapsed_seconds": 1.175224901176989,
+        "exit": 0
+      },
+      {
+        "check": "types",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "elapsed_seconds": 2.9819000139832497,
+        "exit": 0
+      },
+      {
+        "check": "source",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_mainsail_janus",
+          "test_mainsail_notice_dependencies"
+        ],
+        "elapsed_seconds": 0.4146580819506198,
+        "exit": 0
+      }
+    ],
+    "sdk_provenance": {
+      "adapter_authorship": "Independently authored for Mainsail; no wrapper implementation or declarations copied",
+      "archive_sha256": "0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e",
+      "archive_sri": "sha512-Nzd8FpUbDPVXE2juhPJlgJD9lTX5sq7kNzyWW8MVR4zBywiYoP2s9oWGfY0M1xqiItTrfmJ/SATBtvM+T/+9yA==",
+      "candidate_revision": "264d869",
+      "completeness": "Entire 117451-byte sourcesContent string equals git show ab43e143ea6ff9e9b103819cadb474cc4a169756:js/janus.js, including final return Janus and closing IIFE; no wrapper source extracted",
+      "export_tail": "\nexport default Janus;\n",
+      "mainsail_revision": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+      "member": "package/dist/index.esm.js.map",
+      "member_sha256": "75c7341ee500ecaecbdbad8548f6574961cda723413d738ef5a0cf5ebec641e5",
+      "notice_bytes": 1098,
+      "notice_path": "public/licenses/janus-sdk.txt",
+      "notice_sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+      "origin_path": "js/janus.js",
+      "origin_repo": "januscaler/JanusJs",
+      "origin_revision": "ab43e143ea6ff9e9b103819cadb474cc4a169756",
+      "sdk_bytes": 117451,
+      "sdk_header": "/*\n\tThe MIT License (MIT)\n\n\tCopyright (c) 2016 Meetecho\n\n\tPermission is hereby granted, free of charge, to any person obtaining\n\ta copy of this software and associated documentation files (the \"Software\"),\n\tto deal in the Software without restriction, including without limitation\n\tthe rights to use, copy, modify, merge, publish, distribute, sublicense,\n\tand/or sell copies of the Software, and to permit persons to whom the\n\tSoftware is furnished to do so, subject to the following conditions:\n\n\tThe above copyright notice and this permission notice shall be included\n\tin all copies or substantial portions of the Software.\n\n\tTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n\tOR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n\tFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL\n\tTHE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR\n\tOTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,\n\tARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR\n\tOTHER DEALINGS IN THE SOFTWARE.\n */",
+      "sdk_header_sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+      "sdk_license": "MIT, Copyright (c) 2016 Meetecho",
+      "sdk_sha256": "eea437f6e719db131a95715a644c8a41b314424a8f1c6716ce7ef4e9e189e815",
+      "source_index": 0,
+      "source_name": "../js/janus.js",
+      "vendored_path": "src/vendor/janus.js",
+      "vendored_sha256": "b34c84ccfd6d12fa9c7bc21363eb04dd5cb3660da63aec1b12d1d5336e62f374",
+      "wrapper_author_grant": "Unresolved; SDK MIT does not cover wrapper"
     },
-    {
-      "name": "vue-observe-visibility",
-      "version": "1.0.0",
-      "supplier_url": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-1.0.0.tgz",
-      "source_revision": "419680b548499a6d23433831c81644059811d534",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "ExactREADME explicitlylinks generic opensource.org/licenses/MIT, not author-specific copyrightnotice. No noticefilename in fetchedhistory. Publiclicenseissue search finds only dependencybot release text. Demo/docs/polyfill links do not supply authorgrant covering this package."
-    }
-  ],
-  "failed_attempts": [
-    "Initial actual image run stopped at missing later-slot dpkg metadata; now reports unknown coverage per slot. Original failed inputs/logs retained.",
-    "Initial six source notice pins captured empty in-progress shared URL cache; rejected by hash checks. Fresh exact-commit public responses were separately retained; original research unchanged.",
-    "Verbatim text whitespace failed Git diff check; full original text remains in canonicalJSON, plain-text bundle generated on export. No license text normalized."
-  ],
-  "agents": [
-    {
-      "role": "project_researcher",
-      "requested_effort": "default low",
-      "task": "release_inventory_trace",
-      "effective_settings": "not independently observable"
+    "selected_supplemental": {
+      "historical_set_unchanged": true,
+      "omitted_unselected": [
+        "node_modules/aigle"
+      ],
+      "original_historical_sha256": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+      "selected_records": 59
     },
-    {
-      "role": "project_implementer",
-      "requested_effort": "medium",
-      "task": "release_closure_implement",
-      "effective_settings": "not independently observable"
+    "source_commit": "669d9a29d1327b88dad84b37b9231c8a96824a2c",
+    "source_sha256": {
+      "configs/apps/mainsail.json": "80bd2a588093b6c5d83a424f7a7f01bfa0f1128a1843fb2c9fa15326b55a1aa1",
+      "configs/host/mainsail-janus-sdk.json": "fde70af890966e7775b5539b2a2c5d1f613fc08e143fa8752eac082db0722888",
+      "configs/host/npm-notice-resolution.json": "6bdeb8cc19e231eac9fa9428f8e724592d0fb9853bcbd40de1375561bb93e39f",
+      "configs/host/release-source-license-inventory.json": "e15d0e037ababcaa8ef1ac990bfd53191d4b9cd7900e80eb9c248394f5200b47",
+      "patches/mainsail/0005-janus-sdk-replacement.patch": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735",
+      "tests/mainsail_janus_browser.mjs": "076b4e09ba19768239bd377306d96e858fae924d75e60b5541269388ea53e25b",
+      "tests/test_mainsail_janus.py": "44308e2b24d4735f95966e5b7d8160889d743c03721a2a079bb417fe0fccd261",
+      "tests/test_mainsail_notice_dependencies.py": "626aa3250577064f86b63201a4fd7d92c2bb60914fe14a8434f4faefa72c4a60"
     },
-    {
-      "role": "project_researcher",
-      "requested_effort": "medium",
-      "task": "npm_notice_gaps",
-      "effective_settings": "not independently observable"
-    }
-  ],
-  "allowance": {
-    "primary_process_seconds": 7200,
-    "primary_generated_bytes": 8589934592,
-    "conservative_charge_seconds": 1200,
-    "conservative_charge_generated_bytes": 536870912,
-    "includes_agents_and_failed_attempts": true,
-    "additional_research_running": true
+    "typecheck_passed": true,
+    "unit_tests": 64
   },
   "limitations": [
     "Full goal not achieved: nine author-notice gaps remain; compatible dependency alternatives still under investigation.",
@@ -11715,8 +13534,1590 @@
     "Two public GitHub comparison responses used existing CLI authentication after anonymous API rate limit. No credentials inspected; public project corresponding-source qualification remains anonymous.",
     "Private raw inventories/images/logs retained outside repository; public evidence contains software/package metadata only."
   ],
-  "artifact_roots": {
-    "coordinator": "/home/drew/.sv08-release-closure-20261015",
-    "privileged": "/root/.sv08-release-closure-20261015"
+  "ospath_continuation": {
+    "accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 8,
+      "remaining_selected_notice_gaps": 2,
+      "selected_dependencies": 897
+    },
+    "agents": [
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "thread": "/root/ospath_compat_implement"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "default low",
+        "role": "project_researcher",
+        "thread": "/root/ospath_remediation_trace"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "pinned medium",
+        "role": "project_planner",
+        "thread": "/root/ospath_remediation_design"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "default low",
+        "result": "Previous parent versions rejected: unresolved declaration imports and symlink copy fix lost",
+        "role": "project_researcher",
+        "thread": "/root/humanfs_types_contract"
+      }
+    ],
+    "allowance": {
+      "cumulative_conservative_charge_bytes": 15032385536,
+      "cumulative_conservative_charge_process_seconds": 6500,
+      "limit_bytes": 16106127360,
+      "limit_process_seconds": 12600
+    },
+    "code_commit": "6635a45d4b0c9e94f40c322c25a8e0bf62d45bdf",
+    "failed_attempts": [
+      "Initial scratch omitted baseline lock: preparation failed before npm; immutable previous lock supplied",
+      "Scoped relative tar override failed actual npm lock generation at Cypress-relative path despite earlier synthetic success",
+      "One diagnosed stale-record removal repair failed same path; approach stopped",
+      "Root-anchored graph passed with fresh cache; raw npm metadata normalization exceeded intended supplier delta; raw file retained and unrelated libc/dev/peer/optional metadata preserved as prior slices"
+    ],
+    "limitations": [
+      "Cypress interactive launch smoke observes window only; no interactive click workflow",
+      "Fixture app runs disconnected; no printer/camera/physical qualification",
+      "Two selected notice gaps remain; original69 missing-notice facts and60 exact author notices retained",
+      "Cypress runner downloaded by pinned official CLI; archive hash not captured, installed executable identity recorded",
+      "No full current selected-software release qualification or legal compliance claim"
+    ],
+    "private_artifact_root": "/home/drew/.sv08-release-closure-20261015",
+    "receipts": {
+      "cypress-binary-install-receipt.json": {
+        "cache": "/home/drew/.sv08-release-closure-20261015/cypress-15.18.0-cache",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "install"
+        ],
+        "elapsed_seconds": 15.047214146936312,
+        "exit": 0,
+        "scope": "disposable acceptance runner only; no host installation"
+      },
+      "cypress-binary-verify-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "verify"
+        ],
+        "elapsed_seconds": 1.7177890380844474,
+        "exit": 0
+      },
+      "cypress-open-baseline/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "open",
+          "--e2e",
+          "--project",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source",
+          "--browser",
+          "electron"
+        ],
+        "elapsed_seconds": 1.04367358610034,
+        "limitation": "interactive runner launch smoke only; no interactive click workflow",
+        "passed": true,
+        "window_observed": true
+      },
+      "cypress-open-candidate/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/cypress/bin/cypress",
+          "open",
+          "--e2e",
+          "--project",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source",
+          "--browser",
+          "electron"
+        ],
+        "elapsed_seconds": 1.041221836116165,
+        "limitation": "interactive runner launch smoke only; no interactive click workflow",
+        "passed": true,
+        "window_observed": true
+      },
+      "cypress-ospath-baseline/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "run",
+          "--browser",
+          "electron",
+          "--headless",
+          "--spec",
+          "cypress/e2e/dashboard.cy.ts",
+          "--config",
+          "baseUrl=http://localhost:4173,video=false,screenshotsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-baseline/screenshots,downloadsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-baseline/downloads"
+        ],
+        "elapsed_seconds": 6.8373708568979055,
+        "exit": 0,
+        "scope": "unchanged existing Cypress dashboard assertion against built app; isolated loopback namespace"
+      },
+      "cypress-ospath-candidate/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/cypress/bin/cypress",
+          "run",
+          "--browser",
+          "electron",
+          "--headless",
+          "--spec",
+          "cypress/e2e/dashboard.cy.ts",
+          "--config",
+          "baseUrl=http://localhost:4173,video=false,screenshotsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-candidate/screenshots,downloadsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-candidate/downloads"
+        ],
+        "elapsed_seconds": 10.886338999960572,
+        "exit": 0,
+        "scope": "unchanged existing Cypress dashboard assertion against built app; isolated loopback namespace"
+      },
+      "cypress-runner-identity.json": {
+        "archive_sha256": "not captured; installer removed downloaded archive",
+        "binary_sha256": "5044d7eb0c8eabcf30e3076554f9fd4bedf729cd6197a8097fdad1f62d3990c0",
+        "official_download_requested_by_pinned_npm_cli": true,
+        "qualification_scope": "disposable acceptance runner, not release payload",
+        "retained_cache_bytes": 761988304,
+        "version": "15.18.0"
+      },
+      "ospath-final-runtime-results.json": [
+        {
+          "check": "unit",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run"
+          ],
+          "elapsed_seconds": 2.227142618969083,
+          "exit": 0
+        },
+        {
+          "check": "types",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "elapsed_seconds": 6.466506022028625,
+          "exit": 0
+        },
+        {
+          "check": "loading",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "--input-type=module",
+            "-e",
+            "import assert from 'node:assert/strict';import{createRequire}from'node:module';import{readFileSync}from'node:fs';const r=createRequire(import.meta.url);const c=r.resolve('cypress/package.json');const direct=r.resolve('ospath');const indirect=r.resolve('ospath',{paths:[c]});assert.equal(direct,indirect);assert.equal(r('ospath/package.json').name,'@sv08-mainline/ospath-compat');assert.equal(typeof r('cypress').defineConfig,'function');const esm=await import('cypress');assert.equal(typeof esm.defineConfig,'function');console.log(JSON.stringify({rootAndCypressSame:direct===indirect,actualName:r('ospath/package.json').name,cjs:true,esm:true}));"
+          ],
+          "elapsed_seconds": 0.5206993189640343,
+          "exit": 0
+        }
+      ],
+      "ospath-implementation/source-checks-root-anchor-final-node22.json": {
+        "errors": 0,
+        "failures": 0,
+        "node": "v22.23.2",
+        "run": 36,
+        "skipped": 0,
+        "supplier_archive": "/home/drew/.sv08-repro-license-20261013/npm/archives/0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e.tgz"
+      },
+      "ospath-inventory-delta-payload.json": {
+        "actual_payload_notices": [
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/janus-sdk.txt",
+            "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c"
+          },
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/sv08-janus-adapter-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ],
+        "changed_dependency_records": [
+          "node_modules/ospath"
+        ],
+        "coverage": {
+          "declaration_only_dependencies": 2,
+          "dependencies_with_notice_text": 895,
+          "inspected_supplier_archives": 897
+        },
+        "other_applications_unchanged": true,
+        "unchanged_dependency_records": 896,
+        "unchanged_sections": [
+          "build_tools",
+          "debian",
+          "format_version",
+          "hardware_release_qualified",
+          "legal_compliance_assessed",
+          "scope",
+          "wheels"
+        ]
+      },
+      "ospath-inventory-receipt.json": {
+        "command": [
+          "python3",
+          "scripts/license_inventory.py",
+          "--inputs",
+          "/home/drew/.sv08-release-closure-20261015/ospath-inventory-inputs.json",
+          "--output",
+          "configs/host/release-source-license-inventory.json"
+        ],
+        "elapsed_seconds": 13.828808049904183,
+        "exit": 0
+      },
+      "ospath-package-repro.json": {
+        "builds": [
+          {
+            "elapsed_seconds": 25.975144193973392,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 32.119588162982836,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "identical_packages": true,
+        "identical_reports": true,
+        "package_bytes": 2493632,
+        "package_sha256": "f92e665f83ed76cd5038ee2ba9ee1951ee207bbe2a80cbbf3ec9beebf58a915b"
+      },
+      "ospath-package-results.json": [
+        {
+          "elapsed_seconds": 25.975144193973392,
+          "exit": 0,
+          "limit": null,
+          "suffix": "a"
+        },
+        {
+          "elapsed_seconds": 32.119588162982836,
+          "exit": 0,
+          "limit": null,
+          "suffix": "b"
+        }
+      ],
+      "ospath-relocated-install-receipt.json": {
+        "authored_archive_removed_from_fresh_cache": true,
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "ci",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsed_seconds": 7.5395739718806,
+        "exit": 0,
+        "identity_and_resolution_exit": 0,
+        "original_cache_not_used": true,
+        "relocated_manifest_lock_and_archive_only": true
+      },
+      "ospath-root-anchor-idempotence.json": {
+        "elapsed_seconds": 0.6723715818952769,
+        "exit": 0,
+        "final_changed_records": [
+          "",
+          "node_modules/ospath"
+        ],
+        "fresh_cache": true,
+        "raw_generated_lock_byte_idempotent": true,
+        "unrelated_metadata_preserved": {
+          "node_modules/@parcel/watcher-linux-arm-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-musleabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/argparse": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lodash": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs/node_modules/tslib": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/yaml": {
+            "dev": {
+              "after": true,
+              "before": null
+            },
+            "optional": {
+              "after": true,
+              "before": null
+            },
+            "peer": {
+              "after": true,
+              "before": null
+            }
+          }
+        }
+      },
+      "ospath-root-anchor-lock-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "install",
+          "--package-lock-only",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "design": "required root local dependency with scoped Cypress $ospath",
+        "elapsed_seconds": 0.7217632050160319,
+        "exit": 0,
+        "fresh_cache": true
+      }
+    },
+    "source_sha256": {
+      "configs/apps/mainsail.json": "251470eeaa127493da7ba75d83403a09eefb361f6839d31c369fc1aeb8d34ef4",
+      "configs/host/npm-notice-resolution.json": "6d1eedf42686346049184f0a78918f9614eb24087e78db00f73e4fc17305e411",
+      "configs/host/release-source-license-inventory.json": "025a5fbe65069f52509e3e92a6a80eb102c3f31e5e2f78e06e2c66fdba5c066b",
+      "patches/mainsail/0007-ospath-compat.patch": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565",
+      "scripts/package_mainsail.py": "335985e28ec468408c343f844307ab4ba75d9f1ea0b45ed0d89ca17084159f6a",
+      "scripts/resolve_npm_notices.py": "3e3ada8ec34337dd47ecb3b68aea53f17fb2dc7935f9bdda4ae948d88a24b40d",
+      "tests/mainsail_ospath_compat.cjs": "e07f2e7b46395df35b038e636e1f0af300d5e193368cb8faac53de321dc7ded7",
+      "tests/test_mainsail_ospath.py": "6e0e89ad9798bc49a8b0b4de04133724cade8799071db7159f2d18e0f453a75d",
+      "tests/test_resolve_npm_notices.py": "49468ea8822d2e9d68105727f6934ea68522c0fa87f48f11175509efb5d5bf01"
+    },
+    "status": "slice validated; full goal incomplete"
+  },
+  "remaining_notice_gaps": [
+    {
+      "name": "@humanfs/types",
+      "primary_source_observation": "Exact typesREADME/metadata declareApache2.0; rootREADME describes humanfs monorepo and declaresApache2.0 without pointing to any siblinglicense text. No root/typesLICENSE in fetchedhistory. Publicissue171 specifically requests missingtypeslicense; no comments.",
+      "source_revision": "85069f193cbacc371c3beb649ce746f8c5a493be",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/@humanfs/types/-/types-0.15.0.tgz",
+      "version": "0.15.0"
+    },
+    {
+      "name": "@sindarius/gcodeviewer",
+      "primary_source_observation": "No licensefilename in fetchednpm_gcodeviewer history; exact source map contains21 sourcefiles with no authorlicense text or authority link. Related pluginGPL license excluded without applicable scope/code grant.",
+      "source_revision": "c0dad3b80f39cb3e30f7d3b08c48c9470ac3c8c7",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/@sindarius/gcodeviewer/-/gcodeviewer-3.7.18.tgz",
+      "version": "3.7.18"
+    },
+    {
+      "name": "aigle-core",
+      "primary_source_observation": "Exactpackage metadata links only sameauthor aigle-core repository and declaresMIT. README/index.js lack authorfulltext or externalgrant link. No licensefilename in fetchedhistory; repositorylicenseissue search0. RelatedAigle rootlicense not borrowed without explicitcore scopegrant.",
+      "source_revision": "9c25f2e88a5e3ae37e9c042618688a549a462791",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/aigle-core/-/aigle-core-1.0.0.tgz",
+      "version": "1.0.0"
+    },
+    {
+      "name": "de-indent",
+      "primary_source_observation": "Exactpackage source/metadata contain MIT identifier only; no author-controlled fulltext link or noticefilename in fetchedhistory. Publicissue1 requests licensefile; PR2 proposed one but closed/unmerged, no reviews and no author grant in issuecomments.",
+      "source_revision": "5861bd7a39c09f0056fd361d82e570e56bd2c275",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz",
+      "version": "1.0.2"
+    },
+    {
+      "name": "ospath",
+      "primary_source_observation": "ExactREADME License section saysMIT only; metadata links sameospathrepo. No authorfulltext URL, no licensefilename in fetchedhistory, no licensingissue searchresults. Source has no package-author notice.",
+      "source_revision": "de6829c163decd984c87976deb7a754003681d52",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/ospath/-/ospath-1.2.2.tgz",
+      "version": "1.2.2"
+    },
+    {
+      "name": "stackback",
+      "primary_source_observation": "Originalrepo redirects to public defunctzombie/node-stackback. Existingissue1 LICENSE missing: maintainer defunctzombie states project untouched since2013 and will make no furtherchanges. No package-author fullnotice in fetchedhistory.",
+      "source_revision": "2963095372abf7b75ba55f01cef08ab1e62c2ff4",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/stackback/-/stackback-0.0.2.tgz",
+      "version": "0.0.2"
+    },
+    {
+      "name": "throttleit",
+      "primary_source_observation": "Authorlicense text introduced at5556901e7af69e8db88d46b82e788ef72ef2a92d with source/metadata changes. Maintainer issue6 states fix is v2.0.0; issue9 request for oldversion notice receives advice to upgrade, not explicit grant for oldcode.",
+      "source_revision": "afb7848a9b231e90fe3b44f7d18d59821452367f",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/throttleit/-/throttleit-1.0.1.tgz",
+      "version": "1.0.1"
+    },
+    {
+      "name": "typed_janus_js",
+      "primary_source_observation": "ExactgitHead tree has no license/copying file. All14 exact src/*.ts files scanned: no license/copyright/fullgrant or external URLs. No licensefilename in fetchedsourcehistory. Canonical public issue search license returned0. CurrentREADME adds no authornotice.",
+      "source_revision": "ab43e143ea6ff9e9b103819cadb474cc4a169756",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/typed_janus_js/-/typed_janus_js-1.2.1.tgz",
+      "version": "1.2.1"
+    },
+    {
+      "name": "vue-observe-visibility",
+      "primary_source_observation": "ExactREADME explicitlylinks generic opensource.org/licenses/MIT, not author-specific copyrightnotice. No noticefilename in fetchedhistory. Publiclicenseissue search finds only dependencybot release text. Demo/docs/polyfill links do not supply authorgrant covering this package.",
+      "source_revision": "419680b548499a6d23433831c81644059811d534",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-1.0.0.tgz",
+      "version": "1.0.0"
+    }
+  ],
+  "remediation_continuation": {
+    "browser_startup": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-a2"
+      ],
+      "elapsed_seconds": 1.9696648390963674,
+      "exit_code": 0,
+      "scope": "actual changed static assets startup only; no printer/API/hardware",
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+    },
+    "budget": {
+      "conservative_cumulative_charge_bytes": 4294967296,
+      "conservative_cumulative_charge_seconds": 2000,
+      "cumulative_allowance_bytes": 8589934592,
+      "cumulative_allowance_seconds": 7200,
+      "includes_failed_inputs_transient_output_agents": true
+    },
+    "build_results": [
+      {
+        "command": [
+          "python3",
+          "scripts/package_mainsail.py",
+          "--work",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2",
+          "--node-archive",
+          "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64.tar.xz",
+          "--execute"
+        ],
+        "cumulative_allowance_bytes": 4294967296,
+        "cumulative_allowance_seconds": 2400,
+        "elapsed_seconds": 30.99269479396753,
+        "exit_code": 0,
+        "generated_current_bytes": 1036720582,
+        "output_allowance_exhausted": false,
+        "prior_elapsed_seconds": 5.0194910869468,
+        "prior_failed_pair_receipt_preserved": "package-build-results.json",
+        "source_after": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
+          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+        },
+        "source_before": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
+          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+        },
+        "timeout": false
+      }
+    ],
+    "code_commit": "2e452c21b352a48d322a2ec462cae873865fced0",
+    "current_inventory_command": {
+      "command": [
+        "python3",
+        "scripts/license_inventory.py",
+        "--inputs",
+        "/home/drew/.sv08-release-closure-20261015/current-inventory-inputs.json",
+        "--output",
+        "configs/host/release-source-license-inventory.json"
+      ],
+      "observed_exit_code": 0,
+      "output": {
+        "bytes": 3077992,
+        "output_sha256": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88"
+      }
+    },
+    "current_inventory_delta": {
+      "changed_applications": [
+        [
+          2,
+          [
+            "artifact",
+            "config_sha256",
+            "patches",
+            "rebuild_evidence",
+            "source",
+            "version"
+          ]
+        ]
+      ],
+      "changed_dependencies": [
+        "node_modules/throttleit"
+      ],
+      "coverage": {
+        "declaration_only_dependencies": 7,
+        "dependencies_with_notice_text": 924,
+        "inspected_supplier_archives": 931
+      },
+      "removed_dependencies": [
+        "node_modules/de-indent",
+        "node_modules/he",
+        "node_modules/vue-template-compiler"
+      ],
+      "unchanged_domains": [
+        "wheels",
+        "debian",
+        "build_tools"
+      ]
+    },
+    "fixed_dependency_regression_passed": true,
+    "historical_selection_coverage": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 2,
+      "remaining_selected_notice_gaps": 7,
+      "selected_dependencies": 931
+    },
+    "license_text_or_grants_changed": false,
+    "new_failed_attempts": [
+      "Disposable npm isolation used same /dev/null for user/global files; npm rejected before resolution. Distinct empty task config files corrected invocation; original failed input preserved.",
+      "B2 parent monitor failed on du transient removed optional directory. Child continued and final checked build report/artifact completed; process gone. Exit status not observable; never recorded as zero. Artifact byte identity independently verified."
+    ],
+    "next_bounded_slice": "Assess notice-bearing why-is-node-running3.2.3 with explicitly recorded Vitest CJS/ESM default-export compatibility; no blanket canonical-text substitution or missing notice waiver.",
+    "package_reproducibility": {
+      "a2_exit_code": 0,
+      "b2_completion_evidence": "finalreport emitted after checked dpkg-deb and package hashing; process gone, artifact bytes identical. Parentmonitor failed on temporary du path removal; no invented exit status.",
+      "b2_exit_code": null,
+      "independent_fresh_build_outputs_equal": true,
+      "input_roots_preserved": true,
+      "logical_archive_root_uses_hardlinks_not_full_copies": true,
+      "node_archive_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+      "node_version": "22.23.2",
+      "package_sha256": "6ae70d5a666bd5f13e76a9f62c6df3aee4112411194e974ab6f4bc6919bbd081",
+      "report_sha256": [
+        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08",
+        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08"
+      ]
+    },
+    "project_source_package_reproducibility": {
+      "command": [
+        "python3",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-qualification-closure/scripts/prepare_release.py",
+        "--profile",
+        "project-source",
+        "--image",
+        "/home/drew/.sv08-release-closure-20261015/project-source-fixture.ext4",
+        "--public-source",
+        "/home/drew/.sv08-source-policy-20261014/public-session-manifest.json",
+        "--output",
+        "/root/.sv08-release-closure-20261015/source-package-repeat",
+        "--scratch",
+        "/root/.sv08-release-closure-20261015"
+      ],
+      "elapsed_seconds": 1.1667637440841645,
+      "exact_output_bytes_reproduced": true,
+      "exit_code": 0,
+      "output_sha256": {
+        "image-inventory.json": "9961d8835903977aa2b8f2ee8d3a5a9700892121d906c15861241d53a601c3a3",
+        "public-source.json": "079ed200a6812adf430372b80c3d7c484a0194f427b52bb2f9c2fa197c76dc8a",
+        "release-manifest.json": "8588e8d3da79a30e7778464fb655b00eae398697f6b03a5d1e96cd05ed46a9ab",
+        "report.json": "0b579d441fa3aac6db05caef33032d3290bd8d0c5321b99f7588ef4aea8e02a9"
+      },
+      "source": {
+        "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+        "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+      }
+    },
+    "remaining_selected_notice_gaps": 7,
+    "source_sha256": {
+      "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+      "configs/host/npm-notice-resolution.json": "2afa67ca3ed2491c4e6d6808e2d93ed8fdfc5302fa3ac1d422b195e37eb38da5",
+      "configs/host/release-source-license-inventory.json": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88",
+      "docs/development/release-packaging.md": "3c5cbd8e91d051dbae88b1a4ac8aab5033a5412c8a73342f630f2b52ac0eb795",
+      "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+      "patches/mainsail/README.md": "f79a46c173ac033a4bd897054d2fccf7f3cafc7132c4492a1b3fe3854e09dc69",
+      "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+      "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+      "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+    },
+    "tests_passed": 61,
+    "tests_skipped": 0,
+    "validation": [
+      {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_image_license_inventory",
+          "test_prepare_release",
+          "test_resolve_npm_notices",
+          "test_license_inventory",
+          "test_project_license",
+          "test_mainsail_notice_dependencies"
+        ],
+        "elapsed_seconds": 0.514763860963285,
+        "exit_code": 0,
+        "name": "remediation-tests",
+        "source_after": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        },
+        "source_before": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        }
+      },
+      {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "tests/mainsail_fixed_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/node_modules"
+        ],
+        "elapsed_seconds": 0.06384286005049944,
+        "exit_code": 0,
+        "name": "fixed-dependencies",
+        "source_after": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        },
+        "source_before": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        }
+      }
+    ]
+  },
+  "source_sha256": {
+    "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+    "docs/development/release-packaging.md": "cfcd3689ac2a6ae101105dc75a7da518114af79b47cedad20b336c12d88131a8",
+    "docs/licensing/npm-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+    "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+    "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+    "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+    "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
+    "tests/test_image_license_inventory.py": "5fd0ea117f889f1a30fd67a804a8b77b6018b4704d3c70f57fde856314e37d6a",
+    "tests/test_license_inventory.py": "997d6a1c30011b6db59380c442f4cd800e4cc7bb11ef522628348dbf31112dcd",
+    "tests/test_prepare_release.py": "a7718e72c6d88b604a5d084947ba402d78ef44b1a6f0fd2e0aa2bb405bc3e5a8",
+    "tests/test_resolve_npm_notices.py": "3bc487bf793126aa0a23baec6556b29bef73e5c1ee9c4fd8bc5627caee56cf78"
+  },
+  "standard_lgpl_continuation": {
+    "actual_project_source_package": {
+      "command": "sudo -n python3 scripts/prepare_release.py --profile project-source --image <retained64MiBfixture> --public-source <retainedpublicmanifest> --output <newstandard-lgpl-source-package> --scratch <assignedscratch>",
+      "exit_status": 0,
+      "outputs": {
+        "image-inventory.json": "9961d8835903977aa2b8f2ee8d3a5a9700892121d906c15861241d53a601c3a3",
+        "public-source.json": "079ed200a6812adf430372b80c3d7c484a0194f427b52bb2f9c2fa197c76dc8a",
+        "release-manifest.json": "8588e8d3da79a30e7778464fb655b00eae398697f6b03a5d1e96cd05ed46a9ab",
+        "report.json": "0b579d441fa3aac6db05caef33032d3290bd8d0c5321b99f7588ef4aea8e02a9"
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "image",
+            "status": "passed"
+          },
+          {
+            "id": "public-project-source",
+            "status": "passed"
+          }
+        ],
+        "format_version": 1,
+        "hardware_qualified": false,
+        "limitations": [
+          "Hardware, recovery execution, legal compliance and full reproducibility are not qualified.",
+          "Third-party corresponding-source completeness and opaque boot/data license coverage remain separate.",
+          "Artifact must travel alongside this evidence package and match its exact hash."
+        ],
+        "overall_release_qualified": false,
+        "profile": "project-source",
+        "project_source_qualified": true,
+        "software_notice_inventory_checked": false
+      }
+    },
+    "agent": {
+      "effective_settings": "not observable",
+      "id": "/root/standard_lgpl_implement",
+      "requested_effort": "medium",
+      "result": "completed code and focused tests",
+      "role": "project_implementer"
+    },
+    "allowance": {
+      "conservative_used_GiB": 19.6,
+      "conservative_used_seconds": 8700,
+      "cumulative_generated_GiB": 20.5,
+      "cumulative_seconds": 16800,
+      "no_reset": true
+    },
+    "canonical_text": {
+      "bytes": 42098,
+      "includes_gpl3_terms": true,
+      "license": "LGPL-3.0-or-later",
+      "reference": "https://spdx.org/licenses/LGPL-3.0-or-later.html",
+      "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+      "source_repository": "https://github.com/spdx/license-list-data",
+      "source_revision": "e6ccb09584ca771e592281194aa7c74bf62f4105",
+      "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/e6ccb09584ca771e592281194aa7c74bf62f4105/text/LGPL-3.0-or-later.txt"
+    },
+    "code_commit": "d64be5b91f56b181db9be4fd552740b4857bd6d8",
+    "failed_attempts": [
+      {
+        "cause": "loop-device permission denied",
+        "command": "same actual project-source inspection without sudo",
+        "exit_status": 1,
+        "repair": "used existing coordinator sudo permission; no install or configuration change"
+      },
+      {
+        "cause": "prior inventory is checked in rather than that scratch path",
+        "command": "inventory delta comparison using scratch prior inventory filename",
+        "exit_status": 1,
+        "repair": "compared retained checked-in previous inventory; passed"
+      }
+    ],
+    "inventory": {
+      "coverage": {
+        "declaration_only_dependencies": 0,
+        "dependencies_with_distributor_standard_terms": 1,
+        "dependencies_with_notice_text": 896,
+        "inspected_supplier_archives": 897
+      },
+      "only_existing_dependency_fields_changed": "node_modules/@sindarius/gcodeviewer",
+      "sha256": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+      "unrelated_sections_unchanged": true
+    },
+    "limitations": [
+      "Exact-package terms acceptance is not recovered author attribution or a new license grant.",
+      "No full current selected-software image qualification, corresponding-source completeness, legal compliance, hardware or recovery execution claimed.",
+      "Current Mainsail source/build inputs/artifacts and browser behavior unchanged; prior source-bound acceptance reused."
+    ],
+    "owner_authority": "owner-request.md 2026-10-15 clarification: exact supplier declaration plus unmodified SPDX standard terms",
+    "selection": {
+      "coverage": {
+        "accepted_distributor_standard_terms": 1,
+        "historical_notice_resolved": 60,
+        "historical_notice_unresolved": 9,
+        "historical_records": 69,
+        "measured_selection_remediations": 9,
+        "remaining_selected_notice_gaps": 0,
+        "selected_dependencies": 897
+      },
+      "exit_status": 0,
+      "sha256": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf"
+    },
+    "source_sha256": {
+      "configs/host/npm-notice-resolution.json": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf",
+      "configs/host/npm-standard-license-texts.json": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c",
+      "configs/host/release-source-license-inventory.json": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+      "docs/licensing/standard/LGPL-3.0-or-later.txt": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+      "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+      "scripts/license_inventory.py": "9c56db762cae38dd4db1b4203354fde15a3dfd1b93df7a476b9b208354ea54c8",
+      "scripts/prepare_release.py": "b4e8cb6be9314096e72db859474cfcbf0fe1912b81d64e2169c3b08a999bfd33",
+      "scripts/resolve_npm_notices.py": "e0fc0ec77c44c368aa60bd2c0b0167c295b25a8f46ada35bf0cc6867b1b5a248",
+      "tests/test_license_inventory.py": "aa771d926d81e8205b1577a87518cd723e9efd1ade9e1e5dc081e378b50c30eb",
+      "tests/test_prepare_release.py": "a3686e322e92a1ee29c18f16843f4543e136bde83d9c37fe00a647ec298b615c",
+      "tests/test_resolve_npm_notices.py": "8706ba2195b536f145d556124b3c0aa6f261c3df34cf41a0d078f16ab95559ca"
+    },
+    "tests": {
+      "evidence_kind": "worker observed actual commands with retained exact supplier archive; runtime conversation retains output; no fabricated standalone log",
+      "test_license_inventory.py": {
+        "passed": 20
+      },
+      "test_prepare_release.py": {
+        "passed": 7,
+        "rerun_reason": "added missing/corrupt standard text checks"
+      },
+      "test_resolve_npm_notices.py": {
+        "passed": 21
+      }
+    }
+  },
+  "status": "in-progress-seven-current-notice-gaps-remain",
+  "tests": {
+    "distinct_passed": 56,
+    "initial": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_image_license_inventory",
+        "test_prepare_release",
+        "test_resolve_npm_notices",
+        "test_license_inventory",
+        "test_project_license"
+      ],
+      "elapsed_seconds": 0.41445466107688844,
+      "exit_code": 0,
+      "source_after": {
+        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd"
+      },
+      "source_before": {
+        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd"
+      }
+    },
+    "initial_passed": 55,
+    "latest_resolver": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_resolve_npm_notices"
+      ],
+      "elapsed_seconds": 0.11407755897380412,
+      "exit_code": 0,
+      "source_sha256": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
+    },
+    "latest_resolver_passed": 12,
+    "note": "55 initial checks; stricter repository identity handling added and all12 resolver checks passed, including one additional test. Other production code changes since initial tests are module docstring only.",
+    "skips": 0
+  },
+  "visibility_continuation": {
+    "accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 7,
+      "remaining_selected_notice_gaps": 3,
+      "selected_dependencies": 897
+    },
+    "agents": [
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "thread": "/root/visibility_directive_implement"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "default low",
+        "role": "project_researcher",
+        "thread": "/root/visibility_notice_contract"
+      }
+    ],
+    "allowance": {
+      "cumulative_conservative_charge_bytes": 11811160064,
+      "cumulative_conservative_charge_process_seconds": 5000,
+      "limit_bytes": 12884901888,
+      "limit_process_seconds": 10800
+    },
+    "code_commit": "2c8de488585bb93113da033dbef1bf720632e470",
+    "failed_attempts": [
+      "prototypeA: fixture raw Vue import lacked process environment; repaired explicit Vite virtual module",
+      "fresh candidate: SPA fallback attempted app imports and cold optimizer reloaded page; corrected script-free route, disabled discovery, fresh output cache and bootstrap/navigation guards; all 33 case expectations preserved"
+    ],
+    "limitations": [
+      "Representative Vue fixture effects; nine real production components not mounted",
+      "Safari12 not exercised",
+      "No printer, camera, deployment or full-stack qualification",
+      "Three selected notice gaps remain; original60 supplemental records unchanged"
+    ],
+    "private_artifact_root": "/home/drew/.sv08-release-closure-20261015",
+    "receipts": {
+      "mainsail-startup-visibility-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "tests/mainsail_browser_startup.mjs",
+          "--execute",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/dist",
+          "/home/drew/.sv08-release-closure-20261015/mainsail-startup-visibility"
+        ],
+        "elapsed_seconds": 1.8204352660104632,
+        "exit": 0,
+        "scope": "actual production startup; separate directive fixture uses representative effects, not nine production components",
+        "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+      },
+      "visibility-final-baseline-equivalence.json": {
+        "all_three_baseline_traces_identical": true,
+        "corrected_blank_page_and_cold_cache": true,
+        "production_behavior_checks_unchanged": true,
+        "stages": 33
+      },
+      "visibility-final-browser-results.json": [
+        {
+          "check": "baseline-c",
+          "command": [
+            "sudo",
+            "-n",
+            "unshare",
+            "--net",
+            "--",
+            "sh",
+            "-c",
+            "ip link set lo up; exec env VISIBILITY_BASELINE=/home/drew/.sv08-release-closure-20261015/visibility-baseline-c/result.json /home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/tests/mainsail_visibility_browser.mjs --execute /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source /home/drew/.sv08-release-closure-20261015/visibility-baseline-c baseline"
+          ],
+          "elapsed_seconds": 6.982475406024605,
+          "exit": 0,
+          "test_sha256": "498b8ba16e0b71f73189fddc244ead3f85895d5b33a57ace670e70d19c2ddbe9"
+        },
+        {
+          "check": "final-browser-c",
+          "command": [
+            "sudo",
+            "-n",
+            "unshare",
+            "--net",
+            "--",
+            "sh",
+            "-c",
+            "ip link set lo up; exec env VISIBILITY_BASELINE=/home/drew/.sv08-release-closure-20261015/visibility-baseline-c/result.json /home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/tests/mainsail_visibility_browser.mjs --execute /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source /home/drew/.sv08-release-closure-20261015/visibility-final-browser-c candidate"
+          ],
+          "elapsed_seconds": 6.831233115168288,
+          "exit": 0,
+          "test_sha256": "498b8ba16e0b71f73189fddc244ead3f85895d5b33a57ace670e70d19c2ddbe9"
+        }
+      ],
+      "visibility-final-runtime-results.json": [
+        {
+          "check": "unit",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run"
+          ],
+          "elapsed_seconds": 1.9813305691350251,
+          "exit": 0
+        },
+        {
+          "check": "types",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "elapsed_seconds": 3.07866317499429,
+          "exit": 0
+        },
+        {
+          "check": "source",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "-v",
+            "test_mainsail_visibility",
+            "test_mainsail_janus",
+            "test_mainsail_notice_dependencies"
+          ],
+          "elapsed_seconds": 0.5148303480818868,
+          "exit": 0
+        }
+      ],
+      "visibility-inventory-delta.json": {
+        "remaining_selected_notice_gaps": 3,
+        "removed_paths": [
+          "node_modules/vue-observe-visibility"
+        ],
+        "surviving_dependency_records_identical": 897,
+        "unchanged_inventory_sections": [
+          "build_tools",
+          "debian",
+          "format_version",
+          "hardware_release_qualified",
+          "legal_compliance_assessed",
+          "scope",
+          "wheels"
+        ]
+      },
+      "visibility-inventory-receipt.json": {
+        "command": [
+          "python3",
+          "scripts/license_inventory.py",
+          "--inputs",
+          "/home/drew/.sv08-release-closure-20261015/visibility-inventory-inputs.json",
+          "--output",
+          "configs/host/release-source-license-inventory.json"
+        ],
+        "elapsed_seconds": 14.570940595120192,
+        "exit": 0
+      },
+      "visibility-package-repro.json": {
+        "builds": [
+          {
+            "elapsed_seconds": 25.497058643959463,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.228628349024802,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "identical_packages": true,
+        "identical_reports": true,
+        "package_bytes": 2493156,
+        "package_sha256": "07767b38b7192b8bb4a870b113a300f07cd360bd65a2019193e14e62971655ba",
+        "removed_dependency_absent": true
+      },
+      "visibility-payload-notices.json": {
+        "other_applications_unchanged": true,
+        "verified_notices": [
+          {
+            "bytes": 1098,
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/janus-sdk.txt",
+            "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c"
+          },
+          {
+            "bytes": 34523,
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/sv08-janus-adapter-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ]
+      }
+    },
+    "source_sha256": {
+      "configs/apps/mainsail.json": "1a67f3b80df3b6097607dab1c6719972ac53bc6049d3dbbd17ec6b60b5b5d728",
+      "configs/host/npm-notice-resolution.json": "dfa81e434bdfd3ade70d713ec7bde4640f91d8ea1f2ecb32316b2b088cef7aae",
+      "configs/host/release-source-license-inventory.json": "698b47a9e275e72e6b146c96d620f11aafc836ba14ce126fb0f25373568657e7",
+      "patches/mainsail/0006-native-visibility.patch": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f",
+      "tests/mainsail_visibility_browser.mjs": "498b8ba16e0b71f73189fddc244ead3f85895d5b33a57ace670e70d19c2ddbe9",
+      "tests/test_mainsail_visibility.py": "2fcdfb174d2d9d527a1985112863de7d64a828ba1ab7347fe57bf77920edf553"
+    },
+    "status": "slice validated; full goal incomplete"
+  },
+  "vitest_continuation": {
+    "agents": [
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "default-low",
+        "role": "project_researcher",
+        "task": "stackback_remediation_design"
+      },
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "task": "vitest_notice_implement"
+      }
+    ],
+    "baseline_unit": {
+      "exit": 0,
+      "files": 4,
+      "receipt_sha256": "58c929dfef74911a7ad308fbd89d01179c6c04f89144a7267aa9805d89f177a2",
+      "tests": 46
+    },
+    "browser": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/build/vitest-a/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-vitest"
+      ],
+      "elapsed_seconds": 1.7709253090433776,
+      "exit": 0,
+      "scope": "static startup only; no API or hardware qualification",
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+    },
+    "focused_source_checks": {
+      "command": "PYTHONPATH=scripts:tests python3 -m unittest -v test_mainsail_notice_dependencies",
+      "elapsed_seconds": 0.104,
+      "exit": 0,
+      "tests": 6
+    },
+    "historical_accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 3,
+      "remaining_selected_notice_gaps": 6,
+      "selected_dependencies": 921
+    },
+    "inventory_delta": {
+      "changed_top_level_fields": [
+        "applications",
+        "mainsail_dependencies"
+      ],
+      "coverage": {
+        "declaration_only_dependencies": 6,
+        "dependencies_with_notice_text": 915,
+        "inspected_supplier_archives": 921
+      },
+      "current_inventory_sha256": "f8b5bb856bbce02e9a07870eff9f7d4305eac0c77862152f5180ba1fd9873b2a",
+      "previous_inventory_sha256": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88"
+    },
+    "limits": [
+      "Six notice gaps remain; goal incomplete.",
+      "Historical missing notices remain historical facts; removed dependencies were not relicensed.",
+      "Static startup only; no API/printer/full-workload/hardware qualification.",
+      "Earlier unchanged core tests reused from recorded source-bound evidence; six changed patch checks rerun.",
+      "No merge, deployment, upstream message, license change or new host installation."
+    ],
+    "notice_coverage": {
+      "declaration_only_dependencies": 6,
+      "dependencies_with_notice_text": 915,
+      "inspected_supplier_archives": 921
+    },
+    "rationale": "Supported upstream Vitest5 native ESM diagnostics removes stackback without a local supplier-code patch or license changes.",
+    "remaining_selected_gaps": [
+      {
+        "name": "@humanfs/types",
+        "version": "0.15.0"
+      },
+      {
+        "name": "@sindarius/gcodeviewer",
+        "version": "3.7.18"
+      },
+      {
+        "name": "aigle-core",
+        "version": "1.0.0"
+      },
+      {
+        "name": "ospath",
+        "version": "1.2.2"
+      },
+      {
+        "name": "typed_janus_js",
+        "version": "1.2.1"
+      },
+      {
+        "name": "vue-observe-visibility",
+        "version": "1.0.0"
+      }
+    ],
+    "reproducibility": {
+      "builds": [
+        {
+          "elapsed_seconds": 26.550261619035155,
+          "exit": 0,
+          "limit": null,
+          "suffix": "a"
+        },
+        {
+          "elapsed_seconds": 27.611395439133048,
+          "exit": 0,
+          "limit": null,
+          "suffix": "b"
+        }
+      ],
+      "identical_packages": true,
+      "identical_reports": true,
+      "package_sha256": "a3a87a608d99877e5d19a9398e024f5f1fd5d6531906b77fbdfa4e79fa4a77b9",
+      "report_sha256": "8c1fcdbf5fd7a4725796104c107c8d63083209998e3150294d23f5608867fa69"
+    },
+    "resource_accounting": {
+      "conservative_charge_output_bytes": 6442450944,
+      "conservative_charge_process_seconds": 2500,
+      "cumulative_allowance_output_bytes": 8589934592,
+      "cumulative_allowance_process_seconds": 7200,
+      "no_reset": true
+    },
+    "runtime_checks": [
+      {
+        "check": "unit",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run"
+        ],
+        "elapsed_seconds": 1.1230785970110446,
+        "exit": 0
+      },
+      {
+        "check": "notice",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/tests/mainsail_notice_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/build/vitest-a/source/node_modules"
+        ],
+        "elapsed_seconds": 1.11573955998756,
+        "exit": 0
+      },
+      {
+        "check": "fixed",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/tests/mainsail_fixed_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/build/vitest-a/source/node_modules"
+        ],
+        "elapsed_seconds": 0.06375932600349188,
+        "exit": 0
+      }
+    ],
+    "source_commit": "8268b11fc6b46a58af627c39b7942c618d006391",
+    "source_sha256": {
+      "configs/apps/mainsail.json": "e5848855682b84ef92015c1042ae8567e20129c7e21a92480010da64b860b88d",
+      "configs/host/npm-notice-resolution.json": "b752a6c020edac1fcb3d025badc7640621ec8261472eb56c31fb5ffa38f1480d",
+      "configs/host/release-source-license-inventory.json": "f8b5bb856bbce02e9a07870eff9f7d4305eac0c77862152f5180ba1fd9873b2a",
+      "patches/mainsail/0004-vitest-notice-closure.patch": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f",
+      "tests/mainsail_notice_dependencies.cjs": "62d3493817e18d727fd06e912797e12ae2113bac1f221738b4d8201266051c38",
+      "tests/test_mainsail_notice_dependencies.py": "d4efd54074f1ad3c55461767e2894020104bdf30e1ed72362f894fb0ad4fc4d6"
+    },
+    "supplier_archive_intake": [
+      {
+        "notices": 1,
+        "path": "node_modules/@jridgewell/sourcemap-codec",
+        "sha256": "f30a35f6af8c347d01b8ff2f8662272f7d986cf21b916704d86c249a90b97e25",
+        "version": "1.6.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@types/node",
+        "sha256": "1d382e6ea27221dcf02fc1cada5c5d396c4ca499552201323ca43713baa60012",
+        "version": "22.20.5"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@vitest/mocker",
+        "sha256": "113720d5386d59c5c29d408782b5508e100bea325e0353afd6b7cdaae9cfffc5",
+        "version": "5.0.4"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@vitest/mocker/node_modules/magic-string",
+        "sha256": "6c9d770ddb800796303481b4bdacd7c308dfe83edd0ff8fa5377438c03889d08",
+        "version": "1.4.3"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@vitest/spy",
+        "sha256": "bc2329504abf45d4b1496e6ddfe16ffdbc33438e80cb940cdd0eca54e30747b8",
+        "version": "5.0.4"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/chai",
+        "sha256": "ef5457b2ab9e011093f47f104fecc94e5b36ce729fdba6fbc8b0ce316c2e8f60",
+        "version": "6.3.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/es-module-lexer",
+        "sha256": "99b4da5f3bd7cc4483f3d892ee9037b10a1da26ac5bec374038cf0bd4a52e1a7",
+        "version": "2.3.2"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/obug",
+        "sha256": "ecfec0c0318c048b6abde3c42f3a1c3fc35b3f69392a4b262b848aab76ff3d11",
+        "version": "3.0.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/std-env",
+        "sha256": "472694210ae3770970a33826b283db03ecec5a0fcf3f6df76eccb48695459bf5",
+        "version": "4.3.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/tinybench",
+        "sha256": "5a12db6b7b7907ed8486fed0f8d5e66785e72beaa0993ca57dd665b3f9d0bff9",
+        "version": "6.2.2"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/tinyexec",
+        "sha256": "540b804f39c7716c232252085e4d43d9b10e2d89db39faaa1b31ed8cd93e2f1f",
+        "version": "1.3.1"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/vitest",
+        "sha256": "1580270c5534c22baa122ac6f4ffe648f00783502eb0206ea7a50565d8f5061d",
+        "version": "5.0.4"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/vitest/node_modules/magic-string",
+        "sha256": "6c9d770ddb800796303481b4bdacd7c308dfe83edd0ff8fa5377438c03889d08",
+        "version": "1.4.3"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/vitest/node_modules/picomatch",
+        "sha256": "697b463be3cdbd9ffc8f4194fd5019a69ddf95875fb703d78b2b115cc9e740a8",
+        "version": "4.0.7"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/why-is-node-running",
+        "sha256": "825a38a4cfa575b28b587c7669d4ad184c3582b58eabf5374804f5dbc354fdd2",
+        "version": "3.2.1"
+      }
+    ]
   }
 }

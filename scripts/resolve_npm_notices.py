@@ -14,7 +14,10 @@ from pathlib import Path, PurePosixPath
 import re
 import tarfile
 from urllib.parse import unquote, urlsplit
-from license_inventory import digest, serialize
+from license_inventory import digest, serialize, file_pin, checked_path, NOTICE
+from package_mainsail import authored_archive_bytes
+
+REPO = Path(__file__).resolve().parents[1]
 
 REVISION = re.compile(r'[0-9a-f]{40}')
 
@@ -229,6 +232,140 @@ def resolve(records, expected=None):
         coverage=dict(inspected=len(records),resolved=len(accepted),unresolved=len(unresolved)))
 
 
+def selection_resolution(inputs):
+    """Account for the original 69 without claiming removed bytes were relicensed.
+
+    Inputs pin the actual selected lock, existing supplemental notices and any
+    replacement supplier archives. Selection remediation is separate from the
+    original package's unresolved author-notice fact.
+    """
+    lock_pin=inputs['selected_lock'];lock_record=file_pin(lock_pin)
+    config=json.loads((REPO/'configs/apps/mainsail.json').read_text())
+    if lock_record['sha256']!=config['patched_package_lock_sha256']:
+        raise ValueError('Selection accounting requires the exact selected patched lock')
+    lock=json.loads(checked_path(lock_pin['root'],lock_pin['path']).read_text())
+    supplemental_pin=inputs['supplemental_notices'];file_pin(supplemental_pin)
+    supplemental_raw=checked_path(supplemental_pin['root'],supplemental_pin['path']).read_bytes()
+    if digest((REPO/'configs/host/npm-supplemental-notices.json').read_bytes())!=supplemental_pin['sha256']:
+        raise ValueError('Historical accounting requires the retained supplemental notice set')
+    supplemental=json.loads(supplemental_raw)
+    baseline_raw=(REPO/'configs/host/source-license-inventory.json').read_bytes()
+    baseline=json.loads(baseline_raw)['mainsail_dependencies']
+    historical=[p for p in baseline['packages'] if not p['notices']]
+    if len(historical)!=69: raise ValueError('Original declaration-only accounting requires all 69 records')
+    resolved={p['path']:p for p in supplemental['records']}
+    if len(resolved)!=len(supplemental['records']): raise ValueError('Duplicate historical notice record')
+    if set(resolved)-{p['path'] for p in historical}: raise ValueError('Unrelated historical notice record')
+    from license_inventory import npm_standard_license_texts, verify_npm_standard_license
+    standards=npm_standard_license_texts(inputs.get('standard_license_texts'),lock)
+    standard_archives=inputs.get('standard_license_text_archives',{})
+    if set(standard_archives)!=set(standards):
+        raise ValueError('Standard license archives must exactly cover approved records')
+    standard_records={}
+    for path,standard in standards.items():
+        archive_pin=standard_archives[path];file_pin(archive_pin)
+        standard_records[path]=verify_npm_standard_license(standard,lock['packages'][path],
+            checked_path(archive_pin['root'],archive_pin['path']))
+    replacements=inputs.get('replacement_archives',{});used=set();records=[]
+    for original in sorted(historical,key=lambda p:p['path']):
+        name=original['name'];version=original['version'];integrity=original['integrity'];path=original['path']
+        notice=resolved.get(path)
+        if notice and (notice['name'],notice['version'],notice['integrity'],notice['archive_sha256']) != (name,version,integrity,original['archive']['sha256']):
+            raise ValueError('Historical supplemental notice identity mismatch')
+        record=dict(path=path,name=name,original_version=version,original_integrity=integrity,
+            original_archive_sha256=original['archive']['sha256'],
+            historical_notice_status='verified-exact-version-supplemental-notice' if notice else 'unresolved-author-notice',
+            selection_status='retained',selected_version=None,replacement_notices=[])
+        selected=lock['packages'].get(path)
+        if selected is None:
+            # Path disappearance alone is insufficient if the same package was
+            # merely moved to another dependency location.
+            equivalent=[p for p,value in lock['packages'].items() if p and
+                value.get('name',p.rsplit('node_modules/',1)[-1])==name and
+                (value.get('version'),value.get('integrity'))==(version,integrity)]
+            record['selection_status']='relocated' if equivalent else 'removed-from-selected-lock'
+            record['equivalent_paths']=sorted(equivalent)
+        elif (selected.get('version'),selected.get('integrity'))==(version,integrity):
+            record['selected_version']=version
+        else:
+            record['selected_version']=selected.get('version')
+            record['selection_status']='replacement-notice-unverified'
+            if path in replacements:
+                pin=replacements[path];artifact=file_pin(pin);archive=checked_path(pin['root'],pin['path'])
+                authored=config.get('authored_npm_replacements',{}).get(path)
+                selected_name=selected.get('name',name)
+                archive_identity(archive,selected['integrity'],selected_name,selected['version']);used.add(path)
+                if authored:
+                    if (selected_name,selected['version'],selected.get('resolved')) != (
+                            authored['name'],authored['version'],'file:'+authored['archive_path']):
+                        raise ValueError('Authored replacement selected identity mismatch')
+                    source_pin=pin.get('authored_source')
+                    if not source_pin: raise ValueError('Authored replacement source evidence required')
+                    record['authored_manifest']=file_pin(source_pin)
+                    manifest=checked_path(source_pin['root'],source_pin['path'])
+                    source_manifest=json.loads(manifest.read_text())
+                    # Explicit accepted graph edges; a configured authored label alone is insufficient.
+                    routes = {
+                        'node_modules/ospath': ('@sv08-mainline/ospath-compat', 'ospath', ('cypress',), 'commonjs'),
+                        'node_modules/@humanfs/types': ('@sv08-mainline/humanfs-types-compat', '@humanfs/types',
+                                                       ('@humanfs/core', '@humanfs/node'), 'types-only'),
+                    }
+                    route = routes.get(path)
+                    if not route:
+                        raise ValueError('Unsupported authored replacement manifest edges')
+                    identity, dependency, parents, package_format = route
+                    if (manifest.name != 'package.json' or authored['name'] != identity or
+                            authored.get('format', 'commonjs') != package_format or
+                            source_manifest.get('devDependencies', {}).get(dependency) != 'file:' + authored['archive_path'] or
+                            dependency in source_manifest.get('overrides', {}) or
+                            any(source_manifest.get('overrides', {}).get(parent, {}).get(dependency) != '$' + dependency
+                                for parent in parents)):
+                        raise ValueError('Authored replacement manifest override mismatch')
+                    source=manifest.parent
+                    expected=authored_archive_bytes(source,authored)
+                    if digest(expected)!=authored['archive_sha256'] or archive.read_bytes()!=expected:
+                        raise ValueError('Authored replacement source/archive mismatch')
+                    record['authored_replacement']=dict(name=selected_name,version=selected['version'],
+                        source_directory=authored['source_directory'],files=authored['files'])
+                elif selected_name!=name:
+                    raise ValueError('Distinct replacement identity requires explicit authored source pins')
+                with tarfile.open(archive) as tar:
+                    for member in tar:
+                        if not member.isdir() and NOTICE.match(PurePosixPath(member.name).name):
+                            if not member.isfile() or member.size>1024*1024: raise ValueError('Unsafe replacement notice member')
+                            raw=tar.extractfile(member).read()
+                            record['replacement_notices'].append(dict(archive_member=member.name,
+                                sha256=digest(raw),text=raw.decode('utf-8')))
+                if not record['replacement_notices']: raise ValueError('Replacement archive lacks actual embedded notice text')
+                record['replacement_archive']=artifact
+                record['selection_status']=('replaced-by-source-bound-authored-package' if authored else
+                                            'replaced-by-notice-bearing-supplier-release')
+        record['standard_license_texts']=[]
+        if path in standard_records:
+            if notice or record['selection_status']!='retained':
+                raise ValueError('Standard license must cover retained supplier declaration only')
+            record['standard_license_texts']=[standard_records[path]]
+            record['selection_status']='accepted-distributor-standard-terms'
+        record['selected_notice_gap']=(not notice and record['selection_status'] not in
+            ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release',
+             'replaced-by-source-bound-authored-package','accepted-distributor-standard-terms')) or record['selection_status']=='replacement-notice-unverified'
+        records.append(record)
+    if used!=set(replacements): raise ValueError('Unused replacement notice evidence')
+    return dict(format_version=1,scope='historical-notice-facts-and-current-selection',
+        historical_inventory_sha256=digest(baseline_raw),selected_lock=lock_record,
+        supplemental_notices_sha256=supplemental_pin['sha256'],source_patches=config['source_patches'],
+        standard_license_texts_input=file_pin(inputs['standard_license_texts']) if inputs.get('standard_license_texts') else None,
+        legal_compliance_assessed=False,overall_release_qualified=False,records=records,
+        coverage=dict(historical_records=len(records),historical_notice_resolved=sum(bool(p['path'] in resolved) for p in records),
+            historical_notice_unresolved=sum(p['path'] not in resolved for p in records),
+            selected_dependencies=len(lock['packages'])-1,
+            measured_selection_remediations=sum(p['selection_status'] in ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release','replaced-by-source-bound-authored-package') for p in records),
+            accepted_distributor_standard_terms=sum(bool(p['standard_license_texts']) for p in records),
+            remaining_selected_notice_gaps=sum(bool(p['selected_notice_gap']) for p in records)),
+        limitations=['Removed or replaced packages retain their original unresolved author-notice facts.',
+                     'Selection accounting does not qualify all installed software or establish redistribution permission.'])
+
+
 def notice_text(result):
     chunks=[]
     for record in result['records']:
@@ -240,17 +377,22 @@ def notice_text(result):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--research',required=True);parser.add_argument('--output',required=True)
+    mode=parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--research');mode.add_argument('--selection-inputs')
+    parser.add_argument('--output',required=True)
     parser.add_argument('--text-output')
     args=parser.parse_args()
     try:
         for output in (args.output,args.text_output):
             if output and not Path(output).parent.is_dir(): raise ValueError('Output parent directory must exist')
-        result=resolve(json.loads(Path(args.research).read_text()))
+        if args.selection_inputs and args.text_output: raise ValueError('Selection accounting does not emit a historical notice text bundle')
+        result=(selection_resolution(json.loads(Path(args.selection_inputs).read_text())) if args.selection_inputs
+                else resolve(json.loads(Path(args.research).read_text())))
         Path(args.output).write_text(serialize(result))
         if args.text_output: Path(args.text_output).write_text(notice_text(result))
         print(json.dumps(result['coverage'],sort_keys=True))
-        if result['unresolved']: parser.exit(1,'Unresolved exact-version notice evidence remains\n')
+        if (result['coverage']['remaining_selected_notice_gaps'] if args.selection_inputs else result['unresolved']):
+            parser.exit(1,'Unresolved exact-version notice evidence remains\n')
     except (ValueError,OSError,KeyError,TypeError) as error: parser.exit(1,str(error)+'\n')
 
 if __name__=='__main__': main()
