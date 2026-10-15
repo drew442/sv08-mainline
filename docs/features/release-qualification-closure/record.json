@@ -61,11 +61,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "61039215c6ed4daaafcec560628875d1",
-        "session": "release-ospath-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -111,13 +107,16 @@
         "patches/mainsail/0007-ospath-compat.patch",
         "scripts/package_mainsail.py",
         "tests/test_mainsail_ospath.py",
-        "tests/mainsail_ospath_compat.cjs"
+        "tests/mainsail_ospath_compat.cjs",
+        "patches/mainsail/0008-humanfs-types-compat.patch",
+        "tests/test_mainsail_humanfs_types.py",
+        "tests/mainsail_humanfs_types_contract.ts"
       ],
       "repeats": 0,
-      "resumption": "PR24 published; synthetic offline/relocated npm override proven; independent full API compatibility package and explicit authored identity accounting preserve Cypress functionality.",
+      "resumption": "PR25 complete; retain current humanfs runtimes and substitute independently authored strict structural declarations with source-bound local package.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
