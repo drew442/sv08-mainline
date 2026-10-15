@@ -216,3 +216,68 @@ component's presentation is checked separately; it does not qualify a camera or
 printer. Coordinator-owned full unit/type/build/startup and repeatability results
 remain separate evidence. Retire the patch when selected upstream Mainsail has a
 notice-bearing, tested equivalent dependency path; no upstream message was sent.
+
+## Independent native visibility directive
+
+`0006-native-visibility.patch` replaces the selected `vue-observe-visibility`
+1.0.0 dependency with an independently authored directive using the browser's
+IntersectionObserver and Vue 2 lifecycle. It implements only the function-valued
+bindings actually used in the nine pinned consumers. Their source bytes remain
+unchanged, including editor focus, preview creation, webcam request gating and
+chart callbacks. Unused library options, thresholds, throttling and once behavior
+are not an application contract and are not reimplemented.
+
+The shared [Vue 2/Chromium harness](../../tests/mainsail_visibility_browser.mjs)
+was run against the original installed plugin before the directive was authored.
+The measured contract includes an initial visible or hidden result after consumer
+initialization, boolean transition deduplication, native viewport/nested clipping,
+visible exact-edge contact and in-viewport zero-area targets. Unrelated Vue updates
+do not reset observation. Replacing the callback gives its successor a fresh
+initial result. Removal before queued initial delivery produces no callback.
+The replacement defers observation with Vue.nextTick, retains per-element state,
+disconnects on replacement/unbind and invalidates already queued stale delivery.
+
+The harness accepts `--execute CHROME SOURCE OUTPUT baseline|candidate` and must
+run in an isolated network namespace with only loopback up. A minimal Vite server
+loads the real pinned Vue runtime and selected directive without bootstrapping the
+application. An explicit script-free HTML middleware route runs before SPA
+fallback. Dependency discovery is disabled (`entries: []`, `noDiscovery: true`),
+with only Vue and the original plugin (baseline mode) explicitly prebundled in
+a fresh output-local cache. The harness rejects application-entry requests and
+unexpected navigation/reloads and records all requests and navigations. External
+HTTP requests are blocked. It records the complete trace of
+33 stages, including actual scrolling, hidden/revealed and component-root targets,
+independent targets, repeated mounts and representative focus/preview/request/chart
+effects. Candidate mode requires `VISIBILITY_BASELINE=/absolute/result.json` from
+the original run and compares that trace without changing its expectations. Vue's
+actual version is recorded and checked. These are representative fixture consumers;
+the nine production components are protected separately by exact source comparison.
+
+[Offline checks](../../tests/test_mainsail_visibility.py) apply all six pinned
+patches with zero fuzz, preserve the upstream LICENSE and existing public project
+AGPL grant, check all nine consumers and enforce the complete manifest/lock delta.
+The source patch includes eight focused lifecycle tests, including browserless
+import, missing API, stale delivery, deferred cleanup and callback replacement.
+Run `node node_modules/vitest/vitest.mjs run tests/observeVisibility.spec.ts` with
+the pinned Node executable in the prepared source installation. Independent source
+and test files retain AGPL-3.0-or-later headers under the existing public project
+grant. No library implementation is copied, and no missing supplier grant is inferred.
+
+An environment without IntersectionObserver requires a compatible polyfill loaded
+before Vue mounts. Browserless import is safe and unsupported observation emits no
+visibility result; it never assumes visible. Actual Safari 12 behavior has not been
+exercised and remains an explicit limitation of the existing target. Chromium fixture
+results do not establish Safari, printer or camera qualification.
+
+The genuine npm lock-only procedure removes just the root dependency and the
+`node_modules/vue-observe-visibility` record, preserving every surviving supplier
+record. As with earlier patches, unrelated npm rewrites of libc and
+dev/peer/optional metadata were excluded; original surviving supplier records
+were retained. The profile pins patch 6, the final lock and artifact revision 8. Earlier
+patches, upstream source/gitlink, Node/npm pins, disabled install scripts and all
+earlier protections remain unchanged. Coordinator-owned full unit/type/build/startup,
+two fresh reproducible packages and current notice accounting provide separate
+integration evidence. The original dependency's missing author notice remains a
+historical fact; measured removal does not relicense its source. Retire this patch
+when selected upstream Mainsail supplies an equivalent tested, notice-bearing
+visibility mechanism. No upstream message has been sent.

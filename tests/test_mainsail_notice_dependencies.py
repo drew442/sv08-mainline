@@ -32,7 +32,7 @@ class MainsailNoticeDependencies(unittest.TestCase):
         actual = subprocess.check_output(['git','-C',str(upstream),'rev-parse','HEAD'],text=True).strip()
         if actual != cls.config['source_commit']:
             raise AssertionError('Prepared upstream source must match the pinned revision')
-        for name in ('package.json','package-lock.json','vite.config.ts','src/components/webcams/streamers/JanusStreamer.vue'):
+        for name in ('package.json','package-lock.json','vite.config.ts','src/main.ts','src/components/webcams/streamers/JanusStreamer.vue'):
             (cls.source/name).parent.mkdir(parents=True,exist_ok=True)
             (cls.source/name).write_bytes(subprocess.check_output(['git','-C',str(upstream),'show',actual+':'+name]))
         if sha(cls.source/'package-lock.json') != cls.config['package_lock_sha256']:
@@ -58,8 +58,8 @@ class MainsailNoticeDependencies(unittest.TestCase):
 
     def test_exact_patches_and_final_lock_pin(self):
         self.assertEqual(sha(self.source/'package-lock.json'),self.config['patched_package_lock_sha256'])
-        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-7')
-        self.assertEqual(len(self.config['source_patches']),5)
+        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-8')
+        self.assertEqual(len(self.config['source_patches']),6)
         self.assertEqual(self.lock['packages']['node_modules/js-yaml']['version'],'4.3.2')
         self.assertEqual(self.lock['packages']['node_modules/nanoid']['version'],'3.3.18')
         self.assertIn('manifestTransforms',(self.source/'vite.config.ts').read_text())
