@@ -49,7 +49,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Core release/image tools and60/69notices published in draftPR21. Preserve candidate/evidence while renewing exact source ownership for measured unused-dependency cleanup and compatible notice-bearing upgrade; nine upstream notice gaps not waived, cumulative allowance unchanged.",
+      "blocker": null,
       "checks": [
         "packaging",
         "npm",
@@ -61,11 +61,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "d295de6d61e047cdbecd45fe4d4ef7f9",
-        "session": "release-closure-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -75,7 +71,8 @@
         "configs/host-os/",
         "configs/images/",
         "upstream-lock.json",
-        "configs/host/source-license-inventory.json"
+        "configs/host/source-license-inventory.json",
+        "upstream/mainsail/"
       ],
       "owned_paths": [
         "scripts/prepare_release.py",
@@ -91,13 +88,20 @@
         "docs/licensing/npm-notices.txt",
         "docs/development/release-packaging.md",
         "docs/features/release-qualification-closure/evidence.md",
-        "docs/features/release-qualification-closure/evidence.json"
+        "docs/features/release-qualification-closure/evidence.json",
+        "configs/apps/mainsail.json",
+        "patches/mainsail/0003-notice-dependency-closure.patch",
+        "patches/mainsail/README.md",
+        "tests/mainsail_notice_dependencies.cjs",
+        "tests/test_mainsail_notice_dependencies.py",
+        "configs/host/release-source-license-inventory.json",
+        "configs/host/npm-notice-resolution.json"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Actual source research identified notice-bearing throttleit2.1.0 with measured behavior compatibility and unused root vue-template-compiler edge; renew explicit package-patch ownership, validate builds and preserve all69closure requirement, prior failures and cumulative budget.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
