@@ -30,6 +30,9 @@ class MainsailVisibility(unittest.TestCase):
             raw = (REPO/patch['path']).read_bytes()
             if hashlib.sha256(raw).hexdigest() != patch['sha256']:
                 raise AssertionError('patch pin mismatch')
+            if index == 6:
+                cls.after_visibility_manifest = json.loads((cls.source/'package.json').read_text())
+                cls.after_visibility_lock = json.loads((cls.source/'package-lock.json').read_text())
             if index == 5:
                 cls.before_manifest = json.loads((cls.source/'package.json').read_text())
                 cls.before_lock = json.loads((cls.source/'package-lock.json').read_text())
@@ -39,8 +42,8 @@ class MainsailVisibility(unittest.TestCase):
     def test_exact_dependency_removal_and_all_surviving_supplier_records(self):
         expected = json.loads(json.dumps(self.before_manifest))
         expected['dependencies'].pop('vue-observe-visibility')
-        self.assertEqual(json.loads((self.source/'package.json').read_text()),expected)
-        after = json.loads((self.source/'package-lock.json').read_text())
+        self.assertEqual(self.after_visibility_manifest,expected)
+        after = self.after_visibility_lock
         before = self.before_lock
         self.assertEqual({k:v for k,v in before.items() if k!='packages'},
                          {k:v for k,v in after.items() if k!='packages'})
@@ -72,8 +75,8 @@ class MainsailVisibility(unittest.TestCase):
             self.assertTrue((self.source/name).read_text().startswith('// SPDX-License-Identifier: AGPL-3.0-or-later'))
         self.assertEqual(self.config['source_commit'],'32f99e1cf97640b23a52829dfa3a0aceee11d382')
         self.assertEqual(self.config['node_version'],'22.23.2')
-        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-8')
-        self.assertEqual(len(self.config['source_patches']),6)
+        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-9')
+        self.assertEqual(len(self.config['source_patches']),7)
         self.assertEqual(hashlib.sha256((self.source/'package-lock.json').read_bytes()).hexdigest(),
                          self.config['patched_package_lock_sha256'])
 

@@ -88,13 +88,13 @@
     },
     {
       "artifact": {
-        "bytes": 2493156,
-        "path": "sv08-mainsail_2.19.0+git32f99e1c-8_all.deb",
-        "sha256": "07767b38b7192b8bb4a870b113a300f07cd360bd65a2019193e14e62971655ba"
+        "bytes": 2493632,
+        "path": "sv08-mainsail_2.19.0+git32f99e1c-9_all.deb",
+        "sha256": "f92e665f83ed76cd5038ee2ba9ee1951ee207bbe2a80cbbf3ec9beebf58a915b"
       },
       "classification": "project-source-build",
       "config": "configs/apps/mainsail.json",
-      "config_sha256": "1a67f3b80df3b6097607dab1c6719972ac53bc6049d3dbbd17ec6b60b5b5d728",
+      "config_sha256": "251470eeaa127493da7ba75d83403a09eefb361f6839d31c369fc1aeb8d34ef4",
       "license_status": "source-bound-notice-text-inventoried",
       "notices": [
         {
@@ -171,23 +171,28 @@
           "bytes": 11825,
           "path": "patches/mainsail/0006-native-visibility.patch",
           "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+        },
+        {
+          "bytes": 41116,
+          "path": "patches/mainsail/0007-ospath-compat.patch",
+          "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
         }
       ],
       "rebuild_evidence": [
         {
-          "bytes": 465,
-          "path": "visibility-package-repro.json",
-          "sha256": "bd7bebe4d1587793a07d357e363d02eb2421f60cfb4f7845de85be023a46341a"
+          "bytes": 428,
+          "path": "ospath-package-repro.json",
+          "sha256": "c271bc7dd374d70c315766ee3ca3b7809a556650d0b68d3479de8b741560e9ea"
         }
       ],
       "source": {
         "commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
         "identity": "upstream/mainsail",
         "kind": "git-commit",
-        "version": "2.19.0+git32f99e1c-8"
+        "version": "2.19.0+git32f99e1c-9"
       },
       "unresolved_license_declaration": false,
-      "version": "2.19.0+git32f99e1c-8"
+      "version": "2.19.0+git32f99e1c-9"
     },
     {
       "artifact": {
@@ -31920,13 +31925,13 @@
   "legal_compliance_assessed": false,
   "mainsail_dependencies": {
     "lock": {
-      "bytes": 538410,
+      "bytes": 538552,
       "path": "package-lock.json",
-      "sha256": "30fc671e0e7d7b65811094025b4ed177cc737fd5409426372f42a9e9c6b13028"
+      "sha256": "287bf9d4643734e411fff6fb5fbadf93a42694793f8fc6014fe9dbcb3c3a129a"
     },
     "notice_coverage": {
-      "declaration_only_dependencies": 3,
-      "dependencies_with_notice_text": 894,
+      "declaration_only_dependencies": 2,
+      "dependencies_with_notice_text": 895,
       "inspected_supplier_archives": 897
     },
     "packages": [
@@ -55514,32 +55519,39 @@
       },
       {
         "archive": {
-          "bytes": 1593,
-          "path": "archives/e83cbc0b864092e1a05e24054c4666a9d7f11deb1e9f85bd0ef25e9c4025e2e8.tgz",
-          "sha256": "e83cbc0b864092e1a05e24054c4666a9d7f11deb1e9f85bd0ef25e9c4025e2e8"
+          "bytes": 12699,
+          "path": "archives/fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2.tgz",
+          "sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2"
         },
-        "archive_declared_license": "MIT",
+        "archive_declared_license": "AGPL-3.0-or-later",
         "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-declaration-only; no embedded notice text",
-        "declared_license": "MIT",
+        "archive_declared_license_sha256": "33a063ae58dd38729c9083aa7d9d1917254596e140667bfbaa778c82639aa8a6",
+        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
+        "declared_license": "AGPL-3.0-or-later",
         "dependency_scope": "build",
-        "integrity": "sha512-o6E5qJV5zkAbIDNhGSIlyOhScKXgQrSRMilfph0clDfM0nEnBOlKlH4sWDmG95BW/CvwNz0vmm7dJVtU2KlMiA==",
+        "integrity": "sha512-IXa4L27YCkBIaXhUH16Lf2dJRNexMTYJv0RpzMyKSPZEAW0B4kK0rpx/1OSk6FF7BoPXrLcYgxzJP0+EUTUB1Q==",
         "integrity_algorithm_verified": "sha512",
-        "name": "ospath",
-        "notices": [],
+        "name": "@sv08-mainline/ospath-compat",
+        "notices": [
+          {
+            "archive_member": "package/LICENSE",
+            "bytes": 34523,
+            "path": "texts/fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2/LICENSE",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ],
         "optional": false,
         "package_json": {
           "archive_member": "package/package.json",
-          "bytes": 830,
-          "path": "texts/e83cbc0b864092e1a05e24054c4666a9d7f11deb1e9f85bd0ef25e9c4025e2e8/5205bfc4f58dc7ca-package.json",
-          "sha256": "6f519de93a573ce47155ef54f21e4412cd45d034fecaa9e2fe04632454153763"
+          "bytes": 215,
+          "path": "texts/fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2/package.json",
+          "sha256": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
         },
         "path": "node_modules/ospath",
-        "recognizable_notice_file_count": 0,
+        "recognizable_notice_file_count": 1,
         "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/ospath/-/ospath-1.2.2.tgz",
-        "version": "1.2.2"
+        "supplier_url": "file:vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+        "version": "1.0.0"
       },
       {
         "archive": {

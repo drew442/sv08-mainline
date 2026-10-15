@@ -281,3 +281,74 @@ integration evidence. The original dependency's missing author notice remains a
 historical fact; measured removal does not relicense its source. Retire this patch
 when selected upstream Mainsail supplies an equivalent tested, notice-bearing
 visibility mechanism. No upstream message has been sent.
+
+## Independent Cypress operating-system paths package
+
+`0007-ospath-compat.patch` supplies the independently authored
+`@sv08-mainline/ospath-compat` 1.0.0 package under the project's full existing
+AGPL-3.0-or-later notice. Its CommonJS exports are `home`, `data`, `desktop`,
+`tmp` and mutable `__platform`. Authoring used recorded black-box results for
+32 platform/environment scenarios and 32 mutation stages, without reading or
+copying the original ospath implementation. Native `os.homedir` takes precedence;
+legacy environments use HOME or USERPROFILE. Environment and platform values are
+read on each call, while path normalization uses the host Node path module.
+Missing required environment values retain the observed TypeError behavior.
+
+The root manifest declares development dependency `ospath` as
+`file:vendor/sv08-mainline-ospath-compat-1.0.0.tgz` and uses the Cypress-scoped
+override `cypress: { ospath: "$ospath" }`. npm's dependency key remains
+`ospath`; the actual archive and lock identity is the distinctly named authored
+package. The direct root edge establishes the local package before Cypress's
+scoped edge is resolved, avoiding the defective nested relative fetch path.
+Cypress, its existing test and interactive-open scripts, and application consumers stay selected. This is a
+distinct project component, not an ospath supplier release or a new grant for the
+historical archive. No upstream license, gitlink or supplier bytes change.
+
+The builder constructs the tarball before `npm ci` from four explicitly pinned
+files in patched `vendor/ospath-compat`. The profile pins their complete hashes,
+actual authored identity and deterministic archive hash. Archive members are
+validated ordinary files with fixed order, modes, owners and zero timestamps;
+gzip omits filename and wall-clock metadata. Symlinks, extra files, unsafe names,
+wrong identity, changed sources and incomplete project notice fail closed.
+There is no encoded binary patch, registry publication or install lifecycle.
+
+Regenerate the lock only in a disposable source after all patches. First call
+`package_mainsail.prepare_authored_archives(source, config)` with the selected
+profile; then use pinned Node/npm and isolated existing cache/config with
+`npm install --package-lock-only --ignore-scripts --no-audit --no-fund`.
+Preserve the original and generated lock evidence and pin the genuine resulting
+lock and source patch before building. The initial real-lock generation exposed
+npm's inconsistent root-versus-parent relative override resolution; its retained
+failure and the failed bounded stale-record repair are retained separately from
+the earlier synthetic feasibility result. The approved graph correction adds the
+explicit root development edge and scoped reference described above; it is a
+changed graph,
+not a retry of the failed stale-record approach. Two genuine offline lock-only
+npm invocations with separate empty caches produced byte-identical raw output.
+As in earlier patches, unrelated libc/dev/peer/optional metadata rewrites were
+retained at their original values; the final lock changes only the root record
+and `node_modules/ospath`. It records the actual authored package name, local
+archive and SRI, with no original ospath archive selected. The profile pins the
+complete resulting lock and patch. Relocated fresh `npm ci`, replacement Cypress
+acceptance and two fresh reproducible packages remain coordinator-owned checks.
+
+[Source checks](../../tests/test_mainsail_ospath.py) verify the complete measured
+contract, manifest scope, original test scripts, deterministic source/notice
+binding and exact selected lock delta. The
+[portable contract fixture](../../tests/mainsail_ospath_compat.cjs) contains
+observations only. The patch also supplies focused upstream Vitest checks.
+Coordinator-owned actual Cypress CJS/ESM/CLI, E2E and interactive-open checks
+remain necessary; the API fixture alone cannot establish runner compatibility.
+
+Selection accounting accepts an authored replacement only through explicit
+profile pins. Its replacement archive input includes `authored_source`, a
+standard file pin for the patched root `package.json`. The resolver validates
+that manifest's local root development edge and scoped reference, all authored
+source hashes, complete project notice, exact archive bytes, selected identity,
+local path and SRI. It reports
+`replaced-by-source-bound-authored-package` separately from supplier releases.
+Original69 historical records and the original60 supplemental records retain
+their existing facts; replacement does not resolve the original missing grant.
+
+Retire this package when the selected Cypress dependency provides an appropriate
+notice-bearing compatible path implementation. No upstream message was sent.

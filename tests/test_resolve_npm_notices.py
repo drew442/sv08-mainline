@@ -168,4 +168,107 @@ class SupplementalTests(unittest.TestCase):
         Path(research['notices'][0]['path']).write_text('tamper')
         self.assertEqual(m.resolve([research],expected)['coverage']['unresolved'],1)
 
+class AuthoredSelectionTests(unittest.TestCase):
+    def setUp(self):
+        from unittest.mock import patch
+        import package_mainsail as builder
+        self.builder=builder
+        self.temporary=tempfile.TemporaryDirectory();self.addCleanup(self.temporary.cleanup)
+        self.base=Path(self.temporary.name)
+        self.repo=Path(__file__).resolve().parents[1]
+        for folder in ('configs/apps','configs/host','source/vendor/ospath-compat'):
+            (self.base/folder).mkdir(parents=True)
+        for name in ('source-license-inventory.json','npm-supplemental-notices.json'):
+            (self.base/'configs/host'/name).write_bytes((self.repo/'configs/host'/name).read_bytes())
+        self.source=self.base/'source';directory=self.source/'vendor/ospath-compat'
+        self.contents={'package.json':json.dumps(dict(name='@sv08-mainline/ospath-compat',version='1.0.0',
+                       license='AGPL-3.0-or-later',main='index.js')).encode(),
+                       'index.js':b'// Independently authored disposable fixture\nmodule.exports = {}\n',
+                       'README.md':b'Independently authored fixture\n','LICENSE':(self.repo/'LICENSE').read_bytes()}
+        for name,raw in self.contents.items():(directory/name).write_bytes(raw)
+        self.spec=dict(name='@sv08-mainline/ospath-compat',version='1.0.0',source_directory='vendor/ospath-compat',
+                       files={name:m.digest(raw) for name,raw in self.contents.items()},
+                       archive_path='vendor/compat.tgz')
+        (self.source/'package.json').write_text(json.dumps({'devDependencies':{'ospath':'file:vendor/compat.tgz'},'overrides':{'cypress':{'ospath':'$ospath'}}}))
+        self.archive=self.source/self.spec['archive_path']
+        self.archive.write_bytes(builder.authored_archive_bytes(self.source,self.spec))
+        self.spec['archive_sha256']=m.digest(self.archive.read_bytes())
+        baseline=json.loads((self.base/'configs/host/source-license-inventory.json').read_text())
+        packages={p['path']:dict(version=p['version'],integrity=p['integrity'])
+                  for p in baseline['mainsail_dependencies']['packages'] if not p['notices']}
+        self.selected=dict(name=self.spec['name'],version='1.0.0',resolved='file:vendor/compat.tgz',
+                           integrity='sha512-'+base64.b64encode(hashlib.sha512(self.archive.read_bytes()).digest()).decode())
+        packages['node_modules/ospath']=self.selected
+        self.lock=self.source/'package-lock.json';self.lock.write_text(json.dumps({'packages':{'':{},**packages}}))
+        self.config=dict(patched_package_lock_sha256=m.digest(self.lock.read_bytes()),source_patches=[],
+                         authored_npm_replacements={'node_modules/ospath':self.spec})
+        self.write_config()
+        self.inputs=dict(selected_lock=self.pin(self.lock),
+            supplemental_notices=self.pin(self.base/'configs/host/npm-supplemental-notices.json'),
+            replacement_archives={'node_modules/ospath':dict(self.pin(self.archive),authored_source=self.pin(self.source/'package.json'))})
+        mock=patch.object(m,'REPO',self.base);mock.start();self.addCleanup(mock.stop)
+
+    def pin(self,path):return dict(root=str(path.parent),path=path.name,sha256=m.digest(path.read_bytes()))
+    def write_config(self):(self.base/'configs/apps/mainsail.json').write_text(json.dumps(self.config))
+    def record(self):return next(p for p in m.selection_resolution(self.inputs)['records'] if p['path']=='node_modules/ospath')
+    def repin_archive_and_lock(self):
+        self.selected['integrity']='sha512-'+base64.b64encode(hashlib.sha512(self.archive.read_bytes()).digest()).decode()
+        lock=json.loads(self.lock.read_text());lock['packages']['node_modules/ospath']=self.selected
+        self.lock.write_text(json.dumps(lock));self.config['patched_package_lock_sha256']=m.digest(self.lock.read_bytes())
+        self.write_config();self.inputs['selected_lock']=self.pin(self.lock)
+        self.inputs['replacement_archives']['node_modules/ospath'].update(self.pin(self.archive))
+
+    def test_explicit_source_bound_identity_preserves_historical_unresolved_fact(self):
+        record=self.record()
+        self.assertEqual(record['selection_status'],'replaced-by-source-bound-authored-package')
+        self.assertEqual(record['historical_notice_status'],'unresolved-author-notice')
+        self.assertFalse(record['selected_notice_gap'])
+        self.assertEqual(record['authored_replacement']['name'],self.spec['name'])
+        self.assertEqual(record['replacement_notices'][0]['text'],(self.repo/'LICENSE').read_text())
+        self.assertEqual(m.selection_resolution(self.inputs)['coverage']['historical_notice_resolved'],60)
+
+    def test_archive_tamper_and_wrong_selected_identity_fail_closed(self):
+        original=self.archive.read_bytes();self.archive.write_bytes(original+b'tamper')
+        self.repin_archive_and_lock()
+        with self.assertRaisesRegex(ValueError,'source/archive mismatch'):self.record()
+        self.archive.write_bytes(original);self.selected['name']='ospath';self.repin_archive_and_lock()
+        with self.assertRaisesRegex(ValueError,'identity mismatch'):self.record()
+
+    def test_source_tamper_missing_notice_and_label_only_evidence_rejected(self):
+        index=self.source/self.spec['source_directory']/'index.js';index.write_text('tampered')
+        with self.assertRaisesRegex(ValueError,'source hash mismatch'):self.record()
+        index.write_bytes(self.contents['index.js'])
+        notice=self.source/self.spec['source_directory']/'LICENSE';notice.write_text('AGPL-3.0-or-later')
+        self.spec['files']['LICENSE']=m.digest(notice.read_bytes());self.write_config()
+        with self.assertRaisesRegex(ValueError,'complete project notice'):self.record()
+        notice.unlink()
+        with self.assertRaisesRegex(ValueError,'directory contents'):self.record()
+        self.inputs['replacement_archives']['node_modules/ospath'].pop('authored_source')
+        with self.assertRaisesRegex(ValueError,'source evidence required'):self.record()
+
+    def test_root_local_edge_and_cypress_scoped_reference_are_both_required(self):
+        manifest=self.source/'package.json'
+        original=json.loads(manifest.read_text())
+        for section in ('devDependencies','overrides'):
+            with self.subTest(section=section):
+                changed=copy.deepcopy(original)
+                if section=='devDependencies':changed[section].pop('ospath')
+                else:changed[section]['cypress']['ospath']='file:vendor/compat.tgz'
+                manifest.write_text(json.dumps(changed))
+                self.inputs['replacement_archives']['node_modules/ospath']['authored_source']=self.pin(manifest)
+                with self.assertRaisesRegex(ValueError,'manifest override mismatch'):self.record()
+
+    def test_wrong_archive_identity_and_missing_notice_even_with_updated_sri_rejected(self):
+        for missing_notice in (False,True):
+            with self.subTest(missing_notice=missing_notice):
+                with tarfile.open(self.archive,'w:gz') as archive:
+                    for name,raw in self.contents.items():
+                        if missing_notice and name=='LICENSE':continue
+                        if not missing_notice and name=='package.json':
+                            metadata=json.loads(raw);metadata['name']='ospath';raw=json.dumps(metadata).encode()
+                        member=tarfile.TarInfo('package/'+name);member.size=len(raw);archive.addfile(member,io.BytesIO(raw))
+                self.repin_archive_and_lock()
+                with self.assertRaisesRegex(ValueError,'identity mismatch|source/archive mismatch'):self.record()
+
+
 if __name__=='__main__':unittest.main()
