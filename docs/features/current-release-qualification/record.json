@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "6c957995ab7cd2e614bfff00812436a1f9018c08f0231633dad9a1a961b0486d",
-    "rationale": "Owner explicitly requested complete current image qualification; reversible source and disposable execution only.",
+    "proposal_sha256": "030decf6bdede4243a910bc01a8beec639271e382d7251fae3e76ecc5bf3b4c3",
+    "rationale": "Same owner goal, explicit recovery provenance test ownership and evidence-directed repair recorded; no authority expansion.",
     "reference": "docs/features/current-release-qualification/owner-request.md",
     "reference_sha256": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3",
     "requirements_sha256": {
@@ -13,9 +13,9 @@
       "docs/development/release-packaging.md": "7bf36aa87a19b79926f2bd4879e4c4ad8109f5fb9f641f6cab50d4cb72087ba5",
       "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
     },
-    "scope_sha256": "8cae8b247536d7ac4ca35fea93d8848e37ee6014c340d6bb2423552f1fd3f5cc",
+    "scope_sha256": "478377bd01defa782c31ec4c66efc33f668ec300fc03d5731f4e4867e85414b1",
     "session": "current-release-20261015",
-    "source_commit": "1ce4527e7d3865daeb66dcfb897c8e31b364a910"
+    "source_commit": "69e8dd7e6ff7f779a2fcbf83a5d20751df2eef4a"
   },
   "checks": [
     {
@@ -96,10 +96,11 @@
         "tests/test_image_license_inventory.py",
         "tests/test_license_inventory.py",
         "tests/test_assemble_board_diagnostic.py",
-        "docs/development/release-packaging.md"
+        "docs/development/release-packaging.md",
+        "tests/test_recovery_image.py"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Owner-authorized complete-image scope includes necessary recovery provenance builder repair; tests ownership explicitly added, base and intake still running.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
       "status": "pending",
