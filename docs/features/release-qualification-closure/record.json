@@ -2,19 +2,19 @@
   "author": "root/coordinator",
   "authorization": {
     "actor": "coordinator",
-    "basis": "standing",
-    "proposal_sha256": "960d0000a06dc347644b55db0ccda7fb69939ed1cb1dd6823d2407ccb9c5dff0",
-    "rationale": "Remaining notice closure via independently authored structural types, preserving current parent runtime fixes and strict public declaration checks.",
+    "basis": "owner-request",
+    "proposal_sha256": "15c40298c86a4fb16ec78736f5b9c20ba115de8e166de5a90799f1fd6323aaf9",
+    "rationale": "Owner explicitly authorizes unmodified SPDX LGPL-3.0-or-later text for exact declared gcodeviewer package, with factual provenance distinction and no upstream license change.",
     "reference": "docs/features/release-qualification-closure/owner-request.md",
-    "reference_sha256": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf",
+    "reference_sha256": "3b62229a1e34d9743d8759b5ab4b99f7fe70202a692ea77a4369af8f49d5ee1a",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
-      "docs/features/release-qualification-closure/owner-request.md": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf"
+      "docs/features/release-qualification-closure/owner-request.md": "3b62229a1e34d9743d8759b5ab4b99f7fe70202a692ea77a4369af8f49d5ee1a"
     },
-    "scope_sha256": "55cf51c3739ddaa37b36a42eeaba14e54abf81286c920edab6427a6191ad74ab",
-    "session": "release-humanfs-types-20261015",
-    "source_commit": "f54c686aa92e10b07037431e4b11139723cc346f"
+    "scope_sha256": "e9000a90e302bedb78d298bdb397de1b18515b67254e2673a708cd8e7099a519",
+    "session": "release-standard-lgpl-20261015",
+    "source_commit": "9d042e56cf31210c0ef9154aa03ec10eecb2c1b7"
   },
   "checks": [
     {
@@ -110,10 +110,12 @@
         "tests/mainsail_ospath_compat.cjs",
         "patches/mainsail/0008-humanfs-types-compat.patch",
         "tests/test_mainsail_humanfs_types.py",
-        "tests/mainsail_humanfs_types_contract.ts"
+        "tests/mainsail_humanfs_types_contract.ts",
+        "configs/host/npm-standard-license-texts.json",
+        "docs/licensing/standard/LGPL-3.0-or-later.txt"
       ],
       "repeats": 0,
-      "resumption": "PR25 complete; retain current humanfs runtimes and substitute independently authored strict structural declarations with source-bound local package.",
+      "resumption": "Owner explicitly accepts the package LGPL-3.0-or-later declaration plus unmodified standard SPDX license text for gcodeviewer; retain provenance distinction and original missing embedded-notice facts. No maintainer outreach required.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
       "status": "pending",

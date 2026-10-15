@@ -117,6 +117,31 @@ def prepare(image, public_source, profile='selected-software', inventory_inputs=
             outputs['npm-supplemental-notices.json']=raw
             from resolve_npm_notices import notice_text
             outputs['npm-notices.txt']=notice_text(json.loads(raw)).encode('utf-8')
+    if input_raw and inputs['mainsail'].get('standard_license_texts'):
+        pin=inputs['mainsail']['standard_license_texts']
+        license_inventory.file_pin(pin)
+        raw=license_inventory.checked_path(pin['root'],pin['path']).read_bytes()
+        # Recheck immutable source/text anchors after inventory qualification and
+        # bind the exported bytes to the records that actually qualified.
+        lock_pin=inputs['mainsail']
+        lock=json.loads(license_inventory.checked_path(lock_pin['root'],lock_pin['path']).read_bytes())
+        standards=license_inventory.npm_standard_license_texts(pin,lock)
+        qualified={p['path']:p['standard_license_texts'] for p in inventory['mainsail_dependencies']['packages']
+                   if p.get('standard_license_texts')}
+        if set(qualified)!=set(standards):
+            raise ValueError('Exported standard terms differ from qualified inventory')
+        for path,standard in standards.items():
+            expected=dict(standard,historical_embedded_notice_absent=True,author_attribution_invented=False)
+            if qualified[path]!=[expected]:
+                raise ValueError('Exported standard terms differ from qualified inventory')
+            text=standard['license_text']
+            content=license_inventory.checked_path(license_inventory.REPO,text['path']).read_bytes()
+            if license_inventory.digest(content)!=text['sha256']:
+                raise ValueError('Standard license text changed before export')
+            outputs[Path(text['path']).name]=content
+        if license_inventory.digest(raw)!=pin['sha256']:
+            raise ValueError('Standard license provenance changed before export')
+        outputs['npm-standard-license-texts.json']=raw
     report=dict(format_version=1,profile=profile,checks=[dict(id=name,status='passed') for name in PROFILES[profile]],
         project_source_qualified=True,software_notice_inventory_checked=inventory is not None,
         hardware_qualified=False,overall_release_qualified=False,

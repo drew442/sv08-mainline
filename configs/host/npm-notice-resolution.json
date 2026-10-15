@@ -1,10 +1,11 @@
 {
   "coverage": {
+    "accepted_distributor_standard_terms": 1,
     "historical_notice_resolved": 60,
     "historical_notice_unresolved": 9,
     "historical_records": 69,
     "measured_selection_remediations": 9,
-    "remaining_selected_notice_gaps": 1,
+    "remaining_selected_notice_gaps": 0,
     "selected_dependencies": 897
   },
   "format_version": 1,
@@ -53,7 +54,8 @@
       ],
       "selected_notice_gap": false,
       "selected_version": "1.0.0",
-      "selection_status": "replaced-by-source-bound-authored-package"
+      "selection_status": "replaced-by-source-bound-authored-package",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -65,7 +67,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.6",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -77,7 +80,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "0.3.6",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -89,7 +93,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -101,7 +106,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -113,7 +119,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -125,7 +132,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -137,7 +145,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -149,7 +158,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -161,7 +171,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -173,7 +184,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -185,7 +197,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -197,7 +210,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -209,7 +223,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -221,7 +236,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -233,7 +249,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -245,7 +262,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -257,7 +275,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.1.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -269,7 +288,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -281,7 +301,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -293,7 +314,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -305,7 +327,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -317,7 +340,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -329,7 +353,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -341,7 +366,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -353,7 +379,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -365,7 +392,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -377,7 +405,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -389,7 +418,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -401,7 +431,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -413,7 +444,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -425,7 +457,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -437,7 +470,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -449,7 +483,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -461,7 +496,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -473,7 +509,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -485,7 +522,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -497,7 +535,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -509,7 +548,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -521,7 +561,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -533,7 +574,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -545,7 +587,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -557,7 +600,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.62.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "unresolved-author-notice",
@@ -567,9 +611,38 @@
       "original_version": "3.7.18",
       "path": "node_modules/@sindarius/gcodeviewer",
       "replacement_notices": [],
-      "selected_notice_gap": true,
+      "selected_notice_gap": false,
       "selected_version": "3.7.18",
-      "selection_status": "retained"
+      "selection_status": "accepted-distributor-standard-terms",
+      "standard_license_texts": [
+        {
+          "archive_sha256": "b9e987bb80eece0c599355b5304b903f87221191a96ba34cb9f8e7e65047a07a",
+          "author_attribution_invented": false,
+          "classification": "supplier-declaration-plus-distributor-standard-terms",
+          "historical_embedded_notice_absent": true,
+          "integrity": "sha512-3vZKVbFq3UG62lztHZs99hkTplbrLBRMBwBrp/wZplKgkVq8x3EqZPWu6ZakCDUmanYPLJd8Mz7xDjYgso07tw==",
+          "license": "LGPL-3.0-or-later",
+          "license_text": {
+            "bytes": 42098,
+            "path": "docs/licensing/standard/LGPL-3.0-or-later.txt",
+            "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1"
+          },
+          "name": "@sindarius/gcodeviewer",
+          "package_json_sha256": "551f6b4e43ea772fd6f3b226ea7bbf7b6934229a49f39722285b2c57d9d43319",
+          "path": "node_modules/@sindarius/gcodeviewer",
+          "source": {
+            "bytes": 42098,
+            "includes_gpl3_terms": true,
+            "license": "LGPL-3.0-or-later",
+            "reference": "https://spdx.org/licenses/LGPL-3.0-or-later.html",
+            "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+            "source_repository": "https://github.com/spdx/license-list-data",
+            "source_revision": "e6ccb09584ca771e592281194aa7c74bf62f4105",
+            "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/e6ccb09584ca771e592281194aa7c74bf62f4105/text/LGPL-3.0-or-later.txt"
+          },
+          "version": "3.7.18"
+        }
+      ]
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -581,7 +654,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "0.10.3",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -593,7 +667,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.25.10",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -605,7 +680,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.25.10",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -617,7 +693,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "6.0.2",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "equivalent_paths": [],
@@ -630,7 +707,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": null,
-      "selection_status": "removed-from-selected-lock"
+      "selection_status": "removed-from-selected-lock",
+      "standard_license_texts": []
     },
     {
       "equivalent_paths": [],
@@ -643,7 +721,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": null,
-      "selection_status": "removed-from-selected-lock"
+      "selection_status": "removed-from-selected-lock",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -655,7 +734,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.0.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -667,7 +747,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "15.18.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -679,7 +760,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.0.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "equivalent_paths": [],
@@ -692,7 +774,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": null,
-      "selection_status": "removed-from-selected-lock"
+      "selection_status": "removed-from-selected-lock",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -704,7 +787,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "2.1.5",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -716,7 +800,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.3.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -728,7 +813,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.0.6",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -740,7 +826,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "5.0.1",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -752,7 +839,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "0.1.4",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -764,7 +852,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.0.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -776,7 +865,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.0.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -788,7 +878,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "10.9.4",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -800,7 +891,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "4.5.4",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "verified-exact-version-supplemental-notice",
@@ -812,7 +904,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": "1.4.0",
-      "selection_status": "retained"
+      "selection_status": "retained",
+      "standard_license_texts": []
     },
     {
       "authored_manifest": {
@@ -851,7 +944,8 @@
       ],
       "selected_notice_gap": false,
       "selected_version": "1.0.0",
-      "selection_status": "replaced-by-source-bound-authored-package"
+      "selection_status": "replaced-by-source-bound-authored-package",
+      "standard_license_texts": []
     },
     {
       "equivalent_paths": [],
@@ -864,7 +958,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": null,
-      "selection_status": "removed-from-selected-lock"
+      "selection_status": "removed-from-selected-lock",
+      "standard_license_texts": []
     },
     {
       "historical_notice_status": "unresolved-author-notice",
@@ -887,7 +982,8 @@
       ],
       "selected_notice_gap": false,
       "selected_version": "2.1.0",
-      "selection_status": "replaced-by-notice-bearing-supplier-release"
+      "selection_status": "replaced-by-notice-bearing-supplier-release",
+      "standard_license_texts": []
     },
     {
       "equivalent_paths": [],
@@ -900,7 +996,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": null,
-      "selection_status": "removed-from-selected-lock"
+      "selection_status": "removed-from-selected-lock",
+      "standard_license_texts": []
     },
     {
       "equivalent_paths": [],
@@ -913,7 +1010,8 @@
       "replacement_notices": [],
       "selected_notice_gap": false,
       "selected_version": null,
-      "selection_status": "removed-from-selected-lock"
+      "selection_status": "removed-from-selected-lock",
+      "standard_license_texts": []
     }
   ],
   "scope": "historical-notice-facts-and-current-selection",
@@ -956,5 +1054,10 @@
       "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
     }
   ],
+  "standard_license_texts_input": {
+    "bytes": 1390,
+    "path": "configs/host/npm-standard-license-texts.json",
+    "sha256": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c"
+  },
   "supplemental_notices_sha256": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"
 }

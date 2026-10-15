@@ -256,6 +256,16 @@ def selection_resolution(inputs):
     resolved={p['path']:p for p in supplemental['records']}
     if len(resolved)!=len(supplemental['records']): raise ValueError('Duplicate historical notice record')
     if set(resolved)-{p['path'] for p in historical}: raise ValueError('Unrelated historical notice record')
+    from license_inventory import npm_standard_license_texts, verify_npm_standard_license
+    standards=npm_standard_license_texts(inputs.get('standard_license_texts'),lock)
+    standard_archives=inputs.get('standard_license_text_archives',{})
+    if set(standard_archives)!=set(standards):
+        raise ValueError('Standard license archives must exactly cover approved records')
+    standard_records={}
+    for path,standard in standards.items():
+        archive_pin=standard_archives[path];file_pin(archive_pin)
+        standard_records[path]=verify_npm_standard_license(standard,lock['packages'][path],
+            checked_path(archive_pin['root'],archive_pin['path']))
     replacements=inputs.get('replacement_archives',{});used=set();records=[]
     for original in sorted(historical,key=lambda p:p['path']):
         name=original['name'];version=original['version'];integrity=original['integrity'];path=original['path']
@@ -330,19 +340,27 @@ def selection_resolution(inputs):
                 record['replacement_archive']=artifact
                 record['selection_status']=('replaced-by-source-bound-authored-package' if authored else
                                             'replaced-by-notice-bearing-supplier-release')
+        record['standard_license_texts']=[]
+        if path in standard_records:
+            if notice or record['selection_status']!='retained':
+                raise ValueError('Standard license must cover retained supplier declaration only')
+            record['standard_license_texts']=[standard_records[path]]
+            record['selection_status']='accepted-distributor-standard-terms'
         record['selected_notice_gap']=(not notice and record['selection_status'] not in
             ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release',
-             'replaced-by-source-bound-authored-package')) or record['selection_status']=='replacement-notice-unverified'
+             'replaced-by-source-bound-authored-package','accepted-distributor-standard-terms')) or record['selection_status']=='replacement-notice-unverified'
         records.append(record)
     if used!=set(replacements): raise ValueError('Unused replacement notice evidence')
     return dict(format_version=1,scope='historical-notice-facts-and-current-selection',
         historical_inventory_sha256=digest(baseline_raw),selected_lock=lock_record,
         supplemental_notices_sha256=supplemental_pin['sha256'],source_patches=config['source_patches'],
+        standard_license_texts_input=file_pin(inputs['standard_license_texts']) if inputs.get('standard_license_texts') else None,
         legal_compliance_assessed=False,overall_release_qualified=False,records=records,
         coverage=dict(historical_records=len(records),historical_notice_resolved=sum(bool(p['path'] in resolved) for p in records),
             historical_notice_unresolved=sum(p['path'] not in resolved for p in records),
             selected_dependencies=len(lock['packages'])-1,
             measured_selection_remediations=sum(p['selection_status'] in ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release','replaced-by-source-bound-authored-package') for p in records),
+            accepted_distributor_standard_terms=sum(bool(p['standard_license_texts']) for p in records),
             remaining_selected_notice_gaps=sum(bool(p['selected_notice_gap']) for p in records)),
         limitations=['Removed or replaced packages retain their original unresolved author-notice facts.',
                      'Selection accounting does not qualify all installed software or establish redistribution permission.'])

@@ -21,6 +21,8 @@ copied metadata/notice pins include archive_member and use archive_notice_root.
 The archive's SRI and copied text contents are verified before inventory inclusion.
 An inspected archive without recognizable notice filenames may retain its verified
 package.json license declaration alone, explicitly marked without embedded text.
+Optional mainsail.standard_license_texts pins the separately approved exact-package
+standard terms configuration; it does not create a supplier notice or attribution.
 debian_root is
 the read-only documented baseline. build_tools contains equivalent source/artifact/
 notice/proof records. Output contains content hashes, never transient absolute roots.
@@ -334,6 +336,79 @@ def npm_supplemental(pin, texts, package, archive_path=None):
             for p in record['notices']]
 
 
+# Owner-approved exception: immutable supplier identity and full SPDX document.
+# These independent anchors prevent a caller from blessing a self-hashed fake text.
+APPROVED_STANDARD_LICENSE = {
+    "path": "node_modules/@sindarius/gcodeviewer",
+    "name": "@sindarius/gcodeviewer",
+    "version": "3.7.18",
+    "integrity": "sha512-3vZKVbFq3UG62lztHZs99hkTplbrLBRMBwBrp/wZplKgkVq8x3EqZPWu6ZakCDUmanYPLJd8Mz7xDjYgso07tw==",
+    "archive_sha256": "b9e987bb80eece0c599355b5304b903f87221191a96ba34cb9f8e7e65047a07a",
+    "package_json_sha256": "551f6b4e43ea772fd6f3b226ea7bbf7b6934229a49f39722285b2c57d9d43319",
+    "license": "LGPL-3.0-or-later",
+    "classification": "supplier-declaration-plus-distributor-standard-terms",
+    "license_text": {
+        "path": "docs/licensing/standard/LGPL-3.0-or-later.txt",
+        "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+        "bytes": 42098
+    },
+    "source": {
+        "license": "LGPL-3.0-or-later",
+        "reference": "https://spdx.org/licenses/LGPL-3.0-or-later.html",
+        "source_repository": "https://github.com/spdx/license-list-data",
+        "source_revision": "e6ccb09584ca771e592281194aa7c74bf62f4105",
+        "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/e6ccb09584ca771e592281194aa7c74bf62f4105/text/LGPL-3.0-or-later.txt",
+        "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+        "bytes": 42098,
+        "includes_gpl3_terms": True
+    }
+}
+
+
+def npm_standard_license_texts(pin, lock):
+    """Load only explicitly approved standard terms, independently of notices."""
+    if not pin:
+        return {}
+    file_pin(pin)
+    value = json.loads(checked_path(pin['root'], pin['path']).read_bytes())
+    if value.get('format_version') != 1 or set(value) != {'format_version', 'records'}:
+        raise ValueError('Invalid standard license text configuration')
+    records = {}
+    for record in value['records']:
+        if record != APPROVED_STANDARD_LICENSE:
+            raise ValueError('Unapproved standard license identity, text or source pin')
+        path = record['path']
+        if path in records or path not in lock['packages']:
+            raise ValueError('Duplicate or extraneous standard license record')
+        package = lock['packages'][path]
+        if (package.get('name', path.rsplit('node_modules/', 1)[-1]), package.get('version'),
+                package.get('integrity'), package.get('license')) != (
+                record['name'], record['version'], record['integrity'], record['license']):
+            raise ValueError('Standard license selected package/declaration mismatch')
+        text = record['license_text']
+        raw = checked_path(REPO, text['path']).read_bytes()
+        if digest(raw) != text['sha256'] or len(raw) != text['bytes']:
+            raise ValueError('Standard license text bytes mismatch')
+        records[path] = record
+    if not records:
+        raise ValueError('Missing approved standard license record')
+    return records
+
+
+def verify_npm_standard_license(record, package, archive_path):
+    """Verify supplier declaration inside the actual SRI-bound original archive."""
+    from resolve_npm_notices import archive_identity
+    if record != APPROVED_STANDARD_LICENSE:
+        raise ValueError('Unapproved standard license record')
+    if archive_identity(archive_path, package['integrity'], record['name'], package['version']) != record['archive_sha256']:
+        raise ValueError('Standard license supplier archive mismatch')
+    with tarfile.open(archive_path) as archive:
+        raw = archive.extractfile('package/package.json').read()
+    if digest(raw) != record['package_json_sha256'] or json.loads(raw).get('license') != record['license']:
+        raise ValueError('Standard license supplier metadata/declaration mismatch')
+    return dict(record, historical_embedded_notice_absent=True, author_attribution_invented=False)
+
+
 def npm_inventory(pin):
     record = file_pin(pin)
     selected = json.loads((REPO / 'configs/apps/mainsail.json').read_text())
@@ -342,6 +417,7 @@ def npm_inventory(pin):
     lock = json.loads(checked_path(pin['root'], pin['path']).read_text())
     if set(pin['dependency_notices']) != set(lock['packages']) - {''}:
         raise ValueError('NPM source notices must exactly cover all selected production/build dependencies')
+    standards = npm_standard_license_texts(pin.get('standard_license_texts'), lock)
     supplements = {}
     if pin.get('supplemental_notices'):
         supplemental_pin = pin['supplemental_notices']
@@ -360,6 +436,13 @@ def npm_inventory(pin):
         texts = npm_archive_notices(path, package, pin['dependency_notices'][path], pin['archive_notice_root'])
         texts['supplemental_notices'] = npm_supplemental(supplements.get(path), texts, package,
             checked_path(pin['archive_notice_root'],pin['dependency_notices'][path]['archive']['path']))
+        texts['standard_license_texts'] = []
+        if path in standards:
+            if texts['notices'] or texts['supplemental_notices']:
+                raise ValueError('Standard terms must remain separate from supplier notices')
+            texts['standard_license_texts'] = [verify_npm_standard_license(standards[path], package,
+                checked_path(pin['archive_notice_root'], pin['dependency_notices'][path]['archive']['path']))]
+            texts['classification'] = standards[path]['classification']
         if texts['supplemental_notices'] and not texts['notices']:
             texts['classification'] = 'supplier-declaration-and-exact-version-upstream-supplemental-text'
         packages.append(dict(path=path, version=package['version'], integrity=package['integrity'],
@@ -367,9 +450,11 @@ def npm_inventory(pin):
                              dependency_scope='build' if package.get('dev') else 'production',
                              optional=bool(package.get('optional')), **texts))
     return dict(lock=record, packages=packages,
+                standard_license_texts_input=file_pin(pin['standard_license_texts']) if pin.get('standard_license_texts') else None,
                 notice_coverage=dict(inspected_supplier_archives=len(packages),
                                      dependencies_with_notice_text=sum(bool(p['notices'] or p['supplemental_notices']) for p in packages),
-                                     declaration_only_dependencies=sum(not (p['notices'] or p['supplemental_notices']) for p in packages)))
+                                     dependencies_with_distributor_standard_terms=sum(bool(p['standard_license_texts']) for p in packages),
+                                     declaration_only_dependencies=sum(not (p['notices'] or p['supplemental_notices'] or p['standard_license_texts']) for p in packages)))
 
 
 def debian_inventory(root):
