@@ -61,7 +61,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "e2be81fae4ee4d47b503f947cbef664f",
+        "session": "release-vitest-20261015"
+      },
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -102,7 +106,7 @@
       "resumption": "Upstream Vitest5 has native ESM diagnostics and compatible Node/Vite ranges; evaluate bounded manifest/lock change with actual unit and hanging-process coverage, no builder patch or license changes.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
