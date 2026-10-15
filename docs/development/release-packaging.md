@@ -111,8 +111,86 @@ complete shipped code equality, and remains visible as a metadata discrepancy.
 A pinned source README may explicitly reference an external author notice document;
 the actual fetched document and source reference are separately hashed and retained.
 
-The checked-in supplemental evidence currently resolves 60 of the historical 69
-records. Nine remain explicit blockers in the JSON; selected-software packaging
-continues to fail. The JSON retains original text bytes; generate the plain-text collection with
+The checked-in supplemental evidence resolves 60 of the historical 69
+records. Nine retain their original missing author-notice facts in that historical
+JSON. Current selection accounting separately measures removals, replacements and
+the explicit standard-terms acceptance below. The JSON retains original text bytes; generate the plain-text collection with
 --text-output or release preparation. The collection does not establish that
 those nine packages are licensed for redistribution.
+
+## Historical gaps and changed dependency selection
+
+The original 69 records remain fixed historical evidence. A new selected lock can
+remove or replace a dependency without granting rights to its old version. Run
+`resolve_npm_notices.py --selection-inputs INPUTS --output REPORT` to create a
+separate accounting report. INPUTS contains file pins `{root,path,sha256}` for
+`selected_lock` and `supplemental_notices`, plus `replacement_archives` keyed by
+original dependency path. The selected lock must match the current Mainsail
+profile, and the supplemental input must match the retained notice set. A
+replacement archive must match the actual selected version and SRI and contain
+real embedded notice text. The report preserves original identity, archive hash
+and notice status, and distinguishes current retention, removal and verified
+notice-bearing replacement. Remaining selected gaps cause a nonzero exit.
+
+The revision-5 Mainsail patch replaces throttleit 1.0.1 with notice-bearing 2.1.0
+through a scoped npm override and removes an unused compiler edge, pruning
+de-indent. The original 60 notice resolutions and nine unresolved historical
+facts remain unchanged. That historical selection had two measured remediations and seven remaining
+author-notice gaps. Later source-bound replacements are accounted for by the
+current selection report; these changes do not make a release qualified.
+
+
+## Explicit standard LGPL terms for gcodeviewer
+
+For exact `@sindarius/gcodeviewer` 3.7.18, the owner accepts its SRI-verified
+`package.json` declaration `LGPL-3.0-or-later` together with distributor-provided,
+unmodified standard SPDX terms. This exception does not infer rights for other
+packages. The [configuration](../../configs/host/npm-standard-license-texts.json)
+pins the name, version, SRI, archive and package metadata hashes, license identifier,
+and immutable SPDX source revision/URL and full text hash. The
+[standard document](../licensing/standard/LGPL-3.0-or-later.txt) includes both the
+LGPL supplement and incorporated GPL3 terms. Its FSF document copyright is not
+attribution for gcodeviewer. No author attribution is invented.
+
+Add `mainsail.standard_license_texts: {root,path,sha256}` to inventory inputs,
+pointing to that configuration. The inventory independently verifies the original
+archive's SRI, exact metadata declaration and immutable text/source anchors.
+`notices` and `supplemental_notices` stay empty for this package; the separate
+`standard_license_texts` field and `dependencies_with_distributor_standard_terms`
+count distinguish acceptance from supplier notice recovery. Without the explicit
+input, this dependency remains a declaration-only gap and packaging refuses it.
+Unknown packages, altered records, duplicate/extraneous entries, missing documents,
+and text or source pin tampering are refused.
+
+For selection accounting, add the same `standard_license_texts` file pin at the
+input root and `standard_license_text_archives`, a map with exactly the key
+`node_modules/@sindarius/gcodeviewer` and a `{root,path,sha256}` pin to its original
+supplier archive. The resolver verifies actual SRI/archive/package metadata bytes.
+Its selection status becomes `accepted-distributor-standard-terms`, while the
+historical `unresolved-author-notice` status and all 60 supplemental notices remain
+unchanged. This acceptance clears only that selected gap.
+
+Selected-software evidence exports the verified full text as
+`LGPL-3.0-or-later.txt` and its exact configuration as
+`npm-standard-license-texts.json`. The release manifest hashes both files; export
+also rechecks the immutable pins and their agreement with the qualified inventory.
+The project-source profile is unchanged. This records the owner-approved source
+facts and terms, not an upstream license change, recovered author notice, new grant
+or legal compliance assessment.
+
+Focused tests can use a retained immutable original archive without downloading:
+
+```sh
+SV08_GCODEVIEWER_ARCHIVE=/path/to/original-gcodeviewer-3.7.18.tgz \
+  python3 -m unittest discover -s tests -p test_license_inventory.py
+SV08_GCODEVIEWER_ARCHIVE=/path/to/original-gcodeviewer-3.7.18.tgz \
+  python3 -m unittest discover -s tests -p test_resolve_npm_notices.py
+SV08_GCODEVIEWER_ARCHIVE=/path/to/original-gcodeviewer-3.7.18.tgz \
+  python3 -m unittest discover -s tests -p test_prepare_release.py
+```
+
+Without that environment variable, actual supplier archive cases are explicitly
+skipped; portable approval/text/identity rejection tests still run. The release
+unit fixture qualifies real supplier bytes and writes the actual evidence files,
+while mocking image inspection and unrelated full inventory generation. Actual
+image inspection and full release execution remain coordinator integration checks.
