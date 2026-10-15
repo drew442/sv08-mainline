@@ -61,11 +61,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "0b8bc550997f43f6a11b0641dd840d6c",
-        "session": "release-visibility-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -107,13 +103,17 @@
         "tests/mainsail_janus_browser.mjs",
         "patches/mainsail/0006-native-visibility.patch",
         "tests/test_mainsail_visibility.py",
-        "tests/mainsail_visibility_browser.mjs"
+        "tests/mainsail_visibility_browser.mjs",
+        "patches/mainsail/0007-ospath-compat.patch",
+        "scripts/package_mainsail.py",
+        "tests/test_mainsail_ospath.py",
+        "tests/mainsail_ospath_compat.cjs"
       ],
       "repeats": 0,
-      "resumption": "Read-only contract trace found nine plain function bindings and no options; measure original geometry/lifecycle behavior before independent native IntersectionObserver replacement.",
+      "resumption": "PR24 published; synthetic offline/relocated npm override proven; independent full API compatibility package and explicit authored identity accounting preserve Cypress functionality.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
