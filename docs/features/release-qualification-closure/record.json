@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "943fc8a863ee79bb744617e8120083655083de9f6bb666e20c98e94bfe18cda9",
-    "rationale": "Direct owner goal; reversible source, upstream evidence and actual disposable final-image inventory, preserving license terms and hardware gates.",
+    "proposal_sha256": "9b40c7805db89f3f5fcf9ac1a1c84751fb3d65d7456c09f9e82bd019295e1cfa",
+    "rationale": "Continue full owner goal with explicit fourth root patch ownership and upstream-supported diagnostics compatibility acceptance; preserve notices and cumulative allowance.",
     "reference": "docs/features/release-qualification-closure/owner-request.md",
     "reference_sha256": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
       "docs/features/release-qualification-closure/owner-request.md": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf"
     },
-    "scope_sha256": "f8bfdd239cb25077d4ed79d00b94697e7d11fc8d099560a3bf8ba82b4b1131db",
-    "session": "release-closure-20261015",
-    "source_commit": "7f75e9d023f6dd13af0c790b25c40b85921a3fb5"
+    "scope_sha256": "4818bee9ce4dbf8aeb1374d07fd14f8ba2ab5f027d71a967668c4ceed2280cd4",
+    "session": "release-vitest-20261015",
+    "source_commit": "c3a1b62209a42deab8c4a8089779269b27ac54fd"
   },
   "checks": [
     {
@@ -71,7 +71,8 @@
         "configs/host-os/",
         "configs/images/",
         "upstream-lock.json",
-        "configs/host/source-license-inventory.json"
+        "configs/host/source-license-inventory.json",
+        "upstream/mainsail/"
       ],
       "owned_paths": [
         "scripts/prepare_release.py",
@@ -87,10 +88,18 @@
         "docs/licensing/npm-notices.txt",
         "docs/development/release-packaging.md",
         "docs/features/release-qualification-closure/evidence.md",
-        "docs/features/release-qualification-closure/evidence.json"
+        "docs/features/release-qualification-closure/evidence.json",
+        "configs/apps/mainsail.json",
+        "patches/mainsail/0003-notice-dependency-closure.patch",
+        "patches/mainsail/README.md",
+        "tests/mainsail_notice_dependencies.cjs",
+        "tests/test_mainsail_notice_dependencies.py",
+        "configs/host/release-source-license-inventory.json",
+        "configs/host/npm-notice-resolution.json",
+        "patches/mainsail/0004-vitest-notice-closure.patch"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Upstream Vitest5 has native ESM diagnostics and compatible Node/Vite ranges; evaluate bounded manifest/lock change with actual unit and hanging-process coverage, no builder patch or license changes.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
       "status": "pending",

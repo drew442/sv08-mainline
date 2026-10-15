@@ -116,3 +116,23 @@ records. Nine remain explicit blockers in the JSON; selected-software packaging
 continues to fail. The JSON retains original text bytes; generate the plain-text collection with
 --text-output or release preparation. The collection does not establish that
 those nine packages are licensed for redistribution.
+
+## Historical gaps and changed dependency selection
+
+The original 69 records remain fixed historical evidence. A new selected lock can
+remove or replace a dependency without granting rights to its old version. Run
+`resolve_npm_notices.py --selection-inputs INPUTS --output REPORT` to create a
+separate accounting report. INPUTS contains file pins `{root,path,sha256}` for
+`selected_lock` and `supplemental_notices`, plus `replacement_archives` keyed by
+original dependency path. The selected lock must match the current Mainsail
+profile, and the supplemental input must match the retained notice set. A
+replacement archive must match the actual selected version and SRI and contain
+real embedded notice text. The report preserves original identity, archive hash
+and notice status, and distinguishes current retention, removal and verified
+notice-bearing replacement. Remaining selected gaps cause a nonzero exit.
+
+The revision-5 Mainsail patch replaces throttleit 1.0.1 with notice-bearing 2.1.0
+through a scoped npm override and removes an unused compiler edge, pruning
+de-indent. The original 60 notice resolutions and nine unresolved historical
+facts remain unchanged. Current selection has two measured remediations and seven
+remaining author-notice gaps; these changes do not make a release qualified.
