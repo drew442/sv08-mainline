@@ -11543,6 +11543,13 @@
     },
     "scope": "Full original owner objective retained, not marked complete"
   },
+  "completion_audit_after_standard_lgpl": {
+    "image": "Actual historical assembled final image inspected read-only; hashes and coverage/missing metadata retained in actual_image. Inspector hash unchanged. No current release claim.",
+    "npm": "All69 historical entries accounted individually:60 author notices,8 originally unresolved removed/replaced,1 owner-approved standard terms. Nine measured selection remediations overlap60 by one; do not sum disjointly. Zero selected gaps.",
+    "outcome": "Authorized development objective satisfied; publication pending in this evidence snapshot. No merge/deployment.",
+    "packaging": "Implemented exact-artifact fail-closed gate; historical actual-image refusal, current project-source positive and standard-text export/tamper tests passed. Full current stack remains separately unqualified.",
+    "upstream": "No upstream archive/license/gitlink modified; original60 supplemental notice hash unchanged."
+  },
   "failed_attempts": [
     "Initial actual image run stopped at missing later-slot dpkg metadata; now reports unknown coverage per slot. Original failed inputs/logs retained.",
     "Initial six source notice pins captured empty in-progress shared URL cache; rejected by hash checks. Fresh exact-commit public responses were separately retained; original research unchanged.",
@@ -14461,6 +14468,114 @@
     "tests/test_license_inventory.py": "997d6a1c30011b6db59380c442f4cd800e4cc7bb11ef522628348dbf31112dcd",
     "tests/test_prepare_release.py": "a7718e72c6d88b604a5d084947ba402d78ef44b1a6f0fd2e0aa2bb405bc3e5a8",
     "tests/test_resolve_npm_notices.py": "3bc487bf793126aa0a23baec6556b29bef73e5c1ee9c4fd8bc5627caee56cf78"
+  },
+  "standard_lgpl_continuation": {
+    "actual_project_source_package": {
+      "command": "sudo -n python3 scripts/prepare_release.py --profile project-source --image <retained64MiBfixture> --public-source <retainedpublicmanifest> --output <newstandard-lgpl-source-package> --scratch <assignedscratch>",
+      "exit_status": 0,
+      "outputs": {
+        "image-inventory.json": "9961d8835903977aa2b8f2ee8d3a5a9700892121d906c15861241d53a601c3a3",
+        "public-source.json": "079ed200a6812adf430372b80c3d7c484a0194f427b52bb2f9c2fa197c76dc8a",
+        "release-manifest.json": "8588e8d3da79a30e7778464fb655b00eae398697f6b03a5d1e96cd05ed46a9ab",
+        "report.json": "0b579d441fa3aac6db05caef33032d3290bd8d0c5321b99f7588ef4aea8e02a9"
+      },
+      "report": "See release package report; project-source passed, full selected stack not qualified"
+    },
+    "agent": {
+      "effective_settings": "not observable",
+      "id": "/root/standard_lgpl_implement",
+      "requested_effort": "medium",
+      "result": "completed code and focused tests",
+      "role": "project_implementer"
+    },
+    "allowance": {
+      "conservative_used_GiB": 19.6,
+      "conservative_used_seconds": 8700,
+      "cumulative_generated_GiB": 20.5,
+      "cumulative_seconds": 16800,
+      "no_reset": true
+    },
+    "canonical_text": {
+      "bytes": 42098,
+      "includes_gpl3_terms": true,
+      "license": "LGPL-3.0-or-later",
+      "reference": "https://spdx.org/licenses/LGPL-3.0-or-later.html",
+      "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+      "source_repository": "https://github.com/spdx/license-list-data",
+      "source_revision": "e6ccb09584ca771e592281194aa7c74bf62f4105",
+      "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/e6ccb09584ca771e592281194aa7c74bf62f4105/text/LGPL-3.0-or-later.txt"
+    },
+    "code_commit": "d64be5b91f56b181db9be4fd552740b4857bd6d8",
+    "failed_attempts": [
+      {
+        "cause": "loop-device permission denied",
+        "command": "same actual project-source inspection without sudo",
+        "exit_status": 1,
+        "repair": "used existing coordinator sudo permission; no install or configuration change"
+      },
+      {
+        "cause": "prior inventory is checked in rather than that scratch path",
+        "command": "inventory delta comparison using scratch prior inventory filename",
+        "exit_status": 1,
+        "repair": "compared retained checked-in previous inventory; passed"
+      }
+    ],
+    "inventory": {
+      "coverage": {
+        "declaration_only_dependencies": 0,
+        "dependencies_with_distributor_standard_terms": 1,
+        "dependencies_with_notice_text": 896,
+        "inspected_supplier_archives": 897
+      },
+      "only_existing_dependency_fields_changed": "node_modules/@sindarius/gcodeviewer",
+      "sha256": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+      "unrelated_sections_unchanged": true
+    },
+    "limitations": [
+      "Exact-package terms acceptance is not recovered author attribution or a new license grant.",
+      "No full current selected-software image qualification, corresponding-source completeness, legal compliance, hardware or recovery execution claimed.",
+      "Current Mainsail source/build inputs/artifacts and browser behavior unchanged; prior source-bound acceptance reused."
+    ],
+    "owner_authority": "owner-request.md 2026-10-15 clarification: exact supplier declaration plus unmodified SPDX standard terms",
+    "selection": {
+      "coverage": {
+        "accepted_distributor_standard_terms": 1,
+        "historical_notice_resolved": 60,
+        "historical_notice_unresolved": 9,
+        "historical_records": 69,
+        "measured_selection_remediations": 9,
+        "remaining_selected_notice_gaps": 0,
+        "selected_dependencies": 897
+      },
+      "exit_status": 0,
+      "sha256": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf"
+    },
+    "source_sha256": {
+      "configs/host/npm-notice-resolution.json": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf",
+      "configs/host/npm-standard-license-texts.json": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c",
+      "configs/host/release-source-license-inventory.json": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+      "docs/licensing/standard/LGPL-3.0-or-later.txt": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+      "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+      "scripts/license_inventory.py": "9c56db762cae38dd4db1b4203354fde15a3dfd1b93df7a476b9b208354ea54c8",
+      "scripts/prepare_release.py": "b4e8cb6be9314096e72db859474cfcbf0fe1912b81d64e2169c3b08a999bfd33",
+      "scripts/resolve_npm_notices.py": "e0fc0ec77c44c368aa60bd2c0b0167c295b25a8f46ada35bf0cc6867b1b5a248",
+      "tests/test_license_inventory.py": "aa771d926d81e8205b1577a87518cd723e9efd1ade9e1e5dc081e378b50c30eb",
+      "tests/test_prepare_release.py": "a3686e322e92a1ee29c18f16843f4543e136bde83d9c37fe00a647ec298b615c",
+      "tests/test_resolve_npm_notices.py": "8706ba2195b536f145d556124b3c0aa6f261c3df34cf41a0d078f16ab95559ca"
+    },
+    "tests": {
+      "evidence_kind": "worker observed actual commands with retained exact supplier archive; runtime conversation retains output; no fabricated standalone log",
+      "test_license_inventory.py": {
+        "passed": 20
+      },
+      "test_prepare_release.py": {
+        "passed": 7,
+        "rerun_reason": "added missing/corrupt standard text checks"
+      },
+      "test_resolve_npm_notices.py": {
+        "passed": 21
+      }
+    }
   },
   "status": "in-progress-seven-current-notice-gaps-remain",
   "tests": {

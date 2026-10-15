@@ -1,3 +1,13 @@
+# Current continuation: selected notice gaps closed
+
+The owner-approved exact gcodeviewer3.7.18 declaration plus unmodified SPDX LGPL-3.0-or-later document closes the final selected gap. The full document includes LGPL and GPL3 terms. The original archive, metadata declaration and text/source hashes are independently verified; no upstream license or attribution is changed. The original60 author notices and all original missing-notice facts are preserved.
+
+Current inventory:897 inspected archives,896 supplier/recovered notice-bearing dependencies,one separately classified distributor standard document,zero declaration-only gaps. All69 historical entries are accounted for:60 author notices,eight originally unresolved packages removed/replaced,one accepted standard document. The nine measured selection remediations overlap the60 by one. Resolver exits0. Other inventory sections are unchanged; gcodeviewer is the only dependency with changed existing fields.
+
+All48 focused inventory/resolver/release tests pass using the retained exact supplier archive. Positive export writes exact text/provenance and manifest hashes; wrong identity, declaration, source, archive, text and missing/stale inputs are refused. Actual current project-source release preparation against the retained64MiB image passes with existing sudo after an unprivileged loop-device refusal. These fixture/unit results do not qualify a complete current software image. Prior actual historical final-image inspection and its coverage gaps remain unchanged.
+
+Source-bound receipts and full-objective audit are appended in `standard_lgpl_continuation` and `completion_audit_after_standard_lgpl` in [evidence.json](evidence.json). Earlier incomplete snapshots below remain historical. Current build/browser/type/parent-runtime evidence is reused because no application input or artifact changed. No new build/image copies, printer access, outreach, deployment or merge. Source development is complete; review publication and owner integration remain separate.
+
 # Current continuation: one selected notice gap remains
 
 Code candidate `71b8c8a` replaces @humanfs/types with independently authored structural declarations under the existing project grant. Parent core/node runtime and declaration files remain byte-identical, preserving the symlink-copy fix. Strict original/replacement public-contract compilation checks every interface and method, including negative cases, without skipLibCheck. Actual native installed and relocated resolution passes. All20 parent files and actual ESLint directory/ignore/unmatched behavior are unchanged.
