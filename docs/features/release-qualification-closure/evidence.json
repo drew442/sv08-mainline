@@ -11546,8 +11546,13 @@
   "completion_audit_after_standard_lgpl": {
     "image": "Actual historical assembled final image inspected read-only; hashes and coverage/missing metadata retained in actual_image. Inspector hash unchanged. No current release claim.",
     "npm": "All69 historical entries accounted individually:60 author notices,8 originally unresolved removed/replaced,1 owner-approved standard terms. Nine measured selection remediations overlap60 by one; do not sum disjointly. Zero selected gaps.",
-    "outcome": "Authorized development objective satisfied; publication pending in this evidence snapshot. No merge/deployment.",
+    "outcome": "Authorized development objective satisfied and published for owner review as draft PR27 atop PR26. Task self-validation awaits owner integration; no merge/deployment.",
     "packaging": "Implemented exact-artifact fail-closed gate; historical actual-image refusal, current project-source positive and standard-text export/tamper tests passed. Full current stack remains separately unqualified.",
+    "publication": {
+      "ci": "No checks reported on stacked PR at publication",
+      "remote_receipt": "38d29f107c8cea21e23703a5e4056f4aee312ddc verified before final bookkeeping commit",
+      "url": "https://github.com/drew442/sv08-mainline/pull/27"
+    },
     "upstream": "No upstream archive/license/gitlink modified; original60 supplemental notice hash unchanged."
   },
   "failed_attempts": [
@@ -14479,7 +14484,29 @@
         "release-manifest.json": "8588e8d3da79a30e7778464fb655b00eae398697f6b03a5d1e96cd05ed46a9ab",
         "report.json": "0b579d441fa3aac6db05caef33032d3290bd8d0c5321b99f7588ef4aea8e02a9"
       },
-      "report": "See release package report; project-source passed, full selected stack not qualified"
+      "report": {
+        "checks": [
+          {
+            "id": "image",
+            "status": "passed"
+          },
+          {
+            "id": "public-project-source",
+            "status": "passed"
+          }
+        ],
+        "format_version": 1,
+        "hardware_qualified": false,
+        "limitations": [
+          "Hardware, recovery execution, legal compliance and full reproducibility are not qualified.",
+          "Third-party corresponding-source completeness and opaque boot/data license coverage remain separate.",
+          "Artifact must travel alongside this evidence package and match its exact hash."
+        ],
+        "overall_release_qualified": false,
+        "profile": "project-source",
+        "project_source_qualified": true,
+        "software_notice_inventory_checked": false
+      }
     },
     "agent": {
       "effective_settings": "not observable",
