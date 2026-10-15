@@ -61,11 +61,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "d41854bc171b4b5ab225d9c434df0fe0",
-        "session": "release-remediation-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -99,13 +95,14 @@
         "tests/mainsail_notice_dependencies.cjs",
         "tests/test_mainsail_notice_dependencies.py",
         "configs/host/release-source-license-inventory.json",
-        "configs/host/npm-notice-resolution.json"
+        "configs/host/npm-notice-resolution.json",
+        "patches/mainsail/0004-vitest-notice-closure.patch"
       ],
       "repeats": 0,
-      "resumption": "Actual source research identified notice-bearing throttleit2.1.0 with measured behavior compatibility and unused root vue-template-compiler edge; renew explicit package-patch ownership, validate builds and preserve all69closure requirement, prior failures and cumulative budget.",
+      "resumption": "Upstream Vitest5 has native ESM diagnostics and compatible Node/Vite ranges; evaluate bounded manifest/lock change with actual unit and hanging-process coverage, no builder patch or license changes.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
