@@ -113,5 +113,6 @@ the actual fetched document and source reference are separately hashed and retai
 
 The checked-in supplemental evidence currently resolves 60 of the historical 69
 records. Nine remain explicit blockers in the JSON; selected-software packaging
-continues to fail. The accompanying text is a factual notice collection, not an
-assertion that those nine packages are licensed for redistribution.
+continues to fail. The JSON retains original text bytes; generate the plain-text collection with
+--text-output or release preparation. The collection does not establish that
+those nine packages are licensed for redistribution.
