@@ -102,6 +102,92 @@ class ReleaseTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError,'not found'):
                         m.installed_application_bindings(inputs,[changed])
 
+    def ab_fixture(self):
+        inputs,root=self.deb_fixture(opt=True)
+        partitions=[dict(number=i+1,name=name) for i,name in enumerate(
+            ('boot-a','root-a','boot-b','root-b','recovery','data'))]
+        roots=[]
+        for number in (2,4,5):
+            record=copy.deepcopy(root);record.update(selected_partition=number,partitions=copy.deepcopy(partitions))
+            roots.append(record)
+        # Recovery has its own package DB and project source, without selected apps.
+        roots[2].update(packages=[dict(name='recovery-tools',version='1',architecture='all')],files=[])
+        return inputs,roots
+
+    def test_all_normal_slots_bound_and_recovery_exempt(self):
+        inputs,roots=self.ab_fixture()
+        binding=m.installed_application_bindings(inputs,roots)[0]
+        self.assertEqual(binding['matching_partitions'],[2,4])
+        self.assertEqual(binding['required_normal_partitions'],[2,4])
+        for slot in (0,1):
+            for defect in ('changed-payload','missing-payload','changed-package','missing-package'):
+                with self.subTest(slot=slot,defect=defect):
+                    changed=copy.deepcopy(roots)
+                    executable=next(f for f in changed[slot]['files'] if f['path'].endswith('klippy.py'))
+                    if defect=='changed-payload':executable['sha256']='b'*64
+                    elif defect=='missing-payload':changed[slot]['files'].remove(executable)
+                    elif defect=='changed-package':changed[slot]['packages'][0]['version']='2'
+                    else:changed[slot]['packages']=[]
+                    # Even a matching recovery root must not substitute for A or B.
+                    changed[2]['files']=copy.deepcopy(roots[0]['files'])
+                    changed[2]['packages']=copy.deepcopy(roots[0]['packages'])
+                    with self.assertRaisesRegex(ValueError,'not found in every required normal slot'):
+                        m.installed_application_bindings(inputs,changed)
+        for slot in (0,1):
+            with self.subTest(missing_slot=slot),self.assertRaisesRegex(ValueError,'Missing normal-root inventory'):
+                m.installed_application_bindings(inputs,[r for i,r in enumerate(roots) if i!=slot])
+
+    def test_complete_disk_prepare_requires_apps_in_normal_slots_and_recovery_source_metadata(self):
+        inputs,roots=self.ab_fixture()
+        path=self.base/'inventory.json';path.write_text(json.dumps(inputs))
+        record=dict(self.record,roots=roots)
+        inventory={'applications':[],'mainsail_dependencies':{'notice_coverage':{'declaration_only_dependencies':0}}}
+        with patch.object(m,'inspect_artifact',return_value=record),patch.object(m.license_inventory,'generate',return_value=inventory):
+            result=m.prepare(self.image,self.public,inventory_inputs=path)
+            self.assertEqual(json.loads(result['installed-application-bindings.json'])[0]['required_normal_partitions'],[2,4])
+            roots[2]['source_qualification']['qualified']=False
+            with self.assertRaisesRegex(ValueError,'Every software root'):m.prepare(self.image,self.public,inventory_inputs=path)
+            roots[2]['source_qualification']['qualified']=True
+            roots[2]['packages']=[]
+            with self.assertRaisesRegex(ValueError,'package databases'):m.prepare(self.image,self.public,inventory_inputs=path)
+
+    def test_partition_identities_cannot_hide_required_normal_slot(self):
+        inputs,roots=self.ab_fixture()
+        for defect in ('duplicate-number','duplicate-role','contradictory-table','missing-table',
+                       'missing-role','duplicate-root','unknown-root'):
+            with self.subTest(defect=defect):
+                changed=copy.deepcopy(roots)
+                if defect=='duplicate-number':
+                    for root in changed:root['partitions'][3]['number']=2
+                elif defect=='duplicate-role':
+                    for root in changed:root['partitions'][3]['name']='root-a'
+                elif defect=='contradictory-table':changed[0]['partitions'][3]['name']='other'
+                elif defect=='missing-table':del changed[0]['partitions']
+                elif defect=='missing-role':
+                    for root in changed:root['partitions'][3]['name']='other'
+                elif defect=='duplicate-root':changed[1]['selected_partition']=2
+                else:changed[1]['selected_partition']=99
+                with self.assertRaises(ValueError):m.installed_application_bindings(inputs,changed)
+
+    def test_raw_single_root_partition_metadata_keeps_existing_binding(self):
+        inputs,root=self.deb_fixture()
+        root.update(selected_partition=0,partitions=[dict(number=0,format='ext4')])
+        binding=m.installed_application_bindings(inputs,[root])[0]
+        self.assertEqual(binding['matching_partitions'],[0]);self.assertEqual(binding['required_normal_partitions'],[])
+
+    def test_standalone_gpt_root_a_supported_but_incomplete_ab_refused(self):
+        inputs,root=self.deb_fixture()
+        root['partitions']=[dict(number=1,name='boot-a'),dict(number=2,name='root-a')]
+        binding=m.installed_application_bindings(inputs,[root])[0]
+        self.assertEqual(binding['matching_partitions'],[2]);self.assertEqual(binding['required_normal_partitions'],[])
+        for evidence in ('boot-b','recovery'):
+            with self.subTest(evidence=evidence):
+                changed=copy.deepcopy(root);changed['partitions'].append(dict(number=3,name=evidence))
+                with self.assertRaisesRegex(ValueError,'Incomplete normal A/B'):
+                    m.installed_application_bindings(inputs,[changed])
+        root['partitions']=[dict(number=2,name='recovery')]
+        with self.assertRaisesRegex(ValueError,'Incomplete normal A/B'):m.installed_application_bindings(inputs,[root])
+
     def test_selected_software_fixed_checks_and_missing_failed_prerequisites(self):
         inputs,root=self.deb_fixture();record=dict(self.record,roots=[root])
         path=self.base/'inventory.json';path.write_text(json.dumps(inputs))
