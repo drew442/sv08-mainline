@@ -1,10 +1,10 @@
 {
   "author": "root/coordinator",
   "authorization": {
-    "actor": "root/coordinator",
-    "basis": "owner-request",
-    "proposal_sha256": "9fe64855a9ca118505cf7779e4d161c9597d241aa0cd00fdcd19af828faca084",
-    "rationale": "Continue full notice goal with independent visibility directive, measured baseline, explicit ownership and unchanged cumulative allowance; no upstream grant changes.",
+    "actor": "coordinator",
+    "basis": "standing",
+    "proposal_sha256": "58087ac4de6e6b9c0b1a6b82c36b857c4fd0749681c97fa7d757cfaab424eacc",
+    "rationale": "Authorized remaining NPM notice closure; portable local override feasibility measured; preserve Cypress and original author-notice facts with independent package and explicit provenance.",
     "reference": "docs/features/release-qualification-closure/owner-request.md",
     "reference_sha256": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
       "docs/features/release-qualification-closure/owner-request.md": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf"
     },
-    "scope_sha256": "c1f249a2476906df10d0dec624bd76efbd25d44c9ec85419e86c9be26e62ef3b",
-    "session": "release-visibility-20261015",
-    "source_commit": "8f4808728c72402171a2524dabbb29cfd3c9b599"
+    "scope_sha256": "49b358fd33bbc0629603aa2cc2a05393756916be54bd1e7b474f63b7bba83ceb",
+    "session": "release-ospath-20261015",
+    "source_commit": "4ebd11c51c5af7280bb52301f8fa77207aa54380"
   },
   "checks": [
     {
@@ -103,10 +103,14 @@
         "tests/mainsail_janus_browser.mjs",
         "patches/mainsail/0006-native-visibility.patch",
         "tests/test_mainsail_visibility.py",
-        "tests/mainsail_visibility_browser.mjs"
+        "tests/mainsail_visibility_browser.mjs",
+        "patches/mainsail/0007-ospath-compat.patch",
+        "scripts/package_mainsail.py",
+        "tests/test_mainsail_ospath.py",
+        "tests/mainsail_ospath_compat.cjs"
       ],
       "repeats": 0,
-      "resumption": "Read-only contract trace found nine plain function bindings and no options; measure original geometry/lifecycle behavior before independent native IntersectionObserver replacement.",
+      "resumption": "PR24 published; synthetic offline/relocated npm override proven; independent full API compatibility package and explicit authored identity accounting preserve Cypress functionality.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
       "status": "pending",

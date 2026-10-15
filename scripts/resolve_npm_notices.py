@@ -15,6 +15,7 @@ import re
 import tarfile
 from urllib.parse import unquote, urlsplit
 from license_inventory import digest, serialize, file_pin, checked_path, NOTICE
+from package_mainsail import authored_archive_bytes
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -281,7 +282,30 @@ def selection_resolution(inputs):
             record['selection_status']='replacement-notice-unverified'
             if path in replacements:
                 pin=replacements[path];artifact=file_pin(pin);archive=checked_path(pin['root'],pin['path'])
-                archive_identity(archive,selected['integrity'],name,selected['version']);used.add(path)
+                authored=config.get('authored_npm_replacements',{}).get(path)
+                selected_name=selected.get('name',name)
+                archive_identity(archive,selected['integrity'],selected_name,selected['version']);used.add(path)
+                if authored:
+                    if (selected_name,selected['version'],selected.get('resolved')) != (
+                            authored['name'],authored['version'],'file:'+authored['archive_path']):
+                        raise ValueError('Authored replacement selected identity mismatch')
+                    source_pin=pin.get('authored_source')
+                    if not source_pin: raise ValueError('Authored replacement source evidence required')
+                    record['authored_manifest']=file_pin(source_pin)
+                    manifest=checked_path(source_pin['root'],source_pin['path'])
+                    source_manifest=json.loads(manifest.read_text())
+                    if (manifest.name!='package.json' or
+                            source_manifest.get('devDependencies',{}).get('ospath')!='file:'+authored['archive_path'] or
+                            source_manifest.get('overrides',{}).get('cypress',{}).get('ospath')!='$ospath'):
+                        raise ValueError('Authored replacement Cypress manifest override mismatch')
+                    source=manifest.parent
+                    expected=authored_archive_bytes(source,authored)
+                    if digest(expected)!=authored['archive_sha256'] or archive.read_bytes()!=expected:
+                        raise ValueError('Authored replacement source/archive mismatch')
+                    record['authored_replacement']=dict(name=selected_name,version=selected['version'],
+                        source_directory=authored['source_directory'],files=authored['files'])
+                elif selected_name!=name:
+                    raise ValueError('Distinct replacement identity requires explicit authored source pins')
                 with tarfile.open(archive) as tar:
                     for member in tar:
                         if not member.isdir() and NOTICE.match(PurePosixPath(member.name).name):
@@ -291,9 +315,11 @@ def selection_resolution(inputs):
                                 sha256=digest(raw),text=raw.decode('utf-8')))
                 if not record['replacement_notices']: raise ValueError('Replacement archive lacks actual embedded notice text')
                 record['replacement_archive']=artifact
-                record['selection_status']='replaced-by-notice-bearing-supplier-release'
+                record['selection_status']=('replaced-by-source-bound-authored-package' if authored else
+                                            'replaced-by-notice-bearing-supplier-release')
         record['selected_notice_gap']=(not notice and record['selection_status'] not in
-            ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release')) or record['selection_status']=='replacement-notice-unverified'
+            ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release',
+             'replaced-by-source-bound-authored-package')) or record['selection_status']=='replacement-notice-unverified'
         records.append(record)
     if used!=set(replacements): raise ValueError('Unused replacement notice evidence')
     return dict(format_version=1,scope='historical-notice-facts-and-current-selection',
@@ -303,7 +329,7 @@ def selection_resolution(inputs):
         coverage=dict(historical_records=len(records),historical_notice_resolved=sum(bool(p['path'] in resolved) for p in records),
             historical_notice_unresolved=sum(p['path'] not in resolved for p in records),
             selected_dependencies=len(lock['packages'])-1,
-            measured_selection_remediations=sum(p['selection_status'] in ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release') for p in records),
+            measured_selection_remediations=sum(p['selection_status'] in ('removed-from-selected-lock','replaced-by-notice-bearing-supplier-release','replaced-by-source-bound-authored-package') for p in records),
             remaining_selected_notice_gaps=sum(bool(p['selected_notice_gap']) for p in records)),
         limitations=['Removed or replaced packages retain their original unresolved author-notice facts.',
                      'Selection accounting does not qualify all installed software or establish redistribution permission.'])
