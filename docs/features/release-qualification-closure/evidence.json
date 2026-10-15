@@ -12039,6 +12039,603 @@
     "Two public GitHub comparison responses used existing CLI authentication after anonymous API rate limit. No credentials inspected; public project corresponding-source qualification remains anonymous.",
     "Private raw inventories/images/logs retained outside repository; public evidence contains software/package metadata only."
   ],
+  "ospath_continuation": {
+    "accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 8,
+      "remaining_selected_notice_gaps": 2,
+      "selected_dependencies": 897
+    },
+    "agents": [
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "thread": "/root/ospath_compat_implement"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "default low",
+        "role": "project_researcher",
+        "thread": "/root/ospath_remediation_trace"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "pinned medium",
+        "role": "project_planner",
+        "thread": "/root/ospath_remediation_design"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "default low",
+        "result": "Previous parent versions rejected: unresolved declaration imports and symlink copy fix lost",
+        "role": "project_researcher",
+        "thread": "/root/humanfs_types_contract"
+      }
+    ],
+    "allowance": {
+      "cumulative_conservative_charge_bytes": 15032385536,
+      "cumulative_conservative_charge_process_seconds": 6500,
+      "limit_bytes": 16106127360,
+      "limit_process_seconds": 12600
+    },
+    "code_commit": "6635a45d4b0c9e94f40c322c25a8e0bf62d45bdf",
+    "failed_attempts": [
+      "Initial scratch omitted baseline lock: preparation failed before npm; immutable previous lock supplied",
+      "Scoped relative tar override failed actual npm lock generation at Cypress-relative path despite earlier synthetic success",
+      "One diagnosed stale-record removal repair failed same path; approach stopped",
+      "Root-anchored graph passed with fresh cache; raw npm metadata normalization exceeded intended supplier delta; raw file retained and unrelated libc/dev/peer/optional metadata preserved as prior slices"
+    ],
+    "limitations": [
+      "Cypress interactive launch smoke observes window only; no interactive click workflow",
+      "Fixture app runs disconnected; no printer/camera/physical qualification",
+      "Two selected notice gaps remain; original69 missing-notice facts and60 exact author notices retained",
+      "Cypress runner downloaded by pinned official CLI; archive hash not captured, installed executable identity recorded",
+      "No full current selected-software release qualification or legal compliance claim"
+    ],
+    "private_artifact_root": "/home/drew/.sv08-release-closure-20261015",
+    "receipts": {
+      "cypress-binary-install-receipt.json": {
+        "cache": "/home/drew/.sv08-release-closure-20261015/cypress-15.18.0-cache",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "install"
+        ],
+        "elapsed_seconds": 15.047214146936312,
+        "exit": 0,
+        "scope": "disposable acceptance runner only; no host installation"
+      },
+      "cypress-binary-verify-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "verify"
+        ],
+        "elapsed_seconds": 1.7177890380844474,
+        "exit": 0
+      },
+      "cypress-open-baseline/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "open",
+          "--e2e",
+          "--project",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source",
+          "--browser",
+          "electron"
+        ],
+        "elapsed_seconds": 1.04367358610034,
+        "limitation": "interactive runner launch smoke only; no interactive click workflow",
+        "passed": true,
+        "window_observed": true
+      },
+      "cypress-open-candidate/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/cypress/bin/cypress",
+          "open",
+          "--e2e",
+          "--project",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source",
+          "--browser",
+          "electron"
+        ],
+        "elapsed_seconds": 1.041221836116165,
+        "limitation": "interactive runner launch smoke only; no interactive click workflow",
+        "passed": true,
+        "window_observed": true
+      },
+      "cypress-ospath-baseline/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/node_modules/cypress/bin/cypress",
+          "run",
+          "--browser",
+          "electron",
+          "--headless",
+          "--spec",
+          "cypress/e2e/dashboard.cy.ts",
+          "--config",
+          "baseUrl=http://localhost:4173,video=false,screenshotsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-baseline/screenshots,downloadsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-baseline/downloads"
+        ],
+        "elapsed_seconds": 6.8373708568979055,
+        "exit": 0,
+        "scope": "unchanged existing Cypress dashboard assertion against built app; isolated loopback namespace"
+      },
+      "cypress-ospath-candidate/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/cypress/bin/cypress",
+          "run",
+          "--browser",
+          "electron",
+          "--headless",
+          "--spec",
+          "cypress/e2e/dashboard.cy.ts",
+          "--config",
+          "baseUrl=http://localhost:4173,video=false,screenshotsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-candidate/screenshots,downloadsFolder=/home/drew/.sv08-release-closure-20261015/cypress-ospath-candidate/downloads"
+        ],
+        "elapsed_seconds": 10.886338999960572,
+        "exit": 0,
+        "scope": "unchanged existing Cypress dashboard assertion against built app; isolated loopback namespace"
+      },
+      "cypress-runner-identity.json": {
+        "archive_sha256": "not captured; installer removed downloaded archive",
+        "binary_sha256": "5044d7eb0c8eabcf30e3076554f9fd4bedf729cd6197a8097fdad1f62d3990c0",
+        "official_download_requested_by_pinned_npm_cli": true,
+        "qualification_scope": "disposable acceptance runner, not release payload",
+        "retained_cache_bytes": 761988304,
+        "version": "15.18.0"
+      },
+      "ospath-final-runtime-results.json": [
+        {
+          "check": "unit",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run"
+          ],
+          "elapsed_seconds": 2.227142618969083,
+          "exit": 0
+        },
+        {
+          "check": "types",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "elapsed_seconds": 6.466506022028625,
+          "exit": 0
+        },
+        {
+          "check": "loading",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "--input-type=module",
+            "-e",
+            "import assert from 'node:assert/strict';import{createRequire}from'node:module';import{readFileSync}from'node:fs';const r=createRequire(import.meta.url);const c=r.resolve('cypress/package.json');const direct=r.resolve('ospath');const indirect=r.resolve('ospath',{paths:[c]});assert.equal(direct,indirect);assert.equal(r('ospath/package.json').name,'@sv08-mainline/ospath-compat');assert.equal(typeof r('cypress').defineConfig,'function');const esm=await import('cypress');assert.equal(typeof esm.defineConfig,'function');console.log(JSON.stringify({rootAndCypressSame:direct===indirect,actualName:r('ospath/package.json').name,cjs:true,esm:true}));"
+          ],
+          "elapsed_seconds": 0.5206993189640343,
+          "exit": 0
+        }
+      ],
+      "ospath-implementation/source-checks-root-anchor-final-node22.json": {
+        "errors": 0,
+        "failures": 0,
+        "node": "v22.23.2",
+        "run": 36,
+        "skipped": 0,
+        "supplier_archive": "/home/drew/.sv08-repro-license-20261013/npm/archives/0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e.tgz"
+      },
+      "ospath-inventory-delta-payload.json": {
+        "actual_payload_notices": [
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/janus-sdk.txt",
+            "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c"
+          },
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/sv08-janus-adapter-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ],
+        "changed_dependency_records": [
+          "node_modules/ospath"
+        ],
+        "coverage": {
+          "declaration_only_dependencies": 2,
+          "dependencies_with_notice_text": 895,
+          "inspected_supplier_archives": 897
+        },
+        "other_applications_unchanged": true,
+        "unchanged_dependency_records": 896,
+        "unchanged_sections": [
+          "build_tools",
+          "debian",
+          "format_version",
+          "hardware_release_qualified",
+          "legal_compliance_assessed",
+          "scope",
+          "wheels"
+        ]
+      },
+      "ospath-inventory-receipt.json": {
+        "command": [
+          "python3",
+          "scripts/license_inventory.py",
+          "--inputs",
+          "/home/drew/.sv08-release-closure-20261015/ospath-inventory-inputs.json",
+          "--output",
+          "configs/host/release-source-license-inventory.json"
+        ],
+        "elapsed_seconds": 13.828808049904183,
+        "exit": 0
+      },
+      "ospath-package-repro.json": {
+        "builds": [
+          {
+            "elapsed_seconds": 25.975144193973392,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 32.119588162982836,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "identical_packages": true,
+        "identical_reports": true,
+        "package_bytes": 2493632,
+        "package_sha256": "f92e665f83ed76cd5038ee2ba9ee1951ee207bbe2a80cbbf3ec9beebf58a915b"
+      },
+      "ospath-package-results.json": [
+        {
+          "elapsed_seconds": 25.975144193973392,
+          "exit": 0,
+          "limit": null,
+          "suffix": "a"
+        },
+        {
+          "elapsed_seconds": 32.119588162982836,
+          "exit": 0,
+          "limit": null,
+          "suffix": "b"
+        }
+      ],
+      "ospath-relocated-install-receipt.json": {
+        "authored_archive_removed_from_fresh_cache": true,
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "ci",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsed_seconds": 7.5395739718806,
+        "exit": 0,
+        "identity_and_resolution_exit": 0,
+        "original_cache_not_used": true,
+        "relocated_manifest_lock_and_archive_only": true
+      },
+      "ospath-root-anchor-idempotence.json": {
+        "elapsed_seconds": 0.6723715818952769,
+        "exit": 0,
+        "final_changed_records": [
+          "",
+          "node_modules/ospath"
+        ],
+        "fresh_cache": true,
+        "raw_generated_lock_byte_idempotent": true,
+        "unrelated_metadata_preserved": {
+          "node_modules/@parcel/watcher-linux-arm-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-musleabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/argparse": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lodash": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs/node_modules/tslib": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/yaml": {
+            "dev": {
+              "after": true,
+              "before": null
+            },
+            "optional": {
+              "after": true,
+              "before": null
+            },
+            "peer": {
+              "after": true,
+              "before": null
+            }
+          }
+        }
+      },
+      "ospath-root-anchor-lock-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "install",
+          "--package-lock-only",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "design": "required root local dependency with scoped Cypress $ospath",
+        "elapsed_seconds": 0.7217632050160319,
+        "exit": 0,
+        "fresh_cache": true
+      }
+    },
+    "source_sha256": {
+      "configs/apps/mainsail.json": "251470eeaa127493da7ba75d83403a09eefb361f6839d31c369fc1aeb8d34ef4",
+      "configs/host/npm-notice-resolution.json": "6d1eedf42686346049184f0a78918f9614eb24087e78db00f73e4fc17305e411",
+      "configs/host/release-source-license-inventory.json": "025a5fbe65069f52509e3e92a6a80eb102c3f31e5e2f78e06e2c66fdba5c066b",
+      "patches/mainsail/0007-ospath-compat.patch": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565",
+      "scripts/package_mainsail.py": "335985e28ec468408c343f844307ab4ba75d9f1ea0b45ed0d89ca17084159f6a",
+      "scripts/resolve_npm_notices.py": "3e3ada8ec34337dd47ecb3b68aea53f17fb2dc7935f9bdda4ae948d88a24b40d",
+      "tests/mainsail_ospath_compat.cjs": "e07f2e7b46395df35b038e636e1f0af300d5e193368cb8faac53de321dc7ded7",
+      "tests/test_mainsail_ospath.py": "6e0e89ad9798bc49a8b0b4de04133724cade8799071db7159f2d18e0f453a75d",
+      "tests/test_resolve_npm_notices.py": "49468ea8822d2e9d68105727f6934ea68522c0fa87f48f11175509efb5d5bf01"
+    },
+    "status": "slice validated; full goal incomplete"
+  },
   "remaining_notice_gaps": [
     {
       "name": "@humanfs/types",
