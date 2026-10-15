@@ -39,7 +39,7 @@
     },
     {
       "path": "patches/mainsail/0008-humanfs-types-compat.patch",
-      "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+      "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
     }
   ],
   "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",

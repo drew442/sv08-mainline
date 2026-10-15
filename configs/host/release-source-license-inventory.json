@@ -88,13 +88,13 @@
     },
     {
       "artifact": {
-        "bytes": 2493692,
+        "bytes": 2493762,
         "path": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
-        "sha256": "71e65c2b0e9b98256dc0213c503d351b748cd96e7421d085a73137f11a02e80b"
+        "sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50"
       },
       "classification": "project-source-build",
       "config": "configs/apps/mainsail.json",
-      "config_sha256": "ce634ae9e01402ced4200738e9c2d037bcf171ce143feba55fa6ff2b6a2c0ed5",
+      "config_sha256": "8999ed248a3f0a31b65e344d59eb9283d62e4d032768d3880fc1044d28a89df3",
       "license_status": "source-bound-notice-text-inventoried",
       "notices": [
         {
@@ -178,16 +178,16 @@
           "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
         },
         {
-          "bytes": 48633,
+          "bytes": 51332,
           "path": "patches/mainsail/0008-humanfs-types-compat.patch",
-          "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+          "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
         }
       ],
       "rebuild_evidence": [
         {
-          "bytes": 737,
-          "path": "humanfs-types-package-repro.json",
-          "sha256": "295dad4163e19b9d02982678d7b680e51470d7f28772ca9d10222167fd87852f"
+          "bytes": 1010,
+          "path": "humanfs-types-safe-package-repro.json",
+          "sha256": "defb242fc35abb9d89b820c096b464fb7f83f0653aa71b7146301e1af8880269"
         }
       ],
       "source": {

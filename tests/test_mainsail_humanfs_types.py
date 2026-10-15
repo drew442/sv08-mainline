@@ -58,6 +58,7 @@ class MainsailHumanfsTypes(unittest.TestCase):
         patch=(REPO/'patches/mainsail/0008-humanfs-types-compat.patch').read_text()
         touched={line[6:] for line in patch.splitlines() if line.startswith('+++ b/')}
         self.assertEqual(touched,{'package.json','package-lock.json','tests/humanfs-types-contract.mts',
+                         'tests/humanfs-types-contract.spec.ts',
                          *('vendor/humanfs-types-compat/'+n for n in self.spec['files'])})
 
     def test_type_only_metadata_and_deterministic_complete_archive(self):
