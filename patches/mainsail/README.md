@@ -98,3 +98,58 @@ Retire the override when a selected upstream request-progress dependency already
 uses an equivalent notice-bearing compatible throttle release. Retire the compiler
 removal when a selected upstream Mainsail manifest removes the unused declaration,
 or reassess it if upstream introduces a real caller. No upstream message was sent.
+
+## Native ESM Vitest diagnostics without stackback
+
+`0004-vitest-notice-closure.patch` follows patches 1–3 at the same upstream
+revision. The root test-runner edge selects exact upstream `vitest: "5.0.4"`.
+Its native ESM hanging-process reporter imports exact `why-is-node-running: 3.2.1`,
+whose supplier archive includes Mathias Buus's full MIT notice and has no runtime
+dependencies. This removes the former `why-is-node-running` 2.3.0 diagnostic path
+through `siginfo` and `stackback`; it preserves the actual diagnostic functionality.
+The original stackback notice gap remains a historical fact, not a relicensing.
+
+The aligned selected family is Vitest, `@vitest/mocker` and `@vitest/spy` 5.0.4.
+Vitest 5 bundles the former expect, runner, snapshot, utils and pretty-format
+packages; their separate records and unused pathe/tinyrainbow children disappear.
+Required companion updates are chai 6.3.0, es-module-lexer 2.3.2, obug 3.0.0,
+std-env 4.3.0, tinybench 6.2.2, tinyexec 1.3.1, the two runner/mocker-local
+magic-string copies 1.4.3 and runner-local picomatch 4.0.7. Magic-string requires
+sourcemap-codec 1.6.0. The root Node type range changes to `^22.0.0`, selecting
+22.20.5, to satisfy Vitest's peer range while matching the actual pinned Node 22
+runtime. Pinned Node 22.23.2 and selected Vite 8.1.2 satisfy Vitest's declared
+engine and peer ranges. Supplier metadata is retained exactly, not rewritten to
+make incompatible dependencies appear compatible.
+
+The lock-generation procedure remains the disposable archive procedure above,
+now after patches 1–3 and these two manifest edge edits. Retain original unrelated
+`libc` fields rather than npm's removals, as before. The resulting patch changes 15 supplier records
+and the root record, removes 10 records and adds no record paths. All other
+records, including production dependencies and earlier fixes, remain identical.
+The profile pins patch 4, the complete resulting lock and artifact revision 6.
+
+The [offline tests](../../tests/test_mainsail_notice_dependencies.py) enforce that
+complete delta and the exact Vitest/diagnostic SRI values. The existing historical
+accounting fixture deliberately retains its patch-3 selection so its earlier
+removal/replacement protections remain exercised. Current full-69 accounting is
+regenerated separately against the final lock and exact supplier archives.
+
+Run the [runtime regressions](../../tests/mainsail_notice_dependencies.cjs) with
+the pinned Node and a fresh installation's `node_modules` under a 40-second
+external timeout. In addition to the earlier dependency protections, this runs
+the real Vitest CLI twice against a disposable passing test: clean exit, then a
+main-process timer created after reporter initialization. The latter must report
+the supplier's tracked Timeout and fixture location through the built-in
+`hanging-process` reporter, reach Vitest's own 200ms teardown timeout, and exit
+successfully. Each child has a 15-second process bound and is reaped; the fixture
+is removed. The actual unchanged upstream unit suite and coordinator-owned clean
+package builds/startup checks provide compatibility and repeatability evidence;
+source tests alone do not establish these outcomes or release qualification.
+
+Primary upstream sources: the exact [Vitest 5.0.4 supplier archive](https://registry.npmjs.org/vitest/-/vitest-5.0.4.tgz)
+and [why-is-node-running 3.2.1 supplier archive](https://registry.npmjs.org/why-is-node-running/-/why-is-node-running-3.2.1.tgz).
+Their package metadata, native reporter implementation and embedded notice were
+inspected at this continuation. No supplier bytes, upstream gitlink or license
+wording change. Retire this patch when the selected upstream Mainsail runner
+already provides the compatible native ESM diagnostic dependency path. No upstream
+message has been sent.

@@ -3,9 +3,9 @@
     "historical_notice_resolved": 60,
     "historical_notice_unresolved": 9,
     "historical_records": 69,
-    "measured_selection_remediations": 2,
-    "remaining_selected_notice_gaps": 7,
-    "selected_dependencies": 931
+    "measured_selection_remediations": 3,
+    "remaining_selected_notice_gaps": 6,
+    "selected_dependencies": 921
   },
   "format_version": 1,
   "historical_inventory_sha256": "6d8011a9da17b46fcf5cb275c9278c14e1600293fe3d82d126b93fa0b4729d41",
@@ -798,6 +798,7 @@
       "selection_status": "retained"
     },
     {
+      "equivalent_paths": [],
       "historical_notice_status": "unresolved-author-notice",
       "name": "stackback",
       "original_archive_sha256": "3e663c82d1ccf9748ed446b648ec21a7dd6c5895ecf4a95310a60a320ca55858",
@@ -805,9 +806,9 @@
       "original_version": "0.0.2",
       "path": "node_modules/stackback",
       "replacement_notices": [],
-      "selected_notice_gap": true,
-      "selected_version": "0.0.2",
-      "selection_status": "retained"
+      "selected_notice_gap": false,
+      "selected_version": null,
+      "selection_status": "removed-from-selected-lock"
     },
     {
       "historical_notice_status": "unresolved-author-notice",
@@ -818,7 +819,7 @@
       "path": "node_modules/throttleit",
       "replacement_archive": {
         "bytes": 2250,
-        "path": "a4c865462b696befbd8c3dad7480a0b32ecdd83ae7b02b47ffa65f092167e875",
+        "path": "archives/a4c865462b696befbd8c3dad7480a0b32ecdd83ae7b02b47ffa65f092167e875.tgz",
         "sha256": "a4c865462b696befbd8c3dad7480a0b32ecdd83ae7b02b47ffa65f092167e875"
       },
       "replacement_notices": [
@@ -859,9 +860,9 @@
   ],
   "scope": "historical-notice-facts-and-current-selection",
   "selected_lock": {
-    "bytes": 555501,
+    "bytes": 550107,
     "path": "package-lock.json",
-    "sha256": "6165f6d4bcb19aac467472b95e323a0e41fb2d935dcee44d8b80c0dcad6f3d49"
+    "sha256": "302ec0772499c7be16d51f53488e7ed2cdaad936fd9bb959cddbde1eb4378932"
   },
   "source_patches": [
     {
@@ -875,6 +876,10 @@
     {
       "path": "patches/mainsail/0003-notice-dependency-closure.patch",
       "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+    },
+    {
+      "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+      "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
     }
   ],
   "supplemental_notices_sha256": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"

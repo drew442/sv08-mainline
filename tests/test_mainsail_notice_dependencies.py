@@ -40,6 +40,9 @@ class MainsailNoticeDependencies(unittest.TestCase):
             candidate = REPO/patch['path']
             if sha(candidate) != patch['sha256']:
                 raise AssertionError('Source patch pin mismatch')
+            if index == 3:
+                cls.vitest_before_manifest = json.loads((cls.source/'package.json').read_text())
+                cls.vitest_before_lock = json.loads((cls.source/'package-lock.json').read_text())
             if index == 2:
                 cls.before_manifest = json.loads((cls.source/'package.json').read_text())
                 cls.before_lock = json.loads((cls.source/'package-lock.json').read_text())
@@ -51,8 +54,8 @@ class MainsailNoticeDependencies(unittest.TestCase):
 
     def test_exact_patches_and_final_lock_pin(self):
         self.assertEqual(sha(self.source/'package-lock.json'),self.config['patched_package_lock_sha256'])
-        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-5')
-        self.assertEqual(len(self.config['source_patches']),3)
+        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-6')
+        self.assertEqual(len(self.config['source_patches']),4)
         self.assertEqual(self.lock['packages']['node_modules/js-yaml']['version'],'4.3.2')
         self.assertEqual(self.lock['packages']['node_modules/nanoid']['version'],'3.3.18')
         self.assertIn('manifestTransforms',(self.source/'vite.config.ts').read_text())
@@ -61,11 +64,14 @@ class MainsailNoticeDependencies(unittest.TestCase):
         before = json.loads(json.dumps(self.before_manifest))
         before['devDependencies'].pop('vue-template-compiler')
         before['overrides']['request-progress'] = {'throttleit':'2.1.0'}
+        self.assertEqual(self.vitest_before_manifest,before)
+        before['devDependencies']['vitest'] = '5.0.4'
+        before['devDependencies']['@types/node'] = '^22.0.0'
         self.assertEqual(self.manifest,before)
         self.assertNotIn('vue-template-compiler',self.lock['packages']['']['devDependencies'])
 
     def test_only_expected_supplier_lock_records_change(self):
-        before = self.before_lock['packages']; after = self.lock['packages']
+        before = self.before_lock['packages']; after = self.vitest_before_lock['packages']
         self.assertEqual(set(before)-set(after),{'node_modules/vue-template-compiler','node_modules/de-indent','node_modules/he'})
         self.assertEqual(set(after)-set(before),set())
         self.assertEqual({p for p in set(before)&set(after) if before[p]!=after[p]}, {'','node_modules/throttleit'})
@@ -81,6 +87,43 @@ class MainsailNoticeDependencies(unittest.TestCase):
             self.assertNotIn('vue-template-compiler',package.get('dependencies',{}))
             self.assertNotIn('de-indent',package.get('dependencies',{}))
 
+    def test_exact_upstream_vitest_family_delta(self):
+        before = self.vitest_before_lock['packages']; after = self.lock['packages']
+        removed = {'@vitest/expect', '@vitest/pretty-format', '@vitest/runner',
+                   '@vitest/snapshot', '@vitest/snapshot/node_modules/magic-string',
+                   '@vitest/utils', 'pathe', 'siginfo', 'stackback', 'tinyrainbow'}
+        # Vitest 5 bundles several former family packages into its distribution.
+        self.assertEqual(set(before)-set(after), {'node_modules/'+p for p in removed})
+        self.assertEqual(set(after)-set(before), set())
+        versions = {
+            '@jridgewell/sourcemap-codec':'1.6.0', '@types/node':'22.20.5',
+            '@vitest/mocker':'5.0.4', '@vitest/spy':'5.0.4',
+            '@vitest/mocker/node_modules/magic-string':'1.4.3',
+            'chai':'6.3.0', 'es-module-lexer':'2.3.2', 'obug':'3.0.0',
+            'std-env':'4.3.0', 'tinybench':'6.2.2', 'tinyexec':'1.3.1',
+            'vitest':'5.0.4', 'vitest/node_modules/magic-string':'1.4.3',
+            'vitest/node_modules/picomatch':'4.0.7', 'why-is-node-running':'3.2.1',
+        }
+        self.assertEqual({p for p in before.keys() & after.keys() if before[p] != after[p]},
+                         {''} | {'node_modules/'+p for p in versions})
+        for name, version in versions.items():
+            record = after['node_modules/'+name]
+            self.assertEqual(record['version'],version)
+            self.assertEqual(record['resolved'],f'https://registry.npmjs.org/{name.split("node_modules/")[-1]}/-/{name.split("/")[-1]}-{version}.tgz')
+            self.assertTrue(record['integrity'].startswith('sha512-'))
+        vitest = after['node_modules/vitest']
+        self.assertEqual(vitest['integrity'], 'sha512-z0WxZRV2Sg48wF0FSgMq3TFG8JS38/Qr96vZVZdX6+Em9raQTvnXQvdTFJe2m3rfyJnEHeHQ/snceIdi8D1pVg==')
+        self.assertEqual(vitest['dependencies']['why-is-node-running'],'3.2.1')
+        self.assertEqual(vitest['peerDependencies']['vite'],'^6.4.0 || ^7.0.0 || ^8.0.0')
+        why = after['node_modules/why-is-node-running']
+        self.assertEqual(why['integrity'], 'sha512-Tb2FUhB4vUsGQlfSquQLYkApkuPAFQXGFzxWKHHumVz2dK+X1RUm/HnID4+TfIGYJ1kTcwOaCk/buYCEJr6YjQ==')
+        self.assertEqual(why.get('dependencies',{}),{})
+        for record in after.values():
+            self.assertNotIn('stackback',record.get('dependencies',{}))
+        root = json.loads(json.dumps(before['']))
+        root['devDependencies'].update({'vitest':'5.0.4','@types/node':'^22.0.0'})
+        self.assertEqual(after[''],root)
+
     def test_historical_accounting_keeps_removed_and_replaced_license_facts(self):
         with tempfile.TemporaryDirectory(prefix='notice-accounting-') as temporary:
             fixture=Path(temporary);(fixture/'configs/apps').mkdir(parents=True)
@@ -90,7 +133,7 @@ class MainsailNoticeDependencies(unittest.TestCase):
                 for name,raw in [('package/package.json',b'{"name":"throttleit","version":"2.1.0"}'),
                                  ('package/license',b'Author notice text retained exactly in disposable fixture')]:
                     member=tarfile.TarInfo(name);member.size=len(raw);tar.addfile(member,io.BytesIO(raw))
-            selected=json.loads(json.dumps(self.lock))
+            selected=json.loads(json.dumps(self.vitest_before_lock))
             selected['packages']['node_modules/throttleit']['integrity']='sha512-'+base64.b64encode(hashlib.sha512(archive.read_bytes()).digest()).decode()
             lock=fixture/'package-lock.json';lock.write_text(json.dumps(selected))
             config=json.loads(json.dumps(self.config));config['patched_package_lock_sha256']=sha(lock)

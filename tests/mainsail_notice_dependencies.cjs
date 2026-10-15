@@ -4,6 +4,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const os = require('node:os');
+const { spawnSync } = require('node:child_process');
+const { pathToFileURL } = require('node:url');
 const { createRequire } = require('node:module');
 const { EventEmitter } = require('node:events');
 const modules = path.resolve(process.argv[2]);
@@ -91,3 +94,46 @@ const compiled = compiler.compileTemplate({ source: '<div>{{ value }}</div>', fi
 assert.deepEqual(compiled.errors, []);
 assert.match(compiled.code, /value/);
 console.log('Notice dependency API, request-progress and Vue2 compiler regressions passed');
+
+// Exercise the actual CLI and built-in reporter, including its native ESM
+// why-is-node-running import. A main-process timer created after initialization
+// forces Vitest's own teardown-timeout path; the child exits and is reaped.
+const vitestRoot = path.dirname(requireBuild.resolve('vitest/package.json'));
+assert.equal(requireBuild('vitest/package.json').version, '5.0.4');
+assert.equal(fs.existsSync(path.join(modules, 'stackback')), false);
+const diagnosticRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'vitest-notice-diagnostic-'));
+try {
+    const entry = pathToFileURL(path.join(vitestRoot, 'dist/index.js')).href;
+    fs.writeFileSync(path.join(diagnosticRoot, 'diagnostic.test.mjs'),
+        `import { test, expect } from ${JSON.stringify(entry)};\ntest('diagnostic fixture', () => expect(1).toBe(1));\n`);
+    for (const leak of [false, true]) {
+        const config = path.join(diagnosticRoot, 'diagnostic.config.mjs');
+        fs.writeFileSync(config, `export default { test: {
+            include: ['diagnostic.test.mjs'], teardownTimeout: 200,
+            reporters: ['default', 'hanging-process', {
+                onTestRunEnd() { ${leak ? 'setInterval(function noticeDiagnosticTimer() {}, 1000);' : ''} }
+            }]
+        }};`);
+        const result = spawnSync(process.execPath, [path.join(vitestRoot, 'vitest.mjs'),
+            'run', '--config', config, '--maxWorkers', '1'], {
+            cwd: diagnosticRoot, encoding: 'utf8', timeout: 15000,
+            env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' },
+        });
+        const output = (result.stdout || '') + (result.stderr || '');
+        assert.ifError(result.error);
+        assert.equal(result.signal, null, output);
+        assert.equal(result.status, 0, output);
+        assert.match(output, /1 passed/, output);
+        if (leak) {
+            assert.match(output, /close timed out after 200ms/);
+            assert.match(output, /Timeout/);
+            assert.match(output, /diagnostic\.config\.mjs/);
+            assert.doesNotMatch(output, /ERR_REQUIRE_ESM|ERR_MODULE_NOT_FOUND|Unhandled Error/);
+        } else {
+            assert.doesNotMatch(output, /close timed out|There are .*handle/);
+        }
+    }
+} finally {
+    fs.rmSync(diagnosticRoot, { recursive: true, force: true });
+}
+console.log('Vitest native ESM hanging-process reporter and CLI timeout/cleanup regressions passed');
