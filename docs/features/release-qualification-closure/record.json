@@ -49,7 +49,7 @@
   ],
   "tasks": [
     {
-      "blocker": "PR26 published with strict type compatibility and final reproducible packages. Full audit:68/69 original gaps addressed; gcodeviewer3.7.18 LGPL-3.0-or-later author notice remains unavailable. Prepared exact-version maintainer request awaits explicit posting authorization; no external message sent. Preserve all source/evidence; no fabricated grant or weakened gate.",
+      "blocker": null,
       "checks": [
         "packaging",
         "npm",
@@ -61,11 +61,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "project_implementer",
-        "run": "e5f0a6c1df4c422397e4d74f55c87ff0",
-        "session": "release-humanfs-types-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -114,13 +110,15 @@
         "tests/mainsail_ospath_compat.cjs",
         "patches/mainsail/0008-humanfs-types-compat.patch",
         "tests/test_mainsail_humanfs_types.py",
-        "tests/mainsail_humanfs_types_contract.ts"
+        "tests/mainsail_humanfs_types_contract.ts",
+        "configs/host/npm-standard-license-texts.json",
+        "docs/licensing/standard/LGPL-3.0-or-later.txt"
       ],
       "repeats": 0,
-      "resumption": "PR25 complete; retain current humanfs runtimes and substitute independently authored strict structural declarations with source-bound local package.",
+      "resumption": "Owner explicitly accepts the package LGPL-3.0-or-later declaration plus unmodified standard SPDX license text for gcodeviewer; retain provenance distinction and original missing embedded-notice facts. No maintainer outreach required.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
