@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "030decf6bdede4243a910bc01a8beec639271e382d7251fae3e76ecc5bf3b4c3",
-    "rationale": "Same owner goal, explicit recovery provenance test ownership and evidence-directed repair recorded; no authority expansion.",
+    "proposal_sha256": "aee8ae21c4c53c4a0cf687a14d8f6da4b5e89a34e9cb1d00c60afcbb7403f15d",
+    "rationale": "Necessary fresh-root finalization and tests preserve all existing protections and provide truthful provenance for owner-requested current image.",
     "reference": "docs/features/current-release-qualification/owner-request.md",
     "reference_sha256": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3",
     "requirements_sha256": {
@@ -13,9 +13,9 @@
       "docs/development/release-packaging.md": "7bf36aa87a19b79926f2bd4879e4c4ad8109f5fb9f641f6cab50d4cb72087ba5",
       "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
     },
-    "scope_sha256": "478377bd01defa782c31ec4c66efc33f668ec300fc03d5731f4e4867e85414b1",
+    "scope_sha256": "dcbaf861d388aedb3dcaa6465182dd0de4dccdddb866c36e172713a6481d6709",
     "session": "current-release-20261015",
-    "source_commit": "69e8dd7e6ff7f779a2fcbf83a5d20751df2eef4a"
+    "source_commit": "ac3d832e5c7a817a06caed802d64575497dd17ee"
   },
   "checks": [
     {
@@ -56,7 +56,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Source trace confirms no supported fresh-host finalization entrypoint: existing helper requires a previously finalized root receipt. Add truthful fresh-root mode/tests rather than invent a historical receipt; package build still running.",
+      "blocker": null,
       "checks": [
         "composition",
         "release-gate",
@@ -69,11 +69,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "c498782469f14c49927da1260d5e4d9d",
-        "session": "current-release-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "configs/apps/",
         "configs/host-os/",
@@ -107,10 +103,10 @@
         "docs/hardware/host-board-image.md"
       ],
       "repeats": 0,
-      "resumption": "Owner-authorized complete-image scope includes necessary recovery provenance builder repair; tests ownership explicitly added, base and intake still running.",
+      "resumption": "Same authorized complete-image goal; fresh-host finalization ownership added based on source evidence. Running package process retained.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
