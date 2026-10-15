@@ -1,68 +1,87 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "6c957995ab7cd2e614bfff00812436a1f9018c08f0231633dad9a1a961b0486d",
+    "rationale": "Owner explicitly requested complete current image qualification; reversible source and disposable execution only.",
+    "reference": "docs/features/current-release-qualification/owner-request.md",
+    "reference_sha256": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/development/release-packaging.md": "7bf36aa87a19b79926f2bd4879e4c4ad8109f5fb9f641f6cab50d4cb72087ba5",
+      "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
+    },
+    "scope_sha256": "8cae8b247536d7ac4ca35fea93d8848e37ee6014c340d6bb2423552f1fd3f5cc",
+    "session": "current-release-20261015",
+    "source_commit": "1ce4527e7d3865daeb66dcfb897c8e31b364a910"
+  },
+  "checks": [
+    {
+      "description": "Actual complete current A/B and recovery composition with selected application payloads and source-bound hashes.",
+      "environment": "offline",
+      "id": "composition"
+    },
+    {
+      "description": "Default selected-software actual-image qualification passes and exact evidence exports are verified.",
+      "environment": "offline",
+      "id": "release-gate"
+    },
+    {
+      "description": "Altered/incomplete inputs refuse qualification without weakening protections.",
+      "environment": "offline",
+      "id": "refusal"
+    },
+    {
+      "description": "Sanitized source-bound evidence and changes published for review; limitations explicit.",
+      "environment": "offline",
+      "id": "publication"
+    }
+  ],
+  "created": "2026-10-15",
+  "decision": null,
   "format_version": 2,
   "id": "current-release-qualification",
   "kind": "feature",
-  "title": "Qualify a complete current image through the software release gate",
-  "author": "root/coordinator",
-  "created": "2026-10-15",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/current-release-qualification/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/current-release-qualification/owner-request.md",
     "docs/development/release-packaging.md",
     "docs/development/public-source-releases.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "composition",
-      "environment": "offline",
-      "description": "Actual complete current A/B and recovery composition with selected application payloads and source-bound hashes."
-    },
-    {
-      "id": "release-gate",
-      "environment": "offline",
-      "description": "Default selected-software actual-image qualification passes and exact evidence exports are verified."
-    },
-    {
-      "id": "refusal",
-      "environment": "offline",
-      "description": "Altered/incomplete inputs refuse qualification without weakening protections."
-    },
-    {
-      "id": "publication",
-      "environment": "offline",
-      "description": "Sanitized source-bound evidence and changes published for review; limitations explicit."
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Build, qualify and publish complete current software image evidence",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "composition",
         "release-gate",
         "refusal",
         "publication"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "configs/apps/",
+        "configs/host-os/",
+        "configs/images/",
+        "patches/",
+        "runtime/",
+        "scripts/project_license.py",
+        "scripts/qualify_project_source.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/stage_printer_ui.py",
+        "upstream-lock.json"
+      ],
       "owned_paths": [
         "docs/features/current-release-qualification/evidence.md",
         "docs/features/current-release-qualification/evidence.json",
@@ -79,18 +98,15 @@
         "tests/test_assemble_board_diagnostic.py",
         "docs/development/release-packaging.md"
       ],
-      "input_paths": [
-        "configs/apps/",
-        "configs/host-os/",
-        "configs/images/",
-        "patches/",
-        "runtime/",
-        "scripts/project_license.py",
-        "scripts/qualify_project_source.py",
-        "scripts/stage_admin_ui.py",
-        "scripts/stage_printer_ui.py",
-        "upstream-lock.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
+      "status": "pending",
+      "title": "Build, qualify and publish complete current software image evidence",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Qualify a complete current image through the software release gate"
 }
