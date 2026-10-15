@@ -57,11 +57,88 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "packaging",
+          "document": "docs/features/release-qualification-closure/evidence.json",
+          "document_sha256": "e803913a10a796a62409e7cc002693f4c312216cd1bed13ddda09cd3c651fc46",
+          "environment": "offline",
+          "limitations": "Development evidence only; full current image/legal/hardware qualification not claimed. Published PR27, no merge/deployment.",
+          "method": "48 focused tests, actual current project-source fixture acceptance, retained historical full-image refusal and standard export/tamper fixture checks.",
+          "profile": null,
+          "source_commit": "4ba99dbc349286fee3ef92c4cf6cddb25e9549b4",
+          "source_sha256": {
+            "configs/host/npm-notice-resolution.json": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf",
+            "configs/host/npm-standard-license-texts.json": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c",
+            "configs/host/release-source-license-inventory.json": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+            "docs/licensing/standard/LGPL-3.0-or-later.txt": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+            "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+            "scripts/license_inventory.py": "9c56db762cae38dd4db1b4203354fde15a3dfd1b93df7a476b9b208354ea54c8",
+            "scripts/prepare_release.py": "b4e8cb6be9314096e72db859474cfcbf0fe1912b81d64e2169c3b08a999bfd33",
+            "scripts/resolve_npm_notices.py": "e0fc0ec77c44c368aa60bd2c0b0167c295b25a8f46ada35bf0cc6867b1b5a248",
+            "tests/test_license_inventory.py": "aa771d926d81e8205b1577a87518cd723e9efd1ade9e1e5dc081e378b50c30eb",
+            "tests/test_prepare_release.py": "a3686e322e92a1ee29c18f16843f4543e136bde83d9c37fe00a647ec298b615c",
+            "tests/test_resolve_npm_notices.py": "8706ba2195b536f145d556124b3c0aa6f261c3df34cf41a0d078f16ab95559ca"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "npm",
+          "document": "docs/features/release-qualification-closure/evidence.json",
+          "document_sha256": "e803913a10a796a62409e7cc002693f4c312216cd1bed13ddda09cd3c651fc46",
+          "environment": "offline",
+          "limitations": "Development evidence only; full current image/legal/hardware qualification not claimed. Published PR27, no merge/deployment.",
+          "method": "Actual897-archive inventory and all69 selected accounting exit0; exact original archive and canonical bytes verified; original notice facts preserved.",
+          "profile": null,
+          "source_commit": "4ba99dbc349286fee3ef92c4cf6cddb25e9549b4",
+          "source_sha256": {
+            "configs/host/npm-notice-resolution.json": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf",
+            "configs/host/npm-standard-license-texts.json": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c",
+            "configs/host/release-source-license-inventory.json": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+            "docs/licensing/standard/LGPL-3.0-or-later.txt": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+            "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+            "scripts/license_inventory.py": "9c56db762cae38dd4db1b4203354fde15a3dfd1b93df7a476b9b208354ea54c8",
+            "scripts/prepare_release.py": "b4e8cb6be9314096e72db859474cfcbf0fe1912b81d64e2169c3b08a999bfd33",
+            "scripts/resolve_npm_notices.py": "e0fc0ec77c44c368aa60bd2c0b0167c295b25a8f46ada35bf0cc6867b1b5a248",
+            "tests/test_license_inventory.py": "aa771d926d81e8205b1577a87518cd723e9efd1ade9e1e5dc081e378b50c30eb",
+            "tests/test_prepare_release.py": "a3686e322e92a1ee29c18f16843f4543e136bde83d9c37fe00a647ec298b615c",
+            "tests/test_resolve_npm_notices.py": "8706ba2195b536f145d556124b3c0aa6f261c3df34cf41a0d078f16ab95559ca"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "image",
+          "document": "docs/features/release-qualification-closure/evidence.json",
+          "document_sha256": "e803913a10a796a62409e7cc002693f4c312216cd1bed13ddda09cd3c651fc46",
+          "environment": "offline",
+          "limitations": "Development evidence only; full current image/legal/hardware qualification not claimed. Published PR27, no merge/deployment.",
+          "method": "Reuse unchanged inspector source and actual historical final-image read-only evidence; exact current project-source inspection also passes.",
+          "profile": null,
+          "source_commit": "4ba99dbc349286fee3ef92c4cf6cddb25e9549b4",
+          "source_sha256": {
+            "configs/host/npm-notice-resolution.json": "fceb6a8d890d401b48145a3da659fbe0b1b3365a79dc16ae80520ea80ef24cdf",
+            "configs/host/npm-standard-license-texts.json": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c",
+            "configs/host/release-source-license-inventory.json": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48",
+            "docs/licensing/standard/LGPL-3.0-or-later.txt": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+            "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+            "scripts/license_inventory.py": "9c56db762cae38dd4db1b4203354fde15a3dfd1b93df7a476b9b208354ea54c8",
+            "scripts/prepare_release.py": "b4e8cb6be9314096e72db859474cfcbf0fe1912b81d64e2169c3b08a999bfd33",
+            "scripts/resolve_npm_notices.py": "e0fc0ec77c44c368aa60bd2c0b0167c295b25a8f46ada35bf0cc6867b1b5a248",
+            "tests/test_license_inventory.py": "aa771d926d81e8205b1577a87518cd723e9efd1ade9e1e5dc081e378b50c30eb",
+            "tests/test_prepare_release.py": "a3686e322e92a1ee29c18f16843f4543e136bde83d9c37fe00a647ec298b615c",
+            "tests/test_resolve_npm_notices.py": "8706ba2195b536f145d556124b3c0aa6f261c3df34cf41a0d078f16ab95559ca"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "d9965e9e7abc47a288f586f819ac288a",
+        "session": "release-standard-lgpl-20261015"
+      },
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -118,9 +195,17 @@
       "resumption": "Owner explicitly accepts the package LGPL-3.0-or-later declaration plus unmodified standard SPDX license text for gcodeviewer; retain provenance distinction and original missing embedded-notice facts. No maintainer outreach required.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "pending",
+      "status": "validated",
       "title": "Implement and validate release and inventory closure",
-      "validation": null,
+      "validation": {
+        "actor": "project_implementer",
+        "basis_sha256": "ac06469552457970bc3db18fc2fef9a4fe39fc277c27f6dc58d51ca5d05f4243",
+        "evidence_sha256": "5dbf57d8dcf90d33a545f564b5f47e1e62e1864907267aae8dbd42b15feaee16",
+        "outcome": "passed",
+        "rationale": "Full authorized source objective implemented and inspected: actual897-archive inventory and69 accounting pass with owner-approved exact standard terms;48 focused tests and actual current project-source profile pass; unchanged historical final-image and app evidence reused with limits. Published PR27; no merge/deployment.",
+        "session": "release-standard-lgpl-20261015",
+        "source_commit": "4ba99dbc349286fee3ef92c4cf6cddb25e9549b4"
+      },
       "verification": null
     }
   ],
