@@ -56,7 +56,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Recovery builder lacks release provenance input needed by complete-image source gate; extend in-scope recovery test ownership for repair. Payload fix04b7462 frozen/pushed, base/intake handles retained.",
       "checks": [
         "composition",
         "release-gate",
@@ -69,7 +69,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "0899e40c85bc42289f815d1b1b9b0ae4",
+        "session": "current-release-20261015"
+      },
       "input_paths": [
         "configs/apps/",
         "configs/host-os/",
@@ -96,13 +100,14 @@
         "tests/test_image_license_inventory.py",
         "tests/test_license_inventory.py",
         "tests/test_assemble_board_diagnostic.py",
-        "docs/development/release-packaging.md"
+        "docs/development/release-packaging.md",
+        "tests/test_recovery_image.py"
       ],
       "repeats": 0,
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "pending",
+      "status": "blocked",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
