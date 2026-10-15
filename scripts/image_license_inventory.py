@@ -121,7 +121,11 @@ def safe_file(root, relative):
 def tree_inventory(root):
     """Hash installed software only; never traverse data, configuration or keys."""
     result = []
-    for prefix in ('usr', 'bin', 'sbin', 'lib', 'lib64', 'var/lib/dpkg'):
+    for prefix in ('usr', 'bin', 'sbin', 'lib', 'lib64', 'var/lib/dpkg', 'opt/sv08-mainline'):
+        if prefix.startswith('opt/') and (root/'opt').is_symlink():
+            # Never traverse an ancestor link into arbitrary opt or host data.
+            result.append(dict(path='opt',kind='symlink',target=os.readlink(root/'opt'),coverage='not-followed'))
+            continue
         base = root/prefix
         if base.is_symlink():
             # Absolute image links must never resolve against the inspector host.
@@ -199,7 +203,7 @@ def inspect_image(image, root, partition=0, image_hash=None, partition_hashes=No
     unknowns += ['Third-party corresponding-source completeness is not established.',
                  'Vendor kernel/bootloader source reproduction is not established.',
                  'Non-dpkg application license coverage requires separate source inventory.',
-                 'Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded.']
+                 'Only usr, bin/sbin/lib/lib64, opt/sv08-mainline application software and dpkg metadata are enumerated; other opt paths, configuration, credentials and data are excluded.']
     for p in parts: p['sha256'] = (partition_hashes or {}).get(p['number']) or file_hash(image,p['offset_bytes'],p['size_bytes'])
     if file_hash(image) != before: raise ValueError('Image changed during inspection')
     verified_mount(root,image,part['offset_bytes'],part['size_bytes'],'ext4')

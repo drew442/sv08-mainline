@@ -22,7 +22,7 @@ PROFILES = {'project-source': ('image','public-project-source'),
 
 
 def installed_application_bindings(inputs, roots):
-    """Compare .deb identity and actual usr payload bytes, without installing it."""
+    """Compare .deb identity and installed usr/opt software, without installing it."""
     bindings=[]
     for config,record in sorted(inputs['applications'].items()):
         pin=record['artifact'];license_inventory.file_pin(pin)
@@ -31,7 +31,7 @@ def installed_application_bindings(inputs, roots):
         identity=subprocess.check_output(['dpkg-deb','--show','--showformat=${Package}\t${Version}\t${Architecture}',str(artifact)],
             text=True,timeout=30).split('\t')
         if len(identity)!=3: raise ValueError('Invalid Debian application identity')
-        payload={}; total=0; excluded=0
+        payload={}; total=0; excluded=0; non_usr=0
         with subprocess.Popen(['dpkg-deb','--fsys-tarfile',str(artifact)],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL) as process:
             try:
                 with tarfile.open(fileobj=process.stdout,mode='r|') as archive:
@@ -39,7 +39,8 @@ def installed_application_bindings(inputs, roots):
                         name=member.name.removeprefix('./');relative=PurePosixPath(name)
                         if relative.is_absolute() or '..' in relative.parts: raise ValueError('Unsafe application payload path')
                         if member.isdir(): continue
-                        if not name.startswith('usr/'):
+                        if not name.startswith('usr/'): non_usr+=1
+                        if not name.startswith(('usr/', 'opt/sv08-mainline/')):
                             excluded+=1;continue
                         if name in payload: raise ValueError('Duplicate application payload path')
                         if member.isfile():
@@ -53,7 +54,7 @@ def installed_application_bindings(inputs, roots):
                 if process.wait(timeout=30)!=0: raise ValueError('Cannot read application Debian payload')
             except BaseException:
                 process.kill();process.wait();raise
-        if not payload: raise ValueError('Application artifact lacks supported usr payload')
+        if not payload: raise ValueError('Application artifact lacks supported software payload')
         matched=[]
         for root in roots:
             packages={(p['name'],p['version'],p['architecture']) for p in root['packages']}
@@ -62,8 +63,13 @@ def installed_application_bindings(inputs, roots):
                     for name,expected in payload.items()): matched.append(root['selected_partition'])
         if not matched: raise ValueError('Application package identity/payload not found in actual image: '+config)
         bindings.append(dict(config=config,package=identity[0],version=identity[1],architecture=identity[2],
-            artifact_sha256=pin['sha256'],usr_payload_files=len(payload),matching_partitions=matched,
-            excluded_non_usr_members=excluded))
+            artifact_sha256=pin['sha256'],
+            software_payload_files=len(payload),
+            usr_payload_files=sum(name.startswith('usr/') for name in payload),
+            opt_payload_files=sum(name.startswith('opt/sv08-mainline/') for name in payload),
+            matching_partitions=matched,excluded_non_software_members=excluded,
+            # Legacy count remains literally non-usr, including supported opt.
+            excluded_non_usr_members=non_usr))
     return bindings
 
 

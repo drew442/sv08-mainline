@@ -47,10 +47,17 @@ class ReleaseTests(unittest.TestCase):
         def input_drift(*args):self.public.write_text('{}');return self.record
         with patch.object(m,'inspect_artifact',side_effect=input_drift),self.assertRaisesRegex(ValueError,'inputs changed'):self.prepare()
 
-    def deb_fixture(self):
+    def deb_fixture(self, opt=False):
         root=self.base/'deb-root';(root/'DEBIAN').mkdir(parents=True)
         (root/'DEBIAN/control').write_text('Package: example\nVersion: 1.0\nArchitecture: all\nMaintainer: Test <test@example.invalid>\nDescription: disposable test package\n')
         payload=root/'usr/bin/example';payload.parent.mkdir(parents=True);payload.write_bytes(b'exact application bytes')
+        if opt:
+            executable=root/'opt/sv08-mainline/klipper/klippy.py'
+            executable.parent.mkdir(parents=True);executable.write_bytes(b'exact main executable')
+            interpreter=root/'opt/sv08-mainline/venvs/klipper/bin/python'
+            interpreter.parent.mkdir(parents=True);interpreter.symlink_to('/usr/bin/python3')
+            for name in ('etc/example.conf','opt/private/secret','opt/sv08-mainline-other/token'):
+                excluded=root/name;excluded.parent.mkdir(parents=True,exist_ok=True);excluded.write_bytes(b'excluded')
         artifact=self.base/'example.deb'
         subprocess.run(['dpkg-deb','--build','--root-owner-group',str(root),str(artifact)],check=True,stdout=subprocess.DEVNULL)
         pin={'root':str(self.base),'path':artifact.name,'sha256':m.file_hash(artifact)}
@@ -60,6 +67,9 @@ class ReleaseTests(unittest.TestCase):
             project={'source_files':{'configs/apps/mainsail.json':m.file_hash(source_path)}},
             packages=[{'name':'example','version':'1.0','architecture':'all'}],
             files=[{'path':'usr/bin/example','kind':'file','sha256':m.file_hash(payload)}])
+        if opt:
+            from image_license_inventory import tree_inventory
+            root_record['files']=tree_inventory(root)
         return inputs,root_record
 
     def test_real_debian_installed_identity_payload_and_tamper_bindings(self):
@@ -72,6 +82,25 @@ class ReleaseTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'not found'):m.installed_application_bindings(inputs,[changed])
         (self.base/'example.deb').write_bytes(b'tampered archive')
         with self.assertRaises(ValueError):m.installed_application_bindings(inputs,[root])
+
+    def test_opt_executable_and_venv_symlink_are_bound_and_exclusions_counted(self):
+        inputs,root=self.deb_fixture(opt=True)
+        binding=m.installed_application_bindings(inputs,[root])[0]
+        self.assertEqual(binding['software_payload_files'],3)
+        self.assertEqual(binding['usr_payload_files'],1)
+        self.assertEqual(binding['opt_payload_files'],2)
+        self.assertEqual(binding['excluded_non_software_members'],3)
+        self.assertEqual(binding['excluded_non_usr_members'],5)
+        self.assertEqual(binding['matching_partitions'],[2])
+        for path,key,value in (('opt/sv08-mainline/klipper/klippy.py','sha256','b'*64),
+                               ('opt/sv08-mainline/venvs/klipper/bin/python','target','/another/python')):
+            for missing in (False,True):
+                with self.subTest(path=path,missing=missing):
+                    changed=copy.deepcopy(root)
+                    if missing:changed['files']=[f for f in changed['files'] if f['path']!=path]
+                    else:next(f for f in changed['files'] if f['path']==path)[key]=value
+                    with self.assertRaisesRegex(ValueError,'not found'):
+                        m.installed_application_bindings(inputs,[changed])
 
     def test_selected_software_fixed_checks_and_missing_failed_prerequisites(self):
         inputs,root=self.deb_fixture();record=dict(self.record,roots=[root])
