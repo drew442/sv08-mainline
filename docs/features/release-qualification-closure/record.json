@@ -1,0 +1,88 @@
+{
+  "format_version": 2,
+  "id": "release-qualification-closure",
+  "kind": "feature",
+  "title": "Release packaging, NPM notices and actual image inventory",
+  "author": "root/coordinator",
+  "created": "2026-10-15",
+  "priority": 2,
+  "proposal": "docs/features/release-qualification-closure/proposal.md",
+  "requirements": [
+    "docs/features/release-qualification-closure/owner-request.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "packaging",
+      "description": "Exact-artifact fail-closed release packaging and qualification with actual positive and negative evidence.",
+      "environment": "offline"
+    },
+    {
+      "id": "npm",
+      "description": "All69 historical NPM declaration-only entries resolved through exact-version upstream evidence without upstream license changes.",
+      "environment": "offline"
+    },
+    {
+      "id": "image",
+      "description": "Read-only actual final-image inventory, coverage/drift checks and source/image-bound evidence.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate release and inventory closure",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "packaging",
+        "npm",
+        "image"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/prepare_release.py",
+        "scripts/image_license_inventory.py",
+        "scripts/resolve_npm_notices.py",
+        "scripts/license_inventory.py",
+        "tests/test_prepare_release.py",
+        "tests/test_image_license_inventory.py",
+        "tests/test_resolve_npm_notices.py",
+        "tests/test_license_inventory.py",
+        "configs/host/npm-supplemental-notices.json",
+        "docs/licensing/npm-notices.json",
+        "docs/licensing/npm-notices.txt",
+        "docs/development/release-packaging.md",
+        "docs/features/release-qualification-closure/evidence.md",
+        "docs/features/release-qualification-closure/evidence.json"
+      ],
+      "input_paths": [
+        "scripts/project_license.py",
+        "scripts/qualify_project_source.py",
+        "scripts/build_host_image.py",
+        "scripts/package_rauc.py",
+        "configs/apps/",
+        "configs/host-os/",
+        "configs/images/",
+        "upstream-lock.json",
+        "configs/host/source-license-inventory.json"
+      ]
+    }
+  ]
+}
