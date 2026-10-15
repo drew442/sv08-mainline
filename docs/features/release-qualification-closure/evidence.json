@@ -11570,6 +11570,1055 @@
       "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
     }
   },
+  "humanfs_types_continuation": {
+    "accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 9,
+      "remaining_selected_notice_gaps": 1,
+      "selected_dependencies": 897
+    },
+    "agents": [
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "thread": "/root/humanfs_types_implement"
+      }
+    ],
+    "allowance": {
+      "continuation": "Additional1200seconds/2GiB for inert fixture regression and final fresh pair; prior usage retained, cleanup does not reset charge",
+      "cumulative_conservative_charge_bytes": 20937965568,
+      "cumulative_conservative_charge_process_seconds": 8500,
+      "limit_bytes": 21474836480,
+      "limit_process_seconds": 15600
+    },
+    "code_commit": "71b8c8a86e69c9cbb4a5c8184d4005961e6e1752",
+    "failed_or_superseded_attempts": [
+      "Initial source test incorrectly compared preserved upstream GPL LICENSE with project AGPL; fixed test to separately require original upstream and authored-package notices, changing no upstream grant",
+      "Accidental broad test discovery selected unrelated access/UI suites:15 ancestry setup errors and one browser debug-readiness assertion; retained, not acceptance. Scratch group-writable mode diagnosed and corrected; browser cause not established, no pass claimed",
+      "Initial successful revision9 pair superseded before publication; both had already completed when stop was attempted, no signal delivered; revision10 used thereafter",
+      "First revision10 pair superseded for compile-only fixture safety guard and mocked backend regression; no fixture filesystem operations were executed",
+      "Native TypeScript file invocation hit TS5112 beside project config; corrected --ignoreConfig while preserving strict and skipLibCheck=false",
+      "Intermediate patch hash origin9e986 to1afc not observable; reconciliation proves only intended fixture sections changed, all other sections byte-identical"
+    ],
+    "focused_source_checks": {
+      "log_sha256": {
+        "humanfs-types-implementation/dependency-tests.log": "126bb480b24619fe8c0a69756cafcea256d5ab6c55db7199bb5f372e286850d2",
+        "humanfs-types-implementation/ospath-tests.log": "b691a883f37bf88b2d1ed915b0d87e67ba8ee5182d7744051b27f0be27c23e7f",
+        "humanfs-types-implementation/resolver-tests.log": "a07985cb2440260564bf05563ca9310599b9e9c07fa903ab8112338c080f30b7",
+        "humanfs-types-implementation/source-tests-final.log": "12f798d582de35280538556e02f41ea450d9f14a33b75d817e9d6c042d72f967",
+        "humanfs-types-implementation/visibility-tests.log": "bcd6b90c93744c050314f3a5a06dad015de71ab3e4c49664135d60bb35c2101b"
+      },
+      "passed": 39,
+      "scope": "20 resolver,4 humanfs,6 ospath,6 notice,3 visibility; changed checks repeated after edits",
+      "unchanged_janus_supplier_evidence": "reused from exact unchanged patch5 and PR25; broad accidental discovery skipped that check without its optional environment"
+    },
+    "limitations": [
+      "One remaining selected gap: @sindarius/gcodeviewer3.7.18, declared LGPL-3.0-or-later; no author notice invented",
+      "Maintainer issue draft prepared; external posting approval pending, no upstream message sent",
+      "Interactive Cypress evidence reused from PR25, no new interactive click journey",
+      "No printer, deployment, full current-stack release or legal compliance qualification"
+    ],
+    "private_artifact_root": "/home/drew/.sv08-release-closure-20261015",
+    "receipts": {
+      "cypress-humanfs-types-candidate/receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-final-a/source/node_modules/cypress/bin/cypress",
+          "run",
+          "--browser",
+          "electron",
+          "--headless",
+          "--spec",
+          "cypress/e2e/dashboard.cy.ts",
+          "--config",
+          "baseUrl=http://localhost:4173,video=false,screenshotsFolder=/home/drew/.sv08-release-closure-20261015/cypress-humanfs-types-candidate/screenshots,downloadsFolder=/home/drew/.sv08-release-closure-20261015/cypress-humanfs-types-candidate/downloads"
+        ],
+        "elapsed_seconds": 8.270264608087018,
+        "exit": 0,
+        "scope": "unchanged existing Cypress dashboard assertion against built app; isolated loopback namespace"
+      },
+      "humanfs-runtime-preservation.json": {
+        "baseline": {
+          "eslintVersion": "10.6.0",
+          "results": [
+            {
+              "errorCount": 0,
+              "file": "good.js",
+              "messages": [],
+              "warningCount": 0
+            },
+            {
+              "errorCount": 1,
+              "file": "nested/bad.js",
+              "messages": [
+                {
+                  "column": 7,
+                  "line": 1,
+                  "message": "'unused' is assigned a value but never used.",
+                  "ruleId": "no-unused-vars"
+                }
+              ],
+              "warningCount": 0
+            }
+          ],
+          "unmatched": {
+            "message": "No files matching 'missing/**/*.js' were found.",
+            "name": "Error"
+          }
+        },
+        "candidate_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+        "eslint_behavior_identical": true,
+        "parent_files_byte_identical": 20
+      },
+      "humanfs-types-browser-evidence-reuse.json": {
+        "production_asset_files_byte_identical": 195,
+        "reused_cypress_receipt": "cypress-humanfs-types-candidate/receipt.json",
+        "source_changes": "compile-only fixture guard and unit safety test only; no package/lock/archive/runtime changes",
+        "tree_sha256": "1967aa3a1af3cf13a834691ecde39abce85e4d77c758416b69d1f44d0c05ae88"
+      },
+      "humanfs-types-final-evidence-reuse.json": {
+        "current_parent_files_identical_to_original": 20,
+        "prior_install_receipt": "humanfs-types-relocated-install-receipt.json",
+        "prior_runtime_receipt": "humanfs-runtime-preservation.json",
+        "relocated_install_inputs_byte_identical": {
+          "package-lock.json": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+          "package.json": "91a12276c2eab0d1affda4539dd1ea92316fef95b92ffa3dc88698fab19e56b9",
+          "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+          "vendor/sv08-mainline-ospath-compat-1.0.0.tgz": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2"
+        },
+        "strict_current_guarded_contract": "humanfs-types-safe-runtime-results.json"
+      },
+      "humanfs-types-implementation/inert-guard-source-receipt.json": {
+        "executed_fixture": false,
+        "guard": "never-invoked function; all previous assertions and calls preserved verbatim after removing indentation",
+        "guarded_fixture_sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+        "original_fixture_sha256": "ecd81c06183a32a60cbcc089a84481128c7885f1e924058919bff17fe7056240",
+        "patch_sha256": "9e986702794333dd962aebc577833409c77956855f45d3afab0189b454c48c59"
+      },
+      "humanfs-types-implementation/inert-probe-result.json": {
+        "fixture_sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+        "inert_backend_uses": 0,
+        "negative_control_backend_uses": 1,
+        "real_backend_loaded": false,
+        "status": "passed"
+      },
+      "humanfs-types-implementation/inert-test-source-receipt.json": {
+        "fixture_unchanged_sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+        "manifest_lock_archive_unchanged": true,
+        "new_test_sha256": "d24ee7c1e237e51e3d4ef58dd971b664f29ad49c321317f13473ba70acd78dec",
+        "patch_sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7",
+        "prior_patch_sha256": "1afcd642cd56f3f9d7ffbd7b9c5c9ac232352e68c161fcbaf7a71390f003568e"
+      },
+      "humanfs-types-implementation/strict-type-guarded-receipt.json": {
+        "executed_fixture": false,
+        "fixture": {
+          "bytes": 9015,
+          "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/contract-guarded.mts",
+          "sha256": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21"
+        },
+        "only_patch_fixture_changed": true,
+        "patch": {
+          "bytes": 49246,
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/patches/mainsail/0008-humanfs-types-compat.patch",
+          "sha256": "9e986702794333dd962aebc577833409c77956855f45d3afab0189b454c48c59"
+        },
+        "prior_receipt": {
+          "bytes": 10668,
+          "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/strict-type-receipt.json",
+          "sha256": "ad2f0d026e5ecdd1c3be29ce151d29c049c7847fcbb9c5ee19e64c0d003d11bd"
+        },
+        "profile": {
+          "bytes": 3403,
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/configs/apps/mainsail.json",
+          "sha256": "e49f6f481dcb7a65628eda1c26ae3183763fe658e2b148561f7e26382c21e02b"
+        },
+        "runs": [
+          {
+            "command": [
+              "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+              "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/typescript/bin/tsc",
+              "-p",
+              "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/baseline-guarded.json"
+            ],
+            "configuration": {
+              "bytes": 983,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/baseline-guarded.json",
+              "sha256": "650090ecc3bea80e47eacdf2aeb7b595934866ea2d084ceb8a8d144b1460845f"
+            },
+            "declaration": {
+              "bytes": 6682,
+              "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/@humanfs/types/src/hfs-types.ts",
+              "sha256": "a3befb11eea960f9285e5122e7df6c428c7b5bf0f0e73713bbbe085c17c2916e"
+            },
+            "elapsed_seconds": 1.9146806970238686,
+            "exit_code": 0,
+            "label": "baseline",
+            "log": {
+              "bytes": 0,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/baseline-guarded.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          {
+            "command": [
+              "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+              "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-ospath-notice/build/ospath-a/source/node_modules/typescript/bin/tsc",
+              "-p",
+              "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/candidate-guarded.json"
+            ],
+            "configuration": {
+              "bytes": 943,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/candidate-guarded.json",
+              "sha256": "11c1453f6ffe662c9f7f5f05de54e6d6c49c9d85bd874d8c362c4455c25e77dc"
+            },
+            "declaration": {
+              "bytes": 1359,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-lock-source/vendor/humanfs-types-compat/index.d.ts",
+              "sha256": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424"
+            },
+            "elapsed_seconds": 1.9430188869591802,
+            "exit_code": 0,
+            "label": "candidate",
+            "log": {
+              "bytes": 0,
+              "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/candidate-guarded.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        ],
+        "source_guard": {
+          "bytes": 429,
+          "path": "/home/drew/.sv08-release-closure-20261015/humanfs-types-implementation/inert-guard-source-receipt.json",
+          "sha256": "2ace18e4b87799aac067b4ff2fe17e4887388b021cae70e0d6c3680f8af987f1"
+        }
+      },
+      "humanfs-types-lock-generation-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "install",
+          "--package-lock-only",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsed_seconds": 0.6650605399627239,
+        "empty_cache": true,
+        "exit": 0
+      },
+      "humanfs-types-lock-idempotence.json": {
+        "changed_records": [
+          "",
+          "node_modules/@humanfs/types"
+        ],
+        "elapsed_seconds": 0.6716835999395698,
+        "exit": 0,
+        "fresh_cache": true,
+        "raw_byte_identical": true,
+        "unrelated_metadata_preserved": {
+          "node_modules/@parcel/watcher-linux-arm-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-glibc": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@parcel/watcher-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rolldown/binding-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-gnueabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm-musleabihf": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-loong64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-ppc64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-riscv64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-s390x-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/@rollup/rollup-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/argparse": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-arm64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-gnu": {
+            "libc": {
+              "after": null,
+              "before": [
+                "glibc"
+              ]
+            }
+          },
+          "node_modules/lightningcss-linux-x64-musl": {
+            "libc": {
+              "after": null,
+              "before": [
+                "musl"
+              ]
+            }
+          },
+          "node_modules/lodash": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/rxjs/node_modules/tslib": {
+            "dev": {
+              "after": true,
+              "before": null
+            }
+          },
+          "node_modules/yaml": {
+            "dev": {
+              "after": true,
+              "before": null
+            },
+            "optional": {
+              "after": true,
+              "before": null
+            },
+            "peer": {
+              "after": true,
+              "before": null
+            }
+          }
+        }
+      },
+      "humanfs-types-patch-reconciliation.json": {
+        "added_sections": [
+          "+++ b/tests/humanfs-types-contract.spec.ts"
+        ],
+        "base_sha": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762",
+        "changed_sections": [
+          "+++ b/tests/humanfs-types-contract.mts"
+        ],
+        "current_sha": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7",
+        "duplicate_section_keys": false
+      },
+      "humanfs-types-relocated-install-receipt.json": {
+        "authored_cache_content": [
+          {
+            "cached_content_removed": true,
+            "name": "@sv08-mainline/ospath-compat"
+          },
+          {
+            "cached_content_removed": true,
+            "name": "@sv08-mainline/humanfs-types-compat"
+          }
+        ],
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/npm",
+          "ci",
+          "--offline",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "copied_inputs": "root manifest/lock, two local archives and strict contract only",
+        "elapsed_seconds": 7.584199110046029,
+        "exit": 0,
+        "original_cache_not_used": true,
+        "strict_contract_command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--strict",
+          "--noEmit",
+          "--skipLibCheck",
+          "false",
+          "--module",
+          "NodeNext",
+          "--moduleResolution",
+          "NodeNext",
+          "--target",
+          "ES2022",
+          "--types",
+          "node",
+          "contract.mts"
+        ],
+        "strict_contract_exit": 0
+      },
+      "humanfs-types-restored-ospath-checks.json": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_mainsail_ospath.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.16436642897315323,
+        "exit": 0,
+        "reason": "Final diff restored existing final-lock hash assertion after earlier stage-snapshot edit"
+      },
+      "humanfs-types-safe-inventory-delta-payload.json": {
+        "actual_final_payload_notices": [
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/janus-sdk.txt",
+            "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c"
+          },
+          {
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/sv08-janus-adapter-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ],
+        "base_revision": "3e1e70a",
+        "changed_dependencies": [
+          "node_modules/@humanfs/types"
+        ],
+        "coverage": {
+          "declaration_only_dependencies": 1,
+          "dependencies_with_notice_text": 896,
+          "inspected_supplier_archives": 897
+        },
+        "other_applications_unchanged": true,
+        "unchanged_dependency_records": 896,
+        "unchanged_sections": [
+          "build_tools",
+          "debian",
+          "format_version",
+          "hardware_release_qualified",
+          "legal_compliance_assessed",
+          "scope",
+          "wheels"
+        ]
+      },
+      "humanfs-types-safe-inventory-receipt.json": {
+        "command": [
+          "python3",
+          "scripts/license_inventory.py",
+          "--inputs",
+          "/home/drew/.sv08-release-closure-20261015/humanfs-types-safe-inventory-inputs.json",
+          "--output",
+          "configs/host/release-source-license-inventory.json"
+        ],
+        "elapsed_seconds": 14.016167989932,
+        "exit": 0
+      },
+      "humanfs-types-safe-package-repro.json": {
+        "builds": [
+          {
+            "elapsed_seconds": 26.96873917710036,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.58269395097159,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "identical_packages": true,
+        "identical_reports": true,
+        "package_bytes": 2493762,
+        "package_sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50",
+        "superseded_revision9_pair": [
+          {
+            "elapsed_seconds": 25.762879862915725,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.614593118894845,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "superseded_unguarded_fixture_pair": [
+          {
+            "elapsed_seconds": 27.449475159170106,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.184401206905022,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "version": "2.19.0+git32f99e1c-10"
+      },
+      "humanfs-types-safe-runtime-results.json": [
+        {
+          "check": "unit",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run"
+          ],
+          "elapsed_seconds": 1.775445566046983,
+          "exit": 0
+        },
+        {
+          "check": "types",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "elapsed_seconds": 2.983962901867926,
+          "exit": 0
+        },
+        {
+          "check": "native-contract",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--ignoreConfig",
+            "--strict",
+            "--noEmit",
+            "--skipLibCheck",
+            "false",
+            "--module",
+            "NodeNext",
+            "--moduleResolution",
+            "NodeNext",
+            "--target",
+            "ES2022",
+            "--types",
+            "node",
+            "tests/humanfs-types-contract.mts"
+          ],
+          "elapsed_seconds": 2.0827453199308366,
+          "exit": 0
+        }
+      ],
+      "humanfs-types-safe-source-checks.json": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-p",
+          "test_mainsail_humanfs_types.py",
+          "-v"
+        ],
+        "elapsed_seconds": 0.11394670885056257,
+        "exit": 0,
+        "reason": "changed patch touched-file expectation for inertness regression"
+      },
+      "humanfs-types-superseded-cleanup.json": [
+        {
+          "cumulative_usage_not_reset": true,
+          "removed_disposable_paths": [
+            "source/node_modules",
+            "node-v22.23.2-linux-x64",
+            "source.tar",
+            "package"
+          ],
+          "report": {
+            "activation_included": false,
+            "bytes": 2493526,
+            "package": "sv08-mainsail_2.19.0+git32f99e1c-9_all.deb",
+            "payload_bytes": 9934694,
+            "profile": {
+              "authored_npm_replacements": {
+                "node_modules/@humanfs/types": {
+                  "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                  "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                    "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                    "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                  },
+                  "format": "types-only",
+                  "name": "@sv08-mainline/humanfs-types-compat",
+                  "source_directory": "vendor/humanfs-types-compat",
+                  "version": "1.0.0"
+                },
+                "node_modules/ospath": {
+                  "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                  "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                    "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                    "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                  },
+                  "name": "@sv08-mainline/ospath-compat",
+                  "source_directory": "vendor/ospath-compat",
+                  "version": "1.0.0"
+                }
+              },
+              "format_version": 1,
+              "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+              "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+              "node_version": "22.23.2",
+              "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+              "package_version": "2.19.0+git32f99e1c-9",
+              "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+              "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+              "source_patches": [
+                {
+                  "path": "patches/mainsail/0001-stable-precache-order.patch",
+                  "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+                },
+                {
+                  "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                  "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+                },
+                {
+                  "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                  "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+                },
+                {
+                  "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                  "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+                },
+                {
+                  "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                  "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+                },
+                {
+                  "path": "patches/mainsail/0006-native-visibility.patch",
+                  "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+                },
+                {
+                  "path": "patches/mainsail/0007-ospath-compat.patch",
+                  "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+                },
+                {
+                  "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                  "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+                }
+              ],
+              "source_path": "upstream/mainsail",
+              "status": "offline-build-no-browser-validation"
+            },
+            "sha256": "39335abc4c87a8b0e2d1309eae692a3012d5b89f3de23ae66d35bd9342ef961a",
+            "source_date_epoch": 1788551235,
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ]
+          },
+          "retained": "report, deb, patched sources/lock/vendor/dist; all failed/superseded receipts",
+          "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-a"
+        },
+        {
+          "cumulative_usage_not_reset": true,
+          "removed_disposable_paths": [
+            "source/node_modules",
+            "node-v22.23.2-linux-x64",
+            "source.tar",
+            "package"
+          ],
+          "report": {
+            "activation_included": false,
+            "bytes": 2493526,
+            "package": "sv08-mainsail_2.19.0+git32f99e1c-9_all.deb",
+            "payload_bytes": 9934694,
+            "profile": {
+              "authored_npm_replacements": {
+                "node_modules/@humanfs/types": {
+                  "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                  "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                    "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                    "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                  },
+                  "format": "types-only",
+                  "name": "@sv08-mainline/humanfs-types-compat",
+                  "source_directory": "vendor/humanfs-types-compat",
+                  "version": "1.0.0"
+                },
+                "node_modules/ospath": {
+                  "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                  "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                  "files": {
+                    "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                    "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                    "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                    "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                  },
+                  "name": "@sv08-mainline/ospath-compat",
+                  "source_directory": "vendor/ospath-compat",
+                  "version": "1.0.0"
+                }
+              },
+              "format_version": 1,
+              "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+              "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+              "node_version": "22.23.2",
+              "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+              "package_version": "2.19.0+git32f99e1c-9",
+              "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+              "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+              "source_patches": [
+                {
+                  "path": "patches/mainsail/0001-stable-precache-order.patch",
+                  "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+                },
+                {
+                  "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                  "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+                },
+                {
+                  "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                  "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+                },
+                {
+                  "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                  "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+                },
+                {
+                  "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                  "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+                },
+                {
+                  "path": "patches/mainsail/0006-native-visibility.patch",
+                  "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+                },
+                {
+                  "path": "patches/mainsail/0007-ospath-compat.patch",
+                  "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+                },
+                {
+                  "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                  "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+                }
+              ],
+              "source_path": "upstream/mainsail",
+              "status": "offline-build-no-browser-validation"
+            },
+            "sha256": "39335abc4c87a8b0e2d1309eae692a3012d5b89f3de23ae66d35bd9342ef961a",
+            "source_date_epoch": 1788551235,
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ]
+          },
+          "retained": "report, deb, patched sources/lock/vendor/dist; all failed/superseded receipts",
+          "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-b"
+        }
+      ],
+      "humanfs-types-unrelated-discovery-diagnosis.json": {
+        "affected_product_runtime_and_ui_files_changed": false,
+        "broad_discovery_was_not_acceptance": true,
+        "browser_failure": "assert(debug) before product journey; cause not established; no passing claim or retry",
+        "owned_leaked_processes_observed": false,
+        "persistent_ancestry_failure_cause": {
+          "assigned_scratch_mode_before": "0o775",
+          "mode_after": "0o700",
+          "policy": "runtime/sv08_web.py roots rejects group/other writable ancestors",
+          "production_guard_unchanged": true
+        },
+        "relevant_scope_results": "39 focused checks passed; changed humanfs and ospath checks repeated after their edits"
+      },
+      "humanfs-types-version-correction.json": {
+        "active_build": {
+          "command": [
+            "python3",
+            "scripts/package_mainsail.py",
+            "--work",
+            "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-b",
+            "--node-archive",
+            "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64.tar.xz",
+            "--execute"
+          ],
+          "pgid": 1117563,
+          "pid": 1117563
+        },
+        "actual_outcome": "Both revision9 builds had already completed exit0 before stop attempt; process group was missing and no signal was delivered. Both were superseded and revision10 fresh pair passed.",
+        "prior_charge_retained": true,
+        "reason": "New candidate retained prior package revision9; first build successful but superseded, active second build stopped before publication. Correct revision10 then fresh pair required.",
+        "root_limit_bytes": 19327352832,
+        "slice_reservation_bytes": 4294967296
+      }
+    },
+    "source_sha256": {
+      "configs/apps/mainsail.json": "8999ed248a3f0a31b65e344d59eb9283d62e4d032768d3880fc1044d28a89df3",
+      "configs/host/npm-notice-resolution.json": "134021b257171c7892851c3015138cba994778941d9a8ed0f5d27344d7bdecd7",
+      "configs/host/release-source-license-inventory.json": "e4253afe3a988963254e22d4b588d824e0c7466013f66475b62b6fa1ec8a6adc",
+      "patches/mainsail/0008-humanfs-types-compat.patch": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7",
+      "scripts/package_mainsail.py": "105acdf8368b67f89a86c3721638ae7b7b5a1402ba0ad79478370405817be164",
+      "scripts/resolve_npm_notices.py": "e0db02c4fa5b4765e81236df9fbd408ba817e9500a3b4182f1c7e79909cd51b3",
+      "tests/mainsail_humanfs_types_contract.ts": "13949c728385759718ed431d2be936894ef448782d5ea0a61d58f3b3ae599b21",
+      "tests/test_mainsail_humanfs_types.py": "a75b62c5a7c0052c64f869026fcb91393e558063031e8847b3344f4271f72283",
+      "tests/test_resolve_npm_notices.py": "710c59008ab2d796ba0a3409e48426f5cf97f0732bbea754a059c89b44333d91"
+    },
+    "status": "slice validated; full goal incomplete with one selected notice gap"
+  },
   "image_docstring_compatibility": {
     "executable_AST_unchanged": true,
     "final_sha256": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
