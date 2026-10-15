@@ -12429,6 +12429,213 @@
     "note": "55 initial checks; stricter repository identity handling added and all12 resolver checks passed, including one additional test. Other production code changes since initial tests are module docstring only.",
     "skips": 0
   },
+  "visibility_continuation": {
+    "accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 7,
+      "remaining_selected_notice_gaps": 3,
+      "selected_dependencies": 897
+    },
+    "agents": [
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "thread": "/root/visibility_directive_implement"
+      },
+      {
+        "effective_settings": "not observable",
+        "requested_effort": "default low",
+        "role": "project_researcher",
+        "thread": "/root/visibility_notice_contract"
+      }
+    ],
+    "allowance": {
+      "cumulative_conservative_charge_bytes": 11811160064,
+      "cumulative_conservative_charge_process_seconds": 5000,
+      "limit_bytes": 12884901888,
+      "limit_process_seconds": 10800
+    },
+    "code_commit": "2c8de488585bb93113da033dbef1bf720632e470",
+    "failed_attempts": [
+      "prototypeA: fixture raw Vue import lacked process environment; repaired explicit Vite virtual module",
+      "fresh candidate: SPA fallback attempted app imports and cold optimizer reloaded page; corrected script-free route, disabled discovery, fresh output cache and bootstrap/navigation guards; all 33 case expectations preserved"
+    ],
+    "limitations": [
+      "Representative Vue fixture effects; nine real production components not mounted",
+      "Safari12 not exercised",
+      "No printer, camera, deployment or full-stack qualification",
+      "Three selected notice gaps remain; original60 supplemental records unchanged"
+    ],
+    "private_artifact_root": "/home/drew/.sv08-release-closure-20261015",
+    "receipts": {
+      "mainsail-startup-visibility-receipt.json": {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "tests/mainsail_browser_startup.mjs",
+          "--execute",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source/dist",
+          "/home/drew/.sv08-release-closure-20261015/mainsail-startup-visibility"
+        ],
+        "elapsed_seconds": 1.8204352660104632,
+        "exit": 0,
+        "scope": "actual production startup; separate directive fixture uses representative effects, not nine production components",
+        "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+      },
+      "visibility-final-baseline-equivalence.json": {
+        "all_three_baseline_traces_identical": true,
+        "corrected_blank_page_and_cold_cache": true,
+        "production_behavior_checks_unchanged": true,
+        "stages": 33
+      },
+      "visibility-final-browser-results.json": [
+        {
+          "check": "baseline-c",
+          "command": [
+            "sudo",
+            "-n",
+            "unshare",
+            "--net",
+            "--",
+            "sh",
+            "-c",
+            "ip link set lo up; exec env VISIBILITY_BASELINE=/home/drew/.sv08-release-closure-20261015/visibility-baseline-c/result.json /home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/tests/mainsail_visibility_browser.mjs --execute /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source /home/drew/.sv08-release-closure-20261015/visibility-baseline-c baseline"
+          ],
+          "elapsed_seconds": 6.982475406024605,
+          "exit": 0,
+          "test_sha256": "498b8ba16e0b71f73189fddc244ead3f85895d5b33a57ace670e70d19c2ddbe9"
+        },
+        {
+          "check": "final-browser-c",
+          "command": [
+            "sudo",
+            "-n",
+            "unshare",
+            "--net",
+            "--",
+            "sh",
+            "-c",
+            "ip link set lo up; exec env VISIBILITY_BASELINE=/home/drew/.sv08-release-closure-20261015/visibility-baseline-c/result.json /home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/tests/mainsail_visibility_browser.mjs --execute /home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome /home/drew/sv08-mainline/local/feature-workflow/worktrees/release-visibility-notice/build/visibility-a/source /home/drew/.sv08-release-closure-20261015/visibility-final-browser-c candidate"
+          ],
+          "elapsed_seconds": 6.831233115168288,
+          "exit": 0,
+          "test_sha256": "498b8ba16e0b71f73189fddc244ead3f85895d5b33a57ace670e70d19c2ddbe9"
+        }
+      ],
+      "visibility-final-runtime-results.json": [
+        {
+          "check": "unit",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/vitest/vitest.mjs",
+            "run"
+          ],
+          "elapsed_seconds": 1.9813305691350251,
+          "exit": 0
+        },
+        {
+          "check": "types",
+          "command": [
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "node_modules/typescript/bin/tsc",
+            "--noEmit"
+          ],
+          "elapsed_seconds": 3.07866317499429,
+          "exit": 0
+        },
+        {
+          "check": "source",
+          "command": [
+            "python3",
+            "-m",
+            "unittest",
+            "-v",
+            "test_mainsail_visibility",
+            "test_mainsail_janus",
+            "test_mainsail_notice_dependencies"
+          ],
+          "elapsed_seconds": 0.5148303480818868,
+          "exit": 0
+        }
+      ],
+      "visibility-inventory-delta.json": {
+        "remaining_selected_notice_gaps": 3,
+        "removed_paths": [
+          "node_modules/vue-observe-visibility"
+        ],
+        "surviving_dependency_records_identical": 897,
+        "unchanged_inventory_sections": [
+          "build_tools",
+          "debian",
+          "format_version",
+          "hardware_release_qualified",
+          "legal_compliance_assessed",
+          "scope",
+          "wheels"
+        ]
+      },
+      "visibility-inventory-receipt.json": {
+        "command": [
+          "python3",
+          "scripts/license_inventory.py",
+          "--inputs",
+          "/home/drew/.sv08-release-closure-20261015/visibility-inventory-inputs.json",
+          "--output",
+          "configs/host/release-source-license-inventory.json"
+        ],
+        "elapsed_seconds": 14.570940595120192,
+        "exit": 0
+      },
+      "visibility-package-repro.json": {
+        "builds": [
+          {
+            "elapsed_seconds": 25.497058643959463,
+            "exit": 0,
+            "limit": null,
+            "suffix": "a"
+          },
+          {
+            "elapsed_seconds": 26.228628349024802,
+            "exit": 0,
+            "limit": null,
+            "suffix": "b"
+          }
+        ],
+        "identical_packages": true,
+        "identical_reports": true,
+        "package_bytes": 2493156,
+        "package_sha256": "07767b38b7192b8bb4a870b113a300f07cd360bd65a2019193e14e62971655ba",
+        "removed_dependency_absent": true
+      },
+      "visibility-payload-notices.json": {
+        "other_applications_unchanged": true,
+        "verified_notices": [
+          {
+            "bytes": 1098,
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/janus-sdk.txt",
+            "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c"
+          },
+          {
+            "bytes": 34523,
+            "member": "./usr/share/sv08-mainline/mainsail/licenses/sv08-janus-adapter-AGPL-3.0.txt",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ]
+      }
+    },
+    "source_sha256": {
+      "configs/apps/mainsail.json": "1a67f3b80df3b6097607dab1c6719972ac53bc6049d3dbbd17ec6b60b5b5d728",
+      "configs/host/npm-notice-resolution.json": "dfa81e434bdfd3ade70d713ec7bde4640f91d8ea1f2ecb32316b2b088cef7aae",
+      "configs/host/release-source-license-inventory.json": "698b47a9e275e72e6b146c96d620f11aafc836ba14ce126fb0f25373568657e7",
+      "patches/mainsail/0006-native-visibility.patch": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f",
+      "tests/mainsail_visibility_browser.mjs": "498b8ba16e0b71f73189fddc244ead3f85895d5b33a57ace670e70d19c2ddbe9",
+      "tests/test_mainsail_visibility.py": "2fcdfb174d2d9d527a1985112863de7d64a828ba1ab7347fe57bf77920edf553"
+    },
+    "status": "slice validated; full goal incomplete"
+  },
   "vitest_continuation": {
     "agents": [
       {
