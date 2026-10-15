@@ -42,7 +42,9 @@ def authored_archive_bytes(source, spec):
     """
     directory = source_member(source, spec['source_directory'])
     files = spec['files']
-    if set(files) != {'LICENSE', 'README.md', 'index.js', 'package.json'}:
+    package_format = spec.get('format', 'commonjs')
+    entry = {'commonjs': 'index.js', 'types-only': 'index.d.ts'}.get(package_format)
+    if entry is None or set(files) != {'LICENSE', 'README.md', entry, 'package.json'}:
         raise ValueError('Unexpected authored package source members')
     if {p.name for p in directory.iterdir()} != set(files):
         raise ValueError('Unexpected authored package directory contents')
@@ -53,9 +55,18 @@ def authored_archive_bytes(source, spec):
             raise ValueError('Authored package source hash mismatch')
         contents[name] = member.read_bytes()
     metadata = json.loads(contents['package.json'])
-    if (metadata.get('name'), metadata.get('version'), metadata.get('license'), metadata.get('main')) != (
-            spec['name'], spec['version'], 'AGPL-3.0-or-later', 'index.js'):
+    if (metadata.get('name'), metadata.get('version'), metadata.get('license')) != (
+            spec['name'], spec['version'], 'AGPL-3.0-or-later'):
         raise ValueError('Authored package identity mismatch')
+    if package_format == 'commonjs':
+        if metadata.get('main') != 'index.js':
+            raise ValueError('Authored package identity mismatch')
+    elif (metadata.get('types') != 'index.d.ts' or
+          metadata.get('exports') != {'.': {'types': './index.d.ts'}} or
+          metadata.get('type') != 'module' or
+          set(metadata) != {'name', 'version', 'license', 'type', 'types', 'exports', 'files'} or
+          metadata.get('files') != ['index.d.ts', 'LICENSE', 'README.md']):
+        raise ValueError('Authored type-only package metadata mismatch')
     if contents['LICENSE'] != (REPO / 'LICENSE').read_bytes():
         raise ValueError('Authored package requires the complete project notice')
     output = io.BytesIO()

@@ -352,3 +352,37 @@ their existing facts; replacement does not resolve the original missing grant.
 
 Retire this package when the selected Cypress dependency provides an appropriate
 notice-bearing compatible path implementation. No upstream message was sent.
+
+## 0008 — Independent filesystem structural declarations
+
+Preserve the selected @humanfs/core 0.19.2 and @humanfs/node 0.16.8 sources and
+public declarations. The independently authored
+`@sv08-mainline/humanfs-types-compat` 1.0.0 package supplies only the three public
+structural interfaces previously selected from @humanfs/types 0.15.0. It has no
+runtime entrypoint. Its full project AGPL notice and declaration sources are
+shipped in the recorded patch; no supplier implementation or missing grant is
+borrowed. Root development selection and scoped `$@humanfs/types` references in
+both parents bind a deterministic local archive without changing their runtime.
+
+The [shared strict contract](../../tests/mainsail_humanfs_types_contract.ts) is
+compiled unchanged against original and replacement interfaces. It checks exact
+optional method keys/signatures, return values, required directory/walk fields,
+invalid inputs/returns and actual public parent exports/methods. Run with pinned
+Node/TypeScript, `strict`, `noEmit`, `module/moduleResolution: NodeNext`, and the
+fixture copied as `.mts`; map the three public package imports to their selected
+declaration entrypoints. Do not use `skipLibCheck`. Preserve source/config hashes,
+exact commands and compiler results for both runs. This proves declaration
+compatibility, separately from coordinator-owned runtime discovery and full
+integration tests.
+
+[Focused source checks](../../tests/test_mainsail_humanfs_types.py) cover exact
+manifest/lock deltas, type-only metadata, deterministic source-bound archive,
+complete notice, tampering and symlinks. The archive helper accepts only explicit
+`types-only` or existing `commonjs` fixed-member formats. Selection accounting
+accepts only the explicitly named ospath/Cypress and humanfs/core+node manifest
+edges, checks actual authored identity/path/SRI/source bytes and retains the
+original69 historical and60 supplemental notice facts. The existing ospath
+archive remains byte-identical. Genuine lock generation, relocated empty-cache
+installation, current suite/build/Cypress checks and two reproducible packages
+are required integration evidence; no type-only test establishes printer or
+release qualification.

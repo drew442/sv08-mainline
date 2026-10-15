@@ -75,8 +75,8 @@ class MainsailVisibility(unittest.TestCase):
             self.assertTrue((self.source/name).read_text().startswith('// SPDX-License-Identifier: AGPL-3.0-or-later'))
         self.assertEqual(self.config['source_commit'],'32f99e1cf97640b23a52829dfa3a0aceee11d382')
         self.assertEqual(self.config['node_version'],'22.23.2')
-        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-9')
-        self.assertEqual(len(self.config['source_patches']),7)
+        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-10')
+        self.assertEqual(len(self.config['source_patches']),8)
         self.assertEqual(hashlib.sha256((self.source/'package-lock.json').read_bytes()).hexdigest(),
                          self.config['patched_package_lock_sha256'])
 

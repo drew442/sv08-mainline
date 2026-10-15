@@ -88,13 +88,13 @@
     },
     {
       "artifact": {
-        "bytes": 2493632,
-        "path": "sv08-mainsail_2.19.0+git32f99e1c-9_all.deb",
-        "sha256": "f92e665f83ed76cd5038ee2ba9ee1951ee207bbe2a80cbbf3ec9beebf58a915b"
+        "bytes": 2493762,
+        "path": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+        "sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50"
       },
       "classification": "project-source-build",
       "config": "configs/apps/mainsail.json",
-      "config_sha256": "251470eeaa127493da7ba75d83403a09eefb361f6839d31c369fc1aeb8d34ef4",
+      "config_sha256": "8999ed248a3f0a31b65e344d59eb9283d62e4d032768d3880fc1044d28a89df3",
       "license_status": "source-bound-notice-text-inventoried",
       "notices": [
         {
@@ -176,23 +176,28 @@
           "bytes": 41116,
           "path": "patches/mainsail/0007-ospath-compat.patch",
           "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+        },
+        {
+          "bytes": 51332,
+          "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+          "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
         }
       ],
       "rebuild_evidence": [
         {
-          "bytes": 428,
-          "path": "ospath-package-repro.json",
-          "sha256": "c271bc7dd374d70c315766ee3ca3b7809a556650d0b68d3479de8b741560e9ea"
+          "bytes": 1010,
+          "path": "humanfs-types-safe-package-repro.json",
+          "sha256": "defb242fc35abb9d89b820c096b464fb7f83f0653aa71b7146301e1af8880269"
         }
       ],
       "source": {
         "commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
         "identity": "upstream/mainsail",
         "kind": "git-commit",
-        "version": "2.19.0+git32f99e1c-9"
+        "version": "2.19.0+git32f99e1c-10"
       },
       "unresolved_license_declaration": false,
-      "version": "2.19.0+git32f99e1c-9"
+      "version": "2.19.0+git32f99e1c-10"
     },
     {
       "artifact": {
@@ -31925,13 +31930,13 @@
   "legal_compliance_assessed": false,
   "mainsail_dependencies": {
     "lock": {
-      "bytes": 538552,
+      "bytes": 538631,
       "path": "package-lock.json",
-      "sha256": "287bf9d4643734e411fff6fb5fbadf93a42694793f8fc6014fe9dbcb3c3a129a"
+      "sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088"
     },
     "notice_coverage": {
-      "declaration_only_dependencies": 2,
-      "dependencies_with_notice_text": 895,
+      "declaration_only_dependencies": 1,
+      "dependencies_with_notice_text": 896,
       "inspected_supplier_archives": 897
     },
     "packages": [
@@ -37199,32 +37204,39 @@
       },
       {
         "archive": {
-          "bytes": 3866,
-          "path": "archives/3c2942da7ba321f6ba27255a5faceee76eae502403129d8aa50d2dc8400a94d5.tgz",
-          "sha256": "3c2942da7ba321f6ba27255a5faceee76eae502403129d8aa50d2dc8400a94d5"
+          "bytes": 12755,
+          "path": "archives/7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff.tgz",
+          "sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff"
         },
-        "archive_declared_license": "Apache-2.0",
+        "archive_declared_license": "AGPL-3.0-or-later",
         "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "2af71558e438db0b73a20beab92dc278a94e1bbe974c00c1a33e3ab62d53a608",
-        "classification": "supplier-declaration-only; no embedded notice text",
-        "declared_license": "Apache-2.0",
+        "archive_declared_license_sha256": "33a063ae58dd38729c9083aa7d9d1917254596e140667bfbaa778c82639aa8a6",
+        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
+        "declared_license": "AGPL-3.0-or-later",
         "dependency_scope": "build",
-        "integrity": "sha512-ZZ1w0aoQkwuUuC7Yf+7sdeaNfqQiiLcSRbfI08oAxqLtpXQr9AIVX7Ay7HLDuiLYAaFPu8oBYNq/QIi9URHJ3Q==",
+        "integrity": "sha512-yvUL6OtgxLrVj+kafqR3hfuf9e/AMMTgaV2DIVAmiR+c8Xd4K8h1WIGyK7z7G5THuO0WRpyMeyGtnrp54fQXJw==",
         "integrity_algorithm_verified": "sha512",
-        "name": "@humanfs/types",
-        "notices": [],
+        "name": "@sv08-mainline/humanfs-types-compat",
+        "notices": [
+          {
+            "archive_member": "package/LICENSE",
+            "bytes": 34523,
+            "path": "texts/7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff/LICENSE",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          }
+        ],
         "optional": false,
         "package_json": {
           "archive_member": "package/package.json",
-          "bytes": 878,
-          "path": "texts/3c2942da7ba321f6ba27255a5faceee76eae502403129d8aa50d2dc8400a94d5/5205bfc4f58dc7ca-package.json",
-          "sha256": "1b849aa49814883fc0e70ca461c9faccb675ed1c801e784f1858e75e3b36eec5"
+          "bytes": 287,
+          "path": "texts/7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff/package.json",
+          "sha256": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
         },
         "path": "node_modules/@humanfs/types",
-        "recognizable_notice_file_count": 0,
+        "recognizable_notice_file_count": 1,
         "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@humanfs/types/-/types-0.15.0.tgz",
-        "version": "0.15.0"
+        "supplier_url": "file:vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+        "version": "1.0.0"
       },
       {
         "archive": {

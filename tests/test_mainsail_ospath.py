@@ -32,6 +32,9 @@ class MainsailOspath(unittest.TestCase):
         for index, patch in enumerate(cls.config['source_patches']):
             raw=(REPO/patch['path']).read_bytes()
             if hashlib.sha256(raw).hexdigest()!=patch['sha256']:raise AssertionError('patch pin mismatch')
+            if index==7:
+                cls.after_ospath_manifest=json.loads((cls.source/'package.json').read_text())
+                cls.after_ospath_lock=json.loads((cls.source/'package-lock.json').read_text())
             if index==6:
                 cls.before_manifest=json.loads((cls.source/'package.json').read_text())
                 cls.before_lock=json.loads((cls.source/'package-lock.json').read_text())
@@ -49,7 +52,7 @@ class MainsailOspath(unittest.TestCase):
         expected=copy.deepcopy(self.before_manifest)
         expected['devDependencies']['ospath']='file:'+self.spec['archive_path']
         expected['overrides']['cypress']={'ospath':'$ospath'}
-        actual=json.loads((self.source/'package.json').read_text())
+        actual=self.after_ospath_manifest
         self.assertEqual(actual,expected)
         self.assertEqual(actual['scripts']['test'],self.before_manifest['scripts']['test'])
         self.assertEqual(actual['scripts']['test:ui'],'cypress open')
@@ -91,7 +94,7 @@ class MainsailOspath(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'Symlink'):builder.source_member(root,'link/package.json')
 
     def test_genuine_selected_lock_identity_and_complete_delta(self):
-        after=json.loads((self.source/'package-lock.json').read_text())
+        after=self.after_ospath_lock
         self.assertEqual(hashlib.sha256((self.source/'package-lock.json').read_bytes()).hexdigest(),
                          self.config['patched_package_lock_sha256'])
         old,new=self.before_lock['packages'],after['packages']

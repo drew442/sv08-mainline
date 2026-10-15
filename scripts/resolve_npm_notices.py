@@ -294,10 +294,23 @@ def selection_resolution(inputs):
                     record['authored_manifest']=file_pin(source_pin)
                     manifest=checked_path(source_pin['root'],source_pin['path'])
                     source_manifest=json.loads(manifest.read_text())
-                    if (manifest.name!='package.json' or
-                            source_manifest.get('devDependencies',{}).get('ospath')!='file:'+authored['archive_path'] or
-                            source_manifest.get('overrides',{}).get('cypress',{}).get('ospath')!='$ospath'):
-                        raise ValueError('Authored replacement Cypress manifest override mismatch')
+                    # Explicit accepted graph edges; a configured authored label alone is insufficient.
+                    routes = {
+                        'node_modules/ospath': ('@sv08-mainline/ospath-compat', 'ospath', ('cypress',), 'commonjs'),
+                        'node_modules/@humanfs/types': ('@sv08-mainline/humanfs-types-compat', '@humanfs/types',
+                                                       ('@humanfs/core', '@humanfs/node'), 'types-only'),
+                    }
+                    route = routes.get(path)
+                    if not route:
+                        raise ValueError('Unsupported authored replacement manifest edges')
+                    identity, dependency, parents, package_format = route
+                    if (manifest.name != 'package.json' or authored['name'] != identity or
+                            authored.get('format', 'commonjs') != package_format or
+                            source_manifest.get('devDependencies', {}).get(dependency) != 'file:' + authored['archive_path'] or
+                            dependency in source_manifest.get('overrides', {}) or
+                            any(source_manifest.get('overrides', {}).get(parent, {}).get(dependency) != '$' + dependency
+                                for parent in parents)):
+                        raise ValueError('Authored replacement manifest override mismatch')
                     source=manifest.parent
                     expected=authored_archive_bytes(source,authored)
                     if digest(expected)!=authored['archive_sha256'] or archive.read_bytes()!=expected:
