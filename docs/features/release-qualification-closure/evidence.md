@@ -1,3 +1,11 @@
+# Current continuation: six selected notice gaps remain
+
+Code candidate `8268b11` selects supported upstream Vitest5.0.4 and matching Node22 types. Native upstream ESM diagnostics removes stackback without introducing supplier-code patches or changing licenses. All15 changed supplier archive selections have verified SRI and embedded notices. Original69 records remain accounted for:60 exact notices,three measured selection remediations,six remaining gaps. Current inventory921 dependencies/915 notice-bearing/six declaration-only. Earlier seven/nine-gap snapshots below remain historical.
+
+Both fresh package builds exited0 (26.55s/27.61s), with identical reports and package SHA256 `a3a87a608d99877e5d19a9398e024f5f1fd5d6531906b77fbdfa4e79fa4a77b9`. Baseline Vitest4 and upgraded Vitest5 each pass the unchanged4-file/46-test upstream suite. Actual clean CLI exit and intentional timer leak exercise the native hanging-process reporter, useful Timeout/fixture diagnostics and teardown timeout; earlier dependency regressions pass. Six changed source checks pass. Static browser startup passes with zero uncaught exceptions; no API or hardware qualification. Unchanged core test evidence is reused.
+
+The `vitest_continuation` field in [evidence.json](evidence.json) binds exact source, test/build receipts, supplier archives, inventory delta and cumulative2500process-second/6GiB conservative charge under7200seconds/8GiB. Source-only researcher requested default-low; implementation requested medium; effective runtime settings are not independently observable. No upstream license, gitlink, printer or host configuration changes. Full goal remains incomplete.
+
 # Current continuation — seven selected notice gaps remain
 
 The full owner goal remains active and incomplete. **60 exact upstream notice recoveries and two measured dependency-selection remediations account for62 of the original69**; nine original archives still retain their historical missing-notice facts, while seven gaps remain in the selected build.

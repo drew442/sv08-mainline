@@ -1,71 +1,10 @@
 {
-  "format_version": 1,
-  "status": "in-progress-seven-current-notice-gaps-remain",
-  "code_commit": "6b0cdc6342861be2ab3c5fc5622fc6b8f1f2b297",
-  "source_sha256": {
-    "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-    "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-    "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
-    "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-    "tests/test_prepare_release.py": "a7718e72c6d88b604a5d084947ba402d78ef44b1a6f0fd2e0aa2bb405bc3e5a8",
-    "tests/test_image_license_inventory.py": "5fd0ea117f889f1a30fd67a804a8b77b6018b4704d3c70f57fde856314e37d6a",
-    "tests/test_resolve_npm_notices.py": "3bc487bf793126aa0a23baec6556b29bef73e5c1ee9c4fd8bc5627caee56cf78",
-    "tests/test_license_inventory.py": "997d6a1c30011b6db59380c442f4cd800e4cc7bb11ef522628348dbf31112dcd",
-    "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
-    "docs/licensing/npm-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
-    "docs/development/release-packaging.md": "cfcd3689ac2a6ae101105dc75a7da518114af79b47cedad20b336c12d88131a8"
-  },
-  "tests": {
-    "initial": {
-      "command": [
-        "python3",
-        "-m",
-        "unittest",
-        "-v",
-        "test_image_license_inventory",
-        "test_prepare_release",
-        "test_resolve_npm_notices",
-        "test_license_inventory",
-        "test_project_license"
-      ],
-      "exit_code": 0,
-      "elapsed_seconds": 0.41445466107688844,
-      "source_before": {
-        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd",
-        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3"
-      },
-      "source_after": {
-        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd",
-        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3"
-      }
-    },
-    "initial_passed": 55,
-    "latest_resolver": {
-      "command": [
-        "python3",
-        "-m",
-        "unittest",
-        "-v",
-        "test_resolve_npm_notices"
-      ],
-      "exit_code": 0,
-      "elapsed_seconds": 0.11407755897380412,
-      "source_sha256": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
-    },
-    "latest_resolver_passed": 12,
-    "distinct_passed": 56,
-    "skips": 0,
-    "note": "55 initial checks; stricter repository identity handling added and all12 resolver checks passed, including one additional test. Other production code changes since initial tests are module docstring only."
-  },
   "actual_image": {
     "image": {
       "bytes": 7818182656,
       "sha256": "b08c18e3f39e7096c4faeb047f1e26fb5db593dc3d0ff451658eb4b528a8ad43"
     },
+    "overall_release_qualified": false,
     "partitions": [
       {
         "coverage": "opaque-partition-hash-only",
@@ -122,9 +61,11 @@
         "size_bytes": 2565865472
       }
     ],
+    "raw_inventory_sha256": "d31496a22b2d48b37fece7d5e9544f7b52c2f97ea7240273870c7723cfa010b8",
     "roots": [
       {
-        "partition": 2,
+        "files_count": 23761,
+        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
         "filesystem": {
           "bytes": 2147483648,
           "format": "ext4",
@@ -5772,9 +5713,7 @@
             "version": "1:1.3.dfsg+really1.3.1-1+b1"
           }
         ],
-        "files_count": 23761,
-        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
-        "usr_payload": null,
+        "partition": 2,
         "unknowns": [
           "missing-project-source-provenance",
           "missing-package-notice:sv08-update-admission",
@@ -5782,10 +5721,12 @@
           "Vendor kernel/bootloader source reproduction is not established.",
           "Non-dpkg application license coverage requires separate source inventory.",
           "Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded."
-        ]
+        ],
+        "usr_payload": null
       },
       {
-        "partition": 4,
+        "files_count": 23761,
+        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
         "filesystem": {
           "bytes": 2147483648,
           "format": "ext4",
@@ -11433,9 +11374,7 @@
             "version": "1:1.3.dfsg+really1.3.1-1+b1"
           }
         ],
-        "files_count": 23761,
-        "files_sha256": "0143f2c4110081b1e840c17c546b1c6cb14c08778a194f8c5ee6fdbe6664aa1d",
-        "usr_payload": null,
+        "partition": 4,
         "unknowns": [
           "missing-project-source-provenance",
           "missing-package-notice:sv08-update-admission",
@@ -11443,19 +11382,19 @@
           "Vendor kernel/bootloader source reproduction is not established.",
           "Non-dpkg application license coverage requires separate source inventory.",
           "Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded."
-        ]
+        ],
+        "usr_payload": null
       },
       {
-        "partition": 5,
+        "files_count": 0,
+        "files_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
         "filesystem": {
           "bytes": 134217728,
           "format": "ext4",
           "sha256": "772ceecac8f891da4f4807678d5528c1d0b2ced35ca958e373bfe6ce6e357fa3"
         },
         "packages": [],
-        "files_count": 0,
-        "files_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
-        "usr_payload": null,
+        "partition": 5,
         "unknowns": [
           "missing-project-source-provenance",
           "missing-installed-dpkg-database",
@@ -11463,11 +11402,10 @@
           "Vendor kernel/bootloader source reproduction is not established.",
           "Non-dpkg application license coverage requires separate source inventory.",
           "Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded."
-        ]
+        ],
+        "usr_payload": null
       }
-    ],
-    "raw_inventory_sha256": "d31496a22b2d48b37fece7d5e9544f7b52c2f97ea7240273870c7723cfa010b8",
-    "overall_release_qualified": false
+    ]
   },
   "actual_image_receipt": {
     "command": [
@@ -11478,29 +11416,23 @@
       "--scratch",
       "/root/.sv08-release-closure-20261015"
     ],
+    "elapsed_seconds": 37.39236290915869,
     "exit_code": 0,
     "expected_exit_code": 0,
-    "elapsed_seconds": 37.39236290915869,
-    "source_before": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-      "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
-    },
     "source_after": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
       "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
       "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    },
+    "source_before": {
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+      "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
     }
-  },
-  "image_docstring_compatibility": {
-    "measured_sha256": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
-    "final_sha256": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-    "only_change": "module docstring accurately describes managed read-only mounts",
-    "executable_AST_unchanged": true
   },
   "actual_project_source_package": {
     "command": [
@@ -11517,22 +11449,93 @@
       "--scratch",
       "/root/.sv08-release-closure-20261015"
     ],
+    "elapsed_seconds": 1.165902622975409,
     "exit_code": 0,
     "expected_exit_code": 0,
-    "elapsed_seconds": 1.165902622975409,
-    "source_before": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-      "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
-    },
     "source_after": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
       "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
       "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
-      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3"
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    },
+    "source_before": {
+      "runtime/sv08_gpt.py": "1ded9f0d287709000df06a404ee5ba9757ee561bbd41ad6d4f64a3df6641efe3",
+      "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    }
+  },
+  "agents": [
+    {
+      "effective_settings": "not independently observable",
+      "requested_effort": "default low",
+      "role": "project_researcher",
+      "task": "release_inventory_trace"
+    },
+    {
+      "effective_settings": "not independently observable",
+      "requested_effort": "medium",
+      "role": "project_implementer",
+      "task": "release_closure_implement"
+    },
+    {
+      "effective_settings": "not independently observable",
+      "requested_effort": "medium",
+      "role": "project_researcher",
+      "task": "npm_notice_gaps"
+    }
+  ],
+  "allowance": {
+    "additional_research_running": true,
+    "conservative_charge_generated_bytes": 536870912,
+    "conservative_charge_seconds": 1200,
+    "includes_agents_and_failed_attempts": true,
+    "primary_generated_bytes": 8589934592,
+    "primary_process_seconds": 7200
+  },
+  "artifact_roots": {
+    "coordinator": "/home/drew/.sv08-release-closure-20261015",
+    "privileged": "/root/.sv08-release-closure-20261015"
+  },
+  "code_commit": "6b0cdc6342861be2ab3c5fc5622fc6b8f1f2b297",
+  "failed_attempts": [
+    "Initial actual image run stopped at missing later-slot dpkg metadata; now reports unknown coverage per slot. Original failed inputs/logs retained.",
+    "Initial six source notice pins captured empty in-progress shared URL cache; rejected by hash checks. Fresh exact-commit public responses were separately retained; original research unchanged.",
+    "Verbatim text whitespace failed Git diff check; full original text remains in canonicalJSON, plain-text bundle generated on export. No license text normalized."
+  ],
+  "format_version": 1,
+  "full_inventory": {
+    "application_count": 6,
+    "coverage": {
+      "declaration_only_dependencies": 9,
+      "dependencies_with_notice_text": 925,
+      "inspected_supplier_archives": 934
+    },
+    "debian_baseline_packages": 284,
+    "inventory_sha256": "35482fa9ea4d71cf0ff6ac40702379d2f6366e02b31657ea941504716c79cd8a"
+  },
+  "full_inventory_receipt": {
+    "command": [
+      "python3",
+      "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-qualification-closure/scripts/license_inventory.py",
+      "--inputs",
+      "/root/.sv08-release-closure-20261015/inventory-inputs.json",
+      "--output",
+      "/root/.sv08-release-closure-20261015/full-software-inventory.json"
+    ],
+    "elapsed_seconds": 14.99561673682183,
+    "exit_code": 0,
+    "source_after": {
+      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
+    },
+    "source_before": {
+      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
     }
   },
   "historical_artifact_refusal": {
@@ -11550,162 +11553,30 @@
       "--scratch",
       "/root/.sv08-release-closure-20261015"
     ],
+    "elapsed_seconds": 17.3041996199172,
     "exit_code": 1,
     "expected_exit_code": 1,
     "output_exists": false,
-    "elapsed_seconds": 17.3041996199172,
-    "source_sha256_before": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-      "scripts/image_license_inventory.py": "a465298d324c092d9de6d9f183aab2b54d305ab0b1fc928415814e98069aef8f",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612"
-    },
     "source_sha256_after": {
-      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
       "scripts/image_license_inventory.py": "a465298d324c092d9de6d9f183aab2b54d305ab0b1fc928415814e98069aef8f",
-      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612"
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
+    },
+    "source_sha256_before": {
+      "scripts/image_license_inventory.py": "a465298d324c092d9de6d9f183aab2b54d305ab0b1fc928415814e98069aef8f",
+      "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+      "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+      "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
     }
   },
-  "full_inventory": {
-    "coverage": {
-      "declaration_only_dependencies": 9,
-      "dependencies_with_notice_text": 925,
-      "inspected_supplier_archives": 934
-    },
-    "inventory_sha256": "35482fa9ea4d71cf0ff6ac40702379d2f6366e02b31657ea941504716c79cd8a",
-    "application_count": 6,
-    "debian_baseline_packages": 284
+  "image_docstring_compatibility": {
+    "executable_AST_unchanged": true,
+    "final_sha256": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+    "measured_sha256": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+    "only_change": "module docstring accurately describes managed read-only mounts"
   },
-  "full_inventory_receipt": {
-    "command": [
-      "python3",
-      "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-qualification-closure/scripts/license_inventory.py",
-      "--inputs",
-      "/root/.sv08-release-closure-20261015/inventory-inputs.json",
-      "--output",
-      "/root/.sv08-release-closure-20261015/full-software-inventory.json"
-    ],
-    "exit_code": 0,
-    "elapsed_seconds": 14.99561673682183,
-    "source_before": {
-      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
-      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"
-    },
-    "source_after": {
-      "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-      "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
-      "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"
-    }
-  },
-  "remaining_notice_gaps": [
-    {
-      "name": "@humanfs/types",
-      "version": "0.15.0",
-      "supplier_url": "https://registry.npmjs.org/@humanfs/types/-/types-0.15.0.tgz",
-      "source_revision": "85069f193cbacc371c3beb649ce746f8c5a493be",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Exact typesREADME/metadata declareApache2.0; rootREADME describes humanfs monorepo and declaresApache2.0 without pointing to any siblinglicense text. No root/typesLICENSE in fetchedhistory. Publicissue171 specifically requests missingtypeslicense; no comments."
-    },
-    {
-      "name": "@sindarius/gcodeviewer",
-      "version": "3.7.18",
-      "supplier_url": "https://registry.npmjs.org/@sindarius/gcodeviewer/-/gcodeviewer-3.7.18.tgz",
-      "source_revision": "c0dad3b80f39cb3e30f7d3b08c48c9470ac3c8c7",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "No licensefilename in fetchednpm_gcodeviewer history; exact source map contains21 sourcefiles with no authorlicense text or authority link. Related pluginGPL license excluded without applicable scope/code grant."
-    },
-    {
-      "name": "aigle-core",
-      "version": "1.0.0",
-      "supplier_url": "https://registry.npmjs.org/aigle-core/-/aigle-core-1.0.0.tgz",
-      "source_revision": "9c25f2e88a5e3ae37e9c042618688a549a462791",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Exactpackage metadata links only sameauthor aigle-core repository and declaresMIT. README/index.js lack authorfulltext or externalgrant link. No licensefilename in fetchedhistory; repositorylicenseissue search0. RelatedAigle rootlicense not borrowed without explicitcore scopegrant."
-    },
-    {
-      "name": "de-indent",
-      "version": "1.0.2",
-      "supplier_url": "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz",
-      "source_revision": "5861bd7a39c09f0056fd361d82e570e56bd2c275",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Exactpackage source/metadata contain MIT identifier only; no author-controlled fulltext link or noticefilename in fetchedhistory. Publicissue1 requests licensefile; PR2 proposed one but closed/unmerged, no reviews and no author grant in issuecomments."
-    },
-    {
-      "name": "ospath",
-      "version": "1.2.2",
-      "supplier_url": "https://registry.npmjs.org/ospath/-/ospath-1.2.2.tgz",
-      "source_revision": "de6829c163decd984c87976deb7a754003681d52",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "ExactREADME License section saysMIT only; metadata links sameospathrepo. No authorfulltext URL, no licensefilename in fetchedhistory, no licensingissue searchresults. Source has no package-author notice."
-    },
-    {
-      "name": "stackback",
-      "version": "0.0.2",
-      "supplier_url": "https://registry.npmjs.org/stackback/-/stackback-0.0.2.tgz",
-      "source_revision": "2963095372abf7b75ba55f01cef08ab1e62c2ff4",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Originalrepo redirects to public defunctzombie/node-stackback. Existingissue1 LICENSE missing: maintainer defunctzombie states project untouched since2013 and will make no furtherchanges. No package-author fullnotice in fetchedhistory."
-    },
-    {
-      "name": "throttleit",
-      "version": "1.0.1",
-      "supplier_url": "https://registry.npmjs.org/throttleit/-/throttleit-1.0.1.tgz",
-      "source_revision": "afb7848a9b231e90fe3b44f7d18d59821452367f",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "Authorlicense text introduced at5556901e7af69e8db88d46b82e788ef72ef2a92d with source/metadata changes. Maintainer issue6 states fix is v2.0.0; issue9 request for oldversion notice receives advice to upgrade, not explicit grant for oldcode."
-    },
-    {
-      "name": "typed_janus_js",
-      "version": "1.2.1",
-      "supplier_url": "https://registry.npmjs.org/typed_janus_js/-/typed_janus_js-1.2.1.tgz",
-      "source_revision": "ab43e143ea6ff9e9b103819cadb474cc4a169756",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "ExactgitHead tree has no license/copying file. All14 exact src/*.ts files scanned: no license/copyright/fullgrant or external URLs. No licensefilename in fetchedsourcehistory. Canonical public issue search license returned0. CurrentREADME adds no authornotice."
-    },
-    {
-      "name": "vue-observe-visibility",
-      "version": "1.0.0",
-      "supplier_url": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-1.0.0.tgz",
-      "source_revision": "419680b548499a6d23433831c81644059811d534",
-      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
-      "primary_source_observation": "ExactREADME explicitlylinks generic opensource.org/licenses/MIT, not author-specific copyrightnotice. No noticefilename in fetchedhistory. Publiclicenseissue search finds only dependencybot release text. Demo/docs/polyfill links do not supply authorgrant covering this package."
-    }
-  ],
-  "failed_attempts": [
-    "Initial actual image run stopped at missing later-slot dpkg metadata; now reports unknown coverage per slot. Original failed inputs/logs retained.",
-    "Initial six source notice pins captured empty in-progress shared URL cache; rejected by hash checks. Fresh exact-commit public responses were separately retained; original research unchanged.",
-    "Verbatim text whitespace failed Git diff check; full original text remains in canonicalJSON, plain-text bundle generated on export. No license text normalized."
-  ],
-  "agents": [
-    {
-      "role": "project_researcher",
-      "requested_effort": "default low",
-      "task": "release_inventory_trace",
-      "effective_settings": "not independently observable"
-    },
-    {
-      "role": "project_implementer",
-      "requested_effort": "medium",
-      "task": "release_closure_implement",
-      "effective_settings": "not independently observable"
-    },
-    {
-      "role": "project_researcher",
-      "requested_effort": "medium",
-      "task": "npm_notice_gaps",
-      "effective_settings": "not independently observable"
-    }
-  ],
-  "allowance": {
-    "primary_process_seconds": 7200,
-    "primary_generated_bytes": 8589934592,
-    "conservative_charge_seconds": 1200,
-    "conservative_charge_generated_bytes": 536870912,
-    "includes_agents_and_failed_attempts": true,
-    "additional_research_running": true
-  },
+  "initial_delivery_note": "Original code_commit/source/test/image/remaining_notice_gaps fields are the preserved initial delivery snapshot; current continuation is below.",
   "limitations": [
     "Full goal not achieved: nine author-notice gaps remain; compatible dependency alternatives still under investigation.",
     "Actual full image is historical six-slot disposable artifact, not current final software or hardware qualified. Both normal roots contain513 packages; documented baseline284 is not substituted.",
@@ -11715,110 +11586,101 @@
     "Two public GitHub comparison responses used existing CLI authentication after anonymous API rate limit. No credentials inspected; public project corresponding-source qualification remains anonymous.",
     "Private raw inventories/images/logs retained outside repository; public evidence contains software/package metadata only."
   ],
-  "artifact_roots": {
-    "coordinator": "/home/drew/.sv08-release-closure-20261015",
-    "privileged": "/root/.sv08-release-closure-20261015"
-  },
-  "initial_delivery_note": "Original code_commit/source/test/image/remaining_notice_gaps fields are the preserved initial delivery snapshot; current continuation is below.",
-  "remediation_continuation": {
-    "code_commit": "2e452c21b352a48d322a2ec462cae873865fced0",
-    "source_sha256": {
-      "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-      "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-      "patches/mainsail/README.md": "f79a46c173ac033a4bd897054d2fccf7f3cafc7132c4492a1b3fe3854e09dc69",
-      "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
-      "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
-      "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
-      "configs/host/npm-notice-resolution.json": "2afa67ca3ed2491c4e6d6808e2d93ed8fdfc5302fa3ac1d422b195e37eb38da5",
-      "configs/host/release-source-license-inventory.json": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88",
-      "docs/development/release-packaging.md": "3c5cbd8e91d051dbae88b1a4ac8aab5033a5412c8a73342f630f2b52ac0eb795"
+  "remaining_notice_gaps": [
+    {
+      "name": "@humanfs/types",
+      "primary_source_observation": "Exact typesREADME/metadata declareApache2.0; rootREADME describes humanfs monorepo and declaresApache2.0 without pointing to any siblinglicense text. No root/typesLICENSE in fetchedhistory. Publicissue171 specifically requests missingtypeslicense; no comments.",
+      "source_revision": "85069f193cbacc371c3beb649ce746f8c5a493be",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/@humanfs/types/-/types-0.15.0.tgz",
+      "version": "0.15.0"
     },
-    "validation": [
-      {
-        "name": "remediation-tests",
-        "command": [
-          "python3",
-          "-m",
-          "unittest",
-          "-v",
-          "test_image_license_inventory",
-          "test_prepare_release",
-          "test_resolve_npm_notices",
-          "test_license_inventory",
-          "test_project_license",
-          "test_mainsail_notice_dependencies"
-        ],
-        "exit_code": 0,
-        "elapsed_seconds": 0.514763860963285,
-        "source_before": {
-          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
-          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
-          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
-        },
-        "source_after": {
-          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
-          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
-          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
-        }
-      },
-      {
-        "name": "fixed-dependencies",
-        "command": [
-          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
-          "tests/mainsail_fixed_dependencies.cjs",
-          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/node_modules"
-        ],
-        "exit_code": 0,
-        "elapsed_seconds": 0.06384286005049944,
-        "source_before": {
-          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
-          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
-          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
-        },
-        "source_after": {
-          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
-          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
-          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
-          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
-          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
-        }
-      }
-    ],
-    "tests_passed": 61,
-    "tests_skipped": 0,
-    "fixed_dependency_regression_passed": true,
-    "package_reproducibility": {
-      "package_sha256": "6ae70d5a666bd5f13e76a9f62c6df3aee4112411194e974ab6f4bc6919bbd081",
-      "report_sha256": [
-        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08",
-        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08"
+    {
+      "name": "@sindarius/gcodeviewer",
+      "primary_source_observation": "No licensefilename in fetchednpm_gcodeviewer history; exact source map contains21 sourcefiles with no authorlicense text or authority link. Related pluginGPL license excluded without applicable scope/code grant.",
+      "source_revision": "c0dad3b80f39cb3e30f7d3b08c48c9470ac3c8c7",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/@sindarius/gcodeviewer/-/gcodeviewer-3.7.18.tgz",
+      "version": "3.7.18"
+    },
+    {
+      "name": "aigle-core",
+      "primary_source_observation": "Exactpackage metadata links only sameauthor aigle-core repository and declaresMIT. README/index.js lack authorfulltext or externalgrant link. No licensefilename in fetchedhistory; repositorylicenseissue search0. RelatedAigle rootlicense not borrowed without explicitcore scopegrant.",
+      "source_revision": "9c25f2e88a5e3ae37e9c042618688a549a462791",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/aigle-core/-/aigle-core-1.0.0.tgz",
+      "version": "1.0.0"
+    },
+    {
+      "name": "de-indent",
+      "primary_source_observation": "Exactpackage source/metadata contain MIT identifier only; no author-controlled fulltext link or noticefilename in fetchedhistory. Publicissue1 requests licensefile; PR2 proposed one but closed/unmerged, no reviews and no author grant in issuecomments.",
+      "source_revision": "5861bd7a39c09f0056fd361d82e570e56bd2c275",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz",
+      "version": "1.0.2"
+    },
+    {
+      "name": "ospath",
+      "primary_source_observation": "ExactREADME License section saysMIT only; metadata links sameospathrepo. No authorfulltext URL, no licensefilename in fetchedhistory, no licensingissue searchresults. Source has no package-author notice.",
+      "source_revision": "de6829c163decd984c87976deb7a754003681d52",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/ospath/-/ospath-1.2.2.tgz",
+      "version": "1.2.2"
+    },
+    {
+      "name": "stackback",
+      "primary_source_observation": "Originalrepo redirects to public defunctzombie/node-stackback. Existingissue1 LICENSE missing: maintainer defunctzombie states project untouched since2013 and will make no furtherchanges. No package-author fullnotice in fetchedhistory.",
+      "source_revision": "2963095372abf7b75ba55f01cef08ab1e62c2ff4",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/stackback/-/stackback-0.0.2.tgz",
+      "version": "0.0.2"
+    },
+    {
+      "name": "throttleit",
+      "primary_source_observation": "Authorlicense text introduced at5556901e7af69e8db88d46b82e788ef72ef2a92d with source/metadata changes. Maintainer issue6 states fix is v2.0.0; issue9 request for oldversion notice receives advice to upgrade, not explicit grant for oldcode.",
+      "source_revision": "afb7848a9b231e90fe3b44f7d18d59821452367f",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/throttleit/-/throttleit-1.0.1.tgz",
+      "version": "1.0.1"
+    },
+    {
+      "name": "typed_janus_js",
+      "primary_source_observation": "ExactgitHead tree has no license/copying file. All14 exact src/*.ts files scanned: no license/copyright/fullgrant or external URLs. No licensefilename in fetchedsourcehistory. Canonical public issue search license returned0. CurrentREADME adds no authornotice.",
+      "source_revision": "ab43e143ea6ff9e9b103819cadb474cc4a169756",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/typed_janus_js/-/typed_janus_js-1.2.1.tgz",
+      "version": "1.2.1"
+    },
+    {
+      "name": "vue-observe-visibility",
+      "primary_source_observation": "ExactREADME explicitlylinks generic opensource.org/licenses/MIT, not author-specific copyrightnotice. No noticefilename in fetchedhistory. Publiclicenseissue search finds only dependencybot release text. Demo/docs/polyfill links do not supply authorgrant covering this package.",
+      "source_revision": "419680b548499a6d23433831c81644059811d534",
+      "status": "package-author-full-notice-unresolved-after-primary-source-tracing",
+      "supplier_url": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-1.0.0.tgz",
+      "version": "1.0.0"
+    }
+  ],
+  "remediation_continuation": {
+    "browser_startup": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-a2"
       ],
-      "independent_fresh_build_outputs_equal": true,
-      "a2_exit_code": 0,
-      "b2_exit_code": null,
-      "b2_completion_evidence": "finalreport emitted after checked dpkg-deb and package hashing; process gone, artifact bytes identical. Parentmonitor failed on temporary du path removal; no invented exit status.",
-      "node_version": "22.23.2",
-      "node_archive_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
-      "input_roots_preserved": true,
-      "logical_archive_root_uses_hardlinks_not_full_copies": true
+      "elapsed_seconds": 1.9696648390963674,
+      "exit_code": 0,
+      "scope": "actual changed static assets startup only; no printer/API/hardware",
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+    },
+    "budget": {
+      "conservative_cumulative_charge_bytes": 4294967296,
+      "conservative_cumulative_charge_seconds": 2000,
+      "cumulative_allowance_bytes": 8589934592,
+      "cumulative_allowance_seconds": 7200,
+      "includes_failed_inputs_transient_output_agents": true
     },
     "build_results": [
       {
@@ -11831,63 +11693,52 @@
           "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64.tar.xz",
           "--execute"
         ],
-        "exit_code": 0,
-        "elapsed_seconds": 30.99269479396753,
-        "timeout": false,
-        "output_allowance_exhausted": false,
-        "source_before": {
-          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
-          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
-          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
-          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
-          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
-        },
-        "source_after": {
-          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
-          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
-          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
-          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
-          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
-          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
-          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
-        },
-        "generated_current_bytes": 1036720582,
-        "prior_failed_pair_receipt_preserved": "package-build-results.json",
-        "prior_elapsed_seconds": 5.0194910869468,
+        "cumulative_allowance_bytes": 4294967296,
         "cumulative_allowance_seconds": 2400,
-        "cumulative_allowance_bytes": 4294967296
+        "elapsed_seconds": 30.99269479396753,
+        "exit_code": 0,
+        "generated_current_bytes": 1036720582,
+        "output_allowance_exhausted": false,
+        "prior_elapsed_seconds": 5.0194910869468,
+        "prior_failed_pair_receipt_preserved": "package-build-results.json",
+        "source_after": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
+          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+        },
+        "source_before": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
+          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+        },
+        "timeout": false
       }
     ],
-    "browser_startup": {
+    "code_commit": "2e452c21b352a48d322a2ec462cae873865fced0",
+    "current_inventory_command": {
       "command": [
-        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
-        "tests/mainsail_browser_startup.mjs",
-        "--execute",
-        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
-        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/dist",
-        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-a2"
+        "python3",
+        "scripts/license_inventory.py",
+        "--inputs",
+        "/home/drew/.sv08-release-closure-20261015/current-inventory-inputs.json",
+        "--output",
+        "configs/host/release-source-license-inventory.json"
       ],
-      "exit_code": 0,
-      "elapsed_seconds": 1.9696648390963674,
-      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3",
-      "scope": "actual changed static assets startup only; no printer/API/hardware"
+      "observed_exit_code": 0,
+      "output": {
+        "bytes": 3077992,
+        "output_sha256": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88"
+      }
     },
     "current_inventory_delta": {
-      "unchanged_domains": [
-        "wheels",
-        "debian",
-        "build_tools"
-      ],
-      "removed_dependencies": [
-        "node_modules/de-indent",
-        "node_modules/he",
-        "node_modules/vue-template-compiler"
-      ],
-      "changed_dependencies": [
-        "node_modules/throttleit"
-      ],
       "changed_applications": [
         [
           2,
@@ -11901,12 +11752,26 @@
           ]
         ]
       ],
+      "changed_dependencies": [
+        "node_modules/throttleit"
+      ],
       "coverage": {
         "declaration_only_dependencies": 7,
         "dependencies_with_notice_text": 924,
         "inspected_supplier_archives": 931
-      }
+      },
+      "removed_dependencies": [
+        "node_modules/de-indent",
+        "node_modules/he",
+        "node_modules/vue-template-compiler"
+      ],
+      "unchanged_domains": [
+        "wheels",
+        "debian",
+        "build_tools"
+      ]
     },
+    "fixed_dependency_regression_passed": true,
     "historical_selection_coverage": {
       "historical_notice_resolved": 60,
       "historical_notice_unresolved": 9,
@@ -11915,20 +11780,26 @@
       "remaining_selected_notice_gaps": 7,
       "selected_dependencies": 931
     },
-    "current_inventory_command": {
-      "command": [
-        "python3",
-        "scripts/license_inventory.py",
-        "--inputs",
-        "/home/drew/.sv08-release-closure-20261015/current-inventory-inputs.json",
-        "--output",
-        "configs/host/release-source-license-inventory.json"
-      ],
-      "observed_exit_code": 0,
-      "output": {
-        "output_sha256": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88",
-        "bytes": 3077992
-      }
+    "license_text_or_grants_changed": false,
+    "new_failed_attempts": [
+      "Disposable npm isolation used same /dev/null for user/global files; npm rejected before resolution. Distinct empty task config files corrected invocation; original failed input preserved.",
+      "B2 parent monitor failed on du transient removed optional directory. Child continued and final checked build report/artifact completed; process gone. Exit status not observable; never recorded as zero. Artifact byte identity independently verified."
+    ],
+    "next_bounded_slice": "Assess notice-bearing why-is-node-running3.2.3 with explicitly recorded Vitest CJS/ESM default-export compatibility; no blanket canonical-text substitution or missing notice waiver.",
+    "package_reproducibility": {
+      "a2_exit_code": 0,
+      "b2_completion_evidence": "finalreport emitted after checked dpkg-deb and package hashing; process gone, artifact bytes identical. Parentmonitor failed on temporary du path removal; no invented exit status.",
+      "b2_exit_code": null,
+      "independent_fresh_build_outputs_equal": true,
+      "input_roots_preserved": true,
+      "logical_archive_root_uses_hardlinks_not_full_copies": true,
+      "node_archive_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+      "node_version": "22.23.2",
+      "package_sha256": "6ae70d5a666bd5f13e76a9f62c6df3aee4112411194e974ab6f4bc6919bbd081",
+      "report_sha256": [
+        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08",
+        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08"
+      ]
     },
     "project_source_package_reproducibility": {
       "command": [
@@ -11945,9 +11816,9 @@
         "--scratch",
         "/root/.sv08-release-closure-20261015"
       ],
-      "exit_code": 0,
       "elapsed_seconds": 1.1667637440841645,
       "exact_output_bytes_reproduced": true,
+      "exit_code": 0,
       "output_sha256": {
         "image-inventory.json": "9961d8835903977aa2b8f2ee8d3a5a9700892121d906c15861241d53a601c3a3",
         "public-source.json": "079ed200a6812adf430372b80c3d7c484a0194f427b52bb2f9c2fa197c76dc8a",
@@ -11955,25 +11826,416 @@
         "report.json": "0b579d441fa3aac6db05caef33032d3290bd8d0c5321b99f7588ef4aea8e02a9"
       },
       "source": {
-        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
         "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
-        "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
-        "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612"
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612",
+        "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b"
       }
     },
-    "new_failed_attempts": [
-      "Disposable npm isolation used same /dev/null for user/global files; npm rejected before resolution. Distinct empty task config files corrected invocation; original failed input preserved.",
-      "B2 parent monitor failed on du transient removed optional directory. Child continued and final checked build report/artifact completed; process gone. Exit status not observable; never recorded as zero. Artifact byte identity independently verified."
-    ],
     "remaining_selected_notice_gaps": 7,
-    "license_text_or_grants_changed": false,
-    "budget": {
-      "cumulative_allowance_seconds": 7200,
-      "cumulative_allowance_bytes": 8589934592,
-      "conservative_cumulative_charge_seconds": 2000,
-      "conservative_cumulative_charge_bytes": 4294967296,
-      "includes_failed_inputs_transient_output_agents": true
+    "source_sha256": {
+      "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+      "configs/host/npm-notice-resolution.json": "2afa67ca3ed2491c4e6d6808e2d93ed8fdfc5302fa3ac1d422b195e37eb38da5",
+      "configs/host/release-source-license-inventory.json": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88",
+      "docs/development/release-packaging.md": "3c5cbd8e91d051dbae88b1a4ac8aab5033a5412c8a73342f630f2b52ac0eb795",
+      "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+      "patches/mainsail/README.md": "f79a46c173ac033a4bd897054d2fccf7f3cafc7132c4492a1b3fe3854e09dc69",
+      "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+      "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+      "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
     },
-    "next_bounded_slice": "Assess notice-bearing why-is-node-running3.2.3 with explicitly recorded Vitest CJS/ESM default-export compatibility; no blanket canonical-text substitution or missing notice waiver."
+    "tests_passed": 61,
+    "tests_skipped": 0,
+    "validation": [
+      {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_image_license_inventory",
+          "test_prepare_release",
+          "test_resolve_npm_notices",
+          "test_license_inventory",
+          "test_project_license",
+          "test_mainsail_notice_dependencies"
+        ],
+        "elapsed_seconds": 0.514763860963285,
+        "exit_code": 0,
+        "name": "remediation-tests",
+        "source_after": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        },
+        "source_before": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        }
+      },
+      {
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "tests/mainsail_fixed_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/node_modules"
+        ],
+        "elapsed_seconds": 0.06384286005049944,
+        "exit_code": 0,
+        "name": "fixed-dependencies",
+        "source_after": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        },
+        "source_before": {
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0"
+        }
+      }
+    ]
+  },
+  "source_sha256": {
+    "configs/host/npm-supplemental-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+    "docs/development/release-packaging.md": "cfcd3689ac2a6ae101105dc75a7da518114af79b47cedad20b336c12d88131a8",
+    "docs/licensing/npm-notices.json": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+    "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+    "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+    "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+    "scripts/resolve_npm_notices.py": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c",
+    "tests/test_image_license_inventory.py": "5fd0ea117f889f1a30fd67a804a8b77b6018b4704d3c70f57fde856314e37d6a",
+    "tests/test_license_inventory.py": "997d6a1c30011b6db59380c442f4cd800e4cc7bb11ef522628348dbf31112dcd",
+    "tests/test_prepare_release.py": "a7718e72c6d88b604a5d084947ba402d78ef44b1a6f0fd2e0aa2bb405bc3e5a8",
+    "tests/test_resolve_npm_notices.py": "3bc487bf793126aa0a23baec6556b29bef73e5c1ee9c4fd8bc5627caee56cf78"
+  },
+  "status": "in-progress-seven-current-notice-gaps-remain",
+  "tests": {
+    "distinct_passed": 56,
+    "initial": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_image_license_inventory",
+        "test_prepare_release",
+        "test_resolve_npm_notices",
+        "test_license_inventory",
+        "test_project_license"
+      ],
+      "elapsed_seconds": 0.41445466107688844,
+      "exit_code": 0,
+      "source_after": {
+        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd"
+      },
+      "source_before": {
+        "scripts/image_license_inventory.py": "82aa283fc0dfe13e909beee070ff25f935c913b342f6b8297822aeac2e11dfaa",
+        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/resolve_npm_notices.py": "d068260e896b17b978c2ea13382867369b5bbbb5c2bd6cd8bb835ccb33c600cd"
+      }
+    },
+    "initial_passed": 55,
+    "latest_resolver": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "-v",
+        "test_resolve_npm_notices"
+      ],
+      "elapsed_seconds": 0.11407755897380412,
+      "exit_code": 0,
+      "source_sha256": "f4df38a546006c7f25310bfd70bc3c973ac243c6b2de108d6c0303cd9466d47c"
+    },
+    "latest_resolver_passed": 12,
+    "note": "55 initial checks; stricter repository identity handling added and all12 resolver checks passed, including one additional test. Other production code changes since initial tests are module docstring only.",
+    "skips": 0
+  },
+  "vitest_continuation": {
+    "agents": [
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "default-low",
+        "role": "project_researcher",
+        "task": "stackback_remediation_design"
+      },
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "task": "vitest_notice_implement"
+      }
+    ],
+    "baseline_unit": {
+      "exit": 0,
+      "files": 4,
+      "receipt_sha256": "58c929dfef74911a7ad308fbd89d01179c6c04f89144a7267aa9805d89f177a2",
+      "tests": 46
+    },
+    "browser": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/build/vitest-a/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-vitest"
+      ],
+      "elapsed_seconds": 1.7709253090433776,
+      "exit": 0,
+      "scope": "static startup only; no API or hardware qualification",
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+    },
+    "focused_source_checks": {
+      "command": "PYTHONPATH=scripts:tests python3 -m unittest -v test_mainsail_notice_dependencies",
+      "elapsed_seconds": 0.104,
+      "exit": 0,
+      "tests": 6
+    },
+    "historical_accounting": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 3,
+      "remaining_selected_notice_gaps": 6,
+      "selected_dependencies": 921
+    },
+    "inventory_delta": {
+      "changed_top_level_fields": [
+        "applications",
+        "mainsail_dependencies"
+      ],
+      "coverage": {
+        "declaration_only_dependencies": 6,
+        "dependencies_with_notice_text": 915,
+        "inspected_supplier_archives": 921
+      },
+      "current_inventory_sha256": "f8b5bb856bbce02e9a07870eff9f7d4305eac0c77862152f5180ba1fd9873b2a",
+      "previous_inventory_sha256": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88"
+    },
+    "limits": [
+      "Six notice gaps remain; goal incomplete.",
+      "Historical missing notices remain historical facts; removed dependencies were not relicensed.",
+      "Static startup only; no API/printer/full-workload/hardware qualification.",
+      "Earlier unchanged core tests reused from recorded source-bound evidence; six changed patch checks rerun.",
+      "No merge, deployment, upstream message, license change or new host installation."
+    ],
+    "notice_coverage": {
+      "declaration_only_dependencies": 6,
+      "dependencies_with_notice_text": 915,
+      "inspected_supplier_archives": 921
+    },
+    "rationale": "Supported upstream Vitest5 native ESM diagnostics removes stackback without a local supplier-code patch or license changes.",
+    "remaining_selected_gaps": [
+      {
+        "name": "@humanfs/types",
+        "version": "0.15.0"
+      },
+      {
+        "name": "@sindarius/gcodeviewer",
+        "version": "3.7.18"
+      },
+      {
+        "name": "aigle-core",
+        "version": "1.0.0"
+      },
+      {
+        "name": "ospath",
+        "version": "1.2.2"
+      },
+      {
+        "name": "typed_janus_js",
+        "version": "1.2.1"
+      },
+      {
+        "name": "vue-observe-visibility",
+        "version": "1.0.0"
+      }
+    ],
+    "reproducibility": {
+      "builds": [
+        {
+          "elapsed_seconds": 26.550261619035155,
+          "exit": 0,
+          "limit": null,
+          "suffix": "a"
+        },
+        {
+          "elapsed_seconds": 27.611395439133048,
+          "exit": 0,
+          "limit": null,
+          "suffix": "b"
+        }
+      ],
+      "identical_packages": true,
+      "identical_reports": true,
+      "package_sha256": "a3a87a608d99877e5d19a9398e024f5f1fd5d6531906b77fbdfa4e79fa4a77b9",
+      "report_sha256": "8c1fcdbf5fd7a4725796104c107c8d63083209998e3150294d23f5608867fa69"
+    },
+    "resource_accounting": {
+      "conservative_charge_output_bytes": 6442450944,
+      "conservative_charge_process_seconds": 2500,
+      "cumulative_allowance_output_bytes": 8589934592,
+      "cumulative_allowance_process_seconds": 7200,
+      "no_reset": true
+    },
+    "runtime_checks": [
+      {
+        "check": "unit",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run"
+        ],
+        "elapsed_seconds": 1.1230785970110446,
+        "exit": 0
+      },
+      {
+        "check": "notice",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/tests/mainsail_notice_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/build/vitest-a/source/node_modules"
+        ],
+        "elapsed_seconds": 1.11573955998756,
+        "exit": 0
+      },
+      {
+        "check": "fixed",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/tests/mainsail_fixed_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-vitest-notice/build/vitest-a/source/node_modules"
+        ],
+        "elapsed_seconds": 0.06375932600349188,
+        "exit": 0
+      }
+    ],
+    "source_commit": "8268b11fc6b46a58af627c39b7942c618d006391",
+    "source_sha256": {
+      "configs/apps/mainsail.json": "e5848855682b84ef92015c1042ae8567e20129c7e21a92480010da64b860b88d",
+      "configs/host/npm-notice-resolution.json": "b752a6c020edac1fcb3d025badc7640621ec8261472eb56c31fb5ffa38f1480d",
+      "configs/host/release-source-license-inventory.json": "f8b5bb856bbce02e9a07870eff9f7d4305eac0c77862152f5180ba1fd9873b2a",
+      "patches/mainsail/0004-vitest-notice-closure.patch": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f",
+      "tests/mainsail_notice_dependencies.cjs": "62d3493817e18d727fd06e912797e12ae2113bac1f221738b4d8201266051c38",
+      "tests/test_mainsail_notice_dependencies.py": "d4efd54074f1ad3c55461767e2894020104bdf30e1ed72362f894fb0ad4fc4d6"
+    },
+    "supplier_archive_intake": [
+      {
+        "notices": 1,
+        "path": "node_modules/@jridgewell/sourcemap-codec",
+        "sha256": "f30a35f6af8c347d01b8ff2f8662272f7d986cf21b916704d86c249a90b97e25",
+        "version": "1.6.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@types/node",
+        "sha256": "1d382e6ea27221dcf02fc1cada5c5d396c4ca499552201323ca43713baa60012",
+        "version": "22.20.5"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@vitest/mocker",
+        "sha256": "113720d5386d59c5c29d408782b5508e100bea325e0353afd6b7cdaae9cfffc5",
+        "version": "5.0.4"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@vitest/mocker/node_modules/magic-string",
+        "sha256": "6c9d770ddb800796303481b4bdacd7c308dfe83edd0ff8fa5377438c03889d08",
+        "version": "1.4.3"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/@vitest/spy",
+        "sha256": "bc2329504abf45d4b1496e6ddfe16ffdbc33438e80cb940cdd0eca54e30747b8",
+        "version": "5.0.4"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/chai",
+        "sha256": "ef5457b2ab9e011093f47f104fecc94e5b36ce729fdba6fbc8b0ce316c2e8f60",
+        "version": "6.3.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/es-module-lexer",
+        "sha256": "99b4da5f3bd7cc4483f3d892ee9037b10a1da26ac5bec374038cf0bd4a52e1a7",
+        "version": "2.3.2"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/obug",
+        "sha256": "ecfec0c0318c048b6abde3c42f3a1c3fc35b3f69392a4b262b848aab76ff3d11",
+        "version": "3.0.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/std-env",
+        "sha256": "472694210ae3770970a33826b283db03ecec5a0fcf3f6df76eccb48695459bf5",
+        "version": "4.3.0"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/tinybench",
+        "sha256": "5a12db6b7b7907ed8486fed0f8d5e66785e72beaa0993ca57dd665b3f9d0bff9",
+        "version": "6.2.2"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/tinyexec",
+        "sha256": "540b804f39c7716c232252085e4d43d9b10e2d89db39faaa1b31ed8cd93e2f1f",
+        "version": "1.3.1"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/vitest",
+        "sha256": "1580270c5534c22baa122ac6f4ffe648f00783502eb0206ea7a50565d8f5061d",
+        "version": "5.0.4"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/vitest/node_modules/magic-string",
+        "sha256": "6c9d770ddb800796303481b4bdacd7c308dfe83edd0ff8fa5377438c03889d08",
+        "version": "1.4.3"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/vitest/node_modules/picomatch",
+        "sha256": "697b463be3cdbd9ffc8f4194fd5019a69ddf95875fb703d78b2b115cc9e740a8",
+        "version": "4.0.7"
+      },
+      {
+        "notices": 1,
+        "path": "node_modules/why-is-node-running",
+        "sha256": "825a38a4cfa575b28b587c7669d4ad184c3582b58eabf5374804f5dbc354fdd2",
+        "version": "3.2.1"
+      }
+    ]
   }
 }
