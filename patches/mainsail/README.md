@@ -153,3 +153,66 @@ inspected at this continuation. No supplier bytes, upstream gitlink or license
 wording change. Retire this patch when the selected upstream Mainsail runner
 already provides the compatible native ESM diagnostic dependency path. No upstream
 message has been sent.
+
+## Licensed Janus SDK and independent streaming adapter
+
+`0005-janus-sdk-replacement.patch` replaces the sole `typed_janus_js` consumer
+with the complete, exact 117451-byte Meetecho MIT SDK and an independently authored
+narrow adapter and declarations. The SDK is extracted from `sourcesContent[0]`
+(`../js/janus.js`) in the existing supplier's `package/dist/index.esm.js.map`.
+[Provenance](../../configs/host/mainsail-janus-sdk.json) pins the original archive
+SHA256/SRI, source-map member, complete source, notice and added ESM export tail.
+No wrapper implementation or declarations were copied, and no grant for the wrapper
+is inferred. The SDK bytes are unchanged; `\nexport default Janus;\n` is the only
+added SDK tail. Upstream LICENSE and source revision remain unchanged.
+
+The full SDK notice is copied unchanged to `public/licenses/janus-sdk.txt`, so
+bundler comment removal cannot discard it. Independently authored adapter/types
+and source tests carry AGPL-3.0-or-later headers; the full project grant is shipped
+as `public/licenses/sv08-janus-adapter-AGPL-3.0.txt`. The coordinator maintains the
+application-source notice inventory separately from historical NPM accounting.
+
+The adapter uses the existing selected `webrtc-adapter` 9.0.3 supplier directly.
+A genuine lock-only npm invocation after patches 1–4 removes the wrapper, aigle,
+aigle-core, wrapper-local TypeScript/TypeDoc and their now-unused documentation
+children: 23 records disappear, no paths are added, and only the root record
+changes. All surviving supplier records are retained byte-for-byte semantically,
+including unrelated libc and dev metadata rewrites npm attempted. The previous
+wrapper-only lodash override is removed. The exact complete delta is tested; the
+profile pins patch 5, the resulting lock and package revision 7. Pinned Node/npm,
+install-script restrictions and all previous patches remain in effect.
+
+The production component retains its URL derivation, numeric stream ID, ICE
+configuration defaults, createAnswer defaults, video attributes and presentation.
+The independently authored lifecycle invalidates stale callbacks immediately,
+clears tracks/video and waits for SDK destroy success/error (or a thrown destroy)
+before starting its successor. Pending session creation is also cleaned up before
+a successor starts; rapid changes retain only the latest waiting run. Session,
+plugin/watch/start/answer, ICE and synchronous errors become visible error status.
+A stopped or superseded run cannot attach media or update successor state.
+
+[Offline regression tests](../../tests/test_mainsail_janus.py) apply pinned patches,
+check exact source/notice/public grant, unchanged upstream LICENSE and component
+presentation/addressing, and the complete lock delta. Set `MAINSAIL_JANUS_ARCHIVE`
+to the retained supplier archive to additionally verify archive SHA256/SRI, member
+hash and actual source-map extraction. Earlier patch-3 and patch-4 delta fixtures
+remain in [dependency tests](../../tests/test_mainsail_notice_dependencies.py).
+The patched upstream `tests/janusStream.spec.ts` exercises successful negotiation,
+status/tracks, stopped pending initialization/session, stale callbacks, failures,
+delayed destroy success/error/throw and rapid restart/stop ordering.
+
+The [browser harness](../../tests/mainsail_janus_browser.mjs) takes `--execute
+CHROME SOURCE OUTPUT JANUS_URL STREAM_ID RTP_PORT` in an isolated namespace with
+only `lo` and dummy `sv08test0` at `192.0.2.1/32`, with no default route.
+The dummy documentation address permits libnice ICE candidate gathering, which
+excludes loopback addresses; signaling and RTP input remain on loopback.
+It serves the production adapter through Vite, encodes deterministic VP8 canvas
+keyframes using Chromium WebCodecs, sends actual RTP into a disposable Janus
+streaming fixture, and checks decoded video dimensions/frame progress, restart
+and destroy. Its explicit empty ICE list is fixture-only; production defaults are
+unchanged. External HTTP requests are blocked and processes/timers/sockets are
+cleaned up. This exercises actual SDK/WebRTC playback, while the production Vue
+component's presentation is checked separately; it does not qualify a camera or
+printer. Coordinator-owned full unit/type/build/startup and repeatability results
+remain separate evidence. Retire the patch when selected upstream Mainsail has a
+notice-bearing, tested equivalent dependency path; no upstream message was sent.

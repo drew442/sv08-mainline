@@ -32,7 +32,8 @@ class MainsailNoticeDependencies(unittest.TestCase):
         actual = subprocess.check_output(['git','-C',str(upstream),'rev-parse','HEAD'],text=True).strip()
         if actual != cls.config['source_commit']:
             raise AssertionError('Prepared upstream source must match the pinned revision')
-        for name in ('package.json','package-lock.json','vite.config.ts'):
+        for name in ('package.json','package-lock.json','vite.config.ts','src/components/webcams/streamers/JanusStreamer.vue'):
+            (cls.source/name).parent.mkdir(parents=True,exist_ok=True)
             (cls.source/name).write_bytes(subprocess.check_output(['git','-C',str(upstream),'show',actual+':'+name]))
         if sha(cls.source/'package-lock.json') != cls.config['package_lock_sha256']:
             raise AssertionError('Original source lock differs from its pin')
@@ -40,6 +41,9 @@ class MainsailNoticeDependencies(unittest.TestCase):
             candidate = REPO/patch['path']
             if sha(candidate) != patch['sha256']:
                 raise AssertionError('Source patch pin mismatch')
+            if index == 4:
+                cls.janus_before_manifest = json.loads((cls.source/'package.json').read_text())
+                cls.janus_before_lock = json.loads((cls.source/'package-lock.json').read_text())
             if index == 3:
                 cls.vitest_before_manifest = json.loads((cls.source/'package.json').read_text())
                 cls.vitest_before_lock = json.loads((cls.source/'package-lock.json').read_text())
@@ -54,8 +58,8 @@ class MainsailNoticeDependencies(unittest.TestCase):
 
     def test_exact_patches_and_final_lock_pin(self):
         self.assertEqual(sha(self.source/'package-lock.json'),self.config['patched_package_lock_sha256'])
-        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-6')
-        self.assertEqual(len(self.config['source_patches']),4)
+        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-7')
+        self.assertEqual(len(self.config['source_patches']),5)
         self.assertEqual(self.lock['packages']['node_modules/js-yaml']['version'],'4.3.2')
         self.assertEqual(self.lock['packages']['node_modules/nanoid']['version'],'3.3.18')
         self.assertIn('manifestTransforms',(self.source/'vite.config.ts').read_text())
@@ -67,7 +71,7 @@ class MainsailNoticeDependencies(unittest.TestCase):
         self.assertEqual(self.vitest_before_manifest,before)
         before['devDependencies']['vitest'] = '5.0.4'
         before['devDependencies']['@types/node'] = '^22.0.0'
-        self.assertEqual(self.manifest,before)
+        self.assertEqual(self.janus_before_manifest,before)
         self.assertNotIn('vue-template-compiler',self.lock['packages']['']['devDependencies'])
 
     def test_only_expected_supplier_lock_records_change(self):
@@ -88,7 +92,7 @@ class MainsailNoticeDependencies(unittest.TestCase):
             self.assertNotIn('de-indent',package.get('dependencies',{}))
 
     def test_exact_upstream_vitest_family_delta(self):
-        before = self.vitest_before_lock['packages']; after = self.lock['packages']
+        before = self.vitest_before_lock['packages']; after = self.janus_before_lock['packages']
         removed = {'@vitest/expect', '@vitest/pretty-format', '@vitest/runner',
                    '@vitest/snapshot', '@vitest/snapshot/node_modules/magic-string',
                    '@vitest/utils', 'pathe', 'siginfo', 'stackback', 'tinyrainbow'}

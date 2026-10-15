@@ -6,7 +6,7 @@
   "node_version": "22.23.2",
   "node_archive": "node-v22.23.2-linux-x64.tar.xz",
   "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
-  "package_version": "2.19.0+git32f99e1c-6",
+  "package_version": "2.19.0+git32f99e1c-7",
   "status": "offline-build-no-browser-validation",
   "source_patches": [
     {
@@ -24,7 +24,11 @@
     {
       "path": "patches/mainsail/0004-vitest-notice-closure.patch",
       "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+    },
+    {
+      "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+      "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
     }
   ],
-  "patched_package_lock_sha256": "302ec0772499c7be16d51f53488e7ed2cdaad936fd9bb959cddbde1eb4378932"
+  "patched_package_lock_sha256": "0e32ccdb698a6097ac335a8eaaf33498acd6120f23c27e153fb8443a7c28595d"
 }

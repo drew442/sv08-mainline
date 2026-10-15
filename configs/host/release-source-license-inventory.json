@@ -88,13 +88,13 @@
     },
     {
       "artifact": {
-        "bytes": 2509654,
-        "path": "sv08-mainsail_2.19.0+git32f99e1c-6_all.deb",
-        "sha256": "a3a87a608d99877e5d19a9398e024f5f1fd5d6531906b77fbdfa4e79fa4a77b9"
+        "bytes": 2494332,
+        "path": "sv08-mainsail_2.19.0+git32f99e1c-7_all.deb",
+        "sha256": "fe87dfa3f5936249dd09d17b71f3482b62616bbccabd5f83eab2f9ffff87d610"
       },
       "classification": "project-source-build",
       "config": "configs/apps/mainsail.json",
-      "config_sha256": "e5848855682b84ef92015c1042ae8567e20129c7e21a92480010da64b860b88d",
+      "config_sha256": "80bd2a588093b6c5d83a424f7a7f01bfa0f1128a1843fb2c9fa15326b55a1aa1",
       "license_status": "source-bound-notice-text-inventoried",
       "notices": [
         {
@@ -106,6 +106,38 @@
             "identity": "upstream/mainsail",
             "kind": "git-commit",
             "version": "2.19.0+git32f99e1c-4"
+          }
+        },
+        {
+          "bytes": 1098,
+          "path": "licenses/janus-sdk.txt",
+          "sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+          "source": {
+            "file": {
+              "bytes": 117451,
+              "path": "janus-sdk-original.js",
+              "sha256": "eea437f6e719db131a95715a644c8a41b314424a8f1c6716ce7ef4e9e189e815"
+            },
+            "identity": "Meetecho Janus SDK embedded source; exact typed_janus_js1.2.1 source-map extraction",
+            "kind": "source-file",
+            "sha256": "eea437f6e719db131a95715a644c8a41b314424a8f1c6716ce7ef4e9e189e815",
+            "version": "typed_janus_js1.2.1-embedded-sdk"
+          }
+        },
+        {
+          "bytes": 34523,
+          "path": "licenses/sv08-janus-adapter-AGPL-3.0.txt",
+          "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+          "source": {
+            "file": {
+              "bytes": 34523,
+              "path": "LICENSE",
+              "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+            },
+            "identity": "SV08 Mainline project grant for independently authored Janus adapter",
+            "kind": "source-file",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+            "version": "AGPL-3.0-or-later"
           }
         }
       ],
@@ -129,23 +161,28 @@
           "bytes": 22680,
           "path": "patches/mainsail/0004-vitest-notice-closure.patch",
           "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+        },
+        {
+          "bytes": 198212,
+          "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+          "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
         }
       ],
       "rebuild_evidence": [
         {
-          "bytes": 487,
-          "path": "vitest-package-repro.json",
-          "sha256": "5b127e32fb2984171d5021e4c74ad2213ce6d386b3412ac78b7a906718c5f10a"
+          "bytes": 779,
+          "path": "janus-package-repro.json",
+          "sha256": "0f4961da08d68b9c9a2daaa5cbb3ade4d938029866e07ea354c17a2b30fe1153"
         }
       ],
       "source": {
         "commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
         "identity": "upstream/mainsail",
         "kind": "git-commit",
-        "version": "2.19.0+git32f99e1c-6"
+        "version": "2.19.0+git32f99e1c-7"
       },
       "unresolved_license_declaration": false,
-      "version": "2.19.0+git32f99e1c-6"
+      "version": "2.19.0+git32f99e1c-7"
     },
     {
       "artifact": {
@@ -31878,14 +31915,14 @@
   "legal_compliance_assessed": false,
   "mainsail_dependencies": {
     "lock": {
-      "bytes": 550107,
+      "bytes": 538819,
       "path": "package-lock.json",
-      "sha256": "302ec0772499c7be16d51f53488e7ed2cdaad936fd9bb959cddbde1eb4378932"
+      "sha256": "0e32ccdb698a6097ac335a8eaaf33498acd6120f23c27e153fb8443a7c28595d"
     },
     "notice_coverage": {
-      "declaration_only_dependencies": 6,
-      "dependencies_with_notice_text": 915,
-      "inspected_supplier_archives": 921
+      "declaration_only_dependencies": 4,
+      "dependencies_with_notice_text": 894,
+      "inspected_supplier_archives": 898
     },
     "packages": [
       {
@@ -36864,42 +36901,6 @@
       },
       {
         "archive": {
-          "bytes": 197016,
-          "path": "archives/586020e844309c91f78c453fd02f9b48213314ddf49f950b454d01500e458ce5.tgz",
-          "sha256": "586020e844309c91f78c453fd02f9b48213314ddf49f950b454d01500e458ce5"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-bEMORlG0cqdjVyCEuU0cDQbORWX+kYCeo0kV1lbxF5bt4r7SID2l9bqsxJEM0zndaxpOUT7riCyIVEuqq/Ynxg==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@gerrit0/mini-shiki",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1073,
-            "path": "texts/586020e844309c91f78c453fd02f9b48213314ddf49f950b454d01500e458ce5/4c9655af812eacdb-LICENSE",
-            "sha256": "f23a97ad5e531fc57f1d317c7c545fd7795c8464b6ae07642b8bde7631d230c0"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1100,
-          "path": "texts/586020e844309c91f78c453fd02f9b48213314ddf49f950b454d01500e458ce5/5205bfc4f58dc7ca-package.json",
-          "sha256": "871c3a2dd9f49616aa9df38e3a6d3401c110596dc4a655412d56b1bac393fa17"
-        },
-        "path": "node_modules/@gerrit0/mini-shiki",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@gerrit0/mini-shiki/-/mini-shiki-3.23.0.tgz",
-        "version": "3.23.0"
-      },
-      {
-        "archive": {
           "bytes": 23971,
           "path": "archives/cb302ad9f0d59c55c3d557a8d57de74e13f917d44aab01da79c9215c80754b85.tgz",
           "sha256": "cb302ad9f0d59c55c3d557a8d57de74e13f917d44aab01da79c9215c80754b85"
@@ -40577,186 +40578,6 @@
       },
       {
         "archive": {
-          "bytes": 236585,
-          "path": "archives/80ca6b694510aca626bfad47a9dde0d30db4fc55592189a56b8ac00c67530c7b.tgz",
-          "sha256": "80ca6b694510aca626bfad47a9dde0d30db4fc55592189a56b8ac00c67530c7b"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-1nWINwKXxKKLqPibT5f4pAFLej9oZzQTsby8942OTlsJzOBZ0MWKiwzMsd+jhzu8YPCHAswGnnN1YtQfirL35g==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@shikijs/engine-oniguruma",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1121,
-            "path": "texts/80ca6b694510aca626bfad47a9dde0d30db4fc55592189a56b8ac00c67530c7b/4c9655af812eacdb-LICENSE",
-            "sha256": "7a9d8d01038aeacf9e5bcdabbddf2a7815200dce9fc1118468cc553e00ae3eee"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1050,
-          "path": "texts/80ca6b694510aca626bfad47a9dde0d30db4fc55592189a56b8ac00c67530c7b/5205bfc4f58dc7ca-package.json",
-          "sha256": "4bbc38286aa848fdf265973fb160e13610afcda1b04378d46fa07c6b8c83ffd2"
-        },
-        "path": "node_modules/@shikijs/engine-oniguruma",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@shikijs/engine-oniguruma/-/engine-oniguruma-3.23.0.tgz",
-        "version": "3.23.0"
-      },
-      {
-        "archive": {
-          "bytes": 1261524,
-          "path": "archives/fed7460921474cff9a36c018aa003bc9c7f506f9ed43117841ccb2bbcffb9e89.tgz",
-          "sha256": "fed7460921474cff9a36c018aa003bc9c7f506f9ed43117841ccb2bbcffb9e89"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-2Ep4W3Re5aB1/62RSYQInK9mM3HsLeB91cHqznAJMuylqjzNVAVCMnNWRHFtcNHXsoNRayP9z1qj4Sq3nMqYXg==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@shikijs/langs",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1121,
-            "path": "texts/fed7460921474cff9a36c018aa003bc9c7f506f9ed43117841ccb2bbcffb9e89/4c9655af812eacdb-LICENSE",
-            "sha256": "7a9d8d01038aeacf9e5bcdabbddf2a7815200dce9fc1118468cc553e00ae3eee"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 13455,
-          "path": "texts/fed7460921474cff9a36c018aa003bc9c7f506f9ed43117841ccb2bbcffb9e89/5205bfc4f58dc7ca-package.json",
-          "sha256": "397c8e832648caf85ade2fd3fa98386a0ac08b704e9f68fe6664979fb24fa31e"
-        },
-        "path": "node_modules/@shikijs/langs",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@shikijs/langs/-/langs-3.23.0.tgz",
-        "version": "3.23.0"
-      },
-      {
-        "archive": {
-          "bytes": 174057,
-          "path": "archives/3ede8069dbdf87d16534256f06d9ff972fb317cd599c2ebfff4614e723430b0b.tgz",
-          "sha256": "3ede8069dbdf87d16534256f06d9ff972fb317cd599c2ebfff4614e723430b0b"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-5qySYa1ZgAT18HR/ypENL9cUSGOeI2x+4IvYJu4JgVJdizn6kG4ia5Q1jDEOi7gTbN4RbuYtmHh0W3eccOrjMA==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@shikijs/themes",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1121,
-            "path": "texts/3ede8069dbdf87d16534256f06d9ff972fb317cd599c2ebfff4614e723430b0b/4c9655af812eacdb-LICENSE",
-            "sha256": "7a9d8d01038aeacf9e5bcdabbddf2a7815200dce9fc1118468cc553e00ae3eee"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 4202,
-          "path": "texts/3ede8069dbdf87d16534256f06d9ff972fb317cd599c2ebfff4614e723430b0b/5205bfc4f58dc7ca-package.json",
-          "sha256": "6f76fed63a9dca4747b8b9ca47826aaed0e85f9dd5d8cc806f69f13cdeac48cc"
-        },
-        "path": "node_modules/@shikijs/themes",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@shikijs/themes/-/themes-3.23.0.tgz",
-        "version": "3.23.0"
-      },
-      {
-        "archive": {
-          "bytes": 8908,
-          "path": "archives/00e7dd80041532200596d8d90edbcbef6ca181e64a34eb3bb75f677364aca788.tgz",
-          "sha256": "00e7dd80041532200596d8d90edbcbef6ca181e64a34eb3bb75f677364aca788"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-3JZ5HXOZfYjsYSk0yPwBrkupyYSLpAE26Qc0HLghhZNGTZg/SKxXIIgoxOpmmeQP0RRSDJTk1/vPfw9tbw+jSQ==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@shikijs/types",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1121,
-            "path": "texts/00e7dd80041532200596d8d90edbcbef6ca181e64a34eb3bb75f677364aca788/4c9655af812eacdb-LICENSE",
-            "sha256": "7a9d8d01038aeacf9e5bcdabbddf2a7815200dce9fc1118468cc553e00ae3eee"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 831,
-          "path": "texts/00e7dd80041532200596d8d90edbcbef6ca181e64a34eb3bb75f677364aca788/5205bfc4f58dc7ca-package.json",
-          "sha256": "a41fbc88ec1d13be639e3a23cf82046b31519f6b54ce37fd9c81db2110662291"
-        },
-        "path": "node_modules/@shikijs/types",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@shikijs/types/-/types-3.23.0.tgz",
-        "version": "3.23.0"
-      },
-      {
-        "archive": {
-          "bytes": 26249,
-          "path": "archives/2164908fc8d7e4b891faa09953cf345f922ab9359d9c4757e97e2620e6207f34.tgz",
-          "sha256": "2164908fc8d7e4b891faa09953cf345f922ab9359d9c4757e97e2620e6207f34"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@shikijs/vscode-textmate",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE.md",
-            "bytes": 1083,
-            "path": "texts/2164908fc8d7e4b891faa09953cf345f922ab9359d9c4757e97e2620e6207f34/e802aa120ce70aaf-LICENSE.md",
-            "sha256": "b5cb7ff7859e7d282d98fc43ab081b0dda5dc659dc3385cf65740c759a7e6a6c"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1173,
-          "path": "texts/2164908fc8d7e4b891faa09953cf345f922ab9359d9c4757e97e2620e6207f34/5205bfc4f58dc7ca-package.json",
-          "sha256": "7c0323216a2ac6184a0009f1f5bd9fc3bfde8dbc0a1346b02781fc64baa66bad"
-        },
-        "path": "node_modules/@shikijs/vscode-textmate",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@shikijs/vscode-textmate/-/vscode-textmate-10.0.2.tgz",
-        "version": "10.0.2"
-      },
-      {
-        "archive": {
           "bytes": 150046,
           "path": "archives/b9e987bb80eece0c599355b5304b903f87221191a96ba34cb9f8e7e65047a07a.tgz",
           "sha256": "b9e987bb80eece0c599355b5304b903f87221191a96ba34cb9f8e7e65047a07a"
@@ -41145,42 +40966,6 @@
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/@types/file-saver/-/file-saver-2.0.7.tgz",
         "version": "2.0.7"
-      },
-      {
-        "archive": {
-          "bytes": 3175,
-          "path": "archives/50c602401a9304c6ae50fb1febcec9d67e07c4a0efb7d89c51119532ec6f9d8b.tgz",
-          "sha256": "50c602401a9304c6ae50fb1febcec9d67e07c4a0efb7d89c51119532ec6f9d8b"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@types/hast",
-        "notices": [
-          {
-            "archive_member": "hast/LICENSE",
-            "bytes": 1141,
-            "path": "texts/50c602401a9304c6ae50fb1febcec9d67e07c4a0efb7d89c51119532ec6f9d8b/3d2f4165ec0aaec8-LICENSE",
-            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "hast/package.json",
-          "bytes": 1288,
-          "path": "texts/50c602401a9304c6ae50fb1febcec9d67e07c4a0efb7d89c51119532ec6f9d8b/96f4a3fd2bf3c871-package.json",
-          "sha256": "4d62c54549de772d08426aed9dadeea9cc57e538e2de2bb3882782d6eaed3cf2"
-        },
-        "path": "node_modules/@types/hast",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@types/hast/-/hast-3.0.4.tgz",
-        "version": "3.0.4"
       },
       {
         "archive": {
@@ -41721,42 +41506,6 @@
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz",
         "version": "2.0.7"
-      },
-      {
-        "archive": {
-          "bytes": 2597,
-          "path": "archives/b50fd32f739207d1e8c96ef0b0c9dd003ef9cb0403c5b4eb71796b87332a2843.tgz",
-          "sha256": "b50fd32f739207d1e8c96ef0b0c9dd003ef9cb0403c5b4eb71796b87332a2843"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "@types/unist",
-        "notices": [
-          {
-            "archive_member": "unist/LICENSE",
-            "bytes": 1141,
-            "path": "texts/b50fd32f739207d1e8c96ef0b0c9dd003ef9cb0403c5b4eb71796b87332a2843/f6f68f7349695af0-LICENSE",
-            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "unist/package.json",
-          "bytes": 1808,
-          "path": "texts/b50fd32f739207d1e8c96ef0b0c9dd003ef9cb0403c5b4eb71796b87332a2843/4369d2bb57689cc6-package.json",
-          "sha256": "9aaa6fc2ba9d3eacf1888c727b8b0bf47e4cd9e8e39908a6c91683c39a9bdcd7"
-        },
-        "path": "node_modules/@types/unist",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/@types/unist/-/unist-3.0.3.tgz",
-        "version": "3.0.3"
       },
       {
         "archive": {
@@ -42627,73 +42376,6 @@
         ],
         "supplier_url": "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz",
         "version": "6.0.2"
-      },
-      {
-        "archive": {
-          "bytes": 74118,
-          "path": "archives/b97bffe2fd0bc67befcb3a1f0ceff017e333d9638ea0ffd0e291c856948ef77b.tgz",
-          "sha256": "b97bffe2fd0bc67befcb3a1f0ceff017e333d9638ea0ffd0e291c856948ef77b"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-declaration-and-exact-version-upstream-supplemental-text",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-bCmQ65CEebspmpbWFs6ab3S27TNyVH1b5MledX8KoiGxUhsJmPUUGpaoSijhwawNnq5Lt8jbcq7Z7gUAD0nuTw==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "aigle",
-        "notices": [],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1547,
-          "path": "texts/b97bffe2fd0bc67befcb3a1f0ceff017e333d9638ea0ffd0e291c856948ef77b/5205bfc4f58dc7ca-package.json",
-          "sha256": "cdaf5533afe8564408496755235f7b7500a484ea2e16cce79228d9dc084dcb04"
-        },
-        "path": "node_modules/aigle",
-        "recognizable_notice_file_count": 0,
-        "supplemental_notices": [
-          {
-            "bytes": 1075,
-            "sha256": "7a711fa4db2a63cbbade06ef7c2854f81a006fe67f49b7b4ed10d0f7c3675370",
-            "source_mapping": "exact-version-tag-and-source-package",
-            "source_repository": "suguru03/aigle",
-            "source_revision": "8e5e90145593e87aaa1d4e84bfc15d693b44bb8c",
-            "url": "https://raw.githubusercontent.com/suguru03/aigle/8e5e90145593e87aaa1d4e84bfc15d693b44bb8c/LICENSE"
-          }
-        ],
-        "supplier_url": "https://registry.npmjs.org/aigle/-/aigle-1.14.1.tgz",
-        "version": "1.14.1"
-      },
-      {
-        "archive": {
-          "bytes": 1053,
-          "path": "archives/f3e044096da95065d4622f1dfe590c9ad6390e4942c177254265bf57aecdcaa6.tgz",
-          "sha256": "f3e044096da95065d4622f1dfe590c9ad6390e4942c177254265bf57aecdcaa6"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-declaration-only; no embedded notice text",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-uGFWPumk5DLvYnUphNnff+kWC8VeAnjPbbU8ovsSHflKXGX77SD7cAN/aSBCLX3xnoJAM9KdtRgxUygRnSSu7A==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "aigle-core",
-        "notices": [],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 460,
-          "path": "texts/f3e044096da95065d4622f1dfe590c9ad6390e4942c177254265bf57aecdcaa6/5205bfc4f58dc7ca-package.json",
-          "sha256": "0f231fe8f1323c9f3844ed285caecb6e592107b5a0d71c5f7895d377dedf663d"
-        },
-        "path": "node_modules/aigle-core",
-        "recognizable_notice_file_count": 0,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/aigle-core/-/aigle-core-1.0.0.tgz",
-        "version": "1.0.0"
       },
       {
         "archive": {
@@ -47778,42 +47460,6 @@
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/end-of-stream/-/end-of-stream-1.4.5.tgz",
         "version": "1.4.5"
-      },
-      {
-        "archive": {
-          "bytes": 77368,
-          "path": "archives/6b0c60f7351a0b65bb1fc8dbb9299f09e7ecf6d89103d0651bf369e6f463a632.tgz",
-          "sha256": "6b0c60f7351a0b65bb1fc8dbb9299f09e7ecf6d89103d0651bf369e6f463a632"
-        },
-        "archive_declared_license": "BSD-2-Clause",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "248dd895a2f89e28813b4c8c0a7d21806a35699102e4f6e32f47784b82730428",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "BSD-2-Clause",
-        "dependency_scope": "production",
-        "integrity": "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "entities",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1260,
-            "path": "texts/6b0c60f7351a0b65bb1fc8dbb9299f09e7ecf6d89103d0651bf369e6f463a632/4c9655af812eacdb-LICENSE",
-            "sha256": "cb992345949ccd6e8394b2cd6c465f7b897c864f845937dbf64e8997f389e164"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 2883,
-          "path": "texts/6b0c60f7351a0b65bb1fc8dbb9299f09e7ecf6d89103d0651bf369e6f463a632/5205bfc4f58dc7ca-package.json",
-          "sha256": "c92f657f679669a91bc32cd98f0b4812b3f4a9c6f3b3af3022a70cb25b7efc7c"
-        },
-        "path": "node_modules/entities",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/entities/-/entities-4.5.0.tgz",
-        "version": "4.5.0"
       },
       {
         "archive": {
@@ -54385,42 +54031,6 @@
       },
       {
         "archive": {
-          "bytes": 12905,
-          "path": "archives/f5169c5e5d837b5229180cb7214102d42f5c963f6932f284b608ef9549e927b4.tgz",
-          "sha256": "f5169c5e5d837b5229180cb7214102d42f5c963f6932f284b608ef9549e927b4"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "linkify-it",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1058,
-            "path": "texts/f5169c5e5d837b5229180cb7214102d42f5c963f6932f284b608ef9549e927b4/4c9655af812eacdb-LICENSE",
-            "sha256": "95e3f7f0e81e9b4940cdfaa1956aaff5e4dfd2fb1565041e7c78eb9a606f23e3"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1551,
-          "path": "texts/f5169c5e5d837b5229180cb7214102d42f5c963f6932f284b608ef9549e927b4/5205bfc4f58dc7ca-package.json",
-          "sha256": "492ffef383ead25ddc4a7615129c3c41eafe1a0a10172680a93fbb5039c84204"
-        },
-        "path": "node_modules/linkify-it",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/linkify-it/-/linkify-it-5.0.2.tgz",
-        "version": "5.0.2"
-      },
-      {
-        "archive": {
           "bytes": 58071,
           "path": "archives/d6f31223b9947fc36a53d5c8a2026a1cb1cd705837db4c6a1eb731db07845d4a.tgz",
           "sha256": "d6f31223b9947fc36a53d5c8a2026a1cb1cd705837db4c6a1eb731db07845d4a"
@@ -54925,42 +54535,6 @@
       },
       {
         "archive": {
-          "bytes": 222403,
-          "path": "archives/d886e7dc4339a7ede2e5e7fe0e07e6a6feeb1b3bcca0adea836cf53c62699030.tgz",
-          "sha256": "d886e7dc4339a7ede2e5e7fe0e07e6a6feeb1b3bcca0adea836cf53c62699030"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "lunr",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1065,
-            "path": "texts/d886e7dc4339a7ede2e5e7fe0e07e6a6feeb1b3bcca0adea836cf53c62699030/4c9655af812eacdb-LICENSE",
-            "sha256": "ae33f5a0d538cd93de1136a052ffa734b59d6b28e7cfc19e03de1d8b5d9f40ea"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 723,
-          "path": "texts/d886e7dc4339a7ede2e5e7fe0e07e6a6feeb1b3bcca0adea836cf53c62699030/5205bfc4f58dc7ca-package.json",
-          "sha256": "0b0bb4606a8214203f577dadcd2eb5e0b28d24deb6a9754991deea4c9f1d72eb"
-        },
-        "path": "node_modules/lunr",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/lunr/-/lunr-2.3.9.tgz",
-        "version": "2.3.9"
-      },
-      {
-        "archive": {
           "bytes": 78041,
           "path": "archives/5e9938cb56b721f8cb8d64734890a2ed82acfbc4adb37c19f6a2fb7993491163.tgz",
           "sha256": "5e9938cb56b721f8cb8d64734890a2ed82acfbc4adb37c19f6a2fb7993491163"
@@ -54997,42 +54571,6 @@
       },
       {
         "archive": {
-          "bytes": 221116,
-          "path": "archives/cd08352ba955f96b60ea16306cc64dd99a86701fea0b26a56ea86af75840c68f.tgz",
-          "sha256": "cd08352ba955f96b60ea16306cc64dd99a86701fea0b26a56ea86af75840c68f"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-1TGiQiJVRQ3NPmZH6sx5Cfnmg6GQm9jvC1ch4TK511NjSJvjzKLzn5pPfZRNZkRPZP0HqCioSndqH8v2nRaWVQ==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "markdown-it",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1073,
-            "path": "texts/cd08352ba955f96b60ea16306cc64dd99a86701fea0b26a56ea86af75840c68f/4c9655af812eacdb-LICENSE",
-            "sha256": "792c48c5a849a15fdf9e37e8bcf9e6d1dd13b32b46c642a748a0a46a9919d473"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 3087,
-          "path": "texts/cd08352ba955f96b60ea16306cc64dd99a86701fea0b26a56ea86af75840c68f/5205bfc4f58dc7ca-package.json",
-          "sha256": "adb5bd0bae622b295e374fc3766c5864c35ec63de91fafaed6b99e00486bde33"
-        },
-        "path": "node_modules/markdown-it",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/markdown-it/-/markdown-it-14.2.0.tgz",
-        "version": "14.2.0"
-      },
-      {
-        "archive": {
           "bytes": 6355,
           "path": "archives/b8c2c35575493dc086df88cfc468a9e2651b6617336480ab3f00fcf853f443a7.tgz",
           "sha256": "b8c2c35575493dc086df88cfc468a9e2651b6617336480ab3f00fcf853f443a7"
@@ -55066,42 +54604,6 @@
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
         "version": "1.1.0"
-      },
-      {
-        "archive": {
-          "bytes": 7998,
-          "path": "archives/8e0ccb320730dad17981e2a4cc97f34f072366442d000de97070fd1ea21321b5.tgz",
-          "sha256": "8e0ccb320730dad17981e2a4cc97f34f072366442d000de97070fd1ea21321b5"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-Lf+9+2r+Tdp5wXDXC4PcIBjTDtq4UKjCPMQhKIuzpJNW0b96kVqSwW0bT7FhRSfmAiFYgP+SCRvdrDozfh0U5w==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "mdurl",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 2303,
-            "path": "texts/8e0ccb320730dad17981e2a4cc97f34f072366442d000de97070fd1ea21321b5/4c9655af812eacdb-LICENSE",
-            "sha256": "6b6a356c4337e2446841f30f3cdf7e7023af8c5260b5e347c0f987b9f6aa2644"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 839,
-          "path": "texts/8e0ccb320730dad17981e2a4cc97f34f072366442d000de97070fd1ea21321b5/5205bfc4f58dc7ca-package.json",
-          "sha256": "d0e82b456515f586d16484dc262efe640481b1c05f6f2a422864b5969187c97d"
-        },
-        "path": "node_modules/mdurl",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/mdurl/-/mdurl-2.0.0.tgz",
-        "version": "2.0.0"
       },
       {
         "archive": {
@@ -57184,42 +56686,6 @@
         "recognizable_notice_file_count": 1,
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz",
-        "version": "2.3.1"
-      },
-      {
-        "archive": {
-          "bytes": 7601,
-          "path": "archives/8768d89aa6359164220014ba575e1464e3ddff11bedff1cc268e39a21f7324a8.tgz",
-          "sha256": "8768d89aa6359164220014ba575e1464e3ddff11bedff1cc268e39a21f7324a8"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "punycode.js",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE-MIT.txt",
-            "bytes": 1077,
-            "path": "texts/8768d89aa6359164220014ba575e1464e3ddff11bedff1cc268e39a21f7324a8/481aea5bebf0953d-LICENSE-MIT.txt",
-            "sha256": "483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1230,
-          "path": "texts/8768d89aa6359164220014ba575e1464e3ddff11bedff1cc268e39a21f7324a8/5205bfc4f58dc7ca-package.json",
-          "sha256": "ce0bcedcc3d00b235770a2c49af74712e10e5dac8d3dda5ed23c433b19720c3c"
-        },
-        "path": "node_modules/punycode.js",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/punycode.js/-/punycode.js-2.3.1.tgz",
         "version": "2.3.1"
       },
       {
@@ -61226,215 +60692,6 @@
       },
       {
         "archive": {
-          "bytes": 1146669,
-          "path": "archives/0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e.tgz",
-          "sha256": "0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e"
-        },
-        "archive_declared_license": "ISC",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "d8d62d58d661d5ddeff06fdf1ebc08968da4743e369c74cef96eff0241eaea05",
-        "classification": "supplier-declaration-only; no embedded notice text",
-        "declared_license": "ISC",
-        "dependency_scope": "production",
-        "integrity": "sha512-Nzd8FpUbDPVXE2juhPJlgJD9lTX5sq7kNzyWW8MVR4zBywiYoP2s9oWGfY0M1xqiItTrfmJ/SATBtvM+T/+9yA==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "typed_janus_js",
-        "notices": [],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1598,
-          "path": "texts/0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e/5205bfc4f58dc7ca-package.json",
-          "sha256": "c43fd7483872e8163ec5d7785b097e17764e43e56cd69ecbd500d3888d5aec1b"
-        },
-        "path": "node_modules/typed_janus_js",
-        "recognizable_notice_file_count": 0,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/typed_janus_js/-/typed_janus_js-1.2.1.tgz",
-        "version": "1.2.1"
-      },
-      {
-        "archive": {
-          "bytes": 2668,
-          "path": "archives/d854f7abdd0c7a8120cf381e0ad5f972cbd0255f5d987424bd672c8c4fcebcc1.tgz",
-          "sha256": "d854f7abdd0c7a8120cf381e0ad5f972cbd0255f5d987424bd672c8c4fcebcc1"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "balanced-match",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE.md",
-            "bytes": 1096,
-            "path": "texts/d854f7abdd0c7a8120cf381e0ad5f972cbd0255f5d987424bd672c8c4fcebcc1/e802aa120ce70aaf-LICENSE.md",
-            "sha256": "a1bd5deadb6a06dd74efa852c1b8b23f63b67f2214fbe9c8bd591da51da69268"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1069,
-          "path": "texts/d854f7abdd0c7a8120cf381e0ad5f972cbd0255f5d987424bd672c8c4fcebcc1/5205bfc4f58dc7ca-package.json",
-          "sha256": "b30c328501dead1870b894ad604405b2284b571c1f12664cdc61d92a2e3397c2"
-        },
-        "path": "node_modules/typed_janus_js/node_modules/balanced-match",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
-        "version": "1.0.2"
-      },
-      {
-        "archive": {
-          "bytes": 6360,
-          "path": "archives/a2c1ca92b3099d8c464b085b85b9bfdfe680aba8f10a86c227d7a090f36b27ae.tgz",
-          "sha256": "a2c1ca92b3099d8c464b085b85b9bfdfe680aba8f10a86c227d7a090f36b27ae"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "brace-expansion",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 1096,
-            "path": "texts/a2c1ca92b3099d8c464b085b85b9bfdfe680aba8f10a86c227d7a090f36b27ae/4c9655af812eacdb-LICENSE",
-            "sha256": "68f12f6e2c33688699249c01d8f9623c534da20aa71989c57b061b7bc1676d14"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1135,
-          "path": "texts/a2c1ca92b3099d8c464b085b85b9bfdfe680aba8f10a86c227d7a090f36b27ae/5205bfc4f58dc7ca-package.json",
-          "sha256": "0242781e7c6ed4459649b4aca0903ec03690bde675d2e4636538a5956fc9c542"
-        },
-        "path": "node_modules/typed_janus_js/node_modules/brace-expansion",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.1.4.tgz",
-        "version": "2.1.4"
-      },
-      {
-        "archive": {
-          "bytes": 101396,
-          "path": "archives/7d28c9a3ef17ce542093c78ec191481503e2711d29db1bd1522062303ab40478.tgz",
-          "sha256": "7d28c9a3ef17ce542093c78ec191481503e2711d29db1bd1522062303ab40478"
-        },
-        "archive_declared_license": "ISC",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "d8d62d58d661d5ddeff06fdf1ebc08968da4743e369c74cef96eff0241eaea05",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "ISC",
-        "dependency_scope": "production",
-        "integrity": "sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "minimatch",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 775,
-            "path": "texts/7d28c9a3ef17ce542093c78ec191481503e2711d29db1bd1522062303ab40478/4c9655af812eacdb-LICENSE",
-            "sha256": "d11323827fa4edeaafc437cc5b91b6971b335f0127efeeb42bf5122fe8657e8f"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 1967,
-          "path": "texts/7d28c9a3ef17ce542093c78ec191481503e2711d29db1bd1522062303ab40478/5205bfc4f58dc7ca-package.json",
-          "sha256": "07347ae64d38f4cc1be3ffcc83322ec40d4609f5f3e9dc027ae91a4617239ac2"
-        },
-        "path": "node_modules/typed_janus_js/node_modules/minimatch",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/minimatch/-/minimatch-9.0.9.tgz",
-        "version": "9.0.9"
-      },
-      {
-        "archive": {
-          "bytes": 472605,
-          "path": "archives/f4ed86642fcaf1a0c19372fc4f174b55da9c60753f87f7df2600da6b66ae5048.tgz",
-          "sha256": "f4ed86642fcaf1a0c19372fc4f174b55da9c60753f87f7df2600da6b66ae5048"
-        },
-        "archive_declared_license": "Apache-2.0",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "2af71558e438db0b73a20beab92dc278a94e1bbe974c00c1a33e3ab62d53a608",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "Apache-2.0",
-        "dependency_scope": "production",
-        "integrity": "sha512-ftJYPvpVfQvFzpkoSfHLkJybdA/geDJ8BGQt/ZnkkhnBYoYW6lBgPQXu6vqLxO4X75dA55hX8Af847H5KXlEFA==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "typedoc",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE",
-            "bytes": 11323,
-            "path": "texts/f4ed86642fcaf1a0c19372fc4f174b55da9c60753f87f7df2600da6b66ae5048/4c9655af812eacdb-LICENSE",
-            "sha256": "6dc0e068dcf3a5bc8e054205b85b7720e1d49265bbc64bf515d2cf79197df69a"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 3888,
-          "path": "texts/f4ed86642fcaf1a0c19372fc4f174b55da9c60753f87f7df2600da6b66ae5048/5205bfc4f58dc7ca-package.json",
-          "sha256": "f800674b8d0fbec6cbe1e4150aaf7af3116954d0725bb7cf12738f94a15fd1c7"
-        },
-        "path": "node_modules/typed_janus_js/node_modules/typedoc",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/typedoc/-/typedoc-0.28.14.tgz",
-        "version": "0.28.14"
-      },
-      {
-        "archive": {
-          "bytes": 4377468,
-          "path": "archives/10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3.tgz",
-          "sha256": "10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3"
-        },
-        "archive_declared_license": "Apache-2.0",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "2af71558e438db0b73a20beab92dc278a94e1bbe974c00c1a33e3ab62d53a608",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "Apache-2.0",
-        "dependency_scope": "production",
-        "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "typescript",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE.txt",
-            "bytes": 9197,
-            "path": "texts/10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3/5e821eeb8a1d00fd-LICENSE.txt",
-            "sha256": "a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 3620,
-          "path": "texts/10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3/5205bfc4f58dc7ca-package.json",
-          "sha256": "822ef7ca6452205657b6288b066481ecf508bfbf43455d715cf7d3ec457561e6"
-        },
-        "path": "node_modules/typed_janus_js/node_modules/typescript",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
-        "version": "5.9.3"
-      },
-      {
-        "archive": {
           "bytes": 4515854,
           "path": "archives/33cd0ee1beaa8c9e9d15a9da836c62ddea4c34a42d7c2d349dbc80d94165d22a.tgz",
           "sha256": "33cd0ee1beaa8c9e9d15a9da836c62ddea4c34a42d7c2d349dbc80d94165d22a"
@@ -61504,42 +60761,6 @@
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/typescript-eslint/-/typescript-eslint-8.62.1.tgz",
         "version": "8.62.1"
-      },
-      {
-        "archive": {
-          "bytes": 4180,
-          "path": "archives/a31660c690ddac370fe4b17fe6a3a73b8df094f99194ac90d0668d797dabf69b.tgz",
-          "sha256": "a31660c690ddac370fe4b17fe6a3a73b8df094f99194ac90d0668d797dabf69b"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-archive-and-license-text-verified-no-project-source-build-claim",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-ARDJmphmdvUk6Glw7y9DQ2bFkKBHwQHLi2lsaH6PPmz/Ka9sFOBsBluozhDltWmnv9u/cF6Rt87znRTPV+yp/A==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "uc.micro",
-        "notices": [
-          {
-            "archive_member": "package/LICENSE.txt",
-            "bytes": 1077,
-            "path": "texts/a31660c690ddac370fe4b17fe6a3a73b8df094f99194ac90d0668d797dabf69b/5e821eeb8a1d00fd-LICENSE.txt",
-            "sha256": "483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a"
-          }
-        ],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 813,
-          "path": "texts/a31660c690ddac370fe4b17fe6a3a73b8df094f99194ac90d0668d797dabf69b/5205bfc4f58dc7ca-package.json",
-          "sha256": "8b60af5ea73b0bac4d26111a3f5b00844657b998f9a3fd473710d9e33d274250"
-        },
-        "path": "node_modules/uc.micro",
-        "recognizable_notice_file_count": 1,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/uc.micro/-/uc.micro-2.1.0.tgz",
-        "version": "2.1.0"
       },
       {
         "archive": {
