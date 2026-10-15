@@ -29,6 +29,9 @@ class MainsailJanus(unittest.TestCase):
         for index, patch in enumerate(cls.config['source_patches']):
             raw = (REPO/patch['path']).read_bytes()
             if sha(raw) != patch['sha256']: raise AssertionError('patch pin mismatch')
+            if index == 5:
+                cls.after_janus_manifest = json.loads((cls.source/'package.json').read_text())
+                cls.after_janus_lock = json.loads((cls.source/'package-lock.json').read_text())
             if index == 4:
                 cls.before_manifest = json.loads((cls.source/'package.json').read_text())
                 cls.before_lock = json.loads((cls.source/'package-lock.json').read_text())
@@ -74,9 +77,9 @@ class MainsailJanus(unittest.TestCase):
         expected['dependencies'].pop('typed_janus_js')
         expected['dependencies']['webrtc-adapter'] = '9.0.3'
         expected['overrides'].pop('typed_janus_js')
-        self.assertEqual(json.loads((self.source/'package.json').read_text()),expected)
+        self.assertEqual(self.after_janus_manifest,expected)
         before = self.before_lock['packages']
-        after = json.loads((self.source/'package-lock.json').read_text())['packages']
+        after = self.after_janus_lock['packages']
         removed = {'lunr','@gerrit0/mini-shiki','typed_janus_js','typed_janus_js/node_modules/balanced-match',
                    'entities','aigle','@types/unist','@types/hast','aigle-core','@shikijs/themes','linkify-it',
                    'typed_janus_js/node_modules/minimatch','markdown-it','mdurl','typed_janus_js/node_modules/typedoc',

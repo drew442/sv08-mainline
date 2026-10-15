@@ -3,9 +3,9 @@
     "historical_notice_resolved": 60,
     "historical_notice_unresolved": 9,
     "historical_records": 69,
-    "measured_selection_remediations": 6,
-    "remaining_selected_notice_gaps": 4,
-    "selected_dependencies": 898
+    "measured_selection_remediations": 7,
+    "remaining_selected_notice_gaps": 3,
+    "selected_dependencies": 897
   },
   "format_version": 1,
   "historical_inventory_sha256": "6d8011a9da17b46fcf5cb275c9278c14e1600293fe3d82d126b93fa0b4729d41",
@@ -849,6 +849,7 @@
       "selection_status": "removed-from-selected-lock"
     },
     {
+      "equivalent_paths": [],
       "historical_notice_status": "unresolved-author-notice",
       "name": "vue-observe-visibility",
       "original_archive_sha256": "a881bff5325bf6dcaede128cd92da6e51ca95da23bf0a57768335304bab32250",
@@ -856,16 +857,16 @@
       "original_version": "1.0.0",
       "path": "node_modules/vue-observe-visibility",
       "replacement_notices": [],
-      "selected_notice_gap": true,
-      "selected_version": "1.0.0",
-      "selection_status": "retained"
+      "selected_notice_gap": false,
+      "selected_version": null,
+      "selection_status": "removed-from-selected-lock"
     }
   ],
   "scope": "historical-notice-facts-and-current-selection",
   "selected_lock": {
-    "bytes": 538819,
+    "bytes": 538410,
     "path": "package-lock.json",
-    "sha256": "0e32ccdb698a6097ac335a8eaaf33498acd6120f23c27e153fb8443a7c28595d"
+    "sha256": "30fc671e0e7d7b65811094025b4ed177cc737fd5409426372f42a9e9c6b13028"
   },
   "source_patches": [
     {
@@ -887,6 +888,10 @@
     {
       "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
       "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+    },
+    {
+      "path": "patches/mainsail/0006-native-visibility.patch",
+      "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
     }
   ],
   "supplemental_notices_sha256": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90"

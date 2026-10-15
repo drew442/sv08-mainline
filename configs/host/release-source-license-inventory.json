@@ -88,13 +88,13 @@
     },
     {
       "artifact": {
-        "bytes": 2494332,
-        "path": "sv08-mainsail_2.19.0+git32f99e1c-7_all.deb",
-        "sha256": "fe87dfa3f5936249dd09d17b71f3482b62616bbccabd5f83eab2f9ffff87d610"
+        "bytes": 2493156,
+        "path": "sv08-mainsail_2.19.0+git32f99e1c-8_all.deb",
+        "sha256": "07767b38b7192b8bb4a870b113a300f07cd360bd65a2019193e14e62971655ba"
       },
       "classification": "project-source-build",
       "config": "configs/apps/mainsail.json",
-      "config_sha256": "80bd2a588093b6c5d83a424f7a7f01bfa0f1128a1843fb2c9fa15326b55a1aa1",
+      "config_sha256": "1a67f3b80df3b6097607dab1c6719972ac53bc6049d3dbbd17ec6b60b5b5d728",
       "license_status": "source-bound-notice-text-inventoried",
       "notices": [
         {
@@ -166,23 +166,28 @@
           "bytes": 198212,
           "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
           "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+        },
+        {
+          "bytes": 11825,
+          "path": "patches/mainsail/0006-native-visibility.patch",
+          "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
         }
       ],
       "rebuild_evidence": [
         {
-          "bytes": 779,
-          "path": "janus-package-repro.json",
-          "sha256": "0f4961da08d68b9c9a2daaa5cbb3ade4d938029866e07ea354c17a2b30fe1153"
+          "bytes": 465,
+          "path": "visibility-package-repro.json",
+          "sha256": "bd7bebe4d1587793a07d357e363d02eb2421f60cfb4f7845de85be023a46341a"
         }
       ],
       "source": {
         "commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
         "identity": "upstream/mainsail",
         "kind": "git-commit",
-        "version": "2.19.0+git32f99e1c-7"
+        "version": "2.19.0+git32f99e1c-8"
       },
       "unresolved_license_declaration": false,
-      "version": "2.19.0+git32f99e1c-7"
+      "version": "2.19.0+git32f99e1c-8"
     },
     {
       "artifact": {
@@ -31915,14 +31920,14 @@
   "legal_compliance_assessed": false,
   "mainsail_dependencies": {
     "lock": {
-      "bytes": 538819,
+      "bytes": 538410,
       "path": "package-lock.json",
-      "sha256": "0e32ccdb698a6097ac335a8eaaf33498acd6120f23c27e153fb8443a7c28595d"
+      "sha256": "30fc671e0e7d7b65811094025b4ed177cc737fd5409426372f42a9e9c6b13028"
     },
     "notice_coverage": {
-      "declaration_only_dependencies": 4,
+      "declaration_only_dependencies": 3,
       "dependencies_with_notice_text": 894,
-      "inspected_supplier_archives": 898
+      "inspected_supplier_archives": 897
     },
     "packages": [
       {
@@ -62489,35 +62494,6 @@
         "supplemental_notices": [],
         "supplier_url": "https://registry.npmjs.org/vue-load-image/-/vue-load-image-0.2.0.tgz",
         "version": "0.2.0"
-      },
-      {
-        "archive": {
-          "bytes": 67031,
-          "path": "archives/a881bff5325bf6dcaede128cd92da6e51ca95da23bf0a57768335304bab32250.tgz",
-          "sha256": "a881bff5325bf6dcaede128cd92da6e51ca95da23bf0a57768335304bab32250"
-        },
-        "archive_declared_license": "MIT",
-        "archive_declared_license_hash_encoding": "utf8",
-        "archive_declared_license_sha256": "e5dcffe836b6ec8a58e492419b550e65fb8cbdc308503979e5dacb33ac7ea3b7",
-        "classification": "supplier-declaration-only; no embedded notice text",
-        "declared_license": "MIT",
-        "dependency_scope": "production",
-        "integrity": "sha512-s5TFh3s3h3Mhd3jaz3zGzkVHKHnc/0C/gNr30olO99+yw2hl3WBhK3ng3/f9OF+qkW4+l7GkmwfAzDAcY3lCFg==",
-        "integrity_algorithm_verified": "sha512",
-        "name": "vue-observe-visibility",
-        "notices": [],
-        "optional": false,
-        "package_json": {
-          "archive_member": "package/package.json",
-          "bytes": 2207,
-          "path": "texts/a881bff5325bf6dcaede128cd92da6e51ca95da23bf0a57768335304bab32250/5205bfc4f58dc7ca-package.json",
-          "sha256": "e2d28f9d83e09c2dd01c3e3648d6008f5c35b6f2fa79382f71c801456f148d7a"
-        },
-        "path": "node_modules/vue-observe-visibility",
-        "recognizable_notice_file_count": 0,
-        "supplemental_notices": [],
-        "supplier_url": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-1.0.0.tgz",
-        "version": "1.0.0"
       },
       {
         "archive": {
