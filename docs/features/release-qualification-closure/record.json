@@ -195,7 +195,7 @@
       "resumption": "Owner explicitly accepts the package LGPL-3.0-or-later declaration plus unmodified standard SPDX license text for gcodeviewer; retain provenance distinction and original missing embedded-notice facts. No maintainer outreach required.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and validate release and inventory closure",
       "validation": {
         "actor": "project_implementer",
