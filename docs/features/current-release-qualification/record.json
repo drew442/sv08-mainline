@@ -56,7 +56,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Source trace confirms no supported fresh-host finalization entrypoint: existing helper requires a previously finalized root receipt. Add truthful fresh-root mode/tests rather than invent a historical receipt; package build still running.",
       "checks": [
         "composition",
         "release-gate",
@@ -101,13 +101,16 @@
         "tests/test_license_inventory.py",
         "tests/test_assemble_board_diagnostic.py",
         "docs/development/release-packaging.md",
-        "tests/test_recovery_image.py"
+        "tests/test_recovery_image.py",
+        "scripts/finalize_diagnostic_host.py",
+        "tests/test_finalize_diagnostic_host.py",
+        "docs/hardware/host-board-image.md"
       ],
       "repeats": 0,
       "resumption": "Owner-authorized complete-image scope includes necessary recovery provenance builder repair; tests ownership explicitly added, base and intake still running.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "running",
+      "status": "blocked",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
