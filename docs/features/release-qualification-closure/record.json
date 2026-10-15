@@ -49,7 +49,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Core release/image tools and60/69notices published in draftPR21. Preserve candidate/evidence while renewing exact source ownership for measured unused-dependency cleanup and compatible notice-bearing upgrade; nine upstream notice gaps not waived, cumulative allowance unchanged.",
       "checks": [
         "packaging",
         "npm",
@@ -97,7 +97,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
