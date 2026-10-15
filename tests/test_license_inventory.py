@@ -1,4 +1,6 @@
 import json
+import copy
+import os
 import base64
 import hashlib
 import io
@@ -67,6 +69,70 @@ class InventoryTests(unittest.TestCase):
         pin.update(archive_notice_root=str(self.base), dependency_notices={'node_modules/fixture': entry})
         self.pin('configs/apps/mainsail.json', json.dumps({'patched_package_lock_sha256': pin['sha256']}).encode())
         return pin, lock
+
+
+    def test_standard_terms_require_explicit_exact_approved_records_and_source_bytes(self):
+        approved=copy.deepcopy(m.APPROVED_STANDARD_LICENSE)
+        path=approved['path'];package={key:approved[key] for key in ('name','version','integrity','license')}
+        lock={'packages':{path:package}}
+        config={'format_version':1,'records':[approved]}
+        def load(value=config):
+            pin=self.pin('standard.json',json.dumps(value).encode())
+            return m.npm_standard_license_texts(pin,lock)
+        self.assertEqual(m.npm_standard_license_texts(None,lock),{})
+        self.assertEqual(load()[path],approved)
+        for key in ('name','version','integrity','archive_sha256','package_json_sha256','license','path'):
+            broken=copy.deepcopy(config);broken['records'][0][key]='wrong'
+            with self.subTest(key=key),self.assertRaises(ValueError):load(broken)
+        for change in (lambda r:r['source'].update(source_revision='a'*40),
+                       lambda r:r['source'].update(source_url='https://example.invalid/fake'),
+                       lambda r:r['license_text'].update(sha256=m.digest(b'fake'))):
+            broken=copy.deepcopy(config);change(broken['records'][0])
+            with self.assertRaises(ValueError):load(broken)
+        for records in ([],[approved,approved]):
+            with self.assertRaises(ValueError):load(dict(format_version=1,records=records))
+        for key in ('name','version','integrity','license'):
+            previous=package[key];package[key]='wrong'
+            with self.assertRaises(ValueError):load()
+            package[key]=previous
+        lock['packages']={}
+        with self.assertRaises(ValueError):load()
+        lock['packages']={path:package}
+        # Even a caller-hashed fake file cannot replace the canonical SPDX bytes.
+        fake=self.base/approved['license_text']['path'];fake.parent.mkdir(parents=True);fake.write_bytes(b'fake')
+        with patch.object(m,'REPO',self.base),self.assertRaisesRegex(ValueError,'text bytes'):load()
+        fake.unlink()
+        with patch.object(m,'REPO',self.base),self.assertRaises(ValueError):load()
+
+    @unittest.skipUnless(os.environ.get('SV08_GCODEVIEWER_ARCHIVE'),'requires retained exact supplier archive')
+    def test_actual_gcodeviewer_standard_inventory_and_tampered_supplier_archive(self):
+        archive=Path(os.environ['SV08_GCODEVIEWER_ARCHIVE'])
+        approved=m.APPROVED_STANDARD_LICENSE;path=approved['path']
+        raw=archive.read_bytes();self.pin('supplier.tgz',raw)
+        with tarfile.open(archive) as tar:metadata=tar.extractfile('package/package.json').read()
+        entry=dict(name=approved['name'],version=approved['version'],integrity=approved['integrity'],
+            archive=self.pin('supplier.tgz',raw),package_json=dict(self.pin('metadata.json',metadata),archive_member='package/package.json'),notices=[])
+        package={k:approved[k] for k in ('version','integrity','license')};package['resolved']='https://registry.npmjs.org/exact.tgz'
+        lock={'packages':{'':{},path:package}}
+        pin=self.pin('lock.json',json.dumps(lock).encode())
+        pin.update(archive_notice_root=str(self.base),dependency_notices={path:entry})
+        self.pin('configs/apps/mainsail.json',json.dumps({'patched_package_lock_sha256':pin['sha256']}).encode())
+        text=approved['license_text'];self.pin(text['path'],(REPO/text['path']).read_bytes())
+        standard_pin=self.pin('standard.json',(REPO/'configs/host/npm-standard-license-texts.json').read_bytes())
+        with patch.object(m,'REPO',self.base):
+            result=m.npm_inventory(pin)
+            self.assertEqual(result['notice_coverage']['declaration_only_dependencies'],1)
+            pin['standard_license_texts']=standard_pin
+            result=m.npm_inventory(pin);item=result['packages'][0]
+            self.assertEqual(item['notices'],[]);self.assertEqual(item['supplemental_notices'],[])
+            self.assertEqual(item['classification'],'supplier-declaration-plus-distributor-standard-terms')
+            self.assertEqual(result['notice_coverage']['dependencies_with_notice_text'],0)
+            self.assertEqual(result['notice_coverage']['dependencies_with_distributor_standard_terms'],1)
+            self.assertEqual(result['notice_coverage']['declaration_only_dependencies'],0)
+            changed=self.base/'supplier.tgz';changed.write_bytes(raw+b'tamper')
+            entry['archive']['sha256']=m.sha(changed)
+            with self.assertRaisesRegex(ValueError,'integrity'):m.npm_inventory(pin)
+            with self.assertRaisesRegex(ValueError,'SRI'):m.verify_npm_standard_license(approved,package,changed)
 
     def test_top_level_metadata_and_all_embedded_notices(self):
         result = m.inspect_wheel(self.wheel(), ('fixture', '1.0'), self.provenance())

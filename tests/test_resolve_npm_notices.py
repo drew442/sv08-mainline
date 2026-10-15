@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 import base64
+import os
 import copy
 import hashlib
 import io
@@ -207,6 +208,37 @@ class AuthoredSelectionTests(unittest.TestCase):
             supplemental_notices=self.pin(self.base/'configs/host/npm-supplemental-notices.json'),
             replacement_archives={'node_modules/ospath':dict(self.pin(self.archive),authored_source=self.pin(self.source/'package.json'))})
         mock=patch.object(m,'REPO',self.base);mock.start();self.addCleanup(mock.stop)
+
+
+    @unittest.skipUnless(os.environ.get('SV08_GCODEVIEWER_ARCHIVE'),'requires retained exact supplier archive')
+    def test_actual_standard_terms_preserve_historical_facts_and_require_exact_archive(self):
+        approved=license_inventory.APPROVED_STANDARD_LICENSE;path=approved['path']
+        archive=Path(os.environ['SV08_GCODEVIEWER_ARCHIVE'])
+        lock=json.loads(self.lock.read_text())
+        lock['packages'][path]={k:approved[k] for k in ('version','integrity','license')}
+        self.lock.write_text(json.dumps(lock));self.config['patched_package_lock_sha256']=m.digest(self.lock.read_bytes())
+        self.write_config();self.inputs['selected_lock']=self.pin(self.lock)
+        original=next(r for r in m.selection_resolution(self.inputs)['records'] if r['path']==path)
+        self.assertTrue(original['selected_notice_gap'])
+        config=self.repo/'configs/host/npm-standard-license-texts.json'
+        self.inputs['standard_license_texts']=self.pin(config)
+        with self.assertRaisesRegex(ValueError,'exactly cover'):m.selection_resolution(self.inputs)
+        self.inputs['standard_license_text_archives']={path:self.pin(archive)}
+        result=m.selection_resolution(self.inputs)
+        record=next(r for r in result['records'] if r['path']==path)
+        self.assertEqual(record['historical_notice_status'],'unresolved-author-notice')
+        self.assertEqual(record['selection_status'],'accepted-distributor-standard-terms')
+        self.assertFalse(record['selected_notice_gap'])
+        self.assertEqual(record['replacement_notices'],[])
+        self.assertEqual(result['coverage']['historical_notice_resolved'],60)
+        self.assertEqual(result['coverage']['historical_records'],69)
+        self.assertEqual(result['coverage']['accepted_distributor_standard_terms'],1)
+        self.inputs['standard_license_text_archives']['node_modules/wrong']=self.pin(archive)
+        with self.assertRaisesRegex(ValueError,'exactly cover'):m.selection_resolution(self.inputs)
+        self.inputs['standard_license_text_archives'].pop('node_modules/wrong')
+        corrupt=self.base/'corrupt.tgz';corrupt.write_bytes(archive.read_bytes()+b'changed')
+        self.inputs['standard_license_text_archives'][path]=self.pin(corrupt)
+        with self.assertRaisesRegex(ValueError,'SRI'):m.selection_resolution(self.inputs)
 
     def pin(self,path):return dict(root=str(path.parent),path=path.name,sha256=m.digest(path.read_bytes()))
     def write_config(self):(self.base/'configs/apps/mainsail.json').write_text(json.dumps(self.config))
