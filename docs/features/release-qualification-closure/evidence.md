@@ -1,3 +1,15 @@
+# Current continuation — seven selected notice gaps remain
+
+The full owner goal remains active and incomplete. **60 exact upstream notice recoveries and two measured dependency-selection remediations account for62 of the original69**; nine original archives still retain their historical missing-notice facts, while seven gaps remain in the selected build.
+
+A scoped notice-bearing throttleit2.1.0 override and removal of unused root vue-template-compiler eliminate the current throttleit/de-indent gaps. All other lock records are unchanged.61source-bound tests pass, no skips; actual dependency behavior and Vue SFC compilation pass. The existing fixed YAML/nanoid regressions and static browser startup pass. Two fresh package outputs are byte-identical at6ae70d5a666bd5f13e76a9f62c6df3aee4112411194e974ab6f4bc6919bbd081. The B2 parent monitor failed during a transient filesystem-size scan; B2 exit status is **not observable**. Its final report was emitted after checked dpkg completion and hashing, and matching artifacts/reports establish the reproduced output. Original failures and limits remain explicit.
+
+The regenerated current inventory covers931dependencies:924notice-bearing and seven declaration-only. All wheels, documented Debian baseline and build-tool entries are unchanged; only Mainsail application build evidence and the measured dependency delta differ. [Machine-readable continuation](evidence.json) binds current source, commands, actual receipts, semantic inventory comparison and all69accounting. The original baseline and initial delivery observations remain preserved below and in their original commits.
+
+Next: bounded build-tool dependency remediation. Canonical license reference text may document declared terms but is not treated as an author notice or allowed to pass the existing notice gate. No camera/viewer rewrite, upstream license modification, printer operation, merge or deployment occurred. Current full-stack selected-software qualification remains unproven; historical image evidence is not current printer qualification.
+
+## Initial measured delivery — preserved snapshot
+
 # Release packaging and inventory delivery — in progress
 
 The owner goal is not complete: **60 of69** historical NPM notice gaps are resolved; nine remain explicit blockers. Source work adds fixed, fail-closed exact-artifact release preparation, read-only actual-image inventory and verified supplemental author notices without changing any upstream license/project. [Source-bound evidence](evidence.json) records tests, original failures, limits and remaining cases. [Usage](../../development/release-packaging.md) describes supported scopes.

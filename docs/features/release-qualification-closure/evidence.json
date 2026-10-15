@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "status": "in-progress-nine-notice-gaps-remain",
+  "status": "in-progress-seven-current-notice-gaps-remain",
   "code_commit": "6b0cdc6342861be2ab3c5fc5622fc6b8f1f2b297",
   "source_sha256": {
     "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
@@ -11718,5 +11718,262 @@
   "artifact_roots": {
     "coordinator": "/home/drew/.sv08-release-closure-20261015",
     "privileged": "/root/.sv08-release-closure-20261015"
+  },
+  "initial_delivery_note": "Original code_commit/source/test/image/remaining_notice_gaps fields are the preserved initial delivery snapshot; current continuation is below.",
+  "remediation_continuation": {
+    "code_commit": "2e452c21b352a48d322a2ec462cae873865fced0",
+    "source_sha256": {
+      "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+      "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+      "patches/mainsail/README.md": "f79a46c173ac033a4bd897054d2fccf7f3cafc7132c4492a1b3fe3854e09dc69",
+      "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+      "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a",
+      "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
+      "configs/host/npm-notice-resolution.json": "2afa67ca3ed2491c4e6d6808e2d93ed8fdfc5302fa3ac1d422b195e37eb38da5",
+      "configs/host/release-source-license-inventory.json": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88",
+      "docs/development/release-packaging.md": "3c5cbd8e91d051dbae88b1a4ac8aab5033a5412c8a73342f630f2b52ac0eb795"
+    },
+    "validation": [
+      {
+        "name": "remediation-tests",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_image_license_inventory",
+          "test_prepare_release",
+          "test_resolve_npm_notices",
+          "test_license_inventory",
+          "test_project_license",
+          "test_mainsail_notice_dependencies"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.514763860963285,
+        "source_before": {
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
+        },
+        "source_after": {
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
+        }
+      },
+      {
+        "name": "fixed-dependencies",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "tests/mainsail_fixed_dependencies.cjs",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/node_modules"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06384286005049944,
+        "source_before": {
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
+        },
+        "source_after": {
+          "scripts/resolve_npm_notices.py": "a611dd19f9460a73edac7031f3330baf244cefed1e95f0062bd445bff681d16d",
+          "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+          "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+          "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "tests/test_mainsail_notice_dependencies.py": "cfc74a61d59c302fd254349ba3d9954de73470c9c5a848d80f878dd3d2bd3bd0",
+          "tests/mainsail_notice_dependencies.cjs": "d3a5d91e09dd5d5bd28d75180bbea06c6f3952b802ef711b9b11f42cbcd1498a"
+        }
+      }
+    ],
+    "tests_passed": 61,
+    "tests_skipped": 0,
+    "fixed_dependency_regression_passed": true,
+    "package_reproducibility": {
+      "package_sha256": "6ae70d5a666bd5f13e76a9f62c6df3aee4112411194e974ab6f4bc6919bbd081",
+      "report_sha256": [
+        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08",
+        "f9aa757800dbbdb743e7f0b9b5605d4c9fbb6687a22438abc9c10d1278d35e08"
+      ],
+      "independent_fresh_build_outputs_equal": true,
+      "a2_exit_code": 0,
+      "b2_exit_code": null,
+      "b2_completion_evidence": "finalreport emitted after checked dpkg-deb and package hashing; process gone, artifact bytes identical. Parentmonitor failed on temporary du path removal; no invented exit status.",
+      "node_version": "22.23.2",
+      "node_archive_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+      "input_roots_preserved": true,
+      "logical_archive_root_uses_hardlinks_not_full_copies": true
+    },
+    "build_results": [
+      {
+        "command": [
+          "python3",
+          "scripts/package_mainsail.py",
+          "--work",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2",
+          "--node-archive",
+          "/home/drew/sv08-mainline/build/app-intake/node-v22.23.2-linux-x64.tar.xz",
+          "--execute"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 30.99269479396753,
+        "timeout": false,
+        "output_allowance_exhausted": false,
+        "source_before": {
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
+          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+        },
+        "source_after": {
+          "scripts/package_mainsail.py": "c223671c39e12ebba821939a1dde5f4830cd8f3c04924fe12d1d1c7305c8b28b",
+          "scripts/prepare_host_os.py": "47ddbfc56e154e4a2fb2e467722afa3a68f781744bab4ad8f8a01d205153d38c",
+          "configs/apps/mainsail.json": "64e6d43c918e62846070fdb27769c0bf67beb4c1280b09d5e38d13f4d35e84a3",
+          "patches/mainsail/0001-stable-precache-order.patch": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700",
+          "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f",
+          "patches/mainsail/0003-notice-dependency-closure.patch": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94",
+          "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+        },
+        "generated_current_bytes": 1036720582,
+        "prior_failed_pair_receipt_preserved": "package-build-results.json",
+        "prior_elapsed_seconds": 5.0194910869468,
+        "cumulative_allowance_seconds": 2400,
+        "cumulative_allowance_bytes": 4294967296
+      }
+    ],
+    "browser_startup": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-notice-remediation/build/release-notice-a2/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-a2"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9696648390963674,
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3",
+      "scope": "actual changed static assets startup only; no printer/API/hardware"
+    },
+    "current_inventory_delta": {
+      "unchanged_domains": [
+        "wheels",
+        "debian",
+        "build_tools"
+      ],
+      "removed_dependencies": [
+        "node_modules/de-indent",
+        "node_modules/he",
+        "node_modules/vue-template-compiler"
+      ],
+      "changed_dependencies": [
+        "node_modules/throttleit"
+      ],
+      "changed_applications": [
+        [
+          2,
+          [
+            "artifact",
+            "config_sha256",
+            "patches",
+            "rebuild_evidence",
+            "source",
+            "version"
+          ]
+        ]
+      ],
+      "coverage": {
+        "declaration_only_dependencies": 7,
+        "dependencies_with_notice_text": 924,
+        "inspected_supplier_archives": 931
+      }
+    },
+    "historical_selection_coverage": {
+      "historical_notice_resolved": 60,
+      "historical_notice_unresolved": 9,
+      "historical_records": 69,
+      "measured_selection_remediations": 2,
+      "remaining_selected_notice_gaps": 7,
+      "selected_dependencies": 931
+    },
+    "current_inventory_command": {
+      "command": [
+        "python3",
+        "scripts/license_inventory.py",
+        "--inputs",
+        "/home/drew/.sv08-release-closure-20261015/current-inventory-inputs.json",
+        "--output",
+        "configs/host/release-source-license-inventory.json"
+      ],
+      "observed_exit_code": 0,
+      "output": {
+        "output_sha256": "e5c303f7d56e5f6865b75e18faa949bfee2eccd0dd17c85aeb8625cf9ebd4e88",
+        "bytes": 3077992
+      }
+    },
+    "project_source_package_reproducibility": {
+      "command": [
+        "python3",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-qualification-closure/scripts/prepare_release.py",
+        "--profile",
+        "project-source",
+        "--image",
+        "/home/drew/.sv08-release-closure-20261015/project-source-fixture.ext4",
+        "--public-source",
+        "/home/drew/.sv08-source-policy-20261014/public-session-manifest.json",
+        "--output",
+        "/root/.sv08-release-closure-20261015/source-package-repeat",
+        "--scratch",
+        "/root/.sv08-release-closure-20261015"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1667637440841645,
+      "exact_output_bytes_reproduced": true,
+      "output_sha256": {
+        "image-inventory.json": "9961d8835903977aa2b8f2ee8d3a5a9700892121d906c15861241d53a601c3a3",
+        "public-source.json": "079ed200a6812adf430372b80c3d7c484a0194f427b52bb2f9c2fa197c76dc8a",
+        "release-manifest.json": "8588e8d3da79a30e7778464fb655b00eae398697f6b03a5d1e96cd05ed46a9ab",
+        "report.json": "0b579d441fa3aac6db05caef33032d3290bd8d0c5321b99f7588ef4aea8e02a9"
+      },
+      "source": {
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684",
+        "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+        "scripts/qualify_project_source.py": "079cf0642583916fa011e0c7d5ae8a1375b1cb067df27d692717d4d818c8ae8b",
+        "scripts/project_license.py": "d8ea40e2e52cf8e45496fd224801847d24b78abd9f132c9d490b104946066612"
+      }
+    },
+    "new_failed_attempts": [
+      "Disposable npm isolation used same /dev/null for user/global files; npm rejected before resolution. Distinct empty task config files corrected invocation; original failed input preserved.",
+      "B2 parent monitor failed on du transient removed optional directory. Child continued and final checked build report/artifact completed; process gone. Exit status not observable; never recorded as zero. Artifact byte identity independently verified."
+    ],
+    "remaining_selected_notice_gaps": 7,
+    "license_text_or_grants_changed": false,
+    "budget": {
+      "cumulative_allowance_seconds": 7200,
+      "cumulative_allowance_bytes": 8589934592,
+      "conservative_cumulative_charge_seconds": 2000,
+      "conservative_cumulative_charge_bytes": 4294967296,
+      "includes_failed_inputs_transient_output_agents": true
+    },
+    "next_bounded_slice": "Assess notice-bearing why-is-node-running3.2.3 with explicitly recorded Vitest CJS/ESM default-export compatibility; no blanket canonical-text substitution or missing notice waiver."
   }
 }
