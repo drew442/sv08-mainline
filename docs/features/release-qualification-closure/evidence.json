@@ -12662,6 +12662,397 @@
     },
     "status": "slice validated; full goal incomplete with one selected notice gap"
   },
+  "humanfs_types_final_disposable_cleanup": {
+    "available_storage_after": "9.7GiB observed",
+    "budgets_not_reset": true,
+    "current_safe_a_installation_retained": true,
+    "receipt": [
+      {
+        "cumulative_usage_not_reset": true,
+        "removed_disposable_paths": [
+          "source/node_modules",
+          "node-v22.23.2-linux-x64",
+          "source.tar",
+          "package"
+        ],
+        "report": {
+          "activation_included": false,
+          "bytes": 2493692,
+          "package": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+          "payload_bytes": 9934695,
+          "profile": {
+            "authored_npm_replacements": {
+              "node_modules/@humanfs/types": {
+                "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                  "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                  "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                },
+                "format": "types-only",
+                "name": "@sv08-mainline/humanfs-types-compat",
+                "source_directory": "vendor/humanfs-types-compat",
+                "version": "1.0.0"
+              },
+              "node_modules/ospath": {
+                "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                  "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                  "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                },
+                "name": "@sv08-mainline/ospath-compat",
+                "source_directory": "vendor/ospath-compat",
+                "version": "1.0.0"
+              }
+            },
+            "format_version": 1,
+            "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+            "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+            "node_version": "22.23.2",
+            "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+            "package_version": "2.19.0+git32f99e1c-10",
+            "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+            "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ],
+            "source_path": "upstream/mainsail",
+            "status": "offline-build-no-browser-validation"
+          },
+          "sha256": "71e65c2b0e9b98256dc0213c503d351b748cd96e7421d085a73137f11a02e80b",
+          "source_date_epoch": 1788551235,
+          "source_patches": [
+            {
+              "path": "patches/mainsail/0001-stable-precache-order.patch",
+              "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+            },
+            {
+              "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+              "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+            },
+            {
+              "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+              "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+            },
+            {
+              "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+              "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+            },
+            {
+              "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+              "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+            },
+            {
+              "path": "patches/mainsail/0006-native-visibility.patch",
+              "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+            },
+            {
+              "path": "patches/mainsail/0007-ospath-compat.patch",
+              "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+            },
+            {
+              "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+              "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+            }
+          ]
+        },
+        "retained": "source/dist/vendor/manifest/lock, report and deb",
+        "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-final-a"
+      },
+      {
+        "cumulative_usage_not_reset": true,
+        "removed_disposable_paths": [
+          "source/node_modules",
+          "node-v22.23.2-linux-x64",
+          "source.tar",
+          "package"
+        ],
+        "report": {
+          "activation_included": false,
+          "bytes": 2493692,
+          "package": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+          "payload_bytes": 9934695,
+          "profile": {
+            "authored_npm_replacements": {
+              "node_modules/@humanfs/types": {
+                "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                  "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                  "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                },
+                "format": "types-only",
+                "name": "@sv08-mainline/humanfs-types-compat",
+                "source_directory": "vendor/humanfs-types-compat",
+                "version": "1.0.0"
+              },
+              "node_modules/ospath": {
+                "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                  "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                  "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                },
+                "name": "@sv08-mainline/ospath-compat",
+                "source_directory": "vendor/ospath-compat",
+                "version": "1.0.0"
+              }
+            },
+            "format_version": 1,
+            "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+            "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+            "node_version": "22.23.2",
+            "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+            "package_version": "2.19.0+git32f99e1c-10",
+            "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+            "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+              }
+            ],
+            "source_path": "upstream/mainsail",
+            "status": "offline-build-no-browser-validation"
+          },
+          "sha256": "71e65c2b0e9b98256dc0213c503d351b748cd96e7421d085a73137f11a02e80b",
+          "source_date_epoch": 1788551235,
+          "source_patches": [
+            {
+              "path": "patches/mainsail/0001-stable-precache-order.patch",
+              "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+            },
+            {
+              "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+              "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+            },
+            {
+              "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+              "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+            },
+            {
+              "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+              "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+            },
+            {
+              "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+              "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+            },
+            {
+              "path": "patches/mainsail/0006-native-visibility.patch",
+              "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+            },
+            {
+              "path": "patches/mainsail/0007-ospath-compat.patch",
+              "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+            },
+            {
+              "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+              "sha256": "6e8c5d0a47d6b59e8381a3627370b75ff680a0fb146520ccd16f32670838b762"
+            }
+          ]
+        },
+        "retained": "source/dist/vendor/manifest/lock, report and deb",
+        "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-final-b"
+      },
+      {
+        "cumulative_usage_not_reset": true,
+        "removed_disposable_paths": [
+          "source/node_modules",
+          "node-v22.23.2-linux-x64",
+          "source.tar",
+          "package"
+        ],
+        "report": {
+          "activation_included": false,
+          "bytes": 2493762,
+          "package": "sv08-mainsail_2.19.0+git32f99e1c-10_all.deb",
+          "payload_bytes": 9934695,
+          "profile": {
+            "authored_npm_replacements": {
+              "node_modules/@humanfs/types": {
+                "archive_path": "vendor/sv08-mainline-humanfs-types-compat-1.0.0.tgz",
+                "archive_sha256": "7307dcd552e18dde79112d873b79eb6312239b9da71c44dab9743f61b21f68ff",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "3b31e0f353015e22ec2a041d06d2bf376ee05cc1ee84e432dc0f587ed9955b2c",
+                  "index.d.ts": "84c67c06b81cc4a8bf60abc98ec24da06b69d24ba5160ae4779c49e04a517424",
+                  "package.json": "c4bbd18a0ccac55977253de8f49c0436f589b286f681a074222bc6311860eff7"
+                },
+                "format": "types-only",
+                "name": "@sv08-mainline/humanfs-types-compat",
+                "source_directory": "vendor/humanfs-types-compat",
+                "version": "1.0.0"
+              },
+              "node_modules/ospath": {
+                "archive_path": "vendor/sv08-mainline-ospath-compat-1.0.0.tgz",
+                "archive_sha256": "fd33af5945ab0419963815569c5811521eb724ab6b69e06b1749097a407d42b2",
+                "files": {
+                  "LICENSE": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+                  "README.md": "4fe50a75417c229dc248fde18acf2e36cad69d10eb9ab2a550145e3bdc20ed55",
+                  "index.js": "d44bdb1c3fd8c6cbdad1ab86be20bfadc9a4d4213493447ed4f92facbc5c2d11",
+                  "package.json": "eaf0e5c27447caf3f60dcc446cef0f2bcbff8ffa452a1c2892a247cf6ad6ff95"
+                },
+                "name": "@sv08-mainline/ospath-compat",
+                "source_directory": "vendor/ospath-compat",
+                "version": "1.0.0"
+              }
+            },
+            "format_version": 1,
+            "node_archive": "node-v22.23.2-linux-x64.tar.xz",
+            "node_sha256": "d60acfe00a2932254bb0ad20e01b0d74397a0875595de719654b214f4b03f307",
+            "node_version": "22.23.2",
+            "package_lock_sha256": "e8dd1bdb008adbf2905c8d2086b6db97dcfad614e12f53c2a94adc204b334e21",
+            "package_version": "2.19.0+git32f99e1c-10",
+            "patched_package_lock_sha256": "b22b9c87093e5ba034497b9929b803a777a6acbde11d34106f7f765e72dee088",
+            "source_commit": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+            "source_patches": [
+              {
+                "path": "patches/mainsail/0001-stable-precache-order.patch",
+                "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+              },
+              {
+                "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+                "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+              },
+              {
+                "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+                "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+              },
+              {
+                "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+                "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+              },
+              {
+                "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+                "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+              },
+              {
+                "path": "patches/mainsail/0006-native-visibility.patch",
+                "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+              },
+              {
+                "path": "patches/mainsail/0007-ospath-compat.patch",
+                "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+              },
+              {
+                "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+                "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
+              }
+            ],
+            "source_path": "upstream/mainsail",
+            "status": "offline-build-no-browser-validation"
+          },
+          "sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50",
+          "source_date_epoch": 1788551235,
+          "source_patches": [
+            {
+              "path": "patches/mainsail/0001-stable-precache-order.patch",
+              "sha256": "33c71666cd0bf4b60fe85f567e42c7f9a884464f96fe624c88c1c34f6b278700"
+            },
+            {
+              "path": "patches/mainsail/0002-pin-fixed-yaml-nanoid.patch",
+              "sha256": "2f2e264d06b92ae58b917279767307253d9e0014357933f81f7b6e11dca9f14f"
+            },
+            {
+              "path": "patches/mainsail/0003-notice-dependency-closure.patch",
+              "sha256": "6dd34b76dc8876ec79c3bc35e2f36fc7a9ab4edba9bf328cd62a6605bc407a94"
+            },
+            {
+              "path": "patches/mainsail/0004-vitest-notice-closure.patch",
+              "sha256": "cb4b2f331c19968dabafc56a1827a59cac84700992061c2d6362746ff0f8d56f"
+            },
+            {
+              "path": "patches/mainsail/0005-janus-sdk-replacement.patch",
+              "sha256": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735"
+            },
+            {
+              "path": "patches/mainsail/0006-native-visibility.patch",
+              "sha256": "3c3165627037d7c3deb2324d2cfc1462121e797599c0612a36ee5e645bdc221f"
+            },
+            {
+              "path": "patches/mainsail/0007-ospath-compat.patch",
+              "sha256": "85e346023ce848e806104b142ba8c4bf29a6274ecb4ba5408bf92c06c9ed1565"
+            },
+            {
+              "path": "patches/mainsail/0008-humanfs-types-compat.patch",
+              "sha256": "41d99bd2b7b27bc6031d05e87b20b1184171b4866d0ca88dbeb5c71751cdcde7"
+            }
+          ]
+        },
+        "retained": "source/dist/vendor/manifest/lock, report and deb",
+        "root": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-humanfs-types/build/humanfs-types-safe-b"
+      }
+    ]
+  },
   "image_docstring_compatibility": {
     "executable_AST_unchanged": true,
     "final_sha256": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
