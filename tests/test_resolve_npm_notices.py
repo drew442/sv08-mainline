@@ -271,4 +271,84 @@ class AuthoredSelectionTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,'identity mismatch|source/archive mismatch'):self.record()
 
 
+class HumanfsAuthoredSelectionTests(unittest.TestCase):
+    pin = AuthoredSelectionTests.pin
+    write_config = AuthoredSelectionTests.write_config
+
+    def setUp(self):
+        AuthoredSelectionTests.setUp(self)
+        self.path='node_modules/@humanfs/types'
+        self.directory=self.source/'vendor/humanfs-types-compat';self.directory.mkdir()
+        self.contents={'package.json':json.dumps(dict(name='@sv08-mainline/humanfs-types-compat',version='1.0.0',
+            license='AGPL-3.0-or-later',type='module',types='index.d.ts',
+            exports={'.':{'types':'./index.d.ts'}},files=['index.d.ts','LICENSE','README.md'])).encode(),
+            'index.d.ts':b'export interface Fixture { value: string; }\n',
+            'README.md':b'Independently authored disposable type-only fixture\n',
+            'LICENSE':(self.repo/'LICENSE').read_bytes()}
+        for name,raw in self.contents.items():(self.directory/name).write_bytes(raw)
+        self.spec=dict(name='@sv08-mainline/humanfs-types-compat',version='1.0.0',format='types-only',
+            source_directory='vendor/humanfs-types-compat',files={n:m.digest(r) for n,r in self.contents.items()},
+            archive_path='vendor/humanfs.tgz')
+        self.archive=self.source/self.spec['archive_path']
+        self.archive.write_bytes(self.builder.authored_archive_bytes(self.source,self.spec))
+        self.spec['archive_sha256']=m.digest(self.archive.read_bytes())
+        self.manifest=self.source/'package.json'
+        self.manifest.write_text(json.dumps({'devDependencies':{'@humanfs/types':'file:'+self.spec['archive_path']},
+            'overrides':{parent:{'@humanfs/types':'$@humanfs/types'} for parent in ('@humanfs/core','@humanfs/node')}}))
+        baseline=json.loads((self.base/'configs/host/source-license-inventory.json').read_text())
+        packages={p['path']:dict(version=p['version'],integrity=p['integrity'])
+                  for p in baseline['mainsail_dependencies']['packages'] if not p['notices']}
+        self.selected=dict(name=self.spec['name'],version='1.0.0',resolved='file:'+self.spec['archive_path'],
+            integrity='sha512-'+base64.b64encode(hashlib.sha512(self.archive.read_bytes()).digest()).decode())
+        packages[self.path]=self.selected
+        self.lock.write_text(json.dumps({'packages':{'':{},**packages}}))
+        self.config['authored_npm_replacements']={self.path:self.spec}
+        self.inputs['replacement_archives']={self.path:dict(self.pin(self.archive),authored_source=self.pin(self.manifest))}
+        self.repin()
+
+    def repin(self):
+        lock=json.loads(self.lock.read_text());lock['packages'][self.path]=self.selected
+        self.lock.write_text(json.dumps(lock));self.config['patched_package_lock_sha256']=m.digest(self.lock.read_bytes())
+        self.write_config();self.inputs['selected_lock']=self.pin(self.lock)
+        self.inputs['replacement_archives'][self.path].update(self.pin(self.archive))
+        self.inputs['replacement_archives'][self.path]['authored_source']=self.pin(self.manifest)
+
+    def record(self):return next(p for p in m.selection_resolution(self.inputs)['records'] if p['path']==self.path)
+
+    def test_type_only_selection_retains_original_notice_facts(self):
+        record=self.record()
+        self.assertEqual(record['selection_status'],'replaced-by-source-bound-authored-package')
+        self.assertEqual(record['historical_notice_status'],'unresolved-author-notice')
+        self.assertFalse(record['selected_notice_gap'])
+        result=m.selection_resolution(self.inputs)
+        self.assertEqual(len(result['records']),69)
+        self.assertEqual(result['coverage']['historical_notice_resolved'],60)
+
+    def test_explicit_root_and_both_named_parent_edges_are_required(self):
+        original=json.loads(self.manifest.read_text())
+        mutations=[lambda v:v['devDependencies'].pop('@humanfs/types'),
+            lambda v:v['overrides'].pop('@humanfs/core'),lambda v:v['overrides'].pop('@humanfs/node'),
+            lambda v:v['overrides'].update({'@humanfs/types':'file:'+self.spec['archive_path']}),
+            lambda v:v['overrides']['@humanfs/core'].update({'@humanfs/types':'file:'+self.spec['archive_path']})]
+        for change in mutations:
+            changed=copy.deepcopy(original);change(changed);self.manifest.write_text(json.dumps(changed));self.repin()
+            with self.assertRaisesRegex(ValueError,'manifest override mismatch'):self.record()
+
+    def test_wrong_identity_sri_source_and_notice_rejected(self):
+        self.selected['name']='@humanfs/types';self.repin()
+        with self.assertRaisesRegex(ValueError,'identity mismatch'):self.record()
+        self.selected['name']=self.spec['name'];self.selected['integrity']='sha512-'+base64.b64encode(bytes(64)).decode();self.repin()
+        with self.assertRaisesRegex(ValueError,'SRI mismatch'):self.record()
+        self.selected['integrity']='sha512-'+base64.b64encode(hashlib.sha512(self.archive.read_bytes()).digest()).decode();self.repin()
+        source=self.directory/'index.d.ts';source.write_text('tamper')
+        with self.assertRaisesRegex(ValueError,'source hash mismatch'):self.record()
+        source.write_bytes(self.contents['index.d.ts'])
+        notice=self.directory/'LICENSE';notice.unlink()
+        with self.assertRaisesRegex(ValueError,'directory contents'):self.record()
+        notice.write_bytes(self.contents['LICENSE'])
+        self.archive.write_bytes(self.archive.read_bytes()+b'tamper')
+        self.selected['integrity']='sha512-'+base64.b64encode(hashlib.sha512(self.archive.read_bytes()).digest()).decode();self.repin()
+        with self.assertRaisesRegex(ValueError,'source/archive mismatch'):self.record()
+
+
 if __name__=='__main__':unittest.main()

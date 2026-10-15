@@ -58,8 +58,8 @@ class MainsailNoticeDependencies(unittest.TestCase):
 
     def test_exact_patches_and_final_lock_pin(self):
         self.assertEqual(sha(self.source/'package-lock.json'),self.config['patched_package_lock_sha256'])
-        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-9')
-        self.assertEqual(len(self.config['source_patches']),7)
+        self.assertEqual(self.config['package_version'],'2.19.0+git32f99e1c-10')
+        self.assertEqual(len(self.config['source_patches']),8)
         self.assertEqual(self.lock['packages']['node_modules/js-yaml']['version'],'4.3.2')
         self.assertEqual(self.lock['packages']['node_modules/nanoid']['version'],'3.3.18')
         self.assertIn('manifestTransforms',(self.source/'vite.config.ts').read_text())
