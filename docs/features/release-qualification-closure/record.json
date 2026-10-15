@@ -1,61 +1,78 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "943fc8a863ee79bb744617e8120083655083de9f6bb666e20c98e94bfe18cda9",
+    "rationale": "Direct owner goal; reversible source, upstream evidence and actual disposable final-image inventory, preserving license terms and hardware gates.",
+    "reference": "docs/features/release-qualification-closure/owner-request.md",
+    "reference_sha256": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/features/release-qualification-closure/owner-request.md": "89edfc92226500fbc776fbbec3c6f3c2066adac25fb7c791e56994686c9a49bf"
+    },
+    "scope_sha256": "f8bfdd239cb25077d4ed79d00b94697e7d11fc8d099560a3bf8ba82b4b1131db",
+    "session": "release-closure-20261015",
+    "source_commit": "7f75e9d023f6dd13af0c790b25c40b85921a3fb5"
+  },
+  "checks": [
+    {
+      "description": "Exact-artifact fail-closed release packaging and qualification with actual positive and negative evidence.",
+      "environment": "offline",
+      "id": "packaging"
+    },
+    {
+      "description": "All69 historical NPM declaration-only entries resolved through exact-version upstream evidence without upstream license changes.",
+      "environment": "offline",
+      "id": "npm"
+    },
+    {
+      "description": "Read-only actual final-image inventory, coverage/drift checks and source/image-bound evidence.",
+      "environment": "offline",
+      "id": "image"
+    }
+  ],
+  "created": "2026-10-15",
+  "decision": null,
   "format_version": 2,
   "id": "release-qualification-closure",
   "kind": "feature",
-  "title": "Release packaging, NPM notices and actual image inventory",
-  "author": "root/coordinator",
-  "created": "2026-10-15",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/release-qualification-closure/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/release-qualification-closure/owner-request.md",
     "docs/development/public-source-releases.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "packaging",
-      "description": "Exact-artifact fail-closed release packaging and qualification with actual positive and negative evidence.",
-      "environment": "offline"
-    },
-    {
-      "id": "npm",
-      "description": "All69 historical NPM declaration-only entries resolved through exact-version upstream evidence without upstream license changes.",
-      "environment": "offline"
-    },
-    {
-      "id": "image",
-      "description": "Read-only actual final-image inventory, coverage/drift checks and source/image-bound evidence.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate release and inventory closure",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "packaging",
         "npm",
         "image"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "scripts/project_license.py",
+        "scripts/qualify_project_source.py",
+        "scripts/build_host_image.py",
+        "scripts/package_rauc.py",
+        "configs/apps/",
+        "configs/host-os/",
+        "configs/images/",
+        "upstream-lock.json",
+        "configs/host/source-license-inventory.json"
+      ],
       "owned_paths": [
         "scripts/prepare_release.py",
         "scripts/image_license_inventory.py",
@@ -72,17 +89,15 @@
         "docs/features/release-qualification-closure/evidence.md",
         "docs/features/release-qualification-closure/evidence.json"
       ],
-      "input_paths": [
-        "scripts/project_license.py",
-        "scripts/qualify_project_source.py",
-        "scripts/build_host_image.py",
-        "scripts/package_rauc.py",
-        "configs/apps/",
-        "configs/host-os/",
-        "configs/images/",
-        "upstream-lock.json",
-        "configs/host/source-license-inventory.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
+      "status": "pending",
+      "title": "Implement and validate release and inventory closure",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Release packaging, NPM notices and actual image inventory"
 }
