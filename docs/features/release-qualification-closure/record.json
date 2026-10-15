@@ -61,7 +61,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "project_implementer",
+        "run": "c907260159d64e7fa600373006e483f4",
+        "session": "release-janus-20261015"
+      },
       "input_paths": [
         "scripts/project_license.py",
         "scripts/qualify_project_source.py",
@@ -106,7 +110,7 @@
       "resumption": "Measured complete SDK file has explicit Meetecho MIT grant; one actual consumer permits independent feature-preserving adapter and removal of wrapper/aigle notice gaps without changing upstream licenses.",
       "review_policy": "self",
       "review_reason": "Reversible source and private disposable image inspection; no device writes, deployment, upstream license changes or overall legal/hardware qualification.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate release and inventory closure",
       "validation": null,
       "verification": null
