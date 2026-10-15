@@ -1,0 +1,96 @@
+{
+  "format_version": 2,
+  "id": "current-release-qualification",
+  "kind": "feature",
+  "title": "Qualify a complete current image through the software release gate",
+  "author": "root/coordinator",
+  "created": "2026-10-15",
+  "priority": 2,
+  "proposal": "docs/features/current-release-qualification/proposal.md",
+  "requirements": [
+    "docs/features/current-release-qualification/owner-request.md",
+    "docs/development/release-packaging.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "composition",
+      "environment": "offline",
+      "description": "Actual complete current A/B and recovery composition with selected application payloads and source-bound hashes."
+    },
+    {
+      "id": "release-gate",
+      "environment": "offline",
+      "description": "Default selected-software actual-image qualification passes and exact evidence exports are verified."
+    },
+    {
+      "id": "refusal",
+      "environment": "offline",
+      "description": "Altered/incomplete inputs refuse qualification without weakening protections."
+    },
+    {
+      "id": "publication",
+      "environment": "offline",
+      "description": "Sanitized source-bound evidence and changes published for review; limitations explicit."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Build, qualify and publish complete current software image evidence",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "composition",
+        "release-gate",
+        "refusal",
+        "publication"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
+      "hazards": [],
+      "owned_paths": [
+        "docs/features/current-release-qualification/evidence.md",
+        "docs/features/current-release-qualification/evidence.json",
+        "scripts/prepare_release.py",
+        "scripts/image_license_inventory.py",
+        "scripts/license_inventory.py",
+        "scripts/assemble_board_diagnostic.py",
+        "scripts/prepare_host_os.py",
+        "scripts/integrate_host_os.py",
+        "scripts/recovery_image.py",
+        "tests/test_prepare_release.py",
+        "tests/test_image_license_inventory.py",
+        "tests/test_license_inventory.py",
+        "tests/test_assemble_board_diagnostic.py",
+        "docs/development/release-packaging.md"
+      ],
+      "input_paths": [
+        "configs/apps/",
+        "configs/host-os/",
+        "configs/images/",
+        "patches/",
+        "runtime/",
+        "scripts/project_license.py",
+        "scripts/qualify_project_source.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/stage_printer_ui.py",
+        "upstream-lock.json"
+      ]
+    }
+  ]
+}

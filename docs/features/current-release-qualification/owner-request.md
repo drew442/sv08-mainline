@@ -1,0 +1,3 @@
+# Owner request —2026-10-15
+
+Qualify a complete current release image through the new release gate as discussed. Use agents/sub-agents and complete the goal. Scope includes a complete current printer software image, actual installed payload/source/license inspection, fixing missing release inputs, rejection of altered/incomplete inputs, and artifact-bound evidence. Source publication and disposable development testing authorized. No printer operation, deployment, automatic merge, spending or host tool installation. Printing/hardware qualification and full recovery execution on ARM64 remain separate.
