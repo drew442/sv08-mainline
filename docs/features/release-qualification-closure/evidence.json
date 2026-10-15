@@ -11500,6 +11500,49 @@
     "privileged": "/root/.sv08-release-closure-20261015"
   },
   "code_commit": "6b0cdc6342861be2ab3c5fc5622fc6b8f1f2b297",
+  "completion_audit_after_humanfs_types": {
+    "actual_final_image_inventory": {
+      "evidence_field": "actual_image",
+      "inspector_source_unchanged": true,
+      "limitations": "A/B513 package observations, recovery metadata gaps and actual image hashes remain preserved at measured revision",
+      "result": "measured actual historical assembled final image, read-only, not a current release claim"
+    },
+    "all_69_notice_closure": {
+      "addressed_original_gaps_for_selected_build": 68,
+      "exact_original_author_notices": 60,
+      "original_unresolved_archives_selected_away_or_replaced": 8,
+      "release_refusal_expected": true,
+      "remaining": [
+        {
+          "historical_status": "unresolved-author-notice",
+          "name": "@sindarius/gcodeviewer",
+          "version": "3.7.18"
+        }
+      ],
+      "result": "incomplete"
+    },
+    "next_dependency": "Explicit owner approval to post prepared maintainer notice request; subsequently author response or compatible notice-bearing distribution. No message sent, no consent inferred.",
+    "preserve_upstream_licenses": {
+      "legal_compliance_assessed": false,
+      "mainsail_gitlink": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+      "result": "verified original60 notice set and upstream gitlink unchanged; own replacements explicitly identified and source-bound"
+    },
+    "publication": {
+      "checks_at_publication": "none reported",
+      "current_pr": "https://github.com/drew442/sv08-mainline/pull/26",
+      "result": "draft PR21 throughPR26 published; no merge/deployment"
+    },
+    "release_packaging": {
+      "core_source_hashes_unchanged": {
+        "scripts/image_license_inventory.py": "b7179b967806ba7a04c7ed2aeac5f3265495237418022ede734db90efdad7203",
+        "scripts/license_inventory.py": "5842d5c2cdf0aae8e082d98ea9957c1d7eae91c2012f63d2005c416f7e6c6bf3",
+        "scripts/prepare_release.py": "9bea94c428fa950149e4fed839f189fbe2d0aa7445e44b0fe598e433bcde6684"
+      },
+      "limitation": "No current full-stack release or legal/hardware qualification inferred",
+      "result": "implemented and tested; source-bound positive project-source profile and negative historical full-image refusal reused"
+    },
+    "scope": "Full original owner objective retained, not marked complete"
+  },
   "failed_attempts": [
     "Initial actual image run stopped at missing later-slot dpkg metadata; now reports unknown coverage per slot. Original failed inputs/logs retained.",
     "Initial six source notice pins captured empty in-progress shared URL cache; rejected by hash checks. Fresh exact-commit public responses were separately retained; original research unchanged.",
