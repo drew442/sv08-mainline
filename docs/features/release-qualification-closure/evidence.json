@@ -11577,6 +11577,459 @@
     "only_change": "module docstring accurately describes managed read-only mounts"
   },
   "initial_delivery_note": "Original code_commit/source/test/image/remaining_notice_gaps fields are the preserved initial delivery snapshot; current continuation is below.",
+  "janus_continuation": {
+    "actual_playback": {
+      "receipt": {
+        "command": [
+          "sudo",
+          "-n",
+          "nsenter",
+          "--target",
+          "1012525",
+          "--net",
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_janus_browser.mjs",
+          "--execute",
+          "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+          "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source",
+          "/home/drew/.sv08-release-closure-20261015/janus-browser-final-b",
+          "ws://127.0.0.1:44253",
+          "1",
+          "48884"
+        ],
+        "elapsed_seconds": 1.9172616510186344,
+        "exit": 0,
+        "test_sha256": "076b4e09ba19768239bd377306d96e858fae924d75e60b5541269388ea53e25b"
+      },
+      "result": {
+        "actual_janus_webrtc_playback": true,
+        "encoded_keyframe_bytes": 293,
+        "first": {
+          "attached": true,
+          "frames": 3,
+          "height": 240,
+          "status": [
+            "connecting",
+            "preparing",
+            "starting",
+            "started"
+          ],
+          "width": 320
+        },
+        "passed": true,
+        "physical_hardware": false,
+        "production_component_mounted": false,
+        "rtp_packets": 10,
+        "second": {
+          "attached": true,
+          "frames": 6,
+          "height": 240,
+          "status": [
+            "connecting",
+            "preparing",
+            "starting",
+            "started",
+            "connecting",
+            "preparing",
+            "starting",
+            "started"
+          ],
+          "width": 320
+        },
+        "stopped": true,
+        "uncaught_exceptions": []
+      }
+    },
+    "agents": [
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "default-low",
+        "role": "project_researcher",
+        "task": "janus_notice_remediation_design"
+      },
+      {
+        "effective_settings": "not independently observable",
+        "requested_effort": "medium",
+        "role": "project_implementer",
+        "task": "janus_sdk_implement"
+      }
+    ],
+    "fixture": {
+      "all_owned_server_processes_observed_stopped": true,
+      "config": {
+        "config_sha256": {
+          "janus.jcfg": "d69d112300f9ccc11696195becbea8b263dd8ca2247a181c58d4552fe34696a2",
+          "janus.plugin.streaming.jcfg": "4937e0c3278f33098d455cab408697f6ac97a8366f937ef8ed80d5569c55522d",
+          "janus.transport.websockets.jcfg": "3418ddef487fec0979c748c6349e6c93f1d194dc862286268dc5a82e62e6b16b"
+        },
+        "ice_device": "sv08test0",
+        "ice_interface": "192.0.2.1",
+        "janus_version": "1.1.2-1build5",
+        "namespace": "isolated lo + dummy sv08test0/192.0.2.1/32; no external route",
+        "packages": {
+          "janus_1.1.2-1build5_amd64.deb": "baafd8111f7bac3e19cd8c4b8ae277bf1b61e2f8d2e37e34497ab79a8dca0a40",
+          "libconfig9_1.5-0.4build2_amd64.deb": "6f2ac35372eeadfd61bc7ff48c1add32378dd69db08720202daaf2fa19aa119a",
+          "libgssdp-1.6-0_1.6.3-1build3_amd64.deb": "49aa7c3eb2e75f55da069f5f18d3babc0376e4bf8f3bcbbf22a76d60d9f40f9e",
+          "libgupnp-1.6-0_1.6.6-1build3_amd64.deb": "491670df1732d15ced827446e26bcea76326d3c9cfc4856b5806e9911dc4264f",
+          "libgupnp-igd-1.6-0_1.6.0-3build3_amd64.deb": "e71897a39779ffc327b704ca7baef4fe079cfc6a5e1bd56819ac2ad05f8f9b86",
+          "libnice10_0.1.21-2build3_amd64.deb": "fd24e18e0d9d9ead31e192d46df04473fab2d51390ccb2a4a62cf3b90bf6f311",
+          "libsrtp2-1_2.5.0-3build1_amd64.deb": "c2e7ee0ae64597f046fbfb197b8f36dfc9a5159b02d27e850f3a4d14a4603d77",
+          "libusrsctp2_0.9.5.0-2build1_amd64.deb": "1e64a5abf09a91f17237a65204735a2acaec601de924d0be9d5e042de099657c",
+          "libwebsockets19t64_4.3.3-1.1build3_amd64.deb": "31a0ac48e4f81092c7272e8bc7e6ef38dd78daf403f96baa232667aa999c5eea"
+        },
+        "rtp_port": 48884,
+        "scope": "extracted disposable packages only; no host install/config/service change",
+        "stream_id": 1,
+        "ws_url": "ws://127.0.0.1:44253"
+      },
+      "final_exit": {
+        "elapsed_seconds": 101.75695266202092,
+        "exit": 0,
+        "ready": true
+      },
+      "host_install": false,
+      "loopback_attempt_exit": {
+        "elapsed_seconds": 127.86228388198651,
+        "exit": 0,
+        "ready": true
+      },
+      "preflight_exit": {
+        "elapsed_seconds": 421.82715279608965,
+        "exit": 0,
+        "ready": true
+      },
+      "printer_access": false
+    },
+    "inventory_delta": {
+      "changed_applications": [
+        "configs/apps/mainsail.json"
+      ],
+      "changed_top_fields": [
+        "applications",
+        "mainsail_dependencies"
+      ],
+      "count_note": "Six measured selection changes include already-notice-resolved aigle; five of nine originally unresolved notices are selected away. Do not add overlapping counts as disjoint categories.",
+      "current_inventory_sha256": "e15d0e037ababcaa8ef1ac990bfd53191d4b9cd7900e80eb9c248394f5200b47",
+      "historical_accounting": {
+        "historical_notice_resolved": 60,
+        "historical_notice_unresolved": 9,
+        "historical_records": 69,
+        "measured_selection_remediations": 6,
+        "remaining_selected_notice_gaps": 4,
+        "selected_dependencies": 898
+      },
+      "historically_unresolved_selection_remediations": 5,
+      "notice_coverage": {
+        "declaration_only_dependencies": 4,
+        "dependencies_with_notice_text": 894,
+        "inspected_supplier_archives": 898
+      },
+      "previous_inventory_sha256": "f8b5bb856bbce02e9a07870eff9f7d4305eac0c77862152f5180ba1fd9873b2a",
+      "remaining_selected_gaps": [
+        {
+          "name": "@humanfs/types",
+          "version": "0.15.0"
+        },
+        {
+          "name": "@sindarius/gcodeviewer",
+          "version": "3.7.18"
+        },
+        {
+          "name": "ospath",
+          "version": "1.2.2"
+        },
+        {
+          "name": "vue-observe-visibility",
+          "version": "1.0.0"
+        }
+      ],
+      "removed_dependency_paths": [
+        "node_modules/@gerrit0/mini-shiki",
+        "node_modules/@shikijs/engine-oniguruma",
+        "node_modules/@shikijs/langs",
+        "node_modules/@shikijs/themes",
+        "node_modules/@shikijs/types",
+        "node_modules/@shikijs/vscode-textmate",
+        "node_modules/@types/hast",
+        "node_modules/@types/unist",
+        "node_modules/aigle",
+        "node_modules/aigle-core",
+        "node_modules/entities",
+        "node_modules/linkify-it",
+        "node_modules/lunr",
+        "node_modules/markdown-it",
+        "node_modules/mdurl",
+        "node_modules/punycode.js",
+        "node_modules/typed_janus_js",
+        "node_modules/typed_janus_js/node_modules/balanced-match",
+        "node_modules/typed_janus_js/node_modules/brace-expansion",
+        "node_modules/typed_janus_js/node_modules/minimatch",
+        "node_modules/typed_janus_js/node_modules/typedoc",
+        "node_modules/typed_janus_js/node_modules/typescript",
+        "node_modules/uc.micro"
+      ],
+      "surviving_supplier_records_identical": true
+    },
+    "inventory_receipt": {
+      "command": [
+        "python3",
+        "scripts/license_inventory.py",
+        "--inputs",
+        "/home/drew/.sv08-release-closure-20261015/janus-inventory-inputs.json",
+        "--output",
+        "configs/host/release-source-license-inventory.json"
+      ],
+      "elapsed_seconds": 13.592600882053375,
+      "exit": 0,
+      "historical_notices_unchanged": true,
+      "omitted_unselected_paths": [
+        "node_modules/aigle"
+      ],
+      "selected_supplemental_records": 59
+    },
+    "limits": [
+      "Four current selected notice gaps remain; full goal incomplete.",
+      "Actual playback used production SDK/adapter against disposableJanus1.1.2 and syntheticVP8, not production Vue component or physical camera/printer.",
+      "Static application startup and source presentation contract checked separately.",
+      "Earlier core tests and same-lock dependency checks reused with unchanged relevant inputs.",
+      "SDK grant does not grant wrapper rights; no upstream license changed.",
+      "No merge/deployment/host install/upstream message/spending or overall legal/hardware/recovery qualification."
+    ],
+    "offline_skips": 0,
+    "offline_tests": 10,
+    "production_startup": {
+      "command": [
+        "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+        "tests/mainsail_browser_startup.mjs",
+        "--execute",
+        "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+        "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source/dist",
+        "/home/drew/.sv08-release-closure-20261015/mainsail-startup-janus"
+      ],
+      "elapsed_seconds": 1.8200976850930601,
+      "exit": 0,
+      "scope": "actual production app startup only; separate adapter playback fixture does not mount Vue component",
+      "test_sha256": "8b1c63760aa6975535c4f2931a52d732b9e41d2da6e3e3409eb75b9f7cfd8af3"
+    },
+    "rationale": "Retain exact explicitly MIT-licensed embedded Meetecho SDK and independently authored AGPL adapter; remove wrapper and unused dependency subtree without changing any upstream grant.",
+    "reproducibility": {
+      "builds": [
+        {
+          "elapsed_seconds": 26.60829787584953,
+          "exit": 0,
+          "limit": null,
+          "suffix": "a"
+        },
+        {
+          "elapsed_seconds": 27.39719686517492,
+          "exit": 0,
+          "limit": null,
+          "suffix": "b"
+        }
+      ],
+      "distributed_notice_sha256": {
+        "licenses/janus-sdk.txt": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+        "licenses/sv08-janus-adapter-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+      },
+      "identical_packages": true,
+      "identical_reports": true,
+      "old_supplier_license_unmodified": true,
+      "package_sha256": "fe87dfa3f5936249dd09d17b71f3482b62616bbccabd5f83eab2f9ffff87d610",
+      "report_sha256": "d67a3f8637591edf7bc344c5b5942e2c16d6c670f5e52634448f8b289ec86df2"
+    },
+    "resource_accounting": {
+      "conservative_charge_output_bytes": 9663676416,
+      "conservative_charge_process_seconds": 4000,
+      "continuation_added_output_bytes": 4294967296,
+      "continuation_added_process_seconds": 3600,
+      "cumulative_allowance_output_bytes": 12884901888,
+      "cumulative_allowance_process_seconds": 10800,
+      "no_reset": true
+    },
+    "retained_attempts": [
+      {
+        "correction": "Await actual SDK destruction completion before successor startup; add delayed completion/error/throw/rapid restart coverage; include full project grant in assets.",
+        "initial_patch_sha256": "07f167f45ef5248592f09f751b89c9741b50bfb62d7a138087871d82fc927b25",
+        "initial_results": {
+          "builds": [
+            {
+              "elapsed_seconds": 25.893058208050206,
+              "exit": 0,
+              "limit": null,
+              "suffix": "a"
+            },
+            {
+              "elapsed_seconds": 26.82695581507869,
+              "exit": 0,
+              "limit": null,
+              "suffix": "b"
+            }
+          ],
+          "initial_patch_sha256": "07f167f45ef5248592f09f751b89c9741b50bfb62d7a138087871d82fc927b25",
+          "package_sha256": "36e19a2d38c4872f80acca74e827b956be9f70c209fb6887432f9e8f685b8379",
+          "qualification": "pre-repair evidence; not final accepted candidate",
+          "review_defect": "stop invoked asynchronous SDK destroy without awaiting completion before restart; first unit fixture proved call ordering only",
+          "runtime": [
+            {
+              "check": "unit",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "node_modules/vitest/vitest.mjs",
+                "run"
+              ],
+              "elapsed_seconds": 1.3677432101685554,
+              "exit": 0
+            },
+            {
+              "check": "types",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "node_modules/typescript/bin/tsc",
+                "--noEmit"
+              ],
+              "elapsed_seconds": 2.980134473880753,
+              "exit": 0
+            },
+            {
+              "check": "notice",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_notice_dependencies.cjs",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-a/source/node_modules"
+              ],
+              "elapsed_seconds": 1.1220564360264689,
+              "exit": 0
+            },
+            {
+              "check": "fixed",
+              "command": [
+                "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_fixed_dependencies.cjs",
+                "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-a/source/node_modules"
+              ],
+              "elapsed_seconds": 0.06385039002634585,
+              "exit": 0
+            }
+          ]
+        },
+        "kind": "semantic-repair"
+      },
+      {
+        "correction": "Isolated namespace with dummy192.0.2.1/32 and no external route; retain identical decoded-video assertions.",
+        "error": "libnice cannot gather candidates on loopback-only namespace; no offer delivered",
+        "kind": "fixture-repair",
+        "receipt": {
+          "command": [
+            "sudo",
+            "-n",
+            "nsenter",
+            "--target",
+            "1012273",
+            "--net",
+            "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+            "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/tests/mainsail_janus_browser.mjs",
+            "--execute",
+            "/home/drew/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome",
+            "/home/drew/sv08-mainline/local/feature-workflow/worktrees/release-janus-notice/build/janus-final-a/source",
+            "/home/drew/.sv08-release-closure-20261015/janus-browser-final-a",
+            "ws://127.0.0.1:44253",
+            "1",
+            "48884"
+          ],
+          "elapsed_seconds": 16.398624062072486,
+          "exit": 1
+        }
+      },
+      {
+        "correction": "Use59-record selected subset; preserve original60-record historical set and original69 facts; gate unchanged.",
+        "error": "Extraneous supplemental dependency: removed aigle retained in current selected inputs",
+        "kind": "inventory-input-repair"
+      }
+    ],
+    "runtime_results": [
+      {
+        "check": "unit",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run"
+        ],
+        "elapsed_seconds": 1.175224901176989,
+        "exit": 0
+      },
+      {
+        "check": "types",
+        "command": [
+          "/home/drew/sv08-mainline/build/mainsail-package-v7/node-v22.23.2-linux-x64/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "elapsed_seconds": 2.9819000139832497,
+        "exit": 0
+      },
+      {
+        "check": "source",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_mainsail_janus",
+          "test_mainsail_notice_dependencies"
+        ],
+        "elapsed_seconds": 0.4146580819506198,
+        "exit": 0
+      }
+    ],
+    "sdk_provenance": {
+      "adapter_authorship": "Independently authored for Mainsail; no wrapper implementation or declarations copied",
+      "archive_sha256": "0638bb117dba06d41791a20f9b1741da737add3ddc9594e9193c15a35d1bfc8e",
+      "archive_sri": "sha512-Nzd8FpUbDPVXE2juhPJlgJD9lTX5sq7kNzyWW8MVR4zBywiYoP2s9oWGfY0M1xqiItTrfmJ/SATBtvM+T/+9yA==",
+      "candidate_revision": "264d869",
+      "completeness": "Entire 117451-byte sourcesContent string equals git show ab43e143ea6ff9e9b103819cadb474cc4a169756:js/janus.js, including final return Janus and closing IIFE; no wrapper source extracted",
+      "export_tail": "\nexport default Janus;\n",
+      "mainsail_revision": "32f99e1cf97640b23a52829dfa3a0aceee11d382",
+      "member": "package/dist/index.esm.js.map",
+      "member_sha256": "75c7341ee500ecaecbdbad8548f6574961cda723413d738ef5a0cf5ebec641e5",
+      "notice_bytes": 1098,
+      "notice_path": "public/licenses/janus-sdk.txt",
+      "notice_sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+      "origin_path": "js/janus.js",
+      "origin_repo": "januscaler/JanusJs",
+      "origin_revision": "ab43e143ea6ff9e9b103819cadb474cc4a169756",
+      "sdk_bytes": 117451,
+      "sdk_header": "/*\n\tThe MIT License (MIT)\n\n\tCopyright (c) 2016 Meetecho\n\n\tPermission is hereby granted, free of charge, to any person obtaining\n\ta copy of this software and associated documentation files (the \"Software\"),\n\tto deal in the Software without restriction, including without limitation\n\tthe rights to use, copy, modify, merge, publish, distribute, sublicense,\n\tand/or sell copies of the Software, and to permit persons to whom the\n\tSoftware is furnished to do so, subject to the following conditions:\n\n\tThe above copyright notice and this permission notice shall be included\n\tin all copies or substantial portions of the Software.\n\n\tTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n\tOR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n\tFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL\n\tTHE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR\n\tOTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,\n\tARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR\n\tOTHER DEALINGS IN THE SOFTWARE.\n */",
+      "sdk_header_sha256": "fe6099280e689f3e713ec33672def47e7061b505b317eb16466566629827ce0c",
+      "sdk_license": "MIT, Copyright (c) 2016 Meetecho",
+      "sdk_sha256": "eea437f6e719db131a95715a644c8a41b314424a8f1c6716ce7ef4e9e189e815",
+      "source_index": 0,
+      "source_name": "../js/janus.js",
+      "vendored_path": "src/vendor/janus.js",
+      "vendored_sha256": "b34c84ccfd6d12fa9c7bc21363eb04dd5cb3660da63aec1b12d1d5336e62f374",
+      "wrapper_author_grant": "Unresolved; SDK MIT does not cover wrapper"
+    },
+    "selected_supplemental": {
+      "historical_set_unchanged": true,
+      "omitted_unselected": [
+        "node_modules/aigle"
+      ],
+      "original_historical_sha256": "f06ef4480f4667263b899e7e05146ffad252a81e64d7ea7787af1229f7326d90",
+      "selected_records": 59
+    },
+    "source_commit": "669d9a29d1327b88dad84b37b9231c8a96824a2c",
+    "source_sha256": {
+      "configs/apps/mainsail.json": "80bd2a588093b6c5d83a424f7a7f01bfa0f1128a1843fb2c9fa15326b55a1aa1",
+      "configs/host/mainsail-janus-sdk.json": "fde70af890966e7775b5539b2a2c5d1f613fc08e143fa8752eac082db0722888",
+      "configs/host/npm-notice-resolution.json": "6bdeb8cc19e231eac9fa9428f8e724592d0fb9853bcbd40de1375561bb93e39f",
+      "configs/host/release-source-license-inventory.json": "e15d0e037ababcaa8ef1ac990bfd53191d4b9cd7900e80eb9c248394f5200b47",
+      "patches/mainsail/0005-janus-sdk-replacement.patch": "23c728ba84245fa0dca493fbb3b28f315d39fab6c54107f5dd8484dc21287735",
+      "tests/mainsail_janus_browser.mjs": "076b4e09ba19768239bd377306d96e858fae924d75e60b5541269388ea53e25b",
+      "tests/test_mainsail_janus.py": "44308e2b24d4735f95966e5b7d8160889d743c03721a2a079bb417fe0fccd261",
+      "tests/test_mainsail_notice_dependencies.py": "626aa3250577064f86b63201a4fd7d92c2bb60914fe14a8434f4faefa72c4a60"
+    },
+    "typecheck_passed": true,
+    "unit_tests": 64
+  },
   "limitations": [
     "Full goal not achieved: nine author-notice gaps remain; compatible dependency alternatives still under investigation.",
     "Actual full image is historical six-slot disposable artifact, not current final software or hardware qualified. Both normal roots contain513 packages; documented baseline284 is not substituted.",
