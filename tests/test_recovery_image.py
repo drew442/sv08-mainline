@@ -6,9 +6,15 @@ import io
 from contextlib import contextmanager
 from pathlib import Path
 import tempfile
+import shutil
+import sys
+import tarfile
+from contextlib import ExitStack
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 
 SPEC=importlib.util.spec_from_file_location('recovery_image',Path(__file__).resolve().parents[1]/'scripts/recovery_image.py')
 m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
@@ -201,6 +207,180 @@ class RecoveryImageTests(unittest.TestCase):
             work=p/'output';work.mkdir()
             with self.assertRaisesRegex(ValueError,'fresh output'):
                 m.build(argparse.Namespace(work=work,assembly=source,execute=False))
+
+
+class RecoveryReleaseSourceTests(unittest.TestCase):
+    revision='a'*40
+
+    def setUp(self):
+        import project_license as license
+        self.license=license
+        temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
+        self.repo=Path(temporary.name);(self.repo/'build').mkdir()
+        sources={'LICENSE':b'project license', 'LICENSING.md':b'project notice',
+                 '.gitmodules':b'', 'upstream-lock.json':b'{}',
+                 'runtime/controller.py':b'# runtime',
+                 'runtime/sv08_rauc_bootloader.py':b'# executable handler',
+                 'configs/display.service':b'[Service]\nExecStart=/bin/true\n',
+                 'configs/late.py':b'# final staged project file',
+                 'configs/host-os/recovery-init':b'# boot gate'}
+        for name,raw in sources.items():
+            path=self.repo/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+        self.manifest=self.repo/'release.json'
+        self.value=dict(release='diagnostic-fixture',state_schema=1,release_revision=1,deployable=False,
+            project_source_revision=self.revision,
+            devices={name:'/dev/disk/by-partuuid/'+str(m.uuid.UUID(int=i+1))
+                     for i,name in enumerate(('boot-a','root-a','boot-b','root-b','data','recovery'))})
+        self.raw=(json.dumps(self.value,indent=3)+'\n').encode();self.manifest.write_bytes(self.raw)
+        self.stack=ExitStack();self.addCleanup(self.stack.close)
+        self.stack.enter_context(patch.object(m,'REPO',self.repo))
+        self.stack.enter_context(patch.object(m,'integration_inputs',return_value={'fixture':'bound'}))
+        self.stack.enter_context(patch.object(license,'source_state',return_value=(self.revision,False)))
+
+    def root(self,work):
+        root=work/'rootfs'
+        for name in ('usr/lib/sv08','usr/bin','usr/sbin','boot','run','tmp','dev','proc','etc'):
+            (root/name).mkdir(parents=True,exist_ok=True)
+        (root/'usr/lib/sv08/controller.py').write_bytes((self.repo/'runtime/controller.py').read_bytes())
+        (root/'usr/bin/busybox').write_bytes(b'fixture busybox')
+        (root/'boot'/('vmlinuz-'+m.KERNEL)).write_bytes(b'fixture kernel')
+        return root
+
+    def public(self,root):
+        import qualify_project_source as gate
+        record=self.license.validate(root);stream=io.BytesIO()
+        with tarfile.open(fileobj=stream,mode='w:gz') as archive:
+            for name in record['source_files']:
+                raw=(self.repo/name).read_bytes();entry=tarfile.TarInfo('source/'+name);entry.size=len(raw)
+                archive.addfile(entry,io.BytesIO(raw))
+        raw=stream.getvalue()
+        manifest=dict(format_version=1,source_revision=self.revision,archive_prefix='source/',
+            archive=dict(url='https://public.example/source/'+self.revision+'.tar.gz',sha256=self.license.digest(raw)))
+        for group,names in gate.required_inputs(record['source_files']).items():
+            manifest[group]=[dict(path=n,sha256=record['source_files'][n],archive_member=True) for n in sorted(names)]
+        with patch.object(gate,'download',return_value=raw):result=gate.qualify(root,manifest)
+        self.assertTrue(result['qualified']);self.assertFalse(result['overall_release_qualified'])
+        return record
+
+    def test_manifest_validation_exact_bytes_and_default_development_behavior(self):
+        root=self.root(self.repo/'build/source')
+        before=m.inventory(root)
+        self.assertIsNone(m.finalize_project_source(root,None));self.assertEqual(before,m.inventory(root))
+        release=m.release_manifest(self.manifest)
+        self.assertEqual(release['raw'],self.raw)
+        binding=m.finalize_project_source(root,release)
+        self.assertEqual(binding['sha256'],self.license.digest(self.raw))
+        self.assertEqual((root/'usr/lib/sv08/release.json').read_bytes(),self.raw)
+        self.public(root);m.checked_project_source(root,binding)
+        for update in ({'deployable':True},{'project_source_revision':'b'*40},{'state_schema':2},{'devices':{}}, {'release':None}):
+            with self.subTest(update=update):
+                self.manifest.write_text(json.dumps(dict(self.value,**update)))
+                with self.assertRaises(ValueError):m.release_manifest(self.manifest)
+        self.manifest.write_bytes(self.raw[:-2]+b',"release":"duplicate"}')
+        with self.assertRaisesRegex(ValueError,'Duplicate'):m.release_manifest(self.manifest)
+        self.manifest.write_bytes(self.raw)
+        with patch.object(self.license,'source_state',return_value=(self.revision,True)):
+            with self.assertRaisesRegex(ValueError,'clean'):m.release_manifest(self.manifest)
+        release=m.release_manifest(self.manifest);self.manifest.write_bytes(self.raw+b' ')
+        with self.assertRaisesRegex(ValueError,'changed during'):m.finalize_project_source(root,release)
+        self.manifest.write_bytes(self.raw)
+        for name in ('usr/lib/sv08/release.json','usr/lib/sv08/controller.py'):
+            path=root/name;original=path.read_bytes();path.write_bytes(b'tampered')
+            with self.assertRaises(ValueError):m.checked_project_source(root,binding)
+            path.write_bytes(original)
+        with self.assertRaisesRegex(ValueError,'differs'):
+            m.checked_project_source(root,dict(binding,sha256='0'*64))
+
+    def test_assemble_final_provenance_includes_late_files_and_bound_release(self):
+        import stage_admin_ui
+        intake=self.repo/'intake';intake.mkdir();archive=b'disposable package'
+        digest=self.license.digest(archive);(intake/(digest+'.deb')).write_bytes(archive)
+        lock=self.repo/'lock.json';lock.write_text(json.dumps(dict(packages=[dict(
+            package='fixture',version='1',architecture='arm64',sha256=digest,bytes=len(archive))])))
+        work=self.repo/'build/assembled'
+        def run(args,**kw):
+            if args[:2]==['dpkg-deb','-f']:
+                return SimpleNamespace(stdout='Package: fixture\nVersion: 1\nArchitecture: arm64\n')
+            if args[:2]==['dpkg-deb','--extract']:
+                root=Path(args[-1]);doc=root/'usr/share/doc/fixture/copyright'
+                doc.parent.mkdir(parents=True);doc.write_bytes(b'fixture notice')
+                (root/'boot').mkdir()
+            if 'dpkg-query' in args:return SimpleNamespace(stdout='fixture\t1\tinstalled\n',stderr='')
+            return SimpleNamespace(stdout='',stderr='')
+        def late_units(units):
+            root=units.parents[2]
+            target=root/'usr/lib/systemd/system/sv08-recovery-display.service'
+            target.parent.mkdir(parents=True);target.write_bytes((self.repo/'configs/display.service').read_bytes())
+        def stage_checked(work,context,execute):
+            handler=work/'rootfs/usr/lib/sv08/sv08_rauc_bootloader.py'
+            self.assertEqual(handler.stat().st_mode & 0o777,0o755)
+            self.assertEqual(handler.read_bytes(),(self.repo/'runtime/sv08_rauc_bootloader.py').read_bytes())
+        with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+             patch.object(m,'configure_recovery_password'),patch.object(m,'installed_provider_inputs',return_value={}), \
+             patch.object(m,'stage_recovery_units',side_effect=late_units),patch.object(stage_admin_ui,'stage',side_effect=stage_checked):
+            m.assemble(SimpleNamespace(work=work,intake=intake,lock=lock,execute=True,release_manifest=self.manifest))
+        record=self.public(work/'rootfs')
+        self.assertIn('usr/lib/systemd/system/sv08-recovery-display.service',record['staged_files'])
+        receipt=json.loads((work/'assembly.json').read_text())
+        self.assertEqual(receipt['root'],m.inventory(work/'rootfs'))
+        self.assertEqual(receipt['release_manifest']['sha256'],self.license.digest(self.raw))
+
+    def test_build_preserves_bound_source_and_emits_release_binding(self):
+        source=self.repo/'build/source';root=self.root(source)
+        binding=m.finalize_project_source(root,m.release_manifest(self.manifest))
+        (source/'assembly.json').write_text(json.dumps(dict(root=m.inventory(root),
+            integration_inputs=m.integration_inputs(),release_manifest=binding)))
+        before=m.inventory(source);work=self.repo/'build/image'
+        def run(args,**kw):
+            if args[:2]==['cp','-a']:
+                if Path(args[2]).is_dir():shutil.copytree(args[2],args[3],symlinks=True)
+                else:shutil.copy2(args[2],args[3])
+            elif args[0]=='mksquashfs':
+                self.public(Path(args[1]).parent)
+                Path(args[2]).write_bytes(b'compressed fixture')
+            return SimpleNamespace(stdout='',stderr='')
+        def initramfs(root,output,profile):output.write_bytes(b'fixture initramfs')
+        with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+             patch.object(m,'initramfs',side_effect=initramfs),patch.object(m,'SIZE',4096):
+            result=m.build(SimpleNamespace(assembly=source,work=work,execute=True))
+        self.assertEqual(before,m.inventory(source));self.assertTrue(result['source_preserved'])
+        self.assertEqual(result['release_manifest'],binding)
+        self.assertEqual(json.loads((work/'build.json').read_bytes())['release_manifest'],binding)
+        self.public(root)
+
+    def test_derive_explicit_and_inherited_release_preserves_parent_and_final_source(self):
+        source=self.repo/'build/parent';root=self.root(source)
+        # Simulate early staging, then derive adds a final project file.
+        notices,_=self.license.prepare(root,repo=self.repo);self.license.publish(root,notices)
+        packages=self.repo/'packages';packages.mkdir()
+        profile={'packages':[],'kernel_release':m.KERNEL}
+        def run(args,**kw):
+            if args[:2]==['cp','-a']:shutil.copytree(args[2],args[3],symlinks=True)
+            return SimpleNamespace(stdout='',stderr='')
+        for inherited in (False,True):
+            with self.subTest(inherited=inherited):
+                binding=m.finalize_project_source(root,m.release_manifest(self.manifest)) if inherited else None
+                receipt=dict(root=m.inventory(root),integration_inputs=m.integration_inputs())
+                if binding:receipt['release_manifest']=binding
+                (source/'assembly.json').write_text(json.dumps(receipt))
+                before=m.inventory(source);work=self.repo/('build/derived-'+str(inherited))
+                def final_board(derived,profile):
+                    (derived/'usr/lib/sv08/late.py').write_bytes((self.repo/'configs/late.py').read_bytes())
+                with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+                     patch.object(m,'board_profile',return_value=profile), \
+                     patch.object(m,'normalize_board_module_directory',side_effect=final_board),patch.object(m,'check_board_artifacts'):
+                    m.derive(SimpleNamespace(assembly=source,work=work,packages=packages,board_profile='fixture',
+                        execute=True,release_manifest=None if inherited else self.manifest))
+                self.assertEqual(before,m.inventory(source))
+                final=self.public(work/'rootfs');self.assertIn('usr/lib/sv08/late.py',final['staged_files'])
+                record=json.loads((work/'assembly.json').read_text())
+                self.assertEqual(record['root'],m.inventory(work/'rootfs'))
+                self.assertTrue(record['parent_preserved'])
+                snapshot=m.inventory(work)
+                args=SimpleNamespace(assembly=work,work=self.repo/('build/image-'+str(inherited)),execute=False)
+                m.build(args);self.assertEqual(snapshot,m.inventory(work))
+                release=work/'rootfs/usr/lib/sv08/release.json';release.write_bytes(self.raw+b' ')
+                with self.assertRaisesRegex(ValueError,'Stale installed release'):m.build(args)
 
 
 class IntakeTests(unittest.TestCase):

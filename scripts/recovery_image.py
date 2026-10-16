@@ -3,6 +3,8 @@
 
 Custom gap: compressed-/usr integration and independently checked boot envelope.
 See ADR 0014. No device writing, activation, package resolution or network service.
+Optional assemble/derive --release-manifest binds exact diagnostic identity to
+final project notices; anonymous public-source qualification remains a later gate.
 """
 import argparse
 import gzip
@@ -126,12 +128,63 @@ def run(args, **kw):
 
 def integration_inputs():
     paths=[Path(__file__),REPO/'scripts/stage_admin_ui.py',REPO/'scripts/prepare_host_os.py',REPO/'configs/host-os/recovery-init',REPO/'configs/host-os/sv08-recovery-display.service',REPO/'configs/host-os/sv08-recovery-prepare.service',REPO/'configs/host-os/sv08-recovery-restore-prepare.service',REPO/'configs/host-os/sv08-recovery-private-mounts.service',REPO/'configs/host-os/recovery-systemd-udevd.conf',REPO/'configs/host-os/recovery-systemd-logind.conf',REPO/'configs/host-os/recovery-session.desktop',*(REPO/'runtime').glob('*.py')]
-    paths.extend([REPO/'configs/host-os/recovery-board-root',REPO/'configs/host-os/recovery-password.json'])
+    paths.extend([REPO/'configs/host-os/recovery-board-root',REPO/'configs/host-os/recovery-password.json',
+                  REPO/'scripts/project_license.py',REPO/'scripts/integrate_host_os.py',
+                  REPO/'scripts/stage_printer_ui.py',REPO/'LICENSE',REPO/'LICENSING.md'])
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
 
 def sha(path):
     with path.open('rb') as f: return hashlib.file_digest(f, 'sha256').hexdigest()
+
+
+def release_manifest(path):
+    """Capture exact diagnostic identity; public qualification remains separate."""
+    if path is None:return None
+    from integrate_host_os import validate
+    from project_license import source_state
+    path=clean_path(path)
+    if not path.is_file() or path.stat().st_size>65536:raise ValueError('Invalid release manifest file/bound')
+    raw=path.read_bytes()
+    def unique(items):
+        result={}
+        for key,value in items:
+            if key in result:raise ValueError('Duplicate release manifest field')
+            result[key]=value
+        return result
+    value=json.loads(raw,object_pairs_hook=unique)
+    try:validate(value)
+    except (KeyError,TypeError,AttributeError) as error:raise ValueError('Invalid release manifest') from error
+    revision,dirty=source_state(REPO)
+    if dirty or not re.fullmatch('[0-9a-f]{40}',revision or ''):
+        raise ValueError('Release manifest requires clean identified source')
+    if value.get('project_source_revision')!=revision:raise ValueError('Release manifest source revision mismatch')
+    return dict(path=path,raw=raw,sha256=hashlib.sha256(raw).hexdigest(),source_revision=revision)
+
+
+def finalize_project_source(root, release):
+    """Run after final project staging, before the immutable assembly receipt."""
+    if release is None:return None
+    from project_license import checked, prepare, publish, validate
+    if sha(release['path'])!=release['sha256']:raise ValueError('Release manifest changed during composition')
+    target=checked(root,'usr/lib/sv08/release.json')
+    target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(release['raw']);target.chmod(0o644)
+    notices,record=prepare(root,repo=REPO)
+    if record['development'] or record['source_revision']!=release['source_revision']:
+        raise ValueError('Recovery project source remains development-only or changed revision')
+    publish(root,notices);validate(root)
+    if sha(release['path'])!=release['sha256']:raise ValueError('Release manifest changed during composition')
+    return dict(sha256=release['sha256'],project_source_revision=record['source_revision'])
+
+
+def checked_project_source(root, binding):
+    """Verify a recorded binding without refreshing or changing source files."""
+    if binding is None:return
+    from project_license import validate
+    release=release_manifest(root/'usr/lib/sv08/release.json')
+    record=validate(root)
+    if (binding!={'sha256':release['sha256'],'project_source_revision':record['source_revision']} or
+            record['development']):raise ValueError('Recovery release/source binding differs from assembly')
 
 
 def compose_media_policy(profile, envelope_digest):
@@ -326,6 +379,8 @@ def assemble(a):
     inputs=integration_inputs()
     work=clean_path(a.work,output=True); intake=clean_path(a.intake); lock=clean_path(a.lock)
     separate(work,intake,lock)
+    release=release_manifest(getattr(a,'release_manifest',None))
+    if release:separate(work,release['path'])
     if work.exists(): raise ValueError('Assembly requires a fresh output')
     lock_hash=sha(lock)
     packages=json.loads(lock.read_text())['packages']
@@ -385,6 +440,7 @@ def assemble(a):
     write(root/'etc/sv08-recovery-image','Independent offline recovery diagnostics; no media preparer\n')
     runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True,exist_ok=True)
     for p in (REPO/'runtime').glob('*.py'):shutil.copyfile(p,runtime/p.name)
+    (runtime/'sv08_rauc_bootloader.py').chmod(0o755)
     from stage_admin_ui import stage
     stage(work,'recovery',True)
     units=root/'etc/systemd/system';units.mkdir(parents=True,exist_ok=True)
@@ -441,8 +497,11 @@ def assemble(a):
             else:common[name]='textual-reference-not-a-shipped-filename'
         copyrights[p['package']]=dict(path=str(relative),resolved_path=str(doc.relative_to(root)),sha256=sha(doc),common_license_references=common)
     write(work/'copyrights.json',json.dumps(copyrights,indent=2)+'\n')
+    binding=finalize_project_source(root,release)
     if integration_inputs()!=inputs or sha(lock)!=lock_hash:raise ValueError('Integration inputs changed during assembly')
-    write(work/'assembly.json',json.dumps(dict(lock_sha256=lock_hash,root=inventory(root),integration_inputs=inputs),indent=2)+'\n')
+    record=dict(lock_sha256=lock_hash,root=inventory(root),integration_inputs=inputs)
+    if binding:record['release_manifest']=binding
+    write(work/'assembly.json',json.dumps(record,indent=2)+'\n')
     return dict(stage='assemble',packages=len(packages),root=str(root))
 
 
@@ -544,6 +603,10 @@ def derive(a):
     receipt_hash=sha(receipt);recorded=json.loads(receipt.read_text());before=inventory(original)
     require_recorded_integration_inputs(recorded, inputs, 'parent assembly')
     if before!=recorded['root']:raise ValueError('Assembly source changed since completion')
+    checked_project_source(original,recorded.get('release_manifest'))
+    release=release_manifest(getattr(a,'release_manifest',None))
+    if release:separate(work,release['path'])
+    elif recorded.get('release_manifest'):release=release_manifest(original/'usr/lib/sv08/release.json')
     for package in profile['packages']:
         archive=clean_path(packages/package['filename'])
         if not archive.is_file() or archive.stat().st_size!=package['bytes'] or sha(archive)!=package['sha256']:raise ValueError('Missing/changed board package')
@@ -597,7 +660,9 @@ def derive(a):
     # Existing generic modesetting/no-acceleration policy is retained; name is
     # descriptive only. Both kernel versions stay package-owned in the copy.
     write(root/'etc/hostname','sv08-recovery\n')
+    binding=finalize_project_source(root,release)
     record=dict(root=inventory(root),board_profile=profile,parent_assembly_sha256=sha(receipt),parent_root=before,parent_preserved=True,integration_inputs=inputs,regulatory_database=regulatory,module_directory_normalization=module_normalization)
+    if binding:record['release_manifest']=binding
     if integration_inputs()!=inputs:raise ValueError('Integration inputs changed during derivation')
     write(work/'assembly.json',json.dumps(record,indent=2)+'\n')
     return dict(stage='derive',root=str(root),parent_preserved=True)
@@ -615,6 +680,7 @@ def build(a):
     if work.exists():raise ValueError('Build requires a fresh output')
     recorded=json.loads((source/'assembly.json').read_text())
     require_recorded_integration_inputs(recorded, inputs, 'build assembly')
+    checked_project_source(root,recorded.get('release_manifest'))
     if not a.execute:return dict(execute=False,stage='build',work=str(work),bytes=SIZE)
     private()
     before=inventory(root)
@@ -689,6 +755,7 @@ def build(a):
         result['provider_manifest_sha256'] = sha(envelope/'etc/sv08/recovery-image.json')
     if integration_inputs()!=inputs:raise ValueError('Integration inputs changed during build')
     result['integration_inputs']=inputs
+    if recorded.get('release_manifest'):result['release_manifest']=recorded['release_manifest']
     if profile:
         result.update(status='offline-board-candidate',board_profile=profile,boot_gate_sha256=hashlib.sha256(boot_gate(profile).encode()).hexdigest())
     write(work/'build.json',json.dumps(result,indent=2)+'\n')
@@ -702,5 +769,8 @@ def main():
     p.add_argument('--board-profile',type=Path);p.add_argument('--packages',type=Path)
     p.add_argument('--media-profile',type=Path)
     p.add_argument('--restore-profile',type=Path)
-    a=p.parse_args();print(json.dumps(globals()[a.stage](a),indent=2))
+    p.add_argument('--release-manifest',type=Path,help='Exact diagnostic release identity for assemble/derive; requires matching clean source revision')
+    a=p.parse_args()
+    if a.release_manifest and a.stage not in ('assemble','derive'):p.error('--release-manifest requires assemble or derive')
+    print(json.dumps(globals()[a.stage](a),indent=2))
 if __name__=='__main__':main()

@@ -156,6 +156,145 @@ class ProjectLicenseTests(unittest.TestCase):
         with patch.object(gate,'download',side_effect=drift):
             with self.assertRaisesRegex(ValueError,'Stale'):gate.qualify(self.root,manifest)
 
+    def seed_fixture(self):
+        sys.path.insert(0,str(license.REPO/'runtime'))
+        from sv08_printer_stack import MAINSail, NGINX, MOONRAKER
+        for name in ('scripts/project_license.py','scripts/integrate_host_os.py','runtime/sv08_printer_stack.py'):
+            target=self.repo/name;target.parent.mkdir(parents=True,exist_ok=True)
+            target.write_bytes((license.REPO/name).read_bytes())
+        values={'mainsail.json':(json.dumps(MAINSail,indent=2)+'\n').encode(),
+                'nginx-mainsail.conf':NGINX.encode(),'moonraker.conf':MOONRAKER.encode()}
+        # Moonraker is already recognized as an exact source file in real staging.
+        (self.repo/'configs/moonraker.conf').write_bytes(values['moonraker.conf'])
+        for filename,raw in values.items():
+            path=self.root/'usr/lib/sv08/seed/config'/filename
+            path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+        key=self.root/'usr/lib/sv08/seed/authorized_keys'
+        key.write_bytes(b'disposable synthetic public-key fixture only\n')
+        return key,values
+
+    def test_canonical_seed_recipes_and_hashed_owner_input_qualify_unit_archive(self):
+        key,values=self.seed_fixture();before=self.snapshot()
+        payload,record=self.prepare();self.assertEqual(self.snapshot(),before)
+        self.assertFalse(record['development']);self.assertEqual(record['unmatched_original_files'],[])
+        name='usr/lib/sv08/seed/authorized_keys'
+        self.assertEqual(record['non_code_build_inputs'],{
+            name:dict(type='owner-public-key',sha256=license.digest(key.read_bytes()))})
+        self.assertNotIn(name,record['staged_files']);self.assertNotIn(name,record['source_files'])
+        self.assertNotIn(key.read_bytes().strip(),license.encoded(record))
+        for raw in payload.values():self.assertNotIn(key.read_bytes().strip(),raw)
+        for filename in ('mainsail.json','nginx-mainsail.conf'):
+            entry=record['staged_files']['usr/lib/sv08/seed/config/'+filename]
+            self.assertEqual(entry['origin'],'generated')
+            self.assertEqual(entry['sources'],['scripts/project_license.py','scripts/integrate_host_os.py',
+                                               'runtime/sv08_printer_stack.py'])
+        original_id=record['build_id'];key.write_bytes(b'another synthetic public key\n')
+        _,changed=self.prepare();self.assertNotEqual(changed['build_id'],original_id)
+        self.stage();record=license.validate(self.root);manifest,raw=self.public(record)
+        # Unit transport supplies exact synthetic corresponding-source archive bytes.
+        with patch.object(gate,'download',return_value=raw):
+            self.assertTrue(gate.qualify(self.root,manifest)['qualified'])
+        self.assertFalse(record['overall_release_qualified'])
+
+    def test_seed_recipes_use_supplied_checkout_literals_without_import_or_cache(self):
+        _,old=self.seed_fixture()
+        source=self.repo/'runtime/sv08_printer_stack.py'
+        declared={'defaultMode':'declared-checkout','instances':[]}
+        nginx='# nginx from declared checkout\n'
+        # This source must never be executed, even though it declares supported literals.
+        source.write_text("raise RuntimeError('must not execute source')\nNGINX = "+repr(nginx)+
+                          "\nMAINSail = dict(defaultMode='declared-checkout', instances=[])\n")
+        import sv08_printer_stack
+        with patch.object(sv08_printer_stack,'NGINX','cached unrelated nginx'), \
+             patch.object(sv08_printer_stack,'MAINSail',{'defaultMode':'cached-unrelated'}):
+            _,record=self.prepare()
+            self.assertTrue(record['development'])
+            for filename in ('mainsail.json','nginx-mainsail.conf'):
+                self.assertIn('usr/lib/sv08/seed/config/'+filename,record['unmatched_original_files'])
+            expected={'mainsail.json':(json.dumps(declared,indent=2)+'\n').encode(),
+                      'nginx-mainsail.conf':nginx.encode()}
+            for filename,raw in expected.items():
+                (self.root/'usr/lib/sv08/seed/config'/filename).write_bytes(raw)
+            _,record=self.prepare();self.assertFalse(record['development'])
+            # A second declaration in the same process also bypasses module caches.
+            source.write_text("NGINX = 'new literal nginx\\n'\nMAINSail = "+repr(declared)+"\n")
+            _,record=self.prepare();self.assertTrue(record['development'])
+            (self.root/'usr/lib/sv08/seed/config/nginx-mainsail.conf').write_bytes(b'new literal nginx\n')
+            self.assertFalse(self.prepare()[1]['development'])
+
+    def test_unsupported_or_ambiguous_seed_constant_forms_are_unmatched(self):
+        self.seed_fixture();source=self.repo/'runtime/sv08_printer_stack.py'
+        cases=("NGINX = 'literal' + ' computed'\nMAINSail = dict(instances=[])\n",
+               "NGINX = 'literal'\nNGINX = 'reassigned'\nMAINSail = dict(instances=[])\n",
+               "NGINX: str = 'literal'\nMAINSail = dict(instances=[])\n",
+               "NGINX = 'literal'\nMAINSail = dict(**{'instances': []})\n",
+               "NGINX = 'literal'\nMAINSail = factory()\n",
+               "NGINX = 'literal'\nMAINSail = dict(instances=[], instances=[])\n")
+        for raw in cases:
+            with self.subTest(source=raw):
+                source.write_text(raw);self.assertIsNone(license.seed_recipe_bytes(self.repo))
+                self.assertTrue(self.prepare()[1]['development'])
+
+    def test_altered_seed_outputs_and_unknown_seed_code_stay_unmatched(self):
+        _,values=self.seed_fixture()
+        for filename in ('mainsail.json','nginx-mainsail.conf','unknown.conf','controller.py','authorized_keys'):
+            path=self.root/'usr/lib/sv08/seed/config'/filename
+            original=values.get(filename)
+            # Even JSON whitespace differing from the producer is not its recipe.
+            path.write_bytes(original+b' ' if original else b'unmapped seed/code bytes')
+            _,record=self.prepare();name=path.relative_to(self.root).as_posix()
+            self.assertTrue(record['development']);self.assertIn(name,record['unmatched_original_files'])
+            manifest,raw=self.public(record)
+            with self.assertRaisesRegex(ValueError,'development'):gate.verify_public(record,manifest,lambda url:raw)
+            if original is None:path.unlink()
+            else:path.write_bytes(original)
+        path=self.root/'usr/lib/sv08/seed/config/mainsail.json'
+        altered=json.loads(values['mainsail.json']);altered['defaultMode']='altered'
+        path.write_text(json.dumps(altered,indent=2)+'\n')
+        self.assertTrue(self.prepare()[1]['development'])
+
+    def test_owner_input_drift_presence_bound_and_symlinks_refuse(self):
+        key,_=self.seed_fixture();record=self.stage();original=key.read_bytes()
+        for raw in (b'changed synthetic input',b'x'*(license.NON_CODE_INPUT_LIMIT+1)):
+            key.write_bytes(raw)
+            with self.assertRaises(ValueError):license.validate(self.root)
+        key.unlink()
+        with self.assertRaisesRegex(ValueError,'Non-code build input'):license.validate(self.root)
+        external=self.base/'synthetic-key';external.write_bytes(original)
+        key.symlink_to(external)
+        with self.assertRaisesRegex(ValueError,'Symlink'):license.validate(self.root)
+        with self.assertRaisesRegex(ValueError,'Symlink'):self.prepare()
+        key.unlink();key.write_bytes(b'x'*(license.NON_CODE_INPUT_LIMIT+1))
+        with self.assertRaisesRegex(ValueError,'bound'):self.prepare()
+        key.write_bytes(original)
+        self.assertEqual(license.validate(self.root),record)
+        with self.assertRaisesRegex(ValueError,'Stage the owner public-key'):
+            license.prepare(self.root,{key.relative_to(self.root).as_posix():b'override'},repo=self.repo)
+
+    def test_legacy_without_key_validates_and_key_addition_refuses(self):
+        self.stage()
+        # A pre-field record retains its original build identity and remains valid.
+        for base in (license.DOC,*license.PACKAGES):
+            path=self.root/(base+'project-source.json')
+            if not path.exists():continue
+            record=json.loads(path.read_bytes());record.pop('non_code_build_inputs')
+            record['build_id']=license.build_id(record);path.write_bytes(license.encoded(record))
+        license.validate(self.root)
+        key=self.root/'usr/lib/sv08/seed/authorized_keys';key.parent.mkdir(parents=True)
+        key.write_bytes(b'synthetic added key')
+        with self.assertRaisesRegex(ValueError,'Non-code build input'):license.validate(self.root)
+
+    def test_owner_input_public_failures_do_not_publish_and_late_drift_refuses(self):
+        key,_=self.seed_fixture();_,record=self.prepare();manifest,raw=self.public(record)
+        before=self.snapshot()
+        with patch.object(gate,'download',return_value=b'wrong archive'):
+            with self.assertRaisesRegex(ValueError,'hash mismatch'):self.prepare(public_source=manifest)
+        self.assertEqual(self.snapshot(),before)
+        record=self.stage();manifest,raw=self.public(record)
+        def drift(url):key.write_bytes(b'late synthetic key change');return raw
+        with patch.object(gate,'download',side_effect=drift):
+            with self.assertRaisesRegex(ValueError,'Non-code build input'):gate.qualify(self.root,manifest)
+
     def test_private_or_authenticated_urls_and_unsafe_archives_refuse(self):
         for url in ('https://127.0.0.1/'+REVISION,'https://localhost/'+REVISION,
                     'https://user:secret@public.example/'+REVISION,'https://public.example/'+REVISION+'?token=x'):

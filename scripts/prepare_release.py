@@ -21,8 +21,44 @@ PROFILES = {'project-source': ('image','public-project-source'),
             'selected-software': ('image','public-project-source','selected-software-notices')}
 
 
+def required_application_partitions(roots):
+    """Use actual partition roles to require both normal roots on A/B disks."""
+    selected=[root['selected_partition'] for root in roots]
+    if any(type(number) is not int or number<0 for number in selected) or len(set(selected))!=len(selected):
+        raise ValueError('Invalid or duplicate software root partition identity')
+    tables=[root.get('partitions') for root in roots]
+    if not any(table is not None for table in tables):
+        if len(roots)>1:raise ValueError('Missing partition identities for multiple software roots')
+        return set()  # Legacy single-root inventory; exact payload must still match.
+    identities=[]
+    for table in tables:
+        if not isinstance(table,list) or not table:raise ValueError('Missing software root partition table')
+        numbers=set();names=set();identity={}
+        for part in table:
+            number=part['number'];name=part.get('name','')
+            if (type(number) is not int or number<0 or number in numbers or
+                    not isinstance(name,str) or (name and name in names)):
+                raise ValueError('Invalid or duplicate partition role/number identity')
+            numbers.add(number)
+            if name:names.add(name)
+            identity[number]=name
+        identities.append(identity)
+    table=identities[0]
+    if any(identity!=table for identity in identities):raise ValueError('Contradictory software root partition identities')
+    if not set(selected)<=set(table):raise ValueError('Software root partition is absent from table')
+    roles={name:number for number,name in table.items() if name in ('root-a','root-b')}
+    ab_evidence=any(name in ('root-b','boot-b','recovery') for name in table.values())
+    if not roles and not ab_evidence:return set()  # Raw/DOS or generic single-root geometry.
+    if set(roles)=={'root-a'} and not ab_evidence and selected==[roles['root-a']]:return set()
+    if set(roles)!={'root-a','root-b'}:raise ValueError('Incomplete normal A/B partition roles')
+    required=set(roles.values())
+    if not required<=set(selected):raise ValueError('Missing normal-root inventory for A/B disk')
+    return required
+
+
 def installed_application_bindings(inputs, roots):
-    """Compare .deb identity and actual usr payload bytes, without installing it."""
+    """Compare .deb identity and installed usr/opt software, without installing it."""
+    required=required_application_partitions(roots)
     bindings=[]
     for config,record in sorted(inputs['applications'].items()):
         pin=record['artifact'];license_inventory.file_pin(pin)
@@ -31,7 +67,7 @@ def installed_application_bindings(inputs, roots):
         identity=subprocess.check_output(['dpkg-deb','--show','--showformat=${Package}\t${Version}\t${Architecture}',str(artifact)],
             text=True,timeout=30).split('\t')
         if len(identity)!=3: raise ValueError('Invalid Debian application identity')
-        payload={}; total=0; excluded=0
+        payload={}; total=0; excluded=0; non_usr=0
         with subprocess.Popen(['dpkg-deb','--fsys-tarfile',str(artifact)],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL) as process:
             try:
                 with tarfile.open(fileobj=process.stdout,mode='r|') as archive:
@@ -39,7 +75,8 @@ def installed_application_bindings(inputs, roots):
                         name=member.name.removeprefix('./');relative=PurePosixPath(name)
                         if relative.is_absolute() or '..' in relative.parts: raise ValueError('Unsafe application payload path')
                         if member.isdir(): continue
-                        if not name.startswith('usr/'):
+                        if not name.startswith('usr/'): non_usr+=1
+                        if not name.startswith(('usr/', 'opt/sv08-mainline/')):
                             excluded+=1;continue
                         if name in payload: raise ValueError('Duplicate application payload path')
                         if member.isfile():
@@ -53,17 +90,24 @@ def installed_application_bindings(inputs, roots):
                 if process.wait(timeout=30)!=0: raise ValueError('Cannot read application Debian payload')
             except BaseException:
                 process.kill();process.wait();raise
-        if not payload: raise ValueError('Application artifact lacks supported usr payload')
+        if not payload: raise ValueError('Application artifact lacks supported software payload')
         matched=[]
         for root in roots:
             packages={(p['name'],p['version'],p['architecture']) for p in root['packages']}
             files={f['path']:f for f in root['files']}
             if tuple(identity) in packages and all(name in files and all(files[name].get(k)==v for k,v in expected.items())
                     for name,expected in payload.items()): matched.append(root['selected_partition'])
-        if not matched: raise ValueError('Application package identity/payload not found in actual image: '+config)
+        if not matched or not required<=set(matched):
+            raise ValueError('Application package identity/payload not found in every required normal slot of actual image: '+config)
         bindings.append(dict(config=config,package=identity[0],version=identity[1],architecture=identity[2],
-            artifact_sha256=pin['sha256'],usr_payload_files=len(payload),matching_partitions=matched,
-            excluded_non_usr_members=excluded))
+            artifact_sha256=pin['sha256'],
+            software_payload_files=len(payload),
+            usr_payload_files=sum(name.startswith('usr/') for name in payload),
+            opt_payload_files=sum(name.startswith('opt/sv08-mainline/') for name in payload),
+            matching_partitions=matched,required_normal_partitions=sorted(required),
+            excluded_non_software_members=excluded,
+            # Legacy count remains literally non-usr, including supported opt.
+            excluded_non_usr_members=non_usr))
     return bindings
 
 

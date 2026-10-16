@@ -1,0 +1,816 @@
+{
+  "format_version": 1,
+  "status": "complete current-image software qualification published for owner review",
+  "date_utc": "2026-10-16",
+  "artifact": {
+    "bytes": 7818182656,
+    "sha256": "2695e3585d3d6cf4a17dbf56a3543dd54bd316373401b71c8e7c58686502984a"
+  },
+  "artifact_source_revision": "e03db7308e152b8ecf61f18e493a1b5038a10832",
+  "qualification_tool_revision": "a81b48503cabad4b70dad8af272de18d857ef69e",
+  "source_archive": {
+    "url": "https://codeload.github.com/drew442/sv08-mainline/tar.gz/e03db7308e152b8ecf61f18e493a1b5038a10832",
+    "sha256": "1ac2c30a59b3cc15f99b2fa87e9a61b20b4d022dc2bc83e2676a640958a952a2"
+  },
+  "release_identity": {
+    "format_version": 1,
+    "release": "0.1.0-qualification.20261016",
+    "release_revision": 1,
+    "state_schema": 1,
+    "deployable": false,
+    "project_source_revision": "e03db7308e152b8ecf61f18e493a1b5038a10832",
+    "devices": {
+      "boot-a": "/dev/disk/by-partuuid/ba55a9b4-7969-423b-a739-db62e231b7a1",
+      "root-a": "/dev/disk/by-partuuid/26c68198-9248-47af-bbd3-643f1b604ef5",
+      "boot-b": "/dev/disk/by-partuuid/7b6e5211-6c5f-432f-9afc-2ac7e4f80b04",
+      "root-b": "/dev/disk/by-partuuid/d8d04a9a-f51f-41b3-a474-e079efe97186",
+      "recovery": "/dev/disk/by-partuuid/b28438ed-f895-4b93-9bad-d27d3890ccd3",
+      "data": "/dev/disk/by-partuuid/4773f966-0678-4cf5-bb83-8ee6fb11d8eb"
+    }
+  },
+  "composition": {
+    "receipt_sha256": "f565bb8c32a43a6cf44fbf20a76fab01cd60023d5626535721e7a19cc7642c02",
+    "sources_preserved": true,
+    "physical_boot_validated": false,
+    "partitions": [
+      {
+        "number": 1,
+        "name": "boot-a",
+        "partuuid": "ba55a9b4-7969-423b-a739-db62e231b7a1",
+        "offset_bytes": 16777216,
+        "size_bytes": 201326592
+      },
+      {
+        "number": 2,
+        "name": "root-a",
+        "partuuid": "26c68198-9248-47af-bbd3-643f1b604ef5",
+        "offset_bytes": 218103808,
+        "size_bytes": 2147483648
+      },
+      {
+        "number": 3,
+        "name": "boot-b",
+        "partuuid": "7b6e5211-6c5f-432f-9afc-2ac7e4f80b04",
+        "offset_bytes": 2365587456,
+        "size_bytes": 201326592
+      },
+      {
+        "number": 4,
+        "name": "root-b",
+        "partuuid": "d8d04a9a-f51f-41b3-a474-e079efe97186",
+        "offset_bytes": 2566914048,
+        "size_bytes": 2147483648
+      },
+      {
+        "number": 5,
+        "name": "recovery",
+        "partuuid": "b28438ed-f895-4b93-9bad-d27d3890ccd3",
+        "offset_bytes": 4714397696,
+        "size_bytes": 536870912
+      },
+      {
+        "number": 6,
+        "name": "data",
+        "partuuid": "4773f966-0678-4cf5-bb83-8ee6fb11d8eb",
+        "offset_bytes": 5251268608,
+        "size_bytes": 2565865472
+      }
+    ],
+    "partition_hashes": {
+      "boot-a": "8f8ef7474ca192ccf289341b226b66397705bc900d1d1d9a1feeeaab782425d9",
+      "root-a": "485d00fdeb19a7a1ce5ce96cca75bfc63eace09db34e9ac10df7f895c7c9ac15",
+      "boot-b": "7c8159b5ce23ff2046e7327624e20ee409a35681210f99c35882537e63a27bf1",
+      "root-b": "cfa3112fe100f18d9d614067800e4d4a6102d7a543b34e0469a182a4c148463c",
+      "recovery": "b8e409942b97c194f5b6394e8d37188b890cbe5c9d927daad186dc93a7aab02c",
+      "data": "16c21b3023a9988bb9ebb288d84bfaac36edce365d881cbf4be14de6e5759782"
+    },
+    "spl": {
+      "record_sha256": "7354aac91833500df11f8c8a3e7e259367a1801cb247f16ef10fed7e3eaf13aa",
+      "manifest_sha256": "b20da935fc04d1f967bd43da23ab00d5eb73aa4a6ac299f9563d522b205e51a3",
+      "artifact": {
+        "loader_bytes": 786105,
+        "loader_sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+        "loader_offset_bytes": 8192,
+        "loader_end_offset_bytes": 794297,
+        "fit_bytes": 745145,
+        "fit_sha256": "575609afebef87e2004acdc17f6f5e8fa68918cace075fb841b4285b31db4586",
+        "bl31_bytes": 53361,
+        "bl31_sha256": "36a39a1859a9c95d3e79239afe798e9fa6f805dcec8685ed2dbbd1ca1133d237",
+        "config_bytes": 54069,
+        "config_sha256": "52959a1a8761b00927b04cc460182527c7add51e50019d3b397438f98f7b2fb8"
+      }
+    },
+    "environment_sha256": "3c94b8709a7e2657f9aa02907cf11d5fb3b95756a38387265b38d906d7eddd52"
+  },
+  "normal_root": {
+    "finalized_sha256": "aafaca4a8447b836bce99b96a598cb8ba7322a8b39ed81cce07d4ceac2ac7cd8",
+    "root": {
+      "schema": 2,
+      "sha256": "115c2e86340f8b6c393e1176c4bfe031b803d4a388e6b97d77a9a82af72478ce",
+      "files": 26000,
+      "bytes": 1425603215
+    },
+    "checks": {
+      "release": "0.1.0-qualification.20261016",
+      "deployable": false,
+      "owner_key_seeded": true,
+      "printer_services_masked": true,
+      "boot_health_masked": true,
+      "wifi_userspace_present": true,
+      "qemu_fixture_absent": true
+    },
+    "mode": "fresh",
+    "package_checks": {
+      "dpkg_audit": true,
+      "apt_dependency_check": true
+    },
+    "source_revision": "e03db7308e152b8ecf61f18e493a1b5038a10832",
+    "development": false,
+    "unmatched_count": 0,
+    "public_source_qualified": true
+  },
+  "recovery": {
+    "build_record_sha256": "66ded238ead58a6ccb97d731004a0cf3908235992a5eee52bd9521fb24332272",
+    "image_sha256": "75997e6d7bb53748271d93be43affa825641889c390bb82cb5bcfa8dc2e6301c",
+    "source_preserved": true
+  },
+  "release_gate": {
+    "report": {
+      "checks": [
+        {
+          "id": "image",
+          "status": "passed"
+        },
+        {
+          "id": "public-project-source",
+          "status": "passed"
+        },
+        {
+          "id": "selected-software-notices",
+          "status": "passed"
+        }
+      ],
+      "format_version": 1,
+      "hardware_qualified": false,
+      "limitations": [
+        "Hardware, recovery execution, legal compliance and full reproducibility are not qualified.",
+        "Third-party corresponding-source completeness and opaque boot/data license coverage remain separate.",
+        "Artifact must travel alongside this evidence package and match its exact hash."
+      ],
+      "overall_release_qualified": false,
+      "profile": "selected-software",
+      "project_source_qualified": true,
+      "software_notice_inventory_checked": true
+    },
+    "manifest_sha256": "5dfa80cef94bd4f5695bc4bbcaa4b24075f290ec305893fe53c337ca0defce1c",
+    "artifact": {
+      "bytes": 7818182656,
+      "sha256": "2695e3585d3d6cf4a17dbf56a3543dd54bd316373401b71c8e7c58686502984a"
+    },
+    "source_revision": "e03db7308e152b8ecf61f18e493a1b5038a10832",
+    "files_verified": 9,
+    "exported_files": [
+      "LGPL-3.0-or-later.txt",
+      "image-inventory.json",
+      "installed-application-bindings.json",
+      "npm-notices.txt",
+      "npm-standard-license-texts.json",
+      "npm-supplemental-notices.json",
+      "public-source.json",
+      "release-manifest.json",
+      "report.json",
+      "software-inventory.json"
+    ],
+    "roots": [
+      {
+        "partition": 2,
+        "packages": 514,
+        "files": 26951,
+        "source_qualified": true
+      },
+      {
+        "partition": 4,
+        "packages": 514,
+        "files": 26951,
+        "source_qualified": true
+      },
+      {
+        "partition": 5,
+        "packages": 286,
+        "files": 21113,
+        "source_qualified": true
+      }
+    ],
+    "bindings": [
+      {
+        "architecture": "arm64",
+        "artifact_sha256": "e8c07d7b85403f3f55944c75e4664c95df005ecdb8f32acc84d97f1b1cbd4806",
+        "config": "configs/apps/klipper.json",
+        "excluded_non_software_members": 0,
+        "excluded_non_usr_members": 1572,
+        "matching_partitions": [
+          2,
+          4
+        ],
+        "opt_payload_files": 1572,
+        "package": "sv08-klipper",
+        "required_normal_partitions": [
+          2,
+          4
+        ],
+        "software_payload_files": 1575,
+        "usr_payload_files": 3,
+        "version": "0.0+gitf0892d82-2"
+      },
+      {
+        "architecture": "arm64",
+        "artifact_sha256": "a35f4e732da35bacce52ed858ded703129e6d28fb1d006e1a5c252edbbf4a1c6",
+        "config": "configs/apps/klipperscreen.json",
+        "excluded_non_software_members": 0,
+        "excluded_non_usr_members": 1590,
+        "matching_partitions": [
+          2,
+          4
+        ],
+        "opt_payload_files": 1590,
+        "package": "sv08-klipperscreen",
+        "required_normal_partitions": [
+          2,
+          4
+        ],
+        "software_payload_files": 1593,
+        "usr_payload_files": 3,
+        "version": "0.0+git3791fdf7-2"
+      },
+      {
+        "architecture": "all",
+        "artifact_sha256": "67d0f64595d6f8c8570d8152ebdf8b0e21cdb16965db2e8bb5ceaecf80d75c50",
+        "config": "configs/apps/mainsail.json",
+        "excluded_non_software_members": 0,
+        "excluded_non_usr_members": 0,
+        "matching_partitions": [
+          2,
+          4
+        ],
+        "opt_payload_files": 0,
+        "package": "sv08-mainsail",
+        "required_normal_partitions": [
+          2,
+          4
+        ],
+        "software_payload_files": 197,
+        "usr_payload_files": 197,
+        "version": "2.19.0+git32f99e1c-10"
+      },
+      {
+        "architecture": "arm64",
+        "artifact_sha256": "5bbc65c0441391837859c9131829b241f2a91a3f7e028221d1a5e8bd08f226e1",
+        "config": "configs/apps/moonraker.json",
+        "excluded_non_software_members": 0,
+        "excluded_non_usr_members": 1975,
+        "matching_partitions": [
+          2,
+          4
+        ],
+        "opt_payload_files": 1975,
+        "package": "sv08-moonraker",
+        "required_normal_partitions": [
+          2,
+          4
+        ],
+        "software_payload_files": 1978,
+        "usr_payload_files": 3,
+        "version": "0.11.0+git985c1d0b-2"
+      },
+      {
+        "architecture": "all",
+        "artifact_sha256": "304622a04870cb13a95ef3ffc8b67c30320ca682081383f75d9fe3d8e932ea62",
+        "config": "configs/apps/update-admission.json",
+        "excluded_non_software_members": 0,
+        "excluded_non_usr_members": 1,
+        "matching_partitions": [
+          2,
+          4
+        ],
+        "opt_payload_files": 1,
+        "package": "sv08-update-admission",
+        "required_normal_partitions": [
+          2,
+          4
+        ],
+        "software_payload_files": 7,
+        "usr_payload_files": 6,
+        "version": "0.1.0-3"
+      },
+      {
+        "architecture": "arm64",
+        "artifact_sha256": "fc1d757cbe91b39d59f1e4f6634d77016748929ac17849f2047935a4f620f0ec",
+        "config": "configs/host-os/rauc-package.json",
+        "excluded_non_software_members": 0,
+        "excluded_non_usr_members": 0,
+        "matching_partitions": [
+          2,
+          4
+        ],
+        "opt_payload_files": 0,
+        "package": "rauc",
+        "required_normal_partitions": [
+          2,
+          4
+        ],
+        "software_payload_files": 10,
+        "usr_payload_files": 10,
+        "version": "1.15.2-0sv08.2"
+      }
+    ],
+    "npm_notice_coverage": {
+      "declaration_only_dependencies": 0,
+      "dependencies_with_distributor_standard_terms": 1,
+      "dependencies_with_notice_text": 896,
+      "inspected_supplier_archives": 897
+    }
+  },
+  "manifest_files": {
+    "LGPL-3.0-or-later.txt": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+    "image-inventory.json": "b8c2fc540c759e8cde83df2e41a4c0d068bd5da4b12a886db1cec9d942ae67b3",
+    "installed-application-bindings.json": "d1b83543915933467a9d3fbaaf01e24d7c59f1d296a05899bf421c97f2467516",
+    "npm-notices.txt": "1ccbbafe8f7756695564563dd360138a648a4eee5c40b7fbf6fef070721ebb7f",
+    "npm-standard-license-texts.json": "9719d17d4df0ae23310d5eb17f45293a44576845c4453bdc241801003c56379c",
+    "npm-supplemental-notices.json": "10ec4a42c1236b02174f5cc8e73a28f085029b94fb815aed71e9ae5127424d2b",
+    "public-source.json": "b0637008e0dfdf9934637f34f8245fd0313b64cc4d33ce407e664cfa59b9ba34",
+    "report.json": "ab85d53eb31a77603ff6a3f757fde6ae434924cdcdb7061635cc96199cbe24a3",
+    "software-inventory.json": "884ac06a8485138b2b034f6306fab712ab6f7428ede9cfa15802ad2548fb6e48"
+  },
+  "refusals": {
+    "source_revision": "e03db7308e152b8ecf61f18e493a1b5038a10832",
+    "original_image_sha256": "2695e3585d3d6cf4a17dbf56a3543dd54bd316373401b71c8e7c58686502984a",
+    "scope": "actual default selected-software gate; disposable regular image and transported package input only",
+    "qualification_tool_revision": "a81b48503cabad4b70dad8af272de18d857ef69e",
+    "altered_payload": {
+      "exit_code": 1,
+      "output_absent": true,
+      "log_sha256": "454ad976deeea76df844cb8b8a38a8d99ed6aa4eb0e23fb7feed19f2e38c1eda",
+      "path": "opt/sv08-mainline/klipper/klippy/klippy.py",
+      "changed_partition": 2,
+      "unchanged_partition": 4
+    },
+    "restored_image_sha256": "2695e3585d3d6cf4a17dbf56a3543dd54bd316373401b71c8e7c58686502984a",
+    "missing_artifact": {
+      "exit_code": 1,
+      "output_absent": true,
+      "log_sha256": "da75a0bd17d39b849746c41d6e3d291302fd70991623752377d197ff00b1a2e3",
+      "config": "configs/apps/klipper.json",
+      "artifact_sha256": "e8c07d7b85403f3f55944c75e4664c95df005ecdb8f32acc84d97f1b1cbd4806",
+      "attempt": 2,
+      "first_gate_refused_before_harness_assertion": true,
+      "harness_correction": "Require exact documented relative input path in missing-file error, rather than absolute path; original failure/log retained."
+    },
+    "inputs_restored": true
+  },
+  "boot_byte_review": {
+    "image_sha256": "2695e3585d3d6cf4a17dbf56a3543dd54bd316373401b71c8e7c58686502984a",
+    "image_restored_exactly": true,
+    "restoration_evidence": "negative-altered-restoration.json",
+    "spl_matches": true,
+    "spl_sha256": "166b4251ffb3c2db6d3b90536650c399b3e5443b06e5c78a0ad2f8ca9fbf6b40",
+    "both_environments_match": true,
+    "environment_sha256": [
+      "3c94b8709a7e2657f9aa02907cf11d5fb3b95756a38387265b38d906d7eddd52",
+      "3c94b8709a7e2657f9aa02907cf11d5fb3b95756a38387265b38d906d7eddd52"
+    ],
+    "gpt_crc_valid": true,
+    "collision_free": true,
+    "scope": "offline byte comparisons; no hardware boot qualification"
+  },
+  "tools": {
+    "host_architecture": "x86_64",
+    "tools": {
+      "python": {
+        "command": [
+          "python3",
+          "--version"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "Python 3.12.3"
+        ]
+      },
+      "dpkg_deb": {
+        "command": [
+          "dpkg-deb",
+          "--version"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "Debian 'dpkg-deb' package archive backend version 1.22.6 (amd64).",
+          "This is free software; see the GNU General Public License version 2 or"
+        ]
+      },
+      "mksquashfs": {
+        "command": [
+          "mksquashfs",
+          "-version"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "mksquashfs version 4.6.1 (2023/03/25)",
+          "copyright (C) 2023 Phillip Lougher <phillip@squashfs.org.uk>"
+        ]
+      },
+      "mke2fs": {
+        "command": [
+          "mke2fs",
+          "-V"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "mke2fs 1.47.0 (5-Feb-2023)",
+          "\tUsing EXT2FS Library version 1.47.0"
+        ]
+      },
+      "sgdisk": {
+        "command": [
+          "sgdisk",
+          "--version"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "GPT fdisk (sgdisk) version 1.0.10",
+          ""
+        ]
+      },
+      "mkimage": {
+        "command": [
+          "mkimage",
+          "-V"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "mkimage version 2025.10"
+        ]
+      },
+      "qemu_aarch64": {
+        "command": [
+          "qemu-aarch64-static",
+          "--version"
+        ],
+        "exit_code": 0,
+        "version_lines": [
+          "qemu-aarch64 version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+          "Copyright (c) 2003-2023 Fabrice Bellard and the QEMU Project developers"
+        ]
+      }
+    }
+  },
+  "tests": [
+    {
+      "check": "release preparation",
+      "passed": 13,
+      "evidence": "payload-implementation/normal-slots/source-freeze.json"
+    },
+    {
+      "check": "image inventory including nested loop cleanup",
+      "passed": 14,
+      "evidence": "inventory-cleanup/captured-validation.json"
+    },
+    {
+      "check": "recovery assembly/source binding",
+      "passed": 28,
+      "evidence": "recovery-handler-mode-tests-corrected.log"
+    },
+    {
+      "check": "project provenance",
+      "passed": 18,
+      "evidence": "seed-provenance/project-license-repair.log"
+    },
+    {
+      "check": "affected recovery/UI provenance",
+      "passed": 6,
+      "evidence": "seed-provenance/provenance-repair.log",
+      "note": "Focused checks overlap broader suites; no combined unique-test total claimed."
+    },
+    {
+      "check": "fresh finalizer",
+      "passed": 9,
+      "evidence": "fresh-finalize/validation.txt"
+    },
+    {
+      "check": "board diagnostic composer",
+      "passed": 4,
+      "evidence": "fresh-finalize/validation.txt"
+    },
+    {
+      "check": "board recovery contracts",
+      "passed": 11,
+      "evidence": "recovery-provenance/recovery-board-final.log"
+    },
+    {
+      "check": "host integration and admission preservation",
+      "passed": 7,
+      "evidence": "admission-fix/focused-repair.log"
+    },
+    {
+      "check": "boot health",
+      "passed": 35,
+      "evidence": "admission-fix/boot-health-corrected.log"
+    },
+    {
+      "check": "commissioning baseline comparison",
+      "passed": 14,
+      "errors": 3,
+      "skipped": 1,
+      "same_errors_on_unchanged_main": true,
+      "evidence": "admission-fix/commissioning-main-baseline.log",
+      "note": "Three historical bootloader dependency-source guard errors; selected-tool regular-file fixture intentionally opt-in. Not reported as passed."
+    },
+    {
+      "check": "affected relative documentation links",
+      "passed": 24,
+      "evidence": "doc-links.json"
+    }
+  ],
+  "agents": [
+    {
+      "role": "project_researcher",
+      "task": "current_release_trace",
+      "requested_effort": "default low"
+    },
+    {
+      "role": "project_implementer",
+      "task": "release_payload_binding",
+      "requested_effort": "medium"
+    },
+    {
+      "role": "project_implementer",
+      "task": "fresh_host_finalize",
+      "requested_effort": "default low"
+    },
+    {
+      "role": "project_researcher",
+      "task": "normal_stage_recipe",
+      "requested_effort": "default low"
+    },
+    {
+      "role": "project_implementer",
+      "task": "admission_integrator",
+      "requested_effort": "medium"
+    },
+    {
+      "role": "project_implementer",
+      "task": "inventory_loop_cleanup",
+      "requested_effort": "default low"
+    }
+  ],
+  "agent_limits": "Actual named roles with task-scoped context; effective model/effort not independently observable. No savings or independent review claimed.",
+  "failed_attempts": [
+    {
+      "issue": "Original recovery dpkg configuration exceeded its existing 900-second bound on Beelink",
+      "evidence": "recovery-f687-failure.json (Beelink); old root removed after terminal result and receipt preservation"
+    },
+    {
+      "issue": "Recovery bootloader handler lost executable mode during copy; restored mode before strict staging",
+      "evidence": "recovery-e615-failure.json"
+    },
+    {
+      "issue": "Integrated canonical seed settings/public key were incorrectly classified as unmatched code",
+      "evidence": "source-preflight-result.json; exact producer mapping/non-code drift checks repaired"
+    },
+    {
+      "issue": "Fresh core integration rejected package-owned admission subtree; refresh would delete it",
+      "evidence": "admission-fix/normal-integrate.log"
+    },
+    {
+      "issue": "Fresh UI invocation needed supported refresh for matching core catalog and removal of exact stock Debian branding aliases",
+      "evidence": "normal-stage-initial-conflict.log and normal-stage-refresh.log (Beelink); corrected disposable recipe, no guard weakened"
+    },
+    {
+      "issue": "Nested squashfs loop held recovery filesystem busy during actual gate cleanup",
+      "evidence": "release-gate-initial-cleanup-failure.log and release-gate-first-cleanup.json (Beelink); interleaved cleanup fixed/tested"
+    },
+    {
+      "issue": "Initial rootless/ancestry test invocation errors",
+      "evidence": "admission-fix/contracts.log, focused.log, boot-health-repair.log; corrected fixture/invocation retained with passing evidence"
+    }
+  ],
+  "harness_repair": {
+    "initial_missing_gate_refused": true,
+    "initial_harness_assertion_failed": "Absolute error path expected; CLI documents relative path. Original failure retained.",
+    "corrected_check": "Require exact relative pinned path, exit1, absent output, exact input/image restoration. Reran only missing case.",
+    "failed_log_sha256": "ceec6936d62e348dea2a81e9c815ad23933c02c557560d0b23509d7af3165097"
+  },
+  "limitations": [
+    "Hardware, recovery execution, legal compliance and full reproducibility are not qualified.",
+    "Third-party corresponding-source completeness and opaque boot/data license coverage remain separate.",
+    "Artifact must travel alongside this evidence package and match its exact hash.",
+    "Non-deployable diagnostic image; printer services, RAUC activation and boot health are masked. No printer access, deployment, flashing or physical boot performed.",
+    "Boot and data licensing/content inventories remain opaque; offline exact partition, SPL and environment byte comparisons do not qualify hardware.",
+    "Selected application packages reused verified pinned build artifacts; a second complete-image reproducibility build was not performed.",
+    "Commissioning historical dependency-source failures remain unchanged and outside this image qualification path.",
+    "The image source is e03db730; the later inspector cleanup fix is an unshipped qualification-tool change at a81b485. Image provenance was never relabelled."
+  ],
+  "artifact_locations": {
+    "host": "beelink.drewnet.online",
+    "image": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/sv08-board-diagnostic.img",
+    "evidence_package": "/home/drew/.sv08-current-release-20261015/release-evidence",
+    "local_handoff": "/home/drew/.sv08-current-release-20261015/handoff.md"
+  },
+  "allowance": {
+    "process_seconds": 14400,
+    "generated_GiB": 16,
+    "local_GiB": 2,
+    "remote_GiB": 14,
+    "prior_goal_not_reset": "New separately authorized image qualification goal; prior release closure evidence retained.",
+    "continuations": [
+      {
+        "reason": "Actual supported composer writes complete7.8GB final image plus bounded partition files, normal/recovery source trees and compressed envelope; initial16GiB inadequate for one complete attempt without unsafe deletion. Beelink26GiB free at intake; preserve one final image, remove only owned intermediates after hashes/receipts.",
+        "additional_generated_GiB": 8,
+        "cumulative_generated_GiB": 24,
+        "remote_GiB": 22,
+        "local_GiB": 2,
+        "process_seconds_unchanged": 14400
+      },
+      {
+        "reason": "Actual fully audited selected package installation exposes core integrator deleting/refusing pinned admission extension. Repair changes a recovery integration input; honest source-bound recovery assemblies must be rebuilt, preserving prior receipts and failed evidence. Add only bounded recovery copies/output allowance, no extra full disk image.",
+        "additional_generated_GiB": 4,
+        "cumulative_generated_GiB": 28,
+        "local_GiB": 7,
+        "remote_GiB": 21,
+        "process_seconds_unchanged": 14400
+      },
+      {
+        "reason": "Complete actual negative payload test restores the original2GiB root-a extent and rehashes the whole regular image; cumulative generated-write allowance must count restoration plus current recovery output/transport and preserved failures. Add bounded4GiB, retain one complete image and immutable root component, no second full image.",
+        "additional_generated_GiB": 4,
+        "cumulative_generated_GiB": 32,
+        "local_GiB": 7,
+        "remote_GiB": 25,
+        "process_seconds_unchanged": 14400
+      }
+    ],
+    "allocation_adjustment": {
+      "reason": "Build final-source recovery assembly on existing faster Codex with immutable already verified Beelink package cache; no changes to running original-source job. Transfer finished assembly for remote composition, no full image copy locally.",
+      "local_GiB": 3,
+      "remote_GiB": 21,
+      "cumulative_generated_GiB": 24,
+      "process_seconds": 14400,
+      "local_free_GiB": 8.8,
+      "remote_free_GiB": 23
+    },
+    "checkpoint": {
+      "at": "2026-10-16T01:37:43.096953+00:00",
+      "conservative_process_seconds": 11000,
+      "conservative_generated_GiB": 29,
+      "includes": "all builds/failed gates, complete image/components, A-slot mutation/restoration, missing-input first refusal and corrected harness retry; cumulative estimate without reset",
+      "remaining_process_seconds": 3400,
+      "remaining_generated_GiB": 3
+    },
+    "allocation_adjustments_additional": [
+      {
+        "local_GiB": 4,
+        "remote_GiB": 20,
+        "cumulative_generated_GiB": 24,
+        "reason": "Measured successful base821240KiB plus derived945380KiB and recovery output; include prior deleted failed roots and package cache cumulatively. No full image local. Remote composer and all prior work remain within20GiB allocation; check actual footprint before composition."
+      }
+    ],
+    "current_limits": {
+      "process_seconds": 14400,
+      "cumulative_generated_GiB": 32,
+      "local_GiB": 7,
+      "remote_GiB": 25
+    }
+  },
+  "publication": {
+    "baseRefName": "main",
+    "headRefOid": "6d0d74f2b993e6ca66222f32577869345f00afe7",
+    "isDraft": false,
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-16T01:47:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/drew442/sv08-mainline/actions/runs/38836948883/job/116768092733",
+        "name": "deterministic-checks",
+        "startedAt": "2026-10-16T01:46:53Z",
+        "status": "COMPLETED",
+        "workflowName": "Agent workflow checks"
+      }
+    ],
+    "url": "https://github.com/drew442/sv08-mainline/pull/29",
+    "observed_at_utc": "2026-10-16T01:48:16.659225+00:00",
+    "observation_scope": "Head and CI state at this observation; this documentation update is committed/pushed afterward and remote receipt is rechecked by coordinator."
+  },
+  "evidence_sha256": {
+    "positive-gate-summary.json": "8304bc64a0870a9f25a396dc254dfa816b8ab090dc7931b355dd361f76b805b5",
+    "composition.json": "f565bb8c32a43a6cf44fbf20a76fab01cd60023d5626535721e7a19cc7642c02",
+    "normal-finalized-summary.json": "41b707ceca730d82f219f7739f319a49053b453ee233fad1e163e884b770eb07",
+    "refusal-results.json": "54e75d03ce5780d015e5a18755480db6837a470fb2a999d982b18c4d9879fc8c",
+    "byte-review-boot.json": "ec9a1728ec0c579b8b2e71467e4b5ff1518921e52274e2059682845b44a2f161",
+    "byte-review-partitions.json": "8bccb4c1cd81ae4346a37e033d34552b204c34efeae6a32f7e32ab53e516076b",
+    "inventory-cleanup/captured-validation.json": "3b95d5f374bd194ad2cb12de17345cf074cd2f6cf784d05bb552bccd2d05891c",
+    "admission-fix/result.json": "2a4326d2b0935531f6591fe9f63cc5c6784ffc67903c9ebb56f227f416895a21",
+    "doc-links.json": "8a0e72e09b0d2d4748667510e0e1712a6d5fe68531cf05be5fc1343cb336f325",
+    "reused-test-evidence.json": "a58bba92c3a30ae0a56129beaea9d0f4f9cc76eeb9b9107a90568cf5e6730ce3",
+    "recovery-handler-mode-tests-corrected.log": "1d4c37f3f1339867150b86dcb86dd809ad985b0ead8f57b96e5954287dddc56a",
+    "seed-provenance/project-license-repair.log": "0fd8b31cd20b1947b9a454537968e797292855e5972a845a355b521ace10d279",
+    "seed-provenance/provenance-repair.log": "be60c08ec1e74089706cdadc3bb2ebbc9eb84017e7ff3ac34fe3edd9dc49402e",
+    "fresh-finalize/validation.txt": "c771e29fb35d3f880650079cb1ecb147c6e48363c69d395e28fffd3eb8aa6640",
+    "payload-implementation/normal-slots/tests-frozen.log": "8c8232a73793a2e4b3795a480c998b498141e8e559b5ee9eb84eb05b5a849f22",
+    "recovery-provenance/recovery-board-final.log": "8d4bc590a410be2acc73f7be500c2c9286dd92e3990918bbadd09e3ec3eda8bc",
+    "local-retention.json": "6660770dd8e564388b29aee59ded7383874b9b746f19c4e6f313eb2ccccb7210",
+    "remote-retention.json": "79538e11adfa38f1844ca1758c0e3edaee88aa0a4b4126d4fa743ed64d33e227"
+  },
+  "retention": {
+    "local-retention.json": {
+      "removed": [
+        {
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/current-release-image/build/current-recovery-base-modefix/rootfs",
+          "kind": "superseded83recovery-root",
+          "receipt_sha256": "ffec519495a73dfcc6eadabcdeb11f84e4dc830159989f94a8a14888eafac373",
+          "recorded_inventory": {
+            "schema": 2,
+            "sha256": "ee13e3cc1a297cab6212c0fdd19e30a1942ae0737e06e25482cfa587cbe35dac",
+            "files": 17809,
+            "bytes": 788755575
+          }
+        },
+        {
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/current-release-image/build/current-recovery-board/rootfs",
+          "kind": "superseded83recovery-root",
+          "receipt_sha256": "7d006524602c65e52655f469af74ff150bfec5b9c0f12d19d34e1d4625a272f5",
+          "recorded_inventory": {
+            "schema": 2,
+            "sha256": "590f7da0b591ed516f49074c6e7e60d1a00504131ecd220c8e3ccbac9136cfe6",
+            "files": 20568,
+            "bytes": 909355030
+          }
+        },
+        {
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/current-release-image/build/current-recovery-image/recovery.ext4",
+          "kind": "superseded83recovery-image-payload",
+          "build_receipt_sha256": "a4fe3fcbe0d0998a01e6923bbdc75aa895c2773f05dc82346b47af9fe5c81e61"
+        },
+        {
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/current-release-image/build/current-recovery-image/envelope",
+          "kind": "superseded83recovery-image-payload",
+          "build_receipt_sha256": "a4fe3fcbe0d0998a01e6923bbdc75aa895c2773f05dc82346b47af9fe5c81e61"
+        },
+        {
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/current-release-image/build/current-recovery-image/vmlinuz",
+          "kind": "superseded83recovery-image-payload",
+          "build_receipt_sha256": "a4fe3fcbe0d0998a01e6923bbdc75aa895c2773f05dc82346b47af9fe5c81e61"
+        },
+        {
+          "path": "/home/drew/sv08-mainline/local/feature-workflow/worktrees/current-release-image/build/current-recovery-image/initrd.img",
+          "kind": "superseded83recovery-image-payload",
+          "build_receipt_sha256": "a4fe3fcbe0d0998a01e6923bbdc75aa895c2773f05dc82346b47af9fe5c81e61"
+        }
+      ],
+      "free_bytes_before": 4084363264,
+      "free_bytes_after": 6556295168,
+      "preserved": "All source branches/worktrees, old assembly/build receipts, logs and input caches; current e03 recovery roots/output and qualified complete Beelink image untouched. Cumulative generated-data accounting is not reset."
+    },
+    "remote-retention.json": {
+      "removed_component_images": [
+        {
+          "path": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/boot-a.img",
+          "bytes": 201326592,
+          "allocated_bytes": 51806208,
+          "sha256": "8f8ef7474ca192ccf289341b226b66397705bc900d1d1d9a1feeeaab782425d9"
+        },
+        {
+          "path": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/root-a.img",
+          "bytes": 2147483648,
+          "allocated_bytes": 1499594752,
+          "sha256": "485d00fdeb19a7a1ce5ce96cca75bfc63eace09db34e9ac10df7f895c7c9ac15"
+        },
+        {
+          "path": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/boot-b.img",
+          "bytes": 201326592,
+          "allocated_bytes": 51806208,
+          "sha256": "7c8159b5ce23ff2046e7327624e20ee409a35681210f99c35882537e63a27bf1"
+        },
+        {
+          "path": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/root-b.img",
+          "bytes": 2147483648,
+          "allocated_bytes": 1499594752,
+          "sha256": "cfa3112fe100f18d9d614067800e4d4a6102d7a543b34e0469a182a4c148463c"
+        },
+        {
+          "path": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/recovery.img",
+          "bytes": 536870912,
+          "allocated_bytes": 363540480,
+          "sha256": "b8e409942b97c194f5b6394e8d37188b890cbe5c9d927daad186dc93a7aab02c"
+        },
+        {
+          "path": "/home/drew/.sv08-current-release-20261015/repo/build/current-release-disk/data.img",
+          "bytes": 2565865472,
+          "allocated_bytes": 68546560,
+          "sha256": "16c21b3023a9988bb9ebb288d84bfaac36edce365d881cbf4be14de6e5759782"
+        }
+      ],
+      "free_bytes_before": 12237398016,
+      "free_bytes_after": 15772286976,
+      "preserved": "One complete qualified image, evidence package, composition/byte/refusal receipts, boot/envelope debug trees, current host/data/recovery construction inputs. Component removal follows successful exact restoration and all acceptance tests. No accounting reset."
+    }
+  }
+}

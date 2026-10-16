@@ -121,7 +121,11 @@ def safe_file(root, relative):
 def tree_inventory(root):
     """Hash installed software only; never traverse data, configuration or keys."""
     result = []
-    for prefix in ('usr', 'bin', 'sbin', 'lib', 'lib64', 'var/lib/dpkg'):
+    for prefix in ('usr', 'bin', 'sbin', 'lib', 'lib64', 'var/lib/dpkg', 'opt/sv08-mainline'):
+        if prefix.startswith('opt/') and (root/'opt').is_symlink():
+            # Never traverse an ancestor link into arbitrary opt or host data.
+            result.append(dict(path='opt',kind='symlink',target=os.readlink(root/'opt'),coverage='not-followed'))
+            continue
         base = root/prefix
         if base.is_symlink():
             # Absolute image links must never resolve against the inspector host.
@@ -199,7 +203,7 @@ def inspect_image(image, root, partition=0, image_hash=None, partition_hashes=No
     unknowns += ['Third-party corresponding-source completeness is not established.',
                  'Vendor kernel/bootloader source reproduction is not established.',
                  'Non-dpkg application license coverage requires separate source inventory.',
-                 'Only usr, bin/sbin/lib/lib64 and dpkg metadata are enumerated; configuration, credentials and data are excluded.']
+                 'Only usr, bin/sbin/lib/lib64, opt/sv08-mainline application software and dpkg metadata are enumerated; other opt paths, configuration, credentials and data are excluded.']
     for p in parts: p['sha256'] = (partition_hashes or {}).get(p['number']) or file_hash(image,p['offset_bytes'],p['size_bytes'])
     if file_hash(image) != before: raise ValueError('Image changed during inspection')
     verified_mount(root,image,part['offset_bytes'],part['size_bytes'],'ext4')
@@ -215,14 +219,14 @@ def mounted_image(image, part, scratch=None):
     """Privileged coordinator interface; only RO loops and no journal replay."""
     with tempfile.TemporaryDirectory(prefix='sv08-image-inventory-', dir=scratch) as temporary:
         root = Path(temporary)/'root'; root.mkdir()
-        devices = []; targets = []
+        mounts = []
         try:
             device = subprocess.check_output(['losetup','--find','--show','--read-only',
                 '--offset',str(part['offset_bytes']),'--sizelimit',str(part['size_bytes']),str(Path(image).resolve())],
                 text=True,timeout=30).strip()
-            devices.append(device)
+            mounts.append([device, None])
             subprocess.run(['mount','-t','ext4','-o','ro,noload',device,str(root)],check=True,timeout=30)
-            targets.append(root)
+            mounts[-1][1] = root
             verified_mount(root,image,part['offset_bytes'],part['size_bytes'],'ext4')
             payload = root/'usr.squashfs'
             if payload.exists():
@@ -230,15 +234,17 @@ def mounted_image(image, part, scratch=None):
                 usr = root/'usr'
                 if usr.is_symlink() or not usr.is_dir(): raise ValueError('Unsafe usr mountpoint')
                 device = subprocess.check_output(['losetup','--find','--show','--read-only',str(payload)],text=True,timeout=30).strip()
-                devices.append(device)
+                mounts.append([device, None])
                 subprocess.run(['mount','-t','squashfs','-o','ro',device,str(usr)],check=True,timeout=30)
-                targets.append(usr)
+                mounts[-1][1] = usr
             yield root
         finally:
-            # Never detach a loop whose mount failed to unmount. Surface cleanup failures.
-            for target in reversed(targets):
-                subprocess.run(['umount',str(target)],check=True,timeout=30)
-            for device in reversed(devices):
+            # Inner backing files hold the outer filesystem busy until their loops
+            # are detached, even after unmount. Include loops whose mount failed.
+            # A failed unmount stops cleanup before detaching its loop or parents.
+            for device, target in reversed(mounts):
+                if target is not None:
+                    subprocess.run(['umount',str(target)],check=True,timeout=30)
                 subprocess.run(['losetup','--detach',device],check=True,timeout=30)
 
 

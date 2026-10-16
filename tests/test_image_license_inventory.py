@@ -74,6 +74,39 @@ class ImageInventoryTests(unittest.TestCase):
         self.assertEqual({r['path'] for r in records},{'usr/bin/app','usr/escape','bin/busybox'})
         with self.assertRaises(ValueError):m.safe_file(self.base,'usr/escape')
 
+    def test_opt_application_only_and_symlinks_are_not_followed(self):
+        for name in ('opt/sv08-mainline/klipper/klippy.py',
+                     'opt/sv08-mainline/venvs/klipper/bin/python',
+                     'opt/private/secret', 'opt/sv08-mainline-other/token',
+                     'etc/private', 'data/token'):
+            path=self.base/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'fixture')
+        link=self.base/'opt/sv08-mainline/venvs/klipper/bin/python3'
+        link.symlink_to('/opt/private/secret')
+        directory=self.base/'opt/sv08-mainline/escape'
+        directory.symlink_to(self.base/'opt/private',target_is_directory=True)
+        original=m.file_hash;hashed=[]
+        def capture(path,*args):
+            relative=path.relative_to(self.base).as_posix()
+            self.assertIn(relative,('opt/sv08-mainline/klipper/klippy.py',
+                                    'opt/sv08-mainline/venvs/klipper/bin/python'))
+            hashed.append(relative);return original(path,*args)
+        with patch.object(m,'file_hash',side_effect=capture):records=m.tree_inventory(self.base)
+        self.assertEqual(len(hashed),2)
+        self.assertEqual({r['path'] for r in records},set(hashed)|{
+            'opt/sv08-mainline/escape','opt/sv08-mainline/venvs/klipper/bin/python3'})
+        self.assertTrue(all(r['kind']=='symlink' for r in records if r['path'] not in hashed))
+
+    def test_opt_ancestor_and_application_root_symlinks_are_not_followed(self):
+        outside=self.base/'private';outside.mkdir();(outside/'secret').write_bytes(b'secret')
+        for ancestor in ('opt','opt/sv08-mainline'):
+            with self.subTest(ancestor=ancestor):
+                link=self.base/ancestor;link.parent.mkdir(parents=True,exist_ok=True)
+                link.symlink_to(outside,target_is_directory=True)
+                with patch.object(m,'file_hash',side_effect=AssertionError('secret read')):
+                    self.assertEqual(m.tree_inventory(self.base),[dict(
+                        path=ancestor,kind='symlink',target=str(outside),coverage='not-followed')])
+                link.unlink()
+
     def test_missing_package_database_is_explicit_unknown_input(self):
         self.assertEqual(m.installed_packages(self.base),[])
 
@@ -94,6 +127,64 @@ class ImageInventoryTests(unittest.TestCase):
                 with m.mounted_image(self.image,m.geometry(self.image)[0],self.base):raise ValueError('check failed')
         self.assertEqual(calls[-2][0],'umount');self.assertEqual(calls[-1],['losetup','--detach','/dev/loop9'])
         self.assertIn('ro,noload',calls[0]);self.assertEqual(self.image.stat().st_size,8192)
+
+    def managed_nested_cleanup(self, fail_mount=False, fail_unmount=False):
+        """Model the inner loop's backing-file reference keeping ext4 busy."""
+        calls=[];attached=set();mounted=set();root=None
+        def allocate(args,**kwargs):
+            device='/dev/loop9' if not attached else '/dev/loop10'
+            attached.add(device)
+            return device+'\n'
+        def run(args,**kwargs):
+            nonlocal root
+            calls.append(args)
+            if args[0]=='mount':
+                target=Path(args[-1])
+                if args[2]=='ext4':
+                    root=target
+                    (root/'usr').mkdir();(root/'usr.squashfs').write_bytes(b'payload')
+                elif fail_mount:
+                    raise m.subprocess.CalledProcessError(1,args,'inner mount failed')
+                mounted.add(target)
+            elif args[0]=='umount':
+                target=Path(args[1])
+                if target==root and '/dev/loop10' in attached:
+                    raise AssertionError('outer filesystem busy: inner loop still attached')
+                if target==root/'usr' and fail_unmount:
+                    raise m.subprocess.CalledProcessError(1,args,'inner unmount failed')
+                mounted.remove(target)
+            elif args[:2]==['losetup','--detach']:
+                target=root if args[2]=='/dev/loop9' else root/'usr'
+                self.assertNotIn(target,mounted,'must unmount before detach')
+                attached.remove(args[2])
+        with patch.object(m.subprocess,'check_output',side_effect=allocate),patch.object(m.subprocess,'run',side_effect=run),patch.object(m,'verified_mount'):
+            if fail_mount or fail_unmount:
+                with self.assertRaises(m.subprocess.CalledProcessError):
+                    with m.mounted_image(self.image,m.geometry(self.image)[0],self.base):
+                        self.assertFalse(fail_mount,'failed mount must not yield')
+            else:
+                with m.mounted_image(self.image,m.geometry(self.image)[0],self.base):pass
+        return calls,attached,mounted,root
+
+    def test_nested_cleanup_detaches_inner_loop_before_outer_unmount(self):
+        calls,attached,mounted,root=self.managed_nested_cleanup()
+        self.assertEqual(calls[-4:],[['umount',str(root/'usr')],
+            ['losetup','--detach','/dev/loop10'],['umount',str(root)],
+            ['losetup','--detach','/dev/loop9']])
+        self.assertEqual((attached,mounted),(set(),set()))
+
+    def test_failed_inner_mount_detaches_loop_before_outer_unmount(self):
+        calls,attached,mounted,root=self.managed_nested_cleanup(fail_mount=True)
+        self.assertEqual(calls[-3:],[['losetup','--detach','/dev/loop10'],
+            ['umount',str(root)],['losetup','--detach','/dev/loop9']])
+        self.assertEqual((attached,mounted),(set(),set()))
+
+    def test_failed_inner_unmount_never_detaches_its_loop_or_parent(self):
+        calls,attached,mounted,root=self.managed_nested_cleanup(fail_unmount=True)
+        self.assertEqual(calls[-1],['umount',str(root/'usr')])
+        self.assertFalse(any(args[:2]==['losetup','--detach'] for args in calls))
+        self.assertEqual(attached,{'/dev/loop9','/dev/loop10'})
+        self.assertEqual(mounted,{root,root/'usr'})
 
     def test_gpt_reuses_validated_upstream_parser(self):
         raw=bytearray(8192);raw[510:512]=b'\x55\xaa';raw[512:520]=b'EFI PART';self.image.write_bytes(raw)
