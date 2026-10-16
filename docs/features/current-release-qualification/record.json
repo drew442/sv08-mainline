@@ -69,11 +69,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "27b794f30d76451fb47d560395326689",
-        "session": "current-release-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "configs/apps/",
         "configs/host-os/",
@@ -106,13 +102,14 @@
         "tests/test_finalize_diagnostic_host.py",
         "docs/hardware/host-board-image.md",
         "scripts/project_license.py",
-        "tests/test_project_license.py"
+        "tests/test_project_license.py",
+        "tests/test_host_integration.py"
       ],
       "repeats": 0,
-      "resumption": "Same owner goal; measured source preflight requires exact generated seed and separately bound public-key input classifications, not a weaker source gate.",
+      "resumption": "Same complete-image goal; measured fresh package/core conflict requires narrow preservation repair and relevant integration tests.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "running",
+      "status": "pending",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
