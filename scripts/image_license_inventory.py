@@ -219,14 +219,14 @@ def mounted_image(image, part, scratch=None):
     """Privileged coordinator interface; only RO loops and no journal replay."""
     with tempfile.TemporaryDirectory(prefix='sv08-image-inventory-', dir=scratch) as temporary:
         root = Path(temporary)/'root'; root.mkdir()
-        devices = []; targets = []
+        mounts = []
         try:
             device = subprocess.check_output(['losetup','--find','--show','--read-only',
                 '--offset',str(part['offset_bytes']),'--sizelimit',str(part['size_bytes']),str(Path(image).resolve())],
                 text=True,timeout=30).strip()
-            devices.append(device)
+            mounts.append([device, None])
             subprocess.run(['mount','-t','ext4','-o','ro,noload',device,str(root)],check=True,timeout=30)
-            targets.append(root)
+            mounts[-1][1] = root
             verified_mount(root,image,part['offset_bytes'],part['size_bytes'],'ext4')
             payload = root/'usr.squashfs'
             if payload.exists():
@@ -234,15 +234,17 @@ def mounted_image(image, part, scratch=None):
                 usr = root/'usr'
                 if usr.is_symlink() or not usr.is_dir(): raise ValueError('Unsafe usr mountpoint')
                 device = subprocess.check_output(['losetup','--find','--show','--read-only',str(payload)],text=True,timeout=30).strip()
-                devices.append(device)
+                mounts.append([device, None])
                 subprocess.run(['mount','-t','squashfs','-o','ro',device,str(usr)],check=True,timeout=30)
-                targets.append(usr)
+                mounts[-1][1] = usr
             yield root
         finally:
-            # Never detach a loop whose mount failed to unmount. Surface cleanup failures.
-            for target in reversed(targets):
-                subprocess.run(['umount',str(target)],check=True,timeout=30)
-            for device in reversed(devices):
+            # Inner backing files hold the outer filesystem busy until their loops
+            # are detached, even after unmount. Include loops whose mount failed.
+            # A failed unmount stops cleanup before detaching its loop or parents.
+            for device, target in reversed(mounts):
+                if target is not None:
+                    subprocess.run(['umount',str(target)],check=True,timeout=30)
                 subprocess.run(['losetup','--detach',device],check=True,timeout=30)
 
 

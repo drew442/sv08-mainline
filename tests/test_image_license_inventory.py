@@ -128,6 +128,64 @@ class ImageInventoryTests(unittest.TestCase):
         self.assertEqual(calls[-2][0],'umount');self.assertEqual(calls[-1],['losetup','--detach','/dev/loop9'])
         self.assertIn('ro,noload',calls[0]);self.assertEqual(self.image.stat().st_size,8192)
 
+    def managed_nested_cleanup(self, fail_mount=False, fail_unmount=False):
+        """Model the inner loop's backing-file reference keeping ext4 busy."""
+        calls=[];attached=set();mounted=set();root=None
+        def allocate(args,**kwargs):
+            device='/dev/loop9' if not attached else '/dev/loop10'
+            attached.add(device)
+            return device+'\n'
+        def run(args,**kwargs):
+            nonlocal root
+            calls.append(args)
+            if args[0]=='mount':
+                target=Path(args[-1])
+                if args[2]=='ext4':
+                    root=target
+                    (root/'usr').mkdir();(root/'usr.squashfs').write_bytes(b'payload')
+                elif fail_mount:
+                    raise m.subprocess.CalledProcessError(1,args,'inner mount failed')
+                mounted.add(target)
+            elif args[0]=='umount':
+                target=Path(args[1])
+                if target==root and '/dev/loop10' in attached:
+                    raise AssertionError('outer filesystem busy: inner loop still attached')
+                if target==root/'usr' and fail_unmount:
+                    raise m.subprocess.CalledProcessError(1,args,'inner unmount failed')
+                mounted.remove(target)
+            elif args[:2]==['losetup','--detach']:
+                target=root if args[2]=='/dev/loop9' else root/'usr'
+                self.assertNotIn(target,mounted,'must unmount before detach')
+                attached.remove(args[2])
+        with patch.object(m.subprocess,'check_output',side_effect=allocate),patch.object(m.subprocess,'run',side_effect=run),patch.object(m,'verified_mount'):
+            if fail_mount or fail_unmount:
+                with self.assertRaises(m.subprocess.CalledProcessError):
+                    with m.mounted_image(self.image,m.geometry(self.image)[0],self.base):
+                        self.assertFalse(fail_mount,'failed mount must not yield')
+            else:
+                with m.mounted_image(self.image,m.geometry(self.image)[0],self.base):pass
+        return calls,attached,mounted,root
+
+    def test_nested_cleanup_detaches_inner_loop_before_outer_unmount(self):
+        calls,attached,mounted,root=self.managed_nested_cleanup()
+        self.assertEqual(calls[-4:],[['umount',str(root/'usr')],
+            ['losetup','--detach','/dev/loop10'],['umount',str(root)],
+            ['losetup','--detach','/dev/loop9']])
+        self.assertEqual((attached,mounted),(set(),set()))
+
+    def test_failed_inner_mount_detaches_loop_before_outer_unmount(self):
+        calls,attached,mounted,root=self.managed_nested_cleanup(fail_mount=True)
+        self.assertEqual(calls[-3:],[['losetup','--detach','/dev/loop10'],
+            ['umount',str(root)],['losetup','--detach','/dev/loop9']])
+        self.assertEqual((attached,mounted),(set(),set()))
+
+    def test_failed_inner_unmount_never_detaches_its_loop_or_parent(self):
+        calls,attached,mounted,root=self.managed_nested_cleanup(fail_unmount=True)
+        self.assertEqual(calls[-1],['umount',str(root/'usr')])
+        self.assertFalse(any(args[:2]==['losetup','--detach'] for args in calls))
+        self.assertEqual(attached,{'/dev/loop9','/dev/loop10'})
+        self.assertEqual(mounted,{root,root/'usr'})
+
     def test_gpt_reuses_validated_upstream_parser(self):
         raw=bytearray(8192);raw[510:512]=b'\x55\xaa';raw[512:520]=b'EFI PART';self.image.write_bytes(raw)
         with patch.object(m,'inspect_gpt',return_value={'partition_records':[{'number':2}]}) as inspect:
