@@ -214,3 +214,10 @@ recorded before assembly inventory. Derivation preserves and verifies inherited
 bindings; build rechecks them without refreshing source. The final anonymous
 source qualifier still establishes public availability independently. Default
 development recovery assembly remains available and is not silently qualified.
+
+Normal-host Mainsail/nginx seed settings are recognized only when their complete
+bytes equal the declared literal producer settings in the exact corresponding
+checkout. The owner public-key seed is a fixed-path non-code build input, recorded
+by type and SHA256 without publishing key bytes or inventing a source mapping.
+Its addition, removal or modification invalidates existing provenance. Arbitrary
+unknown seed files or altered generated settings remain development-only.
