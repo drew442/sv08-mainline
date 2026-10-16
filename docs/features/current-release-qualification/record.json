@@ -47,7 +47,27 @@
   "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/current-release-qualification/proposal.md",
-  "requirement_rechecks": [],
+  "requirement_rechecks": [
+    {
+      "actor": "root/coordinator",
+      "basis_sha256": "7b6330e17521ecd8cc0dfdcf99efe704e3208242352ff95d4cd9ff0c749ce1ae",
+      "from_sha256": {
+        "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+        "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+        "docs/development/release-packaging.md": "7bf36aa87a19b79926f2bd4879e4c4ad8109f5fb9f641f6cab50d4cb72087ba5",
+        "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
+      },
+      "rationale": "Owner merged PR29 at 8b1643198a05d4c38abf2697c0bdd6f307e53244. Release-packaging documentation now describes the implemented stronger dual-slot payload, fresh-finalization, exact recovery/source and seed-provenance checks within the authorized qualification scope. No owner requirement, protection or acceptance criterion is waived; other requirement documents are unchanged.",
+      "session": "current-release-20261015",
+      "source_commit": "8b1643198a05d4c38abf2697c0bdd6f307e53244",
+      "to_sha256": {
+        "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+        "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+        "docs/development/release-packaging.md": "a759220208205026fe13f858132d85cf5c0f3e6f75616d94a3453bba94c7173f",
+        "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
+      }
+    }
+  ],
   "requirements": [
     "docs/features/current-release-qualification/owner-request.md",
     "docs/development/release-packaging.md",
@@ -230,7 +250,7 @@
       "resumption": "Same complete-image goal; measured fresh package/core conflict requires narrow preservation repair and relevant integration tests.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "validated",
+      "status": "done",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": {
         "actor": "root/coordinator",
