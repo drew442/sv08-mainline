@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "aee8ae21c4c53c4a0cf687a14d8f6da4b5e89a34e9cb1d00c60afcbb7403f15d",
-    "rationale": "Necessary fresh-root finalization and tests preserve all existing protections and provide truthful provenance for owner-requested current image.",
+    "proposal_sha256": "d7a174adac81f5425d93b5d3086801c6619b2a795eb10ab44601fa24b1a1b750",
+    "rationale": "Source preflight demonstrates integrated factory seeds fail current gate; explicit source/test ownership preserves code and non-code boundaries with drift checks.",
     "reference": "docs/features/current-release-qualification/owner-request.md",
     "reference_sha256": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3",
     "requirements_sha256": {
@@ -13,9 +13,9 @@
       "docs/development/release-packaging.md": "7bf36aa87a19b79926f2bd4879e4c4ad8109f5fb9f641f6cab50d4cb72087ba5",
       "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
     },
-    "scope_sha256": "dcbaf861d388aedb3dcaa6465182dd0de4dccdddb866c36e172713a6481d6709",
+    "scope_sha256": "99955f6d0db4b1a692387d59d97cd33f2b6dba5fc1ed22fe616167a3471f8edb",
     "session": "current-release-20261015",
-    "source_commit": "ac3d832e5c7a817a06caed802d64575497dd17ee"
+    "source_commit": "6eb6fc54346e7a3302d66ff670071db72e0c451f"
   },
   "checks": [
     {
@@ -56,7 +56,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Production source preflight proves current integration-generated mainsail/nginx seeds and public-key seed marked unmatched code. Add exact generated-source mappings and separately bound public-key non-code input, preserving arbitrary unmatched refusal; tests ownership required.",
+      "blocker": null,
       "checks": [
         "composition",
         "release-gate",
@@ -69,11 +69,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "44582363a5fd4982ba80b0a02505119c",
-        "session": "current-release-20261015"
-      },
+      "implementation": null,
       "input_paths": [
         "configs/apps/",
         "configs/host-os/",
@@ -109,10 +105,10 @@
         "tests/test_project_license.py"
       ],
       "repeats": 0,
-      "resumption": "Same authorized complete-image goal; fresh-host finalization ownership added based on source evidence. Running package process retained.",
+      "resumption": "Same owner goal; measured source preflight requires exact generated seed and separately bound public-key input classifications, not a weaker source gate.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
