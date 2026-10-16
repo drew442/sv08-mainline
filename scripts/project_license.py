@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Exact project notices and offline build provenance; never image qualification."""
+import ast
 import hashlib
 import json
 import os
@@ -24,6 +25,9 @@ EXTRA_FILES = ('etc/cockpit/cockpit.conf','etc/sudoers.d/sv08-view',
     'usr/share/xsessions/sv08-recovery.desktop')
 GENERATED = ('project-source.json', 'project-LICENSE.txt', 'project-NOTICE.txt')
 NOTICE_PATHS = {base+name for base in (DOC,*PACKAGES) for name in GENERATED}
+# The owner public key is an image build input, not project corresponding source.
+NON_CODE_BUILD_INPUTS = {'usr/lib/sv08/seed/authorized_keys':'owner-public-key'}
+NON_CODE_INPUT_LIMIT = 65536
 
 
 def digest(raw):
@@ -76,7 +80,24 @@ def source_files(repo):
     return result
 
 
+def non_code_build_inputs(root):
+    """Hash only the fixed public-key input; never publish its bytes or source map."""
+    result = {}
+    for name, kind in NON_CODE_BUILD_INPUTS.items():
+        path = checked(root, name)
+        if not path.is_file(): continue
+        if path.stat().st_size > NON_CODE_INPUT_LIMIT:
+            raise ValueError('Non-code build input exceeds bound: ' + name)
+        with path.open('rb') as stream: raw = stream.read(NON_CODE_INPUT_LIMIT+1)
+        if len(raw) > NON_CODE_INPUT_LIMIT:
+            raise ValueError('Non-code build input exceeds bound: ' + name)
+        result[name] = dict(type=kind, sha256=digest(raw))
+    return result
+
+
 def installed_files(root, overrides=None, replaced=()):
+    if any(name in NON_CODE_BUILD_INPUTS for name in (overrides or {})):
+        raise ValueError('Stage the owner public-key build input before preparing provenance')
     result = {}
     for prefix in PREFIXES:
         base = root / prefix
@@ -86,6 +107,7 @@ def installed_files(root, overrides=None, replaced=()):
             if any(name.startswith(p) for p in replaced): continue
             if name in NOTICE_PATHS or name == 'usr/lib/sv08/release.json': continue
             if path.is_symlink(): raise ValueError('Symlink in staged project files')
+            if name in NON_CODE_BUILD_INPUTS: continue
             if path.is_file(): result[name] = checked(root, name).read_bytes()
     for name in EXTRA_FILES:
         path = checked(root, name)
@@ -99,10 +121,47 @@ def installed_files(root, overrides=None, replaced=()):
     return {n: raw for n, raw in result.items() if n not in NOTICE_PATHS}
 
 
+def seed_recipe_bytes(repo):
+    """Read declared literal constants from this checkout, without importing it."""
+    try:
+        tree = ast.parse(checked(repo, 'runtime/sv08_printer_stack.py').read_bytes())
+        names = ('MAINSail', 'NGINX')
+        # Refuse reassignments, nested bindings and non-simple target forms.
+        stores = [node.id for node in ast.walk(tree)
+                  if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store) and node.id in names]
+        if any(stores.count(name) != 1 for name in names): return None
+        values = {}
+        for statement in tree.body:
+            if (not isinstance(statement, ast.Assign) or len(statement.targets) != 1 or
+                    not isinstance(statement.targets[0], ast.Name) or statement.targets[0].id not in names):
+                continue
+            name = statement.targets[0].id; value = statement.value
+            if name == 'MAINSail' and isinstance(value, ast.Call):
+                if (not isinstance(value.func, ast.Name) or value.func.id != 'dict' or value.args or
+                        any(keyword.arg is None for keyword in value.keywords) or
+                        len({keyword.arg for keyword in value.keywords}) != len(value.keywords)):
+                    return None
+                values[name] = {keyword.arg:ast.literal_eval(keyword.value) for keyword in value.keywords}
+            else: values[name] = ast.literal_eval(value)
+        if (set(values) != set(names) or not isinstance(values['MAINSail'], dict) or
+                not isinstance(values['NGINX'], str)): return None
+        return {'mainsail.json':(json.dumps(values['MAINSail'], indent=2)+'\n').encode(),
+                'nginx-mainsail.conf':values['NGINX'].encode()}
+    except (OSError, SyntaxError, ValueError, TypeError, UnicodeError):
+        return None
+
+
 def generated_recipe(root, name, raw, repo):
     """Recognize only exact supported outputs; unknown bytes never become source-bound."""
     recipes = ['scripts/project_license.py', 'scripts/stage_admin_ui.py', 'scripts/stage_printer_ui.py']
-    if name == 'usr/share/cockpit/sv08-host/index.html':
+    seed_names = ('usr/lib/sv08/seed/config/mainsail.json',
+                  'usr/lib/sv08/seed/config/nginx-mainsail.conf')
+    if name in seed_names:
+        expected = seed_recipe_bytes(repo)
+        if expected is not None and raw == expected[Path(name).name]:
+            return 'generated', ['scripts/project_license.py', 'scripts/integrate_host_os.py',
+                                 'runtime/sv08_printer_stack.py']
+    elif name == 'usr/share/cockpit/sv08-host/index.html':
         from stage_printer_ui import compose_host, NAV
         original = (repo/'ui/host/index.html').read_bytes()
         if raw == original.replace(NAV,b''):
@@ -144,6 +203,7 @@ def prepare(root, overrides=None, replaced=(), public_source=None, repo=None):
     revision, dirty = source_state(repo)
     reverse = {}
     for name, sha in sources.items(): reverse.setdefault(sha, []).append(name)
+    build_inputs = non_code_build_inputs(root)
     files = installed_files(root, overrides, replaced)
     staged = {}; unmatched = []
     for name, raw in sorted(files.items()):
@@ -165,7 +225,7 @@ def prepare(root, overrides=None, replaced=(), public_source=None, repo=None):
     record = dict(format_version=1, scope='project-source-only', overall_release_qualified=False,
                   source_revision=revision, development=dirty or revision is None or bool(unmatched),
                   unmatched_original_files=unmatched,
-                  source_files=sources, staged_files=staged, release=release_record,
+                  source_files=sources, staged_files=staged, non_code_build_inputs=build_inputs, release=release_record,
                   license='AGPL-3.0-or-later', notices={n:sources[n] for n in ('LICENSE','LICENSING.md')},
                   limitations=['Third-party corresponding-source and notice obligations remain separate.',
                                'Captured vendor kernel/bootloader source reproduction is not established.'])
@@ -202,6 +262,8 @@ def validate(root):
     if record.get('format_version') != 1 or record.get('scope') != 'project-source-only' or record.get('overall_release_qualified') is not False:
         raise ValueError('Invalid source qualification scope')
     if record.get('build_id') != build_id(record): raise ValueError('Project build identity mismatch')
+    if non_code_build_inputs(root) != record.get('non_code_build_inputs', {}):
+        raise ValueError('Non-code build input inventory mismatch')
     actual = installed_files(root)
     if set(actual) != set(record['staged_files']): raise ValueError('Staged project file inventory mismatch')
     for name, raw in actual.items():
