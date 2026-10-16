@@ -440,6 +440,7 @@ def assemble(a):
     write(root/'etc/sv08-recovery-image','Independent offline recovery diagnostics; no media preparer\n')
     runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True,exist_ok=True)
     for p in (REPO/'runtime').glob('*.py'):shutil.copyfile(p,runtime/p.name)
+    (runtime/'sv08_rauc_bootloader.py').chmod(0o755)
     from stage_admin_ui import stage
     stage(work,'recovery',True)
     units=root/'etc/systemd/system';units.mkdir(parents=True,exist_ok=True)

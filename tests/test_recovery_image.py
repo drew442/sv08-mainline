@@ -220,6 +220,7 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         sources={'LICENSE':b'project license', 'LICENSING.md':b'project notice',
                  '.gitmodules':b'', 'upstream-lock.json':b'{}',
                  'runtime/controller.py':b'# runtime',
+                 'runtime/sv08_rauc_bootloader.py':b'# executable handler',
                  'configs/display.service':b'[Service]\nExecStart=/bin/true\n',
                  'configs/late.py':b'# final staged project file',
                  'configs/host-os/recovery-init':b'# boot gate'}
@@ -310,9 +311,13 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
             root=units.parents[2]
             target=root/'usr/lib/systemd/system/sv08-recovery-display.service'
             target.parent.mkdir(parents=True);target.write_bytes((self.repo/'configs/display.service').read_bytes())
+        def stage_checked(work,context,execute):
+            handler=work/'rootfs/usr/lib/sv08/sv08_rauc_bootloader.py'
+            self.assertEqual(handler.stat().st_mode & 0o777,0o755)
+            self.assertEqual(handler.read_bytes(),(self.repo/'runtime/sv08_rauc_bootloader.py').read_bytes())
         with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
              patch.object(m,'configure_recovery_password'),patch.object(m,'installed_provider_inputs',return_value={}), \
-             patch.object(m,'stage_recovery_units',side_effect=late_units),patch.object(stage_admin_ui,'stage'):
+             patch.object(m,'stage_recovery_units',side_effect=late_units),patch.object(stage_admin_ui,'stage',side_effect=stage_checked):
             m.assemble(SimpleNamespace(work=work,intake=intake,lock=lock,execute=True,release_manifest=self.manifest))
         record=self.public(work/'rootfs')
         self.assertIn('usr/lib/systemd/system/sv08-recovery-display.service',record['staged_files'])
