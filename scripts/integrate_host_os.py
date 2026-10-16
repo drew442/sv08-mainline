@@ -5,6 +5,7 @@ No hardware access; default dry-run. Requires a caller-supplied release/GPT
 manifest. This does not supply a board bootloader, DTB or recovery kernel.
 """
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -55,6 +56,24 @@ def rebuild_initramfs(root):
         print(result.stdout, end='')
 
 
+def admission_subtree(target):
+    """Recognize only the exact pinned package payload before touching runtime."""
+    extras = target / 'klipper-extras'
+    if not extras.exists() and not extras.is_symlink():
+        return None
+    extension = extras / 'sv08_update.py'
+    if (extras.is_symlink() or not extras.is_dir() or
+            {path.name for path in extras.iterdir()} != {'sv08_update.py'} or
+            extension.is_symlink() or not extension.is_file()):
+        raise ValueError('Existing admission extension subtree is unrecognized')
+    pin = json.loads((REPO / 'configs/apps/update-admission.json').read_text())
+    source = REPO / pin['source']
+    if (hashlib.sha256(source.read_bytes()).hexdigest() != pin['source_sha256'] or
+            hashlib.sha256(extension.read_bytes()).hexdigest() != pin['source_sha256']):
+        raise ValueError('Existing admission extension does not match the pinned source')
+    return extras
+
+
 def stage(work, manifest, refresh=False, owner_key=None):
     validate(manifest)
     root = work / 'rootfs'
@@ -62,11 +81,13 @@ def stage(work, manifest, refresh=False, owner_key=None):
         raise ValueError('Use an isolated completed baseline copy')
     target = root / 'usr/lib/sv08'
     target_exists = target.exists() or target.is_symlink()
+    admission = None
     if target_exists:
-        if not refresh:
-            raise ValueError('Integration is already staged; use a fresh copy')
         if target.is_symlink() or not target.is_dir():
             raise ValueError('Existing integration target is not a regular directory')
+        admission = admission_subtree(target)
+        if not refresh and (admission is None or list(target.iterdir()) != [admission]):
+            raise ValueError('Integration is already staged or contains unknown files; use a fresh copy')
     command_links = []
     for command, module in [('sv08-state', 'sv08_state.py'), ('sv08-package', 'sv08_package.py')]:
         link = root / 'usr/bin' / command
@@ -86,8 +107,16 @@ def stage(work, manifest, refresh=False, owner_key=None):
     key_seed = owner_key_source(root, owner_key)
     # All refresh preconditions are checked before replacing the existing runtime.
     if target_exists:
-        shutil.rmtree(target)
-    target.mkdir(parents=True)
+        # The admission Debian package owns this subtree. Preserve its validated
+        # bytes and metadata while replacing only integration-owned runtime.
+        for child in target.iterdir():
+            if child == admission:
+                continue
+            if child.is_dir() and not child.is_symlink():
+                shutil.rmtree(child)
+            else:
+                child.unlink()
+    target.mkdir(parents=True, exist_ok=True)
     for path in (REPO / 'runtime').glob('*.py'):
         shutil.copyfile(path, target / path.name)
     (target / 'sv08_rauc_bootloader.py').chmod(0o755)
