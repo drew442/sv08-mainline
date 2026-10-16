@@ -74,6 +74,39 @@ class ImageInventoryTests(unittest.TestCase):
         self.assertEqual({r['path'] for r in records},{'usr/bin/app','usr/escape','bin/busybox'})
         with self.assertRaises(ValueError):m.safe_file(self.base,'usr/escape')
 
+    def test_opt_application_only_and_symlinks_are_not_followed(self):
+        for name in ('opt/sv08-mainline/klipper/klippy.py',
+                     'opt/sv08-mainline/venvs/klipper/bin/python',
+                     'opt/private/secret', 'opt/sv08-mainline-other/token',
+                     'etc/private', 'data/token'):
+            path=self.base/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'fixture')
+        link=self.base/'opt/sv08-mainline/venvs/klipper/bin/python3'
+        link.symlink_to('/opt/private/secret')
+        directory=self.base/'opt/sv08-mainline/escape'
+        directory.symlink_to(self.base/'opt/private',target_is_directory=True)
+        original=m.file_hash;hashed=[]
+        def capture(path,*args):
+            relative=path.relative_to(self.base).as_posix()
+            self.assertIn(relative,('opt/sv08-mainline/klipper/klippy.py',
+                                    'opt/sv08-mainline/venvs/klipper/bin/python'))
+            hashed.append(relative);return original(path,*args)
+        with patch.object(m,'file_hash',side_effect=capture):records=m.tree_inventory(self.base)
+        self.assertEqual(len(hashed),2)
+        self.assertEqual({r['path'] for r in records},set(hashed)|{
+            'opt/sv08-mainline/escape','opt/sv08-mainline/venvs/klipper/bin/python3'})
+        self.assertTrue(all(r['kind']=='symlink' for r in records if r['path'] not in hashed))
+
+    def test_opt_ancestor_and_application_root_symlinks_are_not_followed(self):
+        outside=self.base/'private';outside.mkdir();(outside/'secret').write_bytes(b'secret')
+        for ancestor in ('opt','opt/sv08-mainline'):
+            with self.subTest(ancestor=ancestor):
+                link=self.base/ancestor;link.parent.mkdir(parents=True,exist_ok=True)
+                link.symlink_to(outside,target_is_directory=True)
+                with patch.object(m,'file_hash',side_effect=AssertionError('secret read')):
+                    self.assertEqual(m.tree_inventory(self.base),[dict(
+                        path=ancestor,kind='symlink',target=str(outside),coverage='not-followed')])
+                link.unlink()
+
     def test_missing_package_database_is_explicit_unknown_input(self):
         self.assertEqual(m.installed_packages(self.base),[])
 
