@@ -56,7 +56,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Production source preflight proves current integration-generated mainsail/nginx seeds and public-key seed marked unmatched code. Add exact generated-source mappings and separately bound public-key non-code input, preserving arbitrary unmatched refusal; tests ownership required.",
       "checks": [
         "composition",
         "release-gate",
@@ -69,7 +69,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "44582363a5fd4982ba80b0a02505119c",
+        "session": "current-release-20261015"
+      },
       "input_paths": [
         "configs/apps/",
         "configs/host-os/",
@@ -100,13 +104,15 @@
         "tests/test_recovery_image.py",
         "scripts/finalize_diagnostic_host.py",
         "tests/test_finalize_diagnostic_host.py",
-        "docs/hardware/host-board-image.md"
+        "docs/hardware/host-board-image.md",
+        "scripts/project_license.py",
+        "tests/test_project_license.py"
       ],
       "repeats": 0,
       "resumption": "Same authorized complete-image goal; fresh-host finalization ownership added based on source evidence. Running package process retained.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "pending",
+      "status": "blocked",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
