@@ -69,7 +69,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "27b794f30d76451fb47d560395326689",
+        "session": "current-release-20261015"
+      },
       "input_paths": [
         "configs/apps/",
         "configs/host-os/",
@@ -108,7 +112,7 @@
       "resumption": "Same owner goal; measured source preflight requires exact generated seed and separately bound public-key input classifications, not a weaker source gate.",
       "review_policy": "self",
       "review_reason": "Private disposable development image and reversible source work; no hardware operations, release distribution or deployment.",
-      "status": "pending",
+      "status": "running",
       "title": "Build, qualify and publish complete current software image evidence",
       "validation": null,
       "verification": null
