@@ -1,6 +1,6 @@
 # Complete current-image software qualification
 
-The complete **7,818,182,656-byte A/B plus independent-recovery image** passed the actual default `selected-software` release gate. Actual altered-payload and missing-artifact cases were refused without publishing evidence packages; the original image and input were restored exactly. Review publication is pending.
+The complete **7,818,182,656-byte A/B plus independent-recovery image** passed the actual default `selected-software` release gate. Actual altered-payload and missing-artifact cases were refused without publishing evidence packages; the original image and input were restored exactly. Published for owner review in [PR #29](https://github.com/drew442/sv08-mainline/pull/29).
 
 This is **software/source preparation evidence for a non-deployable diagnostic image**. Hardware, printing, recovery execution, legal compliance and complete-image reproducibility are not qualified. No printer operation, flashing, deployment or merge occurred.
 
@@ -84,3 +84,5 @@ The full image and ten-file evidence package remain on Beelink under `/home/drew
 Deferred qualifications are the gate's explicit hardware/recovery-execution/legal/full-reproducibility limits and the separately retained commissioning guard failures. Printer services, activation and boot health stay masked in this diagnostic artifact.
 
 After successful refusal/restoration checks, verified superseded 83 recovery roots/payloads and the six unused composition components were removed. Source branches, historical receipts/logs, current construction inputs, the single qualified full image and its evidence remain. Observed free space after cleanup: about 6.1 GiB locally and 14.7 GiB on Beelink. Cumulative generated-data accounting was not reset.
+
+PR #29 is open for review. CI was in progress at the publication observation recorded in the JSON; the coordinator checks the final pushed head separately. Feature integration and printer deployment await their separate owner-authorized workflows.

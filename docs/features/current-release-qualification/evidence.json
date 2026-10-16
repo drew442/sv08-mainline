@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "status": "software qualification passed; review publication pending",
+  "status": "complete current-image software qualification published for owner review",
   "date_utc": "2026-10-16",
   "artifact": {
     "bytes": 7818182656,
@@ -678,7 +678,27 @@
       "remote_GiB": 25
     }
   },
-  "publication": null,
+  "publication": {
+    "baseRefName": "main",
+    "headRefOid": "6d0d74f2b993e6ca66222f32577869345f00afe7",
+    "isDraft": false,
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-16T01:47:48Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/drew442/sv08-mainline/actions/runs/38836948883/job/116768092733",
+        "name": "deterministic-checks",
+        "startedAt": "2026-10-16T01:46:53Z",
+        "status": "COMPLETED",
+        "workflowName": "Agent workflow checks"
+      }
+    ],
+    "url": "https://github.com/drew442/sv08-mainline/pull/29",
+    "observed_at_utc": "2026-10-16T01:48:16.659225+00:00",
+    "observation_scope": "Head and CI state at this observation; this documentation update is committed/pushed afterward and remote receipt is rechecked by coordinator."
+  },
   "evidence_sha256": {
     "positive-gate-summary.json": "8304bc64a0870a9f25a396dc254dfa816b8ab090dc7931b355dd361f76b805b5",
     "composition.json": "f565bb8c32a43a6cf44fbf20a76fab01cd60023d5626535721e7a19cc7642c02",
