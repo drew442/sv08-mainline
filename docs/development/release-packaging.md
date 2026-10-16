@@ -30,8 +30,12 @@ packaging. Arbitrary JSON success receipts are not accepted. The license inputs
 have the existing [inventory tool](../../scripts/license_inventory.py) format;
 `mainsail.supplemental_notices` can add a `{root,path,sha256}` pin to the supplemental
 notice JSON produced below. Every selected application Debian package must match
-an installed package identity and its actual usr payload in at least one software
-partition. Non-usr package members are explicitly counted outside that binding.
+an installed package identity and its actual `usr` and `opt/sv08-mainline` software
+payload. A complete A/B disk requires a match in both normal roots; recovery is
+exempt from selected application presence, while its package and project-source
+checks still apply. Generic single-root images retain their existing matching
+requirement. Unsupported non-software members are explicitly counted outside
+that binding; the legacy non-usr counter also includes supported opt members.
 Selected configuration bytes must belong to the image's matching project source.
 Missing installed package databases or unresolved selected notices fail this scope.
 This does not assert that the selected inputs cover every installed dependency,
@@ -48,8 +52,8 @@ can qualify this scope, with that missing coverage recorded explicitly.
 The image tool supports raw ext4, DOS primary partitions and the existing validated
 GPT layout. GPT root A, root B and recovery software filesystems are inspected
 individually. Every partition has an exact byte hash; boot/data partitions remain
-opaque, without enumerating their contents. Only usr, bin/sbin/lib/lib64 software and dpkg metadata
-are enumerated. Configuration, credentials and user data are excluded. Notices,
+opaque, without enumerating their contents. Only usr, bin/sbin/lib/lib64, opt/sv08-mainline application software and dpkg metadata
+are enumerated. Other opt paths are excluded. Configuration, credentials and user data are excluded. Notices,
 actual package names/versions/architectures, usr squashfs hashes, project provenance,
 and missing/unknown coverage are reported. Invalid project provenance and absent
 package databases remain visible in inspection reports; the corresponding release
@@ -194,3 +198,19 @@ skipped; portable approval/text/identity rejection tests still run. The release
 unit fixture qualifies real supplier bytes and writes the actual evidence files,
 while mocking image inspection and unrelated full inventory generation. Actual
 image inspection and full release execution remain coordinator integration checks.
+
+## Constructing current diagnostic roots
+
+Fresh diagnostic hosts can be finalized with `scripts/finalize_diagnostic_host.py
+--fresh` after the pinned bootstrap/package/refresh stages and host integration.
+The finalizer verifies stage/profile identity, actual package audit/dependencies
+and existing diagnostic checks; copied roots instead use `--source-receipt`. See
+[host composition](../hardware/host-board-image.md) for the full contract.
+
+Recovery `assemble` and `derive` accept `--release-manifest PATH` for exact
+nondeployable release bytes with the current clean source revision. Final project
+notices/provenance are generated after recovery staging and their binding is
+recorded before assembly inventory. Derivation preserves and verifies inherited
+bindings; build rechecks them without refreshing source. The final anonymous
+source qualifier still establishes public availability independently. Default
+development recovery assembly remains available and is not silently qualified.
