@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "d7a174adac81f5425d93b5d3086801c6619b2a795eb10ab44601fa24b1a1b750",
-    "rationale": "Source preflight demonstrates integrated factory seeds fail current gate; explicit source/test ownership preserves code and non-code boundaries with drift checks.",
+    "proposal_sha256": "1cfa9ec5554b907b13bf9ebdb7a5555f52f0cb78435b61b1c1b3ab5443d99cef",
+    "rationale": "Actual selected package/core integration conflict; authorize exact admission payload preservation and focused integration tests.",
     "reference": "docs/features/current-release-qualification/owner-request.md",
     "reference_sha256": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3",
     "requirements_sha256": {
@@ -13,9 +13,9 @@
       "docs/development/release-packaging.md": "7bf36aa87a19b79926f2bd4879e4c4ad8109f5fb9f641f6cab50d4cb72087ba5",
       "docs/features/current-release-qualification/owner-request.md": "2edc573065e83bba175a5dfae419a40d004f186143a5152618d22fce217ca2a3"
     },
-    "scope_sha256": "99955f6d0db4b1a692387d59d97cd33f2b6dba5fc1ed22fe616167a3471f8edb",
+    "scope_sha256": "af86e31149210ea6dd68fca405f18d84d5b81135b65832eb37449b7582d48607",
     "session": "current-release-20261015",
-    "source_commit": "6eb6fc54346e7a3302d66ff670071db72e0c451f"
+    "source_commit": "6bae57c96fa762a3d3e5da2111fba26291d9ea82"
   },
   "checks": [
     {
