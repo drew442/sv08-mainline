@@ -138,7 +138,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source work and disposable package builds only; read-only historical layers, no live service or hardware operations.",
-      "status": "validated",
+      "status": "done",
       "title": "Build, compare and qualify selected package pairs",
       "validation": {
         "actor": "root/coordinator",
