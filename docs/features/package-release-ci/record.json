@@ -1,0 +1,70 @@
+{
+  "format_version": 2,
+  "id": "package-release-ci",
+  "kind": "feature",
+  "title": "Automate package and release-gate CI regression checks",
+  "author": "root/coordinator",
+  "created": "2026-10-23",
+  "priority": 2,
+  "proposal": "docs/features/package-release-ci/proposal.md",
+  "requirements": [
+    "docs/features/package-release-ci/owner-request.md",
+    "docs/development/release-packaging.md",
+    "docs/development/reproducible-builds.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "ci-regressions",
+      "description": "Input-triggered actual hosted package/release regression checks, negative cases and durable bounded failure evidence, local runner/trigger tests and publication.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and qualify package/release CI",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "ci-regressions"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible CI/source work using synthetic offline tests on normal hosted runners; no images, secrets, publication credentials or live printer services.",
+      "hazards": [],
+      "owned_paths": [
+        ".github/workflows/package-release.yml",
+        "scripts/check_package_release.py",
+        "tests/test_package_release_ci.py",
+        "docs/features/package-release-ci/evidence.md"
+      ],
+      "input_paths": [
+        "scripts/",
+        "tests/",
+        "configs/",
+        "patches/",
+        "runtime/",
+        "ui/",
+        "extensions/",
+        "upstream-lock.json",
+        ".gitmodules",
+        "LICENSE",
+        "LICENSING.md"
+      ]
+    }
+  ]
+}
