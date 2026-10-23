@@ -83,7 +83,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "c731e260a4604d7da7f43622ed95a0d2",
+        "session": "stock-ready-followup-20261023"
+      },
       "input_paths": [
         "runtime/",
         "ui/",
@@ -132,7 +136,7 @@
       "resumption": "Owner expands PR33 acceptance; preserve initial published candidate and measurements, reauthorize exact follow-up scope before implementation. No physical work or recovery-host qualification.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "pending",
+      "status": "running",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
