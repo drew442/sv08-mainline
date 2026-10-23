@@ -85,7 +85,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "48b9841fa2694988b7edebff8f164e72",
+        "session": "stock-calibration-final-20261023"
+      },
       "input_paths": [
         "runtime/",
         "ui/",
@@ -149,7 +153,7 @@
       "resumption": "Tested parser/selection checkpoint6a98643 preserved. Add exact draft JSON schema ownership required by versioned stored calibration; no scope or budget reset, all previous evidence retained.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "pending",
+      "status": "running",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
