@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "bd4a9cccea5525d40c0a858dfa4f6457f53ad52507f7d763c1a78ea961eeb4af",
-    "rationale": "Owner authorized deterministic package/release regression CI, failure evidence, agent implementation and review publication.",
+    "rationale": "Actual selected125test run exposes one exact stale accounting expectation; include that test file for a bounded expected-field repair retaining all counts, within existing owner CI goal. No production scope or protections changed; failed evidence preserved.",
     "reference": "docs/features/package-release-ci/owner-request.md",
     "reference_sha256": "1c6139b1c2fadbad97e7c826247745cba29c174e9ff49eef8a78ff792a6e6308",
     "requirements_sha256": {
@@ -14,9 +14,9 @@
       "docs/development/reproducible-builds.md": "d2933dd7b9b30d9a1a0f5aea459d506f73f6e9ae8b364bde9bcfea7c20f821d0",
       "docs/features/package-release-ci/owner-request.md": "1c6139b1c2fadbad97e7c826247745cba29c174e9ff49eef8a78ff792a6e6308"
     },
-    "scope_sha256": "777e9a93553fdcee4b90ed31252e558ece6e63b47aba92787ecf88f8ee4f7eb0",
+    "scope_sha256": "8b4a956f069aa21583d0c3e895e2a05d37f09f1dc7f3834fc60e7f4d7472be78",
     "session": "package-ci-20261023",
-    "source_commit": "509c5685167b4978c18f280c986bab391845345a"
+    "source_commit": "e30c9e227f630ef90b5ea51a9538a108c5ade951"
   },
   "checks": [
     {
