@@ -1,0 +1,105 @@
+{
+  "format_version": 2,
+  "id": "stock-printer-readiness",
+  "kind": "feature",
+  "title": "Close autonomous stock-printer gaps and prepare commissioning",
+  "author": "root/coordinator",
+  "created": "2026-10-23",
+  "priority": 2,
+  "proposal": "docs/features/stock-printer-readiness/proposal.md",
+  "requirements": [
+    "docs/features/stock-printer-readiness/owner-request.md",
+    "docs/features/complete-printer-configuration/proposal.md",
+    "docs/features/complete-printer-configuration/calibration-decision.md",
+    "docs/features/factory-sv08-definitions/proposal.md",
+    "docs/development/printer-hardware-page-design.md",
+    "docs/decisions/20261003-commissioning-host-baseline.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "inventory",
+      "description": "Exact source/evidence readiness and gap matrix, stock vs named hardware distinguished.",
+      "environment": "offline"
+    },
+    {
+      "id": "calibration",
+      "description": "Definition calibration invalidation/editor persistence and composed browser outcomes.",
+      "environment": "offline"
+    },
+    {
+      "id": "stock-config",
+      "description": "Factory/full parser/definition/publication regressions; no protection weakening.",
+      "environment": "offline"
+    },
+    {
+      "id": "session",
+      "description": "One existing-queue-linked practical commissioning session, exact physical-only gaps and action gates.",
+      "environment": "offline"
+    },
+    {
+      "id": "publication",
+      "description": "Complete stable diff, source-bound evidence and review PR.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Repair stock calibration state and close commissioning preparation",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "inventory",
+        "calibration",
+        "stock-config",
+        "session",
+        "publication"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_printer_compose.py",
+        "runtime/sv08_printer_store.py",
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "tests/test_factory_sv08.py",
+        "tests/test_printer_definitions.py",
+        "tests/test_printer_stack.py",
+        "tests/test_printer_publication.py",
+        "tests/test_printer_browser_fixture.py",
+        "tests/printer_browser.mjs",
+        ".github/workflows/cockpit-readiness.yml",
+        "docs/development/stock-printer-readiness.md",
+        "docs/hardware/test-sv08-01-commissioning-session.md",
+        "docs/hardware/coordinated-human-tasks.md",
+        "docs/hardware/host-os-tasks.md",
+        "docs/features/stock-printer-readiness/evidence.md"
+      ],
+      "input_paths": [
+        "runtime/",
+        "ui/",
+        "catalog/printer/",
+        "configs/",
+        "scripts/",
+        "tests/",
+        "upstream-lock.json",
+        ".gitmodules"
+      ]
+    }
+  ]
+}
