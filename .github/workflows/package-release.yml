@@ -69,19 +69,6 @@ jobs:
           TMPDIR: ${{ runner.temp }}
           SV08_GCODEVIEWER_ARCHIVE: ${{ runner.temp }}/gcodeviewer-3.7.18.tgz
         run: python3 scripts/check_package_release.py --output "$RUNNER_TEMP/package-release-evidence"
-      - name: Deliberate failed-test artifact qualification probe
-        env:
-          PYTHONDONTWRITEBYTECODE: '1'
-        run: |
-          python3 - <<'PY'
-          import importlib.util, os
-          from pathlib import Path
-          root = Path.cwd()
-          (root / 'tests/test_ci_failure_probe.py').write_text('import unittest\nclass Probe(unittest.TestCase):\n    def test_expected_failure(self):\n        self.fail("expected bounded CI artifact qualification failure")\n')
-          spec = importlib.util.spec_from_file_location('gate', root / 'scripts/check_package_release.py')
-          gate = importlib.util.module_from_spec(spec); spec.loader.exec_module(gate)
-          raise SystemExit(gate.run(root, Path(os.environ['RUNNER_TEMP']) / 'package-release-evidence', ['test_ci_failure_probe.py']))
-          PY
       - name: Retain bounded regression evidence even after failure
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
