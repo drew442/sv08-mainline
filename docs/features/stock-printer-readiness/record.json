@@ -71,7 +71,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve tested native parser/selection checkpoint. Version2 storage requires exact catalog draft schema ownership; extend before changing format contracts, preserving all attempts and cumulative allowance.",
       "checks": [
         "inventory",
         "calibration",
@@ -152,7 +152,7 @@
       "resumption": "Owner selected literal SAVE_CONFIG with automatic reconciliation. Preserve UI/component/fixture checkpoint10d74cc and failed evidence; add exact reconciler/service/staging/version-parser ownership, keep cumulative allowances and physical gates.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "running",
+      "status": "blocked",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
