@@ -151,7 +151,7 @@ class MainsailNoticeDependencies(unittest.TestCase):
                 report=notices.selection_resolution(inputs)
                 self.assertEqual(report['coverage'],dict(historical_records=69,historical_notice_resolved=60,
                     historical_notice_unresolved=9,selected_dependencies=931,measured_selection_remediations=2,
-                    remaining_selected_notice_gaps=7))
+                    accepted_distributor_standard_terms=0,remaining_selected_notice_gaps=7))
                 records={r['path']:r for r in report['records']}
                 for name in ('throttleit','de-indent'):
                     self.assertEqual(records['node_modules/'+name]['historical_notice_status'],'unresolved-author-notice')

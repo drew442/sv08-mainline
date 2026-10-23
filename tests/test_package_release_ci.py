@@ -4,6 +4,9 @@ import contextlib
 import fnmatch
 import importlib.util
 import io
+import os
+import subprocess
+import textwrap
 import json
 from pathlib import Path
 import sys
@@ -67,6 +70,36 @@ class GateTests(unittest.TestCase):
         self.assertIn('git failed', report['errors'][0])
         self.assertLessEqual((self.output / (noisy + '.log')).stat().st_size, gate.LOG_LIMIT)
         self.assertEqual(report['suites'][0]['tests'], 1)
+
+    def test_late_failure_after_flood_retains_diagnostic_and_failed_outcome(self):
+        noisy = self.fixture('late_failure', '    def test_flood(self):\n        print("雪" * 150000)\n        self.fail("late failure diagnostic retained")\n')
+        code, report = self.run_gate([noisy])
+        self.assertEqual(code, 1)
+        self.assertFalse(report['passed'])
+        raw = (self.output / (noisy + '.log')).read_bytes()
+        self.assertLessEqual(len(raw), gate.LOG_LIMIT)
+        self.assertIn(b'earlier log output truncated', raw)
+        self.assertIn(b'late failure diagnostic retained', raw)
+        self.assertIn(b'FAILED (failures=1)', raw)
+
+    def test_preparation_failures_keep_bounded_error_logs_and_nonzero_status(self):
+        text = (ROOT / '.github/workflows/package-release.yml').read_text()
+        (self.root / 'package-release-evidence').mkdir()
+        for name, log in (('Fetch and verify exact bounded public test input', 'fixture-preparation.log'),
+                          ('Prepare only pinned public Mainsail source', 'mainsail-preparation.log')):
+            step = text.split('      - name: ' + name + '\n', 1)[1].split('      - name:', 1)[0]
+            script = textwrap.dedent(step.split('        run: |\n', 1)[1])
+            # Exercise the actual workflow shell wrapper with a failed input
+            # command, without network access or mutating any submodule.
+            head = script.split('\n', 2)[:2]
+            script = '\n'.join(head) + "\npython3 -c 'print(150000 * chr(120))'\necho preparation-diagnostic >&2\nfalse\necho wrongly-continued\nPREP\n"
+            result = subprocess.run(['bash', '-e', '-o', 'pipefail', '-c', script],
+                                    env={**os.environ, 'RUNNER_TEMP': str(self.root)}, capture_output=True)
+            self.assertNotEqual(result.returncode, 0, result.stderr)
+            raw = (self.root / 'package-release-evidence' / log).read_bytes()
+            self.assertLessEqual(len(raw), gate.LOG_LIMIT)
+            self.assertIn(b'preparation-diagnostic', raw)
+            self.assertNotIn(b'wrongly-continued', raw)
 
     def test_workflow_triggers_permissions_inputs_and_failure_artifact(self):
         # No YAML dependency on hosted runners: inspect the deliberately small

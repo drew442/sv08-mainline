@@ -26,12 +26,23 @@ SUITES = (
 LOG_LIMIT = 128 * 1024
 
 
-class BoundedLog(io.StringIO):
+class BoundedLog(io.TextIOBase):
+    """Keep the latest diagnostics when noisy tests exceed the artifact limit."""
+    marker = b'[earlier log output truncated; retaining tail]\n'
+
+    def __init__(self):
+        self.tail = b''
+        self.truncated = False
+
     def write(self, text):
-        remaining = LOG_LIMIT - len(self.getvalue().encode('utf-8'))
-        if remaining > 0:
-            super().write(text.encode('utf-8')[:remaining].decode('utf-8', errors='ignore'))
+        raw = self.tail + text.encode('utf-8')
+        capacity = LOG_LIMIT - len(self.marker)
+        self.truncated = self.truncated or len(raw) > capacity
+        self.tail = raw[-capacity:]
         return len(text)
+
+    def getvalue(self):
+        return (self.marker if self.truncated else b'').decode() + self.tail.decode('utf-8', errors='ignore')
 
 
 def source_metadata(root):

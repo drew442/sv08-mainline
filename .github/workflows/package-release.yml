@@ -45,6 +45,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          bash -euo pipefail <<'PREP' 2>&1 | tail -c 131072 > "$RUNNER_TEMP/package-release-evidence/fixture-preparation.log"
           curl --fail --location --max-time 60 --max-filesize 1048576 --output "$RUNNER_TEMP/gcodeviewer-3.7.18.tgz" 'https://registry.npmjs.org/@sindarius/gcodeviewer/-/gcodeviewer-3.7.18.tgz'
           python3 - <<'PY'
           import base64, hashlib, json, os
@@ -54,8 +55,14 @@ jobs:
           assert hashlib.sha256(raw).hexdigest() == record['archive_sha256'], 'supplier SHA256 mismatch'
           assert 'sha512-' + base64.b64encode(hashlib.sha512(raw).digest()).decode() == record['integrity'], 'supplier SRI mismatch'
           PY
+          PREP
       - name: Prepare only pinned public Mainsail source
-        run: git submodule update --init --depth 1 -- upstream/mainsail
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -euo pipefail <<'PREP' 2>&1 | tail -c 131072 > "$RUNNER_TEMP/package-release-evidence/mainsail-preparation.log"
+          git submodule update --init --depth 1 -- upstream/mainsail
+          PREP
       - name: Run deterministic offline package and release gates
         env:
           PYTHONDONTWRITEBYTECODE: '1'
