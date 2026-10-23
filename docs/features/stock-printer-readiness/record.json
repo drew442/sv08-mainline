@@ -67,7 +67,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve diagnosed calibration repair checkpoint; explicit-null required-input accounting needs exact generator ownership extension. Legacy current preset in definition-backed component preview also diagnosed. No new owner scope or protection waiver.",
       "checks": [
         "inventory",
         "calibration",
@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "9197a91285ba49a3a90e063545f08dc6",
+        "session": "stock-ready-20261023"
+      },
       "input_paths": [
         "runtime/",
         "ui/",
@@ -114,7 +118,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "pending",
+      "status": "blocked",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
