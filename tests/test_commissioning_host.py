@@ -7,6 +7,7 @@ import hashlib
 import json
 import multiprocessing
 import os
+import shutil
 import stat
 from pathlib import Path
 import subprocess
@@ -59,6 +60,32 @@ def historical_source_fixture(root):
     shell = root / 'etc/cockpit/cockpit.conf'
     shell.parent.mkdir(parents=True, exist_ok=True)
     shell.write_bytes(b'[WebService]\nShell=/sv08-host/index.html\n')
+    return root
+
+
+def historical_staging_checkout(root):
+    """Represent the accepted source combination, not current-main compatibility.
+
+    The stager requires the edit-start bootloader unchanged, alongside today's
+    explicitly staged helper/theme/unit. Share only read-only Git object lookup;
+    no checkout, index update or production guard substitution is performed.
+    """
+    root.mkdir()
+    gitdir = subprocess.check_output(
+        ['git', '-C', str(REPO), 'rev-parse', '--absolute-git-dir'],
+        text=True, timeout=3).strip()
+    (root / '.git').write_text('gitdir: ' + gitdir + '\n')
+    for relative in ('runtime/sv08_commissioning_health.py', 'ui/host/style.css',
+                     'configs/host-os/commissioning/sv08-commissioning-health.service'):
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(REPO / relative, target)
+    shutil.copytree(REPO / 'configs/host-os/cockpit-branding',
+                    root / 'configs/host-os/cockpit-branding')
+    bootloader = subprocess.check_output(
+        ['git', '-C', str(REPO), 'show',
+         staging.DEPENDENCY_REVISION + ':runtime/sv08_rauc_bootloader.py'], timeout=3)
+    (root / 'runtime/sv08_rauc_bootloader.py').write_bytes(bootloader)
     return root
 
 
@@ -342,6 +369,8 @@ class CommissioningTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.checkout = historical_staging_checkout(self.root / 'staging-source')
+        self.enterContext(patch.object(staging, 'REPO', self.checkout))
 
     def run_fixture(self, counter, **options):
         rt = FixtureRuntime(self.root / ('state-'+str(counter)), counter)
@@ -463,6 +492,15 @@ class CommissioningTests(unittest.TestCase):
         self.assertEqual(one,two)
         result=staging.stage(self.source,cfg,self.root/'overlay',True,deployment_preimages=PREIMAGES)
         output=self.root/'overlay/rootfs'
+        self.assertEqual(result['dependency_revision'], staging.DEPENDENCY_REVISION)
+        bootloader = subprocess.check_output(
+            ['git', '-C', str(REPO), 'show',
+             staging.DEPENDENCY_REVISION + ':runtime/sv08_rauc_bootloader.py'], timeout=3)
+        relative = 'usr/lib/sv08/sv08_rauc_bootloader.py'
+        self.assertEqual((output / relative).read_bytes(), bootloader)
+        self.assertEqual(result['files'][relative]['sha256'], staging.sha(bootloader))
+        self.assertEqual(result['preimages'][relative], dict(kind='absent'))
+        self.assertNotIn('/usr/lib/sv08/sv08_environment_device.py', result['dependency_closure'])
         self.assertEqual((output/'usr/lib/sv08/sv08_state.py').read_bytes(),staging.source(staging.TLS,'runtime/sv08_state.py'))
         self.assertNotIn(b'sv08_data_budget',(output/'usr/lib/sv08/sv08_state.py').read_bytes())
         # Existing sv08-state symlink executes this file directly. TLS overlay
@@ -490,6 +528,25 @@ class CommissioningTests(unittest.TestCase):
         bad=copy.deepcopy(cfg);bad['dependencies']['/usr/lib/sv08/sv08_state.py']='0'*64
         with self.assertRaisesRegex(ValueError,'closure'):staging.stage(self.source,bad,deployment_preimages=PREIMAGES)
         with self.assertRaises(ValueError):staging.check_target(output,result)
+
+    def test_staging_refuses_incompatible_or_modified_bootloader_source(self):
+        cfg = config()
+        # Current-main's metadata recheck belongs to a different composition;
+        # deriving config from that checkout must not bypass the source guard.
+        with patch.object(staging, 'REPO', REPO):
+            current = (REPO / 'runtime/sv08_rauc_bootloader.py').read_bytes()
+            self.assertNotEqual(current, staging.source(
+                staging.DEPENDENCY_REVISION, 'runtime/sv08_rauc_bootloader.py'))
+            with self.assertRaisesRegex(ValueError, 'Reconcile bootloader source'):
+                staging.stage(self.source, config(), self.root / 'current-overlay',
+                              True, deployment_preimages=PREIMAGES)
+        self.assertFalse((self.root / 'current-overlay').exists())
+        path = self.checkout / 'runtime/sv08_rauc_bootloader.py'
+        path.write_bytes(path.read_bytes() + b'\n# unreviewed local modification\n')
+        with self.assertRaisesRegex(ValueError, 'Reconcile bootloader source'):
+            staging.stage(self.source, cfg, self.root / 'modified-overlay',
+                          True, deployment_preimages=PREIMAGES)
+        self.assertFalse((self.root / 'modified-overlay').exists())
 
     def test_copied_target_preflight_dependency_and_preimage_conflicts(self):
         manifest = staging.stage(self.source,config(),deployment_preimages=PREIMAGES)
