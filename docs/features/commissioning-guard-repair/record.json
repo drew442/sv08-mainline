@@ -1,57 +1,71 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "e246c95507c9565824f96ea84b4edf601b79eba56d0547d976e38b4012561495",
+    "rationale": "Explicit owner goal to fix PR29 commissioning failures using agents; offline repair and publication.",
+    "reference": "docs/features/commissioning-guard-repair/owner-request.md",
+    "reference_sha256": "d377d70ad9a2c644e18caae7daf767e64e6ace03d39bb891d036ed1740979b9b",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/commissioning-guard-repair/owner-request.md": "d377d70ad9a2c644e18caae7daf767e64e6ace03d39bb891d036ed1740979b9b"
+    },
+    "scope_sha256": "24f0e1ac258ceb9b6e8f741b94e3d6b650c9a7e75a6fa880edcfba5a03e27df6",
+    "session": "commissioning-20261023",
+    "source_commit": "df8d0320ae539b7062d7540247179ec70db820b3"
+  },
+  "checks": [
+    {
+      "description": "Commissioning reproduction and repaired full suite, dependency refusal regressions, relevant adjacent checks and source-bound publication.",
+      "environment": "offline",
+      "id": "offline-journey"
+    }
+  ],
+  "created": "2026-10-23",
+  "decision": null,
   "format_version": 2,
   "id": "commissioning-guard-repair",
   "kind": "feature",
-  "title": "Repair commissioning dependency-source test failures",
-  "author": "root/coordinator",
-  "created": "2026-10-23",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/commissioning-guard-repair/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/commissioning-guard-repair/owner-request.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "offline-journey",
-      "description": "Commissioning reproduction and repaired full suite, dependency refusal regressions, relevant adjacent checks and source-bound publication.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Repair and validate commissioning staging provenance",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "offline-journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source and disposable offline fixture repair only; no deployed or physical changes.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "scripts/project_license.py"
+      ],
       "owned_paths": [
         "scripts/stage_commissioning_host.py",
         "tests/test_commissioning_host.py",
         "docs/features/commissioning-guard-repair/evidence.md"
       ],
-      "input_paths": [
-        "runtime/",
-        "scripts/project_license.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable offline fixture repair only; no deployed or physical changes.",
+      "status": "pending",
+      "title": "Repair and validate commissioning staging provenance",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Repair commissioning dependency-source test failures"
 }
