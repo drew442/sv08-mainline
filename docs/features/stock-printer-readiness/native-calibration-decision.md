@@ -1,0 +1,9 @@
+# Native calibration persistence decision — 2026-10-23
+
+Owner selected: “Normal SAVE_CONFIG, with automatic reconciliation (recommended)”. Users may run supported configured Klipper calibration tools and normal SAVE_CONFIG/restart; a separate manual Cockpit import is not the required path.
+
+Implementation uses unmodified pinned Klipper: mutable top-level calibration options and native autosave footer, immutable hardware/limits/macros includes, strict option ownership and automatic hardware-bound calibration reconciliation. Preserve normal stopped publication/restoration admission. Reconciliation imports recognized native measurements/profile changes atomically without publishing/restarting services or activating heaters/motion. A Full configuration has usable normal print macros behind a closed-by-default per-Klipper-instance acknowledgement; validate the loaded configuration and persisted calibration before opening it on that same socket connection. Setup stays blocked. Do not infer measurement from offset being nonzero; zero may be measured. Reconnects never inherit previous instance acknowledgement. A renewable lease is unnecessary.
+
+Version-aware offline inspection/migration must preserve originals and explain incompatible older readers. Do not delete clear markers, invent measurements, mutate immutable source snapshots or claim transparent downgrade compatibility. Preserve the old envelope's known top-level shape and fail closed under older software where unsupported. Ordinary generation rollback should retain the prior generation's compatible configuration.
+
+This is reversible source/disposable work. No printer access, deployment, physical calibration or automatic service activation on a real printer is authorized by this decision. Physical checks remain tasks for the configured printer, not an exhaustive test of every parameter combination.
