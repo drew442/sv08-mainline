@@ -49,7 +49,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "4d922d037abc4decace95bbaf560dc19",
+        "session": "repro-20261023"
+      },
       "input_paths": [
         "configs/apps/",
         "configs/host/",
@@ -80,7 +84,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source work and disposable package builds only; read-only historical layers, no live service or hardware operations.",
-      "status": "pending",
+      "status": "running",
       "title": "Build, compare and qualify selected package pairs",
       "validation": null,
       "verification": null
