@@ -67,7 +67,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Preserve diagnosed calibration repair checkpoint; explicit-null required-input accounting needs exact generator ownership extension. Legacy current preset in definition-backed component preview also diagnosed. No new owner scope or protection waiver.",
+      "blocker": null,
       "checks": [
         "inventory",
         "calibration",
@@ -81,11 +81,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "9197a91285ba49a3a90e063545f08dc6",
-        "session": "stock-ready-20261023"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/",
         "ui/",
@@ -112,13 +108,14 @@
         "docs/hardware/test-sv08-01-commissioning-session.md",
         "docs/hardware/coordinated-human-tasks.md",
         "docs/hardware/host-os-tasks.md",
-        "docs/features/stock-printer-readiness/evidence.md"
+        "docs/features/stock-printer-readiness/evidence.md",
+        "runtime/sv08_printer_generate.py"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Preserved checkpoint80fff10 and failed diagnostics; extend exact ownership to generator required-calibration handling. Same stock-readiness goal, physical gates and cumulative7200sec/4GiB budget retained.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
