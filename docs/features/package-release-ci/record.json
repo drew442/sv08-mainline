@@ -53,7 +53,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "87fb3b6ec14b4263a712010f161a695c",
+        "session": "package-ci-20261023"
+      },
       "input_paths": [
         "scripts/",
         "tests/",
@@ -77,7 +81,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible CI/source work using synthetic offline tests on normal hosted runners; no images, secrets, publication credentials or live printer services.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and qualify package/release CI",
       "validation": null,
       "verification": null
