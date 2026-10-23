@@ -2,9 +2,8 @@
 
 Status: prepared offline; no physical check is marked passed here. This is the
 single H01/H02/H04/H05/H06 session form linked by the
-[human queue](coordinated-human-tasks.md). Use it for an identified stock target or
-an explicitly declared modified target. The filename retains its historical named
-machine identity; it does not make that modified printer representative of stock.
+[human queue](coordinated-human-tasks.md). Use it for the identified printer with its actual selected definitions, including modifications. The filename retains its historical named
+machine identity; an unmodified printer and exhaustive parameter combinations are not prerequisites for this session.
 See the [current readiness and remaining gaps](../development/stock-printer-readiness.md).
 
 The purpose is to reach an attended first print with the correct configuration,
@@ -63,7 +62,7 @@ its dependent evidence, not unrelated completed checks.
 | 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; persist any measured gains through Cockpit as described below, never by borrowing factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
 | 7. Record manual probe calibration | Establish the reviewed gantry/bed plane first at the intended thermal state, then perform the supported manual probe procedure. Record the reported measurement in Cockpit as described below, save/regenerate/apply stopped, then restart only under the reviewed procedure. Confirm the saved value survives reload and the candidate no longer reports pending probe calibration. After the reviewed restart, verify the plane/mount has not changed; perform the mesh only after a valid probe measurement. Any subsequent tilt/QGL adjustment requires renewed probe calibration and then a new mesh. | H06 |
 | 8. First layer and print controls | With all preceding gates passed, use a known bounded test file and matching slicer start/end controls. Attend the first layer; separately verify pause, resume, cancel and shutdown. Record observed behavior, not just a successfully uploaded file. | H06 |
-| 9. Finish cleanly | Stop the job and outputs, preserve logs/calibration/configuration, confirm the intended persistent/stopped service state and record which capabilities are accepted. Stock support requires an actual stock target; a modified target proves only its selected configuration. | H02/H06 closure |
+| 9. Finish cleanly | Stop the job and outputs, preserve logs/calibration/configuration, confirm the intended persistent/stopped service state and record which capabilities are accepted. Accept the actual configured printer and record its selected definitions; no exhaustive combination testing is required. | H02/H06 closure |
 
 Stop immediately for smoke, unexpected heat/motion, wrong input association,
 communication loss or any inability to stop. Use the reviewed independent stop

@@ -138,6 +138,19 @@
         });
         renderComponents();controls();
     }
+    function activeComponentPresets() {
+        const plan=draft.definition_plan,seen=new Set(),selected=new Set();
+        function visit(ref) {
+            const key=ref.source+'::'+ref.id+'@'+ref.version;
+            if(seen.has(key))return;seen.add(key);
+            if(plan.replacements?.[key]){visit(plan.replacements[key]);return;}
+            const record=plan.snapshots[key];if(!record)return;
+            if(ref.source==='builtin')selected.add(record.id);
+            for(const dep of record.dependencies??[])visit({...dep,source:dep.source??ref.source});
+        }
+        for(const ref of plan?.selections??[])visit(ref);
+        return selected;
+    }
     function renderComponents() {
         const root=$('components');root.replaceChildren();
         for(const fan of draft.devices.filter(d=>d.kind==='fan')){const toggle=el('input');toggle.type='checkbox';toggle.checked=fan.settings.print_fan??['part_cooling_front','part_cooling_rear'].includes(fan.name);toggle.dataset.printFan=fan.name;toggle.onchange=()=>{fan.settings.print_fan=toggle.checked;edit();};root.append(label(fan.name.replaceAll('_',' ')+' · use for part cooling (M106/M107)',toggle));}
@@ -149,7 +162,7 @@
                 const presets=(board.presets??[]).filter(p=>p.id!=='funssor_cn3d_bed').filter(p=>p.devices.some(d=>d.kind===kind));
                 if(!presets.length)continue;
                 const target=draft.devices.find(d=>d.board===role&&d.kind===kind);
-                const match=presets.find(p=>p.id===target?.profile)??presets.find(p=>p.devices.every(expected=>draft.devices.some(d=>d.board===role&&d.name===expected.name&&d.kind===expected.kind&&Object.entries(expected.settings).every(([k,v])=>d.settings[k]===v))));
+                const match=presets.find(p=>p.id===target?.profile)??presets.find(p=>activeComponentPresets().has(board.id+'.'+p.id))??presets.find(p=>p.devices.every(expected=>draft.devices.some(d=>d.board===role&&d.name===expected.name&&d.kind===expected.kind&&Object.entries(expected.settings).every(([k,v])=>d.settings[k]===v))));
                 const choice=select([['',target?'Current configuration (modified)':'Choose installed component'],...presets.map(p=>[p.id,friendlyPreset(p,board)])],match?.id??'',value=>{if(value)chooseComponent(role,value);});
                 choice.dataset.component=kind;choice.dataset.board=role;
                 box.append(label(kind==='bed'?'Heated bed':'Hotend',choice));

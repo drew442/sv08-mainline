@@ -186,6 +186,30 @@ class CalibrationPersistence(unittest.TestCase):
                     self.assertTrue(result['validated']);self.assertFalse(result['physical_hardware'])
 
 
+class SelectedComponentContract(unittest.TestCase):
+    def test_browser_selection_uses_active_closure_and_replacements(self):
+        # Execute the production resolver with genuine factory source records.
+        # Historical snapshots and replaced dependency records must not select it.
+        catalog,draft=factory()
+        source=(ROOT/'ui/printer/app.js').read_text()
+        function=source[source.index('    function activeComponentPresets()'):source.index('    function renderComponents()')]
+        native=copy.deepcopy(draft)
+        replaced=copy.deepcopy(draft)
+        plan=replaced['definition_plan'];key=next(k for k,d in plan['snapshots'].items() if d['id']=='sv08-main.bed_assembly')
+        original=plan['snapshots'][key];custom=copy.deepcopy(original);custom['id']='custom-bed'
+        ref=dict(source='local',id=custom['id'],version=custom['version'],sha256=digest(custom),commit='fixture')
+        plan.setdefault('replacements',{})[key]=ref
+        plan['snapshots']['local::'+custom['id']+'@'+custom['version']]=custom
+        inactive=copy.deepcopy(native);inactive['definition_plan']['selections']=[]
+        script='const cases='+json.dumps([native,replaced,inactive])+';let draft;'+function+';process.stdout.write(JSON.stringify(cases.map(value=>{draft=value;return [...activeComponentPresets()]})));'
+        result=subprocess.run([os.environ.get('SV08_NODE','node')],input=script,capture_output=True,text=True,check=True)
+        selected=json.loads(result.stdout)
+        self.assertIn('sv08-main.bed_assembly',selected[0])
+        self.assertNotIn('sv08-main.bed_assembly',selected[1])
+        self.assertIn('sv08-tool.hotend_assembly',selected[1])
+        self.assertEqual(selected[2],[])
+
+
 class StackTests(unittest.TestCase):
     def test_factory_complete_closed_bundle_and_print_integration(self):
         catalog,draft=factory(True);original=copy.deepcopy(draft);output=generate(catalog,draft,'full')
