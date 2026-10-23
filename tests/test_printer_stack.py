@@ -96,6 +96,61 @@ class CalibrationPersistence(unittest.TestCase):
         self.assertEqual(self.state(),before)
         self.assertEqual((self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None,live)
 
+    def test_saved_component_choices_remain_available_without_repinning(self):
+        catalog,draft=factory()
+        self.request(action='save',draft=draft)
+        before=copy.deepcopy(self.state()['draft']['definition_plan'])
+        loaded=self.service.request({'action':'status'})
+        self.assertTrue(all(not b['presets'] for b in loaded['catalog']['boards'] if b['id'] in ('sv08-main','sv08-tool')))
+        choices=loaded['available_components']
+        for board,preset in [('sv08-main','bed_assembly'),('sv08-tool','hotend_assembly'),('sv08-main','exhaust_fan')]:
+            self.assertIn(preset,{p['id'] for p in choices[board]})
+        for role,preset in [('main','bed_assembly'),('tool','hotend_assembly'),('main','exhaust_fan')]:
+            changed=self.request(action='component',draft=self.state()['draft'],role=role,preset=preset)['draft']
+            self.request(action='save',draft=changed)
+            reloaded=self.service.request({'action':'status'})
+            self.assertIn(preset,{p['id'] for p in reloaded['available_components']['sv08-'+role]})
+            plan=reloaded['state']['draft']['definition_plan']
+            self.assertEqual(plan['runtime_assets'],before['runtime_assets'])
+            self.assertEqual(plan['snapshots'],before['snapshots'])
+        # A newer incompatible current source never becomes a pinned board choice.
+        self.c.boards['sv08-main']['source']['revision']='0'*40
+        loaded=self.service.request({'action':'status'})
+        self.assertNotIn('sv08-main',loaded['available_components'])
+        with self.assertRaisesRegex(ValueError,'pinned board mapping'):
+            self.request(action='component',draft=loaded['state']['draft'],role='main',preset='bed_assembly')
+        self.assertEqual(self.state()['draft']['definition_plan']['runtime_assets'],before['runtime_assets'])
+
+    def test_temperature_save_import_and_generate_guardrails(self):
+        catalog,draft=factory()
+        for expanded in (False,True):
+            candidate=apply_inputs(draft,catalog) if expanded else copy.deepcopy(draft)
+            bed=next(d for d in candidate['devices'] if d['kind']=='bed')
+            sensor=next(d for d in candidate['devices'] if d['name']==bed['settings']['sensor'])
+            sensor['settings']['max_temp']=120
+            self.request(action='save',draft=candidate)
+            saved=self.state();self.assertEqual(next(d for d in saved['draft']['devices'] if d['name']==sensor['name'])['settings']['max_temp'],120)
+            self.assertTrue(generate(catalog,saved['draft'],'setup')['complete'])
+            sensor['settings']['max_temp']=1200
+            for action in ('save','import'):
+                with self.assertRaisesRegex(ValueError,'supported-FDM'):
+                    self.request(action=action,draft=candidate,expected_revision=saved['revision'])
+            with self.assertRaisesRegex(ValueError,'supported-FDM'):generate(catalog,candidate,'full')
+            self.assertEqual(self.state(),saved)
+
+    def test_funssor_120_with_factory_curve_remains_a_local_modification(self):
+        catalog,draft=factory()
+        selected=self.request(action='component',draft=draft,role='main',preset='funssor_cn3d_bed')['draft']
+        sensor=next(d for d in selected['devices'] if d['kind']=='sensor' and d['board']=='main')
+        sensor['settings'].update(curve='sovol-bed',max_temp=120)
+        for candidate in (selected,apply_inputs(selected,catalog)):
+            catalog.validate(candidate)
+            self.request(action='save',draft=candidate)
+            generated=generate(catalog,self.state()['draft'],'setup')
+            self.assertTrue(generated['complete'],generated['blockers'])
+            self.assertIn('max_temp: 120',generated['text'])
+            self.assertEqual(next(c for c in candidate['definition_plan']['runtime_assets']['curves'] if c['id']=='sovol-bed')['reference_bounds'],[5,105])
+
     def test_legacy_geometry_replacements_invalidate_probe_but_fans_preserve_it(self):
         catalog,draft=factory(True);draft['definition_plan']['instance_values']={'probe.z_offset':.25}
         self.request(action='save',draft=draft);before=self.state()

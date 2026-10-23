@@ -47,6 +47,30 @@ def full_draft():
 
 class CatalogTests(unittest.TestCase):
     def setUp(self):self.c=Catalog(CATALOG)
+    def test_component_temperature_policy_boundaries_and_sensor_associations(self):
+        from sv08_printer_fields import validate_component_temperatures, SUPPORTED_FDM_TEMPERATURE_C
+        for kind,(low,high) in SUPPORTED_FDM_TEMPERATURE_C.items():
+            with self.subTest(kind=kind):
+                sensor=dict(name='renamed_sensor',kind='sensor' if kind in ('bed','extruder','chamber') else kind,board='main',settings=dict(min_temp=low,max_temp=high))
+                devices=[sensor]
+                if kind in ('bed','extruder','chamber'):
+                    devices.append(dict(name='renamed_heater',kind=kind,board='main',settings=dict(sensor='renamed_sensor')))
+                validate_component_temperatures(devices,{})
+                for field,value in [('min_temp',low-.01),('max_temp',high+.01)]:
+                    bad=copy.deepcopy(devices);bad[0]['settings'][field]=value
+                    with self.assertRaisesRegex(ValueError,'°C'):validate_component_temperatures(bad,{})
+                for value in (low,high):
+                    bad=copy.deepcopy(devices);bad[0]['settings']=dict(min_temp=value,max_temp=value)
+                    with self.assertRaisesRegex(ValueError,'below'):validate_component_temperatures(bad,{})
+        # The sensor name conveys no heater identity; actual association controls.
+        for kind,ceiling in [('bed',200),('extruder',500),('chamber',150)]:
+            devices=[dict(name='hotend_named_sensor',kind='sensor',board='main',settings=dict(min_temp=5,max_temp=ceiling+1)),dict(name='custom',kind=kind,board='main',settings=dict(sensor='hotend_named_sensor'))]
+            with self.assertRaisesRegex(ValueError,kind+' supported-FDM'):validate_component_temperatures(devices,{})
+        devices=[dict(name='custom',kind='sensor',board='main',settings=dict(curve='limited',max_temp=121))]
+        with self.assertRaisesRegex(ValueError,'documented sensor'):validate_component_temperatures(devices,{'limited':{'limits':[0,120]}})
+        devices[0]['settings']=dict(curve='limited',min_temp=-1)
+        with self.assertRaisesRegex(ValueError,'documented sensor'):validate_component_temperatures(devices,{'limited':{'limits':[0,120]}})
+
     def test_catalog_sources(self):
         source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         import hashlib

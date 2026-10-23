@@ -19,6 +19,34 @@ class Definitions(unittest.TestCase):
         self.ref=dict(source='builtin',id=self.bed['id'],version=self.bed['version'],sha256=digest(self.bed),commit=self.c.revision)
         self.snapshots={'builtin::'+self.bed['id']+'@'+self.bed['version']:self.bed}
         self.d=empty_draft();self.d['boards']['main']={'id':'sv08-main'}
+    def test_temperature_definition_defaults_and_instance_inputs(self):
+        for value,valid in [(120,True),(200,True),(200.01,False),(1200,False),(-100,False)]:
+            record=copy.deepcopy(self.bed)
+            sensor=next(c for c in record['components'] if c['kind']=='sensor')
+            sensor['settings']['max_temp']=value
+            if valid:validate_definition(record,self.c)
+            else:
+                with self.assertRaises(ValueError):validate_definition(record,self.c)
+        record=copy.deepcopy(self.bed)
+        sensor=next(c for c in record['components'] if c['kind']=='sensor')
+        target=sensor['name']+'.max_temp'
+        record.setdefault('inputs',{})['temperature']=dict(type='number',label='Maximum temperature (°C)',target=target,minimum=-100,maximum=2000,default=1200)
+        with self.assertRaisesRegex(ValueError,'supported-FDM'):validate_definition(record,self.c)
+        record['inputs']['temperature']['default']=120
+        ref={**self.ref,'sha256':digest(record)}
+        selected=select_definition(self.c,self.d,ref,{'builtin::'+record['id']+'@'+record['version']:record})
+        self.c.validate(selected)
+        selected['definition_plan']['instance_values']={target:120}
+        self.c.validate(selected)
+        tighter=copy.deepcopy(record);tighter['inputs']['temperature']['maximum']=125
+        tightref={**ref,'sha256':digest(tighter)}
+        tight=select_definition(self.c,self.d,tightref,{'builtin::'+tighter['id']+'@'+tighter['version']:tighter})
+        tight['definition_plan']['instance_values']={target:126}
+        with self.assertRaisesRegex(ValueError,'declared bounds'):self.c.validate(tight)
+        selected['definition_plan']['instance_values']={target:1200}
+        with self.assertRaisesRegex(ValueError,'supported-FDM'):self.c.validate(selected)
+        with self.assertRaisesRegex(ValueError,'supported-FDM'):apply_inputs(selected,self.c)
+
     def test_factory_only_builtin_choices(self):
         self.assertTrue(self.records)
         self.assertTrue(all(d['id'].startswith(('sv08-main.','sv08-tool.','sv08.factory')) for d in self.records))

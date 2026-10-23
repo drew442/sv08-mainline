@@ -1,7 +1,7 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById('printer-' + id);
-    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
+    let catalog, availableComponents = {}, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
     let reloadAfterAuthority=false;
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { const target={'#definition-sources':'source-notice','#printer-connections':'connection-notice','#definitions':'definitions-notice'}[location.hash]??'notice';$(target).textContent=text;$(target).dataset.kind=text.startsWith('Saved configuration loaded.')?'loaded':'task'; if(reconcile)$('notice').textContent=text; };
@@ -142,7 +142,8 @@
         const root=$('components');root.replaceChildren();
         for(const fan of draft.devices.filter(d=>d.kind==='fan')){const toggle=el('input');toggle.type='checkbox';toggle.checked=fan.settings.print_fan??['part_cooling_front','part_cooling_rear'].includes(fan.name);toggle.dataset.printFan=fan.name;toggle.onchange=()=>{fan.settings.print_fan=toggle.checked;edit();};root.append(label(fan.name.replaceAll('_',' ')+' · use for part cooling (M106/M107)',toggle));}
         for(const role of ['main','tool']) {
-            const board=boardData(role);if(!board)continue;
+            const pinned=boardData(role);if(!pinned)continue;
+            const board={...pinned,presets:availableComponents[pinned.id]??[]};
             const box=el('div');box.append(el('h3',role==='main'?'Mainboard components':'Toolhead components'));
             for(const kind of ['bed','extruder']) {
                 const presets=(board.presets??[]).filter(p=>p.id!=='funssor_cn3d_bed').filter(p=>p.devices.some(d=>d.kind===kind));
@@ -334,7 +335,7 @@
     async function load(keep = false) {
         loading=true;
         try {
-            invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;definitionRows=result.definitions??[];sourceRows=result.sources??{};const filters=$('definition-filter');const selectedFilter=filters.value;filters.replaceChildren();for(const [v,t] of [['','All sources'],['builtin','Built-in'],...Object.values(sourceRows).map(s=>[s.id,s.repository??s.manifest.name])]){const o=el('option',t);o.value=v;filters.append(o);}filters.value=selectedFilter;revision=saved.revision;if (!keep || !draft) { draft=saved.draft===undefined?null:copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
+            invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;availableComponents=result.available_components??{};saved=result.state;definitionRows=result.definitions??[];sourceRows=result.sources??{};const filters=$('definition-filter');const selectedFilter=filters.value;filters.replaceChildren();for(const [v,t] of [['','All sources'],['builtin','Built-in'],...Object.values(sourceRows).map(s=>[s.id,s.repository??s.manifest.name])]){const o=el('option',t);o.value=v;filters.append(o);}filters.value=selectedFilter;revision=saved.revision;if (!keep || !draft) { draft=saved.draft===undefined?null:copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
             if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;$('export').textContent=draft?.format_version===1&&draft.boards?'Export retained local draft':'Export private diagnostic backup';controls();return;}
             if(catalog.boards.some(b=>b.role==='chamber')&&!$('device-board').querySelector('[value=chamber]')){const o=el('option','Chamber module');o.value='chamber';$('device-board').append(o);}
             $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}

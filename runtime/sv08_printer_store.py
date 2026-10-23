@@ -195,7 +195,10 @@ class PrinterStore:
             available=[row['record'] for row in self.definitions(state)]
             effective=catalog_for(request.get('draft',state['draft']),self.catalog,available)
             if action=='status':
-                return dict(state=state,catalog=effective.data,context=context,
+                # Browsable defaults are current source choices, never saved runtime assets.
+                choices={b['id']:b.get('presets',[]) for b in self.catalog.data['boards']
+                         if b['id'] in effective.boards and compatible_mapping(effective.boards[b['id']],b)}
+                return dict(state=state,catalog=effective.data,available_components=choices,context=context,
                             catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,
                             loaded_identity=self.identity(state,context,None),definitions=self.definitions(state),sources=state.get('sources',{}),migration_available='definition_plan' not in state['draft'])
             if 'expected_revision' in request:

@@ -355,16 +355,8 @@ class Catalog:
                         raise ValueError('Unsupported heater control')
                 else:
                     self.number(value, typ)
-            if 'min_temp' in settings and settings['min_temp'] <= -273.15:
-                raise ValueError('Temperature bound must be above absolute zero')
             if 'microsteps' in settings and settings['microsteps'] not in (1,2,4,8,16,32,64,128,256):
                 raise ValueError('Microsteps must be a supported power of two')
-            if 'min_temp' in settings and 'max_temp' in settings:
-                if settings['min_temp'] >= settings['max_temp']:
-                    raise ValueError('Temperature minimum must be below maximum')
-                curve = self.curves.get(settings.get('curve'))
-                if curve and curve.get('limits') and not (curve['limits'][0] <= settings['min_temp'] < settings['max_temp'] <= curve['limits'][1]):
-                    raise ValueError('Temperatures exceed documented component limits')
             if kind=='output' and settings.get('pwm') and settings.get('cycle_time',.1)>3:raise ValueError('Mainline PWM cycle must be at most 3 seconds')
             if settings.get('verify_max_error',120)>120 or settings.get('verify_check_gain_time',120)>120 or settings.get('verify_hysteresis',10)>10:raise ValueError('Heater verification exceeds supported protection bounds')
             if settings.get('endstop_mode')=='sensorless' and ('homing_retract_dist' in settings and settings['homing_retract_dist']!=0):raise ValueError('Sensorless homing needs an explicit threshold and zero retract')
@@ -385,6 +377,11 @@ class Catalog:
                 heater_sensors.add(target)
             if target is not None and not any(d['name'] == target and d['kind'] == 'sensor' and d['board'] == device['board'] for d in draft['devices']):
                 raise ValueError('Heater must reference a temperature sensor on its board')
+        from sv08_printer_fields import validate_component_temperatures
+        validate_component_temperatures(draft['devices'],self.curves)
+        if 'definition_plan' in draft:
+            from sv08_printer_compose import apply_inputs
+            validate_component_temperatures(apply_inputs(draft,self)['devices'],self.curves)
         return draft
 
     @staticmethod

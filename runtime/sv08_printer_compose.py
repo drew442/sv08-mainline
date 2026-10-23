@@ -2,7 +2,7 @@
 import copy
 from sv08_printer_catalog import digest, keys
 from sv08_printer_definitions import resolve, validate_definition
-from sv08_printer_fields import compatible_mapping,compact_mapping
+from sv08_printer_fields import compatible_mapping,compact_mapping,validate_component_temperatures
 
 
 def catalog_for(draft,catalog,records=()):
@@ -158,6 +158,14 @@ def validate_plan(plan, catalog):
         elif inp['type']=='boolean' and type(value) is not bool:raise ValueError('Boolean instance input required')
         elif inp['type']=='curve' and value not in catalog.curves:raise ValueError('Unknown instance sensor curve')
         elif inp['type']=='choice' and value not in inp.get('choices',[]):raise ValueError('Unsupported instance choice')
+    components=[copy.deepcopy(c) for d in closure.values() for c in d.get('components',[])]
+    for inp in inputs.values():
+        value=values.get(inp['target'],inp.get('default'))
+        if value is None:continue
+        name,field=inp['target'].split('.',1)
+        component=next((c for c in components if c['name']==name),None)
+        if component:component['settings'][field]=value
+    validate_component_temperatures(components,catalog.curves)
     return closure, hooks
 
 
