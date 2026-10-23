@@ -1,0 +1,75 @@
+{
+  "format_version": 2,
+  "id": "package-reproducibility-qualification",
+  "kind": "feature",
+  "title": "Qualify current package reproducibility",
+  "author": "root/coordinator",
+  "created": "2026-10-23",
+  "priority": 2,
+  "proposal": "docs/features/package-reproducibility-qualification/proposal.md",
+  "requirements": [
+    "docs/features/package-reproducibility-qualification/owner-request.md",
+    "docs/development/reproducible-builds.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "package-pairs",
+      "description": "Independent current package pairs and native source inputs, exact equality and input/toolchain provenance; relevant regression/refusal checks and publication.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Build, compare and qualify selected package pairs",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "package-pairs"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source work and disposable package builds only; read-only historical layers, no live service or hardware operations.",
+      "hazards": [],
+      "owned_paths": [
+        "docs/features/package-reproducibility-qualification/evidence.md",
+        "docs/features/package-reproducibility-qualification/results.json",
+        "docs/development/reproducible-builds.md",
+        "scripts/package_update_admission.py",
+        "scripts/package_klipper.py",
+        "scripts/package_python_app.py",
+        "scripts/package_mainsail.py",
+        "scripts/package_rauc.py",
+        "scripts/build_klipper_inputs.py",
+        "scripts/check_package_reproducibility.py",
+        "tests/test_package_reproducibility.py",
+        "tests/test_package_rauc.py",
+        "tests/test_package_klipper.py",
+        "tests/test_python_app_package.py",
+        "tests/test_package_update_admission_license.py"
+      ],
+      "input_paths": [
+        "configs/apps/",
+        "configs/host/",
+        "configs/host-os/rauc-package.json",
+        "configs/host-os/offline-tool-sources.json",
+        "patches/",
+        "upstream-lock.json",
+        "scripts/prepare_host_os.py"
+      ]
+    }
+  ]
+}
