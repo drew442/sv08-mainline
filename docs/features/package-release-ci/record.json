@@ -1,12 +1,39 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "bd4a9cccea5525d40c0a858dfa4f6457f53ad52507f7d763c1a78ea961eeb4af",
+    "rationale": "Owner authorized deterministic package/release regression CI, failure evidence, agent implementation and review publication.",
+    "reference": "docs/features/package-release-ci/owner-request.md",
+    "reference_sha256": "1c6139b1c2fadbad97e7c826247745cba29c174e9ff49eef8a78ff792a6e6308",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/development/release-packaging.md": "a759220208205026fe13f858132d85cf5c0f3e6f75616d94a3453bba94c7173f",
+      "docs/development/reproducible-builds.md": "d2933dd7b9b30d9a1a0f5aea459d506f73f6e9ae8b364bde9bcfea7c20f821d0",
+      "docs/features/package-release-ci/owner-request.md": "1c6139b1c2fadbad97e7c826247745cba29c174e9ff49eef8a78ff792a6e6308"
+    },
+    "scope_sha256": "777e9a93553fdcee4b90ed31252e558ece6e63b47aba92787ecf88f8ee4f7eb0",
+    "session": "package-ci-20261023",
+    "source_commit": "509c5685167b4978c18f280c986bab391845345a"
+  },
+  "checks": [
+    {
+      "description": "Input-triggered actual hosted package/release regression checks, negative cases and durable bounded failure evidence, local runner/trigger tests and publication.",
+      "environment": "offline",
+      "id": "ci-regressions"
+    }
+  ],
+  "created": "2026-10-23",
+  "decision": null,
   "format_version": 2,
   "id": "package-release-ci",
   "kind": "feature",
-  "title": "Automate package and release-gate CI regression checks",
-  "author": "root/coordinator",
-  "created": "2026-10-23",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/package-release-ci/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/package-release-ci/owner-request.md",
     "docs/development/release-packaging.md",
@@ -14,44 +41,19 @@
     "docs/development/public-source-releases.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "ci-regressions",
-      "description": "Input-triggered actual hosted package/release regression checks, negative cases and durable bounded failure evidence, local runner/trigger tests and publication.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and qualify package/release CI",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "ci-regressions"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible CI/source work using synthetic offline tests on normal hosted runners; no images, secrets, publication credentials or live printer services.",
       "hazards": [],
-      "owned_paths": [
-        ".github/workflows/package-release.yml",
-        "scripts/check_package_release.py",
-        "tests/test_package_release_ci.py",
-        "docs/features/package-release-ci/evidence.md"
-      ],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "input_paths": [
         "scripts/",
         "tests/",
@@ -64,7 +66,22 @@
         ".gitmodules",
         "LICENSE",
         "LICENSING.md"
-      ]
+      ],
+      "owned_paths": [
+        ".github/workflows/package-release.yml",
+        "scripts/check_package_release.py",
+        "tests/test_package_release_ci.py",
+        "docs/features/package-release-ci/evidence.md"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible CI/source work using synthetic offline tests on normal hosted runners; no images, secrets, publication credentials or live printer services.",
+      "status": "pending",
+      "title": "Implement and qualify package/release CI",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Automate package and release-gate CI regression checks"
 }
