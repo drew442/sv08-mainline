@@ -486,7 +486,7 @@
       "resumption": "Preserved125test failure at initial candidate; correct exact stale historical coverage expectation within owner-authorized CI regression scope, adding owned tests/test_mainsail_notice_dependencies.py. No accounting or release guard change; cumulative1800sec/512MiB budget retained.",
       "review_policy": "self",
       "review_reason": "Reversible CI/source work using synthetic offline tests on normal hosted runners; no images, secrets, publication credentials or live printer services.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement and qualify package/release CI",
       "validation": {
         "actor": "root/coordinator",
