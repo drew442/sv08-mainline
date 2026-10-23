@@ -61,7 +61,7 @@ its dependent evidence, not unrelated completed checks.
 | 4. Verify stop, fans and motors | After phase 3 and exact action review, enable only the approved phase. Verify the stop path and each physically identified fan; check one bounded motor action/direction at a time with clear travel. Wrong direction, unexpected motion or inability to stop is a failure. | H06 |
 | 5. Establish homing/probing | Verify the configured probe and sensorless/DIAG dependencies before the separately reviewed bounded homing sequence. Do not issue ordinary `G28`, gantry levelling or mesh before these dependencies pass. Keep pressure GPIO observations separate from proprietary automatic calibration. | H06 |
 | 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; persist any measured gains through Cockpit as described below, never by borrowing factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
-| 7. Record manual probe calibration | Perform the supported manual probe procedure under the reviewed motion/temperature state. Record the reported measurement in Cockpit as described below, save/regenerate/apply stopped, then restart only under the reviewed procedure. Confirm the saved value survives reload and the candidate no longer reports pending probe calibration. Perform the reviewed gantry/mesh checks in their correct thermal state. | H06 |
+| 7. Record manual probe calibration | Establish the reviewed gantry/bed plane first at the intended thermal state, then perform the supported manual probe procedure. Record the reported measurement in Cockpit as described below, save/regenerate/apply stopped, then restart only under the reviewed procedure. Confirm the saved value survives reload and the candidate no longer reports pending probe calibration. After the reviewed restart, verify the plane/mount has not changed; perform the mesh only after a valid probe measurement. Any subsequent tilt/QGL adjustment requires renewed probe calibration and then a new mesh. | H06 |
 | 8. First layer and print controls | With all preceding gates passed, use a known bounded test file and matching slicer start/end controls. Attend the first layer; separately verify pause, resume, cancel and shutdown. Record observed behavior, not just a successfully uploaded file. | H06 |
 | 9. Finish cleanly | Stop the job and outputs, preserve logs/calibration/configuration, confirm the intended persistent/stopped service state and record which capabilities are accepted. Stock support requires an actual stock target; a modified target proves only its selected configuration. | H02/H06 closure |
 
@@ -78,6 +78,8 @@ are separate controlled maintenance qualifications, not extra first-print tasks.
 
 ## Manual Z offset: the supported persistence path
 
+The [pinned Klipper guidance](https://github.com/Klipper3d/klipper/blob/f0892d82b0f1c1228454f09eb508eddde2250f4b/docs/Probe_Calibrate.md#calibrating-probe-z-offset) requires probe recalibration after changes to the motion system, hotend position or probe location. With XY probe offsets, changing bed tilt/gantry levelling also invalidates the measurement and any dependent mesh. Establish that plane before the final manual measurement; do not calibrate once and then blindly run QGL.
+
 The generated configuration uses a sourced starting offset of zero while measured
 calibration is missing; printing is blocked in that state. Under the reviewed manual
 procedure, Klipper's `PROBE_CALIBRATE`/`TESTZ`/`ACCEPT` interaction reports the measured
@@ -92,7 +94,7 @@ Do not rely on normal `SAVE_CONFIG` for this managed path: the generated probe
 setting is in an include, and pinned Klipper refuses conflicting included settings.
 Cockpit is the source of truth here; automatic `SAVE_CONFIG` ingestion is not
 implemented. This is intentional explicit persistence, not permission to hand-edit
-generated files or copy an old printer's offset. A bed/probe replacement clears its
+generated files or copy an old printer's offset. A bed/probe/hotend or motion-component replacement clears its
 dependent measurement; recalibrate the changed assembly before printing again.
 
 ## Retaining measured heater PID results

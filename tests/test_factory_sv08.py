@@ -52,12 +52,13 @@ class Factory(unittest.TestCase):
             if x['name'] not in ('bed_sensor','heater_bed','probe'):self.assertEqual(x,prior[x['name']])
         self.assertNotIn('z_offset',next(x for x in changed['devices'] if x['name']=='probe')['settings'])
     def test_replacements_clear_authoritative_calibration_for_direct_and_bundled_parts(self):
-        for kind in ('bed','probe'):
+        for kind in ('bed','probe','extruder','motor'):
             for bundled in (False,True):
                 with self.subTest(kind=kind,bundled=bundled):
                     c,d,s=calibrated_fixture()
                     d['definition_plan']['instance_values']={'probe.z_offset':.25}
-                    record=copy.deepcopy(next(x for x in s.values() if x['id']==('sv08-main.bed_assembly' if kind=='bed' else 'sv08-tool.probe')))
+                    ident={'bed':'sv08-main.bed_assembly','probe':'sv08-tool.probe','extruder':'sv08-tool.hotend_assembly','motor':'sv08-main.stepper_x'}[kind]
+                    record=copy.deepcopy(next(x for x in s.values() if x['id']==ident))
                     record['id']='replacement-'+kind
                     if kind=='probe':record['inputs']['probe_z_offset']['default']=.8
                     snap={'fixture::'+record['id']+'@'+record['version']:record}
@@ -76,6 +77,23 @@ class Factory(unittest.TestCase):
                     self.assertTrue(generated['complete'],generated['blockers']);self.assertFalse(generated['printing_enabled'])
                     self.assertIn('z_offset: 0',generated['text'])
                     for key,value in before['definition_plan']['snapshots'].items():self.assertEqual(changed['definition_plan']['snapshots'][key],value)
+
+    def test_unrelated_fan_replacement_preserves_probe_calibration_and_snapshots(self):
+        c,d,s=calibrated_fixture();d['definition_plan']['instance_values']={'probe.z_offset':.25}
+        before=copy.deepcopy(d)
+        fan=next(x for x in s.values() if x['id']=='sv08-main.exhaust_fan')
+        ref=dict(source='builtin',id=fan['id'],version=fan['version'],sha256=digest(fan),commit=c.revision)
+        changed=select_definition(c,d,ref,s)
+        self.assertEqual(d,before);self.assertEqual(changed['definition_plan']['snapshots'],before['definition_plan']['snapshots'])
+        self.assertEqual(changed['definition_plan']['instance_values']['probe.z_offset'],.25)
+        self.assertEqual(next(x for x in apply_inputs(changed,c)['devices'] if x['kind']=='probe')['settings']['z_offset'],.25)
+        self.assertTrue(generate(c,changed,'full')['printing_enabled'])
+
+    def test_software_motion_limit_edits_preserve_recorded_probe_calibration(self):
+        c,d,s=calibrated_fixture();d['definition_plan']['instance_values']={'probe.z_offset':.25}
+        d['geometry']['max_velocity']=250
+        result=generate(c,d,'full')
+        self.assertTrue(result['complete']);self.assertTrue(result['printing_enabled']);self.assertIn('z_offset: 0.25',result['text'])
 
     def test_custom_current_requires_real_rating(self):
         c,d,s=calibrated_fixture();motor=next(x for x in d['devices'] if x['name']=='stepper_x');motor['settings']['run_current']=1.6

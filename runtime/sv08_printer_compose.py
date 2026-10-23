@@ -52,6 +52,9 @@ def connection_devices(definition, draft, catalog):
 # A null instance value records an explicit calibration clear. Absence retains
 # the legacy input/default behaviour; snapshots remain immutable source records.
 CALIBRATION_FIELDS=('z_offset','pid_kp','pid_ki','pid_kd')
+# Pinned Klipper Probe_Calibrate.md: motion-system, hotend-position and
+# probe-location changes invalidate the measured nozzle/probe relationship.
+PROBE_GEOMETRY_KINDS=('bed','probe','extruder','motor')
 
 def clear_calibration(draft, catalog, targets):
     plan=draft.get('definition_plan')
@@ -244,7 +247,7 @@ def select_definition(catalog, draft, ref, snapshots):
     # of bundles. Retained shared dependencies keep their local calibration.
     prior_slots={(d['board'],d['name']) for d in draft['devices']}
     targets={d['name']+'.'+field for d in changed_devices if (d['board'],d['name']) in prior_slots for field in (*CALIBRATION_FIELDS,'custom_curve')}
-    if any(d['kind'] in ('bed','probe') for d in changed_devices):
+    if any(d['kind'] in PROBE_GEOMETRY_KINDS for d in changed_devices):
         targets.update(d['name']+'.z_offset' for d in result['devices'] if d['kind']=='probe' and (d['board'],d['name']) in prior_slots)
     clear_calibration(result,catalog,targets)
     # Old content remains in saved/restoration envelopes; no mutable lookup is used.

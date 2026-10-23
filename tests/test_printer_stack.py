@@ -11,12 +11,13 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 from zipfile import ZipFile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'runtime'))
 from sv08_printer_catalog import Catalog,empty_draft,digest
 from sv08_printer_definitions import builtins
-from sv08_printer_compose import select_definition
+from sv08_printer_compose import select_definition,apply_inputs
 from sv08_printer_generate import generate
 from sv08_printer_stack import archive,MOONRAKER
 from sv08_printer_publish import Publisher,inventory,validate_output
@@ -95,21 +96,39 @@ class CalibrationPersistence(unittest.TestCase):
         self.assertEqual(self.state(),before)
         self.assertEqual((self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None,live)
 
+    def test_legacy_geometry_replacements_invalidate_probe_but_fans_preserve_it(self):
+        catalog,draft=factory(True);draft['definition_plan']['instance_values']={'probe.z_offset':.25}
+        self.request(action='save',draft=draft);before=self.state()
+        for role,preset,sensitive in [('tool','hotend_assembly',True),('main','stepper_x',True),('main','exhaust_fan',False)]:
+            with self.subTest(role=role,preset=preset):
+                # Exercise compatibility fallback when this profile has no native
+                # definition available; catalogue presets themselves stay pinned.
+                records=[d for d in builtins(catalog) if d['id']!='sv08-'+role+'.'+preset]
+                with patch('sv08_printer_store.builtins',return_value=records):
+                    changed=self.request(action='component',draft=draft,role=role,preset=preset)['draft']
+                effective=apply_inputs(changed,catalog)
+                self.assertEqual(next(d for d in effective['devices'] if d['kind']=='probe')['settings'].get('z_offset'),None if sensitive else .25)
+                self.assertEqual(changed['definition_plan']['instance_values']['probe.z_offset'],None if sensitive else .25)
+                self.assertEqual(changed['definition_plan']['snapshots'],draft['definition_plan']['snapshots'])
+                self.assertEqual(self.state(),before)
+
     @unittest.skipUnless(os.environ.get('SV08_PRINTER_VALIDATION_PYTHON'),'Pinned parser environment required')
     def test_stock_component_full_without_pid_reaches_real_parser_ready(self):
         catalog,draft=factory(True)
         draft['definition_plan']['instance_values']={'probe.z_offset':.25}
         self.request(action='save',draft=draft)
-        changed=self.request(action='component',draft=draft,role='main',preset='bed_assembly')['draft']
-        output=generate(catalog,changed,'full')
-        self.assertTrue(output['complete']);self.assertFalse(output['printing_enabled'])
-        self.assertNotIn('pid_kp:',output['text']);self.assertIn('z_offset: 0',output['text'])
         source=Path(os.environ['SV08_PRINTER_SOURCE_ROOT'])
-        with tempfile.TemporaryDirectory() as tmp:
-            for name,value in output['files'].items():(Path(tmp)/name).write_text(value)
-            preview=dict(files={},review='export',activation=output['files']['printer.cfg'])
-            result=validate_output(preview,Path(tmp),os.environ['SV08_PRINTER_VALIDATION_PYTHON'],str(source/'upstream/klipper/klippy/klippy.py'),str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'))
-            self.assertTrue(result['validated']);self.assertFalse(result['physical_hardware'])
+        for role,preset in [('main','bed_assembly'),('tool','hotend_assembly'),('main','stepper_x')]:
+            with self.subTest(role=role,preset=preset):
+                changed=self.request(action='component',draft=draft,role=role,preset=preset)['draft']
+                output=generate(catalog,changed,'full')
+                self.assertTrue(output['complete']);self.assertFalse(output['printing_enabled'])
+                self.assertNotIn('pid_kp:',output['text']);self.assertIn('z_offset: 0',output['text'])
+                with tempfile.TemporaryDirectory() as tmp:
+                    for name,value in output['files'].items():(Path(tmp)/name).write_text(value)
+                    preview=dict(files={},review='export',activation=output['files']['printer.cfg'])
+                    result=validate_output(preview,Path(tmp),os.environ['SV08_PRINTER_VALIDATION_PYTHON'],str(source/'upstream/klipper/klippy/klippy.py'),str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'))
+                    self.assertTrue(result['validated']);self.assertFalse(result['physical_hardware'])
 
 
 class StackTests(unittest.TestCase):
