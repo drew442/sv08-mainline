@@ -183,6 +183,43 @@ class Definitions(unittest.TestCase):
         selected['definition_plan']['instance_values']={'main.identity':None}
         with self.assertRaises(ValueError):validate_plan(selected['definition_plan'],self.c)
 
+    def test_required_cleared_probe_is_not_supplied_by_factory_start(self):
+        from test_factory_sv08 import calibrated_fixture
+        from sv08_printer_generate import generate
+        c,d,s=calibrated_fixture()
+        # Local source fixture, never a measured hardware offset.
+        for record in d['definition_plan']['snapshots'].values():
+            for inp in record.get('inputs',{}).values():
+                if inp['target']=='probe.z_offset':inp['required']=True;inp['default']=.8
+        # Re-pin changed fixture definitions and their dependency digests.
+        plan=d['definition_plan']
+        for record in plan['snapshots'].values():
+            for dep in record.get('dependencies',[]):
+                key=dep.get('source','builtin')+'::'+dep['id']+'@'+dep['version']
+                if key in plan['snapshots']:dep['sha256']=digest(plan['snapshots'][key])
+        for ref in plan['selections']:ref['sha256']=digest(plan['snapshots'][ref['source']+'::'+ref['id']+'@'+ref['version']])
+        plan['instance_values']={'probe.z_offset':None}
+        result=generate(c,d,'full')
+        self.assertFalse(result['complete']);self.assertTrue(any('needs your input' in x and 'offset' in x.lower() for x in result['blockers']),result['blockers'])
+        plan['instance_values']['probe.z_offset']=0
+        result=generate(c,d,'full');self.assertTrue(result['complete']);self.assertTrue(result['printing_enabled'])
+
+    def test_remap_clears_explicit_identity_ack_and_calibration_inputs(self):
+        selected=select_definition(self.c,self.d,self.ref,self.snapshots)
+        plan=selected['definition_plan'];record=plan['snapshots']['builtin::'+self.bed['id']+'@'+self.bed['version']]
+        record['inputs']={key:dict(type=typ,label=key,target=target,required=False) for key,typ,target in [('identity','identity','main.identity'),('ack','boolean','main.reference_ack'),('kp','number','heater_bed.pid_kp')]}
+        plan['selections'][0]['sha256']=digest(record)
+        plan['instance_values']={'main.identity':'/dev/fixture-old-main','main.reference_ack':True,'heater_bed.pid_kp':2}
+        selected['boards']['tool']={'id':'sv08-tool','identity':'/dev/fixture-unrelated-tool'}
+        original=copy.deepcopy(selected)
+        remapped=remap_board(selected,'main','octopus-v1.1-non-pro',self.c)['draft']
+        effective=apply_inputs(remapped,self.c)
+        self.assertNotIn('main.identity',remapped['definition_plan']['instance_values']);self.assertNotIn('main.reference_ack',remapped['definition_plan']['instance_values'])
+        self.assertNotIn('identity',effective['boards']['main']);self.assertNotIn('reference_ack',effective['boards']['main'])
+        self.assertNotIn('pid_kp',next(d for d in effective['devices'] if d['kind']=='bed')['settings'])
+        self.assertEqual(effective['boards']['tool'],original['boards']['tool']);self.assertEqual(selected,original)
+        self.assertEqual(remapped['definition_plan']['snapshots'],original['definition_plan']['snapshots'])
+
     def test_repository_path_injection(self):
         for url in ['http://github.com/a/b','https://user@github.com/a/b','https://github.com/a/b?token=secret','https://evil.test/a/b','https://github.com/a/b/blob/main/catalog.json']:
             with self.assertRaises(ValueError):repository(url)

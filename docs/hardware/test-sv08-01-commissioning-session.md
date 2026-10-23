@@ -42,11 +42,11 @@ Record these once in the assigned private session directory:
 
 - Date/operator, physical target, selected profile and fitted parts; mark stock or modified.
 - Image/source/slot/boot and both MCU revision/identity bindings; reuse exact known evidence where still applicable.
-- Saved hardware revision, generated Full configuration/manifest hash and publication receipt.
+- Saved hardware revision and final Full configuration/manifest hash/publication receipt; record each earlier input-only, setup or calibration candidate separately.
 - Independent reference instrument, approved phase limits, stop control, recovery route and capture paths.
 - Exact reviewed activation procedure, operation authorization and coordinator contact.
 
-Use a single row per phase: `time | pass/fail/inconclusive | observation/evidence | next action`.
+Use a single row per phase: `time | configuration hash / launch-stop review binding | pass/fail/inconclusive | observation/evidence | next action`.
 A failed/inconclusive prerequisite stops dependent phases. Leave later rows unpassed.
 A safe pause between phases is allowed; changed hardware/configuration invalidates
 its dependent evidence, not unrelated completed checks.
@@ -55,12 +55,12 @@ its dependent evidence, not unrelated completed checks.
 
 | Phase | Owner/coordinator action and observable pass condition | H dependency |
 | --- | --- | --- |
-| 1. Identify the fitted machine | With all relevant power isolated, confirm board/connector/part evidence and wiring changes without unnecessary disassembly. Confirm factory bed/hotend/sensors or choose definitions for the actual replacements. Do not select a factory sensor merely because a hotend name matches. | H01 |
+| 1. Identify the fitted machine | With power isolated, including USB/serial back-power, confirm board/connector/part evidence and wiring changes without unnecessary disassembly. Confirm factory bed/hotend/sensors or choose definitions for the actual replacements. Do not select a factory sensor merely because a hotend name matches. | H01 |
 | 2. Establish the host and stopped setup | Arm capture, then use only the reviewed boot/installation procedure. Confirm intended slot, persistent configuration/identity, correct MCU revision/serial association, Mainsail/Moonraker access and no unintended outputs. Confirm the independent recovery/stop route. No trial, update or service race may be active. | H02/H04 |
 | 3. Check inputs before outputs | Use the reviewed input-only configuration. Observe each actual probe/filament/endstop released–operated–released transition and physical association. Compare plausible stable ambient readings with the independent reference. Take pins, names and configured conversion settings from this session's generated manifest, not old hardcoded pin tables. | H05 |
 | 4. Verify stop, fans and motors | After phase 3 and exact action review, enable only the approved phase. Verify the stop path and each physically identified fan; check one bounded motor action/direction at a time with clear travel. Wrong direction, unexpected motion or inability to stop is a failure. | H06 |
 | 5. Establish homing/probing | Verify the configured probe and sensorless/DIAG dependencies before the separately reviewed bounded homing sequence. Do not issue ordinary `G28`, gantry levelling or mesh before these dependencies pass. Keep pressure GPIO observations separate from proprietary automatic calibration. | H06 |
-| 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; do not borrow factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
+| 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; persist any measured gains through Cockpit as described below, never by borrowing factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
 | 7. Record manual probe calibration | Perform the supported manual probe procedure under the reviewed motion/temperature state. Record the reported measurement in Cockpit as described below, save/regenerate/apply stopped, then restart only under the reviewed procedure. Confirm the saved value survives reload and the candidate no longer reports pending probe calibration. Perform the reviewed gantry/mesh checks in their correct thermal state. | H06 |
 | 8. First layer and print controls | With all preceding gates passed, use a known bounded test file and matching slicer start/end controls. Attend the first layer; separately verify pause, resume, cancel and shutdown. Record observed behavior, not just a successfully uploaded file. | H06 |
 | 9. Finish cleanly | Stop the job and outputs, preserve logs/calibration/configuration, confirm the intended persistent/stopped service state and record which capabilities are accepted. Stock support requires an actual stock target; a modified target proves only its selected configuration. | H02/H06 closure |
@@ -84,7 +84,7 @@ procedure, Klipper's `PROBE_CALIBRATE`/`TESTZ`/`ACCEPT` interaction reports the 
 `z_offset`. Those commands require the approved physical setup; do not run them as
 an unattended test.
 
-1. Record that measured result once in **Printer Hardware → Existing component calibration → Z offset**. A measured zero is valid; an unmeasured starting zero is not a completed calibration.
+1. Record that measured result once in **Printer Hardware → Inspect changes → Configuration output, calibration and expert actions → Existing component calibration → Z offset**. A measured zero is valid; an unmeasured starting zero is not a completed calibration.
 2. Save the hardware configuration, prepare/review the Full candidate and confirm the measured value and pending-calibration status. Reload to confirm persistence.
 3. Publish/apply only through the stopped, drift-checked managed route. Restart using the separately reviewed activation procedure, then verify the active configuration matches the saved candidate before printing.
 
@@ -94,6 +94,24 @@ Cockpit is the source of truth here; automatic `SAVE_CONFIG` ingestion is not
 implemented. This is intentional explicit persistence, not permission to hand-edit
 generated files or copy an old printer's offset. A bed/probe replacement clears its
 dependent measurement; recalibrate the changed assembly before printing again.
+
+## Retaining measured heater PID results
+
+Factory Full configurations intentionally support watermark control before PID
+calibration; do not invent gains or make PID a hardware-selection prerequisite.
+If a reviewed PID calibration is performed, record its reported `pid_kp`, `pid_ki`
+and `pid_kd` for the correct heater in **Existing component calibration**, and
+select **PID (enter gains)** for that heater in its advanced device settings.
+Save, regenerate and review the Full candidate, then publish stopped and restart
+only through the reviewed procedure. Confirm the active control/gains and safe
+thermal response before using them for a print. Ordinary `SAVE_CONFIG` is not the
+persistence route for included managed heater settings either.
+
+If PID is deferred, keep the explicitly selected watermark mode and document its
+accepted thermal behavior/limits. Fine sensor-curve calibration remains deferred;
+changing control mode does not authorize fitting an unknown sensor curve. Link
+this phase's measured results and configuration hash once, without redoing
+unaffected input checks.
 
 ## Handoff
 

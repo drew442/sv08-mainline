@@ -16,6 +16,7 @@ from sv08_printer_definitions import builtins
 from sv08_printer_compose import select_definition, migration_preview, remap_board, runtime_assets, catalog_for, remove_definition, clear_calibration, CALIBRATION_FIELDS
 from sv08_printer_sources import GitHub, accept_source, bundle_preview
 from sv08_printer_publish import Publisher
+from sv08_printer_fields import compatible_mapping
 
 STORAGE_LIMIT = 4 * 1024 * 1024
 STATE_LIMIT = 2 * 1024 * 1024
@@ -273,11 +274,41 @@ class PrinterStore:
             if action=='preset':
                 return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
             if action=='component':
+                board=self.catalog.board(request['draft'],request['role'])
+                records=builtins(self.catalog)
+                native=next((d for d in records if d['id']==board['id']+'.'+request['preset']),None)
+                assets=request['draft'].get('definition_plan',{}).get('runtime_assets')
+                if assets:
+                    pinned=next((b for b in assets['boards'] if b['id']==board['id']),None)
+                    if pinned is None or not compatible_mapping(pinned,board):raise ValueError('Selected component conflicts with pinned board mapping')
+                if native:
+                    # The ordinary stock selector shares the native composition
+                    # path, including watermark control until local PID is chosen.
+                    snapshots={'builtin::'+d['id']+'@'+d['version']:d for d in records}
+                    ref=dict(source='builtin',id=native['id'],version=native['version'],sha256=digest(native),commit=self.catalog.revision)
+                    return dict(draft=select_definition(catalog_for(request['draft'],self.catalog),request['draft'],ref,snapshots))
                 draft=self.catalog.select_component(request['draft'],request['role'],request['preset'])
                 changed=[d for d in draft['devices'] if d.get('profile')==request['preset'] and d['board']==request['role']]
                 targets={d['name']+'.'+field for d in changed for field in (*CALIBRATION_FIELDS,'custom_curve')}
                 if any(d['kind'] in ('bed','probe') for d in changed):targets.update(d['name']+'.z_offset' for d in draft['devices'] if d['kind']=='probe')
                 clear_calibration(draft,self.catalog,targets)
+                assets=draft.get('definition_plan',{}).get('runtime_assets')
+                if assets:
+                    current=self.catalog.board(draft,request['role'])
+                    pinned=next(b for b in assets['boards'] if b['id']==current['id'])
+                    if not compatible_mapping(pinned,current):raise ValueError('Selected component conflicts with pinned board mapping')
+                    preset=next(p for p in current['presets'] if p['id']==request['preset'])
+                    # This explicit selection pins only the chosen profile with its
+                    # field sources; saved electrical mappings and other assets stay.
+                    pinned['presets']=[p for p in pinned.get('presets',[]) if p['id']!=preset['id']]+json.loads(json.dumps([preset]))
+                    curves={c['id']:c for c in assets['curves']}
+                    for device in changed:
+                        curve=device['settings'].get('curve')
+                        if not curve:continue
+                        source=self.catalog.curves[curve]
+                        if curve in curves and curves[curve]!=source:raise ValueError('Selected component conflicts with pinned sensor curve')
+                        if curve not in curves:assets['curves'].append(json.loads(json.dumps(source)))
+                    catalog_for(draft,self.catalog).validate(draft)
                 return dict(draft=draft)
             if action in ('save','restore'):
                 if action=='restore':

@@ -71,8 +71,45 @@ class CalibrationPersistence(unittest.TestCase):
         self.assertEqual(self.state(),before)
         self.assertIsNone(replacement['definition_plan']['instance_values']['probe.z_offset'])
         self.assertNotIn('z_offset',next(d for d in replacement['devices'] if d['kind']=='probe')['settings'])
-        self.assertFalse(generate(catalog,replacement,'full')['printing_enabled'])
+        pending=generate(catalog,replacement,'full')
+        self.assertTrue(pending['complete'],pending['blockers']);self.assertFalse(pending['printing_enabled'])
+        self.assertIn('control: watermark',pending['text']);self.assertNotIn('pid_kp:',pending['text'])
+        self.assertEqual(replacement['definition_plan']['snapshots'],before['draft']['definition_plan']['snapshots'])
+        self.assertEqual(replacement['definition_plan']['runtime_assets'],before['draft']['definition_plan']['runtime_assets'])
+        # Legacy profiles without a native definition pin only the explicitly
+        # selected catalogue profile; missing fitted sensor facts stay missing.
+        legacy=self.request(action='component',draft=before['draft'],role='main',preset='funssor_cn3d_bed')['draft']
+        generated=generate(catalog,legacy,'full');self.assertFalse(generated['complete'])
+        self.assertTrue(any('curve' in blocker for blocker in generated['blockers']))
+        original_assets=before['draft']['definition_plan']['runtime_assets']
+        for board in legacy['definition_plan']['runtime_assets']['boards']:
+            prior=next(b for b in original_assets['boards'] if b['id']==board['id'])
+            self.assertEqual({k:v for k,v in board.items() if k!='presets'},{k:v for k,v in prior.items() if k!='presets'})
+            if board['role']=='main':self.assertEqual(board['presets'],[next(p for p in catalog.boards[board['id']]['presets'] if p['id']=='funssor_cn3d_bed')])
+            else:self.assertEqual(board,prior)
+        with self.assertRaisesRegex(ValueError,'Unknown component'):self.request(action='component',draft=before['draft'],role='tool',preset='bed_assembly')
+        incompatible=copy.deepcopy(before['draft'])
+        board=next(b for b in incompatible['definition_plan']['runtime_assets']['boards'] if b['role']=='main')
+        board['source']['revision']='0'*40
+        with self.assertRaisesRegex(ValueError,'pinned board mapping'):self.request(action='component',draft=incompatible,role='main',preset='bed_assembly')
+        self.assertEqual(self.state(),before)
         self.assertEqual((self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None,live)
+
+    @unittest.skipUnless(os.environ.get('SV08_PRINTER_VALIDATION_PYTHON'),'Pinned parser environment required')
+    def test_stock_component_full_without_pid_reaches_real_parser_ready(self):
+        catalog,draft=factory(True)
+        draft['definition_plan']['instance_values']={'probe.z_offset':.25}
+        self.request(action='save',draft=draft)
+        changed=self.request(action='component',draft=draft,role='main',preset='bed_assembly')['draft']
+        output=generate(catalog,changed,'full')
+        self.assertTrue(output['complete']);self.assertFalse(output['printing_enabled'])
+        self.assertNotIn('pid_kp:',output['text']);self.assertIn('z_offset: 0',output['text'])
+        source=Path(os.environ['SV08_PRINTER_SOURCE_ROOT'])
+        with tempfile.TemporaryDirectory() as tmp:
+            for name,value in output['files'].items():(Path(tmp)/name).write_text(value)
+            preview=dict(files={},review='export',activation=output['files']['printer.cfg'])
+            result=validate_output(preview,Path(tmp),os.environ['SV08_PRINTER_VALIDATION_PYTHON'],str(source/'upstream/klipper/klippy/klippy.py'),str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'))
+            self.assertTrue(result['validated']);self.assertFalse(result['physical_hardware'])
 
 
 class StackTests(unittest.TestCase):

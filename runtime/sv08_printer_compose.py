@@ -274,6 +274,7 @@ def remap_board(draft, role, board_id, catalog):
     result=copy.deepcopy(draft);old=catalog.board(draft,role);new=catalog.boards[board_id]
     if new['role']!=role:raise ValueError('Board role mismatch')
     result['boards'][role]={'id':board_id};rows=[]
+    for field in ('identity','reference_ack'):result.get('definition_plan',{}).get('instance_values',{}).pop(role+'.'+field,None)
     for d in result['devices']:
         if d['board']!=role:continue
         d.pop('profile',None)
@@ -286,6 +287,7 @@ def remap_board(draft, role, board_id, catalog):
             else:del d['settings'][field];status='Needs connection'
             rows.append(dict(device=d['name'],field=field,status=status))
         for field in ('pullup_resistor','pid_kp','pid_ki','pid_kd','custom_curve','current_rating_rms'):d['settings'].pop(field,None)
+    clear_calibration(result,catalog,{d['name']+'.'+field for d in result['devices'] if d['board']==role for field in ('pid_kp','pid_ki','pid_kd','custom_curve')})
     # Keep semantic definitions/overrides; selection compatibility is unresolved.
     catalog.validate(result)
     return dict(draft=result,changes=rows,identity_cleared=True)

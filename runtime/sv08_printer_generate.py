@@ -2,7 +2,7 @@
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 from sv08_printer_fields import LEGACY_FIELDS
 
-GENERATOR_VERSION = 8
+GENERATOR_VERSION = 9
 
 
 def generate(catalog, draft, mode):
@@ -51,8 +51,8 @@ def generate(catalog, draft, mode):
             for key,inp in definition.get('inputs',{}).items():
                 if not inp.get('required'):continue
                 device,field=inp['target'].split('.',1)
-                actual=next((d for d in draft['devices'] if d['name']==device),None)
-                supplied=actual and field in actual['settings'] or field in draft['boards'].get(device,{}) or inp['target'] in draft['definition_plan'].get('instance_values',{})
+                actual=next((d for d in source_draft['devices'] if d['name']==device),None)
+                supplied=bool(actual and field in actual['settings'] or field in source_draft['boards'].get(device,{}))
                 if not supplied:blockers.append(ident+': needs your input — '+inp['label'])
         if policies and mode=='sensors':blockers.append('Behaviour outputs require full mode; sensor mode remains output-free')
 

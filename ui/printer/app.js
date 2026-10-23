@@ -117,9 +117,13 @@
                 box.append(connection);
                 connection.append(el('p',board.warning),el('small','Documented reference. Installed match: unknown. '+board.unknowns.join('; ')));
                 connection.append(el('small',board.source.path+' @ '+board.source.revision+'; accessed '+board.source.accessed));
-                connection.append(field('Transport','text',selection.transport,v=>{if(v)selection.transport=v;else delete selection.transport;delete selection.identity;edit();renderBoards();},[['serial','USB / serial'],['can','CAN']].filter(([value])=>!board.supported_transports||board.supported_transports.includes(value))));
-                connection.append(field('Private MCU identity','text',selection.identity,v=>{if(v)selection.identity=v;else delete selection.identity;edit();}));
-                connection.append(field('Use this reference provisionally','boolean',selection.reference_ack,v=>{if(v===undefined)delete selection.reference_ack;else selection.reference_ack=v;edit();}));
+                const connectionField=(key,title,type,onchange,options)=>{
+                    const item=field(title,type,instanceFieldValue(role,key),onchange,options),control=item.querySelector('input,select');
+                    control.dataset.instanceTarget=role+'.'+key;return item;
+                };
+                connection.append(connectionField('transport','Transport','text',v=>{setInstanceField(role,'transport',v);setInstanceField(role,'identity',undefined);edit();renderBoards();},[['serial','USB / serial'],['can','CAN']].filter(([value])=>!board.supported_transports||board.supported_transports.includes(value))));
+                connection.append(connectionField('identity','Private MCU identity','text',v=>{setInstanceField(role,'identity',v);edit();}));
+                connection.append(connectionField('reference_ack','Use this reference provisionally','boolean',v=>{setInstanceField(role,'reference_ack',v);edit();}));
             }
             $('boards').append(box);
         }
@@ -237,11 +241,11 @@
                 else if(type==='color_order')options=['RGB','GRB','BRG','BGR','RBG','GBR'].map(v=>[v,v]);
                 else if(type==='control')options=[['pid','PID (enter gains)'],['watermark','Watermark']];
                 const text=({'invert':'Invert signal','invert_dir':'Invert direction','invert_enable':'Invert enable','digital_pullup':'Digital input pull-up','pullup_resistor':'Analog pull-up resistance (ohm)','current_rating_rms':'Motor RMS rating (A), owner entered','run_current':'Driver RMS current (A)','sense_resistor':'Sense resistor (ohm), explicit','pin':'Connection / pin'}[name]??name.replaceAll('_',' '));
-                advanced.append(field(text,type==='name'?'text':type,device.settings[name],value=>{
-                    if(calibrationFields.includes(name))setCalibration(device,name,value);else if(value===undefined||value==='')delete device.settings[name];else device.settings[name]=value;
+                advanced.append(field(text,type==='name'?'text':type,instanceFieldValue(device.name,name),value=>{
+                    setInstanceField(device.name,name,value);
                     if(device.kind==='sensor'&&['curve','pullup_resistor'].includes(name))for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(heater,key,undefined);
                     if(name==='curve'){setCalibration(device,'custom_curve',undefined);delete device.settings.pullup_resistor;delete device.settings.min_temp;delete device.settings.max_temp;}
-                    if(name==='connector')for(const key of ['invert_dir','invert_enable','run_current','current_rating_rms','sense_resistor','uart_address','endstop_pin','endstop_invert','endstop_pullup'])delete device.settings[key];
+                    if(name==='connector')for(const key of ['invert_dir','invert_enable','run_current','current_rating_rms','sense_resistor','uart_address','endstop_pin','endstop_invert','endstop_pullup'])setInstanceField(device.name,key,undefined);
                     if(name==='control' && value!=='pid')for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(device,key,undefined);
                     edit();renderSensors();renderComponents();renderCalibration();if(['curve','connector','control'].includes(name))renderDevices();
                 },options));
@@ -288,19 +292,27 @@
         for(const ref of plan?.selections??[])visit(ref);
         return inputs;
     }
-    function setCalibration(device,key,value) {
-        const target=device.name+'.'+key;
-        if(value===undefined)delete device.settings[key];else device.settings[key]=value;
-        if(calibrationFields.includes(key)&&definitionInputs()[target]){
-            draft.definition_plan.instance_values??={};
-            draft.definition_plan.instance_values[target]=value??null;
+    function setInstanceField(name,key,value) {
+        const target=name+'.'+key,input=definitionInputs()[target];
+        const settings=['identity','transport','reference_ack'].includes(key)&&draft.boards[name]?draft.boards[name]:draft.devices.find(d=>d.name===name)?.settings;
+        const cleared=value===undefined||value==='';
+        if(settings){if(cleared)delete settings[key];else settings[key]=value;}
+        if(input){
+            const values=draft.definition_plan.instance_values??={};
+            if(cleared){if(calibrationFields.includes(key)&&input.type==='number')values[target]=null;else delete values[target];}
+            else values[target]=value;
         }
-        for(const control of document.querySelectorAll('[data-input-target]'))if(control.dataset.inputTarget===target)control.value=value??'';
+        for(const control of document.querySelectorAll('[data-input-target], [data-instance-target]'))if((control.dataset.inputTarget??control.dataset.instanceTarget)===target){
+            control.value=cleared?'':String(value);
+            if(control.dataset.inputTarget&&input)control.parentElement.firstChild.textContent=input.label+(input.required&&inputValue(input)===undefined?' · needs your input':'');
+        }
     }
-    function calibrationValue(device,key) {
-        const input=definitionInputs()[device.name+'.'+key];
-        return input?inputValue(input):device.settings[key];
+    function instanceFieldValue(name,key) {
+        const input=definitionInputs()[name+'.'+key];
+        return input?inputValue(input):(['identity','transport','reference_ack'].includes(key)?draft.boards[name]?.[key]:draft.devices.find(d=>d.name===name)?.settings[key]);
     }
+    function setCalibration(device,key,value) {setInstanceField(device.name,key,value);}
+    function calibrationValue(device,key) {return instanceFieldValue(device.name,key);}
     function renderCalibration() {
         const root=$('calibration');root.replaceChildren();
         for(const probe of draft.devices.filter(d=>d.kind==='probe')){const box=el('fieldset');box.append(el('legend','Measured probe calibration'),field('Z offset (mm)','number',calibrationValue(probe,'z_offset'),value=>{setCalibration(probe,'z_offset',value);edit();}));root.append(box);}
@@ -427,9 +439,9 @@ renderChanges();renderDefinitionChoices();renderJourney();
         }
         const selected=$('selected-definitions');selected.replaceChildren();
         const selectedRows=selectedDefinitions().filter(row=>row.definition.category===selectedCategory).sort((a,b)=>Number(Object.values(b.definition.inputs??{}).some(input=>input.required&&inputValue(input)===undefined))-Number(Object.values(a.definition.inputs??{}).some(input=>input.required&&inputValue(input)===undefined)));
-        for(const {ref,definition:d} of selectedRows){const root=el('div');root.className='printer-selected-definition';root.append(el('h3',d.name),el('p','Selected in draft · '+ref.version+' · '+ref.source));selected.append(root);for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=inputValue(inp);const inputField=field(inp.label+(inp.required&&value===undefined?' · needs your input':''),inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{draft.definition_plan.instance_values??={};const [name,key]=inp.target.split('.'),device=draft.devices.find(d=>d.name===name);if(device&&calibrationFields.includes(key)){setCalibration(device,key,v);renderCalibration();}else if(v===undefined||v==='')delete draft.definition_plan.instance_values[inp.target];else draft.definition_plan.instance_values[inp.target]=v;inputField.firstChild.textContent=inp.label+(inp.required&&inputValue(inp)===undefined?' · needs your input':'');edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined);inputField.querySelector('input,select').dataset.inputTarget=inp.target;root.append(inputField);}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
+        for(const {ref,definition:d} of selectedRows){const root=el('div');root.className='printer-selected-definition';root.append(el('h3',d.name),el('p','Selected in draft · '+ref.version+' · '+ref.source));selected.append(root);for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=inputValue(inp);const inputField=field(inp.label+(inp.required&&value===undefined?' · needs your input':''),inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{const [name,key]=inp.target.split('.');setInstanceField(name,key,v);if(calibrationFields.includes(key))renderCalibration();inputField.firstChild.textContent=inp.label+(inp.required&&inputValue(inp)===undefined?' · needs your input':'');edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined);inputField.querySelector('input,select').dataset.inputTarget=inp.target;root.append(inputField);}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
             const guide=el('details');guide.append(el('summary','Defaults, overrides and sources'));
-            for(const c of d.components??[]){const actual=draft.devices.find(x=>x.name===c.name&&x.board===c.board);if(!actual)continue;for(const [key,value] of Object.entries(c.settings)){const row=el('p',c.name+' · '+key.replaceAll('_',' ')+': '+JSON.stringify(actual.settings[key])+' · '+(JSON.stringify(value)===JSON.stringify(actual.settings[key])?'Definition default':'Local override'));if(JSON.stringify(value)!==JSON.stringify(actual.settings[key])){const reset=el('button','Reset to definition default');reset.disabled=!authority()||busy||reconcile;reset.onclick=()=>{actual.settings[key]=copy(value);for(const gain of ['pid_kp','pid_ki','pid_kd'])setCalibration(actual,gain,undefined);edit();render();};row.append(reset);}guide.append(row);}}
+            for(const c of d.components??[]){const actual=draft.devices.find(x=>x.name===c.name&&x.board===c.board);if(!actual)continue;for(const [key,value] of Object.entries(c.settings)){const row=el('p',c.name+' · '+key.replaceAll('_',' ')+': '+JSON.stringify(actual.settings[key])+' · '+(JSON.stringify(value)===JSON.stringify(actual.settings[key])?'Definition default':'Local override'));if(JSON.stringify(value)!==JSON.stringify(actual.settings[key])){const reset=el('button','Reset to definition default');reset.disabled=!authority()||busy||reconcile;reset.onclick=()=>{setInstanceField(actual.name,key,copy(value));for(const gain of ['pid_kp','pid_ki','pid_kd'])setCalibration(actual,gain,undefined);edit();render();};row.append(reset);}guide.append(row);}}
             for(const source of d.sources){if(source.url){const a=el('a',source.id+' · '+source.locator);a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';guide.append(a);}else guide.append(el('p',source.revision+' · '+source.locator));}root.append(guide);
             const remove=el('button','Remove definition and owned contributions');remove.disabled=!authority()||busy||reconcile;remove.onclick=()=>operation(async()=>{const result=await rpc({action:'definition_remove',draft,reference:ref,expected_revision:revision});pendingDefinition=result.draft;$('definition-effects').textContent='Remove '+d.name+' and contributions not shared by retained definitions. Other configuration remains. Review: '+JSON.stringify(result.draft.devices.map(c=>c.name));$('definition-review').showModal();});root.append(remove);}
         for(const control of selected.querySelectorAll('input,select,button'))control.disabled=!authority()||busy||diagnostic||reconcile;
