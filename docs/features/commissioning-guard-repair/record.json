@@ -1,0 +1,57 @@
+{
+  "format_version": 2,
+  "id": "commissioning-guard-repair",
+  "kind": "feature",
+  "title": "Repair commissioning dependency-source test failures",
+  "author": "root/coordinator",
+  "created": "2026-10-23",
+  "priority": 2,
+  "proposal": "docs/features/commissioning-guard-repair/proposal.md",
+  "requirements": [
+    "docs/features/commissioning-guard-repair/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "offline-journey",
+      "description": "Commissioning reproduction and repaired full suite, dependency refusal regressions, relevant adjacent checks and source-bound publication.",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Repair and validate commissioning staging provenance",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "offline-journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source and disposable offline fixture repair only; no deployed or physical changes.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/stage_commissioning_host.py",
+        "tests/test_commissioning_host.py",
+        "docs/features/commissioning-guard-repair/evidence.md"
+      ],
+      "input_paths": [
+        "runtime/",
+        "scripts/project_license.py"
+      ]
+    }
+  ]
+}
