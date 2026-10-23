@@ -1,0 +1,3 @@
+# Stock readiness: preserved diagnostic checkpoint
+
+Baseline6e7a424: corrected actual repro retained probe offset0.25 and printing_enabled=true after bed replacement because instance input reapplied stale calibration. Initial repair exposed required-input accounting that treats explicit-null membership as answered and a legacy component preview unable to find its selected profile in pinned assets. These are incomplete/failed results, not qualification. Current patch/failure logs preserved before exact generator ownership extension. Research experiments3config/~1.75sec and1install/~0.15sec; primary worker tests under20sec; cumulative7200sec/4GiB allowance retained. No printer operations or output activation.

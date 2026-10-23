@@ -13,7 +13,7 @@ from sv08_state import atomic_json, fsync_dir
 from sv08_printer_catalog import encoded, digest, strict_json, empty_draft, BUNDLE_LIMIT
 from sv08_printer_generate import generate, GENERATOR_VERSION
 from sv08_printer_definitions import builtins
-from sv08_printer_compose import select_definition, migration_preview, remap_board, runtime_assets, catalog_for, remove_definition
+from sv08_printer_compose import select_definition, migration_preview, remap_board, runtime_assets, catalog_for, remove_definition, clear_calibration, CALIBRATION_FIELDS
 from sv08_printer_sources import GitHub, accept_source, bundle_preview
 from sv08_printer_publish import Publisher
 
@@ -273,7 +273,12 @@ class PrinterStore:
             if action=='preset':
                 return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
             if action=='component':
-                return dict(draft=self.catalog.select_component(request['draft'],request['role'],request['preset']))
+                draft=self.catalog.select_component(request['draft'],request['role'],request['preset'])
+                changed=[d for d in draft['devices'] if d.get('profile')==request['preset'] and d['board']==request['role']]
+                targets={d['name']+'.'+field for d in changed for field in (*CALIBRATION_FIELDS,'custom_curve')}
+                if any(d['kind'] in ('bed','probe') for d in changed):targets.update(d['name']+'.z_offset' for d in draft['devices'] if d['kind']=='probe')
+                clear_calibration(draft,self.catalog,targets)
+                return dict(draft=draft)
             if action in ('save','restore'):
                 if action=='restore':
                     if not state['previous']:raise ValueError('No previous candidate')

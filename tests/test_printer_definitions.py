@@ -9,7 +9,7 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'runtime'))
 from sv08_printer_catalog import Catalog,empty_draft,digest
 from sv08_printer_definitions import builtins,validate_definition,public_json,resolve
-from sv08_printer_compose import select_definition,validate_plan,migration_preview,remap_board,remove_definition
+from sv08_printer_compose import select_definition,validate_plan,migration_preview,remap_board,remove_definition,apply_inputs,clear_calibration
 from sv08_printer_sources import GitHub,accept_source,bundle_preview,repository
 
 class Definitions(unittest.TestCase):
@@ -159,6 +159,30 @@ class Definitions(unittest.TestCase):
         selected['definition_plan']['instance_values']={'bed_sensor.max_temp':90}
         self.assertIn('max_temp: 90',generate(self.c,selected,'sensors')['text'])
         selected['devices']=[];output=generate(self.c,selected,'sensors');self.assertFalse(output['complete']);self.assertTrue(any('contribution removed' in x for x in output['blockers']))
+    def test_calibration_clear_suppresses_input_defaults_and_rejects_other_null_inputs(self):
+        selected=select_definition(self.c,self.d,self.ref,self.snapshots)
+        record=selected['definition_plan']['snapshots']['builtin::'+self.bed['id']+'@'+self.bed['version']]
+        record['inputs']={key:dict(type='number',label=key,target='heater_bed.'+key,default=index+1,required=False) for index,key in enumerate(('pid_kp','pid_ki','pid_kd'))}
+        selected['definition_plan']['selections'][0]['sha256']=digest(record)
+        original=copy.deepcopy(record)
+        effective=apply_inputs(selected,self.c)
+        self.assertEqual(effective['devices'][1]['settings']['pid_kp'],1)
+        clear_calibration(effective,self.c,{'heater_bed.'+key for key in ('pid_kp','pid_ki','pid_kd')})
+        restored=apply_inputs(json.loads(json.dumps(effective)),self.c)
+        self.assertFalse(any(key.startswith('pid_') for key in restored['devices'][1]['settings']))
+        self.assertEqual(record,original)
+        # Absence continues to mean use the source default for legacy drafts.
+        restored['definition_plan'].pop('instance_values')
+        self.assertEqual(apply_inputs(restored,self.c)['devices'][1]['settings']['pid_kp'],1)
+        record['inputs']['limit']=dict(type='number',label='limit',target='heater_bed.max_temp')
+        selected['definition_plan']['selections'][0]['sha256']=digest(record)
+        selected['definition_plan']['instance_values']={'heater_bed.max_temp':None}
+        with self.assertRaises(ValueError):validate_plan(selected['definition_plan'],self.c)
+        record['inputs']['identity']=dict(type='identity',label='identity',target='main.identity')
+        selected['definition_plan']['selections'][0]['sha256']=digest(record)
+        selected['definition_plan']['instance_values']={'main.identity':None}
+        with self.assertRaises(ValueError):validate_plan(selected['definition_plan'],self.c)
+
     def test_repository_path_injection(self):
         for url in ['http://github.com/a/b','https://user@github.com/a/b','https://github.com/a/b?token=secret','https://evil.test/a/b','https://github.com/a/b/blob/main/catalog.json']:
             with self.assertRaises(ValueError):repository(url)

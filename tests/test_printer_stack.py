@@ -32,6 +32,49 @@ def factory(calibrated=False):
     return catalog,draft
 
 
+class CalibrationPersistence(unittest.TestCase):
+    def setUp(self):
+        from test_printer_configuration import PersistenceTests
+        PersistenceTests.setUp(self)
+    def tearDown(self):self.tmp.cleanup()
+    def request(self,**request):
+        status=self.service.request({'action':'status'})
+        request.setdefault('expected_identity',status['loaded_identity'])
+        if request['action'] in ('save','component'):request.setdefault('expected_revision',status['state']['revision'])
+        return self.service.request(request)
+    def state(self):return self.service.request({'action':'status'})['state']
+    def prepare(self):
+        review=self.request(action='review',mode='full')
+        self.request(action='apply',mode='full',review=review['review'])
+        return review
+    def test_calibration_edit_clear_reload_regenerate_and_component_preview(self):
+        catalog,draft=factory()
+        draft['definition_plan'].setdefault('instance_values',{})['probe.z_offset']=.25
+        self.request(action='save',draft=draft);self.prepare()
+        before=self.state();live=(self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None
+        edited=copy.deepcopy(before['draft'])
+        next(d for d in edited['devices'] if d['kind']=='probe')['settings']['z_offset']=.4
+        edited['definition_plan']['instance_values']['probe.z_offset']=.4
+        self.assertEqual(self.state(),before)
+        self.request(action='save',draft=edited)
+        self.assertEqual(self.state()['current'],before['current'])
+        review=self.prepare();self.assertTrue(review['printing_enabled']);self.assertIn('z_offset: 0.4',review['text'])
+        measured=self.state();self.assertEqual(measured['previous'],before['current'])
+        cleared=copy.deepcopy(measured['draft']);next(d for d in cleared['devices'] if d['kind']=='probe')['settings'].pop('z_offset')
+        cleared['definition_plan']['instance_values']['probe.z_offset']=None
+        self.request(action='save',draft=cleared)
+        self.assertIsNone(self.state()['draft']['definition_plan']['instance_values']['probe.z_offset'])
+        self.assertEqual(self.state()['current'],measured['current'])
+        review=self.prepare();self.assertTrue(review['complete']);self.assertFalse(review['printing_enabled']);self.assertIn('z_offset: 0',review['text'])
+        self.request(action='save',draft=edited);before=self.state()
+        replacement=self.request(action='component',draft=before['draft'],role='main',preset='bed_assembly')['draft']
+        self.assertEqual(self.state(),before)
+        self.assertIsNone(replacement['definition_plan']['instance_values']['probe.z_offset'])
+        self.assertNotIn('z_offset',next(d for d in replacement['devices'] if d['kind']=='probe')['settings'])
+        self.assertFalse(generate(catalog,replacement,'full')['printing_enabled'])
+        self.assertEqual((self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None,live)
+
+
 class StackTests(unittest.TestCase):
     def test_factory_complete_closed_bundle_and_print_integration(self):
         catalog,draft=factory(True);original=copy.deepcopy(draft);output=generate(catalog,draft,'full')

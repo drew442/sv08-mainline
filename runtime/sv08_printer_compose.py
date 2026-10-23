@@ -49,6 +49,24 @@ def connection_devices(definition, draft, catalog):
     return devices
 
 
+# A null instance value records an explicit calibration clear. Absence retains
+# the legacy input/default behaviour; snapshots remain immutable source records.
+CALIBRATION_FIELDS=('z_offset','pid_kp','pid_ki','pid_kd')
+
+def clear_calibration(draft, catalog, targets):
+    plan=draft.get('definition_plan')
+    closure={}
+    if plan:
+        for ref in plan['selections']:closure.update(resolve(ref,plan['snapshots'],catalog,replacements=plan.get('replacements',{})))
+    inputs={i['target'] for d in closure.values() for i in d.get('inputs',{}).values()}
+    for target in targets:
+        name,field=target.split('.',1)
+        device=next((d for d in draft['devices'] if d['name']==name),None)
+        if device:device['settings'].pop(field,None)
+        if target in inputs and field in CALIBRATION_FIELDS:plan.setdefault('instance_values',{})[target]=None
+        elif plan:plan.get('instance_values',{}).pop(target,None)
+
+
 def apply_inputs(draft,catalog):
     result=copy.deepcopy(draft);plan=result.get('definition_plan')
     if not plan:return result
@@ -63,7 +81,8 @@ def apply_inputs(draft,catalog):
                 device=next((c for c in result['devices'] if c['name']==name),None)
                 if not device:continue # Missing contributions are labelled by generation.
                 if field not in catalog.kinds[device['kind']]:raise ValueError('Instance input target is unavailable')
-                device['settings'][field]=copy.deepcopy(value)
+                if value is None:device['settings'].pop(field,None)
+                else:device['settings'][field]=copy.deepcopy(value)
     return result
 
 
@@ -126,6 +145,7 @@ def validate_plan(plan, catalog):
     if set(values)-set(inputs):raise ValueError('Unknown instance input')
     for target,value in values.items():
         inp=inputs[target]
+        if value is None and target.split('.',1)[1] in CALIBRATION_FIELDS and inp['type']=='number':continue
         if inp['type']=='number':
             catalog.number(value,'number')
             if value<inp.get('minimum',float('-inf')) or value>inp.get('maximum',float('inf')):raise ValueError('Instance input outside declared bounds')
@@ -157,12 +177,13 @@ def select_definition(catalog, draft, ref, snapshots):
         result['geometry']={**copy.deepcopy(definition['printer_settings'].get('geometry',{})),**result['geometry']}
     old=[r for r in plan['selections'] if r['source']==ref['source'] and r['id']==ref['id']]
     active,_=validate_plan(plan,catalog)
-    incoming=[]
+    incoming=[];changed_devices=[]
     for dependency,d in sorted(closure.items()):
         mapped=connection_devices(d,result,catalog)
         if dependency in active and dependency!=ident:
             actual={(c['board'],c['name']):c for c in draft['devices']}
             mapped=[copy.deepcopy(actual.get((c['board'],c['name']),c)) for c in mapped]
+        else:changed_devices+=mapped
         incoming+=mapped
     names={d['name'] for d in incoming};sensor_inputs={(d['board'],d['settings'].get('pin')) for d in incoming if d['kind']=='sensor'}
     removed=names|{d['name'] for d in result['devices'] if d['kind']=='sensor' and (d['board'],d['settings'].get('pin')) in sensor_inputs}
@@ -177,7 +198,7 @@ def select_definition(catalog, draft, ref, snapshots):
             base=prior_devices.get(device['name']);current=actual.get(device['name'])
             if not base or not current:continue
             for field,value in current['settings'].items():
-                if base['settings'].get(field)!=value and field not in ('pid_kp','pid_ki','pid_kd','custom_curve'):
+                if base['settings'].get(field)!=value and field not in (*CALIBRATION_FIELDS,'custom_curve'):
                     device['settings'][field]=copy.deepcopy(value)
     plan['snapshots'].update(closure)
     incoming_slots={(d['board'],d['name']) for d in incoming}
@@ -215,13 +236,17 @@ def select_definition(catalog, draft, ref, snapshots):
     if any((d['board'],d['name']) not in obsolete and (d['board'],d['settings'].get('sensor')) in obsolete for d in result['devices']):raise ValueError('Replaced definition sensor is used by another heater')
     result['devices']=[d for d in result['devices'] if (d['board'],d['name']) not in obsolete]
     result['devices']=[d for d in result['devices'] if d['name'] not in removed]+incoming
-    if definition['category']=='bed' and definition['kind']!='behaviour':
-        for device in result['devices']:
-            if device['kind']=='probe':device['settings'].pop('z_offset',None)
     # Multiple motors, fans and controller roles coexist in their categories.
     plan['selections']=[r for r in plan['selections'] if r not in replaced]+[copy.deepcopy(ref)]
     plan['snapshots'].update(closure)
     plan['origins'].update({d['name']:'user-declared' for d in incoming})
+    # Invalidate measurements for changed contributions, including dependencies
+    # of bundles. Retained shared dependencies keep their local calibration.
+    prior_slots={(d['board'],d['name']) for d in draft['devices']}
+    targets={d['name']+'.'+field for d in changed_devices if (d['board'],d['name']) in prior_slots for field in (*CALIBRATION_FIELDS,'custom_curve')}
+    if any(d['kind'] in ('bed','probe') for d in changed_devices):
+        targets.update(d['name']+'.z_offset' for d in result['devices'] if d['kind']=='probe' and (d['board'],d['name']) in prior_slots)
+    clear_calibration(result,catalog,targets)
     # Old content remains in saved/restoration envelopes; no mutable lookup is used.
     result=apply_inputs(result,catalog)
     result['definition_plan']['runtime_assets']=runtime_assets(result,catalog)
