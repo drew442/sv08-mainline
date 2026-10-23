@@ -1,6 +1,26 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "b426d806713bb164d87c3d11526892cd1238b20aabdb40e7c7edd7c2032d0065",
+    "rationale": "Owner requests resolving PR33 gaps and clarifies configured-printer acceptance; same delivery revised before merge, prior evidence preserved.",
+    "reference": "docs/features/stock-printer-readiness/follow-up-request.md",
+    "reference_sha256": "ac8caf01a6df21fa6476cc7825c78df539cfa450baa7b6e4986f4e5f814509b7",
+    "requirements_sha256": {
+      "docs/decisions/20261003-commissioning-host-baseline.md": "783ca9c0aa0ee8653c12812fb6f929ac2b6a2a31c684f62cc752c60177a4051d",
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/printer-hardware-page-design.md": "be50a1219e2a7f60b463f9350b13117398184b48d5f043130dd1d5e3ae1d15aa",
+      "docs/features/complete-printer-configuration/calibration-decision.md": "25ee02371f9d7c562ec44dbf8a63ec65a758ff08cbb431d78e11fd4df7cfaac7",
+      "docs/features/complete-printer-configuration/proposal.md": "67b58d869f985e35d542bbeb30b9aa3b3048f23939a04a9c5dfe4d63dbe5a870",
+      "docs/features/factory-sv08-definitions/proposal.md": "71f0c83657b02d463aa0c5490a1a74d0cd00b1f22d73039bf39ed989797865c1",
+      "docs/features/stock-printer-readiness/follow-up-request.md": "ac8caf01a6df21fa6476cc7825c78df539cfa450baa7b6e4986f4e5f814509b7",
+      "docs/features/stock-printer-readiness/owner-request.md": "1dd390048481b7b155257b80f13f1d1be75d0c5f72536ae291cd1d9abe1283af"
+    },
+    "scope_sha256": "5f27ecdf23bdb49452f743adb984e4fe451bdd6ebe7d69c9a5d95fd8d90406bc",
+    "session": "stock-ready-followup-20261023",
+    "source_commit": "7f1531a3bc51b1ca7404ad4259fbb284b4149ee8"
+  },
   "checks": [
     {
       "description": "Exact source/evidence readiness and gap matrix, stock vs named hardware distinguished.",
