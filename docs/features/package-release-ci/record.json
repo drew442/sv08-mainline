@@ -43,7 +43,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "New selected Mainsail accounting suite exposes stale expected coverage dict missing accepted_distributor_standard_terms:0. Preserve failed125test run; expand exact test ownership within owner-authorized CI repair, no production behavior or assertion weakening.",
       "checks": [
         "ci-regressions"
       ],
@@ -81,7 +81,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible CI/source work using synthetic offline tests on normal hosted runners; no images, secrets, publication credentials or live printer services.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and qualify package/release CI",
       "validation": null,
       "verification": null
