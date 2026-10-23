@@ -85,7 +85,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "ff16385f270c4a63aeda4b331bc563f4",
+        "session": "stock-calibration-20261023"
+      },
       "input_paths": [
         "runtime/",
         "ui/",
@@ -148,7 +152,7 @@
       "resumption": "Owner selected literal SAVE_CONFIG with automatic reconciliation. Preserve UI/component/fixture checkpoint10d74cc and failed evidence; add exact reconciler/service/staging/version-parser ownership, keep cumulative allowances and physical gates.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "pending",
+      "status": "running",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
