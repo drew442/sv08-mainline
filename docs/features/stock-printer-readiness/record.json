@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "8b3545e78f65e71f08964a1c69f3d3681fd9f9c2f3ecaa8a1f2133c1cd461b6b",
-    "rationale": "Owner requests actionable stock-readiness closure, autonomous software repairs and one physical commissioning handoff using agents; preserve all operation gates.",
+    "rationale": "Null clear marker needs generator to label required calibration unanswered before starting-offset synthesis. Expand exact generator ownership within original calibration correctness goal; preserve all failed attempts, source snapshots and physical protections.",
     "reference": "docs/features/stock-printer-readiness/owner-request.md",
     "reference_sha256": "1dd390048481b7b155257b80f13f1d1be75d0c5f72536ae291cd1d9abe1283af",
     "requirements_sha256": {
@@ -16,9 +16,9 @@
       "docs/features/factory-sv08-definitions/proposal.md": "71f0c83657b02d463aa0c5490a1a74d0cd00b1f22d73039bf39ed989797865c1",
       "docs/features/stock-printer-readiness/owner-request.md": "1dd390048481b7b155257b80f13f1d1be75d0c5f72536ae291cd1d9abe1283af"
     },
-    "scope_sha256": "12b4f0834888e02da79ca1f8fb0e20a686a0efcd45d50e1d6351a2eff692bc2f",
+    "scope_sha256": "1e51c090a8ffcbbf209c99547d6a27f43fc38d7b78b2fd514bd917f00ab33302",
     "session": "stock-ready-20261023",
-    "source_commit": "bd13e812c9e2c875fc85826e06e850caa99f3620"
+    "source_commit": "5e3360c771863a9da3ae728166d2c34b3ac3f663"
   },
   "checks": [
     {
