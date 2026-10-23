@@ -11,12 +11,13 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 from zipfile import ZipFile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'runtime'))
 from sv08_printer_catalog import Catalog,empty_draft,digest
 from sv08_printer_definitions import builtins
-from sv08_printer_compose import select_definition
+from sv08_printer_compose import select_definition,apply_inputs
 from sv08_printer_generate import generate
 from sv08_printer_stack import archive,MOONRAKER
 from sv08_printer_publish import Publisher,inventory,validate_output
@@ -30,6 +31,104 @@ def factory(calibrated=False):
     draft=select_definition(catalog,draft,dict(source='builtin',id=record['id'],version=record['version'],sha256=digest(record),commit=catalog.revision),snapshots)
     if calibrated:next(d for d in draft['devices'] if d['kind']=='probe')['settings']['z_offset']=.25 # disposable software fixture only
     return catalog,draft
+
+
+class CalibrationPersistence(unittest.TestCase):
+    def setUp(self):
+        from test_printer_configuration import PersistenceTests
+        PersistenceTests.setUp(self)
+    def tearDown(self):self.tmp.cleanup()
+    def request(self,**request):
+        status=self.service.request({'action':'status'})
+        request.setdefault('expected_identity',status['loaded_identity'])
+        if request['action'] in ('save','component'):request.setdefault('expected_revision',status['state']['revision'])
+        return self.service.request(request)
+    def state(self):return self.service.request({'action':'status'})['state']
+    def prepare(self):
+        review=self.request(action='review',mode='full')
+        self.request(action='apply',mode='full',review=review['review'])
+        return review
+    def test_calibration_edit_clear_reload_regenerate_and_component_preview(self):
+        catalog,draft=factory()
+        draft['definition_plan'].setdefault('instance_values',{})['probe.z_offset']=.25
+        self.request(action='save',draft=draft);self.prepare()
+        before=self.state();live=(self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None
+        edited=copy.deepcopy(before['draft'])
+        next(d for d in edited['devices'] if d['kind']=='probe')['settings']['z_offset']=.4
+        edited['definition_plan']['instance_values']['probe.z_offset']=.4
+        self.assertEqual(self.state(),before)
+        self.request(action='save',draft=edited)
+        self.assertEqual(self.state()['current'],before['current'])
+        review=self.prepare();self.assertTrue(review['printing_enabled']);self.assertIn('z_offset: 0.4',review['text'])
+        measured=self.state();self.assertEqual(measured['previous'],before['current'])
+        cleared=copy.deepcopy(measured['draft']);next(d for d in cleared['devices'] if d['kind']=='probe')['settings'].pop('z_offset')
+        cleared['definition_plan']['instance_values']['probe.z_offset']=None
+        self.request(action='save',draft=cleared)
+        self.assertIsNone(self.state()['draft']['definition_plan']['instance_values']['probe.z_offset'])
+        self.assertEqual(self.state()['current'],measured['current'])
+        review=self.prepare();self.assertTrue(review['complete']);self.assertFalse(review['printing_enabled']);self.assertIn('z_offset: 0',review['text'])
+        self.request(action='save',draft=edited);before=self.state()
+        replacement=self.request(action='component',draft=before['draft'],role='main',preset='bed_assembly')['draft']
+        self.assertEqual(self.state(),before)
+        self.assertIsNone(replacement['definition_plan']['instance_values']['probe.z_offset'])
+        self.assertNotIn('z_offset',next(d for d in replacement['devices'] if d['kind']=='probe')['settings'])
+        pending=generate(catalog,replacement,'full')
+        self.assertTrue(pending['complete'],pending['blockers']);self.assertFalse(pending['printing_enabled'])
+        self.assertIn('control: watermark',pending['text']);self.assertNotIn('pid_kp:',pending['text'])
+        self.assertEqual(replacement['definition_plan']['snapshots'],before['draft']['definition_plan']['snapshots'])
+        self.assertEqual(replacement['definition_plan']['runtime_assets'],before['draft']['definition_plan']['runtime_assets'])
+        # Legacy profiles without a native definition pin only the explicitly
+        # selected catalogue profile; missing fitted sensor facts stay missing.
+        legacy=self.request(action='component',draft=before['draft'],role='main',preset='funssor_cn3d_bed')['draft']
+        generated=generate(catalog,legacy,'full');self.assertFalse(generated['complete'])
+        self.assertTrue(any('curve' in blocker for blocker in generated['blockers']))
+        original_assets=before['draft']['definition_plan']['runtime_assets']
+        for board in legacy['definition_plan']['runtime_assets']['boards']:
+            prior=next(b for b in original_assets['boards'] if b['id']==board['id'])
+            self.assertEqual({k:v for k,v in board.items() if k!='presets'},{k:v for k,v in prior.items() if k!='presets'})
+            if board['role']=='main':self.assertEqual(board['presets'],[next(p for p in catalog.boards[board['id']]['presets'] if p['id']=='funssor_cn3d_bed')])
+            else:self.assertEqual(board,prior)
+        with self.assertRaisesRegex(ValueError,'Unknown component'):self.request(action='component',draft=before['draft'],role='tool',preset='bed_assembly')
+        incompatible=copy.deepcopy(before['draft'])
+        board=next(b for b in incompatible['definition_plan']['runtime_assets']['boards'] if b['role']=='main')
+        board['source']['revision']='0'*40
+        with self.assertRaisesRegex(ValueError,'pinned board mapping'):self.request(action='component',draft=incompatible,role='main',preset='bed_assembly')
+        self.assertEqual(self.state(),before)
+        self.assertEqual((self.view/'printer.cfg').read_bytes() if (self.view/'printer.cfg').exists() else None,live)
+
+    def test_legacy_geometry_replacements_invalidate_probe_but_fans_preserve_it(self):
+        catalog,draft=factory(True);draft['definition_plan']['instance_values']={'probe.z_offset':.25}
+        self.request(action='save',draft=draft);before=self.state()
+        for role,preset,sensitive in [('tool','hotend_assembly',True),('main','stepper_x',True),('main','exhaust_fan',False)]:
+            with self.subTest(role=role,preset=preset):
+                # Exercise compatibility fallback when this profile has no native
+                # definition available; catalogue presets themselves stay pinned.
+                records=[d for d in builtins(catalog) if d['id']!='sv08-'+role+'.'+preset]
+                with patch('sv08_printer_store.builtins',return_value=records):
+                    changed=self.request(action='component',draft=draft,role=role,preset=preset)['draft']
+                effective=apply_inputs(changed,catalog)
+                self.assertEqual(next(d for d in effective['devices'] if d['kind']=='probe')['settings'].get('z_offset'),None if sensitive else .25)
+                self.assertEqual(changed['definition_plan']['instance_values']['probe.z_offset'],None if sensitive else .25)
+                self.assertEqual(changed['definition_plan']['snapshots'],draft['definition_plan']['snapshots'])
+                self.assertEqual(self.state(),before)
+
+    @unittest.skipUnless(os.environ.get('SV08_PRINTER_VALIDATION_PYTHON'),'Pinned parser environment required')
+    def test_stock_component_full_without_pid_reaches_real_parser_ready(self):
+        catalog,draft=factory(True)
+        draft['definition_plan']['instance_values']={'probe.z_offset':.25}
+        self.request(action='save',draft=draft)
+        source=Path(os.environ['SV08_PRINTER_SOURCE_ROOT'])
+        for role,preset in [('main','bed_assembly'),('tool','hotend_assembly'),('main','stepper_x')]:
+            with self.subTest(role=role,preset=preset):
+                changed=self.request(action='component',draft=draft,role=role,preset=preset)['draft']
+                output=generate(catalog,changed,'full')
+                self.assertTrue(output['complete']);self.assertFalse(output['printing_enabled'])
+                self.assertNotIn('pid_kp:',output['text']);self.assertIn('z_offset: 0',output['text'])
+                with tempfile.TemporaryDirectory() as tmp:
+                    for name,value in output['files'].items():(Path(tmp)/name).write_text(value)
+                    preview=dict(files={},review='export',activation=output['files']['printer.cfg'])
+                    result=validate_output(preview,Path(tmp),os.environ['SV08_PRINTER_VALIDATION_PYTHON'],str(source/'upstream/klipper/klippy/klippy.py'),str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict'))
+                    self.assertTrue(result['validated']);self.assertFalse(result['physical_hardware'])
 
 
 class StackTests(unittest.TestCase):

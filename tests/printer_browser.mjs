@@ -41,6 +41,101 @@ try {
  const ready=()=>until(`document.querySelector('#printer-boards fieldset') && !document.querySelector('#printer-save').disabled && !document.querySelector('#printer-candidate-review').open`);
  const reloadDocument=async()=>{const origin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${origin} && window.sv08Session?.available===true && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);};
  const reload=async()=>{await click('#printer-reload');if(await evaluate("!document.querySelector('#printer-reconciliation').hidden")){await send('Page.handleJavaScriptDialog',{accept:true}).catch(()=>{});await click('#printer-reconcile');}await ready();};
+ async function measuredCalibrationJourney() {
+ // Measured calibration edits replace authoritative inputs and remain local until save.
+ const calibrationCurrent=JSON.stringify(state().current),calibrationPrevious=JSON.stringify(state().previous);
+ const calibrationLivePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg',calibrationLive=fs.readFileSync(calibrationLivePath);
+ await click('[data-printer-view=changes]');
+ await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+ await set('#printer-calibration input','.25');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'0.25');
+ const measuredBeforeEdit=fs.readFileSync(statepath);
+ await set('#printer-calibration input','.4');await screenshotAt('calibration-measured-edit','#printer-calibration');assert.deepEqual(fs.readFileSync(statepath),measuredBeforeEdit);assert.deepEqual(fs.readFileSync(calibrationLivePath),calibrationLive);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(state().draft.definition_plan.instance_values['probe.z_offset'],.4);assert.equal(state().draft.devices.find(d=>d.kind==='probe').settings.z_offset,.4);
+ await reloadDocument();await click('#authorize');await ready();await click('[data-printer-view=changes]');
+ await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+ assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'0.4');await screenshotAt('calibration-measured-reloaded','#printer-calibration');
+ await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
+ assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),/z_offset: 0.4/);assert.doesNotMatch(await evaluate(`document.querySelector('#printer-review-text').textContent`),/Probe calibration pending/);await click('#printer-cancel-review');
+ const measuredBeforeClear=fs.readFileSync(statepath);await set('#printer-calibration input','');assert.deepEqual(fs.readFileSync(statepath),measuredBeforeClear);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(state().draft.definition_plan.instance_values['probe.z_offset'],null);assert.equal(state().draft.devices.find(d=>d.kind==='probe').settings.z_offset,undefined);
+ await reloadDocument();await click('#authorize');await ready();await click('[data-printer-view=changes]');
+ await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+ assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'');await screenshotAt('calibration-cleared-reloaded','#printer-calibration');
+ await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
+ assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/sourced factory starting value 0 mm/);assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),/Probe calibration pending/);await screenshotAt('calibration-pending-review','#printer-review-detail');await click('#printer-cancel-review');
+ assert.equal(JSON.stringify(state().current),calibrationCurrent);assert.equal(JSON.stringify(state().previous),calibrationPrevious);assert.deepEqual(fs.readFileSync(calibrationLivePath),calibrationLive);
+ await click('[data-printer-view=components]');
+ }
+ async function identityInputJourney() {
+  const before=state(),tool=JSON.stringify(before.draft.boards.tool),current=JSON.stringify(before.current),previous=JSON.stringify(before.previous);
+  const livePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg',live=fs.readFileSync(livePath);
+  const saveDraft=async()=>{await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);};
+  const reopenBoards=async()=>{await reloadDocument();await click('#authorize');await ready();await click('[data-category=boards]');};
+  const reviewFull=async()=>{await click('[data-printer-view=changes]');await evaluate(`document.querySelector('#printer-output-controls').open=true`);await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);};
+  await evaluate(`document.querySelector('#printer-boards details[data-role="main"]').open=true`);
+  const savedBytes=fs.readFileSync(statepath);
+  await set('[data-instance-target="main.identity"]','/dev/fixture-main-edited');
+  assert.equal(await evaluate(`document.querySelector('[data-input-target="main.identity"]').value`),'/dev/fixture-main-edited');
+  assert.deepEqual(fs.readFileSync(statepath),savedBytes);assert.deepEqual(fs.readFileSync(livePath),live);
+  await saveDraft();await reopenBoards();
+  assert.equal(state().draft.boards.main.identity,'/dev/fixture-main-edited');assert.equal(state().draft.definition_plan.instance_values['main.identity'],'/dev/fixture-main-edited');
+  assert.equal(await evaluate(`document.querySelector('[data-instance-target="main.identity"]').value`),'/dev/fixture-main-edited');
+  await reviewFull();assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),/serial: \/dev\/fixture-main-edited/);await click('#printer-cancel-review');
+  await click('[data-printer-view=components]');await click('[data-category=boards]');
+  await evaluate(`document.querySelector('#printer-boards details[data-role="main"]').open=true`);
+  await set('[data-instance-target="main.identity"]','');await saveDraft();await reopenBoards();
+  assert.equal(state().draft.boards.main.identity,undefined);assert.equal(state().draft.definition_plan.instance_values['main.identity'],undefined);
+  assert.equal(await evaluate(`document.querySelector('[data-input-target="main.identity"]').value`),'');
+  await reviewFull();assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/needs your input.*Mainboard MCU identity/);assert.equal(await evaluate(`document.querySelector('#printer-apply').disabled`),true);
+  await screenshotAt('identity-cleared-required-review','#printer-review-detail');await click('#printer-cancel-review');
+  await click('[data-printer-view=components]');await click('[data-category=boards]');
+  await set('[data-input-target="main.identity"]','/dev/fixture-main-generic');await saveDraft();await reopenBoards();
+  assert.equal(await evaluate(`document.querySelector('[data-instance-target="main.identity"]').value`),'/dev/fixture-main-generic');
+  const beforeClear=fs.readFileSync(statepath);await set('[data-input-target="main.identity"]','');assert.deepEqual(fs.readFileSync(statepath),beforeClear);
+  await saveDraft();await reopenBoards();
+  assert.equal(state().draft.boards.main.identity,undefined);assert.equal(state().draft.definition_plan.instance_values['main.identity'],undefined);
+  assert.equal(await evaluate(`document.querySelector('[data-instance-target="main.identity"]').value`),'');
+  assert.match(await evaluate(`document.querySelector('[data-input-target="main.identity"]').parentElement.textContent`),/needs your input/);
+  await reviewFull();assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/needs your input.*Mainboard MCU identity/);assert.equal(await evaluate(`document.querySelector('#printer-apply').disabled`),true);await click('#printer-cancel-review');
+  await click('[data-printer-view=components]');await click('[data-category=boards]');
+  assert.equal(JSON.stringify(state().draft.boards.tool),tool);assert.equal(JSON.stringify(state().current),current);assert.equal(JSON.stringify(state().previous),previous);assert.deepEqual(fs.readFileSync(livePath),live);
+  await set('[data-input-target="main.identity"]','/dev/null');await saveDraft();
+ }
+ async function calibrationOnlyJourney() {
+  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
+  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html'});
+  await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
+  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+  await click('[data-page=printer]');await click('#authorize');await ready();
+  await click('#printer-use-factory');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');
+  await click('[data-category=boards]');
+  for(const role of ['main','tool'])await set('[data-input-target="'+role+'.identity"]','/dev/null');
+  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+  assert.equal(state().draft.devices.length,24);
+  await identityInputJourney();
+  await click('[data-printer-view=changes]');
+  await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+  // Prepare real inactive history through the UI. No managed publication occurs.
+  for(const value of [.15,.25]) {
+   await set('#printer-calibration input',value);await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+   await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
+   assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),new RegExp('z_offset: '+value));
+   await click('#printer-apply');await until(`!document.querySelector('#printer-candidate-review').open && !document.querySelector('#printer-save').disabled`);
+  }
+  assert.equal(state().current.draft.definition_plan.instance_values['probe.z_offset'],.25);
+  assert.equal(state().previous.draft.definition_plan.instance_values['probe.z_offset'],.15);
+  await measuredCalibrationJourney();
+  assert.equal(errors.length,0,JSON.stringify(errors));
+  assert.deepEqual(fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg'),fs.readFileSync(fixture+'/original-live.txt'));
+  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,mode:'calibration-only',authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600]],factory_selected_through_ui:true,connection_identity_authoritative_edit_clear_save_reload_regenerate:true,generic_identity_clear_removes_effective_value:true,unrelated_board_preserved:true,prepared_current_previous_preserved:true,measured_calibration_authoritative_edit_clear_save_reload_regenerate:true,calibration_pending_print_guard:true,live_config_unchanged:true,uncaught_exceptions:errors.length,full_suite_executed:false},null,2)+'\n');
+  console.log('Printer calibration-only browser journey PASS');
+ }
+ if(process.env.SV08_CALIBRATION_ONLY==='1') {
+  await calibrationOnlyJourney();
+ } else {
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html'});await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
@@ -477,6 +572,7 @@ try {
 
  await evaluate(`for(const input of document.querySelectorAll('#printer-boards input')){if(input.parentElement.textContent.includes('Private MCU identity')){input.value='/dev/null';input.dispatchEvent(new Event('change',{bubbles:true}));}}`);
  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ await measuredCalibrationJourney();
  const beforeBundle=JSON.stringify(state());
  await set('#printer-mode','setup');await click('#printer-configuration-export');
  for(let i=0;i<200 && !fs.existsSync(output+'/sv08-printer-configuration.zip');i++)await delay(100);
@@ -579,6 +675,7 @@ try {
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,hardware_journey_state_attention_save_cancel:true,definition_author_gap_distinct:true,required_answer_label_tracks_edit_without_focus_loss:true,publication_refusal_no_confirmation:true,publication_escape_retains_bytes_focus:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,source_preview_discard_preserves_input_no_rpc:true,catalogue_connection_clear_nonmutating_focus:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,hardware_journey_state_attention_save_cancel:true,definition_author_gap_distinct:true,required_answer_label_tracks_edit_without_focus_loss:true,publication_refusal_no_confirmation:true,publication_escape_retains_bytes_focus:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,measured_calibration_authoritative_edit_clear_save_reload_regenerate:true,calibration_edits_preserve_current_previous_and_live:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,source_preview_discard_preserves_input_no_rpc:true,catalogue_connection_clear_nonmutating_focus:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
+ }
 } finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes,entries:fs.readdirSync(profile,{withFileTypes:true}).map(e=>({name:e.name,bytes:e.isDirectory()?bytes(profile+'/'+e.name):e.isFile()?fs.statSync(profile+'/'+e.name).size:0})).sort((a,b)=>b.bytes-a.bytes)}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

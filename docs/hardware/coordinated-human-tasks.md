@@ -521,3 +521,9 @@ no physical manipulation is currently requested.
 The [component page](../features/printer-component-configuration/installed-evidence.md)
 is now installed and independently verified. Its saved two-sensor candidate is
 inactive. PSU remains OFF; no attended action is needed to complete this software goal.
+
+## Current stock/selected-printer commissioning handoff — 2026-10-23
+
+Use the [single staged session](test-sv08-01-commissioning-session.md) for H01/H02/H04/H05/H06 and the [current software/readiness matrix](../development/stock-printer-readiness.md). This consolidates the earlier printer-lane forms/dispatch wording; it does not erase measured results, reopen H12 or authorize a new physical operation. Stock qualification needs a stock target; the named machine's bed/hotend upgrades must be selected correctly and do not establish factory thermal behavior.
+
+Before scheduling output work, coordinator prepares the exact configuration/source/firmware bindings, target-specific reviewed launch/stop procedure and recovery preconditions. Current diagnostic masks and OS-health restrictions remain; no generic unmask or forged health marker. One private session log feeds all consuming H IDs. Reuse unchanged applicable evidence, collect actual input transitions and staged motion/heat/calibration/print observations once, and preserve failures as phase-specific dependencies. Use Cockpit's measured-offset field for persistence; ordinary SAVE_CONFIG cannot update the included managed probe setting. Fine sensor fitting/proprietary pressure calibration remain deferred. No physical check is complete merely from this preparation; no printer access or operation occurred in this source goal.
