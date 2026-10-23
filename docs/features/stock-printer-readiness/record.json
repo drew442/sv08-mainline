@@ -69,7 +69,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve Android and component/fixture checkpoints. Owner chose native SAVE_CONFIG with automatic reconciliation; extend exact ownership for calibrated-root persistence, service, versioned parser and read-status integration before edits.",
       "checks": [
         "inventory",
         "calibration",
@@ -136,7 +136,7 @@
       "resumption": "Owner expands PR33 acceptance; preserve initial published candidate and measurements, reauthorize exact follow-up scope before implementation. No physical work or recovery-host qualification.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "running",
+      "status": "blocked",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
