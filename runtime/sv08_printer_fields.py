@@ -235,3 +235,45 @@ def compact_mapping(board):
             source=value['source'];value['source']={k:v for k,v in source.items() if k in ('line','path','revision') and (k=='line' or v!=result['source'].get(k))}
             value.pop('evidence',None) # Board warning/provenance applies to every binding.
     return result
+
+
+# Supported-FDM application input policy, not physical ratings or a safety claim.
+# Broad ceilings deliberately allow modified printers; selected documented curve
+# limits still narrow these ranges. Factory reference_bounds are operating
+# defaults, not thermistor ratings (e.g. a modified bed may use 120 C).
+SUPPORTED_FDM_TEMPERATURE_C = {
+    'bed': (-100, 200), 'extruder': (-100, 500), 'chamber': (-100, 150),
+    'sensor': (-100, 700), 'mcu_temperature': (-100, 150),
+}
+
+
+def validate_component_temperatures(devices, curves):
+    """Validate partial portable components and fully mapped instance devices."""
+    def bound(device, field, value, low, high, policy):
+        import math
+        if type(value) not in (int,float) or not math.isfinite(value):
+            raise ValueError(device['name']+'.'+field+': finite temperature in °C required')
+        if not low <= value <= high:
+            raise ValueError(device['name']+'.'+field+': '+policy+' range is '+str(low)+'..'+str(high)+' °C')
+    for device in devices:
+        kind=device['kind'];settings=device['settings']
+        limits=SUPPORTED_FDM_TEMPERATURE_C.get(kind)
+        if limits:
+            low,high=limits
+            for field in ('min_temp','max_temp'):
+                if field in settings:bound(device,field,settings[field],low,high,kind+' supported-FDM')
+            if 'min_temp' in settings and 'max_temp' in settings and settings['min_temp'] >= settings['max_temp']:
+                raise ValueError(device['name']+'.min_temp: must be below max_temp (°C)')
+            curve=curves.get(settings.get('curve'),{})
+            if curve.get('limits'):
+                for field in ('min_temp','max_temp'):
+                    if field in settings:bound(device,field,settings[field],*curve['limits'],'documented sensor')
+        if kind in ('bed','extruder','chamber'):
+            sensor=next((d for d in devices if d['name']==settings.get('sensor') and d['board']==device['board'] and d['kind']=='sensor'),None)
+            if sensor:
+                for field in ('min_temp','max_temp'):
+                    if field in sensor['settings']:bound(sensor,field,sensor['settings'][field],*SUPPORTED_FDM_TEMPERATURE_C[kind],device['name']+' '+kind+' supported-FDM')
+            if kind=='extruder' and 'min_extrude_temp' in settings:
+                upper=SUPPORTED_FDM_TEMPERATURE_C[kind][1]
+                if sensor:upper=min(upper,sensor['settings'].get('max_temp',upper))
+                bound(device,'min_extrude_temp',settings['min_extrude_temp'],0,upper,'extrusion supported-FDM')
