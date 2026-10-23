@@ -12,6 +12,11 @@ on:
       - 'tests/test_host_boot.py'
       - 'tests/test_installed_cockpit.py'
       - 'tests/test_data_budget.py'
+      - 'ui/printer/**'
+      - 'tests/test_factory_sv08.py'
+      - 'tests/test_printer_definitions.py'
+      - 'tests/test_printer_stack.py'
+      - 'tests/test_printer_publication.py'
   push:
     branches: [main]
     paths:
@@ -22,6 +27,11 @@ on:
       - 'tests/test_host_boot.py'
       - 'tests/test_installed_cockpit.py'
       - 'tests/test_data_budget.py'
+      - 'ui/printer/**'
+      - 'tests/test_factory_sv08.py'
+      - 'tests/test_printer_definitions.py'
+      - 'tests/test_printer_stack.py'
+      - 'tests/test_printer_publication.py'
   workflow_dispatch:
 
 permissions:
@@ -60,3 +70,17 @@ jobs:
           if not result.wasSuccessful() or result.skipped:
               raise SystemExit('Ownership tests failed or were skipped')
           PY
+      - name: Offline printer calibration and publication regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          scratch=$(mktemp -d)
+          trap 'rm -rf "$scratch"' EXIT
+          env SV08_PRINTER_SCRATCH="$scratch" PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 - <<'PYTHON'
+          import unittest
+          loader = unittest.TestLoader()
+          names = ('test_factory_sv08.py', 'test_printer_definitions.py', 'test_printer_stack.py', 'test_printer_publication.py')
+          result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(loader.discover('tests', pattern=name) for name in names))
+          if not result.wasSuccessful():
+              raise SystemExit('Offline printer regressions failed')
+          PYTHON
