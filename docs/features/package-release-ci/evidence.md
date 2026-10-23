@@ -1,0 +1,3 @@
+# Package/release CI evidence — initial preserved attempt
+
+Initial selected runner executed125tests,124passed/1failed, zero skips. The historical Mainsail coverage equality expected dict omitted production field `accepted_distributor_standard_terms:0`; other counts agree. Full log retained in assigned scratch selected-run-1, SHA256 `746eed064977e50cc879a0dd108d2472123505976d4882369660c43a36c48382`. Four authored runner tests passed. This is failed evidence, not completion. Coordinator is extending exact test ownership within the authorized CI repair; production accounting and release guards remain unchanged. Budget lineage under10process-seconds/~10MiB worker use, plus coordinator workflow/retrieval overhead, carried forward.
