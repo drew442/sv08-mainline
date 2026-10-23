@@ -146,7 +146,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source and disposable offline fixture repair only; no deployed or physical changes.",
-      "status": "validated",
+      "status": "done",
       "title": "Repair and validate commissioning staging provenance",
       "validation": {
         "actor": "root/coordinator",
