@@ -1,49 +1,64 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "d6eefe78030462d170f07e1c4facd27270df1762c319120cab025483ff869855",
+    "rationale": "Owner requests independent current package builds, reproducibility repairs, measured evidence and publication using agents.",
+    "reference": "docs/features/package-reproducibility-qualification/owner-request.md",
+    "reference_sha256": "8300452957fee0b5af45bfdea3e9dfa554f701ab5d5a362cc312f06c497cbbff",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/reproducible-builds.md": "d2933dd7b9b30d9a1a0f5aea459d506f73f6e9ae8b364bde9bcfea7c20f821d0",
+      "docs/features/package-reproducibility-qualification/owner-request.md": "8300452957fee0b5af45bfdea3e9dfa554f701ab5d5a362cc312f06c497cbbff"
+    },
+    "scope_sha256": "9fa678ba5408eef26d34290d837873f3c8528cb34979029713d46fba171b2009",
+    "session": "repro-20261023",
+    "source_commit": "26a226d6e8b2c22b00d23664358aa63b71647116"
+  },
+  "checks": [
+    {
+      "description": "Independent current package pairs and native source inputs, exact equality and input/toolchain provenance; relevant regression/refusal checks and publication.",
+      "environment": "offline",
+      "id": "package-pairs"
+    }
+  ],
+  "created": "2026-10-23",
+  "decision": null,
   "format_version": 2,
   "id": "package-reproducibility-qualification",
   "kind": "feature",
-  "title": "Qualify current package reproducibility",
-  "author": "root/coordinator",
-  "created": "2026-10-23",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/package-reproducibility-qualification/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/package-reproducibility-qualification/owner-request.md",
     "docs/development/reproducible-builds.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "package-pairs",
-      "description": "Independent current package pairs and native source inputs, exact equality and input/toolchain provenance; relevant regression/refusal checks and publication.",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Build, compare and qualify selected package pairs",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "package-pairs"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source work and disposable package builds only; read-only historical layers, no live service or hardware operations.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "configs/apps/",
+        "configs/host/",
+        "configs/host-os/rauc-package.json",
+        "configs/host-os/offline-tool-sources.json",
+        "patches/",
+        "upstream-lock.json",
+        "scripts/prepare_host_os.py"
+      ],
       "owned_paths": [
         "docs/features/package-reproducibility-qualification/evidence.md",
         "docs/features/package-reproducibility-qualification/results.json",
@@ -61,15 +76,15 @@
         "tests/test_python_app_package.py",
         "tests/test_package_update_admission_license.py"
       ],
-      "input_paths": [
-        "configs/apps/",
-        "configs/host/",
-        "configs/host-os/rauc-package.json",
-        "configs/host-os/offline-tool-sources.json",
-        "patches/",
-        "upstream-lock.json",
-        "scripts/prepare_host_os.py"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source work and disposable package builds only; read-only historical layers, no live service or hardware operations.",
+      "status": "pending",
+      "title": "Build, compare and qualify selected package pairs",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Qualify current package reproducibility"
 }
