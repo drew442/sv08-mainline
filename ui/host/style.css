@@ -79,3 +79,7 @@ dialog{background:var(--surface)}
 
 /* Installed project source access remains available without elevation. */
 #source-open{display:inline-flex;align-items:center;gap:8px}#source-open .outline-icon{margin:0;width:20px;height:20px}#project-source{background:var(--surface)}#project-source a{color:var(--control-text)}#source-downloads a{display:inline-block;padding:10px 12px;border:1px solid var(--input-border);border-radius:6px;min-height:44px}#source-build,#source-revision{font-family:monospace;font-size:13px;overflow-wrap:anywhere}
+/* Fit the source/status/refresh row at 412 CSS px without reducing touch height. */
+@media(max-width:500px){
+    .header-end #source-open{padding-inline:8px;gap:6px}
+}
