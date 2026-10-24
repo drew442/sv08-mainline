@@ -170,6 +170,9 @@ prepare_permissions(s.root, b['generation'])
 b['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
 Path('/run/sv08').mkdir(exist_ok=True)
 Path('/run/sv08/boot.json').write_text(json.dumps(b))
+# The composed hardware helper requires the same exact generation view as boot.
+view=Path('/run/sv08/printer_data');view.mkdir(exist_ok=True)
+(view/'config').symlink_to(Path(b['generation'])/'config')
 Path('/data/sv08/boot-mount-evidence.json').write_text(json.dumps({
     'root_options':subprocess.check_output(['findmnt','-no','OPTIONS','/'],text=True).strip(),
     'data_options':subprocess.check_output(['findmnt','-no','OPTIONS','/data'],text=True).strip()}))
