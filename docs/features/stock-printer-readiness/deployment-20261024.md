@@ -48,3 +48,14 @@ source-bound manifests; restore root mount mode, check all installed hashes and
 six status helpers against prior hardware counts, and observe authenticated
 rendering if existing authorized authentication permits. Any absent rendered
 acceptance must remain explicit. Native goal remains active and incomplete.
+
+## Connectivity blocker confirmed
+
+Three consecutive goal turns confirmed the same missing printer access. The final
+recheck again returned `No route to host` for both .141 and .150; DNS remains .141.
+The Beelink alternate development route was also unreachable on the preceding
+turn. All SSH attempts are terminal. No target preflight, live-write assessment,
+deployment or installed verification can proceed without restored connectivity
+or the printer's new address. The provisional payload and source assessment are
+preserved. The deployment objective remains incomplete; the native blocked-audit
+threshold is now satisfied. Restore access, then resume the same goal.
