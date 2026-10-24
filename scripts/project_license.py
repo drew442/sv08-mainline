@@ -16,6 +16,7 @@ SOURCE_DIRS = ('runtime', 'ui', 'scripts', 'configs', 'catalog', 'patches', 'ext
                'profiles', 'schemas', 'examples', 'tests', 'docs/development')
 SOURCE_ROOTS = ('LICENSE', 'LICENSING.md', 'upstream-lock.json', '.gitmodules')
 EXTRA_FILES = ('etc/cockpit/cockpit.conf','etc/sudoers.d/sv08-view',
+    'etc/systemd/system/sv08-calibration-reconcile.service',
     'etc/dbus-1/system.d/zz-sv08-rauc.conf','etc/systemd/system/rauc.service.d/sv08.conf',
     'etc/systemd/system/cockpit.socket.d/sv08-identity.conf',
     'usr/lib/systemd/system/sv08-admin-image-worker@.service',

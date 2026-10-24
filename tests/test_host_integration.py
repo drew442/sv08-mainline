@@ -170,6 +170,14 @@ class IntegrationManifestTests(unittest.TestCase):
         wants = root / 'etc/systemd/system/multi-user.target.wants'
         self.assertEqual({p.name for p in wants.iterdir()},
                          {'sv08-boot-health.service', 'sv08-printer-api.service', 'sv08-mainsail.service'})
+        observer=(units/'sv08-calibration-reconcile.service').read_text()
+        self.assertIn('sv08_calibration_reconcile.py',observer)
+        self.assertIn('ConditionPathExists=!/run/sv08/trial',observer)
+        self.assertNotIn('Wants=sv08-klipper.service',observer)
+        self.assertIn('WantedBy=sv08-klipper.service',observer)
+        self.assertIn('PartOf=sv08-klipper.service',observer)
+        self.assertEqual((units/'sv08-klipper.service.wants/sv08-calibration-reconcile.service').readlink(),Path('../sv08-calibration-reconcile.service'))
+        self.assertFalse((units/'multi-user.target.wants/sv08-calibration-reconcile.service').exists())
         for name in ('sv08-klipper.service', 'sv08-moonraker.service'):
             self.assertFalse((wants / name).exists())
         self.assertFalse((target / 'seed/config/printer.cfg').exists())

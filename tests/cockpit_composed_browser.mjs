@@ -7,7 +7,7 @@ import {request as httpsRequest} from 'node:https';import {request as httpReques
 import {uploadCases} from './cockpit_upload_cases.mjs';
 import fs from 'node:fs';import {execFileSync} from 'node:child_process';import {startBrowser,assertBrowserZoom,finiteStatusDiagnostic} from './browser_runtime.mjs';import {setTimeout as delay} from 'node:timers/promises';import assert from 'node:assert/strict';
 const [W,chrome,mode='installed'] = process.argv.slice(2);
-assert(['installed','cancellation'].includes(mode));
+assert(['installed','cancellation','hardware'].includes(mode));
 const baseURL=process.env.SV08_COCKPIT_URL || 'https://127.0.0.1:19091';
 assert.match(baseURL,/^https?:\/\/127\.0\.0\.1:\d+$/);
 const zoom=mode==='installed'?2:1;
@@ -26,7 +26,7 @@ try{
   const failure=Error('Timeout '+expression);
   try{
    // Public feedback and boolean guards only: no inputs, plans, bodies or DOM.
-   const snapshot=await ev(`({texts:Object.fromEntries(['notice','upload-status','upload-storage','connection','session-status'].map(id=>[id,document.getElementById(id)?.textContent?.slice(0,2048)??''])),flags:{busy:typeof busy==='boolean'?busy:null,jobs_busy:typeof jobsBusy==='boolean'?jobsBusy:null,refreshing:typeof refreshing==='boolean'?refreshing:null,state_present:typeof state!=='undefined'&&!!state,elevated:window.sv08Session?.elevated===true,review_open:document.getElementById('review')?.open===true,upload_review_open:document.getElementById('upload-review')?.open===true,upload_active:typeof uploadActive==='boolean'?uploadActive:null},disabled:Object.fromEntries(['save-auto','stage-image','review-upload','confirm-upload','cancel-upload','authorize','stop-authorization'].map(id=>[id,document.getElementById(id)?.disabled??null]))})`);
+   const snapshot=await ev(`({texts:Object.fromEntries(['notice','printer-notice','upload-status','upload-storage','connection','session-status'].map(id=>[id,document.getElementById(id)?.textContent?.slice(0,2048)??''])),flags:{busy:typeof busy==='boolean'?busy:null,jobs_busy:typeof jobsBusy==='boolean'?jobsBusy:null,refreshing:typeof refreshing==='boolean'?refreshing:null,state_present:typeof state!=='undefined'&&!!state,elevated:window.sv08Session?.elevated===true,review_open:document.getElementById('review')?.open===true,upload_review_open:document.getElementById('upload-review')?.open===true,upload_active:typeof uploadActive==='boolean'?uploadActive:null},disabled:Object.fromEntries(['save-auto','stage-image','review-upload','confirm-upload','cancel-upload','authorize','stop-authorization'].map(id=>[id,document.getElementById(id)?.disabled??null]))})`);
    const secrets=Object.entries(creds).flatMap(([account,password])=>[password,Buffer.from(account+':'+password).toString('base64')]);
    secrets.push('ephemeral-draft-secret');
    const diagnostic={texts:Object.fromEntries(Object.entries(snapshot.texts).map(([id,value])=>[id,finiteStatusDiagnostic('host',{message:value},secrets).message])),flags:snapshot.flags,disabled:snapshot.disabled};
@@ -161,6 +161,21 @@ try{
   results.ordinary_write_denial_no_revision_change=true;
   await route('overview');
  }
+ if(mode==='hardware') {
+  const expected=JSON.parse(fs.readFileSync(W+'/payload-final.json'));
+  assert(Object.keys(expected).includes('etc/systemd/system/sv08-calibration-reconcile.service'));
+  const names=Object.keys(expected).map(name=>'/'+name);
+  const hashes=await ev(`cockpit.spawn(['/usr/bin/sha256sum',...${JSON.stringify(names)}]).then(x=>x)`);
+  const actual={};for(const line of hashes.trim().split('\n')){const [hash,target]=line.split(/\s+/);assert.equal(hash,expected[target.slice(1)],'Installed source mismatch '+target);actual[target.slice(1)]=hash;}
+  assert.equal(Object.keys(actual).length,Object.keys(expected).length);results.installed_sources=actual;
+  results.source=JSON.parse(fs.readFileSync(W+'/source-final.json'));
+  assert.equal(await ev(`cockpit.spawn(['/usr/bin/readlink','/etc/systemd/system/sv08-klipper.service.wants/sv08-calibration-reconcile.service']).then(x=>x.trim())`),'../sv08-calibration-reconcile.service');
+  await route('printer');
+  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+  assert.equal(await ev('sv08Session.elevated'),false);
+  assert.equal(await ev('document.querySelector("#printer-save").disabled'),true);
+  results.ordinary_hardware_read=true;
+ }
  results.uid_proof={ordinary_account:await ev(`cockpit.spawn(['id','-u']).then(x=>x.trim())`)};
  const ordinary = await ev(`cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin.py']).input('{"method":"status"}').then(x=>JSON.parse(x))`);
  assert.equal(ordinary.ok,false);assert.match(ordinary.error,/Administrator access/);
@@ -175,7 +190,18 @@ try{
  await click('#cancel-authorization');await until('!document.querySelector("#authorization").open && !document.querySelector("#authorize").disabled');await secretsClear();assert.equal(await uid(),'access-denied');results.wrong_password_and_cancel=true;console.log('wrong password and cancel PASS');
  results.uid_proof.administrator_unelevated=await ev(`cockpit.spawn(['id','-u']).then(x=>x.trim())`);
  await authorize();await secretsClear();results.uid_proof.elevated=await uid();
- if(mode==='cancellation'){ const inspected=await helper({method:'image.inspect',id:'dddddddddddddddddddddddddddddddd'});assert.equal(inspected.ok,true);const disposed=await helper({method:'image.dispose',plan:inspected.result.plan});assert.equal(disposed.ok,true);await click('#logout');await until('!window.sv08Session');assert.equal(await login('fixtureadmin',creds.fixtureadmin),200);await loadShell();await authorize();const cancelPlan=await helper({method:'plan',action:'image.cancel',arguments:{}});assert.equal(cancelPlan.ok,true);const submitted=await helper({method:'image.submit',id:'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',plan:cancelPlan.result});assert.equal(submitted.ok,true);for(let i=0;i<100;i++){const h=await helper({method:'jobs'});if(h.result.jobs.find(x=>x.id==='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')?.phase==='succeeded')break;await delay(200)}const end=await helper({method:'jobs'});assert.equal(end.result.jobs.find(x=>x.id==='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee').phase,'succeeded');const finalStatus=await helper({method:'status'});assert.equal(finalStatus.result.pending,null);assert.equal(finalStatus.result.boot.slot,'A');assert.equal(finalStatus.result.transaction.previous_slot,'A');const after=await helper({method:'jobs'});assert.equal(after.result.jobs.find(x=>x.id==='dddddddddddddddddddddddddddddddd').disposition.kind,'retain-unknown-v1');assert.equal(await ev(`cockpit.spawn(['/usr/bin/cat','/data/fixture/user-data-sentinel'],{superuser:'require'}).then(x=>x.trim())`),'preserved fixture data');results.composed={disposition:'unknown',cancellation:'succeeded',reconnect:true,source_slot:'A',data_sentinel_preserved:true};
+ if(mode==='hardware') {
+  await route('printer');await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+  await click('#printer-use-factory');await until(`document.querySelector('#printer-definition-review').open`);
+  await click('#printer-definition-confirm');await click('#printer-save');
+  await until(`document.querySelector('#printer-notice').textContent==='Draft saved'`);
+  await loadShell();await route('printer');
+  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+  assert.equal(await ev(`document.querySelectorAll('#printer-cards .printer-card').length>0`),true);
+  results.hardware_factory_save_reload=true;await capture('installed-hardware-saved');
+  if(!await ev('sv08Session.elevated'))await authorize();
+  await stopped();await secretsClear();assert.equal(await ev('document.querySelector("#printer-save").disabled'),true);results.hardware_stop_denies_mutation=true;
+ } else if(mode==='cancellation'){ const inspected=await helper({method:'image.inspect',id:'dddddddddddddddddddddddddddddddd'});assert.equal(inspected.ok,true);const disposed=await helper({method:'image.dispose',plan:inspected.result.plan});assert.equal(disposed.ok,true);await click('#logout');await until('!window.sv08Session');assert.equal(await login('fixtureadmin',creds.fixtureadmin),200);await loadShell();await authorize();const cancelPlan=await helper({method:'plan',action:'image.cancel',arguments:{}});assert.equal(cancelPlan.ok,true);const submitted=await helper({method:'image.submit',id:'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',plan:cancelPlan.result});assert.equal(submitted.ok,true);for(let i=0;i<100;i++){const h=await helper({method:'jobs'});if(h.result.jobs.find(x=>x.id==='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')?.phase==='succeeded')break;await delay(200)}const end=await helper({method:'jobs'});assert.equal(end.result.jobs.find(x=>x.id==='eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee').phase,'succeeded');const finalStatus=await helper({method:'status'});assert.equal(finalStatus.result.pending,null);assert.equal(finalStatus.result.boot.slot,'A');assert.equal(finalStatus.result.transaction.previous_slot,'A');const after=await helper({method:'jobs'});assert.equal(after.result.jobs.find(x=>x.id==='dddddddddddddddddddddddddddddddd').disposition.kind,'retain-unknown-v1');assert.equal(await ev(`cockpit.spawn(['/usr/bin/cat','/data/fixture/user-data-sentinel'],{superuser:'require'}).then(x=>x.trim())`),'preserved fixture data');results.composed={disposition:'unknown',cancellation:'succeeded',reconnect:true,source_slot:'A',data_sentinel_preserved:true};
  } else {
  // Run the real installed checker through this authenticated elevated bridge.
  const installedCheck=await ev(`(async()=>{let output='';const p=cockpit.spawn(['/usr/bin/python3','/payload/source/scripts/check_installed_cockpit.py','--manifest','/data/pr9-assets.json'],{superuser:'require',err:'message'});p.stream(chunk=>{output+=chunk;if(output.length>65536)p.close('terminated')});try{await p;return {exit_status:0,output}}catch(error){return {exit_status:Number.isInteger(error.exit_status)?error.exit_status:null,output}}})()`);

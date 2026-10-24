@@ -18,7 +18,7 @@ SCRIPTS = {name: '/usr/lib/sv08/sv08_' + script + '.py' for name, script in
             ('software', 'software'), ('identity', 'identity'), ('mainsail-access', 'mainsail_access')]}
 FIELDS = {
     'host': 'context revision boot requested_mode auto_update update_policy slots pending transaction free_bytes capabilities catalog destinations images hostname feed_status'.split(),
-    'printer': 'state catalog context catalog_revision catalog_supported loaded_identity definitions sources migration_available'.split(),
+    'printer': 'state catalog available_components native_calibration_status context catalog_revision catalog_supported loaded_identity definitions sources migration_available'.split(),
     'network': 'devices connections hostname fqdn pending'.split(),
     'software': 'boot requested_mode customized catalog capabilities storage jobs reconciliation'.split(),
     'identity': 'revision ca_fingerprint ssh_fingerprint authorized_keys service_names healthy'.split(),

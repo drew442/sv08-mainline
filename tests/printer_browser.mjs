@@ -41,6 +41,101 @@ try {
  const ready=()=>until(`document.querySelector('#printer-boards fieldset') && !document.querySelector('#printer-save').disabled && !document.querySelector('#printer-candidate-review').open`);
  const reloadDocument=async()=>{const origin=await evaluate('performance.timeOrigin');await send('Page.reload');await until(`performance.timeOrigin!==${origin} && window.sv08Session?.available===true && document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);};
  const reload=async()=>{await click('#printer-reload');if(await evaluate("!document.querySelector('#printer-reconciliation').hidden")){await send('Page.handleJavaScriptDialog',{accept:true}).catch(()=>{});await click('#printer-reconcile');}await ready();};
+ async function measuredCalibrationJourney() {
+ // Measured calibration edits replace authoritative inputs and remain local until save.
+ const calibrationCurrent=JSON.stringify(state().current),calibrationPrevious=JSON.stringify(state().previous);
+ const calibrationLivePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg',calibrationLive=fs.readFileSync(calibrationLivePath);
+ await click('[data-printer-view=changes]');
+ await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+ await set('#printer-calibration input','.25');await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'0.25');
+ const measuredBeforeEdit=fs.readFileSync(statepath);
+ await set('#printer-calibration input','.4');await screenshotAt('calibration-measured-edit','#printer-calibration');assert.deepEqual(fs.readFileSync(statepath),measuredBeforeEdit);assert.deepEqual(fs.readFileSync(calibrationLivePath),calibrationLive);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(state().draft.definition_plan.instance_values['probe.z_offset'],.4);assert.equal(state().draft.devices.find(d=>d.kind==='probe').settings.z_offset,.4);
+ await reloadDocument();await click('#authorize');await ready();await click('[data-printer-view=changes]');
+ await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+ assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'0.4');await screenshotAt('calibration-measured-reloaded','#printer-calibration');
+ await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
+ assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),/z_offset: 0.4/);assert.doesNotMatch(await evaluate(`document.querySelector('#printer-review-text').textContent`),/Probe calibration pending/);await click('#printer-cancel-review');
+ const measuredBeforeClear=fs.readFileSync(statepath);await set('#printer-calibration input','');assert.deepEqual(fs.readFileSync(statepath),measuredBeforeClear);
+ await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ assert.equal(state().draft.definition_plan.instance_values['probe.z_offset'],null);assert.equal(state().draft.devices.find(d=>d.kind==='probe').settings.z_offset,undefined);
+ await reloadDocument();await click('#authorize');await ready();await click('[data-printer-view=changes]');
+ await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+ assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'');await screenshotAt('calibration-cleared-reloaded','#printer-calibration');
+ await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
+ assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/sourced factory starting value 0 mm/);const guardedText=await evaluate(`document.querySelector('#printer-review-text').textContent`);assert.match(guardedText,/variable_ready: 0/);assert.match(guardedText,/ready\|int != 1/);assert.match(guardedText,/Persisted native calibration has not been reconciled for this Klipper instance/);await screenshotAt('calibration-pending-review','#printer-review-detail');await click('#printer-cancel-review');
+ assert.equal(JSON.stringify(state().current),calibrationCurrent);assert.equal(JSON.stringify(state().previous),calibrationPrevious);assert.deepEqual(fs.readFileSync(calibrationLivePath),calibrationLive);
+ await click('[data-printer-view=components]');
+ }
+ async function identityInputJourney() {
+  const before=state(),tool=JSON.stringify(before.draft.boards.tool),current=JSON.stringify(before.current),previous=JSON.stringify(before.previous);
+  const livePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg',live=fs.readFileSync(livePath);
+  const saveDraft=async()=>{await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);};
+  const reopenBoards=async()=>{await reloadDocument();await click('#authorize');await ready();await click('[data-category=boards]');};
+  const reviewFull=async()=>{await click('[data-printer-view=changes]');await evaluate(`document.querySelector('#printer-output-controls').open=true`);await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);};
+  await evaluate(`document.querySelector('#printer-boards details[data-role="main"]').open=true`);
+  const savedBytes=fs.readFileSync(statepath);
+  await set('[data-instance-target="main.identity"]','/dev/fixture-main-edited');
+  assert.equal(await evaluate(`document.querySelector('[data-input-target="main.identity"]').value`),'/dev/fixture-main-edited');
+  assert.deepEqual(fs.readFileSync(statepath),savedBytes);assert.deepEqual(fs.readFileSync(livePath),live);
+  await saveDraft();await reopenBoards();
+  assert.equal(state().draft.boards.main.identity,'/dev/fixture-main-edited');assert.equal(state().draft.definition_plan.instance_values['main.identity'],'/dev/fixture-main-edited');
+  assert.equal(await evaluate(`document.querySelector('[data-instance-target="main.identity"]').value`),'/dev/fixture-main-edited');
+  await reviewFull();assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),/serial: \/dev\/fixture-main-edited/);await click('#printer-cancel-review');
+  await click('[data-printer-view=components]');await click('[data-category=boards]');
+  await evaluate(`document.querySelector('#printer-boards details[data-role="main"]').open=true`);
+  await set('[data-instance-target="main.identity"]','');await saveDraft();await reopenBoards();
+  assert.equal(state().draft.boards.main.identity,undefined);assert.equal(state().draft.definition_plan.instance_values['main.identity'],undefined);
+  assert.equal(await evaluate(`document.querySelector('[data-input-target="main.identity"]').value`),'');
+  await reviewFull();assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/needs your input.*Mainboard MCU identity/);assert.equal(await evaluate(`document.querySelector('#printer-apply').disabled`),true);
+  await screenshotAt('identity-cleared-required-review','#printer-review-detail');await click('#printer-cancel-review');
+  await click('[data-printer-view=components]');await click('[data-category=boards]');
+  await set('[data-input-target="main.identity"]','/dev/fixture-main-generic');await saveDraft();await reopenBoards();
+  assert.equal(await evaluate(`document.querySelector('[data-instance-target="main.identity"]').value`),'/dev/fixture-main-generic');
+  const beforeClear=fs.readFileSync(statepath);await set('[data-input-target="main.identity"]','');assert.deepEqual(fs.readFileSync(statepath),beforeClear);
+  await saveDraft();await reopenBoards();
+  assert.equal(state().draft.boards.main.identity,undefined);assert.equal(state().draft.definition_plan.instance_values['main.identity'],undefined);
+  assert.equal(await evaluate(`document.querySelector('[data-instance-target="main.identity"]').value`),'');
+  assert.match(await evaluate(`document.querySelector('[data-input-target="main.identity"]').parentElement.textContent`),/needs your input/);
+  await reviewFull();assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/needs your input.*Mainboard MCU identity/);assert.equal(await evaluate(`document.querySelector('#printer-apply').disabled`),true);await click('#printer-cancel-review');
+  await click('[data-printer-view=components]');await click('[data-category=boards]');
+  assert.equal(JSON.stringify(state().draft.boards.tool),tool);assert.equal(JSON.stringify(state().current),current);assert.equal(JSON.stringify(state().previous),previous);assert.deepEqual(fs.readFileSync(livePath),live);
+  await set('[data-input-target="main.identity"]','/dev/null');await saveDraft();
+ }
+ async function calibrationOnlyJourney() {
+  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
+  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html'});
+  await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
+  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
+  await click('[data-page=printer]');await click('#authorize');await ready();
+  await click('#printer-use-factory');await until(`document.querySelector('#printer-definition-review').open`);await click('#printer-definition-confirm');
+  await click('[data-category=boards]');
+  for(const role of ['main','tool'])await set('[data-input-target="'+role+'.identity"]','/dev/null');
+  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+  assert.equal(state().draft.devices.length,24);
+  await identityInputJourney();
+  await click('[data-printer-view=changes]');
+  await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
+  // Prepare real inactive history through the UI. No managed publication occurs.
+  for(const value of [.15,.25]) {
+   await set('#printer-calibration input',value);await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+   await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
+   assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),new RegExp('z_offset: '+value));
+   await click('#printer-apply');await until(`!document.querySelector('#printer-candidate-review').open && !document.querySelector('#printer-save').disabled`);
+  }
+  assert.equal(state().current.draft.definition_plan.instance_values['probe.z_offset'],.25);
+  assert.equal(state().previous.draft.definition_plan.instance_values['probe.z_offset'],.15);
+  await measuredCalibrationJourney();
+  assert.equal(errors.length,0,JSON.stringify(errors));
+  assert.deepEqual(fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg'),fs.readFileSync(fixture+'/original-live.txt'));
+  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,mode:'calibration-only',authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600]],factory_selected_through_ui:true,connection_identity_authoritative_edit_clear_save_reload_regenerate:true,generic_identity_clear_removes_effective_value:true,unrelated_board_preserved:true,prepared_current_previous_preserved:true,measured_calibration_authoritative_edit_clear_save_reload_regenerate:true,calibration_pending_print_guard:true,live_config_unchanged:true,uncaught_exceptions:errors.length,full_suite_executed:false},null,2)+'\n');
+  console.log('Printer calibration-only browser journey PASS');
+ }
+ if(process.env.SV08_CALIBRATION_ONLY==='1') {
+  await calibrationOnlyJourney();
+ } else {
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html'});await until(`document.querySelector('#authorize') && !document.querySelector('#authorize').disabled`);
  await until(`document.querySelector('#printer-notice').textContent.startsWith('Saved configuration loaded.')`);
@@ -94,18 +189,60 @@ try {
  await evaluate(`window.fixtureHostFailure=false;refresh()`);await until(`document.querySelector('#connection').textContent==='Host connected'`);
  assert.match(await evaluate(`document.querySelector('#notice').textContent`),/previous receipt/);
 
- for(const [width,height] of [[1440,900],[1024,600],[390,844]]){
-  await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+ // Android physical displays 1080x2340/2400 at 2.625 CSS scaling, plus
+ // reduced browser space. A readable partial section is enough to invite scroll.
+ const shellViewports=[{width:1440,height:900},{width:1024,height:600},{width:390,height:844},
+  ...[892,915,780].map(height=>({width:412,height,deviceScaleFactor:2.625,mobile:true}))];
+ const shellLayouts=[];
+ await evaluate(`window.shellTrustedTouchMoves=0;document.addEventListener('touchmove',event=>{if(event.isTrusted)window.shellTrustedTouchMoves++;},{passive:true})`);
+ for(const viewport of shellViewports){
+  const {width,height,mobile=false,deviceScaleFactor=1}=viewport;
+  const name=mobile?'android-'+width+'x'+height:width;
+  await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor,mobile});
+  await send('Emulation.setTouchEmulationEnabled',{enabled:mobile,maxTouchPoints:mobile?5:1});
   await evaluate(`document.querySelector('#fixture').hidden=true;scrollTo(0,0)`);
   assert.equal(await evaluate(`document.querySelector('#printer h1').getBoundingClientRect().bottom<innerHeight`),true);
-  await screenshot('task-shell-'+width);
+  await screenshot('task-shell-'+name);
   const layout=await evaluate(`Object.fromEntries([['viewport',{width:innerWidth,height:innerHeight}],...['header','.session','#task-context','#printer .printer-title','#printer .printer-state','#printer .printer-tabs','#printer .printer-secondary','.printer-card'].map(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return [selector,{top:r.top,bottom:r.bottom,height:r.height,width:r.width}];})])`);
-  assert.equal(await evaluate(`document.querySelector('.printer-card').getBoundingClientRect().top<innerHeight`),true,'First component is visible: '+JSON.stringify(layout));
+  // Require a readable label, not merely the top border of a clipped card.
+  const cue=await evaluate(`['.printer-card strong','#printer .printer-secondary summary'].some(selector=>{const e=document.querySelector(selector),range=document.createRange();range.selectNodeContents(e);const r=range.getBoundingClientRect();return e.getClientRects().length>0&&e.textContent.trim().length>0&&r.height>0&&r.top>=0&&r.bottom<=innerHeight;})`);
+  assert.equal(cue,true,'Recognizable component or draft-tools scroll cue: '+JSON.stringify(layout));
+  if(width>=800)assert.equal(layout['.printer-card'].top<height,true,'First desktop component is visible: '+JSON.stringify(layout));
+  assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
+  if(mobile){
+   // Explicit touch events: this Chromium's synthesized scroll gesture emits
+   // start/end without move events. Keep a real touch + root-scroll assertion.
+   await evaluate('window.shellTrustedTouchMoves=0');
+   const x=Math.round(width/2),startY=Math.round(height*0.8),distance=Math.round(height*0.65);
+   const touchPoint=y=>({x,y,id:0,radiusX:1,radiusY:1,force:1});
+   await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[touchPoint(startY)]});
+   await delay(30);
+   for(let step=1;step<=12;step++){
+    await send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[touchPoint(startY-Math.round(distance*step/12))]});
+    await delay(30);
+   }
+   // Pause before release so reachability is measured without a fling.
+   await delay(150);
+   await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+   await until(`document.scrollingElement.scrollTop>0&&window.shellTrustedTouchMoves>0`);
+   shellLayouts.push({...viewport,layout,touchScrollY:await evaluate('document.scrollingElement.scrollTop'),trustedTouchMoves:await evaluate('window.shellTrustedTouchMoves')});
+   assert.equal(await evaluate(`(()=>{const r=document.querySelector('.printer-card strong').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;})()`),true,'Touch scrolling exposes the first component label');
+   const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/task-parts-'+name+'.png',Buffer.from(shot.data,'base64'));
+  }
+  await evaluate(`document.querySelector('.printer-card').scrollIntoView({block:'center'})`);
+  assert.equal(await evaluate(`(()=>{const r=document.querySelector('.printer-card strong').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;})()`),true,'Component label reachable after scrolling');
+  for(const selector of ['#printer-save','#printer-next','#printer-show-changes']){
+   await evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center'})`);
+   assert.equal(await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect();return e.getClientRects().length>0&&r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth;})()`),true,'Final control reachable: '+selector);
+  }
+  if(mobile){const shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/task-controls-'+name+'.png',Buffer.from(shot.data,'base64'));}
   assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
  }
+ fs.writeFileSync(output+'/android-layouts.json',JSON.stringify(shellLayouts,null,2)+'\n');
  await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');
  await key('Escape');assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');
  assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'false');
+ await send('Emulation.setTouchEmulationEnabled',{enabled:false});
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  // Catalogue browsing is read-only, with compact groups and component drill-down.
  const definitionsState=fs.existsSync(statepath)?fs.readFileSync(statepath):null;
@@ -206,6 +343,12 @@ try {
  // Board change cancel preserves settings; confirmation clears only affected assignments.
  // Actual Chromium: dirty selections survive unsupported status reconciliation.
  await send('Page.setDownloadBehavior',{behavior:'allow',downloadPath:output+'/recovery'});
+ await set('#printer-geometry-fields input',123);await click('#printer-export');
+ const retainedExport=output+'/recovery/printer-hardware-draft.json';
+ for(let n=0;n<100&&!fs.existsSync(retainedExport);n++)await delay(50);
+ const retainedDraft=JSON.parse(fs.readFileSync(retainedExport));
+ assert.equal(retainedDraft.geometry.max_velocity,123);
+ fs.renameSync(retainedExport,output+'/recovery/retained-before-unsupported.json');
  for(const unsupported of ['catalog','state','draft']) {
   await set('#printer-geometry-fields input',123);
   await click('#stop-authorization');await until('!sv08Session.elevated');
@@ -219,7 +362,7 @@ try {
   await click('#printer-export');
   const recovery=output+'/recovery/printer-hardware-draft.json';
   for(let n=0;n<100&&!fs.existsSync(recovery);n++)await delay(50);
-  const recovered=JSON.parse(fs.readFileSync(recovery));assert.equal(recovered.geometry.max_velocity,123);assert.equal(recovered.format_version,1);fs.renameSync(recovery,output+'/recovery/'+unsupported+'-draft.json');
+  const recovered=JSON.parse(fs.readFileSync(recovery));assert.equal(recovered.geometry.max_velocity,123);assert.deepEqual(recovered,retainedDraft);fs.renameSync(recovery,output+'/recovery/'+unsupported+'-draft.json');
   await evaluate('window.fixtureUnsupported=null');await click('#printer-reconcile');await ready();
   assert.equal(await evaluate(`document.querySelector('#printer-geometry-fields input').value`),'123');
  }
@@ -477,6 +620,7 @@ try {
 
  await evaluate(`for(const input of document.querySelectorAll('#printer-boards input')){if(input.parentElement.textContent.includes('Private MCU identity')){input.value='/dev/null';input.dispatchEvent(new Event('change',{bubbles:true}));}}`);
  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
+ await measuredCalibrationJourney();
  const beforeBundle=JSON.stringify(state());
  await set('#printer-mode','setup');await click('#printer-configuration-export');
  for(let i=0;i<200 && !fs.existsSync(output+'/sv08-printer-configuration.zip');i++)await delay(100);
@@ -571,14 +715,36 @@ try {
  await followAttention('bed');await screenshotAt('journey-sensor-adjustment','#printer-sensors');await set('[data-sensor="bed_sensor"]','sovol-bed');
  assert.doesNotMatch(await evaluate(`document.querySelector('#printer-attention-list').textContent`),/identify the fitted bed sensor/);
  await click('#printer-save');await until(`document.querySelector('#printer-notice').textContent==='Draft saved' && !document.querySelector('#printer-save').disabled`);
- await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});await evaluate(`document.body.style.zoom='200%'`);await screenshot('components-200-percent');assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);await evaluate(`document.body.style.zoom=''`);
- // Emulate 200% reflow: a 1024×600 display represented as a 512×300 CSS viewport.
- await send('Emulation.setDeviceMetricsOverride',{width:512,height:300,deviceScaleFactor:2,mobile:false});await evaluate(`document.querySelector('.printer-footer').scrollIntoView({block:'end'})`);assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);const reflow=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/reflow-primary-controls.png',Buffer.from(reflow.data,'base64'));await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');await key('Escape');assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
+ // 200%-equivalent reflow: browser page zoom changes the responsive CSS
+ // viewport. Injecting body.style.zoom scales content without doing that.
+ const beforeReflow=fs.readFileSync(statepath);
+ await click('#printer-detail-back');
+ await send('Emulation.setDeviceMetricsOverride',{width:512,height:300,deviceScaleFactor:2,mobile:false});
+ assert.equal(await evaluate(`innerWidth===512&&matchMedia('(max-width:800px)').matches`),true);
+ await evaluate('scrollTo(0,0)');await screenshot('reflow-entry');
+ assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
+ await evaluate(`document.querySelector('.printer-card').scrollIntoView({block:'center'})`);
+ assert.equal(await evaluate(`(()=>{const r=document.querySelector('.printer-card strong').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth;})()`),true,'Reflow component label is reachable');
+ const reflowComponentImage=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/reflow-component.png',Buffer.from(reflowComponentImage.data,'base64'));
+ for(const selector of ['#printer-save','#printer-next','#printer-show-changes']){
+  await evaluate(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center'})`);
+  assert.equal(await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect();return e.getClientRects().length>0&&r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth;})()`),true,'Reflow primary control reachable: '+selector);
+ }
+ const reflowControlsImage=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(output+'/reflow-primary-controls.png',Buffer.from(reflowControlsImage.data,'base64'));
+ await evaluate(`document.querySelector('#navigation-toggle').scrollIntoView({block:'center'})`);
+ await click('#navigation-toggle');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'true');
+ assert.equal(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),true);
+ await key('Escape');assert.equal(await evaluate(`document.querySelector('#navigation-toggle').getAttribute('aria-expanded')`),'false');
+ assert.equal(await evaluate(`document.activeElement.id`),'navigation-toggle');
+ assert.deepEqual(fs.readFileSync(statepath),beforeReflow,'Reflow and navigation do not mutate saved configuration');
+ fs.writeFileSync(output+'/reflow-result.json',JSON.stringify({passed:true,scope:'200% equivalent CSS viewport reflow; not actual browser zoom',css_viewport:[512,300],device_scale_factor:2,component_label_reachable:true,primary_controls_reachable:true,navigation_focus_return:true,saved_configuration_unchanged:true},null,2)+'\n');
+ await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
  await evaluate('window.fixtureDisconnect()');await until(`document.querySelector('#printer-save').disabled`);assert.match(await evaluate(`document.querySelector('#session-status').textContent`),/disconnected/);
  await reloadDocument();await click('#authorize');await ready();await click('#logout');await until(`document.body.dataset.loggedOut==='true'`);assert.equal(await evaluate(`document.querySelector('#printer-save').disabled`),true);
  const generation=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation;
  assert.equal(fs.readFileSync(generation+'/config/printer.cfg','utf8'),fs.readFileSync(fixture+'/original-live.txt','utf8'));
  assert.equal(await evaluate(`localStorage.length`),0);assert.equal(errors.length,0,JSON.stringify(errors));
- fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,hardware_journey_state_attention_save_cancel:true,definition_author_gap_distinct:true,required_answer_label_tracks_edit_without_focus_loss:true,publication_refusal_no_confirmation:true,publication_escape_retains_bytes_focus:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,source_preview_discard_preserves_input_no_rpc:true,catalogue_connection_clear_nonmutating_focus:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
+ fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,mode:'full',full_suite_executed:true,authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600],[1440,900],[390,844]],android_viewports:shellViewports.filter(v=>v.mobile),android_partial_scroll_cue_touch_and_final_controls:true,unsupported_status_draft_export_recovery:true,shared_panel:true,initial_status_navigation:true,stale_status_authority_rejected:true,printer_review_late_response_ignored:true,host_refresh_failure_isolation:true,incomplete_save_reopen:true,hardware_journey_state_attention_save_cancel:true,definition_author_gap_distinct:true,required_answer_label_tracks_edit_without_focus_loss:true,publication_refusal_no_confirmation:true,publication_escape_retains_bytes_focus:true,connector_pin_form:true,factory_default:true,simple_assembly_selectors:true,factory_only_choices:true,complete_factory_select_cancel_save_reload:true,definition_preview_cancel_select:true,source_bundle_disable_remove_preserves_selected_snapshot:true,definition_sources_sidebar_route_reload:true,complete_setup_bundle_download_and_real_parser:true,factory_start_full_complete_calibration_pending:true,measured_calibration_authoritative_edit_clear_save_reload_regenerate:true,calibration_edits_preserve_current_previous_and_live:true,schema_reference_download:true,repository_starter_download:true,repository_starter_static_no_rpc:true,compact_github_preview_selection_save_retention:true,source_executable_file_error_visible:true,definitions_sidebar_route_history_reload:true,definitions_source_category_grouping:true,definitions_builtin_external_disabled_unsupported:true,definitions_dependency_component_drilldown:true,definitions_read_only_no_rpc:true,definitions_search_empty_keyboard_responsive:true,source_preview_discard_preserves_input_no_rpc:true,catalogue_connection_clear_nonmutating_focus:true,logical_connection_table:true,blueprint_graph:true,connections_sidebar_history_reload:true,complete_factory_graph:true,graph_pan_zoom_drag_filter_highlight:true,graph_idle_dom_mutations:0,graph_idle_rpc_calls:0,graph_idle_task_seconds:graphIdleTaskSeconds,connection_inspector_authority_gated:true,external_selection_offline_retention:true,zoom_200_percent_equivalent_reflow:true,one_click_enclosure_fan:true,ntc_ptc_defaults:true,hardware_save_before_pid:true,advanced_fields_collapsed:true,sensor_reference_journey:true,motor_reference_journey:true,preset_collision_refused:true,two_real_tab_stale_import_refused:true,generation_swap_refused:true,last_status_identity_carried:true,refresh_generation_edit_apply:true,refresh_exact_import_diff:true,keyboard_escape:true,touch_reload:true,import_diff_cancel_save:true,review_cancel_apply:true,previous_restore:true,lost_ack_reconciled:true,lost_ack_stop_logout_disconnect:true,upload_review_navigation_cancelled:true,host_review_late_response_ignored:true,legacy_deeplink_reload:true,skip_retains_route:true,board_remap_preserves_unresolved_devices:true,stop_disconnect_logout:true,live_config_unchanged:true,uncaught_exceptions:errors.length},null,2)+'\n');
  console.log('Printer browser fixture journeys PASS');
+ }
 } finally {secondSocket?.close();socket?.close();try{process.kill(-child.pid,'SIGTERM');}catch{}fs.closeSync(log);await delay(300);const bytes=path=>fs.readdirSync(path,{withFileTypes:true}).reduce((n,e)=>n+(e.isDirectory()?bytes(path+'/'+e.name):e.isFile()?fs.statSync(path+'/'+e.name).size:0),0);const profileBytes=bytes(profile);fs.writeFileSync(output+'/profile-usage.json',JSON.stringify({profile,bytes:profileBytes,entries:fs.readdirSync(profile,{withFileTypes:true}).map(e=>({name:e.name,bytes:e.isDirectory()?bytes(profile+'/'+e.name):e.isFile()?fs.statSync(profile+'/'+e.name).size:0})).sort((a,b)=>b.bytes-a.bytes)}));fs.rmSync(profile,{recursive:true,force:true});assert(profileBytes<24*1024*1024);}

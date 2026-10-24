@@ -12,6 +12,13 @@ on:
       - 'tests/test_host_boot.py'
       - 'tests/test_installed_cockpit.py'
       - 'tests/test_data_budget.py'
+      - 'ui/printer/**'
+      - 'tests/test_factory_sv08.py'
+      - 'tests/test_printer_definitions.py'
+      - 'tests/test_printer_stack.py'
+      - 'tests/test_printer_publication.py'
+      - 'tests/test_printer_calibration.py'
+      - 'tests/test_calibration_reconcile.py'
   push:
     branches: [main]
     paths:
@@ -22,6 +29,13 @@ on:
       - 'tests/test_host_boot.py'
       - 'tests/test_installed_cockpit.py'
       - 'tests/test_data_budget.py'
+      - 'ui/printer/**'
+      - 'tests/test_factory_sv08.py'
+      - 'tests/test_printer_definitions.py'
+      - 'tests/test_printer_stack.py'
+      - 'tests/test_printer_publication.py'
+      - 'tests/test_printer_calibration.py'
+      - 'tests/test_calibration_reconcile.py'
   workflow_dispatch:
 
 permissions:
@@ -41,6 +55,8 @@ jobs:
           persist-credentials: false
           submodules: false
           lfs: false
+      - name: Exact pinned native SAVE_CONFIG source
+        run: git submodule update --init --depth 1 upstream/klipper
       - name: Existing Python schema dependency
         run: |
           sudo apt-get update -qq
@@ -60,3 +76,41 @@ jobs:
           if not result.wasSuccessful() or result.skipped:
               raise SystemExit('Ownership tests failed or were skipped')
           PY
+      - name: Offline printer calibration and publication regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo mkdir -m 700 /root/sv08-printer-regressions
+          trap 'sudo rmdir /root/sv08-printer-regressions' EXIT
+          sudo env SV08_PRINTER_SCRATCH=/root/sv08-printer-regressions PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 - <<'PYTHON'
+          import os, unittest
+          loader = unittest.TestLoader()
+          names = ('test_factory_sv08.py', 'test_printer_definitions.py', 'test_printer_stack.py', 'test_printer_publication.py', 'test_printer_calibration.py', 'test_calibration_reconcile.py')
+          suites = []
+          for name in names:
+              suite = loader.discover('tests', pattern=name)
+              if not suite.countTestCases():
+                  raise SystemExit('Missing or empty test suite: ' + name)
+              suites.append(suite)
+          if loader.errors:
+              raise SystemExit('Test discovery failed: ' + '\n'.join(loader.errors))
+          suite = unittest.TestSuite(suites)
+          discovered = suite.countTestCases()
+          expected_skips = {} if os.environ.get('SV08_PRINTER_VALIDATION_PYTHON') else {
+              'test_factory_sv08.Factory.test_complete_factory_with_pinned_klipper_no_live_mcu': 'Explicit existing pinned environment required',
+              'test_printer_stack.CalibrationPersistence.test_stock_component_full_without_pid_reaches_real_parser_ready': 'Pinned parser environment required',
+              'test_printer_stack.StackTests.test_real_factory_setup_and_full_closed_output_reach_ready': 'Pinned parser environment required',
+              'test_printer_stack.StackTests.test_setup_guard_commands_in_real_klipper_do_not_submit_printing': 'Pinned parser environment required',
+              'test_printer_publication.PinnedValidation.test_complete_output_parser_and_unsupported_semantics': 'Explicit existing pinned environment required',
+          }
+          if not os.environ.get('SV08_PRINTER_VALIDATION_PYTHON'):
+              expected_skips['test_calibration_reconcile.Reconciliation.test_real_same_pid_save_config_restart_and_profile_lifecycle'] = 'Explicit pinned Klippy file-output venv/dictionary required; simulated MCU only'
+          if not os.environ.get('SV08_PREVIOUS_RELEASE_RUNTIME'):
+              expected_skips['test_calibration_reconcile.Reconciliation.test_actual_previous_reader_exports_new_envelope_and_refuses_mutation'] = 'Explicit archived previous-release runtime required; actual older reader opt-in'
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          observed_skips = {test.id(): reason for test, reason in result.skipped}
+          if (not result.wasSuccessful() or result.testsRun != discovered
+                  or len(result.skipped) != len(expected_skips) or observed_skips != expected_skips):
+              raise SystemExit('Offline printer regressions failed or unexpected skip/discovery result')
+          print(f'{result.testsRun - len(result.skipped)} passed; {len(result.skipped)} expected file-output/previous-reader opt-in skips')
+          PYTHON
