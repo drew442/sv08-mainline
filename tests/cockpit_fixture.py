@@ -27,7 +27,7 @@ from prepare_host_os import REPO
 
 
 # Disposable guest capacity covers Store.prepare_boot's copy/staging admission.
-DATA_IMAGE_BYTES = 1024**3
+DATA_IMAGE_BYTES = 1536 * 1024**2
 FIXTURE_WRITABLE = (('/var/lib/systemd', '16M', '0755'), ('/var/tmp', '32M', '1777'))
 
 

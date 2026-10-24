@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 import tempfile
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'runtime'))
 import unittest
 from cockpit_fixture import boot, prepare, writable_fixture_paths, DATA_IMAGE_BYTES, fixture_read_access
 
@@ -49,11 +51,19 @@ class FixtureSourceTests(unittest.TestCase):
 
 
 class FixtureWritableTests(unittest.TestCase):
-    def test_capacity_covers_prepare_boot_admission(self):
-        # Current factory Store admission needs 811876352 free bytes before boot.
-        # Leave space for ext4 metadata and its default five percent reserve.
-        self.assertEqual(DATA_IMAGE_BYTES, 1024**3)
-        self.assertGreater(DATA_IMAGE_BYTES * .90, 811876352)
+    def test_capacity_covers_boot_and_full_save_admission(self):
+        from sv08_data_budget import Budget
+        # Saving reserves a full256MiB copy above the768MiB floor, plus journal
+        # headroom; boot alone does not exercise this stronger requirement.
+        budget=Budget('/unused')
+        def filesystem(size):
+            return SimpleNamespace(f_frsize=4096,f_bsize=4096,
+                f_bavail=int(size*.90)//4096,f_favail=100000)
+        with self.assertRaisesRegex(ValueError,'Insufficient shared data'):
+            budget.check(256*1024**2,128,fs=filesystem(1024**3))
+        admitted=budget.check(256*1024**2,128,fs=filesystem(DATA_IMAGE_BYTES))
+        self.assertLess(admitted['required_bytes'],DATA_IMAGE_BYTES*.90)
+        self.assertLessEqual(DATA_IMAGE_BYTES,2*1024**3)
 
     def test_packaged_service_paths_are_guest_only_writable_mounts(self):
         with tempfile.TemporaryDirectory() as temporary:
