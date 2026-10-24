@@ -71,7 +71,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserved native-calibration checkpoint6bc9bdc and actual passing closure evidence. Renew exact ownership for required project service inventory and sanitized visual artifacts; same task and cumulative allowance, no physical authority.",
       "checks": [
         "inventory",
         "calibration",
@@ -153,7 +153,7 @@
       "resumption": "Tested parser/selection checkpoint6a98643 preserved. Add exact draft JSON schema ownership required by versioned stored calibration; no scope or budget reset, all previous evidence retained.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "running",
+      "status": "blocked",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
