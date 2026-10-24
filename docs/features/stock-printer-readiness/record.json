@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "7756b3f5a788f2ad3c0b18c9ce4bce08fa1ed68479f2c9200d874cb149866b04",
-    "rationale": "Version-aware calibration storage must update the exact draft JSON schema alongside runtime; same owner-selected behavior, no added physical authority or budget reset.",
+    "rationale": "Required existing service provenance inventory and sanitized delivery screenshots only; preserved native-calibration checkpoint6bc9bdc, same task and cumulative7200second/8GiB allowance; no physical authority.",
     "reference": "docs/features/stock-printer-readiness/native-calibration-decision.md",
     "reference_sha256": "efcedb5a60874ad203569aaae31a04e6bcc5075111e0905527661cb2bd25d9ea",
     "requirements_sha256": {
@@ -18,9 +18,9 @@
       "docs/features/stock-printer-readiness/native-calibration-decision.md": "efcedb5a60874ad203569aaae31a04e6bcc5075111e0905527661cb2bd25d9ea",
       "docs/features/stock-printer-readiness/owner-request.md": "1dd390048481b7b155257b80f13f1d1be75d0c5f72536ae291cd1d9abe1283af"
     },
-    "scope_sha256": "81f167efe90f19a1385c4c766597d7b1b721b39e21c0d06e5a4931ed8a501c1e",
-    "session": "stock-calibration-final-20261023",
-    "source_commit": "ccb48f02a9d4e775d7feb054c8970e8c3f795494"
+    "scope_sha256": "b40134482d2af2c4cb68467a0b2b72ddbf5d5ca758711945a0ee5874ee9c336f",
+    "session": "stock-native-package-20261024",
+    "source_commit": "d7c16706ebb8dfa026a1cf687622985e2ee3c952"
   },
   "checks": [
     {
