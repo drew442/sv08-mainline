@@ -239,9 +239,20 @@ class Catalog:
         if not self.supported:raise ValueError('Unsupported catalog; export draft for diagnosis')
         if len(encoded(draft)) > DRAFT_LIMIT:
             raise ValueError('Draft exceeds 128 KiB')
-        keys(draft, ('format_version', 'boards', 'devices', 'geometry', 'definition_plan', 'custom_config'), ('format_version', 'boards', 'devices', 'geometry'))
-        if type(draft['format_version']) is not int or draft['format_version'] != 1:
+        keys(draft, ('format_version', 'boards', 'devices', 'geometry', 'definition_plan', 'custom_config', 'native_calibration', 'calibration_edits'), ('format_version', 'boards', 'devices', 'geometry'))
+        if type(draft['format_version']) is not int or draft['format_version'] not in (1,2):
             raise ValueError('Unsupported draft schema; original retained')
+        if 'calibration_edits' in draft:
+            edits=draft['calibration_edits']
+            if draft['format_version']!=2 or not isinstance(edits,dict) or len(edits)>64:raise ValueError('Unsupported calibration edit markers')
+            for target,entry in edits.items():
+                if not re.fullmatch(r'[a-z][a-z0-9_]{0,39}\.[a-z][a-z0-9_]{0,39}',target) or not isinstance(entry,dict) or set(entry)!={'value','nonce'} or not re.fullmatch('[0-9a-f]{32}',entry.get('nonce','')):raise ValueError('Invalid calibration edit marker')
+                if entry['value'] is not None:self.number(entry['value'],'number')
+        if 'native_calibration' in draft:
+            if draft['format_version']!=2:raise ValueError('Native calibration requires draft schema 2')
+            from sv08_printer_calibration import compatible_records
+            mirror=draft['native_calibration']
+            if not isinstance(mirror,dict) or set(mirror)-{'format_version','publication','context','records','bindings','status','origins'} or not {'format_version','publication','context','records','bindings'}<=set(mirror) or mirror['format_version']!=1:raise ValueError('Unsupported native calibration mirror')
         if 'custom_config' in draft:
             if not isinstance(draft['custom_config'], str) or len(draft['custom_config'].encode())>65536:raise ValueError('Custom configuration exceeds 64 KiB')
             from sv08_printer_publish import sections
@@ -271,6 +282,8 @@ class Catalog:
             if 'reference_ack' in selection and type(selection['reference_ack']) is not bool:
                 raise ValueError('Reference acknowledgment must be explicit')
         keys(draft['geometry'], (*GEOMETRY,'square_corner_velocity'))
+        from sv08_printer_fields import validate_numeric_values
+        validate_numeric_values('geometry',draft['geometry'])
         for v in draft['geometry'].values():
             self.number(v, 'positive')
         if not isinstance(draft['devices'], list) or len(draft['devices']) > 64:
@@ -381,7 +394,8 @@ class Catalog:
         validate_component_temperatures(draft['devices'],self.curves)
         if 'definition_plan' in draft:
             from sv08_printer_compose import apply_inputs
-            validate_component_temperatures(apply_inputs(draft,self)['devices'],self.curves)
+            applied=apply_inputs(draft,self);applied.pop('definition_plan',None)
+            self.validate(applied)
         return draft
 
     @staticmethod

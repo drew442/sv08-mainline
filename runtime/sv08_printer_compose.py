@@ -65,7 +65,12 @@ def clear_calibration(draft, catalog, targets):
     for target in targets:
         name,field=target.split('.',1)
         device=next((d for d in draft['devices'] if d['name']==name),None)
-        if device:device['settings'].pop(field,None)
+        if device:
+            device['settings'].pop(field,None)
+            if draft.get('native_calibration') and field in catalog.kinds[device['kind']]:
+                import uuid
+                draft['format_version']=2
+                draft.setdefault('calibration_edits',{})[target]=dict(value=None,nonce=uuid.uuid4().hex)
         if target in inputs and field in CALIBRATION_FIELDS:plan.setdefault('instance_values',{})[target]=None
         elif plan:plan.get('instance_values',{}).pop(target,None)
 
@@ -148,7 +153,7 @@ def validate_plan(plan, catalog):
     if set(values)-set(inputs):raise ValueError('Unknown instance input')
     for target,value in values.items():
         inp=inputs[target]
-        if value is None and target.split('.',1)[1] in CALIBRATION_FIELDS and inp['type']=='number':continue
+        if value is None and (target.split('.',1)[1] in CALIBRATION_FIELDS and inp['type']=='number' or target.split('.',1)[1]=='control' and inp['type']=='choice'):continue
         if inp['type']=='number':
             catalog.number(value,'number')
             if value<inp.get('minimum',float('-inf')) or value>inp.get('maximum',float('inf')):raise ValueError('Instance input outside declared bounds')
@@ -329,3 +334,93 @@ def locked_catalog(draft,catalog):
         cid=d['settings'].get('curve')
         if cid and cid not in candidate.curves:raise ValueError('Sensor override requires updated runtime lock before generation')
     return candidate
+
+
+def record_calibration_edits(current,draft,catalog,native_values=None):
+    """Explicit JSON/editor changes must not be shadowed by a native mirror."""
+    import uuid
+    from sv08_printer_calibration import calibration_sources
+    result=copy.deepcopy(draft)
+    previous={(d['board'],d['name']):d for d in current['devices']}
+    closure=validate_plan(result['definition_plan'],catalog)[0] if 'definition_plan' in result else {}
+    inputs={inp['target'] for definition in closure.values() for inp in definition.get('inputs',{}).values()}
+    old_values=current.get('definition_plan',{}).get('instance_values',{})
+    incoming_values=result.get('definition_plan',{}).get('instance_values',{})
+    baseline=calibration_sources(apply_inputs(current,catalog),catalog)
+    hardware=copy.deepcopy(result);hardware['calibration_edits']=copy.deepcopy(current.get('calibration_edits',{}))
+    compatible=calibration_sources(apply_inputs(hardware,catalog),catalog)
+    for device in result['devices']:
+        old=previous.get((device['board'],device['name']))
+        if not old:continue
+        intent=[]
+        for field in (*CALIBRATION_FIELDS,'control'):
+            target=device['name']+'.'+field
+            raw_changed=old['settings'].get(field)!=device['settings'].get(field)
+            input_changed=(target in incoming_values)!=(target in old_values) or incoming_values.get(target)!=old_values.get(target)
+            marker_changed=result.get('calibration_edits',{}).get(target)!=current.get('calibration_edits',{}).get(target)
+            default_value=incoming_values.get(target,device['settings'].get(field))
+            if not marker_changed and calibration_reference_default(result,device,field,default_value,catalog,closure):
+                raw_changed=False;input_changed=False
+            if raw_changed or input_changed or marker_changed:
+                value=device['settings'].get(field) if raw_changed else incoming_values.get(target,device['settings'].get(field))
+                intent.append((field,value))
+        if device['settings'].get('control')=='watermark' and all((field,None) in intent for field in ('pid_kp','pid_ki','pid_kd')) and (native_values or {}).get(device['name'],{}).get('control')=='pid':intent.append(('control','watermark'))
+        pid_edit=any(field in ('control','pid_kp','pid_ki','pid_kd') for field,value in intent)
+        group=(device['name'] if device['kind']!='chamber' else 'heater_generic '+device['name']) if device['kind'] in ('bed','extruder','chamber') else 'geometry'
+        if baseline.get(group)!=compatible.get(group):
+            explicit={field for field,value in intent}
+            for field in CALIBRATION_FIELDS:
+                if field in catalog.kinds[device['kind']] and field not in explicit:
+                    device['settings'].pop(field,None);target=device['name']+'.'+field
+                    if target in inputs:result['definition_plan'].setdefault('instance_values',{})[target]=None
+                    result.setdefault('calibration_edits',{})[target]=dict(value=None,nonce=uuid.uuid4().hex);result['format_version']=2
+        if pid_edit and baseline.get(group)==compatible.get(group):
+            for field,value in (native_values or {}).get(group,{}).items():
+                if field in ('control','pid_kp','pid_ki','pid_kd'):
+                    device['settings'][field]=value if field=='control' else float(value)
+                    if field!='control' and field not in {key for key,value in intent}:
+                        result.setdefault('calibration_edits',{})[device['name']+'.'+field]=dict(value=float(value),nonce=uuid.uuid4().hex)
+        for field,value in intent:
+            target=device['name']+'.'+field
+            if value is None:device['settings'].pop(field,None)
+            else:device['settings'][field]=value
+            if target in inputs:result['definition_plan'].setdefault('instance_values',{})[target]=value
+            edits=result.setdefault('calibration_edits',{})
+            for marked in ('pid_kp','pid_ki','pid_kd') if field=='control' else (field,):
+                key=device['name']+'.'+marked;marked_value=device['settings'].get(marked) if field=='control' and value=='pid' else None if field=='control' else value
+                if edits.get(key)==current.get('calibration_edits',{}).get(key) or edits.get(key,{}).get('value')!=marked_value:
+                    edits[key]=dict(value=marked_value,nonce=uuid.uuid4().hex)
+            result['format_version']=2
+    return result
+
+
+def calibration_reference_default(draft,device,field,value,catalog,closure):
+    target=device['name']+'.'+field
+    if any(inp.get('target')==target and 'default' in inp and inp['default']==value for definition in closure.values() for inp in definition.get('inputs',{}).values()):return True
+    profile=device.get('profile')
+    if profile:
+        board=next((b for b in draft.get('definition_plan',{}).get('runtime_assets',{}).get('boards',[]) if b['role']==device['board']),None)
+        if board is None:board=catalog.boards.get(draft['boards'].get(device['board'],{}).get('id'),{})
+        return any(p['id']==profile and any(d['name']==device['name'] and d['settings'].get(field)==value for d in p['devices']) for p in board.get('presets',[]))
+    return False
+
+
+def user_calibration_records(draft,effective,catalog):
+    """Explicit instance data is user-reported, never a universal measurement."""
+    closure=validate_plan(draft['definition_plan'],catalog)[0] if 'definition_plan' in draft else {}
+    values=draft.get('definition_plan',{}).get('instance_values',{});records={}
+    originals={d['name']:d for d in draft['devices']}
+    def explicit(device,field):
+        target=device['name']+'.'+field;value=device['settings'].get(field)
+        marker=draft.get('calibration_edits',{}).get(target)
+        if marker is not None:return marker['value'] is not None and marker['value']==value
+        if target in values:return values[target] is not None and values[target]==value and not calibration_reference_default(draft,originals[device['name']],field,value,catalog,closure)
+        raw=originals[device['name']]
+        return field in raw['settings'] and not calibration_reference_default(draft,raw,field,value,catalog,closure)
+    for device in effective['devices']:
+        if device['kind']=='probe' and 'z_offset' in device['settings'] and explicit(device,'z_offset'):
+            records['probe']={'z_offset':str(device['settings']['z_offset'])}
+        if device['kind'] in ('bed','extruder','chamber') and device['settings'].get('control')=='pid' and all(key in device['settings'] and explicit(device,key) for key in ('pid_kp','pid_ki','pid_kd')):
+            section='heater_bed' if device['kind']=='bed' else 'extruder' if device['kind']=='extruder' else 'heater_generic '+device['name']
+            records[section]={'control':'pid',**{key:str(device['settings'][key]) for key in ('pid_kp','pid_ki','pid_kd')}}
+    return records

@@ -240,6 +240,11 @@ def stage(work, manifest, refresh=False, owner_key=None):
         link = health_wants / name
         link.unlink(missing_ok=True)
         link.symlink_to('../' + name)
+    observer_wants=units/'sv08-klipper.service.wants'
+    observer_wants.mkdir(exist_ok=True)
+    observer_link=observer_wants/'sv08-calibration-reconcile.service'
+    observer_link.unlink(missing_ok=True)
+    observer_link.symlink_to('../sv08-calibration-reconcile.service')
     # Physical printer services remain separately gated; no printer.cfg is seeded.
     (work / 'integration-staged.json').write_text(json.dumps(manifest, indent=2)+'\n')
 

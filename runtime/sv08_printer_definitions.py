@@ -139,6 +139,10 @@ def validate_definition(d,catalog):
         component=next((c for c in defaults if c['name']==name),None)
         if component:component['settings'][field]=inp['default']
     validate_component_temperatures(d.get('components',[]),catalog.curves)
+    for component in defaults:
+        for field,value in component['settings'].items():
+            typ=catalog.kinds[component['kind']][field]
+            if typ in ('positive','number','fraction','integer','address','nonnegative','nonnegative_integer','byte','unit_interval'):catalog.number(value,typ)
     validate_component_temperatures(defaults,catalog.curves)
     endpoints=set()
     for conn in d.get('connections',[]):

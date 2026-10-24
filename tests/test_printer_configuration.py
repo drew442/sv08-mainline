@@ -71,6 +71,25 @@ class CatalogTests(unittest.TestCase):
         devices[0]['settings']=dict(curve='limited',min_temp=-1)
         with self.assertRaisesRegex(ValueError,'documented sensor'):validate_component_temperatures(devices,{'limited':{'limits':[0,120]}})
 
+    def test_supported_fdm_numeric_families_keep_typed_lower_bounds(self):
+        cases=[('probe','samples',100,101),('probe','samples_tolerance_retries',100,101),('probe','speed',200,201),('probe','lift_speed',500,501),('probe','z_offset',50,50.01),('probe','x_offset',2000,2001),('motor','rotation_distance',5000,5001),('motor','homing_speed',500,501),('motor','full_steps_per_rotation',10000,10001)]
+        for kind,field,limit,invalid in cases:
+            for value,valid in [(limit,True),(invalid,False),(-invalid,False)]:
+                with self.subTest(kind=kind,field=field,value=value):
+                    draft=full_draft();device=next(d for d in draft['devices'] if d['kind']==kind);device['settings'][field]=value
+                    if valid:self.c.validate(draft)
+                    else:
+                        with self.assertRaises(ValueError):self.c.validate(draft)
+        for field,limit in [('max_velocity',2000),('max_z_velocity',500),('max_accel',100000),('max_z_accel',10000)]:
+            draft=full_draft();draft['geometry'][field]=limit;self.c.validate(draft)
+            draft['geometry'][field]=limit+1
+            with self.assertRaisesRegex(ValueError,'supported-FDM'):self.c.validate(draft)
+            draft['geometry'][field]=0
+            with self.assertRaisesRegex(ValueError,'positive'):self.c.validate(draft)
+        for field in ('samples','speed'):
+            draft=full_draft();next(d for d in draft['devices'] if d['kind']=='probe')['settings'][field]=0
+            with self.assertRaises(ValueError):self.c.validate(draft)
+
     def test_catalog_sources(self):
         source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         import hashlib
@@ -348,7 +367,7 @@ class PersistenceTests(unittest.TestCase):
 
     def test_future_opaque_draft_is_exportable_without_composition(self):
         self.save(sensor_draft());path=self.service.directory/'state.json';future=self.status()
-        future.update(format_version=2,draft={'format_version':2,'future_topology':[]},current={'future_candidate':True})
+        future.update(format_version=3,draft={'format_version':3,'future_topology':[]},current={'future_candidate':True})
         path.write_text(json.dumps(future));before=path.read_bytes()
         status=self.service.request({'action':'status'});self.assertEqual(status['state'],future);self.assertEqual(status['definitions'],[])
         with self.assertRaises(ValueError):self.save(sensor_draft(),future['revision'])
@@ -494,10 +513,10 @@ class PersistenceTests(unittest.TestCase):
         _,status=os.waitpid(pid,0);self.assertTrue(os.WIFSIGNALED(status));self.assertEqual(path.read_bytes(),before)
         self.assertTrue(list(self.service.directory.glob('.state.json.*')))
         self.save(sensor_draft());self.assertFalse(list(self.service.directory.glob('.state.json.*')))
-        state=self.status();state['format_version']=2;path.write_text(json.dumps(state));path.chmod(0o600)
-        self.assertEqual(self.status()['format_version'],2)
+        state=self.status();state['format_version']=3;path.write_text(json.dumps(state));path.chmod(0o600)
+        self.assertEqual(self.status()['format_version'],3)
         with self.assertRaises(ValueError):self.save(sensor_draft(),state['revision'])
-        self.assertEqual(json.loads(path.read_text())['format_version'],2)
+        self.assertEqual(json.loads(path.read_text())['format_version'],3)
     def test_real_generation_copy_rollback_current_and_historical(self):
         self.save(sensor_draft());self.apply();original=self.status()
         for label,cls in [('current',Store),('historical',self.historical_store())]:

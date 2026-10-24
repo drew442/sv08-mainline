@@ -59,8 +59,8 @@ its dependent evidence, not unrelated completed checks.
 | 3. Check inputs before outputs | Use the reviewed input-only configuration. Observe each actual probe/filament/endstop released–operated–released transition and physical association. Compare plausible stable ambient readings with the independent reference. Take pins, names and configured conversion settings from this session's generated manifest, not old hardcoded pin tables. | H05 |
 | 4. Verify stop, fans and motors | After phase 3 and exact action review, enable only the approved phase. Verify the stop path and each physically identified fan; check one bounded motor action/direction at a time with clear travel. Wrong direction, unexpected motion or inability to stop is a failure. | H06 |
 | 5. Establish homing/probing | Verify the configured probe and sensorless/DIAG dependencies before the separately reviewed bounded homing sequence. Do not issue ordinary `G28`, gantry levelling or mesh before these dependencies pass. Keep pressure GPIO observations separate from proprietary automatic calibration. | H06 |
-| 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; persist any measured gains through Cockpit as described below, never by borrowing factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
-| 7. Record manual probe calibration | Establish the reviewed gantry/bed plane first at the intended thermal state, then perform the supported manual probe procedure. Record the reported measurement in Cockpit as described below, save/regenerate/apply stopped, then restart only under the reviewed procedure. Confirm the saved value survives reload and the candidate no longer reports pending probe calibration. After the reviewed restart, verify the plane/mount has not changed; perform the mesh only after a valid probe measurement. Any subsequent tilt/QGL adjustment requires renewed probe calibration and then a new mesh. | H06 |
+| 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; persist any measured gains with native `SAVE_CONFIG` as described below, never by borrowing factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
+| 7. Record manual probe calibration | Establish the reviewed gantry/bed plane at the intended thermal state, then run the supported manual probe procedure and native `SAVE_CONFIG`. Wait for restart and automatic reconciliation, then confirm the persisted value in Cockpit. Exercise the actual print-start levelling and Z-rehoming sequence and verify the nozzle-to-bed reference before first extrusion. If levelling changes that reference, recalibrate after levelling and rebuild the mesh before printing. | H06 |
 | 8. First layer and print controls | With all preceding gates passed, use a known bounded test file and matching slicer start/end controls. Attend the first layer; separately verify pause, resume, cancel and shutdown. Record observed behavior, not just a successfully uploaded file. | H06 |
 | 9. Finish cleanly | Stop the job and outputs, preserve logs/calibration/configuration, confirm the intended persistent/stopped service state and record which capabilities are accepted. Accept the actual configured printer and record its selected definitions; no exhaustive combination testing is required. | H02/H06 closure |
 
@@ -75,44 +75,64 @@ a location-specific ambient reference, not proof of heater temperature accuracy 
 a reason to fit a conversion curve. Forced update fallback and destructive recovery
 are separate controlled maintenance qualifications, not extra first-print tasks.
 
-## Manual Z offset: the supported persistence path
+## Native Klipper calibration and persistence
 
-The [pinned Klipper guidance](https://github.com/Klipper3d/klipper/blob/f0892d82b0f1c1228454f09eb508eddde2250f4b/docs/Probe_Calibrate.md#calibrating-probe-z-offset) requires probe recalibration after changes to the motion system, hotend position or probe location. With XY probe offsets, changing bed tilt/gantry levelling also invalidates the measurement and any dependent mesh. Establish that plane before the final manual measurement; do not calibrate once and then blindly run QGL.
+The generated setup uses the sourced starting offset of zero until a measured
+probe offset is recorded. A persisted measured zero is valid; a starting zero is
+not evidence that calibration has been performed. Full printing starts guarded
+and the observer acknowledges only a matching loaded configuration and accepted
+calibration. Explicit Setup mode remains blocked.
 
-The generated configuration uses a sourced starting offset of zero while measured
-calibration is missing; printing is blocked in that state. Under the reviewed manual
-procedure, Klipper's `PROBE_CALIBRATE`/`TESTZ`/`ACCEPT` interaction reports the measured
-`z_offset`. Those commands require the approved physical setup; do not run them as
-an unattended test.
+Under the reviewed physical procedure, use normal Klipper calibration tools:
 
-1. Record that measured result once in **Printer Hardware → Inspect changes → Configuration output, calibration and expert actions → Existing component calibration → Z offset**. A measured zero is valid; an unmeasured starting zero is not a completed calibration.
-2. Save the hardware configuration, prepare/review the Full candidate and confirm the measured value and pending-calibration status. Reload to confirm persistence.
-3. Publish/apply only through the stopped, drift-checked managed route. Restart using the separately reviewed activation procedure, then verify the active configuration matches the saved candidate before printing.
+1. Establish the intended warmed gantry/bed plane, then run the supported
+   `PROBE_CALIBRATE` / `TESTZ` / `ACCEPT` interaction.
+2. Issue normal `SAVE_CONFIG`. Klipper persists the result and restarts. There is
+   no required transcription into Cockpit or separate hardware publication for
+   this calibration-only save.
+3. Wait for Klipper to become ready and Cockpit's calibration synchronization
+   message to report acceptance. Confirm the persisted value survives reload in
+   **Printer Hardware → Inspect changes → Configuration output, calibration and
+   expert actions → Existing component calibration**. Pending/conflicting values
+   are not a successful active calibration.
+4. Before first extrusion, exercise the actual print-start levelling, Z-rehoming
+   and mesh sequence in the reviewed thermal state, then verify the nozzle-to-bed
+   reference. Record the active configuration hash for this phase.
 
-Do not rely on normal `SAVE_CONFIG` for this managed path: the generated probe
-setting is in an include, and pinned Klipper refuses conflicting included settings.
-Cockpit is the source of truth here; automatic `SAVE_CONFIG` ingestion is not
-implemented. This is intentional explicit persistence, not permission to hand-edit
-generated files or copy an old printer's offset. A bed/probe/hotend or motion-component replacement clears its
-dependent measurement; recalibrate the changed assembly before printing again.
+The [pinned Klipper guidance](https://github.com/Klipper3d/klipper/blob/f0892d82b0f1c1228454f09eb508eddde2250f4b/docs/Probe_Calibrate.md#calibrating-probe-z-offset)
+requires recalibration after changes to the motion system, hotend position or
+probe location. With XY probe offsets, a changed bed tilt can also invalidate the
+measurement and dependent mesh. QGL can change that relationship; it is not proof
+of an offset's validity. The normal generated QGL → Z-rehome → mesh sequence is
+retained, consistent with the [published Voron start example](https://docs.vorondesign.com/community/howto/EricZimmerman/SlicerAndPrintStart.html).
+Whether this configured machine reproduces its calibrated reference is an attended
+check. If it does not, stop, recalibrate after levelling and rebuild the mesh.
 
-## Retaining measured heater PID results
+Supported native results are mirrored automatically against the applied hardware.
+Unrelated root edits, immutable include drift and incompatible records are refused;
+normal later hardware publication/restoration still requires stopped services.
+Manual calibration fields remain optional overrides. If used, save, regenerate,
+review and apply stopped; they do not authorize writing generated files by hand.
+Replacement of affected hardware clears dependent measurements. The automatic
+observer validates persisted data and loaded configuration, not physical accuracy.
 
-Factory Full configurations intentionally support watermark control before PID
-calibration; do not invent gains or make PID a hardware-selection prerequisite.
-If a reviewed PID calibration is performed, record its reported `pid_kp`, `pid_ki`
-and `pid_kd` for the correct heater in **Existing component calibration**, and
-select **PID (enter gains)** for that heater in its advanced device settings.
-Save, regenerate and review the Full candidate, then publish stopped and restart
-only through the reviewed procedure. Confirm the active control/gains and safe
-thermal response before using them for a print. Ordinary `SAVE_CONFIG` is not the
-persistence route for included managed heater settings either.
+## Optional heater PID calibration
 
-If PID is deferred, keep the explicitly selected watermark mode and document its
-accepted thermal behavior/limits. Fine sensor-curve calibration remains deferred;
-changing control mode does not authorize fitting an unknown sensor curve. Link
-this phase's measured results and configuration hash once, without redoing
-unaffected input checks.
+Hardware selection does not require PID calibration. Supported Full configurations
+can retain explicitly selected watermark control while PID is deferred. Do not
+invent or borrow measured gains.
+
+After thermal identity, limits and response have passed their reviewed checks,
+use Klipper's normal PID calibration for the identified heater and agreed target,
+then `SAVE_CONFIG`. The native result includes PID control and gains; automatic
+reconciliation records them without manually copying numbers or changing an
+advanced control selector. Wait for accepted synchronization and verify the active
+control/gains and thermal response before printing.
+
+If PID remains deferred, record the accepted watermark behavior and limits. Fine
+sensor-curve fitting remains deferred; changing control mode does not identify an
+unknown sensor. Keep this phase's result/configuration binding in the same session
+record instead of repeating unaffected input checks.
 
 ## Handoff
 

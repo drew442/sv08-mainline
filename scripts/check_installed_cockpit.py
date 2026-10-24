@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import stat
 import subprocess
@@ -19,6 +20,32 @@ HELPERS = {'hardware': ('sv08_printer_helper.py', 'action'),
            'network': ('sv08_network.py', 'method'),
            'identity': ('sv08_identity.py', 'method'),
            'mainsail': ('sv08_mainsail_access.py', 'method')}
+
+
+CALIBRATION_UNIT='etc/systemd/system/sv08-calibration-reconcile.service'
+REQUIRED_RUNTIME={CALIBRATION_UNIT}|{'usr/lib/sv08/'+name+'.py' for name in (
+    'sv08_calibration_reconcile','sv08_printer_calibration','sv08_printer_catalog',
+    'sv08_printer_fields','sv08_printer_definitions','sv08_printer_compose',
+    'sv08_printer_generate','sv08_printer_stack','sv08_printer_publish',
+    'sv08_printer_store','sv08_printer_helper','sv08_view')}
+
+
+def check_runtime(root, manifest):
+    files=manifest.get('runtime_files')
+    if not isinstance(files,dict) or not REQUIRED_RUNTIME<=set(files) or len(files)>128:
+        raise ValueError('Complete calibration runtime/service hash manifest required')
+    result={}
+    for name,expected in files.items():
+        if (name!=CALIBRATION_UNIT and not re.fullmatch(r'usr/lib/sv08/sv08_[a-z_]+\.py',name)) or not isinstance(expected,str) or not re.fullmatch('[0-9a-f]{64}',expected):
+            raise ValueError('Unsupported runtime manifest path or hash')
+        path=root/name
+        try:
+            info=path.lstat()
+            result[name]=(not any(p.is_symlink() for p in (path,*path.parents)) and stat.S_ISREG(info.st_mode) and info.st_uid==0 and info.st_nlink==1 and not info.st_mode & 0o022 and hashlib.sha256(path.read_bytes()).hexdigest()==expected)
+        except OSError:result[name]=False
+    link=root/'etc/systemd/system/sv08-klipper.service.wants/sv08-calibration-reconcile.service'
+    result['klipper_start_wants_observer']=not any(p.is_symlink() for p in link.parents) and link.is_symlink() and os.readlink(link)=='../sv08-calibration-reconcile.service'
+    return result
 
 
 def probe(root, name, key):
@@ -57,12 +84,14 @@ def check(root, manifest, run_probe=probe, baseline=None):
         except OSError: good = False
         report['assets'][name] = good
         report['passed'] &= good
+    report['runtime']=check_runtime(root,manifest)
+    report['passed'] &= all(report['runtime'].values())
     for label, (name, key) in HELPERS.items():
         try:
             result = run_probe(root, name, key)
             if label == 'hardware':
                 state = result['state']
-                if not (state['format_version'] == 1 and result.get('catalog_supported', True) and
+                if not (state['format_version'] in (1,2) and result.get('catalog_supported', True) and
                         type(state['revision']) is int and isinstance(state['draft']['devices'], list) and
                         isinstance(result['definitions'], list) and result['definitions'] and isinstance(result['sources'], dict)):
                     raise ValueError('Unsupported hardware status')

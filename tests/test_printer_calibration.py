@@ -1,6 +1,8 @@
 """Pure ownership contract exercised with unmodified pinned SAVE_CONFIG writer."""
 import copy
 import os
+import json
+import subprocess
 from pathlib import Path
 import sys
 import tempfile
@@ -11,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'runtime'))
 from sv08_printer_calibration import (upstream,parse,split_lane,render,native_parts,
     recognized_root,validate_records,hardware_binding,inspect_envelope,migrate_envelope)
 
-SOURCE=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))/'upstream/klipper'
+SOURCE=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT',ROOT))/'upstream/klipper'
 HARDWARE='''[probe]
 pin: PA1
 z_offset: 0
@@ -47,6 +49,7 @@ class NativeCalibration(unittest.TestCase):
         self.assertEqual(parse(lane),{'probe':{'z_offset':'0'},'heater_bed':{'control':'watermark'}})
         self.assertEqual(set(parse(immutable)),set(parse(HARDWARE)))
 
+    @unittest.skipUnless((SOURCE/'klippy/configfile.py').is_file(),'Unchanged pinned upstream configfile.py source required; no venv or MCU')
     def test_real_native_writer_root_zero_repeated_save_and_profile_delete(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary);path=root/'printer.cfg'
@@ -71,6 +74,7 @@ class NativeCalibration(unittest.TestCase):
             self.assertEqual(records['probe']['z_offset'],'0.125');self.assertNotIn('bed_mesh measured',records)
             self.assertEqual((root/'hardware.cfg').read_text(),immutable)
 
+    @unittest.skipUnless((SOURCE/'klippy/configfile.py').is_file(),'Unchanged pinned upstream configfile.py source required; no venv or MCU')
     def test_real_writer_rejects_included_calibration_option(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary);(root/'hardware.cfg').write_text(HARDWARE)
@@ -79,6 +83,7 @@ class NativeCalibration(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'conflicts with included value'):writer.save()
             self.assertEqual(path.read_text(),'[include hardware.cfg]\n')
 
+    @unittest.skipUnless((SOURCE/'klippy/configfile.py').is_file(),'Unchanged pinned upstream configfile.py source required; no venv or MCU')
     def test_unrecognized_root_footer_and_unsupported_records_refused(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary);path=root/'printer.cfg';baseline='[probe]\nz_offset: 0\n'
@@ -94,6 +99,38 @@ class NativeCalibration(unittest.TestCase):
         for records in [{'input_shaper':{'shaper_freq_x':'nan'}},{'input_shaper':{'shaper_type_x':'unknown'}},{'stepper_a':{'position_endstop':'0'}},{'endstop_phase stepper_z':{'trigger_phase':'64/64'}}]:
             with self.assertRaises(ValueError):validate_records(records,config)
         with self.assertRaises(ValueError):validate_records({'input_shaper':{'shaper_freq_x':'55'}},{})
+
+    def test_dynamic_profile_sections_do_not_leave_undeletable_immutable_headers(self):
+        profile=dict(version='1',points='0, 0, 0\n0, 0, 0\n0, 0, 0',min_x='10',max_x='100',min_y='10',max_y='100',x_count='3',y_count='3',mesh_x_pps='2',mesh_y_pps='2',algo='lagrange',tension='.2')
+        immutable,lane=split_lane(HARDWARE+render({'bed_mesh measured':profile}))
+        self.assertNotIn('[bed_mesh measured]',immutable)
+        self.assertEqual(parse(lane)['bed_mesh measured'],profile)
+        self.assertEqual(render({'bed_mesh measured':{}}),'')
+
+    def test_duplicate_option_refused_but_only_calibration_section_can_span_root_and_include(self):
+        from sv08_printer_publish import inventory
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            (root/'hardware.cfg').write_text('[probe]\npin: PA1\n')
+            (root/'printer.cfg').write_text('[include hardware.cfg]\n[probe]\nz_offset: 0\n')
+            self.assertIn('probe',inventory(root)[1])
+            (root/'printer.cfg').write_text('[include hardware.cfg]\n[probe]\npin: PA2\n')
+            with self.assertRaisesRegex(ValueError,'Duplicate option'):inventory(root)
+            (root/'printer.cfg').write_text('[include hardware.cfg]\n[probe]\nx_offset: 1\n')
+            with self.assertRaisesRegex(ValueError,'outside root calibration lane'):inventory(root)
+
+    def test_offline_cli_migration_is_exclusive_private_and_preserves_clear_markers(self):
+        value=dict(format_version=1,revision=1,draft={'format_version':1,'definition_plan':{'instance_values':{'probe.z_offset':None},'snapshots':{'fixture':{'preserve':True}}}},current=None,previous=None)
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);source=root/'old.json';destination=root/'new.json';source.write_text(json.dumps(value));before=source.read_bytes()
+            command=[sys.executable,str(ROOT/'runtime/sv08_printer_calibration.py')]
+            inspected=subprocess.run(command+['inspect',str(source)],capture_output=True,text=True,check=True)
+            self.assertTrue(json.loads(inspected.stdout)['legacy'])
+            subprocess.run(command+['migrate',str(source),'--output',str(destination)],capture_output=True,text=True,check=True)
+            migrated=json.loads(destination.read_text());self.assertEqual({**migrated,'format_version':1},value)
+            self.assertEqual(source.read_bytes(),before);self.assertEqual(destination.stat().st_mode & 0o777,0o600)
+            again=subprocess.run(command+['migrate',str(source),'--output',str(destination)],capture_output=True,text=True)
+            self.assertNotEqual(again.returncode,0);self.assertEqual(source.read_bytes(),before)
 
     def test_version_migration_preserves_every_original_draft_and_candidate(self):
         value=dict(format_version=1,revision=7,draft={'format_version':1,'definition_plan':{'instance_values':{'probe.z_offset':None},'snapshots':{'old':{'unchanged':True}}}},current={'draft':{'historical':True}},previous=None)

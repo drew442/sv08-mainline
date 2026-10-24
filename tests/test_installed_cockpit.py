@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from check_installed_cockpit import check, probe
+from check_installed_cockpit import check, probe, check_runtime, REQUIRED_RUNTIME, CALIBRATION_UNIT
 from test_data_budget import fixture_root
 
 
@@ -24,6 +24,13 @@ class InstalledReadinessTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check(Path('/'), {'files': {'etc/shadow': '0' * 64}}, lambda *_: {})
 
+    def test_runtime_manifest_is_mandatory_and_paths_are_finite(self):
+        for manifest in ({},{'runtime_files':{}},{'runtime_files':{name:'0'*64 for name in REQUIRED_RUNTIME}|{'etc/shadow':'0'*64}}):
+            with self.assertRaises(ValueError):check_runtime(Path('/'),manifest)
+        with tempfile.TemporaryDirectory() as temporary:
+            report=check_runtime(Path(temporary),{'runtime_files':{name:'0'*64 for name in REQUIRED_RUNTIME}})
+            self.assertFalse(any(report.values()))
+
     @unittest.skipUnless(os.geteuid() == 0, 'real ownership fixture; run with sudo')
     def test_populated_status_assets_and_managed_ownership_all_required(self):
         with tempfile.TemporaryDirectory(dir=fixture_root()) as temp:
@@ -31,6 +38,12 @@ class InstalledReadinessTests(unittest.TestCase):
             asset = root / 'usr/share/cockpit/sv08-host/app.js'
             asset.parent.mkdir(parents=True); asset.write_text('fixture asset')
             manifest = {'files': {str(asset.relative_to(root)): hashlib.sha256(asset.read_bytes()).hexdigest()}}
+            manifest['runtime_files']={}
+            for name in REQUIRED_RUNTIME:
+                path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('fixture runtime')
+                manifest['runtime_files'][name]=hashlib.sha256(path.read_bytes()).hexdigest()
+            wants=root/'etc/systemd/system/sv08-klipper.service.wants';wants.mkdir()
+            (wants/'sv08-calibration-reconcile.service').symlink_to('../sv08-calibration-reconcile.service')
             config = root / 'data/sv08/generations/test/config'; config.mkdir(parents=True)
             managed = config / 'printer-managed'; managed.mkdir(mode=0o750); os.chown(managed, 0, 1000)
             boot = root / 'run/sv08/boot.json'; boot.parent.mkdir(parents=True); boot.write_text(json.dumps({'generation': '/data/sv08/generations/test'}))

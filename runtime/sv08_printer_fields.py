@@ -199,6 +199,7 @@ def validate_printer_settings(settings,catalog):
     from sv08_printer_catalog import keys,GEOMETRY
     keys(settings,('geometry','bed_mesh','quad_gantry_level','safe_z_home'))
     for group,values in settings.items():
+        validate_numeric_values(group,values)
         if group=='geometry':
             keys(values,(*GEOMETRY,'square_corner_velocity'),GEOMETRY)
             for value in values.values():catalog.number(value,'positive')
@@ -257,6 +258,7 @@ def validate_component_temperatures(devices, curves):
             raise ValueError(device['name']+'.'+field+': '+policy+' range is '+str(low)+'..'+str(high)+' °C')
     for device in devices:
         kind=device['kind'];settings=device['settings']
+        validate_numeric_values(kind,settings)
         limits=SUPPORTED_FDM_TEMPERATURE_C.get(kind)
         if limits:
             low,high=limits
@@ -277,3 +279,30 @@ def validate_component_temperatures(devices, curves):
                 upper=SUPPORTED_FDM_TEMPERATURE_C[kind][1]
                 if sensor:upper=min(upper,sensor['settings'].get('max_temp',upper))
                 bound(device,'min_extrude_temp',settings['min_extrude_temp'],0,upper,'extrusion supported-FDM')
+
+
+# Supported-FDM plausibility policy: practical software input scope, not motor,
+# machine, electrical or measured safety ratings. Existing tighter checks win.
+def validate_numeric_values(kind, settings):
+    def check(field,value,low,high,unit):
+        if type(value) not in (int,float):return # Finite/type checks own this error.
+        if not low<=value<=high:raise ValueError(kind+'.'+field+': supported-FDM range '+str(low)+'..'+str(high)+' '+unit)
+    counts={'samples':100,'retries':100,'samples_tolerance_retries':100,'full_steps_per_rotation':10000,'tachometer_ppr':128}
+    speeds={'max_velocity':2000,'max_z_velocity':500,'homing_speed':500,'homing_retract_speed':500,'second_homing_speed':500,'lift_speed':500,'speed':200 if kind=='probe' else 500,'z_hop_speed':500,'square_corner_velocity':2000}
+    distances={'position_min','position_max','position_endstop','rotation_distance','sample_retract_dist','homing_retract_dist','samples_tolerance','horizontal_move_z','split_delta_z','adaptive_margin','fade_start','fade_end','fade_target','retry_tolerance','max_adjust','z_hop'}
+    times={'event_delay','pause_delay','kick_start_time','cycle_time','tachometer_poll_interval','verify_check_gain_time'}
+    for field,value in settings.items():
+        if field in counts:check(field,value,0,counts[field],'count')
+        elif field in speeds:check(field,value,0,speeds[field],'mm/s')
+        elif field in ('max_accel','max_z_accel'):check(field,value,0,100000 if field=='max_accel' else 10000,'mm/s²')
+        elif field in ('z_offset','z_offset_start'):check(field,value,-50,50,'mm')
+        elif field in ('x_offset','y_offset'):check(field,value,-2000,2000,'mm')
+        elif field in distances:check(field,value,-5000,5000,'mm')
+        elif field in times:check(field,value,0,86400,'s')
+        elif field in ('mesh_min','mesh_max','home_xy_position','gantry_corners','points','probe_count','mesh_pps'):
+            def numbers(values):
+                for v in values:
+                    if isinstance(v,list):yield from numbers(v)
+                    else:yield v
+            if isinstance(value,list):
+                for number in numbers(value):check(field,number,0 if field in ('probe_count','mesh_pps') else -5000,100 if field in ('probe_count','mesh_pps') else 5000,'count' if field in ('probe_count','mesh_pps') else 'mm')

@@ -1,4 +1,9 @@
-# Stock-printer software closure and commissioning handoff
+# Configured-printer software closure and commissioning handoff
+
+The first report below is historical evidence at PR33 revision
+`3f4677f4f9be0d8f8553dce61e706d17bd4cf05e`. Its limitations describe that
+revision. The owner-requested follow-up is recorded separately below; historical
+results and hashes have not been refreshed or relabelled as current proof.
 
 ## Outcome and remaining boundary
 
@@ -68,3 +73,56 @@ Two fresh named project_researcher children traced independent lanes (config exp
 Exact generator ownership was expanded through committed blocked/resumed/reauthorized records before edits; initial checkpoint80fff10 and failed attempts remain preserved. The primary7200process-second/4GiB allowance is cumulative across research, failures, scope renewal and browser modes. Conservatively charge2400process-seconds including workflow/unmetered reserve and512MiB generated including deleted profiles/fixtures; worker measured native tests22.925seconds, staging final37.956seconds and earlier37.173seconds, research~1.9seconds, remaining commands covered by reserve. No images, host installs, new infrastructure, firmware work, service activation, live deployment, heating, motion or physical test occurred.
 
 Final source-bound submission, actual hosted CI state and review PR are recorded in existing project goal/task records after publication. This is autonomous software closure and a physical handoff, not a working-stock-print or supported release claim.
+
+
+## Owner-requested follow-up — 2026-10-24
+
+The owner selected normal Klipper `SAVE_CONFIG` and its restart, followed by
+automatic reconciliation. This supersedes the earlier manual-transcription
+limitation. The qualification target is the configured printer, including
+supported modifications; parameter contracts require boundary and representative
+composition tests, not every combination or a factory-only physical print.
+
+The implementation separates immutable wiring, heater limits and macros from a
+registered top-level calibration lane and Klipper's native autosave footer. The
+observer validates the pinned reader, complete include closure, actual loaded
+configuration and persisted values, then acknowledges that loaded Klipper
+instance on the same connection. Setup remains blocked. Reconciliation performs
+no publication, restart, heater or motion operation. Normal stopped publication
+and restore protections remain. Existing managed configurations need one reviewed
+application of the new generated layout before normal native persistence works.
+Installation must include the reconciler runtime, service and its Klipper wanted
+link; static UI assets alone do not enable it. Host-image integration installs
+that link, and the installed checker refuses an incomplete runtime or missing
+link. No live deployment is claimed here.
+
+Persisted zero is valid calibration. Factory starting zero and universal
+calibration defaults are not measurements. Explicit local values remain available
+as user-reported calibration, with origin metadata; they do not become verified
+physical measurements. Native values survive unrelated edits and byte-preserving
+update generations. Calibration dependencies reject incompatible hardware/source
+changes. Unsupported native records, root drift and mismatched loaded settings
+remain conflicts, rather than silently opening the printing guard.
+
+Storage version2 retains the known envelope shape. The offline inspection and
+exclusive-output migration commands preserve originals; an actual prior reader
+can export the new envelope opaquely and refuses unsupported mutation. This is not
+transparent downgrade editing or proof of physical rollback qualification.
+
+The component selector again exposes current compatible choices without changing
+pinned source assets. Numerical software plausibility bounds cover thermal and
+motion/component inputs, with stricter declared limits retained. They reject
+obvious mistakes such as a 1200°C bed while allowing a 120°C modification; they are
+not component ratings or physical qualification.
+
+Android acceptance targets 412×892 and 412×915 CSS pixels at 2.625 device scale,
+with a shorter 412×780 case.1080/2.625=411.43 and2340/2.625=891.43;
+2400/2.625=914.29. Partial recognizable component content is a scroll cue.
+The navigation harness models MutationObserver. Trusted touch moves test actual
+scrolling. The 512×300, DPR2 case is explicitly equivalent responsive reflow,
+not a claim to have changed browser page zoom using CSS `zoom`.
+
+Final source-bound validation, disposable installed acceptance and publication
+results are added below after execution. Full physical commissioning and the
+separate ARM64/KVM recovery qualification remain pending tasks. No printer was
+accessed or operated for this follow-up.

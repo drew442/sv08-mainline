@@ -47,6 +47,23 @@ class Definitions(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'supported-FDM'):self.c.validate(selected)
         with self.assertRaisesRegex(ValueError,'supported-FDM'):apply_inputs(selected,self.c)
 
+    def test_component_number_policy_applies_to_public_defaults_and_instance_values(self):
+        probe=copy.deepcopy(next(d for d in self.records if d['id']=='sv08-tool.probe'))
+        component=probe['components'][0]
+        component['settings']['samples']=1000000000
+        with self.assertRaisesRegex(ValueError,'supported-FDM'):validate_definition(probe,self.c)
+        component['settings']['samples']=5
+        probe.setdefault('inputs',{})['sample_count']=dict(type='number',label='Samples',target=component['name']+'.samples',default=1000000000)
+        with self.assertRaisesRegex(ValueError,'supported-FDM'):validate_definition(probe,self.c)
+        probe['inputs']['sample_count']['default']=1.5
+        with self.assertRaisesRegex(ValueError,'integer'):validate_definition(probe,self.c)
+        probe['inputs']['sample_count']['default']=5
+        self.d['boards']['tool']={'id':'sv08-tool'}
+        ref=dict(source='fixture',id=probe['id'],version=probe['version'],sha256=digest(probe),commit='fixture')
+        selected=select_definition(self.c,self.d,ref,{'fixture::'+probe['id']+'@'+probe['version']:probe})
+        selected['definition_plan']['instance_values']={component['name']+'.samples':1000000000}
+        with self.assertRaisesRegex(ValueError,'supported-FDM'):self.c.validate(selected)
+
     def test_factory_only_builtin_choices(self):
         self.assertTrue(self.records)
         self.assertTrue(all(d['id'].startswith(('sv08-main.','sv08-tool.','sv08.factory')) for d in self.records))

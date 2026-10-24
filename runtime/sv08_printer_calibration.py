@@ -9,6 +9,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
 import math
 from pathlib import Path
 import re
@@ -20,7 +21,7 @@ CONFIGFILE_SHA256 = 'c4049b906b5341ad492105901515c6d9a4504d980098f9ce346df48388c
 KLIPPER_SOURCE = Path('/opt/sv08-mainline/klipper')
 PROFILE_NAME = re.compile(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,79}\Z')
 MESH_FIELDS = {'version','points','min_x','max_x','min_y','max_y','x_count','y_count','mesh_x_pps','mesh_y_pps','algo','tension'}
-SHAPER_FIELDS = {'shaper_type','shaper_type_x','shaper_type_y','shaper_freq_x','shaper_freq_y','damping_ratio_x','damping_ratio_y'}
+SHAPER_FIELDS = {'shaper_type_x','shaper_type_y','shaper_freq_x','shaper_freq_y'}
 
 
 def upstream(source=KLIPPER_SOURCE):
@@ -68,6 +69,7 @@ def validate_records(records, config):
     for section,options in records.items():
         allowed=allowed_fields(section,config)
         if not allowed or not options or set(options)-allowed:raise ValueError('Unsupported native calibration record: '+section)
+        if (section in ('heater_bed','extruder') or section.startswith('heater_generic ')) and set(options)!={'control','pid_kp','pid_ki','pid_kd'}:raise ValueError('Incomplete persisted PID calibration record')
         for field,value in options.items():
             if not isinstance(value,str) or len(value)>65536:raise ValueError('Invalid native calibration value')
             if field=='control':
@@ -88,6 +90,8 @@ def validate_records(records, config):
                 if field.startswith('shaper_freq') and values[0]<0:raise ValueError('Shaper frequency must be nonnegative (Hz)')
                 if field.startswith('damping_ratio') and not 0<=values[0]<=1:raise ValueError('Invalid shaper damping ratio')
                 if field in ('version','x_count','y_count','mesh_x_pps','mesh_y_pps') and (not values[0].is_integer() or not 0<=values[0]<=256):raise ValueError('Invalid mesh count/version')
+        from sv08_printer_fields import validate_numeric_values
+        validate_numeric_values('probe' if section in ('probe','bltouch') else 'motor' if section.startswith('stepper_') else section,{k:float(v) for k,v in options.items() if k in ('z_offset','position_endstop')})
         if section.startswith('bed_mesh '):
             if set(options)!=MESH_FIELDS or options['version']!='1':raise ValueError('Incomplete or unsupported mesh profile')
             rows=[[float(v) for v in row.split(',')] for row in options['points'].strip().splitlines()]
@@ -98,11 +102,14 @@ def validate_records(records, config):
 
 def split_lane(text):
     """Keep exact non-calibration lines immutable; move known options to root."""
-    config=parse(text);known=registry(config);immutable=[];lane={};section=None;moving=False
+    config=parse(text);known={s:allowed_fields(s,config) for s in config};immutable=[];lane={};section=None;moving=False
+    profiles={s for s in config if s.startswith(('bed_mesh ','skew_correction ')) and known[s]}
+    validate_records({s:config[s] for s in profiles},config)
     for line in text.splitlines(keepends=True):
         stripped=line.strip()
         if stripped.startswith('[') and stripped.endswith(']'):
             section=stripped[1:-1];moving=False
+            if section in profiles:continue
         match=re.match(r'^([A-Za-z0-9_]+)\s*[:=]',line)
         if match:
             field=match[1].lower();moving=field in known.get(section,set())
@@ -113,7 +120,7 @@ def split_lane(text):
 
 
 def render(records):
-    return ''.join('\n['+s+']\n'+''.join(k+': '+v.replace('\n','\n  ')+'\n' for k,v in sorted(options.items())) for s,options in sorted(records.items()))
+    return ''.join('\n['+s+']\n'+''.join(k+': '+v.replace('\n','\n  ')+'\n' for k,v in sorted(options.items())) for s,options in sorted(records.items()) if options)
 
 
 def native_parts(raw, source=KLIPPER_SOURCE):
@@ -141,7 +148,7 @@ def recognized_root(baseline, observed, config, source=KLIPPER_SOURCE):
 
 
 def hardware_binding(draft):
-    """Active structural state, excluding mutable measurements and source history."""
+    """Structural fingerprint excluding measurements; source snapshots stay pinned."""
     data=copy.deepcopy(draft);data.pop('native_calibration',None);data.pop('format_version',None)
     for device in data['devices']:
         for field in ('z_offset','pid_kp','pid_ki','pid_kd','position_endstop'):
@@ -172,7 +179,101 @@ def main():
     if args.action=='inspect':print(json.dumps(inspect_envelope(value),indent=2));return
     if args.output is None:parser.error('migrate requires a new --output file')
     result=migrate_envelope(value)
-    with args.output.open('x') as stream:json.dump(result,stream,indent=2);stream.write('\n')
+    fd=os.open(args.output,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+    with os.fdopen(fd,'w') as stream:json.dump(result,stream,indent=2);stream.write('\n')
+
+
+
+def dependency_binding(config, section, sources=None):
+    """Calibration dependencies, deliberately excluding unrelated fans/macros."""
+    if section.startswith(('bed_mesh ','skew_correction ')) or section in ('probe','bltouch','bed_tilt','axis_twist_compensation') or section.startswith('endstop_phase '):
+        names={s for s in config if s.startswith(('mcu','stepper_','tmc2209 ')) or s in ('printer','probe','bltouch','bed_mesh','bed_tilt','axis_twist_compensation','heater_bed','extruder','skew_correction')}
+    elif section=='input_shaper':
+        names={s for s in config if s.startswith(('mcu','stepper_','tmc2209 ','adxl345','resonance_tester')) or s in ('printer','input_shaper','extruder')}
+    elif section in ('heater_bed','extruder') or section.startswith('heater_generic '):
+        names={section}|{s for s in config if s.startswith(('mcu','thermistor '))}
+    else:names={section}
+    structural={s:{k:v for k,v in config[s].items() if k not in allowed_fields(s,config) and (s!='printer' or k=='kinematics')} for s in sorted(names) if s in config}
+    return digest(dict(structural=structural,source=(sources or {}).get(calibration_group(section))))
+
+
+def compatible_records(mirror, config, sources=None):
+    if not mirror:return {}
+    if not isinstance(mirror,dict) or set(mirror)-{'format_version','publication','context','records','bindings','status','origins'} or not {'format_version','publication','context','records','bindings'}<=set(mirror) or mirror['format_version']!=1:raise ValueError('Unsupported native calibration mirror')
+    selected={s:copy.deepcopy(options) for s,options in mirror['records'].items() if allowed_fields(s,config) and mirror['bindings'].get(s)==dependency_binding(config,s,sources)}
+    validate_records(selected,config)
+    return selected
+
+
+def apply_records(text, records):
+    """Replace only explicitly registered option values, retaining other text."""
+    config=parse(text);validate_records(records,config)
+    chunks=re.split(r'(?m)(?=^\[)',text);seen=set();out=[]
+    for chunk in chunks:
+        match=re.match(r'^\[([^\]]+)\]',chunk)
+        if not match or match[1] not in records:out.append(chunk);continue
+        section=match[1];seen.add(section);options=records[section];lines=chunk.splitlines(keepends=True);remaining=set(options);body=[];skip=False
+        for line in lines:
+            found=re.match(r'^([A-Za-z0-9_]+)\s*[:=]',line)
+            if found:
+                field=found[1].lower();skip=field in options
+                if skip:body.append(field+': '+options[field].replace('\n','\n  ')+'\n');remaining.discard(field)
+            elif line and not line[:1].isspace():skip=False
+            if skip and (found or line[:1].isspace()):continue
+            body.append(line)
+        body.extend(k+': '+options[k].replace('\n','\n  ')+'\n' for k in sorted(remaining));out.append(''.join(body))
+    return ''.join(out)+render({s:v for s,v in records.items() if s not in seen})
+
+
+def footer_text(records, source=KLIPPER_SOURCE):
+    """Serialize the pinned native data format without loading application code.
+
+    Header and stdlib ConfigParser.write match pinned ConfigFileReader; native
+    writer/parser tests establish recognition. This does not invent measurements.
+    """
+    if not records:return ''
+    import io
+    header='\n#*# <---------------------- SAVE_CONFIG ---------------------->\n#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.\n#*#\n'
+    parser=configparser.RawConfigParser(interpolation=None);parser.read_dict(records)
+    stream=io.StringIO();parser.write(stream)
+    return '\n'+header.rstrip()+'\n'+'\n'.join(('#*# '+line).strip() for line in stream.getvalue().split('\n'))+'\n'
+
+
+def canonical(config):
+    return {s:{k.lower():' '.join(str(v).split()) for k,v in options.items()} for s,options in config.items() if not s.startswith('include ')}
+
+
+def calibration_group(section):
+    if section in ('heater_bed','extruder') or section.startswith('heater_generic '):return section
+    return 'motion' if section=='input_shaper' else 'geometry'
+
+
+def calibration_sources(draft,catalog):
+    """Active source/component identity per measurement dependency group."""
+    from sv08_printer_compose import validate_plan
+    closure=validate_plan(draft['definition_plan'],catalog)[0] if 'definition_plan' in draft else {}
+    groups={'geometry':{'bed','extruder','probe','motor','sensor'},'motion':{'extruder','motor','accelerometer'}}
+    for device in draft['devices']:
+        if device['kind'] in ('bed','extruder','chamber'):
+            section=device['name'] if device['kind']!='chamber' else 'heater_generic '+device['name']
+            groups[section]={device['kind'],'sensor'}
+    result={}
+    for group,kinds in groups.items():
+        selected=[copy.deepcopy(d) for d in draft['devices'] if d['kind'] in kinds]
+        if group not in ('geometry','motion'):
+            heater=next((d for d in selected if d['name']==group or 'heater_generic '+d['name']==group),None)
+            selected=[d for d in selected if heater and d['name'] in (heater['name'],heater['settings'].get('sensor'))]
+        names={d['name'] for d in selected};roles={d['board'] for d in selected}
+        for device in selected:
+            for field in ('z_offset','pid_kp','pid_ki','pid_kd','position_endstop','control'):device['settings'].pop(field,None)
+        sources={ident:digest(record) for ident,record in closure.items() if any(c['name'] in names for c in record.get('components',[]))}
+        boards={r:draft['boards'][r] for r in roles}
+        assets=draft.get('definition_plan',{}).get('runtime_assets',{})
+        mappings=[{k:v for k,v in b.items() if k!='presets'} for b in assets.get('boards',[]) if b['role'] in roles]
+        settings=[{k:v for k,v in d['printer_settings'].items() if k!='geometry'} for d in closure.values() if d.get('printer_settings')] if group in ('geometry','motion') else []
+        edits={target:value for target,value in draft.get('calibration_edits',{}).items() if target.split('.',1)[0] in names and (group not in ('geometry','motion') or target.split('.',1)[1] in ('z_offset','position_endstop'))}
+        result[group]=digest(dict(devices=selected,sources=sources,boards=boards,mappings=mappings,settings=settings,edits=edits))
+    return result
 
 
 if __name__=='__main__':main()

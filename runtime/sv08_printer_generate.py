@@ -2,10 +2,12 @@
 from sv08_printer_catalog import BUNDLE_LIMIT, GEOMETRY
 from sv08_printer_fields import LEGACY_FIELDS
 
-GENERATOR_VERSION = 9
+GENERATOR_VERSION = 10
 
 
 def generate(catalog, draft, mode):
+    import copy,json
+    original_draft=copy.deepcopy(draft)
     from sv08_printer_compose import locked_catalog, apply_inputs
     draft=apply_inputs(draft,catalog)
     catalog=locked_catalog(draft,catalog)
@@ -235,11 +237,31 @@ def generate(catalog, draft, mode):
     if mode!='sensors':
         from sv08_printer_stack import support, files
         integration=support(draft,printer_settings,mode,policies,calibration_pending)
+        from sv08_printer_calibration import compatible_records,parse,apply_records,calibration_sources
+        native=compatible_records(source_draft.get('native_calibration'),parse(text),calibration_sources(source_draft,catalog))
+        from sv08_printer_compose import user_calibration_records
+        manual=user_calibration_records(original_draft,source_draft,catalog)
+        manual={section:{key:value for key,value in fields.items() if key not in native.get(section,{})} for section,fields in manual.items()}
+        manual={section:fields for section,fields in manual.items() if fields}
+        origins={section+'.'+key:source_draft.get('native_calibration',{}).get('origins',{}).get(section+'.'+key,'SAVE_CONFIG') for section,fields in native.items() for key in fields}
+        for section,fields in manual.items():
+            native.setdefault(section,{}).update(fields)
+            origins.update({section+'.'+key:'user-reported' for key in fields})
+        unmatched=set(source_draft.get('native_calibration',{}).get('records',{}))-set(native)
+        warnings.extend('Persisted native calibration '+section+' does not match this draft hardware/source; it is retained for the active publication, not reused here' for section in sorted(unmatched))
+        if native:
+            text=apply_records(text,native)
+            if any('z_offset' in native.get(name,{}) for name in ('probe','bltouch')):
+                calibration_pending=False
+                setup_requirements=[message for message in setup_requirements if not message.startswith('probe.z_offset: calibration pending')]
+        if any(device['kind']=='probe' for device in source_draft['devices']) and not any('z_offset' in native.get(name,{}) for name in ('probe','bltouch')):
+            calibration_pending=True
         from sv08_printer_publish import sections
         if sections(text)&sections(integration):raise ValueError('Custom configuration conflicts with managed print controls; explicit ownership review required')
-        exported=files(text,integration,source_draft,mode,GENERATOR_VERSION,catalog.revision,calibration_pending)
+        exported=files(text,integration,source_draft,mode,GENERATOR_VERSION,catalog.revision,calibration_pending,native)
+        manifest=json.loads(exported['configuration-manifest.json']);manifest['calibration_origins']=origins;exported['configuration-manifest.json']=json.dumps(manifest,indent=2,sort_keys=True)+'\n'
         if sum(len(v.encode()) for v in exported.values())>BUNDLE_LIMIT:raise ValueError('Complete exported configuration exceeds 512 KiB')
         text+=integration
         if len(text.encode())>BUNDLE_LIMIT:raise ValueError('Generated bundle exceeds 512 KiB')
-        return dict(complete=True,blockers=[],warnings=warnings+setup_requirements,text=text,behaviours=behaviours,files=exported,setup_requirements=setup_requirements,printing_enabled=mode=='full' and not calibration_pending)
+        return dict(complete=True,blockers=[],warnings=warnings+setup_requirements,text=text,behaviours=behaviours,files=exported,setup_requirements=setup_requirements,manual_calibration=manual,calibration_origins=origins,printing_enabled=mode=='full' and not calibration_pending)
     return dict(complete=True, blockers=[], warnings=warnings, text=text,behaviours=behaviours)

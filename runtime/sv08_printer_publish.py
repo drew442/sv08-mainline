@@ -41,7 +41,7 @@ def sections(text):
 
 def inventory(root):
     """Account for the explicit include closure and SAVE_CONFIG byte drift."""
-    found={};owned=set();visiting=set()
+    found={};owned=set();options={};owners={};visiting=set()
     def read(relative,depth=0):
         if depth>12 or len(found)>64:raise ValueError('Configuration include closure exceeds limit')
         if relative in visiting:raise ValueError('Configuration include cycle')
@@ -52,22 +52,46 @@ def inventory(root):
         if raw is None:found[relative]=None;return
         if sum(len(x or b'') for x in found.values())+len(raw)>2*BUNDLE_LIMIT:raise ValueError('Configuration inventory exceeds limit')
         text=raw.decode();found[relative]=raw;visiting.add(relative)
-        parser_sections=sections(text)
+        from sv08_printer_calibration import parse
+        parsed=parse(text);parser_sections=set(parsed)
         for name in parser_sections:
             if name.startswith('include '):
                 pattern=name[8:]
                 if '*' in pattern or '?' in pattern or '[' in pattern:raise ValueError('Adopt wildcard includes explicitly before managed publication')
                 read(str(path.parent/pattern),depth+1)
             else:
-                if name in owned:raise ValueError('Duplicate section in include closure')
-                owned.add(name)
+                overlap=options.get(name,set()) & set(parsed[name])
+                if overlap:raise ValueError('Duplicate option in include closure: '+name)
+                options.setdefault(name,set()).update(parsed[name]);owners.setdefault(name,[]).append(relative);owned.add(name)
         visiting.remove(relative)
     read('printer.cfg')
+    from sv08_printer_calibration import parse,allowed_fields
+    config={}
+    for raw in found.values():
+        if raw:
+            for name,values in parse(raw.decode()).items():config.setdefault(name,{}).update(values)
+    root_config=parse((found.get('printer.cfg') or b'').decode())
+    for name,paths in owners.items():
+        if len(paths)>1 and (len(paths)!=2 or 'printer.cfg' not in paths or set(root_config.get(name,{}))-allowed_fields(name,config)):
+            raise ValueError('Duplicate section ownership outside root calibration lane: '+name)
     return found,owned
 
 
+def persistent_context(context):
+    """Current mirror metadata survives reboot; CAS reviews keep full context.
+
+    Generation, slot, release and mode describe the validated current root.
+    Historical receipt values need not equal a byte-preserving inherited root.
+    """
+    if not isinstance(context,dict):raise ValueError('Unsupported publication context')
+    return {key:value for key,value in context.items() if key!='boot_id'}
+
+
 class Publisher:
-    def __init__(self,root,admit=lambda:False,budget=None,validate=None):
+    def __init__(self,root,admit=lambda:False,budget=None,validate=None,source=None,binding=None):
+        from sv08_printer_calibration import KLIPPER_SOURCE
+        self.source=Path(source) if source is not None else KLIPPER_SOURCE
+        self.binding=binding
         self.root=Path(root);self.admit=admit;self.budget=budget;self.validate=validate
         self.directory=self.root/'printer-managed'
         try:self.reader_gid=grp.getgrnam('sv08').gr_gid if os.geteuid()==0 else os.getegid()
@@ -79,38 +103,97 @@ class Publisher:
         self.check_root();path=self.directory/'receipt.json'
         raw=regular(path,missing=True)
         return strict_json(raw,BUNDLE_LIMIT) if raw else None
+    def active_calibration(self, context=None):
+        """Read a bound active publication independently of prepared candidates."""
+        from sv08_printer_calibration import recognized_root,parse,canonical
+        prior=self.receipt()
+        if not prior or 'native' not in prior:raise ValueError('Active publication has no native calibration contract')
+        native=prior['native']
+        # Receipts are copied with a Store generation and retain their historical
+        # application context. Authority comes from the validated CURRENT root,
+        # not equality with that historical slot/release/mode/boot identity.
+        if context is not None:
+            generation=Path(context.get('generation',''))
+            if not generation.is_absolute() or '..' in generation.parts or self.root!=generation/'config':
+                raise ValueError('Active publication does not match current configuration root')
+        for name,h in prior['after'].items():
+            if name=='printer.cfg':continue
+            if sha(regular(self.root/name))!=h:raise ValueError('Immutable configuration drift')
+        root=regular(self.root/'printer.cfg').decode()
+        records=recognized_root(native['root'],root,native['config'],self.source)
+        found,_=inventory(self.root)
+        expected=set(prior['after'])
+        # All include closure files, including retained unmanaged files, are bound.
+        if set(found)!=set(native['closure']):raise ValueError('Configuration include closure changed')
+        for name,h in native['closure'].items():
+            if name!='printer.cfg' and sha(found[name])!=h:raise ValueError('Configuration include drift')
+        return prior,records,root,found
+
+    def calibration_origins(self,receipt,records):
+        origins={};native=receipt['native']
+        for section,fields in records.items():
+            for key,value in fields.items():
+                previous=native.get('config',{}).get(section,{}).get(key)
+                try:same=float(previous)==float(value)
+                except (TypeError,ValueError):same=previous==value
+                origins[section+'.'+key]='user-reported' if same and native.get('origins',{}).get(section+'.'+key)=='user-reported' else 'SAVE_CONFIG'
+        return origins
+
     def preview(self,files,context,plan_id):
+        from sv08_printer_calibration import split_lane,parse,render,compatible_records,dependency_binding,footer_text,validate_records
         self.check_root()
         if set(files)-FILE_NAMES or 'hardware.cfg' not in files:raise ValueError('Unsupported managed destination')
         if sum(len(v.encode()) for v in files.values())>BUNDLE_LIMIT:raise ValueError('Managed output oversized')
-        new_sections=set()
-        for name,text in files.items():
+        original_files=files;files={};lane={};config={};new_sections=set()
+        for name,text in original_files.items():
             names=sections(text)
             if any(s.startswith('include ') or s.startswith('delayed_gcode ') for s in names):raise ValueError('Managed include/startup behaviour requires separate capability')
             if names&new_sections:raise ValueError('Conflicting managed section ownership')
-            new_sections|=names
-        current,current_sections=inventory(self.root);prior=self.receipt()
+            new_sections|=names;config.update(parse(text))
+            immutable,mutable=split_lane(text);files[name]=immutable
+            for section,options in parse(mutable).items():lane.setdefault(section,{}).update(options)
+        current,current_sections=inventory(self.root);prior=self.receipt();records={};origins={}
         if prior:
-            # Every prior owned file and activation point participates in drift.
-            for name,h in prior['after'].items():
-                raw=regular(self.root/name,missing=h is None)
-                if (sha(raw) if raw is not None else None)!=h:raise ValueError('Managed configuration drift; reconcile manual/SAVE_CONFIG edits')
+            if 'native' in prior:
+                _,old_records,_,_=self.active_calibration(context)
+                origins=self.calibration_origins(prior,old_records)
+                old_config=prior['native']['config']
+                records={section:options for section,options in old_records.items() if dependency_binding(old_config,section,(prior['native'].get('binding') or {}).get('calibration_sources'))==dependency_binding(config,section,(self.binding or {}).get('calibration_sources'))}
+            else:
+                for name,h in prior['after'].items():
+                    raw=regular(self.root/name,missing=h is None)
+                    if (sha(raw) if raw is not None else None)!=h:raise ValueError('Managed configuration drift; reconcile manual/SAVE_CONFIG edits')
             old_sections=set(prior['sections'])
         else:old_sections=set()
+        manual=(self.binding or {}).get('manual_calibration',{})
+        validate_records(manual,config)
+        for section,fields in manual.items():
+            records.setdefault(section,{}).update(fields)
+            origins.update({section+'.'+key:'user-reported' for key in fields})
+        origins={section+'.'+key:origins.get(section+'.'+key,'SAVE_CONFIG') for section,fields in records.items() for key in fields}
         unmanaged=current_sections-old_sections
         if unmanaged&new_sections:raise ValueError('Unmanaged section conflict; explicit ownership adoption required: '+', '.join(sorted(unmanaged&new_sections)))
-        identity=digest(dict(context=context,plan=plan_id,files=files,before={n:sha(v) if v is not None else None for n,v in current.items()},receipt=prior))
+        identity=digest(dict(context=context,plan=plan_id,files=files,lane=lane,records=records,binding=self.binding,before={n:sha(v) if v is not None else None for n,v in current.items()},receipt=prior))
         prefix=current.get('printer.cfg') or b''
-        if MARKER.encode() in prefix:
+        if prior and 'native' in prior:prefix=prior['native']['prefix'].encode()
+        elif MARKER.encode() in prefix:
             if not prior:raise ValueError('Unknown managed marker')
             if prefix.count(MARKER.encode())!=1:raise ValueError('Ambiguous activation marker')
             start=prefix.index(MARKER.encode());tail=prefix[start:].splitlines(keepends=True)
             if len(tail)<2 or not tail[1].startswith(b'[include printer-managed/'):raise ValueError('Managed activation marker changed')
             prefix=prefix[:start]+b''.join(tail[2:])
+        if b'#*#' in prefix:raise ValueError('Existing native calibration requires explicit ownership adoption')
         include='printer-managed/'+identity+'/bundle.cfg'
-        activation=prefix+(b'\n' if prefix and not prefix.endswith(b'\n') else b'')+MARKER.encode()+('[include '+include+']\n').encode()
-        # Physical defaults and unresolved values must be resolved before this API.
-        return dict(review=identity,files=files,activation=activation.decode(),before={n:sha(v) if v is not None else None for n,v in current.items()},sections=sorted(new_sections),context=context,plan=plan_id,previous_available=prior is not None,diff=[dict(path=n,before=None,after=v,operation='create immutable managed file') for n,v in sorted(files.items())]+[dict(path='printer.cfg',before=prefix.decode(),after=activation.decode(),operation='update activation include')],service_action='none; printer stays stopped')
+        mutable={s:{k:v for k,v in options.items() if k not in records.get(s,{})} for s,options in lane.items()}
+        activation=prefix+(b'\n' if prefix and not prefix.endswith(b'\n') else b'')+MARKER.encode()+('[include '+include+']\n'+render(mutable)).encode()
+        if records:activation+=footer_text(records,self.source).encode()
+        native=None
+        if lane or 'gcode_macro SV08_CALIBRATION_STATUS' in config:
+            closure={n:sha(v) for n,v in current.items() if v is not None and n!='printer.cfg' and not n.startswith('printer-managed/')}
+            closure.update({'printer-managed/'+identity+'/'+name:sha(text.encode()) for name,text in files.items()})
+            closure['printer-managed/'+identity+'/bundle.cfg']=sha(''.join('[include '+n+']\n' for n in sorted(files)).encode());closure['printer.cfg']=sha(activation)
+            native=dict(format_version=1,root=activation.decode(),prefix=prefix.decode(),config=config,closure=closure,binding=self.binding,origins=origins)
+        return dict(review=identity,files=files,activation=activation.decode(),native=native,before={n:sha(v) if v is not None else None for n,v in current.items()},sections=sorted(new_sections),context=context,plan=plan_id,previous_available=prior is not None,diff=[dict(path=n,before=None,after=v,operation='create immutable managed file') for n,v in sorted(files.items())]+[dict(path='printer.cfg',before=(current.get('printer.cfg') or b'').decode(),after=activation.decode(),operation='update activation and native calibration lane')],service_action='none; printer stays stopped')
     def apply(self,review,files,context,plan_id):
         if not self.admit():raise ValueError('Printer must be stopped and not printing; no publication')
         current=self.preview(files,context,plan_id)
@@ -137,13 +220,14 @@ class Publisher:
         atomic_json(self.directory/'journal.json',journal)
         destination.mkdir(mode=0o750);os.chmod(destination,0o750);os.chown(destination,os.geteuid(),self.reader_gid);fsync_dir(self.directory)
         try:
-            for name,text in files.items():put(destination/name,text.encode(),0o640,(os.geteuid(),self.reader_gid))
+            for name,text in current['files'].items():put(destination/name,text.encode(),0o640,(os.geteuid(),self.reader_gid))
             put(destination/'bundle.cfg',''.join('[include '+name+']\n' for name in sorted(files)).encode(),0o640,(os.geteuid(),self.reader_gid))
             after={str((destination/name).relative_to(self.root)):sha(regular(destination/name)) for name in [*files,'bundle.cfg']}
             if not self.admit():raise ValueError('Printer stopped state changed during publication; reconcile inactive bundle')
             if self.preview(files,context,plan_id)['review']!=review:raise ValueError('Publication context changed during validation; reconcile before retrying')
             after['printer.cfg']=sha(current['activation'].encode())
             receipt=dict(format_version=1,review=review,after=after,sections=current['sections'],previous=previous,activation_before=journal['before'],activation_before_metadata=before_metadata,context=context,plan=plan_id,service_action='none',commissioning='required separately')
+            if current.get('native') is not None:receipt['native']=current['native']
             if len(encoded(receipt))>BUNDLE_LIMIT:raise ValueError('Restoration receipt budget exceeded; reconcile before retrying')
             put_metadata(self.root/'printer.cfg',current['activation'].encode(),before_metadata or dict(mode=0o640,uid=os.geteuid(),gid=self.reader_gid))
             atomic_json(self.directory/'receipt.json',receipt)
@@ -156,9 +240,12 @@ class Publisher:
     def restore_preview(self,context):
         prior=self.receipt()
         if not prior:raise ValueError('No applied configuration history')
-        for name,h in prior['after'].items():
-            if sha(regular(self.root/name))!=h:raise ValueError('Managed configuration drift; reconcile before restoration')
-        return dict(review=digest(dict(receipt=prior,context=context)),before=regular(self.root/'printer.cfg').decode(),after=prior['activation_before'],previous=prior['previous'],after_metadata=prior.get('activation_before_metadata'),context=context,service_action='none; restoration does not restart printer')
+        if 'native' in prior:observed=self.active_calibration(context)[2].encode()
+        else:
+            for name,h in prior['after'].items():
+                if sha(regular(self.root/name))!=h:raise ValueError('Managed configuration drift; reconcile before restoration')
+            observed=regular(self.root/'printer.cfg')
+        return dict(review=digest(dict(receipt=prior,context=context,root_sha256=sha(observed))),before=observed.decode(),after=prior['activation_before'],previous=prior['previous'],after_metadata=prior.get('activation_before_metadata'),context=context,service_action='none; restoration does not restart printer')
     def restore(self,review,context):
         if not self.admit():raise ValueError('Printer must be stopped for restoration')
         preview=self.restore_preview(context)
@@ -223,8 +310,8 @@ def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d
     if not Path(python).is_file() or not Path(klippy).is_file():raise ValueError('Pinned Klipper validation runtime is unavailable')
     if sha(regular(Path(klippy)))!='aa9eb47fbe3598fc814d40ed8e0b2b814a0af459fca7acab6732c59bf42e4659':raise ValueError('Pinned Klipper entry point changed')
     current,_=inventory(Path(root))
-    allowed={'printer','mcu','probe','extruder','heater_bed','bed_mesh','quad_gantry_level','respond','pause_resume','display_status','print_stats','virtual_sdcard','gcode_arcs','exclude_object','safe_z_home','display','adxl345'}
-    prefixes=('mcu ','stepper_','tmc2209 ','temperature_sensor ','thermistor ','fan_generic ','heater_generic ','filament_switch_sensor ','gcode_macro ','heater_fan ','output_pin ','neopixel ','gcode_button ','verify_heater ','adxl345 ')
+    allowed={'printer','mcu','probe','extruder','heater_bed','bed_mesh','quad_gantry_level','respond','pause_resume','display_status','print_stats','virtual_sdcard','gcode_arcs','exclude_object','safe_z_home','display','adxl345','input_shaper','bed_tilt','axis_twist_compensation','skew_correction','endstop_phase','resonance_tester'}
+    prefixes=('mcu ','stepper_','tmc2209 ','temperature_sensor ','thermistor ','fan_generic ','heater_generic ','filament_switch_sensor ','gcode_macro ','heater_fan ','output_pin ','neopixel ','gcode_button ','verify_heater ','adxl345 ','bed_mesh ','skew_correction ','endstop_phase ')
     combined=[v.decode() for v in current.values() if v]+list(preview['files'].values())
     for text in combined:
         for name in sections(text):
@@ -240,7 +327,7 @@ def validate_output(preview,root,python='/opt/sv08-mainline/venvs/klipper-f0892d
         if preview['files']:
             (work/'printer-managed'/preview['review']/'bundle.cfg').write_text(''.join('[include '+n+']\n' for n in sorted(preview['files'])))
         (work/'printer.cfg').write_text(preview['activation'])
-        args=['/usr/bin/prlimit','--as=268435456','--cpu=8','--fsize=4194304','--',python,klippy,str(work/'printer.cfg'),'-a',str(work/'api'),'-o',str(work/'mcu.output'),'-d',str(dictionary),'-l',str(work/'klippy.log')]
+        args=['/usr/bin/prlimit','--as=268435456','--cpu=8','--fsize=4194304','--',python,klippy,str(work/'printer.cfg'),'-I',str(work/'tty'),'-a',str(work/'api'),'-o',str(work/'mcu.output'),'-d',str(dictionary),'-l',str(work/'klippy.log')]
         _,names=inventory(work)
         for name in sorted(names):
             if name.startswith('mcu '):args+=['-d',name[4:]+'='+str(dictionary)]

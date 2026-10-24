@@ -80,7 +80,7 @@ def inventory(root, names):
 
 
 def dependencies(root, files):
-    pending=['sv08_printer_helper'];seen={}
+    pending=['sv08_printer_helper','sv08_calibration_reconcile'];seen={}
     while pending:
         module=pending.pop()
         if module in seen:continue
@@ -100,6 +100,9 @@ def payload(validation_dictionary=None):
         for p in sorted((REPO/directory).rglob('*')):
             if p.is_file() and p.name!='session.js':result[target+'/'+str(p.relative_to(REPO/directory))]=p.read_bytes()
     for p in sorted((REPO/'runtime').glob('sv08_printer_*.py')):result['usr/lib/sv08/'+p.name]=p.read_bytes()
+    result['usr/lib/sv08/sv08_calibration_reconcile.py']=(REPO/'runtime/sv08_calibration_reconcile.py').read_bytes()
+    result['usr/lib/sv08/sv08_view.py']=(REPO/'runtime/sv08_view.py').read_bytes()
+    result['etc/systemd/system/sv08-calibration-reconcile.service']=(REPO/'configs/host-os/systemd/sv08-calibration-reconcile.service').read_bytes()
     if validation_dictionary is not None:
         path=Path(validation_dictionary)
         if path.is_symlink() or not path.is_file() or path.stat().st_size>128*1024:raise ValueError('Invalid validation dictionary')

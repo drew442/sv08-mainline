@@ -208,6 +208,57 @@ class SelectedComponentContract(unittest.TestCase):
         self.assertNotIn('sv08-main.bed_assembly',selected[1])
         self.assertIn('sv08-tool.hotend_assembly',selected[1])
         self.assertEqual(selected[2],[])
+    def test_production_calibration_projection_preserves_unrelated_edits_and_explicit_intent(self):
+        catalog,draft=factory()
+        draft['native_calibration']={'records':{'probe':{'z_offset':'0.000'},'heater_bed':{'control':'pid','pid_kp':'20','pid_ki':'1','pid_kd':'50'}}}
+        source=(ROOT/'ui/printer/app.js').read_text()
+        functions=source[source.index("    const calibrationFields="):source.index('    function renderCalibration()')]
+        functions+=source[source.index('    function inputValue('):source.index('    function componentChanges()')]
+        script='const seed='+json.dumps(draft)+";const copy=v=>JSON.parse(JSON.stringify(v));let draft,saved,changed;let nonce=0;const crypto={randomUUID:()=> (++nonce).toString(16).padStart(32,'0')};const document={querySelectorAll:()=>[]};let nativeCalibrationStatus={values:seed.native_calibration.records};"+functions+"""
+        function reset(){draft=copy(seed);saved={draft:copy(seed)};changed=false;}
+        function check(value,message){if(!value)throw Error(message);}
+        reset();let probe=draft.devices.find(d=>d.kind==='probe');
+        check(calibrationValue(probe,'z_offset')===0,'persisted native zero');
+        check(instanceFieldValue('heater_bed','control')==='pid','native PID control in advanced field');
+        draft.devices.find(d=>d.kind==='fan').settings.max_power=.8;changed=true;
+        check(calibrationValue(probe,'z_offset')===0,'unrelated dirty fan does not hide zero');
+        setInstanceField('heater_bed','pid_kp',30);
+        check(instanceFieldValue('heater_bed','control')==='pid','gain edit retains PID control');
+        check(instanceFieldValue('heater_bed','pid_kp')===30&&instanceFieldValue('heater_bed','pid_ki')===1&&instanceFieldValue('heater_bed','pid_kd')===50,'coherent PID tuple');
+        check(calibrationValue(probe,'z_offset')===0,'PID marker does not invalidate probe');
+        setInstanceField('heater_bed','control','watermark');
+        check(instanceFieldValue('heater_bed','control')==='watermark','intentional watermark effective');
+        reset();probe=draft.devices.find(d=>d.kind==='probe');setInstanceField('probe','z_offset',undefined);
+        check(calibrationValue(probe,'z_offset')===undefined&&draft.calibration_edits['probe.z_offset'].value===null,'generic clear of absent base value');
+        reset();probe=draft.devices.find(d=>d.kind==='probe');setCalibration(probe,'z_offset',.4);
+        check(calibrationValue(probe,'z_offset')===.4,'explicit manual value retained');
+        reset();probe=draft.devices.find(d=>d.kind==='probe');setInstanceField('probe','pin',probe.settings.pin+'-different');
+        check(calibrationValue(probe,'z_offset')===undefined,'changed hardware does not inherit native zero');
+        process.stdout.write('calibration projection cases passed');
+        """
+        result=subprocess.run([os.environ.get('SV08_NODE','node')],input=script,capture_output=True,text=True,check=True)
+        self.assertIn('projection cases passed',result.stdout)
+
+    def test_supported_v2_shareable_export_redacts_mirror_and_never_falls_back_to_history(self):
+        catalog,draft=factory();draft['custom_config']='PRIVATE_CUSTOM_TEXT';draft['native_calibration']={'context':{'generation':'PRIVATE_GENERATION'}}
+        draft['definition_plan']['instance_values']={'main.identity':'PRIVATE_INPUT_ID','probe.z_offset':0}
+        source=(ROOT/'ui/printer/app.js').read_text();start=source.index('    function shareableDraft(state)');end=source.index('\n',source.index("    $('export').onclick=",start))
+        functions=source[start:end]
+        script='let draft='+json.dumps(draft)+";const saved={private_history:'PRIVATE_HISTORY'},catalog={};let output;const button={};const $=()=>button;const download=(name,data)=>{output={name,data:JSON.parse(data)}};"+functions+"""
+        for(const version of [1,2]){
+            draft.format_version=version;button.onclick();
+            if(output.name!=='printer-hardware-draft.json')throw Error('supported draft fell into diagnostic export');
+            const text=JSON.stringify(output.data);
+            for(const value of ['PRIVATE_INPUT_ID','PRIVATE_CUSTOM_TEXT','PRIVATE_GENERATION','PRIVATE_HISTORY','/dev/null'])if(text.includes(value))throw Error('private value exported: '+value);
+            if('native_calibration' in output.data)throw Error('mirror crossed export boundary');
+        }
+        draft.format_version=3;button.onclick();
+        if(output.name!=='printer-hardware-diagnosis.json'||output.data.state.private_history!=='PRIVATE_HISTORY')throw Error('unsupported diagnostic changed');
+        process.stdout.write('v1/v2 redacted; future diagnosis private');
+        """
+        result=subprocess.run([os.environ.get('SV08_NODE','node')],input=script,capture_output=True,text=True,check=True)
+        self.assertIn('v1/v2 redacted',result.stdout)
+
 
 
 class StackTests(unittest.TestCase):
@@ -238,7 +289,7 @@ class StackTests(unittest.TestCase):
         output=generate(catalog,draft,'setup');self.assertTrue(output['complete']);self.assertFalse(output['printing_enabled']);self.assertEqual(draft,changed)
         self.assertNotIn('pid_kp:',output['text']);self.assertIn('control: watermark',output['text']);self.assertIn('z_offset: 0',output['text'])
         for command in ('PRINT_START','M24','SDCARD_PRINT_FILE','RESUME'):
-            section=output['text'].split('[gcode_macro '+command+']',1)[1].split('[',1)[0]
+            section=output['text'].split('[gcode_macro '+command+']',1)[1].split('\n[',1)[0]
             self.assertIn('action_raise_error',section)
         self.assertTrue(output['setup_requirements']);self.assertEqual(original['geometry'],draft['geometry'])
 
@@ -250,13 +301,37 @@ class StackTests(unittest.TestCase):
         self.assertNotIn('z_offset: 1.0',output['text'])
         self.assertTrue(json.loads(output['files']['configuration-manifest.json'])['probe_calibration_pending'])
         for command in ('PRINT_START','M24','SDCARD_PRINT_FILE','RESUME'):
-            self.assertIn('action_raise_error',output['text'].split('[gcode_macro '+command+']',1)[1].split('[',1)[0])
+            self.assertIn('action_raise_error',output['text'].split('[gcode_macro '+command+']',1)[1].split('\n[',1)[0])
 
     def test_explicit_fan_roles_override_legacy_semantics(self):
         catalog,draft=factory(True)
         for d in draft['devices']:
             if d['kind']=='fan':d['settings']['print_fan']=d['name']=='exhaust_fan'
         text=generate(catalog,draft,'full')['text'];self.assertIn('FAN=exhaust_fan',text);self.assertNotIn('FAN=part_cooling',text)
+
+    def test_universal_zero_input_default_is_not_reported_manual_calibration(self):
+        catalog,draft=factory();plan=draft['definition_plan']
+        record=next(d for d in plan['snapshots'].values() if d['id']=='sv08-tool.probe')
+        for inp in record['inputs'].values():
+            if inp['target']=='probe.z_offset':inp['default']=0
+        for definition in plan['snapshots'].values():
+            for dep in definition.get('dependencies',[]):
+                target=dep.get('source','builtin')+'::'+dep['id']+'@'+dep['version']
+                if target in plan['snapshots']:dep['sha256']=digest(plan['snapshots'][target])
+        for ref in plan['selections']:ref['sha256']=digest(plan['snapshots'][ref['source']+'::'+ref['id']+'@'+ref['version']])
+        # Exercise the actual selection/materialization path, then a retained
+        # instance value equal to the publisher default. Neither is local intent.
+        from sv08_printer_compose import select_definition
+        ref=plan['selections'][0];snapshots=copy.deepcopy(plan['snapshots'])
+        initial=empty_draft();initial['boards']=copy.deepcopy(draft['boards'])
+        selected=select_definition(catalog,initial,ref,snapshots)
+        selected['definition_plan'].setdefault('instance_values',{})['probe.z_offset']=0
+        output=generate(catalog,selected,'full')
+        self.assertTrue(output['complete'],output['blockers']);self.assertFalse(output['printing_enabled'])
+        self.assertEqual(output['manual_calibration'],{});self.assertNotIn('#*# z_offset',output['files']['printer.cfg'])
+        selected['format_version']=2;selected['calibration_edits']={'probe.z_offset':{'value':0,'nonce':'a'*32}}
+        explicit=generate(catalog,selected,'full');self.assertTrue(explicit['printing_enabled'])
+        self.assertEqual(explicit['manual_calibration']['probe']['z_offset'],'0')
 
     def test_sensors_stay_output_free_and_do_not_gain_print_stack(self):
         from test_printer_configuration import sensor_draft
@@ -281,7 +356,7 @@ class StackTests(unittest.TestCase):
             work=Path(tmp);output=generate(catalog,draft,'setup')
             for n,v in output['files'].items():(work/n).write_text(v)
             dictionary=str(source/'artifacts/test-sv08-01-mcu-usb-v1/klipper.dict')
-            args=[python,str(source/'upstream/klipper/klippy/klippy.py'),str(work/'printer.cfg'),'-a',str(work/'api'),'-o',str(work/'mcu.out'),'-d',dictionary,'-d','tool='+dictionary,'-l',str(work/'klippy.log')]
+            args=[python,str(source/'upstream/klipper/klippy/klippy.py'),str(work/'printer.cfg'),'-I',str(work/'tty'),'-a',str(work/'api'),'-o',str(work/'mcu.out'),'-d',dictionary,'-d','tool='+dictionary,'-l',str(work/'klippy.log')]
             with (work/'process.log').open('w') as log:
                 child=subprocess.Popen(args,stdout=log,stderr=log,env={**os.environ,'MALLOC_ARENA_MAX':'1'})
                 try:
@@ -295,7 +370,7 @@ class StackTests(unittest.TestCase):
                         time.sleep(.05)
                     else:self.fail('Klipper did not reach ready')
                     for command in ('PRINT_START BED_TEMP=60 EXTRUDER_TEMP=200','SDCARD_PRINT_FILE FILENAME=example.gcode','M24','RESUME'):
-                        result=request('gcode/script',dict(script=command));self.assertIn('Probe calibration pending',result['error']['message'])
+                        result=request('gcode/script',dict(script=command));self.assertIn('Setup configuration',result['error']['message'])
                     self.assertEqual(request('info',{})['result']['state'],'ready')
                 finally:
                     child.terminate()

@@ -17,6 +17,8 @@ on:
       - 'tests/test_printer_definitions.py'
       - 'tests/test_printer_stack.py'
       - 'tests/test_printer_publication.py'
+      - 'tests/test_printer_calibration.py'
+      - 'tests/test_calibration_reconcile.py'
   push:
     branches: [main]
     paths:
@@ -32,6 +34,8 @@ on:
       - 'tests/test_printer_definitions.py'
       - 'tests/test_printer_stack.py'
       - 'tests/test_printer_publication.py'
+      - 'tests/test_printer_calibration.py'
+      - 'tests/test_calibration_reconcile.py'
   workflow_dispatch:
 
 permissions:
@@ -51,6 +55,8 @@ jobs:
           persist-credentials: false
           submodules: false
           lfs: false
+      - name: Exact pinned native SAVE_CONFIG source
+        run: git submodule update --init --depth 1 upstream/klipper
       - name: Existing Python schema dependency
         run: |
           sudo apt-get update -qq
@@ -79,7 +85,7 @@ jobs:
           sudo env SV08_PRINTER_SCRATCH=/root/sv08-printer-regressions PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 - <<'PYTHON'
           import os, unittest
           loader = unittest.TestLoader()
-          names = ('test_factory_sv08.py', 'test_printer_definitions.py', 'test_printer_stack.py', 'test_printer_publication.py')
+          names = ('test_factory_sv08.py', 'test_printer_definitions.py', 'test_printer_stack.py', 'test_printer_publication.py', 'test_printer_calibration.py', 'test_calibration_reconcile.py')
           suites = []
           for name in names:
               suite = loader.discover('tests', pattern=name)
@@ -97,10 +103,14 @@ jobs:
               'test_printer_stack.StackTests.test_setup_guard_commands_in_real_klipper_do_not_submit_printing': 'Pinned parser environment required',
               'test_printer_publication.PinnedValidation.test_complete_output_parser_and_unsupported_semantics': 'Explicit existing pinned environment required',
           }
+          if not os.environ.get('SV08_PRINTER_VALIDATION_PYTHON'):
+              expected_skips['test_calibration_reconcile.Reconciliation.test_real_same_pid_save_config_restart_and_profile_lifecycle'] = 'Explicit pinned Klippy file-output venv/dictionary required; simulated MCU only'
+          if not os.environ.get('SV08_PREVIOUS_RELEASE_RUNTIME'):
+              expected_skips['test_calibration_reconcile.Reconciliation.test_actual_previous_reader_exports_new_envelope_and_refuses_mutation'] = 'Explicit archived previous-release runtime required; actual older reader opt-in'
           result = unittest.TextTestRunner(verbosity=2).run(suite)
           observed_skips = {test.id(): reason for test, reason in result.skipped}
           if (not result.wasSuccessful() or result.testsRun != discovered
                   or len(result.skipped) != len(expected_skips) or observed_skips != expected_skips):
               raise SystemExit('Offline printer regressions failed or unexpected skip/discovery result')
-          print(f'{result.testsRun - len(result.skipped)} passed; {len(result.skipped)} expected native-parser skips')
+          print(f'{result.testsRun - len(result.skipped)} passed; {len(result.skipped)} expected file-output/previous-reader opt-in skips')
           PYTHON
