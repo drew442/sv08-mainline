@@ -6,7 +6,7 @@ import copy
 import re
 from sv08_printer_catalog import strict_json, encoded, digest, keys, NAME
 
-from sv08_printer_fields import compact_mapping, ELECTRICAL, CHOICES, compatible_mapping, validate_printer_settings
+from sv08_printer_fields import compact_mapping, ELECTRICAL, CHOICES, compatible_mapping, validate_printer_settings, validate_component_temperatures
 
 FORMAT = '0.1'
 FILE_LIMIT = 128 * 1024
@@ -131,6 +131,19 @@ def validate_definition(d,catalog):
             typ=catalog.kinds[component['kind']].get(field)
             compatible={'number':('positive','number','fraction','integer','address'),'boolean':('boolean',),'curve':('curve',),'choice':('control','ratio','name')}
             if typ not in compatible.get(inp['type'],()):raise ValueError('Input type/target field mismatch')
+    # Defaults must meet the same component policy as local instance edits.
+    defaults=copy.deepcopy(d.get('components',[]))
+    for inp in d.get('inputs',{}).values():
+        if 'default' not in inp:continue
+        name,field=inp['target'].split('.',1)
+        component=next((c for c in defaults if c['name']==name),None)
+        if component:component['settings'][field]=inp['default']
+    validate_component_temperatures(d.get('components',[]),catalog.curves)
+    for component in defaults:
+        for field,value in component['settings'].items():
+            typ=catalog.kinds[component['kind']][field]
+            if typ in ('positive','number','fraction','integer','address','nonnegative','nonnegative_integer','byte','unit_interval'):catalog.number(value,typ)
+    validate_component_temperatures(defaults,catalog.curves)
     endpoints=set()
     for conn in d.get('connections',[]):
         keys(conn,('endpoint','board','connector','capability','board_ids','contact'),('endpoint','board','connector','capability','board_ids'))

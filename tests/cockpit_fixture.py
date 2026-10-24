@@ -26,6 +26,36 @@ from stage_admin_ui import stage
 from prepare_host_os import REPO
 
 
+# Disposable guest capacity covers Store.prepare_boot's copy/staging admission.
+DATA_IMAGE_BYTES = 1536 * 1024**2
+FIXTURE_WRITABLE = (('/var/lib/systemd', '16M', '0755'), ('/var/tmp', '32M', '1777'))
+
+
+def writable_fixture_paths(root):
+    """Guest-only mounts for packaged logind state and networkd PrivateTmp."""
+    rows=[]
+    for target,size,mode in FIXTURE_WRITABLE:
+        path=root / target.lstrip('/')
+        path.mkdir(parents=True,exist_ok=True)
+        path.chmod(int(mode,8))
+        rows.append(f'tmpfs {target} tmpfs rw,nosuid,nodev,size={size},mode={mode} 0 0\n')
+    fstab=root / 'etc/fstab'
+    with fstab.open('a') as stream:stream.write('\n# Disposable Cockpit fixture writable service state\n'+''.join(rows))
+
+
+def fixture_read_access(root):
+    """Synthetic accounts get only the shipped finite status helper privilege."""
+    sudoers=root / 'etc/sudoers.d/cockpit-fixture-view'
+    sudoers.parent.mkdir(parents=True,exist_ok=True)
+    command='/usr/bin/python3 -I /usr/lib/sv08/sv08_view.py'
+    sudoers.write_text('# Disposable Cockpit fixture read access only\n'+''.join(
+        name+' ALL=(root) NOPASSWD: '+command+'\n' for name in ('fixtureadmin','fixtureordinary')))
+    sudoers.chmod(0o440)
+    if os.geteuid()==0:os.chown(sudoers,0,0)
+    hosts=root / 'etc/hosts'
+    with hosts.open('a') as stream:stream.write('\n127.0.1.1 sv08-cockpit-fixture\n')
+
+
 def run(command, **kwargs):
     return subprocess.run([str(x) for x in command], check=True, **kwargs)
 
@@ -105,6 +135,7 @@ def prepare(args):
         runtime = root / 'usr/lib/sv08'; runtime.mkdir(parents=True, exist_ok=True)
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, runtime / path.name)
         staging = stage(work, 'host', True)
+        fixture_read_access(root)
         # Fixture-only changes below are never produced by production staging.
         upload_fixture = getattr(args, 'upload_fixture', None)
         if upload_fixture:
@@ -139,10 +170,14 @@ prepare_permissions(s.root, b['generation'])
 b['boot_id']=Path('/proc/sys/kernel/random/boot_id').read_text().strip()
 Path('/run/sv08').mkdir(exist_ok=True)
 Path('/run/sv08/boot.json').write_text(json.dumps(b))
+# The composed hardware helper requires the same exact generation view as boot.
+view=Path('/run/sv08/printer_data');view.mkdir(exist_ok=True)
+(view/'config').symlink_to(Path(b['generation'])/'config')
 Path('/data/sv08/boot-mount-evidence.json').write_text(json.dumps({
     'root_options':subprocess.check_output(['findmnt','-no','OPTIONS','/'],text=True).strip(),
     'data_options':subprocess.check_output(['findmnt','-no','OPTIONS','/data'],text=True).strip()}))
 """)
+        writable_fixture_paths(root)
         (root / 'data').mkdir(exist_ok=True)
         (root / 'etc/systemd/system/data.mount').write_text('[Unit]\nDescription=Disposable persistent state fixture\nBefore=sv08-prepare.service\n[Mount]\nWhat=/dev/vdb\nWhere=/data\nType=ext4\nOptions=rw,nodev,nosuid\n[Install]\nWantedBy=local-fs.target\n')
         (root / 'usr/lib/systemd/system/sv08-prepare.service').write_text('[Unit]\nDescription=Disposable SV08 persistent state setup\nDefaultDependencies=no\nRequires=data.mount\nAfter=data.mount\nBefore=local-fs.target\n[Service]\nType=oneshot\nExecStart=/usr/bin/python3 /usr/lib/sv08/cockpit-fixture.py\nRemainAfterExit=yes\n[Install]\nWantedBy=local-fs.target\n')
@@ -168,12 +203,13 @@ Path('/data/sv08/boot-mount-evidence.json').write_text(json.dumps({
         owned = [root / 'usr/share/cockpit/sv08-host', *(root / 'usr/share/cockpit/sv08-host').iterdir(),
                  runtime, runtime / 'sv08_admin.py', runtime / 'admin-context.json',
                  root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/systemd/system/sv08-admin-image-worker@.service']
+        owned.append(root / 'etc/sudoers.d/cockpit-fixture-view')
         for path in owned:
             if path.stat().st_uid != 0 or path.stat().st_mode & 0o022: raise ValueError('Unsafe staged ownership/mode: '+str(path))
         permissions = {str(p.relative_to(root)): dict(uid=p.stat().st_uid, gid=p.stat().st_gid, mode=oct(p.stat().st_mode & 0o7777)) for p in owned}
         run(['truncate', '-s', '3G' if upload_fixture else '2G', work / 'guest.ext4'])
         run(['mkfs.ext4', '-q', '-F', '-d', root, work / 'guest.ext4'])
-        run(['truncate', '-s', '256M', work / 'guest-data.ext4'])
+        run(['truncate', '-s', str(DATA_IMAGE_BYTES), work / 'guest-data.ext4'])
         run(['mkfs.ext4', '-q', '-F', work / 'guest-data.ext4'])
         kernel = lower / 'boot/vmlinuz-6.12.107+deb13-arm64'; initrd = lower / 'boot/initrd.img-6.12.107+deb13-arm64'
         report = dict(format_version=1, deployable=False, baseline=before, root=root_inventory, staging=staging,

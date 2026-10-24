@@ -48,6 +48,12 @@ class ViewTests(unittest.TestCase):
         status={'mode':'certificate','username':'sv08','certificates':[{'id':'a','label':'Browser','fingerprint':'public','expires':42,'revoked':False}]}
         self.assertEqual(view.public('mainsail-access','status',status),status)
 
+    def test_compatible_component_choices_survive_public_printer_read(self):
+        choices={'sv08-main':[{'id':'bed_assembly','devices':[]}]}
+        self.assertEqual(view.public('printer','status',{'available_components':choices,'unreviewed_future_field':'hidden'}),{'available_components':choices})
+        status={'state':'conflict','message':'Review unsupported SAVE_CONFIG changes before printing.'}
+        self.assertEqual(view.public('printer','status',{'native_calibration_status':status,'private_debug_log':'hidden'}),{'native_calibration_status':status})
+
     def test_public_certificate_is_exact_and_never_private(self):
         certificate={'filename':'sv08-printer-ca.crt','content':'-----BEGIN CERTIFICATE-----\nQUFB\n-----END CERTIFICATE-----\n'}
         self.assertEqual(view.public('identity','ca.download',certificate),certificate)
