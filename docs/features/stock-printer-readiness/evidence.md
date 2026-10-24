@@ -122,7 +122,114 @@ The navigation harness models MutationObserver. Trusted touch moves test actual
 scrolling. The 512×300, DPR2 case is explicitly equivalent responsive reflow,
 not a claim to have changed browser page zoom using CSS `zoom`.
 
-Final source-bound validation, disposable installed acceptance and publication
-results are added below after execution. Full physical commissioning and the
+Final source-bound validation and disposable installed acceptance are recorded
+below. Publication is recorded in the existing task record and review PR. Full physical commissioning and the
 separate ARM64/KVM recovery qualification remain pending tasks. No printer was
 accessed or operated for this follow-up.
+
+
+### Follow-up acceptance and source binding
+
+| Check | Executed result |
+| --- | --- |
+| Native reconciliation and configured calibration | Final affected modules55/55 pass,0skips,45.913s; then restore-CAS3/3 pass,1.836s. Actual pinned Klipper SAVE_CONFIG across same-PID restarts and the actual archived previous reader are included, rather than mocked compatibility claims.26 final native source hashes match the release candidate. |
+| Package/staging |13/13 stage/restore tests pass,41.438s, after adding the reconciler unit to the project file inventory;18/18 project-license tests pass,0.361s. |
+| Finite read/ownership |4/4 installed-contract tests pass as actual root,0.011s. The full runtime/service hash manifest and wanted link are mandatory. |
+| Hosted selection reproduced locally |100 discovered/run:93pass and7 exact opt-in skips,39.149s. Those skips require the file-output venv or archived prior reader; they were exercised in the local native runs, not represented as hosted CI passes. Unknown skips still fail. |
+| Full composed browser |PASS at`ce9d192777e975b745fd1cef9ab90b61d659f5c6`, full_suite_executed=true,0uncaught exceptions. Actual Store/Budget with a Cockpit transport/session shim; no PAM or physical-hardware claim from this suite. |
+| Rendered assessment |Coordinator opened the actual Android entry/parts, responsive footer and native-calibration screenshots. Partial component visibility invites scrolling; trusted touch moves reach components and final controls.512×300 equivalent reflow retains usable controls. |
+| Disposable installed fixture |PASS in actual installed Cockpit/PAM/sudo: invalid login refusal, ordinary read, ordinary administrator denial, wrong-password cancellation, real UID0 elevation, factory save/reload and Stop returning to denied mutation.86 installed payload hashes and the observer wanted link checked. Source92d8c1c; synthetic ARM64/QEMU guest, private HTTP loopback; no physical hardware or production TLS claim. |
+
+Representative sanitized screenshots: [Android412×892](images/android-412x892.png)
+and [normal calibration tools/pending state](images/calibration-tools.png).
+They show synthetic fixture data, not an installed printer.
+
+The final browser run uses the new closed-by-default native acknowledgement
+macro. Its first attempt retained an obsolete assertion for the prior guard's
+wording; it failed and remains preserved. The corrected check asserts ready=0,
+the actual readiness condition and the explicit refusal message, alongside the
+existing clear/save/reload, source-value and nonmutation assertions. It does not
+remove the printing-block requirement.
+
+Real installed acceptance exposed independent disposable-input defects: the
+finite helper grants for synthetic accounts, the missing generation config view,
+and insufficient full-copy admission space. The fixture now creates the exact
+active-generation view, retains unmodified packaged PAM/sudo, adds only the finite
+read helper grants, and provides1.5GiB of data. Its capacity test runs the actual
+production Budget calculation:1GiB fails full-save admission and the new capacity
+passes with filesystem overhead. Production reserves and admission are unchanged.
+The failed attempts and their source/image metadata are retained separately.
+
+Validation source sequence: native checkpoint`6bc9bdc`; service-inventory fix
+`ef29d3f`; browser assertion adaptation/full PASS`ce9d192`; disposable generation
+view`91d188c`; disposable save capacity`439baeb`; sanitized images`92d8c1c`.
+Changes after the full browser PASS are confined to the separate installed
+fixture/tests and image evidence. Browser/runtime/UI source is unchanged.
+
+Assigned retained evidence is`/home/drew/.sv08-pr33-followup`:
+`native-calibration/{closure-checks,restore-cas-checks}.json`,
+`staging-final.log`,`project-license-final.log`,`ci-offline-final.log`,
+`browser-final-native-b/result.json`, and installed attempt metadata under
+`installed/failed-final-{a,b}`. Original PR33 and all superseded attempts remain
+historical evidence; their hashes were not refreshed.
+
+| Retained follow-up artifact | SHA256 |
+| --- | --- |
+|native-calibration/closure-checks.json|cbfe7a82abb8d806541e084bc2cf168da43801df80f9fcf1654f29735ba96ec6|
+|native-calibration/restore-cas-checks.json|47989b15f345c83604abf1c762c36e6745dbf32803b2ed460e30af4eaf30ea6a|
+|staging-final.log|5a947c59edec5f9a5f98016080d35ad3a50cede7c89030806593fdbd4c4ae4d3|
+|project-license-final.log|3fb1a5798c4df0352b619366ae480d71a73d286b310673cfbed6c59124870f2e|
+|ci-offline-final.log|0664caf399b93acf88d0eeb6a8b9523ee38322bd73f1cff9eab269ce144a4183|
+|browser-final-native-b/result.json|986112688a03868992c077b14390b2c4fe0ea373e5b200c3ae983e44721f4be5|
+
+The actual work used named implementer/researcher medium assignments, plus a
+normal-low integration assignment for the earlier concrete fixture diagnosis.
+The Android UX worker explicitly read only the repository UX skill and relevant
+references. Coordinator ran defined tests, provisioned the assigned disposable
+resources and inspected source/rendered evidence. Effective per-turn model/effort
+was not independently observed in this delivery; no token-savings or model-quality
+measurement is claimed.
+
+Cumulative allowance was expanded once for final disposable admission to8400
+process-seconds/10GiB, without resetting prior attempts. Conservative current
+charge6500seconds/8.5GiB includes prior delivery, failed attempts, worker700seconds,
+boot/browser/test lifetimes, copied root and all reformatted disposable data.
+Only one copied root and the reused current data image were needed; no unchanged
+OS image was rebuilt, no host tool installed and no printer contacted. No review
+PR merge, live deployment or physical printing qualification is authorized here.
+
+
+Final installed result:`installed/composed-result.json`, SHA256
+`187d45f07da816b85e7af83e9d190beff8a234c6406751dd5bee97a9771d271e`.
+`installed/final-installed-evidence.json` records30 retained text logs/reports
+scanned for the generated synthetic passwords/Basic encodings,0violations; this
+is not a guest-journal or arbitrary-file scan. Synthetic credentials and owned
+browser profiles were removed. Both fixture servers, all owned browsers and
+QEMU are terminal. Guest cleanup confirms workstation identity files and Cockpit
+units unchanged and the namespace PID file removed. The actual installed
+save/reload screenshot was opened and inspected after the successful run.
+
+Reproduction uses the pinned source/venv described by the existing composed-panel
+recipe, not copied workstation paths. From the candidate checkout, assign fresh
+private fixture/output/profile paths and run`tests/test_printer_browser_fixture.py`,
+then`tests/printer_browser.mjs` with installed Node22/Chromium. For actual installed
+acceptance follow [the disposable Cockpit recipe](../../hardware/host-admin-cockpit.md),
+stage the composed panel/current runtime in its stopped disposable root, retain
+packaged PAM/sudo, and boot in the private network/PID namespace. Run
+`tests/cockpit_composed_browser.mjs WORK CHROMIUM hardware` through that namespace.
+This mode consumes ephemeral`credentials.json`, a source-generated relative-path
+SHA256 map`payload-final.json`, and`source-final.json` with the source revision.
+The SHA256 map covers`stage_printer_ui.payload()` plus all runtime modules and
+host assets, with`compose_host()` applied to the host index; include the pinned
+validation dictionary when installed. Those expected hashes are calculated from
+reviewed source before staging, not copied from the installed guest. Their
+retained actual values, root/kernel/initrd/data image hashes and input scripts are
+in the assigned private evidence directory. Never substitute a provisioned
+printer root or owner backup for this synthetic fixture.
+
+Configured-printer physical commissioning remains the existing session/H-queue
+task: verify fitted parts and the actual print-start levelling/rehome/nozzle-bed
+reference before extrusion, then qualify its first layer and print. This is not
+an exhaustive parameter matrix or factory-only printing prerequisite. The
+separate ARM64/KVM recovery qualification still awaits its host. No physical test,
+image release, PR merge or printer deployment is claimed by these software checks.
