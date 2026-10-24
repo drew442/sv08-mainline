@@ -85,7 +85,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "bffd79cdc0624a629cada1b22b3a7dbb",
+        "session": "stock-native-package-20261024"
+      },
       "input_paths": [
         "runtime/",
         "ui/",
@@ -152,7 +156,7 @@
       "resumption": "Same owner-selected native calibration task: exact service provenance inventory and two sanitized screenshots required for final acceptance/publication. Checkpoint6bc9bdc and all failed/passing evidence retained; no allowance reset.",
       "review_policy": "self",
       "review_reason": "Reversible software/configuration repairs, disposable parser/browser checks and conditional commissioning preparation only. No physical operations or deployment; their consequential gates remain required.",
-      "status": "pending",
+      "status": "running",
       "title": "Repair stock calibration state and close commissioning preparation",
       "validation": null,
       "verification": null
