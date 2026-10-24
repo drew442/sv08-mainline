@@ -65,7 +65,7 @@ try {
  await evaluate(`document.querySelector('#printer-output-controls').open=true;document.querySelector('#printer-calibration').parentElement.open=true`);
  assert.equal(await evaluate(`document.querySelector('#printer-calibration input').value`),'');await screenshotAt('calibration-cleared-reloaded','#printer-calibration');
  await set('#printer-mode','full');await click('#printer-review');await until(`document.querySelector('#printer-candidate-review').open`);
- assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/sourced factory starting value 0 mm/);assert.match(await evaluate(`document.querySelector('#printer-review-text').textContent`),/Probe calibration pending/);await screenshotAt('calibration-pending-review','#printer-review-detail');await click('#printer-cancel-review');
+ assert.match(await evaluate(`document.querySelector('#printer-review-detail').textContent`),/sourced factory starting value 0 mm/);const guardedText=await evaluate(`document.querySelector('#printer-review-text').textContent`);assert.match(guardedText,/variable_ready: 0/);assert.match(guardedText,/ready\|int != 1/);assert.match(guardedText,/Persisted native calibration has not been reconciled for this Klipper instance/);await screenshotAt('calibration-pending-review','#printer-review-detail');await click('#printer-cancel-review');
  assert.equal(JSON.stringify(state().current),calibrationCurrent);assert.equal(JSON.stringify(state().previous),calibrationPrevious);assert.deepEqual(fs.readFileSync(calibrationLivePath),calibrationLive);
  await click('[data-printer-view=components]');
  }
