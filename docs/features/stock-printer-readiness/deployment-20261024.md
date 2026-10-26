@@ -59,3 +59,10 @@ deployment or installed verification can proceed without restored connectivity
 or the printer's new address. The provisional payload and source assessment are
 preserved. The deployment objective remains incomplete; the native blocked-audit
 threshold is now satisfied. Restore access, then resume the same goal.
+
+## Resumed and deployed
+
+Owner requested retry on2026-10-26 after restoring Beelink. Printer access was
+restored, exact-operation assessment/preconditions passed, and the software was
+deployed and verified. See [the actual installed result](deployment-20261026.md).
+The earlier provisional packet/blocker observations remain historical evidence.
