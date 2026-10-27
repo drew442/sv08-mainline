@@ -9,7 +9,9 @@ disposable ARM64 Cockpit/PAM; HTTP401 reproduction, partial failure/retry,
 keyboard/focus, unsaved input and no elevation/mutation checked.2source UI,
 18license and13staging tests pass; rendered evidence inspected. See
 [evidence](../docs/features/source-document-access/evidence.md) on the PR branch.
-Feature task is validated awaiting owner integration; no merge/deployment.
+Owner merged PR #34 at a2d4e288554c2419f790d078744d9d0158007476; local main
+fast-forwarded and feature task completed with unchanged reviewed source/evidence.
+No printer deployment in this follow-up.
 Owner session cause is not proven; public-source qualification remains separate.
 No new native goal was requested or created. Disposable QEMU stopped, host
 identities/units preserved and own new image copies/synthetic credentials removed.

@@ -126,7 +126,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible fixed ordinary-file reader and local document links; no root/server auth changes, hardware/configuration/service operation or consequential deployment in this source task.",
-      "status": "validated",
+      "status": "done",
       "title": "Restore ordinary access to source and license documents",
       "validation": {
         "actor": "root/coordinator",
