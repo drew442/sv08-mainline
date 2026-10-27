@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Actual disposable controller + staged source UI; injected offers test rendering only.
 import fs from 'node:fs';
+import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {setTimeout as delay} from 'node:timers/promises';
 import {startBrowser} from './browser_runtime.mjs';
@@ -31,16 +32,58 @@ try {
  assert.equal(await evaluate(`fetch('project-source.json',{credentials:'same-origin'}).then(response=>response.status)`),401);
  assert.equal((await fetch(url+'/source-file?name='+encodeURIComponent('/usr/share/cockpit/sv08-host/project-source.json'))).status,401);
  assert.equal(await evaluate(`Boolean(document.querySelector('#printer'))`),Boolean(composed));
+ const root=fixture+'/rootfs/';
+ const projectSnapshot=()=>{
+  const result={};
+  const walk=directory=>{for(const name of fs.readdirSync(directory)){const path=directory+'/'+name;const stat=fs.lstatSync(path);if(stat.isSymbolicLink())result[path.slice(root.length)]=['link',fs.readlinkSync(path)];else if(stat.isDirectory())walk(path);else if(stat.isFile())result[path.slice(root.length)]=['file',stat.mode,createHash('sha256').update(fs.readFileSync(path)).digest('hex')];}};
+  walk(root.slice(0,-1));return result;
+ };
+ const beforeProject=projectSnapshot();
  const beforeState=fs.readFileSync(fixture+'/state/state.json');
  const beforeConfig=fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg');
  await evaluate(`document.querySelector('#network-ssid').value='Unfinished network draft';document.querySelector('#source-open').focus();`);
- const beforeRequests=await evaluate(`JSON.stringify(window.fixtureRequests.filter(request=>!(request.area==='host'&&['status','jobs','upload.list'].includes(request.method))))`);
+ const beforeRequests=await evaluate(`JSON.stringify(window.fixtureRequests.filter(request=>!((request.area==='host'&&['status','jobs','upload.list'].includes(request.method))||(request.area==='provenance'&&request.method==='status'))))`);
  await key('Enter');await until(`document.querySelector('#project-source').open && document.querySelector('#source-status').textContent.includes('unqualified')`);
  assert.match(await evaluate(`document.querySelector('#source-build').textContent`),/^[a-f0-9]{64}$/);
+ await until(`document.querySelector('#source-integrity-label').textContent==='Intact'`);
+ assert.equal(await evaluate(`document.querySelector('#source-integrity').dataset.tone`),'success');
+ const intactIcon=await evaluate(`document.querySelector('#source-integrity-icon').getAttribute('d')`);
+ const covered=root+'usr/lib/sv08/sv08_restart.py';const originalCovered=fs.readFileSync(covered);
+ const baseline=root+'usr/share/doc/sv08-mainline/project-source.json';const originalBaseline=fs.readFileSync(baseline);const originalBaselineMode=fs.statSync(baseline).mode & 0o7777;
+ const retry=async()=>{await evaluate(`document.querySelector('#source-retry').click();if(document.querySelector('#source-integrity-label').textContent!=='Checking'||document.querySelector('#source-integrity').dataset.tone!=='neutral')throw Error('stale integrity on retry');`);};
+ fs.writeFileSync(covered,Buffer.concat([originalCovered,Buffer.from('\n# disposable covered change\n')]));
+ await retry();await until(`document.querySelector('#source-integrity-label').textContent==='Tainted'`);
+ assert.equal(await evaluate(`document.querySelector('#source-integrity').dataset.tone`),'error');
+ assert.notEqual(await evaluate(`document.querySelector('#source-integrity-icon').getAttribute('d')`),intactIcon);
+ await screenshot('source-tainted');
+ fs.writeFileSync(covered,originalCovered);
+ fs.unlinkSync(baseline);await retry();await until(`document.querySelector('#source-integrity-label').textContent==='Unavailable'`);
+ assert.equal(await evaluate(`document.querySelector('#source-integrity').dataset.tone`),'neutral');
+ await screenshot('source-baseline-unavailable');fs.writeFileSync(baseline,originalBaseline);fs.chmodSync(baseline,originalBaselineMode);
+ await retry();await until(`document.querySelector('#source-integrity-label').textContent==='Intact'`);
+ // A real check result held by the transport cannot overwrite a newer result.
+ await evaluate(`window.sourceOriginalView=sv08View;window.sourceHold=true;window.sourceHeld=[];sv08View=async(...args)=>{const result=await window.sourceOriginalView(...args);if(window.sourceHold&&args[0]==='provenance')return await new Promise(resolve=>window.sourceHeld.push(()=>resolve(result)));return result;};document.querySelector('#source-retry').click();`);
+ await until(`window.sourceHeld.length===1`);
+ fs.writeFileSync(covered,Buffer.concat([originalCovered,Buffer.from('\n# newer covered change\n')]));
+ await evaluate(`window.sourceHold=false;document.querySelector('#source-retry').click()`);
+ await until(`document.querySelector('#source-integrity-label').textContent==='Tainted'`);
+ await evaluate(`window.sourceHeld[0]()`);await delay(100);
+ assert.equal(await evaluate(`document.querySelector('#source-integrity-label').textContent`),'Tainted');
+ fs.writeFileSync(covered,originalCovered);
+ // Command and malformed response failures discard a previous intact result.
+ await evaluate(`sv08View=async()=>{throw Error('controlled command failure');};document.querySelector('#source-retry').click()`);
+ await until(`document.querySelector('#source-integrity-label').textContent==='Unavailable'`);
+ await evaluate(`sv08View=async()=>JSON.parse('invalid json');document.querySelector('#source-retry').click()`);
+ await until(`document.querySelector('#source-integrity-label').textContent==='Unavailable'`);
+ await evaluate(`sv08View=async()=>({state:'intact',scope:'local-project-record',reason:'record-matches',build_id:'f'.repeat(64)});document.querySelector('#source-retry').click()`);
+ await until(`document.querySelector('#source-integrity-label').textContent==='Tainted'`);
+ await evaluate(`sv08View=window.sourceOriginalView;document.querySelector('#source-retry').click()`);
+ await until(`document.querySelector('#source-integrity-label').textContent==='Intact'`);
+
  assert.equal(await evaluate(`document.querySelectorAll('#source-downloads a').length`),0);
  assert.equal(await evaluate(`document.querySelector('#source-open').disabled`),false);
  assert.equal(await evaluate(`window.fixtureStarts`),0);
- assert.equal(await evaluate(`JSON.stringify(window.fixtureRequests.filter(request=>!(request.area==='host'&&['status','jobs','upload.list'].includes(request.method))))`),beforeRequests);
+ assert.equal(await evaluate(`JSON.stringify(window.fixtureRequests.filter(request=>!((request.area==='host'&&['status','jobs','upload.list'].includes(request.method))||(request.area==='provenance'&&request.method==='status'))))`),beforeRequests);
  for(const [element,name] of [['source-license','project-LICENSE.txt'],['source-notice','project-NOTICE.txt'],['source-provenance','project-source.json']]) {
   const href=await evaluate(`document.querySelector('#${element}').href`);assert(href.startsWith('blob:'));
   const expected=fs.readFileSync(fixture+'/rootfs/usr/share/cockpit/sv08-host/'+name,'utf8');
@@ -58,7 +101,11 @@ try {
  assert.equal(await evaluate(`document.activeElement.id`),'source-open');
  await screenshot('source-overview');
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
- await key('Enter');await until(`document.querySelector('#project-source').open`);
+ await key('Enter');await until(`document.querySelector('#project-source').open && document.querySelector('#source-integrity-label').textContent==='Intact'`);
+ assert.equal(await evaluate(`(()=>{const d=document.querySelector('#project-source').getBoundingClientRect();const title=document.querySelector('#source-title').getBoundingClientRect();const status=document.querySelector('#source-integrity').getBoundingClientRect();return title.top>=d.top&&status.bottom<=d.bottom;})()`),true);
+ await evaluate(`document.querySelector('#source-retry').focus()`);await key('Enter');
+ await until(`document.querySelector('#source-integrity-label').textContent==='Intact'`);
+ assert.equal(await evaluate(`document.activeElement.id`),'source-title');
  assert.equal(await evaluate(`document.documentElement.scrollWidth <= innerWidth`),true);
  assert.equal(await evaluate(`(()=>{const r=document.querySelector('#project-source').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth;})()`),true);
  await screenshot('source-narrow');await key('Escape');
@@ -82,8 +129,10 @@ try {
  await screenshot('source-unavailable');await key('Escape');
  assert.equal(await evaluate(`document.querySelector('#network-ssid').value`),'Unfinished network draft');
  assert.equal(await evaluate(`window.fixtureStarts`),0);
- assert.equal(await evaluate(`JSON.stringify(window.fixtureRequests.filter(request=>!(request.area==='host'&&['status','jobs','upload.list'].includes(request.method))))`),beforeRequests);
+ assert.equal(await evaluate(`JSON.stringify(window.fixtureRequests.filter(request=>!((request.area==='host'&&['status','jobs','upload.list'].includes(request.method))||(request.area==='provenance'&&request.method==='status'))))`),beforeRequests);
+ assert.deepEqual(projectSnapshot(),beforeProject);
+ assert.equal(Object.keys(projectSnapshot()).some(path=>path.includes('__pycache__')||path.endsWith('.pyc')),false);
  assert.deepEqual(fs.readFileSync(fixture+'/state/state.json'),beforeState);
  assert.deepEqual(fs.readFileSync(JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg'),beforeConfig);
- fs.writeFileSync(output+'/summary.json',JSON.stringify({passed:true,composed,widths:[1280,390],controller_mutations:0,administrator_starts:0,metadata_requires_ordinary_session:true,all_three_documents_open_exact_new_tab_contents:true,raw_http_denial_preserved:true,fixed_file_reads_no_elevation:true,partial_document_failure_keeps_other_links:true,unsaved_input_preserved:true,controlled_offer_rendering_only:true},null,2)+'\n');
+ fs.writeFileSync(output+'/summary.json',JSON.stringify({passed:true,composed,widths:[1280,390],controller_mutations:0,administrator_starts:0,metadata_requires_ordinary_session:true,genuine_verifier_clean_change_missing_baseline:true,stale_retry_and_out_of_order_checked:true,command_and_json_failures_checked:true,checked_build_identity_compared:true,project_bytes_modes_links_preserved_no_bytecode:true,all_three_documents_open_exact_new_tab_contents:true,raw_http_denial_preserved:true,fixed_file_reads_and_finite_root_read_no_admin_bridge:true,partial_document_failure_keeps_other_links:true,unsaved_input_preserved:true,controlled_offer_rendering_only:true},null,2)+'\n');
 } finally {socket?.close();await browser.stop();}

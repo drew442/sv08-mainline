@@ -16,6 +16,13 @@ class StageUITests(unittest.TestCase):
         for path in (REPO / 'runtime').glob('*.py'): shutil.copyfile(path, target / path.name)
         (target / 'sv08_rauc_bootloader.py').chmod(0o755)
 
+    def test_provenance_helper_conflict_refuses_before_writes(self):
+        helper=self.work/'rootfs/usr/lib/sv08/sv08_provenance.py'
+        helper.write_text('unexpected preimage')
+        with self.assertRaisesRegex(ValueError, 'conflicts'): stage(self.work,'host',True)
+        self.assertEqual(helper.read_text(),'unexpected preimage')
+        self.assertFalse((self.work/'rootfs/usr/share/cockpit/sv08-host').exists())
+
     def test_project_notices_bind_actual_stage_and_stale_release(self):
         from project_license import validate, DOC
         root=self.work/'rootfs'
@@ -25,6 +32,10 @@ class StageUITests(unittest.TestCase):
         self.assertEqual({str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()},before)
         report=stage(self.work,'host',True)
         record=validate(root)
+        helper='usr/lib/sv08/sv08_provenance.py'
+        self.assertEqual((root/helper).read_bytes(),(REPO/'runtime/sv08_provenance.py').read_bytes())
+        self.assertIn(helper, report['hashes'])
+        self.assertIn(helper, record['staged_files'])
         self.assertEqual(record['build_id'],report['project_source']['build_id'])
         for base in (DOC,'usr/share/cockpit/sv08-host/'):
             self.assertEqual((root/(base+'project-LICENSE.txt')).read_bytes(),(REPO/'LICENSE').read_bytes())

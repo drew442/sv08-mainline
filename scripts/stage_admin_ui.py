@@ -74,7 +74,7 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
             raise ValueError('Existing host UI target is not a regular directory')
     extra = [root / 'usr/lib/systemd/system' / ('sv08-admin-image-worker@.service' if context == 'host' else 'sv08-recovery-display.service')]
     if context == 'host':
-        extra.extend([root / 'usr/lib/sv08/sv08_view.py', root / 'etc/sudoers.d/sv08-view'])
+        extra.extend([root / 'usr/lib/sv08/sv08_provenance.py', root / 'usr/lib/sv08/sv08_view.py', root / 'etc/sudoers.d/sv08-view'])
         extra.extend([root / 'usr/lib/sv08/software-catalog.json', root / 'usr/lib/systemd/system/sv08-software-worker@.service'])
         extra.extend([root / 'etc/cockpit/cockpit.conf', root / 'usr/lib/sv08/admin-context.json', root / 'usr/lib/sv08/rauc-service-policy.json', root / 'etc/dbus-1/system.d/zz-sv08-rauc.conf', root / 'etc/systemd/system/rauc.service.d/sv08.conf'])
         extra.extend(root / name for name in ('usr/lib/systemd/system/sv08-feed.service',
@@ -125,9 +125,9 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
             allowed_refresh_output = refresh and (
                 path == target or (not path.is_symlink() and path.is_file()))
             allowed_branding_output = path in branding and not path.is_symlink() and path.is_file()
-            matching_view = (context == 'host' and path == root/'usr/lib/sv08/sv08_view.py'
+            matching_view = (context == 'host' and path.name in ('sv08_view.py', 'sv08_provenance.py') and path.parent == root/'usr/lib/sv08'
                              and not path.is_symlink() and path.is_file()
-                             and path.read_bytes() == (REPO/'runtime/sv08_view.py').read_bytes())
+                             and path.read_bytes() == (REPO/'runtime'/path.name).read_bytes())
             if not (allowed_refresh_output or allowed_branding_output or matching_view):
                 raise ValueError('Existing UI/configuration conflicts with staging: '+str(path))
     if context == 'host' and (root/'usr/share/cockpit/sv08-printer').exists():
@@ -142,6 +142,7 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
         name = 'usr/share/cockpit/sv08-host/index.html'
         prospective[name] = (compose_host(prospective[name]) if (root/'usr/share/cockpit/sv08-printer').exists()
                              else prospective[name].replace(NAV,b''))
+        prospective['usr/lib/sv08/sv08_provenance.py'] = (REPO/'runtime/sv08_provenance.py').read_bytes()
         prospective['usr/lib/sv08/sv08_view.py'] = (REPO/'runtime/sv08_view.py').read_bytes()
         prospective['usr/lib/sv08/software-catalog.json'] = (REPO/'configs/host-os/software-catalog.json').read_bytes()
         prospective['usr/lib/sv08/admin-context.json'] = (json.dumps(dict(format_version=1,context='host'))+'\n').encode()
@@ -168,6 +169,10 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
     if not execute: return dict(execute=False, context=context, root=str(root),
                                 project_source=provenance, notice_hashes={n:hashlib.sha256(v).hexdigest() for n,v in notices.items()})
     if context == 'host':
+        helper = root/'usr/lib/sv08/sv08_provenance.py'
+        shutil.copyfile(REPO/'runtime/sv08_provenance.py', helper)
+        helper.chmod(0o644)
+        if os.geteuid() == 0: os.chown(helper, 0, 0)
         view = root/'usr/lib/sv08/sv08_view.py'
         shutil.copyfile(REPO/'runtime/sv08_view.py', view)
         view.chmod(0o644)
@@ -244,7 +249,7 @@ def _stage(work, context, execute=False, refresh=False, public_source=None):
                      ('sv08_software.py', 'sv08_network.py', 'sv08_admission.py', 'sv08_feed.py', 'sv08_auto_reboot.py', 'sv08_web.py', 'sv08_printer_stack.py', 'sv08_mainsail_access.py'))
     files.append(root / ('usr/lib/sv08/admin-context.json' if context == 'host' else
                          'usr/lib/systemd/system/sv08-recovery-display.service'))
-    if context == 'host': files.extend([root/'usr/lib/sv08/sv08_view.py', root/'etc/sudoers.d/sv08-view'])
+    if context == 'host': files.extend([root/'usr/lib/sv08/sv08_provenance.py', root/'usr/lib/sv08/sv08_view.py', root/'etc/sudoers.d/sv08-view'])
     hashes = {str(p.relative_to(root)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
     if context == 'host':
         hashes['etc/cockpit/ws-certs.d'] = hashlib.sha256(

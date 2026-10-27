@@ -13,12 +13,15 @@ from pathlib import Path
 import shutil
 import sys
 import unittest
+from unittest.mock import patch
+from threading import Lock
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'));sys.path.insert(0,str(ROOT/'runtime'))
 from stage_admin_ui import stage
 from stage_printer_ui import compose_host
 from sv08_state import Store
 from sv08_admin import Controller
+import sv08_view as view
 
 
 class SourcePolicyUITests(unittest.TestCase):
@@ -38,8 +41,10 @@ class SourcePolicyUITests(unittest.TestCase):
     def test_static_source_reader_has_no_controller_or_elevation_calls(self):
         script=(ROOT/'ui/host/source.js').read_text()
         self.assertIn("cockpit.file('/usr/share/cockpit/sv08-host/' + name)",script)
-        for forbidden in ('cockpit.spawn','sv08View','superuser','sv08Session','location.href ='):
+        for forbidden in ('cockpit.spawn','superuser','sv08Session','location.href ='):
             self.assertNotIn(forbidden,script)
+        self.assertEqual(script.count("sv08View('provenance')"), 1)
+        self.assertEqual(script.count('sv08View('), 1)
         self.assertIn("finally { file.close(); }",script)
         self.assertIn('overall_release_qualified === false',script)
 
@@ -64,6 +69,7 @@ def serve(work, composed=False):
     (work/'fixture.json').write_text(json.dumps({'generation':boot['generation']}))
     authority={'elevated':False}
     requests=[]
+    provenance_lock=Lock()
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args):pass
         def respond(self,status,raw,kind='application/json',login=False):
@@ -104,7 +110,15 @@ def serve(work, composed=False):
                 request=json.loads(self.rfile.read(size));requests.append(request)
                 (work/'requests.json').write_text(json.dumps(requests))
                 # Finite host status reads use the actual disposable controller.
-                if request.get('area')=='host' and request.get('method') in ('status','jobs','upload.list'):
+                if request == {'area':'provenance','method':'status'}:
+                    # Actual finite view adapter and isolated subprocess; only the
+                    # installed root/import path are adapted to this disposable root.
+                    code = ("import sys,json;sys.path.insert(0," + repr(str(runtime)) + ");"
+                            "from sv08_provenance import status;"
+                            "print(json.dumps({'ok':True,'result':status(" + repr(str(work/'rootfs')) + ")}))")
+                    with provenance_lock, patch.object(view, 'child_code', return_value=code):
+                        result=view.read(request)
+                elif request.get('area')=='host' and request.get('method') in ('status','jobs','upload.list'):
                     result=controller.request({'method':request['method']})
                 else:raise ValueError('Fixture supports finite host reads only')
                 self.respond(200,json.dumps({'ok':True,'result':result}))

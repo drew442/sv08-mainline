@@ -15,7 +15,8 @@ OUTPUT_LIMIT = 8 * 1024 * 1024
 ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C.UTF-8', 'HOME': '/root'}
 SCRIPTS = {name: '/usr/lib/sv08/sv08_' + script + '.py' for name, script in
            [('host', 'admin'), ('printer', 'printer_helper'), ('network', 'network'),
-            ('software', 'software'), ('identity', 'identity'), ('mainsail-access', 'mainsail_access')]}
+            ('software', 'software'), ('identity', 'identity'), ('mainsail-access', 'mainsail_access'),
+            ('provenance', 'provenance')]}
 FIELDS = {
     'host': 'context revision boot requested_mode auto_update update_policy slots pending transaction free_bytes capabilities catalog destinations images hostname feed_status'.split(),
     'printer': 'state catalog available_components native_calibration_status context catalog_revision catalog_supported loaded_identity definitions sources migration_available'.split(),
@@ -51,6 +52,19 @@ def validate(request):
 
 def public(area, method, result):
     if not isinstance(result, dict): raise ValueError('Invalid read response')
+    if area == 'provenance':
+        fields = {'state', 'build_id', 'scope', 'reason'}
+        result = {key: result[key] for key in fields if key in result}
+        reasons = {'intact': {'record-matches'}, 'tainted': {'record-mismatch'},
+                   'unavailable': {'baseline-missing', 'read-failed'}}
+        if (set(result) != fields or result['scope'] != 'local-project-record' or
+                not isinstance(result['state'], str) or result['state'] not in reasons or
+                not isinstance(result['reason'], str) or result['reason'] not in reasons[result['state']] or
+                (result['state'] == 'intact' and (not isinstance(result['build_id'], str) or
+                    not re.fullmatch('[a-f0-9]{64}', result['build_id']))) or
+                (result['state'] != 'intact' and result['build_id'] is not None)):
+            raise ValueError('Invalid provenance response')
+        return result
     if area == 'identity' and method == 'ca.download':
         if set(result) != {'filename','content'} or result['filename'] != 'sv08-printer-ca.crt' or not isinstance(result['content'],str) or len(result['content'])>65536 or not re.fullmatch(r'-----BEGIN CERTIFICATE-----\n[A-Za-z0-9+/=\r\n]+-----END CERTIFICATE-----\n?', result['content']):
             raise ValueError('Invalid public certificate')
@@ -87,7 +101,8 @@ def read(request):
     area, method = validate(request)
     child = {'action': 'status'} if area == 'printer' else {'method': method}
     if area == 'software' and method == 'inspect': child['id'] = request['id']
-    result = subprocess.run(['/usr/bin/python3', '-I', '-c', child_code(area)],
+    command = ['/usr/bin/python3', '-I'] + (['-B'] if area == 'provenance' else [])
+    result = subprocess.run([*command, '-c', child_code(area)],
                             input=json.dumps(child), text=True, capture_output=True,
                             cwd='/', env=ENV, timeout=30)
     if result.returncode or len(result.stdout.encode()) > OUTPUT_LIMIT:

@@ -26,15 +26,43 @@
             return content;
         } finally { file.close(); }
     }
+    function integrity(state, reason) {
+        const styles = {
+            checking: ['Checking', 'neutral', 'M12 8v4m0 4h.01M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20'],
+            intact: ['Intact', 'success', 'm6 12 4 4 8-8M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20'],
+            tainted: ['Tainted', 'error', 'm8 8 8 8m0-8-8 8M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20'],
+            unavailable: ['Unavailable', 'neutral', 'M12 8v4m0 4h.01M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20'],
+        };
+        const [label, tone, path] = styles[state];
+        document.getElementById('source-integrity').dataset.tone = tone;
+        document.getElementById('source-integrity-label').textContent = label;
+        document.getElementById('source-integrity-icon').setAttribute('d', path);
+        document.getElementById('source-integrity-reason').textContent = reason;
+    }
+    async function verify() {
+        const result = await sv08View('provenance');
+        if (result.scope !== 'local-project-record' ||
+            !['intact', 'tainted', 'unavailable'].includes(result.state) ||
+            !['record-matches', 'record-mismatch', 'baseline-missing', 'read-failed'].includes(result.reason) ||
+            (result.state === 'intact' && (result.reason !== 'record-matches' || !/^[a-f0-9]{64}$/.test(result.build_id || '')))) throw Error('unavailable');
+        return result;
+    }
     async function load() {
         const current = ++request;
         clearDocuments();
+        integrity('checking', 'Checking installed project files…');
+        document.getElementById('source-title').focus({preventScroll: true});
+        dialog.scrollTop = 0;
+        document.getElementById('source-revision').textContent = 'Checking…';
+        document.getElementById('source-build').textContent = 'Checking…';
         status.textContent = 'Loading installed build information…';
         const feedback = document.getElementById('source-documents-status');
         feedback.hidden = true;
         document.getElementById('source-downloads').replaceChildren();
         document.getElementById('source-public-help').textContent = 'Matching public source has not been qualified for this build.';
-        const reads = await Promise.allSettled(documents.map(([,name]) => readDocument(name)));
+        const results = await Promise.allSettled([...documents.map(([,name]) => readDocument(name)), verify()]);
+        const reads = results.slice(0, 3);
+        let displayedBuild = null;
         if (current !== request) return;
         for (let i=0;i<documents.length;i++) {
             if (reads[i].status !== 'fulfilled') continue;
@@ -52,6 +80,7 @@
             if (data.format_version !== 1 || !/^[a-f0-9]{64}$/.test(data.build_id || '')) throw Error('invalid');
             document.getElementById('source-revision').textContent = data.source_revision || 'Development snapshot';
             document.getElementById('source-build').textContent = data.build_id;
+            displayedBuild = data.build_id;
             status.textContent = 'Project build recorded. Public source is unqualified.';
             const offer = data.public_source;
             if (data.development === false && offer?.qualified === true && offer.scope === 'project-source-only' &&
@@ -74,6 +103,17 @@
             status.textContent = 'Installed source information unavailable. Check again or ask the image publisher for matching source.';
             document.getElementById('source-revision').textContent = 'Unavailable';
             document.getElementById('source-build').textContent = 'Unavailable';
+        } finally {
+            const verified = results[3];
+            if (verified.status !== 'fulfilled') {
+                integrity('unavailable', 'The check could not complete. Check your connection or sign in again, then choose Check again.');
+            } else if (verified.value.state === 'intact' && displayedBuild === verified.value.build_id) {
+                integrity('intact', 'Installed project files match the local build record.');
+            } else if (verified.value.state === 'tainted' || (verified.value.state === 'intact' && displayedBuild !== null)) {
+                integrity('tainted', 'Installed project files or build records differ. Ask the image publisher for a matching build.');
+            } else {
+                integrity('unavailable', 'The local build record could not be read. Choose Check again or ask the image publisher.');
+            }
         }
     }
     function open() { if (!dialog.open) dialog.showModal(); load(); }
