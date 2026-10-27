@@ -1,5 +1,17 @@
 # Current delivery goals
 
+## Active goal — installed provenance indicator, 2026-10-27
+
+Owner requests a simple intact/tainted build-provenance indicator using agents.
+Native goal is active; source task `provenance-indicator:implement` owns
+feature/provenance-indicator at3d71bf4. Read-only research found the existing
+project validator; skilled medium implementer owns shared runtime validation,
+ordinary on-demand UI status and focused tests. Primary allowance1200process-seconds/
+1GiB; no image rebuild, live printer or auth-policy change. [Scope](../docs/features/provenance-indicator/proposal.md).
+Intact means local recorded project consistency, separate from source/publisher/
+whole-image qualification. Finish with tested, rendered review PR, no merge/deploy.
+
+
 ## Completed source delivery — ordinary source/license access, 2026-10-27
 
 Published [PR #34](https://github.com/drew442/sv08-mainline/pull/34), candidate

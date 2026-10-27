@@ -55,7 +55,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "55e97806627349cc9e7134f6a7ef47c6",
+        "session": "provenance-20261027"
+      },
       "input_paths": [
         "runtime/",
         "scripts/",
@@ -84,7 +88,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
-      "status": "pending",
+      "status": "running",
       "title": "Show installed project provenance integrity",
       "validation": null,
       "verification": null
