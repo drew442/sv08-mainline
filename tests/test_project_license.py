@@ -306,4 +306,66 @@ class ProjectLicenseTests(unittest.TestCase):
             with self.assertRaises(ValueError):gate.archive_files(stream.getvalue())
 
 
+# Keep runtime integrity acceptance in the existing package/release CI suite.
+import sv08_provenance as provenance
+
+
+class ProvenanceTests(unittest.TestCase):
+    setUp = ProjectLicenseTests.setUp
+    prepare = ProjectLicenseTests.prepare
+    stage = ProjectLicenseTests.stage
+    snapshot = ProjectLicenseTests.snapshot
+
+    def test_shared_validator_and_clean_configuration_exclusion(self):
+        self.assertIs(license.validate, provenance.validate)
+        record = self.stage()
+        config = self.root/'data/config/printer.cfg'
+        config.parent.mkdir(parents=True); config.write_text('mutable user configuration')
+        before = self.snapshot()
+        self.assertEqual(provenance.status(self.root), dict(state='intact',
+            build_id=record['build_id'], scope='local-project-record', reason='record-matches'))
+        self.assertEqual(self.snapshot(), before)
+
+    def test_covered_changes_additions_deletions_notices_and_records(self):
+        self.stage(); before = self.snapshot()
+        cases = [('usr/lib/sv08/controller.py', b'changed'),
+                 ('usr/lib/sv08/added.py', b'addition'),
+                 ('usr/lib/sv08/controller.py', None),
+                 (provenance.DOC+'project-NOTICE.txt', b'changed notice'),
+                 ('usr/lib/sv08/release.json', b'{}'),
+                 (provenance.DOC+'project-source.json', b'[]'),
+                 (provenance.DOC+'project-source.json', b'{invalid'),
+                 ('usr/share/cockpit/sv08-host/project-source.json', b'{}'),
+                 ('usr/share/cockpit/sv08-host/project-source.json', None)]
+        for name, raw in cases:
+            with self.subTest(name=name, raw=raw):
+                path = self.root/name
+                if raw is None: path.unlink()
+                else: path.write_bytes(raw)
+                self.assertEqual(provenance.status(self.root)['state'], 'tainted')
+                if name in before: path.write_bytes(before[name])
+                else: path.unlink()
+        self.assertEqual(provenance.status(self.root)['state'], 'intact')
+
+    def test_missing_read_failed_and_walk_failure_never_green(self):
+        self.assertEqual(provenance.status(self.root)['reason'], 'baseline-missing')
+        self.stage()
+        with patch.object(Path, 'read_bytes', side_effect=PermissionError('private details')):
+            self.assertEqual(provenance.status(self.root)['state'], 'unavailable')
+        def failed(*args, **kwargs):
+            kwargs['onerror'](PermissionError('private directory'))
+            return iter(())
+        with patch.object(provenance.os, 'walk', side_effect=failed):
+            result = provenance.status(self.root)
+            self.assertEqual(result['state'], 'unavailable')
+            self.assertNotIn('private', json.dumps(result))
+        # Non-code public-key hash mismatches remain covered but are never returned.
+        key = self.root/'usr/lib/sv08/seed/authorized_keys'
+        key.parent.mkdir(); key.write_text('public build input')
+        result = provenance.status(self.root)
+        self.assertEqual(result['state'], 'tainted')
+        self.assertEqual(set(result), {'state','scope','reason','build_id'})
+
+
+
 if __name__=='__main__':unittest.main()
