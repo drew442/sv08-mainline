@@ -1,6 +1,21 @@
 {
   "author": "root/coordinator",
-  "authorization": null,
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "eacbd93909c5ac7b016e3cda130df81d8e7e46dadfd5b8a4359941f40c55a26d",
+    "rationale": "Owner reports all3project document links and provenance read unauthorized; bounded ordinary file access fix, no auth-policy or physical changes.",
+    "reference": "docs/features/source-document-access/owner-request.md",
+    "reference_sha256": "0fb1acdba5d6e59fff263a731e1150287e2f0c7705a54172660cb02f867a6ddc",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/features/source-document-access/owner-request.md": "0fb1acdba5d6e59fff263a731e1150287e2f0c7705a54172660cb02f867a6ddc"
+    },
+    "scope_sha256": "1d84676745aa6068ce7c502f00ec6fbbd8a104901c4820b08572e0f130717543",
+    "session": "source-documents-20261027",
+    "source_commit": "7430b103115f22431afdf921f7be9e89ee8d50f9"
+  },
   "checks": [
     {
       "description": "Exact documents open under ordinary authenticated Cockpit with no elevation/controller mutation; errors/retry/unsaved focus behavior and actual disposable PAM verified.",
