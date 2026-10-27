@@ -55,7 +55,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "351476c91e9548ce959fb781313f33a6",
+        "session": "source-documents-20261027"
+      },
       "input_paths": [
         "ui/",
         "runtime/",
@@ -77,7 +81,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible fixed ordinary-file reader and local document links; no root/server auth changes, hardware/configuration/service operation or consequential deployment in this source task.",
-      "status": "pending",
+      "status": "running",
       "title": "Restore ordinary access to source and license documents",
       "validation": null,
       "verification": null
