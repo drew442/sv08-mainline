@@ -1,55 +1,70 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "081b18478c25367a22cf18b0ab93977270284f17b1b391a9921f3f6b70923a2d",
+    "rationale": "Owner requests simple provenance intact/tainted indicator with agents; read-only shared validator and bounded UI delivery.",
+    "reference": "docs/features/provenance-indicator/owner-request.md",
+    "reference_sha256": "bd82fde8b835bc49327d24b10032e6642ba36b47b5c3feef590041250f8e8908",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/features/provenance-indicator/owner-request.md": "bd82fde8b835bc49327d24b10032e6642ba36b47b5c3feef590041250f8e8908"
+    },
+    "scope_sha256": "d8b56f3637b1bb1c471002ca9deaaf305aa19a569a85a5c620771a2d0ccb8f09",
+    "session": "provenance-20261027",
+    "source_commit": "1526ed569202b8848c8744602610707021aba142"
+  },
+  "checks": [
+    {
+      "description": "Runtime/build parity, change/error detection and normal mutable configuration exclusion",
+      "environment": "offline",
+      "id": "integrity"
+    },
+    {
+      "description": "Rendered browser states/retry, ordinary reads, regressions and published PR",
+      "environment": "offline",
+      "id": "journey"
+    }
+  ],
+  "created": "2026-10-27",
+  "decision": null,
   "format_version": 2,
   "id": "provenance-indicator",
   "kind": "feature",
-  "title": "Show installed project provenance integrity",
-  "author": "root/coordinator",
-  "created": "2026-10-27",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/provenance-indicator/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/provenance-indicator/owner-request.md",
     "docs/development/public-source-releases.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "integrity",
-      "description": "Runtime/build parity, change/error detection and normal mutable configuration exclusion",
-      "environment": "offline"
-    },
-    {
-      "id": "journey",
-      "description": "Rendered browser states/retry, ordinary reads, regressions and published PR",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Show installed project provenance integrity",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "integrity",
         "journey"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/",
+        "scripts/",
+        "ui/",
+        "tests/",
+        "configs/",
+        "LICENSE",
+        "LICENSING.md"
+      ],
       "owned_paths": [
         "runtime/sv08_provenance.py",
         "scripts/project_license.py",
@@ -65,15 +80,15 @@
         "tests/test_stage_printer_ui.py",
         "docs/features/provenance-indicator/evidence.md"
       ],
-      "input_paths": [
-        "runtime/",
-        "scripts/",
-        "ui/",
-        "tests/",
-        "configs/",
-        "LICENSE",
-        "LICENSING.md"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
+      "status": "pending",
+      "title": "Show installed project provenance integrity",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Show installed project provenance integrity"
 }
