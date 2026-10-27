@@ -1,0 +1,79 @@
+{
+  "format_version": 2,
+  "id": "provenance-indicator",
+  "kind": "feature",
+  "title": "Show installed project provenance integrity",
+  "author": "root/coordinator",
+  "created": "2026-10-27",
+  "priority": 2,
+  "proposal": "docs/features/provenance-indicator/proposal.md",
+  "requirements": [
+    "docs/features/provenance-indicator/owner-request.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "integrity",
+      "description": "Runtime/build parity, change/error detection and normal mutable configuration exclusion",
+      "environment": "offline"
+    },
+    {
+      "id": "journey",
+      "description": "Rendered browser states/retry, ordinary reads, regressions and published PR",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Show installed project provenance integrity",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "integrity",
+        "journey"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_provenance.py",
+        "scripts/project_license.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/stage_printer_ui.py",
+        "ui/host/source.js",
+        "ui/host/index.html",
+        "tests/test_provenance.py",
+        "tests/test_project_license.py",
+        "tests/test_source_policy_ui.py",
+        "tests/source_policy_browser.mjs",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "docs/features/provenance-indicator/evidence.md"
+      ],
+      "input_paths": [
+        "runtime/",
+        "scripts/",
+        "ui/",
+        "tests/",
+        "configs/",
+        "LICENSE",
+        "LICENSING.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+# Installed project provenance indicator
+
+Add an ordinary-user, on-demand consistency check to Source & license: Intact (green/check icon), Tainted (red/error icon), Unavailable/checking (neutral), with a concise reason. Compare actual installed project inventory, hashes, build identity, release and notices against the existing local record using a shared runtime validator. Keep mutable printer/user configuration outside its existing scope. Intact does not imply trusted publisher, matching public source qualification, whole-image integrity or hardware readiness.
+
+Acceptance: genuine staged fixture intact; covered modifications/additions/deletions, notices/release/record mismatch tainted; missing/unreadable baseline or command failure unavailable; no stale intact during retry/failure, no elevation/mutations and unrelated inputs preserved. Verify browser states/icons/keyboard/narrow display and runtime/build validator parity, staging/restoration contracts. Use existing source fixture/Node/Chromium; no installs or live printer. Publish tested PR for owner review; no automatic merge/deployment.
+
+Primary allowance1200cumulative process-seconds/1GiB outputs for source tests/browser fixtures, scratch /home/drew/.sv08-provenance-indicator;49GiB available. Research read-only300seconds/256MiB incidental maximum, no experiments used. One skilled medium implementer, no delegation or settings changes.
