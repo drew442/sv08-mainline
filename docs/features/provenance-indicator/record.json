@@ -55,7 +55,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "6c693e11fd4c450ea18b648d9524bff6",
+        "session": "provenance-20261027"
+      },
       "input_paths": [
         "runtime/",
         "scripts/",
@@ -86,7 +90,7 @@
       "resumption": "Use existing provenance/status finite read channel instead of unusable ordinary-file inventory check; same user outcome and cumulative allowance, applied source retained.",
       "review_policy": "self",
       "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
-      "status": "pending",
+      "status": "running",
       "title": "Show installed project provenance integrity",
       "validation": null,
       "verification": null
