@@ -1,5 +1,20 @@
 # Current delivery goals
 
+## Completed source delivery — ordinary source/license access, 2026-10-27
+
+Published [PR #34](https://github.com/drew442/sv08-mainline/pull/34), candidate
+9d115adaa038f1b177fc2714d44724420e3cf9cf. Exact license/notice/provenance
+new-tab contents pass via ordinary Cockpit file reads in composed and actual
+disposable ARM64 Cockpit/PAM; HTTP401 reproduction, partial failure/retry,
+keyboard/focus, unsaved input and no elevation/mutation checked.2source UI,
+18license and13staging tests pass; rendered evidence inspected. See
+[evidence](../docs/features/source-document-access/evidence.md) on the PR branch.
+Feature task is validated awaiting owner integration; no merge/deployment.
+Owner session cause is not proven; public-source qualification remains separate.
+No new native goal was requested or created. Disposable QEMU stopped, host
+identities/units preserved and own new image copies/synthetic credentials removed.
+
+
 ## Completed PR-delivery goal — Printer Hardware journey, 2026-10-11
 
 Published [PR #7](https://github.com/drew442/sv08-mainline/pull/7) for owner review.

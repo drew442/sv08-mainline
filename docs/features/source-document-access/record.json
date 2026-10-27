@@ -51,7 +51,52 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "ordinary-documents",
+          "document": "docs/features/source-document-access/evidence.md",
+          "document_sha256": "56b469b8dcc79f6e3f64c2180b6f669d0f9dcd582b450f7fb7a2dbc792bf1a96",
+          "environment": "offline",
+          "limitations": "No live printer/browser/TLS qualification or deployment. Synthetic cookie loss reproduces the failure class, not proven owner-session cause. Self-validation.",
+          "method": "Exact new-tab document comparisons, HTTP authorization failure regression, no elevation/mutation, retry/partial failures, rendered inspection and source/license/staging checks; published PR.",
+          "profile": "Composed panel and disposable ARM64 Cockpit/PAM; ordinary synthetic user",
+          "source_commit": "9d115adaa038f1b177fc2714d44724420e3cf9cf",
+          "source_sha256": {
+            "docs/features/source-document-access/evidence.md": "56b469b8dcc79f6e3f64c2180b6f669d0f9dcd582b450f7fb7a2dbc792bf1a96",
+            "scripts/project_license.py": "fd0685765b204217364d02fd9488043d89e6fd499cc0b7ccaca5649625fae7a9",
+            "scripts/stage_printer_ui.py": "d97dfd2a53eedca8002392b38e6ef244e6f9f34e6b766d3fe01ba34c0115c582",
+            "tests/browser_runtime.mjs": "4c99810e215379e271ebf77147d9c7069b2a494578d3fa3b38614316b33dc163",
+            "tests/cockpit_composed_browser.mjs": "177166bb2235ac07249f77a33240774b2ba30d18945ea08432f986034021eb39",
+            "tests/source_policy_browser.mjs": "001d9791898e8372e4631233ab21f60f334e1c10cd4509b857cd6fd6aad9cf79",
+            "tests/test_source_policy_ui.py": "bcfc3da1126afca4cffcffdd4de89bae2e41bd53078bbd39663be99ab5396846",
+            "ui/host/index.html": "df012b21fe512525fb553cc39f4a7846e73796409d57d6c616624249c39ecf75",
+            "ui/host/source.js": "bdaa6046fad1fb3285bb91eb4706cda5639a6b31c5e1d1c0927ce00287d320fe"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "publication",
+          "document": "docs/features/source-document-access/evidence.md",
+          "document_sha256": "56b469b8dcc79f6e3f64c2180b6f669d0f9dcd582b450f7fb7a2dbc792bf1a96",
+          "environment": "offline",
+          "limitations": "No live printer/browser/TLS qualification or deployment. Synthetic cookie loss reproduces the failure class, not proven owner-session cause. Self-validation.",
+          "method": "Exact new-tab document comparisons, HTTP authorization failure regression, no elevation/mutation, retry/partial failures, rendered inspection and source/license/staging checks; published PR.",
+          "profile": "Composed panel and disposable ARM64 Cockpit/PAM; ordinary synthetic user",
+          "source_commit": "9d115adaa038f1b177fc2714d44724420e3cf9cf",
+          "source_sha256": {
+            "docs/features/source-document-access/evidence.md": "56b469b8dcc79f6e3f64c2180b6f669d0f9dcd582b450f7fb7a2dbc792bf1a96",
+            "scripts/project_license.py": "fd0685765b204217364d02fd9488043d89e6fd499cc0b7ccaca5649625fae7a9",
+            "scripts/stage_printer_ui.py": "d97dfd2a53eedca8002392b38e6ef244e6f9f34e6b766d3fe01ba34c0115c582",
+            "tests/browser_runtime.mjs": "4c99810e215379e271ebf77147d9c7069b2a494578d3fa3b38614316b33dc163",
+            "tests/cockpit_composed_browser.mjs": "177166bb2235ac07249f77a33240774b2ba30d18945ea08432f986034021eb39",
+            "tests/source_policy_browser.mjs": "001d9791898e8372e4631233ab21f60f334e1c10cd4509b857cd6fd6aad9cf79",
+            "tests/test_source_policy_ui.py": "bcfc3da1126afca4cffcffdd4de89bae2e41bd53078bbd39663be99ab5396846",
+            "ui/host/index.html": "df012b21fe512525fb553cc39f4a7846e73796409d57d6c616624249c39ecf75",
+            "ui/host/source.js": "bdaa6046fad1fb3285bb91eb4706cda5639a6b31c5e1d1c0927ce00287d320fe"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
@@ -81,9 +126,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible fixed ordinary-file reader and local document links; no root/server auth changes, hardware/configuration/service operation or consequential deployment in this source task.",
-      "status": "running",
+      "status": "validated",
       "title": "Restore ordinary access to source and license documents",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "d683ebaeb32eb9223250c80cab0df416ae7fd6268ffb396199659b6b4b5b2f3e",
+        "evidence_sha256": "82632e0c44db014189fdf8650fdfa6582b848d58526905da0f6f3eb29fe27b97",
+        "outcome": "passed",
+        "rationale": "Exact ordinary document tabs pass in composed and actual disposable Cockpit/PAM; error/retry and unchanged state verified, rendered evidence inspected, source/license/staging checks pass, stable diff inspected and review PR published.",
+        "session": "source-documents-20261027",
+        "source_commit": "9d115adaa038f1b177fc2714d44724420e3cf9cf"
+      },
       "verification": null
     }
   ],
