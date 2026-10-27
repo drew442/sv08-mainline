@@ -55,11 +55,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "55e97806627349cc9e7134f6a7ef47c6",
-        "session": "provenance-20261027"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/",
         "scripts/",
@@ -82,13 +78,15 @@
         "tests/source_policy_browser.mjs",
         "tests/test_stage_admin_ui.py",
         "tests/test_stage_printer_ui.py",
-        "docs/features/provenance-indicator/evidence.md"
+        "docs/features/provenance-indicator/evidence.md",
+        "runtime/sv08_view.py",
+        "tests/test_config_view.py"
       ],
       "repeats": 0,
-      "resumption": null,
+      "resumption": "Use existing provenance/status finite read channel instead of unusable ordinary-file inventory check; same user outcome and cumulative allowance, applied source retained.",
       "review_policy": "self",
       "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
-      "status": "running",
+      "status": "pending",
       "title": "Show installed project provenance integrity",
       "validation": null,
       "verification": null
