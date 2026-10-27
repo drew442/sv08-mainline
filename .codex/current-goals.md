@@ -1,5 +1,27 @@
 # Current delivery goals
 
+## Pending deployment — PR34/35 and branding compatibility, 2026-10-27
+
+Owner explicitly requested deployment after PR35 merge. Read-only printer preflight
+reached192.168.1.141, healthy immutable slotB/rootRO, printer services inactive with
+original masks. No live software/configuration/service changes were performed.
+Stock Debian/Cockpit favicon/logo symlinks incorrectly block project provenance.
+Prepared [PR #37](https://github.com/drew442/sv08-mainline/pull/37), candidate
+180a361cfe6ec3f74966e3b44a4d8d8e3ae41249,58passing tests and read-only actual-root
+check. [Evidence/handoff](../docs/features/provenance-branding-compatibility/evidence.md)
+on the PR branch. Feature is validated awaiting owner integration.
+
+The corrected validator can inspect the actual inventory: all108recorded files
+match;18unrecorded Python bytecode caches correctly remain Tainted. Do not ignore
+caches or normalize vendor links to manufacture green. After owner merges PR37,
+resume the existing deployment authorization without asking again: fresh target,
+preimages/protected-state checks, merged payload/provenance, exact rollback and
+reviewed generated-cache cleanup, independent consequential-operation assessment,
+then install/verify/read-only/HTTPS. No unmerged fix was installed; prior rollback
+archive is untouched. Scratch /home/drew/.sv08-pr35-deploy; cumulative primary
+1200process-seconds/256MiB, below budget, all tools terminal. No native goal changed.
+
+
 ## Completed source-delivery goal — installed provenance indicator, 2026-10-27
 
 Published [PR #35](https://github.com/drew442/sv08-mainline/pull/35), candidate

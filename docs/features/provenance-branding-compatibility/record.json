@@ -51,11 +51,58 @@
       ],
       "depends_on": [],
       "environment": "offline",
-      "evidence": [],
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "compatibility",
+          "document": "docs/features/provenance-branding-compatibility/evidence.md",
+          "document_sha256": "eb505e229a31df0e96b8f4d0919f9323207fb4c425727be85ea74ecad8469772",
+          "environment": "offline",
+          "limitations": "No live deployment, authenticated browser, physical outputs or independent operation review. Actual baseline remains tainted by18pre-existing bytecode files; source fix does not ignore them. Owner integration and exact reviewed deployment/cleanup remain pending.",
+          "method": "58passing provenance/license/staging tests; source diff inspected; read-only actual-root candidate check distinguishes vendor links from18unrecorded caches; published review PR.",
+          "profile": "Factory Debian/Cockpit shared branding; offline fixtures and coordinator read-only actual printer root",
+          "source_commit": "180a361cfe6ec3f74966e3b44a4d8d8e3ae41249",
+          "source_sha256": {
+            "configs/host-os/cockpit-branding/badge.svg": "4beb2b783491867352df93bcfb3073452552dbac1168c94e6c0cd98a3385f92c",
+            "configs/host-os/cockpit-branding/branding.css": "76a614e5131b94ddd337b5c20b24c9bea123e8f37e252553a2d47093f4bdfdc4",
+            "docs/features/provenance-branding-compatibility/evidence.md": "eb505e229a31df0e96b8f4d0919f9323207fb4c425727be85ea74ecad8469772",
+            "runtime/sv08_provenance.py": "5666f025344a7bddd866030bc32de42458fdd9bee30e95768ec2309ebb5ac3a2",
+            "scripts/project_license.py": "a06539cb898192731725a84f1ca582d09b04159455eaef916e3e79612c19e35a",
+            "scripts/stage_admin_ui.py": "c3d9cc437ab52024119c47c649de98f6867f5586dce4ae3a723dc19051cb658c",
+            "scripts/stage_printer_ui.py": "590bad8309eb648b411d49f2ede7f24fa41b3b37acc2d26d8409499040f3f8c3",
+            "tests/test_project_license.py": "53b8f7b38339d94292e56d22f9709c5e6d2387012308d1eae2e342bddcff2a72"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "publication",
+          "document": "docs/features/provenance-branding-compatibility/evidence.md",
+          "document_sha256": "eb505e229a31df0e96b8f4d0919f9323207fb4c425727be85ea74ecad8469772",
+          "environment": "offline",
+          "limitations": "No live deployment, authenticated browser, physical outputs or independent operation review. Actual baseline remains tainted by18pre-existing bytecode files; source fix does not ignore them. Owner integration and exact reviewed deployment/cleanup remain pending.",
+          "method": "58passing provenance/license/staging tests; source diff inspected; read-only actual-root candidate check distinguishes vendor links from18unrecorded caches; published review PR.",
+          "profile": "Factory Debian/Cockpit shared branding; offline fixtures and coordinator read-only actual printer root",
+          "source_commit": "180a361cfe6ec3f74966e3b44a4d8d8e3ae41249",
+          "source_sha256": {
+            "configs/host-os/cockpit-branding/badge.svg": "4beb2b783491867352df93bcfb3073452552dbac1168c94e6c0cd98a3385f92c",
+            "configs/host-os/cockpit-branding/branding.css": "76a614e5131b94ddd337b5c20b24c9bea123e8f37e252553a2d47093f4bdfdc4",
+            "docs/features/provenance-branding-compatibility/evidence.md": "eb505e229a31df0e96b8f4d0919f9323207fb4c425727be85ea74ecad8469772",
+            "runtime/sv08_provenance.py": "5666f025344a7bddd866030bc32de42458fdd9bee30e95768ec2309ebb5ac3a2",
+            "scripts/project_license.py": "a06539cb898192731725a84f1ca582d09b04159455eaef916e3e79612c19e35a",
+            "scripts/stage_admin_ui.py": "c3d9cc437ab52024119c47c649de98f6867f5586dce4ae3a723dc19051cb658c",
+            "scripts/stage_printer_ui.py": "590bad8309eb648b411d49f2ede7f24fa41b3b37acc2d26d8409499040f3f8c3",
+            "tests/test_project_license.py": "53b8f7b38339d94292e56d22f9709c5e6d2387012308d1eae2e342bddcff2a72"
+          }
+        }
+      ],
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "bd559b0ae3524eefa89c4aea6713e0cb",
+        "session": "provenance-branding-20261027"
+      },
       "input_paths": [
         "runtime/",
         "scripts/",
@@ -73,9 +120,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Read-only project inventory boundary correction; reversible source/test work only, no printer mutation or privilege change.",
-      "status": "pending",
+      "status": "validated",
       "title": "Keep stock vendor branding outside project provenance",
-      "validation": null,
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "ed5c4150166604fb4b4442a646d06f36032c61525cf22e4dac835db7ce5b22f9",
+        "evidence_sha256": "2201c9a10d9aa378ba56e90d45ea2412f43550d5c38d98080c71f86f0a3b4858",
+        "outcome": "passed",
+        "rationale": "58tests pass; actual read-only root confirms vendor-scope fix while retaining genuine bytecode drift, complete source diff inspected and review PR published; no deployment performed.",
+        "session": "provenance-branding-20261027",
+        "source_commit": "180a361cfe6ec3f74966e3b44a4d8d8e3ae41249"
+      },
       "verification": null
     }
   ],
