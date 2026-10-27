@@ -1,0 +1,68 @@
+{
+  "format_version": 2,
+  "id": "provenance-branding-compatibility",
+  "kind": "feature",
+  "title": "Keep stock vendor branding outside project provenance",
+  "author": "root/coordinator",
+  "created": "2026-10-27",
+  "priority": 2,
+  "proposal": "docs/features/provenance-branding-compatibility/proposal.md",
+  "requirements": [
+    "docs/features/provenance-branding-compatibility/owner-request.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "compatibility",
+      "description": "Stock links excluded, project assets protected; shared validation/staging checks and read-only actual record check",
+      "environment": "offline"
+    },
+    {
+      "id": "publication",
+      "description": "Stable diff, source-bound evidence and published review PR; no printer writes",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Keep stock vendor branding outside project provenance",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "compatibility",
+        "publication"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Read-only project inventory boundary correction; reversible source/test work only, no printer mutation or privilege change.",
+      "hazards": [],
+      "owned_paths": [
+        "runtime/sv08_provenance.py",
+        "tests/test_project_license.py",
+        "docs/features/provenance-branding-compatibility/evidence.md"
+      ],
+      "input_paths": [
+        "runtime/",
+        "scripts/",
+        "tests/",
+        "configs/host-os/cockpit-branding/",
+        "LICENSE",
+        "LICENSING.md"
+      ]
+    }
+  ]
+}

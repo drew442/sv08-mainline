@@ -1,0 +1,5 @@
+# Keep factory vendor branding outside project provenance
+
+The project-source-only validator currently walks every asset in Debian Cockpit branding and refuses stock vendor favicon/logo symlinks. On the actual printer, only project badge.svg and branding.css are recorded; the unchanged vendor links make the check fail. Restrict this external directory to the explicit project-owned branding filenames, preserving strict symlink/path/hash checks for those files and all existing project prefixes. Assert the runtime allowlist agrees with staged branding source assets.
+
+Acceptance: stock vendor links no longer break prepare/validate/status and are not falsely incorporated into project inventory; changing project branding still taints and symlinking it refuses; build/stage contracts pass. Read-only live check may confirm the correction against the existing actual record before any writes. Publish PR for owner integration; no automatic merge or live installation of unmerged code. Preserve previous completed evidence. Cumulative deployment/source allowance1200process-seconds/256MiB, scratch /home/drew/.sv08-pr35-deploy; no images/tools/printer outputs.
