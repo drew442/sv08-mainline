@@ -1,0 +1,72 @@
+{
+  "author": "root/coordinator",
+  "authorization": null,
+  "checks": [
+    {
+      "description": "Exact documents open under ordinary authenticated Cockpit with no elevation/controller mutation; errors/retry/unsaved focus behavior and actual disposable PAM verified.",
+      "environment": "offline",
+      "id": "ordinary-documents"
+    },
+    {
+      "description": "Stable source diff, relevant source/license/staging checks, inspected rendered evidence and published review PR.",
+      "environment": "offline",
+      "id": "publication"
+    }
+  ],
+  "created": "2026-10-27",
+  "decision": null,
+  "format_version": 2,
+  "id": "source-document-access",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/source-document-access/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/source-document-access/owner-request.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "ordinary-documents",
+        "publication"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "ui/",
+        "runtime/",
+        "scripts/",
+        "configs/",
+        "tests/",
+        "LICENSE",
+        "LICENSING.md"
+      ],
+      "owned_paths": [
+        "ui/host/source.js",
+        "ui/host/index.html",
+        "tests/source_policy_browser.mjs",
+        "tests/test_source_policy_ui.py",
+        "tests/cockpit_composed_browser.mjs",
+        "docs/features/source-document-access/evidence.md"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible fixed ordinary-file reader and local document links; no root/server auth changes, hardware/configuration/service operation or consequential deployment in this source task.",
+      "status": "pending",
+      "title": "Restore ordinary access to source and license documents",
+      "validation": null,
+      "verification": null
+    }
+  ],
+  "title": "Restore ordinary access to source and license documents"
+}
