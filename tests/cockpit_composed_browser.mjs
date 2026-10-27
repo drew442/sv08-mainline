@@ -7,7 +7,7 @@ import {request as httpsRequest} from 'node:https';import {request as httpReques
 import {uploadCases} from './cockpit_upload_cases.mjs';
 import fs from 'node:fs';import {execFileSync} from 'node:child_process';import {startBrowser,assertBrowserZoom,finiteStatusDiagnostic} from './browser_runtime.mjs';import {setTimeout as delay} from 'node:timers/promises';import assert from 'node:assert/strict';
 const [W,chrome,mode='installed'] = process.argv.slice(2);
-assert(['installed','cancellation','hardware'].includes(mode));
+assert(['installed','cancellation','hardware','source-documents'].includes(mode));
 const baseURL=process.env.SV08_COCKPIT_URL || 'https://127.0.0.1:19091';
 assert.match(baseURL,/^https?:\/\/127\.0\.0\.1:\d+$/);
 const zoom=mode==='installed'?2:1;
@@ -18,7 +18,7 @@ const creds=JSON.parse(fs.readFileSync(W+'/credentials.json'));const browser=sta
 try{
  const port=await browser.ready;
  const tabs=await(await fetch(`http://127.0.0.1:${port}/json/list`)).json();socket=new WebSocket(tabs.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise((r,j)=>{socket.onopen=r;socket.onerror=j});
- let id=0;const pending=new Map(), browserEvents=[];function send(method,params={}){return new Promise((resolve,reject)=>{const key=++id;const timer=setTimeout(()=>reject(Error('CDP timeout '+method)),60000);pending.set(key,{resolve,reject,timer});socket.send(JSON.stringify({id:key,method,params}))})}
+ let id=0;const pending=new Map(), browserEvents=[];function send(method,params={},sessionId){return new Promise((resolve,reject)=>{const key=++id;const timer=setTimeout(()=>reject(Error('CDP timeout '+method)),60000);pending.set(key,{resolve,reject,timer});socket.send(JSON.stringify({id:key,method,params,...(sessionId?{sessionId}:{})}))})}
  socket.onmessage=({data})=>{const e=JSON.parse(data);if(['Runtime.consoleAPICalled','Runtime.exceptionThrown','Log.entryAdded'].includes(e.method))browserEvents.push(e);if(e.id){const p=pending.get(e.id);if(p){clearTimeout(p.timer);pending.delete(e.id);e.error?p.reject(Error('CDP error')):p.resolve(e.result)}}};
  const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error('Browser evaluation failed: '+r.exceptionDetails.text);return r.result.value};
  const until=async expression=>{
@@ -122,6 +122,32 @@ try{
  assert.equal(await login('fixtureadmin','deliberately-invalid'),401);results.bad_login_rejected=true;
  assert.equal(await login('fixtureordinary',creds.fixtureordinary),200);await loadShell();
  assert.equal(await uid(),'access-denied');
+ if(mode==='source-documents') {
+  assert.equal(await ev(`cockpit.spawn(['id','-un']).then(value=>value.trim())`),'fixtureordinary');
+  await ev(`window.sourceFileCalls=[];window.originalSourceFile=cockpit.file;cockpit.file=(path,options)=>{window.sourceFileCalls.push({path,elevation:options?.superuser??null});return window.originalSourceFile.call(cockpit,path,options);};document.querySelector('#network-ssid').value='Unfinished source check';`);
+  // Reproduce HTTP authorization loss without changing server auth or the
+  // already authenticated ordinary bridge used by the running application.
+  await send('Network.clearBrowserCookies');
+  assert.equal(await ev(`fetch('project-source.json',{credentials:'same-origin'}).then(response=>response.status)`),401);
+  await click('#source-open');
+  await until(`document.querySelector('#source-status').textContent.includes('unqualified')`);
+  const expected=JSON.parse(fs.readFileSync(W+'/source-documents.json'));
+  for(const [element,name] of [['source-license','project-LICENSE.txt'],['source-notice','project-NOTICE.txt'],['source-provenance','project-source.json']]) {
+   const href=await ev(`document.querySelector('#${element}').href`);assert(href.startsWith('blob:'));
+   const targets=new Set((await send('Target.getTargets')).targetInfos.map(t=>t.targetId));
+   await ev(`document.querySelector('#${element}').focus()`);await key('Enter');
+   let target;for(let i=0;i<100;i++){target=(await send('Target.getTargets')).targetInfos.find(t=>!targets.has(t.targetId)&&t.type==='page'&&t.url===href);if(target)break;await delay(50);}assert(target,'New document tab');
+   const {sessionId}=await send('Target.attachToTarget',{targetId:target.targetId,flatten:true});
+   let body;for(let i=0;i<100;i++){const response=await send('Runtime.evaluate',{expression:'document.readyState==="complete"?document.body.textContent:null',returnByValue:true},sessionId);body=response.result?.value;if(body!==null&&body!==undefined)break;await delay(50);}
+   assert.equal(body,expected[name]);await send('Target.closeTarget',{targetId:target.targetId});
+  }
+  assert.equal(await ev('sv08Session.elevated'),false);
+  assert.equal(await ev(`window.sourceFileCalls.length`),3);
+  assert.equal(await ev(`window.sourceFileCalls.every(call=>call.elevation===null && ['/usr/share/cockpit/sv08-host/project-LICENSE.txt','/usr/share/cockpit/sv08-host/project-NOTICE.txt','/usr/share/cockpit/sv08-host/project-source.json'].includes(call.path))`),true);
+  await capture('ordinary-source-documents');await key('Escape');
+  assert.equal(await ev(`document.querySelector('#network-ssid').value`),'Unfinished source check');
+  results.ordinary_fixed_file_reads=true;results.http_authorization_loss_reproduced=true;results.all_three_new_document_tabs_exact=true;results.no_administrator_elevation=true;results.unsaved_input_preserved=true;
+ } else {
  if(mode==='installed') {
   const manifest=JSON.parse(execFileSync('python3',[new URL('./test_pr9_follow_up.py',import.meta.url).pathname,'--manifest'],{encoding:'utf8',env:{...process.env,PYTHONDONTWRITEBYTECODE:'1'}}));
   const installedRuntime=await ev(`cockpit.spawn(['/usr/bin/find','/usr/lib/sv08','-maxdepth','1','-type','f','-name','sv08_*.py']).then(x=>x.trim().split('\\n'))`);
@@ -374,6 +400,7 @@ try{
  for(const value of forbidden)assert(!JSON.stringify(browserEvents).includes(value),'Credential found in browser console/error');
  for(const value of forbidden)assert(!JSON.stringify(results).includes(value),'Credential found in report');
  results.secret_scan={guest_journal:true,browser_console_and_errors:true,private_log_and_evidence_files:scanned.length,violations:0};
+ }
  }
  results.passed=true;fs.writeFileSync(W+'/composed-result.json',JSON.stringify(results,null,2)+'\n');console.log('Actual Cockpit authentication, helper/session and transition tests PASS');
 }finally{socket?.close();await browser.stop();}
