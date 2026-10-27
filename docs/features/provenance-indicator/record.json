@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "081b18478c25367a22cf18b0ab93977270284f17b1b391a9921f3f6b70923a2d",
-    "rationale": "Owner requests simple provenance intact/tainted indicator with agents; read-only shared validator and bounded UI delivery.",
+    "proposal_sha256": "5a16f2c68f76c980256ef52eded96aba390bae789ebc590a6b9a0f9fb9ae24b9",
+    "rationale": "Same requested indicator; full local manifest covers root-only files, so use existing finite read channel without admin bridge/sudoers change. Prior claim/source preserved via recorded block/resume; cumulative allowance retained.",
     "reference": "docs/features/provenance-indicator/owner-request.md",
     "reference_sha256": "bd82fde8b835bc49327d24b10032e6642ba36b47b5c3feef590041250f8e8908",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
       "docs/features/provenance-indicator/owner-request.md": "bd82fde8b835bc49327d24b10032e6642ba36b47b5c3feef590041250f8e8908"
     },
-    "scope_sha256": "d8b56f3637b1bb1c471002ca9deaaf305aa19a569a85a5c620771a2d0ccb8f09",
+    "scope_sha256": "038208fac4f22dbc3643c4c9479bca572f3d9220e902dc5c0b0ccd281fcc27bd",
     "session": "provenance-20261027",
-    "source_commit": "1526ed569202b8848c8744602610707021aba142"
+    "source_commit": "6902b81d326cc600ccdc4f892f36f02a0ae7dfb1"
   },
   "checks": [
     {
