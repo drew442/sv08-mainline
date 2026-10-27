@@ -1,60 +1,61 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "276ed38c6361d8a7fca1eddfbf35569dd964da63316df31ab0c186dcf8a6dd52",
+    "rationale": "Necessary reversible source correction discovered during requested deployment; preserve stock vendor assets and project-only scope, publish tested PR with no unmerged live changes.",
+    "reference": "docs/features/provenance-branding-compatibility/owner-request.md",
+    "reference_sha256": "79db1a4290485f4b6f63a5cfed78da48988ff38b23bd951758fff0a9faeb94f9",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/features/provenance-branding-compatibility/owner-request.md": "79db1a4290485f4b6f63a5cfed78da48988ff38b23bd951758fff0a9faeb94f9"
+    },
+    "scope_sha256": "8a05d55c1d875630f41c74dfd8f5b8006f67d72a9fb88fd1087174f329f7ff5d",
+    "session": "provenance-branding-20261027",
+    "source_commit": "bfe8ddaf8c2abc0aaf366a094bd7e1dde428daba"
+  },
+  "checks": [
+    {
+      "description": "Stock links excluded, project assets protected; shared validation/staging checks and read-only actual record check",
+      "environment": "offline",
+      "id": "compatibility"
+    },
+    {
+      "description": "Stable diff, source-bound evidence and published review PR; no printer writes",
+      "environment": "offline",
+      "id": "publication"
+    }
+  ],
+  "created": "2026-10-27",
+  "decision": null,
   "format_version": 2,
   "id": "provenance-branding-compatibility",
   "kind": "feature",
-  "title": "Keep stock vendor branding outside project provenance",
-  "author": "root/coordinator",
-  "created": "2026-10-27",
+  "owner_decision_required": false,
   "priority": 2,
   "proposal": "docs/features/provenance-branding-compatibility/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/provenance-branding-compatibility/owner-request.md",
     "docs/development/public-source-releases.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "compatibility",
-      "description": "Stock links excluded, project assets protected; shared validation/staging checks and read-only actual record check",
-      "environment": "offline"
-    },
-    {
-      "id": "publication",
-      "description": "Stable diff, source-bound evidence and published review PR; no printer writes",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Keep stock vendor branding outside project provenance",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "compatibility",
         "publication"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Read-only project inventory boundary correction; reversible source/test work only, no printer mutation or privilege change.",
       "hazards": [],
-      "owned_paths": [
-        "runtime/sv08_provenance.py",
-        "tests/test_project_license.py",
-        "docs/features/provenance-branding-compatibility/evidence.md"
-      ],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
       "input_paths": [
         "runtime/",
         "scripts/",
@@ -62,7 +63,21 @@
         "configs/host-os/cockpit-branding/",
         "LICENSE",
         "LICENSING.md"
-      ]
+      ],
+      "owned_paths": [
+        "runtime/sv08_provenance.py",
+        "tests/test_project_license.py",
+        "docs/features/provenance-branding-compatibility/evidence.md"
+      ],
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Read-only project inventory boundary correction; reversible source/test work only, no printer mutation or privilege change.",
+      "status": "pending",
+      "title": "Keep stock vendor branding outside project provenance",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Keep stock vendor branding outside project provenance"
 }
