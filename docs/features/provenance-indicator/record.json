@@ -151,7 +151,7 @@
       "resumption": "Use existing provenance/status finite read channel instead of unusable ordinary-file inventory check; same user outcome and cumulative allowance, applied source retained.",
       "review_policy": "self",
       "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
-      "status": "validated",
+      "status": "done",
       "title": "Show installed project provenance integrity",
       "validation": {
         "actor": "root/coordinator",

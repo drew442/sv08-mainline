@@ -12,12 +12,14 @@ and coordinator inspected rendered evidence. See [evidence](../docs/features/pro
 on the PR branch. New runtime cases join existing package/release CI selection.
 
 Named researcher default and skilled implementer requested medium with task-scoped
-UX skill; no runtime-route measurement or savings claim. Reviewed candidate is
-validated awaiting owner integration. Local-record consistency excludes mutable
+UX skill; no runtime-route measurement or savings claim. Owner merged PR #35 at bbfc48db0e1f15b9ae7e3186ce29c7e39e4bf11d;
+local main fast-forwarded and task completed with unchanged reviewed source/evidence.
+All four PR CI checks passed. Local-record consistency excludes mutable
 configuration and is not publisher/full-OS/hardware qualification. No merge,
 deployment, printer access, installs or image rebuild. Scratch approximately8MiB;
 all owned test processes terminal, failed attempts preserved, allowance retained.
-Native goal completed at published review PR; feature integration stays pending.
+Native goal completed at published review PR; owner integration is now recorded.
+No printer deployment occurred in this integration follow-up.
 
 ## Completed source delivery — ordinary source/license access, 2026-10-27
 
