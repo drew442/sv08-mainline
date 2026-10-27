@@ -316,6 +316,33 @@ class ProvenanceTests(unittest.TestCase):
     stage = ProjectLicenseTests.stage
     snapshot = ProjectLicenseTests.snapshot
 
+    def test_project_branding_allowlist_matches_staged_assets(self):
+        assets = license.REPO/'configs/host-os/cockpit-branding'
+        self.assertEqual(set(provenance.BRANDING_FILES), {p.name for p in assets.iterdir() if p.is_file()})
+
+    def test_stock_vendor_branding_links_are_outside_project_scope(self):
+        branding = self.root/'usr/share/cockpit/branding/debian'
+        branding.mkdir(parents=True)
+        vendor = self.root/'usr/share/pixmaps/debian-logo.png'
+        vendor.parent.mkdir(parents=True); vendor.write_bytes(b'vendor image')
+        for name in ('favicon.ico', 'logo.png'):
+            (branding/name).symlink_to('../../../pixmaps/debian-logo.png')
+        for name in provenance.BRANDING_FILES:
+            (branding/name).write_bytes(('project '+name).encode())
+        record = self.stage()
+        self.assertEqual(provenance.status(self.root)['state'], 'intact')
+        for name in ('favicon.ico', 'logo.png'):
+            self.assertNotIn(str((branding/name).relative_to(self.root)), record['staged_files'])
+        vendor.write_bytes(b'vendor package changed')
+        self.assertEqual(provenance.status(self.root)['state'], 'intact')
+        asset = branding/'branding.css'; original = asset.read_bytes()
+        asset.write_bytes(b'changed project branding')
+        self.assertEqual(provenance.status(self.root)['state'], 'tainted')
+        asset.write_bytes(original)
+        self.assertEqual(provenance.status(self.root)['state'], 'intact')
+        asset.unlink(); asset.symlink_to('../../../pixmaps/debian-logo.png')
+        self.assertEqual(provenance.status(self.root)['state'], 'tainted')
+
     def test_shared_validator_and_clean_configuration_exclusion(self):
         self.assertIs(license.validate, provenance.validate)
         record = self.stage()
