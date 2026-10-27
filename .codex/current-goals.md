@@ -1,16 +1,23 @@
 # Current delivery goals
 
-## Active goal — installed provenance indicator, 2026-10-27
+## Completed source-delivery goal — installed provenance indicator, 2026-10-27
 
-Owner requests a simple intact/tainted build-provenance indicator using agents.
-Native goal is active; source task `provenance-indicator:implement` owns
-feature/provenance-indicator at3d71bf4. Read-only research found the existing
-project validator; skilled medium implementer owns shared runtime validation,
-ordinary on-demand UI status and focused tests. Primary allowance1200process-seconds/
-1GiB; no image rebuild, live printer or auth-policy change. [Scope](../docs/features/provenance-indicator/proposal.md).
-Intact means local recorded project consistency, separate from source/publisher/
-whole-image qualification. Finish with tested, rendered review PR, no merge/deploy.
+Published [PR #35](https://github.com/drew442/sv08-mainline/pull/35), candidate
+0df67e01d9c74cc4189943887b45580b7b5a0688. Source & license shows icon/labeled
+green Intact, red Tainted or neutral Checking/Unavailable using a shared runtime/
+build validator through the existing finite read channel.71distinct checks pass;
+actual composed browser verifies genuine clean/drift/missing states, stale/retry/
+errors, keyboard/narrow layout and unchanged configuration. Skilled implementer
+and coordinator inspected rendered evidence. See [evidence](../docs/features/provenance-indicator/evidence.md)
+on the PR branch. New runtime cases join existing package/release CI selection.
 
+Named researcher default and skilled implementer requested medium with task-scoped
+UX skill; no runtime-route measurement or savings claim. Reviewed candidate is
+validated awaiting owner integration. Local-record consistency excludes mutable
+configuration and is not publisher/full-OS/hardware qualification. No merge,
+deployment, printer access, installs or image rebuild. Scratch approximately8MiB;
+all owned test processes terminal, failed attempts preserved, allowance retained.
+Native goal completed at published review PR; feature integration stays pending.
 
 ## Completed source delivery — ordinary source/license access, 2026-10-27
 
