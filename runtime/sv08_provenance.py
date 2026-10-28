@@ -23,6 +23,10 @@ NOTICE_PATHS = {base+name for base in (DOC,*PACKAGES) for name in GENERATED}
 # The owner public key is an image build input, not project corresponding source.
 NON_CODE_BUILD_INPUTS = {'usr/lib/sv08/seed/authorized_keys':'owner-public-key'}
 NON_CODE_INPUT_LIMIT = 65536
+# Only these branding assets belong to this project. Other files in Debian's
+# shared branding directory (including its favicon/logo symlinks) belong to the
+# vendor package, outside the project-source-only inventory.
+BRANDING_FILES = ('badge.svg', 'branding.css')
 
 
 def digest(raw):
@@ -90,9 +94,10 @@ def installed_files(root, overrides=None, replaced=()):
         if path.is_file(): result[name] = path.read_bytes()
     branding = root/'usr/share/cockpit/branding/debian'
     if branding.is_symlink(): raise ValueError('Symlink in project branding')
-    for path in walk_files(branding, recursive=False):
-        if path.is_file():
-            name = path.relative_to(root).as_posix(); result[name] = checked(root,name).read_bytes()
+    for filename in BRANDING_FILES:
+        name = (branding / filename).relative_to(root).as_posix()
+        path = checked(root, name)
+        if path.is_file(): result[name] = path.read_bytes()
     result.update(overrides or {})
     return {n: raw for n, raw in result.items() if n not in NOTICE_PATHS}
 
