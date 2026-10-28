@@ -120,7 +120,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Read-only project inventory boundary correction; reversible source/test work only, no printer mutation or privilege change.",
-      "status": "validated",
+      "status": "done",
       "title": "Keep stock vendor branding outside project provenance",
       "validation": {
         "actor": "root/coordinator",

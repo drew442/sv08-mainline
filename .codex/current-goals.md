@@ -1,26 +1,27 @@
 # Current delivery goals
 
-## Pending deployment — PR34/35 and branding compatibility, 2026-10-27
+## Completed deployment — PR34/35/37, 2026-10-28
 
-Owner explicitly requested deployment after PR35 merge. Read-only printer preflight
-reached192.168.1.141, healthy immutable slotB/rootRO, printer services inactive with
-original masks. No live software/configuration/service changes were performed.
-Stock Debian/Cockpit favicon/logo symlinks incorrectly block project provenance.
-Prepared [PR #37](https://github.com/drew442/sv08-mainline/pull/37), candidate
-180a361cfe6ec3f74966e3b44a4d8d8e3ae41249,58passing tests and read-only actual-root
-check. [Evidence/handoff](../docs/features/provenance-branding-compatibility/evidence.md)
-on the PR branch. Feature is validated awaiting owner integration.
+Owner merged PR37; main fast-forwarded to ffde7e19698ea76f15291ef2efe97ad061bd0459.
+Feature task integrated with unchanged reviewed source/evidence. Exact merged
+13-file payload deployed after independent named consequential-operation assessment,
+verified hashes and successful dry run.7files replaced,18exact backed-up generated
+cache preimages removed.109project inventory entries verify; actual ordinary
+provenance check Intact, three public documents readable, all seven finite status
+areas pass. Hardware remains13/24devices/26definitions/1source/current+previous.
 
-The corrected validator can inspect the actual inventory: all108recorded files
-match;18unrecorded Python bytecode caches correctly remain Tainted. Do not ignore
-caches or normalize vendor links to manufacture green. After owner merges PR37,
-resume the existing deployment authorization without asking again: fresh target,
-preimages/protected-state checks, merged payload/provenance, exact rollback and
-reviewed generated-cache cleanup, independent consequential-operation assessment,
-then install/verify/read-only/HTTPS. No unmerged fix was installed; prior rollback
-archive is untouched. Scratch /home/drew/.sv08-pr35-deploy; cumulative primary
-1200process-seconds/256MiB, below budget, all tools terminal. No native goal changed.
+RootRO,15protected paths/boot/vendor links/permanent CA unchanged. Cockpit/socket
+active after CA-verified FQDN/IP HTTPS200; anonymous login401. Feedtimer restored;
+printer/Moonraker/nginx/observer retain original inactive states/masks. No physical
+outputs, firmware, reboot or configuration publication. Existing feed failure is
+unchanged. No authenticated owner-browser rendering or overall release/hardware
+qualification claimed; development/source-unqualified scope remains explicit.
 
+[Deployment receipt and evidence](../docs/features/provenance-branding-compatibility/deployment-20261028.md).
+Rollback retained under /data/sv08/system/ui-deployments/20261028-pr35-37-ffde7e1;
+prior PR33 rollback untouched. Only assigned /tmp uploads removed. Primary allowance
+retained across attempts/resume; conservative charge1000seconds/16MiB below1200/256MiB.
+No native goal created/replaced; earlier source-delivery goal remains complete.
 
 ## Completed source-delivery goal — installed provenance indicator, 2026-10-27
 
