@@ -80,7 +80,7 @@ try {
  assert.equal(await evaluate('document.querySelector("#authorization-password").value'),'');
  assert.equal(await evaluate('document.querySelector("#authorization-prompt").textContent'),'');
  assert.equal(await evaluate(`cockpit.spawn(['id','-u'],{superuser:'require'}).then(value=>value.trim())`),'0');
- const helper=await evaluate(`cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin.py'],{superuser:'require',err:'message'}).input(JSON.stringify({action:'status'})).then(raw=>({ok:JSON.parse(raw).ok}),()=>({ok:false}))`);
+ const helper=await evaluate(`cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin.py'],{superuser:'require',err:'message'}).input(JSON.stringify({method:'status'})).then(raw=>({ok:JSON.parse(raw).ok}),()=>({ok:false}))`);
  assert.equal(helper.ok,true,'Real elevated host helper failed');
  await evaluate('sv08Navigation.go("identity")');await until('!document.querySelector("#identity").hidden');
  await capture('cockpit-owner-identity.png');
