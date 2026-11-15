@@ -414,7 +414,7 @@ def assemble(a):
         (root/'run/debs').mkdir()
         mount(['mount','--bind',intake,root/'run/debs'],root/'run/debs')
         run(['mount','-o','remount,bind,ro',root/'run/debs'])
-        env=dict(os.environ,DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
+        env=dict(os.environ,TMPDIR='/tmp',DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
         with (work/'dpkg.log').open('w') as log:
             run(['chroot',root,'dpkg','--force-depends','--unpack',*['/run/debs/'+p['sha256']+'.deb' for p in packages]],env=env,stdout=log,stderr=subprocess.STDOUT)
             write(root/'etc/initramfs-tools/update-initramfs.conf','update_initramfs=no\nbackup_initramfs=no\n')
@@ -631,7 +631,7 @@ def derive(a):
             if staged.stat().st_size!=package['bytes'] or sha(staged)!=package['sha256']:raise ValueError('Changed staged board package')
         write(root/'etc/initramfs-tools/update-initramfs.conf','update_initramfs=no\nbackup_initramfs=no\n')
         write(root/'usr/sbin/policy-rc.d','#!/bin/sh\nexit 101\n',0o755)
-        env=dict(os.environ,DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
+        env=dict(os.environ,TMPDIR='/tmp',DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
         with (work/'dpkg.log').open('w') as log:
             run(['chroot',root,'dpkg','--force-confold','--install',*['/run/debs/'+p['filename'] for p in profile['packages']]],env=env,stdout=log,stderr=subprocess.STDOUT)
         regulatory=select_upstream_regdb(root)

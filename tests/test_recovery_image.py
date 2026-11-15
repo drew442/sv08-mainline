@@ -325,7 +325,11 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         lock=self.repo/'lock.json';lock.write_text(json.dumps(dict(packages=[dict(
             package='fixture',version='1',architecture='arm64',sha256=digest,bytes=len(archive))])))
         work=self.repo/'build/assembled'
+        maintainer_calls=[]
         def run(args,**kw):
+            if 'dpkg' in args and any(flag in args for flag in ('--unpack','--configure')):
+                self.assertEqual(kw['env']['TMPDIR'],'/tmp')
+                maintainer_calls.append(args)
             if args[:2]==['dpkg-deb','-f']:
                 return SimpleNamespace(stdout='Package: fixture\nVersion: 1\nArchitecture: arm64\n')
             if args[:2]==['dpkg-deb','--extract']:
@@ -342,10 +346,12 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
             handler=work/'rootfs/usr/lib/sv08/sv08_rauc_bootloader.py'
             self.assertEqual(handler.stat().st_mode & 0o777,0o755)
             self.assertEqual(handler.read_bytes(),(self.repo/'runtime/sv08_rauc_bootloader.py').read_bytes())
-        with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+        with patch.dict(m.os.environ,TMPDIR='/host-only/nonexistent/tmp'), \
+             patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
              patch.object(m,'configure_recovery_password'),patch.object(m,'installed_provider_inputs',return_value={}), \
              patch.object(m,'stage_recovery_units',side_effect=late_units),patch.object(stage_admin_ui,'stage',side_effect=stage_checked):
             m.assemble(SimpleNamespace(work=work,intake=intake,lock=lock,execute=True,release_manifest=self.manifest))
+        self.assertEqual(len(maintainer_calls),2)
         record=self.public(work/'rootfs')
         self.assertIn('usr/lib/systemd/system/sv08-recovery-display.service',record['staged_files'])
         receipt=json.loads((work/'assembly.json').read_text())
@@ -381,7 +387,11 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         notices,_=self.license.prepare(root,repo=self.repo);self.license.publish(root,notices)
         packages=self.repo/'packages';packages.mkdir()
         profile={'packages':[],'kernel_release':m.KERNEL}
+        maintainer_calls=[]
         def run(args,**kw):
+            if 'dpkg' in args and '--install' in args:
+                self.assertEqual(kw['env']['TMPDIR'],'/tmp')
+                maintainer_calls.append(args)
             if args[:2]==['cp','-a']:shutil.copytree(args[2],args[3],symlinks=True)
             return SimpleNamespace(stdout='',stderr='')
         for inherited in (False,True):
@@ -393,11 +403,13 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
                 before=m.inventory(source);work=self.repo/('build/derived-'+str(inherited))
                 def final_board(derived,profile):
                     (derived/'usr/lib/sv08/late.py').write_bytes((self.repo/'configs/late.py').read_bytes())
-                with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+                with patch.dict(m.os.environ,TMPDIR='/host-only/nonexistent/tmp'), \
+                     patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
                      patch.object(m,'board_profile',return_value=profile), \
                      patch.object(m,'normalize_board_module_directory',side_effect=final_board),patch.object(m,'check_board_artifacts'):
                     m.derive(SimpleNamespace(assembly=source,work=work,packages=packages,board_profile='fixture',
                         execute=True,release_manifest=None if inherited else self.manifest))
+                self.assertEqual(len(maintainer_calls),1+int(inherited))
                 self.assertEqual(before,m.inventory(source))
                 final=self.public(work/'rootfs');self.assertIn('usr/lib/sv08/late.py',final['staged_files'])
                 record=json.loads((work/'assembly.json').read_text())
