@@ -1,5 +1,19 @@
 # Current delivery goals
 
+## Native ARM host availability verified — 2026-11-15
+
+Owner authorized root@a733-host.drewnet.online. Actual ARM64/KVM initialization
+passed with the existing two-vCPU/1024MiB profile, QMP query-kvm enabled/present,
+clean exit.8CPUs,11.6GiB RAM,209GiB free guest filesystem and private namespaces
+verified. [Preflight evidence](../docs/features/recovery-printer-stack/arm64-host-preflight-20261115.md).
+Native host-availability prerequisite is cleared. Runner preparation must account
+for noexec/nodev guest storage,64MiB/tmp and absent image-building/browser tools;
+existing build hosts can provide those stages. No host installs/configuration or
+printer operation. Existing native recovery goal status was not changed. Resume
+its unchanged-limit isolated validator probe and full acceptance journey under
+existing project records when that goal resumes. Historical failure remains intact.
+
+
 ## Completed deployment — PR34/35/37, 2026-10-28
 
 Owner merged PR37; main fast-forwarded to ffde7e19698ea76f15291ef2efe97ad061bd0459.
