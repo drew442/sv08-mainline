@@ -1,0 +1,169 @@
+{
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "5a16f2c68f76c980256ef52eded96aba390bae789ebc590a6b9a0f9fb9ae24b9",
+    "rationale": "Same requested indicator; full local manifest covers root-only files, so use existing finite read channel without admin bridge/sudoers change. Prior claim/source preserved via recorded block/resume; cumulative allowance retained.",
+    "reference": "docs/features/provenance-indicator/owner-request.md",
+    "reference_sha256": "bd82fde8b835bc49327d24b10032e6642ba36b47b5c3feef590041250f8e8908",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/development/public-source-releases.md": "96e0cbc423dc6e20fd2954baaaabc1e44a2cd2da6528a44f443d3166cdb024b1",
+      "docs/features/provenance-indicator/owner-request.md": "bd82fde8b835bc49327d24b10032e6642ba36b47b5c3feef590041250f8e8908"
+    },
+    "scope_sha256": "038208fac4f22dbc3643c4c9479bca572f3d9220e902dc5c0b0ccd281fcc27bd",
+    "session": "provenance-20261027",
+    "source_commit": "6902b81d326cc600ccdc4f892f36f02a0ae7dfb1"
+  },
+  "checks": [
+    {
+      "description": "Runtime/build parity, change/error detection and normal mutable configuration exclusion",
+      "environment": "offline",
+      "id": "integrity"
+    },
+    {
+      "description": "Rendered browser states/retry, ordinary reads, regressions and published PR",
+      "environment": "offline",
+      "id": "journey"
+    }
+  ],
+  "created": "2026-10-27",
+  "decision": null,
+  "format_version": 2,
+  "id": "provenance-indicator",
+  "kind": "feature",
+  "owner_decision_required": false,
+  "priority": 2,
+  "proposal": "docs/features/provenance-indicator/proposal.md",
+  "requirement_rechecks": [],
+  "requirements": [
+    "docs/features/provenance-indicator/owner-request.md",
+    "docs/development/public-source-releases.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "tasks": [
+    {
+      "blocker": null,
+      "checks": [
+        "integrity",
+        "journey"
+      ],
+      "depends_on": [],
+      "environment": "offline",
+      "evidence": [
+        {
+          "board_revision": null,
+          "check": "integrity",
+          "document": "docs/features/provenance-indicator/evidence.md",
+          "document_sha256": "fabe8edb7fa932f6c338b792598951e5a6ba753cf59fd0ce100357cf742a3787",
+          "environment": "offline",
+          "limitations": "Fixture transport, not installed Cockpit/PAM/TLS or H616 performance/hardware. Local recorded project consistency, not malicious-tamper/publisher/whole-image attestation. No deployment. Self-validation.",
+          "method": "71unit/regression checks, real fixture-root isolated verifier and finite view; browser states/retry/errors/keyboard/narrow/no mutation; actual rendered assessment, stable diff inspected and published review PR.",
+          "profile": "Ordinary Cockpit session; composed panel and isolated fixture-root Python verifier",
+          "source_commit": "0df67e01d9c74cc4189943887b45580b7b5a0688",
+          "source_sha256": {
+            "docs/features/provenance-indicator/evidence.md": "fabe8edb7fa932f6c338b792598951e5a6ba753cf59fd0ce100357cf742a3787",
+            "runtime/sv08_provenance.py": "ffd7e6bfaf914baec25a9724cf354d657446dcd3738fac5f7e07256672228c20",
+            "runtime/sv08_view.py": "c0aa6156d386c9455fd271e23c3004b9c5dafac9ea62cf8ec2987f284a3b95b1",
+            "scripts/check_package_release.py": "098242da6ef7a1e9769cb1fce1978efb0432239bc52266a0317a95e36d98e093",
+            "scripts/project_license.py": "a06539cb898192731725a84f1ca582d09b04159455eaef916e3e79612c19e35a",
+            "scripts/stage_admin_ui.py": "c3d9cc437ab52024119c47c649de98f6867f5586dce4ae3a723dc19051cb658c",
+            "scripts/stage_printer_ui.py": "590bad8309eb648b411d49f2ede7f24fa41b3b37acc2d26d8409499040f3f8c3",
+            "tests/browser_runtime.mjs": "4c99810e215379e271ebf77147d9c7069b2a494578d3fa3b38614316b33dc163",
+            "tests/source_policy_browser.mjs": "299c76675c44eed8dcb2c061fea1ba795fe93bc55fc7c279b750c04641cd7463",
+            "tests/test_config_view.py": "3e3ab10467bf83562c0a0b5f374c8eb80b972c7ab2ea11d3df03843f56a07752",
+            "tests/test_project_license.py": "a071ab9d69f477e01a8928e049335f0a554ed28b7f756c896b91c853c2b741fe",
+            "tests/test_source_policy_ui.py": "16037b2aa51f89c39c19f94b152101fcfa863e14768ea35a8ffc43833a3841d9",
+            "tests/test_stage_admin_ui.py": "7d354813c818a429193333afdf04e31716875902be8c94671556e6c796cb1987",
+            "tests/test_stage_printer_ui.py": "9f1c5a7fec8082687afc37e0461979c5d8cb2bdfcf18bbc9d7020951b48f86eb",
+            "ui/host/index.html": "009f18713f8203998f43966fe8ac8dc3ca89695faf1b7cbc21b9ff157d0e3ba6",
+            "ui/host/source.js": "c3c4d7c82b4bfe6eba659aef10b2129e14cfc9fc0bebe9b361f69ce7d0c09365",
+            "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521"
+          }
+        },
+        {
+          "board_revision": null,
+          "check": "journey",
+          "document": "docs/features/provenance-indicator/evidence.md",
+          "document_sha256": "fabe8edb7fa932f6c338b792598951e5a6ba753cf59fd0ce100357cf742a3787",
+          "environment": "offline",
+          "limitations": "Fixture transport, not installed Cockpit/PAM/TLS or H616 performance/hardware. Local recorded project consistency, not malicious-tamper/publisher/whole-image attestation. No deployment. Self-validation.",
+          "method": "71unit/regression checks, real fixture-root isolated verifier and finite view; browser states/retry/errors/keyboard/narrow/no mutation; actual rendered assessment, stable diff inspected and published review PR.",
+          "profile": "Ordinary Cockpit session; composed panel and isolated fixture-root Python verifier",
+          "source_commit": "0df67e01d9c74cc4189943887b45580b7b5a0688",
+          "source_sha256": {
+            "docs/features/provenance-indicator/evidence.md": "fabe8edb7fa932f6c338b792598951e5a6ba753cf59fd0ce100357cf742a3787",
+            "runtime/sv08_provenance.py": "ffd7e6bfaf914baec25a9724cf354d657446dcd3738fac5f7e07256672228c20",
+            "runtime/sv08_view.py": "c0aa6156d386c9455fd271e23c3004b9c5dafac9ea62cf8ec2987f284a3b95b1",
+            "scripts/check_package_release.py": "098242da6ef7a1e9769cb1fce1978efb0432239bc52266a0317a95e36d98e093",
+            "scripts/project_license.py": "a06539cb898192731725a84f1ca582d09b04159455eaef916e3e79612c19e35a",
+            "scripts/stage_admin_ui.py": "c3d9cc437ab52024119c47c649de98f6867f5586dce4ae3a723dc19051cb658c",
+            "scripts/stage_printer_ui.py": "590bad8309eb648b411d49f2ede7f24fa41b3b37acc2d26d8409499040f3f8c3",
+            "tests/browser_runtime.mjs": "4c99810e215379e271ebf77147d9c7069b2a494578d3fa3b38614316b33dc163",
+            "tests/source_policy_browser.mjs": "299c76675c44eed8dcb2c061fea1ba795fe93bc55fc7c279b750c04641cd7463",
+            "tests/test_config_view.py": "3e3ab10467bf83562c0a0b5f374c8eb80b972c7ab2ea11d3df03843f56a07752",
+            "tests/test_project_license.py": "a071ab9d69f477e01a8928e049335f0a554ed28b7f756c896b91c853c2b741fe",
+            "tests/test_source_policy_ui.py": "16037b2aa51f89c39c19f94b152101fcfa863e14768ea35a8ffc43833a3841d9",
+            "tests/test_stage_admin_ui.py": "7d354813c818a429193333afdf04e31716875902be8c94671556e6c796cb1987",
+            "tests/test_stage_printer_ui.py": "9f1c5a7fec8082687afc37e0461979c5d8cb2bdfcf18bbc9d7020951b48f86eb",
+            "ui/host/index.html": "009f18713f8203998f43966fe8ac8dc3ca89695faf1b7cbc21b9ff157d0e3ba6",
+            "ui/host/source.js": "c3c4d7c82b4bfe6eba659aef10b2129e14cfc9fc0bebe9b361f69ce7d0c09365",
+            "ui/host/view.js": "8dde61d4b18f43e7cae25a84ebb875099bb38b3ba236dc27e836def360c61521"
+          }
+        }
+      ],
+      "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "6c693e11fd4c450ea18b648d9524bff6",
+        "session": "provenance-20261027"
+      },
+      "input_paths": [
+        "runtime/",
+        "scripts/",
+        "ui/",
+        "tests/",
+        "configs/",
+        "LICENSE",
+        "LICENSING.md"
+      ],
+      "owned_paths": [
+        "runtime/sv08_provenance.py",
+        "scripts/project_license.py",
+        "scripts/stage_admin_ui.py",
+        "scripts/stage_printer_ui.py",
+        "ui/host/source.js",
+        "ui/host/index.html",
+        "tests/test_provenance.py",
+        "tests/test_project_license.py",
+        "tests/test_source_policy_ui.py",
+        "tests/source_policy_browser.mjs",
+        "tests/test_stage_admin_ui.py",
+        "tests/test_stage_printer_ui.py",
+        "docs/features/provenance-indicator/evidence.md",
+        "runtime/sv08_view.py",
+        "tests/test_config_view.py"
+      ],
+      "repeats": 0,
+      "resumption": "Use existing provenance/status finite read channel instead of unusable ordinary-file inventory check; same user outcome and cumulative allowance, applied source retained.",
+      "review_policy": "self",
+      "review_reason": "Read-only local provenance consistency check and reversible UI; no privilege/auth policy or printer operation.",
+      "status": "done",
+      "title": "Show installed project provenance integrity",
+      "validation": {
+        "actor": "root/coordinator",
+        "basis_sha256": "f85984de97173c7f83f2cf80231389478179456b9026b3abd6837e90f5da88ab",
+        "evidence_sha256": "a6d22da5200540bcdbd1ded22f0eb9a458c567bf75091ab22d89664da21987b8",
+        "outcome": "passed",
+        "rationale": "71distinct checks plus genuine finite-view verifier browser journey pass, actual phone/desktop rendered results inspected, stable diff reviewed and review PR published; limits retained.",
+        "session": "provenance-20261027",
+        "source_commit": "0df67e01d9c74cc4189943887b45580b7b5a0688"
+      },
+      "verification": null
+    }
+  ],
+  "title": "Show installed project provenance integrity"
+}

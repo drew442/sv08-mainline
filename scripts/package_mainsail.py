@@ -5,10 +5,12 @@ Gap: upstream ZIP releases do not provide this image's dpkg-owned source build.
 Only recorded build/dependency patches. Retire when upstream supplies an equivalent pinned deb.
 """
 import argparse
+import gzip
 import hashlib
+import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import shutil
 import subprocess
 import tarfile
@@ -17,6 +19,79 @@ from prepare_host_os import REPO, work_path, run
 
 def digest(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def source_member(root, relative):
+    """Require ordinary, contained source members, including all parent paths."""
+    parts = PurePosixPath(relative)
+    if not parts.parts or parts.is_absolute() or '..' in parts.parts or '\\' in relative:
+        raise ValueError('Unsafe authored package path')
+    current = Path(root)
+    for part in parts.parts:
+        current = current / part
+        if current.is_symlink():
+            raise ValueError('Symlink in authored package path')
+    return current
+
+
+def authored_archive_bytes(source, spec):
+    """Build an independently authored npm archive with fixed tar/gzip metadata.
+
+    Both packaging and notice accounting use the same source-bound bytes. No npm
+    lifecycle, supplier archive rewriting, or wall-clock metadata is involved.
+    """
+    directory = source_member(source, spec['source_directory'])
+    files = spec['files']
+    package_format = spec.get('format', 'commonjs')
+    entry = {'commonjs': 'index.js', 'types-only': 'index.d.ts'}.get(package_format)
+    if entry is None or set(files) != {'LICENSE', 'README.md', entry, 'package.json'}:
+        raise ValueError('Unexpected authored package source members')
+    if {p.name for p in directory.iterdir()} != set(files):
+        raise ValueError('Unexpected authored package directory contents')
+    contents = {}
+    for name, expected in sorted(files.items()):
+        member = source_member(directory, name)
+        if not member.is_file() or member.stat().st_size > 1024 * 1024 or digest(member) != expected:
+            raise ValueError('Authored package source hash mismatch')
+        contents[name] = member.read_bytes()
+    metadata = json.loads(contents['package.json'])
+    if (metadata.get('name'), metadata.get('version'), metadata.get('license')) != (
+            spec['name'], spec['version'], 'AGPL-3.0-or-later'):
+        raise ValueError('Authored package identity mismatch')
+    if package_format == 'commonjs':
+        if metadata.get('main') != 'index.js':
+            raise ValueError('Authored package identity mismatch')
+    elif (metadata.get('types') != 'index.d.ts' or
+          metadata.get('exports') != {'.': {'types': './index.d.ts'}} or
+          metadata.get('type') != 'module' or
+          set(metadata) != {'name', 'version', 'license', 'type', 'types', 'exports', 'files'} or
+          metadata.get('files') != ['index.d.ts', 'LICENSE', 'README.md']):
+        raise ValueError('Authored type-only package metadata mismatch')
+    if contents['LICENSE'] != (REPO / 'LICENSE').read_bytes():
+        raise ValueError('Authored package requires the complete project notice')
+    output = io.BytesIO()
+    with gzip.GzipFile(fileobj=output, mode='wb', filename='', mtime=0, compresslevel=9) as compressed:
+        with tarfile.open(fileobj=compressed, mode='w', format=tarfile.USTAR_FORMAT) as tar:
+            for name, raw in sorted(contents.items()):
+                member = tarfile.TarInfo('package/' + name)
+                member.size = len(raw)
+                member.mode = 0o644
+                member.uid = member.gid = member.mtime = 0
+                member.uname = member.gname = ''
+                tar.addfile(member, io.BytesIO(raw))
+    return output.getvalue()
+
+
+def prepare_authored_archives(source, config):
+    for spec in config.get('authored_npm_replacements', {}).values():
+        raw = authored_archive_bytes(source, spec)
+        if hashlib.sha256(raw).hexdigest() != spec['archive_sha256']:
+            raise ValueError('Authored package archive hash mismatch')
+        target = source_member(source, spec['archive_path'])
+        if target.exists():
+            raise ValueError('Authored package archive already exists')
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
 
 
 def main():
@@ -56,6 +131,7 @@ def main():
         run('patch', '--batch', '--forward', '-d', src, '-p1', '-i', REPO / patch['path'])
     if digest(src / 'package-lock.json') != c.get('patched_package_lock_sha256', c['package_lock_sha256']):
         raise ValueError('Patched dependency lock hash mismatch')
+    prepare_authored_archives(src, c)
     epoch = int(subprocess.check_output(['git', '-C', str(source), 'show', '-s', '--format=%ct', head], text=True))
     env = dict(os.environ, PATH=str(work / ('node-v' + c['node_version'] + '-linux-x64/bin')) + ':' + os.environ['PATH'], SOURCE_DATE_EPOCH=str(epoch))
     run('npm', 'ci', '--ignore-scripts', '--no-audit', '--no-fund', cwd=src, env=env)

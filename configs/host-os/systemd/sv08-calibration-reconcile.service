@@ -1,0 +1,19 @@
+[Unit]
+Description=SV08 native calibration reconciliation observer
+Requires=sv08-prepare.service sv08-boot-health.service
+After=sv08-prepare.service sv08-boot-health.service sv08-klipper.service
+PartOf=sv08-klipper.service
+ConditionPathExists=/run/sv08/printer_data/config/printer.cfg
+ConditionPathExists=!/run/sv08/trial
+ConditionPathExists=/run/sv08/os-health-ready
+
+[Service]
+Type=simple
+User=root
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -I /usr/lib/sv08/sv08_calibration_reconcile.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=sv08-klipper.service

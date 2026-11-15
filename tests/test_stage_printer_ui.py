@@ -30,6 +30,10 @@ class StageTests(unittest.TestCase):
             self.assertEqual(stage.inventory(root,before),before)
             report=stage.stage(root,expected,True)
             record=validate(root)
+            helper='usr/lib/sv08/sv08_provenance.py'
+            self.assertEqual((root/helper).read_bytes(),(ROOT/'runtime/sv08_provenance.py').read_bytes())
+            self.assertIn(helper, report['after'])
+            self.assertIn(helper, record['staged_files'])
             self.assertEqual(record['build_id'],report['project_source']['build_id'])
             for base in (DOC,'usr/share/cockpit/sv08-host/','usr/share/cockpit/sv08-printer/'):
                 self.assertEqual((root/(base+'project-NOTICE.txt')).read_bytes(),(ROOT/'LICENSING.md').read_bytes())

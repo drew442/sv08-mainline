@@ -1,5 +1,7 @@
 # Host OS completion checklist
 
+Current status (2026-10-23): use the [stock-printer readiness handoff](../development/stock-printer-readiness.md) and [single commissioning session](test-sv08-01-commissioning-session.md). The dated execution order/checkpoints below are historical; later installed identity, boot, web-service, image/software and update evidence supersedes earlier failures. They are not a fresh work queue or a reason to repeat H12. Generic stock printing-image and physical commissioning acceptance remain explicit in the current handoff.
+
 Current execution order was reset on 2026-10-01; see the
 [recalibrated plan](../remaining-work-plan.md). Warm boot capture passed; SD return and corrected
 physical H12 preflight are next. Recovery export composition, printer-interface

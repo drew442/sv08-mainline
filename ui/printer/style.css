@@ -115,3 +115,14 @@
     #printer .printer-title p{margin:4px 0}
     #task-context{margin-bottom:6px}
 }
+/* Keep the three labelled view controls together on typical Android widths. */
+@media(max-width:600px){
+    #printer .printer-tabs{gap:8px}
+    #printer .printer-tabs button{font-size:14px;padding:8px 6px;gap:6px;margin:4px 0}
+    #printer .printer-tabs .printer-advanced-toggle{font-size:14px}
+}
+@media(min-width:380px) and (max-width:600px){
+    #printer .printer-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+    #printer .printer-tabs button{justify-content:center;min-width:0}
+    #printer .printer-tabs .printer-advanced-toggle{justify-self:end}
+}

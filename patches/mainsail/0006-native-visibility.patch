@@ -1,0 +1,269 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -63,7 +63,6 @@
+         "vue-i18n": "^8.28.2",
+         "vue-inline-svg": "^2.1.3",
+         "vue-load-image": "^0.2.0",
+-        "vue-observe-visibility": "^1.0.0",
+         "vue-property-decorator": "^9.1.2",
+         "vue-toast-notification": "^1.0.1",
+         "vuedraggable": "^2.24.3",
+diff --git a/package-lock.json b/package-lock.json
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -45,7 +45,6 @@
+                 "vue-i18n": "^8.28.2",
+                 "vue-inline-svg": "^2.1.3",
+                 "vue-load-image": "^0.2.0",
+-                "vue-observe-visibility": "^1.0.0",
+                 "vue-property-decorator": "^9.1.2",
+                 "vue-toast-notification": "^1.0.1",
+                 "vuedraggable": "^2.24.3",
+@@ -12121,12 +12120,6 @@
+                 "vue": "^2.0.0"
+             }
+         },
+-        "node_modules/vue-observe-visibility": {
+-            "version": "1.0.0",
+-            "resolved": "https://registry.npmjs.org/vue-observe-visibility/-/vue-observe-visibility-1.0.0.tgz",
+-            "integrity": "sha512-s5TFh3s3h3Mhd3jaz3zGzkVHKHnc/0C/gNr30olO99+yw2hl3WBhK3ng3/f9OF+qkW4+l7GkmwfAzDAcY3lCFg==",
+-            "license": "MIT"
+-        },
+         "node_modules/vue-property-decorator": {
+             "version": "9.1.2",
+             "resolved": "https://registry.npmjs.org/vue-property-decorator/-/vue-property-decorator-9.1.2.tgz",
+diff --git a/src/main.ts b/src/main.ts
+--- a/src/main.ts
++++ b/src/main.ts
+@@ -7,8 +7,8 @@
+ import store from '@/store'
+ import router from '@/plugins/router'
+ import { WebSocketPlugin } from '@/plugins/webSocketClient'
+-// vue-observe-visibility
+-import { ObserveVisibility } from 'vue-observe-visibility'
++// Native visibility observation
++import { ObserveVisibility } from '@/plugins/observeVisibility'
+ //vue-load-image
+ import VueLoadImage from 'vue-load-image'
+ //vue-toast-notifications
+diff --git a/src/plugins/observeVisibility.ts b/src/plugins/observeVisibility.ts
+--- /dev/null
++++ b/src/plugins/observeVisibility.ts
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: AGPL-3.0-or-later
++import Vue from 'vue'
++import type { DirectiveOptions } from 'vue'
++
++type VisibilityCallback = (visible: boolean, entry: IntersectionObserverEntry) => void
++interface Observation {
++    callback: VisibilityCallback
++    observer: IntersectionObserver
++    last?: boolean
++}
++const observations = new WeakMap<HTMLElement, Observation>()
++
++function stop(element: HTMLElement) {
++    const observation = observations.get(element)
++    observations.delete(element)
++    observation?.observer.disconnect()
++}
++
++function watch(element: HTMLElement, callback: unknown) {
++    stop(element)
++    // Unsupported environments require an IntersectionObserver polyfill loaded
++    // before mounting. Absence is unknown visibility, never an automatic true.
++    if (typeof callback !== 'function' || typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') {
++        return
++    }
++    const observation: Observation = {
++        callback: callback as VisibilityCallback,
++        observer: new IntersectionObserver((entries) => {
++            for (const entry of entries) {
++                if (observations.get(element) !== observation || entry.target !== element) continue
++                // Native isIntersecting includes edge contact and visible zero-area
++                // targets, as measured against the original directive in Chromium.
++                const visible = entry.isIntersecting
++                if (observation.last === visible) continue
++                observation.last = visible
++                observation.callback(visible, entry)
++            }
++        }),
++    }
++    observations.set(element, observation)
++    // Consumers initialize editors/charts in mounted; defer observation until the
++    // current Vue patch and mounted hooks finish. Cancellation also covers this queue.
++    Vue.nextTick(() => {
++        if (observations.get(element) === observation) observation.observer.observe(element)
++    })
++}
++
++/** Function bindings only: the contract used by all nine pinned Mainsail consumers. */
++export const ObserveVisibility: DirectiveOptions = {
++    bind(element, binding) {
++        watch(element, binding.value)
++    },
++    update(element, binding) {
++        if (binding.value === binding.oldValue) return
++        // A replacement callback receives a new initial result; ordinary component
++        // updates retain the current observer and boolean deduplication state.
++        watch(element, binding.value)
++    },
++    unbind(element) {
++        stop(element)
++    },
++}
+diff --git a/tests/observeVisibility.spec.ts b/tests/observeVisibility.spec.ts
+--- /dev/null
++++ b/tests/observeVisibility.spec.ts
+@@ -0,0 +1,150 @@
++// SPDX-License-Identifier: AGPL-3.0-or-later
++import Vue from 'vue'
++import type { VNode, DirectiveBinding } from 'vue'
++import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
++import { ObserveVisibility } from '../src/plugins/observeVisibility'
++
++class Observer {
++    static instances: Observer[] = []
++    observe = vi.fn()
++    disconnect = vi.fn()
++    constructor(
++        readonly callback: IntersectionObserverCallback,
++        readonly options?: IntersectionObserverInit
++    ) {
++        Observer.instances.push(this)
++    }
++    deliver(element: HTMLElement, ...values: boolean[]) {
++        this.callback(
++            values.map((isIntersecting) => ({ target: element, isIntersecting }) as unknown as IntersectionObserverEntry),
++            this as unknown as IntersectionObserver
++        )
++    }
++}
++function bind(element: HTMLElement, value: unknown) {
++    ObserveVisibility.bind!(element, { value } as DirectiveBinding<unknown>, {} as VNode, {} as VNode)
++}
++function update(element: HTMLElement, value: unknown, oldValue: unknown) {
++    ObserveVisibility.update!(element, { value, oldValue } as DirectiveBinding<unknown>, {} as VNode, {} as VNode)
++}
++function unbind(element: HTMLElement) {
++    ObserveVisibility.unbind!(element, {} as DirectiveBinding<unknown>, {} as VNode, {} as VNode)
++}
++const target = () => ({}) as HTMLElement
++beforeEach(() => {
++    Observer.instances = []
++    vi.stubGlobal('window', {})
++    vi.stubGlobal('IntersectionObserver', Observer)
++})
++afterEach(() => vi.unstubAllGlobals())
++
++describe('native function-valued visibility directive', () => {
++    it('defers observation until initialization, uses browser defaults and passes the actual entry', async () => {
++        const element = target(), callback = vi.fn()
++        bind(element, callback)
++        const observer = Observer.instances[0]
++        expect(observer.options).toBeUndefined()
++        expect(observer.observe).not.toHaveBeenCalled()
++        expect(callback).not.toHaveBeenCalled()
++        await Vue.nextTick()
++        expect(observer.observe).toHaveBeenCalledExactlyOnceWith(element)
++        observer.deliver(element, false)
++        expect(callback).toHaveBeenCalledExactlyOnceWith(false, expect.objectContaining({ target: element }))
++        unbind(element)
++    })
++    it('delivers initial true and false, retaining only genuine boolean transitions in a batch', async () => {
++        for (const initial of [true, false]) {
++            const element = target(), callback = vi.fn()
++            bind(element, callback)
++            await Vue.nextTick()
++            Observer.instances.at(-1)!.deliver(element, initial, initial, !initial, !initial, initial)
++            expect(callback.mock.calls.map(([visible]) => visible)).toEqual([initial, !initial, initial])
++            unbind(element)
++        }
++    })
++    it('ignores unrelated updates without resetting or replaying the initial result', async () => {
++        const element = target(), callback = vi.fn()
++        bind(element, callback)
++        await Vue.nextTick()
++        const observer = Observer.instances[0]
++        observer.deliver(element, true)
++        update(element, callback, callback)
++        await Vue.nextTick()
++        observer.deliver(element, true)
++        expect(Observer.instances).toHaveLength(1)
++        expect(observer.disconnect).not.toHaveBeenCalled()
++        expect(callback).toHaveBeenCalledTimes(1)
++        unbind(element)
++    })
++    it('replaces callbacks with a fresh initial result and cancels queued old results', async () => {
++        const element = target(), first = vi.fn(), second = vi.fn()
++        bind(element, first)
++        await Vue.nextTick()
++        const old = Observer.instances[0]
++        old.deliver(element, true)
++        update(element, second, first)
++        old.deliver(element, false)
++        expect(old.disconnect).toHaveBeenCalledTimes(1)
++        await Vue.nextTick()
++        Observer.instances[1].deliver(element, true, true, false)
++        expect(first.mock.calls.map(([visible]) => visible)).toEqual([true])
++        expect(second.mock.calls.map(([visible]) => visible)).toEqual([true, false])
++        unbind(element)
++    })
++    it('cancels observation before the initial queue and ignores delivery after unbinding', async () => {
++        const element = target(), callback = vi.fn()
++        bind(element, callback)
++        const observer = Observer.instances[0]
++        unbind(element)
++        await Vue.nextTick()
++        observer.deliver(element, true)
++        expect(observer.observe).not.toHaveBeenCalled()
++        expect(observer.disconnect).toHaveBeenCalledTimes(1)
++        expect(callback).not.toHaveBeenCalled()
++    })
++    it('keeps multiple elements and reused roots independent across repeated mounts', async () => {
++        const first = target(), second = target(), a = vi.fn(), b = vi.fn()
++        bind(first, a)
++        bind(second, b)
++        await Vue.nextTick()
++        Observer.instances[0].deliver(first, true)
++        Observer.instances[1].deliver(second, false)
++        unbind(first)
++        bind(first, a)
++        await Vue.nextTick()
++        Observer.instances[0].deliver(first, false)
++        Observer.instances[2].deliver(first, true)
++        Observer.instances[1].deliver(second, true)
++        expect(a.mock.calls.map(([visible]) => visible)).toEqual([true, true])
++        expect(b.mock.calls.map(([visible]) => visible)).toEqual([false, true])
++        unbind(first)
++        unbind(second)
++    })
++    it('does not call an unsupported or disabled binding and cleans up when disabled', async () => {
++        const element = target(), callback = vi.fn()
++        bind(element, callback)
++        const observer = Observer.instances[0]
++        update(element, undefined, callback)
++        await Vue.nextTick()
++        observer.deliver(element, true)
++        expect(observer.disconnect).toHaveBeenCalledTimes(1)
++        expect(observer.observe).not.toHaveBeenCalled()
++        expect(callback).not.toHaveBeenCalled()
++        bind(element, { callback }) // The unused library options API is intentionally unsupported.
++        expect(Observer.instances).toHaveLength(1)
++    })
++    it('imports without a browser and never substitutes visible for a missing API', async () => {
++        vi.stubGlobal('window', undefined)
++        vi.stubGlobal('IntersectionObserver', undefined)
++        vi.resetModules()
++        const { ObserveVisibility: browserless } = await import('../src/plugins/observeVisibility')
++        const callback = vi.fn(), element = target()
++        browserless.bind!(element, { value: callback } as DirectiveBinding<unknown>, {} as VNode, {} as VNode)
++        await Vue.nextTick()
++        vi.stubGlobal('window', {})
++        bind(element, callback)
++        await Vue.nextTick()
++        expect(callback).not.toHaveBeenCalled()
++        expect(Observer.instances).toHaveLength(0)
++    })
++})

@@ -1,0 +1,174 @@
+{
+  "deployment_date": "2026-10-28",
+  "target": "sv08@192.168.1.141",
+  "source_revision": "ffde7e19698ea76f15291ef2efe97ad061bd0459",
+  "merged_prs": [
+    34,
+    35,
+    37
+  ],
+  "payload_sha256": {
+    "usr/lib/sv08/sv08_provenance.py": "5666f025344a7bddd866030bc32de42458fdd9bee30e95768ec2309ebb5ac3a2",
+    "usr/lib/sv08/sv08_view.py": "c0aa6156d386c9455fd271e23c3004b9c5dafac9ea62cf8ec2987f284a3b95b1",
+    "usr/share/cockpit/sv08-host/index.html": "c65efa4c7bf60a52860979894ea756cfc34b6e6cacfd403f52db564e6c7b0de8",
+    "usr/share/cockpit/sv08-host/project-LICENSE.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "usr/share/cockpit/sv08-host/project-NOTICE.txt": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+    "usr/share/cockpit/sv08-host/project-source.json": "a52f1dcdebc6318a9bac44619e1ce07c657943bf198ac8abd5afe15816cda2b3",
+    "usr/share/cockpit/sv08-host/source.js": "c3c4d7c82b4bfe6eba659aef10b2129e14cfc9fc0bebe9b361f69ce7d0c09365",
+    "usr/share/cockpit/sv08-printer/project-LICENSE.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "usr/share/cockpit/sv08-printer/project-NOTICE.txt": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+    "usr/share/cockpit/sv08-printer/project-source.json": "a52f1dcdebc6318a9bac44619e1ce07c657943bf198ac8abd5afe15816cda2b3",
+    "usr/share/doc/sv08-mainline/project-LICENSE.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+    "usr/share/doc/sv08-mainline/project-NOTICE.txt": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+    "usr/share/doc/sv08-mainline/project-source.json": "a52f1dcdebc6318a9bac44619e1ce07c657943bf198ac8abd5afe15816cda2b3"
+  },
+  "installed_audit": {
+    "passed": true,
+    "source_revision": "ffde7e19698ea76f15291ef2efe97ad061bd0459",
+    "boot_unchanged": true,
+    "root_read_only": true,
+    "payload_files": 13,
+    "inventory_files": 109,
+    "protected_paths": 15,
+    "vendor_links_preserved": true,
+    "caches_removed": 18,
+    "ordinary_checks": {
+      "host": {
+        "ok": true
+      },
+      "printer": {
+        "ok": true,
+        "revision": 13,
+        "devices": 24,
+        "definitions": 26,
+        "sources": 1,
+        "current": true,
+        "previous": true
+      },
+      "network": {
+        "ok": true
+      },
+      "software": {
+        "ok": true
+      },
+      "identity": {
+        "ok": true,
+        "healthy": true,
+        "permanent_ca_preserved": true
+      },
+      "mainsail-access": {
+        "ok": true
+      },
+      "provenance": {
+        "ok": true,
+        "scope": "local-project-record",
+        "reason": "record-matches",
+        "build_id": "557c857c8b8e739bd7c3b576830c635f0de36f11bdbcddc6e3493cffab8e1573",
+        "state": "intact"
+      }
+    },
+    "units": {
+      "cockpit.socket": {
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "cockpit.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "static"
+      },
+      "sv08-feed.timer": {
+        "ActiveState": "active",
+        "UnitFileState": "enabled"
+      },
+      "sv08-feed.service": {
+        "ActiveState": "failed",
+        "UnitFileState": "static"
+      },
+      "sv08-klipper.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "masked-runtime"
+      },
+      "sv08-moonraker.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "masked-runtime"
+      },
+      "nginx.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "masked"
+      },
+      "sv08-calibration-reconcile.service": {
+        "ActiveState": "inactive",
+        "UnitFileState": "enabled"
+      }
+    },
+    "rollback": "/data/sv08/system/ui-deployments/20261028-pr35-37-ffde7e1/before.tar",
+    "rollback_bytes": 696320,
+    "rollback_sha256": "2ab32439cdaaa618504beff50247871bf18633aa31ef9214b112017f254fa517",
+    "authenticated_browser_observed": false
+  },
+  "https": {
+    "fqdn": {
+      "exit_status": 0,
+      "http_status": "200",
+      "error": ""
+    },
+    "ip": {
+      "exit_status": 0,
+      "http_status": "200",
+      "error": ""
+    },
+    "anonymous_login": {
+      "exit_status": 0,
+      "http_status": "401",
+      "error": ""
+    }
+  },
+  "ordinary_document_reads": {
+    "ordinary_uid": 1000,
+    "documents_readable": 3,
+    "hashes": {
+      "usr/share/cockpit/sv08-host/project-LICENSE.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+      "usr/share/cockpit/sv08-host/project-NOTICE.txt": "b01e2b84ab54affb5886da40337d76baf669bfbe063beeea1efedd47c96885e6",
+      "usr/share/cockpit/sv08-host/project-source.json": "a52f1dcdebc6318a9bac44619e1ce07c657943bf198ac8abd5afe15816cda2b3"
+    }
+  },
+  "review": {
+    "agent": "/root/pr37_deployment_review",
+    "role": "high_consequence_reviewer",
+    "outcome": "pass-with-conditions",
+    "script_sha256": "bcade62b5895e24b3891bfbfd0cd582aab7b6dcedc7936372414a9949ffd6c2b",
+    "bundle_sha256": "4b8a07abe61e1fef8f29bc1e83dcc3b47182a375971fd062a5619facf8de2b3d",
+    "plan_sha256": "858cc31e65025e5cfe45dfa89f2e0b651aba18b55f6fe1ccd79b2eac43775323",
+    "conditions": [
+      "Verified uploaded exact hashes and successful dry run; fresh preconditions inside execution",
+      "Retain rollback/journal, reconcile after interruption before retry",
+      "Separate post-restoration root/boot/config/vendor/masks/Cockpit/timer/provenance/CA-HTTPS audit",
+      "Preserve development/source-unqualified six generated unmatched inputs"
+    ],
+    "effective_runtime_settings": "not separately observable"
+  },
+  "final_services_after_https": {
+    "cockpit.socket": "active",
+    "cockpit.service": "active",
+    "sv08-feed.timer": "active",
+    "printer_services": "inactive with original masks"
+  },
+  "temporary_upload_removed": true,
+  "qualification": "local-project-record consistency only; development/source-unqualified, no printing/release qualification",
+  "artifact_sha256": {
+    "preflight.py": "8e50a0e2bdb12d8d3f8d87932be0f6dd26206e9cca6317328f4084948494fe8d",
+    "preflight.json": "dc754a5b7b50b77e3e445a6299fdd30d5e4d227d1811ee45ec5fcff62b9a31e4",
+    "deploy.py": "bcade62b5895e24b3891bfbfd0cd582aab7b6dcedc7936372414a9949ffd6c2b",
+    "plan.json": "858cc31e65025e5cfe45dfa89f2e0b651aba18b55f6fe1ccd79b2eac43775323",
+    "bundle.tar": "4b8a07abe61e1fef8f29bc1e83dcc3b47182a375971fd062a5619facf8de2b3d",
+    "upload-hashes.log": "bbdd2087da93865482518cb2247e0d09fddf439fecc039f3d89c6092c6d479c4",
+    "dry-run.log": "0f658121b52ebe8feb892c16385bf777257b39862db32c1a52c4dea5a956e0d0",
+    "execute.log": "ef33cade56bd946bee01aa3e71b0e6e21efd2c51e73404aed9dc5ed277fe63d6",
+    "post-audit.py": "06aaa7bd381fb898b94d57deadc32aba6c420b5521803d20fe0b7dff187d5b04",
+    "post-audit.json": "579775c12c1cef0fa194c734d5ddb8b6064e8ff4745dae658ee035c52f2672ea",
+    "https.json": "25a268151eef5dafd4fbfb4cce6370b9b9d447ec2e130c68446cf5b6fad7b707",
+    "ordinary-documents.json": "a5ec3a622d5ddfbffd59b896366c7b28af0d32485cae004f9ba333f54c41d2a4",
+    "final-units-cleanup.log": "01099944efd5177d411dcd21c7bbf16c5aaf591cd2ef5dd0cf7ce7e4e6f3fc00",
+    "review.json": "ae995a020f0bd9ea29bf04b7483183d7c1448367b9435b82c9d70d509b9486b2"
+  }
+}

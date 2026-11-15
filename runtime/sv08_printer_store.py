@@ -13,20 +13,22 @@ from sv08_state import atomic_json, fsync_dir
 from sv08_printer_catalog import encoded, digest, strict_json, empty_draft, BUNDLE_LIMIT
 from sv08_printer_generate import generate, GENERATOR_VERSION
 from sv08_printer_definitions import builtins
-from sv08_printer_compose import select_definition, migration_preview, remap_board, runtime_assets, catalog_for, remove_definition
+from sv08_printer_compose import select_definition, migration_preview, remap_board, runtime_assets, catalog_for, remove_definition, clear_calibration, CALIBRATION_FIELDS, PROBE_GEOMETRY_KINDS, record_calibration_edits
 from sv08_printer_sources import GitHub, accept_source, bundle_preview
 from sv08_printer_publish import Publisher
+from sv08_printer_fields import compatible_mapping
 
 STORAGE_LIMIT = 4 * 1024 * 1024
 STATE_LIMIT = 2 * 1024 * 1024
 
 
 class PrinterStore:
-    def __init__(self, store, boot_path, config_view, catalog, privileged=lambda: os.geteuid() == 0, source_fetch=None, publication_admit=lambda:False,publication_validate=None):
+    def __init__(self, store, boot_path, config_view, catalog, privileged=lambda: os.geteuid() == 0, source_fetch=None, publication_admit=lambda:False,publication_validate=None,native_source=None):
         self.store, self.boot_path, self.config_view = store, Path(boot_path), Path(config_view)
         self.catalog, self.privileged = catalog, privileged
         self.source_fetch, self.publication_admit = source_fetch, publication_admit
         self.publication_validate=publication_validate
+        self.native_source=native_source
 
     def context(self):
         if not self.privileged():
@@ -95,7 +97,7 @@ class PrinterStore:
         value=strict_json(path.read_bytes(),STATE_LIMIT)
         if not isinstance(value,dict) or not {'format_version','revision','draft','current','previous'} <= set(value) or set(value)-{'format_version','revision','draft','current','previous','sources'}:
             raise ValueError('Corrupt configuration state; originals retained')
-        if value['format_version']!=1:
+        if value['format_version'] not in (1,2):
             if writable:raise ValueError('Unsupported stored schema; export original for diagnosis')
             return value
         if type(value['revision']) is not int or value['revision']<0:
@@ -112,6 +114,8 @@ class PrinterStore:
         return value
 
     def publish(self, value, record):
+        # Known envelope shape lets older readers retain/export this opaquely.
+        value['format_version']=2
         raw=(json.dumps(value,indent=2,allow_nan=False)+"\n").encode()
         if len(raw)>STATE_LIMIT:raise ValueError('Configuration envelope is too large')
         fs=os.statvfs(self.directory);block=fs.f_frsize or fs.f_bsize
@@ -153,6 +157,28 @@ class PrinterStore:
                 rows.append(dict(record=record,reference=dict(source=source['id'],id=record['id'],version=record['version'],sha256=digest(record),commit=source['commit']),origin=source.get('repository','Local definition')))
         return rows
 
+    def calibration_status(self,state,context):
+        mirror=state['draft'].get('native_calibration')
+        status=(mirror or {}).get('status',dict(state='pending',message='Run supported Klipper calibration tools and SAVE_CONFIG; waiting for automatic reconciliation.'))
+        try:
+            publisher=Publisher(self.directory.parent,source=self.native_source)
+            if not publisher.receipt():return dict(state='pending',message='Prepare and apply a Full configuration before native calibration reconciliation.')
+            receipt,records,root,found=publisher.active_calibration(context)
+            if 'gcode_macro SV08_CALIBRATION_STATUS' not in receipt['native']['config']:return dict(state='pending',message='Prepare and review a managed Full configuration to enable automatic calibration reconciliation.')
+            setup=receipt['native']['config'].get('gcode_macro SV08_CALIBRATION_STATUS',{}).get('variable_setup')=='1'
+            if setup:status=dict(state='pending',message='Setup keeps printing blocked. Calibrate with Klipper and SAVE_CONFIG, then prepare Full when ready.')
+            if not mirror:return status if setup else dict(state='pending',message='Calibration is needed. Use supported Klipper tools and SAVE_CONFIG, or report measured local values explicitly.')
+            if mirror['publication']!=receipt['review'] or mirror['records']!=records:
+                return dict(state='pending',message='Persisted configuration changed; waiting for automatic calibration reconciliation.')
+            from sv08_printer_calibration import compatible_records,calibration_sources
+            from sv08_printer_compose import apply_inputs
+            effective=catalog_for(state['draft'],self.catalog)
+            values=compatible_records(mirror,receipt['native']['config'],calibration_sources(apply_inputs(state['draft'],effective),effective))
+            return dict(status,values=values)
+        except (OSError,ValueError,KeyError,TypeError) as error:
+            if str(error)=='Active publication has no native calibration contract':return dict(state='pending',message='Prepare and review a managed Full configuration to enable automatic calibration reconciliation.')
+            return dict(state='conflict',message='Active calibration cannot be acknowledged. Review manual or unsupported SAVE_CONFIG changes before printing.')
+
     def request(self, request):
         if not isinstance(request,dict) or 'action' not in request:
             raise ValueError('Invalid request')
@@ -188,13 +214,21 @@ class PrinterStore:
         # Exact finite schemas include the identity of the last loaded status.
         with self.locked() as (context,record):
             state=self.load(writable=action!='status')
-            if action=='status' and (state['format_version']!=1 or not isinstance(state.get('draft'),dict) or state['draft'].get('format_version')!=1):
+            if action=='status' and (state['format_version'] not in (1,2) or not isinstance(state.get('draft'),dict) or state['draft'].get('format_version') not in (1,2)):
                 # Future envelopes are opaque diagnostic data, never composed.
                 return dict(state=state,catalog=self.catalog.data,context=context,catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,loaded_identity=digest(dict(state=state,context=context)),definitions=[],sources={},migration_available=False)
+            if action=='import' and isinstance(request.get('draft'),dict):
+                if 'native_calibration' in request['draft'] and request['draft']['native_calibration']!=state['draft'].get('native_calibration'):raise ValueError('Native calibration mirror is maintained by the reconciler; preserve the loaded mirror')
+                if 'native_calibration' not in request['draft'] and state['draft'].get('native_calibration'):
+                    request={**request,'draft':{**request['draft'],'format_version':2,'native_calibration':state['draft']['native_calibration']}}
+            if action in ('save','import','review_draft') and isinstance(request.get('draft'),dict):request={**request,'draft':record_calibration_edits(state['draft'],request['draft'],self.catalog,self.calibration_status(state,context).get('values',{}))}
             available=[row['record'] for row in self.definitions(state)]
             effective=catalog_for(request.get('draft',state['draft']),self.catalog,available)
             if action=='status':
-                return dict(state=state,catalog=effective.data,context=context,
+                # Browsable defaults are current source choices, never saved runtime assets.
+                choices={b['id']:b.get('presets',[]) for b in self.catalog.data['boards']
+                         if b['id'] in effective.boards and compatible_mapping(effective.boards[b['id']],b)}
+                return dict(state=state,catalog=effective.data,available_components=choices,native_calibration_status=self.calibration_status(state,context),context=context,
                             catalog_revision=self.catalog.revision,catalog_supported=self.catalog.supported,
                             loaded_identity=self.identity(state,context,None),definitions=self.definitions(state),sources=state.get('sources',{}),migration_available='definition_plan' not in state['draft'])
             if 'expected_revision' in request:
@@ -211,7 +245,7 @@ class PrinterStore:
                 import tempfile,base64
                 from sv08_printer_stack import archive
                 with tempfile.TemporaryDirectory(prefix='sv08-config-export-') as directory:
-                    preview=Publisher(directory).preview({'hardware.cfg':generated['text']},context,'export')
+                    preview=Publisher(directory,source=self.native_source).preview({'hardware.cfg':generated['text']},context,'export')
                     validation=self.publication_validate(preview,directory)
                     if not validation.get('validated'):raise ValueError('Complete-output validation failed')
                 return dict(filename='sv08-printer-configuration.zip',data=base64.b64encode(archive(generated['files'])).decode(),validation=validation,printing_enabled=generated['printing_enabled'],setup_requirements=generated['setup_requirements'])
@@ -254,31 +288,70 @@ class PrinterStore:
                 return dict(revision=state['revision'],message='Definition source updated; selected snapshots unchanged')
             if action.startswith('publication_'):
                 if action in ('publication_restore_review','publication_restore'):
-                    publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate)
+                    publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate,source=self.native_source)
                     if action=='publication_restore_review':return publisher.restore_preview(context)
                     return publisher.restore(request['review'],context)
-                if action=='publication_reconcile':return Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate).reconcile()
+                if action=='publication_reconcile':return Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate,source=self.native_source).reconcile()
                 if not state['current'] or state['current']['mode']!='full' or digest(state['current']['draft'])!=digest(state['draft']):raise ValueError('Save a complete full candidate for these selections before publication')
                 generated=generate(self.catalog,state['draft'],'full')
                 if not generated['complete'] or generated['text']!=state['current']['text']:raise ValueError('Candidate or definition lock changed; regenerate before publication')
                 files={'hardware.cfg':generated['text']}
-                publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate)
+                from sv08_printer_calibration import hardware_binding,calibration_sources
+                publisher=Publisher(self.directory.parent,self.publication_admit,getattr(self.store,'budget',None),self.publication_validate,source=self.native_source,binding=dict(manual_calibration=generated.get('manual_calibration',{}),calibration_sources=calibration_sources(state['draft'],self.catalog),hardware=hardware_binding(state['draft']),sources=digest(state['draft'].get('definition_plan',{}).get('runtime_assets',{}))))
                 plan=self.identity(state,context,'full')
                 if action=='publication_review':return publisher.preview(files,context,plan)
                 result=publisher.apply(request['review'],files,context,plan)
                 return dict(applied=True,receipt=result,message='Managed configuration applied; printer remains stopped. Commission changed components separately.')
             if action=='import':
+                if request['draft'].get('native_calibration')!=state['draft'].get('native_calibration'):raise ValueError('Native calibration mirror is maintained by the reconciler; preserve the loaded mirror')
                 effective.validate(request['draft'])
                 return dict(draft=request['draft'],changed=digest(request['draft'])!=digest(state['draft']),expected_revision=state['revision'])
             if action=='preset':
                 return dict(draft=self.catalog.apply_preset(request['draft'],request['role'],request['preset']))
             if action=='component':
-                return dict(draft=self.catalog.select_component(request['draft'],request['role'],request['preset']))
+                board=self.catalog.board(request['draft'],request['role'])
+                records=builtins(self.catalog)
+                native=next((d for d in records if d['id']==board['id']+'.'+request['preset']),None)
+                assets=request['draft'].get('definition_plan',{}).get('runtime_assets')
+                if assets:
+                    pinned=next((b for b in assets['boards'] if b['id']==board['id']),None)
+                    if pinned is None or not compatible_mapping(pinned,board):raise ValueError('Selected component conflicts with pinned board mapping')
+                if native:
+                    # The ordinary stock selector shares the native composition
+                    # path, including watermark control until local PID is chosen.
+                    snapshots={'builtin::'+d['id']+'@'+d['version']:d for d in records}
+                    ref=dict(source='builtin',id=native['id'],version=native['version'],sha256=digest(native),commit=self.catalog.revision)
+                    return dict(draft=select_definition(catalog_for(request['draft'],self.catalog),request['draft'],ref,snapshots))
+                draft=self.catalog.select_component(request['draft'],request['role'],request['preset'])
+                changed=[d for d in draft['devices'] if d.get('profile')==request['preset'] and d['board']==request['role']]
+                targets={d['name']+'.'+field for d in changed for field in (*CALIBRATION_FIELDS,'custom_curve')}
+                if any(d['kind'] in PROBE_GEOMETRY_KINDS for d in changed):targets.update(d['name']+'.z_offset' for d in draft['devices'] if d['kind']=='probe')
+                clear_calibration(draft,self.catalog,targets)
+                assets=draft.get('definition_plan',{}).get('runtime_assets')
+                if assets:
+                    current=self.catalog.board(draft,request['role'])
+                    pinned=next(b for b in assets['boards'] if b['id']==current['id'])
+                    if not compatible_mapping(pinned,current):raise ValueError('Selected component conflicts with pinned board mapping')
+                    preset=next(p for p in current['presets'] if p['id']==request['preset'])
+                    # This explicit selection pins only the chosen profile with its
+                    # field sources; saved electrical mappings and other assets stay.
+                    pinned['presets']=[p for p in pinned.get('presets',[]) if p['id']!=preset['id']]+json.loads(json.dumps([preset]))
+                    curves={c['id']:c for c in assets['curves']}
+                    for device in changed:
+                        curve=device['settings'].get('curve')
+                        if not curve:continue
+                        source=self.catalog.curves[curve]
+                        if curve in curves and curves[curve]!=source:raise ValueError('Selected component conflicts with pinned sensor curve')
+                        if curve not in curves:assets['curves'].append(json.loads(json.dumps(source)))
+                    catalog_for(draft,self.catalog).validate(draft)
+                return dict(draft=draft)
             if action in ('save','restore'):
                 if action=='restore':
                     if not state['previous']:raise ValueError('No previous candidate')
                     draft=state['previous']['draft']
-                else:draft=request['draft']
+                else:
+                    draft=request['draft']
+                    if draft.get('native_calibration')!=state['draft'].get('native_calibration'):raise ValueError('Native calibration mirror is maintained by the reconciler; preserve the loaded mirror')
                 catalog_for(draft,self.catalog,available).validate(draft)
                 if 'definition_plan' in draft:
                     # Keep old assets unless an explicit new override requires a lock.

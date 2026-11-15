@@ -14,11 +14,12 @@ class ViewTests(unittest.TestCase):
     def test_read_allowlist_constructs_fixed_child_requests(self):
         for area in view.SCRIPTS:
             with self.subTest(area=area), patch.object(view.subprocess, 'run') as run:
-                run.return_value = subprocess.CompletedProcess([], 0, '{"ok":true,"result":{}}', '')
-                self.assertEqual(view.read({'area': area, 'method': 'status'}), {})
+                expected = dict(state='intact', build_id='a'*64, scope='local-project-record', reason='record-matches') if area == 'provenance' else {}
+                run.return_value = subprocess.CompletedProcess([], 0, json.dumps({'ok':True,'result':expected}), '')
+                self.assertEqual(view.read({'area': area, 'method': 'status'}), expected)
                 args, kw = run.call_args
-                self.assertEqual(args[0][:3], ['/usr/bin/python3', '-I', '-c'])
-                self.assertEqual(args[0][3], view.child_code(area))
+                self.assertEqual(args[0][:-1], ['/usr/bin/python3', '-I'] + (['-B'] if area == 'provenance' else []) + ['-c'])
+                self.assertEqual(args[0][-1], view.child_code(area))
                 self.assertEqual(kw['env'], view.ENV)
                 self.assertEqual(kw['cwd'], '/')
                 self.assertEqual(json.loads(kw['input']), {'action': 'status'} if area == 'printer' else {'method': 'status'})
@@ -48,6 +49,12 @@ class ViewTests(unittest.TestCase):
         status={'mode':'certificate','username':'sv08','certificates':[{'id':'a','label':'Browser','fingerprint':'public','expires':42,'revoked':False}]}
         self.assertEqual(view.public('mainsail-access','status',status),status)
 
+    def test_compatible_component_choices_survive_public_printer_read(self):
+        choices={'sv08-main':[{'id':'bed_assembly','devices':[]}]}
+        self.assertEqual(view.public('printer','status',{'available_components':choices,'unreviewed_future_field':'hidden'}),{'available_components':choices})
+        status={'state':'conflict','message':'Review unsupported SAVE_CONFIG changes before printing.'}
+        self.assertEqual(view.public('printer','status',{'native_calibration_status':status,'private_debug_log':'hidden'}),{'native_calibration_status':status})
+
     def test_public_certificate_is_exact_and_never_private(self):
         certificate={'filename':'sv08-printer-ca.crt','content':'-----BEGIN CERTIFICATE-----\nQUFB\n-----END CERTIFICATE-----\n'}
         self.assertEqual(view.public('identity','ca.download',certificate),certificate)
@@ -62,6 +69,17 @@ class ViewTests(unittest.TestCase):
         for ident in ['../secret','a'*31,'A'*32,None,[], 'a'*32+'\n']:
             with self.assertRaises(ValueError):view.validate({**request,'id':ident})
         with self.assertRaises(ValueError):view.validate({**request,'path':'/etc/shadow'})
+
+    def test_provenance_public_response_is_finite_and_omits_private_fields(self):
+        result = dict(state='intact', build_id='a'*64, scope='local-project-record', reason='record-matches')
+        self.assertEqual(view.public('provenance', 'status', {**result, 'source_files': {'private':'hash'}}), result)
+        for changes in ({'state':'unknown'}, {'reason':'private error path'}, {'build_id':'bad'},
+                        {'state':'tainted'}, {'scope':'full-os'}, {'state':[]}, {'reason':{}}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                view.public('provenance', 'status', {**result, **changes})
+        for state, reason in [('tainted','record-mismatch'), ('unavailable','read-failed'), ('unavailable','baseline-missing')]:
+            safe = dict(state=state, reason=reason, build_id=None, scope='local-project-record')
+            self.assertEqual(view.public('provenance','status',safe),safe)
 
     def test_child_error_is_sanitized(self):
         with patch.object(view.subprocess,'run',return_value=subprocess.CompletedProcess([],0,'{"ok":false,"error":"password secret /private/path"}','private stderr')):
@@ -84,7 +102,8 @@ class ViewTests(unittest.TestCase):
     @unittest.skipIf(view.os.geteuid()==0, 'Requires ordinary execution identity')
     def test_existing_helpers_still_refuse_ordinary_invocation(self):
         root=Path(__file__).resolve().parents[1]/'runtime'
-        for script in view.SCRIPTS.values():
+        for area, script in view.SCRIPTS.items():
+            if area == 'provenance': continue  # read-only helper has no mutation entry
             with self.subTest(script=script):
                 result=subprocess.run([sys.executable,str(root/Path(script).name)],input='{"method":"status"}',text=True,capture_output=True,timeout=5)
                 self.assertFalse(json.loads(result.stdout)['ok'])

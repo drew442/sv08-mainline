@@ -137,6 +137,20 @@ this initial host test. Installed UI files and pilot login do not establish the
 remaining software/network adapters, production TLS/account persistence, signed
 release delivery or physical recovery operations.
 
+For an initial fresh root, use
+`finalize_diagnostic_host.py --work build/PRIVATE --data build/DATA --fresh`.
+The default reviewed profile is `configs/images/host-ab.json`; `--profile PATH`
+selects the reviewed baseline used for that construction. The staged `profile.json`
+and all three `bootstrap-complete`, `packages-complete`, and `refresh-complete`
+markers must match that profile's canonical digest. The finalizer runs bounded
+`dpkg --audit` and `apt-get check` inside this root, requires clean package state,
+and performs the diagnostic key, service-mask and initramfs checks. It neither
+installs packages nor starts services. Inspection is the default; add `--execute`
+to write `finalized.json` after every check passes. Fresh provenance records the
+actual profile and marker hashes alongside the current root inventory; it does
+not invent a historical finalization receipt. This is offline construction evidence,
+not hardware validation or a release claim.
+
 If a reviewed runtime or host-UI correction is required after a diagnostic root
 has been finalized, preserve that root unchanged and copy it to a fresh private
 build directory. The normal staging commands reject an existing runtime/UI.
@@ -145,7 +159,9 @@ project directories and outputs in that copied root; they reject symlinks and
 unrecognized files before replacing either directory. Regenerate the initramfs
 and create a new `finalized.json` receipt with
 [`finalize_diagnostic_host.py`](../../scripts/finalize_diagnostic_host.py)
-before composition. This construction exception is limited to non-deployable
+with `--source-receipt PATH` pointing to the preserved source receipt, before
+composition. This mode is mutually exclusive with `--fresh` and retains the
+source receipt hash. This construction exception is limited to non-deployable
 diagnostic roots by [decision 0016](../decisions/0016-controlled-host-restaging.md).
 
 A clean root may receive its first-boot owner public-key seed from the separate

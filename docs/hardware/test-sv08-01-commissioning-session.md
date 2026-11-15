@@ -1,113 +1,142 @@
-# Test SV08-01 commissioning session record
+# One SV08 commissioning session
 
-Status: prepared offline; no session result is implied. Profile: [test-sv08-01](../../profiles/test-sv08-01/profile.json), whose hardware identity and support status remain unverified. Use this form only with the coordinator's reviewed configuration and an identified target.
+Status: prepared offline; no physical check is marked passed here. This is the
+single H01/H02/H04/H05/H06 session form linked by the
+[human queue](coordinated-human-tasks.md). Use it for the identified printer with its actual selected definitions, including modifications. The filename retains its historical named
+machine identity; an unmodified printer and exhaustive parameter combinations are not prerequisites for this session.
+See the [current readiness and remaining gaps](../development/stock-printer-readiness.md).
 
-This form groups the ready work for H01, H02, H05 and H06 while preserving their safety boundaries. The canonical dispatch queue is [coordinated human tasks](coordinated-human-tasks.md). Do not copy serials, credentials, raw captures or private calibration into this file; put them in the ignored local evidence path and record only its evidence reference below.
+The purpose is to reach an attended first print with the correct configuration,
+without asking for repeated inspections, media moves or calibration transcription.
+Keep one private session record and link it from every consuming H row. Do not put
+serials, private configuration, calibration, keys or raw captures in this document.
 
-## Session header
+## Before scheduling the attended work
 
-| Field | Record |
-| --- | --- |
-| Session date / operator | `____________________________` |
-| Target/profile and physical identity evidence | `____________________________` |
-| Board revisions / sensor and heater evidence (H01) | `____________________________` |
-| Host image / slot / boot ID (H02) | `____________________________` |
-| Mainboard and toolhead Klipper revision | `f0892d82b0f1c1228454f09eb508eddde2250f4b` / `________________` |
-| Reviewed configuration path and hash | `____________________________` |
-| Private evidence directory / capture IDs | `____________________________` |
-| Coordinator and stop contact | `____________________________` |
+The coordinator prepares the exact candidate/configuration manifest, firmware/source
+matches, last applicable evidence, logging and a known stop/restore route. The owner
+confirms the actual target and available independent recovery medium. Reuse earlier
+measurements only when the same parts, wiring and configuration still match; do not
+ask the owner to recreate source inventories. Never ask for a media move before
+reviewed bytes, target boundaries and the writing procedure are ready.
 
-Record each stage separately. A communication or input pass does not pass a later output, motion, homing, thermal, calibration or print gate. If hardware, wiring, firmware, host image, or reviewed configuration changes, invalidate the affected downstream rows and begin a new session record.
+The session packet must identify how Klipper will be launched for each approved
+phase, its configuration hash, service/socket ownership, output limits and stop
+procedure. Configuration publication deliberately leaves Klipper stopped. Current
+diagnostic images retain production masks and do not grant normal OS-health
+readiness. Their physical commissioning launch must receive a separate exact-target
+operation assessment and owner authorization. **No generic unmask/start command or
+fabricated health marker is part of this form.** If no supported/reviewed activation
+route is ready, stop at that explicit integration dependency before requesting
+output tests; do not disguise it as a failed sensor or ask the owner to debug Linux.
 
-## Stage H01 — unpowered inspection and identity
+For an unqualified factory host, prepare target-specific boot/MCU and independent
+recovery checks before any installation. The existing complete diagnostic image is
+not a generic stock printing installer. This session does not authorize flashing,
+power cycling, motion or heating merely because its instructions exist.
 
-**Preconditions:** printer is fully unpowered and isolated; the inspection list and safe procedure have been reviewed. Do not remove unnecessary heatsinks or disturb wiring.
+## One header, one result log
 
-**Action / observation:** inspect and photograph markings and connectors privately; identify only facts supported by marking, schematic comparison or measurement. Reuse existing MCU/oscillator marking evidence. Record only unresolved installed board revisions, hotend and bed sensor/heater parts or unresolved status, probe and filament physical associations, and any wiring change.
+Record these once in the assigned private session directory:
 
-| Field | Record |
-| --- | --- |
-| Power-isolated state confirmed by | `________________` at `________` |
-| Target and board evidence path | `____________________________` |
-| Mainboard revision / evidence level | `____________________________` |
-| Toolhead revision / evidence level | `____________________________` |
-| Sensor/heater identities and circuit evidence | `____________________________` |
-| Probe and filament physical association | `____________________________` |
-| Result: pass / fail / inconclusive | `________________` |
-| Stop reason or unresolved dependency | `____________________________` |
-| H01 evidence reference | `____________________________` |
+- Date/operator, physical target, selected profile and fitted parts; mark stock or modified.
+- Image/source/slot/boot and both MCU revision/identity bindings; reuse exact known evidence where still applicable.
+- Saved hardware revision and final Full configuration/manifest hash/publication receipt; record each earlier input-only, setup or calibration candidate separately.
+- Independent reference instrument, approved phase limits, stop control, recovery route and capture paths.
+- Exact reviewed activation procedure, operation authorization and coordinator contact.
 
-**Stop immediately** for unexpected power, damaged insulation, an unidentified connection that must be disturbed, or any need to energize the printer to complete inspection. Dependency for H05 is sufficient sensor/circuit and input-association evidence; a universal PCB revision is not required if the relevant pins and safety facts are otherwise evidenced.
+Use a single row per phase: `time | configuration hash / launch-stop review binding | pass/fail/inconclusive | observation/evidence | next action`.
+A failed/inconclusive prerequisite stops dependent phases. Leave later rows unpassed.
+A safe pause between phases is allowed; changed hardware/configuration invalidates
+its dependent evidence, not unrelated completed checks.
 
-## Stage H02 — capture-ready power and paired MCU start
+## The session, in order
 
-**Preconditions:** H01 physical state is recorded; the reviewed host image/slot and printer state are known; logs are armed before reconnecting power; serial/USB back-power risk is accounted for. This stage does not enable outputs.
-
-**Allowed observations:** record cold/warm boot, host health, USB enumeration and the paired MCU `ready` result using the coordinator's reviewed capture procedure. Use the existing no-output configuration only with private serial substitutions: [test-sv08-01-no-outputs.cfg](../../configs/commissioning/test-sv08-01-no-outputs.cfg). The existing paired USB evidence is a reference, not a new session result.
-
-| Field | Record |
-| --- | --- |
-| Capture armed before power reconnection (ID) | `____________________________` |
-| Intended image/slot and safe printer state | `____________________________` |
-| Mainboard identity / application revision | `____________________________` |
-| Toolhead identity / application revision | `____________________________` |
-| Host and MCU boot observations | `____________________________` |
-| Output state confirmed disabled | `____________________________` |
-| Result: pass / fail / inconclusive | `________________` |
-| Stop reason or unresolved dependency | `____________________________` |
-| H02 evidence reference | `____________________________` |
-
-**Stop immediately** for smoke, heat, unexpected current or motion, loss of communication, boot failure, or any output becoming active. H02 passing permits H05 input-only checks; it does not permit H06 outputs or ordinary homing.
-
-## Stage H05 — read-only inputs and ambient reference
-
-**Preconditions:** H01 sensor/input facts and H02 paired no-output start pass; independent temperature instrument is present; outputs remain disabled; reviewed input-only configuration is loaded. Use [test-sv08-01-sensors.cfg](../../configs/commissioning/test-sv08-01-sensors.cfg) and [test-sv08-01-inputs.cfg](../../configs/commissioning/test-sv08-01-inputs.cfg) only as the documented input-only includes. Their settings are preserved software values, not verified component identities.
-
-**Validated queries:** query `gcode_button probe_check` and `gcode_button filament_check` and record the physical action, observed transition and polarity. Do not infer physical association from the logical label. Record simultaneous ambient readings from both configured inputs and the independent instrument; old samples are historical references only.
-
-| Field | Record |
-| --- | --- |
-| Configuration path/hash and paired MCU evidence | `____________________________` |
-| Independent instrument / calibration reference | `____________________________` |
-| Room/reference temperature and time | `____________________________` |
-| Hotend input (`extra_mcu:PA5`, software pull-up 11500 ohm) | `____________` / `____________` |
-| Bed input (`PC5`, upstream default pull-up 4700 ohm) | `____________` / `____________` |
-| `probe_check` released → pressed observation | `____________________________` |
-| `filament_check` released → pressed observation | `____________________________` |
-| Physical association and polarity confirmed | `____________________________` |
-| Result: pass / fail / inconclusive | `________________` |
-| Stop reason or unresolved dependency | `____________________________` |
-| H05 evidence reference | `____________________________` |
-
-**Stop immediately** for a sensor outside its declared bounds, implausible or rapidly changing values, unexpected input transitions, inability to identify the physical input, or any output activity. H05 is the gate for H06; it does not validate heated operation.
-
-## Stage H06 — attended outputs, motion, heat and first print
-
-Run each row only after the preceding row passes. Use a reviewed configuration and operator-visible stop control. The candidate commissioning limits recorded in the source packet are proposals, not validated machine limits. Never issue ordinary `G28` from this form: use a separately reviewed homing sequence after endstop/probe checks.
-
-| Gate | Preconditions and bounded action | Evidence / result |
+| Phase | Owner/coordinator action and observable pass condition | H dependency |
 | --- | --- | --- |
-| Fans and shutdown | H05 pass; identify fan physically; perform the coordinator's bounded fan test and shutdown observation | `time ______ target ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
-| Motors and direction | Fan gate pass; clear workspace; test one bounded motor action at a time with immediate stop available | `time ______ axis ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
-| X/Y sensorless and Z probe homing | Motor gate pass; DIAG/probe facts reviewed; use attended, reviewed sequence; no unreviewed `G28` | `time ______ sequence ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
-| Controlled heat and reference | Homing gate pass; independent reference and limits reviewed; supervise temperature continuously | `time ______ heater ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
-| PID / extrusion | Controlled heat pass; heater response and sensor behavior accepted; run only reviewed bounded procedure | `time ______ procedure ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
-| Gantry / mesh / manual Z offset | Previous gates pass; reviewed upstream manual Z-offset procedure selected; pressure calibration remains deferred unless separately approved and evidenced | `time ______ procedure ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
-| First layer and print controls | All prior gates pass; attended first layer; verify pause, resume, cancel and shutdown controls separately | `time ______ file ______ observation ____________________ pass/fail/inconclusive ______ evidence ______` |
+| 1. Identify the fitted machine | With power isolated, including USB/serial back-power, confirm board/connector/part evidence and wiring changes without unnecessary disassembly. Confirm factory bed/hotend/sensors or choose definitions for the actual replacements. Do not select a factory sensor merely because a hotend name matches. | H01 |
+| 2. Establish the host and stopped setup | Arm capture, then use only the reviewed boot/installation procedure. Confirm intended slot, persistent configuration/identity, correct MCU revision/serial association, Mainsail/Moonraker access and no unintended outputs. Confirm the independent recovery/stop route. No trial, update or service race may be active. | H02/H04 |
+| 3. Check inputs before outputs | Use the reviewed input-only configuration. Observe each actual probe/filament/endstop released–operated–released transition and physical association. Compare plausible stable ambient readings with the independent reference. Take pins, names and configured conversion settings from this session's generated manifest, not old hardcoded pin tables. | H05 |
+| 4. Verify stop, fans and motors | After phase 3 and exact action review, enable only the approved phase. Verify the stop path and each physically identified fan; check one bounded motor action/direction at a time with clear travel. Wrong direction, unexpected motion or inability to stop is a failure. | H06 |
+| 5. Establish homing/probing | Verify the configured probe and sensorless/DIAG dependencies before the separately reviewed bounded homing sequence. Do not issue ordinary `G28`, gantry levelling or mesh before these dependencies pass. Keep pressure GPIO observations separate from proprietary automatic calibration. | H06 |
+| 6. Validate heating and extrusion | With identified sensor/heater parts, reviewed limits and an independent reference, observe each approved controlled heat response and shutdown. Stop on implausible readings, overshoot or protection failure. Perform reviewed PID/extrusion checks only after thermal behavior is accepted; persist any measured gains with native `SAVE_CONFIG` as described below, never by borrowing factory measured gains. Maximum configuration limits are not initial test targets. | H06 |
+| 7. Record manual probe calibration | Establish the reviewed gantry/bed plane at the intended thermal state, then run the supported manual probe procedure and native `SAVE_CONFIG`. Wait for restart and automatic reconciliation, then confirm the persisted value in Cockpit. Exercise the actual print-start levelling and Z-rehoming sequence and verify the nozzle-to-bed reference before first extrusion. If levelling changes that reference, recalibrate after levelling and rebuild the mesh before printing. | H06 |
+| 8. First layer and print controls | With all preceding gates passed, use a known bounded test file and matching slicer start/end controls. Attend the first layer; separately verify pause, resume, cancel and shutdown. Record observed behavior, not just a successfully uploaded file. | H06 |
+| 9. Finish cleanly | Stop the job and outputs, preserve logs/calibration/configuration, confirm the intended persistent/stopped service state and record which capabilities are accepted. Accept the actual configured printer and record its selected definitions; no exhaustive combination testing is required. | H02/H06 closure |
 
-**Stop immediately** for unexpected temperature, heater runaway or shutdown failure, smoke, smell, noise, wrong direction, unexpected travel, endstop/probe failure, loss of communication, or any inability to stop. Record the exact gate and leave later rows blank. H06 evidence is physical commissioning evidence for this target only; it does not certify stock SV08 support.
+Stop immediately for smoke, unexpected heat/motion, wrong input association,
+communication loss or any inability to stop. Use the reviewed independent stop
+control. Do not continue by weakening heater protections, inventing offsets,
+changing limits or disabling a guard. Send one exact failed phase/evidence reference
+to the coordinator and keep the setup available for diagnosis where safe.
 
-**H06 dependency handoff:** `H05 evidence ____________________` → `reviewed candidate/config hash ____________________` → `next ready gate ____________________`. If any gate is fail or inconclusive, send the exact H06 sub-gate and evidence reference to the coordinator; do not request a second physical action until the affected configuration or safety dependency is reviewed.
+Fine sensor-curve fitting remains deferred. The earlier chamber BLE measurement is
+a location-specific ambient reference, not proof of heater temperature accuracy or
+a reason to fit a conversion curve. Forced update fallback and destructive recovery
+are separate controlled maintenance qualifications, not extra first-print tasks.
 
-## Handoff and dependency record
+## Native Klipper calibration and persistence
 
-| Item | Record |
-| --- | --- |
-| H IDs consumed | `H01, H02, H05, H06` / `________________` |
-| Passed gates and linked evidence | `____________________________` |
-| Failed or inconclusive gate and reason | `____________________________` |
-| Next ready offline action | `____________________________` |
-| Physical dependency sent to coordinator | `____________________________` |
-| Invalidation trigger for this record | `____________________________` |
+The generated setup uses the sourced starting offset of zero until a measured
+probe offset is recorded. A persisted measured zero is valid; a starting zero is
+not evidence that calibration has been performed. Full printing starts guarded
+and the observer acknowledges only a matching loaded configuration and accepted
+calibration. Explicit Setup mode remains blocked.
 
-The [configuration intake](../development/printer-configuration-intake.md) now links the coordinator-supplied sanitized section inventory. Next bind both serial placeholders and exact host/MCU revisions, then resolve the public-source gaps before any activation request. No new owner inventory is required for that offline preparation.
+Under the reviewed physical procedure, use normal Klipper calibration tools:
+
+1. Establish the intended warmed gantry/bed plane, then run the supported
+   `PROBE_CALIBRATE` / `TESTZ` / `ACCEPT` interaction.
+2. Issue normal `SAVE_CONFIG`. Klipper persists the result and restarts. There is
+   no required transcription into Cockpit or separate hardware publication for
+   this calibration-only save.
+3. Wait for Klipper to become ready and Cockpit's calibration synchronization
+   message to report acceptance. Confirm the persisted value survives reload in
+   **Printer Hardware → Inspect changes → Configuration output, calibration and
+   expert actions → Existing component calibration**. Pending/conflicting values
+   are not a successful active calibration.
+4. Before first extrusion, exercise the actual print-start levelling, Z-rehoming
+   and mesh sequence in the reviewed thermal state, then verify the nozzle-to-bed
+   reference. Record the active configuration hash for this phase.
+
+The [pinned Klipper guidance](https://github.com/Klipper3d/klipper/blob/f0892d82b0f1c1228454f09eb508eddde2250f4b/docs/Probe_Calibrate.md#calibrating-probe-z-offset)
+requires recalibration after changes to the motion system, hotend position or
+probe location. With XY probe offsets, a changed bed tilt can also invalidate the
+measurement and dependent mesh. QGL can change that relationship; it is not proof
+of an offset's validity. The normal generated QGL → Z-rehome → mesh sequence is
+retained, consistent with the [published Voron start example](https://docs.vorondesign.com/community/howto/EricZimmerman/SlicerAndPrintStart.html).
+Whether this configured machine reproduces its calibrated reference is an attended
+check. If it does not, stop, recalibrate after levelling and rebuild the mesh.
+
+Supported native results are mirrored automatically against the applied hardware.
+Unrelated root edits, immutable include drift and incompatible records are refused;
+normal later hardware publication/restoration still requires stopped services.
+Manual calibration fields remain optional overrides. If used, save, regenerate,
+review and apply stopped; they do not authorize writing generated files by hand.
+Replacement of affected hardware clears dependent measurements. The automatic
+observer validates persisted data and loaded configuration, not physical accuracy.
+
+## Optional heater PID calibration
+
+Hardware selection does not require PID calibration. Supported Full configurations
+can retain explicitly selected watermark control while PID is deferred. Do not
+invent or borrow measured gains.
+
+After thermal identity, limits and response have passed their reviewed checks,
+use Klipper's normal PID calibration for the identified heater and agreed target,
+then `SAVE_CONFIG`. The native result includes PID control and gains; automatic
+reconciliation records them without manually copying numbers or changing an
+advanced control selector. Wait for accepted synchronization and verify the active
+control/gains and thermal response before printing.
+
+If PID remains deferred, record the accepted watermark behavior and limits. Fine
+sensor-curve fitting remains deferred; changing control mode does not identify an
+unknown sensor. Keep this phase's result/configuration binding in the same session
+record instead of repeating unaffected input checks.
+
+## Handoff
+
+The coordinator links this single result into H01/H02/H04/H05/H06, recording exact
+passed phases and exclusions. Unresolved fitted parts, activation, calibration or
+print behavior remain named dependencies with the next useful action. No H row is
+closed from an empty form, a parser pass, an export or a publication receipt.

@@ -13,12 +13,15 @@ from pathlib import Path
 import shutil
 import sys
 import unittest
+from unittest.mock import patch
+from threading import Lock
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'scripts'));sys.path.insert(0,str(ROOT/'runtime'))
 from stage_admin_ui import stage
 from stage_printer_ui import compose_host
 from sv08_state import Store
 from sv08_admin import Controller
+import sv08_view as view
 
 
 class SourcePolicyUITests(unittest.TestCase):
@@ -37,10 +40,12 @@ class SourcePolicyUITests(unittest.TestCase):
 
     def test_static_source_reader_has_no_controller_or_elevation_calls(self):
         script=(ROOT/'ui/host/source.js').read_text()
-        self.assertIn("fetch('project-source.json'",script)
-        for forbidden in ('cockpit.spawn','sv08View','superuser','sv08Session','location.href ='):
+        self.assertIn("cockpit.file('/usr/share/cockpit/sv08-host/' + name)",script)
+        for forbidden in ('cockpit.spawn','superuser','sv08Session','location.href ='):
             self.assertNotIn(forbidden,script)
-        self.assertIn("credentials:'same-origin'",script)
+        self.assertEqual(script.count("sv08View('provenance')"), 1)
+        self.assertEqual(script.count('sv08View('), 1)
+        self.assertIn("finally { file.close(); }",script)
         self.assertIn('overall_release_qualified === false',script)
 
 
@@ -64,6 +69,7 @@ def serve(work, composed=False):
     (work/'fixture.json').write_text(json.dumps({'generation':boot['generation']}))
     authority={'elevated':False}
     requests=[]
+    provenance_lock=Lock()
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args):pass
         def respond(self,status,raw,kind='application/json',login=False):
@@ -74,16 +80,24 @@ def serve(work, composed=False):
         def do_GET(self):
             if self.headers.get('Host')!=f'127.0.0.1:{self.server.server_port}':return self.respond(403,b'{}')
             if self.path.endswith('/base1/cockpit.js'):
-                return self.respond(200,"""(()=>{const proxy=new EventTarget();Object.assign(proxy,{valid:true,Current:'none',Bridges:['sudo'],wait:cb=>cb(),Start:()=>{window.fixtureStarts++;},Answer:()=>{},Stop:()=>{}});window.fixtureStarts=0;window.fixtureRequests=[];window.cockpit={logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>proxy}),spawn:(argv,options)=>({input:async data=>{const request=JSON.parse(data);window.fixtureRequests.push(request);const response=await fetch('/request',{method:'POST',body:JSON.stringify(request)});return response.text();}})};})();""",'text/javascript')
+                return self.respond(200,"""(()=>{const proxy=new EventTarget();Object.assign(proxy,{valid:true,Current:'none',Bridges:['sudo'],wait:cb=>cb(),Start:()=>{window.fixtureStarts++;},Answer:()=>{},Stop:()=>{}});window.fixtureStarts=0;window.fixtureRequests=[];window.fixtureSourceFileReads=[];window.cockpit={file:path=>{window.fixtureSourceFileReads.push(path);return {read:async()=>{const response=await fetch('/source-file?name='+encodeURIComponent(path));if(!response.ok)throw Error('unavailable');return response.text();},close:()=>{}};},logout:()=>{},dbus:()=>({addEventListener:()=>{},proxy:()=>proxy}),spawn:(argv,options)=>({input:async data=>{const request=JSON.parse(data);window.fixtureRequests.push(request);const response=await fetch('/request',{method:'POST',body:JSON.stringify(request)});return response.text();}})};})();""",'text/javascript')
             if self.path=='/source-off':authority['source_off']=True;return self.respond(200,b'{}')
             name=self.path.split('?')[0].rsplit('/',1)[-1] or 'index.html'
-            if name=='project-source.json':
+            if self.path.startswith('/source-file?name='):
+                from urllib.parse import unquote
+                path=unquote(self.path.split('=',1)[1]);prefix='/usr/share/cockpit/sv08-host/'
+                if not path.startswith(prefix) or path[len(prefix):] not in ('project-LICENSE.txt','project-NOTICE.txt','project-source.json'):return self.respond(404,b'{}')
                 cookie=SimpleCookie()
                 try:cookie.load(self.headers.get('Cookie',''))
                 except CookieError:return self.respond(401,b'{}')
                 session=cookie.get('sv08-source-fixture')
                 if session is None or session.value!='ordinary-session':return self.respond(401,b'{}')
-            if name=='project-source.json' and authority.get('source_off'):return self.respond(404,b'{}')
+                document=path[len(prefix):]
+                if document=='project-source.json' and authority.get('source_off'):return self.respond(404,b'{}')
+                return self.respond(200,(work/'rootfs'/path.lstrip('/')).read_bytes(),'text/plain')
+            # Reproduce unavailable raw HTTP documents while the ordinary bridge
+            # remains usable; no anonymous endpoint or elevation is introduced.
+            if name in ('project-source.json','project-LICENSE.txt','project-NOTICE.txt'):return self.respond(401,b'{}')
             if '/sv08-printer/' in self.path:base=work/'rootfs/usr/share/cockpit/sv08-printer'
             else:base=work/'rootfs/usr/share/cockpit/sv08-host'
             if name not in {p.name for p in base.iterdir() if p.is_file()}:return self.respond(404,b'{}')
@@ -96,7 +110,15 @@ def serve(work, composed=False):
                 request=json.loads(self.rfile.read(size));requests.append(request)
                 (work/'requests.json').write_text(json.dumps(requests))
                 # Finite host status reads use the actual disposable controller.
-                if request.get('area')=='host' and request.get('method') in ('status','jobs','upload.list'):
+                if request == {'area':'provenance','method':'status'}:
+                    # Actual finite view adapter and isolated subprocess; only the
+                    # installed root/import path are adapted to this disposable root.
+                    code = ("import sys,json;sys.path.insert(0," + repr(str(runtime)) + ");"
+                            "from sv08_provenance import status;"
+                            "print(json.dumps({'ok':True,'result':status(" + repr(str(work/'rootfs')) + ")}))")
+                    with provenance_lock, patch.object(view, 'child_code', return_value=code):
+                        result=view.read(request)
+                elif request.get('area')=='host' and request.get('method') in ('status','jobs','upload.list'):
                     result=controller.request({'method':request['method']})
                 else:raise ValueError('Fixture supports finite host reads only')
                 self.respond(200,json.dumps({'ok':True,'result':result}))

@@ -1,7 +1,7 @@
 'use strict';
 (() => {
     const $ = id => document.getElementById('printer-' + id);
-    let catalog, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
+    let catalog, availableComponents = {}, nativeCalibrationStatus = {}, draft, revision, loadedIdentity, saved, review, busy = false, epoch = 0, statusEpoch = 0, loading = false, changed = false, reconcile = false, diagnostic = false;
     let reloadAfterAuthority=false;
     const copy = value => JSON.parse(JSON.stringify(value));
     const notice = text => { const target={'#definition-sources':'source-notice','#printer-connections':'connection-notice','#definitions':'definitions-notice'}[location.hash]??'notice';$(target).textContent=text;$(target).dataset.kind=text.startsWith('Saved configuration loaded.')?'loaded':'task'; if(reconcile)$('notice').textContent=text; };
@@ -117,9 +117,13 @@
                 box.append(connection);
                 connection.append(el('p',board.warning),el('small','Documented reference. Installed match: unknown. '+board.unknowns.join('; ')));
                 connection.append(el('small',board.source.path+' @ '+board.source.revision+'; accessed '+board.source.accessed));
-                connection.append(field('Transport','text',selection.transport,v=>{if(v)selection.transport=v;else delete selection.transport;delete selection.identity;edit();renderBoards();},[['serial','USB / serial'],['can','CAN']].filter(([value])=>!board.supported_transports||board.supported_transports.includes(value))));
-                connection.append(field('Private MCU identity','text',selection.identity,v=>{if(v)selection.identity=v;else delete selection.identity;edit();}));
-                connection.append(field('Use this reference provisionally','boolean',selection.reference_ack,v=>{if(v===undefined)delete selection.reference_ack;else selection.reference_ack=v;edit();}));
+                const connectionField=(key,title,type,onchange,options)=>{
+                    const item=field(title,type,instanceFieldValue(role,key),onchange,options),control=item.querySelector('input,select');
+                    control.dataset.instanceTarget=role+'.'+key;return item;
+                };
+                connection.append(connectionField('transport','Transport','text',v=>{setInstanceField(role,'transport',v);setInstanceField(role,'identity',undefined);edit();renderBoards();},[['serial','USB / serial'],['can','CAN']].filter(([value])=>!board.supported_transports||board.supported_transports.includes(value))));
+                connection.append(connectionField('identity','Private MCU identity','text',v=>{setInstanceField(role,'identity',v);edit();}));
+                connection.append(connectionField('reference_ack','Use this reference provisionally','boolean',v=>{setInstanceField(role,'reference_ack',v);edit();}));
             }
             $('boards').append(box);
         }
@@ -134,17 +138,31 @@
         });
         renderComponents();controls();
     }
+    function activeComponentPresets() {
+        const plan=draft.definition_plan,seen=new Set(),selected=new Set();
+        function visit(ref) {
+            const key=ref.source+'::'+ref.id+'@'+ref.version;
+            if(seen.has(key))return;seen.add(key);
+            if(plan.replacements?.[key]){visit(plan.replacements[key]);return;}
+            const record=plan.snapshots[key];if(!record)return;
+            if(ref.source==='builtin')selected.add(record.id);
+            for(const dep of record.dependencies??[])visit({...dep,source:dep.source??ref.source});
+        }
+        for(const ref of plan?.selections??[])visit(ref);
+        return selected;
+    }
     function renderComponents() {
         const root=$('components');root.replaceChildren();
         for(const fan of draft.devices.filter(d=>d.kind==='fan')){const toggle=el('input');toggle.type='checkbox';toggle.checked=fan.settings.print_fan??['part_cooling_front','part_cooling_rear'].includes(fan.name);toggle.dataset.printFan=fan.name;toggle.onchange=()=>{fan.settings.print_fan=toggle.checked;edit();};root.append(label(fan.name.replaceAll('_',' ')+' · use for part cooling (M106/M107)',toggle));}
         for(const role of ['main','tool']) {
-            const board=boardData(role);if(!board)continue;
+            const pinned=boardData(role);if(!pinned)continue;
+            const board={...pinned,presets:availableComponents[pinned.id]??[]};
             const box=el('div');box.append(el('h3',role==='main'?'Mainboard components':'Toolhead components'));
             for(const kind of ['bed','extruder']) {
                 const presets=(board.presets??[]).filter(p=>p.id!=='funssor_cn3d_bed').filter(p=>p.devices.some(d=>d.kind===kind));
                 if(!presets.length)continue;
                 const target=draft.devices.find(d=>d.board===role&&d.kind===kind);
-                const match=presets.find(p=>p.id===target?.profile)??presets.find(p=>p.devices.every(expected=>draft.devices.some(d=>d.board===role&&d.name===expected.name&&d.kind===expected.kind&&Object.entries(expected.settings).every(([k,v])=>d.settings[k]===v))));
+                const match=presets.find(p=>p.id===target?.profile)??presets.find(p=>activeComponentPresets().has(board.id+'.'+p.id))??presets.find(p=>p.devices.every(expected=>draft.devices.some(d=>d.board===role&&d.name===expected.name&&d.kind===expected.kind&&Object.entries(expected.settings).every(([k,v])=>d.settings[k]===v))));
                 const choice=select([['',target?'Current configuration (modified)':'Choose installed component'],...presets.map(p=>[p.id,friendlyPreset(p,board)])],match?.id??'',value=>{if(value)chooseComponent(role,value);});
                 choice.dataset.component=kind;choice.dataset.board=role;
                 box.append(label(kind==='bed'?'Heated bed':'Hotend',choice));
@@ -191,11 +209,11 @@
                 // Bias belongs to the board input circuit, not the replacement curve.
                 const reference=(board.presets??[]).flatMap(p=>p.devices).find(d=>d.kind==='sensor'&&d.settings.pin===device.settings.pin);
                 device.settings.curve=value;
-                delete device.settings.pullup_resistor;delete device.settings.custom_curve;
+                delete device.settings.pullup_resistor;setCalibration(device,'custom_curve',undefined);
                 if(reference)device.settings.pullup_resistor=reference.settings.pullup_resistor;
                 // Keep existing heater temperature protections; do not raise bounds.
                 for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))
-                    for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];
+                    for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(heater,key,undefined);
                 edit();render();
                 notice('Sensor changed to '+curve.label+'. Board input defaults restored; heater PID calibration can be done later.'+(reference?'':' Set the input bias in advanced settings for this custom connection.'));
             });
@@ -237,12 +255,11 @@
                 else if(type==='color_order')options=['RGB','GRB','BRG','BGR','RBG','GBR'].map(v=>[v,v]);
                 else if(type==='control')options=[['pid','PID (enter gains)'],['watermark','Watermark']];
                 const text=({'invert':'Invert signal','invert_dir':'Invert direction','invert_enable':'Invert enable','digital_pullup':'Digital input pull-up','pullup_resistor':'Analog pull-up resistance (ohm)','current_rating_rms':'Motor RMS rating (A), owner entered','run_current':'Driver RMS current (A)','sense_resistor':'Sense resistor (ohm), explicit','pin':'Connection / pin'}[name]??name.replaceAll('_',' '));
-                advanced.append(field(text,type==='name'?'text':type,device.settings[name],value=>{
-                    if(value===undefined||value==='')delete device.settings[name];else device.settings[name]=value;
-                    if(device.kind==='sensor'&&['curve','pullup_resistor'].includes(name))for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];
-                    if(name==='curve'){delete device.settings.custom_curve;delete device.settings.pullup_resistor;delete device.settings.min_temp;delete device.settings.max_temp;}
-                    if(name==='connector')for(const key of ['invert_dir','invert_enable','run_current','current_rating_rms','sense_resistor','uart_address','endstop_pin','endstop_invert','endstop_pullup'])delete device.settings[key];
-                    if(name==='control' && value!=='pid')for(const key of ['pid_kp','pid_ki','pid_kd'])delete device.settings[key];
+                advanced.append(field(text,type==='name'?'text':type,instanceFieldValue(device.name,name),value=>{
+                    setInstanceField(device.name,name,value);
+                    if(device.kind==='sensor'&&['curve','pullup_resistor'].includes(name))for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(heater,key,undefined);
+                    if(name==='curve'){setCalibration(device,'custom_curve',undefined);delete device.settings.pullup_resistor;delete device.settings.min_temp;delete device.settings.max_temp;}
+                    if(name==='connector')for(const key of ['invert_dir','invert_enable','run_current','current_rating_rms','sense_resistor','uart_address','endstop_pin','endstop_invert','endstop_pullup'])setInstanceField(device.name,key,undefined);
                     edit();renderSensors();renderComponents();renderCalibration();if(['curve','connector','control'].includes(name))renderDevices();
                 },options));
             }
@@ -258,28 +275,92 @@
                             custom.append(field(title+' '+(i+1),'number',points[i][j],v=>{points[i][j]=v;}));
                         const use=el('button','Use custom curve');use.onclick=()=>{
                             if(!points.every(p=>p.every(v=>typeof v==='number'&&Number.isFinite(v)))){notice('Enter all three temperature / resistance pairs.');return;}
-                            device.settings.custom_curve=copy(points);
-                            for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];
+                            setCalibration(device,'custom_curve',copy(points));
+                            for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(heater,key,undefined);
                             edit();render();
                         };
-                        const reset=el('button','Use default sensor curve');reset.onclick=()=>{delete device.settings.custom_curve;for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];edit();render();};
+                        const reset=el('button','Use default sensor curve');reset.onclick=()=>{setCalibration(device,'custom_curve',undefined);for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(heater,key,undefined);edit();render();};
                         custom.append(use,reset);box.append(custom);
                     }
                     box.append(el('small',curve.origin+'. '+curve.pullup_origin+'. Physical sensor/circuit identity unknown.'));
                     if(curve.reference_bounds)box.append(el('small',curve.bounds_origin+': '+curve.reference_bounds.join(' to ')+' °C.'));
                     const preset=el('button',curve.reference_bounds?'Use factory configured pull-up and bounds':'Use documented reference pull-up');
-                    preset.onclick=()=>{device.settings.pullup_resistor=curve.reference_pullup;if(curve.reference_bounds){[device.settings.min_temp,device.settings.max_temp]=curve.reference_bounds;}for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])delete heater.settings[key];edit();renderCalibration();renderDevices();};box.append(preset);
+                    preset.onclick=()=>{device.settings.pullup_resistor=curve.reference_pullup;if(curve.reference_bounds){[device.settings.min_temp,device.settings.max_temp]=curve.reference_bounds;}for(const heater of draft.devices.filter(d=>d.settings.sensor===device.name))for(const key of ['pid_kp','pid_ki','pid_kd'])setCalibration(heater,key,undefined);edit();renderCalibration();renderDevices();};box.append(preset);
                 }
             }
             $('devices').append(box);
         }
     }
+    const calibrationFields=['z_offset','pid_kp','pid_ki','pid_kd'];
+    function definitionInputs(state=draft) {
+        const plan=state.definition_plan, seen=new Set(), inputs={};
+        function visit(ref) {
+            let key=ref.source+'::'+ref.id+'@'+ref.version;
+            if(plan.replacements?.[key])return visit(plan.replacements[key]);
+            if(seen.has(key))return;seen.add(key);
+            const record=plan.snapshots[key];if(!record)return;
+            for(const dep of record.dependencies??[])visit({...dep,source:dep.source??ref.source});
+            for(const input of Object.values(record.inputs??{}))inputs[input.target]=input;
+        }
+        for(const ref of plan?.selections??[])visit(ref);
+        return inputs;
+    }
+    function calibrationProjectionSignature(state,device) {
+        const heater=['bed','extruder','chamber'].includes(device.kind);
+        const kinds=heater?[device.kind,'sensor']:['bed','extruder','probe','motor','sensor'];
+        const devices=state.devices.filter(d=>kinds.includes(d.kind)&&(!heater||[device.name,device.settings.sensor].includes(d.name))).map(d=>{const item=copy(d);for(const key of [...calibrationFields,'position_endstop','control'])delete item.settings[key];return item;});
+        const names=new Set(devices.map(d=>d.name)),roles=new Set(devices.map(d=>d.board)),plan=state.definition_plan,seen=new Set(),sources=[],settings=[];
+        function visit(ref){const id=ref.source+'::'+ref.id+'@'+ref.version;if(seen.has(id))return;seen.add(id);if(plan.replacements?.[id]){visit(plan.replacements[id]);return;}const record=plan.snapshots[id];if(!record)return;for(const dep of record.dependencies??[])visit({...dep,source:dep.source??ref.source});if((record.components??[]).some(c=>names.has(c.name)))sources.push([id,ref.sha256]);if(!heater&&record.printer_settings){const value=copy(record.printer_settings);delete value.geometry;settings.push(value);}}
+        for(const ref of plan?.selections??[])visit(ref);
+        return JSON.stringify({devices,boards:Object.fromEntries([...roles].sort().map(role=>[role,state.boards[role]])),sources:sources.sort(),settings,mappings:(plan?.runtime_assets?.boards??[]).filter(b=>roles.has(b.role)).map(b=>{const value=copy(b);delete value.presets;return value;}),edits:Object.fromEntries(Object.entries(state.calibration_edits??{}).filter(([target])=>names.has(target.split('.')[0])&&(heater||['z_offset','position_endstop'].includes(target.split('.')[1]))).sort())});
+    }
+    function nativeCalibrationValue(device,key) {
+        const value=nativeCalibrationStatus.values?.[device.name]?.[key];
+        if(value===undefined||!saved?.draft)return undefined;
+        const prior=saved.draft.devices.find(d=>d.name===device.name&&d.board===device.board);
+        if(!prior||calibrationProjectionSignature(draft,device)!==calibrationProjectionSignature(saved.draft,prior))return undefined;
+        return key==='control'?value:Number(value);
+    }
+    function setInstanceField(name,key,value) {
+        const target=name+'.'+key,input=definitionInputs()[target];
+        const device=draft.devices.find(d=>d.name===name);
+        // Preserve the compatible native PID tuple before editing one member.
+        if(device&&['control','pid_kp','pid_ki','pid_kd'].includes(key)){for(const field of ['control','pid_kp','pid_ki','pid_kd']){const value=nativeCalibrationValue(device,field);if(value!==undefined)device.settings[field]=value;}}
+        const settings=['identity','transport','reference_ack'].includes(key)&&draft.boards[name]?draft.boards[name]:draft.devices.find(d=>d.name===name)?.settings;
+        const cleared=value===undefined||value==='';
+        if(settings){if(cleared)delete settings[key];else settings[key]=value;}
+        if(input){
+            const values=draft.definition_plan.instance_values??={};
+            if(cleared){if(calibrationFields.includes(key)&&input.type==='number'||key==='control'&&input.type==='choice')values[target]=null;else delete values[target];}
+            else values[target]=value;
+        }
+        if([...calibrationFields,'position_endstop'].includes(key)||draft.native_calibration&&key==='control'){
+            draft.format_version=2;const edits=draft.calibration_edits??={};
+            for(const field of key==='control'?['pid_kp','pid_ki','pid_kd']:[key])edits[name+'.'+field]={value:key==='control'?(value==='pid'?settings?.[field]??null:null):value??null,nonce:crypto.randomUUID().replaceAll('-','')};
+            if(key==='control'&&value!=='pid')for(const field of ['pid_kp','pid_ki','pid_kd']){delete settings[field];const target=name+'.'+field;if(definitionInputs()[target])(draft.definition_plan.instance_values??={})[target]=null;}
+        }
+        for(const control of document.querySelectorAll('[data-input-target], [data-instance-target]'))if((control.dataset.inputTarget??control.dataset.instanceTarget)===target){
+            control.value=cleared?'':String(value);
+            if(control.dataset.inputTarget&&input)control.parentElement.firstChild.textContent=input.label+(input.required&&inputValue(input)===undefined?' · needs your input':'');
+        }
+    }
+    function instanceFieldValue(name,key) {
+        const device=draft.devices.find(d=>d.name===name);const native=device?nativeCalibrationValue(device,key):undefined;if(native!==undefined)return native;
+        const input=definitionInputs()[name+'.'+key];
+        return input?inputValue(input):(['identity','transport','reference_ack'].includes(key)?draft.boards[name]?.[key]:draft.devices.find(d=>d.name===name)?.settings[key]);
+    }
+    function setCalibration(device,key,value) {setInstanceField(device.name,key,value);}
+    function calibrationValue(device,key) {return instanceFieldValue(device.name,key);}
     function renderCalibration() {
         const root=$('calibration');root.replaceChildren();
-        for(const probe of draft.devices.filter(d=>d.kind==='probe')){const box=el('fieldset');box.append(el('legend','Measured probe calibration'),field('Z offset (mm)','number',probe.settings.z_offset,value=>{if(value===undefined)delete probe.settings.z_offset;else probe.settings.z_offset=value;edit();}));root.append(box);}
+        root.append(el('p','Run supported calibration tools in Klipper, then SAVE_CONFIG. The host reconciles persisted values automatically after restart. Full printing remains blocked until the loaded instance matches persisted calibration; Setup stays blocked.'));
+        if(nativeCalibrationStatus.message){const status=el('p');const state=nativeCalibrationStatus.state;sv08Presentation.status(status,nativeCalibrationStatus.message,{accepted:'success',pending:'warning',conflict:'error'}[state]??'neutral',{accepted:'check',pending:'clock',conflict:'error'}[state]??'info');status.dataset.nativeCalibrationState=state;root.append(status);}
+        if(draft.native_calibration){const native=el('details');native.append(el('summary','Last persisted native calibration · bound to applied hardware'),el('pre',JSON.stringify(draft.native_calibration.records,null,2)));root.append(native);}
+
+        for(const probe of draft.devices.filter(d=>d.kind==='probe')){const box=el('fieldset');box.append(el('legend','Probe calibration'),field('Z offset (mm)','number',calibrationValue(probe,'z_offset'),value=>{setCalibration(probe,'z_offset',value);edit();}));root.append(box);}
         for(const heater of draft.devices.filter(d=>['bed','extruder'].includes(d.kind))) {
             const box=el('fieldset');box.append(el('legend',heater.name.replaceAll('_',' ')));
-            for(const key of ['pid_kp','pid_ki','pid_kd'])box.append(field(key.replaceAll('_',' '),'positive',heater.settings[key],value=>{if(value===undefined)delete heater.settings[key];else heater.settings[key]=value;edit();}));
+            for(const key of ['pid_kp','pid_ki','pid_kd'])box.append(field(key.replaceAll('_',' '),'positive',calibrationValue(heater,key),value=>{setCalibration(heater,key,value);edit();}));
             root.append(box);
         }
     }
@@ -295,8 +376,8 @@
     async function load(keep = false) {
         loading=true;
         try {
-            invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;saved=result.state;definitionRows=result.definitions??[];sourceRows=result.sources??{};const filters=$('definition-filter');const selectedFilter=filters.value;filters.replaceChildren();for(const [v,t] of [['','All sources'],['builtin','Built-in'],...Object.values(sourceRows).map(s=>[s.id,s.repository??s.manifest.name])]){const o=el('option',t);o.value=v;filters.append(o);}filters.value=selectedFilter;revision=saved.revision;if (!keep || !draft) { draft=saved.draft===undefined?null:copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
-            if(saved.format_version!==1 || saved.draft?.format_version!==1 || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;$('export').textContent=draft?.format_version===1&&draft.boards?'Export retained local draft':'Export private diagnostic backup';controls();return;}
+            invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;availableComponents=result.available_components??{};nativeCalibrationStatus=result.native_calibration_status??{};saved=result.state;definitionRows=result.definitions??[];sourceRows=result.sources??{};const filters=$('definition-filter');const selectedFilter=filters.value;filters.replaceChildren();for(const [v,t] of [['','All sources'],['builtin','Built-in'],...Object.values(sourceRows).map(s=>[s.id,s.repository??s.manifest.name])]){const o=el('option',t);o.value=v;filters.append(o);}filters.value=selectedFilter;revision=saved.revision;if (!keep || !draft) { draft=saved.draft===undefined?null:copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
+            if(![1,2].includes(saved.format_version) || ![1,2].includes(saved.draft?.format_version) || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;$('export').textContent=[1,2].includes(draft?.format_version)&&draft.boards?'Export retained local draft':'Export private diagnostic backup';controls();return;}
             if(catalog.boards.some(b=>b.role==='chamber')&&!$('device-board').querySelector('[value=chamber]')){const o=el('option','Chamber module');o.value='chamber';$('device-board').append(o);}
             $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
             $('export').textContent='Export shareable draft';$('import-diff').hidden=true;render();$('source-notice').textContent='Add a repository to make definitions available. Hardware selections and applied settings stay unchanged.';$('connection-notice').textContent='Connections in current selections. Undocumented physical contacts remain unknown.';$('definitions-notice').textContent='Browse definitions without changing hardware selections.';notice('Saved configuration loaded. Candidates remain inactive.');
@@ -310,7 +391,7 @@
     function categoryFor(device){if(['bed'].includes(device.kind)||/bed/.test(device.name))return 'bed';if(['probe','pressure_switch'].includes(device.kind))return 'probe';if(['extruder','accelerometer'].includes(device.kind)||device.board==='tool'&&/hotend|extruder/.test(device.name))return 'toolhead';if(device.kind==='motor')return 'motion';if(device.kind==='input')return 'filament';if(['fan','chamber','heater_fan'].includes(device.kind)||device.board==='chamber')return 'cooling';return 'boards';}
     function setView(view){localView=view;for(const name of ['components','changes'])$(name+'-view').hidden=name!==view;for(const b of document.querySelectorAll('[data-printer-view]'))b.setAttribute('aria-current',b.dataset.printerView===view?'page':'false');$('history-panel').hidden=true;if(view==='changes')renderChanges();}
     function selectedDefinitions(state=draft){return (state?.definition_plan?.selections??[]).map(ref=>({ref,definition:state.definition_plan.snapshots[ref.source+'::'+ref.id+'@'+ref.version]})).filter(row=>row.definition);}
-    function inputValue(input,state=draft){const [name,key]=input.target.split('.');return state.definition_plan?.instance_values?.[input.target]??input.default??state.devices.find(d=>d.name===name)?.settings[key]??state.boards[name]?.[key];}
+    function inputValue(input,state=draft){const [name,key]=input.target.split('.'),values=state.definition_plan?.instance_values??{};return Object.hasOwn(values,input.target)?values[input.target]??undefined:input.default??state.devices.find(d=>d.name===name)?.settings[key]??state.boards[name]?.[key];}
     function componentChanges(){
         if(!draft||!saved?.draft?.devices)return 0;
         const affected=new Set(categories.filter(([key])=>JSON.stringify(draft.devices.filter(d=>categoryFor(d)===key))!==JSON.stringify(saved.draft.devices.filter(d=>categoryFor(d)===key))||JSON.stringify(selectedDefinitions().filter(r=>r.definition.category===key).map(r=>r.ref))!==JSON.stringify(selectedDefinitions(saved.draft).filter(r=>r.definition.category===key).map(r=>r.ref))).map(([key])=>key));
@@ -400,9 +481,9 @@ renderChanges();renderDefinitionChoices();renderJourney();
         }
         const selected=$('selected-definitions');selected.replaceChildren();
         const selectedRows=selectedDefinitions().filter(row=>row.definition.category===selectedCategory).sort((a,b)=>Number(Object.values(b.definition.inputs??{}).some(input=>input.required&&inputValue(input)===undefined))-Number(Object.values(a.definition.inputs??{}).some(input=>input.required&&inputValue(input)===undefined)));
-        for(const {ref,definition:d} of selectedRows){const root=el('div');root.className='printer-selected-definition';root.append(el('h3',d.name),el('p','Selected in draft · '+ref.version+' · '+ref.source));selected.append(root);for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=inputValue(inp);const inputField=field(inp.label+(inp.required&&value===undefined?' · needs your input':''),inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{draft.definition_plan.instance_values??={};if(v===undefined||v==='')delete draft.definition_plan.instance_values[inp.target];else draft.definition_plan.instance_values[inp.target]=v;inputField.firstChild.textContent=inp.label+(inp.required&&inputValue(inp)===undefined?' · needs your input':'');edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined);inputField.querySelector('input,select').dataset.inputTarget=inp.target;root.append(inputField);}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
+        for(const {ref,definition:d} of selectedRows){const root=el('div');root.className='printer-selected-definition';root.append(el('h3',d.name),el('p','Selected in draft · '+ref.version+' · '+ref.source));selected.append(root);for(const [key,inp] of Object.entries(d.inputs??{})){if(inp.type==='curve')continue;const value=inputValue(inp);const inputField=field(inp.label+(inp.required&&value===undefined?' · needs your input':''),inp.type==='identity'||inp.type==='choice'?'text':inp.type==='boolean'?'boolean':'number',value,v=>{const [name,key]=inp.target.split('.');setInstanceField(name,key,v);if(calibrationFields.includes(key))renderCalibration();inputField.firstChild.textContent=inp.label+(inp.required&&inputValue(inp)===undefined?' · needs your input':'');edit();},inp.type==='choice'?(inp.choices??[]).map(v=>[String(v),String(v)]):undefined);inputField.querySelector('input,select').dataset.inputTarget=inp.target;root.append(inputField);}for(const gap of d.unresolved??[])root.append(el('p','Definition incomplete: '+gap));root.append(el('small','Selected '+ref.version+' · '+ref.source+' · user-declared installation'));
             const guide=el('details');guide.append(el('summary','Defaults, overrides and sources'));
-            for(const c of d.components??[]){const actual=draft.devices.find(x=>x.name===c.name&&x.board===c.board);if(!actual)continue;for(const [key,value] of Object.entries(c.settings)){const row=el('p',c.name+' · '+key.replaceAll('_',' ')+': '+JSON.stringify(actual.settings[key])+' · '+(JSON.stringify(value)===JSON.stringify(actual.settings[key])?'Definition default':'Local override'));if(JSON.stringify(value)!==JSON.stringify(actual.settings[key])){const reset=el('button','Reset to definition default');reset.disabled=!authority()||busy||reconcile;reset.onclick=()=>{actual.settings[key]=copy(value);for(const gain of ['pid_kp','pid_ki','pid_kd'])delete actual.settings[gain];edit();render();};row.append(reset);}guide.append(row);}}
+            for(const c of d.components??[]){const actual=draft.devices.find(x=>x.name===c.name&&x.board===c.board);if(!actual)continue;for(const [key,value] of Object.entries(c.settings)){const row=el('p',c.name+' · '+key.replaceAll('_',' ')+': '+JSON.stringify(actual.settings[key])+' · '+(JSON.stringify(value)===JSON.stringify(actual.settings[key])?'Definition default':'Local override'));if(JSON.stringify(value)!==JSON.stringify(actual.settings[key])){const reset=el('button','Reset to definition default');reset.disabled=!authority()||busy||reconcile;reset.onclick=()=>{setInstanceField(actual.name,key,copy(value));for(const gain of ['pid_kp','pid_ki','pid_kd'])setCalibration(actual,gain,undefined);edit();render();};row.append(reset);}guide.append(row);}}
             for(const source of d.sources){if(source.url){const a=el('a',source.id+' · '+source.locator);a.href=source.url;a.target='_blank';a.rel='noopener noreferrer';guide.append(a);}else guide.append(el('p',source.revision+' · '+source.locator));}root.append(guide);
             const remove=el('button','Remove definition and owned contributions');remove.disabled=!authority()||busy||reconcile;remove.onclick=()=>operation(async()=>{const result=await rpc({action:'definition_remove',draft,reference:ref,expected_revision:revision});pendingDefinition=result.draft;$('definition-effects').textContent='Remove '+d.name+' and contributions not shared by retained definitions. Other configuration remains. Review: '+JSON.stringify(result.draft.devices.map(c=>c.name));$('definition-review').showModal();});root.append(remove);}
         for(const control of selected.querySelectorAll('input,select,button'))control.disabled=!authority()||busy||diagnostic||reconcile;
@@ -719,7 +800,11 @@ renderChanges();renderDefinitionChoices();renderJourney();
     });
     $('restore').onclick=()=>operation(async()=>{await rpc({action:'restore',expected_revision:revision});await load();notice('Previous candidate draft restored. Review before applying.');});
     function download(name,text,type) {const url=URL.createObjectURL(new Blob([text],{type}));const a=el('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-    $('export').onclick=()=>{const shareable=draft?.format_version===1&&draft.boards&&draft.devices;download(shareable?'printer-hardware-draft.json':'printer-hardware-diagnosis.json',JSON.stringify(shareable?{...draft,boards:Object.fromEntries(Object.entries(draft.boards).map(([role,b])=>[role,{...b,identity:undefined}])),definition_plan:draft.definition_plan?{...draft.definition_plan,instance_values:Object.fromEntries(Object.entries(draft.definition_plan.instance_values??{}).filter(([k])=>!k.endsWith('.identity')))}:undefined,custom_config:draft.custom_config?'# Custom text omitted from shareable export; use private backup separately':undefined}:{state:saved,catalog},null,2),'application/json');};
+    function shareableDraft(state) {
+        if(![1,2].includes(state?.format_version)||!state.boards||!state.devices)return null;
+        return {...state,native_calibration:undefined,boards:Object.fromEntries(Object.entries(state.boards).map(([role,b])=>[role,{...b,identity:undefined}])),definition_plan:state.definition_plan?{...state.definition_plan,instance_values:Object.fromEntries(Object.entries(state.definition_plan.instance_values??{}).filter(([key])=>!key.endsWith('.identity')))}:undefined,custom_config:state.custom_config?'# Custom text omitted from shareable export; use private backup separately':undefined};
+    }
+    $('export').onclick=()=>{const shareable=shareableDraft(draft);download(shareable?'printer-hardware-draft.json':'printer-hardware-diagnosis.json',JSON.stringify(shareable??{state:saved,catalog},null,2),'application/json');};
     $('export-config').onclick=()=>{if(saved?.current)download('inactive-candidate.cfg',saved.current.text,'text/plain');else notice('No saved candidate to export.');};
     function showImportDiff(before,after) {
         const rows=$('import-diff-rows');rows.replaceChildren();

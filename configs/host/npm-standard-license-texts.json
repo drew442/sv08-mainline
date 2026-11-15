@@ -1,0 +1,30 @@
+{
+  "format_version": 1,
+  "records": [
+    {
+      "path": "node_modules/@sindarius/gcodeviewer",
+      "name": "@sindarius/gcodeviewer",
+      "version": "3.7.18",
+      "integrity": "sha512-3vZKVbFq3UG62lztHZs99hkTplbrLBRMBwBrp/wZplKgkVq8x3EqZPWu6ZakCDUmanYPLJd8Mz7xDjYgso07tw==",
+      "archive_sha256": "b9e987bb80eece0c599355b5304b903f87221191a96ba34cb9f8e7e65047a07a",
+      "package_json_sha256": "551f6b4e43ea772fd6f3b226ea7bbf7b6934229a49f39722285b2c57d9d43319",
+      "license": "LGPL-3.0-or-later",
+      "classification": "supplier-declaration-plus-distributor-standard-terms",
+      "license_text": {
+        "path": "docs/licensing/standard/LGPL-3.0-or-later.txt",
+        "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+        "bytes": 42098
+      },
+      "source": {
+        "license": "LGPL-3.0-or-later",
+        "reference": "https://spdx.org/licenses/LGPL-3.0-or-later.html",
+        "source_repository": "https://github.com/spdx/license-list-data",
+        "source_revision": "e6ccb09584ca771e592281194aa7c74bf62f4105",
+        "source_url": "https://raw.githubusercontent.com/spdx/license-list-data/e6ccb09584ca771e592281194aa7c74bf62f4105/text/LGPL-3.0-or-later.txt",
+        "sha256": "996af0513df21f7496288951c41428a03c174e9e4a9d63665c57d670f845ccb1",
+        "bytes": 42098,
+        "includes_gpl3_terms": true
+      }
+    }
+  ]
+}

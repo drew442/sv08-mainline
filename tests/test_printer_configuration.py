@@ -47,6 +47,49 @@ def full_draft():
 
 class CatalogTests(unittest.TestCase):
     def setUp(self):self.c=Catalog(CATALOG)
+    def test_component_temperature_policy_boundaries_and_sensor_associations(self):
+        from sv08_printer_fields import validate_component_temperatures, SUPPORTED_FDM_TEMPERATURE_C
+        for kind,(low,high) in SUPPORTED_FDM_TEMPERATURE_C.items():
+            with self.subTest(kind=kind):
+                sensor=dict(name='renamed_sensor',kind='sensor' if kind in ('bed','extruder','chamber') else kind,board='main',settings=dict(min_temp=low,max_temp=high))
+                devices=[sensor]
+                if kind in ('bed','extruder','chamber'):
+                    devices.append(dict(name='renamed_heater',kind=kind,board='main',settings=dict(sensor='renamed_sensor')))
+                validate_component_temperatures(devices,{})
+                for field,value in [('min_temp',low-.01),('max_temp',high+.01)]:
+                    bad=copy.deepcopy(devices);bad[0]['settings'][field]=value
+                    with self.assertRaisesRegex(ValueError,'°C'):validate_component_temperatures(bad,{})
+                for value in (low,high):
+                    bad=copy.deepcopy(devices);bad[0]['settings']=dict(min_temp=value,max_temp=value)
+                    with self.assertRaisesRegex(ValueError,'below'):validate_component_temperatures(bad,{})
+        # The sensor name conveys no heater identity; actual association controls.
+        for kind,ceiling in [('bed',200),('extruder',500),('chamber',150)]:
+            devices=[dict(name='hotend_named_sensor',kind='sensor',board='main',settings=dict(min_temp=5,max_temp=ceiling+1)),dict(name='custom',kind=kind,board='main',settings=dict(sensor='hotend_named_sensor'))]
+            with self.assertRaisesRegex(ValueError,kind+' supported-FDM'):validate_component_temperatures(devices,{})
+        devices=[dict(name='custom',kind='sensor',board='main',settings=dict(curve='limited',max_temp=121))]
+        with self.assertRaisesRegex(ValueError,'documented sensor'):validate_component_temperatures(devices,{'limited':{'limits':[0,120]}})
+        devices[0]['settings']=dict(curve='limited',min_temp=-1)
+        with self.assertRaisesRegex(ValueError,'documented sensor'):validate_component_temperatures(devices,{'limited':{'limits':[0,120]}})
+
+    def test_supported_fdm_numeric_families_keep_typed_lower_bounds(self):
+        cases=[('probe','samples',100,101),('probe','samples_tolerance_retries',100,101),('probe','speed',200,201),('probe','lift_speed',500,501),('probe','z_offset',50,50.01),('probe','x_offset',2000,2001),('motor','rotation_distance',5000,5001),('motor','homing_speed',500,501),('motor','full_steps_per_rotation',10000,10001)]
+        for kind,field,limit,invalid in cases:
+            for value,valid in [(limit,True),(invalid,False),(-invalid,False)]:
+                with self.subTest(kind=kind,field=field,value=value):
+                    draft=full_draft();device=next(d for d in draft['devices'] if d['kind']==kind);device['settings'][field]=value
+                    if valid:self.c.validate(draft)
+                    else:
+                        with self.assertRaises(ValueError):self.c.validate(draft)
+        for field,limit in [('max_velocity',2000),('max_z_velocity',500),('max_accel',100000),('max_z_accel',10000)]:
+            draft=full_draft();draft['geometry'][field]=limit;self.c.validate(draft)
+            draft['geometry'][field]=limit+1
+            with self.assertRaisesRegex(ValueError,'supported-FDM'):self.c.validate(draft)
+            draft['geometry'][field]=0
+            with self.assertRaisesRegex(ValueError,'positive'):self.c.validate(draft)
+        for field in ('samples','speed'):
+            draft=full_draft();next(d for d in draft['devices'] if d['kind']=='probe')['settings'][field]=0
+            with self.assertRaises(ValueError):self.c.validate(draft)
+
     def test_catalog_sources(self):
         source=Path(os.environ.get('SV08_PRINTER_SOURCE_ROOT','/home/drew/sv08-mainline'))
         import hashlib
@@ -324,7 +367,7 @@ class PersistenceTests(unittest.TestCase):
 
     def test_future_opaque_draft_is_exportable_without_composition(self):
         self.save(sensor_draft());path=self.service.directory/'state.json';future=self.status()
-        future.update(format_version=2,draft={'format_version':2,'future_topology':[]},current={'future_candidate':True})
+        future.update(format_version=3,draft={'format_version':3,'future_topology':[]},current={'future_candidate':True})
         path.write_text(json.dumps(future));before=path.read_bytes()
         status=self.service.request({'action':'status'});self.assertEqual(status['state'],future);self.assertEqual(status['definitions'],[])
         with self.assertRaises(ValueError):self.save(sensor_draft(),future['revision'])
@@ -470,10 +513,10 @@ class PersistenceTests(unittest.TestCase):
         _,status=os.waitpid(pid,0);self.assertTrue(os.WIFSIGNALED(status));self.assertEqual(path.read_bytes(),before)
         self.assertTrue(list(self.service.directory.glob('.state.json.*')))
         self.save(sensor_draft());self.assertFalse(list(self.service.directory.glob('.state.json.*')))
-        state=self.status();state['format_version']=2;path.write_text(json.dumps(state));path.chmod(0o600)
-        self.assertEqual(self.status()['format_version'],2)
+        state=self.status();state['format_version']=3;path.write_text(json.dumps(state));path.chmod(0o600)
+        self.assertEqual(self.status()['format_version'],3)
         with self.assertRaises(ValueError):self.save(sensor_draft(),state['revision'])
-        self.assertEqual(json.loads(path.read_text())['format_version'],2)
+        self.assertEqual(json.loads(path.read_text())['format_version'],3)
     def test_real_generation_copy_rollback_current_and_historical(self):
         self.save(sensor_draft());self.apply();original=self.status()
         for label,cls in [('current',Store),('historical',self.historical_store())]:
