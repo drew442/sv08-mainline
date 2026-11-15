@@ -34,6 +34,14 @@ class ProjectLicenseTests(unittest.TestCase):
         self.overrides = {'usr/lib/sv08/controller.py':inputs['runtime/controller.py'],
                           'usr/share/cockpit/sv08-host/index.html':inputs['ui/host/index.html']}
 
+    def test_identity_socket_recipe_accepts_only_exact_staging_constant(self):
+        from stage_admin_ui import IDENTITY_SOCKET
+        name='etc/systemd/system/cockpit.socket.d/sv08-identity.conf'
+        recipe=license.generated_recipe(self.root,name,IDENTITY_SOCKET,self.repo)
+        self.assertEqual(recipe[0],'generated');self.assertIn('scripts/stage_admin_ui.py',recipe[1])
+        for raw in (IDENTITY_SOCKET+b'# arbitrary\n',b'[Unit]\nRequires=sv08-identity.service\nAfter=sv08-identity.service\n',IDENTITY_SOCKET.replace(b'DefaultDependencies=no',b'DefaultDependencies=yes')):
+            self.assertIsNone(license.generated_recipe(self.root,name,raw,self.repo))
+
     def prepare(self, dirty=False, public_source=None):
         with patch.object(license,'source_state',return_value=(REVISION,dirty)):
             return license.prepare(self.root,self.overrides,public_source=public_source,repo=self.repo)

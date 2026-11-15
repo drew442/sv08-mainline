@@ -50,6 +50,49 @@ class RestoreTests(unittest.TestCase):
         result = exporter.execute(exporter.prepare('usb'))
         return self.usb/result['filename']
     def plan(self): return self.restore.prepare('target','backup')
+    def test_v2_journal_mode_is_anchored_bound_and_unavailable_to_v1(self):
+        from sv08_restore import pinned_archive, scan
+        journal=self.source/'sv08/shared/logs/journal';journal.mkdir(parents=True)
+        self.archive=self.export();original=self.archive.read_bytes()
+        name='data/sv08/shared/logs/journal'
+        def change(entries,mode=0o2755,uid=0,legacy=False,tamper=False,missing_anchor=False):
+            if missing_anchor:
+                entries[:]=[(item,raw) for item,raw in entries if item.name!='data/sv08/state.json']
+            for index,(item,raw) in enumerate(entries):
+                if item.name==name:item.mode=mode;item.uid=uid
+                if item.name=='export-manifest.json':
+                    manifest=json.loads(raw)
+                    if not tamper:manifest['nodes'][name].update(mode=mode,uid=uid)
+                    if missing_anchor:
+                        del manifest['nodes']['data/sv08/state.json']
+                        manifest['files']=[row for row in manifest['files'] if row['path']!='data/sv08/state.json']
+                    if legacy:manifest.pop('nodes');manifest['format_version']=1
+                    raw=json.dumps(manifest).encode();item.size=len(raw);entries[index]=(item,raw)
+        self.rewrite(change)
+        # Scan only: model root's ownership admission without extracting/chowning.
+        with patch('sv08_restore.os.geteuid',return_value=0),pinned_archive(self.archive) as (fd,_):scan(fd)
+        for options in ({'mode':0o4755},{'mode':0o2775},{'uid':12345},{'legacy':True},
+                        {'tamper':True},{'missing_anchor':True}):
+            self.archive.write_bytes(original)
+            self.rewrite(lambda entries:change(entries,**options))
+            with self.subTest(options=options),patch('sv08_restore.os.geteuid',return_value=0):
+                with pinned_archive(self.archive) as (fd,_),self.assertRaises(ValueError):scan(fd)
+
+    @unittest.skipUnless(os.geteuid()==0,'Real root journal ownership roundtrip required')
+    def test_root_journal_and_machine_directory_roundtrip_preserve_mode_and_group(self):
+        journal=self.source/'sv08/shared/logs/journal';journal.mkdir(parents=True)
+        child=journal/('a'*32);child.mkdir()
+        for path in (journal,child):os.chown(path,0,12345);path.chmod(0o2755)
+        (child/'system.journal').write_bytes(b'opaque synthetic journal bytes')
+        self.archive=self.export()
+        self.restore.archives['backup']['path']=self.archive
+        self.restore.execute(self.plan())
+        for path in (journal,child):
+            restored=self.target/'data'/path.relative_to(self.source)
+            info=restored.stat()
+            self.assertEqual((info.st_mode & 0o7777,info.st_uid,info.st_gid),(0o2755,0,12345))
+        self.assertEqual((self.target/'data'/child.relative_to(self.source)/'system.journal').read_bytes(),
+                         b'opaque synthetic journal bytes')
     def rewrite(self, change):
         with tarfile.open(self.archive) as archive:
             entries = [(item,archive.extractfile(item).read() if item.isfile() else None) for item in archive]
