@@ -364,18 +364,35 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         (source/'assembly.json').write_text(json.dumps(dict(root=m.inventory(root),
             integration_inputs=m.integration_inputs(),release_manifest=binding)))
         before=m.inventory(source);work=self.repo/'build/image'
+        compressions=[]
         def run(args,**kw):
             if args[:2]==['cp','-a']:
                 if Path(args[2]).is_dir():shutil.copytree(args[2],args[3],symlinks=True)
                 else:shutil.copy2(args[2],args[3])
             elif args[0]=='mksquashfs':
+                compressions.append(args)
                 self.public(Path(args[1]).parent)
                 Path(args[2]).write_bytes(b'compressed fixture')
             return SimpleNamespace(stdout='',stderr='')
         def initramfs(root,output,profile):output.write_bytes(b'fixture initramfs')
         with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
              patch.object(m,'initramfs',side_effect=initramfs),patch.object(m,'SIZE',4096):
-            result=m.build(SimpleNamespace(assembly=source,work=work,execute=True))
+            previous_umask=m.os.umask(0o077)
+            try:
+                result=m.build(SimpleNamespace(assembly=source,work=work,execute=True))
+                compressed=work/'envelope/usr.squashfs'
+                self.assertEqual(compressed.stat().st_mode & 0o777,0o644)
+                # A valid cached payload may retain an old builder's private mode.
+                # Normalize only its staged copy, preserving the cache and bytes.
+                compressed.chmod(0o600);cache_before=m.inventory(work)
+                reused=self.repo/'build/reused-image'
+                m.build(SimpleNamespace(assembly=source,work=reused,execute=True,reuse_usr=work))
+                copied=reused/'envelope/usr.squashfs'
+                self.assertEqual(copied.stat().st_mode & 0o777,0o644)
+                self.assertEqual(copied.read_bytes(),compressed.read_bytes())
+                self.assertEqual(m.inventory(work),cache_before)
+                self.assertEqual(len(compressions),1)
+            finally:m.os.umask(previous_umask)
         self.assertEqual(before,m.inventory(source));self.assertTrue(result['source_preserved'])
         self.assertEqual(result['release_manifest'],binding)
         self.assertEqual(json.loads((work/'build.json').read_bytes())['release_manifest'],binding)

@@ -706,9 +706,11 @@ def build(a):
     else:
         with (work/'squashfs.log').open('w') as log:
             run(['mksquashfs',root/'usr',envelope/'usr.squashfs','-noappend','-comp','xz','-b','1M','-processors','2','-mem','256M','-all-time',str(EPOCH),'-mkfs-time',str(EPOCH)],stdout=log,stderr=subprocess.STDOUT)
+    usr=envelope/'usr.squashfs'
+    # The boot gate requires this mode regardless of the build umask or cache.
+    usr.chmod(0o644)
     (envelope/'boot').mkdir(exist_ok=True)
     initramfs(root,envelope/'boot/initrd-recovery.img',profile)
-    usr=envelope/'usr.squashfs'
     # Line-oriented fixed manifest is parseable by the self-contained busybox gate.
     manifest=f'format=sv08-recovery-usr-v1\nroot_uuid={UUID}\nroot_bytes={SIZE}\nusr_path=/usr.squashfs\nusr_bytes={usr.stat().st_size}\nusr_sha256={sha(usr)}\n'
     write(envelope/'etc/sv08/recovery-envelope.manifest',manifest)
