@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Preserve native restore/activation and restored boot evidence before narrow typed allocation-busy ownership extension for CI paused-upload regression.",
+      "blocker": null,
       "checks": [
         "archive",
         "configuration",
@@ -81,11 +81,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "b7ee5edb74784495af950ed3a06df44d",
-        "session": "recovery-native-20261115"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -152,13 +148,15 @@
         "docs/features/recovery-printer-stack/native-evidence.md",
         "docs/features/recovery-printer-stack/native-evidence.json",
         "runtime/sv08_admin_jobs.py",
-        "tests/test_admin_jobs.py"
+        "tests/test_admin_jobs.py",
+        "runtime/sv08_data_budget.py",
+        "tests/test_data_budget.py"
       ],
       "repeats": 0,
-      "resumption": "Continue the same native qualification with preserved run026b4a617edc4f7083939bda55ac5aca, candidate0ae0506, receipts, failed attempts and cumulative allowance; add normal empty-history initialization compatibility repair demonstrated by genuine source export. No acceptance or protection change.",
+      "resumption": "Continue same goal, native archive/restore/activation and restored-1PASS evidence retained; extend only typed allocation-busy signal ownership to preserve unchanged paused-upload status contract. Same cumulative allowances and all attempts carry.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
