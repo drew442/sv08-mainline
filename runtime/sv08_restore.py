@@ -1,6 +1,7 @@
 """Bounded full export restore into an absent, configured directory.
 
-No tar extraction API, merge, repair or activation. Version 1 exports do not
+No tar extraction API, merge, repair or activation. Version 2 binds node metadata
+and narrowly permitted opaque links; version 1 exports remain readable and do not
 checksum directory metadata; modes/uid/gid are validated and preserved, while
 ACLs, xattrs, sparse allocation and subsecond timestamps are not represented.
 Failed staging is retained as a private .sv08-restore-*.partial directory.
@@ -17,6 +18,7 @@ import uuid
 
 from sv08_export import CHUNK, identity, opened, publish, restore_archive
 from sv08_state import Store
+from sv08_recovery_links import validate_links
 
 MAX_ENTRIES = 100000
 MAX_BYTES = 2**32 - 1
@@ -56,13 +58,25 @@ def pinned_archive(path):
             require(identity(os.fstat(current)) == stamp, 'Restore archive pathname changed')
 
 
+@contextmanager
+def staged_directory(stage, relative):
+    # stage is the private leaf beneath execute's held parent descriptor.
+    # Open that leaf without following it, then walk only real descendants.
+    root = os.open(stage, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        with opened(root, relative) as directory: yield directory
+    finally: os.close(root)
+
+
 def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_root=None):
     """Validate every payload and inventory; optionally write a private stage."""
     members, files, manifest, total, end = {}, {}, None, 0, 0
-    links = []
+    links = []; opaque = []
     with restore_archive('/proc/self/fd/'+str(fd)) as (archive, size):
         for item in archive:
-            require(item.name not in members and len(members) <= max_entries, 'Duplicate or too many restore members')
+            require(item.name not in members and
+                    (len(members) - int('export-manifest.json' in members) < max_entries or
+                     item.name == 'export-manifest.json'), 'Duplicate or too many restore members')
             require(item.sparse is None and 0 <= item.size <= max_bytes, 'Invalid restore payload bounds')
             end = item.offset_data + ((item.size+511)//512)*512
             if item.name == 'export-manifest.json':
@@ -71,7 +85,7 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
                 members[item.name] = None
                 continue
             relative = parts(item.name)
-            require(item.isdir() or item.isfile() or item.islnk(), 'Unsupported restore member type')
+            require(item.isdir() or item.isfile() or item.islnk() or item.issym(), 'Unsupported restore member type')
             require(type(item.mode) is int and 0 <= item.mode <= 0o777 and
                     type(item.uid) is int and 0 <= item.uid <= 2**31-1 and
                     type(item.gid) is int and 0 <= item.gid <= 2**31-1 and
@@ -82,8 +96,14 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
             require(all('data/'+'/'.join(relative[:n]) in members and
                         members['data/'+'/'.join(relative[:n])]['type'] == 'directory'
                         for n in range(1, len(relative))), 'Missing directory ancestor')
-            kind = 'directory' if item.isdir() else ('hardlink' if item.islnk() else 'file')
+            kind = 'directory' if item.isdir() else ('symlink' if item.issym() else ('hardlink' if item.islnk() else 'file'))
             members[item.name] = dict(type=kind, mode=item.mode, uid=item.uid, gid=item.gid, mtime=item.mtime, bytes=item.size)
+            if item.issym():
+                require(item.size == 0 and item.mode == 0o777, 'Unsafe recovery link metadata')
+                members[item.name]['target'] = item.linkname
+                opaque.append((item.name, item.linkname))
+                files[item.name] = dict(path=item.name, symlink=item.linkname)
+                continue
             if item.isdir():
                 require(item.size == 0, 'Directory has a payload')
                 if stage: stage.joinpath(*relative).mkdir(mode=0o700)
@@ -118,8 +138,8 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
     require(os.fstat(fd).st_size - end >= 1024, 'Missing archive terminator')
     os.lseek(fd, end, os.SEEK_SET)
     while block := os.read(fd, CHUNK): require(not any(block), 'Nonzero trailing archive data')
-    require(type(manifest) is dict and set(manifest) == {'format_version', 'kind', 'files', 'history'} and
-            type(manifest['format_version']) is int and manifest['format_version'] == 1 and
+    require(type(manifest) is dict and set(manifest) == ({'format_version', 'kind', 'files', 'history', 'nodes'} if manifest.get('format_version') == 2 else {'format_version', 'kind', 'files', 'history'}) and
+            type(manifest['format_version']) is int and manifest['format_version'] in (1, 2) and
             manifest['kind'] == 'user-data-export-not-os-image' and type(manifest['files']) is list and
             len(manifest['files']) <= max_entries and type(manifest['history']) is list,
             'Invalid complete restore manifest')
@@ -130,9 +150,17 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
         parts(record['path'])
         require((set(record) == {'path','bytes','sha256'} and type(record['bytes']) is int and 0 <= record['bytes'] <= max_bytes and
                  type(record['sha256']) is str and re.fullmatch('[0-9a-f]{64}',record['sha256'])) or
-                (set(record) == {'path','hardlink'} and type(record['hardlink']) is str), 'Invalid restore inventory fields')
+                (set(record) == {'path','hardlink'} and type(record['hardlink']) is str) or
+                (manifest['format_version'] == 2 and set(record) == {'path','symlink'} and type(record['symlink']) is str), 'Invalid restore inventory fields')
         records[record['path']] = record
     require(records == files, 'Restore inventory or checksum mismatch')
+    if manifest['format_version'] == 2:
+        require(manifest['nodes'] == {name: value for name, value in members.items() if value is not None},
+                'Restore node metadata mismatch')
+    else:
+        require(not opaque, 'Legacy archive cannot contain opaque links')
+    validate_links({parts(name): (value['type'], value.get('target')) for name, value in members.items()
+                    if value is not None})
     histories = {}
     for binding in manifest['history']:
         require(type(binding) is dict and set(binding) == {'path', 'revision', 'alias', 'target'} and
@@ -148,10 +176,19 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
                 {key: members[target][key] for key in ('mode', 'uid', 'gid', 'mtime')}, 'Invalid history fence target or metadata')
         if stage: os.link(stage.joinpath(*parts(target)), stage.joinpath(*parts(name)))
     if stage:
+        for name, target in opaque:
+            relative = parts(name)
+            with staged_directory(stage, relative[:-1]) as directory:
+                os.symlink(target, relative[-1], dir_fd=directory)
         # Verify actual destination bytes before permissions become restrictive.
         for name, record in files.items():
             path=stage.joinpath(*parts(name))
             current=os.stat(path,follow_symlinks=False)
+            if 'symlink' in record:
+                with staged_directory(stage, parts(name)[:-1]) as directory:
+                    require(stat.S_ISLNK(current.st_mode) and
+                            os.readlink(parts(name)[-1], dir_fd=directory) == record['symlink'], 'Staged recovery link changed')
+                continue
             if 'hardlink' in record:
                 target=os.stat(stage.joinpath(*parts(record['hardlink'])),follow_symlinks=False)
                 require(current.st_nlink == target.st_nlink == 2 and
@@ -167,6 +204,17 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
         for name, metadata in reversed(list(members.items())):
             if metadata is None: continue
             path = stage.joinpath(*parts(name))
+            if metadata['type'] == 'symlink':
+                with staged_directory(stage, parts(name)[:-1]) as directory:
+                    leaf = parts(name)[-1]
+                    if os.geteuid() == 0: os.chown(leaf, metadata['uid'], metadata['gid'], dir_fd=directory, follow_symlinks=False)
+                    os.utime(leaf, (metadata['mtime'], metadata['mtime']), dir_fd=directory, follow_symlinks=False)
+                    actual = os.stat(leaf, dir_fd=directory, follow_symlinks=False)
+                    require(stat.S_ISLNK(actual.st_mode) and
+                            (stat.S_IMODE(actual.st_mode), actual.st_uid, actual.st_gid, int(actual.st_mtime)) ==
+                            (metadata['mode'], metadata['uid'], metadata['gid'], int(metadata['mtime'])) and
+                            os.readlink(leaf, dir_fd=directory) == metadata['target'], 'Staged recovery link metadata mismatch')
+                continue
             child = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
             try:
                 if os.geteuid() == 0: os.fchown(child, metadata['uid'], metadata['gid'])
