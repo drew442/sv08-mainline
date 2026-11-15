@@ -156,6 +156,11 @@ class StackHarnessTests(unittest.TestCase):
         with self.assertRaises(ValueError):vm.command(candidate,self.fixture,self.root/'unassigned.qmp')
     def test_normal_command_strict_hash_bindings_restricted_ports_and_fixture_mac(self):
         candidate=self.candidate();normal=self.fixture/'normal';normal.mkdir()
+        # A preparatory build without --restore-profile has no provider binding.
+        # Its kernel/initrd can still back the independently bound normal image.
+        build=json.loads((candidate/'build.json').read_text())
+        del build['provider_manifest_sha256']
+        (candidate/'build.json').write_text(json.dumps(build))
         (normal/'normal-root.raw').write_bytes(b'normal root');(normal/'normal-initrd.img').write_bytes(b'normal initrd')
         receipt=dict(normal_root_sha256=guest.sha(normal/'normal-root.raw'),initrd_sha256=guest.sha(normal/'normal-initrd.img'),kernel_sha256=guest.sha(candidate/'vmlinuz'),manifest_sha256='c'*64)
         (normal/'normal-fixture.json').write_text(json.dumps(receipt))
@@ -180,6 +185,8 @@ class StackHarnessTests(unittest.TestCase):
         self.assertEqual(functional_bootstrap[functional_bootstrap.index('-icount')+1],'shift=0,align=off,sleep=off')
         with self.assertRaisesRegex(ValueError,'complete installed normal'):
             vm.command(candidate,self.fixture,self.fixture/'bootstrap.qmp',bootstrap=True)
+        with self.assertRaisesRegex(KeyError,'provider_manifest_sha256'):
+            vm.command(candidate,self.fixture,self.fixture/'recovery.qmp')
         (normal/'normal-initrd.img').write_bytes(b'changed')
         with self.assertRaisesRegex(ValueError,'hashes changed'):vm.command(candidate,self.fixture,self.fixture/'normal.qmp',normal)
     def test_host_assert_full_success_uses_real_key_stat_and_preserves_api_receipt(self):

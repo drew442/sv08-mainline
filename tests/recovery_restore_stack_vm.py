@@ -369,13 +369,14 @@ def command(candidate,fixture,qmp,normal=None,expected='restored',bootstrap=Fals
     build=json.loads((candidate/'build.json').read_text())
     kernel=regular(candidate/'vmlinuz'); initrd=regular(candidate/'initrd.img')
     root=regular(candidate/'recovery.ext4')
-    append='console=ttyAMA0 root=/dev/vda ro sv08.envelope='+build['manifest_sha256']+' sv08.recovery='+build['provider_manifest_sha256']+' systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console'
     if normal:
         normal=Path(normal); receipt=json.loads((normal/'normal-fixture.json').read_text())
         root=regular(normal/'normal-root.raw');initrd=regular(normal/'normal-initrd.img')
         require(sha(root)==receipt['normal_root_sha256'] and sha(initrd)==receipt['initrd_sha256'] and sha(kernel)==receipt['kernel_sha256'],'Normal boot source hashes changed')
         role='sv08.stack.bootstrap=1' if bootstrap else 'sv08.stack.expect='+expected
         append='console=ttyAMA0 root=/dev/vda1 ro rauc.slot=A sv08.envelope='+receipt['manifest_sha256']+' '+role+' systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console'
+    else:
+        append='console=ttyAMA0 root=/dev/vda ro sv08.envelope='+build['manifest_sha256']+' sv08.recovery='+build['provider_manifest_sha256']+' systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console'
     # Opt-in instruction-count time supports bounded software semantics under
     # emulation. It is not H616 timing/performance/CPU-budget qualification.
     accelerator='tcg,thread=single' if functional_clock else 'tcg,thread=multi'
