@@ -215,8 +215,13 @@ class Jobs:
                 # A validated unfenced, lock-only namespace is genuinely empty.
                 # Commit it through the ordinary legacy writer so read-only
                 # recovery export can require a manifest without repairing data.
-                self.save([], view['revision'])
-                view = self.acknowledged()
+                from sv08_data_budget import AllocationBusy
+                try: self.save([], view['revision'])
+                except AllocationBusy:
+                    # No writer started. Keep history readable during an upload;
+                    # a later call retries the commit under normal admission.
+                    pass
+                else: view = self.acknowledged()
             rows = view['rows']
             active = len(view['active']); archives = len(view['manifest']['archives']) if view['format'] == 2 else 0
             from sv08_admin_history import History, TOTAL

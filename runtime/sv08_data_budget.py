@@ -11,6 +11,10 @@ METADATA_BYTES = MIB
 HISTORY_INODES = 64
 
 
+class AllocationBusy(ValueError):
+    """Nonblocking allocation admission refused before the writer can start."""
+
+
 def rounded(value, block):
     return ((value + block - 1) // block) * block
 
@@ -51,7 +55,7 @@ class Budget:
                     raise ValueError('Invalid allocation lock')
                 try: fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except BlockingIOError:
-                    raise ValueError('Shared data allocation is busy; refresh and review again') from None
+                    raise AllocationBusy('Shared data allocation is busy; refresh and review again') from None
                 bound = os.stat('allocation.lock', dir_fd=directory_fd, follow_symlinks=False)
                 if (bound.st_dev, bound.st_ino, bound.st_mode, bound.st_uid, bound.st_nlink) != (info.st_dev, info.st_ino, info.st_mode, info.st_uid, info.st_nlink):
                     raise ValueError('Allocation lock changed')

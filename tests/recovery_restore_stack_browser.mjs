@@ -15,10 +15,12 @@ const strict=JSON.parse(fs.readFileSync(path.join(output,'host-assert.json')));
 assert.equal(strict.result,'PASS'); assert.equal(strict.strict_ca_and_hostname,true); assert.equal(strict.expected,expected);
 const credentials=JSON.parse(fs.readFileSync(path.join(fixture,'credentials.json')));
 const gateway=credentials[expected], owner=credentials.owner;
+const caDer=execFileSync('openssl',['x509','-in',path.join(fixture,expected+'-ca.crt'),'-outform','DER']);
+const expectedCaFingerprint=createHash('sha256').update(caDer).digest('hex');
 const publicKey=execFileSync('openssl',['x509','-in',path.join(output,'service-public.crt'),'-pubkey','-noout']);
 const der=execFileSync('openssl',['pkey','-pubin','-outform','DER'],{input:publicKey});
 const spki=createHash('sha256').update(der).digest('base64');
-const browser=startBrowser({chrome,output,args:['--ignore-certificate-errors-spki-list='+spki]});
+const browser=startBrowser({chrome,output,args:['--ignore-certificate-errors-spki-list='+spki,'--window-size=1280,900']});
 let socket; const pending=new Map(); const result={expected,physical_hardware:false,printing_ready:false,strict_tls_receipt:'host-assert.json',browser_trust:'verified current synthetic leaf SPKI only'};
 try {
  const port=await browser.ready;
@@ -83,12 +85,14 @@ try {
  const helper=await evaluate(`cockpit.spawn(['/usr/bin/python3','/usr/lib/sv08/sv08_admin.py'],{superuser:'require',err:'message'}).input(JSON.stringify({method:'status'})).then(raw=>({ok:JSON.parse(raw).ok}),()=>({ok:false}))`);
  assert.equal(helper.ok,true,'Real elevated host helper failed');
  await evaluate('sv08Navigation.go("identity")');await until('!document.querySelector("#identity").hidden');
+ await until('document.querySelector("#identity-status").textContent==="Printer identity is ready." && !document.querySelector("#identity-download-ca").disabled');
+ assert.equal(await evaluate('document.querySelector("#identity-ca-fingerprint").textContent.trim()'),expectedCaFingerprint,'Rendered restored CA fingerprint differs');
  await capture('cockpit-owner-identity.png');
  await evaluate('document.querySelector("#stop-authorization").click()');await until('!sv08Session.elevated');
  assert.equal(await evaluate('document.querySelector("#authorization-password").value'),'');
  const storage=await evaluate('JSON.stringify({local:{...localStorage},session:{...sessionStorage}})');
  for(const entry of Object.values(credentials))assert(!storage.includes(entry.password),'Synthetic password persisted in browser storage');
- result.cockpit={pam_owner_login:true,wrong_password_refused:true,real_finite_helpers:true,real_sudo_authorization:true,authorization_prompted:authorizationPrompted,passwordless_sudo:!authorizationPrompted,elevated_host_helper:true,authorization_cleared:true};
+ result.cockpit={pam_owner_login:true,wrong_password_refused:true,real_finite_helpers:true,real_sudo_authorization:true,authorization_prompted:authorizationPrompted,passwordless_sudo:!authorizationPrompted,elevated_host_helper:true,identity_rendered_ready:true,ca_fingerprint_verified:true,authorization_cleared:true};
  result.result='PASS'; fs.writeFileSync(path.join(output,'browser-assert.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600});
  console.log(JSON.stringify(result));
 } finally {
