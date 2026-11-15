@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Native full-stack source export exposed empty history initialization incompatibility; preserve current run before adding normal history initializer ownership under owner-authorized failure repair.",
+      "blocker": null,
       "checks": [
         "archive",
         "configuration",
@@ -81,11 +81,7 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "026b4a617edc4f7083939bda55ac5aca",
-        "session": "recovery-native-20261115"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -150,13 +146,15 @@
         "runtime/sv08_provenance.py",
         "tests/test_stage_printer_ui.py",
         "docs/features/recovery-printer-stack/native-evidence.md",
-        "docs/features/recovery-printer-stack/native-evidence.json"
+        "docs/features/recovery-printer-stack/native-evidence.json",
+        "runtime/sv08_admin_jobs.py",
+        "tests/test_admin_jobs.py"
       ],
       "repeats": 0,
-      "resumption": "Owner resumed PR17 full qualification on verified authorized native ARM64/KVM host, permits disposable setup and adds10800process-seconds/32GiB; preserve all prior attempts and six acceptance criteria.",
+      "resumption": "Continue the same native qualification with preserved run026b4a617edc4f7083939bda55ac5aca, candidate0ae0506, receipts, failed attempts and cumulative allowance; add normal empty-history initialization compatibility repair demonstrated by genuine source export. No acceptance or protection change.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "blocked",
+      "status": "pending",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
