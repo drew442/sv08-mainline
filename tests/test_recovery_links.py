@@ -43,6 +43,24 @@ class RecoveryLinksTests(unittest.TestCase):
     def export(self):
         result = self.exporter.execute(self.exporter.prepare('usb'))
         return self.usb/result['filename']
+    def test_journal_special_mode_policy_refuses_lookalikes_and_unreal_anchors(self):
+        from sv08_recovery_links import validate_modes
+        entries={('state.json',):dict(type='file',mode=0o600,uid=0),
+                 ('shared',):dict(type='directory',mode=0o755,uid=0),
+                 ('shared','logs'):dict(type='directory',mode=0o755,uid=0),
+                 ('shared','logs','journal'):dict(type='directory',mode=0o2755,uid=0)}
+        journal=('shared','logs','journal');child=(*journal,'a'*32)
+        entries[child]=dict(type='directory',mode=0o2755,uid=0)
+        validate_modes(entries)
+        for name,value in ((journal,dict(type='file',mode=0o2755,uid=0)),
+                           (child,dict(type='directory',mode=0o1755,uid=0)),
+                           (('shared','logs'),dict(type='symlink',mode=0o777,uid=0)),
+                           (('state.json',),dict(type='directory',mode=0o700,uid=0))):
+            altered={**entries,name:value}
+            with self.subTest(name=name,value=value),self.assertRaises(ValueError):validate_modes(altered)
+        for name in ((*journal,'not-a-machine-id'),(*child,'nested'),('elsewhere','journal')):
+            altered={**entries,name:dict(type='directory',mode=0o2755,uid=0)}
+            with self.subTest(path=name),self.assertRaises(ValueError):validate_modes(altered)
     def restorer(self, archive):
         return Restore({'backup':dict(path=archive)}, {'target':dict(root=self.parent/'restored')}, admission, reserve_bytes=0)
     def test_isolated_history_restore_validates_v2_nodes_and_preserves_v1(self):

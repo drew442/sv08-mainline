@@ -18,7 +18,7 @@ import uuid
 
 from sv08_export import CHUNK, identity, opened, publish, restore_archive
 from sv08_state import Store
-from sv08_recovery_links import validate_links
+from sv08_recovery_links import validate_links, validate_modes
 
 MAX_ENTRIES = 100000
 MAX_BYTES = 2**32 - 1
@@ -86,7 +86,8 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
                 continue
             relative = parts(item.name)
             require(item.isdir() or item.isfile() or item.islnk() or item.issym(), 'Unsupported restore member type')
-            require(type(item.mode) is int and 0 <= item.mode <= 0o777 and
+            require(type(item.mode) is int and
+                    (0 <= item.mode <= 0o777 or (item.isdir() and item.mode == 0o2755 and item.uid == 0)) and
                     type(item.uid) is int and 0 <= item.uid <= 2**31-1 and
                     type(item.gid) is int and 0 <= item.gid <= 2**31-1 and
                     0 <= item.mtime <= 2**32-1,
@@ -159,6 +160,8 @@ def scan(fd, stage=None, max_bytes=MAX_BYTES, max_entries=MAX_ENTRIES, history_r
                 'Restore node metadata mismatch')
     else:
         require(not opaque, 'Legacy archive cannot contain opaque links')
+    validate_modes({parts(name): value for name, value in members.items() if value is not None},
+                   manifest['format_version'])
     validate_links({parts(name): (value['type'], value.get('target')) for name, value in members.items()
                     if value is not None})
     histories = {}

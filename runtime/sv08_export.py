@@ -15,7 +15,7 @@ from pathlib import Path
 import stat
 import tarfile
 import uuid
-from sv08_recovery_links import read_link, validate_links
+from sv08_recovery_links import read_link, validate_links, validate_modes
 
 DIRECTORY = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
 CHUNK = 1024 * 1024
@@ -80,6 +80,8 @@ def inventory(root, limit=100000):
         visit(root_fd, ())
     validate_links({p: ('directory' if stat.S_ISDIR(s[2]) else ('symlink' if stat.S_ISLNK(s[2]) else 'file'),
                         s[9] if stat.S_ISLNK(s[2]) else None) for p, s in result})
+    validate_modes({p: dict(type='directory' if stat.S_ISDIR(s[2]) else 'file',
+                            mode=stat.S_IMODE(s[2]), uid=s[6]) for p, s in result})
     # Read-only validation does not create or repair source lock bookkeeping.
     paths = {relative for relative, _ in result}
     for relative, stamp in result:

@@ -1,4 +1,4 @@
-"""The two provisioned link kinds preserved as opaque recovery records.
+"""Narrow provisioned link and journal-mode compatibility for recovery records.
 
 Targets are literal strings, never paths to open. Identity generations are
 separately required to be real directories via the caller's safe inventory.
@@ -8,6 +8,29 @@ import re
 import stat
 
 README_TARGET = '../../usr/share/doc/systemd/README.logs'
+
+
+def validate_modes(entries, format_version=2):
+    """Preserve only the anchored systemd journal directory's special mode.
+
+    Version 2 binds this metadata to archive nodes. Legacy archives retain their
+    original ordinary-permission bound; no special regular-file bits are allowed.
+    """
+    for relative, metadata in entries.items():
+        mode = metadata['mode']
+        if type(mode) is int and 0 <= mode <= 0o777: continue
+        prefix = None
+        if relative[-3:] == ('shared', 'logs', 'journal'):
+            prefix = relative[:-3]
+        elif (len(relative) >= 4 and relative[-4:-1] == ('shared', 'logs', 'journal') and
+                re.fullmatch('[0-9a-f]{32}', relative[-1])):
+            prefix = relative[:-4]
+        if (format_version != 2 or mode != 0o2755 or metadata['type'] != 'directory' or
+                metadata['uid'] != 0 or prefix is None or
+                entries.get((*prefix, 'state.json'), {}).get('type') != 'file' or
+                any(entries.get(relative[:n], {}).get('type') != 'directory'
+                    for n in range(1, len(relative)))):
+            raise ValueError('Unsafe recovery permission metadata')
 
 
 def link_target(relative, target, prefix=()):
