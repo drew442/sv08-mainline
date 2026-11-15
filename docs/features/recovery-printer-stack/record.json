@@ -3,8 +3,8 @@
   "authorization": {
     "actor": "root/coordinator",
     "basis": "owner-request",
-    "proposal_sha256": "e150f503beff030ccca7189449a93e133a9c90697fb7f972bc874f3cc30c52c7",
-    "rationale": "Owner explicitly authorized resolving demonstrated native qualification failures. Extend only normal empty-history initializer ownership after preserving live run in ab0390f; all original acceptance/protections/allowances retained.",
+    "proposal_sha256": "e4d0da0a15d57b5ae1c362f94ff0ccd088914c595e277827381325ce9681baa6",
+    "rationale": "Owner-authorized demonstrated failure repair; typed backward-compatible pre-admission allocation-busy signal preserves paused-upload read status without bypassing lock or export guards. Previous run/evidence durably preserved in3f9e0e9.",
     "reference": "docs/features/recovery-printer-stack/owner-request.md",
     "reference_sha256": "432526e64daf0a4f8d6104fa850ab3a9870f75b67d3e0b2cea3235de003d0406",
     "requirements_sha256": {
@@ -13,9 +13,9 @@
       "docs/features/persistent-printer-stack/proposal.md": "96ca8c05b073d423d5fb11dbb7b070117055deca02d826c2f4103c8e33700a92",
       "docs/features/recovery-printer-stack/owner-request.md": "432526e64daf0a4f8d6104fa850ab3a9870f75b67d3e0b2cea3235de003d0406"
     },
-    "scope_sha256": "c9724c6a3f3c6e064d694651f11e425f77e1504b67ff645ca3760fbb2596c594",
+    "scope_sha256": "a9b33149cbf948304e55312743cedf69856b51cfc55da4bb8d41d31b1d5982e4",
     "session": "recovery-native-20261115",
-    "source_commit": "7e295baa3492dcc5f6d64216a464e1e742db0507"
+    "source_commit": "bd52e5d9e501f29c75876ffd260d76f4845c0b56"
   },
   "checks": [
     {
