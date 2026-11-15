@@ -62,8 +62,7 @@
     "docs/features/recovery-printer-stack/owner-request.md",
     "docs/decisions/0010-host-administration-and-recovery-ui.md",
     "docs/features/persistent-printer-stack/proposal.md",
-    "docs/decisions/20261005-proportionate-development-review.md",
-    "docs/features/recovery-printer-stack/arm64-host-preflight-20261115.md"
+    "docs/decisions/20261005-proportionate-development-review.md"
   ],
   "tasks": [
     {
@@ -109,7 +108,8 @@
         "runtime/sv08_printer_sources.py",
         "runtime/sv08_printer_fields.py",
         "tests/cockpit_browser.mjs",
-        "tests/browser_runtime.mjs"
+        "tests/browser_runtime.mjs",
+        "docs/features/recovery-printer-stack/arm64-host-preflight-20261115.md"
       ],
       "owned_paths": [
         "runtime/sv08_recovery_links.py",
