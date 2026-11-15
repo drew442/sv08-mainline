@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "f3b0e3af45fd4f879ccabbe5b70c2196",
+        "session": "recovery-native-20261115"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -156,7 +160,7 @@
       "resumption": "Continue same goal, native archive/restore/activation and restored-1PASS evidence retained; extend only typed allocation-busy signal ownership to preserve unchanged paused-upload status contract. Same cumulative allowances and all attempts carry.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
