@@ -80,6 +80,47 @@ class StackHarnessTests(unittest.TestCase):
         (tree/'sv08/state.json').write_text('preserved partial fixture')
         with self.assertRaisesRegex(ValueError,'must be empty'):vm.bootstrap_tree(self.fixture)
         self.assertEqual((tree/'sv08/state.json').read_text(),'preserved partial fixture')
+    def test_fixture_configuration_stays_outside_project_inventory(self):
+        from types import SimpleNamespace
+        from sv08_provenance import installed_files
+        root=self.root/'rootfs';root.mkdir()
+        for name in guest.BOOTSTRAP_FILES:
+            path=self.fixture/name
+            if not path.exists():path.write_text('synthetic '+name)
+            path.chmod(0o600)
+        original_stat=Path.stat
+        def root_stat(path,*args,**kwargs):
+            actual=original_stat(path,*args,**kwargs)
+            return SimpleNamespace(st_uid=0,st_mode=actual.st_mode,st_nlink=actual.st_nlink)
+        with patch.object(Path,'stat',root_stat),patch.object(vm.os,'chown'):
+            vm.stage_fixture_config(root,self.fixture)
+            config=root/'etc/sv08'
+            expectations=config/'stack-expectations.json'
+            self.assertEqual(os.readlink(expectations),'/data/stack-expectations.json')
+            bootstrap=config/'stack-bootstrap'
+            self.assertEqual(set(p.name for p in bootstrap.iterdir()),set(guest.BOOTSTRAP_FILES))
+            self.assertEqual(bootstrap.stat().st_mode & 0o777,0o700)
+            for name in guest.BOOTSTRAP_FILES:
+                self.assertEqual((bootstrap/name).read_bytes(),(self.fixture/name).read_bytes())
+                self.assertEqual((bootstrap/name).stat().st_mode & 0o777,0o600)
+            self.assertEqual(installed_files(root),{})
+            self.assertEqual(guest.bootstrap.__defaults__[0],guest.FIXTURE_CONFIG/'stack-bootstrap')
+            vm.stage_fixture_config(root,self.fixture)
+            expectations.unlink();expectations.symlink_to('/data/foreign.json')
+            with self.assertRaisesRegex(ValueError,'Unexpected fixture expectations link'):
+                vm.stage_fixture_config(root,self.fixture)
+            self.assertEqual(os.readlink(expectations),'/data/foreign.json')
+        with patch('sys.argv',['driver','--phase','normal-assert','--expected','restored',
+                               '--disposable-marker',str(self.fixture/'disposable-marker')]), \
+                patch.object(guest,'normal_assert',return_value={}) as normal,patch('builtins.print'):
+            guest.main()
+            self.assertEqual(normal.call_args.args[1],Path('/etc/sv08/stack-expectations.json'))
+        linked=self.root/'linked-root';linked.mkdir()
+        outside=self.root/'outside';outside.mkdir()
+        (linked/'etc').symlink_to(outside)
+        with self.assertRaisesRegex(ValueError,'Real fixture configuration directory'):
+            vm.stage_fixture_config(linked,self.fixture)
+        self.assertEqual(list(outside.iterdir()),[])
     def test_network_profile_distinct_uuid_same_explicit_virtual_mac(self):
         import configparser
         for name in ('previous','restored'):

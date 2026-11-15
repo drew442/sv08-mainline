@@ -20,6 +20,7 @@ import time
 
 MARKER = 'sv08-disposable-recovery-stack-v1\n'
 MAC = '52:54:00:08:10:13'
+FIXTURE_CONFIG = Path('/etc/sv08')
 PROFILE_UUIDS = {'previous':'daa90916-6d0d-493e-84bc-968c502f7351',
                  'restored':'daa90916-6d0d-493e-84bc-968c502f7352'}
 REQUIRED_UNITS = ('sv08-prepare.service','sv08-web-prepare.service',
@@ -197,7 +198,7 @@ def bootstrap_role(cmdline):
     return values == ['sv08.stack.bootstrap=1'] and not any(part.startswith('sv08.stack.expect=') for part in cmdline.split())
 
 
-def bootstrap(source=Path('/usr/lib/sv08/stack-bootstrap'), work=Path('/data/stack-bootstrap')):
+def bootstrap(source=FIXTURE_CONFIG/'stack-bootstrap', work=Path('/data/stack-bootstrap')):
     """Preparation in real ARM64 PID 1, without a stack qualification claim."""
     require(os.geteuid()==0 and Path('/proc/1/comm').read_text().strip()=='systemd' and
             bootstrap_role(Path('/proc/cmdline').read_text()), 'Explicit full-system bootstrap role required')
@@ -424,7 +425,7 @@ def main():
     p.add_argument('--phase',choices=('provision','bootstrap','restore','activate','rollback','normal-assert','host-assert','audit-boots'),required=True)
     p.add_argument('--disposable-marker',type=Path,required=True); p.add_argument('--work',type=Path)
     p.add_argument('--output',type=Path);p.add_argument('--release',type=Path);p.add_argument('--owner-public-key',type=Path)
-    p.add_argument('--expected',choices=('restored','previous'));p.add_argument('--expectations',type=Path,default=Path('/usr/lib/sv08/stack-expectations.json'))
+    p.add_argument('--expected',choices=('restored','previous'));p.add_argument('--expectations',type=Path,default=FIXTURE_CONFIG/'stack-expectations.json')
     p.add_argument('--receipt-dir',type=Path,default=Path('/data/stack-receipts'));p.add_argument('--deadline',type=int,default=600)
     a=p.parse_args(); require(a.disposable_marker.read_text()==MARKER,'Disposable guest marker required')
     if a.phase=='provision':

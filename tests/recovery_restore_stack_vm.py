@@ -27,7 +27,7 @@ import stat
 import subprocess
 import sys
 sys.path[:0]=[str(Path(__file__).resolve().parents[1]/'runtime'),str(Path(__file__).parent)]
-from recovery_restore_stack import MARKER, MAC, BOOTSTRAP_FILES, private_fixture, require, sha, write_json
+from recovery_restore_stack import MARKER, MAC, BOOTSTRAP_FILES, FIXTURE_CONFIG, private_fixture, require, sha, write_json
 from recovery_export_vm import partition_image, gpt, embed, media, part, identity, stable_key, LINUX_GUID, FAT_GUID, RECOVERY_BYTES, RECOVERY_UUID, _unpack_initrd, run
 from recovery_restore_e2e_vm import TARGET_UUID, TARGET_PARTUUID, NORMAL_ROOT_PARTUUID, BOOT_PARTUUID, BOOT_UUID
 
@@ -81,6 +81,29 @@ def installed_root(rootfs):
     return rootfs
 
 
+def stage_fixture_config(rootfs, fixture):
+    # One immutable userspace serves bootstrap and all qualification boots.
+    # The public, source-bound expectations accompany each data-tree parent.
+    config=rootfs/FIXTURE_CONFIG.relative_to('/')
+    require(all(not p.is_symlink() for p in (config,*config.parents)), 'Real fixture configuration directory required')
+    config.mkdir(parents=True,exist_ok=True)
+    expectations=config/'stack-expectations.json'
+    if expectations.is_symlink():
+        require(os.readlink(expectations)=='/data/stack-expectations.json','Unexpected fixture expectations link')
+    else:
+        expectations.unlink(missing_ok=True); expectations.symlink_to('/data/stack-expectations.json')
+    bootstrap=config/'stack-bootstrap'; bootstrap.mkdir(mode=0o700,exist_ok=True)
+    require(not bootstrap.is_symlink() and bootstrap.stat().st_uid==0,'Real root-owned bootstrap directory required')
+    bootstrap.chmod(0o700)
+    require(set(path.name for path in bootstrap.iterdir()) <= set(BOOTSTRAP_FILES),'Unexpected bootstrap assets preserved')
+    for name in BOOTSTRAP_FILES:
+        source=regular(fixture/name); info=source.stat()
+        require(info.st_uid==0 and not info.st_mode & 0o022,'Known root-owned generated fixture assets required')
+        destination=bootstrap/name
+        require(not destination.is_symlink(),'Bootstrap destination link refused')
+        shutil.copyfile(source,destination); destination.chmod(0o600); os.chown(destination,0,0)
+
+
 def stage(rootfs, fixture):
     fixture=private_fixture(fixture); rootfs=installed_root(rootfs)
     require(os.geteuid()==0 and rootfs.is_dir() and not rootfs.is_symlink(),'Private root fixture stage required')
@@ -96,23 +119,7 @@ def stage(rootfs, fixture):
     for path in (rootfs/'etc/ssh').glob('ssh_host_*'): path.unlink()
     shutil.copyfile(Path(__file__).with_name('recovery_restore_stack.py'),runtime/'recovery_restore_stack.py')
     (runtime/'stack-disposable').write_text(MARKER)
-    # One immutable userspace serves bootstrap and all qualification boots.
-    # The public, source-bound expectations accompany each data-tree parent.
-    expectations=runtime/'stack-expectations.json'
-    if expectations.is_symlink():
-        require(os.readlink(expectations)=='/data/stack-expectations.json','Unexpected fixture expectations link')
-    else:
-        expectations.unlink(missing_ok=True); expectations.symlink_to('/data/stack-expectations.json')
-    bootstrap=runtime/'stack-bootstrap'; bootstrap.mkdir(mode=0o700,exist_ok=True)
-    require(not bootstrap.is_symlink() and bootstrap.stat().st_uid==0,'Real root-owned bootstrap directory required')
-    bootstrap.chmod(0o700)
-    require(set(path.name for path in bootstrap.iterdir()) <= set(BOOTSTRAP_FILES),'Unexpected bootstrap assets preserved')
-    for name in BOOTSTRAP_FILES:
-        source=regular(fixture/name); info=source.stat()
-        require(info.st_uid==0 and not info.st_mode & 0o022,'Known root-owned generated fixture assets required')
-        destination=bootstrap/name
-        require(not destination.is_symlink(),'Bootstrap destination link refused')
-        shutil.copyfile(source,destination); destination.chmod(0o600); os.chown(destination,0,0)
+    stage_fixture_config(rootfs,fixture)
     units=rootfs/'etc/systemd/system'
     default=units/'default.target';default.unlink(missing_ok=True);default.symlink_to('multi-user.target')
     # Keep original service commands/physical conditions. Only failure reboot is
