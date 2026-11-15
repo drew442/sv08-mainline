@@ -242,7 +242,7 @@ def installed_provider_inputs(root):
         'configs/host-os/recovery-systemd-logind.conf':
             root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
     }
-    for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py',
+    for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py', 'sv08_recovery_links.py',
                  'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
         paths['runtime/'+name] = root/'usr/lib/sv08'/name
     if not all(path.is_file() for path in paths.values()):
@@ -414,7 +414,7 @@ def assemble(a):
         (root/'run/debs').mkdir()
         mount(['mount','--bind',intake,root/'run/debs'],root/'run/debs')
         run(['mount','-o','remount,bind,ro',root/'run/debs'])
-        env=dict(os.environ,DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
+        env=dict(os.environ,TMPDIR='/tmp',DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
         with (work/'dpkg.log').open('w') as log:
             run(['chroot',root,'dpkg','--force-depends','--unpack',*['/run/debs/'+p['sha256']+'.deb' for p in packages]],env=env,stdout=log,stderr=subprocess.STDOUT)
             write(root/'etc/initramfs-tools/update-initramfs.conf','update_initramfs=no\nbackup_initramfs=no\n')
@@ -631,7 +631,7 @@ def derive(a):
             if staged.stat().st_size!=package['bytes'] or sha(staged)!=package['sha256']:raise ValueError('Changed staged board package')
         write(root/'etc/initramfs-tools/update-initramfs.conf','update_initramfs=no\nbackup_initramfs=no\n')
         write(root/'usr/sbin/policy-rc.d','#!/bin/sh\nexit 101\n',0o755)
-        env=dict(os.environ,DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
+        env=dict(os.environ,TMPDIR='/tmp',DEBIAN_FRONTEND='noninteractive',LC_ALL='C',SOURCE_DATE_EPOCH=str(EPOCH))
         with (work/'dpkg.log').open('w') as log:
             run(['chroot',root,'dpkg','--force-confold','--install',*['/run/debs/'+p['filename'] for p in profile['packages']]],env=env,stdout=log,stderr=subprocess.STDOUT)
         regulatory=select_upstream_regdb(root)
