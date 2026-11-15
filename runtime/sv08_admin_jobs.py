@@ -210,7 +210,14 @@ class Jobs:
     def history(self):
         # Never acquire the state/transaction lock, including on initial page load.
         with self.lock('ledger.lock'):
-            view = self.acknowledged(); rows = view['rows']
+            view = self.acknowledged()
+            if not (self.root / 'jobs.json').exists():
+                # A validated unfenced, lock-only namespace is genuinely empty.
+                # Commit it through the ordinary legacy writer so read-only
+                # recovery export can require a manifest without repairing data.
+                self.save([], view['revision'])
+                view = self.acknowledged()
+            rows = view['rows']
             active = len(view['active']); archives = len(view['manifest']['archives']) if view['format'] == 2 else 0
             from sv08_admin_history import History, TOTAL
             try: maintenance = History(self).review(view); reason = ''
