@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Native full-stack source export exposed empty history initialization incompatibility; preserve current run before adding normal history initializer ownership under owner-authorized failure repair.",
       "checks": [
         "archive",
         "configuration",
@@ -156,7 +156,7 @@
       "resumption": "Owner resumed PR17 full qualification on verified authorized native ARM64/KVM host, permits disposable setup and adds10800process-seconds/32GiB; preserve all prior attempts and six acceptance criteria.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
