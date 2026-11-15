@@ -6,15 +6,15 @@ All six original criteria pass on the authorized a733 native ARM64/KVM host.
 Final current-source normal/recovery images completed actual export, installed
 restore/activation, two distinct restored boots, authenticated services and
 rendered browser/TLS/identity/network checks, recovery rollback and a distinct
-previous-state boot. The unchanged pinned validator reached ready in4.061seconds.
+previous-state boot. The unchanged pinned validator reached ready in 4.061 seconds.
 Source/evidence candidate: bf7f058 on feature/pr17-native-delivery; existing task
 recovery-printer-stack:implement is validated awaiting owner integration, not
-marked done because product merge is forbidden. [Native evidence](../docs/features/recovery-printer-stack/native-evidence.md)
+marked done because product merge is forbidden. [Native evidence](https://github.com/drew442/sv08-mainline/blob/feature/recovery-printer-stack/docs/features/recovery-printer-stack/native-evidence.md)
 will be available through [PR17](https://github.com/drew442/sv08-mainline/pull/17).
 Final publication/CI readiness remains coordinator-owned before native goal
 completion; no printer access, deployment or merge. Historical evidence retained.
-Cumulative conservative charge22950process-seconds/87.774713GiB within
-25200seconds/88GiB; retired outputs receive zero credit. Named medium implementer
+Cumulative conservative charge: 22,950 process-seconds / 87.774713 GiB within
+25,200 seconds / 88 GiB; retired outputs receive zero credit. Named medium implementer
 and default-low researcher completed bounded assignments; no active workers/VMs.
 
 
