@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "b7ee5edb74784495af950ed3a06df44d",
+        "session": "recovery-native-20261115"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -154,7 +158,7 @@
       "resumption": "Continue the same native qualification with preserved run026b4a617edc4f7083939bda55ac5aca, candidate0ae0506, receipts, failed attempts and cumulative allowance; add normal empty-history initialization compatibility repair demonstrated by genuine source export. No acceptance or protection change.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
