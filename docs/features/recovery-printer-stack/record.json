@@ -81,7 +81,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "026b4a617edc4f7083939bda55ac5aca",
+        "session": "recovery-native-20261115"
+      },
       "input_paths": [
         "runtime/sv08_identity.py",
         "runtime/sv08_network.py",
@@ -152,7 +156,7 @@
       "resumption": "Owner resumed PR17 full qualification on verified authorized native ARM64/KVM host, permits disposable setup and adds10800process-seconds/32GiB; preserve all prior attempts and six acceptance criteria.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null

@@ -1,5 +1,21 @@
 # Current delivery goals
 
+## Active goal — complete PR17 native recovery qualification, 2026-11-15
+
+Owner resumed all six acceptance criteria and authorized a733-host disposable
+setup. Existing project task runs as recovery-native-20261115 in candidate
+feature/pr17-native-qualification, preserving PR17 history and latest main.
+Cumulative allowance25200process-seconds/88GiB, prior charge12200seconds/49.0625GiB,
+new continuation10800seconds/32GiB. [Plan](../docs/features/recovery-printer-stack/review-plan.md).
+Actual native KVM isolated pinned validator PASS at4.061seconds readiness,
+3.926499child CPU seconds, unchanged8/8CPU/256MiB/ten-second gates. First probe
+failed before validator on an outdated retained dependency set; current module/
+catalog staging corrected it. VM processes stopped and original root remains RO.
+Current-source full images/journey/CI remain in progress. No printer/deployment/
+merge. Source tests242run/4explicit skips plus11probe regressions pass; required
+native/full acceptance remains coordinator-owned and unclaimed until measured.
+
+
 ## Native ARM host availability verified — 2026-11-15
 
 Owner authorized root@a733-host.drewnet.online. Actual ARM64/KVM initialization
