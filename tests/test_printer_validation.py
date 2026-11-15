@@ -1,5 +1,6 @@
 """Deterministic deadlines, private telemetry and single-owner cleanup; no Klipper."""
 import json
+import hashlib
 import os
 from pathlib import Path
 import subprocess
@@ -160,6 +161,9 @@ class ProbeTests(unittest.TestCase):
             patches.enter_context(patch.object(probe,'factory',side_effect=lambda path,name:guest.factory(Path(__file__).resolve().parents[1]/'catalog/printer/catalog.json',name)))
             def failure(preview,config,**kwargs):
                 self.assertEqual(set(preview['files']),{'hardware.cfg'});self.assertIn('sv08-stack-restored-main',preview['files']['hardware.cfg'])
+                staged=json.loads((work/'preview-private.json').read_text())
+                self.assertEqual(staged,preview)
+                self.assertNotIn('z_offset:',preview['files']['hardware.cfg'])
                 self.assertTrue(kwargs['isolated_children']);kwargs['private_diagnostics']({'private_log_excerpts':{'klippy.log':'PRIVATE'}})
                 raise ValueError('Complete-output validation process stopped before ready (-9)')
             with patch.object(probe,'validate_output',side_effect=failure) as validate:
@@ -168,6 +172,11 @@ class ProbeTests(unittest.TestCase):
             self.assertEqual(receipt['result'],'FAIL');self.assertIn('(-9)',receipt['failure_private']);self.assertEqual(receipt['diagnostics_private'][0]['private_log_excerpts']['klippy.log'],'PRIVATE')
             self.assertEqual((work/'probe-private.json').stat().st_mode & 0o777,0o600)
             self.assertEqual(len(receipt['validator_input_sha256']),3);self.assertFalse(receipt['physical_hardware'])
+            staged=json.loads((work/'preview-private.json').read_text())
+            hardware='printer-managed/'+staged['review']+'/hardware.cfg'
+            actual=hashlib.sha256(staged['files']['hardware.cfg'].encode()).hexdigest()
+            self.assertEqual(receipt['validator_input_sha256'][hardware],actual)
+            self.assertNotEqual(actual,receipt['hardware_sha256'])
             with patch.object(probe,'validate_output') as validate:
                 with self.assertRaisesRegex(ValueError,'Fresh work'):probe.probe(work,marker)
                 validate.assert_not_called()

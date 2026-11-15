@@ -56,7 +56,7 @@ def probe(work, marker):
                 activation_sha256=hashlib.sha256(preview['activation'].encode()).hexdigest(),
                 files_sha256={key:hashlib.sha256(value.encode()).hexdigest() for key,value in generated['files'].items()},
                 validator_input_sha256={'printer.cfg':hashlib.sha256(preview['activation'].encode()).hexdigest(),
-                    'printer-managed/'+preview['review']+'/hardware.cfg':hashlib.sha256(generated['text'].encode()).hexdigest(),
+                    'printer-managed/'+preview['review']+'/hardware.cfg':hashlib.sha256(preview['files']['hardware.cfg'].encode()).hexdigest(),
                     'printer-managed/'+preview['review']+'/bundle.cfg':hashlib.sha256(b'[include hardware.cfg]\n').hexdigest()},
                 loaded_module_sha256={name:sha(module.__file__) for name,module in sys.modules.copy().items()
                     if name.startswith('sv08_') and getattr(module,'__file__',None) and Path(module.__file__).is_file()},

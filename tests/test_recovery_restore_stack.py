@@ -14,6 +14,7 @@ from unittest.mock import patch
 import recovery_restore_stack as guest
 import recovery_restore_stack_vm as vm
 from sv08_printer_generate import generate
+from sv08_printer_calibration import parse
 from test_data_budget import fixture_root
 
 
@@ -33,9 +34,11 @@ class StackHarnessTests(unittest.TestCase):
         self.assertEqual(output['files'],generate(catalog,persisted,'full')['files'])
         self.assertEqual(output['text'],generate(catalog,persisted,'full')['text'])
         self.assertIn('z_offset: 0',output['text']);self.assertIn('control: watermark',output['text'])
+        sections=parse(output['text'])
         for command in ('PRINT_START','SDCARD_PRINT_FILE','RESUME','M24'):
-            section=output['text'].split('[gcode_macro '+command+']',1)[1].split('[',1)[0]
-            self.assertIn('action_raise_error',section)
+            body=sections['gcode_macro '+command]['gcode']
+            self.assertIn('action_raise_error',body)
+            self.assertIn('SV08_CALIBRATION_STATUS',body)
         self.assertIn('verify_heater',output['text']);self.assertIn('/dev/serial/by-id/sv08-stack-restored-main',output['text'])
     def test_profile_exact_bounded_gpt_identity_and_no_capacity_override(self):
         profile=vm.profile(self.fixture)
