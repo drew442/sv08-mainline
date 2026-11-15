@@ -66,7 +66,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve native restore/activation and restored boot evidence before narrow typed allocation-busy ownership extension for CI paused-upload regression.",
       "checks": [
         "archive",
         "configuration",
@@ -158,7 +158,7 @@
       "resumption": "Continue the same native qualification with preserved run026b4a617edc4f7083939bda55ac5aca, candidate0ae0506, receipts, failed attempts and cumulative allowance; add normal empty-history initialization compatibility repair demonstrated by genuine source export. No acceptance or protection change.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable guest qualification; no printer/physical media. Supplemental source assessment only for concrete opaque-link/identity risk.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement compatibility and qualify installed-stack recovery",
       "validation": null,
       "verification": null
