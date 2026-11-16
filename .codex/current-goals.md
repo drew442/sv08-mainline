@@ -1,21 +1,20 @@
 # Current delivery goals
 
-## PR17 native recovery qualification — acceptance validated, 2026-11-15
+## Completed — PR17 native recovery qualification, merged 2026-11-16
 
-All six original criteria pass on the authorized a733 native ARM64/KVM host.
-Final current-source normal/recovery images completed actual export, installed
-restore/activation, two distinct restored boots, authenticated services and
-rendered browser/TLS/identity/network checks, recovery rollback and a distinct
-previous-state boot. The unchanged pinned validator reached ready in 4.061 seconds.
-Source/evidence candidate: bf7f058 on feature/pr17-native-delivery; existing task
-recovery-printer-stack:implement is validated awaiting owner integration, not
-marked done because product merge is forbidden. [Native evidence](https://github.com/drew442/sv08-mainline/blob/feature/recovery-printer-stack/docs/features/recovery-printer-stack/native-evidence.md)
-will be available through [PR17](https://github.com/drew442/sv08-mainline/pull/17).
-Final publication/CI readiness remains coordinator-owned before native goal
-completion; no printer access, deployment or merge. Historical evidence retained.
+Owner merged [PR17](https://github.com/drew442/sv08-mainline/pull/17) as
+7a8aec25631a28cd52826e09f5a0abed3f1d54d5. Local main fast-forwarded.
+All six original acceptance criteria passed on native ARM64/KVM, and all four
+final-head CI jobs passed before review readiness. Final images exercised actual
+export, restore/activation, two distinct restored boots, authenticated services,
+TLS/identity/network persistence, recovery rollback and a previous-state boot.
+The unchanged pinned validator reached ready in 4.061 seconds.
+[Source-bound evidence](../docs/features/recovery-printer-stack/native-evidence.md)
+preserves historical observations, failed attempts and resource accounting.
+Native delivery goal is complete; the existing feature task is closed following
+owner integration. No deployment or physical printer qualification is implied.
 Cumulative conservative charge: 22,950 process-seconds / 87.774713 GiB within
-25,200 seconds / 88 GiB; retired outputs receive zero credit. Named medium implementer
-and default-low researcher completed bounded assignments; no active workers/VMs.
+25,200 seconds / 88 GiB. No active qualification workers or guests remain.
 
 
 ## Native ARM host availability verified — 2026-11-15
