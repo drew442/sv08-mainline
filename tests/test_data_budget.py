@@ -7,7 +7,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'runtime'))
-from sv08_data_budget import Budget, BATCH_BYTES, METADATA_BYTES, rounded
+from sv08_data_budget import AllocationBusy, Budget, BATCH_BYTES, METADATA_BYTES, rounded
 
 
 _private_fixture = None
@@ -42,6 +42,19 @@ def fixture_budget(root=None):
 
 
 class DataBudgetTests(unittest.TestCase):
+    def test_only_real_lock_contention_has_typed_busy_admission(self):
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:
+            root=Path(directory);budget=fixture_budget(root)
+            with budget.locked():
+                with self.assertRaises(AllocationBusy) as raised:
+                    with budget.locked():self.fail('Contender entered writer')
+                self.assertIsInstance(raised.exception,ValueError)
+                self.assertEqual(str(raised.exception),'Shared data allocation is busy; refresh and review again')
+            (root/'allocation.lock').chmod(0o644)
+            with self.assertRaises(ValueError) as raised:
+                with budget.locked():self.fail('Unsafe lock entered writer')
+            self.assertNotIsInstance(raised.exception,AllocationBusy)
+
     def test_exact_byte_inode_edges_and_configured_floor(self):
         budget = Budget(Path(fixture_root()), state_reserve=100, copy_limit=200, staging_reserve=400)
         block = 4096; delta = 1
@@ -71,5 +84,4 @@ class DataBudgetTests(unittest.TestCase):
 def _busy(root):
     try:
         with Budget(root).locked(): raise AssertionError('Contender acquired held allocation')
-    except ValueError as error:
-        if 'busy' not in str(error): raise
+    except AllocationBusy: pass

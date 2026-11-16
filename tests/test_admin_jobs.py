@@ -20,6 +20,71 @@ class ImageJobTests(ImageAdministrationTests):
         plan = self.controller.plan(action, {'digest': self.digest} if action == 'image.stage' else {})
         return self.jobs.submit(identity, plan, self.controller), plan
 
+    def test_empty_history_status_commits_exportable_legacy_without_rotating_lock(self):
+        from contextlib import nullcontext
+        import tarfile
+        from sv08_export import Export, inventory
+        with self.jobs.lock('ledger.lock'):pass
+        ledger=self.jobs.root/'ledger.lock';before=ledger.stat()
+        with self.assertRaisesRegex(ValueError,'Missing committed history export manifest'):
+            inventory(self.store.root)
+        state=self.store.load()
+        status=self.jobs.history()
+        self.assertEqual(status['jobs'],[]);self.assertEqual(status['format'],1)
+        self.assertEqual(self.store.load(),state)
+        manifest=self.jobs.root/'jobs.json'
+        self.assertEqual(manifest.read_bytes(),b'[]\n')
+        self.assertEqual(manifest.stat().st_mode & 0o777,0o600)
+        self.assertFalse((self.jobs.root/'history-format-v2.lock').exists())
+        committed=manifest.stat()
+        self.assertEqual(self.jobs.history(),status)
+        self.assertEqual(manifest.stat(),committed)
+        self.assertEqual((ledger.stat().st_dev,ledger.stat().st_ino),(before.st_dev,before.st_ino))
+        target=self.store.root.parent/'empty-history-export';target.mkdir()
+        exporter=Export(self.store.root,{'usb':dict(path=target)},lambda _:nullcontext(),reserve_bytes=0)
+        result=exporter.execute(exporter.prepare('usb'))
+        with tarfile.open(target/result['filename']) as archive:
+            self.assertEqual(archive.extractfile('data/admin-image-jobs/jobs.json').read(),b'[]\n')
+
+    def test_empty_history_initialization_refuses_debris_or_fence(self):
+        with self.jobs.lock('ledger.lock'):pass
+        for name in ('snapshot-'+'a'*64+'.json','.history-manifest-'+'b'*32):
+            path=self.jobs.root/name;path.write_bytes(b'[]\n');path.chmod(0o600)
+            with self.subTest(name=name),self.assertRaisesRegex(ValueError,'Missing committed'):
+                self.jobs.history()
+            self.assertFalse((self.jobs.root/'jobs.json').exists())
+            self.assertTrue(path.exists());path.unlink()
+        os.link(self.jobs.root/'ledger.lock',self.jobs.root/'history-format-v2.lock')
+        with self.assertRaisesRegex(ValueError,'Missing committed'):self.jobs.history()
+        self.assertFalse((self.jobs.root/'jobs.json').exists())
+
+    def test_empty_history_commit_failure_is_reported_without_false_status(self):
+        for error in (OSError('No space left on device'),
+                      ValueError('Shared data allocation is busy; refresh and review again')):
+            with self.subTest(error=error),patch.object(self.jobs,'save',side_effect=error):
+                with self.assertRaises(type(error)):self.jobs.history()
+            self.assertFalse((self.jobs.root/'jobs.json').exists())
+        self.assertEqual(self.launches,[])
+
+    def test_empty_history_defers_only_held_allocation_and_later_commits(self):
+        import time
+        from sv08_export import inventory
+        with self.jobs.lock('ledger.lock'):pass
+        ledger=self.jobs.root/'ledger.lock';inode=ledger.stat().st_ino
+        with self.jobs.budget.locked():
+            start=time.monotonic();status=self.jobs.history()
+            self.assertLess(time.monotonic()-start,1)
+            self.assertEqual(status['jobs'],[]);self.assertEqual(status['format'],1)
+            self.assertEqual(set(os.listdir(self.jobs.root)),{'ledger.lock'})
+            with self.assertRaisesRegex(ValueError,'Missing committed history export manifest'):
+                inventory(self.store.root)
+        committed=self.jobs.history()
+        self.assertEqual(committed['jobs'],[])
+        self.assertEqual(committed['history_revision'],status['history_revision'])
+        self.assertEqual((self.jobs.root/'jobs.json').read_bytes(),b'[]\n')
+        self.assertEqual(ledger.stat().st_ino,inode)
+        inventory(self.store.root)
+
     def test_stage_arm_cancel_and_duplicate_ack(self):
         row, plan = self.submit()
         self.assertEqual(row['phase'], 'queued')

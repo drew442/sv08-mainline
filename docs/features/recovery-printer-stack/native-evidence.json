@@ -1,0 +1,1576 @@
+{
+  "acceptance": {
+    "archive": "PASS",
+    "configuration": "PASS",
+    "persistence": "PASS",
+    "regression": "PASS",
+    "rollback": "PASS",
+    "services": "PASS"
+  },
+  "agents": [
+    {
+      "context": "fork_turns=none; source-only narrow trace",
+      "cumulative_process_seconds_upper": 8,
+      "effective_model_effort": "not independently observable in this delivery report",
+      "name": "/root/native_probe_trace",
+      "requested_effort": "default low",
+      "requested_role": "project_researcher"
+    },
+    {
+      "context": "fork_turns=none; bounded source/test ownership, no delegation",
+      "cumulative_generated_mib_upper": 746,
+      "cumulative_process_seconds_upper": 245,
+      "effective_model_effort": "not independently observable in this delivery report",
+      "name": "/root/pr17_source_integration",
+      "requested_effort": "medium",
+      "requested_role": "project_implementer"
+    }
+  ],
+  "allowance": {
+    "cumulative_allowance": {
+      "generated_gib": 88,
+      "process_seconds": 25200
+    },
+    "cumulative_charge": {
+      "generated_gib": 87.7747126352042,
+      "process_seconds": 22950
+    },
+    "method": "Conservative cumulative charge; logical sparse container and mounted files both counted. Retired/deleted outputs retain their charge, no credit. Build/stage log intervals sum3534s rounded up; setup/tool/transfers1200s plus600s, source/bootstrap VMs1030s, early relay lifetimes1312s, final/supplementary normal/recovery/browser orchestration700s, tests/agents450s, aborted attempts/initrd400s, residual and publication774s =10000s; round total to10750s including final CI/publication reserve. Not CPU-time or cost savings measurement.",
+    "new_work_conservative_charge": {
+      "generated_bytes": 41566921806,
+      "generated_gib": 38.712212635204196,
+      "process_seconds": 10750
+    },
+    "new_work_output_ceiling_gib": 38.9375,
+    "output_components": {
+      "final_publication_upper_bytes": 33554432,
+      "final_reseed_retired_payload_bytes": 2257994,
+      "local_scratch_upper_bytes": 104857600,
+      "retained_host_bytes_container_and_contents": 26791576521,
+      "retired_aborted_normal_raw_bytes": 809500672,
+      "retired_archive_partition_temps_bytes": 528482304,
+      "retired_assembly_bytes": 3195988981,
+      "retired_boot_partition_temp_bytes": 62914560,
+      "retired_data_partition_temps_bytes": 3212836864,
+      "retired_inode_failure_partial_upper_bytes": 674005062,
+      "retired_normal_partition_temps_bytes": 3221225472,
+      "retired_parent_normal_root_upper_bytes": 1610612736,
+      "retired_replaced_archive_raw_bytes": 268435456,
+      "test_and_input_reseed_upper_bytes": 268435456,
+      "worker_cumulative_upper_bytes": 782237696
+    },
+    "owner_continuation": {
+      "generated_gib": 32,
+      "process_seconds": 10800
+    },
+    "prior_charge": {
+      "generated_gib": 49.0625,
+      "process_seconds": 12200
+    },
+    "prior_unused_output_allocated_gib": 6.9375
+  },
+  "archive_and_restore_records": {
+    "final-images-audit.json": {
+      "normal": {
+        "compressed_owner_group_mode_links": [
+          0,
+          0,
+          "0o644",
+          1
+        ],
+        "current_runtime_sha256": {
+          "sv08_admin_jobs.py": "75539efa18c6dda169cb5d4cb618351ca86e5b11f1ba5e2fdaf98fb1830c52b9",
+          "sv08_boot.py": "2c746f4ed3630ed778ac0ea2e295622aac2362a7df8c5d103b1c7393ec5e9f75",
+          "sv08_data_budget.py": "efe6bdac5dce776f35aa04b3f69c80f7b55efd4932de85d1356afb2ba5a98ecb",
+          "sv08_export.py": "d404c6bf0352914668232db73e887ad5df518347c19d14297118c654fa907124",
+          "sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+          "sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+          "sv08_printer_publish.py": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+          "sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
+          "sv08_recovery_links.py": "f36d7df4c63b55c50d695688cc4e29d44c137ef67e31ebdc9ddf7b18ff73a02d",
+          "sv08_restore.py": "3d2029b0e80c55286003c9ef76b6713b37d12cc2275bded8b7e0e64d97f50f33",
+          "sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+          "sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d"
+        },
+        "image_sha256": "c14d91b325551e2f4d52ee242fc7fbc2ed7ea796878b5639a5fc328b75a58c30",
+        "usr_sha256": "d25df1a781cab64a53c89b10e7a67c720516bbe373022180c2897209e0d08dfc"
+      },
+      "recovery": {
+        "compressed_owner_group_mode_links": [
+          0,
+          0,
+          "0o644",
+          1
+        ],
+        "current_runtime_sha256": {
+          "sv08_admin_jobs.py": "75539efa18c6dda169cb5d4cb618351ca86e5b11f1ba5e2fdaf98fb1830c52b9",
+          "sv08_boot.py": "2c746f4ed3630ed778ac0ea2e295622aac2362a7df8c5d103b1c7393ec5e9f75",
+          "sv08_data_budget.py": "efe6bdac5dce776f35aa04b3f69c80f7b55efd4932de85d1356afb2ba5a98ecb",
+          "sv08_export.py": "d404c6bf0352914668232db73e887ad5df518347c19d14297118c654fa907124",
+          "sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+          "sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+          "sv08_printer_publish.py": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+          "sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
+          "sv08_recovery_links.py": "f36d7df4c63b55c50d695688cc4e29d44c137ef67e31ebdc9ddf7b18ff73a02d",
+          "sv08_restore.py": "3d2029b0e80c55286003c9ef76b6713b37d12cc2275bded8b7e0e64d97f50f33",
+          "sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+          "sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d"
+        },
+        "image_sha256": "f9c33cd047209d28f86ae5d151d6804b2b5ce9254a629543cb9f9172d2df0005",
+        "usr_sha256": "368441cf95eb84bf50e6cb8f3e9c7e0ed9beb780faa6b1598feee16f9df74463"
+      }
+    },
+    "fixture/boot-recovery-restore-activate-delivery/run.json": {
+      "backend": {
+        "active_backend_verified": true,
+        "argv": [
+          "qemu-system-aarch64",
+          "-L",
+          "/run/a733-guests/sv08-pr17-20261115/qemu-firmware",
+          "-machine",
+          "virt,gic-version=host",
+          "-cpu",
+          "host",
+          "-accel",
+          "kvm",
+          "-smp",
+          "2",
+          "-m",
+          "1024",
+          "-kernel",
+          "/run/a733-guests/sv08-pr17-20261115/candidate/build/recovery-native-delivery/vmlinuz",
+          "-initrd",
+          "/run/a733-guests/sv08-pr17-20261115/candidate/build/recovery-native-delivery/initrd.img",
+          "-append",
+          "console=ttyAMA0 root=/dev/vda ro sv08.envelope=0554048803d65de1897f5a91fff553c3d30cbeb53419bd8c361e6427e53b784d sv08.recovery=f9befc12e4d83d8ef374c3ef77a03587e9f2c255d5771980953cfb09951ab97a systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console",
+          "-drive",
+          "if=none,id=recovery,format=raw,file=/run/a733-guests/sv08-pr17-20261115/candidate/build/recovery-native-delivery/recovery.ext4,readonly=on",
+          "-device",
+          "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
+          "-device",
+          "virtio-scsi-pci,id=scsi0",
+          "-drive",
+          "if=none,id=archive,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/archive.raw,readonly=on",
+          "-device",
+          "scsi-hd,drive=archive,serial=SV08-ARCHIVE,bus=scsi0.0,wwn=0x5000000000000001",
+          "-drive",
+          "if=none,id=target,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/target.raw",
+          "-device",
+          "scsi-hd,drive=target,serial=SV08-TARGET,bus=scsi0.0,wwn=0x5000000000000003",
+          "-drive",
+          "if=none,id=boot,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/boot.raw,readonly=on",
+          "-device",
+          "scsi-hd,drive=boot,serial=SV08-BOOT,bus=scsi0.0,wwn=0x5000000000000004",
+          "-nic",
+          "none",
+          "-display",
+          "none",
+          "-serial",
+          "mon:stdio",
+          "-qmp",
+          "unix:/run/a733-guests/sv08-pr17-20261115/fixture/boot-recovery-restore-activate-delivery/qmp.sock,server=on,wait=off",
+          "-no-reboot"
+        ],
+        "execution_backend": "arm64-kvm",
+        "physical_hardware": false,
+        "printing_ready": false,
+        "qemu_version": {
+          "package": "Debian 1:7.2+dfsg-7+deb12u18+b3",
+          "qemu": {
+            "major": 7,
+            "micro": 22,
+            "minor": 2
+          }
+        },
+        "qmp_command": "query-kvm",
+        "qmp_observation": {
+          "enabled": true,
+          "present": true
+        }
+      },
+      "command_sent": true,
+      "driver_sha256": "184f42257438ec085515f37b1eb84c6a142b05f094ea4224a2f95e771e47d6e0",
+      "elapsed_seconds": 29.196,
+      "phase_exit": 0,
+      "phases": {
+        "activate": {
+          "archive_sha256": "5cccafa18033324587a2d96f255e4132c9cfc62ceff939b0c48378494d6b503e",
+          "phase": "activate",
+          "result": "PASS",
+          "sibling_sha256": "d96b3c26c592184bf5dbb8e2da97946d1c111ec33098f6b8394e2c1adf9e3eb2"
+        },
+        "restore": {
+          "archive_sha256": "5cccafa18033324587a2d96f255e4132c9cfc62ceff939b0c48378494d6b503e",
+          "phase": "restore",
+          "result": "PASS",
+          "sibling_sha256": "d96b3c26c592184bf5dbb8e2da97946d1c111ec33098f6b8394e2c1adf9e3eb2"
+        }
+      },
+      "process_stopped": true,
+      "qemu_exit": 0
+    },
+    "fixture/boot-recovery-rollback-delivery/run.json": {
+      "backend": {
+        "active_backend_verified": true,
+        "argv": [
+          "qemu-system-aarch64",
+          "-L",
+          "/run/a733-guests/sv08-pr17-20261115/qemu-firmware",
+          "-machine",
+          "virt,gic-version=host",
+          "-cpu",
+          "host",
+          "-accel",
+          "kvm",
+          "-smp",
+          "2",
+          "-m",
+          "1024",
+          "-kernel",
+          "/run/a733-guests/sv08-pr17-20261115/candidate/build/recovery-native-delivery/vmlinuz",
+          "-initrd",
+          "/run/a733-guests/sv08-pr17-20261115/candidate/build/recovery-native-delivery/initrd.img",
+          "-append",
+          "console=ttyAMA0 root=/dev/vda ro sv08.envelope=0554048803d65de1897f5a91fff553c3d30cbeb53419bd8c361e6427e53b784d sv08.recovery=f9befc12e4d83d8ef374c3ef77a03587e9f2c255d5771980953cfb09951ab97a systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console",
+          "-drive",
+          "if=none,id=recovery,format=raw,file=/run/a733-guests/sv08-pr17-20261115/candidate/build/recovery-native-delivery/recovery.ext4,readonly=on",
+          "-device",
+          "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
+          "-device",
+          "virtio-scsi-pci,id=scsi0",
+          "-drive",
+          "if=none,id=archive,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/archive.raw,readonly=on",
+          "-device",
+          "scsi-hd,drive=archive,serial=SV08-ARCHIVE,bus=scsi0.0,wwn=0x5000000000000001",
+          "-drive",
+          "if=none,id=target,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/target.raw",
+          "-device",
+          "scsi-hd,drive=target,serial=SV08-TARGET,bus=scsi0.0,wwn=0x5000000000000003",
+          "-drive",
+          "if=none,id=boot,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/boot.raw,readonly=on",
+          "-device",
+          "scsi-hd,drive=boot,serial=SV08-BOOT,bus=scsi0.0,wwn=0x5000000000000004",
+          "-nic",
+          "none",
+          "-display",
+          "none",
+          "-serial",
+          "mon:stdio",
+          "-qmp",
+          "unix:/run/a733-guests/sv08-pr17-20261115/fixture/boot-recovery-rollback-delivery/qmp.sock,server=on,wait=off",
+          "-no-reboot"
+        ],
+        "execution_backend": "arm64-kvm",
+        "physical_hardware": false,
+        "printing_ready": false,
+        "qemu_version": {
+          "package": "Debian 1:7.2+dfsg-7+deb12u18+b3",
+          "qemu": {
+            "major": 7,
+            "micro": 22,
+            "minor": 2
+          }
+        },
+        "qmp_command": "query-kvm",
+        "qmp_observation": {
+          "enabled": true,
+          "present": true
+        }
+      },
+      "command_sent": true,
+      "driver_sha256": "184f42257438ec085515f37b1eb84c6a142b05f094ea4224a2f95e771e47d6e0",
+      "elapsed_seconds": 20.347,
+      "phase_exit": 0,
+      "phases": {
+        "rollback": {
+          "archive_sha256": "5cccafa18033324587a2d96f255e4132c9cfc62ceff939b0c48378494d6b503e",
+          "phase": "rollback",
+          "result": "PASS",
+          "sibling_sha256": "d96b3c26c592184bf5dbb8e2da97946d1c111ec33098f6b8394e2c1adf9e3eb2"
+        }
+      },
+      "process_stopped": true,
+      "qemu_exit": 0
+    },
+    "fixture/booted-source-export.json": {
+      "archive_path": "/run/a733-guests/sv08-pr17-20261115/fixture/archive-tree/backup.tar",
+      "filename": "sv08-user-data-a8c02dff0a0644768fbbd68ade5913f2.tar",
+      "files": 63,
+      "message": "User data saved and readback verified: sv08-user-data-a8c02dff0a0644768fbbd68ade5913f2.tar. Includes private configuration and credentials; keep the destination private.",
+      "physical_hardware": false,
+      "sha256": "5cccafa18033324587a2d96f255e4132c9cfc62ceff939b0c48378494d6b503e",
+      "source_booted": true,
+      "source_read_only": true,
+      "source_uuid": "dd0a5b84-794a-4b29-8f70-2483b2958013"
+    },
+    "fixture/current-reexport.json": {
+      "current_restore_parser": {
+        "bytes": 2184898,
+        "entries": 218,
+        "metadata_sha256": "423616a0c10e5d516274d7df90d154fae74c409b601f920f361e8ce31ae743ff",
+        "required_bytes": 3086018,
+        "required_inodes": 220,
+        "sha256": "c53ca32805a74b1aa09b65cc89ff26f8b2ea473f6e7ddb5422f2549104774275"
+      },
+      "export": {
+        "filename": "sv08-user-data-e7db96cd2d8549e881d1e6a54f0481e3.tar",
+        "files": 116,
+        "message": "User data saved and readback verified: sv08-user-data-e7db96cd2d8549e881d1e6a54f0481e3.tar. Includes private configuration and credentials; keep the destination private.",
+        "sha256": "c53ca32805a74b1aa09b65cc89ff26f8b2ea473f6e7ddb5422f2549104774275"
+      },
+      "original_archive_untouched": true,
+      "result": "PASS",
+      "source_boot_id": "bded3f25-f3cf-40b5-a999-600bf8619a9d",
+      "source_role": "actual-restored-current-normal"
+    },
+    "fixture/final-input-preparation.json": {
+      "method": "disposable regular-file input reset; not production restore",
+      "new_image_files": 0,
+      "previous_receipts_preserved": true,
+      "result": "PASS",
+      "retired_payload_bytes_charged": 2257994,
+      "source_payload_nodes": 95
+    },
+    "fixture/previous-seed-receipt.json": {
+      "after_disk_sha256": "c2d6f4166484ba5fcd561563cf0735ce5f01ba1a9575a52438311149f1904eb3",
+      "archive_sha256": "5cccafa18033324587a2d96f255e4132c9cfc62ceff939b0c48378494d6b503e",
+      "before_disk_sha256": "not recorded; verified source archive preserved before writes",
+      "existing_disk_bytes": 1610612736,
+      "filesystem_uuid": "dd0a5b84-794a-4b29-8f70-2483b2958013",
+      "generated_write_reserve_bytes": 268435456,
+      "geometry_matches_assigned_profile": true,
+      "method": "offline-private-regular-file-disposable-input-reseed",
+      "new_disk_files": 0,
+      "node_count": 94,
+      "previous_semantic_sha256": "90710ae404207a6c5178fa488179c5b378a643c11900142df28dbd164a87f4a7",
+      "prior_preparation_failure": "copy verification initially used inode-bound review digest across different filesystems; no recopy needed",
+      "production_restore_or_rollback": false,
+      "result": "PASS",
+      "source_receipts_preserved": true,
+      "source_sha256": "f46bf0de3225d55adb3890664dd7059cc8858b8f2ee47bd2aa12b3a1a9fdd87b"
+    }
+  },
+  "boots": {
+    "previous": {
+      "browser": {
+        "browser_trust": "verified current synthetic leaf SPKI only",
+        "cockpit": {
+          "authorization_cleared": true,
+          "authorization_prompted": false,
+          "ca_fingerprint_verified": true,
+          "elevated_host_helper": true,
+          "identity_rendered_ready": true,
+          "pam_owner_login": true,
+          "passwordless_sudo": true,
+          "real_finite_helpers": true,
+          "real_sudo_authorization": true,
+          "wrong_password_refused": true
+        },
+        "expected": "previous",
+        "mainsail": {
+          "klippy_state": "disconnected",
+          "moonraker_version": "985c1d0",
+          "mounted": true,
+          "websocket_connected": true
+        },
+        "physical_hardware": false,
+        "printing_ready": false,
+        "result": "PASS",
+        "strict_tls_receipt": "host-assert.json"
+      },
+      "host": {
+        "actual_moonraker_version": "985c1d0",
+        "anonymous_rejected": true,
+        "expected": "previous",
+        "klippy_state": "disconnected",
+        "native_owner_login": true,
+        "other_state_password_rejected": true,
+        "paired_os_pam_login": true,
+        "pam_password_portable": false,
+        "physical_hardware": false,
+        "printing_ready": false,
+        "result": "PASS",
+        "ssh_host_key_verified": true,
+        "ssh_owner_authenticated": true,
+        "ssh_owner_uid": 1000,
+        "strict_ca_and_hostname": true,
+        "wrong_ca_rejected": true,
+        "wrong_password_rejected": true
+      },
+      "hostname_tls": {
+        "actual_hostname": "sv08-stack-previous",
+        "expected_hostname": "sv08-stack-previous",
+        "result": "PASS",
+        "strict_persistent_hostname_certificate": true
+      },
+      "native_execution": {
+        "backend": {
+          "active_backend_verified": true,
+          "argv": [
+            "qemu-system-aarch64",
+            "-L",
+            "/run/a733-guests/sv08-pr17-20261115/qemu-firmware",
+            "-machine",
+            "virt,gic-version=host",
+            "-cpu",
+            "host",
+            "-accel",
+            "kvm",
+            "-smp",
+            "2",
+            "-m",
+            "1024",
+            "-kernel",
+            "/run/a733-guests/sv08-pr17-20261115/initial-candidate/vmlinuz",
+            "-initrd",
+            "/run/a733-guests/sv08-pr17-20261115/fixture/normal-delivery/normal-initrd.img",
+            "-append",
+            "console=ttyAMA0 root=/dev/vda1 ro rauc.slot=A sv08.envelope=d94cf09ad795972d01375f7c66903ddab63b237e9ec01df696a155c55aacca67 sv08.stack.expect=previous systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console",
+            "-drive",
+            "if=none,id=recovery,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/normal-delivery/normal-root.raw,readonly=on",
+            "-device",
+            "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
+            "-device",
+            "virtio-scsi-pci,id=scsi0",
+            "-drive",
+            "if=none,id=archive,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/archive.raw,readonly=on",
+            "-device",
+            "scsi-hd,drive=archive,serial=SV08-ARCHIVE,bus=scsi0.0,wwn=0x5000000000000001",
+            "-drive",
+            "if=none,id=target,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/target.raw",
+            "-device",
+            "scsi-hd,drive=target,serial=SV08-TARGET,bus=scsi0.0,wwn=0x5000000000000003",
+            "-drive",
+            "if=none,id=boot,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/boot.raw,readonly=on",
+            "-device",
+            "scsi-hd,drive=boot,serial=SV08-BOOT,bus=scsi0.0,wwn=0x5000000000000004",
+            "-netdev",
+            "user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:19090-:9090,hostfwd=tcp:127.0.0.1:18443-:8443,hostfwd=tcp:127.0.0.1:12222-:22",
+            "-device",
+            "virtio-net-pci,netdev=net0,mac=52:54:00:08:10:13",
+            "-display",
+            "none",
+            "-serial",
+            "mon:stdio",
+            "-qmp",
+            "unix:/run/a733-guests/sv08-pr17-20261115/fixture/boot-previous/qmp.sock,server=on,wait=off",
+            "-no-reboot"
+          ],
+          "execution_backend": "arm64-kvm",
+          "physical_hardware": false,
+          "printing_ready": false,
+          "qemu_version": {
+            "package": "Debian 1:7.2+dfsg-7+deb12u18+b3",
+            "qemu": {
+              "major": 7,
+              "micro": 22,
+              "minor": 2
+            }
+          },
+          "qmp_command": "query-kvm",
+          "qmp_observation": {
+            "enabled": true,
+            "present": true
+          }
+        },
+        "command_sent": true,
+        "elapsed_seconds": 71.714,
+        "poweroff_requested": true,
+        "process_stopped": true,
+        "qemu_exit": 0
+      },
+      "normal": {
+        "actual_klippy_state": "disconnected",
+        "boot_health_service": "Result=success\nExecMainStatus=0\nActiveState=inactive\nSubState=dead\n",
+        "boot_id": "53c4c379-7019-4f5d-a4dd-7104f19555cb",
+        "expected": "previous",
+        "identity": {
+          "authorized_keys_sha256": "f323d61f88aa42e603b6314b0ddce949df3585195da294200a6e0bca2f2285ed",
+          "ca_sha256": "a412b0356e792382028e224c15ee9efe83223942d7362afa8a7ace85bd80f0a1",
+          "ssh_public_sha256": "14cae50e6be449fb0a02efca43f36199750406d54c2321425b51b82205129505"
+        },
+        "identity_unit": {
+          "ActiveState": "inactive",
+          "ExecMainStartTimestampMonotonic": "13610337",
+          "ExecMainStatus": "0",
+          "Result": "success"
+        },
+        "klipper_service": "ExecMainStatus=0\nActiveState=inactive\nSubState=dead\nConditionResult=no\n",
+        "mounts": {
+          "/": [
+            "ext4",
+            "ro,relatime,norecovery"
+          ],
+          "/boot": [
+            "vfat",
+            "ro,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro"
+          ],
+          "/data": [
+            "ext4",
+            "rw,nosuid,nodev,relatime"
+          ],
+          "/usr": [
+            "squashfs",
+            "ro,nodev,relatime,errors=continue"
+          ]
+        },
+        "os_health_marker_present": false,
+        "os_health_marker_sha256": null,
+        "parser": {
+          "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+          "klipper_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+          "physical_hardware": false,
+          "validated": true
+        },
+        "physical_hardware": false,
+        "printing_ready": false,
+        "profile_uuid": "daa90916-6d0d-493e-84bc-968c502f7351",
+        "result": "PASS",
+        "units": {
+          "NetworkManager.service": "active",
+          "cockpit.socket": "active",
+          "ssh.service": "active",
+          "sv08-mainsail.service": "active",
+          "sv08-prepare.service": "active",
+          "sv08-printer-api.service": "active",
+          "sv08-web-auth.service": "active",
+          "sv08-web-prepare.service": "active"
+        }
+      },
+      "orchestration": {
+        "browser_seconds": 20.255,
+        "elapsed_seconds": 74.589,
+        "expected": "previous",
+        "relay_pid": 312772,
+        "relay_seconds": 24.675,
+        "result": "PASS",
+        "role": "previous",
+        "vm_ssh_exit": 0,
+        "vm_ssh_pid": 312692,
+        "vm_ssh_poll": 0
+      }
+    },
+    "restored-2": {
+      "browser": {
+        "browser_trust": "verified current synthetic leaf SPKI only",
+        "cockpit": {
+          "authorization_cleared": true,
+          "authorization_prompted": false,
+          "ca_fingerprint_verified": true,
+          "elevated_host_helper": true,
+          "identity_rendered_ready": true,
+          "pam_owner_login": true,
+          "passwordless_sudo": true,
+          "real_finite_helpers": true,
+          "real_sudo_authorization": true,
+          "wrong_password_refused": true
+        },
+        "expected": "restored",
+        "mainsail": {
+          "klippy_state": "disconnected",
+          "moonraker_version": "985c1d0",
+          "mounted": true,
+          "websocket_connected": true
+        },
+        "physical_hardware": false,
+        "printing_ready": false,
+        "result": "PASS",
+        "strict_tls_receipt": "host-assert.json"
+      },
+      "host": {
+        "actual_moonraker_version": "985c1d0",
+        "anonymous_rejected": true,
+        "expected": "restored",
+        "klippy_state": "disconnected",
+        "native_owner_login": true,
+        "other_state_password_rejected": true,
+        "paired_os_pam_login": true,
+        "pam_password_portable": false,
+        "physical_hardware": false,
+        "printing_ready": false,
+        "result": "PASS",
+        "ssh_host_key_verified": true,
+        "ssh_owner_authenticated": true,
+        "ssh_owner_uid": 1000,
+        "strict_ca_and_hostname": true,
+        "wrong_ca_rejected": true,
+        "wrong_password_rejected": true
+      },
+      "hostname_tls": {
+        "actual_hostname": "sv08-stack-restored",
+        "expected_hostname": "sv08-stack-restored",
+        "result": "PASS",
+        "strict_persistent_hostname_certificate": true
+      },
+      "native_execution": {
+        "backend": {
+          "active_backend_verified": true,
+          "argv": [
+            "qemu-system-aarch64",
+            "-L",
+            "/run/a733-guests/sv08-pr17-20261115/qemu-firmware",
+            "-machine",
+            "virt,gic-version=host",
+            "-cpu",
+            "host",
+            "-accel",
+            "kvm",
+            "-smp",
+            "2",
+            "-m",
+            "1024",
+            "-kernel",
+            "/run/a733-guests/sv08-pr17-20261115/initial-candidate/vmlinuz",
+            "-initrd",
+            "/run/a733-guests/sv08-pr17-20261115/fixture/normal-delivery/normal-initrd.img",
+            "-append",
+            "console=ttyAMA0 root=/dev/vda1 ro rauc.slot=A sv08.envelope=d94cf09ad795972d01375f7c66903ddab63b237e9ec01df696a155c55aacca67 sv08.stack.expect=restored systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console",
+            "-drive",
+            "if=none,id=recovery,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/normal-delivery/normal-root.raw,readonly=on",
+            "-device",
+            "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
+            "-device",
+            "virtio-scsi-pci,id=scsi0",
+            "-drive",
+            "if=none,id=archive,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/archive.raw,readonly=on",
+            "-device",
+            "scsi-hd,drive=archive,serial=SV08-ARCHIVE,bus=scsi0.0,wwn=0x5000000000000001",
+            "-drive",
+            "if=none,id=target,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/target.raw",
+            "-device",
+            "scsi-hd,drive=target,serial=SV08-TARGET,bus=scsi0.0,wwn=0x5000000000000003",
+            "-drive",
+            "if=none,id=boot,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/boot.raw,readonly=on",
+            "-device",
+            "scsi-hd,drive=boot,serial=SV08-BOOT,bus=scsi0.0,wwn=0x5000000000000004",
+            "-netdev",
+            "user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:19090-:9090,hostfwd=tcp:127.0.0.1:18443-:8443,hostfwd=tcp:127.0.0.1:12222-:22",
+            "-device",
+            "virtio-net-pci,netdev=net0,mac=52:54:00:08:10:13",
+            "-display",
+            "none",
+            "-serial",
+            "mon:stdio",
+            "-qmp",
+            "unix:/run/a733-guests/sv08-pr17-20261115/fixture/boot-restored-2/qmp.sock,server=on,wait=off",
+            "-no-reboot"
+          ],
+          "execution_backend": "arm64-kvm",
+          "physical_hardware": false,
+          "printing_ready": false,
+          "qemu_version": {
+            "package": "Debian 1:7.2+dfsg-7+deb12u18+b3",
+            "qemu": {
+              "major": 7,
+              "micro": 22,
+              "minor": 2
+            }
+          },
+          "qmp_command": "query-kvm",
+          "qmp_observation": {
+            "enabled": true,
+            "present": true
+          }
+        },
+        "command_sent": true,
+        "elapsed_seconds": 66.714,
+        "poweroff_requested": true,
+        "process_stopped": true,
+        "qemu_exit": 0
+      },
+      "normal": {
+        "actual_klippy_state": "disconnected",
+        "boot_health_service": "Result=success\nExecMainStatus=0\nActiveState=inactive\nSubState=dead\n",
+        "boot_id": "2f6b8106-b877-4f8d-924f-b5f46a48d93e",
+        "expected": "restored",
+        "identity": {
+          "authorized_keys_sha256": "f323d61f88aa42e603b6314b0ddce949df3585195da294200a6e0bca2f2285ed",
+          "ca_sha256": "035e58022edb33e0e780bb41d6bcb8121ad9e4f487ef1c5791ca665891428279",
+          "ssh_public_sha256": "dbd102449e9597cc0c194e04d0720f23a41a3850bc9fb9fbe02af85cc921be91"
+        },
+        "identity_unit": {
+          "ActiveState": "inactive",
+          "ExecMainStartTimestampMonotonic": "13439072",
+          "ExecMainStatus": "0",
+          "Result": "success"
+        },
+        "klipper_service": "ExecMainStatus=0\nActiveState=inactive\nSubState=dead\nConditionResult=no\n",
+        "mounts": {
+          "/": [
+            "ext4",
+            "ro,relatime,norecovery"
+          ],
+          "/boot": [
+            "vfat",
+            "ro,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro"
+          ],
+          "/data": [
+            "ext4",
+            "rw,nosuid,nodev,relatime"
+          ],
+          "/usr": [
+            "squashfs",
+            "ro,nodev,relatime,errors=continue"
+          ]
+        },
+        "os_health_marker_present": false,
+        "os_health_marker_sha256": null,
+        "parser": {
+          "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+          "klipper_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+          "physical_hardware": false,
+          "validated": true
+        },
+        "physical_hardware": false,
+        "printing_ready": false,
+        "profile_uuid": "daa90916-6d0d-493e-84bc-968c502f7352",
+        "result": "PASS",
+        "units": {
+          "NetworkManager.service": "active",
+          "cockpit.socket": "active",
+          "ssh.service": "active",
+          "sv08-mainsail.service": "active",
+          "sv08-prepare.service": "active",
+          "sv08-printer-api.service": "active",
+          "sv08-web-auth.service": "active",
+          "sv08-web-prepare.service": "active"
+        }
+      },
+      "orchestration": {
+        "browser_seconds": 19.953,
+        "elapsed_seconds": 69.554,
+        "expected": "restored",
+        "relay_pid": 312329,
+        "relay_seconds": 24.106,
+        "result": "PASS",
+        "role": "restored-2",
+        "vm_ssh_exit": 0,
+        "vm_ssh_pid": 312295,
+        "vm_ssh_poll": 0
+      }
+    },
+    "restored-3": {
+      "browser": {
+        "browser_trust": "verified current synthetic leaf SPKI only",
+        "cockpit": {
+          "authorization_cleared": true,
+          "authorization_prompted": false,
+          "ca_fingerprint_verified": true,
+          "elevated_host_helper": true,
+          "identity_rendered_ready": true,
+          "pam_owner_login": true,
+          "passwordless_sudo": true,
+          "real_finite_helpers": true,
+          "real_sudo_authorization": true,
+          "wrong_password_refused": true
+        },
+        "expected": "restored",
+        "mainsail": {
+          "klippy_state": "disconnected",
+          "moonraker_version": "985c1d0",
+          "mounted": true,
+          "websocket_connected": true
+        },
+        "physical_hardware": false,
+        "printing_ready": false,
+        "result": "PASS",
+        "strict_tls_receipt": "host-assert.json"
+      },
+      "host": {
+        "actual_moonraker_version": "985c1d0",
+        "anonymous_rejected": true,
+        "expected": "restored",
+        "klippy_state": "disconnected",
+        "native_owner_login": true,
+        "other_state_password_rejected": true,
+        "paired_os_pam_login": true,
+        "pam_password_portable": false,
+        "physical_hardware": false,
+        "printing_ready": false,
+        "result": "PASS",
+        "ssh_host_key_verified": true,
+        "ssh_owner_authenticated": true,
+        "ssh_owner_uid": 1000,
+        "strict_ca_and_hostname": true,
+        "wrong_ca_rejected": true,
+        "wrong_password_rejected": true
+      },
+      "hostname_tls": {
+        "actual_hostname": "sv08-stack-restored",
+        "expected_hostname": "sv08-stack-restored",
+        "result": "PASS",
+        "strict_persistent_hostname_certificate": true
+      },
+      "native_execution": {
+        "backend": {
+          "active_backend_verified": true,
+          "argv": [
+            "qemu-system-aarch64",
+            "-L",
+            "/run/a733-guests/sv08-pr17-20261115/qemu-firmware",
+            "-machine",
+            "virt,gic-version=host",
+            "-cpu",
+            "host",
+            "-accel",
+            "kvm",
+            "-smp",
+            "2",
+            "-m",
+            "1024",
+            "-kernel",
+            "/run/a733-guests/sv08-pr17-20261115/initial-candidate/vmlinuz",
+            "-initrd",
+            "/run/a733-guests/sv08-pr17-20261115/fixture/normal-delivery/normal-initrd.img",
+            "-append",
+            "console=ttyAMA0 root=/dev/vda1 ro rauc.slot=A sv08.envelope=d94cf09ad795972d01375f7c66903ddab63b237e9ec01df696a155c55aacca67 sv08.stack.expect=restored systemd.debug_shell=ttyAMA0 systemd.mask=serial-getty@ttyAMA0.service systemd.log_target=console",
+            "-drive",
+            "if=none,id=recovery,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/normal-delivery/normal-root.raw,readonly=on",
+            "-device",
+            "virtio-blk-pci,drive=recovery,serial=SV08-RECOVERY",
+            "-device",
+            "virtio-scsi-pci,id=scsi0",
+            "-drive",
+            "if=none,id=archive,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/archive.raw,readonly=on",
+            "-device",
+            "scsi-hd,drive=archive,serial=SV08-ARCHIVE,bus=scsi0.0,wwn=0x5000000000000001",
+            "-drive",
+            "if=none,id=target,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/target.raw",
+            "-device",
+            "scsi-hd,drive=target,serial=SV08-TARGET,bus=scsi0.0,wwn=0x5000000000000003",
+            "-drive",
+            "if=none,id=boot,format=raw,file=/run/a733-guests/sv08-pr17-20261115/fixture/boot.raw,readonly=on",
+            "-device",
+            "scsi-hd,drive=boot,serial=SV08-BOOT,bus=scsi0.0,wwn=0x5000000000000004",
+            "-netdev",
+            "user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:19090-:9090,hostfwd=tcp:127.0.0.1:18443-:8443,hostfwd=tcp:127.0.0.1:12222-:22",
+            "-device",
+            "virtio-net-pci,netdev=net0,mac=52:54:00:08:10:13",
+            "-display",
+            "none",
+            "-serial",
+            "mon:stdio",
+            "-qmp",
+            "unix:/run/a733-guests/sv08-pr17-20261115/fixture/boot-restored-3/qmp.sock,server=on,wait=off",
+            "-no-reboot"
+          ],
+          "execution_backend": "arm64-kvm",
+          "physical_hardware": false,
+          "printing_ready": false,
+          "qemu_version": {
+            "package": "Debian 1:7.2+dfsg-7+deb12u18+b3",
+            "qemu": {
+              "major": 7,
+              "micro": 22,
+              "minor": 2
+            }
+          },
+          "qmp_command": "query-kvm",
+          "qmp_observation": {
+            "enabled": true,
+            "present": true
+          }
+        },
+        "command_sent": true,
+        "elapsed_seconds": 67.709,
+        "poweroff_requested": true,
+        "process_stopped": true,
+        "qemu_exit": 0
+      },
+      "normal": {
+        "actual_klippy_state": "disconnected",
+        "boot_health_service": "Result=success\nExecMainStatus=0\nActiveState=inactive\nSubState=dead\n",
+        "boot_id": "5227f9cc-4fac-4ab1-993f-470899da1f82",
+        "expected": "restored",
+        "identity": {
+          "authorized_keys_sha256": "f323d61f88aa42e603b6314b0ddce949df3585195da294200a6e0bca2f2285ed",
+          "ca_sha256": "035e58022edb33e0e780bb41d6bcb8121ad9e4f487ef1c5791ca665891428279",
+          "ssh_public_sha256": "dbd102449e9597cc0c194e04d0720f23a41a3850bc9fb9fbe02af85cc921be91"
+        },
+        "identity_unit": {
+          "ActiveState": "inactive",
+          "ExecMainStartTimestampMonotonic": "14136711",
+          "ExecMainStatus": "0",
+          "Result": "success"
+        },
+        "klipper_service": "ExecMainStatus=0\nActiveState=inactive\nSubState=dead\nConditionResult=no\n",
+        "mounts": {
+          "/": [
+            "ext4",
+            "ro,relatime,norecovery"
+          ],
+          "/boot": [
+            "vfat",
+            "ro,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro"
+          ],
+          "/data": [
+            "ext4",
+            "rw,nosuid,nodev,relatime"
+          ],
+          "/usr": [
+            "squashfs",
+            "ro,nodev,relatime,errors=continue"
+          ]
+        },
+        "os_health_marker_present": false,
+        "os_health_marker_sha256": null,
+        "parser": {
+          "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+          "klipper_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+          "physical_hardware": false,
+          "validated": true
+        },
+        "physical_hardware": false,
+        "printing_ready": false,
+        "profile_uuid": "daa90916-6d0d-493e-84bc-968c502f7352",
+        "result": "PASS",
+        "units": {
+          "NetworkManager.service": "active",
+          "cockpit.socket": "active",
+          "ssh.service": "active",
+          "sv08-mainsail.service": "active",
+          "sv08-prepare.service": "active",
+          "sv08-printer-api.service": "active",
+          "sv08-web-auth.service": "active",
+          "sv08-web-prepare.service": "active"
+        }
+      },
+      "orchestration": {
+        "browser_seconds": 20.754,
+        "elapsed_seconds": 70.584,
+        "expected": "restored",
+        "relay_pid": 312517,
+        "relay_seconds": 24.73,
+        "result": "PASS",
+        "role": "restored-3",
+        "vm_ssh_exit": 0,
+        "vm_ssh_pid": 312485,
+        "vm_ssh_poll": 0
+      }
+    }
+  },
+  "date": "2026-11-15",
+  "environment": {
+    "architecture": "aarch64",
+    "backend": "native KVM; QMP query-kvm enabled/present",
+    "guest_kernel": "6.12.107+deb13-arm64",
+    "host": "a733-host.drewnet.online",
+    "host_changes": "private tool extraction and private executable/workspace mounts only; no global tool installs, service restarts or SSH policy changes",
+    "memory_mib": 1024,
+    "network": "isolated guest loopback ports; recovery nic:none",
+    "qemu": "7.2.22",
+    "vcpu": 2
+  },
+  "evidence_retention": {
+    "failed_and_supplementary": "*-pre-final, *-early-refused and original named logs preserved; previous final-audit-pre-final.json retained",
+    "historical_files": "evidence.md/json and review-evidence.md/json remain byte-identical to prior committed evidence; original TCG failure cause remains unestablished",
+    "private_host_root": "/run/a733-guests/sv08-pr17-20261115",
+    "private_local_root": "/home/drew/.sv08-pr17-native-20261115"
+  },
+  "failed_attempts": [
+    "Special-device copy stopped; replaced with metadata-preserving cp-a.",
+    "SFTP unavailable; authenticated SSH streams used.",
+    "Probe A retained dependencies outdated; B staged current modules/catalog read-only and passed actual pinned validator.",
+    "Assembly B exhausted parent inodes; retained receipt, private sparse ext4 workspace used.",
+    "Assembly C inherited host TMPDIR into chroot; explicit /tmp fixed and regression checked.",
+    "Missing sfdisk and NIC ROM supplied in private tool prefix; same normal build resumed with compressed bytes hash-preserved.",
+    "Native regression fixture symlink dictionary correctly refused; only3affected methods rerun with real regular dictionary/source.",
+    "SSH forwarding refused by policy; two-port localhost-only exec relay used.",
+    "Bootstrap early prompt match corrected in same guest before provisioning; no acceptance attributed to bootstrap.",
+    "Browser used obsolete action:status; corrected to actual method:status, real helper/auth tests retained.",
+    "Recovery compressed payload0600 correctly refused before PID1, target hash unchanged; producer now0644 fresh/cache,29tests pass.",
+    "Actual restore review refused generated journal02755; narrow v2 anchored root journal-directory preservation added;83root checks passed.",
+    "Normal empty job history lacked export manifest; initialize validated empty history through existing locked writer. CI then exposed allocation contention; typed pre-writer AllocationBusy alone defers commit;94root checks and unchanged paused-upload races pass.",
+    "Identity screenshot initially captured loading state; final harness waits ready and verifies displayed CA fingerprint.",
+    "Premature final normal launch overlapped recovery shutdown; QEMU target write lock refused before guest boot. Failed receipts retained; recovered by waiting for actual recovery exit before fresh normal launch. No concurrent writable guest ran."
+  ],
+  "final_boot_audit": {
+    "boot_ids": [
+      "5227f9cc-4fac-4ab1-993f-470899da1f82",
+      "2f6b8106-b877-4f8d-924f-b5f46a48d93e",
+      "53c4c379-7019-4f5d-a4dd-7104f19555cb"
+    ],
+    "physical_hardware": false,
+    "previous_boots": 1,
+    "printing_ready": false,
+    "restored_boots": 2,
+    "result": "PASS"
+  },
+  "final_image_audit": {
+    "normal": {
+      "compressed_owner_group_mode_links": [
+        0,
+        0,
+        "0o644",
+        1
+      ],
+      "current_runtime_sha256": {
+        "sv08_admin_jobs.py": "75539efa18c6dda169cb5d4cb618351ca86e5b11f1ba5e2fdaf98fb1830c52b9",
+        "sv08_boot.py": "2c746f4ed3630ed778ac0ea2e295622aac2362a7df8c5d103b1c7393ec5e9f75",
+        "sv08_data_budget.py": "efe6bdac5dce776f35aa04b3f69c80f7b55efd4932de85d1356afb2ba5a98ecb",
+        "sv08_export.py": "d404c6bf0352914668232db73e887ad5df518347c19d14297118c654fa907124",
+        "sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+        "sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "sv08_printer_publish.py": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+        "sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
+        "sv08_recovery_links.py": "f36d7df4c63b55c50d695688cc4e29d44c137ef67e31ebdc9ddf7b18ff73a02d",
+        "sv08_restore.py": "3d2029b0e80c55286003c9ef76b6713b37d12cc2275bded8b7e0e64d97f50f33",
+        "sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+        "sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d"
+      },
+      "image_sha256": "c14d91b325551e2f4d52ee242fc7fbc2ed7ea796878b5639a5fc328b75a58c30",
+      "usr_sha256": "d25df1a781cab64a53c89b10e7a67c720516bbe373022180c2897209e0d08dfc"
+    },
+    "recovery": {
+      "compressed_owner_group_mode_links": [
+        0,
+        0,
+        "0o644",
+        1
+      ],
+      "current_runtime_sha256": {
+        "sv08_admin_jobs.py": "75539efa18c6dda169cb5d4cb618351ca86e5b11f1ba5e2fdaf98fb1830c52b9",
+        "sv08_boot.py": "2c746f4ed3630ed778ac0ea2e295622aac2362a7df8c5d103b1c7393ec5e9f75",
+        "sv08_data_budget.py": "efe6bdac5dce776f35aa04b3f69c80f7b55efd4932de85d1356afb2ba5a98ecb",
+        "sv08_export.py": "d404c6bf0352914668232db73e887ad5df518347c19d14297118c654fa907124",
+        "sv08_identity.py": "80bcb49436bcffe68029dc3d5f2a6f35a87503ae1f399589c1db48b61157813c",
+        "sv08_network.py": "e7c4bcb4a075157cef0a37fd60f9e2cddad0c7474f96604d7b736e20dbc8ec7c",
+        "sv08_printer_publish.py": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+        "sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
+        "sv08_recovery_links.py": "f36d7df4c63b55c50d695688cc4e29d44c137ef67e31ebdc9ddf7b18ff73a02d",
+        "sv08_restore.py": "3d2029b0e80c55286003c9ef76b6713b37d12cc2275bded8b7e0e64d97f50f33",
+        "sv08_state.py": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370",
+        "sv08_web.py": "25571712e047e1fcbf5b3e4011bd0a6f5881f1d5c5f3f774882a283a2482276d"
+      },
+      "image_sha256": "f9c33cd047209d28f86ae5d151d6804b2b5ce9254a629543cb9f9172d2df0005",
+      "usr_sha256": "368441cf95eb84bf50e6cb8f3e9c7e0ed9beb780faa6b1598feee16f9df74463"
+    }
+  },
+  "format_version": 1,
+  "limitations": [
+    "Offline full-system software qualification, not physical printer, MCU, motion/heater, SD, power-loss or factory-image-fit/release qualification.",
+    "Normal Klipper production unit remains gated; actual pinned debug parser validates generated bundle, Moonraker reports disconnected without MCU. No printing-ready or commissioned health marker fabricated.",
+    "PAM password is paired disposable OS state, not restored portable password; persistent authorized SSH keys and native/gateway authentication were restored and negative-tested.",
+    "Final images are qualification artifacts, not deployable releases; no printer access, deployment or PR merge."
+  ],
+  "local_test_log_sha256": {
+    "implementation/browser-helper-protocol-tests.log": "3ff645b5a04a07d925fee6d754affe4b2c34d729b961014475599d92038a79b0",
+    "implementation/empty-history-busy-reproduction.log": "e3d2bf7d2bed9c5434e17f79358b8839186afa193450b88c02c8a261a878cbde",
+    "implementation/empty-history-tests-final.log": "fe88d35b058fe9d50875e2a0ed61f61f87c1897110b7faf813e2dce36b261858",
+    "implementation/empty-history-tests.log": "383c77782a2f549d48b615dc5a9dd5392cdce52e3c6f083254caaad3b269046a",
+    "implementation/fixture-config-tests-final.log": "36acf790a6044e6f7deb5a34c951f12e754ec93810fabea4fbacbf81c8a947d3",
+    "implementation/fixture-config-tests.log": "6eb05ced5aa5b898805bb0345824f7f68688d79adbc85b40251f6c7424584d8a",
+    "implementation/focused-tests-repair.log": "6263e8a3e48bff58d9b8115f49ca0e34c6b02cfafd0f3184bf9ffee348433ce4",
+    "implementation/focused-tests.log": "b606fd64c380b5ca892f1ed0170edaba298fb14e287f941dc717173023fa2533",
+    "implementation/journal-mode-tests.log": "44e9d495767846fea30d211d1f27b43b0f395b545aea0718fc8a135213a679d5",
+    "implementation/no-profile-normal-tests.log": "ce7fbafbeccbf820cf312fcd699f59b7f94ba08be4dc70e1ef496f23957c237b",
+    "implementation/probe-correction-tests.log": "fc25682c25a74a7067934a13ce303da0eb5c5fc79936d36747af0f22726dea31",
+    "implementation/recovery-squashfs-mode-tests.log": "32a848ccb28dd6ec4f37693aeae8fbe3be1ae5228fbeaae488784cd0490da8b4",
+    "implementation/recovery-tmpdir-tests.log": "542c31edf23e765c74372c61af2ccd9534b334c65f91d73a739ed4894f7c363b",
+    "implementation/typed-busy-focused.log": "7574cc06aec512fd27954a1cd48949bae372913599122b9826c96fb50b57f3ba",
+    "implementation/typed-busy-upload-history.log": "e9a787cc57ff71342b64d0d8552b8efd79ef0d410c5a3167be95cfe12b0d6335",
+    "root-history-repair.log": "5f0c38dd256adcf4f80eef805082c5eaf8020165ba12ba99e4ed57b95d514da8",
+    "root-journal-mode.log": "5d166cef807d04d915df1b44e8670d6c46418c69f6cd16c5ffde659d220ddcce",
+    "root-link-tests-b.log": "4bc524a625cdf9553109d035821da37fe5225ea6eed3cab1b7e9313a1cd5873a",
+    "root-link-tests.log": "cb494616a1f9769651bb9f8dee19f7ec23cfadecacdc439b7769e1243158868f",
+    "root-typed-busy.log": "e28fa831af0a88af35a9bc5991d00b0e6e095e7609c6e8cb3172ce69317c47dd"
+  },
+  "physical_hardware": false,
+  "printing_ready": false,
+  "private_harness_sha256": {
+    "final-audit.py": "de7c268f33e67a225067ef1bc6303e23dfb840fe9c0486a753a84214f67540e9",
+    "qualify-normal.py": "4ae99770d44021af664e34f398eec8f2ebcefc473778345a70b556420f912d0e",
+    "run-recovery-boot.py": "7511ebad63aad8795a778e3222e17bf1b075dc247692728fd53a919dff8dad1e",
+    "run-stack-boot.py": "863fbd8eef607e3e6fbdf21aff0cde8e0bb70c5cabdb950d67653d97b1a1c76b",
+    "wait-host-check.py": "00ea97e21b94a3548634800f6641b215446acdff8edbe0ec8375df22b824b503",
+    "web-relay-local.py": "86af1731718cefe8b25904976c2a7d70fa012c54df86029facc8b049462854e5",
+    "web-relay-remote.py": "9139af8d0ea68cbd58023c4f937cfb7906a952a533a75a1405b213b1ca36a47c"
+  },
+  "process_and_build_log_receipts": {
+    "archive-after-export.log": {
+      "birth": 1794712725,
+      "elapsed_upper": 2.7085297107696533,
+      "modified": 1794712727.7085297,
+      "sha256": "befe4820163547ca2babf0c7b8ed11f198208df5fbf68c920fadea024438fa84"
+    },
+    "archive-bootstrap-build.log": {
+      "birth": 1794709036,
+      "elapsed_upper": 2.646498441696167,
+      "modified": 1794709038.6464984,
+      "sha256": "144158232002e095f6efddd394af49de2b38b1e6d529beb6e3958c189f21cdee"
+    },
+    "boot-media-build.log": {
+      "birth": 1794709038,
+      "elapsed_upper": 2.1025242805480957,
+      "modified": 1794709040.1025243,
+      "sha256": "fee8414dc8ccd342656244b092da4abbb2e32c81eccc339d8b6af3be24862f74"
+    },
+    "bootstrap-collection.log": {
+      "birth": 1794709596,
+      "elapsed_upper": 10.048485040664673,
+      "modified": 1794709606.048485,
+      "sha256": "aba7b530081f94f8e88346d56b7fe2af2b965f5ec153d42364cdde3f151f34c0"
+    },
+    "bootstrap-run-b.log": {
+      "birth": 1794709308,
+      "elapsed_upper": 223.4471776485443,
+      "modified": 1794709531.4471776,
+      "sha256": "e7d7630f4b816dbe02f59d7450d5fba13590b2ecd3150800a5c90b5ec938053d"
+    },
+    "bootstrap-run.log": {
+      "birth": 1794709153,
+      "elapsed_upper": 3.1205763816833496,
+      "modified": 1794709156.1205764,
+      "sha256": "5e8c40e263632c84175c56a9791647510c504f0037c404c06b6514a4d0b49277"
+    },
+    "current-reexport.log": {
+      "birth": 1794719788,
+      "elapsed_upper": 0.9328732490539551,
+      "modified": 1794719788.9328732,
+      "sha256": "f6e1ffdbe3219554937a9e327723066b87925ab9fd3a92b1e608bc14139de5ca"
+    },
+    "data-bootstrap-build.log": {
+      "birth": 1794709029,
+      "elapsed_upper": 7.438459157943726,
+      "modified": 1794709036.4384592,
+      "sha256": "88f11cc63f0cad251232e90c04bc66a01b09f3557196368e6f9a631379228773"
+    },
+    "data-source-build.log": {
+      "birth": 1794709599,
+      "elapsed_upper": 6.9724836349487305,
+      "modified": 1794709605.9724836,
+      "sha256": "6823ad982c7a4ed33a673a15dd9cb38ee55b0d6b831c77e06881d05839a64ba4"
+    },
+    "final-images-audit.log": {
+      "birth": 1794719242,
+      "elapsed_upper": 4.360270977020264,
+      "modified": 1794719246.360271,
+      "sha256": "118cb3c56821a0260e7e6ac6dd946093b15bfdc6d7b50f152af4ca672f816c29"
+    },
+    "host-source-restored.log": {
+      "birth": 1794709755,
+      "elapsed_upper": 8.943248510360718,
+      "modified": 1794709763.9432485,
+      "sha256": "a120bfb0fc0eb3d778a9e88ce2a927219005fa39ee10c961a8a7889e76bef96e"
+    },
+    "journal-current-archive-check.log": {
+      "birth": 1794715294,
+      "elapsed_upper": 0.9274053573608398,
+      "modified": 1794715294.9274054,
+      "sha256": "1ccb578610b74708dfb0e64c06fbe92f4ef967565c215116b77794c7f87230e1"
+    },
+    "native-regressions-a.log": {
+      "birth": 1794709047,
+      "elapsed_upper": 27.819139003753662,
+      "modified": 1794709074.819139,
+      "sha256": "0d269b9aab34b8b282cc6a7a6bd9973fa6821a14e70e5d5a0af623d20d285d73"
+    },
+    "native-regressions-b.log": {
+      "birth": 1794709121,
+      "elapsed_upper": 15.108222723007202,
+      "modified": 1794709136.1082227,
+      "sha256": "838b54d64a09da40016db475163c9d3386f77d5e228bffe10dc561cff13cb8ba"
+    },
+    "normal-build-resume.log": {
+      "birth": 1794709018,
+      "elapsed_upper": 10.982326984405518,
+      "modified": 1794709028.982327,
+      "sha256": "38b32b8bfb9fb6efa94651964de7799827f62a2432f7de1442767ab315484321"
+    },
+    "normal-build.log": {
+      "birth": 1794708608,
+      "elapsed_upper": 287.5359556674957,
+      "modified": 1794708895.5359557,
+      "sha256": "836ab759eabec7e26d7c428ce6792a1fcb0a3f41100f525c73b4557534dae27e"
+    },
+    "normal-current-build.log": {
+      "birth": 1794715306,
+      "elapsed_upper": 293.2963080406189,
+      "modified": 1794715599.296308,
+      "sha256": "d854b4f3a408087dc9966086b177eb2af256c0b7979713df3ed19275c6401e62"
+    },
+    "normal-delivery-build.log": {
+      "birth": 1794718355,
+      "elapsed_upper": 293.5474364757538,
+      "modified": 1794718648.5474365,
+      "sha256": "2db3d8516a2c949f9bd4265b26b004c37aab4936044134b501f6987854f66278"
+    },
+    "normal-final-build.log": {
+      "birth": 1794711144,
+      "elapsed_upper": 294.3775427341461,
+      "modified": 1794711438.3775427,
+      "sha256": "343f6e68cc9fbb8f465f7fa5788b9e543e9575e45aab49da37f13d350a2a1127"
+    },
+    "package-upgrade.log": {
+      "birth": 1794707108,
+      "elapsed_upper": 18.2408185005188,
+      "modified": 1794707126.2408185,
+      "sha256": "035be83d08d6b9de99b2bd9097ba2c4252490c0a303a59224c6e1784f8546d2b"
+    },
+    "previous-run.log": {
+      "birth": 1794720046,
+      "elapsed_upper": 567.7342584133148,
+      "modified": 1794720613.7342584,
+      "sha256": "08392e985a859e37e33e70b7b4ade572ada920b9d1f2e1342f7d3a617d536b89"
+    },
+    "previous-seed-b.log": {
+      "birth": 1794712450,
+      "elapsed_upper": 4.37967324256897,
+      "modified": 1794712454.3796732,
+      "sha256": "1c0bdc3bbd9df29a5b69fc98a47f83b735cbd40e2f7d31545564ec0715edeec6"
+    },
+    "previous-seed-verification.log": {
+      "birth": 1794712722,
+      "elapsed_upper": 2.9844813346862793,
+      "modified": 1794712724.9844813,
+      "sha256": "328d3400b63715b6a60720c539529cc36be8f52cab7295b6dbc408b0c4a8a436"
+    },
+    "previous-seed.log": {
+      "birth": 1794712276,
+      "elapsed_upper": 1.9045352935791016,
+      "modified": 1794712277.9045353,
+      "sha256": "e32fefcc041bfddad345bec2528312d0e26116ee609617818d8ebb3b1a14001e"
+    },
+    "recovery-assemble-b.log": {
+      "birth": 1794707423,
+      "elapsed_upper": 26.178460836410522,
+      "modified": 1794707449.1784608,
+      "sha256": "b1cc02c527e072da59042c4828ff310e8f3b2d17535cc8be31c3fd88d3810b9d"
+    },
+    "recovery-assemble-c.log": {
+      "birth": 1794707747,
+      "elapsed_upper": 207.063227891922,
+      "modified": 1794707954.063228,
+      "sha256": "600c7edeb39ccf1bb8c2a9ac3db3415cd79e9624b9aea29703122f6b70b423d2"
+    },
+    "recovery-assemble-d.log": {
+      "birth": 1794708188,
+      "elapsed_upper": 208.46292304992676,
+      "modified": 1794708396.462923,
+      "sha256": "1c0fcd40e5408bcbfcaec502b3ac1d39b039a236b451478755468951a089ba01"
+    },
+    "recovery-assemble.log": {
+      "birth": 1794707379,
+      "elapsed_upper": 6.553352117538452,
+      "modified": 1794707385.553352,
+      "sha256": "fbadf785a6513717e4353f676e6f282bd8b295e9808bff7f1b04218bf7666ba2"
+    },
+    "recovery-build-final.log": {
+      "birth": 1794712727,
+      "elapsed_upper": 196.32800364494324,
+      "modified": 1794712923.3280036,
+      "sha256": "2e2ed9365743ba30f8e0cfb02119585962320fae856fea9c527dead48b8d07d9"
+    },
+    "recovery-build-initial.log": {
+      "birth": 1794708413,
+      "elapsed_upper": 195.69880509376526,
+      "modified": 1794708608.698805,
+      "sha256": "7250982e541df54f78546ae01c69dcf322afeab9fcb5f5903851a913577a2fd0"
+    },
+    "recovery-current-assemble.log": {
+      "birth": 1794715599,
+      "elapsed_upper": 208.7317349910736,
+      "modified": 1794715807.731735,
+      "sha256": "a2ec011be73cfebeca4ea481c507cce1611e5b53f6895153ef06fe73adab14b6"
+    },
+    "recovery-current-build.log": {
+      "birth": 1794715807,
+      "elapsed_upper": 193.87894201278687,
+      "modified": 1794716000.878942,
+      "sha256": "7c9c4d6dd9bcb583c73800cf048420c4fb4d945aba54636b6712f80f35c55781"
+    },
+    "recovery-delivery-assemble.log": {
+      "birth": 1794718648,
+      "elapsed_upper": 210.19440388679504,
+      "modified": 1794718858.194404,
+      "sha256": "772eda6b6061f8d3fc095767e06ea4a8759773229eb9506916d322cc4a481459"
+    },
+    "recovery-delivery-build.log": {
+      "birth": 1794718858,
+      "elapsed_upper": 191.8932557106018,
+      "modified": 1794719049.8932557,
+      "sha256": "489ac8ccc8ada2e473f679692b7eb752685a933267b2be1ac2f689bdf8e525fb"
+    },
+    "recovery-final-assemble.log": {
+      "birth": 1794711438,
+      "elapsed_upper": 210.36130905151367,
+      "modified": 1794711648.361309,
+      "sha256": "db6c69a77a721bdd13e66b5e62505d5abc8be9c4c48681cecc370342a97e250d"
+    },
+    "recovery-qualified-assemble.log": {
+      "birth": 1794713634,
+      "elapsed_upper": 209.08832812309265,
+      "modified": 1794713843.0883281,
+      "sha256": "1ce209cbe91ef5453d109660603656de77ef1285971c44b9df8a2ece85b4b8f6"
+    },
+    "recovery-qualified-build.log": {
+      "birth": 1794713843,
+      "elapsed_upper": 192.97975087165833,
+      "modified": 1794714035.9797509,
+      "sha256": "2d1ed32bfa3323a83f494b9fd3a2c5bca999a9d45a3f3070dec38d5e2872cf87"
+    },
+    "recovery-restore-activate-current-run.log": {
+      "birth": 1794716232,
+      "elapsed_upper": 29.163295030593872,
+      "modified": 1794716261.163295,
+      "sha256": "f90ac31c1eb2940b8921eca9d85e3852a00cff809d30c956a0e768d5b545f1c5"
+    },
+    "recovery-restore-activate-delivery-run.log": {
+      "birth": 1794720231,
+      "elapsed_upper": 31.140531301498413,
+      "modified": 1794720262.1405313,
+      "sha256": "33800be4ab16cdde6eecaf8910899733fdcf92dba6d463b8adefaa65f58e826a"
+    },
+    "recovery-restore-activate-qualified-run.log": {
+      "birth": 1794714235,
+      "elapsed_upper": 18.66361355781555,
+      "modified": 1794714253.6636136,
+      "sha256": "7c2857b2b5928ae985134070fab98d2a3e9f4e6fcee166d655c05cf5a33a6768"
+    },
+    "recovery-restore-activate-run.log": {
+      "birth": 1794713135,
+      "elapsed_upper": 5.459858417510986,
+      "modified": 1794713140.4598584,
+      "sha256": "bb95c3baf16db2986861d0e6651c48acea842fee850e5fda3ce4be20c2544c08"
+    },
+    "recovery-rollback-delivery-run.log": {
+      "birth": 1794719865,
+      "elapsed_upper": 21.75044894218445,
+      "modified": 1794719886.750449,
+      "sha256": "6cab594a5ee9283bf2533014ce80a9f3642e1267e4d752d67c35900e40a50237"
+    },
+    "recovery-rollback-final-run.log": {
+      "birth": 1794720505,
+      "elapsed_upper": 22.468851566314697,
+      "modified": 1794720527.4688516,
+      "sha256": "e65854fafebba27f9fc4cc8d501cf6dc11416ab1f14a9f94555ad4d63565204b"
+    },
+    "restored-1-run.log": {
+      "birth": 1794716321,
+      "elapsed_upper": 66.18141150474548,
+      "modified": 1794716387.1814115,
+      "sha256": "37a4bfd46b77160ac33211537320ab83d1d64f368f8dc455b8708e9b5c3cf632"
+    },
+    "restored-2-run.log": {
+      "birth": 1794719290,
+      "elapsed_upper": 1064.7940385341644,
+      "modified": 1794720354.7940385,
+      "sha256": "14cd58e7c17e86573fa9e9e14cad3fad9450c931bba9a1919db1ad2a6335ec7c"
+    },
+    "restored-3-run.log": {
+      "birth": 1794719566,
+      "elapsed_upper": 865.0712804794312,
+      "modified": 1794720431.0712805,
+      "sha256": "e61fbc8215ae06ae3c8893b3e0afc32e13a614fe71f34f10d8a54d2b7e01faa1"
+    },
+    "retirement-more.log": {
+      "birth": 1794717884,
+      "elapsed_upper": 3.9307079315185547,
+      "modified": 1794717887.930708,
+      "sha256": "a4498fc0ff7ab422a9d5a8d120080294063db3f62cbcac3b4a0bc63176d7f1e2"
+    },
+    "retirement.log": {
+      "birth": 1794715985,
+      "elapsed_upper": 6.4187843799591064,
+      "modified": 1794715991.4187844,
+      "sha256": "57cf10a61b8531b0cd628e823f0af55d4c8b71e778d04f2a2c9a31b514f0fb93"
+    },
+    "source-export-final.log": {
+      "birth": 1794712275,
+      "elapsed_upper": 2.98453688621521,
+      "modified": 1794712277.984537,
+      "sha256": "7cf75046bfaf5ef2bc9f4b866e30587d4fb8e5100f401b141fe16379559fbb1f"
+    },
+    "source-export.log": {
+      "birth": 1794710332,
+      "elapsed_upper": 1.3051903247833252,
+      "modified": 1794710333.3051903,
+      "sha256": "00de922422335ff2f57c8171a67232b0689b40d9c8b87b8866a63b7e19e6a482"
+    },
+    "source-final-run.log": {
+      "birth": 1794711789,
+      "elapsed_upper": 233.31998538970947,
+      "modified": 1794712022.3199854,
+      "sha256": "51cdbb5546b09687b3c98e44d09814f49c6742a1c4857e2a0f918d6636e5b680"
+    },
+    "source-restored-run.log": {
+      "birth": 1794709646,
+      "elapsed_upper": 580.0033185482025,
+      "modified": 1794710226.0033185,
+      "sha256": "62a74858204cd5027df8dab02c5e896a7f4e106308489e1178d95b0178a62642"
+    },
+    "stage-a.log": {
+      "birth": 1794706609,
+      "elapsed_upper": 0.15164923667907715,
+      "modified": 1794706609.1516492,
+      "sha256": "ffcba8c5f4aa4bd4034993670f7c1d5eccce12937abb62aae9f529532c1ee9cf"
+    },
+    "stage-b.log": {
+      "birth": 1794706609,
+      "elapsed_upper": 10.007826566696167,
+      "modified": 1794706619.0078266,
+      "sha256": "c853e5d6283c65d1d9ef324b0a883bf8ba2692fa91f73e932362b1fd6e7b3fa9"
+    },
+    "stage-c.log": {
+      "birth": 1794706813,
+      "elapsed_upper": 10.571480751037598,
+      "modified": 1794706823.5714808,
+      "sha256": "121ee2b05c35d17bfaf6b7e29fb16832a17153bc1cfddd0f23ddda34ddab2879"
+    },
+    "stage-d.log": {
+      "birth": 1794707217,
+      "elapsed_upper": 10.914599418640137,
+      "modified": 1794707227.9145994,
+      "sha256": "483545e0374c374b725f9ee009e430f7f2e5492278af25983311c5a7b82e2a33"
+    },
+    "stage-delivery-result.log": {
+      "birth": 1794718344,
+      "elapsed_upper": 11.642618179321289,
+      "modified": 1794718355.6426182,
+      "sha256": "483545e0374c374b725f9ee009e430f7f2e5492278af25983311c5a7b82e2a33"
+    },
+    "stage-history-result.log": {
+      "birth": 1794711133,
+      "elapsed_upper": 11.716238975524902,
+      "modified": 1794711144.716239,
+      "sha256": "483545e0374c374b725f9ee009e430f7f2e5492278af25983311c5a7b82e2a33"
+    },
+    "stage-journal-result.log": {
+      "birth": 1794715294,
+      "elapsed_upper": 12.083582162857056,
+      "modified": 1794715306.0835822,
+      "sha256": "483545e0374c374b725f9ee009e430f7f2e5492278af25983311c5a7b82e2a33"
+    },
+    "stage.log": {
+      "birth": 1794706556,
+      "elapsed_upper": 9.906869173049927,
+      "modified": 1794706565.9068692,
+      "sha256": "ffcba8c5f4aa4bd4034993670f7c1d5eccce12937abb62aae9f529532c1ee9cf"
+    }
+  },
+  "qualified_implementation_commit": "f14d190c8c0677bfe728f0993ae06d6d094cb19c",
+  "result": "PASS",
+  "source_sha256": {
+    "catalog/printer/catalog.json": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d",
+    "runtime/sv08_admin_jobs.py": "75539efa18c6dda169cb5d4cb618351ca86e5b11f1ba5e2fdaf98fb1830c52b9",
+    "runtime/sv08_data_budget.py": "efe6bdac5dce776f35aa04b3f69c80f7b55efd4932de85d1356afb2ba5a98ecb",
+    "runtime/sv08_export.py": "d404c6bf0352914668232db73e887ad5df518347c19d14297118c654fa907124",
+    "runtime/sv08_printer_publish.py": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+    "runtime/sv08_recovery_activation.py": "c71915578b0bf8a6f01af75f7537d9e38a934095568ec3512ad78a7ba3dadd51",
+    "runtime/sv08_recovery_links.py": "f36d7df4c63b55c50d695688cc4e29d44c137ef67e31ebdc9ddf7b18ff73a02d",
+    "runtime/sv08_restore.py": "3d2029b0e80c55286003c9ef76b6713b37d12cc2275bded8b7e0e64d97f50f33",
+    "scripts/project_license.py": "99e17995cd64846199ae97a2e12f262b2ebf4680ffebc91d0343862c316a3f63",
+    "scripts/recovery_image.py": "0aa75f42063ec099019fa5e08c4ed6202f8a1d7385fa494f4c21422e396221e2",
+    "scripts/stage_admin_ui.py": "153731651a1d5cd2859ba752056de8288720c89366ab938a0bd2f01093d41103",
+    "tests/printer_validator_probe.py": "9b982e642fb4f435c8b1d84a20d163f2b1a5506447d9bceed5a567c1e00b443e",
+    "tests/recovery_restore_stack.py": "184f42257438ec085515f37b1eb84c6a142b05f094ea4224a2f95e771e47d6e0",
+    "tests/recovery_restore_stack_browser.mjs": "529dd41df03fc36ef6e2429b7d32e3ad4ea686b99d7e8a46156b9e17a21ad54e",
+    "tests/recovery_restore_stack_vm.py": "11e3a12b0c5bc8dc9e625396263840982cdda05b101fb5b5581af87f45a3ec00",
+    "tests/test_admin_jobs.py": "0670ce2e4ef48d8a88db43797a6b819afa674a650b99b220252796e100e4267e",
+    "tests/test_data_budget.py": "ea2d828fdc0c856c94d712b301ac79b66247981d31a796ed309334b55e9b0c18",
+    "tests/test_export.py": "0099de14946ce4885ed7c5c9e6c5a3d5dd35e66ad8dcad544c9311b56ba19105",
+    "tests/test_printer_validation.py": "e8d544bb212e77a3d2552e9f644fc8df7ae6e630fc1d944caabeddfec66e9767",
+    "tests/test_project_license.py": "347af4e3b8212f1e4cdc1c8dacdcf903aeebe2103790284dc08fefe688a7abce",
+    "tests/test_recovery_image.py": "eb8d02d54e34702e14fb96a5a9f89cc02e663987702f21447e2517e701d3b773",
+    "tests/test_recovery_links.py": "ea900babc34bf82e8aabf0ccab81f2a6e4dfe4fde547dbd709cd70f8ee255197",
+    "tests/test_recovery_restore_stack.py": "a158279c883c2878a7bcb7ace1795f1a9dfe137f59fcfbaacdd10f6cae88dff2",
+    "tests/test_restore.py": "c19b8ff0f35fbfc5ec81315a0a80bab88f041f6db54662da1927f8503b873f63",
+    "tests/test_stage_admin_ui.py": "e6a334c67f31350dcb356241f62668d9b03260b93f634a55ee84ff079fe48fa8",
+    "upstream-lock.json": "1452835e9969d23aea61a0936806efc0e42a25b8a117206a984051c6a4beb440"
+  },
+  "validator_probe": {
+    "activation_sha256": "0be8a5464b2bdf073d8afc3474d1cff2c3904db456566a079ed4ed6cc0782a19",
+    "address_space_soft_hard_bytes": [
+      268435456,
+      268435456
+    ],
+    "architecture": "aarch64",
+    "child_cpu_seconds": {
+      "system": 2.022861,
+      "user": 1.903638
+    },
+    "cleanup_signals": [
+      "TERM"
+    ],
+    "cpu_soft_hard_seconds": [
+      8,
+      8
+    ],
+    "exit_before_cleanup": null,
+    "file_soft_hard_bytes": [
+      4194304,
+      4194304
+    ],
+    "files_sha256": {
+      "README.txt": "00e0ba9c0a1486395f76a7ef5f735ff2981ccddae9210e76ef5ce84b57fbe585",
+      "configuration-manifest.json": "5cdc500d3e18e2183e9933714879d7f3960fff30d53e339a76765e60bd19d6af",
+      "hardware.cfg": "ca313e67c7070c98b575cd5c8051edd2408017c83eaff57eb8b7e9d27080b4d1",
+      "mainsail.cfg": "2725e698ef0ad950f040cd8c19c138bf526cb58e64933edfe84d61fcff6cf005",
+      "mainsail.json": "96f9f149b36016c261773ff98756a791cecbf48b89505fbba9397370c86fa715",
+      "moonraker.conf": "4e9e48598f63ad34ffd2c5d34df7e4dfeda107ad790346034f1a6ae1a8f53705",
+      "nginx-mainsail.conf": "f0ebbb8d1479be28852f0423d2857a2cf2dec6e716ec77309faf676f9a302046",
+      "printer.cfg": "189674b7bd6bc2675115586d7926a71a3e1d6fa759fc97d1fee3fcb5e1a1b08c"
+    },
+    "guest_elapsed_seconds": 4.0610769179999995,
+    "kernel": "6.12.107+deb13-arm64",
+    "last_state": "ready",
+    "loaded_module_sha256": {
+      "sv08_printer_calibration": "7de25521519d4531b78236e63412e485f4d1fb0aed7b6d16471d716cc5918aea",
+      "sv08_printer_catalog": "03063026baad1896066ed80e18db5ab8737bb44781ee5ddf33edcd9a112edf19",
+      "sv08_printer_compose": "fa4d791f873427dc36d96eef147ed16906f50abd3cbed2be356a911ddc5aa932",
+      "sv08_printer_definitions": "500cd3540f424b02347ab2bd92d3fced416a8c15eea44650dfaa8f0ac44edf20",
+      "sv08_printer_fields": "85e26a74397445d084bc19507cb25697949bd662154aea687212cd3284d69961",
+      "sv08_printer_generate": "cebc0b679907cbb920e0ad0a3aaa49eebb9688f35b3c6c6f9e37664a5f39f750",
+      "sv08_printer_publish": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+      "sv08_printer_stack": "7b6a3b58ce1ef9bcab57396c52a838a669de16f47192638b195ef8355f154406",
+      "sv08_state": "af70b8608510d7147b12bb37af4e84b84489173f2eaff985f05313727ec8e370"
+    },
+    "native_run": {
+      "elapsed_seconds": 14.061,
+      "kvm": {
+        "enabled": true,
+        "present": true
+      },
+      "native": true,
+      "process_stopped": true,
+      "qemu_exit": 0,
+      "qemu_pid": 29632,
+      "version": {
+        "package": "Debian 1:7.2+dfsg-7+deb12u18+b3",
+        "qemu": {
+          "major": 7,
+          "micro": 22,
+          "minor": 2
+        }
+      }
+    },
+    "readiness_deadline_seconds": 10,
+    "result": "PASS",
+    "source_sha256": {
+      "catalog": "7cd66f1f2993912f1b036a8cc78c930b2be461e9b19bb9094c0f452accea381d",
+      "dictionary": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+      "guest_factory": "9a3cbaee18a6ba47f4a64b46206b1c6ca2d29b8ad44e808506b1f4da5b3ea7d7",
+      "helper": "77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e",
+      "klippy": "aa9eb47fbe3598fc814d40ed8e0b2b814a0af459fca7acab6732c59bf42e4659",
+      "probe": "9b982e642fb4f435c8b1d84a20d163f2b1a5506447d9bceed5a567c1e00b443e",
+      "python": "19f5e159357388b3062871c0109a525d9d01d8694ec11d79775d8443c1780740"
+    },
+    "validation": {
+      "dictionary_sha256": "86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b",
+      "klipper_revision": "f0892d82b0f1c1228454f09eb508eddde2250f4b",
+      "physical_hardware": false,
+      "validated": true
+    },
+    "validator_input_sha256": {
+      "printer-managed/8f85a3fe0708e4e909e86269fdd88ffaf317aed8a83eaf64e285f3301a199d3c/bundle.cfg": "ab84efe255f1e84b99cae786a3d36f8e5bb48c387351126ac3ee55fbd2a81b94",
+      "printer-managed/8f85a3fe0708e4e909e86269fdd88ffaf317aed8a83eaf64e285f3301a199d3c/hardware.cfg": "d8d25d212d4405aeb98a5985ec7c90df25ad441b59c6f5ca6da034026d6a08fa",
+      "printer.cfg": "0be8a5464b2bdf073d8afc3474d1cff2c3904db456566a079ed4ed6cc0782a19"
+    },
+    "vm_kib": {
+      "VmHWM": 38172,
+      "VmPeak": 139352,
+      "VmRSS": 38172,
+      "VmSize": 139352
+    }
+  }
+}

@@ -30,6 +30,33 @@ class RecoveryImageTests(unittest.TestCase):
                 with tempfile.TemporaryDirectory(dir=root/'build') as work:
                     yield work
 
+    def test_cockpit_socket_identity_admission_avoids_basic_target_cycle(self):
+        import configparser
+        import shutil
+        import sys
+        from test_data_budget import fixture_root
+        sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+        from stage_admin_ui import stage, REPO
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as directory:
+            work=Path(directory);runtime=work/'rootfs/usr/lib/sv08';runtime.mkdir(parents=True)
+            for path in (REPO/'runtime').glob('*.py'):shutil.copyfile(path,runtime/path.name)
+            (runtime/'sv08_rauc_bootloader.py').chmod(0o755)
+            relative='etc/systemd/system/cockpit.socket.d/sv08-identity.conf'
+            for refresh in (False,True):
+                result=stage(work,'host',True,refresh=refresh)
+                path=work/'rootfs'/relative;unit=configparser.ConfigParser();unit.read(path)
+                settings=unit['Unit']
+                # Disables the implicit socket-before-sockets.target edge and
+                # target's automatic ordering, while retaining failure gates.
+                self.assertEqual(settings['DefaultDependencies'],'no')
+                self.assertEqual(set(settings['Requires'].split()),{'sysinit.target','sv08-identity.service'})
+                self.assertEqual(set(settings['After'].split()),{'sysinit.target','sv08-identity.service'})
+                self.assertEqual(settings['Before'],'shutdown.target')
+                self.assertEqual(settings['Conflicts'],'shutdown.target')
+                self.assertEqual(result['hashes'][relative],hashlib.sha256(path.read_bytes()).hexdigest())
+                self.assertFalse(result['activated'])
+                self.assertFalse((work/'rootfs/etc/systemd/system/sockets.target.wants').exists())
+
     def test_builder_restore_binding_roundtrips_through_runtime_authentication(self):
         from test_recovery_restore_media import policy as restore_policy
         from sv08_recovery_media import canonical_json, PROVIDER_MANIFEST, ENVELOPE_MANIFEST
@@ -70,7 +97,7 @@ class RecoveryImageTests(unittest.TestCase):
             logind=(units/'systemd-logind.service.d/recovery-namespace.conf').read_text()
             runtime=root/'usr/lib/sv08';runtime.mkdir(parents=True)
             for name in ('sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_restore.py', 'sv08_recovery_restore_media.py', 'sv08_recovery_media.py', 'sv08_recovery_prepare.py',
-                         'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_state.py',
+                         'sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py','sv08_recovery_links.py','sv08_state.py',
                          'sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
                 (runtime/name).write_text(name)
             bound=m.installed_provider_inputs(root)
@@ -298,7 +325,11 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         lock=self.repo/'lock.json';lock.write_text(json.dumps(dict(packages=[dict(
             package='fixture',version='1',architecture='arm64',sha256=digest,bytes=len(archive))])))
         work=self.repo/'build/assembled'
+        maintainer_calls=[]
         def run(args,**kw):
+            if 'dpkg' in args and any(flag in args for flag in ('--unpack','--configure')):
+                self.assertEqual(kw['env']['TMPDIR'],'/tmp')
+                maintainer_calls.append(args)
             if args[:2]==['dpkg-deb','-f']:
                 return SimpleNamespace(stdout='Package: fixture\nVersion: 1\nArchitecture: arm64\n')
             if args[:2]==['dpkg-deb','--extract']:
@@ -315,10 +346,12 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
             handler=work/'rootfs/usr/lib/sv08/sv08_rauc_bootloader.py'
             self.assertEqual(handler.stat().st_mode & 0o777,0o755)
             self.assertEqual(handler.read_bytes(),(self.repo/'runtime/sv08_rauc_bootloader.py').read_bytes())
-        with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+        with patch.dict(m.os.environ,TMPDIR='/host-only/nonexistent/tmp'), \
+             patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
              patch.object(m,'configure_recovery_password'),patch.object(m,'installed_provider_inputs',return_value={}), \
              patch.object(m,'stage_recovery_units',side_effect=late_units),patch.object(stage_admin_ui,'stage',side_effect=stage_checked):
             m.assemble(SimpleNamespace(work=work,intake=intake,lock=lock,execute=True,release_manifest=self.manifest))
+        self.assertEqual(len(maintainer_calls),2)
         record=self.public(work/'rootfs')
         self.assertIn('usr/lib/systemd/system/sv08-recovery-display.service',record['staged_files'])
         receipt=json.loads((work/'assembly.json').read_text())
@@ -331,18 +364,35 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         (source/'assembly.json').write_text(json.dumps(dict(root=m.inventory(root),
             integration_inputs=m.integration_inputs(),release_manifest=binding)))
         before=m.inventory(source);work=self.repo/'build/image'
+        compressions=[]
         def run(args,**kw):
             if args[:2]==['cp','-a']:
                 if Path(args[2]).is_dir():shutil.copytree(args[2],args[3],symlinks=True)
                 else:shutil.copy2(args[2],args[3])
             elif args[0]=='mksquashfs':
+                compressions.append(args)
                 self.public(Path(args[1]).parent)
                 Path(args[2]).write_bytes(b'compressed fixture')
             return SimpleNamespace(stdout='',stderr='')
         def initramfs(root,output,profile):output.write_bytes(b'fixture initramfs')
         with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
              patch.object(m,'initramfs',side_effect=initramfs),patch.object(m,'SIZE',4096):
-            result=m.build(SimpleNamespace(assembly=source,work=work,execute=True))
+            previous_umask=m.os.umask(0o077)
+            try:
+                result=m.build(SimpleNamespace(assembly=source,work=work,execute=True))
+                compressed=work/'envelope/usr.squashfs'
+                self.assertEqual(compressed.stat().st_mode & 0o777,0o644)
+                # A valid cached payload may retain an old builder's private mode.
+                # Normalize only its staged copy, preserving the cache and bytes.
+                compressed.chmod(0o600);cache_before=m.inventory(work)
+                reused=self.repo/'build/reused-image'
+                m.build(SimpleNamespace(assembly=source,work=reused,execute=True,reuse_usr=work))
+                copied=reused/'envelope/usr.squashfs'
+                self.assertEqual(copied.stat().st_mode & 0o777,0o644)
+                self.assertEqual(copied.read_bytes(),compressed.read_bytes())
+                self.assertEqual(m.inventory(work),cache_before)
+                self.assertEqual(len(compressions),1)
+            finally:m.os.umask(previous_umask)
         self.assertEqual(before,m.inventory(source));self.assertTrue(result['source_preserved'])
         self.assertEqual(result['release_manifest'],binding)
         self.assertEqual(json.loads((work/'build.json').read_bytes())['release_manifest'],binding)
@@ -354,7 +404,11 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
         notices,_=self.license.prepare(root,repo=self.repo);self.license.publish(root,notices)
         packages=self.repo/'packages';packages.mkdir()
         profile={'packages':[],'kernel_release':m.KERNEL}
+        maintainer_calls=[]
         def run(args,**kw):
+            if 'dpkg' in args and '--install' in args:
+                self.assertEqual(kw['env']['TMPDIR'],'/tmp')
+                maintainer_calls.append(args)
             if args[:2]==['cp','-a']:shutil.copytree(args[2],args[3],symlinks=True)
             return SimpleNamespace(stdout='',stderr='')
         for inherited in (False,True):
@@ -366,11 +420,13 @@ class RecoveryReleaseSourceTests(unittest.TestCase):
                 before=m.inventory(source);work=self.repo/('build/derived-'+str(inherited))
                 def final_board(derived,profile):
                     (derived/'usr/lib/sv08/late.py').write_bytes((self.repo/'configs/late.py').read_bytes())
-                with patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
+                with patch.dict(m.os.environ,TMPDIR='/host-only/nonexistent/tmp'), \
+                     patch.object(m,'run',side_effect=run),patch.object(m,'private'), \
                      patch.object(m,'board_profile',return_value=profile), \
                      patch.object(m,'normalize_board_module_directory',side_effect=final_board),patch.object(m,'check_board_artifacts'):
                     m.derive(SimpleNamespace(assembly=source,work=work,packages=packages,board_profile='fixture',
                         execute=True,release_manifest=None if inherited else self.manifest))
+                self.assertEqual(len(maintainer_calls),1+int(inherited))
                 self.assertEqual(before,m.inventory(source))
                 final=self.public(work/'rootfs');self.assertIn('usr/lib/sv08/late.py',final['staged_files'])
                 record=json.loads((work/'assembly.json').read_text())

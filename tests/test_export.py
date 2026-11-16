@@ -34,6 +34,20 @@ class ExportTests(unittest.TestCase):
             finally:self.depth-=1
         self.export=Export(self.source,{'usb-1':{'path':self.target,'label':'Test USB'}},admission,reserve_bytes=0)
 
+    def test_special_modes_refuse_before_archive_publication(self):
+        file=self.source/'config/printer.cfg'
+        for mode in (0o2755,0o4755,0o1755):
+            file.chmod(mode)
+            with self.subTest(mode=mode),self.assertRaisesRegex(ValueError,'permission metadata'):
+                self.export.prepare('usb-1')
+            self.assertEqual(list(self.target.iterdir()),[])
+        file.chmod(0o644)
+        journal=self.source/'shared/logs/journal';journal.mkdir(parents=True);journal.chmod(0o2755)
+        # Even a matching path/mode needs real state ancestry and root ownership.
+        (self.source/'state.json').unlink()
+        with self.assertRaisesRegex(ValueError,'permission metadata'):self.export.prepare('usb-1')
+        self.assertEqual(list(self.target.iterdir()),[])
+
     def test_real_archive_readback_and_corrupt_registry_preserved(self):
         before={str(p.relative_to(self.source)):p.read_bytes() for p in self.source.rglob('*') if p.is_file()}
         plan=self.export.prepare('usb-1');self.assertEqual(list(self.target.iterdir()),[])
