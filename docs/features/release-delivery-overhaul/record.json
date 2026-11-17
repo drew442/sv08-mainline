@@ -439,7 +439,10 @@
         "tests/test_package_release_ci.py",
         ".github/workflows/agent-workflow.yml",
         ".github/workflows/cockpit-readiness.yml",
-        "docs/features/release-delivery-overhaul/visuals/firmware-mismatch.png"
+        "docs/features/release-delivery-overhaul/visuals/firmware-mismatch.png",
+        "tests/test_factory_sv08.py",
+        "tests/auto_policy_browser.mjs",
+        ".github/workflows/cockpit-follow-up.yml"
       ],
       "repeats": 0,
       "resumption": "Both source writers stopped; sourceeee598c and prior lease1244fff48c714d9395a1a07514670f1f preserved. Include existing inventory/CI consumers of new task and firmware contracts, same cumulative attempts/allowance.",
