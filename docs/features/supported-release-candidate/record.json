@@ -1,55 +1,65 @@
 {
+  "author": "root/coordinator",
+  "authorization": {
+    "actor": "root/coordinator",
+    "basis": "owner-request",
+    "proposal_sha256": "1872d64f651372420751845bb6a51b52a5f14330b3dc7dbe50d727475af8b741",
+    "rationale": "First supported release goal: implement clean owner and candidate paths; separate exact physical operations remain gated.",
+    "reference": "docs/features/supported-release-candidate/owner-request.md",
+    "reference_sha256": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
+    "requirements_sha256": {
+      "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
+      "docs/features/supported-release-candidate/owner-request.md": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
+      "docs/remaining-work-plan.md": "c86c29e67af62eb3853aa0f8a79ec39c1fbba8b71860d2175ffe1cc5540a0f31"
+    },
+    "scope_sha256": "4125d0450936dbf17aebdc64257e4a6845083e8d217c4817b419c18a6b73b15e",
+    "session": "supported-release-20261117",
+    "source_commit": "b10532616fd5822b393e06310562b7e49cefad18"
+  },
+  "checks": [
+    {
+      "description": "Supported composition and diagnostic preservation",
+      "environment": "offline",
+      "id": "c1"
+    },
+    {
+      "description": "Clean owner enrollment and persistent authentication",
+      "environment": "offline",
+      "id": "c2"
+    },
+    {
+      "description": "Guarded service activation and firmware policy",
+      "environment": "offline",
+      "id": "c3"
+    },
+    {
+      "description": "Composed and rendered checks with regressions",
+      "environment": "offline",
+      "id": "c4"
+    },
+    {
+      "description": "Source-bound evidence and next release phase",
+      "environment": "offline",
+      "id": "c5"
+    }
+  ],
+  "created": "2026-11-17",
+  "decision": null,
   "format_version": 2,
   "id": "supported-release-candidate",
   "kind": "feature",
-  "title": "Supported candidate composition and clean-owner setup",
-  "author": "root/coordinator",
-  "created": "2026-11-17",
+  "owner_decision_required": false,
   "priority": 1,
   "proposal": "docs/features/supported-release-candidate/proposal.md",
+  "requirement_rechecks": [],
   "requirements": [
     "docs/features/supported-release-candidate/owner-request.md",
     "docs/remaining-work-plan.md",
     "docs/decisions/20261005-proportionate-development-review.md"
   ],
-  "owner_decision_required": false,
-  "decision": null,
-  "authorization": null,
-  "requirement_rechecks": [],
-  "checks": [
-    {
-      "id": "c1",
-      "description": "Supported composition and diagnostic preservation",
-      "environment": "offline"
-    },
-    {
-      "id": "c2",
-      "description": "Clean owner enrollment and persistent authentication",
-      "environment": "offline"
-    },
-    {
-      "id": "c3",
-      "description": "Guarded service activation and firmware policy",
-      "environment": "offline"
-    },
-    {
-      "id": "c4",
-      "description": "Composed and rendered checks with regressions",
-      "environment": "offline"
-    },
-    {
-      "id": "c5",
-      "description": "Source-bound evidence and next release phase",
-      "environment": "offline"
-    }
-  ],
   "tasks": [
     {
-      "id": "implement",
-      "title": "Implement and validate supported candidate source path",
-      "status": "pending",
-      "environment": "offline",
-      "depends_on": [],
+      "blocker": null,
       "checks": [
         "c1",
         "c2",
@@ -57,17 +67,25 @@
         "c4",
         "c5"
       ],
-      "human_task": null,
-      "blocker": null,
-      "implementation": null,
+      "depends_on": [],
+      "environment": "offline",
       "evidence": [],
-      "verification": null,
-      "validation": null,
-      "repeats": 0,
-      "resumption": null,
-      "review_policy": "self",
-      "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
       "hazards": [],
+      "human_task": null,
+      "id": "implement",
+      "implementation": null,
+      "input_paths": [
+        "runtime/sv08_state.py",
+        "runtime/sv08_identity.py",
+        "runtime/sv08_boot_health.py",
+        "runtime/sv08_printer_firmware.py",
+        "runtime/sv08_web.py",
+        "catalog/printer/",
+        "schemas/printer-definitions/",
+        "configs/storage/",
+        "configs/host-os/environment-layout.json",
+        "upstream-lock.json"
+      ],
       "owned_paths": [
         "scripts/integrate_host_os.py",
         "scripts/assemble_board_diagnostic.py",
@@ -110,18 +128,15 @@
         "docs/features/supported-release-candidate/",
         ".codex/current-goals.md"
       ],
-      "input_paths": [
-        "runtime/sv08_state.py",
-        "runtime/sv08_identity.py",
-        "runtime/sv08_boot_health.py",
-        "runtime/sv08_printer_firmware.py",
-        "runtime/sv08_web.py",
-        "catalog/printer/",
-        "schemas/printer-definitions/",
-        "configs/storage/",
-        "configs/host-os/environment-layout.json",
-        "upstream-lock.json"
-      ]
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
+      "status": "pending",
+      "title": "Implement and validate supported candidate source path",
+      "validation": null,
+      "verification": null
     }
-  ]
+  ],
+  "title": "Supported candidate composition and clean-owner setup"
 }
