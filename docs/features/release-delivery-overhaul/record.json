@@ -131,7 +131,14 @@
         "tests/test_printer_browser_fixture.py",
         "scripts/stage_printer_ui.py",
         "scripts/stage_admin_ui.py",
-        "tests/test_stage_admin_ui.py"
+        "tests/test_stage_admin_ui.py",
+        "scripts/workflow_inventory.py",
+        "tests/test_workflow_inventory.py",
+        "scripts/check_package_release.py",
+        "tests/test_package_release_ci.py",
+        ".github/workflows/agent-workflow.yml",
+        ".github/workflows/cockpit-readiness.yml",
+        "docs/features/release-delivery-overhaul/visuals/firmware-mismatch.png"
       ],
       "repeats": 0,
       "resumption": "Prior run7f29065453074b95a7d14c339e4d82ef and candidate9a0f666 preserved; both writers stopped, extend exactly admin dependency guards, cumulative allowance/attempts unchanged.",
