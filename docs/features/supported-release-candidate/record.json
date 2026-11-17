@@ -73,15 +73,10 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "336b4a0344604415b769491d3a056d7e",
-        "session": "supported-release-20261117"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
-        "runtime/sv08_boot_health.py",
         "runtime/sv08_printer_firmware.py",
         "runtime/sv08_web.py",
         "catalog/printer/",
@@ -166,13 +161,15 @@
         "runtime/sv08_provenance.py",
         "tests/test_project_license.py",
         "tests/test_recovery_image.py",
-        ".github/workflows/cockpit-readiness.yml"
+        ".github/workflows/cockpit-readiness.yml",
+        "runtime/sv08_boot_health.py",
+        "tests/test_host_boot_health.py"
       ],
       "repeats": 0,
-      "resumption": "All implementers stopped; source822242e and failed logs preserved. Add source-provenance/CI/test fixture integration ownership and SD recipe dependencies, then reapply patch to fresh main-based claim. Cumulative source allowance remains7200sec/1GiB, conservatively900sec/128MiB charged; no reset.",
+      "resumption": "All source workers stopped; current boot-activation patch and66dce8d prototype evidence preserved. Extend existing C3 ownership to BootHealth canonical post-confirm metadata and health tests. Prior source/native attempts and allowances carry forward; no physical authority.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
