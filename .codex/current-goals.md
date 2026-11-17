@@ -3,7 +3,8 @@
 ## Current continuation — new SD and eMMC topology repair
 
 Current owned source worktree: `local/feature-workflow/worktrees/supported-recovery-boot-areas`,
-branch `feature/supported-recovery-boot-areas`, run `8732f9f57c444d1197113ec983ea5de9`.
+branch `feature/supported-recovery-final`, run `fb32f83d8733428da23740228bcceeaa`.
+Previous protected-area run/branch is preserved at `dcde29c`.
 Earlier source worktrees and all evidence remain preserved.
 
 Owner supplied a new blank SC16G SD (15,931,539,456 bytes), identified read-only
