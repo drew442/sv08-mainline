@@ -1,17 +1,40 @@
 # Current delivery state
 
-PR38 merged on 2026-11-17 as `47e265e21b3382ddc921317097e53991fffd6035`;
-local main fast-forwarded. The delivery-overhaul task is complete after owner
-integration; all four final-head CI jobs passed. [Evidence](../docs/features/release-delivery-overhaul/evidence.md)
-records source acceptance and limitations. No deployment, MCU flashing or printer
-operation occurred. The native recovery goal remains complete; the next product
-milestone below has not been started.
+PR38 merged as `47e265e21b3382ddc921317097e53991fffd6035`. The native
+first-supported-release goal is active; the existing
+[supported candidate task](../docs/features/supported-release-candidate/proposal.md)
+is running. The earlier recovery qualification remains complete at its recorded
+scope. No physical deployment, MCU flashing or output operation occurred in this goal.
+
+Draft [PR39](https://github.com/drew442/sv08-mainline/pull/39) publishes the supported
+candidate/clean-owner source checkpoint at
+`3f86bd2ea82ea173d25bc9a1cb0e9282b02224b4`. All four applicable CI workflows pass at
+that exact source. Root source checks, six disposable mode/slot boots and rendered
+800x480 owner interaction checks pass; installed native PAM and supported board
+artifacts remain to qualify. These are source/software results, not printing or
+release acceptance. The full native goal is not complete at this PR checkpoint.
+
+Native work is assigned to `/run/a733-guests/sv08-release-20261117` on the existing
+ARM64/KVM runner, with a private inode-rich workspace and extracted tools. The
+separate allowance is 10,800 process-seconds /64GiB generated, including the logical
+32GiB workspace; source work retains its 7,200seconds /1GiB cumulative allowance.
+[The execution ledger](https://github.com/drew442/sv08-mainline/blob/3f86bd2ea82ea173d25bc9a1cb0e9282b02224b4/docs/features/supported-release-candidate/execution.json)
+retains prior charges and attempts. A fresh normal baseline is in progress; the
+first attempt's missing private wget prerequisite was corrected without a host
+installation and its failed log retained. Actual validator/owner integration
+precedes expensive final assembly. No TCG substitution or simulated native pass.
+
+Read-only target preflight found saved hardware revision13 selecting a Funssor/CN3D
+bed. Fitted-hardware confirmation is pending; saved selections are not physical
+proof. The target remains on release0.1.0-physical-update.2, slotB, immutable. Exact
+physical-operation authority/review, recovery readiness and attendance remain
+required before changing the printer.
 
 ## Contract and next milestone
 
-Use [the canonical release route](../docs/remaining-work-plan.md). Initial support is the actual test printer's fitted configuration, not assumed factory bed/hotend. LAN signed delivery suffices initially. Preserve immutable/writable modes, data/identity, safety/admission and independent recovery. System releases assign immutable definition-based MCU recommendations; older-system boot never reflashes, and observed mismatch/unknown is visible. Actual present target state still needs coordinator preflight.
+Use [the canonical release route](../docs/remaining-work-plan.md). Initial support is the actual test printer's fitted configuration, not assumed factory bed/hotend. LAN signed delivery suffices initially. Preserve immutable/writable modes, data/identity, safety/admission and independent recovery. System releases assign immutable definition-based MCU recommendations; older-system boot never reflashes, and observed mismatch/unknown is visible. Passive target preflight is recorded in the candidate execution ledger; recheck safety-relevant state before any physical operation.
 
-Next product milestone: implement the supported release/commissioning candidate path and clean-owner journey in existing builders/runtime; freeze/assemble one candidate, execute attended configured-printer commissioning and remaining candidate-specific acceptance, then publish the qualified release with source/notices. Current diagnostic and KVM images do not establish board release or printing acceptance. Required first physical action waits for exact configuration/target/recovery review and separate authority.
+Current milestone: finish native candidate/clean-owner qualification and freeze/assemble one supported candidate; then execute attended configured-printer commissioning and remaining candidate-specific acceptance, and publish the qualified release with source/notices. Current diagnostic and KVM images do not establish board release or printing acceptance. Required first physical action waits for exact configuration/target/recovery review and separate authority.
 
 ## Reuse
 
@@ -23,4 +46,4 @@ Next product milestone: implement the supported release/commissioning candidate 
 
 ## Authority and history
 
-This source-overhaul PR is not physical-operation or release-publication authority. Native goal status is separate from project feature-task status; no new native goal is implicitly created. Physical dependencies remain in [one H queue](../docs/hardware/coordinated-human-tasks.md). [Historical goal narratives](../docs/history/current-goals-through-20261116.md) are evidence, not current instructions.
+Source PR publication is not physical-operation or release-publication authority. The active native full-release goal and running source feature-task have distinct completion criteria. Physical dependencies remain in [one H queue](../docs/hardware/coordinated-human-tasks.md). [Historical goal narratives](../docs/history/current-goals-through-20261116.md) are evidence, not current instructions.
