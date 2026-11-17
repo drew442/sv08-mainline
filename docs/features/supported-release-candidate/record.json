@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "1872d64f651372420751845bb6a51b52a5f14330b3dc7dbe50d727475af8b741",
-    "rationale": "Same accepted C1-C5/full release goal: add the demonstrated post-confirm boot metadata producer and its tests to existing source ownership. Preserve current patch, prototype evidence, failures and cumulative source/native allowances; no physical action.",
+    "rationale": "Same accepted C1-C5 supported actual-printer path: measured Kernel.inventory rejects eMMC boot0/boot1. Add protected auxiliary-topology runtime/preparation and tests to existing ownership; preserve all earlier evidence/attempts and broaden no physical authority. Offline source fix and affected artifact refresh only.",
     "reference": "docs/features/supported-release-candidate/owner-request.md",
     "reference_sha256": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/features/supported-release-candidate/owner-request.md": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
       "docs/remaining-work-plan.md": "c86c29e67af62eb3853aa0f8a79ec39c1fbba8b71860d2175ffe1cc5540a0f31"
     },
-    "scope_sha256": "fee8e9101346056c57ebc2c8dc587fb4c78c112c0055a8c2eb75da09d0ba1bdc",
+    "scope_sha256": "63bf5e8ee8ad76dd9d5938650ba57c3e61d06482204e735414e22fb47bc032b7",
     "session": "supported-release-20261117",
-    "source_commit": "d8a50f4b42776ec413f4cf153aa9dbd5e7fb87a4"
+    "source_commit": "52712158a1d623e630e8a6a3e718541d40ad6c17"
   },
   "checks": [
     {
