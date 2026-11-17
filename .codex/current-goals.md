@@ -6,29 +6,32 @@ first-supported-release goal is active; the existing
 is running. The earlier recovery qualification remains complete at its recorded
 scope. No physical deployment, MCU flashing or output operation occurred in this goal.
 
-Draft [PR39](https://github.com/drew442/sv08-mainline/pull/39) publishes the supported
-candidate/clean-owner source checkpoint at
-`3f86bd2ea82ea173d25bc9a1cb0e9282b02224b4`. All four applicable CI workflows pass at
-that exact source. Root source checks, six disposable mode/slot boots and rendered
-800x480 owner interaction checks pass; installed native PAM and supported board
-artifacts remain to qualify. These are source/software results, not printing or
-release acceptance. The full native goal is not complete at this PR checkpoint.
+Draft [PR39](https://github.com/drew442/sv08-mainline/pull/39) contains the supported
+candidate/clean-owner source path. All four CI workflows passed at3f86bd2;
+subsequent source repair88fe387 and final branch CI require separate observation.
+The actual native KVM factory and captured-hardware validators passed unchanged
+production limits. The owner/PAM probe passed29 checks after one fixture-permissions
+repair. [Native evidence](../docs/features/supported-release-candidate/native-evidence.json)
+distinguishes real installed PAM in synthetic roots from normal boot/browser and
+physical acceptance. Root source, six disposable mode/slot boots and800x480 rendered
+owner checks also pass. This source/software checkpoint is not release completion.
 
-Native work is assigned to `/run/a733-guests/sv08-release-20261117` on the existing
-ARM64/KVM runner, with a private inode-rich workspace and extracted tools. The
-separate allowance is 10,800 process-seconds /64GiB generated, including the logical
-32GiB workspace; source work retains its 7,200seconds /1GiB cumulative allowance.
-[The execution ledger](https://github.com/drew442/sv08-mainline/blob/3f86bd2ea82ea173d25bc9a1cb0e9282b02224b4/docs/features/supported-release-candidate/execution.json)
-retains prior charges and attempts. A fresh normal baseline is in progress; the
-first attempt's missing private wget prerequisite was corrected without a host
-installation and its failed log retained. Actual validator/owner integration
-precedes expensive final assembly. No TCG substitution or simulated native pass.
+Native work: `/run/a733-guests/sv08-release-20261117` on the existing ARM64/KVM
+runner, private mounts/tools and a logical32GiB inode-rich workspace. Source
+ceiling7,200process-seconds/1GiB, conservative charge2,500seconds/384MiB. Separate
+native ceiling10,800seconds/72GiB after a recorded8GiB output continuation; conservative charge6,600seconds/62GiB including
+logical container plus generated files and removed attempts. [Execution](../docs/features/supported-release-candidate/execution.json)
+retains cumulative attempts. Bootstrap/security refresh and exact application,
+Cockpit/RAUC and board-package checks passed. The revision4 six-partition candidate is assembled at the factory size; readback of all partitions/SPL/environments and the selected-software release gate pass. It is not physically booted or printing/release qualified.
+Current normal-root finalization and provenance pass after the canonical certificate link fix. A distinct revision5 signed OTA payload is being prepared from unchanged source for the update/fallback campaign; no second whole normal disk is planned.
 
-Read-only target preflight found saved hardware revision13 selecting a Funssor/CN3D
-bed. Fitted-hardware confirmation is pending; saved selections are not physical
-proof. The target remains on release0.1.0-physical-update.2, slotB, immutable. Exact
-physical-operation authority/review, recovery readiness and attendance remain
-required before changing the printer.
+Owner confirmed the fitted Funssor/CN3D bed, factory mainboard/toolhead/hotend,
+filament sensor and exhaust fan matching saved hardware revision13. Passive target
+preflight: release0.1.0-physical-update.2, slotB, immutable, no trial; target32GB spare,
+candidate revision4. Artifacts still must fit the factory7,818,182,656-byte layout.
+Independent SD/backup-medium identities are requested for the final reviewed policy.
+No physical configuration/service/boot/output change has occurred. Exact-operation
+authority/review, recovery readiness and attendance remain required before changes.
 
 ## Contract and next milestone
 
