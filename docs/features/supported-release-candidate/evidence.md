@@ -2,7 +2,8 @@
 
 The supported source path and clean-owner interaction are implemented. This is
 a **source checkpoint**, not a supported release or installed/hardware acceptance.
-The full native release goal remains active. [Execution ledger](execution.json)
+The full native release goal remains active. Later continuation sections below
+supersede earlier pending-state statements only for their named inputs. [Execution ledger](execution.json)
 retains resources, attempts and target-preflight limitations; [intake](intake.json)
 remains historical at its stated source.
 
@@ -94,3 +95,75 @@ regression coverage passes10 supported-candidate plus24 admin-staging tests. Its
 first mkdir fixture error is retained. Current-source provenance/root finalization
 must be rerun after publication of the repair; full board images remain unassembled.
 All four hosted workflows passed at3f86bd2; newer-source CI must be checked separately.
+
+
+## Boot lifecycle correction at dd65c33
+
+Tracing the constructed66dce8d prototype found two product defects: persisted
+commissioning permission had no reboot activation consumer, and successful trial
+confirmation left the prepared boot record marked as a trial. The repair queues
+Klipper only after real health and a full existing permission check; Klipper keeps
+its own execution-time guards. Confirmation verifies the completed transaction and
+publishes validated normal boot metadata before releasing readiness. 49 focused
+source checks pass; related transaction/restart/boot checks add 62 passes and one
+explicit opt-in namespace skip. Counts overlap earlier suites and are not summed.
+
+The [native unit-contract receipt](boot-lifecycle-evidence.json) records two actual
+ARM64/KVM boots, distinct kernel boot IDs, enabled/present query-kvm observations,
+six cases per boot and both QEMU exits 0. Absent/revoked/stale permission and failed
+health leave the stub stopped; valid permission queues it. Health and permission
+are explicit stubs in this test. This does not prove production OS health, normal
+board boot, physical MCU compatibility or printing. The first staging invocation
+stopped before boot because host Python lacked a tarfile API; existing GNU tar
+repaired only the disposable invocation. The failed attempt remains preserved.
+
+All four hosted workflows pass at dd65c33: [package/release](https://github.com/drew442/sv08-mainline/actions/runs/44068120233),
+[installed Cockpit](https://github.com/drew442/sv08-mainline/actions/runs/44068120228),
+[deterministic Cockpit](https://github.com/drew442/sv08-mainline/actions/runs/44068120172)
+and [agent workflow](https://github.com/drew442/sv08-mainline/actions/runs/44068120290).
+Anonymous public source bytes match 635 project files. The superseded full prototype
+was compressed and decompressed with its original 7,818,182,656-byte SHA256 verified
+before raw disk/components were retired; hashes/receipts and one compressed archive
+remain. Deleting files does not refund cumulative output. Repaired normal/recovery/
+OTA outputs are being refreshed; prototype measurements are not relabelled as
+current-source proof. No physical operation has occurred.
+
+
+## Refreshed constructed candidate at dd65c33
+
+[Candidate receipts](candidate-build-evidence.json) bind the repaired normal disk,
+internal recovery and signed revision 5 OTA to the frozen production source. The
+normal disk is 7,818,182,656 bytes and the bundle545,122,734 bytes. All six filesystem
+checks and partition readbacks, SPL/both environment copies, trusted RAUC signer,
+streamed payload hashes and embedded release identity pass. The default
+selected-software preparation gate checked actual normal A/B/recovery roots,
+anonymous public source, installed application payloads and selected notices.
+Its generic hardware/legal/full-reproducibility limits remain explicit.
+
+Data filesystem availability is 2,434,105,344 bytes/156,789 inodes. The modeled maximum
+1 GiB bundle plus256 MiB state copy passes with 256 MiB assumed existing data and refuses
+with 512 MiB; the measured545,122,734-byte bundle plus256 MiB copy also passes with 512 MiB
+assumed existing data. These are admission calculations against measured filesystem
+capacity, not measured printer data or actual allocation. Runtime refusal is retained.
+
+The first trusted inspection wrote one 5,024-byte Python cache into its disposable
+source root after raw payload construction. The invariant caught it; the cache and
+failed log remain, and the exact pre-signing root inventory was restored. Repeating
+only inspection with bytecode disabled passed without changing the bundle or any
+production source. The record distinguishes the initial mutation from repaired
+source preservation. Normal-parent/root receipts and owner/PAM metadata remain
+unchanged. Historical prototype evidence and failed attempts were not rewritten.
+
+Remaining release work: identify independent recovery/backup media, bind/build that
+SD route, prepare the existing attended commissioning packet and obtain physical
+operation authority/assessment. Then complete actual installation, normal boot/
+browser access, MCU observation, commissioning/calibration/printing, required
+peripherals and final candidate-specific LAN update/fallback/recovery acceptance.
+Public binary release remains separately authorised and unperformed. The full
+native goal remains active; this PR is a source checkpoint.
+
+After all checks, eight redundant final partition/OTA raw components were retired
+only after matching their hashes to the retained full disk and signed bundle.
+Full current artifacts, recovery sources and every receipt remain; workspace free
+space is 8,468,197,376 bytes. Cumulative output stays charged at 93 GiB, with no deletion
+credit. Final artifact paths remain on the private ARM runner.
