@@ -72,3 +72,32 @@ motor currents are documented configuration defaults, not invented motor ratings
 changing a current or its connector requires a separate owner-entered rating.
 Measured PID gains are excluded and watermark control is the uncalibrated state.
 Hardware selection requires no PID calibration and never activates outputs.
+
+## Release-recommended MCU firmware
+
+Board definitions may carry the validated `sv08.mcu_firmware` metadata extension:
+`{"format_version":1,"klipper_commit":"<exact 40-character lowercase commit>"}`.
+This is a recommendation, not a flash command, clock/offset declaration or proof
+of hardware compatibility. Changed board definitions use new immutable versions
+and hashes; built-in assembly dependencies are regenerated with them.
+
+Existing host integration embeds exact board-definition snapshots in each release
+manifest. A newly prepared OS generation receives its release-bound assignment
+outside the editable hardware/configuration envelope. Source/older generations
+remain unchanged, including on rollback. Invalid/tampered assignments refuse;
+legacy generations lacking assignment remain unknown rather than silently gaining
+new facts. Firmware observations are not written into the hardware draft.
+
+Ordinary Printer Hardware status joins the applied publication's board mapping
+with read-only observations from the fixed local Klipper socket. It reports
+recommended full commit, reported version and match/mismatch/unknown. Short,
+dirty, unparseable, disconnected or unmapped observations are unknown. Saved or
+unsaved draft changes cannot substitute for the applied board mapping. Matching
+a reported commit is not commissioning or protocol compatibility proof.
+
+No release update, rollback or status call flashes an MCU. Existing bundle pin,
+idle admission, calibration and heater protections remain. Explicit USB firmware
+maintenance is a separate reviewed operation. Rollback qualification must name
+versions containing this policy; historical roots predating the notification
+implementation cannot retroactively display it. Their use needs an explicit
+compatibility/maintenance plan rather than a claim of automatic warning support.

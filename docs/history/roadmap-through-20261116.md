@@ -1,0 +1,269 @@
+# Historical record — not current instructions
+
+Original path: `docs/roadmap.md`; original SHA256: `9337a26bcb14ef7e42623e30b7e87d70e3aa611d845bdecd983a6217d0a5790c`.
+[Original rendered record and relative links](https://github.com/drew442/sv08-mainline/blob/85a17aeb169a36fe938dec9f8d9efed3736107c4/docs/roadmap.md).
+Verbatim historical content follows; permissions, next actions and status are not current.
+
+````````markdown
+# Roadmap
+
+H12 completed on 2026-10-03: attended SD reimaging of the installed eMMC,
+integrated checks, Yes/No confirmation, full write/readback and an operator-requested
+relay restart into the installed system all passed. This is bounded recovery
+acceptance, not a printing or release qualification. See the
+[current goals](../.codex/current-goals.md),
+[owner's H12 scope decision](decisions/20261002-h12-scope-reduction.md), and
+[remaining-work plan](remaining-work-plan.md). RAM maintenance, permission
+anti-forgery/replay and cold-capture work are abandoned; automatic launch/return
+are deferred. Historical phase notes below retain their evidence boundaries.
+
+## 0. Foundation — initial intake complete
+
+- Define the stock-first, modified-electronics-capable scope and agent workflow.
+- Gather primary board/chip references with evidence levels.
+- Initialize and pin five upstream reference/source submodules.
+- Record a stock profile as research-only, with unknowns explicit.
+
+This phase establishes inputs; it does not validate firmware or printer operation.
+
+## 1. Identify and preserve the stock system — in progress
+
+Prepared a read-only host collector with offline fixture tests and a
+[discovery/backup workflow](hardware/discovery-and-backup.md). Physical inspection
+and full backup/recovery evidence remain outstanding.
+
+[Test printer 01](hardware/test-sv08-01.md) is identified by its owner as mostly
+factory electronics with a 10 mm bed, upgraded hotend, enclosure and dual displays.
+Its [first live inspection](hardware/test-sv08-01-discovery.md) identifies a
+vendor-derived stack, two different MCU builds and mostly vendor thermal settings.
+The initial hotend temperature anomaly is no longer observed after owner-reported
+thermistor repair; a read-only recheck found stable ambient readings with unchanged
+sensor settings. Heated-range validation remains outstanding. Raw captures remain private.
+
+The approved private configuration archive parses to the same 116 sections as
+the captured running configuration. Existing mainboard firmware files match the
+pinned vendor artifacts; [file inspection](hardware/test-sv08-01-firmware.md)
+identifies an 8 MHz/zero-offset build candidate, without establishing installed
+flash contents. HDMI and USB touch paths are detected. The owner has an ST-Link,
+eMMC USB reader and spare 32 GB module; the
+[recovery plan](hardware/test-sv08-01-recovery.md) preserves the original module
+as the owner-selected host rollback baseline and builds a fresh
+[host bring-up image](hardware/test-sv08-01-image.md) for the blank spare.
+A full factory image file is optional for this host-only experiment. Both eMMC boot
+regions and the user-area prefix now have matching repeat-read captures, with
+decoded eMMC metadata preserved privately. A factory-module user-area image
+has now been uploaded and passed its supplied hash and read-only filesystem
+checks; repeat-read and restore evidence remain outstanding. The
+[backup/ST-Link intake](hardware/test-sv08-01-backup-and-stlink.md) records this
+and the new host's remote validation. The [mainboard SWD backup](hardware/test-sv08-01-mainboard-swd.md) now has
+two matching complete flash and option-byte reads. The
+[toolhead backup](hardware/test-sv08-01-toolhead-swd.md) also has matching full
+128 KiB reads and option bytes. MCU restoration tests remain outstanding;
+[Katapult preparation](hardware/test-sv08-01-katapult.md) records the selected
+USB update path and remaining validation requirements. The
+[2026-09-07 markings](hardware/test-sv08-01-markings.md) agree with measured
+MCU capacities; the toolhead crystal report is from a spare, so its installed
+8 MHz reference was initially provisional; the owner subsequently confirmed
+installed/spare equivalence. The [hands-on task list](hardware/test-sv08-01-recovery-tasks.md)
+provides the spare write/boot steps and independent MCU preservation tasks.
+
+Capture PCB revisions, processor markings, host OS/boot/device-tree information,
+MCU identities, existing configs, and flash/clock settings. Obtain recoverable
+host and MCU backups, recording hashes and a restore plan. Reconcile the published
+schematics with the actual boards.
+
+Exit evidence: a populated stock hardware record, private backup inventory,
+reviewed recovery procedure, and resolved settings for each MCU build target.
+
+## 2. Audit vendor behavior and select the stack
+
+An [initial static compatibility audit](vendor-compatibility.md) records removed
+configuration options, vendor extras, probe API differences, and missing includes.
+The complete vendor delta and runtime behavior remain to be investigated.
+
+Compare Sovol's Klipper changes, probing/Z-offset routines, macros, thermistor
+handling, and optional services against current upstream. Create a feature matrix:
+upstream equivalent, required configuration, custom implementation, or explicitly
+deferred. Evaluate the OS/kernel/device tree and boot chain independently.
+
+Exit evidence: architecture decisions, selected candidate revisions, compatibility
+gaps with reproductions, and a minimal custom-code plan where needed.
+
+The [2026-09-09 host OS and A/B proposal](design/host-os-ab.md) compares Debian,
+Ubuntu and custom distributions, upstream LTS kernels, persistent state and
+transactional deployment. Owner answers now require factory 8 GB sizing, HDMI and onboard Wi-Fi, allow
+external drivers, and select configurable idle staging with next-boot activation.
+The owner selected immutable mode by default and supported writable mode in
+[decision 0004](decisions/0004-os-operating-modes.md). Mode switching and
+customization-aware updates require implementation; board/package-size validation
+remains open. This does not replace the current bring-up image.
+
+The [new host preparation stages](hardware/host-ab-build.md) now implement
+factory-capacity layout validation and an isolated Debian package baseline.
+Offline [state/mount and signed-update integration](hardware/host-state-build.md)
+now has regression, full ARM64 mode/package boots and paired RAUC installation
+tests. A [reproducible ARM64 RAUC package](hardware/host-rauc-build.md) also passes
+actual ext4/vfat inactive-partition installation on the selected distro kernel.
+[Redundant environment tests](hardware/host-environment-build.md) now cover real
+RAUC/U-Boot selection, CRC fallback and recovery-script dispatch.
+[Full Linux A → B → A boots](hardware/host-rollback-build.md) verify late state
+copying and rollback in QEMU. The [integrated device backend](hardware/host-rauc-backend.md)
+now stages, verifies, arms and cancels under real ARM64 service admission. Board boot
+integration, health confirmation, service activation and idle coordination remain
+outstanding; this is not a flashable replacement image.
+
+The owner now requires [browser host administration and local recovery UI](hardware/host-admin-ui.md)
+without Linux commands. Initial Cockpit page, GTK recovery screen, guarded policy
+and image-controller tests are implemented offline. Complete software/network
+adapters, independent recovery writes/export, production
+account/TLS provisioning and physical input testing remain first-release requirements.
+[Actual Cockpit authentication](hardware/host-admin-cockpit.md) now passes
+independent offline review with real ARM64 PAM/sudo, helper/session tests and an
+exact package closure. This does not establish production LAN/TLS or board support.
+[Authenticated bundle upload](hardware/host-admin-upload.md) now also passes
+independent offline review with real ARM64 Cockpit/RAUC, bounded transfer,
+interruption/reconnect and explicit cleanup. Upload authenticates the signed
+manifest; image installation and activation remain separate reviewed operations.
+[Recovery data export](hardware/host-recovery-export.md) now has a real archive
+backend and [verified pre-mounted media admission](hardware/host-recovery-media.md)
+with GTK cancellation/apply and filesystem/block-read-only source/FAT32 fixtures.
+[Single-pass verification](hardware/host-recovery-readback.md) now halves logical
+read volume on the approved fixture while retaining complete-byte integrity checks.
+The [independent recovery image](hardware/host-recovery-image.md) now fits its
+512 MiB allocation and boots the installed ARM64 GTK diagnostics without A/B/data
+roots. Trusted premount integration, production recovery operations and physical
+export/input tests remain outstanding.
+
+The printer returned online on 2026-09-12. A
+[read-only host inspection](hardware/test-sv08-01-online-20260912.md) now identifies
+the SDIO radio's bound driver, confirms the retained camera offers MJPEG
+640×480/15 fps through V4L2, and records HDMI/touch enumeration and unresolved
+kernel diagnostics. This is evidence from the existing bring-up image; new-image
+boot, Wi-Fi operation, camera capture and physical UI tests remain open.
+
+The subsequent [physical kernel trials](hardware/host-kernel-trial.md) now verify
+wired SSH, a passive onboard-radio scan and decoded camera frames on Linux
+6.18.51, followed by return to the original kernel. The
+[complete A/B diagnostic composition](hardware/host-board-image.md) joins the
+corrected source-built loader, clean host and
+[board recovery](hardware/host-recovery-board.md). These are first-host-test
+inputs; association, sustained workloads, physical A/B/recovery boot and printing
+remain unvalidated. New product features remain paused while this work proceeds.
+
+The [v4 physical first boot](hardware/host-board-image-20260924-v4-first-boot.md)
+then exposed an A-slot `sv08-prepare.service` failure followed by U-Boot selecting
+independent recovery. The initramfs omitted the staged persistent-identity hook,
+which is a likely cause; the service exception is not yet captured. The recovery UI
+is visible through the GL-RM1V2. Its persistent EDID was changed from the KVM's
+2560×1440@60 preset to a custom 1024×600@60 mode, but the selected HDMI mode on
+the printer and compatibility with the unidentified touchscreen remain to be
+verified. These findings do not establish eMMC data loss or a cause for the A
+failure.
+
+On 2026-09-25 the reviewed v5 replacement booted from slot A and reached SSH over
+Wi-Fi with persistent `/data` mounted. Cockpit failed because TLS certificate
+generation targeted the read-only root. Boot-health confirmation remains masked
+and a separately reviewed live re-arm set `BOOT_A_LEFT=3` without rebooting.
+That does not confirm A healthy; the counter has not been re-read after the later
+SD trial. The [v5 record](hardware/host-board-image-20260925-v5-first-boot.md)
+retains the evidence and limitations. On 2026-10-03, the narrow installed TLS/theme
+repair passed actual Cockpit authentication and persistence through a normal
+restart. A device-number assumption found afterward was repaired with stable
+controller/CID binding and independently reviewed. A subsequent normal restart
+and HW-667 power cycle passed automatic diagnostic A confirmation and persistent
+SSH/Cockpit checks. On October4 both live MCU firmware dictionaries/build metadata
+matched the host, and independent final delivery verification passed. See [current installed progress](features/commissioning-host-readiness/installed-progress.md).
+The disposable
+[SD/NFS-root diagnostic](hardware/host-sd-network-root-prototype.md) passed its
+single corrected physical retry: SD loader, Linux kernel, wired DHCP and
+read-only NFS root all reached the exact diagnostic pass marker before poweroff.
+The separately reviewed H10 retry also read both current U-Boot environment
+copies from the spare eMMC with CRC/layout checks; their recorded A counters
+differ (3 and 2). This proves remote Linux-root testing and a bounded read
+without writing the eMMC. Kernel and initramfs still reside on SD because U-Boot
+has no Ethernet driver; the test is not a complete host OS, does not establish
+which redundant environment U-Boot selects, and does not establish normal
+printer operation. See the [first-attempt record](hardware/host-sd-network-first-boot-20260925.md),
+[successful H09 result](hardware/host-sd-network-first-boot-20260926.md), and
+[H10 eMMC result](hardware/host-sd-network-emmc-probe-20260926.md).
+
+## 3. Reproducible builds and offline validation — host and MCU candidates built
+
+The first image assembles fresh Debian 13 arm64 from a dated snapshot with
+captured vendor boot support; see [decision 0002](decisions/0002-first-emmc-image.md).
+It stages the selected Klipper source but does not activate printer services or
+include MCU firmware. This is not a source-reproduced boot chain or a supported
+printer image. On 2026-09-06 the owner reported successful boot on the new
+eMMC; detailed host validation and full stack builds remain outstanding. The
+[image capture guide](hardware/imaging-emmc.md) now covers preserving the installed
+module on Windows, Linux and macOS.
+
+The [2026-09-07 MCU build](hardware/test-sv08-01-mcu-build.md) provides pinned
+Katapult and matching Klipper binaries with identical clean rebuilds, plus an
+AArch64 host helper and matching source archive. The installed toolhead clock
+is provisional; hardware writes and the full host dependency environment remain
+outstanding at that build stage. The subsequent
+[host integration](hardware/test-sv08-01-host-integration.md) now passes native
+helper loading and dual-MCU file-output validation; physical USB updates remain
+untested. [Initial installation and rollback inputs](hardware/test-sv08-01-initial-programming.md)
+are now staged. The [toolhead bootloader installation](hardware/test-sv08-01-toolhead-katapult.md)
+has completed with full readback verification. The
+[toolhead USB session](hardware/test-sv08-01-toolhead-usb.md) now verifies two
+application uploads, software re-entry and a live ready state with no outputs.
+The [mainboard bootloader](hardware/test-sv08-01-mainboard-katapult.md) is now
+installed with full readback verification. Its
+[USB updates and paired MCU test](hardware/test-sv08-01-mainboard-usb.md) now pass:
+both MCUs report the pinned Klipper version and reach ready without outputs.
+On October 4, the unchanged factory-curve ambient baseline passed with the chamber
+BLE reference. The [installed Cockpit component page](features/printer-component-configuration/installed-evidence.md)
+now supports board/device presets and inactive configuration candidates with
+independent software and installed acceptance. Physical filament/probe transitions
+and fine calibration are owner-deferred; outputs and printing remain unvalidated.
+
+The [sensor bring-up and offline configuration migration](hardware/test-sv08-01-sensor-bringup.md)
+now provide the next commissioning stage. Full-printer activation and hardware
+validation remain outstanding. Routine USB updates are selected by
+[decision 0003](decisions/0003-usb-mcu-updates.md).
+
+Record toolchains, build dependencies, per-MCU configs, patches, and artifact
+hashes. Build the host integration and both MCU targets. Check configuration
+compatibility and regression-test custom behavior. Keep flashing separate.
+
+Exit evidence: repeatable build instructions and artifacts tied to a project
+revision. Builds alone do not advance hardware support status.
+
+The new A/B host now has a [measured Klipper package](hardware/host-apps-build.md)
+installed and checked in an isolated Debian ARM64 baseline. The [complete application payload build](hardware/host-stack-build.md) now includes
+Moonraker, Mainsail and KlipperScreen, with offline API/GUI checks. Operating-mode integration is under offline test;
+recovery and board-bootable image assembly remain outstanding; see the
+[completion checklist](hardware/host-os-tasks.md). The
+[Armbian source intake](hardware/host-ab-armbian-intake.md) identifies a maintained
+SV08 board-support candidate whose hardware validation is explicitly pending.
+
+## 4. Stock hardware bring-up and conversion guide
+
+Validate boot/storage/network reliability and persistent MCU identity. Follow
+Klipper's configuration checks for sensor readings, fans, endstops, and motion;
+then validate probing, homing, gantry leveling, heaters, and mesh. Measure the
+temperature path before accepting vendor thermistor settings. Exercise shutdown
+behavior and recovery, and record limitations.
+
+Exit evidence: named-board bench results, representative print results, tested
+recovery, and a clean-system conversion reproduced from the documentation.
+
+## 5. Modified profiles and maintenance
+
+Add explicit profiles for replacement hosts, mainboards, toolheads, probes, and
+transports. Reuse shared mechanics while validating each changed electrical
+interface and firmware target. Automate candidate update checks and regression
+builds; publish supported combinations only with the associated test records.
+
+## Open decisions
+
+- Exact installed board revisions, recovery adapter models and spare-module compatibility.
+- OS/image builder, kernel line, bootloader, and device-tree strategy.
+- Treatment of vendor probing and power-loss recovery features.
+- First modified-electronics combination to support after stock.
+- License for original code/documentation, before external contributions/releases.
+
+````````

@@ -4,7 +4,7 @@
     {
       "format_version": "0.1",
       "id": "sv08-main.board",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "kind": "board",
       "name": "Sovol SV08 original mainboard reference",
       "description": "Reference mapping only; installed identity and electrical ratings require confirmation.",
@@ -894,6 +894,12 @@
         "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
         "reservation_evidence": "Klipper MCU USB dictionary RESERVE_PINS_USB (SV08) / explicit sample USB PA11/PA12 (EBB)",
         "presets": []
+      },
+      "extensions": {
+        "sv08.mcu_firmware": {
+          "format_version": 1,
+          "klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b"
+        }
       },
       "inputs": {
         "transport": {
@@ -2321,7 +2327,7 @@
     {
       "format_version": "0.1",
       "id": "sv08-tool.board",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "kind": "board",
       "name": "Sovol SV08 Extra_MCU reference",
       "description": "Reference mapping only; installed identity and electrical ratings require confirmation.",
@@ -2684,6 +2690,12 @@
         "reserved_scope": "Only documented transport reservations; all unlisted signals are unavailable, not assumed free.",
         "reservation_evidence": "Klipper MCU USB dictionary RESERVE_PINS_USB (SV08) / explicit sample USB PA11/PA12 (EBB)",
         "presets": []
+      },
+      "extensions": {
+        "sv08.mcu_firmware": {
+          "format_version": 1,
+          "klipper_commit": "f0892d82b0f1c1228454f09eb508eddde2250f4b"
+        }
       },
       "inputs": {
         "transport": {
@@ -3375,7 +3387,7 @@
     {
       "format_version": "0.1",
       "id": "sv08.factory",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "kind": "assembly",
       "name": "Sovol SV08 \u00b7 complete factory hardware",
       "description": "Original SV08 factory hardware and documented configuration defaults. Controller identities and measured calibration remain local. Pressure contact is monitored; vendor-specific automatic Z calibration is a separate workflow.",
@@ -3416,8 +3428,8 @@
         {
           "source": "builtin",
           "id": "sv08-main.board",
-          "version": "0.2.0",
-          "sha256": "ed10f3a25e1117cad7ecc2a0f1c02a4b4ca8b0e76d2383c5142a8fdc63c2ba4d"
+          "version": "0.3.0",
+          "sha256": "ba1947347e6561a268bd9dd32176c5f6c36d937ee2cf76e9fe6988879928e35e"
         },
         {
           "source": "builtin",
@@ -3512,8 +3524,8 @@
         {
           "source": "builtin",
           "id": "sv08-tool.board",
-          "version": "0.2.0",
-          "sha256": "b31293fbd60da5b7a50fd2b4c0dec00eb3b3ca2bfcf46501c646303a19762231"
+          "version": "0.3.0",
+          "sha256": "e85b574b89923108071850fa56fbf5e9d81142824961da78a5ffe6e1acf31f94"
         },
         {
           "source": "builtin",

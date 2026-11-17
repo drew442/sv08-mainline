@@ -326,6 +326,8 @@ class Store:
         if release_revision is not None:
             from sv08_update_policy import release_revision as validate_revision
             validate_revision(release_revision)
+        from sv08_printer_firmware import installed_assignment, read_regular, validate_assignment
+        firmware_assignment=installed_assignment(release,schema)
         identifier(release)
         if slot not in ('A', 'B') or schema != 1:
             raise ValueError('Unsupported slot/schema')
@@ -366,6 +368,16 @@ class Store:
                         for name in ('config', 'database', 'ui'):
                             (target / name).mkdir()
                         fsync_dir(target)
+                    # New OS generation gets the current image's exact definitions.
+                    # Snapshot may contain an older generation-root assignment.
+                    assignment_path=target/'mcu-firmware.json'
+                    if assignment_path.exists() or assignment_path.is_symlink():
+                        if assignment_path.is_symlink():raise ValueError('Unexpected inherited MCU assignment link')
+                        assignment_path.unlink()
+                    if firmware_assignment is not None:
+                        self.budget.check(65536,1)
+                        atomic_json(assignment_path,firmware_assignment)
+                    fsync_dir(target)
                     fsync_dir(target.parent)
                 record = dict(release=release, generation=generation, schema=schema,
                               customized=False, parent_generation=source['generation'] if source else None)
@@ -386,7 +398,14 @@ class Store:
                 if tx.get('id') == pending['id'] and tx.get('release_revision') is not None:
                     from sv08_update_policy import release_revision as validate_revision
                     record['release_revision'] = validate_revision(tx['release_revision'])
-            self.generation_path(record)
+            generation_path=self.generation_path(record)
+            # Existing generations, including rollback, are never reassigned.
+            # Legacy generations remain unknown until a new release is assigned.
+            assignment_path=generation_path/'mcu-firmware.json'
+            if assignment_path.exists() or assignment_path.is_symlink():
+                assigned=validate_assignment(read_regular(assignment_path),release)
+                if firmware_assignment is not None and assigned!=firmware_assignment:
+                    raise ValueError('Installed MCU recommendation differs from assigned generation')
             # Conservatively retain customization status across writable -> immutable.
             if state['requested_mode'] == 'writable':
                 record['customized'] = True

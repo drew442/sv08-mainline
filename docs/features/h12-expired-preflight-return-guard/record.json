@@ -32,7 +32,7 @@
   ],
   "tasks": [
     {
-      "blocker": "Owner deferred automatic recovery return on 2026-10-02; old RAM preflight and permission expiry work abandoned. Superseded by attended SD H12 scope. Do not dispatch until owner changes scope.",
+      "blocker": null,
       "checks": [
         "hret-01",
         "hret-02",
@@ -46,9 +46,16 @@
       "implementation": null,
       "repeats": 0,
       "resumption": null,
-      "status": "blocked",
+      "status": "superseded",
       "title": "Implement and independently verify the bounded H12 return exception",
-      "verification": null
+      "verification": null,
+      "supersession": {
+        "actor": "root/coordinator",
+        "reason": "Owner withdrew old RAM/preflight exception and deferred automatic recovery return; do not recreate this abandoned implementation gate. Prior recorded blocker: Owner deferred automatic recovery return on 2026-10-02; old RAM preflight and permission expiry work abandoned. Superseded by attended SD H12 scope. Do not dispatch until owner changes scope.",
+        "reference": "docs/features/release-delivery-overhaul/coverage.md",
+        "reference_sha256": "b2efba839c8a400976428be40e61d53599607a0760089568b03603a8c7d4c83d",
+        "source_commit": "fd30e7ef9c137983e6e9597fb805b21ddc7dba7c"
+      }
     }
   ],
   "title": "Guard one H12 SD return with possible retained preflight marker"

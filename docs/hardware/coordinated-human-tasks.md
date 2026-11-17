@@ -1,5 +1,34 @@
 # Coordinated human tasks
 
+Current physical dispatch for [the release route](../remaining-work-plan.md).
+Use [one configured-printer commissioning session](test-sv08-01-commissioning-session.md),
+not separate repeated sensor/firmware/print appointments. No physical operation
+is authorised by this queue or the delivery-overhaul PR.
+
+| Existing H scope | Remaining action | Before requesting attendance |
+| --- | --- | --- |
+| H01 | Confirm actual fitted test printer and selected component definitions; no factory-bed requirement | Coordinator assembles existing evidence and names only unresolved observations |
+| H02/H04 | Candidate install/boot compatibility and exact commissioning launch/stop/recovery route | Reviewed bytes/configuration/target, usable independent recovery and explicit operation authority |
+| H05 | Input association/transitions and appropriate independent sensor reference | Input-only configuration; preserve owner fine-calibration deferral |
+| H06 | Stop/fans/motors/homing/heat, calibration persistence, first layer/representative prints and controls | Complete earlier phases; separately reviewed bounded output actions with an attended stop route |
+| Remaining release hardware gates | Required Wi-Fi/HDMI/touch/USB/concurrent workload and selected credible interruption/recovery cases | Freeze candidate and exact scope; use expendable data; no exhaustive arbitrary test matrix |
+
+H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
+software recovery have completed evidence. Reuse applicable results; final-artifact
+or physical boundaries still need their own acceptance. Do not repeat destructive
+recovery/fallback merely to start printing. No physical task is marked passed here.
+Current dependency is the coordinator's supported candidate/clean-owner/activation
+packet; do not ask the owner to improvise generic Linux commands.
+
+The detailed earlier H IDs, observations and procedures are retained below for
+references. Historical next actions and permissions are not current dispatch or
+new operation authority. Original text SHA256: `422c1f6bc20a0fc81c0d89ff96a5ab8eb64b7bc9aa8379258a605d86a7648158`.
+
+<details>
+<summary>Historical H queue and receipts through 2026-11-16</summary>
+
+# Coordinated human tasks
+
 **Owner scope change, 2026-10-02:** Keep installed-eMMC reimaging using SD
 maintenance, simple target/image checks, full write verification and an attended
 yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and
@@ -527,3 +556,5 @@ inactive. PSU remains OFF; no attended action is needed to complete this softwar
 Use the [single staged session](test-sv08-01-commissioning-session.md) for H01/H02/H04/H05/H06 and the [current software/readiness matrix](../development/stock-printer-readiness.md). This consolidates the earlier printer-lane forms/dispatch wording; it does not erase measured results, reopen H12 or authorize a new physical operation. Stock qualification needs a stock target; the named machine's bed/hotend upgrades must be selected correctly and do not establish factory thermal behavior.
 
 Before scheduling output work, coordinator prepares the exact configuration/source/firmware bindings, target-specific reviewed launch/stop procedure and recovery preconditions. Current diagnostic masks and OS-health restrictions remain; no generic unmask or forged health marker. One private session log feeds all consuming H IDs. Reuse unchanged applicable evidence, collect actual input transitions and staged motion/heat/calibration/print observations once, and preserve failures as phase-specific dependencies. Use Cockpit's measured-offset field for persistence; ordinary SAVE_CONFIG cannot update the included managed probe setting. Fine sensor fitting/proprietary pressure calibration remain deferred. No physical check is complete merely from this preparation; no printer access or operation occurred in this source goal.
+
+</details>
