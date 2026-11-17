@@ -7,7 +7,7 @@ is authorised by this queue or the delivery-overhaul PR.
 
 | Existing H scope | Remaining action | Before requesting attendance |
 | --- | --- | --- |
-| H01 | Confirm actual fitted test printer and selected component definitions; no factory-bed requirement | Coordinator assembles existing evidence and names only unresolved observations |
+| H01 | Owner confirmed the saved fitted parts on 2026-11-17; resolve only remaining essential wiring/MCU/sensor associations, without requiring a factory bed | Reuse the declaration and existing evidence; do not repeat the complete part inventory |
 | H02/H04 | Candidate install/boot compatibility and exact commissioning launch/stop/recovery route | Reviewed bytes/configuration/target, usable independent recovery and explicit operation authority |
 | H05 | Input association/transitions and appropriate independent sensor reference | Input-only configuration; preserve owner fine-calibration deferral |
 | H06 | Stop/fans/motors/homing/heat, calibration persistence, first layer/representative prints and controls | Complete earlier phases; separately reviewed bounded output actions with an attended stop route |
@@ -17,8 +17,15 @@ H12 attended SD reimage, H13 physical automatic update/fallback and PR17 native
 software recovery have completed evidence. Reuse applicable results; final-artifact
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
-Current dependency is the coordinator's supported candidate/clean-owner/activation
-packet; do not ask the owner to improvise generic Linux commands.
+The supported candidate and clean-owner path are source-validated in [PR39](https://github.com/drew442/sv08-mainline/pull/39).
+The [current session bindings](test-sv08-01-commissioning-session.md#current-candidate-bindings--2026-11-17)
+record rebuilt artifacts, an actual native-validated input-only candidate and a
+passive installed-storage snapshot. These do not pass any physical H phase.
+Current dependency: identify the spare SD/backup drive and their read-only access
+location, then bind/build independent recovery and finalise exact phase launch/stop
+assessment/authority. Keep the tested rescue SD unchanged. The coordinator supplies
+the Linux procedure; do not ask the owner to improvise it. Latest cumulative
+preparation allowances/charges and retained failures are in the same session form.
 
 The detailed earlier H IDs, observations and procedures are retained below for
 references. Historical next actions and permissions are not current dispatch or

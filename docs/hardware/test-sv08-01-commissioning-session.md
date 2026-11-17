@@ -11,6 +11,72 @@ without asking for repeated inspections, media moves or calibration transcriptio
 Keep one private session record and link it from every consuming H row. Do not put
 serials, private configuration, calibration, keys or raw captures in this document.
 
+## Current candidate bindings — 2026-11-17
+
+Preparation only; no physical launch/write is authorised. These bindings belong to
+[PR39](https://github.com/drew442/sv08-mainline/pull/39), whose source checks and
+four hosted workflows passed. The source feature remains self-validated, awaiting
+integration; the full release goal remains active. Keep the source worktree and
+native build checkout frozen rather than rebuilding for this coordinator record.
+
+<details>
+<summary>Coordinator bindings, offline checks and cumulative allowance</summary>
+
+| Item | Prepared binding / remaining condition |
+| --- | --- |
+| Fitted hardware | Owner confirmed saved revision 13: Funssor/CN3D heated bed, factory mainboard/toolhead/hotend, filament sensor and exhaust fan. This declaration does not close wiring, input association, MCU identity or thermal checks. |
+| Production source | `dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d`; pinned host Klipper `f0892d82b0f1c1228454f09eb508eddde2250f4b`. Source/evidence candidate `adb8be0d061bd4eac3fc8623ea86a600e4248f13`; PR head `9e874f075e4a2332aa97aee52c4301f26fbfb138`. Later queue/packet records do not change the built production inputs. |
+| Initial normal disk | `0.1.0-supported-candidate.1`, revision 4, 7,818,182,656 bytes; SHA256 `49697c8eaf21f9b8d83784d3e3525aed3f2bdec38f1a707cdb83647e1362ec63`. Six filesystems/partition readbacks, loader and both environment copies checked; actual normal boot remains unqualified. |
+| Update qualification payload | `0.1.0-supported-candidate.2`, revision 5, 545,122,734 bytes; SHA256 `dba542811057ff68df1cf899aa29b4178ee06a36a58ef7abfa2d995d42c0d019`. Signer, payload hashes and embedded release identity checked. This is the later revision 4→5 trial payload, not authority or proven eligibility to update the current legacy installation. |
+| Recovery / media | Current internal recovery and independent-SD source base are built. **No current independent-SD artifact/admission profile is ready:** spare SD and backup drive identities/location are still required. Preserve the tested rescue SD. Initial migration is planned through independent-SD installation/private-data restore/owner enrollment, subject to exact-operation review. |
+| Saved configuration | Private saved-hardware capture SHA256 `1e4ddf2ef152bc1f6c4b6012f679d4bb613d3ba61b7cdc4a71ee7c6626831cc6`; generated preview JSON `21161db468d2d029ea8604f93d99788359525bd440a4bfa0821962c04feb7115`. The preview is complete with printing disabled; it is not an applied/active publication receipt. Regenerate/review after restore against the installed release and record that receipt before normal commissioning permission. |
+| Input-only phase | Private 1,203-byte candidate SHA256 `af010cc9e3c8a3e992dfe6f28300ea0101b655f1d25dd8d8e6beda57bab9a154`, derived from that captured selection. It contains only the two MCU declarations, inert `kinematics: none`, exact selected thermistor curves/conversion settings, temperature inputs and empty probe/filament button handlers. No heaters, motors, fans, includes, actuation macros or nonempty event commands. |
+| Stop / phase activation | Still requires exact live launch/socket ownership, lifetime/stop procedure, target/boot-state binding, independent operation assessment and owner authority. The input-only artifact is not a substitute managed Full publication and must not be fed to the normal commissioning service or used to remove its guards. No generic unmask/start or readiness-marker creation is approved. |
+
+The input-only candidate reached **ready** using the actual pinned production
+validator in native ARM64/KVM, with observed 8-second CPU/256 MiB address-space
+limits and unchanged 10-second readiness deadline. `query-kvm` reported enabled
+and present; guest boot ID `760a5a3e-fe3f-437d-b25e-91340834f431` exited 0 and stopped.
+The source helper hash is `77fe141910f601962a67efc5d225a5115d49887e6923e73d3b35aca3193b4c3e`;
+the returned dictionary hash is `86665c7ba90587f09347af0001faf3681cc35819141b5c37c1f646e49a15125b`.
+This establishes parser/software readiness only, using file-output simulated MCUs;
+it does not connect to actual MCUs, establish firmware compatibility, prove
+physical sensor associations/accuracy or approve a physical launch. A first local
+derivation guard stopped before output because it assumed a generic sensor name;
+the corrected candidate preserves the exact two named thermistor definitions
+already selected by the owner. No default conversion was substituted.
+
+Private assigned evidence: `~/.sv08-release-20261117/commissioning/` on Codex
+(`inputs.cfg`, provenance, original failed derivation, allowance, native summary,
+filtered runtime limits and `packet-evidence.json`). Native raw diagnostics remain
+under `/run/a733-guests/sv08-release-20261117/logs/native-input-stage/` on the ARM
+runner. Native summary SHA256 `5d236ae4e62eabb13274544ef5179acca40c87efe39caded7b827006de8bcd56`;
+filtered runtime receipt SHA256 `f3b4f73d8beb4ac5f10a617b3951c0e4fa6310c171d5f5df81a060c7eb3de326`. Keep private serials/configuration
+out of this public form. [Built artifact receipts](https://github.com/drew442/sv08-mainline/blob/adb8be0d061bd4eac3fc8623ea86a600e4248f13/docs/features/supported-release-candidate/candidate-build-evidence.json)
+retain the construction/source/notice evidence and its precise limits.
+
+At `2026-11-17T11:53:41+00:00`, a read-only metadata snapshot of the identified installed eMMC data
+partition matched the build profile's expected medium identity. It reported
+1,929,543,680 available bytes, 156,223 available inodes and 504,561,664 allocated
+bytes under `/data/sv08`; no private file contents were read by that snapshot and
+no service/configuration/output change was requested. Receipt SHA256
+`9b862c4a3e77f6ad9034194eee86f60f7224ab5bf167bd7482274781f71c224f`. The current guard calculation admits the actual
+545,122,734-byte bundle plus an assumed maximum 256 MiB state copy: required
+1,625,419,776 bytes/8,256 inodes. A hypothetical 1 GiB bundle plus that copy correctly
+refuses. These are calculations against the older installed filesystem snapshot,
+not an allocation or new-candidate/restore measurement; recheck immediately before
+any live operation. Do not delete user data to turn a refusal into a pass.
+
+This preparation retained prior consumption/attempts and used the existing source
+and native allowances: conservative cumulative upper bounds are 3,620 process-seconds/
+708 MiB source and 11,360 seconds/(93 GiB+64 MiB) native, within 7,200 seconds/1 GiB and
+14,400 seconds/96 GiB respectively. The logical 32 GiB workspace remains charged, the
+existing native fixture was reused, and no image was rebuilt or deletion credit
+claimed. Media identification and physical gates remain unmet.
+
+
+</details>
+
 ## Before scheduling the attended work
 
 The coordinator prepares the exact candidate/configuration manifest, firmware/source
