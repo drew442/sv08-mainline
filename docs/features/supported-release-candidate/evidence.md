@@ -167,3 +167,38 @@ only after matching their hashes to the retained full disk and signed bundle.
 Full current artifacts, recovery sources and every receipt remain; workspace free
 space is 8,468,197,376 bytes. Cumulative output stays charged at 93 GiB, with no deletion
 credit. Final artifact paths remain on the private ARM runner.
+
+
+## Protected eMMC boot-area continuation at 7317a89
+
+The new blank 16 GB SD was identified read-only on Beelink. Actual passive printer
+inventory then exposed a missing production case: eMMC boot0/boot1 regions lack
+independent card identity. [The bounded repair](boot-area-evidence.json) treats
+them as protected, nonselectable children of their verified MMC owner, preserves
+their live identities and write protections, and includes them in mount checks.
+Writable/malformed/selected auxiliary areas refuse before probing or mutation.
+Reviewed eMMC policies now include their extents; omitted topology refuses.
+
+The named implementer reported 54 focused passes with exact source hashes. Of 99
+related checks, 96 passed initially; two required a direct local build directory,
+and one exposed a stale activation factory missing the required storage reserve.
+The affected three pass after correcting disposable inputs and that fixture.
+The rejected symlink attempt and original failures remain preserved. Production
+storage checks were unchanged. Coordinator inspected the complete repair diff.
+
+The reviewed candidate reader also succeeded in memory on the real printer: one
+eMMC, six partitions and two readonly/force-readonly 4 MiB boot areas. This was
+passive metadata/identity probing only, without installing files or changing
+services, mounts, protection flags or storage. It does not prove recovery boot.
+Anonymous public source at 7317a89 matches all 635 project files. Previous validator,
+owner/PAM, rendered and unit-contract proofs retain their original stated scope;
+this metadata fix does not turn them into physical acceptance.
+
+The DD65 prototype is superseded/not for deployment. Its compressed archive was
+decompressed and checked against the original full-image hash before retiring
+the redundant raw disk. All receipts, source roots and earlier history remain.
+Final SD composition still needs the separate USB backup disk; SD root, backup
+and eMMC must remain distinct physical disks. Affected images will be refreshed
+from cached pinned inputs once the complete medium policy can be bound, avoiding
+another redundant artifact set. No printer or SD writes have occurred. The full
+release goal remains active; this is a source correction checkpoint.

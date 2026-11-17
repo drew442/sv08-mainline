@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 3820,
-    "conservative_current_charge_bytes": 891289600,
+    "conservative_current_charge_seconds": 3900,
+    "conservative_current_charge_bytes": 922746880,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -96,8 +96,8 @@
       "board_packages_hash_match": true
     },
     "images_built": true,
-    "conservative_current_charge_seconds": 11800,
-    "conservative_current_charge_bytes": 103079215104,
+    "conservative_current_charge_seconds": 12100,
+    "conservative_current_charge_bytes": 105226698752,
     "tools": {
       "git": "2.39.5",
       "debootstrap": "1.0.128+nmu2+deb12u2",
@@ -380,11 +380,12 @@
         "slaves": []
       }
     ],
-    "repair_status": "Protected nested reader and54 source checks pass; in-memory candidate inventory succeeds on actual eMMC, no deployment/mutation. Affected broader regression exposed stale activation test factory missing reserve_bytes; add test ownership and repair before submission.",
+    "repair_status": "54 focused and99 related source checks pass after explicit fixture/input corrections; actual candidate reader inventory succeeds passively in memory. No deployment. New media policies require protected extents; affected artifacts await refresh.",
     "private_observation": "/home/drew/.sv08-release-20261117/sd-preparation/printer-inventory-private.json",
     "previous_source_validation_commit": "adb8be0d061bd4eac3fc8623ea86a600e4248f13",
     "historical_source_validation_preserved_in_main": "27ffe17c6f992d17a2a34f0200beaf069f58b2fa",
-    "candidate_runtime_sha256": "82950e6c21135e54d1c99e9b69c659848bb0accdf9668d29d5a8c53386bb9c79"
+    "candidate_runtime_sha256": "82950e6c21135e54d1c99e9b69c659848bb0accdf9668d29d5a8c53386bb9c79",
+    "source_revision": "7317a890b4cf812f2010c3fdf480edb0657e8d8b"
   },
   "new_recovery_sd": {
     "host": "beelink.drewnet.online",
@@ -397,6 +398,19 @@
     "no_write": true,
     "backup_drive": "requested; not yet identified",
     "sd_root_derived_at": "dd65c33; source-only predecessor before topology repair",
-    "loader_sources_and_tf_a": "prepared; no final loader without final policy-bound script"
+    "loader_sources_and_tf_a": "prepared; no final loader without final policy-bound script",
+    "final_composition": "awaiting separate backup drive identity; source fix completed, final policy/loader/images pending"
+  },
+  "prototype_dd65_archive": {
+    "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+    "not_for_deployment": true,
+    "compressed_bytes": 1474584233,
+    "compressed_sha256": "bf8c7f69803664ae5742b216cbf88f511c703c3bfdda24d4c73b865ad63d27d5",
+    "uncompressed_bytes": 7818182656,
+    "uncompressed_sha256": "49697c8eaf21f9b8d83784d3e3525aed3f2bdec38f1a707cdb83647e1362ec63",
+    "roundtrip_verified": true,
+    "raw_retired_after_verified_archive": true,
+    "elapsed_seconds": 216.5421811940032,
+    "no_deletion_credit": true
   }
 }
