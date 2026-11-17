@@ -1,5 +1,8 @@
 # Coordinated human tasks
 
+Current release scope/order: [canonical route](../remaining-work-plan.md). The existing configured-printer commissioning session remains the single attended dispatch. PR17 native recovery is complete; H12 SD reimage and H13 physical update/fallback are complete at their recorded scope. Historical next-action narratives below do not reauthorise or reopen those operations. Remaining physical candidate gates are in [host acceptance](host-os-tasks.md).
+
+
 **Owner scope change, 2026-10-02:** Keep installed-eMMC reimaging using SD
 maintenance, simple target/image checks, full write verification and an attended
 yes/no prompt. Abandon RAM maintenance, permission anti-forgery/anti-replay and

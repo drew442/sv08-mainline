@@ -74,8 +74,26 @@ def admission_subtree(target):
     return extras
 
 
+def firmware_manifest(manifest):
+    sys.path.insert(0,str(REPO/'runtime'))
+    from sv08_printer_firmware import release_assignment
+    from sv08_printer_definitions import builtins
+    from sv08_printer_catalog import Catalog
+    from sv08_printer_calibration import KLIPPER_REVISION
+    if manifest.get('klipper_commit',KLIPPER_REVISION)!=KLIPPER_REVISION:
+        raise ValueError('Release host Klipper pin differs from MCU definitions')
+    assignment=release_assignment(manifest['release'],KLIPPER_REVISION,builtins(Catalog(REPO/'catalog/printer/catalog.json')))
+    if 'mcu_firmware' in manifest and manifest['mcu_firmware']!=assignment:
+        raise ValueError('Supplied MCU assignment differs from release definitions')
+    manifest={**manifest,'mcu_firmware':assignment}
+    if len((json.dumps(manifest,indent=2)+'\n').encode())>65536:
+        raise ValueError('Release manifest exceeds the boot metadata bound')
+    return manifest
+
+
 def stage(work, manifest, refresh=False, owner_key=None):
     validate(manifest)
+    manifest=firmware_manifest(manifest)
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir() or not (work / 'refresh-complete').is_file():
         raise ValueError('Use an isolated completed baseline copy')

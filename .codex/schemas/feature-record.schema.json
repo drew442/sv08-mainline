@@ -205,7 +205,8 @@
               "running",
               "review",
               "blocked",
-              "done"
+              "done",
+              "superseded"
             ]
           },
           "environment": {
@@ -446,6 +447,39 @@
                 "type": "null"
               }
             ]
+          },
+          "supersession": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "actor",
+              "reason",
+              "reference",
+              "reference_sha256",
+              "source_commit"
+            ],
+            "properties": {
+              "actor": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reference": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reference_sha256": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_commit": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
           }
         },
         "required": [
