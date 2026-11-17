@@ -8,7 +8,8 @@ from pathlib import Path
 from contextlib import nullcontext
 from sv08_recovery_prepare import PreparationKernel, RecoveryPreparer, find_identity, emit
 from sv08_recovery_media import (MediaLease, canonical_json, fingerprint, require, reviewed_inventory,
-                                same_identity, trusted_file, PROVIDER_MANIFEST, ENVELOPE_MANIFEST)
+                                same_identity, trusted_file, PROVIDER_MANIFEST, ENVELOPE_MANIFEST,
+                                inventory_nodes)
 from sv08_recovery_restore_media import RestoreMediaProvider, POLICY, CONTEXT, PROTOCOL
 
 
@@ -68,7 +69,7 @@ class RestorePreparer(RecoveryPreparer):
                         selected.append((role,spec,block))
                 require(len({b['disk_device'] for _,_,b in selected}) == len(selected), 'Restore media roles alias a whole disk')
                 mounts = self.kernel.mounts()
-                devices = {v['device'] for disk in observed for v in [disk,*disk['partitions']]}
+                devices = {v['device'] for v in inventory_nodes(observed)}
                 require(any(m['path'] == '/' and m['device'] == recovery['device'] for m in mounts) and
                         all(m['device'] not in devices or (m['path'] == '/' and m['device'] == recovery['device']) for m in mounts),
                         'Restore medium already mounted or recovery root differs')

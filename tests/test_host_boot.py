@@ -34,6 +34,18 @@ class BootIdentityTests(unittest.TestCase):
                 with patch('sv08_boot.Path.read_text', return_value=bad), self.assertRaises(ValueError):
                     bind_boot_identity(original)
 
+    def test_supported_empty_ssh_seed_preserves_owner_keys(self):
+        with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
+            data = Path(temporary); (data/'users/sv08').mkdir(parents=True)
+            seed = data/'seed'; seed.write_bytes(b'')
+            with self.assertRaises(ValueError): initialize_owner_authorized_keys(data, seed)
+            with patch('sv08_boot.os.fchown'):
+                self.assertTrue(initialize_owner_authorized_keys(data, seed, allow_empty=True))
+            keys = data/'users/sv08/.ssh/authorized_keys'
+            keys.write_text('ssh-ed25519 fixture-owner-key')
+            self.assertFalse(initialize_owner_authorized_keys(data, seed, allow_empty=True))
+            self.assertEqual(keys.read_text(), 'ssh-ed25519 fixture-owner-key')
+
     def test_copied_application_files_receive_application_ownership(self):
         with tempfile.TemporaryDirectory(dir=fixture_root()) as temporary:
             store = Store(Path(temporary) / 'data', reserve_bytes=0, budget=fixture_budget())

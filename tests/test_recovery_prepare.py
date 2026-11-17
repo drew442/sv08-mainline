@@ -74,6 +74,17 @@ def medium(name, stable, device, *, filesystem, uuid, partition=0, removable=Fal
     return value
 
 
+def add_boot_areas(inventory):
+    """Already-discovered protected auxiliary nodes for preparer census tests."""
+    disk=inventory[1]
+    disk['boot_areas']=[dict(index=index,device=device,sectors=8192,readonly=True,
+                             force_readonly=True,removable=False,disk_device=disk['device'],
+                             diskseq=40+index,sysfs=disk['sysfs']+'/mmcblk3boot'+str(index),
+                             sysfs_inode=400+index,holders=[],slaves=[])
+                        for index,device in enumerate(('179:40','179:48'))]
+    return disk['boot_areas']
+
+
 class RecoveryPrepareTests(unittest.TestCase):
     def setUp(self):
         recovery = medium('vda', {'serial':'recovery'}, '254:0', filesystem='ext4', uuid='root')
@@ -301,6 +312,40 @@ class RecoveryPrepareTests(unittest.TestCase):
         self.assertEqual(find_identity(observed, self.policy['source'])['device'], '8:1')
         changed = copy.deepcopy(self.policy['source']); changed['filesystem_uuid'] = 'unknown'
         with self.assertRaisesRegex(ValueError, 'absent or ambiguous'): find_identity(observed, changed)
+
+    def test_boot_areas_are_reviewed_protected_nodes_never_mount_candidates(self):
+        observed=copy.deepcopy(self.inventory);areas=add_boot_areas(observed)
+        policy=copy.deepcopy(self.policy);policy['media']=reviewed_inventory(observed)
+        kernel,_=self.run_preparer(policy,FakeKernel(observed))
+        self.assertEqual([event[1] for event in kernel.events if isinstance(event,tuple) and event[0]=='mount'],
+                         ['8:1','8:17'])
+        for area in areas:
+            kernel=FakeKernel(observed)
+            kernel.mounts=lambda:[dict(path='/',device='254:0'),dict(path='/unexpected',device=area['device'])]
+            with self.assertRaisesRegex(ValueError,'unexpected active mount'):self.run_preparer(policy,kernel)
+            self.assertFalse([event for event in kernel.events if isinstance(event,tuple)])
+        expected=dict(stable=observed[1]['stable'],partition=0,start=0,sectors=8192,
+                      filesystem_uuid='fake-filesystem-on-boot-area')
+        for role in ('recovery','source','destination'):
+            changed=copy.deepcopy(policy)
+            if role=='destination':changed['destinations']['usb']['identity']=expected
+            else:changed[role]=expected
+            kernel=FakeKernel(observed)
+            with self.subTest(role=role),self.assertRaisesRegex(ValueError,'absent or ambiguous'):
+                self.run_preparer(changed,kernel)
+            self.assertFalse([event for event in kernel.events if isinstance(event,tuple)])
+
+    def test_removed_or_resized_boot_area_invalidates_review_before_mutation(self):
+        observed=copy.deepcopy(self.inventory);add_boot_areas(observed)
+        policy=copy.deepcopy(self.policy);policy['media']=reviewed_inventory(observed)
+        for change in ('missing','extent'):
+            changed=copy.deepcopy(observed)
+            if change=='missing':changed[1]['boot_areas'].pop()
+            else:changed[1]['boot_areas'][0]['sectors']+=1
+            kernel=FakeKernel(changed)
+            with self.subTest(change=change),self.assertRaisesRegex(ValueError,'topology'):
+                self.run_preparer(policy,kernel)
+            self.assertEqual(kernel.events,['inventory'])
 
     def test_builder_binds_reviewed_profile_to_final_manifests(self):
         profile = {name:copy.deepcopy(self.policy[name]) for name in

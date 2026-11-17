@@ -1,0 +1,138 @@
+{
+  "format_version": 1,
+  "source_revision": "dd65c33f51d535c1f9f3ff7a15482fc5bb4c008d",
+  "purpose": "Guarded commissioned activation systemd unit contract",
+  "passed": true,
+  "physical_hardware": false,
+  "production_os_health": false,
+  "printing_qualified": false,
+  "release_qualified": false,
+  "boots": [
+    {
+      "boot_id": "61cbff37-5425-4d01-a2a0-9f6463b96dc7",
+      "qemu_exit": 0,
+      "elapsed_seconds": 42.586158688005526,
+      "backend": "arm64-kvm",
+      "qmp_command": "query-kvm",
+      "qmp_observation": {
+        "enabled": true,
+        "present": true
+      },
+      "cases": [
+        {
+          "case": "absent",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "valid",
+          "stub_started": true,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "revoked",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "stale",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "valid-repeat",
+          "stub_started": true,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "health-failed",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        }
+      ],
+      "source_inputs_sha256": {
+        "runtime/sv08_commissioning.py": "0c4940db4c2ea4819dc412634ddb31cfd8e27a91a5db28b96723c86c28018c18",
+        "runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+        "configs/host-os/systemd/sv08-commissioned-start.service": "cbb071365f5c71976ee73f80a1890b5db4c09e0a2da65086812cc504cd03e9a3"
+      },
+      "harness_sha256": "92607b96d640f01b3a35c53ac02cb1b1dac1043fdf4d040d0001f70f46ae9e79"
+    },
+    {
+      "boot_id": "f3447df5-8d38-4a9b-b73a-1050a00b4603",
+      "qemu_exit": 0,
+      "elapsed_seconds": 42.035163243999705,
+      "backend": "arm64-kvm",
+      "qmp_command": "query-kvm",
+      "qmp_observation": {
+        "enabled": true,
+        "present": true
+      },
+      "cases": [
+        {
+          "case": "absent",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "valid",
+          "stub_started": true,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "revoked",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "stale",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "valid-repeat",
+          "stub_started": true,
+          "evidence": "native-unit-contract/STUB-health"
+        },
+        {
+          "case": "health-failed",
+          "stub_started": false,
+          "evidence": "native-unit-contract/STUB-health"
+        }
+      ],
+      "source_inputs_sha256": {
+        "runtime/sv08_commissioning.py": "0c4940db4c2ea4819dc412634ddb31cfd8e27a91a5db28b96723c86c28018c18",
+        "runtime/sv08_restart.py": "f8546208a6086671090997d166749158fc567ebaf583a16e3d87bc56cddacdae",
+        "configs/host-os/systemd/sv08-commissioned-start.service": "cbb071365f5c71976ee73f80a1890b5db4c09e0a2da65086812cc504cd03e9a3"
+      },
+      "harness_sha256": "92607b96d640f01b3a35c53ac02cb1b1dac1043fdf4d040d0001f70f46ae9e79"
+    }
+  ],
+  "limitations": [
+    "Explicit health/permission stub, not production OS-health acceptance",
+    "Generic virt guest, not actual printer boot or hardware qualification"
+  ],
+  "source_checks": {
+    "commissioning": 8,
+    "host_boot_health": 41,
+    "transaction": 37,
+    "restart": 14,
+    "host_boot": {
+      "passed": 11,
+      "opt_in_namespace_skipped": 1
+    }
+  },
+  "private_evidence": "/run/a733-guests/sv08-release-20261117/logs/native-unit-contract-dd65c33",
+  "receipt_sha256": "f9b7ece9c99ffbccf06d27ce95a331df339f5ed7cbda78f70ecc9bd49efaef50",
+  "pre_guest_staging_failure": {
+    "reason": "Host Python tarfile lacks extractall filter argument",
+    "guest_started": false,
+    "repair": "Use existing GNU tar to extract trusted own Git archive; failed empty staging/log preserved",
+    "source_changed": false
+  },
+  "harness_inputs": {
+    "run-unit-contract.py": "e051970dd0f55004623588f694696373b0deb401be81880bb85a21d4e9121ee0",
+    "run-unit-contract-attempt2.py": "f8a147ab587f73b83051c1eeda363d28a9ce740466f8d20895361a93c58e9bf1",
+    "guest-unit-contract.py": "53fbe778b285ede682cab63827b8d14e6ee56c1c82e59a388aceba5ae85f0a51"
+  },
+  "command": "sh /run/a733-guests/sv08-release-20261117/exec-private.sh python3 /run/a733-guests/sv08-release-20261117/run-unit-contract-attempt2.py"
+}

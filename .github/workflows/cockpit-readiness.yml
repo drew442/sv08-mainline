@@ -7,6 +7,25 @@ on:
     paths:
       - '.github/workflows/cockpit-readiness.yml'
       - 'runtime/**'
+      - 'scripts/integrate_host_os.py'
+      - 'scripts/supported_candidate.py'
+      - 'scripts/finalize_supported_host.py'
+      - 'scripts/assemble_supported_candidate.py'
+      - 'scripts/assemble_board_diagnostic.py'
+      - 'scripts/recovery_image.py'
+      - 'scripts/project_license.py'
+      - 'configs/host-os/supported/**'
+      - 'configs/host-os/systemd/**'
+      - 'tests/test_owner.py'
+      - 'tests/test_recovery_owner.py'
+      - 'tests/test_host_mounts.py'
+      - 'tests/host_mount_namespace.py'
+      - 'tests/recovery_owner_gtk.py'
+      - 'tests/test_supported_candidate.py'
+      - 'tests/test_commissioning.py'
+      - 'tests/test_project_license.py'
+      - 'tests/test_recovery_image.py'
+      - 'tests/test_recovery_restore_media.py'
       - 'catalog/printer/**'
       - 'scripts/check_installed_cockpit.py'
       - 'tests/test_host_boot.py'
@@ -25,6 +44,25 @@ on:
     paths:
       - '.github/workflows/cockpit-readiness.yml'
       - 'runtime/**'
+      - 'scripts/integrate_host_os.py'
+      - 'scripts/supported_candidate.py'
+      - 'scripts/finalize_supported_host.py'
+      - 'scripts/assemble_supported_candidate.py'
+      - 'scripts/assemble_board_diagnostic.py'
+      - 'scripts/recovery_image.py'
+      - 'scripts/project_license.py'
+      - 'configs/host-os/supported/**'
+      - 'configs/host-os/systemd/**'
+      - 'tests/test_owner.py'
+      - 'tests/test_recovery_owner.py'
+      - 'tests/test_host_mounts.py'
+      - 'tests/host_mount_namespace.py'
+      - 'tests/recovery_owner_gtk.py'
+      - 'tests/test_supported_candidate.py'
+      - 'tests/test_commissioning.py'
+      - 'tests/test_project_license.py'
+      - 'tests/test_recovery_image.py'
+      - 'tests/test_recovery_restore_media.py'
       - 'catalog/printer/**'
       - 'scripts/check_installed_cockpit.py'
       - 'tests/test_host_boot.py'
@@ -62,7 +100,7 @@ jobs:
       - name: Existing Python schema dependency
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends python3-jsonschema
+          sudo apt-get install -y --no-install-recommends python3-jsonschema python3-gi gir1.2-gtk-3.0 xvfb xauth
       - name: Actual ownership and functional contract tests
         shell: bash
         run: |
@@ -116,3 +154,35 @@ jobs:
               raise SystemExit('Offline printer regressions failed or unexpected skip/discovery result')
           print(f'{result.testsRun - len(result.skipped)} passed; {len(result.skipped)} expected file-output/previous-reader opt-in skips')
           PYTHON
+      - name: Supported candidate, owner and recovery contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo mkdir -m 700 /root/sv08-supported-contracts
+          trap 'sudo rmdir /root/sv08-supported-contracts' EXIT
+          sudo env TMPDIR=/root/sv08-supported-contracts PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=runtime:scripts /usr/bin/python3 - <<'PYTHON'
+          import unittest
+          loader = unittest.TestLoader()
+          names = ('test_owner.py', 'test_recovery_owner.py', 'test_host_mounts.py', 'test_supported_candidate.py', 'test_commissioning.py', 'test_host_integration.py', 'test_finalize_diagnostic_host.py', 'test_recovery_image.py', 'test_recovery_restore_media.py', 'test_environment_device.py', 'test_project_license.py')
+          suites = [loader.discover('tests', pattern=name) for name in names]
+          if loader.errors or any(not suite.countTestCases() for suite in suites):
+              raise SystemExit('Incomplete supported-candidate test discovery')
+          result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(suites))
+          if not result.wasSuccessful() or result.skipped:
+              raise SystemExit('Supported candidate tests failed or skipped')
+          PYTHON
+          sudo env TMPDIR=/root/sv08-supported-contracts PYTHONDONTWRITEBYTECODE=1 unshare --mount --propagation private /usr/bin/python3 tests/host_mount_namespace.py
+      - name: Rendered independent recovery owner setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -m 700 "$RUNNER_TEMP/sv08-owner-gtk"
+          timeout 45s xvfb-run --auto-servernum --server-args='-screen 0 800x480x24 -nolisten tcp' env SV08_UI_EVIDENCE="$RUNNER_TEMP/sv08-owner-gtk" PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 tests/recovery_owner_gtk.py
+      - name: Sanitized recovery owner screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: recovery-owner-gtk
+          path: ${{ runner.temp }}/sv08-owner-gtk/*.png
+          if-no-files-found: ignore
+          retention-days: 14

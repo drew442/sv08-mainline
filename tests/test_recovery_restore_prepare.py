@@ -68,4 +68,28 @@ class RestorePrepareTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'target mount failed'):self.execute(kernel)
         self.assertEqual(kernel.events[-1],('unmount','/run/sv08-recovery/archives/backup'))
 
+    def test_boot_area_mount_and_archive_or_target_selection_refuse_before_mutation(self):
+        areas=helpers.add_boot_areas(self.inventory);self.policy['media']=reviewed_inventory(self.inventory)
+        for area in areas:
+            kernel=FakeKernel(copy.deepcopy(self.inventory))
+            kernel.mounts=lambda:[dict(path='/',device='254:0'),dict(path='/boot-area',device=area['device'])]
+            with self.assertRaisesRegex(ValueError,'already mounted'):self.execute(kernel)
+            self.assertFalse([event for event in kernel.events if isinstance(event,tuple)])
+        original=copy.deepcopy(self.policy)
+        for role,key in (('archives','backup'),('targets','target')):
+            self.policy=copy.deepcopy(original)
+            self.policy[role][key]['identity']=dict(stable=self.inventory[1]['stable'],partition=0,start=0,
+                                                   sectors=8192,filesystem_uuid='fake-boot-area-fs')
+            kernel=FakeKernel(copy.deepcopy(self.inventory))
+            reason='absent or ambiguous' if role=='archives' else 'overlaps archive medium'
+            with self.subTest(role=role),self.assertRaisesRegex(ValueError,reason):self.execute(kernel)
+            self.assertFalse([event for event in kernel.events if isinstance(event,tuple)])
+
+    def test_changed_boot_area_extent_refuses_before_restore_preflight(self):
+        helpers.add_boot_areas(self.inventory);self.policy['media']=reviewed_inventory(self.inventory)
+        changed=copy.deepcopy(self.inventory);changed[1]['boot_areas'][0]['sectors']+=1
+        kernel=FakeKernel(changed)
+        with self.assertRaisesRegex(ValueError,'inventory changed'):self.execute(kernel)
+        self.assertEqual(kernel.events,['inventory'])
+
 if __name__=='__main__': unittest.main()
