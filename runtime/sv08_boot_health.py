@@ -243,8 +243,12 @@ def record_failure(store, boot, reason):
 
 
 def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marker=None,
-        validate, record=record_failure, normal_health=None):
-    """Dispatch one validated boot; only a validated failed target may request fallback."""
+        validate, record=record_failure, normal_health=None, boot_path=None):
+    """Dispatch one validated boot; only a validated failed target may request fallback.
+
+    Production supplies boot_path to publish the confirmed normal context before
+    releasing gates. In-memory callers can omit it while retaining validation.
+    """
     ready = Path(ready)
     ready.unlink(missing_ok=True)
     validate()
@@ -314,6 +318,35 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
     if outcome in ('idle', 'staged', 'awaiting-reboot', 'needs-arm'):
         if outcome == 'idle' and transaction.store.load()['pending'] is not None:
             raise ValueError('Pending trial remains after reconciliation')
+        if confirmed_trial:
+            with transaction.store.locked(), admission(), transaction.writer():
+                transaction.store.require_running()
+                completed = transaction.load()
+                if (transaction.store.load()['pending'] is not None or not completed or
+                        completed['phase'] != 'complete' or completed['id'] != tx['id'] or
+                        completed['slot'] != boot['slot'] or completed['release'] != boot['release']):
+                    raise ValueError('Confirmed trial changed before boot publication')
+                was_trial = boot['trial']
+                if was_trial:
+                    if trial_marker is None or not Path(trial_marker).is_file():
+                        raise ValueError('Prepared trial marker is missing')
+                    if boot_path is not None and bounded_json(boot_path) != boot:
+                        raise ValueError('Boot record changed before confirmation publication')
+                    # Confirmation is authoritative before changing the context.
+                    # Validate the normal context against the now-cleared state,
+                    # then atomically publish it before releasing either gate.
+                    boot['trial'] = False
+                try:
+                    validate()
+                    if was_trial and boot_path is not None:
+                        atomic_json(Path(boot_path), boot)
+                except Exception:
+                    boot['trial'] = was_trial
+                    raise
+                if was_trial:
+                    Path(trial_marker).unlink()
+                ready.touch(mode=0o600)
+            return outcome
         if not confirmed_trial:
             with transaction.store.locked(), admission(), transaction.writer():
                 transaction.store.require_running()
@@ -350,10 +383,6 @@ def run(boot, transaction, os_health, admission, fallback, *, ready, trial_marke
                 validate()
                 if transaction.store.load() != before_state or transaction.load() != before_tx:
                     raise ValueError('Normal confirmation changed state or transaction')
-        if boot['trial']:
-            if trial_marker is None or not Path(trial_marker).is_file():
-                raise ValueError('Prepared trial marker is missing')
-            Path(trial_marker).unlink()
         ready.touch(mode=0o600)
     return outcome
 
@@ -401,7 +430,7 @@ def _main(*, disposable_fixture=False):
                         disposable_fixture=disposable_fixture)
     outcome = run(boot, tx, health, boot_admission, fallback,
                   ready='/run/sv08/os-health-ready', trial_marker='/run/sv08/trial',
-                  validate=validate, normal_health=health.normal)
+                  validate=validate, normal_health=health.normal, boot_path='/run/sv08/boot.json')
     if outcome not in ('idle', 'staged', 'awaiting-reboot', 'needs-arm', 'needs-health'):
         raise ValueError('Unsupported boot outcome')
 

@@ -7,31 +7,38 @@ is running. The earlier recovery qualification remains complete at its recorded
 scope. No physical deployment, MCU flashing or output operation occurred in this goal.
 
 Draft [PR39](https://github.com/drew442/sv08-mainline/pull/39) contains the supported
-candidate/clean-owner source path. All four CI workflows passed at3f86bd2;
-subsequent source repair88fe387 and final branch CI require separate observation.
-The actual native KVM factory and captured-hardware validators passed unchanged
-production limits. The owner/PAM probe passed29 checks after one fixture-permissions
-repair. [Native evidence](../docs/features/supported-release-candidate/native-evidence.json)
-distinguishes real installed PAM in synthetic roots from normal boot/browser and
-physical acceptance. Root source, six disposable mode/slot boots and800x480 rendered
-owner checks also pass. This source/software checkpoint is not release completion.
+candidate/clean-owner path. Current claimed worktree:
+`local/feature-workflow/worktrees/supported-release-boot-fix`, branch
+`feature/supported-release-boot-fix`; prior integration worktree/tips remain intact.
+The native full-release goal is active; source and hardware acceptance stay separate.
 
-Native work: `/run/a733-guests/sv08-release-20261117` on the existing ARM64/KVM
-runner, private mounts/tools and a logical32GiB inode-rich workspace. Source
-ceiling7,200process-seconds/1GiB, conservative charge2,500seconds/384MiB. Separate
-native ceiling10,800seconds/72GiB after a recorded8GiB output continuation; conservative charge6,600seconds/62GiB including
-logical container plus generated files and removed attempts. [Execution](../docs/features/supported-release-candidate/execution.json)
-retains cumulative attempts. Bootstrap/security refresh and exact application,
-Cockpit/RAUC and board-package checks passed. The revision4 six-partition candidate is assembled at the factory size; readback of all partitions/SPL/environments and the selected-software release gate pass. It is not physically booted or printing/release qualified.
-Current normal-root finalization and provenance pass after the canonical certificate link fix. A distinct revision5 signed OTA payload is being prepared from unchanged source for the update/fallback campaign; no second whole normal disk is planned.
+The66dce8d prototype normal/recovery images and signed revision5 OTA passed their
+construction, byte-readback, trusted-signature, payload-hash and selected-software
+source/notice checks. Native factory/selected hardware validators and29 owner/PAM
+checks passed at their recorded inputs. These prototypes are **not for deployment**:
+source tracing found missing commissioned reboot startup and stale post-confirmation
+trial metadata. All receipts, failures and source identities are preserved.
 
-Owner confirmed the fitted Funssor/CN3D bed, factory mainboard/toolhead/hotend,
-filament sensor and exhaust fan matching saved hardware revision13. Passive target
-preflight: release0.1.0-physical-update.2, slotB, immutable, no trial; target32GB spare,
-candidate revision4. Artifacts still must fit the factory7,818,182,656-byte layout.
-Independent SD/backup-medium identities are requested for the final reviewed policy.
-No physical configuration/service/boot/output change has occurred. Exact-operation
-authority/review, recovery readiness and attendance remain required before changes.
+Both lifecycle defects have source repairs. Supported boot activation checks the
+existing persistent permission after real health; Klipper keeps its own guards.
+Confirmation atomically publishes normal boot metadata before releasing trial/ready
+gates.49 focused tests pass, plus62 related passes/one opt-in namespace skip.
+Next: native STUB unit-contract evidence, freeze repaired source and refresh affected
+normal/recovery/update outputs; never relabel old prototype proof as new-source proof.
+Actual installed fresh boot/browser/physical printing and release acceptance remain.
+
+[Execution](../docs/features/supported-release-candidate/execution.json): source
+ceiling7,200process-seconds/1GiB, conservative charge3,000seconds/640MiB. Native
+ceiling14,400seconds/96GiB after recorded continuations, with all prior charges and
+attempts carried forward; includes the logical32GiB private ARM workspace. Preserve
+one verified compressed prototype archive, not redundant historical raw components.
+
+Owner confirmed Funssor/CN3D bed, factory mainboard/toolhead/hotend, filament sensor
+and exhaust fan matching saved hardware revision13. Target passive preflight remains
+release0.1.0-physical-update.2, stable immutable slotB,32GB spare; artifacts must fit
+factory7,818,182,656bytes. Independent SD/backup media identities are requested.
+No printer configuration/service/boot/output change occurred. Exact-operation
+review/authority, usable recovery and attendance precede physical work.
 
 ## Contract and next milestone
 

@@ -5,7 +5,8 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+import uuid
+from unittest.mock import Mock, patch
 
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'runtime'))
 from sv08_commissioning import Commissioning
@@ -156,6 +157,47 @@ class CommissioningTests(unittest.TestCase):
         self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
         with patch('sv08_commissioning.subprocess.run',side_effect=subprocess.CalledProcessError(1,'stub')):
             with self.assertRaises(subprocess.CalledProcessError):self.service.boot_activate()
+
+    def test_actual_trial_confirmation_allows_activation_in_same_original_boot(self):
+        from sv08_boot_health import HealthFailure, run, validate_boot
+        from sv08_transaction import Transaction
+        from test_host_boot_health import Backend, admitted
+        self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
+        permission=self.service.permission.read_bytes()
+        # Real state/transaction transition, with explicitly synthetic backend
+        # and health callbacks. No production OS-health acceptance is asserted.
+        self.store.prepare_boot('A','fixture-rc1',release_revision=1)
+        tx=Transaction(self.store,Backend(),admitted)
+        tx.stage('fixture-bundle',dict(release='fixture-rc2',release_revision=2,
+                 bundle_sha256='a'*64,signer_trusted=True),self.boot)
+        tx.arm(self.boot)
+        target=self.store.prepare_boot('B','fixture-rc2',release_revision=2)
+        target['boot_id']=str(uuid.uuid4());original=dict(target)
+        boot_path=self.runtime/'boot.json';atomic_json(boot_path,target)
+        manifest=json.loads(self.release.read_text());manifest['release']='fixture-rc2'
+        manifest['release_revision']=2;manifest.pop('mcu_firmware')
+        manifest=firmware_manifest(manifest);atomic_json(self.release,manifest)
+        gate=self.runtime/'trial';gate.touch();ready=self.runtime/'os-health-ready';ready.unlink()
+        def validate():
+            return validate_boot(target,self.store,manifest,boot_id=original['boot_id'],
+                                 cmdline='rauc.slot=B',observed_slot='B',verify=lambda *_:None)
+        with patch('sv08_commissioning.subprocess.run') as command:
+            self.assertEqual(self.service.boot_activate()['service_action'],'none')
+            self.assertEqual(run(target,tx,Mock(side_effect=HealthFailure('synthetic unstable')),
+                                 admitted,Mock(),ready=ready,trial_marker=gate,validate=validate,
+                                 boot_path=boot_path),'needs-health')
+            self.assertEqual(self.service.boot_activate()['service_action'],'none')
+            command.assert_not_called()
+            self.assertEqual(json.loads(boot_path.read_text()),original)
+            self.assertEqual(run(target,tx,Mock(return_value=True),admitted,Mock(),ready=ready,
+                                 trial_marker=gate,validate=validate,boot_path=boot_path),'idle')
+            self.assertEqual(target,dict(original,trial=False))
+            self.assertEqual(json.loads(boot_path.read_text()),target)
+            self.assertTrue(self.service.check()['permitted'])
+            self.assertEqual(self.service.boot_activate()['service_action'],'start-queued')
+            command.assert_called_once_with(['/usr/bin/systemctl','--no-block','start','sv08-klipper.service'],
+                                            check=True,timeout=15)
+        self.assertEqual(self.service.permission.read_bytes(),permission)
 
 
 if __name__=='__main__': unittest.main()

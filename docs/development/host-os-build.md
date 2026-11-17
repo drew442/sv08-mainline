@@ -120,9 +120,14 @@ execution. Missing, revoked, stale or inadmissible permission queues nothing and
 logs the reason in the helper's journal. The helper never enables a physical unit
 or starts a second Moonraker; the enabled printer API already supplies Moonraker.
 Valid permission survives compatible host updates, A/B selection and both root
-modes without a writable-root enable operation. Trial boots remain stopped; a
-later healthy normal boot can use the retained permission. Recording permission
-still performs no service action; the first start remains in the reviewed packet.
+modes without a writable-root enable operation. Unconfirmed trial boots remain
+stopped. After real OS health durably confirms the matching update transaction,
+the health coordinator atomically publishes `boot.json` with `trial: false` before
+clearing the trial marker and publishing OS readiness. Retained valid permission
+can then start Klipper in that same boot, without another reboot or manual Linux
+work. Metadata publication failure leaves readiness closed and the trial gate
+retained. Recording permission still performs no service action; the first start
+remains in the reviewed packet.
 The exact launch/stop operations belong in the attended packet, not a generic
 unmask/start instruction. Permission is not measured MCU compatibility or printing
 acceptance. No user needs to fabricate health files.

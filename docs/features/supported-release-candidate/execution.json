@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 2500,
-    "conservative_current_charge_bytes": 402653184,
+    "conservative_current_charge_seconds": 3000,
+    "conservative_current_charge_bytes": 671088640,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -34,6 +34,22 @@
         "role": "project_implementer",
         "requested_effort": "default low",
         "effective": "not independently observable"
+      },
+      "commissioned_boot_activation": {
+        "requested_role": "project_implementer",
+        "requested_effort": "medium",
+        "effective": "not independently observable",
+        "cumulative_process_seconds_upper": 45,
+        "cumulative_generated_bytes_upper": 121634816,
+        "source_tests": {
+          "commissioning": 8,
+          "host_health": 41,
+          "supported_candidate": 10,
+          "host_integration": 7
+        },
+        "failed_attempts": [
+          "Compatible-update test fixture initially ran after writable customization; corrected fixture order without removing requirement."
+        ]
       }
     }
   },
@@ -212,6 +228,35 @@
       "role": "project_implementer",
       "requested_effort": "medium",
       "effective": "not independently observable"
+    },
+    "repair_status": "Source implemented: guarded boot activation and canonical confirmed-trial boot metadata;49 focused source checks PASS. Native contract and refreshed artifacts pending."
+  },
+  "post_confirmation_defect": {
+    "finding": "Real confirmation left boot.json trial=true, blocking same-boot commissioning/configuration/health restart.",
+    "repair": "Under state/admission/writer locks verify completed matching tx/no pending, validate normal context, atomically publish trial=false before trial marker removal/readiness. Fail closed on changed state, shutdown or publication failure.",
+    "ownership_authorization": "8fb8bd0",
+    "current_claim": "fc4c8ee09ba64cfb9f446a564406c79a",
+    "worktree": "local/feature-workflow/worktrees/supported-release-boot-fix",
+    "previous_worktree_preserved": true,
+    "tests": "8 commissioning +41 host-health source tests; no production-health claim"
+  },
+  "related_regressions": {
+    "transaction": {
+      "tests": 37,
+      "passed": 37,
+      "seconds": 1.282
+    },
+    "restart": {
+      "tests": 14,
+      "passed": 14,
+      "seconds": 0.5
+    },
+    "host_boot": {
+      "tests": 12,
+      "passed": 11,
+      "skipped": 1,
+      "seconds": 0.233,
+      "limitation": "Namespace opt-in not run in this invocation; prior six-boot mount evidence stays at its original unchanged-input scope."
     }
   }
 }
