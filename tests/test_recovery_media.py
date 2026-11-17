@@ -1,4 +1,5 @@
 import copy
+from contextlib import contextmanager
 import errno
 import json
 import hashlib
@@ -18,6 +19,156 @@ from sv08_recovery_media import (Kernel, MediaProvider, PROTOCOL, WRITER_MODEL,
                                  reviewed_inventory, trusted_file)
 from sv08_recovery import RecoveryController, installed_controller
 from sv08_state import Store
+
+
+class SysfsInventoryTests(unittest.TestCase):
+    """Real discovery over disposable sysfs files, never host block devices."""
+    def setUp(self):
+        temporary=tempfile.TemporaryDirectory();self.addCleanup(temporary.cleanup)
+        self.root=Path(temporary.name);self.sysfs=self.root/'sys';self.dev=self.root/'dev';self.dev.mkdir()
+        (self.sysfs/'class/block').mkdir(parents=True);(self.sysfs/'dev/block').mkdir(parents=True)
+        self.card=self.sysfs/'devices/platform/mmc_host/mmc3/mmc3:001a'
+        self.disk=self.card/'block/mmcblk3'
+        self.numbers={}
+        self.node(self.disk,'179:32',234567,3,ro='0')
+        (self.card/'type').write_text('MMC\n');(self.card/'cid').write_text('synthetic-cid\n')
+        (self.disk/'device').symlink_to(self.card)
+        self.partition=self.disk/'mmcblk3p1'
+        self.node(self.partition,'179:33',123456,0,ro='0')
+        (self.partition/'partition').write_text('1\n');(self.partition/'start').write_text('2048\n')
+        self.areas=[]
+        for index,device in enumerate(('179:40','179:48')):
+            area=self.disk/('mmcblk3boot'+str(index));self.areas.append(area)
+            self.node(area,device,8192,10+index)
+            (area/'force_ro').write_text('1\n')
+
+    def node(self,path,device,sectors,sequence,ro='1'):
+        path.mkdir(parents=True)
+        for key,value in dict(dev=device,size=sectors,diskseq=sequence,ro=ro,removable=0,
+                              uevent='DEVNAME='+path.name).items():
+            (path/key).write_text(str(value)+'\n')
+        for key in ('holders','slaves'):(path/key).mkdir()
+        (self.sysfs/'class/block'/path.name).symlink_to(path)
+        (self.sysfs/'dev/block'/device).symlink_to(path)
+        (self.dev/path.name).write_text('synthetic filesystem signature')
+        self.numbers[path.name]=device
+
+    @contextmanager
+    def discovered(self):
+        original_stat=os.stat
+        def fake_block(path,*args,**kwargs):
+            path=Path(path)
+            if path.parent==self.dev and path.name in self.numbers:
+                major,minor=map(int,self.numbers[path.name].split(':'))
+                return SimpleNamespace(st_mode=stat.S_IFBLK|0o600,st_rdev=os.makedev(major,minor))
+            return original_stat(path,*args,**kwargs)
+        def probe(path):
+            self.assertNotIn('boot',path.name,'Boot area reached blkid despite a fake FS signature')
+            return dict(TYPE='ext4',UUID='fixture-partition') if path==self.dev/self.partition.name else {}
+        with patch.object(Kernel,'sysfs_root',self.sysfs),patch.object(Kernel,'device_root',self.dev), \
+             patch('sv08_recovery_media.os.stat',fake_block),patch.object(Kernel,'_probe',side_effect=probe):
+            yield Kernel()
+
+    def test_discovers_owned_protected_areas_without_independent_stable_id_or_probe(self):
+        with self.discovered() as kernel:
+            observed=kernel.inventory()
+            (self.disk/'ro').write_text('1\n')
+            protected_after_user_area_ro=kernel.inventory()[0]['boot_areas']
+            (self.areas[0]/'diskseq').write_text('12\n')
+            resequenced=kernel.inventory()
+            (self.areas[0]/'size').write_text('8193\n')
+            resized=kernel.inventory()
+        self.assertEqual(len(observed),1);disk=observed[0]
+        self.assertEqual(disk['stable'],{'device/cid':'synthetic-cid'})
+        self.assertEqual(len(disk['partitions']),1)
+        self.assertEqual([area['device'] for area in disk['boot_areas']],['179:40','179:48'])
+        self.assertEqual([area['diskseq'] for area in disk['boot_areas']],[10,11])
+        self.assertTrue(all(area['readonly'] and area['force_readonly'] and not area['removable']
+                            and area['disk_device']=='179:32' and 'stable' not in area
+                            for area in disk['boot_areas']))
+        self.assertEqual(protected_after_user_area_ro,disk['boot_areas'])
+        reviewed=reviewed_inventory(observed)
+        self.assertEqual(reviewed[0]['boot_areas'],[dict(index=0,sectors=8192),dict(index=1,sectors=8192)])
+        self.assertEqual(resequenced[0]['boot_areas'][0]['diskseq'],12)
+        self.assertNotEqual(resequenced,observed);self.assertEqual(reviewed_inventory(resequenced),reviewed)
+        self.assertEqual(resized[0]['boot_areas'][0]['sectors'],8193)
+        self.assertNotEqual(reviewed_inventory(resized),reviewed)
+        for field in ('sectors','index'):
+            changed=copy.deepcopy(observed);changed[0]['boot_areas'][0][field]+=1
+            self.assertNotEqual(reviewed_inventory(changed),reviewed)
+        changed=copy.deepcopy(observed);changed[0]['boot_areas'].pop()
+        self.assertNotEqual(reviewed_inventory(changed),reviewed)
+
+    def test_boot_area_cannot_be_selected_even_with_filesystem_signature(self):
+        from sv08_recovery_prepare import PreparationKernel
+        with self.discovered() as kernel,patch('sv08_recovery_media.subprocess.run') as command:
+            for area in self.areas:
+                with self.assertRaisesRegex(ValueError,'cannot be selected'):
+                    kernel.block(dict(device=(area/'dev').read_text().strip(),filesystem='ext4'))
+                with self.assertRaisesRegex(ValueError,'cannot be selected'):kernel._identity(area)
+                with patch('sv08_recovery_prepare.os.open',side_effect=AssertionError('Auxiliary opened')):
+                    for whole in (False,True):
+                        with self.assertRaisesRegex(ValueError,'cannot be selected'):
+                            PreparationKernel._open_identity(dict(sysfs=str(area)),whole=whole)
+            command.assert_not_called()
+
+    def test_missing_wrong_type_parent_ancestry_and_name_fail_closed(self):
+        with self.discovered() as kernel:
+            (self.card/'type').write_text('SD\n')
+            with self.assertRaisesRegex(ValueError,'ownership or type'):kernel.inventory()
+            (self.card/'type').unlink()
+            with self.assertRaises(OSError):kernel.inventory()
+            (self.card/'type').write_text('MMC\n')
+            parent_link=self.sysfs/'class/block/mmcblk3';parent_link.unlink()
+            with self.assertRaisesRegex(ValueError,'owning medium'):kernel.inventory()
+            parent_link.symlink_to(self.disk)
+            device_link=self.disk/'device';device_link.unlink();device_link.mkdir()
+            (device_link/'type').write_text('MMC\n')
+            with self.assertRaisesRegex(ValueError,'ownership or type'):kernel.inventory()
+            (device_link/'type').unlink();device_link.rmdir();device_link.symlink_to(self.card)
+            area=self.areas[0];wrong=self.card/area.name;area.rename(wrong)
+            link=self.sysfs/'class/block'/area.name;link.unlink();link.symlink_to(wrong)
+            with self.assertRaisesRegex(ValueError,'owning medium'):kernel.inventory()
+            wrong.rename(area);link.unlink();link.symlink_to(area)
+            malformed=self.disk/'mmcblk3boot2';self.node(malformed,'179:56',8192,12)
+            with self.assertRaisesRegex(ValueError,'cannot be selected'):kernel.inventory()
+
+    def test_missing_changed_properties_and_topology_fail_closed(self):
+        with self.discovered() as kernel:
+            for key,value in (('ro','0'),('force_ro','0'),('removable','1'),('size','0'),('diskseq','0'),
+                              ('uevent','DEVNAME=mmcblk99boot0'),('partition','1')):
+                path=self.areas[0]/key;old=path.read_bytes() if path.exists() else None
+                path.write_text(value+'\n')
+                with self.subTest(key=key),self.assertRaises(ValueError):kernel.inventory()
+                if old is None:path.unlink()
+                else:path.write_bytes(old)
+            for key in ('force_ro','removable','diskseq','size'):
+                path=self.areas[0]/key;old=path.read_bytes();path.unlink()
+                with self.subTest(missing=key),self.assertRaises(OSError):kernel.inventory()
+                path.write_bytes(old)
+            for key in ('holders','slaves'):
+                path=self.areas[0]/key/'unexpected';path.touch()
+                with self.subTest(key=key),self.assertRaisesRegex(ValueError,'holder or slave'):kernel.inventory()
+                path.unlink()
+            (self.sysfs/'class/block'/self.areas[1].name).unlink()
+            with self.assertRaisesRegex(ValueError,'Incomplete'):kernel.inventory()
+
+    def test_generic_non_mmc_inventory_keeps_legacy_shape(self):
+        import shutil
+        shutil.rmtree(self.sysfs);(self.sysfs/'class/block').mkdir(parents=True)
+        (self.sysfs/'dev/block').mkdir(parents=True)
+        disk=self.sysfs/'devices/pci/virtio0/block/vda';self.node(disk,'254:7',4096,21)
+        (disk/'serial').write_text('synthetic-virtio\n')
+        with self.discovered() as kernel:observed=kernel.inventory()
+        self.assertEqual(len(observed),1);self.assertNotIn('boot_areas',observed[0])
+        self.assertEqual(observed[0]['transport'],'virtio')
+
+    def test_provider_census_rejects_auxiliary_mount_before_selected_mounts(self):
+        provider=MediaProvider.__new__(MediaProvider);provider.kernel=Kernel()
+        observed=dict(media=[dict(boot_areas=[dict(device='179:48')])])
+        with patch.object(provider,'complete_inventory',return_value={**observed,'active_loops':[{}]}), \
+             patch.object(provider.kernel,'mounts',return_value=[dict(device='179:48',path='/fake')]):
+            with self.assertRaisesRegex(ValueError,'boot area has an unexpected mount'):provider.snapshot()
 
 
 class RecoveryMediaTests(unittest.TestCase):

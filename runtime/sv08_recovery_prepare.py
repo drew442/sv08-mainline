@@ -21,7 +21,8 @@ from sv08_recovery_media import (CONTEXT, ENVELOPE_MANIFEST, POLICY,
                                  PROVIDER_MANIFEST, Kernel, MediaLease, MediaProvider,
                                  PROTOCOL, WRITER_MODEL, canonical_json,
                                  fingerprint, require, reviewed_inventory, same_identity,
-                                 trusted_file, validate_usr_loop_inventory)
+                                 trusted_file, validate_usr_loop_inventory, inventory_nodes,
+                                 require_selectable)
 
 
 def emit(event, **fields):
@@ -52,10 +53,13 @@ class PreparationKernel(Kernel):
 
     @staticmethod
     def _open_identity(identity, *, whole):
+        require_selectable(Path(identity['sysfs']))
         sysfs = Path(identity['disk'] if whole else identity['sysfs'])
         uevent = dict(line.split('=', 1) for line in (sysfs / 'uevent').read_text().splitlines())
         name = uevent.get('DEVNAME')
         require(name and re.fullmatch(r'[A-Za-z0-9_-]+', name), 'Untrusted block device name')
+        require_selectable(sysfs)
+        require_selectable(Path(name))
         node = Path('/dev') / name
         fd = os.open(node, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_CLOEXEC)
         info = os.fstat(fd)
@@ -154,6 +158,7 @@ class PreparationKernel(Kernel):
 def find_identity(observed, expected):
     matches = []
     for disk in observed:
+        # Hardware boot areas are protection-only, never selectable media roles.
         values = [disk] + disk['partitions']
         for value in values:
             candidate = dict(stable=disk['stable'], partition=value.get('partition', 0),
@@ -287,6 +292,8 @@ class RecoveryPreparer:
                 require(len({item['device'] for item in protected}) == len(protected) and
                         not selected_devices.intersection(item['device'] for item in protected),
                         'Protected media roles are duplicate or alias prepared media')
+                # Only selectable leaves need named media roles. Boot areas are
+                # already protected by the parent's reviewed topology and census.
                 leaf_devices = {item['device'] for disk in observed
                                 for item in (disk['partitions'] if disk['partitions'] else [disk])}
                 require(leaf_devices == selected_devices | {recovery['device']} |
@@ -295,8 +302,7 @@ class RecoveryPreparer:
                 mounts = self.kernel.mounts()
                 require(any(m['path'] == '/' and m['device'] == recovery['device'] for m in mounts),
                         'Reviewed recovery root is not the running root')
-                media_devices = {value['device'] for disk in observed
-                                 for value in [disk, *disk['partitions']]}
+                media_devices = {value['device'] for value in inventory_nodes(observed)}
                 require(all(m['device'] not in media_devices or
                             (m['device'] == recovery['device'] and m['path'] == '/') for m in mounts),
                         'Reviewed media has an unexpected active mount')
