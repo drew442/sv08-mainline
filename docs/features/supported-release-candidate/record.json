@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "fc4c8ee09ba64cfb9f446a564406c79a",
+        "session": "supported-release-20261117"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -169,7 +173,7 @@
       "resumption": "All source workers stopped; current boot-activation patch and66dce8d prototype evidence preserved. Extend existing C3 ownership to BootHealth canonical post-confirm metadata and health tests. Prior source/native attempts and allowances carry forward; no physical authority.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
