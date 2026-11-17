@@ -57,7 +57,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserved source candidate9a0f666; extend only admin staging dependency guard ownership before final source acceptance; same outcome/allowance/attempts, no hardware.",
       "checks": [
         "delivery-contract",
         "firmware-policy",
@@ -135,7 +135,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible offline source and disposable fixtures only; no hardware operations or release publication.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement complete accepted overhaul",
       "validation": null,
       "verification": null
