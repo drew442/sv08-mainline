@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 3740,
-    "conservative_current_charge_bytes": 759169024,
+    "conservative_current_charge_seconds": 3820,
+    "conservative_current_charge_bytes": 891289600,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -50,13 +50,26 @@
         "failed_attempts": [
           "Compatible-update test fixture initially ran after writable customization; corrected fixture order without removing requirement."
         ]
+      },
+      "protected_boot_areas": {
+        "role": "project_implementer",
+        "requested_effort": "retained explicit medium",
+        "effective": "not independently observable",
+        "process_seconds_upper": 30,
+        "generated_bytes_upper": 33554432,
+        "tests": 54,
+        "passed": 54
       }
     },
     "workflow_submission": {
       "initial": "Refused before save: merged candidate included a queue-record change relative to lease base8fb8bd0. Product checks unchanged.",
       "repair": "Coordinator restored only candidate queue snapshot to lease base; authoritative running record remains on main. Candidate source/evidence and prior commit preserved; no gate or scope change.",
       "queue_authority": "primary main checkout"
-    }
+    },
+    "continuation_attempts": [
+      "99 related checks:96pass,3errors (two absent localbuilddir, one stale testfactory)",
+      "Symlink scratch repair refused by builder; replaced with empty direct builddir, affected2PASS; no production guard change"
+    ]
   },
   "integration_worker": {
     "name": "/root/supported_provenance",
@@ -367,10 +380,11 @@
         "slaves": []
       }
     ],
-    "repair_status": "Source task reopened; explicit protected nonselectable boot-area model required. CurrentDD65 images not for deployment.",
+    "repair_status": "Protected nested reader and54 source checks pass; in-memory candidate inventory succeeds on actual eMMC, no deployment/mutation. Affected broader regression exposed stale activation test factory missing reserve_bytes; add test ownership and repair before submission.",
     "private_observation": "/home/drew/.sv08-release-20261117/sd-preparation/printer-inventory-private.json",
     "previous_source_validation_commit": "adb8be0d061bd4eac3fc8623ea86a600e4248f13",
-    "historical_source_validation_preserved_in_main": "27ffe17c6f992d17a2a34f0200beaf069f58b2fa"
+    "historical_source_validation_preserved_in_main": "27ffe17c6f992d17a2a34f0200beaf069f58b2fa",
+    "candidate_runtime_sha256": "82950e6c21135e54d1c99e9b69c659848bb0accdf9668d29d5a8c53386bb9c79"
   },
   "new_recovery_sd": {
     "host": "beelink.drewnet.online",
