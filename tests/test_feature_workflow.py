@@ -62,6 +62,8 @@ class WorkflowTests(unittest.TestCase):
         self.assertFalse(result['acceptance_claimed'])
         self.assertEqual(record['tasks'][0]['evidence'],before)
         self.assertIsNone(self.workflow.select(records))
+        child=self.feature('child');child['tasks'][0]['depends_on']=['export:implement'];records['child']=child
+        self.assertIsNone(self.workflow.select(records), 'Superseded dependency is not a passed replacement')
         self.assertEqual(record['tasks'][0]['supersession']['reference_sha256'],file_hash(self.root,'human.md'))
         with self.assertRaises(WorkflowError):
             self.workflow.supersede(records,'export:implement','coordinator','human.md','Again')
@@ -79,6 +81,10 @@ class WorkflowTests(unittest.TestCase):
         task['owned_paths']=['ui/printer/','ui/printer-other/','docs/features/']
         self.workflow.check_candidate_scope(record,task,tree)
         (tree/'docs/features/export/record.json').write_text('{}')
+        self.commit(tree)
+        with self.assertRaises(WorkflowError):self.workflow.check_candidate_scope(record,task,tree)
+        (tree/'docs/features/export/record.json').write_bytes((self.root/'docs/features/export/record.json').read_bytes())
+        (tree/'docs/features/export/proposal.md').write_text('Changed authorised proposal')
         self.commit(tree)
         with self.assertRaises(WorkflowError):self.workflow.check_candidate_scope(record,task,tree)
 
@@ -401,12 +407,6 @@ class WorkflowTests(unittest.TestCase):
         self.workflow.resume(self.workflow.load(), 'export:implement', 'Trace the changed syscall boundary')
         self.assertEqual(self.workflow.select(self.workflow.load())['task'], 'export:implement')
 
-
-# Keep the new contract in the established named CI suite as well as its
-# independently runnable focused module; no extra runner or CI dependency.
-def load_tests(loader, standard_tests, pattern):
-    standard_tests.addTests(loader.loadTestsFromName('test_build_preflight'))
-    return standard_tests
 
 if __name__ == '__main__':
     unittest.main()

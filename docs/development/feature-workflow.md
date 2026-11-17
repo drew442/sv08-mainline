@@ -204,7 +204,7 @@ the subcommand; shared records remain locked and coordinator-owned.
 
 ## Withdrawn or replaced work
 
-`superseded` means withdrawn/replaced, never passed or done. Dependencies on it remain unsatisfied until a real replacement is explicitly selected. A coordinator may retire only unowned pending/blocked tasks with a committed public disposition reference, actor and reason:
+`superseded` means withdrawn/replaced, never passed or done. Dependencies on it remain unsatisfied until a real replacement is explicitly selected. A coordinator may retire only nonactive pending/blocked tasks with a committed public disposition reference, actor and reason:
 
 ```sh
 python3 scripts/feature_workflow.py --execute supersede <feature>:<task> \

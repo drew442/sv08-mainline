@@ -269,10 +269,4 @@ class Definitions(unittest.TestCase):
         for url in ['http://github.com/a/b','https://user@github.com/a/b','https://github.com/a/b?token=secret','https://evil.test/a/b','https://github.com/a/b/blob/main/catalog.json']:
             with self.assertRaises(ValueError):repository(url)
 
-# Keep the new contract in the established named CI suite as well as its
-# independently runnable focused module; no extra runner or CI dependency.
-def load_tests(loader, standard_tests, pattern):
-    standard_tests.addTests(loader.loadTestsFromName('test_printer_firmware'))
-    return standard_tests
-
 if __name__=='__main__':unittest.main()

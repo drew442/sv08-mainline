@@ -1,6 +1,6 @@
 # Current delivery state
 
-Baseline: main85a17ae, PR17 merged; native recovery goal complete. Owner approved the delivery overhaul on2026-11-17. Source changes/evidence are tracked in [release-delivery-overhaul](../docs/features/release-delivery-overhaul/proposal.md); no release or deployment is implied.
+Baseline: main `85a17ae`, PR17 merged; native recovery goal complete. Owner approved the delivery overhaul on 2026-11-17. Source changes/evidence are tracked in [release-delivery-overhaul](../docs/features/release-delivery-overhaul/proposal.md); no release or deployment is implied.
 
 ## Contract and next milestone
 

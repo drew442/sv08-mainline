@@ -37,6 +37,16 @@ class InventoryTests(unittest.TestCase):
     def row(self, value):
         return summarize({'example': value})['tasks'][0]
 
+    def test_explicit_supersession_is_retained_and_not_done(self):
+        for version in [1,2]:
+            r=record(version=version,state='superseded')
+            with self.assertRaisesRegex(ValueError,'Missing supersession'):self.row(r)
+            r['tasks'][0]['supersession']={'reason':'Withdrawn by owner','reference':'public.md'}
+            row=self.row(r)
+            self.assertEqual(row['inspection_action'],'preserve_superseded_history')
+            self.assertEqual(row['recorded_status'],'superseded')
+            self.assertEqual(row['supersession']['reference'],'public.md')
+
     def test_pending_legacy_needs_assessment_not_automatic_migration(self):
         row = self.row(record())
         self.assertEqual(row['inspection_action'], 'assess_remaining_scope_for_v2')

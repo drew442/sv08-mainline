@@ -554,7 +554,7 @@ class Workflow:
     def supersede(self, records, key, actor, reference, reason):
         """Retire withdrawn/replaced work without fabricating acceptance or completion."""
         record, task = self.lookup(records, key)
-        require(task['status'] in {'pending', 'blocked'}, 'Only unowned pending/blocked work may be superseded')
+        require(task['status'] in {'pending', 'blocked'}, 'Only nonactive pending/blocked work may be superseded')
         require(actor.strip() and reason.strip(), 'Actor and concrete disposition required')
         path = public_path(self.root, reference)
         committed = subprocess.check_output(['git','-C',str(self.root),'show','HEAD:'+reference])
@@ -573,6 +573,7 @@ class Workflow:
         changed = subprocess.check_output(['git', '-C', str(tree), 'diff', '--name-only',
                                            '--no-renames', '-z', base, 'HEAD']).decode().split('\0')
         require(all(not name or (self.covered(name, task['owned_paths']) and
+                    name not in {record['proposal'], *(p.split('#',1)[0] for p in record['requirements'])} and
                     not re.fullmatch(r'docs/features/[^/]+/record\.json', name)) for name in changed),
                 'Candidate changed files outside assigned ownership')
 
