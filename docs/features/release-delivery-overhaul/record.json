@@ -4,16 +4,16 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "44b0bc637bb1a1bf3c9e957a88a3b7cac905cffe80b7d074f7d1adbba2b4b353",
-    "rationale": "Complete upfront definition/generation ownership from source trace; same approved outcome and allowance, no live task replaced.",
+    "rationale": "Same outcome, history and budget; exact staging dependency guard extension only; candidate9a0f666 preserved.",
     "reference": "docs/features/release-delivery-overhaul/owner-request.md",
     "reference_sha256": "b9b743aaaaf699a7560f91422ff3524864b1b4a97f85ed93a19091617004f0ea",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/features/release-delivery-overhaul/owner-request.md": "b9b743aaaaf699a7560f91422ff3524864b1b4a97f85ed93a19091617004f0ea"
     },
-    "scope_sha256": "00ec4812860e2ec277bafbf49b9cfe1485c1ee7041ff0830ed8ede3de87603c8",
+    "scope_sha256": "1602f800fb6acafc925a4509298d2756a2dda384dccf7328c0d73833304ac472",
     "session": "delivery-overhaul-20261117",
-    "source_commit": "cdbe31408f2c83cab2838b9b4c8036b63b7edab9"
+    "source_commit": "725bd915db11623b9861133311520a1c281440d4"
   },
   "checks": [
     {
