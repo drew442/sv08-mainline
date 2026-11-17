@@ -17,8 +17,8 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 1800,
-    "conservative_current_charge_bytes": 268435456,
+    "conservative_current_charge_seconds": 2500,
+    "conservative_current_charge_bytes": 402653184,
     "worker_followups": {
       "provenance": {
         "conservative_seconds": 30,
@@ -62,8 +62,8 @@
       "board_packages_hash_match": true
     },
     "images_built": false,
-    "conservative_current_charge_seconds": 600,
-    "conservative_current_charge_bytes": 34574486732,
+    "conservative_current_charge_seconds": 2700,
+    "conservative_current_charge_bytes": 42949672960,
     "tools": {
       "git": "2.39.5",
       "debootstrap": "1.0.128+nmu2+deb12u2",
@@ -71,8 +71,13 @@
       "mksquashfs": "4.5.1"
     },
     "preparation_attempts": [
-      "Private signed Debian tool intake/extraction succeeded; initial version sequence exposed missing pkg-exec/sbin PATH entry. Corrected private wrapper and strict version sequence passed. No host installation."
-    ]
+      "Private signed Debian tool intake/extraction succeeded; initial version sequence exposed missing pkg-exec/sbin PATH entry. Corrected private wrapper and strict version sequence passed. No host installation.",
+      "Bootstrap attempt1 refused missing wget before downloads; privately extracted signed Debian wget, retained failed work/log; fresh bootstrap/package/refresh/inspect PASS.",
+      "Pinned application/Cockpit/RAUC package install and exact board package install, generic kernel purge and artifact/regdb checks PASS.",
+      "Native KVM validator PASS for factory and captured selected hardware; repaired owner fixture PASS29 checks. All failed/collector receipts retained; no unchanged validator repeat.",
+      "Actual supported normal root staged current core/UI/public-source provenance, then hygiene check refused the canonical persistent Cockpit certificate link. Source repair accepts exact link without following it; wrong/private/embedded-data refusals retained. Final root/provenance must be refreshed at published repaired source."
+    ],
+    "native_boundaries": "native-evidence.json"
   },
   "combined_ceiling": {
     "process_seconds": 18000,
@@ -97,7 +102,7 @@
     "raw_cid_published": false,
     "saved_hardware_revision": 13,
     "selected_third_party_bed": "funssor-cn3d-hotbed 1.0.0",
-    "fitted_match": "owner confirmation pending",
+    "fitted_match": "Owner explicitly confirmed Yes, those are fitted on2026-11-17",
     "configuration_capture_bytes": 100201,
     "configuration_capture_sha256": "1e4ddf2ef152bc1f6c4b6012f679d4bb613d3ba61b7cdc4a71ee7c6626831cc6",
     "configuration_capture": "private assigned target/saved-hardware.json; no credentials/backups/whole-filesystem dump",
@@ -106,7 +111,8 @@
       "sv08-printer-api": "activating",
       "sv08-mainsail": "inactive"
     },
-    "mutations": false
+    "mutations": false,
+    "physical_operation_authority": false
   },
   "physical_access_kind": "read-only SSH preflight only",
   "physical_operations": false,
@@ -131,5 +137,13 @@
     "affected_check_skips": 0,
     "affected_log_sha256": "d7ac787a9b0fc67e1a622fe7d87e10e2852f14489391a73bbff45019316124d5",
     "limitation": "Pinned metadata and intake plus source tests; actual installed recovery/PAM still pending"
+  },
+  "native_boundaries": {
+    "evidence": "native-evidence.json",
+    "factory_validator": "PASS",
+    "selected_validator": "PASS",
+    "owner_pam_checks": 29,
+    "normal_boot": false,
+    "browser_login": false
   }
 }

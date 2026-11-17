@@ -70,3 +70,27 @@ checks pass/no skips after the149-test source checkpoint (overlapping counts, no
 a summed test total). Logs and hashes are in execution.json. Native CLI/PAM remains
 a required check. Recovery component manifests retain the normal release/version/
 source/MCU identity but remain deployable:false; normal manifests remain deployable:true.
+
+
+## Native integration continuation
+
+[Native receipts](native-evidence.json) bind actual ARM64/KVM checks to3f86bd2.
+The factory and captured selected-hardware configurations reached ready under the
+unchanged production8s CPU,256MiB address-space and10s readiness limits. Actual
+query-kvm observed enabled/present, and both guests exited0. The repaired owner
+probe passed29 checks using installed login/Cockpit PAM policies, enrollment/reset,
+immutable/writable synthetic roots and a native service-account operation. This
+does not establish normal boot, browser login, physical operation or release acceptance.
+Owner confirmed the saved fitted components. No physical changes were performed.
+
+Failed fixture permissions and a stale receipt-collection path were retained and
+corrected; the second check executed only the affected owner probe. Normal
+bootstrap/package/security refresh, pinned applications/Cockpit/RAUC and board
+artifact checks pass. Final normal-root composition found a real hygiene/staging
+mismatch: the canonical persistent Cockpit certificate link was rejected. The
+source repair admits only that exact link without following it; populated private
+directories, wrong links and embedded persistent data still refuse. Actual staging
+regression coverage passes10 supported-candidate plus24 admin-staging tests. Its
+first mkdir fixture error is retained. Current-source provenance/root finalization
+must be rerun after publication of the repair; full board images remain unassembled.
+All four hosted workflows passed at3f86bd2; newer-source CI must be checked separately.

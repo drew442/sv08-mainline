@@ -5,6 +5,7 @@ and per-printer identity are created on the device, outside immutable images.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import stat
@@ -121,8 +122,23 @@ def public_account_checks(root):
         raise ValueError('Supported owner aging must allow PAM login without forced password writes')
     if regular(root, 'etc/machine-id').strip() or regular(root, 'usr/lib/sv08/seed/authorized_keys').strip():
         raise ValueError('Supported image must not contain an owner key or machine identity')
+    # Host UI staging binds certificates to device-enrolled persistent state.
+    # Inspect only the link text: resolving this absolute target would inspect
+    # the build host's /data rather than the image's separate empty data seed.
+    certs = root/'etc/cockpit/ws-certs.d'
+    persistent_certs = certs.is_symlink()
+    if persistent_certs:
+        if (any(path.is_symlink() for path in (root, root/'etc', root/'etc/cockpit')) or
+                os.readlink(certs) != '/data/sv08/system/cockpit/ws-certs.d'):
+            raise ValueError('Supported image contains private state: etc/cockpit/ws-certs.d')
+        embedded_data = root/'data'
+        if (embedded_data.is_symlink() or embedded_data.exists() and
+                (not embedded_data.is_dir() or any(embedded_data.iterdir()))):
+            raise ValueError('Supported image embedded data must be empty')
     for relative in ('etc/NetworkManager/system-connections', 'var/lib/NetworkManager',
                      'etc/cockpit/ws-certs.d', 'etc/ssl/private'):
+        if relative == 'etc/cockpit/ws-certs.d' and persistent_certs:
+            continue
         directory = root/relative
         if directory.is_symlink() or directory.exists() and any(directory.iterdir()):
             raise ValueError('Supported image contains private state: '+relative)

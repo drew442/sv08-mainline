@@ -165,6 +165,26 @@ class SupportedCandidate(unittest.TestCase):
         password_stack.write_bytes(b'# vendor stack\npassword required pam_unix.so\n')
         value=profile();cert=self.certificate()
         with patch('integrate_host_os.rebuild_initramfs'): stage(work,profile_check(value),supported_profile=value,release_certificate=cert)
+        # Exercise the real composition boundary: admin staging creates the
+        # persistent certificate binding consumed by supported finalization.
+        from stage_admin_ui import stage as stage_admin
+        with patch('project_license.source_state',return_value=('a'*40,False)):
+            staged=stage_admin(work,'host',execute=True,refresh=True)
+        certs=root/'etc/cockpit/ws-certs.d'
+        canonical=certs.readlink()
+        self.assertEqual(canonical,Path('/data/sv08/system/cockpit/ws-certs.d'))
+        self.assertIn('etc/cockpit/ws-certs.d',staged['hashes'])
+        # Never follow the absolute certificate link into the build host.
+        exists,iterdir=Path.exists,Path.iterdir
+        def no_cert_exists(path):
+            self.assertNotEqual(path,certs,'Certificate link was followed')
+            return exists(path)
+        def no_cert_iterdir(path):
+            self.assertNotEqual(path,certs,'Certificate link was followed')
+            return iterdir(path)
+        with patch.object(Path,'exists',no_cert_exists),patch.object(Path,'iterdir',no_cert_iterdir):
+            public=public_account_checks(root)
+        self.assertTrue(public['inherited_identity_absent'])
         data=self.base/'data';data.mkdir()
         for name in WIFI_FILES:
             path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.touch()
@@ -172,6 +192,33 @@ class SupportedCandidate(unittest.TestCase):
         with patch('finalize_supported_host.initramfs_entries',return_value={'scripts/local-bottom/sv08-data'}), \
              patch('project_license.validate',return_value=dict(development=False,source_revision='a'*40)):
             result=checks(root,data,value);self.assertFalse(result['release_qualified'])
+            # Wrong/relative links and private certificate directories remain
+            # forbidden, and diagnostics never copy credential bytes.
+            secret='synthetic-private-credential-do-not-publish'
+            private=self.base/'private-certs';private.mkdir()
+            (private/'host.key').write_text(secret)
+            for target in (private,Path('../../data/sv08/system/cockpit/ws-certs.d'),
+                           Path('/data/sv08/system/cockpit/other'),
+                           '/data//sv08/system/cockpit/ws-certs.d'):
+                with self.subTest(target=target):
+                    certs.unlink();certs.symlink_to(target)
+                    with self.assertRaisesRegex(ValueError,'private state') as raised:
+                        checks(root,data,value)
+                    self.assertNotIn(secret,str(raised.exception))
+            certs.unlink();certs.mkdir();(certs/'host.key').write_text(secret)
+            with self.assertRaisesRegex(ValueError,'private state') as raised:
+                checks(root,data,value)
+            self.assertNotIn(secret,str(raised.exception))
+            (certs/'host.key').unlink();certs.rmdir();certs.symlink_to(canonical)
+            embedded=root/'data';embedded.mkdir(exist_ok=True)
+            checks(root,data,value)
+            (embedded/'host.key').write_text(secret)
+            with self.assertRaisesRegex(ValueError,'embedded data') as raised:
+                checks(root,data,value)
+            self.assertNotIn(secret,str(raised.exception))
+            (embedded/'host.key').unlink();embedded.rmdir();embedded.symlink_to(private)
+            with self.assertRaisesRegex(ValueError,'embedded data'):checks(root,data,value)
+            embedded.unlink()
             correct=password_stack.read_bytes()
             password_stack.write_bytes(b'# reordered policy\n'+correct)
             with self.assertRaisesRegex(ValueError,'password policy'):checks(root,data,value)
