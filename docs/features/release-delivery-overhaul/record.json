@@ -57,7 +57,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Preserve delivery-final candidate; extend final registered ownership to workflow inventory compatibility, explicit existing CI selection and representative visual. Same outcome/attempts/budget, no live work.",
       "checks": [
         "delivery-contract",
         "firmware-policy",
@@ -137,7 +137,7 @@
       "resumption": "Prior run7f29065453074b95a7d14c339e4d82ef and candidate9a0f666 preserved; both writers stopped, extend exactly admin dependency guards, cumulative allowance/attempts unchanged.",
       "review_policy": "self",
       "review_reason": "Reversible offline source and disposable fixtures only; no hardware operations or release publication.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement complete accepted overhaul",
       "validation": null,
       "verification": null
