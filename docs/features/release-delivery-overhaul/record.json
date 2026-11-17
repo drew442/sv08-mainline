@@ -117,7 +117,15 @@
         "tests/test_build_preflight.py",
         "tests/test_recovery_image.py",
         "docs/features/release-delivery-overhaul/evidence.md",
-        "docs/features/release-delivery-overhaul/coverage.md"
+        "docs/features/release-delivery-overhaul/coverage.md",
+        "runtime/sv08_state.py",
+        "runtime/sv08_printer_definitions.py",
+        "catalog/printer/definitions/builtin.json",
+        "tests/test_host_state.py",
+        "tests/test_printer_definitions.py",
+        "tests/printer_browser.mjs",
+        "tests/test_printer_browser_fixture.py",
+        "scripts/stage_printer_ui.py"
       ],
       "repeats": 0,
       "resumption": null,
