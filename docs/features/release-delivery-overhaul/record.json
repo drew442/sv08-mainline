@@ -4,16 +4,16 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "44b0bc637bb1a1bf3c9e957a88a3b7cac905cffe80b7d074f7d1adbba2b4b353",
-    "rationale": "Complete existing inventory/CI integration and visual evidence; no new product scope or hardware authority; all history/budgets carried.",
+    "rationale": "CI-diagnosed fixture/launcher repair only; preserve failed receipts and source history; same acceptance/cumulative allowance.",
     "reference": "docs/features/release-delivery-overhaul/owner-request.md",
     "reference_sha256": "b9b743aaaaf699a7560f91422ff3524864b1b4a97f85ed93a19091617004f0ea",
     "requirements_sha256": {
       "docs/decisions/20261005-proportionate-development-review.md": "70477c82715e2208de0e98b931fec8908749220b7fc812a6e9d9bd4f149e3005",
       "docs/features/release-delivery-overhaul/owner-request.md": "b9b743aaaaf699a7560f91422ff3524864b1b4a97f85ed93a19091617004f0ea"
     },
-    "scope_sha256": "669eebd2cc03e6ec59f2f5fe50b0ab7b88f87089b0015702560f52d990a28dac",
+    "scope_sha256": "9510d3c242d8309b269de2b67904eb98efee90e30a884b0a1865c995fc172931",
     "session": "delivery-overhaul-20261117",
-    "source_commit": "b5d61ab0a490232157c7a6382e8de92810cb7aec"
+    "source_commit": "1fab3fe8c1ca2a350493722ff78c6e6be95dd0cd"
   },
   "checks": [
     {
