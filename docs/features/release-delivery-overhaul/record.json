@@ -1,0 +1,119 @@
+{
+  "format_version": 2,
+  "id": "release-delivery-overhaul",
+  "kind": "feature",
+  "title": "Complete release delivery overhaul and MCU definition policy",
+  "author": "root/coordinator",
+  "created": "2026-11-17",
+  "priority": 2,
+  "proposal": "docs/features/release-delivery-overhaul/proposal.md",
+  "requirements": [
+    "docs/features/release-delivery-overhaul/owner-request.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "delivery-contract",
+      "description": "delivery-contract acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "firmware-policy",
+      "description": "firmware-policy acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "workflow",
+      "description": "workflow acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "build-preflight",
+      "description": "build-preflight acceptance in proposal",
+      "environment": "offline"
+    },
+    {
+      "id": "publication",
+      "description": "publication acceptance in proposal",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement complete accepted overhaul",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "delivery-contract",
+        "firmware-policy",
+        "workflow",
+        "build-preflight",
+        "publication"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible offline source and disposable fixtures only; no hardware operations or release publication.",
+      "hazards": [],
+      "owned_paths": [
+        "AGENTS.md",
+        ".codex/agent-guide.md",
+        ".codex/current-goals.md",
+        ".codex/README.md",
+        ".codex/schemas/feature-record.schema.json",
+        ".codex/schemas/feature-record-v2.schema.json",
+        "scripts/feature_workflow.py",
+        "tests/test_feature_workflow.py",
+        "docs/project.md",
+        "docs/remaining-work-plan.md",
+        "docs/roadmap.md",
+        "docs/hardware/host-os-tasks.md",
+        "docs/hardware/coordinated-human-tasks.md",
+        "docs/development/stock-printer-readiness.md",
+        "docs/development/reproducible-builds.md",
+        "docs/development/feature-workflow.md",
+        "docs/development/release-packaging.md",
+        "docs/development/printer-hardware-catalog.md",
+        "docs/history/current-goals-through-20261116.md",
+        "docs/history/remaining-work-through-20261116.md",
+        "docs/history/roadmap-through-20261116.md",
+        "docs/history/host-os-tasks-through-20261116.md",
+        "runtime/sv08_printer_firmware.py",
+        "runtime/sv08_printer_store.py",
+        "runtime/sv08_view.py",
+        "scripts/integrate_host_os.py",
+        "ui/printer/app.js",
+        "ui/printer/panel.html",
+        "tests/test_printer_firmware.py",
+        "tests/test_config_view.py",
+        "tests/test_printer_configuration.py",
+        "scripts/build_preflight.py",
+        "scripts/recovery_image.py",
+        "scripts/prepare_host_os.py",
+        "tests/test_build_preflight.py",
+        "tests/test_recovery_image.py",
+        "docs/features/release-delivery-overhaul/evidence.md",
+        "docs/features/release-delivery-overhaul/coverage.md"
+      ],
+      "input_paths": [
+        "catalog/printer/",
+        "schemas/printer-definitions/",
+        "runtime/sv08_bundle.py",
+        "runtime/sv08_printer_calibration_observer.py",
+        "configs/images/host-ab.json"
+      ]
+    }
+  ]
+}
