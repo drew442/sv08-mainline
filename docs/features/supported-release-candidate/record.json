@@ -1,0 +1,127 @@
+{
+  "format_version": 2,
+  "id": "supported-release-candidate",
+  "kind": "feature",
+  "title": "Supported candidate composition and clean-owner setup",
+  "author": "root/coordinator",
+  "created": "2026-11-17",
+  "priority": 1,
+  "proposal": "docs/features/supported-release-candidate/proposal.md",
+  "requirements": [
+    "docs/features/supported-release-candidate/owner-request.md",
+    "docs/remaining-work-plan.md",
+    "docs/decisions/20261005-proportionate-development-review.md"
+  ],
+  "owner_decision_required": false,
+  "decision": null,
+  "authorization": null,
+  "requirement_rechecks": [],
+  "checks": [
+    {
+      "id": "c1",
+      "description": "Supported composition and diagnostic preservation",
+      "environment": "offline"
+    },
+    {
+      "id": "c2",
+      "description": "Clean owner enrollment and persistent authentication",
+      "environment": "offline"
+    },
+    {
+      "id": "c3",
+      "description": "Guarded service activation and firmware policy",
+      "environment": "offline"
+    },
+    {
+      "id": "c4",
+      "description": "Composed and rendered checks with regressions",
+      "environment": "offline"
+    },
+    {
+      "id": "c5",
+      "description": "Source-bound evidence and next release phase",
+      "environment": "offline"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "implement",
+      "title": "Implement and validate supported candidate source path",
+      "status": "pending",
+      "environment": "offline",
+      "depends_on": [],
+      "checks": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
+      "human_task": null,
+      "blocker": null,
+      "implementation": null,
+      "evidence": [],
+      "verification": null,
+      "validation": null,
+      "repeats": 0,
+      "resumption": null,
+      "review_policy": "self",
+      "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
+      "hazards": [],
+      "owned_paths": [
+        "scripts/integrate_host_os.py",
+        "scripts/assemble_board_diagnostic.py",
+        "scripts/finalize_supported_host.py",
+        "scripts/assemble_supported_candidate.py",
+        "scripts/supported_candidate.py",
+        "scripts/prepare_host_os.py",
+        "scripts/recovery_image.py",
+        "runtime/sv08_owner.py",
+        "runtime/sv08_recovery_owner.py",
+        "runtime/sv08_boot.py",
+        "runtime/sv08_mounts.py",
+        "runtime/sv08_recovery.py",
+        "runtime/sv08_recovery_restore_media.py",
+        "runtime/sv08_recovery_ui.py",
+        "runtime/sv08_admin.py",
+        "runtime/sv08_environment_device.py",
+        "runtime/sv08_commissioning.py",
+        "runtime/sv08_restart.py",
+        "configs/host-os/systemd/",
+        "configs/host-os/supported/",
+        "configs/images/host-ab.json",
+        "tests/test_owner.py",
+        "tests/test_recovery_owner.py",
+        "tests/recovery_owner_gtk.py",
+        "tests/test_host_boot.py",
+        "tests/test_host_mounts.py",
+        "tests/host_mount_namespace.py",
+        "tests/test_host_integration.py",
+        "tests/test_supported_candidate.py",
+        "tests/test_commissioning.py",
+        "tests/test_environment_device.py",
+        "tests/test_recovery_ui.py",
+        "tests/test_recovery_restore_media.py",
+        "tests/test_admin.py",
+        ".github/workflows/host-os.yml",
+        ".github/workflows/agent-workflow.yml",
+        "docs/development/owner-setup.md",
+        "docs/development/host-os-build.md",
+        "docs/features/supported-release-candidate/",
+        ".codex/current-goals.md"
+      ],
+      "input_paths": [
+        "runtime/sv08_state.py",
+        "runtime/sv08_identity.py",
+        "runtime/sv08_boot_health.py",
+        "runtime/sv08_printer_firmware.py",
+        "runtime/sv08_web.py",
+        "catalog/printer/",
+        "schemas/printer-definitions/",
+        "configs/storage/",
+        "configs/host-os/environment-layout.json",
+        "upstream-lock.json"
+      ]
+    }
+  ]
+}
