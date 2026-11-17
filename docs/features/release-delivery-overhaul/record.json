@@ -463,7 +463,7 @@
       "resumption": "Preserve5f848f2 source and PR38 failed logs. Both writers stopped; correct explicit CI fixture paths/version and reuse established browser startup evidence. No budget/attempt reset or production protection change.",
       "review_policy": "self",
       "review_reason": "Reversible offline source and disposable fixtures only; no hardware operations or release publication.",
-      "status": "validated",
+      "status": "done",
       "title": "Implement complete accepted overhaul",
       "validation": {
         "actor": "root/coordinator",

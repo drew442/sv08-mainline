@@ -1,6 +1,11 @@
 # Current delivery state
 
-Baseline: main `85a17ae`, PR17 merged; native recovery goal complete. Owner approved the delivery overhaul on 2026-11-17. Source changes/evidence are tracked in [release-delivery-overhaul](../docs/features/release-delivery-overhaul/proposal.md); no release or deployment is implied.
+PR38 merged on 2026-11-17 as `47e265e21b3382ddc921317097e53991fffd6035`;
+local main fast-forwarded. The delivery-overhaul task is complete after owner
+integration; all four final-head CI jobs passed. [Evidence](../docs/features/release-delivery-overhaul/evidence.md)
+records source acceptance and limitations. No deployment, MCU flashing or printer
+operation occurred. The native recovery goal remains complete; the next product
+milestone below has not been started.
 
 ## Contract and next milestone
 
