@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "8732f9f57c444d1197113ec983ea5de9",
+        "session": "supported-release-20261117"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -175,7 +179,7 @@
       "resumption": "New measured physical topology demonstrates missing eMMC boot-area admission. Reopen existing C1-C5 source task; retain prior proofs at their original inputs, all attempts/consumption and PR39 history. Add protected nonselectable auxiliary topology without relaxing aliases, holder/read-only or complete-inventory checks; no physical writes.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
