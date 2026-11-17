@@ -21,13 +21,17 @@ The supported candidate/clean-owner source checkpoint is in [PR39](https://githu
 Its task is reopened after an actual passive inventory call rejected the printer's
 eMMC boot0/boot1 hardware areas. The new blank16GB SC16G SD is identified on
 Beelink and remains unwritten; backup-media identity is still requested.
-The coordinator must correct protected boot-area admission and refresh affected
-artifacts before finalising the SD policy or requesting a physical write.
+The protected boot-area correction at `7317a89` passes its focused and related
+source checks, and its reader succeeds passively in memory on the actual eMMC.
+[Source-bound evidence](https://github.com/drew442/sv08-mainline/blob/bc1c71a39301630779892c505203ef4caa0d910b/docs/features/supported-release-candidate/boot-area-evidence.json)
+records the limits. DD65 artifacts are superseded/not for deployment. Refresh
+affected artifacts after binding the separately identified USB backup drive;
+no SD policy or physical write is ready.
 The [current session bindings](test-sv08-01-commissioning-session.md#current-candidate-bindings--2026-11-17)
 record rebuilt artifacts, an actual native-validated input-only candidate and a
 passive installed-storage snapshot. These do not pass any physical H phase.
-Current dependency: identify the spare SD/backup drive and their read-only access
-location, then bind/build independent recovery and finalise exact phase launch/stop
+Current dependency: identify the separate USB backup drive and its read-only access
+location (the new SD is identified), then bind/build independent recovery and finalise exact phase launch/stop
 assessment/authority. Keep the tested rescue SD unchanged. The coordinator supplies
 the Linux procedure; do not ask the owner to improvise it. Latest cumulative
 preparation allowances/charges and retained failures are in the same session form.

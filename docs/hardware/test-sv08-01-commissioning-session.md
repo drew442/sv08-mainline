@@ -13,6 +13,19 @@ serials, private configuration, calibration, keys or raw captures in this docume
 
 ## Current candidate bindings — 2026-11-17
 
+Superseding preparation note: the new blank SC16G SD is identified read-only on
+Beelink and remains unwritten. Passive actual-printer inventory exposed protected
+eMMC boot regions missing from the reader. The correction at `7317a89` passes
+source checks and its in-memory reader now succeeds on the actual eMMC, without
+deployment or mutation. [Evidence](https://github.com/drew442/sv08-mainline/blob/bc1c71a39301630779892c505203ef4caa0d910b/docs/features/supported-release-candidate/boot-area-evidence.json).
+The DD65 image/bundle bindings below remain historical, superseded and **not for
+deployment**. Current independent-SD policy waits for a separate USB backup disk;
+then refresh affected artifacts from cached pinned inputs. Source self-validation
+is recorded at `bc1c71a`; no physical H acceptance is claimed. Current cumulative
+ceilings are source 7,200 seconds/1 GiB and native 18,000 seconds/124 GiB; conservative
+charges are 3,900 seconds/880 MiB and 12,100 seconds/98 GiB, without deletion credits.
+The earlier preparation figures below retain their original scope.
+
 Preparation only; no physical launch/write is authorised. These bindings belong to
 [PR39](https://github.com/drew442/sv08-mainline/pull/39), whose source checks and
 four hosted workflows passed. The source feature remains self-validated, awaiting
