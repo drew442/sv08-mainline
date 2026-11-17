@@ -240,7 +240,7 @@
       }
     },
     {
-      "blocker": "Owner dropped separate rehearsal and abandoned RAM maintenance on 2026-10-02. Historical offline evidence retained; this old physical gate is withdrawn and replaced by integrated checks in attended SD flashing.",
+      "blocker": null,
       "checks": [
         "urh-04"
       ],
@@ -254,12 +254,19 @@
       "implementation": null,
       "repeats": 0,
       "resumption": null,
-      "status": "blocked",
+      "status": "superseded",
       "title": "Validate recovery handoff and return without target write",
-      "verification": null
+      "verification": null,
+      "supersession": {
+        "actor": "root/coordinator",
+        "reason": "Owner withdrew separate RAM/rehearsal path on2026-10-02; integrated checks and attended SD reimage/H12 completion replace it. Prior recorded blocker: Owner dropped separate rehearsal and abandoned RAM maintenance on 2026-10-02. Historical offline evidence retained; this old physical gate is withdrawn and replaced by integrated checks in attended SD flashing.",
+        "reference": "docs/features/release-delivery-overhaul/coverage.md",
+        "reference_sha256": "b2efba839c8a400976428be40e61d53599607a0760089568b03603a8c7d4c83d",
+        "source_commit": "fd30e7ef9c137983e6e9597fb805b21ddc7dba7c"
+      }
     },
     {
-      "blocker": "Old RAM/claim/automatic-return physical procedure superseded by attended SD reimage. Whole-image outcome remains required through the new SD delivery, without old dependencies.",
+      "blocker": null,
       "checks": [
         "urh-05"
       ],
@@ -273,9 +280,16 @@
       "implementation": null,
       "repeats": 0,
       "resumption": null,
-      "status": "blocked",
+      "status": "superseded",
       "title": "Commission one full installed-spare reimage",
-      "verification": null
+      "verification": null,
+      "supersession": {
+        "actor": "root/coordinator",
+        "reason": "Old RAM/claim/automatic-return procedure replaced by attended SD write/readback/normal boot (h12-attended-sd-reimage/physical-completion.md). No new physical success claimed. Prior recorded blocker: Old RAM/claim/automatic-return physical procedure superseded by attended SD reimage. Whole-image outcome remains required through the new SD delivery, without old dependencies.",
+        "reference": "docs/features/release-delivery-overhaul/coverage.md",
+        "reference_sha256": "b2efba839c8a400976428be40e61d53599607a0760089568b03603a8c7d4c83d",
+        "source_commit": "fd30e7ef9c137983e6e9597fb805b21ddc7dba7c"
+      }
     }
   ],
   "title": "Enter and leave the RAM writer through existing recovery boot"

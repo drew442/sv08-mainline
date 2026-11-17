@@ -162,10 +162,17 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Exact product and connection specifications are missing; obtain them before choosing settings.",
-      "status": "pending",
+      "status": "superseded",
       "title": "Add exact named bed/hotend/chamber upgrade profiles",
       "validation": null,
-      "verification": null
+      "verification": null,
+      "supersession": {
+        "actor": "root/coordinator",
+        "reason": "Owner moved third-party presets to definition sources and initial release to actual fitted target; required matching definitions remain part of release commissioning, not speculative built-in upgrade presets.",
+        "reference": "docs/features/release-delivery-overhaul/coverage.md",
+        "reference_sha256": "b2efba839c8a400976428be40e61d53599607a0760089568b03603a8c7d4c83d",
+        "source_commit": "fd30e7ef9c137983e6e9597fb805b21ddc7dba7c"
+      }
     },
     {
       "blocker": null,
@@ -196,10 +203,17 @@
       "resumption": null,
       "review_policy": "targeted",
       "review_reason": "Exact changed runtime/catalog/UI installation and preservation assessment before using the existing immutable-host overlay procedure.",
-      "status": "pending",
+      "status": "superseded",
       "title": "Deliver and check the simpler installed Cockpit page",
       "validation": null,
-      "verification": null
+      "verification": null,
+      "supersession": {
+        "actor": "root/coordinator",
+        "reason": "Replaced by later installed component/readiness/UI delivery; preserve original scope and evidence. See stock-printer-readiness/deployment-20261026.md and subsequent provenance deployment.",
+        "reference": "docs/features/release-delivery-overhaul/coverage.md",
+        "reference_sha256": "b2efba839c8a400976428be40e61d53599607a0760089568b03603a8c7d4c83d",
+        "source_commit": "fd30e7ef9c137983e6e9597fb805b21ddc7dba7c"
+      }
     }
   ],
   "title": "Simple board and hardware upgrade selections"
