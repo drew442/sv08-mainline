@@ -52,23 +52,31 @@ def board_profile(path):
             result[key]=value
         return result
     value=json.loads(clean_path(path).read_text(),object_pairs_hook=unique)
-    if set(value)!={'format_version','kernel_release','recovery','partitions','artifacts','packages'} or value['format_version']!=1:
+    fields={'format_version','kernel_release','recovery','partitions','artifacts','packages'}
+    independent_sd = value.get('format_version') == 2 and value.get('medium') == 'independent-sd'
+    if (set(value) != fields | ({'medium'} if independent_sd else set()) or
+            type(value['format_version']) is not int or value['format_version'] != (2 if independent_sd else 1)):
         raise ValueError('Invalid board profile schema')
     if value['kernel_release']!='6.18.51-sv08-candidate1':raise ValueError('Unreviewed board kernel')
     def canonical(value):
         if not isinstance(value,str) or str(uuid.UUID(value))!=value or uuid.UUID(value).int==0:raise ValueError('Invalid canonical partition UUID')
     recovery=value['recovery']
-    if set(recovery)!={'partuuid','filesystem_uuid','bytes','index'} or recovery['filesystem_uuid']!=UUID or recovery['bytes']!=SIZE or recovery['index']!=5:
+    if (set(recovery)!={'partuuid','filesystem_uuid','bytes','index'} or
+            (not independent_sd and recovery['filesystem_uuid']!=UUID) or
+            recovery['bytes']!=SIZE or recovery['index']!=(2 if independent_sd else 5)):
         raise ValueError('Invalid recovery identity/capacity')
+    canonical(recovery['filesystem_uuid'])
     canonical(recovery['partuuid'])
     partitions=value['partitions']
-    if len(partitions)!=6 or {p['index'] for p in partitions}!=set(range(1,7)) or len({p['partuuid'] for p in partitions})!=6 or len({p['role'] for p in partitions})!=6:
+    count = 2 if independent_sd else 6
+    if len(partitions)!=count or {p['index'] for p in partitions}!=set(range(1,count+1)) or len({p['partuuid'] for p in partitions})!=count or len({p['role'] for p in partitions})!=count:
         raise ValueError('Six distinct partition identities required')
     for p in partitions:
         if set(p)!={'role','index','partuuid'} or type(p['index']) is not int:raise ValueError('Invalid partition schema')
         canonical(p['partuuid'])
-    if [p['role'] for p in sorted(partitions,key=lambda p:p['index'])]!=['boot-a','root-a','boot-b','root-b','recovery','data']:raise ValueError('Unexpected partition roles/order')
-    if [p for p in partitions if p['role']=='recovery']!=[dict(role='recovery',index=5,partuuid=recovery['partuuid'])]:raise ValueError('Recovery partition role mismatch')
+    roles = ['sd-boot','recovery'] if independent_sd else ['boot-a','root-a','boot-b','root-b','recovery','data']
+    if [p['role'] for p in sorted(partitions,key=lambda p:p['index'])]!=roles:raise ValueError('Unexpected partition roles/order')
+    if [p for p in partitions if p['role']=='recovery']!=[dict(role='recovery',index=recovery['index'],partuuid=recovery['partuuid'])]:raise ValueError('Recovery partition role mismatch')
     artifacts=value['artifacts']
     if set(artifacts)!={'image','config','dtb','modules'}:raise ValueError('Missing board artifacts')
     for name,item in artifacts.items():
@@ -104,11 +112,11 @@ def boot_gate(profile=None):
     start=content.index('for module in virtio_pci ')
     end=content.index('manifest=/newroot/')
     selector=(REPO/'configs/host-os/recovery-board-root').read_text()
-    for key,value in {'PARTUUID':profile['recovery']['partuuid'],'INDEX':5,'SECTORS':SIZE//512,'UUID':UUID}.items():selector=selector.replace('@'+key+'@',str(value))
+    for key,value in {'PARTUUID':profile['recovery']['partuuid'],'INDEX':profile['recovery']['index'],'SECTORS':SIZE//512,'UUID':profile['recovery']['filesystem_uuid']}.items():selector=selector.replace('@'+key+'@',str(value))
     content=content[:start]+selector+content[end:]
     old="= '/dev/vda:ext4:ro,relatime,norecovery'"
     if content.count(old)!=1:raise ValueError('Common mount gate changed; review required')
-    return content.replace(old,'= "${recovery_device}:ext4:ro,relatime,norecovery"')
+    return content.replace(old,'= "${recovery_device}:ext4:ro,relatime,norecovery"').replace(UUID,profile['recovery']['filesystem_uuid'])
 
 
 def run(args, **kw):
@@ -243,7 +251,8 @@ def installed_provider_inputs(root):
             root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
     }
     for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py', 'sv08_recovery_links.py',
-                 'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
+                 'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py',
+                 'sv08_owner.py','sv08_recovery_owner.py','sv08_web.py','sv08_printer_stack.py'):
         paths['runtime/'+name] = root/'usr/lib/sv08'/name
     if not all(path.is_file() for path in paths.values()):
         raise ValueError('Installed recovery provider input is missing')
@@ -712,7 +721,8 @@ def build(a):
     (envelope/'boot').mkdir(exist_ok=True)
     initramfs(root,envelope/'boot/initrd-recovery.img',profile)
     # Line-oriented fixed manifest is parseable by the self-contained busybox gate.
-    manifest=f'format=sv08-recovery-usr-v1\nroot_uuid={UUID}\nroot_bytes={SIZE}\nusr_path=/usr.squashfs\nusr_bytes={usr.stat().st_size}\nusr_sha256={sha(usr)}\n'
+    filesystem_uuid = profile['recovery']['filesystem_uuid'] if profile else UUID
+    manifest=f'format=sv08-recovery-usr-v1\nroot_uuid={filesystem_uuid}\nroot_bytes={SIZE}\nusr_path=/usr.squashfs\nusr_bytes={usr.stat().st_size}\nusr_sha256={sha(usr)}\n'
     write(envelope/'etc/sv08/recovery-envelope.manifest',manifest)
     media_profile = getattr(a, 'media_profile', None)
     media_profile_hash = None
@@ -742,7 +752,7 @@ def build(a):
     for p in [envelope,*envelope.rglob('*')]:os.utime(p,(EPOCH,EPOCH),follow_symlinks=False)
     disk=work/'recovery.ext4'
     with disk.open('xb') as f:f.truncate(SIZE)
-    run(['mkfs.ext4','-q','-F','-b','4096','-I','256','-m','0','-U',UUID,'-L','SV08_RECOVERY','-E','lazy_itable_init=0,lazy_journal_init=0,hash_seed='+UUID,'-d',envelope,disk],env=dict(os.environ,E2FSPROGS_FAKE_TIME=str(EPOCH)))
+    run(['mkfs.ext4','-q','-F','-b','4096','-I','256','-m','0','-U',filesystem_uuid,'-L','SV08_RECOVERY','-E','lazy_itable_init=0,lazy_journal_init=0,hash_seed='+filesystem_uuid,'-d',envelope,disk],env=dict(os.environ,E2FSPROGS_FAKE_TIME=str(EPOCH)))
     fsck=run(['e2fsck','-fn',disk],capture_output=True,text=True)
     write(work/'fsck.txt',fsck.stdout+fsck.stderr)
     usage=run(['dumpe2fs','-h',disk],capture_output=True,text=True).stdout

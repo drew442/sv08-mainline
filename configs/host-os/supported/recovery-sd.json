@@ -1,0 +1,53 @@
+{
+  "format_version": 2,
+  "kernel_release": "6.18.51-sv08-candidate1",
+  "recovery": {
+    "partuuid": "deaf981d-7441-428c-bf43-ce40bca6ca65",
+    "filesystem_uuid": "27ea34a6-fb05-4814-aaee-251071577ae1",
+    "bytes": 536870912,
+    "index": 2
+  },
+  "partitions": [
+    {
+      "role": "sd-boot",
+      "index": 1,
+      "partuuid": "91a855d4-e0d7-4bd5-ab68-62c44d36e60f"
+    },
+    {
+      "role": "recovery",
+      "index": 2,
+      "partuuid": "deaf981d-7441-428c-bf43-ce40bca6ca65"
+    }
+  ],
+  "artifacts": {
+    "image": {
+      "path": "boot/vmlinuz-6.18.51-sv08-candidate1",
+      "sha256": "f20fa139d726159e4539e3d7eaec2ec31c75df713f3005dd443bbd4a738c500e"
+    },
+    "config": {
+      "path": "boot/config-6.18.51-sv08-candidate1",
+      "sha256": "e0f0a8bfdc98effeccbe328d165301116de540fe06d68b3e6780593383e46da2"
+    },
+    "dtb": {
+      "path": "usr/lib/linux-image-6.18.51-sv08-candidate1/allwinner/test-sv08-01-diagnostic.dtb",
+      "sha256": "571288762747007542bb00c7ce04c2e0994678422e441975d928022588da9d3f"
+    },
+    "modules": {
+      "path": "usr/lib/modules/6.18.51-sv08-candidate1",
+      "inventory_sha256": "10632761f81a09a69d6a6b5d6a6b8e78fd2c1384f640014f0290d1f69906c2e0"
+    }
+  },
+  "packages": [
+    {
+      "filename": "sv08-board-support-6.18.51-sv08-candidate1_0.1.0~diagnostic.1_arm64.deb",
+      "bytes": 643112,
+      "sha256": "53a57823343129daad761d2cb43510cccfb16ea9d691e9493cbf0192db38c80c"
+    },
+    {
+      "filename": "linux-image-6.18.51-sv08-candidate1_6.18.51+sv08.1-1_arm64.deb",
+      "bytes": 30558312,
+      "sha256": "f47fd1bf51dc10efb8443c0d82ffb5e44aae9b63fc86822464c302ffb8d380b4"
+    }
+  ],
+  "medium": "independent-sd"
+}

@@ -15,12 +15,16 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'runtime'))
 from sv08_state import Store
 from sv08_mounts import BINDS, TMPFS, apply
+from sv08_owner import Owner
 
-with tempfile.TemporaryDirectory(prefix='sv08-mount-test-') as temporary:
+with tempfile.TemporaryDirectory(prefix='sv08-mount-test-', dir=os.environ.get('SV08_TEST_ROOT')) as temporary:
     base = Path(temporary)
     data = base / 'data'
     store = Store(data, reserve_bytes=0)
     store.initialize()
+    (data/'system').chmod(0o700)
+    owner=Owner(data);owner.save('fixture owner password','fixture owner password',owner.status())
+    owner_hash=owner.load()[0]['password_hash']
     (data / 'system/machine-id').write_text('0' * 32 + '\n')
     (data / 'system/hostname').write_text('sv08\n')
     (data / 'system/hosts').write_text('127.0.0.1 localhost\n')
@@ -37,12 +41,21 @@ with tempfile.TemporaryDirectory(prefix='sv08-mount-test-') as temporary:
                 dst.mkdir(exist_ok=True)
         for path in list(TMPFS) + ['run', 'var/lib/dpkg', 'etc']:
             (root / path).mkdir(parents=True, exist_ok=True)
+        (root/'etc/passwd').write_text('root:x:0:0::/root:/bin/bash\nsv08:x:1000:1000::/home/sv08:/bin/bash\n')
+        slot_shadow='root:*:0:0:99999:7:::\nsv08:*:0:0:99999:7:::\ndaemon:!:0:0:99999:7:::\n'
+        (root/'etc/shadow').write_text(slot_shadow)
         (root / 'var/lib/dpkg/status').write_text('slot-local package database')
         subprocess.run(['mount', '--bind', str(root), str(root)], check=True)
         subprocess.run(['mount', '-t', 'tmpfs', 'tmpfs', str(root / 'run')], check=True)
         store.policy(mode=mode)
-        boot = store.prepare_boot('A', 'release-1')
-        apply(root, data, boot, bind_root=True)
+        slot='B' if mode == 'writable' else 'A'
+        boot = store.prepare_boot(slot, 'release-1')
+        apply(root, data, boot, bind_root=True, owner_setup=True)
+        assert (root/'etc/shadow').read_text() == slot_shadow.replace('sv08:*:', 'sv08:'+owner_hash+':')
+        try:
+            (root/'etc/shadow').write_text('unexpected')
+            raise AssertionError('Owner shadow accepted a transient password write')
+        except OSError as error: assert error.errno == errno.EROFS, error
         try:
             (root / 'etc/os-write-test').write_text('customization')
             assert mode == 'writable', 'immutable root accepted a write'
@@ -55,7 +68,7 @@ with tempfile.TemporaryDirectory(prefix='sv08-mount-test-') as temporary:
         (root / 'var/cache/temporary').write_text('ephemeral')
         assert not (data / 'var/cache').exists()
         subprocess.run(['umount', '-R', str(root)], check=True)
-    assert store.load()['slots']['A']['customized']
+    assert store.load()['slots']['B']['customized']
     print(json.dumps({'real_mount_namespace': True, 'immutable_write_rejected': True,
                       'writable_write_succeeded': True, 'persistent_write_succeeded': True,
-                      'both_mode_transitions': True, 'dpkg_slot_local': True}))
+                      'both_mode_transitions': True, 'dpkg_slot_local': True, 'owner_shadow_readonly_both_modes': True, 'owner_AB_persistent': True}))

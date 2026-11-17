@@ -20,9 +20,10 @@ from sv08_recovery_media import (Kernel, MediaLease, LOCK, WRITER_MODEL, trusted
     strict_envelope_manifest, reviewed_inventory, validate_usr_loop_inventory, MediaProvider)
 from sv08_restore import Restore
 from sv08_recovery_activation import Activation
+from sv08_recovery_owner import RecoveryOwner, ACTION as OWNER_ACTION
 
 ACTIVATION_ACTIONS = ('recovery.activate', 'recovery.activate-fresh', 'recovery.rollback')
-RESTORE_ACTIONS = ('recovery.data-restore', 'recovery.initialize', *ACTIVATION_ACTIONS)
+RESTORE_ACTIONS = ('recovery.data-restore', 'recovery.initialize', *ACTIVATION_ACTIONS, OWNER_ACTION)
 
 POLICY = Path('/etc/sv08/recovery-restore-policy.json')
 CONTEXT = Path('/run/sv08-recovery/restore-context.json')
@@ -33,12 +34,21 @@ ID = r'[a-zA-Z0-9][a-zA-Z0-9._+-]{0,79}'
 class RestoreAdapter:
     def __init__(self, restorer, boot=None):
         self.restorer = restorer
+        self.owner = RecoveryOwner(restorer.targets, restorer.admission, reserve_bytes=restorer.reserve_bytes)
         self.activation = Activation(restorer.targets,restorer.admission,boot) if boot else None
     def images(self): return []
     def destinations(self): return []
     def archives(self): return [dict(id=k, label=v['label']) for k,v in self.restorer.archives.items()]
     def restore_targets(self): return [dict(id=k, label=v['label']) for k,v in self.restorer.targets.items()]
+    def review_owner(self, arguments): return self.owner.prepare(arguments)
+    def enroll_owner(self, plan, password, confirmation): return self.owner.execute(plan['owner'], password, confirmation)
     def capability(self, action, view):
+        if action == OWNER_ACTION:
+            try:
+                with self.restorer.admission(next(iter(self.restorer.targets))) as guard: guard.recheck()
+                return True, ''
+            except (OSError,ValueError,KeyError,TypeError,StopIteration,subprocess.SubprocessError) as error:
+                return False, 'Owner setup unavailable: '+str(error)
         if action in ACTIVATION_ACTIONS:
             if not self.activation: return False, 'Reviewed normal boot binding is unavailable.'
             try:
@@ -155,7 +165,7 @@ class RestoreMediaProvider(RestoreAdapter):
         require(manifest['inputs'].get('restore_policy') == policy_binding(self.policy), 'Restore policy differs from immutable manifest')
         for name in ('sv08_restore.py','sv08_recovery_prepare.py','sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_recovery_restore_media.py','sv08_recovery.py','sv08_recovery_ui.py',
                      'sv08_admin.py','sv08_export.py','sv08_recovery_media.py','sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py',
-                     'sv08_data_budget.py','sv08_update_policy.py'):
+                     'sv08_data_budget.py','sv08_update_policy.py','sv08_owner.py','sv08_recovery_owner.py','sv08_web.py','sv08_printer_stack.py'):
             installed = Path('/usr/lib/sv08') / name
             data = trusted_file(installed)
             require(manifest['inputs'].get('runtime/'+name) == hashlib.sha256(data).hexdigest(),
@@ -238,10 +248,12 @@ class Composite:
     def destinations(self): return self.export.destinations()
     def archives(self): return self.restore.archives() if hasattr(self.restore,'archives') else []
     def restore_targets(self): return self.restore.restore_targets() if hasattr(self.restore,'restore_targets') else []
-    def selected(self, action): return self.restore if action in ('recovery.data-restore','recovery.initialize',*ACTIVATION_ACTIONS) else self.export
+    def selected(self, action): return self.restore if action in ('recovery.data-restore','recovery.initialize',*ACTIVATION_ACTIONS,OWNER_ACTION) else self.export
     def capability(self, action, view): return self.selected(action).capability(action,view)
     def status_capabilities(self, view):
         return self.restore.status_capabilities(view) if hasattr(self.restore,'status_capabilities') else {}
+    def review_owner(self, arguments): return self.restore.review_owner(arguments)
+    def enroll_owner(self, plan, password, confirmation): return self.restore.enroll_owner(plan, password, confirmation)
     def review_export(self, target): return self.export.review_export(target)
     def review_restore(self, action,args): return self.restore.review_restore(action,args)
     def apply(self, plan): return self.selected(plan['action']).apply(plan)
