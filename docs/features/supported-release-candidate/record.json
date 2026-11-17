@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "1872d64f651372420751845bb6a51b52a5f14330b3dc7dbe50d727475af8b741",
-    "rationale": "First supported release goal: implement clean owner and candidate paths; separate exact physical operations remain gated.",
+    "rationale": "Discovered required generated-profile provenance and SD composition dependencies; same c1-c5 acceptance, unchanged7200sec/1GiB cumulative allowance and preserved822242e source/failed receipts.",
     "reference": "docs/features/supported-release-candidate/owner-request.md",
     "reference_sha256": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/features/supported-release-candidate/owner-request.md": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
       "docs/remaining-work-plan.md": "c86c29e67af62eb3853aa0f8a79ec39c1fbba8b71860d2175ffe1cc5540a0f31"
     },
-    "scope_sha256": "4125d0450936dbf17aebdc64257e4a6845083e8d217c4817b419c18a6b73b15e",
+    "scope_sha256": "041b723caf6071493ada21b96b85d71df1d81d2aa83811dd51b29e651d519990",
     "session": "supported-release-20261117",
-    "source_commit": "b10532616fd5822b393e06310562b7e49cefad18"
+    "source_commit": "6d52606d42ddc9efc630b515f577fe5f4b482f5d"
   },
   "checks": [
     {
