@@ -2,6 +2,10 @@
 
 ## Current continuation — new SD and eMMC topology repair
 
+Current owned source worktree: `local/feature-workflow/worktrees/supported-recovery-boot-areas`,
+branch `feature/supported-recovery-boot-areas`, run `8732f9f57c444d1197113ec983ea5de9`.
+Earlier source worktrees and all evidence remain preserved.
+
 Owner supplied a new blank SC16G SD (15,931,539,456 bytes), identified read-only
 on Beelink as `/dev/mmcblk0`; it is unmounted with no holders and has not been
 written. The separate backup drive is still requested. Current recovery requires

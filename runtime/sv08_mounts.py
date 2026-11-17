@@ -47,7 +47,7 @@ def plan(root, data, boot):
     return actions
 
 
-def apply(root, data, boot, bind_root=False):
+def apply(root, data, boot, bind_root=False, owner_setup=False):
     root, data = Path(root).absolute(), Path(data).absolute()
     actions = plan(root, data, boot)
     if subprocess.run(['findmnt', '--mountpoint', str(root), '--noheadings'],
@@ -64,6 +64,13 @@ def apply(root, data, boot, bind_root=False):
                 raise ValueError('Missing/invalid explicit mount path: ' + destination)
     mounted = []
     try:
+        if owner_setup and boot['mode'] == 'immutable':
+            from sv08_owner import prepare_shadow
+            source = prepare_shadow(root, data)
+            target = root/'etc/shadow'
+            subprocess.run(['mount', '--bind', str(source), str(target)], check=True)
+            mounted.append(str(target))
+            subprocess.run(['mount', '-o', 'remount,bind,ro', str(target)], check=True)
         for kind, source, destination in actions:
             if kind == 'bind':
                 subprocess.run(['mount', '--bind', source, destination], check=True)
@@ -83,6 +90,9 @@ def apply(root, data, boot, bind_root=False):
             elif kind == 'mode':
                 options = 'remount,' + ('bind,' if bind_root else '') + ('ro' if source == 'immutable' else 'rw')
                 subprocess.run(['mount', '-o', options, destination], check=True)
+                if owner_setup and source == 'writable':
+                    from sv08_owner import merge_shadow
+                    merge_shadow(root, data)
         status = root / 'run/sv08/boot.json'
         status.write_text(json.dumps(boot, indent=2) + '\n')
     except BaseException:

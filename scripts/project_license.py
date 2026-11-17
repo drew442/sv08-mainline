@@ -83,6 +83,39 @@ def seed_recipe_bytes(repo):
 def generated_recipe(root, name, raw, repo):
     """Recognize only exact supported outputs; unknown bytes never become source-bound."""
     recipes = ['scripts/project_license.py', 'scripts/stage_admin_ui.py', 'scripts/stage_printer_ui.py']
+    supported_names = ('layout.json', 'environment.json', 'environment-device.json', 'update-policy.json', 'feed.json')
+    if name in tuple('usr/lib/sv08/'+n for n in supported_names) + ('etc/rauc/system.conf',):
+        from supported_candidate import backend_documents, rauc_configuration
+        profile_path = checked(root, 'usr/lib/sv08/supported-profile.json')
+        try:
+            producer_files = ['scripts/supported_candidate.py','scripts/integrate_host_os.py','scripts/prepare_host_os.py']
+            # These helpers execute in this build process. A different declared
+            # producer cannot be qualified using a cached implementation here.
+            if any(checked(repo,p).read_bytes() != checked(REPO,p).read_bytes() for p in producer_files):
+                return None
+            if not profile_path.is_file() or profile_path.stat().st_size > NON_CODE_INPUT_LIMIT:
+                return None
+            profile = json.loads(profile_path.read_bytes())
+            if 'feed' in profile:
+                producer_files += ['runtime/sv08_feed.py','runtime/sv08_state.py']
+                if any(checked(repo,p).read_bytes() != checked(REPO,p).read_bytes() for p in producer_files):
+                    return None
+            documents = backend_documents(profile, repo=repo)
+            sources = ['scripts/project_license.py', 'scripts/supported_candidate.py',
+                       'scripts/integrate_host_os.py', 'scripts/prepare_host_os.py',
+                       'upstream-lock.json', 'configs/host-os/recovery-test-sv08-01.json',
+                       'configs/images/host-ab.json', 'configs/host-os/environment-layout.json']
+            if 'feed' in profile: sources += ['runtime/sv08_feed.py','runtime/sv08_state.py']
+            if name == 'etc/rauc/system.conf':
+                expected = rauc_configuration(profile, repo=repo).encode()
+                sources += ['configs/host-os/rauc-system.conf.in']
+            else:
+                expected = (json.dumps(documents[Path(name).name], indent=2)+'\n').encode()
+            if raw == expected: return 'generated', sources
+        except (ValueError, OSError, KeyError, TypeError, StopIteration, UnicodeError):
+            return None
+        return None
+
     seed_names = ('usr/lib/sv08/seed/config/mainsail.json',
                   'usr/lib/sv08/seed/config/nginx-mainsail.conf')
     if name in seed_names:
@@ -135,6 +168,12 @@ def prepare(root, overrides=None, replaced=(), public_source=None, repo=None):
     reverse = {}
     for name, sha in sources.items(): reverse.setdefault(sha, []).append(name)
     build_inputs = non_code_build_inputs(root)
+    if 'usr/lib/sv08/supported-profile.json' in build_inputs:
+        from supported_candidate import profile_check
+        profile_check(json.loads(checked(root, 'usr/lib/sv08/supported-profile.json').read_bytes()), repo=repo)
+    if 'etc/rauc/release-keyring.pem' in build_inputs:
+        from supported_candidate import public_certificate
+        public_certificate(checked(root, 'etc/rauc/release-keyring.pem'))
     files = installed_files(root, overrides, replaced)
     staged = {}; unmatched = []
     for name, raw in sorted(files.items()):

@@ -155,6 +155,10 @@ def inspect(c, work):
     boot = int(subprocess.check_output(['du', '-sbx', str(root / 'boot')], text=True).split()[0])
     installed = {line.split('\t', 1)[0] for line in inventory.splitlines()}
     missing_apps = [name for name in ('sv08-klipper', 'sv08-moonraker', 'sv08-mainsail', 'sv08-klipperscreen') if name not in installed]
+    tools = {'debootstrap': subprocess.check_output(['debootstrap', '--version'], text=True).splitlines()[0]}
+    host_architecture = os.uname().machine
+    if host_architecture not in ('aarch64', 'arm64'):
+        tools['qemu-user'] = subprocess.check_output(['qemu-aarch64-static', '--version'], text=True).splitlines()[0]
     report = dict(status='package-baseline-only-not-bootable', profile_sha256=digest(c),
                   layout=layout(c), package_count=len(inventory.splitlines()),
                   package_inventory_sha256=hashlib.sha256(inventory.encode()).hexdigest(),
@@ -164,9 +168,8 @@ def inspect(c, work):
                                if p.is_file() and not p.is_symlink()},
                   root_budget_pass=total-boot <= c['root_content_budget_mib']*MIB,
                   boot_budget_pass=boot <= c['boot_content_budget_mib']*MIB,
-                  tools={name: subprocess.check_output(cmd, text=True).splitlines()[0]
-                         for name, cmd in {'debootstrap': ['debootstrap', '--version'],
-                                           'qemu': ['qemu-aarch64-static', '--version']}.items()},
+                  tools=tools, host_architecture=host_architecture,
+                  chroot_execution='native' if host_architecture in ('aarch64', 'arm64') else 'qemu-user',
                   kernel_versions=sorted(p.name for p in (root / 'usr/lib/modules').iterdir()),
                   missing=['board bootloader/DTB', 'verified Wi-Fi/display drivers',
                            'application service integration', 'A/B integration',

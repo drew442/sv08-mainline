@@ -52,23 +52,31 @@ def board_profile(path):
             result[key]=value
         return result
     value=json.loads(clean_path(path).read_text(),object_pairs_hook=unique)
-    if set(value)!={'format_version','kernel_release','recovery','partitions','artifacts','packages'} or value['format_version']!=1:
+    fields={'format_version','kernel_release','recovery','partitions','artifacts','packages'}
+    independent_sd = value.get('format_version') == 2 and value.get('medium') == 'independent-sd'
+    if (set(value) != fields | ({'medium'} if independent_sd else set()) or
+            type(value['format_version']) is not int or value['format_version'] != (2 if independent_sd else 1)):
         raise ValueError('Invalid board profile schema')
     if value['kernel_release']!='6.18.51-sv08-candidate1':raise ValueError('Unreviewed board kernel')
     def canonical(value):
         if not isinstance(value,str) or str(uuid.UUID(value))!=value or uuid.UUID(value).int==0:raise ValueError('Invalid canonical partition UUID')
     recovery=value['recovery']
-    if set(recovery)!={'partuuid','filesystem_uuid','bytes','index'} or recovery['filesystem_uuid']!=UUID or recovery['bytes']!=SIZE or recovery['index']!=5:
+    if (set(recovery)!={'partuuid','filesystem_uuid','bytes','index'} or
+            (not independent_sd and recovery['filesystem_uuid']!=UUID) or
+            recovery['bytes']!=SIZE or recovery['index']!=(2 if independent_sd else 5)):
         raise ValueError('Invalid recovery identity/capacity')
+    canonical(recovery['filesystem_uuid'])
     canonical(recovery['partuuid'])
     partitions=value['partitions']
-    if len(partitions)!=6 or {p['index'] for p in partitions}!=set(range(1,7)) or len({p['partuuid'] for p in partitions})!=6 or len({p['role'] for p in partitions})!=6:
+    count = 2 if independent_sd else 6
+    if len(partitions)!=count or {p['index'] for p in partitions}!=set(range(1,count+1)) or len({p['partuuid'] for p in partitions})!=count or len({p['role'] for p in partitions})!=count:
         raise ValueError('Six distinct partition identities required')
     for p in partitions:
         if set(p)!={'role','index','partuuid'} or type(p['index']) is not int:raise ValueError('Invalid partition schema')
         canonical(p['partuuid'])
-    if [p['role'] for p in sorted(partitions,key=lambda p:p['index'])]!=['boot-a','root-a','boot-b','root-b','recovery','data']:raise ValueError('Unexpected partition roles/order')
-    if [p for p in partitions if p['role']=='recovery']!=[dict(role='recovery',index=5,partuuid=recovery['partuuid'])]:raise ValueError('Recovery partition role mismatch')
+    roles = ['sd-boot','recovery'] if independent_sd else ['boot-a','root-a','boot-b','root-b','recovery','data']
+    if [p['role'] for p in sorted(partitions,key=lambda p:p['index'])]!=roles:raise ValueError('Unexpected partition roles/order')
+    if [p for p in partitions if p['role']=='recovery']!=[dict(role='recovery',index=recovery['index'],partuuid=recovery['partuuid'])]:raise ValueError('Recovery partition role mismatch')
     artifacts=value['artifacts']
     if set(artifacts)!={'image','config','dtb','modules'}:raise ValueError('Missing board artifacts')
     for name,item in artifacts.items():
@@ -104,11 +112,11 @@ def boot_gate(profile=None):
     start=content.index('for module in virtio_pci ')
     end=content.index('manifest=/newroot/')
     selector=(REPO/'configs/host-os/recovery-board-root').read_text()
-    for key,value in {'PARTUUID':profile['recovery']['partuuid'],'INDEX':5,'SECTORS':SIZE//512,'UUID':UUID}.items():selector=selector.replace('@'+key+'@',str(value))
+    for key,value in {'PARTUUID':profile['recovery']['partuuid'],'INDEX':profile['recovery']['index'],'SECTORS':SIZE//512,'UUID':profile['recovery']['filesystem_uuid']}.items():selector=selector.replace('@'+key+'@',str(value))
     content=content[:start]+selector+content[end:]
     old="= '/dev/vda:ext4:ro,relatime,norecovery'"
     if content.count(old)!=1:raise ValueError('Common mount gate changed; review required')
-    return content.replace(old,'= "${recovery_device}:ext4:ro,relatime,norecovery"')
+    return content.replace(old,'= "${recovery_device}:ext4:ro,relatime,norecovery"').replace(UUID,profile['recovery']['filesystem_uuid'])
 
 
 def run(args, **kw):
@@ -131,6 +139,8 @@ def integration_inputs():
     paths.extend([REPO/'configs/host-os/recovery-board-root',REPO/'configs/host-os/recovery-password.json',
                   REPO/'scripts/project_license.py',REPO/'scripts/integrate_host_os.py',
                   REPO/'scripts/stage_printer_ui.py',REPO/'LICENSE',REPO/'LICENSING.md'])
+    supplement=REPO/'configs/host-os/supported/recovery-owner-packages.json'
+    if supplement.is_file():paths.append(supplement)
     return {str(p.relative_to(REPO)):sha(p) for p in paths}
 
 
@@ -243,7 +253,8 @@ def installed_provider_inputs(root):
             root/'etc/systemd/system/systemd-logind.service.d/recovery-namespace.conf',
     }
     for name in ('sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py','sv08_export.py', 'sv08_recovery_links.py',
-                 'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py'):
+                 'sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py',
+                 'sv08_owner.py','sv08_recovery_owner.py','sv08_web.py','sv08_printer_stack.py'):
         paths['runtime/'+name] = root/'usr/lib/sv08'/name
     if not all(path.is_file() for path in paths.values()):
         raise ValueError('Installed recovery provider input is missing')
@@ -342,13 +353,66 @@ def inventory(root, *, empty_xattr_reference=None):
     return dict(schema=2,sha256=h.hexdigest(),files=files,bytes=size)
 
 
+def package_inputs(a, work):
+    """Add explicit pinned archives without resolving or replacing the base closure."""
+    lock=clean_path(a.lock);separate(work,lock)
+    raw=lock.read_bytes();base=json.loads(raw)
+    packages=list(base['packages'])
+    supplement=getattr(a,'package_supplement',None)
+    binding={}
+    if supplement is not None:
+        supplement=clean_path(supplement);separate(work,supplement)
+        if not supplement.is_file() or supplement.stat().st_size>65536:
+            raise ValueError('Invalid package supplement bound')
+        data=supplement.read_bytes()
+        def unique(items):
+            result={}
+            for key,value in items:
+                if key in result:raise ValueError('Duplicate package supplement field')
+                result[key]=value
+            return result
+        value=json.loads(data,object_pairs_hook=unique)
+        if (not isinstance(value,dict) or not {'format_version','snapshot','architecture','packages','roots'}<=set(value) or
+                set(value)-{'format_version','snapshot','architecture','packages','roots','resolution'} or
+                type(value['format_version']) is not int or value['format_version']!=1 or
+                value['snapshot']!=base.get('snapshot') or value['architecture']!=base.get('architecture')):
+            raise ValueError('Package supplement format/snapshot/architecture mismatch')
+        additions=value['packages']
+        if not isinstance(additions,list) or not 1<=len(additions)<=16:
+            raise ValueError('Package supplement requires 1..16 packages')
+        fields={'package','version','architecture','bytes','sha256','filename','url','source','source_version','installed_kib','depends','pre_depends'}
+        names=set()
+        for item in additions:
+            if (not isinstance(item,dict) or set(item)!=fields or
+                    not isinstance(item['package'],str) or not re.fullmatch('[a-z0-9][a-z0-9+.-]*',item['package']) or
+                    item['architecture'] not in (base['architecture'],'all') or
+                    type(item['bytes']) is not int or item['bytes']<=0 or
+                    not isinstance(item['sha256'],str) or not re.fullmatch('[0-9a-f]{64}',item['sha256']) or
+                    not isinstance(item['url'],str) or not item['url'].startswith('https://snapshot.debian.org/archive/')):
+                raise ValueError('Invalid package supplement archive identity')
+            if item['package'] in names or any(p.get('package')==item['package'] for p in packages):
+                raise ValueError('Package supplement must not override base or duplicate packages')
+            names.add(item['package'])
+        if not isinstance(value['roots'],list) or not value['roots'] or any(not isinstance(n,str) or n not in names for n in value['roots']):
+            raise ValueError('Invalid package supplement roots')
+        packages.extend(additions)
+        binding=dict(package_supplement_sha256=hashlib.sha256(data).hexdigest())
+    return lock,hashlib.sha256(raw).hexdigest(),packages,supplement,binding
+
+
+def check_package_supplement(path,binding):
+    if path is None:return
+    try:current=sha(path)
+    except OSError as error:raise ValueError('Package supplement unreadable at completion') from error
+    if current!=binding['package_supplement_sha256']:
+        raise ValueError('Package supplement content changed during operation')
+
+
 def intake(a):
-    work=clean_path(a.work,output=True);lock=clean_path(a.lock);separate(work,lock)
-    lock_bytes=lock.read_bytes()
-    lock_hash=hashlib.sha256(lock_bytes).hexdigest()
-    packages=json.loads(lock_bytes)['packages']
+    work=clean_path(a.work,output=True)
+    lock,lock_hash,packages,supplement,binding=package_inputs(a,work)
     if work.exists():raise ValueError('Intake requires a fresh output')
-    if not a.execute:return dict(execute=False,stage='intake',packages=len(packages),bytes=sum(p['bytes'] for p in packages))
+    if not a.execute:return dict(execute=False,stage='intake',packages=len(packages),bytes=sum(p['bytes'] for p in packages),**binding)
     if os.geteuid()==0:raise ValueError('Network intake runs unprivileged')
     work.mkdir(parents=True,mode=0o700)
     for p in packages:
@@ -372,7 +436,8 @@ def intake(a):
     try:current_lock_hash=sha(lock)
     except OSError as error:raise ValueError('Lock unreadable at intake completion') from error
     if current_lock_hash!=lock_hash:raise ValueError('Lock content changed during intake')
-    return dict(stage='intake',packages=len(packages),lock_sha256=lock_hash)
+    check_package_supplement(supplement,binding)
+    return dict(stage='intake',packages=len(packages),lock_sha256=lock_hash,**binding)
 
 
 def assemble(a):
@@ -382,8 +447,7 @@ def assemble(a):
     release=release_manifest(getattr(a,'release_manifest',None))
     if release:separate(work,release['path'])
     if work.exists(): raise ValueError('Assembly requires a fresh output')
-    lock_hash=sha(lock)
-    packages=json.loads(lock.read_text())['packages']
+    lock,lock_hash,packages,supplement,supplement_binding=package_inputs(a,work)
     if not packages or any(not re.fullmatch('[0-9a-f]{64}',p['sha256']) or type(p['bytes']) is not int or p['bytes']<=0 for p in packages):
         raise ValueError('Invalid archive identity')
     for p in packages:
@@ -393,7 +457,7 @@ def assemble(a):
         control=run(['dpkg-deb','-f',f,'Package','Version','Architecture'],capture_output=True,text=True).stdout
         fields=dict(line.split(': ',1) for line in control.splitlines())
         if fields!={'Package':p['package'],'Version':p['version'],'Architecture':p['architecture']}:raise ValueError('Archive control differs from lock')
-    if not a.execute:return dict(execute=False,stage='assemble',packages=len(packages),work=str(work))
+    if not a.execute:return dict(execute=False,stage='assemble',packages=len(packages),work=str(work),**supplement_binding)
     private(); work.mkdir(parents=True,mode=0o700);root=work/'rootfs';root.mkdir()
     # Populate the entire dependency closure before executing maintainer scripts.
     # dpkg subsequently unpacks and configures the same archives to own all metadata.
@@ -499,10 +563,11 @@ def assemble(a):
     write(work/'copyrights.json',json.dumps(copyrights,indent=2)+'\n')
     binding=finalize_project_source(root,release)
     if integration_inputs()!=inputs or sha(lock)!=lock_hash:raise ValueError('Integration inputs changed during assembly')
-    record=dict(lock_sha256=lock_hash,root=inventory(root),integration_inputs=inputs)
+    check_package_supplement(supplement,supplement_binding)
+    record=dict(lock_sha256=lock_hash,root=inventory(root),integration_inputs=inputs,**supplement_binding)
     if binding:record['release_manifest']=binding
     write(work/'assembly.json',json.dumps(record,indent=2)+'\n')
-    return dict(stage='assemble',packages=len(packages),root=str(root))
+    return dict(stage='assemble',packages=len(packages),root=str(root),**supplement_binding)
 
 
 def initramfs(root, output, profile=None):
@@ -677,6 +742,8 @@ def build(a):
     if not root.is_dir() or not (source/'assembly.json').is_file():raise ValueError('Complete assembly required')
     for name in ['usr','boot','boot/vmlinuz-'+kernel,'usr/bin/busybox']:
         clean_path(root/name)
+    if (root/'usr/lib/sv08/sv08_owner.py').exists() and not (root/'usr/bin/openssl').is_file():
+        raise ValueError('Owner setup requires /usr/bin/openssl; use fresh assemble with the default --package-supplement')
     if work.exists():raise ValueError('Build requires a fresh output')
     recorded=json.loads((source/'assembly.json').read_text())
     require_recorded_integration_inputs(recorded, inputs, 'build assembly')
@@ -712,7 +779,8 @@ def build(a):
     (envelope/'boot').mkdir(exist_ok=True)
     initramfs(root,envelope/'boot/initrd-recovery.img',profile)
     # Line-oriented fixed manifest is parseable by the self-contained busybox gate.
-    manifest=f'format=sv08-recovery-usr-v1\nroot_uuid={UUID}\nroot_bytes={SIZE}\nusr_path=/usr.squashfs\nusr_bytes={usr.stat().st_size}\nusr_sha256={sha(usr)}\n'
+    filesystem_uuid = profile['recovery']['filesystem_uuid'] if profile else UUID
+    manifest=f'format=sv08-recovery-usr-v1\nroot_uuid={filesystem_uuid}\nroot_bytes={SIZE}\nusr_path=/usr.squashfs\nusr_bytes={usr.stat().st_size}\nusr_sha256={sha(usr)}\n'
     write(envelope/'etc/sv08/recovery-envelope.manifest',manifest)
     media_profile = getattr(a, 'media_profile', None)
     media_profile_hash = None
@@ -742,7 +810,7 @@ def build(a):
     for p in [envelope,*envelope.rglob('*')]:os.utime(p,(EPOCH,EPOCH),follow_symlinks=False)
     disk=work/'recovery.ext4'
     with disk.open('xb') as f:f.truncate(SIZE)
-    run(['mkfs.ext4','-q','-F','-b','4096','-I','256','-m','0','-U',UUID,'-L','SV08_RECOVERY','-E','lazy_itable_init=0,lazy_journal_init=0,hash_seed='+UUID,'-d',envelope,disk],env=dict(os.environ,E2FSPROGS_FAKE_TIME=str(EPOCH)))
+    run(['mkfs.ext4','-q','-F','-b','4096','-I','256','-m','0','-U',filesystem_uuid,'-L','SV08_RECOVERY','-E','lazy_itable_init=0,lazy_journal_init=0,hash_seed='+filesystem_uuid,'-d',envelope,disk],env=dict(os.environ,E2FSPROGS_FAKE_TIME=str(EPOCH)))
     fsck=run(['e2fsck','-fn',disk],capture_output=True,text=True)
     write(work/'fsck.txt',fsck.stdout+fsck.stderr)
     usage=run(['dumpe2fs','-h',disk],capture_output=True,text=True).stdout
@@ -768,10 +836,11 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('stage',choices=['intake','assemble','derive','build'])
     p.add_argument('--work',type=Path,required=True);p.add_argument('--execute',action='store_true')
     p.add_argument('--intake',type=Path);p.add_argument('--lock',type=Path,default=REPO/'configs/host-os/recovery-packages.json');p.add_argument('--assembly',type=Path);p.add_argument('--reuse-usr',type=Path)
+    p.add_argument('--package-supplement',type=Path,default=REPO/'configs/host-os/supported/recovery-owner-packages.json',help='Additive pinned packages for intake/assemble only')
     p.add_argument('--board-profile',type=Path);p.add_argument('--packages',type=Path)
     p.add_argument('--media-profile',type=Path)
     p.add_argument('--restore-profile',type=Path)
-    p.add_argument('--release-manifest',type=Path,help='Exact diagnostic release identity for assemble/derive; requires matching clean source revision')
+    p.add_argument('--release-manifest',type=Path,help='Exact non-host recovery component identity for assemble/derive; requires matching clean source revision')
     a=p.parse_args()
     if a.release_manifest and a.stage not in ('assemble','derive'):p.error('--release-manifest requires assemble or derive')
     if a.execute and a.stage in ('assemble','derive','build'):
