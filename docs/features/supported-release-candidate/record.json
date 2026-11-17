@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "68489a196a2f4614812678cc5cf89fae",
+        "session": "supported-release-20261117"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -132,7 +136,7 @@
       "resumption": null,
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
