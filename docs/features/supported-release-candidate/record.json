@@ -59,7 +59,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "Affected recovery regression exposed pre-existing stale RestoreAdapter factory fixture missing reserve_bytes. Preserve protected-boot-area repair and 54 passes; extend existing test ownership before correcting fixture and final submission.",
       "checks": [
         "c1",
         "c2",
@@ -179,7 +179,7 @@
       "resumption": "New measured physical topology demonstrates missing eMMC boot-area admission. Reopen existing C1-C5 source task; retain prior proofs at their original inputs, all attempts/consumption and PR39 history. Add protected nonselectable auxiliary topology without relaxing aliases, holder/read-only or complete-inventory checks; no physical writes.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "running",
+      "status": "blocked",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
