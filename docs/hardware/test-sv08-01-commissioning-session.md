@@ -21,12 +21,113 @@ deployment or mutation. [Evidence](https://github.com/drew442/sv08-mainline/blob
 The DD65 image/bundle bindings below remain historical, superseded and **not for
 deployment**. Current independent-SD policy waits for a separate USB backup disk;
 then refresh affected artifacts from cached pinned inputs. Source self-validation
-is recorded at `bc1c71a`; no physical H acceptance is claimed. Current cumulative
-ceilings are source 7,200 seconds/1 GiB and native 18,000 seconds/124 GiB; conservative
-charges are 3,900 seconds/880 MiB and 12,100 seconds/98 GiB, without deletion credits.
-The earlier preparation figures below retain their original scope.
+is recorded at `bc1c71a`; no physical H acceptance is claimed. At that source checkpoint, ceilings were source 7,200 seconds/1 GiB and native
+18,000 seconds/124 GiB; conservative charges were 3,900 seconds/880 MiB and
+12,100 seconds/98 GiB, without deletion credits. The current continuation below
+supersedes those preparation figures.
 
-Preparation only; no physical launch/write is authorised. These bindings belong to
+
+### Current native refresh at 7317a89
+
+This continuation supersedes the DD65 artifact bindings below. It changes no
+production source beyond the already validated protected-boot-area repair;
+production paths at `7317a890b4cf812f2010c3fdf480edb0657e8d8b` match PR39 head
+`5cd49102f83b512f210c868df925934c44309a11`. No image was installed or printer
+service/output operated. The separate USB backup drive remains unidentified.
+
+| Artifact | Bytes | SHA256 |
+| --- | ---: | --- |
+| Normal revision 4 disk | 7818182656 | `f8eaeac00354895b4bfdab9274cd68ddb1a35d65c683748610220752d5efc61a` |
+| Internal recovery | 536870912 | `ea326e623141fd7cee2a8e58f17fbd4619eb12fd1df6192838f42b41e9f2500a` |
+| Signed revision 5 OTA | 545114542 | `096369b715fd26a91b019f6519b40280ec4385d73ea2ab9c90acbe1f90052883` |
+
+The refreshed normal root passed clean-owner/identity/disabled-physical-service
+checks and preserved its DD65 source parent before retirement. Fresh recovery
+assembly used the cached 285 pinned packages and unchanged owner supplement;
+board derivations preserved the base. Internal recovery and SD root derivation
+pass. All six normal filesystems, partition byte readbacks, SPL and both boot
+environment copies pass. The default **selected-software** gate checked matching
+anonymous public source in all three actual software roots, both normal roots'
+application bindings and selected notices. This is construction/source evidence,
+not physical boot, legal completeness, whole-image reproducibility or a printing
+release. The gate retains those explicit limits.
+
+The revision 5 bundle's signer is trusted by the qualification CA. Both payload
+streams match their signed image hashes and its embedded release/source/MCU
+recommendation matches. Inspection left its source root unchanged, with bytecode
+writes explicitly disabled. Actual verity-device installation, production health
+and the revision 4→5 trial/reboot journey remain unproven. This bundle does not
+authorise updating the current legacy installation directly. Normal-image
+filesystem IDs were probed read-only at their verified GPT extents for the later
+post-install recovery policy; they are artifact facts, not a claim about the
+currently installed target.
+
+<details>
+<summary>Source-bound commands, receipts and carried allowance</summary>
+
+| Phase (existing builders; exact invocation in private receipt) | Exit | Elapsed seconds | Log SHA256 |
+| --- | ---: | ---: | --- |
+| recovery / assemble | 0 | 210.102 | `e57e446aac57fb3bd0d11135a6aab34cb422136256334bf78c6af33a1354ca7f` |
+| recovery / derive-emmc | 0 | 35.254 | `b3b47c2e059ce6bca5723da62b9bf9872fd4a0ddea54be64c4474efa472c3224` |
+| recovery / build-emmc | 0 | 221.695 | `3694be4f58b6032263e9805f3fd10fe8f7bf13a3aa716afd84405304a40ede02` |
+| recovery / derive-sd | 0 | 36.838 | `a977716e7cb5a03569bff4a7aa6b0f777882951fba1611a0d43212efe2378567` |
+| normal / compose | 0 | 117.271 | `ae0da34795b9df9c99ee38384a4f39da30bb28d4d9a3bc663b4bbc8c41f905d8` |
+| normal / readback | 0 | 31.856 | `c7a9e8ccd6ba5dcc3f6545c11744164b9dc7c0432e94ccd960c9d0a7c26b6acb` |
+| normal / selected-software | 0 | 215.863 | `ab85d53eb31a77603ff6a3f757fde6ae434924cdcdb7061635cc96199cbe24a3` |
+| update / prepare-update-root-7317a89.py | 0 | 42.752 | `bb78ae359691cfc084d2938ff4397760dc8e61dfe7cd9e785f775f1a90acaffa` |
+| update / build-update-payloads-7317a89.py | 0 | 20.561 | `ffb5b0b7dfad1b89c240b40013c4435db09805f62e30fe809b9a564b3a68dbab` |
+| update / sign-update-7317a89.py | 0 | 165.826 | `67a4c64b86a99508e62ff2acae4d6ea7a0cf3ecc8a56587037ad654a6cc47e8d` |
+| update / readback-update-7317a89.py | 0 | 6.825 | `5b4c71edf5f044923e6cf367e7071138c017fc39b7a51729b8e0eed3770bbf22` |
+
+Coordinator additionally refreshed/staged/finalized the normal cached root in
+44.725 seconds. Existing product commands are `recovery_image.py`
+assemble/derive/build, `assemble_supported_candidate.py`, the default
+`prepare_release.py` selected-software gate, RAUC bundle/trusted inspection and
+read-only stream/partition comparisons. No OS bootstrap or permanent host change.
+The small scripts and complete phase commands/logs remain in the assigned private
+release workspace and Codex `~/.sv08-release-20261117/`; failed default-SFTP intake
+was retained and corrected to the existing legacy SCP transport before building.
+
+Exact aggregate receipt: `/run/a733-guests/sv08-release-20261117/logs/artifact-refresh-7317a89.json`,
+SHA256 `fc2167f07f144f5d8ea92405be35b6347295f04c36ec379eb7a8e27c90165973`; its copy is
+`~/.sv08-release-20261117/boot-area-fix/artifact-refresh-7317a89.json`. It pins the
+normal finalization/parent/owner, recovery assembly/build, composition, signed
+bundle/readback and release report/manifest receipts. Filesystem observations are
+in adjacent `normal-7317a89-filesystems.json`. Full image and bundle stay private
+in `workspace/candidate/build/supported-emmc-7317a89/` and `update5-7317a89/out/`.
+
+Current allocation supersedes earlier preparation figures only: source ceiling
+7,200 process-seconds/1 GiB; conservative source charge 4,000 seconds/896 MiB.
+Native ceiling remains 18,000 process-seconds, with a bounded additional 4 GiB
+output continuation to **128 GiB** for mandatory refresh/temporary output and the
+pending SD artifact. Conservative native charge is now **14,500 seconds/126 GiB**.
+The existing 32 GiB workspace is included, previous attempts carry forward and
+deletion earns no credit. The last direct size observation accounts for
+25,370,057,849 new logical bytes, including retired current components; the
+conservative charge also covers temporary generation. Native
+`logs/native-refresh-allowance.json` and `native-refresh-output-continuation.json`
+retain the unchanged scope/authority and earlier ceilings. These are continuations
+of the same release goal, not new physical-operation permission.
+
+After byte checks, redundant current partition/OTA components, obsolete DD65 roots
+and superseded OTA bundles were retired. Their JSON receipts/hashes and the two
+round-trip-verified prototype archives remain. Current full disk, signed bundle,
+current normal/update/recovery roots, package/app/kernel/license caches and native
+fixture remain. Workspace free space after retirement: **14,026,801,152 bytes**.
+No SD/eMMC write, target service restart, MCU operation or public binary release
+occurred. Source-checkpoint hashes/records remain at their original revisions.
+
+</details>
+
+Next action: identify the separate USB drive and its host/location, then bind the
+export/restore inventories to the actual SD/backup/eMMC, finish the SD build and
+script-bound loader, and obtain the existing exact-operation assessment/authority.
+Preserve the tested rescue SD. All physical commissioning/printing/peripheral and
+candidate-specific update/recovery acceptance remains in the existing H phases.
+
+### Preserved pre-refresh bindings
+
+Preparation only; no physical launch/write is authorised. These historical bindings belong to
 [PR39](https://github.com/drew442/sv08-mainline/pull/39), whose source checks and
 four hosted workflows passed. The source feature remains self-validated, awaiting
 integration; the full release goal remains active. Keep the source worktree and

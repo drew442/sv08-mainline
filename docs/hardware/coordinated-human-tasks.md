@@ -18,15 +18,17 @@ software recovery have completed evidence. Reuse applicable results; final-artif
 or physical boundaries still need their own acceptance. Do not repeat destructive
 recovery/fallback merely to start printing. No physical task is marked passed here.
 The supported candidate/clean-owner source checkpoint is in [PR39](https://github.com/drew442/sv08-mainline/pull/39).
-Its task is reopened after an actual passive inventory call rejected the printer's
-eMMC boot0/boot1 hardware areas. The new blank16GB SC16G SD is identified on
-Beelink and remains unwritten; backup-media identity is still requested.
-The protected boot-area correction at `7317a89` passes its focused and related
-source checks, and its reader succeeds passively in memory on the actual eMMC.
+Its source task was reopened after an actual passive inventory call rejected the
+printer's eMMC boot0/boot1 hardware areas; that correction is now self-validated.
+The new blank 16 GB SC16G SD is identified on Beelink and remains unwritten.
+The protected boot-area correction at `7317a89` passes focused/related source
+checks, and its reader succeeds passively in memory on the actual eMMC.
 [Source-bound evidence](https://github.com/drew442/sv08-mainline/blob/bc1c71a39301630779892c505203ef4caa0d910b/docs/features/supported-release-candidate/boot-area-evidence.json)
-records the limits. DD65 artifacts are superseded/not for deployment. Refresh
-affected artifacts after binding the separately identified USB backup drive;
-no SD policy or physical write is ready.
+records the limits. DD65 artifacts are superseded/not for deployment. The refreshed
+normal disk, internal recovery and signed OTA pass construction/readback/source
+checks at `7317a89`; see the current native refresh below. These are private,
+unqualified candidates. Final SD policy still needs the separately identified USB
+backup drive; no physical write is ready.
 The [current session bindings](test-sv08-01-commissioning-session.md#current-candidate-bindings--2026-11-17)
 record rebuilt artifacts, an actual native-validated input-only candidate and a
 passive installed-storage snapshot. These do not pass any physical H phase.
