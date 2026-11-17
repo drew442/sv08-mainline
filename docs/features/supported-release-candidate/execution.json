@@ -46,8 +46,8 @@
     "generated_bytes_ceiling": 134217728
   },
   "native_allocation": {
-    "process_seconds": 10800,
-    "generated_bytes": 77309411328,
+    "process_seconds": 14400,
+    "generated_bytes": 103079215104,
     "work": "/run/a733-guests/sv08-release-20261117",
     "workspace_logical_bytes_ceiling": 34359738368,
     "method": "Existing ARM64 development runner; private namespaces and inode-rich ext4 workspace, private tool extraction/exec mounts; no permanent host changes. Charge logical workspace plus generated files, no deletion credit; retain failed attempts. Full images only after source/validator applicability prerequisite closure.",
@@ -94,6 +94,18 @@
         "previous_conservative_generated_bytes": 66571993088,
         "continuation_authority": "Coordinator bounded primary-task continuation under AGENTS.md standing consent and active full release goal; no printer/deployment authority.",
         "workspace_logical_bytes_still": 34359738368
+      },
+      {
+        "reason": "Demonstrated missing Klipper activation after commissioned reboot/update requires source repair, native unit-contract proof and refreshed affected normal/recovery/update outputs. Reuse package/kernel caches; preserve66dce8d prototype receipts/hashes and remove superseded generated copies only after evidence intake. No additional historical image set kept.",
+        "additional_process_seconds": 3600,
+        "additional_generated_bytes": 25769803776,
+        "cumulative_native_process_seconds_ceiling": 14400,
+        "cumulative_native_generated_bytes_ceiling": 103079215104,
+        "previous_process_seconds_ceiling": 10800,
+        "previous_generated_bytes_ceiling": 77309411328,
+        "previous_consumption_not_reset": true,
+        "workspace_logical_bytes_still": 34359738368,
+        "authority": "Coordinator bounded continuation under AGENTS.md standing consent and active full release goal; no printer operation/public binary release authority."
       }
     ],
     "built_scope": [
@@ -106,8 +118,8 @@
     "release_qualified": false
   },
   "combined_ceiling": {
-    "process_seconds": 18000,
-    "generated_bytes": 78383153152
+    "process_seconds": 21600,
+    "generated_bytes": 104152956928
   },
   "physical_access": true,
   "target_preflight": {
@@ -184,5 +196,22 @@
     "physical_boot": false,
     "independent_sd_media_policy": "awaiting actual medium identities",
     "update_payload": "revision5 preparation authorised; no additional whole disk image"
+  },
+  "demonstrated_lifecycle_defect": {
+    "source": "66dce8d",
+    "finding": "Valid persisted commissioning permission has no boot activation consumer; a one-time manual start does not survive reboot or update.",
+    "evidence": [
+      "integrate_host_os.py removes wants links",
+      "finalize_supported_host.py forbids physical wants links",
+      "Commissioning.authorize persists permission only",
+      "BootHealth and enabled API never schedule Klipper"
+    ],
+    "repair": "Supported post-health permission-checked nonblocking activation; original startup guards retained.",
+    "prototype_status": "unqualified; retain measured evidence, rebuild affected outputs after source checks",
+    "source_worker": {
+      "role": "project_implementer",
+      "requested_effort": "medium",
+      "effective": "not independently observable"
+    }
   }
 }
