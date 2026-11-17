@@ -57,7 +57,7 @@ runner problem, not a reason to spend more reasoning tokens.
 
 ## Small handoffs and persistent state
 
-Declare coherent ownership up front. Give a narrow task handoff, not the full conversation:
+Give a narrow task handoff, not the full conversation:
 
 ```text
 Task/outcome; existing authorization; self/targeted/consequential review reason:

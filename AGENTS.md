@@ -16,8 +16,7 @@ a short handoff never licenses ignoring applicable requirements or part of a dif
 
 Coordinators use [.codex/agent-guide.md](.codex/agent-guide.md) for dispatch and
 [the workflow entry](.codex/README.md) for records. Workers answer their assignment,
-not the whole backlog, and do not run global queue selection. Release route: docs/remaining-work-plan.md.
-Current goals and owner decisions govern priority and scope;
+not the whole backlog, and do not run global queue selection. Current goals and owner decisions govern priority and scope;
 historical notes are evidence at their stated revision, not new authorization.
 
 ## Role, execution and authority
