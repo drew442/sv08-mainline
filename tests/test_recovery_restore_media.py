@@ -158,7 +158,7 @@ class ProviderTests(unittest.TestCase):
         inventory=list(blocks.values())
         source=b'fixture runtime bytes'
         names=('sv08_recovery_prepare.py','sv08_recovery_activation.py','sv08_recovery_restore_prepare.py','sv08_restore.py','sv08_recovery_restore_media.py','sv08_recovery.py','sv08_recovery_ui.py','sv08_admin.py',
-               'sv08_export.py','sv08_recovery_media.py','sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py')
+               'sv08_export.py','sv08_recovery_media.py','sv08_state.py','sv08_admin_history.py','sv08_admin_jobs.py','sv08_data_budget.py','sv08_update_policy.py','sv08_owner.py','sv08_recovery_owner.py','sv08_web.py')
         manifest=dict(format_version=2,kind='sv08-independent-recovery-provider',protocol='sv08-recovery-media-v1',policy_sha256='c'*64,
                       inputs={'runtime/'+name:hashlib.sha256(source).hexdigest() for name in names})
         for name in ('sv08-recovery-prepare.service','sv08-recovery-restore-prepare.service','sv08-recovery-private-mounts.service','recovery-systemd-udevd.conf','recovery-systemd-logind.conf'):

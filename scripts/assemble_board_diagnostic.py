@@ -48,13 +48,14 @@ exit
 '''
 
 
-def seed_environment():
+def seed_environment(*, supported=False):
     lines = (REPO / 'configs/host-os/sv08-default.env').read_text().splitlines()
     env = dict(line.split('=', 1) for line in lines)
     if len(lines) != len(env) or any(k in env for k in ('BOOT_ORDER', 'BOOT_A_LEFT', 'BOOT_B_LEFT', 'sv08_env_layout')):
         raise ValueError('Default environment contract changed')
     env.update(sv08_env_layout='ab-8gb-v1', BOOT_ORDER='A', BOOT_A_LEFT='3', BOOT_B_LEFT='0')
-    env['sv08_consoleargs'] += ''.join(' systemd.mask='+name+'.service' for name in MASKS)
+    if not supported:
+        env['sv08_consoleargs'] += ''.join(' systemd.mask='+name+'.service' for name in MASKS)
     return ''.join(key+'='+value+'\n' for key, value in env.items())
 
 
@@ -108,6 +109,14 @@ def main():
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--execute', action='store_true')
     a = parser.parse_args()
+    compose(a)
+
+
+def compose(a, *, supported_profile=None):
+    supported = supported_profile is not None
+    if supported:
+        from supported_candidate import profile_check
+        profile_check(supported_profile)
     work = work_path(a.work)
     if work.exists(): raise ValueError('Fresh output required')
     sources = {name: work_path(getattr(a, name)) for name in ('host', 'recovery', 'data', 'spl')}
@@ -115,26 +124,36 @@ def main():
         if work == path or work in path.parents or path in work.parents:
             raise ValueError('Overlapping input/output')
     spl = reviewed_spl(a.spl_record, HARDWARE_PROFILE)
-    input_paths = [Path(__file__), sources['spl'], spl['record_path'], spl['manifest_path'], sources['host'] / 'finalized.json', sources['recovery'] / 'build.json',
+    receipt_name = 'supported-finalized.json' if supported else 'finalized.json'
+    input_paths = [Path(__file__), sources['spl'], spl['record_path'], spl['manifest_path'], sources['host'] / receipt_name, sources['recovery'] / 'build.json',
                    *[REPO / p for p in ('configs/host-os/recovery-test-sv08-01.json', 'configs/images/host-ab.json',
                        'configs/host-os/sv08-default.env', 'configs/host-os/slot-boot.cmd')]]
+    if supported:
+        input_paths += [REPO/'scripts'/name for name in
+                        ('assemble_supported_candidate.py','finalize_supported_host.py','supported_candidate.py','integrate_host_os.py')]
     inputs = {str(path): sha(path) for path in input_paths}
     root = sources['host'] / 'rootfs'
     # Recheck the current root, even when its finalization receipt predates a
     # newly required diagnostic safety or package check.
-    check_diagnostic_host(root, sources['data'])
+    if supported:
+        from finalize_supported_host import checks as check_supported_host
+        check_supported_host(root, sources['data'], supported_profile)
+    else:
+        check_diagnostic_host(root, sources['data'])
     profile = board_profile(REPO / 'configs/host-os/recovery-test-sv08-01.json')
     config = json.loads((REPO / 'configs/images/host-ab.json').read_text())
     parts = layout(config)
     identities = {p['index']: p for p in profile['partitions']}
     expected = expected_partitions(profile, parts)
-    host = json.loads((sources['host'] / 'finalized.json').read_text())
+    host = json.loads((sources['host'] / receipt_name).read_text())
+    if supported and host.get('profile') != supported_profile:
+        raise ValueError('Supported host receipt has another target/profile')
     if host['root'] != inventory(root): raise ValueError('Host changed after finalization')
     release = json.loads((root / 'usr/lib/sv08/release.json').read_text())
     devices = {p['role']: '/dev/disk/by-partuuid/'+p['partuuid'] for p in profile['partitions']}
-    if release['devices'] != devices or release['deployable'] is not False:
+    if release['devices'] != devices or release['deployable'] is not supported:
         raise ValueError('Unexpected diagnostic release identities')
-    for name in MASKS:
+    for name in (() if supported else MASKS):
         if os.readlink(root / 'etc/systemd/system' / (name+'.service')) != '/dev/null':
             raise ValueError('Printer service must be masked')
     if (root / 'usr/lib/sv08/qemu-probe.py').exists() or (root / 'etc/systemd/system/qemu-probe.service').exists():
@@ -169,7 +188,7 @@ def main():
     shutil.copyfile(boot / 'dtb/sv08.dtb', envelope / 'boot/sv08.dtb')
     command = work / 'recovery.cmd'; command.write_text(recovery_script(profile, record['manifest_sha256']))
     run('mkimage', '-A', 'arm64', '-T', 'script', '-C', 'none', '-n', 'SV08 independent recovery', '-d', command, envelope / 'recovery.scr')
-    env_text = work / 'environment.txt'; env_text.write_text(seed_environment())
+    env_text = work / 'environment.txt'; env_text.write_text(seed_environment(supported=supported))
     env_bin = work / 'environment.bin'
     run('mkenvimage', '-r', '-s', '65536', '-o', env_bin, env_text)
     images = {}
@@ -187,7 +206,7 @@ def main():
             (work / (role+'-fsck.txt')).write_bytes(run('e2fsck', '-fn', image))
             (work / (role+'-filesystem.txt')).write_bytes(run('dumpe2fs', '-h', image))
         images[role] = image
-    disk = work / 'sv08-board-diagnostic.img'
+    disk = work / ('sv08-supported-candidate.img' if supported else 'sv08-board-diagnostic.img')
     with disk.open('xb') as stream: stream.truncate(config['image_bytes'])
     args = ['sgdisk', '--clear', '--move-main-table=4096']
     for index, part in enumerate(parts, 1):
@@ -211,6 +230,9 @@ def main():
         raise ValueError('Final partition table changed')
     result = dict(status='diagnostic-awaiting-independent-byte-review', image_bytes=disk.stat().st_size, image_sha256=sha(disk), geometry=inspect(disk, environment_regions=regions), partition_images={role: dict(bytes=p.stat().st_size, sha256=sha(p)) for role,p in images.items()}, host_root=host['root'], data=data_before, recovery_build_sha256=sha(recovery / 'build.json'), recovery_envelope=inventory(envelope), spl=dict(record_sha256=sha(spl['record_path']), manifest_sha256=sha(spl['manifest_path']), artifact=spl_record), environment_sha256=sha(env_bin), sources_preserved=True, physical_boot_validated=False)
     result['input_files'] = inputs
+    if supported:
+        result.update(status='supported-candidate-awaiting-qualification', profile=supported_profile,
+                      printing_qualified=False, release_qualified=False, deployable=True)
     (work / 'composition.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps(result, indent=2))
 

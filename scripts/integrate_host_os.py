@@ -17,7 +17,7 @@ import sys
 from prepare_host_os import REPO, work_path
 
 
-def validate(manifest):
+def validate(manifest, *, supported=False):
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,79}', manifest['release']):
         raise ValueError('Invalid release identifier')
     if manifest['state_schema'] != 1:
@@ -32,7 +32,13 @@ def validate(manifest):
             raise ValueError('Use explicit GPT PARTUUID paths')
     if len(set(devices.values())) != 6:
         raise ValueError('Partitions must be distinct')
-    if manifest.get('deployable') is not False:
+    if supported:
+        if (manifest.get('deployable') is not True or manifest.get('owner_setup') != 'recovery-v1' or
+                manifest.get('commissioning') != 'explicit-v1' or
+                manifest.get('hardware_profile') != 'test-sv08-01' or
+                type(manifest.get('release_revision')) is not int or manifest['release_revision'] < 1):
+            raise ValueError('Explicit supported commissioning/owner profile required')
+    elif manifest.get('deployable') is not False:
         raise ValueError('This integration stage is still an offline candidate')
 
 
@@ -91,8 +97,14 @@ def firmware_manifest(manifest):
     return manifest
 
 
-def stage(work, manifest, refresh=False, owner_key=None):
-    validate(manifest)
+def stage(work, manifest, refresh=False, owner_key=None, *, supported_profile=None, release_certificate=None):
+    supported = supported_profile is not None
+    validate(manifest, supported=supported)
+    if supported:
+        from supported_candidate import profile_check, public_certificate
+        if manifest != profile_check(supported_profile) or owner_key is not None:
+            raise ValueError('Supported integration requires exact profile and no baked owner access key')
+        public_certificate(release_certificate)
     manifest=firmware_manifest(manifest)
     root = work / 'rootfs'
     if root.is_symlink() or not root.is_dir() or not (work / 'refresh-complete').is_file():
@@ -122,7 +134,7 @@ def stage(work, manifest, refresh=False, owner_key=None):
     groups = (root / 'etc/group').read_text().splitlines()
     if not owner and any(line.split(':')[2] == '1000' for line in groups):
         raise ValueError('GID 1000 is occupied; do not reassign an existing group')
-    key_seed = owner_key_source(root, owner_key)
+    key_seed = b'' if supported else owner_key_source(root, owner_key)
     # All refresh preconditions are checked before replacing the existing runtime.
     if target_exists:
         # The admission Debian package owns this subtree. Preserve its validated
@@ -218,6 +230,16 @@ def stage(work, manifest, refresh=False, owner_key=None):
     if not any(line.startswith('sv08:') for line in existing):
         subprocess.run(['chroot', str(root), 'groupadd', '--gid', '1000', 'sv08'], check=True)
         subprocess.run(['chroot', str(root), 'useradd', '--uid', '1000', '--gid', '1000', '--home-dir', '/home/sv08', '--shell', '/bin/bash', '--groups', 'dialout,video', 'sv08'], check=True)
+    if supported:
+        # Recovery supplies the owner's hash. Do not force a first-login write
+        # to the read-only derived shadow, or ship an inherited owner password.
+        shadow = root/'etc/shadow'
+        rows = [line.split(':') for line in shadow.read_text().splitlines()]
+        if any(len(row) != 9 for row in rows): raise ValueError('Invalid supported slot shadow')
+        if sum(row[0] == 'sv08' for row in rows) != 1: raise ValueError('Missing supported owner shadow')
+        for row in rows:
+            if row[0] == 'sv08': row[:] = ['sv08', '*', '', '0', '99999', '7', '', '', '']
+        shadow.write_text(''.join(':'.join(row)+'\n' for row in rows))
     sudoers = root / 'etc/sudoers.d/sv08-owner'
     sudoers.write_text('sv08 ALL=(ALL) NOPASSWD: ALL\n')
     sudoers.chmod(0o440)
@@ -263,6 +285,21 @@ def stage(work, manifest, refresh=False, owner_key=None):
     observer_link=observer_wants/'sv08-calibration-reconcile.service'
     observer_link.unlink(missing_ok=True)
     observer_link.symlink_to('../sv08-calibration-reconcile.service')
+    if supported:
+        from supported_candidate import install_backend, public_account_checks
+        install_backend(root, supported_profile, release_certificate)
+        public_account_checks(root)
+        # Keep package aliases masked. The supported entry remains disabled
+        # until a separate, reviewed commissioning operation.
+        for name in ('klipper', 'moonraker', 'KlipperScreen'):
+            path = units/(name+'.service')
+            path.unlink(missing_ok=True); path.symlink_to('/dev/null')
+        for name in ('sv08-klipper', 'sv08-moonraker'):
+            for directory in units.glob('*.wants'):
+                (directory/(name+'.service')).unlink(missing_ok=True)
+        (units/'sv08-klipper.service.d').mkdir(exist_ok=True)
+        (units/'sv08-klipper.service.d/supported-commissioning.conf').write_text(
+            '[Service]\nExecStartPre=+/usr/bin/python3 /usr/lib/sv08/sv08_commissioning.py check\n')
     # Physical printer services remain separately gated; no printer.cfg is seeded.
     (work / 'integration-staged.json').write_text(json.dumps(manifest, indent=2)+'\n')
 
@@ -276,16 +313,29 @@ def main():
                    help='Replace only an already staged runtime in a fresh copied root')
     p.add_argument('--owner-key', type=Path,
                    help='Non-empty regular public-key file to seed on first boot')
+    p.add_argument('--supported-profile', type=Path,
+                   help='Explicit measured named-printer candidate policy; no owner-key seed')
+    p.add_argument('--release-certificate', type=Path,
+                   help='Public signed-update authority certificate for supported profile')
     a = p.parse_args()
     manifest = json.loads(a.manifest.read_text())
-    validate(manifest)
+    profile = json.loads(a.supported_profile.read_text()) if a.supported_profile else None
+    validate(manifest, supported=profile is not None)
+    if profile is not None:
+        from supported_candidate import profile_check, public_certificate
+        if manifest != profile_check(profile) or a.owner_key is not None:
+            raise ValueError('Supported manifest/profile mismatch or baked owner key')
+        public_certificate(a.release_certificate)
+    elif a.release_certificate is not None:
+        raise ValueError('Release certificate requires explicit supported profile')
     work = work_path(a.work)
     print(json.dumps(dict(execute=a.execute, refresh=a.refresh, work=str(work), release=manifest['release'],
                           owner_key=bool(a.owner_key))))
     if a.execute:
         if os.geteuid() != 0:
             p.error('Staging requires root for filesystem ownership and user creation')
-        stage(work, manifest, a.refresh, a.owner_key)
+        stage(work, manifest, a.refresh, a.owner_key,
+              supported_profile=profile, release_certificate=a.release_certificate)
 
 
 if __name__ == '__main__':
