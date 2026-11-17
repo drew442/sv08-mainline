@@ -57,7 +57,7 @@
   ],
   "tasks": [
     {
-      "blocker": null,
+      "blocker": "PR38 CI: source/workflow and package jobs PASS; root firmware test uses workstation-specific parser path, factory assertion predates required immutable version bump, browser startup lacks inspectable port failure evidence. Preserve5f848f2/0580be3 and all prior consumption; repair demonstrated CI fixtures/launcher only.",
       "checks": [
         "delivery-contract",
         "firmware-policy",
@@ -445,7 +445,7 @@
       "resumption": "Both source writers stopped; sourceeee598c and prior lease1244fff48c714d9395a1a07514670f1f preserved. Include existing inventory/CI consumers of new task and firmware contracts, same cumulative attempts/allowance.",
       "review_policy": "self",
       "review_reason": "Reversible offline source and disposable fixtures only; no hardware operations or release publication.",
-      "status": "validated",
+      "status": "blocked",
       "title": "Implement complete accepted overhaul",
       "validation": {
         "actor": "root/coordinator",
