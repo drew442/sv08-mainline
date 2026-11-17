@@ -17,7 +17,7 @@
       "commissioning test helper argument",
       "two dependency fixture omissions"
     ],
-    "conservative_current_charge_seconds": 3300,
+    "conservative_current_charge_seconds": 3500,
     "conservative_current_charge_bytes": 738197504,
     "worker_followups": {
       "provenance": {
@@ -51,6 +51,11 @@
           "Compatible-update test fixture initially ran after writable customization; corrected fixture order without removing requirement."
         ]
       }
+    },
+    "workflow_submission": {
+      "initial": "Refused before save: merged candidate included a queue-record change relative to lease base8fb8bd0. Product checks unchanged.",
+      "repair": "Coordinator restored only candidate queue snapshot to lease base; authoritative running record remains on main. Candidate source/evidence and prior commit preserved; no gate or scope change.",
+      "queue_authority": "primary main checkout"
     }
   },
   "integration_worker": {

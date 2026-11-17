@@ -30,7 +30,7 @@ compressed archive and all historical receipts remain, redundant raw components
 were retired. The final candidates remain private and unqualified for release.
 
 Cumulative allowances remain source 7,200 process-seconds/1 GiB and native 14,400 seconds/
-96 GiB. Conservative charges are source 3,300 seconds/704 MiB and native 11,000 seconds/
+96 GiB. Conservative charges are source 3,500 seconds/704 MiB and native 11,000 seconds/
 93 GiB, including the logical32 GiB ARM workspace and every prior attempt; no deletion
 credits. Private native workspace has 8,468,197,376 bytes available after verified redundant-component retirement.
 The PR39 execution ledger carries all continuations, failures and receipts.
