@@ -4,7 +4,7 @@
     "actor": "root/coordinator",
     "basis": "owner-request",
     "proposal_sha256": "1872d64f651372420751845bb6a51b52a5f14330b3dc7dbe50d727475af8b741",
-    "rationale": "Discovered required generated-profile provenance and SD composition dependencies; same c1-c5 acceptance, unchanged7200sec/1GiB cumulative allowance and preserved822242e source/failed receipts.",
+    "rationale": "Same accepted C1-C5/full release goal: add the demonstrated post-confirm boot metadata producer and its tests to existing source ownership. Preserve current patch, prototype evidence, failures and cumulative source/native allowances; no physical action.",
     "reference": "docs/features/supported-release-candidate/owner-request.md",
     "reference_sha256": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
     "requirements_sha256": {
@@ -12,9 +12,9 @@
       "docs/features/supported-release-candidate/owner-request.md": "9271da70c3f75e3f472a27ad2d383a83425e910d5755fc2e457af069b0dba8b3",
       "docs/remaining-work-plan.md": "c86c29e67af62eb3853aa0f8a79ec39c1fbba8b71860d2175ffe1cc5540a0f31"
     },
-    "scope_sha256": "041b723caf6071493ada21b96b85d71df1d81d2aa83811dd51b29e651d519990",
+    "scope_sha256": "fee8e9101346056c57ebc2c8dc587fb4c78c112c0055a8c2eb75da09d0ba1bdc",
     "session": "supported-release-20261117",
-    "source_commit": "6d52606d42ddc9efc630b515f577fe5f4b482f5d"
+    "source_commit": "d8a50f4b42776ec413f4cf153aa9dbd5e7fb87a4"
   },
   "checks": [
     {
@@ -73,15 +73,10 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": {
-        "actor": "root/coordinator",
-        "run": "336b4a0344604415b769491d3a056d7e",
-        "session": "supported-release-20261117"
-      },
+      "implementation": null,
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
-        "runtime/sv08_boot_health.py",
         "runtime/sv08_printer_firmware.py",
         "runtime/sv08_web.py",
         "catalog/printer/",
@@ -166,13 +161,15 @@
         "runtime/sv08_provenance.py",
         "tests/test_project_license.py",
         "tests/test_recovery_image.py",
-        ".github/workflows/cockpit-readiness.yml"
+        ".github/workflows/cockpit-readiness.yml",
+        "runtime/sv08_boot_health.py",
+        "tests/test_host_boot_health.py"
       ],
       "repeats": 0,
-      "resumption": "All implementers stopped; source822242e and failed logs preserved. Add source-provenance/CI/test fixture integration ownership and SD recipe dependencies, then reapply patch to fresh main-based claim. Cumulative source allowance remains7200sec/1GiB, conservatively900sec/128MiB charged; no reset.",
+      "resumption": "All source workers stopped; current boot-activation patch and66dce8d prototype evidence preserved. Extend existing C3 ownership to BootHealth canonical post-confirm metadata and health tests. Prior source/native attempts and allowances carry forward; no physical authority.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "running",
+      "status": "pending",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
