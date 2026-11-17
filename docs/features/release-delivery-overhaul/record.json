@@ -450,15 +450,7 @@
       "review_reason": "Reversible offline source and disposable fixtures only; no hardware operations or release publication.",
       "status": "blocked",
       "title": "Implement complete accepted overhaul",
-      "validation": {
-        "actor": "root/coordinator",
-        "basis_sha256": "926ecf2bcadf3d0d6cc660ac00f2ce66dc91a8dcaa3993d16b949e29d4fdf1b0",
-        "evidence_sha256": "33d8258ffd396aa0280fdb8e803b59b0d9e9c7ed8d2f88a792902a4f8c1f6aa3",
-        "outcome": "passed",
-        "rationale": "Complete source overhaul with tested firmware/rollback advisory, staging closure, truthful supersession and bounded ownership, build CLI preflight, canonical scope/history/handoff. All affected required offline checks pass; explicit local supplier skip to be exercised by hosted gate. Source candidate5f848f2 frozen; no hardware, release or deploy claim.",
-        "session": "delivery-overhaul-20261117",
-        "source_commit": "5f848f2cc8daef94b958ad63eebc29abdd3607b1"
-      },
+      "validation": null,
       "verification": null
     }
   ],
