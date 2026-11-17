@@ -1,5 +1,8 @@
 # Reproducing the selected software packages
 
+Current scope: [selected package qualification](../features/package-reproducibility-qualification/evidence.md) and [notice closure](../features/release-qualification-closure/evidence.md) supersede older unresolved counts below. Native complete-stack recovery is also complete. These historical details are not instructions to repeat unchanged work. Whole-image rebuild/variation accounting remains in [the release route](../remaining-work-plan.md); cross-toolchain, compiler-bootstrap and all-distro rebuilds are not new release gates.
+
+
 The [build closure evidence](../features/build-license-closure/evidence.md) distinguishes independent source builds, fresh package assemblies and repackaging supplier binaries. It covers the selected project packages, not a bit-identical complete boot image or a printing release. Do not replace historical results with new hashes.
 
 Klipper `0.0+gitf0892d82-2` selects the reproducibly built helper and MarkupSafe wheel in [klipper-build-inputs.json](../../configs/host/klipper-build-inputs.json). The upstream host/MCU commit, source code, optimization flags and physical configuration are unchanged. Canonical compiler paths and a recorded source epoch remove workspace-dependent debug/timestamp output. Historical hashes remain in the recipe. Admission `0.1.0-3` includes hash-pinned project license/grant notices and carries the corresponding exact Klipper dependency; its extension source is unchanged.

@@ -55,6 +55,10 @@ class ViewTests(unittest.TestCase):
         status={'state':'conflict','message':'Review unsupported SAVE_CONFIG changes before printing.'}
         self.assertEqual(view.public('printer','status',{'native_calibration_status':status,'private_debug_log':'hidden'}),{'native_calibration_status':status})
 
+    def test_firmware_status_available_to_ordinary_view(self):
+        status={'state':'mismatch','release':'r1','boards':[{'role':'main','expected_commit':'a'*40,'observed_version':'v1-1-gbbbbbbb','state':'mismatch'}]}
+        self.assertEqual(view.public('printer','status',{'mcu_firmware':status,'private_debug_log':'hidden'}),{'mcu_firmware':status})
+
     def test_public_certificate_is_exact_and_never_private(self):
         certificate={'filename':'sv08-printer-ca.crt','content':'-----BEGIN CERTIFICATE-----\nQUFB\n-----END CERTIFICATE-----\n'}
         self.assertEqual(view.public('identity','ca.download',certificate),certificate)

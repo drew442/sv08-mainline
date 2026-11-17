@@ -4,7 +4,7 @@
 [the operating guide](../docs/development/feature-workflow.md) for records.
 At queue-session start run `python3 scripts/feature_workflow.py validate` and
 `python3 scripts/feature_workflow.py next`; select again after completion/blocking.
-A null selection means inspect blockers, not declare the project complete.
+A null selection is not product completion. Release route: docs/remaining-work-plan.md.
 For adoption/validation gaps, consult the optional
 [follow-up register](../docs/development/agent-followups.md), not another onboarding read.
 

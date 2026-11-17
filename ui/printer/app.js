@@ -372,16 +372,29 @@
         $('current').textContent=appliedText && saved.current?.text===appliedText ? 'Application confirmed in this session. Printer remains stopped; commission changed components separately.' : saved.current?'Candidate saved ('+saved.current.mode+'). Application state has not been checked in this session. Review exact managed files before applying; commissioning remains separate.':'No saved candidate.';
         controls();renderDesign();
     }
+    function renderFirmware(status) {
+        const root=$('firmware-status');root.replaceChildren();root.append(el('h2','Controller firmware'));
+        root.firstChild.id='printer-firmware-title';
+        const summary=el('p');const state=status?.state??'unknown';
+        sv08Presentation.status(summary,status?.message??'Controller firmware status unavailable. Refresh to check.',state==='match'?'success':'warning',state==='match'?'check':'info');
+        summary.dataset.firmwareState=state;root.append(summary);
+        if(status?.release)root.append(el('p','Recommendation assigned by system release '+status.release));
+        for(const board of status?.boards??[]){
+            const row=el('p');row.dataset.firmwareRole=board.role;row.style.overflowWrap='anywhere';
+            row.append(el('strong',(board.role==='main'?'Mainboard':board.role==='tool'?'Toolhead':board.role)+' · '+{match:'Matches recommendation',mismatch:'Differs from recommendation',unknown:'Comparison unknown'}[board.state]),el('br'),el('span','Recommended: '+(board.expected_commit??'Unknown')),el('br'),el('span','Reported: '+(board.observed_version??'Unavailable')));root.append(row);
+        }
+        root.append(el('small','System updates and rollback do not flash controller firmware. Firmware changes use a separate reviewed workflow.'));
+    }
     // Route changes cancel reviews, but a read-only load may finish in either panel.
     async function load(keep = false) {
         loading=true;
         try {
-            invalidate();const result=await rpc({action:'status'});loadedIdentity=result.loaded_identity;catalog=result.catalog;availableComponents=result.available_components??{};nativeCalibrationStatus=result.native_calibration_status??{};saved=result.state;definitionRows=result.definitions??[];sourceRows=result.sources??{};const filters=$('definition-filter');const selectedFilter=filters.value;filters.replaceChildren();for(const [v,t] of [['','All sources'],['builtin','Built-in'],...Object.values(sourceRows).map(s=>[s.id,s.repository??s.manifest.name])]){const o=el('option',t);o.value=v;filters.append(o);}filters.value=selectedFilter;revision=saved.revision;if (!keep || !draft) { draft=saved.draft===undefined?null:copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
+            invalidate();const result=await rpc({action:'status'});renderFirmware(result.mcu_firmware);loadedIdentity=result.loaded_identity;catalog=result.catalog;availableComponents=result.available_components??{};nativeCalibrationStatus=result.native_calibration_status??{};saved=result.state;definitionRows=result.definitions??[];sourceRows=result.sources??{};const filters=$('definition-filter');const selectedFilter=filters.value;filters.replaceChildren();for(const [v,t] of [['','All sources'],['builtin','Built-in'],...Object.values(sourceRows).map(s=>[s.id,s.repository??s.manifest.name])]){const o=el('option',t);o.value=v;filters.append(o);}filters.value=selectedFilter;revision=saved.revision;if (!keep || !draft) { draft=saved.draft===undefined?null:copy(saved.draft);changed=false; } reconcile=false;diagnostic=false;
             if(![1,2].includes(saved.format_version) || ![1,2].includes(saved.draft?.format_version) || result.catalog_supported===false){notice('Unsupported stored schema or catalog. Export for diagnosis; editing is disabled.');diagnostic=true;$('export').textContent=[1,2].includes(draft?.format_version)&&draft.boards?'Export retained local draft':'Export private diagnostic backup';controls();return;}
             if(catalog.boards.some(b=>b.role==='chamber')&&!$('device-board').querySelector('[value=chamber]')){const o=el('option','Chamber module');o.value='chamber';$('device-board').append(o);}
             $('device-kind').replaceChildren();for(const kind of Object.keys(catalog.kinds)){const o=el('option',kind);o.value=kind;$('device-kind').append(o);}
             $('export').textContent='Export shareable draft';$('import-diff').hidden=true;render();$('source-notice').textContent='Add a repository to make definitions available. Hardware selections and applied settings stay unchanged.';$('connection-notice').textContent='Connections in current selections. Undocumented physical contacts remain unknown.';$('definitions-notice').textContent='Browse definitions without changing hardware selections.';notice('Saved configuration loaded. Candidates remain inactive.');
-        } finally { loading=false; }
+        } catch(error) {renderFirmware(null);throw error;} finally { loading=false; }
     }
     // Component-first presentation over the same instance state and RPC authority.
     let guidedReview=false, appliedText=null;
