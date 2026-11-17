@@ -265,6 +265,27 @@ class StageUITests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, name): stage(self.work, 'host', True)
             path.write_bytes(raw)
 
+    def test_firmware_boot_dependencies_refuse_missing_or_stale_before_mutation(self):
+        root=self.work/'rootfs'
+        for name in ('sv08_printer_firmware.py','sv08_printer_catalog.py'):
+            path=root/'usr/lib/sv08'/name;original=path.read_bytes()
+            for stale in (False,True):
+                if stale:path.write_bytes(original+b'\n# stale fixture\n')
+                else:path.unlink()
+                before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
+                for context in ('host','recovery'):
+                    with self.subTest(name=name,stale=stale,context=context):
+                        with self.assertRaisesRegex(ValueError,name):stage(self.work,context,True)
+                        self.assertEqual({str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()},before)
+                path.write_bytes(original)
+
+    def test_firmware_boot_dependencies_are_in_staging_receipt(self):
+        import hashlib
+        report=stage(self.work,'host',True)
+        for name in ('sv08_printer_firmware.py','sv08_printer_catalog.py'):
+            key='usr/lib/sv08/'+name
+            self.assertEqual(report['hashes'][key],hashlib.sha256((REPO/'runtime'/name).read_bytes()).hexdigest())
+
     def test_restart_helper_is_a_strict_recovery_dependency_too(self):
         path = self.work/'rootfs/usr/lib/sv08/sv08_restart.py'
         path.unlink()

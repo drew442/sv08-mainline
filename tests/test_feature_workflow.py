@@ -55,6 +55,33 @@ class WorkflowTests(unittest.TestCase):
         self.workflow.save(record)
         return record
 
+    def test_supersession_is_not_success_and_preserves_old_evidence(self):
+        record = self.feature(); records = {'export':record}; self.commit()
+        before = deepcopy(record['tasks'][0]['evidence'])
+        result = self.workflow.supersede(records,'export:implement','coordinator','human.md','Owner withdrew this separate rehearsal')
+        self.assertFalse(result['acceptance_claimed'])
+        self.assertEqual(record['tasks'][0]['evidence'],before)
+        self.assertIsNone(self.workflow.select(records))
+        self.assertEqual(record['tasks'][0]['supersession']['reference_sha256'],file_hash(self.root,'human.md'))
+        with self.assertRaises(WorkflowError):
+            self.workflow.supersede(records,'export:implement','coordinator','human.md','Again')
+
+    def test_candidate_scope_subtree_is_bounded_and_cannot_write_queue(self):
+        record = self.feature(); records={'export':record}; self.commit()
+        tree,_=self.claim(records)
+        task=record['tasks'][0];task['owned_paths']=['ui/printer/']
+        directory=tree/'ui/printer';directory.mkdir(parents=True)
+        (directory/'status.js').write_text('const value = 1;')
+        self.commit(tree);self.workflow.check_candidate_scope(record,task,tree)
+        sibling=tree/'ui/printer-other';sibling.mkdir();(sibling/'status.js').write_text('bad')
+        self.commit(tree)
+        with self.assertRaises(WorkflowError):self.workflow.check_candidate_scope(record,task,tree)
+        task['owned_paths']=['ui/printer/','ui/printer-other/','docs/features/']
+        self.workflow.check_candidate_scope(record,task,tree)
+        (tree/'docs/features/export/record.json').write_text('{}')
+        self.commit(tree)
+        with self.assertRaises(WorkflowError):self.workflow.check_candidate_scope(record,task,tree)
+
     def decision(self, record):
         return {'outcome': 'approved', 'reviewer': 'approver', 'session': 'review-1', 'authority': 'delegated',
                 'rationale': 'Bounded accepted export behavior with preservation checks.',
@@ -374,6 +401,12 @@ class WorkflowTests(unittest.TestCase):
         self.workflow.resume(self.workflow.load(), 'export:implement', 'Trace the changed syscall boundary')
         self.assertEqual(self.workflow.select(self.workflow.load())['task'], 'export:implement')
 
+
+# Keep the new contract in the established named CI suite as well as its
+# independently runnable focused module; no extra runner or CI dependency.
+def load_tests(loader, standard_tests, pattern):
+    standard_tests.addTests(loader.loadTestsFromName('test_build_preflight'))
+    return standard_tests
 
 if __name__ == '__main__':
     unittest.main()

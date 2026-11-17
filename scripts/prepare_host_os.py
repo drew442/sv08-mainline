@@ -193,6 +193,10 @@ def main():
         return
     if os.geteuid() != 0:
         p.error('Execution requires root for the isolated chroot')
+    if a.stage != 'inspect':
+        from build_preflight import check as build_preflight
+        tools = ['chroot', 'mount', 'umount', 'debootstrap'] if a.stage == 'bootstrap' else ['chroot', 'mount', 'umount']
+        build_preflight(work, tools=tools, min_bytes=c['root_content_budget_mib']*1024**2, min_inodes=40000, device_nodes=True)
     globals()[a.stage](c, work)
 
 

@@ -133,7 +133,39 @@ try {
   fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,mode:'calibration-only',authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; actual Store/Budget',viewport_sizes:[[1024,600]],factory_selected_through_ui:true,connection_identity_authoritative_edit_clear_save_reload_regenerate:true,generic_identity_clear_removes_effective_value:true,unrelated_board_preserved:true,prepared_current_previous_preserved:true,measured_calibration_authoritative_edit_clear_save_reload_regenerate:true,calibration_pending_print_guard:true,live_config_unchanged:true,uncaught_exceptions:errors.length,full_suite_executed:false},null,2)+'\n');
   console.log('Printer calibration-only browser journey PASS');
  }
- if(process.env.SV08_CALIBRATION_ONLY==='1') {
+ async function firmwareOnlyJourney() {
+  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
+  await send('Page.navigate',{url:url+'/cockpit/@localhost/sv08-host/index.html#printer'});
+  await until(`document.querySelector('[data-firmware-state="unknown"]') && window.sv08Session?.available`);
+  assert.equal(await evaluate('window.fixtureStarts'),0);
+  const beforeState=fs.existsSync(statepath)?fs.readFileSync(statepath):null;
+  const livePath=JSON.parse(fs.readFileSync(fixture+'/fixture.json')).generation+'/config/printer.cfg';
+  const beforeLive=fs.readFileSync(livePath);
+  for(const state of ['mismatch','match','unknown']){
+   const data={release:'rollback-release',state,message:state==='mismatch'?'Reported MCU firmware differs from this system release’s recommendation. Check compatibility before printing. System updates and rollback do not flash MCU firmware.':state==='match'?'Reported MCU firmware matches this system release’s recommendation. This does not establish hardware compatibility or commissioning.':'MCU firmware could not be compared with this system release’s recommendation. Compatibility is unknown.',boards:[{role:'main',state,expected_commit:'f0892d82b0f1c1228454f09eb508eddde2250f4b',observed_version:state==='unknown'?null:'v0.13.0-1-g'+(state==='match'?'f0892d82':'aaaaaaaa')},{role:'tool',state:state==='match'?'match':'unknown',expected_commit:state==='match'?'f0892d82b0f1c1228454f09eb508eddde2250f4b':null,observed_version:state==='match'?'v0.13.0-1-gf0892d82':'<script>unsafe()</script>'}]};
+   await evaluate(`window.fixtureFirmware=${JSON.stringify(data)};document.querySelector('#printer-reload').click()`);
+   await until(`document.querySelector('[data-firmware-state="${state}"]')`);
+   assert.match(await evaluate(`document.querySelector('#printer-firmware-status').textContent`),/rollback-release/);
+   assert.equal(await evaluate(`document.querySelector('#printer-firmware-status script')===null`),true);
+   if(state!=='match')assert.match(await evaluate(`document.querySelector('[data-firmware-role="tool"]').textContent`),/<script>unsafe\(\)<\/script>/);
+   await screenshotAt('firmware-'+state+'-desktop','#printer-firmware-status');
+   await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
+   await screenshotAt('firmware-'+state+'-mobile','#printer-firmware-status');
+   assert.equal(await evaluate(`(()=>{const r=document.querySelector('#printer-firmware-status').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth})()`),true);
+   await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});
+  }
+  assert.equal(await evaluate('window.fixtureStarts'),0);
+  assert.equal(await evaluate('sv08Session.elevated'),false);
+  assert.equal(await evaluate(`window.fixtureRequests.every(r=>r.request.action==='status')`),true);
+  if(beforeState)assert.deepEqual(fs.readFileSync(statepath),beforeState);else assert.equal(fs.existsSync(statepath),false);
+  assert.deepEqual(fs.readFileSync(livePath),beforeLive);
+  assert.equal(errors.length,0,JSON.stringify(errors));
+  fs.writeFileSync(output+'/result.json',JSON.stringify({passed:true,mode:'firmware-only',authenticated:false,hardware:false,transport:'Cockpit session/RPC shim; synthetic firmware UI responses; backend separately tested',ordinary_status:true,no_elevation:true,no_mutations:true,states:['match','mismatch','unknown'],viewport_sizes:[[1024,600],[390,844]],uncaught_exceptions:errors.length},null,2)+'\n');
+  console.log('Printer firmware-only browser journey PASS');
+ }
+ if(process.env.SV08_FIRMWARE_ONLY==='1') {
+  await firmwareOnlyJourney();
+ } else if(process.env.SV08_CALIBRATION_ONLY==='1') {
   await calibrationOnlyJourney();
  } else {
  await send('Emulation.setDeviceMetricsOverride',{width:1024,height:600,deviceScaleFactor:1,mobile:false});

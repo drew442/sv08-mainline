@@ -39,8 +39,7 @@ the outcome, scope, acceptance checks and authorization reference; a full design
 proposal is needed only for an actual design question. Existing product requirements
 remain authoritative. `decision` is null when no independent design decision occurred.
 
-`owned_paths` names exact tracked files the task may change, including its evidence
-document. Do not include shared record.json bookkeeping. `input_paths` names relevant
+`owned_paths` names exact files/gitlinks or explicit slash-terminated narrow subtrees (at least two path components) the task may change, including its evidence document. Declare a coherent related change up front rather than renew ownership for every adjacent repair. New/deleted files and directory-boundary collisions are checked; shared feature record.json files remain coordinator-only even inside an owned subtree. Do not include shared record.json bookkeeping. `input_paths` names relevant
 additional dependencies; a trailing `/` protects an entire subtree, including new
 files. No globs. Both are part of authorized scope. Evidence input paths, proposal
 and requirement files are added to the protected footprint automatically. Explicitly
@@ -202,3 +201,43 @@ actual safety classification or the truth of a submitted test report. Real queue
 validation requires a complete checkout. No API transport, scheduler, model or permission
 change is introduced. All mutations remain inspection-only unless `--execute` precedes
 the subcommand; shared records remain locked and coordinator-owned.
+
+## Withdrawn or replaced work
+
+`superseded` means withdrawn/replaced, never passed or done. Dependencies on it remain unsatisfied until a real replacement is explicitly selected. A coordinator may retire only unowned pending/blocked tasks with a committed public disposition reference, actor and reason:
+
+```sh
+python3 scripts/feature_workflow.py --execute supersede <feature>:<task> \
+  --actor coordinator --reference docs/features/<current-work>/owner-request.md \
+  --reason 'Exact owner withdrawal or replacement, with retained evidence location'
+```
+
+The disposition retains evidence/review/ownership history and records reference hash/source commit. It cannot retire running/review/validated/done work, invent a success or bypass a dependent requirement. Keep completed evidence immutable. Never change old review identities/hashes to make validation green.
+
+## Delivery efficiency
+
+Current state belongs in `.codex/current-goals.md`; release scope/order belongs in `docs/remaining-work-plan.md`. A native Codex goal is separate from feature status. Use concise scoped packets, direct tools for predetermined execution, and existing named roles only when their work saves coordination or isolates a concrete question. Reuse relevant passes by dependency/environment/assumption identity; classify failures before expanding work. Existing inexpensive regression automation stays. Exact-operation consequential review remains at the hazardous transition, not every reversible preparation.
+
+## Before expensive image execution
+
+Existing `prepare_host_os.py --execute` and recovery `assemble/derive/build
+--execute` CLI paths now run the shared read-only build preflight before stage
+mutation. It checks tools, available bytes/inodes, real workspace ancestry and
+execution/device-node mount flags. Floors (normal root budget or three recovery
+partitions; 40,000 inodes) are baseline build workspace estimates, not final factory
+capacity evidence or a new hardware requirement. Use an authorised private
+workspace/execution mount for noexec/nodev hosts; the check never installs tools
+or changes mounts. Standalone invocation lets the coordinator apply the actual
+assigned resource floor before allocating images:
+
+```sh
+python3 scripts/build_preflight.py --work /assigned/private/work \
+  --min-bytes 3221225472 --min-inodes 100000 --tool mksquashfs --device-nodes
+```
+
+Set floors from the assigned build/output allowance and observed closure; do not
+copy example limits into a printing, recovery or release acceptance contract.
+Direct Python calls to stage functions remain lower-level APIs; their caller
+must perform the same preflight. CLI integration does not establish QEMU/KVM or
+browser readiness: use the existing backend/browser initialization checks before
+claiming those execution modes.
