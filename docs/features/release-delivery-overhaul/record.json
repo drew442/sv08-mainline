@@ -129,7 +129,9 @@
         "tests/test_printer_definitions.py",
         "tests/printer_browser.mjs",
         "tests/test_printer_browser_fixture.py",
-        "scripts/stage_printer_ui.py"
+        "scripts/stage_printer_ui.py",
+        "scripts/stage_admin_ui.py",
+        "tests/test_stage_admin_ui.py"
       ],
       "repeats": 0,
       "resumption": null,
