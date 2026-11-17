@@ -14,19 +14,21 @@ backup, SD root and eMMC target to be distinct physical disks.
 
 Actual read-only invocation of the unchanged installed media inventory reader
 failed on `mmcblk2boot0`. The eMMC exposes boot0/boot1 as readonly 4MiB hardware
-areas, not independently identified user disks. Reopen the existing source task
-for protected, nonselectable auxiliary topology; retain alias, holder, mount,
-read-only and complete-inventory protections. Source/native passes below remain
+areas, not independently identified user disks. Protected nonselectable auxiliary topology is repaired at 7317a89: 54 focused
+checks plus 99 related checks (three repaired fixture/input failures) pass. The
+candidate reader succeeds in memory against the actual eMMC without deployment.
+See `docs/features/supported-release-candidate/boot-area-evidence.json`. Source/native passes below remain
 historical at their stated inputs; DD65 images are not deployment candidates.
 No card, eMMC, MCU, service or printer-output changes have occurred.
 
 The SD root and loader source/TF-A preparation exist, but final SD composition
-waits for repaired source and actual backup-media policy. Reuse cached packages
+waits for actual backup-media policy and refreshed source-bound artifacts. Reuse cached packages
 and the recorded normal/recovery roots; no unchanged OS bootstrap. Source ceiling
 stays7,200seconds/1GiB. Native ceiling is now18,000process-seconds/124GiB after a
 bounded continuation for this demonstrated repair and affected artifact refresh;
-conservative prior charges11,800seconds/96GiB include all prior attempts, inputs
-and the logical32GiB workspace, with no deletion credit. The existing execution
+current conservative charges are source 3,900 seconds/880 MiB and native
+12,100 seconds/98 GiB, including all prior attempts, inputs and the logical
+32 GiB workspace, with no deletion credit. The existing execution
 ledger records the full continuation. No physical write or release is authorised.
 
 ## Preserved source checkpoint (before this topology finding)
