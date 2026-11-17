@@ -1,23 +1,53 @@
 # Current delivery state
 
-PR38 is merged. Native goal active: first supported release for the actual configured test printer, through installation, commissioning/printing, LAN update/recovery and qualified artifact/source/notice publication. The source-overhaul goal is complete; this full release goal is not.
+PR38 merged as `47e265e21b3382ddc921317097e53991fffd6035`. The native
+first-supported-release goal is active; the existing
+[supported candidate task](../docs/features/supported-release-candidate/proposal.md)
+is running. The earlier recovery qualification remains complete at its recorded
+scope. No physical deployment, MCU flashing or output operation occurred in this goal.
 
-## Current phase
+Draft [PR39](https://github.com/drew442/sv08-mainline/pull/39) contains the supported
+candidate/clean-owner source path. All four CI workflows passed at3f86bd2;
+subsequent source repair88fe387 and final branch CI require separate observation.
+The actual native KVM factory and captured-hardware validators passed unchanged
+production limits. The owner/PAM probe passed29 checks after one fixture-permissions
+repair. [Native evidence](../docs/features/supported-release-candidate/native-evidence.json)
+distinguishes real installed PAM in synthetic roots from normal boot/browser and
+physical acceptance. Root source, six disposable mode/slot boots and800x480 rendered
+owner checks also pass. This source/software checkpoint is not release completion.
 
-[supported-release-candidate](../docs/features/supported-release-candidate/proposal.md): worktree `local/feature-workflow/worktrees/supported-release-integration`, branch `feature/supported-release-integration`. Prior source822242e and old worktree are preserved; ownership was extended/re-authorised for demonstrated provenance/fixture integration, not reset. [Execution](../docs/features/supported-release-candidate/execution.json) carries attempts, assignments and allowances.
+Native work: `/run/a733-guests/sv08-release-20261117` on the existing ARM64/KVM
+runner, private mounts/tools and a logical32GiB inode-rich workspace. Source
+ceiling7,200process-seconds/1GiB, conservative charge2,500seconds/384MiB. Separate
+native ceiling10,800seconds/64GiB, conservative charge2,700seconds/40GiB including
+logical container plus generated files and removed attempts. [Execution](../docs/features/supported-release-candidate/execution.json)
+retains cumulative attempts. Bootstrap/security refresh and exact application,
+Cockpit/RAUC and board-package checks passed. Full board images are unassembled.
+Current normal-root finalization found and repaired the canonical Cockpit certificate
+link/privacy-check mismatch; refresh current source/provenance and rerun that boundary.
 
-Source checkpoint:149 selected root tests pass/no skips, followed by45 overlapping affected checks for the pinned recovery OpenSSL addition; actual six-boot mount checks and rendered800x480 owner enrollment/cancel/error pass. Named implementers covered owner setup (requested medium) and provenance (default low); effective settings not independently audited. Native installed PAM/Cockpit and physical acceptance are still unproven. Draft source publication is not release completion.
+Owner confirmed the fitted Funssor/CN3D bed, factory mainboard/toolhead/hotend,
+filament sensor and exhaust fan matching saved hardware revision13. Passive target
+preflight: release0.1.0-physical-update.2, slotB, immutable, no trial; target32GB spare,
+candidate revision4. Artifacts still must fit the factory7,818,182,656-byte layout.
+Independent SD/backup-medium identities are requested for the final reviewed policy.
+No physical configuration/service/boot/output change has occurred. Exact-operation
+authority/review, recovery readiness and attendance remain required before changes.
 
-Supported integration extends existing builders with measured target policy, public update certificate, optional HTTPS LAN feed, production health, clean recovery owner enrollment/reset and explicit Klipper-start permission. Diagnostic contracts remain. Immutable shadow is read-only; writable shadow permits slot-local package account replacement. No automatic MCU flashing.
+## Contract and next milestone
 
-## Resources and target
+Use [the canonical release route](../docs/remaining-work-plan.md). Initial support is the actual test printer's fitted configuration, not assumed factory bed/hotend. LAN signed delivery suffices initially. Preserve immutable/writable modes, data/identity, safety/admission and independent recovery. System releases assign immutable definition-based MCU recommendations; older-system boot never reflashes, and observed mismatch/unknown is visible. Passive target preflight is recorded in the candidate execution ledger; recheck safety-relevant state before any physical operation.
 
-Source ceiling7,200process-seconds/1GiB; conservative charge1,800seconds/256MiB. Separate native ceiling10,800seconds/64GiB, including logical32GiB private workspace; conservative preparation charge600seconds/32.2GiB. Combined18,000seconds/65GiB. Prior consumption/deleted attempts receive no credit. Native ARM tools/private mounts ready; no new OS image built yet.
+Current milestone: finish native candidate/clean-owner qualification and freeze/assemble one supported candidate; then execute attended configured-printer commissioning and remaining candidate-specific acceptance, and publish the qualified release with source/notices. Current diagnostic and KVM images do not establish board release or printing acceptance. Required first physical action waits for exact configuration/target/recovery review and separate authority.
 
-Read-only coordinator SSH preflight: actual target stable non-trial B/revision2, retained A/revision3; candidate revision4. Measured fixed-controller CID, currently Linux mmcblk2,32GB spare eMMC. Artifacts must still fit7,818,182,656bytes. Private saved hardware revision13 selects factory electronics/hotend plus Funssor bed, filament sensor and exhaust fan; physically fitted match awaits owner confirmation. Services were observed, never changed. No credentials/private backups inspected.
+## Reuse
 
-## Next work
+[PR17 native recovery](../docs/features/recovery-printer-stack/native-evidence.md), [H13 update/fallback](../docs/features/physical-automatic-update-validation/completion.md), [H12 SD reimage](../docs/features/h12-attended-sd-reimage/physical-completion.md), [configuration/calibration](../docs/features/stock-printer-readiness/evidence.md), [package reproduction](../docs/features/package-reproducibility-qualification/evidence.md), [notices](../docs/features/release-qualification-closure/evidence.md). Recheck affected inputs/assumptions, not everything after a docs commit. Historical counters/results remain at their original revisions.
 
-Publish/freeze source and inspect CI; build current normal/recovery/independent SD using verified package inputs on assigned ARM workspace. Reuse PR17 validator proof only for matching inputs, otherwise prove actual pinned validator before full assembly. Qualify changed owner/PAM/package/activation boundaries natively; distinguish virtual fixtures from production board images. Prepare exact [attended packet](../docs/hardware/test-sv08-01-commissioning-session.md), then obtain separate exact-operation authority/review and usable independent recovery confirmation before changes/outputs. Execute configured-printer commissioning, print/peripherals, candidate-specific update/recovery, repeat clean installation and publish qualified artifacts/source/notices.
+## Goal prompt for the remaining milestone
 
-[Canonical contract](../docs/remaining-work-plan.md); [PR17 reuse](../docs/features/recovery-printer-stack/native-evidence.md); [H13](../docs/features/physical-automatic-update-validation/completion.md); [H12](../docs/features/h12-attended-sd-reimage/physical-completion.md). Preserve historical evidence. Physical dependencies remain in [one H queue](../docs/hardware/coordinated-human-tasks.md). No deployment, flashing, heater or motion operation occurred.
+> Deliver the first supported release for the actual configured test printer using docs/remaining-work-plan.md and the existing feature/H records. Implement the supported candidate/clean-owner/commissioning path in existing composition and runtime tools; preserve all mandatory requirements, working components, LAN trust and release-bound MCU definition policy with no automatic flashing on rollback. Reuse applicable evidence, freeze/build one source-bound factory-capacity candidate, and prepare the single commissioning session. Perform physical installation, flashing, outputs and destructive tests only with separate exact-operation authority/review; stop at the precise missing human action when necessary. Complete candidate-specific install/print/update/recovery/peripheral acceptance and publish installable artifacts with corresponding source, notices and recovery instructions only when authorised and qualified. Follow AGENTS.md for mechanics; no optional feature expansion or fabricated health/release markers. Finish at the supported public release, or preserve work and report the concrete blocker and next action.
+
+## Authority and history
+
+Source PR publication is not physical-operation or release-publication authority. The active native full-release goal and running source feature-task have distinct completion criteria. Physical dependencies remain in [one H queue](../docs/hardware/coordinated-human-tasks.md). [Historical goal narratives](../docs/history/current-goals-through-20261116.md) are evidence, not current instructions.

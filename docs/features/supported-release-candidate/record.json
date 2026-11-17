@@ -73,7 +73,11 @@
       "hazards": [],
       "human_task": null,
       "id": "implement",
-      "implementation": null,
+      "implementation": {
+        "actor": "root/coordinator",
+        "run": "336b4a0344604415b769491d3a056d7e",
+        "session": "supported-release-20261117"
+      },
       "input_paths": [
         "runtime/sv08_state.py",
         "runtime/sv08_identity.py",
@@ -168,7 +172,7 @@
       "resumption": "All implementers stopped; source822242e and failed logs preserved. Add source-provenance/CI/test fixture integration ownership and SD recipe dependencies, then reapply patch to fresh main-based claim. Cumulative source allowance remains7200sec/1GiB, conservatively900sec/128MiB charged; no reset.",
       "review_policy": "self",
       "review_reason": "Reversible source/disposable test work only; physical operations and public flashable release remain separately gated.",
-      "status": "pending",
+      "status": "running",
       "title": "Implement and validate supported candidate source path",
       "validation": null,
       "verification": null
