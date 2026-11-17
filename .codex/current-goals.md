@@ -19,12 +19,11 @@ owner checks also pass. This source/software checkpoint is not release completio
 Native work: `/run/a733-guests/sv08-release-20261117` on the existing ARM64/KVM
 runner, private mounts/tools and a logical32GiB inode-rich workspace. Source
 ceiling7,200process-seconds/1GiB, conservative charge2,500seconds/384MiB. Separate
-native ceiling10,800seconds/64GiB, conservative charge2,700seconds/40GiB including
+native ceiling10,800seconds/72GiB after a recorded8GiB output continuation; conservative charge6,600seconds/62GiB including
 logical container plus generated files and removed attempts. [Execution](../docs/features/supported-release-candidate/execution.json)
 retains cumulative attempts. Bootstrap/security refresh and exact application,
-Cockpit/RAUC and board-package checks passed. Full board images are unassembled.
-Current normal-root finalization found and repaired the canonical Cockpit certificate
-link/privacy-check mismatch; refresh current source/provenance and rerun that boundary.
+Cockpit/RAUC and board-package checks passed. The revision4 six-partition candidate is assembled at the factory size; readback of all partitions/SPL/environments and the selected-software release gate pass. It is not physically booted or printing/release qualified.
+Current normal-root finalization and provenance pass after the canonical certificate link fix. A distinct revision5 signed OTA payload is being prepared from unchanged source for the update/fallback campaign; no second whole normal disk is planned.
 
 Owner confirmed the fitted Funssor/CN3D bed, factory mainboard/toolhead/hotend,
 filament sensor and exhaust fan matching saved hardware revision13. Passive target
