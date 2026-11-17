@@ -11,6 +11,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'runtime'))
 from sv08_commissioning import Commissioning
 from sv08_printer_publish import Publisher
 from sv08_state import Store, atomic_json
+from sv08_restart import publish, start_admitted
 from test_data_budget import fixture_root, fixture_budget
 from test_printer_configuration import primary_source
 import test_printer_calibration as calibration
@@ -66,6 +67,9 @@ class CommissioningTests(unittest.TestCase):
         relative=next(name for name in receipt['after'] if name.endswith('hardware.cfg'))
         path=Path(boot['generation'])/'config'/relative;path.write_text(path.read_text().replace('PA2','PA9'))
         with self.assertRaisesRegex(ValueError,'drift'): self.service.check()
+        with patch('sv08_commissioning.subprocess.run') as command:
+            self.assertIn('drift',self.service.boot_activate()['reason'])
+        command.assert_not_called()
         self.assertEqual(self.service.permission.read_bytes(),before)
 
     def test_health_trial_and_firmware_change_refuse(self):
@@ -80,7 +84,78 @@ class CommissioningTests(unittest.TestCase):
         manifest['mcu_firmware']['host_klipper_commit']='b'*40;manifest['mcu_firmware']['definitions']=[]
         atomic_json(self.release,manifest)
         with self.assertRaisesRegex(ValueError,'MCU firmware was not flashed'): self.service.check()
+        with patch('sv08_commissioning.subprocess.run') as command:
+            self.assertIn('MCU firmware was not flashed',self.service.boot_activate()['reason'])
+        command.assert_not_called()
         self.assertEqual(self.service.permission.read_bytes(),before)
+
+    def test_boot_activation_absent_revoked_and_stale_permission_never_dispatch(self):
+        with patch('sv08_commissioning.subprocess.run') as command:
+            result=self.service.boot_activate()
+            self.assertEqual(result['service_action'],'none');self.assertIn('reviewed',result['reason'])
+            self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
+            self.service.permission.unlink()  # Same persisted outcome as explicit revoke.
+            self.assertEqual(self.service.boot_activate()['service_action'],'none')
+            self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
+            permission=json.loads(self.service.permission.read_text());permission['binding']['hardware']='b'*64
+            atomic_json(self.service.permission,permission)
+            result=self.service.boot_activate()
+            self.assertEqual(result['service_action'],'none');self.assertIn('changed',result['reason'])
+        command.assert_not_called()
+
+    def test_boot_activation_health_trial_pending_shutdown_and_busy_never_dispatch(self):
+        self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
+        with patch('sv08_commissioning.subprocess.run') as command:
+            (self.runtime/'os-health-ready').unlink()
+            self.assertIn('healthy',self.service.boot_activate()['reason'])
+            (self.runtime/'os-health-ready').touch();(self.runtime/'trial').touch()
+            self.assertIn('healthy',self.service.boot_activate()['reason'])
+            (self.runtime/'trial').unlink()
+            boot=dict(self.boot,trial=True);atomic_json(self.runtime/'boot.json',boot)
+            self.assertIn('healthy',self.service.boot_activate()['reason'])
+            atomic_json(self.runtime/'boot.json',self.boot)
+            self.store.expect_trial('B','fixture-rc2','A')
+            self.assertIn('healthy',self.service.boot_activate()['reason'])
+            state=self.store.load();state['pending']=None;self.store.save(state)
+            publish(self.runtime)
+            self.assertIn('shutdown',self.service.boot_activate()['reason'])
+            (self.runtime/'shutdown.json').unlink()
+            with start_admitted(self.runtime):
+                self.assertEqual(self.service.boot_activate()['service_action'],'none')
+        command.assert_not_called()
+
+    def test_boot_activation_repeats_across_modes_slots_and_compatible_host_update(self):
+        self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
+        permission=self.service.permission.read_bytes();calls=[]
+        def queue(args,**kwargs):
+            # Dispatch must not race execution-time guards for their locks.
+            with self.store.locked(nonblocking=True), start_admitted(self.runtime):
+                self.assertTrue(self.service.check()['permitted'])
+            calls.append((args,kwargs))
+        for mode,slot,release in [('immutable','A','fixture-rc1'),('immutable','B','fixture-rc2'),
+                                  ('immutable','A','fixture-rc1'),('writable','B','fixture-rc2')]:
+            with self.subTest(mode=mode,slot=slot,release=release):
+                self.store.policy(mode=mode)
+                manifest=json.loads(self.release.read_text());manifest['release']=release
+                manifest.pop('mcu_firmware');atomic_json(self.release,firmware_manifest(manifest))
+                if not any(record['release']==release for record in self.store.load()['slots'].values()):
+                    self.store.expect_trial(slot,release,'B' if slot=='A' else 'A')
+                    self.store.prepare_boot(slot,release)
+                    self.store.confirm(slot,release)
+                boot=self.store.prepare_boot(slot,release);boot['boot_id']='synthetic-new-boot'
+                atomic_json(self.runtime/'boot.json',boot)
+                self.assertEqual(self.service.boot_activate(queue)['service_action'],'start-queued')
+                self.assertEqual(self.service.permission.read_bytes(),permission)
+        self.assertEqual(len(calls),4)
+        for args,kwargs in calls:
+            self.assertEqual(args,['/usr/bin/systemctl','--no-block','start','sv08-klipper.service'])
+            self.assertEqual(kwargs,dict(check=True,timeout=15))
+
+    def test_boot_activation_dispatch_failure_is_not_reported_as_queued(self):
+        import subprocess
+        self.service.authorize(self.service.snapshot()['review_sha256'],'H05 synthetic review')
+        with patch('sv08_commissioning.subprocess.run',side_effect=subprocess.CalledProcessError(1,'stub')):
+            with self.assertRaises(subprocess.CalledProcessError):self.service.boot_activate()
 
 
 if __name__=='__main__': unittest.main()

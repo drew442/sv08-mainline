@@ -294,8 +294,8 @@ def stage(work, manifest, refresh=False, owner_key=None, *, supported_profile=No
         from supported_candidate import install_backend, public_account_checks
         install_backend(root, supported_profile, release_certificate)
         public_account_checks(root)
-        # Keep package aliases masked. The supported entry remains disabled
-        # until a separate, reviewed commissioning operation.
+        # Keep physical units disabled. Only the guarded boot helper is enabled;
+        # it cannot grant the separately reviewed persistent start permission.
         for name in ('klipper', 'moonraker', 'KlipperScreen'):
             path = units/(name+'.service')
             path.unlink(missing_ok=True); path.symlink_to('/dev/null')
@@ -305,6 +305,9 @@ def stage(work, manifest, refresh=False, owner_key=None, *, supported_profile=No
         (units/'sv08-klipper.service.d').mkdir(exist_ok=True)
         shutil.copyfile(REPO/'configs/host-os/systemd/sv08-klipper.service.d/supported-commissioning.conf',
                         units/'sv08-klipper.service.d/supported-commissioning.conf')
+        activation = health_wants/'sv08-commissioned-start.service'
+        activation.unlink(missing_ok=True)
+        activation.symlink_to('../sv08-commissioned-start.service')
     # Physical printer services remain separately gated; no printer.cfg is seeded.
     (work / 'integration-staged.json').write_text(json.dumps(manifest, indent=2)+'\n')
 

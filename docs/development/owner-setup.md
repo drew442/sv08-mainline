@@ -31,6 +31,14 @@ password changes and `passwd` for `sv08` are refused by a supported-image PAM
 rule in both modes; use local recovery reset instead. Optional SSH public keys can
 be enrolled through the existing Cockpit identity workflow after login.
 
+Password setup does not commission the printer. After the separately reviewed
+first Klipper start, persistent valid commissioning permission allows startup on
+later healthy normal boots and compatible host updates in either root mode.
+The supported boot helper checks that permission and all existing startup gates;
+missing, revoked or stale permission leaves Klipper stopped and records a reason
+in the `sv08-commissioned-start.service` journal. No Linux enable command or root
+mode change is needed. See [service startup and acceptance](host-os-build.md#service-startup-and-acceptance).
+
 ## Persistence and boundaries
 
 The root-owned mode-0600 `system/owner.json` stores only a salted SHA-512 crypt hash

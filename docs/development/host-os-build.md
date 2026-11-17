@@ -48,8 +48,8 @@ Use [the baseline recipe](../hardware/host-ab-build.md), pinned package tools an
    through `integrate_host_os.py --supported-profile PROFILE --release-certificate
    PUBLIC_PEM --manifest MANIFEST --work WORK --execute`. No owner-key argument is
    allowed in supported mode. The builder installs production backend documents,
-   real OS health and the explicit commissioning guard; physical services remain
-   disabled and package aliases masked.
+   real OS health, the explicit commissioning guard and the supported guarded
+   boot activation helper; physical units remain disabled and package aliases masked.
 2. Use existing printer/admin staging and public-source/notice qualification at
    the frozen revision. Supported backend documents have deterministic recipes,
    and profile/certificate bytes are separately bounded/hash-bound build inputs.
@@ -111,6 +111,18 @@ This writes permission and performs no service operation. It binds the managed
 publication, fitted hardware binding and host/MCU recommendation. Native
 `SAVE_CONFIG` remains under the existing recognized calibration lane and does not
 invalidate permission. New hardware publication or host pin requires a new review.
+On later boots, `sv08-commissioned-start.service` runs only after successful
+`sv08-prepare.service` and real `sv08-boot-health.service`. It checks the full
+persistent permission under state/shutdown admission locks, releases the locks,
+then queues `sv08-klipper.service` with `systemctl --no-block start`. Klipper keeps
+its own configuration, trial, health, shutdown and commissioning checks at actual
+execution. Missing, revoked, stale or inadmissible permission queues nothing and
+logs the reason in the helper's journal. The helper never enables a physical unit
+or starts a second Moonraker; the enabled printer API already supplies Moonraker.
+Valid permission survives compatible host updates, A/B selection and both root
+modes without a writable-root enable operation. Trial boots remain stopped; a
+later healthy normal boot can use the retained permission. Recording permission
+still performs no service action; the first start remains in the reviewed packet.
 The exact launch/stop operations belong in the attended packet, not a generic
 unmask/start instruction. Permission is not measured MCU compatibility or printing
 acceptance. No user needs to fabricate health files.

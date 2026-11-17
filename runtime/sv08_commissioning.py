@@ -1,7 +1,8 @@
 """Explicit supported Klipper-start permission, separate from print qualification.
 
-No MCU access, service operation or output command. A root operator records the
-reviewed physical-operation reference only after the project's external gate.
+No MCU access or output command. A root operator records the reviewed
+physical-operation reference only after the project's external gate. Authorize
+does not operate services; boot-activate queues only an already permitted start.
 Normal SAVE_CONFIG drift stays under the existing native calibration contract.
 """
 import argparse
@@ -10,6 +11,7 @@ import os
 from pathlib import Path
 import re
 import stat
+import subprocess
 
 from sv08_printer_catalog import digest, strict_json
 from sv08_printer_publish import Publisher
@@ -98,16 +100,35 @@ class Commissioning:
             raise ValueError('Hardware publication or host/MCU recommendation changed; review compatibility before starting Klipper. MCU firmware was not flashed.')
         return dict(permitted=True, printing_qualified=False)
 
+    def boot_activate(self, command=None):
+        """Queue a guarded boot start, never create or repair permission.
+
+        Release the locks before dispatch so Klipper's ExecStartPre can acquire
+        them. That execution-time check closes changes after this observation.
+        Never wait for service completion or hold a boot dependency job open.
+        """
+        try:
+            with self.store.locked(nonblocking=True), start_admitted(self.runtime):
+                self.check()
+        except (ValueError, OSError) as error:
+            return dict(service_action='none', reason=str(error), printing_qualified=False)
+        (command or subprocess.run)(['/usr/bin/systemctl', '--no-block', 'start', 'sv08-klipper.service'],
+                                    check=True, timeout=15)
+        return dict(service_action='start-queued', printing_qualified=False)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=('review', 'authorize', 'check', 'revoke'))
+    parser.add_argument('action', choices=('review', 'authorize', 'check', 'revoke', 'boot-activate'))
     parser.add_argument('--review-sha256')
     parser.add_argument('--assessment')
     args = parser.parse_args()
     if os.geteuid() != 0: parser.error('Root administration is required')
     store = Store(ROOT)
     service = Commissioning(store)
+    if args.action == 'boot-activate':
+        print(json.dumps(service.boot_activate()))
+        return
     # State before service admission is the existing lock order.
     with store.locked(nonblocking=True), start_admitted(RUNTIME):
         if args.action == 'review': result = service.snapshot()

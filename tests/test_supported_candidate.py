@@ -137,6 +137,16 @@ class SupportedCandidate(unittest.TestCase):
         self.assertTrue((root/'etc/systemd/system/multi-user.target.wants/sv08-boot-health.service').is_symlink())
         self.assertFalse((root/'etc/systemd/system/multi-user.target.wants/sv08-klipper.service').exists())
         self.assertIn('sv08_commissioning.py check',(root/'etc/systemd/system/sv08-klipper.service.d/supported-commissioning.conf').read_text())
+        units=root/'etc/systemd/system'
+        self.assertEqual((units/'multi-user.target.wants/sv08-commissioned-start.service').readlink(),
+                         Path('../sv08-commissioned-start.service'))
+        activation=(units/'sv08-commissioned-start.service').read_text()
+        self.assertIn('Requires=sv08-prepare.service sv08-boot-health.service',activation)
+        self.assertIn('After=sv08-prepare.service sv08-boot-health.service',activation)
+        self.assertIn('sv08_commissioning.py boot-activate',activation)
+        self.assertNotIn('Wants=sv08-klipper',activation)
+        self.assertNotIn('Before=sv08-klipper',activation)
+        self.assertFalse((units/'multi-user.target.wants/sv08-moonraker.service').exists())
         for name,document in backend_documents(value).items():
             if name!='release.json': self.assertEqual(json.loads((root/'usr/lib/sv08'/name).read_text()),document)
         original=(root/'etc/shadow').read_bytes()
@@ -192,6 +202,21 @@ class SupportedCandidate(unittest.TestCase):
         with patch('finalize_supported_host.initramfs_entries',return_value={'scripts/local-bottom/sv08-data'}), \
              patch('project_license.validate',return_value=dict(development=False,source_revision='a'*40)):
             result=checks(root,data,value);self.assertFalse(result['release_qualified'])
+            activation=root/'etc/systemd/system/sv08-commissioned-start.service'
+            original_activation=activation.read_bytes()
+            activation.write_bytes(original_activation.replace(b'After=',b'#After='))
+            with self.assertRaisesRegex(ValueError,'service differs'):checks(root,data,value)
+            activation.write_bytes(original_activation)
+            activation_link=root/'etc/systemd/system/multi-user.target.wants/sv08-commissioned-start.service'
+            activation_link.unlink()
+            with self.assertRaisesRegex(ValueError,'boot activation'):checks(root,data,value)
+            activation_link.symlink_to('../sv08-boot-health.service')
+            with self.assertRaisesRegex(ValueError,'boot activation'):checks(root,data,value)
+            activation_link.unlink();activation_link.symlink_to('../sv08-commissioned-start.service')
+            physical=root/'etc/systemd/system/multi-user.target.wants/sv08-klipper.service'
+            physical.symlink_to('../sv08-klipper.service')
+            with self.assertRaisesRegex(ValueError,'must not autostart'):checks(root,data,value)
+            physical.unlink()
             # Wrong/relative links and private certificate directories remain
             # forbidden, and diagnostics never copy credential bytes.
             secret='synthetic-private-credential-do-not-publish'

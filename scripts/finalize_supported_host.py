@@ -37,7 +37,7 @@ def checks(root, data, profile):
     if data.is_symlink() or not data.is_dir() or any(data.iterdir()):
         raise ValueError('Supported image data seed must be empty; enroll state/identity in recovery')
     units = root/'etc/systemd/system'
-    for name in ('sv08-boot-health', 'sv08-klipper', 'sv08-moonraker'):
+    for name in ('sv08-boot-health', 'sv08-klipper', 'sv08-moonraker', 'sv08-commissioned-start'):
         path = units/(name+'.service')
         if path.is_symlink() or not path.is_file(): raise ValueError('Supported current service is missing or masked: '+name)
         source = REPO/'configs/host-os/systemd'/(name+'.service')
@@ -54,6 +54,9 @@ def checks(root, data, profile):
         raise ValueError('Supported commissioning guard is missing')
     if not (units/'multi-user.target.wants/sv08-boot-health.service').is_symlink():
         raise ValueError('Supported real OS-health handoff is not enabled')
+    activation = units/'multi-user.target.wants/sv08-commissioned-start.service'
+    if not activation.is_symlink() or os.readlink(activation) != '../sv08-commissioned-start.service':
+        raise ValueError('Supported guarded boot activation is not enabled with its exact unit binding')
     for name in WIFI_FILES:
         path = root/name
         if path.is_symlink() or not path.is_file(): raise ValueError('Supported Wi-Fi userspace is missing: '+name)
